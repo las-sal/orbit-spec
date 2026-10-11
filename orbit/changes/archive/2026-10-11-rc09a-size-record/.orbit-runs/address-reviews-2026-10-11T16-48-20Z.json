@@ -1,0 +1,116 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-11T16:48:20Z",
+  "change": "rc09a-size-record",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc09a-size-record/.orbit-runs/external-proposal-2026-10-10T21-53-20Z.md",
+  "source_command": null,
+  "source_token": "2026-10-10T21-53-20Z",
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-6 Codex",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 3,
+    "suggestion": 2
+  },
+  "pushback_verification": "All five verified against the artifacts after log 1; four converged findings already closed there.",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale_suppressed": 4,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Multiline declaration reasons have conflicting interpretations",
+      "file": "orbit/changes/rc09a-size-record/specs/orbit-change-size/spec.md",
+      "line": 125,
+      "marker_source": "external",
+      "classification": "stale",
+      "action": "converged with the fresh pass; walked in the earlier log",
+      "evidence": "address-reviews-2026-10-11T16-48-04Z (the earlier pass's log) resolved \"Declaration edge cases split implementations: unconfigured dimensions, other bullet markers, reason-on-continuation, heading spelling\": the reason begins on the item's first line, a continuation-only reason is MALFORMED, a nested bullet is part of the reason; re-checked, in place",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Size computation does not specify filesystem failure behavior",
+      "file": "orbit/changes/rc09a-size-record/specs/orbit-change-size/spec.md",
+      "line": 19,
+      "marker_source": "external",
+      "classification": "stale",
+      "action": "converged with the fresh pass; walked in the earlier log",
+      "evidence": "address-reviews-2026-10-11T16-48-04Z (the earlier pass's log) resolved \"No failure path for the size computation on the status surface every body reads gate state from\": an existing-but-unreadable input nulls its figure, is listed in size.errors and reported by validate as a size WARNING; status exits as without size; re-checked, in place",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Split does not override the existing completion instruction",
+      "file": "orbit/changes/rc09a-size-record/specs/orbit-propose-modifications/spec.md",
+      "line": 18,
+      "marker_source": "external",
+      "classification": "trivial_fix",
+      "action": "on Split, the split recommendation replaces the completion prompt to review; the completion emit is still written and the body says its pointer names review only because the artifacts are complete; a scenario added; design D5 and task 5.1 carry it",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc09a-size-record/design.md",
+          "orbit/changes/rc09a-size-record/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc09a-size-record/specs/orbit-propose-modifications/spec.md",
+            "text": "Split replaces the review prompt"
+          },
+          {
+            "path": "orbit/changes/rc09a-size-record/tasks.md",
+            "text": "on Split, the split recommendation replaces the completion prompt to review"
+          }
+        ],
+        "searched": [
+          "completion prompt",
+          "/orbit:review <name>",
+          "Split"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Empty ceiling maps changed semantics without a recorded narrowing",
+      "file": "orbit/changes/rc09a-size-record/explore.md",
+      "line": 80,
+      "marker_source": "external",
+      "classification": "stale",
+      "action": "converged with the fresh pass; walked in the earlier log",
+      "evidence": "address-reviews-2026-10-11T16-48-04Z (the earlier pass's log) resolved \"A map with no valid entry is OFF here but ON-comparing-nothing in the explored rule, and the change does not record it\" by direction A (Sal): OFF kept, the narrowing recorded in design D7(b); re-checked, in place",
+      "outcome": "stale"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Clarify which status render modes carry size",
+      "file": "orbit/changes/rc09a-size-record/specs/orbit-change-size/spec.md",
+      "line": 194,
+      "marker_source": "external",
+      "classification": "stale",
+      "action": "converged with the fresh pass; walked in the earlier log",
+      "evidence": "address-reviews-2026-10-11T16-48-04Z (the earlier pass's log) resolved \"The Size: line's figure format and status-flag reach are unpinned\": the field rides plain change status only, never --boot, --scenarios or --report; re-checked, in place",
+      "outcome": "stale"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "One resolved (Split now replaces the completion prompt to review); four converged with the fresh pass and recorded stale, naming its log.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal rc09a-size-record",
+  "ripple_misses": 0
+}

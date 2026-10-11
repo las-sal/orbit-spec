@@ -1,0 +1,29 @@
+{
+  "command": "apply",
+  "timestamp": "2026-09-21T13:42:53Z",
+  "change": "rc02c-confirmation-semantics",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "gate_overridden": {
+    "gate": "review-proposal",
+    "state": "unpassed",
+    "reason": "latest independent pass has 6 CRITICAL"
+  },
+  "consent": "user-invoked",
+  "tasks_completed": 18,
+  "tasks_remaining": 0,
+  "user_validation_remaining": 0,
+  "chunk": null,
+  "chunk_name": null,
+  "chunk_complete": true,
+  "tasks_completed_this_session": 1,
+  "files_touched": [
+    "orbit/changes/rc02c-confirmation-semantics/.orbit-runs/apply-2026-09-21T13-37-23Z.json",
+    "orbit/changes/rc02c-confirmation-semantics/tasks.md",
+    "test/core/source-lint.test.ts",
+    "test/core/sources-registry.test.ts"
+  ],
+  "diff_base": "f5182861b694fc6c530c1378ba788cd6396efe4d",
+  "final_assessment": "18 of 18 tasks done. 18 of 18 complete. Task 5.1's blocker cleared on Sal's ratification of option 1 — the two pre-existing orbit-source-lint failures were fixed as SEPARATE work in their own commit, keeping this change's diff and Touchpoints honest. They turned out to be two different things wearing one costume: countRulingEntries' pinned 10 was WORKING AS DESIGNED (its comment demands a deliberate update whenever a ruling is added, and R-crc-11 was recorded without one, so the pin moved to 11 — the red was the feature), while source-lint's inCodeRegion threshold was genuinely unsound twice over: it depended on rc07's own in-flight artifacts, which became excluded RECORDS at archive, and it demanded prose the capability's authoring rule tells writers not to produce, since a fenced example naming a REAL source is live-shaped and placeholders do not match the conforming grammar. Replaced with the invariant a sweep over living documents can soundly own — no live span ever OPENS inside a code region — leaving the non-vacuous core (every file swept for malformed markers, every live span naming a declared source) untouched. Suite 2204/2204, build clean, validate --all --strict clean at 26 items.",
+  "next_recommended": "/orbit:review --as system --fresh rc02c-confirmation-semantics"
+}

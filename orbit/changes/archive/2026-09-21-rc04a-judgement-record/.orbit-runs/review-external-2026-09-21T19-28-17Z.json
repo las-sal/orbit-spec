@@ -1,0 +1,13 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-09-21T19:28:17Z",
+  "change": "rc04a-judgement-record",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "mode": "system",
+  "prompt_path": "orbit/changes/rc04a-judgement-record/.orbit-runs/external-prompt-system-2026-09-21T19-27-17Z.md",
+  "target": "GPT-5 Codex",
+  "final_assessment": "External review prompt packaged for rc04a-judgement-record (iter 1, mode system); awaiting findings. This is the EXTERNAL half of the review-system gate's blind-pair slot — the fresh half has not been spawned, and per R-crc-4 both members must be in flight on this tree before either is walked. The cycle context hands over ZERO open findings: the proposal cadence ran fresh then in-context, both walked to zero, and review-proposal computed PASSED with no override. So this handoff carries no anchor, and the rc03a conflict between orbit-review-external's cycle-context requirement and the blind-pair blindness requirement does not bite. The prompt names the delta-fidelity check explicitly as in-scope, because a prior pass on this change found a MODIFIED block silently dropping four baseline scenarios — a defect class validate --strict and base_fingerprints structurally cannot detect, and one worth a second independent look after the repair. It also lists six claims to attack rather than accept, including the presence-scoping guarantee measured over 442 existing emits and the acceptance fixture's sort of rc02c's six warnings, which could beg the question it is meant to settle. Handoff preflight satisfied at packaging time: clean tree, no unpushed commits, remote reachable.",
+  "awaiting_findings": true,
+  "next_recommended": "Paste orbit/changes/rc04a-judgement-record/.orbit-runs/external-prompt-system-2026-09-21T19-27-17Z.md into the target AI, save the response as orbit/changes/rc04a-judgement-record/.orbit-runs/external-system-<TS>.md, then /orbit:address-reviews rc04a-judgement-record --from-file <path>"
+}

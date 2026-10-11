@@ -1,0 +1,47 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-25T12:40:41Z",
+  "change": null,
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "source": "from-file",
+  "source_path": "orbit/.orbit-runs/audit-drift-2026-09-24T17-04-42Z.json",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 0
+  },
+  "pushback_verification": "1 of 1 verified: CLAUDE.md unchanged since the audit that produced the finding (HEAD de4af354); the rc04d paragraph was still the last stage paragraph and line 212 still read 'Three more stages'. 0 stale.",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The handoff narrative stops at rc04c 'applied' and carries no archive paragraph — every prior rc-stage got one at its archive, and a cold session reading this file would not learn that the stage shipped through a computed gate",
+      "marker_source": "audit-drift",
+      "file": "CLAUDE.md",
+      "line": 212,
+      "classification": "trivial_fix",
+      "action": "Appended the rc04c archive paragraph after rc04d's, in the shape of its predecessors: what shipped (field gone from the write path, footprint 3→0, the totality rule and its set), how it converged (second computed PASSED gate, first through the blind pair; the shared defect; the fourth instance; R-crc-14; option A taken, B canonized at Q-crc-24; Q-crc-25/26), the readiness record's four accepted residuals, the hash-pin sizing lesson, the 34/36 task figures, 2243 tests. The rulings figure inside it is MARKED (`src:rulings`), so `orbit validate --sources` now checks two rulings spans — reads 14 on both. Line 212 updated to 'Four more stages have shipped since … SIX stages complete (rc04c is archived, awaiting ratification)'. Line 230's '(rc04c, applied 2026-09-24)' left as history, per the finding. Source lint clean; source-lint and sources-registry tests green (84).",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "The one project-wide drift finding resolved: CLAUDE.md's handoff narrative now records rc04c's archive in the customary paragraph, with its ruling figure marked for the source lint. No stale findings, nothing deferred.",
+  "iteration": 3,
+  "next_recommended": "No markers remain in scope; the project trail records this walk."
+}

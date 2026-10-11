@@ -1,0 +1,82 @@
+{
+  "command": "archive",
+  "timestamp": "2026-10-05T00:46:38Z",
+  "change": "rc06b-map-readers",
+  "kind": "lifecycle",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Archived rc06b-map-readers to orbit/changes/archive/2026-10-05-rc06b-map-readers/: verify reads the scenario map by one mirrored table and every Pass 0 reader reads the same surface; orbit-verify-modifications ADDED (22 → 23); 6 delta blocks synced byte-verified; fingerprints 4/4.",
+  "archive_path": "orbit/changes/archive/2026-10-05-rc06b-map-readers/",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": [
+      "orbit-conventions",
+      "orbit-run-summary-emit",
+      "orbit-verify-modifications"
+    ],
+    "added": 2,
+    "modified": 4,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
+  "user_decision": "proceeded_with_no_critical",
+  "consent": "user-invoked",
+  "warnings": [
+    "Pre-archive audit-drift: 2 Category-5 SUGGESTIONs — test/core/emit-composition.test.ts and test/core/templates/orbit-generated-surface.test.ts rode along unpredicted by Touchpoints (scenario tags and the fail-mode test split).",
+    "orbit-verify-modifications' Purpose was written at archive, replacing the sync's TBD placeholder.",
+    "The in-context confirm's commentary (review-system-2026-10-05T00-42-17Z) cites 'nine move-shaped claims' — an unmeasured count; its five verdicts are the measured record.",
+    "Archive date is UTC (2026-10-05), matching the trail's tokens."
+  ],
+  "judgements": [
+    {
+      "kind": "readiness",
+      "formed_against": [
+        "2026-10-04T23-55-07Z",
+        "2026-10-05T00-06-04Z",
+        "2026-10-05T00-27-56Z",
+        "2026-10-05T00-30-25Z"
+      ],
+      "disposition": "ready",
+      "ratified_by": "ai",
+      "reasoning": "Both blind-pair halves read the shipped map at Pass 0 and neither found a defect that breaks a user path; every finding they raised was walked, and the in-context confirm's one regression — three stale 'never runs validate' premises — was a prose cascade gap repaired at walk 3. What remains is stated below at its real strength.",
+      "accepted": [
+        {
+          "claim": "PASSED means every finding was resolved, not that an independent pass stood clean on the final tree.",
+          "why": "rc07's distinction: the fresh and external passes reviewed the apply commit 60e83077; nothing independent has read the walked tree."
+        },
+        {
+          "claim": "Walk 2 changed verify's behaviour — it now runs `orbit validate <name>` to classify its fail mode — after both independent halves had run.",
+          "why": "The change closed a pre-D5 contract gap the external pass found (Sal: A); only the in-context VERIFICATION confirm read the new step, and it graded the edit landed in substance, regressed only for the cascade."
+        },
+        {
+          "claim": "Walk 3's repair of the three validate premises is unconfirmed by any pass.",
+          "why": "It is prose in design.md and proposal.md only, with no behaviour or spec text; the residue grep returns nothing and validate --strict is clean."
+        },
+        {
+          "claim": "An undeclared delta scenario after apply stops nothing in the agent-driven archive flow (Q-rc06b-1 / D-rc06b-8).",
+          "why": "Out of this stage's scope by design; verify now surfaces it as a WARNING and a mode-③ fail mode, and the stop is proposed to rc10-apply-closure as a rider."
+        },
+        {
+          "claim": "The reader table is AI-followed prose; whether an AI follows every row is observed, not enforced.",
+          "why": "The body test asserts every row is carried and mirrored; the fresh system pass is the first observed Pass 0 run through it, and only the empty-map rows were exercised."
+        },
+        {
+          "claim": "The `Upstream-verbatim — kept unchanged` scenario's unchanged-body half is held by a dated observation, not a test.",
+          "why": "No test here reads git history (Sal: A at walk 2); the ledger's observed entry cites the fresh pass's upstream/v1.3.1 diff, and the hash pin is a deliberate-act guard only."
+        }
+      ]
+    }
+  ],
+  "next_recommended": "Change archived. Run /orbit:new or /orbit:explore to start the next change, or /orbit:audit-drift for a project-wide drift check."
+}

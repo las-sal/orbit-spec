@@ -1,0 +1,109 @@
+{
+  "command": "review",
+  "timestamp": "2026-09-21T03:58:20Z",
+  "change": "rc02c-confirmation-semantics",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "design.md still says 'all seven requirements' after this change grew to eight",
+      "file": "orbit/changes/rc02c-confirmation-semantics/design.md",
+      "line": 234,
+      "recommendation": "Line 234 closes the Scenario accounting section with 'Every other scenario across all seven requirements is preserved byte-identically.' The delta now carries EIGHT requirements — the size table at line 132 says so, and the same section's own third subsection covers the eighth (`spec-driven v1 gates and cadence`). This is residue from the walk that added the requirement: the count was written before the section it describes was complete. Change 'seven' to 'eight'."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "`independentSpendFresh` in instruction-loader.ts is named by no task, so the deletion leaves a dead field in the second projection",
+      "file": "orbit/changes/rc02c-confirmation-semantics/tasks.md",
+      "line": 12,
+      "recommendation": "`independentSpendFresh` has FOUR live sites: gates.ts (declaration 49, computation 758, both status branches 657/781) and `src/core/artifact-graph/instruction-loader.ts` (type declaration 152, projection 431). Task 2.1 deletes the trigger count 'from `gates.ts`' — scoped by name to one module. Task 2.2 names instruction-loader.ts but only for `budgetExhausted` (line 432), not for its sibling one line above. So an implementer following the tasks literally leaves `independentSpendFresh?: number` declared and `independentSpendFresh: g.independentSpendFresh` projected, permanently undefined. That is exactly what task 1.1 forbids in its own words for the clause-(c) fields — 'a field no producer sets is a trap for the next reader' — and 1.1 secures it with the phrase 'and every consumer', which the budget tasks do not carry. Extend 2.1 or 2.2 to name instruction-loader.ts lines 152 and 431, or add 'and every consumer' to 2.1 the way 1.1 has it."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "title": "The new spend-rendering prohibition says `independentSpend` renders ALONE in the JSON projection, then says `budget` stays readable there",
+      "file": "orbit/changes/rc02c-confirmation-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 298,
+      "recommendation": "Lines 301-303 read 'Wherever spend is shown — terminal gate row, superseded gate row, JSON projection — `independentSpend` renders ALONE, never as a fraction of `budget` and never beside a derived label', and lines 303-305 then read 'The `budget` field remains readable in the JSON projection because the declaration is a real part of the schema.' The two sentences fight over the same surface: the first forbids `independentSpend` appearing beside `budget` in JSON, the second requires `budget` to be there. The intended rule is about COMPOSITION (no ratio, no derived label) and not about co-presence of two independent fields, but an implementer reading 'renders ALONE' for the JSON projection could reasonably drop `budget` from the projection — which the second sentence then contradicts. Split the rule by surface: the RENDERED rows carry the figure alone; the JSON projection carries both fields separately and composes neither."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "title": "CLAUDE.md is absent from Touchpoints although task 5.2b now edits it at apply",
+      "file": "orbit/changes/rc02c-confirmation-semantics/design.md",
+      "line": 181,
+      "recommendation": "The Touchpoints list (lines 181-190) predicts six targets and CLAUDE.md is not among them; task 5.2b (added during the first walk) requires rewriting CLAUDE.md's rc02 paragraph. Touchpoints is FROZEN from the first apply commit and `orbit-audit-drift` computes `actual_unpredicted` from the real diff, so as written this change is scheduled to diverge from its own prediction. The proposal review cadence is precisely what bounds that staleness, and apply has not started — so this is the moment. Add a `CLAUDE.md` entry."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "title": "Task 2.3b splits a three-field bundle without saying what happens to the `budget` field itself",
+      "file": "orbit/changes/rc02c-confirmation-semantics/tasks.md",
+      "line": 15,
+      "recommendation": "In gates.ts, `budgetReportable` (line 779) gates ONE object containing three fields: `{ budget: gate.budget, independentSpend, independentSpendFresh }` (line 781). Task 2.3b removes the `budget !== undefined` half of the condition so spend reports whenever mode is derivable — but with `independentSpendFresh` deleted by 2.1, the surviving object is `{ budget: gate.budget, independentSpend }`, and when no budget is declared `gate.budget` is `undefined`. The task does not say whether `budget` is then omitted from the projection or emitted as an undefined-valued key. JSON.stringify drops it either way, but the typed projection and the `--json` consumers are a stated normative surface in this very requirement ('the names are normative'), so leaving it to the implementer is the ambiguity Pass 5 exists to catch. State it: the spend fields report on mode alone; `budget` is present only when declared."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "The status.ts touchpoint annotation still describes only the BUDGET-SPENT chip",
+      "file": "orbit/changes/rc02c-confirmation-semantics/design.md",
+      "line": 185,
+      "recommendation": "The entry reads '`src/commands/workflow/status.ts` — the `BUDGET-SPENT` chip in the gate readout.' Two tasks added during the first walk now touch that file for more than the chip: 2.2b replaces the `spend N/budget` ratio at both render sites, and 2.3b removes the budget-presence guard. The PATH is what the divergence check parses, so nothing computed is wrong here — but the annotation is what a human reads to know the shape of the work, and it now understates it."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "proposal.md's What Changes does not mention that `confirm` becomes a declared-and-inert attribute",
+      "file": "orbit/changes/rc02c-confirmation-semantics/proposal.md",
+      "line": 22,
+      "recommendation": "The What Changes list covers clause (c)'s removal, the budget demotion and the assigned residue, but not the consequence the first walk made explicit in a seventh requirement: `confirm` keeps its grammar slot and both declared values, and nothing reads either. That is the visible-to-schema-authors half of this change — someone maintaining `schemas/spec-driven/schema.yaml` will see `confirm: no-new-findings` survive a change that deletes what it selected. It follows from clause (c)'s removal and is fully specified in the delta, so this is a proposal-readability gap rather than a spec gap."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "This is the in-context slot, and it is worth being precise about what that buys and what it cannot. I authored the walk that produced the current tree, so on the substance of the change — whether deleting clause (c) is right, whether the budget demotion is sound — I am the worst available reader, and nothing here should be taken as independent confirmation of those. What an in-context pass CAN do is check its own diff, and that is where I aimed the whole pass: every finding below sits in material that changed in the last hour, and five of the seven are residue from the walk itself rather than from the original proposal.\n\nThe pattern is one I should name because it is the same pattern the fresh pass found, arriving one layer further out. The fresh pass caught a change that swept its vocabulary through the paragraphs it rewrote and stopped at their edges. The walk then fixed those paragraphs — and stopped at ITS edges: a count sentence written before the section it counts was finished; a touchpoint list that predicted the work as it stood at propose while the walk added a file to it; a task that names one module for one field and leaves the sibling field in the second module to the reader's initiative. Adding a requirement and two tasks is a structural edit, and structural edits have a blast radius that prose edits do not.\n\nThe one finding I want to flag as more than bookkeeping is the instruction-loader gap. This change's own task 1.1 states the standard — a field no producer sets is a trap for the next reader — and secures it with the phrase 'and every consumer'. The budget tasks do not carry that phrase, and the consequence is exactly the trap 1.1 names, in the one module the spec calls a normative projection surface. It is a small edit and an easy miss, and it is the kind of miss that survives into baseline because nothing fails when it happens.\n\nWhat I probed and found sound: the drift sweep is clean — every surviving mention of `budgetExhausted`, `independentSpendFresh` and `BUDGET-SPENT` across the specs, design and tasks is deliberate retirement prose naming what was retired, not residue. Marker residue is zero. Fingerprints cover all eight touched requirements. The seventh requirement preserves its four scenarios byte-identically, which I checked rather than assumed. And the schema.yaml comment block that describes the exhaustion boolean and the position token is already claimed by task 2.4, which I expected to find uncovered and did not.",
+  "passes_run": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "passes_skipped": [],
+  "final_assessment": "0 critical, 5 warning, 2 suggestion.",
+  "iteration": 2,
+  "next_recommended": "/orbit:address-reviews rc02c-confirmation-semantics --from-file orbit/changes/rc02c-confirmation-semantics/.orbit-runs/review-proposal-2026-09-21T03-58-20Z.json"
+}

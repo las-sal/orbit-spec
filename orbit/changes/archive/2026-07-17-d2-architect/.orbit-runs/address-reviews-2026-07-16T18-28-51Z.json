@@ -1,0 +1,39 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-07-16T18:28:51Z",
+  "change": "d2-architect",
+  "source": "--from-file",
+  "source_path": "orbit/changes/d2-architect/.orbit-runs/review-system-2026-07-16T18-22-44Z.json",
+  "source_format": "internal-review-json",
+  "walk_mode": "per_finding",
+  "kind": "editorial",
+  "resolutions": [
+    {
+      "finding": "D15 bullet still claims getProfileWorkflows 'always returns all 15 workflows'",
+      "severity": "WARNING",
+      "file": "CLAUDE.md",
+      "pushback": "still applies — verified by read at CLAUDE.md:90 ('always returns all 15 workflows')",
+      "classification": "trivial fix",
+      "action": "Reworded to the count-robust form: 'always returns ALL workflows (16 as of D2)' — the decision statement no longer goes stale on the next surface growth. The D1-completion line's 'all 15 bodies' left as historical record.",
+      "ripple_cascade": { "applied": ["CLAUDE.md"], "flagged_not_applied": [] }
+    },
+    {
+      "finding": "Sequencing bullet still says 'the maintenance burden D2 will automate'",
+      "severity": "WARNING",
+      "file": "orbit/architecture/d-arc-arbitered-flow.md",
+      "pushback": "still applies — verified by read at arc lines 362-363",
+      "classification": "trivial fix",
+      "action": "Reworded to the landed split: the document still updates when a stage's change archives (status log); stage STATE is engine-computed since D2 (orbit architecture status); only the narrative ledger is hand-appended. Doc re-validates parseable.",
+      "ripple_cascade": { "applied": ["orbit/architecture/d-arc-arbitered-flow.md"], "flagged_not_applied": [] }
+    }
+  ],
+  "resolution_summary": {
+    "resolved": 2,
+    "stale": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "post_state": "residue sweep clean (no remaining 'all 15'/'D2 will automate' outside historical ledger entries); orbit architecture validate passes",
+  "final_assessment": "Both system-review WARNINGs resolved as trivial single-line stale-prose fixes in governing docs. No stale suppressions, no deferrals.",
+  "next_recommended": "/orbit:review-external --as system d2-architect"
+}

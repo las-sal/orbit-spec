@@ -1,0 +1,21 @@
+{
+  "command": "review",
+  "timestamp": "2026-07-30T14:15:53Z",
+  "change": "d4-review-consistency",
+  "final_assessment": "No findings.",
+  "next_recommended": "orbit status --change d4-review-consistency --report",
+  "kind": "editorial",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "scorecard": {
+    "completeness": { "critical": 0, "warning": 0, "suggestion": 0 },
+    "correctness": { "critical": 0, "warning": 0, "suggestion": 0 },
+    "coherence": { "critical": 0, "warning": 0, "suggestion": 0 }
+  },
+  "findings": [],
+  "stale_suppressed": [],
+  "passes_run": ["Pass 0 (verify-change)", "Pass 1 (Baseline Compliance)", "Pass 2 (Cohesion)", "Pass 3 (Surface Walk)", "Pass 6 (Drift/Residue)"],
+  "passes_skipped": ["Pass 4: no perspectives defined (orbit/lenses/ absent)", "Pass 5: no critical paths defined (orbit/lenses/ absent)"],
+  "commentary": "Trailing confirm over the fresh iter-4 resolution batch. The shared-axis chip extension held its seams: the fault-isolation baseline stays emit-scoped (its 'never increments ⟲N' clause governs skipped JSON emits; the modified strip-composition block owns external-file policy — no contradiction, each layer names its own axis), the new orientation→report-render import is acyclic (report-render depends only on artifact-graph), and every surface walked coherent — bare and --full render the shared-axis chips, --change gate rows unchanged, architecture status computes d4 in-change, the report renders with the ordinal the strip now matches. The generated surface carries the mode-scoped retirement sentence; the old internal-only comment is gone from orientation. Verified live that strip ⟲9/⟲4 equals the report ordinals — the one-voice seam the fresh pass flagged is closed by construction, not annotation. Fingerprints 19/19 including the newly stamped strip-composition base; 1819 tests green from the batch's own run."
+}

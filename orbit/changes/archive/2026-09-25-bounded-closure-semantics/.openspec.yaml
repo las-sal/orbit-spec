@@ -1,0 +1,14 @@
+schema: spec-driven
+created: 2026-09-25
+schema_version: 4
+base_fingerprints:
+  orbit-conventions:
+    "`explore.md` five-section format": sha256:d188be95e3a7d468a6fdf3be3841872c9b38f2825e6e56ca3d2a58a43f97fbb9
+    "`orbit/explore/<name>/` staging directory": sha256:775d3e229b80e1a3faa076e595a0f08e6d2b679c2d2040fc2df6b0331196ce66
+  orbit-explore-modifications:
+    explore.md five-section convention: sha256:a2b52e47f5adda1216e09de875cb2b3e2b07bea158cc511305107d5f7e8f3263
+    Three invocation modes supported: sha256:dac1b4add054efd8e0dd4743eeffa697b086da84c15b9abbfbf7532bec637da7
+    Boundary residency sweep before emits: sha256:7d67437f2c0fe4f90b5febeaccf19892547776aeb4dca9a9cc99dbb81ca112a2
+architecture:
+  doc: clean-up-review-cycle
+  stage: rc13a-explore-mechanism-convention

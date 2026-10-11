@@ -1,0 +1,192 @@
+{
+  "command": "review",
+  "timestamp": "2026-09-17T18:00:55Z",
+  "change": "rc07-artifact-lint",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m] (fresh clean-context subagent)",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 1,
+      "warning": 2,
+      "suggestion": 2
+    },
+    "correctness": {
+      "critical": 1,
+      "warning": 2,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "6",
+      "severity": "CRITICAL",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+      "line": 63,
+      "title": "The self-reference rule is normative and scenario-backed, but no input is declared for it and no task implements or tests it",
+      "recommendation": "Spec line 63 makes it a SHALL and the scenario at line 79 makes it a hard failure, but computing it requires knowing, per source, the byte or line region of the markdown file the source's value is derived from — and neither the normative source table nor design D3's table declares such a region. Design's own R-crc-10 opening names four observable inputs; 'which region of a document a source's value is computed from' is not among them, so the change added a CHECK whose input its own discipline never named. It is also the ONLY one of 21 scenarios with neither an implementing nor a testing task: 2.3 is containment, 2.2 is pairing and inertness, 5.2's fixtures omit it, and 4.2 cites the rule only as authoring guidance for the dogfood. Two implementers produce opposite artifacts — one a per-source region check, one nothing.",
+      "recommendation_options": [
+        {
+          "label": "A — declare the region",
+          "body": "Add a fourth column to requirement 1's source table giving each source's INPUT REGION (`architecture.ruling-count` → the named doc's `## Rulings index` section; `architecture.stage-count` → that doc's `### Stage ` heading lines; `specs.capability-count` and `schema.version` → no markdown region, rule vacuous), restate line 63 as a check over that column, and add an implementing task under §2 plus a 5.2 fixture. Two of four sources get a real region and the other two are explicitly vacuous, which makes the empty case explicit by construction per R-crc-7."
+        },
+        {
+          "label": "B — demote to a record",
+          "body": "Change line 63's SHALL NOT to an authorial SHOULD beside the containment-residual paragraph (already framed as a RECORD), and delete the scenario at line 79. This keeps R-crc-10's claim intact — the engine checks nothing it cannot observe — and leaves the dogfood's protection where it already lives, in task 4.2's instruction not to mark inside counted material."
+        }
+      ]
+    },
+    {
+      "pass": "4",
+      "severity": "CRITICAL",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc07-artifact-lint/design.md",
+      "line": 111,
+      "title": "The 'the parse lives in a different module, so no MODIFIED delta is owed' argument does not survive the baseline's actual wording",
+      "recommendation": "`orbit/specs/orbit-architecture-engine/spec.md:22-26` reads 'The engine reads ONLY: stage ids/titles, the two slots, and section boundaries … All other content — charter prose, exit criteria, premise, RULINGS, status log — is engine-opaque.' The subject is THE ENGINE and the verb is READS; it is not scoped to `parseArchitectureDoc` or to a parsed model, and `src/core/sources-registry.ts` is the engine. Design D3 substitutes 'what that subsystem EXPOSES' for 'what the engine reads' — a substitution the baseline text does not license. The consequence is behavioural, not verbal: after the dogfood lands, reformatting a rulings-index bold span drops the count and turns `orbit validate --all` red, so rulings carry engine-visible meaning inside an architecture doc — what the requirement titled 'Parseable architecture-doc format' denies. Post-archive the two baselines would contradict each other. The ceiling argument does not apply: 1 → 2 capabilities is still inside R-crc-1's 3.",
+      "recommendation_options": [
+        {
+          "label": "A — narrow the baseline clause",
+          "body": "Add `orbit-architecture-engine` as a MODIFIED capability changing 'The engine reads ONLY' to 'The architecture parser's model contains ONLY', plus one sentence naming the source lint as a second, non-parser reader of the rulings index. 1 → 2 capabilities, inside R-crc-1. Design D3 and the proposal's 'Modified Capabilities: none' both need updating."
+        },
+        {
+          "label": "B — drop architecture.ruling-count from v1",
+          "body": "Close the source table at three entries and defer the rulings count with kind and method, the same D-bcs-2 treatment the fourth defect already gets. Keeps one capability and removes the only new parse, at the cost of one motivating defect — and it removes the prefix parameter, task 1.1, and the self-reference rule's only concrete case, so it interacts with finding 1."
+        }
+      ]
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc07-artifact-lint/tasks.md",
+      "line": 31,
+      "title": "Task 5.2 pins a marker count that is wrong, in the change whose purpose is to stop pinned counts from going wrong — and design D4b explicitly forbids pinning it",
+      "recommendation": "Task 5.2 says to use 'this change's own four in-backtick markers verbatim: three openers, one orphan closer'. Running the spec's fence rule and its six-row code-span table over the real tree finds 14 `src:`-family tokens inside backtick spans, of which 10 are conforming — 3 openers (proposal.md:12, design.md:292, explore.md:83) and 7 closers (proposal.md:12, design.md:160, tasks.md:12, spec.md:57, spec.md:124, spec.md:129, explore.md:154). Design D4b already ruled on exactly this, saying the test DERIVES them rather than pinning a count because the count moves with every scenario added, and noting an earlier draft said 'four' and was wrong within the same session. The walk fixed the design and left the same wrong figure in the task."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+      "line": 19,
+      "title": "The architecture sources' document preconditions exist in design and tasks but not in the spec, and the spec's table reads the opposite way",
+      "recommendation": "Design line 149 and the Risks entry require that an ABSENT, LEGACY or MALFORMED architecture doc makes both architecture sources ERROR naming the doc; task 1.2 repeats it; the spec states none of it. The spec's table says `architecture.stage-count` emits 'the count of WELL-FORMED parsed stages in that doc', which read alone licenses exactly the short count the design forbids — `parseArchitectureDoc` returns `docClass: 'malformed'` with `stages` still populated, and `legacy` returns an empty `stages`, a silent zero. Design's claim that 'Both architecture sources state their document preconditions' is false of the artifact that syncs to baseline. Add one sentence to requirement 1 after the source table plus a scenario; the prose can be lifted verbatim from design line 149."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc07-artifact-lint/design.md",
+      "line": 267,
+      "title": "D4b rejects the anchored-opener alternative on the strength of a requirement D3 reversed",
+      "recommendation": "D4b rejects anchoring the opener because 'it forbids marking a figure mid-sentence, which is exactly what the rulings endpoint above requires' — but D3 reversed endpoint marking outright ('never the range endpoint — and that reverses an earlier decision in this change'). There is no longer any requirement above for a mid-sentence rulings endpoint, so a reader chasing the citation lands on a decision saying the opposite, and 'a rule that outlaws its own dogfood is the wrong rule' has no dogfood behind it. The conclusion still holds on the surviving case — a marked COUNT inside a written current-state sentence is itself mid-sentence — so re-ground the rejection there and drop the endpoint reference."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc07-artifact-lint/tasks.md",
+      "line": 25,
+      "title": "The dogfooded `specs.capability-count` mark is guaranteed to go stale at this change's own archive, and no task owns it",
+      "recommendation": "Task 4.2 writes a marked baseline-capability count into `CLAUDE.md` during apply. `orbit/specs/` holds 20 capability directories today, so the mark lands as 20; archiving rc07 syncs `orbit-source-lint` into baseline, making it 21, and `orbit validate --all` on the post-archive tree fails on the mark the change just wrote. The repo has an established at-archive-note convention (D5's 9.4/9.5/9.7, D6's 5.5-5.9) and rc07's task list has none; nothing in CI runs `orbit validate --all`, so it would sit red until a human ran it. Add an at-archive note under §5 requiring the mark to be re-read from the post-sync tree in the same archive commit, and note in 4.2 that the value written at apply is pre-sync."
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc07-artifact-lint/design.md",
+      "line": 192,
+      "title": "`byType.sources`'s item unit is undefined, and contributing to `summary.totals` breaks the existing `totals.items === items.length` invariant",
+      "recommendation": "D5b says a `--sources` run contributes a `sources` entry to `byType` with its own items/passed/failed rolled into `summary.totals`. In `src/commands/validate.ts` the bulk JSON is `{items, summary, version}` with `totals.items === results.length`, and every counted item appears in `items[]` as a BulkItemResult. Neither design nor task 3.2 says what a SOURCE item is — one registry, one declared source, one marked span, one linted file — nor whether source items are pushed into `items[]`. Two implementers diverge, and the paragraph's own goal (a non-zero exit never accompanied by zero failed items) is satisfied by several incompatible choices. State the unit explicitly — one declared source is the natural one, with registry-level faults counting as a single failed pseudo-item — and say whether source items appear in `items[]`, since if they do not the `totals.items === items.length` invariant is retired and that should be deliberate."
+    },
+    {
+      "pass": "3",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc07-artifact-lint/design.md",
+      "line": 280,
+      "title": "D6b's premise that `CLAUDE.md` has no present tense is false for the two figures that matter, and the dogfood adds a second unlinted voice for the stage count",
+      "recommendation": "D6b justifies writing a new current-state line by claiming every capability figure in that file is a transition inside an archived narrative and every schema-version figure is likewise historical. Two live counterexamples: `CLAUDE.md:113` says 'eighteen small stages in four phases' in the section describing the ACTIVE program — present tense, and the exact defect instance Case 1 recorded (it read 'fifteen', then 'seventeen', now 18); `CLAUDE.md:145` says '**`spec-driven` is version 4**', present tense. Task 4.2's 'convert word-form figures to numerals inside marked spans only' then leaves `eighteen` at 113 as an unmarked second voice for a fact the new line marks. The change's charter is ONE VOICE FOR FACTS and the dogfood ships two for the stage count in one file, protecting the one that was never wrong.",
+      "recommendation_options": [
+        {
+          "label": "A — mark the living sentence",
+          "body": "Convert 'eighteen small stages' at CLAUDE.md:113 to a marked `18` and drop the stage count from the new current-state line. One voice, and the linted figure is the one that actually went stale three times."
+        },
+        {
+          "label": "B — keep the new line, delete the duplicate",
+          "body": "Keep D6b's current-state line as the single marked home for all four facts, and have task 4.2 remove the bare stage count from line 113's sentence so the file states it once. Preserves D6b's structure while honouring the charter rule."
+        }
+      ]
+    },
+    {
+      "pass": "4",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc07-artifact-lint/design.md",
+      "line": 212,
+      "title": "The overlap with `orbit-audit-drift` Category 3(b) is unacknowledged",
+      "recommendation": "The charter-divergence table drops 'and audit-drift' on mechanism-placement grounds — a sound argument — but never mentions that `orbit/specs/orbit-audit-drift/spec.md:83` already requires Category 3 to extract quantitative claims (counts, version pins) from `CLAUDE.md` and raise a CRITICAL when a governing doc disagrees with a current spec. Explore's Case 1 confirms it: the schema-version defect was the one caught by a hand-run project-wide audit. So an existing capability already owns this class as a judgment, and after apply both surfaces report on the same marked figure. No contradiction, but 'Modified Capabilities: none' is reached without the overlap being named, in a change whose own argument against splitting is that two capabilities in charge of one rule is a defect. Add a row or sentence naming the overlap and why it is acceptable — different mechanism, different reliability, and audit-drift keeps the unmarked figures the lint can never see."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+      "line": 20,
+      "title": "The ruling-entry grammar — the one genuinely new parse — is prose, where the change's other two grammars are decision tables",
+      "recommendation": "The pairing rules and the inline-code rules are CLOSED tables per R-crc-7; the ruling-entry grammar is one table cell plus two prose sentences, leaving two terms to the implementer: 'top-level list item' (zero indent? CommonMark's up-to-three-space allowance? not nested?) and the extent of 'the `## Rulings index` section' (to the next `##`, or to the next heading of any level). On the live doc both readings agree — ten entries either way — so the dogfood will not expose the ambiguity, which is exactly why it would ship unnoticed. Define both terms and add a negative fixture to task 1.1: a nested bullet whose bold span matches the prefix, which must not count."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "docs/cli.md",
+      "line": 333,
+      "title": "Task 5.3's 'not behaviorally false' goal is unreachable by the three named edits — the existing JSON example is already fabricated",
+      "recommendation": "Task 5.3 names the `--sources` row, the command description and the `--all` row, and says to update the JSON example to the settled shape. But the existing example does not resemble the implementation at all: it shows `\"version\": \"1.0.0\"` and `\"results\": {\"changes\": [...]}` with a `warnings` array, while `src/commands/validate.ts:284` emits `{\"version\": \"1.0\", \"items\": [...], \"summary\": {\"totals\", \"byType\"}}`. The text example likewise bears no relation to real output. An implementer reading 5.3 as 'add the two arrays' would leave the doc false in the way the task says it is fixing. Widen 5.3 to state that the whole validate JSON and text examples must be regenerated from a real run, so the `--sources` additions land on an accurate base."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc07-artifact-lint/design.md",
+      "line": 189,
+      "title": "The `line` field of a multi-line `mismatch` finding is undefined",
+      "recommendation": "The discriminated-kind table gives `mismatch` the fields file, line, source, span_text, source_value, and the spec confirms a span may cross line endings — the inline-code table contemplates regions spanning a line break, and 'its text is the bytes between them' admits newlines. Nothing says whether `line` is the opener's line, the closer's, or the line the differing text sits on. Most implementers would choose the opener, but it is a JSON contract field with no stated rule in a change otherwise scrupulous about closing degenerate cases. State that every span-derived finding reports the OPENER's line and that a MARKER ERROR reports the offending delimiter's own line."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Ten of twelve findings sit in material a walk wrote, and they cluster in one shape: a decision was made well in one document and its consequences were not propagated to the other two. D3 reversed endpoint-marking and D4b still cites the reversed requirement. D4b forbade pinning the marker count and the task still pins it. Design and tasks require architecture sources to error on broken docs and the spec — the artifact that outlives the change — says nothing. This is R-crc-6's failure mode observed in miniature: each walk repaired locally and correctly, and the repair's ripple was not swept. `orbit-conventions` already requires that sweep for substantive modifications; three walks did not run it across design/spec/tasks. That, rather than any individual finding, is what I would fix about how this change was produced.\n\nWhat I probed hardest came back clean. Self-application was not reasoned about but IMPLEMENTED: the spec's fence rule mirroring `createFenceTracker`'s exact semantics, its six-row code-span table, the file domain resolved from `git ls-files '*.md'` minus the declared exclusions, run over all 52 domain files. Sixteen `src:`-family tokens found, fourteen in code spans, two in a fence, ZERO LIVE — including the two cases most likely to bite, the bare opener with no closer anywhere after it and the three bare closers that would otherwise be orphans. The exclusion globs behave. Every code claim the artifacts make was re-verified and none is false: the fence tracker is line-based and fences-only as described, the parser does split stages from violations with a docClass, and the schema resolver really does consult project then user then package, so skipping the user tier is a genuine and correctly described deviation.\n\nThe risk sits in two places the change reasons its way AROUND rather than through. The architecture-engine argument is well-made and its conclusion — don't grow the parser — is right; what fails is the inference that not growing the parser means the baseline claim survives. The baseline says 'the engine reads', the engine now reads rulings, and an author reformatting a ruling entry breaks validation. That is a change in what the architecture-doc format means to the engine, which is the requirement's own subject, and the fix is cheap enough that avoiding it is hard to justify. The second is the self-reference rule: added late, in response to a reviewer, and the one rule in the change whose input the design's own R-crc-10 table never names. Everything else passes that table cleanly. The giveaway is structural rather than philosophical — it is the only one of twenty-one scenarios that no task implements.\n\nI filed nothing against the declared non-goals; they are internally consistent, stated with kind and method, and consistent with the charter's exit criteria as worded. Size is comfortably inside the ceiling: one capability, four requirements, twenty kilobytes of delta, eighteen tasks.\n\nUndetermined, and filed rather than guessed: whether `byType.sources`'s item unit is per-source or per-run, since both readings are equally consistent with everything written; whether the self-reference rule was MEANT as a check or as authorial guidance, an ambiguity that is itself the finding; and whether the audit-drift Category 3 overlap was considered and dismissed or simply not noticed, since nothing in the artifacts or the walk records touches it.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "final_assessment": "2 critical, 6 warning, 4 suggestion.",
+  "iteration": 4,
+  "next_recommended": "/orbit:address-reviews rc07-artifact-lint --from-file orbit/changes/rc07-artifact-lint/.orbit-runs/review-proposal-2026-09-17T18-00-55Z.json"
+}

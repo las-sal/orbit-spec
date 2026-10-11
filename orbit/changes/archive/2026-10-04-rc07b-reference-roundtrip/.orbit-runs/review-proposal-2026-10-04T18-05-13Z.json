@@ -1,0 +1,196 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-04T18:05:13Z",
+  "change": "rc07b-reference-roundtrip",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 4,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 2
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "title": "The scope table has no archived target, but the archive surface resolves only an archived directory",
+      "file": "specs/orbit-emit-composition/spec.md",
+      "line": 11,
+      "recommendation": "The table maps `change` to 'a change directory created in the disposable project' (design D3 says the same). `resolveTarget` in src/core/emit-composition.ts resolves `orbit emit archive --change <name>` ONLY against `orbit/changes/archive/*-<name>/` and throws 'no archived directory matching …' otherwise, so the archive reference's `json example change` block (task 3.4) is refused in a disposable project built to the table as written. The address-reviews archived fallback, which explore D-rc07b-1's scope row lists as covered, has no scope word either. Decide how an archived target is expressed, and state it in the table and in D3.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Add a closed fourth scope word `archived`: the disposable project carries `orbit/changes/archive/<date>-<name>/`. The archive example's info string is `json example archived`, and address-reviews may list it for its fallback."
+        },
+        {
+          "label": "B",
+          "body": "Keep three words and make the `change` row command-aware: for `archive` the test creates the archived directory, because that is the archive command's only change-scope target. State this as a row note."
+        }
+      ]
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "title": "An empty disposable trail refuses the archive judgements the body tells the AI to write, so 'EXACTLY the payload' and D3 cannot both hold",
+      "file": "design.md",
+      "line": 24,
+      "recommendation": "The requirement says the example is EXACTLY the payload file the body tells the AI to write. The archive body composes a terminal `readiness` judgement at Step 5.5, and `validateJudgements` requires a NON-EMPTY `formed_against` on it. `judgementOrderingCheck` then refuses every cited token that is not an independent pass on the change's trail ('resolves to no readable pass'). D3's fresh project has an empty trail, so an archive example faithful to the body cannot be accepted. D3 reasons about the trail only for review (pass genre). Settle how trail-dependent write-gate checks meet the round trip, in the requirement and in D3.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Seed the disposable project's trail with what an example cites: for example, one fresh `review-system-<fixed past TS>.json` pass whose token the archive example's `formed_against` names. State the seeding rule in D3 and name it in the requirement."
+        },
+        {
+          "label": "B",
+          "body": "Let the example omit fields whose acceptance depends on trail state (`judgements`). Reword 'EXACTLY the payload file' to 'a payload the body could write', and name the trail-dependent checks as a residual beside the validator limit."
+        }
+      ]
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "'no spine field' forbids `model` and `final_assessment`, which the gate requires in the payload",
+      "file": "specs/orbit-emit-composition/spec.md",
+      "line": 5,
+      "recommendation": "The example is defined as 'narrative and per-command extension fields only — no spine field and no engine-computed field'. `orbit-conventions`' universal spine lists `final_assessment` and `model` as spine fields. `validatePayload` refuses a payload missing `model`, and `universalSpineCheck` refuses an empty `final_assessment` for every command whose table carries it (audit-drift, archive, address-reviews, review-external). An example built to this sentence is refused. Reword it to 'no ENGINE-OWNED field (the command's SPINE_FIELDS and engine-computed extensions)', and say explicitly that `model` is always present and `final_assessment` is present wherever the command's payload table carries it."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "title": "The count computation's input domain is open: a non-array `categories_run`, numeric ids, or a finding without a string `category`",
+      "file": "specs/orbit-emit-composition/spec.md",
+      "line": 49,
+      "recommendation": "The requirement (and design D4: 'holds by construction') assumes `categories_run` is an array of strings and every finding carries a string `category`. The gate checks neither: that is the change's own named limit. The recorded trail has already broken both assumptions. `orbit/.orbit-runs/audit-drift-2026-09-14T14-18-48Z.json` carries `categories_run` as an OBJECT of booleans, written through the surface, and iterating it as an array throws a TypeError, not an EmitError. `audit-drift-2026-09-28T18-36-10Z.json` carries numbers `[1,3,4]`. A finding with no `category` counts toward `findings_total` but toward no key, so the sum-equals-total claim fails. Two implementers will pick different behaviours: crash, `Object.keys`, Map versus object keys, an 'undefined' key. These are the count's OWN inputs, so they are not the general surface hardening that Considered & out excludes.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Refuse at the seam the inputs the computation needs: `categories_run`, when present, must be an array of strings; `findings` must be an array and each entry's `category` a non-empty string. Add scenarios for each refusal, and narrow the named limit to exclude them."
+        },
+        {
+          "label": "B",
+          "body": "Define a tolerant computation: keys are `String(id)`; a non-array `categories_run` contributes no keys; a finding without a string category is counted under a named key (or keyed `String(value)`). Restate the by-construction claim only under that rule, and add a scenario per edge."
+        }
+      ]
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "title": "No task declares the two now-engine-owned counts in the field-set test's subtraction list",
+      "file": "tasks.md",
+      "line": 25,
+      "recommendation": "Design D5 and task 2.1 keep `findings_total` and `findings_by_category` in the audit-drift schema block, marked engine-computed. `test/core/emit-schema-parity.test.ts` derives AI-supplied keys as the block's keys minus `ENGINE_OWNED` ∪ `ENGINE_OWNED_PER_COMMAND[command]`, and audit-drift has no entry there. Once task 1.2 removes both counts from the payload table, the `⊆ payloadFields` test fails on them. The field-note orphan test has the same exposure if a note names them. The requirement's own scenario 'A new engine-owned key must be declared' forces the edit, but task 4.3 only deletes `KNOWN_DIVERGENCE`. Add the step to 4.3: `ENGINE_OWNED_PER_COMMAND['audit-drift'] = ['findings_total', 'findings_by_category']`, with a comment naming this change."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "title": "The proposal and the explore Mechanism row still state the pre-D4 keying that the design says is the defect",
+      "file": "proposal.md",
+      "line": 9,
+      "recommendation": "proposal.md:9 defines `findings_by_category` as 'one key per id in `categories_run`'. explore.md:90 (D-rc07b-3's Domain row) says the same. Design D4 rejects that keying because it 'would drop a finding whose category did not run and let the two counts disagree', and the spec states the union. An implementer reading the proposal first builds the rejected rule. Repoint both sentences to the union, or to the spec requirement by name."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "Exit (1) is met by executing the EXAMPLE; the schema block's documented shape is still proven only by comparison",
+      "file": "design.md",
+      "line": 45,
+      "recommendation": "The charter's thesis is that a field-set comparison cannot tell a divergence from a refusal, but running it can. After this change, the round trip executes only the example. The schema block, which documents every field including conditional ones, is still checked by the comparison, and that comparison still strips `ENGINE_OWNED`. The Premise's third measurement (a reference that documents `next_recommended` with authoring instructions) therefore stays invisible to both instruments; only D5's one-time rewrite removes it from audit-drift. The Risks entry names example drift but does not say how exit (1) will be graded. Under R-crc-12, state the reading before the test grades it.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Record the reading in design.md: exit (1)'s 'documented shape' is the example. The schema block's refused fields are caught by the comparison, not by execution, and that half is named as a residual of the exit."
+        },
+        {
+          "label": "B",
+          "body": "Close the gap: assert that each example's key set equals its schema block's AI-supplied key set (a maximal example), so every documented field is executed. This interacts with the trail-dependence finding for `judgements`."
+        }
+      ]
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "title": "The proposal says two orbit-audit-drift scenarios change; the delta changes one",
+      "file": "proposal.md",
+      "line": 24,
+      "recommendation": "Only 'Change-scoped standalone summary written' is modified. 'Project-wide standalone summary written' already says 'the same content shape' and is unchanged, which is correct. Say 'one summary scenario', and fix explore.md:114 and :142 to match."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "title": "'matches the computation on every one that records it flat' holds for values, not key sets",
+      "file": "proposal.md",
+      "line": 9,
+      "recommendation": "Re-measured over the 13 emits: every recorded value equals the per-category count. But five flat emits (2026-07-13T20-22-45Z, 2026-09-28T18-36-10Z, 2026-10-01T16-53-35Z, 2026-10-04T04-23-24Z, 2026-10-04T17-19-25Z) carry zero keys for categories NOT in `categories_run` (\"2\", \"5\", \"6\"), so the spec's union keying would compose a different object. Nothing is migrated, so nothing breaks. State the claim at its real strength: values agree; key sets differ on five."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "title": "Task 4.5 measures 'against the BUILT CLI' before any task builds",
+      "file": "tasks.md",
+      "line": 27,
+      "recommendation": "`npm run build` first appears in 5.1. Run in order, 4.5 exercises the stale `dist/`, whose engine still reads a supplied `findings_total ?? 0` and composes no count, so the measurement fails or misleads. Prefix 4.5 with `npm run build`, and say which copy of the example it uses (source template or regenerated skill)."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "The rewritten references keep a '6-field universal spine' that omits `model`, next to an example that must carry it",
+      "file": "tasks.md",
+      "line": 9,
+      "recommendation": "Both the audit-drift and the archive references open with 'inherits the 6-field universal spine', listing six fields without `model`. `orbit-conventions` lists seven, and every example this change adds must carry `model`. Since 2.1/2.2 and 3.4 rewrite those paragraphs, either repoint them to `orbit-conventions` by name (R-crc-14) or say seven and include `model`."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "D2's 'the same REFERENCES table' is a module-local constant in another test file",
+      "file": "design.md",
+      "line": 22,
+      "recommendation": "`REFERENCES` is a non-exported const in test/core/emit-schema-parity.test.ts. The new suite can only share it if it is extracted, for example to a test helper both files import. Otherwise the plan produces two tables, a second voice of exactly the kind this stage removes. Name the extraction in D2 and task 4.1."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "I probed the change mostly by running it against the engine rather than reading it against itself. resolveTarget, validatePayload, universalSpineCheck and judgementOrderingCheck were read to check whether each proposed example could actually pass in the disposable project D3 describes. Every recorded audit-drift emit was re-measured to test the count claims. The pattern: the design reasons carefully about the review command's trail dependence (pass genre) but not about the other commands' target and trail dependence. Archive is the outlier on both counts — it resolves only archived directories, and it cites passes. The count computation inherits the same blind spot from the opposite direction: its inputs are exactly the fields the named limit leaves unchecked, and the recorded trail already holds an object-shaped and a numeric categories_run. Both hash pins in D7 were verified to be the only ones the edits touch.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The thesis holds and is cheap to keep: proving a reference by submitting its own example through the real gate is the right instrument, and computing the counts removes the silent clean-recommendation path rather than testing for it. What I found is all at the seams between the instrument and the engine's actual target and trail resolution: archived targets, trail-dependent judgement checks, the spine/payload wording, and the counts' open input domain. Each can be repaired or descoped in the artifacts without new mechanism, except the counts-domain and trail-seeding choices, which are small decision tables. Walk them, then apply."
+  },
+  "final_assessment": "0 critical, 7 warning, 5 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc07b-reference-roundtrip --from-file orbit/changes/rc07b-reference-roundtrip/.orbit-runs/review-proposal-2026-10-04T18-05-13Z.json"
+}

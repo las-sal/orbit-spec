@@ -1,0 +1,114 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-23T19:05:36Z",
+  "change": "rc04c-retire-gate-overridden",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc04c-retire-gate-overridden/.orbit-runs/external-proposal-2026-09-23T02-10-20Z.md",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": "Codex (GPT-5)",
+  "walk_mode": "per_finding",
+  "walk_mode_source": "flag",
+  "input_findings_summary": {
+    "critical": 3,
+    "warning": 1,
+    "suggestion": 1
+  },
+  "pushback_verification": "All 5 verified as ALREADY RESOLVED by the edits made in the 02-21-43Z walk minutes earlier, each checked against the current file rather than assumed from the sibling record. No finding here is stale in the ordinary sense — none was resolved before the review; all five were resolved by a walk of the same reviewer's re-run of the same review.",
+  "resolution_summary": {
+    "resolved": 5,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "The empty-citation successor contradicts the capability's unchanged membership rule",
+      "marker_source": "external",
+      "file": "orbit/changes/rc04c-retire-gate-overridden/specs/orbit-run-summary-emit/spec.md",
+      "line": 132,
+      "classification": "trivial_fix",
+      "action": "Resolved by the same edit recorded against this finding's restatement in 02-21-43Z: the requirement's exclusion is re-grounded on CADENCE POSITION rather than citation count, because edge (d) falsifies the 'no ordering to check' reason the exclusion rested on. This file additionally named the generated apply/archive REFERENCES as repeating the old membership definition while tasks 2.1b/2.2a changed only cardinality — that half was taken up specifically: both body tasks now carry TWO edits, cardinality AND the membership sentence.",
+      "ratified_via": "chat",
+      "resolution": "Resolved through the walk of 02-21-43Z (this reviewer's sharpened re-run, a strict superset). This record exists so the earlier file's findings are certified under THEIR OWN keys rather than reading unresolved while the fixes stand in the tree.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "The only rebuild occurs before the engine finishes retiring the field",
+      "marker_source": "external",
+      "file": "orbit/changes/rc04c-retire-gate-overridden/tasks.md",
+      "line": 75,
+      "classification": "trivial_fix",
+      "action": "Resolved by task 2.6 — a second mandatory build after 2.5a/2.5b plus a smoke test through the BUILT CLI. This file's framing (`bin/orbit.js` imports `dist/`, so source grep and Vitest can pass while the runnable surface still accepts the key) is the one verified directly.",
+      "ratified_via": "chat",
+      "resolution": "Resolved through the walk of 02-21-43Z (this reviewer's sharpened re-run, a strict superset). This record exists so the earlier file's findings are certified under THEIR OWN keys rather than reading unresolved while the fixes stand in the tree.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "The proposal exceeds R-crc-1 on both delta size and task count",
+      "marker_source": "external",
+      "file": "orbit/changes/rc04c-retire-gate-overridden/proposal.md",
+      "line": 76,
+      "classification": "trivial_fix",
+      "action": "Resolved as option B: the R-crc-1 clarification is drafted at task 5.1c (architect-owned, not performed, and it gates the stage), and the proposal's Impact now states all four dimensions. Byte ceiling proposed to measure CHANGED bytes; task overage proposed as R-crc-9's first ratified breach rather than defined away.",
+      "ratified_via": "chat",
+      "resolution": "Resolved through the walk of 02-21-43Z (this reviewer's sharpened re-run, a strict superset). This record exists so the earlier file's findings are certified under THEIR OWN keys rather than reading unresolved while the fixes stand in the tree.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The prior-generation compatibility fix neither exercises a reader nor supplies an executable manual check",
+      "marker_source": "external",
+      "file": "orbit/changes/rc04c-retire-gate-overridden/tasks.md",
+      "line": 128,
+      "classification": "trivial_fix",
+      "action": "Resolved as option C: task 3.5 now reaches the archived emits through `readTrail`, and task 4.2 names two commands that actually run. This file's diagnosis — that the raw `fs.readFileSync` + `JSON.parse` never invokes an orbit reader, so unknown-field compatibility was not being tested — is the precise statement of the defect.",
+      "ratified_via": "chat",
+      "resolution": "Resolved through the walk of 02-21-43Z (this reviewer's sharpened re-run, a strict superset). This record exists so the earlier file's findings are certified under THEIR OWN keys rather than reading unresolved while the fixes stand in the tree.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The test task does not pin the newly normative latest-pass choice",
+      "marker_source": "external",
+      "file": "orbit/changes/rc04c-retire-gate-overridden/tasks.md",
+      "line": 139,
+      "classification": "trivial_fix",
+      "action": "Resolved: task 3.6's refusal case now seeds at least two preceding independent passes and asserts the error names the LATEST token plus the entry index.",
+      "ratified_via": "chat",
+      "resolution": "Resolved through the walk of 02-21-43Z (this reviewer's sharpened re-run, a strict superset). This record exists so the earlier file's findings are certified under THEIR OWN keys rather than reading unresolved while the fixes stand in the tree.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "COVERAGE RECORD for the FIRST of two external-proposal files from one reviewer's iteration 1. Both files are GPT-5 Codex reviewing the same tree; 02-21-43Z is a sharpened re-run and a strict superset (it adds one WARNING and sharpens three titles). The substantive walk is recorded against 02-21-43Z; every edit it describes is in the tree.\n\nThis record exists because resolution is keyed on (title, file) and the two files title the same defects differently — so without it, a pass whose findings are genuinely and completely resolved would read as carrying unresolved substantive findings, and the gate would hold on a defect that no longer exists. That is the inverse of Q-crc-17's failure (a record certifying nothing while claiming ten resolutions): here the work is done and the record would have claimed nothing.\n\nOne thing this file caught that its re-run did not state as sharply: the generated apply/archive REFERENCES repeat the old membership definition while the tasks changed only cardinality. That half is why tasks 2.1b and 2.2a now carry two edits each rather than one.\n\nWorth knowing before reading the spend figure: the trail now counts THREE independent passes (one fresh, two external files) for what is substantively two reviews. A reviewer that re-runs rather than editing in place inflates recorded spend, and nothing distinguishes a re-run from a genuinely independent second pass at the trail level.",
+  "iteration": 4,
+  "next_recommended": "/orbit:review --as proposal rc04c-retire-gate-overridden"
+}

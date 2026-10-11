@@ -151,14 +151,15 @@ describe('artifact-workflow CLI commands', () => {
       expect(json.message).toBe('No active changes.');
     });
 
-    it('errors when --change is missing and lists available changes', async () => {
+    it('renders the sprint view when --change is missing and changes exist (D3: error path claimed)', async () => {
       await createTestChange('some-change');
 
       const result = await runCLI(['status'], { cwd: tempDir });
-      expect(result.exitCode).toBe(1);
+      expect(result.exitCode).toBe(0);
       const output = getOutput(result);
-      expect(output).toContain('Missing required option --change');
+      expect(output).not.toContain('Missing required option --change');
       expect(output).toContain('some-change');
+      expect(output).toContain('propose'); // the sprint strip renders
     });
 
     it('errors for unknown change name and lists available changes', async () => {
@@ -530,7 +531,11 @@ apply:
       });
       expect(result.exitCode).toBe(0);
       expect(result.stdout).toContain('complete ✓');
-      expect(result.stdout).toContain('ready to be archived');
+      // D1: the all_done instruction defers to the gate graph instead of
+      // advertising archive (post-apply the graph points at review-system).
+      expect(result.stdout).toContain('All tasks are complete.');
+      expect(result.stdout).toContain('gate graph');
+      expect(result.stdout).not.toContain('ready to be archived');
     });
 
     it('uses spec-driven schema apply configuration', async () => {
@@ -660,7 +665,7 @@ artifacts:
     it('status command help shows description', async () => {
       const result = await runCLI(['status', '--help']);
       expect(result.exitCode).toBe(0);
-      expect(result.stdout).toContain('Display artifact completion status');
+      expect(result.stdout).toContain('Orientation: bare = current sprint');
     });
 
     it('instructions command help shows description', async () => {

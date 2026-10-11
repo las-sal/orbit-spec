@@ -1,0 +1,123 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-07T17:25:35Z",
+  "change": "rc18-walk-is-next",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 2
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "pass": "1",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc18-walk-is-next/specs/orbit-engine-gates/spec.md",
+      "line": 69,
+      "title": "The frontier is defined as the owner's superseded test negated, but the owner states that test in phase terms",
+      "recommendation": "The delta says the frontier is 'exactly the test that marks a non-passed reviewed gate superseded in Gate-aware status and instructions with position readout, negated, and nothing more'. The owner (orbit/specs/orbit-engine-gates/spec.md:626-631) says a reviewed gate is superseded when its 'before PHASE is already complete', and does not restrict that to non-passed gates. That is the reading design D2 explicitly rejects ('rather than equated with the phase is complete, which an artifact target would make ambiguous'). An implementer who follows the pointer to the owner would treat a gate whose before names a completed artifact (the 'tasks' case the tests cover) as non-frontier, which contradicts the delta's own 'a before naming an artifact ... never makes a gate non-frontier'. Choose one: either state the gate-id test as the delta's own rule without claiming it is 'exactly' the owner's test, or carry a MODIFIED block that narrows the owner's superseded sentence to gate ids and non-passed gates, which is what gates.ts computes (passedGateIds.has(s.before) on s.state !== 'passed').",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Reword the delta: the frontier is the gate-id test stated here; drop 'exactly' and 'and nothing more' as a claim about the owner."
+        },
+        {
+          "label": "B",
+          "body": "Add a MODIFIED block for Gate-aware status and instructions with position readout, narrowing its superseded sentence to the code's gate-id, non-passed test (a second requirement in the same capability; the capability count does not move)."
+        }
+      ]
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc18-walk-is-next/specs/orbit-engine-gates/spec.md",
+      "line": 88,
+      "title": "The selection table's DERIVED closure counts two tracked-gate states, but a tracked gate can also be blocked",
+      "recommendation": "computeGateStates gives ANY gate kind state 'blocked' when its requires are unmet (gates.ts, the unmet.length > 0 branch), so spec-driven's apply gate is blocked until tasks.md exists. The selection then skips it, because it has no nextCommand and is not 'ready'. The table has rows for tracked 'ready' and 'passed' only, and the closure line says 'plus the two tracked-gate states'. Add a row, 'tracked gate blocked | nothing; selection continues', and say three states in the closure."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc18-walk-is-next/design.md",
+      "line": 118,
+      "title": "The verify fallback risk is stated for the passed gate only; the unpassed walk now diverges too",
+      "recommendation": "systemReviewNext (src/core/emit-composition.ts) keeps the graph's next only when it contains '/orbit:review --as system', and otherwise falls back to the bare in-context invocation. Before rc18, an unpassed review-system holding only a SUGGESTION-only invoked pass had the in-context review as its graph next, so verify's pointer matched. After D5 the graph names the walk while verify's emit names the in-context review: that is the order D5 exists to prevent, because following it puts the in-context pass before the walk. Extend the risk line to the unpassed case. If the second voice matters beyond Pass 0, let systemReviewNext also keep an address-reviews next."
+    },
+    {
+      "pass": "1",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc18-walk-is-next/design.md",
+      "line": 67,
+      "title": "D2's mid-apply consequence covers one of two shapes",
+      "recommendation": "D2 says that during apply, before any apply emit makes the proposal passes stale, a passed review-proposal holding an unwalked pass still names the walk. Once a partial-apply emit lands, the gate reads 'stale' and is not superseded, because apply is not yet passed. Through D5's step (2) it then also names the walk: probed in a scratch project with tasks 1/2 checked and an apply emit after a SUGGESTION-only in-context pass, next_command was '/orbit:address-reviews c' on a stale row. With no unwalked pass, the same state already names a proposal review (pre-existing). The apply emit's own post-write next overrides both with /orbit:apply, but `orbit status` mid-apply does not. State both shapes in D2 so the mid-apply readout is not a surprise."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc18-walk-is-next/design.md",
+      "line": 114,
+      "title": "A launched pair with no member landed shows a reason that says nothing is walked yet beside a next that names the walk",
+      "recommendation": "Probed: an in-context proposal pass at T1 carrying only SUGGESTIONs, then a pair launch at T2 with neither member landed. The row's reason reads 'pair launched at T2: neither member has landed; both must land before either is walked', and next_command is '/orbit:address-reviews c'. Walking T1 is safe: the pair still formed, covered, and passed after an in-context pass. But 'before either is walked' names the members, and a reader can take it as forbidding the very command the next line offers. The generic risk line ('a reason naming a slot can sit beside a next naming the walk') does not cover a reason whose words are about walking. Name this row in the risk, or let the walk's triage say the pass it walks is not a pair member."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 3244,
+      "title": "The stage declaration still says walking cannot start a review loop",
+      "recommendation": "The declaration's measurement sentence, '... left the gate passed and unwalkedPasses empty, so walking cannot start a review loop', stands unqualified above the revised exits. The revision note explains that exit (2)'s wording came from the one measured branch, but the 'cannot start a review loop' conclusion is the stronger claim, and the off-path un-pass (D-rc18-1, Case 1) falsifies it in letter: an off-path walk costs at least one more review. Qualify it in place, for example 'on the measured branch', or point at the revision note, as the stage's exits already do."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "The engine change is small and correct where it matters. One predicate drives both the row and the change. The passed-gate branch never borrows a passed review-proposal's /orbit:apply. D5's step (2) slots in after openPair and before every slot command, and the oracle's zero-finding passes keep it inert there. I probed the shapes the tests do not build: an extra independent pass after the gate passed, walked before or after the in-context pass, never un-passes. Two last-slot in-context passes walk down to the phase command. An in-context-first pass is walked and then the pair runs. A walk between a pair launch and its members leaves the pair intact. A stale mid-apply proposal gate names the walk. None of these loops or regresses. What remains is prose: the frontier is anchored to an owner sentence that states a different test, one closure miscounts tracked states, and three risk or consequence statements cover fewer shapes than the code reaches. The scenario map shows 33 of 33 delta scenarios covered, validate --strict is clean, and the four touched suites pass (136 tests). Task 4.4 is open by design. Pass 0 ran as these structural checks rather than through the verify skill.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3"
+  ],
+  "passes_skipped": [
+    "4: no perspectives defined (orbit/lenses/ absent); skip Pass 4",
+    "5: no critical paths defined (orbit/lenses/ absent); skip Pass 5",
+    "6: audit-drift not invoked by the fresh worker (it writes its own emit to the trail); a targeted residue sweep of the charter and the touched specs ran instead"
+  ],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The mechanism does what the stage set out to do and holds on every trail shape I could build against it, including the off-path un-pass and the pair-launch interleaving. The one substantive item is a pointer that sends an implementer to an owner sentence stating a broader test than the code. It is a prose repair, and so are the rest: none needs engine work, and none should hold the stage."
+  },
+  "final_assessment": "0 critical, 1 warning, 5 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc18-walk-is-next"
+}

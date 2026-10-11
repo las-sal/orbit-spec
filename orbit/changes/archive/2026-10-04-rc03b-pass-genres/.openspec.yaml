@@ -1,0 +1,15 @@
+schema: spec-driven
+created: 2026-10-04
+schema_version: 4
+architecture:
+  doc: clean-up-review-cycle
+  stage: rc03b-pass-genres
+base_fingerprints:
+  orbit-conventions:
+    Review mode decision framework: sha256:ff9e407f0cc891dd95478c125a3597bd157e003aaf82fc3f4f897840a89b899a
+  orbit-review:
+    "`--fresh` runs pass work in a clean execution context": sha256:2354cd3753ba9731289bbb0607a8a956c3afbf4d5ae126cd0aff219a6e546f65
+  orbit-review-external:
+    Prompt written to versioned file with chat invocation snippet: sha256:0d67009587ac02a61e09ca49db336da06dc2051ddffd67c5c579a48038c32ef3
+    Cycle context populated from prior runs: sha256:3d0f8202e4093e8a785b0f259cfc5873d352cbda2fd0d396cbc3e68809c15971
+    Recommended-session note in chat output: sha256:ae6bd5cd9e4852dd736cf9622202d5e3aa165e3c7957b8caa0a0bb9defd50640

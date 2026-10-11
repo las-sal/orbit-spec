@@ -1,0 +1,178 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-07T17:02:17Z",
+  "change": "rc18-walk-is-next",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc18-walk-is-next/.orbit-runs/external-proposal-2026-10-07T16-48-24Z.md",
+  "source_command": null,
+  "source_token": "2026-10-07T16-48-24Z",
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-6 Codex",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 3,
+    "suggestion": 1
+  },
+  "pushback_verification": "All four verified at HEAD. W1: the superseded test is passedGateIds.has(s.before), on gate ids only. W2: the empty-unwalked row contradicted the equality sentence as written. W3: the bounded claim held only for a two-slot cadence; a three-slot case uncovers the external slot first. S1 converged with the fresh half's finding.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 1,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Frontier completion is ambiguous for legal artifact targets",
+      "marker_source": "external",
+      "file": "orbit/changes/rc18-walk-is-next/design.md",
+      "line": 52,
+      "classification": "trivial_fix",
+      "action": "Stated the narrower rule: the frontier is a test on gate ids only. A `before` naming an artifact, a non-gate phase (`archive`) or nothing never makes a gate non-frontier. Applied in design D2, the spec's selection paragraph, the proposal, and task 1.1, plus a test row in 1.3.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc18-walk-is-next/specs/orbit-engine-gates/spec.md",
+          "orbit/changes/rc18-walk-is-next/proposal.md",
+          "orbit/changes/rc18-walk-is-next/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "A reviewed gate is the frontier while its `before` gate has not passed",
+          "whose `before` gate has not passed (the FRONTIER)"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc18-walk-is-next/design.md",
+            "text": "It is a test on GATE IDS"
+          },
+          {
+            "path": "orbit/changes/rc18-walk-is-next/specs/orbit-engine-gates/spec.md",
+            "text": "never makes a gate non-frontier"
+          }
+        ],
+        "searched": [
+          "frontier",
+          "before` gate"
+        ],
+        "scope": [
+          "src/core/artifact-graph/gates.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Empty frontier row contradicts the required row-command equality",
+      "marker_source": "external",
+      "file": "orbit/changes/rc18-walk-is-next/specs/orbit-engine-gates/spec.md",
+      "line": 79,
+      "classification": "trivial_fix",
+      "action": "Restricted the equality to a passed frontier gate holding an unwalked pass. Every other passed row keeps its phase command, and the selection takes a passed gate's command only on the predicate. Applied in the spec, the proposal, design D1, and task 1.3.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc18-walk-is-next/proposal.md",
+          "orbit/changes/rc18-walk-is-next/design.md",
+          "orbit/changes/rc18-walk-is-next/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "own row `nextCommand` SHALL equal the command its table row yields",
+          "the row's `nextCommand` equal to the change's `next_command` on every passed frontier state"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc18-walk-is-next/specs/orbit-engine-gates/spec.md",
+            "text": "every other `passed` gate's row keeps its phase command"
+          },
+          {
+            "path": "orbit/changes/rc18-walk-is-next/tasks.md",
+            "text": "every other passed gate's row keeps its phase command"
+          }
+        ],
+        "searched": [
+          "SHALL equal",
+          "every passed frontier"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The one-in-context-check guarantee assumes the shipped two-slot cadence",
+      "marker_source": "external",
+      "file": "orbit/changes/rc18-walk-is-next/specs/orbit-engine-gates/spec.md",
+      "line": 85,
+      "classification": "trivial_fix",
+      "action": "Scoped the claim. The un-pass happens only off the recommended path, and the next is whatever the order computes for the uncovered slots: one in-context review on spec-driven's [invoked, in-context], possibly more on a longer cadence. Added a three-slot scenario, design D4's wording, and task 3.2.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc18-walk-is-next/design.md",
+          "orbit/changes/rc18-walk-is-next/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "That cost is bounded: the trailing slot is the cadence's last",
+          "names the in-context check. The table's"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc18-walk-is-next/specs/orbit-engine-gates/spec.md",
+            "text": "a longer cadence can uncover more than one slot"
+          },
+          {
+            "path": "orbit/changes/rc18-walk-is-next/design.md",
+            "text": "a longer cadence can owe more than one review"
+          },
+          {
+            "path": "orbit/changes/rc18-walk-is-next/tasks.md",
+            "text": "Test a three-slot `[fresh, external, in-context]` cadence"
+          }
+        ],
+        "searched": [
+          "bounded",
+          "one in-context",
+          "trailing slot"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/rc18-walk-is-next/explore.md",
+            "why": "the exploration record, kept unchanged at promotion; its D-rc18-4 states the bound as measured then"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Exploration status still says the decisions are awaiting promotion",
+      "marker_source": "external",
+      "file": "orbit/changes/rc18-walk-is-next/explore.md",
+      "line": 1,
+      "classification": "stale",
+      "action": "Converged with the fresh pass's explore.md header finding, walked stale in log 2026-10-07T17-01-55Z: propose keeps explore.md unchanged as the historical record.",
+      "evidence": "address-reviews-2026-10-07T17-01-55Z.json, entry 'explore.md still reads `exploring.` though its one rule is now proposed'",
+      "outcome": "stale"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "final_assessment": "Four of four closed: three resolved and one stale, converged with the fresh half's explore.md header finding and walked in log 2026-10-07T17-01-55Z.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal rc18-walk-is-next",
+  "ripple_misses": 0
+}

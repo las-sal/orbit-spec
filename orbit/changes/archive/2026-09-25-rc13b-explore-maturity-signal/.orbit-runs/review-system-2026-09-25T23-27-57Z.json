@@ -1,0 +1,70 @@
+{
+  "command": "review",
+  "timestamp": "2026-09-25T23:27:57Z",
+  "change": "rc13b-explore-maturity-signal",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": [],
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "dimension": "coherence",
+      "severity": "WARNING",
+      "title": "Task 1.3's text still asserts the `orbit-explore` pin is never re-pinned, after the walk re-recorded it as a second act",
+      "file": "orbit/changes/rc13b-explore-maturity-signal/tasks.md",
+      "line": 5,
+      "recommendation": "The checked task reads `assert the orbit-explore pin … is UNCHANGED (a moved pin fails this task, never gets re-pinned)`. That measurement stood at apply (recorded in the apply emit and the parity test's comment), but the log-1 walk then moved the pin deliberately (option B, ratified) — and tasks.md, the change's own record, now contradicts HEAD for a reader who opens it alone. Append a dated note under 1.3: the interpolation was measured pin-unchanged on 2026-09-25 (apply); the pin moved afterwards at the system walk for the retired-Mature-rung prose repair, recorded in skill-templates-parity.test.ts. Do not untick the task — its claim was true when graded."
+    },
+    {
+      "dimension": "coherence",
+      "severity": "SUGGESTION",
+      "title": "The repeated-heading note covers `## Decisions` and `## Mechanism` only; a repeated `## Open questions` merges silently",
+      "file": "src/core/parsers/explore-rules.ts",
+      "line": 289,
+      "recommendation": "The collector merges EVERY same-named section (executed: two `## Open questions` sections → both questions counted, `notes: []`), but the note loop iterates only the two names the walk fixed. The format violation is the same for all six sections. Iterate every section whose `headings.length > 1` (the Map's keys), so the counter's attestation over a merged Open-questions section is never silent; add the Open-questions case to the merge fixture."
+    },
+    {
+      "dimension": "coherence",
+      "severity": "SUGGESTION",
+      "title": "The repaired persist-step sentence paraphrases the grid's inputs beside its pointer, and the paraphrase is already incomplete",
+      "file": "src/core/templates/workflows/explore.ts",
+      "line": 673,
+      "recommendation": "The new parenthetical reads `(per orbit-run-summary-emit's maturity requirement — the header token is read first, then the counts and the form parse's open-rule set; the rungs are stated there once)`. The owner names FIVE inputs; the paraphrase names four (no key defects). This is the R-crc-14 pattern in miniature — a partial restatement next to a pointer, which is where the walks found the last four divergences. Trim to the pointer alone: `(per orbit-run-summary-emit's maturity requirement, which owns the rungs and their inputs)`. One more pin move, same second-act record."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Confirm over the two walks' own additions, read line by line from the working-tree diff (src and the change's artifacts) and executed against the compiled parser: a repeated section merges with first-key-wins across the file; an H3 or H4, and a post-blank unindented line, end a list item while a nested bullet, an indented continuation and a lazy continuation still belong; compact, aligned and trailing-space rows accept and three-cell or empty-cell rows stay malformed; the colon-wrapped opener keeps its ID; a degraded explore row keeps its trail-derived position. Every prior system finding from both halves verified closed at HEAD — none re-opened. What remains is record coherence around the one deliberate pin move: the change's own task text still states the pre-walk invariant, and the repaired sentence carries a partial paraphrase beside its pointer. The one behavioral gap is the merge note's scope, two sections of six, found by executing the case the walk did not fixture. Passes 4 and 5 skipped: orbit/lenses/ does not exist. Pass 0 by hand: 17 of 18 tasks verified against artifacts; 6.4's datum is now recorded by both halves (fresh 0 of 0, external 1 of 1 ENUMERATE) and the checkbox is the user's. Risk texture: the list-item boundary rule is the one edit with a real blast radius, and it was measured safe against every explore.md on the record before landing; the merge rule changes counts only for files that were already malformed.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "6"
+  ],
+  "passes_skipped": [
+    "4",
+    "5"
+  ],
+  "final_assessment": "0 critical, 1 warning, 2 suggestion.",
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc13b-explore-maturity-signal --from-file orbit/changes/rc13b-explore-maturity-signal/.orbit-runs/review-system-2026-09-25T23-27-57Z.json"
+}

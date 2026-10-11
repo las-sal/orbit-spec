@@ -1,0 +1,14 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-08-04T16:20:51Z",
+  "change": "d5-context-economy",
+  "final_assessment": "External review prompt packaged for d5-context-economy (iter 1, mode proposal); awaiting findings. Handoff preflight: dirty working tree (21 uncommitted entries incl. this prompt) — commit+push required before the pull handoff is usable.",
+  "next_recommended": "Commit the pending work (including orbit/changes/d5-context-economy/.orbit-runs/external-prompt-proposal-2026-08-04T16-20-08Z.md) and push; then: Paste orbit/changes/d5-context-economy/.orbit-runs/external-prompt-proposal-2026-08-04T16-20-08Z.md into the target AI, save the response as orbit/changes/d5-context-economy/.orbit-runs/external-proposal-<TS>.md, then /orbit:address-reviews d5-context-economy --from-file <path>",
+  "kind": "editorial",
+  "model": "claude-fable-5",
+  "mode": "proposal",
+  "reviewer_class": "external",
+  "prompt_path": "orbit/changes/d5-context-economy/.orbit-runs/external-prompt-proposal-2026-08-04T16-20-08Z.md",
+  "target": null,
+  "awaiting_findings": true
+}

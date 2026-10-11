@@ -1,0 +1,181 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-11T23:02:13Z",
+  "change": "rc10-apply-closure",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc10-apply-closure/.orbit-runs/external-system-2026-10-11T22-51-02Z.md",
+  "source_command": null,
+  "source_token": "2026-10-11T22-51-02Z",
+  "latest_apply_token": "2026-10-11T22-05-30Z",
+  "external_reviewer": "GPT-6",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 3,
+    "suggestion": 0
+  },
+  "pushback_verification": "All three reproduced at HEAD before any edit, by a throwaway vitest probe: parseCheckboxes on the reviewer's four-backtick case returned zero tasks (tasksRemaining 0, empty unchecked lists); a checked and an unchecked '1.1 (User-validation)' with one deferral for 1.1 was ACCEPTED by orbit emit archive; and the read was a bare catch that returned an empty marked set for any error.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Valid Markdown fences can hide a validation task from the write gate",
+      "marker_source": "external",
+      "file": "src/core/parsers/apply-state.ts",
+      "line": 62,
+      "outcome": "resolved",
+      "remedy": "repair",
+      "classification": "trivial_fix",
+      "action": "parseCheckboxes now reads fences through the engine's shared CommonMark tracker (createFenceTracker, src/core/markdown-fence.ts) instead of a local toggle; the reviewer's case reads its task and the write gate requires its deferral (tests in emit-composition and apply-state, with two consecutive marked tasks after the fence); no tasks.md in the repo uses a four-character or indented fence, so no recorded count moves; design D4 says so; the sweep found the same toggle in the Touchpoints parser (src/core/parsers/touchpoints.ts), repaired the same way with a four-backtick test",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/emit-composition.test.ts",
+          "test/core/parsers/apply-state.test.ts",
+          "orbit/changes/rc10-apply-closure/design.md",
+          "src/core/parsers/touchpoints.ts",
+          "test/core/parsers/touchpoints.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "inFence = !inFence"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/parsers/apply-state.ts",
+            "text": "const fence = createFenceTracker();"
+          },
+          {
+            "path": "orbit/changes/rc10-apply-closure/design.md",
+            "text": "through the engine's shared CommonMark tracker"
+          },
+          {
+            "path": "src/core/parsers/touchpoints.ts",
+            "text": "const fence = createFenceTracker();"
+          }
+        ],
+        "searched": [
+          "inFence",
+          "`{3,}|~{3,}",
+          "fence-aware"
+        ],
+        "scope": [
+          "src/core/parsers"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "Task-file read failures silently disable validation closure",
+      "marker_source": "external",
+      "file": "src/core/emit-composition.ts",
+      "line": 958,
+      "outcome": "resolved",
+      "remedy": "repair",
+      "classification": "trivial_fix",
+      "action": "checkDeferredValidations treats only ENOENT as a missing tasks.md; any other read failure is refused naming the path and the error (test: a directory named tasks.md is refused with EISDIR); the production's closing line, the proposal, design D4, task 1.2 and both bodies' report sentence say so",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc10-apply-closure/specs/orbit-archive-modifications/spec.md",
+          "src/core/templates/workflows/archive-change.ts",
+          "src/core/templates/workflows/bulk-archive-change.ts",
+          "orbit/changes/rc10-apply-closure/proposal.md",
+          "orbit/changes/rc10-apply-closure/design.md",
+          "orbit/changes/rc10-apply-closure/tasks.md",
+          "test/core/emit-composition.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "// A missing tasks.md is an empty marked set."
+        ],
+        "introduced": [
+          {
+            "path": "src/core/emit-composition.ts",
+            "text": "!== 'ENOENT'"
+          },
+          {
+            "path": "orbit/changes/rc10-apply-closure/specs/orbit-archive-modifications/spec.md",
+            "text": "any other failure to read it is refused, naming the error"
+          }
+        ],
+        "searched": [
+          "empty marked set",
+          "catch {"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "Duplicate task IDs bypass the checked-task refusal",
+      "marker_source": "external",
+      "file": "src/core/emit-composition.ts",
+      "line": 987,
+      "outcome": "resolved",
+      "remedy": "repair",
+      "classification": "trivial_fix",
+      "action": "the DEFERRAL REFUSALS production gains case 8 — a marked unchecked task whose id another task line carries, checked or not, refused naming both lines — in the spec fence and its mirror constant together (the parity test holds them); the engine check quotes both lines (the reader now keeps checked items' text); a new scenario 'A task id two task lines carry is refused' is declared by its behaviour test; Step 3.2 in both bodies reports cases 2, 3 and 8 to the user, and the requirement, design D4/D6, the proposal and tasks 1.2/2.2 name it",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc10-apply-closure/specs/orbit-archive-modifications/spec.md",
+          "src/core/templates/workflows/archive-change.ts",
+          "src/core/templates/workflows/bulk-archive-change.ts",
+          "src/core/parsers/apply-state.ts",
+          "orbit/changes/rc10-apply-closure/proposal.md",
+          "orbit/changes/rc10-apply-closure/design.md",
+          "orbit/changes/rc10-apply-closure/tasks.md",
+          "test/core/emit-composition.test.ts",
+          "test/core/templates/archive-user-validation.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "(cases 2 and 3)",
+          "an id-less or ungrouped marked\ntask is reported",
+          "An id-less or ungrouped marked task is reported for the user"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc10-apply-closure/specs/orbit-archive-modifications/spec.md",
+            "text": "8 a marked unchecked task whose task id another task line also carries, checked or not, naming both lines"
+          },
+          {
+            "path": "src/core/templates/workflows/archive-change.ts",
+            "text": "8 a marked unchecked task whose task id another task line also carries"
+          },
+          {
+            "path": "src/core/emit-composition.ts",
+            "text": "is carried by ${linesById.get(id)!.length} task lines"
+          }
+        ],
+        "searched": [
+          "cases 2 and 3",
+          "id-less or ungrouped",
+          "naming a checked task"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": "walk all, A",
+  "final_assessment": "Three findings resolved in the write gate's reader: fences through the shared tracker, only ENOENT reads as missing, and a duplicated marked task id is refused as case 8 of the production.",
+  "iteration": 5,
+  "next_recommended": "/orbit:review --as system rc10-apply-closure",
+  "ripple_misses": 0
+}

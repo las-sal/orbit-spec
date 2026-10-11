@@ -1,0 +1,356 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-25T16:05:42Z",
+  "change": "rc13b-explore-maturity-signal",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc13b-explore-maturity-signal/.orbit-runs/review-proposal-2026-09-25T15-54-12Z.json",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 2,
+    "warning": 11,
+    "suggestion": 5
+  },
+  "pushback_verification": "All 18 findings verified against the current artifacts before any edit — every cited line read and found as described; 0 stale. Both decision-lane facts re-verified against source (renderNextLine in src/commands/workflow/status.ts prefixes every explore next unconditionally; the archived fixture has 12 openers by prefix and 9 with the closing ** on the same line).",
+  "resolution_summary": {
+    "resolved": 18,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "Task 2.3's fixture counts are false under the change's own ID-less-by-wrapping rule",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 12,
+      "classification": "decision_required",
+      "action": "Option A ratified: the Decisions ID opener is a FIRST-LINE PREFIX match (`- **<date> — <ID>: `; closing ** anywhere). Task 2.3 keeps 12 decisions / 9 live / 9 accounted / 0 malformed / 1 residual and names the three wrapped openers as must-parse; the wrapped-opener scenario in the emit-composition delta replaced by a scenario where the wrapped entry is WELL-FORMED and a prefix-less entry is `open`; explore.md D-rc13b-8 EXECUTE move and domain row amended (dated, at the proposal walk); design Risk rewritten; proposal sentence corrected.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13b-explore-maturity-signal/tasks.md",
+          "orbit/changes/rc13b-explore-maturity-signal/specs/orbit-emit-composition/spec.md",
+          "orbit/changes/rc13b-explore-maturity-signal/explore.md",
+          "orbit/changes/rc13b-explore-maturity-signal/design.md",
+          "orbit/changes/rc13b-explore-maturity-signal/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Define the ID opener as an ID-first prefix match on the entry's first line (closing `**` not required); keep 2.3's 9/9/0/1; delete the wrapped-opener scenario and fixture; correct explore.md:158."
+          },
+          {
+            "label": "B",
+            "body": "Keep the strict same-line opener; rewrite 2.3 to the executed figures (9 live, 7 accounted, 2 open by line 380/392, 2 malformed orphans D-bcs-8/D-bcs-9, 1 residual, Unaccounted); correct explore.md:158's EXECUTE claim."
+          }
+        ],
+        "chosen": "A"
+      }
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "The Unaccounted string's 'K of R live rules' counts MALFORMED orphans that are not live rules",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-run-summary-emit/spec.md",
+      "line": 11,
+      "classification": "trivial_fix",
+      "action": "Defined once in the emit-composition delta: `rules_open` has four LIVE-RULE states and one MALFORMED state; K counts the live-rule states only; malformed entries render in their own `; N malformed (…)` clause; the maturity delta points and its Unaccounted rung carries the clause; the emit delta scenario THEN now reads \"2 of 4 live rules have open domains (D-foo-3, D-foo-4); 1 malformed (D-foo-9)\"; an orphan scenario added to the maturity delta.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13b-explore-maturity-signal/specs/orbit-run-summary-emit/spec.md",
+          "orbit/changes/rc13b-explore-maturity-signal/design.md",
+          "orbit/changes/rc13b-explore-maturity-signal/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "'Byte-identical' Early/Mid/Stalled strings and the 'exactly' Concluded string contradict the appended open-domains record",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-run-summary-emit/spec.md",
+      "line": 14,
+      "classification": "trivial_fix",
+      "action": "\"byte-identical PREFIXES … the record suffix is appended AFTER\"; Concluded scenario restricted to empty rules_open with a sibling non-empty scenario stating the exact suffixed string; task 3.3 narrowed to byte-equality on the empty list (prefix-equality otherwise); proposal Impact sentence corrected.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13b-explore-maturity-signal/tasks.md",
+          "orbit/changes/rc13b-explore-maturity-signal/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The concluded row's next line will render under 'Ready when you are:' — eligibility framing on a rung that points at nothing",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-orientation/spec.md",
+      "line": 43,
+      "classification": "decision_required",
+      "action": "Option A ratified: a THIRD MODIFIED block in the orientation delta — `Next-recommendation sourcing is time-shifted, never live` gains the concluded rule (the recorded prose renders BARE, no `Ready when you are:` label, no model hint) with a scenario; the concluded-strip scenario THEN says bare; tasks 5.1/5.2 name `renderNextLine` in src/commands/workflow/status.ts and the test; design D-rc13b-9 records the correction; explore.md D-rc13b-9 `next` row amended; fingerprint stamped for the new block; proposal capability list updated.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13b-explore-maturity-signal/tasks.md",
+          "orbit/changes/rc13b-explore-maturity-signal/design.md",
+          "orbit/changes/rc13b-explore-maturity-signal/explore.md",
+          "orbit/changes/rc13b-explore-maturity-signal/proposal.md",
+          "orbit/changes/rc13b-explore-maturity-signal/.openspec.yaml"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Modify 'Next-recommendation sourcing' (same capability): a concluded workstream's next renders the recorded prose without the `Ready when you are:` label; scenario + tests in 5.1/5.2."
+          },
+          {
+            "label": "B",
+            "body": "Keep the framing; state the full rendered line in the concluded-strip scenario's THEN and in design D-rc13b-9 so it is a recorded choice."
+          }
+        ],
+        "chosen": "A"
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "The well-formed ID opener rule (closing ** on the first line) is stated in no production — only in a scenario and an explore.md move line",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-emit-composition/spec.md",
+      "line": 96,
+      "classification": "trivial_fix",
+      "action": "Resolved with finding 1 (option A): the well-formed-opener rule is stated ONCE in the emit-composition delta (\"The Decisions-side rules the parse adds to the owned productions\"); task 2.2 exercises a wrapped-title opener (well-formed) and a prefix-less line; design records that orbit-conventions points at it on its next touch.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13b-explore-maturity-signal/tasks.md",
+          "orbit/changes/rc13b-explore-maturity-signal/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Duplicate Decisions IDs: rules_total, the Mechanism join, and the preamble's 'per MALFORMED Mechanism entry' are unspecified for a Decisions-side defect",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-emit-composition/spec.md",
+      "line": 25,
+      "classification": "trivial_fix",
+      "action": "Stated once in the emit-composition delta: the first occurrence in file order owns the key and joins its Mechanism entry; the second appears in rules_open as {id, state: malformed, line} and is excluded from rules_total; task 2.2 asserts the three facts; the emit delta scenario exercises two `D-foo-2` entries; explore.md D-rc13b-8 domain row amended.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13b-explore-maturity-signal/tasks.md",
+          "orbit/changes/rc13b-explore-maturity-signal/explore.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "status.re_entry when concluded with no live Re-entry slot, and with two live slots, is unspecified",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-emit-composition/spec.md",
+      "line": 34,
+      "classification": "trivial_fix",
+      "action": "`re_entry` present iff concluded AND exactly one live entry carries the slot; ABSENT when none (the prose alone carries the fallback); two live slots → first in file order wins, stderr note names the second; a scenario covers both; task 2.2 lists all three cases.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13b-explore-maturity-signal/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "A newest emit whose `status` is present but not `{token: string}` has no stated reading in orientation",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-orientation/spec.md",
+      "line": 19,
+      "classification": "trivial_fix",
+      "action": "One sentence in the orientation strip block: a `status` that is not an object with a string `token` reads as `exploring` — optional, not spine, never degrades a row; the hand-flipped scenario WHEN covers it; tasks 5.1/5.2 list the case.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13b-explore-maturity-signal/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Delta scenario titles still name the retired 'Mature' rung",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-run-summary-emit/spec.md",
+      "line": 34,
+      "classification": "trivial_fix",
+      "action": "Stalled scenario retitled \"(the 4+ decisions threshold met, the open-question check fails)\"; the split scenario retitled \"(the cell the retired Mature rung occupied)\" — the historical contrast, kept deliberately.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Task 2.2's fixture list does not cover 'each out-of-domain disposition' as exit criterion (2) requires",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 11,
+      "classification": "trivial_fix",
+      "action": "Task 2.2 now names each out-of-domain disposition — Kind: fact, Kind: scope, Disposition: superseded <ID>, Disposition: assigned <stage> — each OUT of the obligation with a permitted history entry that must not become an orphan.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Task 4.3 and D-rc13b-4 name artifacts that do not exist: no explore run-summary-schema reference, no explore field table",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 24,
+      "classification": "trivial_fix",
+      "action": "Descope lane: task 4.3 DELETED (19 → 18 tasks). Design D-rc13b-4 records that the four fields' shapes are stated once in the emit-composition requirement and that no explore schema reference or explore field table exists; explore.md D-rc13b-4 domain row amended (dated) so the ENUMERATE move names real members.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13b-explore-maturity-signal/design.md",
+          "orbit/changes/rc13b-explore-maturity-signal/explore.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The deltas restate four rules owned elsewhere instead of naming and pointing (R-crc-14)",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-emit-composition/spec.md",
+      "line": 35,
+      "classification": "trivial_fix",
+      "action": "Four restatements replaced by name-and-point: live-rule membership → orbit-conventions' Decision-entry requirement; the FORM-only paragraph → the FORM-only clause of the Mechanism-grammar requirement (keeping only the new no-match-is-absent rule and the all-facts example); the neither-token rule → the status-header production; orientation's data-source list → the bare-status requirement's closed data-source scenario.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13b-explore-maturity-signal/specs/orbit-orientation/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Design Risks claim change-directory explore.md is never parsed by the explore emit — the code and task 6.3 say otherwise",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 113,
+      "classification": "trivial_fix",
+      "action": "Risk corrected: the migration surface includes every active change whose consumed explore.md predates rc13a (the emit surface resolves a change-scoped emit to the change directory and parses its explore.md — the path task 6.3 depends on), each rendering UNACCOUNTED on its next in-change emit; stated as intended.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Spec-dictated strings pluralize wrongly ('1 bounded residuals named', '1 of 4 live rules have')",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-run-summary-emit/spec.md",
+      "line": 28,
+      "classification": "trivial_fix",
+      "action": "Noun and verb agree with their count, stated in the maturity delta for both new strings; scenarios corrected (\"1 of 4 live rules has an open domain\", \"1 bounded residual named\"); task 3.3 asserts the singular/plural pairs.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13b-explore-maturity-signal/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "rules_open ordering is unstated, so the three-ID bound picks a nondeterministic first three",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-run-summary-emit/spec.md",
+      "line": 14,
+      "classification": "trivial_fix",
+      "action": "Order stated once in the emit-composition delta: Decisions entries in file order, then Mechanism-only malformed entries in heading order; the maturity delta's bound takes \"the first three in the array's order\"; task 3.3 asserts specific IDs.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13b-explore-maturity-signal/specs/orbit-run-summary-emit/spec.md",
+          "orbit/changes/rc13b-explore-maturity-signal/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Spec text carries a handoff to an unlanded stage ('named here first and adopted there')",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-orientation/spec.md",
+      "line": 74,
+      "classification": "trivial_fix",
+      "action": "Clause cut to \"the stage-state vocabulary literal `concluded`\"; the rc15 handoff stays in design and the stage charter.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Form-parse output when explore.md is absent is unstated",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-emit-composition/spec.md",
+      "line": 42,
+      "classification": "trivial_fix",
+      "action": "One sentence: a missing file yields rules_total 0, rules_open [], residuals [], status {token: exploring} and the counter's existing missing-section notes, no additional Mechanism note; task 2.2 lists the case.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13b-explore-maturity-signal/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Three task counts for one change: design says ~16, tasks.md holds 19",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 134,
+      "classification": "trivial_fix",
+      "action": "Size Risk now reads six requirement blocks (five MODIFIED, one ADDED) and 18 tasks after the walk deleted 4.3, with the one-under-the-bound note.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": "a",
+  "final_assessment": "18 of 18 findings resolved (2C/11W/5S), 0 stale, none deferred. Two decision-lane findings ratified by Sal in chat (\"a\" — option A on both): the Decisions ID opener is a FIRST-LINE PREFIX match, so wrapped titles are well-formed and the archived fixture keeps 9/9 accounted; and orbit-orientation's sourcing requirement gains the concluded rule so the Concluded rung's prose renders BARE — a third MODIFIED block (fingerprint stamped, 5 of 5). The K-of-R CRITICAL is closed by defining the rules_open states and their order ONCE in the emit-composition delta, with malformed entries in their own clause. Four R-crc-14 restatements replaced by pointers. Task 4.3 deleted (descope lane: the artifacts it named do not exist); 19 → 18 tasks, six requirement blocks. explore.md carries four dated amendments (D-rc13b-4, D-rc13b-8 ×2, D-rc13b-9) and its grammar check is clean (9 decisions, 7 rules, 7 entries). orbit validate --strict passes. Residue sweep: no \"wrapped opener loses its ID\" claim survives; the propose emit's 18-task figure, wrong when written, is now true by coincidence and stays a recorded error.",
+  "iteration": 1,
+  "next_recommended": "/orbit:review --as proposal rc13b-explore-maturity-signal"
+}

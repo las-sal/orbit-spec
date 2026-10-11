@@ -1,0 +1,80 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-25T23:31:44Z",
+  "change": "rc13b-explore-maturity-signal",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc13b-explore-maturity-signal/.orbit-runs/review-system-2026-09-25T23-27-57Z.json",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 2
+  },
+  "pushback_verification": "All 3 findings verified against the working tree (each sits in text or code the two prior walks wrote); 0 stale.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Task 1.3's text still asserts the `orbit-explore` pin is never re-pinned, after the walk re-recorded it as a second act",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc13b-explore-maturity-signal/tasks.md",
+      "line": 5,
+      "classification": "trivial_fix",
+      "action": "A dated NOTE appended under task 1.3 in tasks.md: the assertion was measured and held at apply (recorded in the apply emit); the pin moved as a SECOND act at the system walk for the retired-Mature-rung prose repair (option B), recorded with the new hashes in skill-templates-parity.test.ts; the task's claim was true when graded and is not re-graded. Task stays ticked.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13b-explore-maturity-signal/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The repeated-heading note covers `## Decisions` and `## Mechanism` only; a repeated `## Open questions` merges silently",
+      "marker_source": "internal-review",
+      "file": "src/core/parsers/explore-rules.ts",
+      "line": 289,
+      "classification": "trivial_fix",
+      "action": "The note loop in parseExploreRules now iterates every collected section (the Map's entries) and notes each extra heading, so a merged `## Open questions` — or any section — is never silent. Fixture added to the merge test (executed: one note naming the repeated Open questions heading, with a Mechanism section present so the only note is the repeat).",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/parsers/explore-rules.ts",
+          "test/core/parsers/explore-rules.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The repaired persist-step sentence paraphrases the grid's inputs beside its pointer, and the paraphrase is already incomplete",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/explore.ts",
+      "line": 673,
+      "classification": "trivial_fix",
+      "action": "The persist-step parenthetical trimmed to the bare pointer: `(per orbit-run-summary-emit's maturity requirement, which owns the rungs and their inputs)`. The orbit-explore pins re-recorded under the same second-act comment, extended with this trim; the regenerated SKILL.md still diffs against the pre-change snapshot at exactly one line (624).",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/templates/workflows/explore.ts",
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "3 of 3 in-context confirm findings (0C/1W/2S) resolved, 0 stale, all obvious-fix — no decision lane fired. The warning was record coherence: tasks.md 1.3 now carries a dated note reconciling its measured-at-apply claim with the second-act pin move. The two suggestions: the repeated-heading note now covers every merged section (one new fixture), and the repaired explore-body sentence is a bare pointer with no paraphrase beside it — the pin re-recorded once more under the same comment, the regenerated skill still one line from the pre-change snapshot. 2322 tests green, unchanged from log 2. Every edit in this walk was a sentence or a loop bound, not new mechanism.",
+  "iteration": 6,
+  "next_recommended": "/orbit:archive rc13b-explore-maturity-signal — user-invoked"
+}

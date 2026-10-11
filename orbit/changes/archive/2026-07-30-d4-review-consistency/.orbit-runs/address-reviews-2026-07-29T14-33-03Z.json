@@ -1,0 +1,33 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-07-29T14:33:03Z",
+  "change": "d4-review-consistency",
+  "source": "--from-file",
+  "source_path": "orbit/changes/d4-review-consistency/.orbit-runs/external-proposal-2026-07-27T17-29-09Z.md",
+  "source_format": "external-markdown",
+  "external_reviewer": "Codex (GPT-5)",
+  "external_iteration": 2,
+  "walk_mode": "per_finding",
+  "kind": "editorial",
+  "resolutions": [],
+  "stale_suppressed": [
+    { "finding": "The external Notes contract changes an untouched baseline requirement", "severity": "CRITICAL", "evidence": "Already resolved 2026-07-27 (address-reviews-2026-07-27T18-34-12Z.json, commit 2998c5c): specs/orbit-review-external/spec.md exists with the template carried verbatim + the Notes Commentary contract; fingerprint verified in the 15/15 check." },
+    { "finding": "The advertised legacy-render path rejects real repository history", "severity": "CRITICAL", "evidence": "Already resolved (fork A): the scorecard-presence boundary + 'pre-capability emit' error present in the report-rendering validation requirement with the real-generation fixture scenario; task 1.4 pins them." },
+    { "finding": "Equal-token passes have no single as-of order", "severity": "CRITICAL", "evidence": "Already resolved: 'ONE TOTAL PASS ORDER' declared in the computed-context requirement, governing selection/ordinal/matching/trend; equal-token golden in task 1.4." },
+    { "finding": "The required ungated tail asks the engine for values it does not compute", "severity": "CRITICAL", "evidence": "Already resolved (fork A): 'EACH tail line renders ONLY when the engine computes its value'; the ungated tail is the --- rule alone; design D2b note + minimal-tail golden tasked." },
+    { "finding": "The scorecard can contradict the findings while passing strict validation", "severity": "CRITICAL", "evidence": "Already resolved: findings carry an owning `dimension`; cell-rollup equality validated (suppressed excluded), mismatch fails whole; the conventions canonical example made self-consistent; tasks 1.4/3.4 carry fixtures + schema edits." },
+    { "finding": "finding_titles is required by conventions but absent from the review contract and work plan", "severity": "CRITICAL", "evidence": "Already resolved (fork A): the conventions extension line declares full findings[] entries with 'no separate title array'; finding_titles retired for review emits; example + scenarios updated." },
+    { "finding": "Arbitrary verbatim recommendation markdown can escape the Findings section", "severity": "WARNING", "evidence": "Already resolved: BLOCKQUOTE CONTAINMENT specified for all verbatim-sourced bodies in the grammar requirement; D2b forms updated; containment goldens tasked." },
+    { "finding": "External parse confidence does not require the header fields the renderer needs", "severity": "WARNING", "evidence": "Already resolved: Reviewer + Date MANDATORY and uniquely parsed in the per-genre validation; task 1.5 carries the rejection errors." },
+    { "finding": "Handoff evidence notes conflict with the deterministic review assessment field", "severity": "WARNING", "evidence": "Already resolved: task 5.4 names NON-REVIEW emits as the seam evidence carriers; review final_assessment stays the deterministic counts sentence." }
+  ],
+  "resolution_summary": {
+    "resolved": 0,
+    "stale": 9,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "post_state": "Nothing edited this run (pushback suppressed all nine as already-fixed); orbit validate --strict passes; fingerprints 15/15 verified; 23 delta requirements (8 ADDED + 15 MODIFIED) across 7 files; 18 tasks",
+  "final_assessment": "Re-ingest of an already-walked findings file: all 9 findings verified already resolved at HEAD (the 2026-07-27 walk, commits 2998c5c/8efbd4a) and suppressed with evidence per the pushback discipline — no re-fixing of fixed state. The cadence position is unchanged: the last independent pass carried CRITICALs (now resolved), so the confirm predicate still requires an independent pass yielding none.",
+  "next_recommended": "/orbit:review --as proposal --fresh d4-review-consistency"
+}

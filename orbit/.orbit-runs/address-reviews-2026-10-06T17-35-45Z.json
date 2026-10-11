@@ -1,0 +1,69 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-06T17:35:45Z",
+  "change": null,
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "from-file",
+  "source_path": "orbit/.orbit-runs/audit-drift-2026-10-06T17-34-22Z.json",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "walk_mode_source": null,
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 1
+  },
+  "pushback_verification": "Verified against current state: orbit/changes/rc17d-external-runner/ no longer exists; the explore.md lives under the archive.",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "SUGGESTION",
+      "title": "rc17d's charter points at its active change path, which the archive moved",
+      "marker_source": "audit-drift",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 3106,
+      "classification": "trivial_fix",
+      "action": "Re-pointed the charter's explore.md path from the active change directory to orbit/changes/archive/2026-10-06-rc17d-external-runner/ — a pointer correction; the charter's substance stays as declared.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "(`orbit/changes/rc17d-external-runner/`, D-rc17d-1..8"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "text": "(`orbit/changes/archive/2026-10-06-rc17d-external-runner/`, D-rc17d-1..8"
+          }
+        ],
+        "searched": [
+          "orbit/changes/rc17d-external-runner/"
+        ],
+        "scope": [
+          "CLAUDE.md",
+          "orbit/explore/rc17b-blind-pair-command/explore.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "One of one resolved: rc17d's charter pointer re-pointed to the archived change path.",
+  "iteration": 12,
+  "next_recommended": "No markers remain in scope; the project trail records this walk.",
+  "ripple_misses": 0
+}

@@ -1,0 +1,26 @@
+{
+  "command": "apply",
+  "timestamp": "2026-09-22T02:07:22Z",
+  "change": "rc04d-override-vocabulary",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "consent": "user-invoked",
+  "tasks_completed": 14,
+  "tasks_remaining": 0,
+  "user_validation_remaining": 0,
+  "chunk": null,
+  "chunk_name": null,
+  "chunk_complete": true,
+  "tasks_completed_this_session": 14,
+  "files_touched": [
+    "orbit/changes/rc04d-override-vocabulary/design.md",
+    "orbit/changes/rc04d-override-vocabulary/explore.md",
+    "orbit/changes/rc04d-override-vocabulary/proposal.md",
+    "orbit/changes/rc04d-override-vocabulary/specs/orbit-engine-gates/spec.md",
+    "orbit/changes/rc04d-override-vocabulary/specs/orbit-pr-lifecycle/spec.md",
+    "orbit/changes/rc04d-override-vocabulary/tasks.md"
+  ],
+  "diff_base": "ff4f793bbe72b2bc0fe5b17ec798a3cd10a06ac9",
+  "final_assessment": "14 of 14 tasks done. a CONFIRMATION-ONLY apply: the five replacements were authored at propose by a script built from baseline, so every task in section 1 verifies rather than writes, and the stage's exit (2) forbids any src/ or test/ edit. All three exit criteria were executed rather than asserted. Exit (2) HOLDS with hard evidence — the union of the change's committed diff, the working tree and untracked files contains ZERO src/ and ZERO test/ paths, which is what makes 'this is pure vocabulary' falsifiable rather than a claim a reviewer must take on trust. Exit (1) reads 0 occurrences in the deltas. Exit (3)'s PRE-SYNC half is recorded: six baseline capabilities carry the field today (archive-modifications, conventions, emit-composition, engine-gates, pr-lifecycle, run-summary-emit); its post-sync half is a checkbox-less AT-ARCHIVE NOTE and does not run here. Task 2.4 — the load-bearing claim that every de-named form is TRUE OF THE ENGINE AS IT STANDS — was checked site by site against source rather than against the predecessor wording: apply-change.ts records the override on Proceed anyway; exactly two commands' payload tables accept the field, which is precisely the two owners the new clause names; pr-choreography.ts:388 flips per-change PRs including on gate-override archives, matching the now-gate-qualified READY rule; and archive-change.ts:286 records it in the archive run summary almost word for word with the conventions scenario. Two of those greps returned a false zero first — my patterns, not the behaviour — and were re-run; that is the session's recurring instrument-error class and it is recorded rather than quietly corrected. Task 2.5 ran the instrument the task now NAMES instead of a remembered one: 27 scenario titles set-equal to baseline across all five requirements, 0 mismatches, and the fence hazard the task warns about was checked rather than assumed — zero fence markers inside the five requirement bodies, so the fence-unaware split is safe here. Fingerprints 5/5 verified, validate --strict clean.",
+  "next_recommended": "/orbit:review --as system --fresh rc04d-override-vocabulary"
+}

@@ -1,0 +1,49 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-08-10T03:42:37Z",
+  "change": "d5-context-economy",
+  "kind": "editorial",
+  "model": "claude-fable-5",
+  "source": "from-file",
+  "source_path": "orbit/changes/d5-context-economy/.orbit-runs/external-system-2026-08-10T03-37-38Z.md",
+  "source_command": null,
+  "external_reviewer": "OpenAI Codex (GPT-5)",
+  "walk_mode": "per_finding",
+  "walk_mode_source": null,
+  "input_findings_summary": {
+    "critical": 1,
+    "warning": 0,
+    "suggestion": 0
+  },
+  "pushback_verification": "Verified live before acting: the check site (:768, post-mkdir) and the write site (:1044) confirmed ~275 composition lines apart, with caller-supplied payload reads (property getters) and the final JSON.stringify (nested toJSON hooks) both running AFTER the only canonical check — the deterministic in-process vector in their reproduction is real. 0 stale suppressions.",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "marker": "src/core/emit-composition.ts:768 — canonical trail check precedes caller-controlled composition (check/use race)",
+      "severity": "CRITICAL",
+      "source": "external",
+      "classification": "trivial fix",
+      "status": "resolved",
+      "action": "Serialize-then-check, their exact bar: the final JSON.stringify (the LAST point caller code can run — getters and toJSON hooks fire there) now materializes the bytes FIRST, then assertCanonicalTrailDir re-runs immediately before the write of the frozen bytes — no caller-controlled code executes between the final check and the write. The early post-creation check stays for fast failure. Regression: a resolutions-entry toJSON hook that swaps the validated .orbit-runs for an outside symlink during serialization — the hook demonstrably fires, the re-check refuses, nothing lands at the redirect. Delta containment sentence upgraded to the checked-TWICE wording naming the closed window.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/emit-composition.ts",
+          "test/core/emit-composition.test.ts",
+          "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md"
+        ],
+        "flagged_not_applied": []
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": null,
+  "final_assessment": "The single iteration-4 external finding (1 CRITICAL, OpenAI Codex GPT-5 — the check/use race between the canonical trail check and the write) walked and resolved: bytes are materialized before a second canonical check that runs immediately before the write, closing every in-process vector (getters, toJSON hooks) and narrowing the concurrent-swap window to nothing between check and write. Codex confirmed the identity predicate itself and its delta wording are correct — this was purely the ordering. 1916 tests green (1915 → 1916); strict validation; fingerprints 26/26. External convergence: 8 → 6 → 1 → 1, now a single ordering fix inside one function.",
+  "iteration": 15,
+  "next_recommended": "/orbit:review --as system --reviewer external d5-context-economy"
+}

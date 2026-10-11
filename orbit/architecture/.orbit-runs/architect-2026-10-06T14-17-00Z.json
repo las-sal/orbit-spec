@@ -1,0 +1,25 @@
+{
+  "command": "architect",
+  "timestamp": "2026-10-06T14:17:00Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Pre-propose sweep of rc17d against the baseline found one spec the exploration's count missed: the review-external T0's next_recommended must be the user's paste/save action (orbit-run-summary-emit, composed by orbit-emit-composition), stale once a runner launches. Sal took A: keep it as the stated manual fallback, a named limit in rc17d's orbit-review-external delta (D-rc17d-7), three capabilities. rc17d's charter now names the limit and points at its own exploration. Doc valid; validate --sources clean; no ratification pending.",
+  "stages_touched": [
+    "rc17d-external-runner"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      "orbit/architecture/clean-up-review-cycle.md — Stage rc17d-external-runner (charter, named limit, exits)",
+      "orbit/explore/rc17d-external-runner/explore.md — D-rc17d-1..7, six rules with Mechanism entries, Q-rc17d-3 open"
+    ],
+    "next_command": "/orbit:propose rc17d-external-runner",
+    "model_hint": null,
+    "seam": "rc17d propose"
+  },
+  "next_recommended": "/orbit:propose rc17d-external-runner"
+}

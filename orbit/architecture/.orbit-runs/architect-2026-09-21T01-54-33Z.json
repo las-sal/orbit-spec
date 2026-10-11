@@ -1,0 +1,31 @@
+{
+  "command": "architect",
+  "timestamp": "2026-09-21T01:54:33Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "Q-crc-19 RESOLVED by Sal: budget is demoted from a gate-adjacent signal to a recorded figure. The spend survives as effort under R-crc-11(h); what stops is the spend colouring the gate — budgetExhausted, the distinct position token, and the budget clause in the reason string. The reasoning is that budgetExhausted is target-shaped by construction, saying 'you have spent too much', which is precisely what (h) forbids a record from saying. It resolves against evidence rather than argument: rc07 ran a fourth independent pass over an exhausted budget, that pass was the most valuable of its five (it validated the format change the previous walk had made, confirmed the migration fails loud, and named the root cause four rounds of patching had missed), and the only cost of running it was a readout line saying 4 of 3 whose only effect was to make a good decision feel like a transgression. This partially reverses rc02 — archived, complete and user-ratified — so the reversal is recorded in rc02's own stage section as well as in the open question, since a reader arriving at that stage should not have to learn it elsewhere. The reversal is narrow: one signal. The blind pair, substantive-only resolution, cadence slots and assignCadence all stand, and R-crc-11 promotes the blind pair to the program's central mechanism. rc02c carries the implementation and inherits one genuinely open fork the direction does not settle: whether budget leaves the schema grammar (a version bump migrating every declaring schema) or stays as an inert declaration the gate no longer consults. With Q-crc-19 settled, nothing now blocks rc02c or rc04 from proposing.",
+  "stages_touched": [
+    "rc02-gate-semantics",
+    "rc02c-confirmation-semantics"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [],
+  "handoff": {
+    "boot_sequence": [
+      {
+        "path": "orbit/architecture/clean-up-review-cycle.md",
+        "why": "R-crc-11(a)-(i) is the premise; Q-crc-16/18/19 resolved; Q-crc-14/15/17/20 open; rc02 carries its own partial-reversal note"
+      },
+      {
+        "path": "orbit/explore/rc04-readiness-record/explore.md",
+        "why": "eight decisions and three open questions, now unblocked by Q-crc-19"
+      }
+    ],
+    "next_command": "orbit architecture status",
+    "model_hint": "any",
+    "seam": "architect session end; nothing blocks proposing"
+  },
+  "next_recommended": "orbit architecture status"
+}

@@ -1,0 +1,31 @@
+{
+  "command": "apply",
+  "timestamp": "2026-09-28T15:08:08Z",
+  "change": "rc13c-propose-consumes-mechanism",
+  "kind": "workflow",
+  "model": "claude-fable-5-1",
+  "user_validation_tasks": [
+    "4.4"
+  ],
+  "consent": "user-invoked",
+  "tasks_completed": 14,
+  "tasks_remaining": 1,
+  "user_validation_remaining": 1,
+  "chunk": null,
+  "chunk_name": null,
+  "chunk_complete": true,
+  "tasks_completed_this_session": 14,
+  "files_touched": [
+    "orbit/changes/rc13c-propose-consumes-mechanism/.orbit-runs/external-proposal-2026-09-27T01-49-30Z.md",
+    "orbit/changes/rc13c-propose-consumes-mechanism/design.md",
+    "orbit/changes/rc13c-propose-consumes-mechanism/proposal.md",
+    "orbit/changes/rc13c-propose-consumes-mechanism/specs/orbit-propose-modifications/spec.md",
+    "orbit/changes/rc13c-propose-consumes-mechanism/tasks.md",
+    "src/core/templates/workflows/propose.ts",
+    "test/core/templates/orbit-content-fidelity.test.ts",
+    "test/core/templates/skill-templates-parity.test.ts"
+  ],
+  "diff_base": "b618ef707b204c5e05a6bf62d662dd4495dc8f67",
+  "final_assessment": "14 of 15 tasks done. one session, 14 of 15 checkboxes (4.4 is the user-validation handoff: the next propose on a live exploration produces the record unprompted; 4.5 converted to an AT-ARCHIVE NOTE per the repo convention — the read-only print question is appended to the program doc in the archive flow). Body edits in six places of propose.ts (Step 0 refuse + live-only inference + the Regenerate sentence; Step 0a mirror; Step 0b interpolated entry form + the Mechanism read; Step 0c row; NEW Step 0c.6; Graceful degradation); the orbit-propose pins re-recorded ONCE with a dated reason; seven new fidelity assertions (position, pointer-not-restated ×2, residue, section-list parity, decision-table parity, four-shape parity, interpolated entry form). Measured: residue grep zero in the body; exit (2) kind 1 / method 1 / Risks names the requirement 1; exit (3) header row 0 / `ask nothing else` 0 / re-entry requirement named 1; strict validation green; fingerprints 5/5; full suite 2329 green (baseline 2322); local surface regenerated and Step 0 / Step 0c.6 read as a user would.",
+  "next_recommended": "/orbit:review --as system --fresh rc13c-propose-consumes-mechanism"
+}

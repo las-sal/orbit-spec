@@ -1,0 +1,39 @@
+{
+  "command": "architect",
+  "timestamp": "2026-09-11T21:27:13Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-fable-5-1",
+  "final_assessment": "Method delegated and all ten open questions settled. R-crc-3 captured (Sal ratifies scope and priority; the authoring AI settles method, dated and strikeable). Under it: R-crc-4, the canonical cadence — a blind pair (external ∥ fresh) on one artifact state, one merged walk, one verification pass; a CRITICAL buys one more blind review; the freshness loop removed by construction. R-crc-5, the CONDITIONAL reversal of D-d6-7 for deterministic PR steps, flagged as reversing a Sal-ratified ruling and effective only when rc12 is proposed on rc05's evidence. Goals rewritten one per phase (G0–G4). rc02/rc03/rc04 re-cut to the one cadence (rc02 reports budget-exhausted as a gate state; rc04 records residual_risk at archive); rc01's grammar exit moved to rc05; rc06 the scenario map's sole owner and rc10 narrowed to the pre-archive dogfood condition; rc09's vestigial dependency dropped; rc11 moved to Considered & out with a re-entry trigger; rc12 to be explored as two changes; premise residue struck. Eleven stages remain, all premised. rc01 is the first to explore.",
+  "stages_touched": [
+    "rc01-instrument-fidelity",
+    "rc02-gate-semantics",
+    "rc03-review-genres",
+    "rc04-cost-visibility",
+    "rc05-executable-references",
+    "rc06-scenario-test-map",
+    "rc07-artifact-lint",
+    "rc08-walk-completeness",
+    "rc09-propose-hygiene",
+    "rc10-apply-closure",
+    "rc12-engine-owned-choreography"
+  ],
+  "rulings_captured": [
+    "R-crc-3",
+    "R-crc-4",
+    "R-crc-5"
+  ],
+  "completions_ratified": [],
+  "handoff": {
+    "boot_sequence": [
+      "orbit/architecture/clean-up-review-cycle.md — Rulings index R-crc-1..5 (R-crc-3 is the operating rule for this program; R-crc-4 the cadence every stage assumes), then Goals G0–G4, then the eleven stages",
+      "orbit/architecture/.orbit-runs/architect-2026-09-11T21-20-05Z.json — the cohesion review that the ten resolutions answer",
+      "orbit/changes/archive/2026-09-11-d6-pr-lifecycle/.orbit-runs/ — the measured trail behind the premise"
+    ],
+    "next_command": "/orbit:explore rc01-instrument-fidelity",
+    "model_hint": null,
+    "seam": "architect session boundary — program shaped, rulings captured, questions closed; rc01 (no dependencies, smallest) is the first stage to explore under R-crc-4's cadence"
+  },
+  "next_recommended": "/orbit:explore rc01-instrument-fidelity"
+}

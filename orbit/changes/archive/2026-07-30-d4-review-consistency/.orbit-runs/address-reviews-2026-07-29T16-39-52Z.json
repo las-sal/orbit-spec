@@ -1,0 +1,27 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-07-29T16:39:52Z",
+  "change": "d4-review-consistency",
+  "source": "--from-file",
+  "source_path": "orbit/changes/d4-review-consistency/.orbit-runs/review-proposal-2026-07-29T16-33-31Z.json",
+  "source_format": "internal-review",
+  "source_mode": "proposal",
+  "source_iteration": 8,
+  "walk_mode": "per_finding",
+  "kind": "editorial",
+  "resolutions": [
+    { "finding": "The 'B2-era' generation descriptor doesn't match the real archives it tells the implementer to pin from", "severity": "WARNING", "file": "orbit/changes/d4-review-consistency/specs/orbit-report-rendering/spec.md", "pushback": "still applies — the reviewer's own survey distinguished absent (B2) / populated dimension-less (B3-era) / empty (C1-era) findings within the kind+findings_summary generation", "classification": "trivial fix", "action": "The pre-D4 scenario and the boundary requirement now describe the first generation by its DETECTION KEYS (kind + findings_summary, no scorecard) with findings 'absent, empty, or dimension-less' and the per-era archive mapping named; the design risk note matches; task 1.4's fixture list names the real variants and 'pre-D3' is corrected to the D3-cycle label.", "ripple_cascade": { "applied": ["orbit/changes/d4-review-consistency/specs/orbit-report-rendering/spec.md", "orbit/changes/d4-review-consistency/design.md", "orbit/changes/d4-review-consistency/tasks.md"], "flagged_not_applied": [] } },
+    { "finding": "The address-side copy of the external findings format still carries the pre-D4 Notes placeholder", "severity": "WARNING", "file": "src/core/templates/workflows/address-reviews.ts", "pushback": "still applies — no task touched address' references/external-findings-format.md", "classification": "trivial fix", "action": "Task 3.4 extended: the address-side external-findings-format reference's Notes line is updated to the Commentary-contract text (or a one-line pointer to the prompt template as the format's source of truth) so both shipped copies agree.", "ripple_cascade": { "applied": ["orbit/changes/d4-review-consistency/tasks.md"], "flagged_not_applied": [] } },
+    { "finding": "The internal strict-validation checked set omits reviewer_class and depth", "severity": "SUGGESTION", "file": "orbit/changes/d4-review-consistency/specs/orbit-report-rendering/spec.md", "pushback": "still applies", "classification": "trivial fix", "action": "reviewer_class and depth named in the internal checked set (the per-genre validation requirement) and task 1.3.", "ripple_cascade": { "applied": ["orbit/changes/d4-review-consistency/specs/orbit-report-rendering/spec.md", "orbit/changes/d4-review-consistency/tasks.md"], "flagged_not_applied": [] } },
+    { "finding": "A baseline citation's mechanism goes stale at sync (Review mode decision framework)", "severity": "SUGGESTION", "file": "orbit/specs/orbit-conventions/spec.md", "pushback": "still applies — the attribution sentence verified at :774", "classification": "decision required", "recommendation_fork": { "detected": true, "source": "structured", "options_presented": [ { "label": "A", "body": "Fourth conventions MODIFIED block re-pointing the sentence at the review-system cadence's external slot rendered by the report tail (+1 fingerprint)" }, { "label": "B", "body": "Accept as documented residue in design D8 with audit-drift Cat 3 as the named catcher" } ], "chosen": "A", "discuss_invoked": false }, "action": "FOURTH conventions MODIFIED block: the framework requirement carried baseline-verbatim except the attribution sentence, now 'The review-system cadence's external slot encodes this default (per orbit-engine-gates), and the engine-rendered report tail surfaces the resulting canonical next command (per orbit-report-rendering — D-arc Stage D4).' Fingerprint stamped (18/18).", "ripple_cascade": { "applied": ["orbit/changes/d4-review-consistency/specs/orbit-conventions/spec.md"], "flagged_not_applied": [] } }
+  ],
+  "resolution_summary": {
+    "resolved": 4,
+    "stale": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "post_state": "orbit validate d4-review-consistency --strict passes; fingerprints 18/18 verified (conventions framework stamped); change now at 26 delta requirements (8 ADDED + 18 MODIFIED) across 7 files (conventions now ×4); 18 tasks",
+  "final_assessment": "All 4 iteration-8 findings resolved: the first-generation descriptor now keyed on detection fields with the real per-era archive variants named (and the D3-cycle label corrected); the address-side format copy's update tasked; reviewer_class/depth in the checked set; the framework citation re-pointed by a fourth conventions block (fork A). The iteration-8 pass carried no CRITICAL — with these resolutions landed, the cadence sits one clean independent confirmation from the strict predicate, and R-d-10's ratified calibration (0 CRITICAL + 0 new WARNING-or-above) is available at the apply inflection.",
+  "next_recommended": "/orbit:review --as proposal --fresh d4-review-consistency"
+}

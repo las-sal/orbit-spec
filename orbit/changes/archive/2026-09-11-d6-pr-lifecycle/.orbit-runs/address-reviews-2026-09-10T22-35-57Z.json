@@ -1,0 +1,289 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-10T22:35:57Z",
+  "change": "d6-pr-lifecycle",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "source": "from-file",
+  "source_path": "orbit/changes/d6-pr-lifecycle/.orbit-runs/external-system-2026-09-10T15-49-04Z.md",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": "Claude Fable 5.1 (clean-context session, same model as the authoring AI)",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 1,
+    "warning": 7,
+    "suggestion": 4
+  },
+  "pushback_verification": "All 12 verified against current state before disposition; 1 stale (the CRITICAL, resolved by the Codex walk that preceded this one — evidence recorded on the entry), 1 partially stale (the create-path half of the harness-claims finding, same walk), 10 still applying in full. Every cited line was re-read; the architect's lack of references and the missing step-6 transcription were confirmed by grep.",
+  "resolution_summary": {
+    "resolved": 11,
+    "stale_suppressed": 1,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "Generation-input precondition triggers on worktree PRESENCE, so an uncommitted exploration skips the PR layer on the canonical consume-mode path",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/pr-choreography.ts",
+      "line": 79,
+      "classification": "stale",
+      "action": "Stale — resolved by the Codex walk (address-reviews-2026-09-10T20-44-29Z, finding 1), which both external reviewers reached independently. Evidence: `grep -c 'TRACKED in HEAD'` hits the reference and the orbit-propose-modifications delta; the delta carries the scenario `An uncommitted exploration does not trigger the skip`; phase1.ts hoists `generationInputGuard` (tracked-and-differs) ahead of BOTH switch paths; phase1.test.ts carries the untracked-on-reuse, untracked-on-create, and tracked-but-different cases (31/31 at that walk). No edit made.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Both Position paragraphs mislabel \"Phase 2\", contradicting the reference's phase numbering",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/propose.ts",
+      "line": 277,
+      "classification": "trivial_fix",
+      "action": "Both Position paragraphs now use the reference's map: Phase 2 (generation + validation, ON that branch) IS upstream Step 1 onward / the consume-mode flow (propose) and Steps 2–4 (ff); Phase 3 carries the no-CI note, then commit → push → draft PR, then the attachment record's own commit + push (finding 5). A fidelity assertion pins the labels against the reference (`Phase 2 (generation + validation` present, `Phase 2 (the no-CI` absent) for both bodies. This was a regression the previous walk introduced; closed at the source.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/templates/workflows/ff-change.ts",
+          "test/core/templates/orbit-content-fidelity.test.ts",
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Program-PR body at birth (and PR titles on both paths) are unspecified — the AI must improvise the one text the landmark contract defines",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/pr-choreography.ts",
+      "line": 150,
+      "classification": "decision_required",
+      "action": "Option A. A `Title and body at birth (both paths — never improvised)` paragraph in PR_PROPOSE_SECTION: titles passed EXPLICITLY (`gh pr create` without `--title` prompts) — per-change `<change-name>: <proposal.md's title line>`, program `<doc stem>: <doc title line>`; per-change body = intent adapted from Why/What; program body = program intent adapted from the doc's opening prose (before the first `### Stage`) plus its stage list; titles set ONCE at birth, the tail's rewrite/append touch the body only. The mid-flight recovery `gh pr create` command now carries `--title` and `--body-file`. The orbit-pr-lifecycle landmark requirement gained the title-once and program-body-at-birth clauses.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/specs/orbit-pr-lifecycle/spec.md",
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "resolution": "A — the reviewer's convention: adapted titles on both paths, program body from the doc's opening prose plus stage list, titles set once at birth.",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Adopt the reviewer's convention: `<change-name>: <proposal title>` / `<doc stem>: <doc title>`; program body from the doc's opening intent plus stage list; titles never rewritten."
+          },
+          {
+            "label": "B",
+            "body": "Mechanical titles (bare change name / doc stem); body rules as in A."
+          }
+        ],
+        "chosen": "A"
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "Stage-entry APPEND has no read-current-body step; `gh pr edit --body-file` REPLACES, so a literal performance wipes earlier stages' entries",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/pr-choreography.ts",
+      "line": 295,
+      "classification": "trivial_fix",
+      "action": "PR_ARCHIVE_TAIL_SECTION gained `APPEND means READ-APPEND-WRITE`: read the current body (`gh pr view --repo <owner>/<repo> <url> --json body -q .body`), append this stage's entry, write the COMPOSED whole; writing only the entry would destroy every earlier stage's entry — the landmark itself. The recovery bullet says the file is the composed body, never the entry alone. The landmark requirement in the orbit-pr-lifecycle delta states the read-append-write rule. The new `gh pr view` invocation is repository-qualified (fidelity test passes).",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/specs/orbit-pr-lifecycle/spec.md",
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The attachment record (propose emit) is written AFTER the phase-3 push and rides no D6-guaranteed push until archive — a fresh checkout between seams silently loses the attachment and the PR is stranded draft",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/pr-choreography.ts",
+      "line": 177,
+      "classification": "decision_required",
+      "action": "Option A. The reference's `Recording the attachment` section ends with `Then COMMIT and PUSH the record — the seam's final act`: stage exactly the emit file, commit, push to the resolved remote; same seam, same invocation, no new consent, the only push between propose and archive (seams-only rule untouched); a failure is a mid-flight failure naming the completing command. Both bodies' emit steps say the emit is not the last act when the choreography ran. The orbit-propose-modifications delta's phase-3 description carries the step and a new scenario `The attachment record reaches the branch`. Chose A because the tail's correctness rests entirely on that record and the choreography already owns push at this seam.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/templates/workflows/propose.ts",
+          "src/core/templates/workflows/ff-change.ts",
+          "orbit/changes/d6-pr-lifecycle/specs/orbit-propose-modifications/spec.md",
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "resolution": "A — a second commit + push at the propose seam carrying the emit file.",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "A second commit + push at the propose seam carrying the emit (still the propose seam; two-seams decision holds)."
+          },
+          {
+            "label": "B",
+            "body": "A completion-readout line naming the uncommitted attachment record and its consequence, plus a named v1 limit in the reference's recording section."
+          }
+        ],
+        "chosen": "A"
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "Verification claims in checked tasks exceed what the phase-1 harness transcribes",
+      "marker_source": "external",
+      "file": "orbit/changes/d6-pr-lifecycle/tasks.md",
+      "line": 305,
+      "classification": "trivial_fix",
+      "action": "(a) Reference step 6 is now transcribed: before the switch on the reuse path, when the branch exists locally AND remotely, `merge-base --is-ancestor` both ways classifies behind / ahead / diverged — behind fast-forwards with `git merge --ff-only` after the switch, ahead proceeds, diverged SKIPS without switching with a note that orbit never force-moves; two harness cases (`fast-forwards a local branch that is strictly BEHIND`, `SKIPS without switching when ... DIVERGED`, asserting HEAD equals the remote tip / HEAD unmoved and the user's branch untouched), so 6.2c's `remote-ahead fast-forward and remote-diverged skip` claim is now true. (b) The create-path staging check was already resolved by the previous walk (`generationInputGuard` on both paths). (c) 6.2a's config-flipped-mid-flight tail clause and 6.2b's both-seams clause carry dated RESCOPED-to-6.3 notes; 6.2b's note points at the fidelity suite's byte-identical shared-section assertion as the substitute evidence.",
+      "ripple_cascade": {
+        "applied": [
+          "test/integration/pr-lifecycle/phase1.ts",
+          "test/integration/pr-lifecycle/phase1.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Architect readout invokes `gh --repo <owner>/<repo>` and the base-filtered query without carrying or pointing at the shared resolution algorithm",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/architect.ts",
+      "line": 127,
+      "classification": "decision_required",
+      "action": "Option A. New export `PR_RESOLUTION_REFERENCE` in pr-choreography.ts (header + the SHARED `PR_RESOLUTION_SECTION` + the four-axis query with `--repo`, `--head`, `--state open`, base-discard; reports only, never creates/edits/flips), emitted as `references/pr-resolution.md` on the architect skill; the readout's `Locating the PR` paragraph points at it. A fidelity test asserts the architect's shared section is byte-identical to the propose reference's; the reference-bearing lists in the fidelity, generated-surface, and config-profile fixtures gained architect. The orbit-skill-generation baseline defines `references` generically (no per-skill pin), so no delta was needed. Verified on disk after `orbit update --force`: `.claude/skills/orbit-architect/references/pr-resolution.md` exists.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/templates/workflows/pr-choreography.ts",
+          "test/core/templates/orbit-content-fidelity.test.ts",
+          "test/core/templates/orbit-generated-surface.test.ts",
+          "test/commands/config-profile.test.ts",
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "resolution": "A — emit the shared resolution section as references/pr-resolution.md on the architect skill.",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Emit PR_RESOLUTION_SECTION plus the four-axis query as references/pr-resolution.md on the architect skill and point the readout at it."
+          },
+          {
+            "label": "B",
+            "body": "Point the readout at the archive skill's pr-archive-tail reference by name (no surface change; cross-skill pointer)."
+          }
+        ],
+        "chosen": "A"
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "Design's mid-flight-adoption risk bullet is inaccurate for this repo: the program branch is named by doc stem, and `d-arc` is not `d-arc-arbitered-flow`",
+      "marker_source": "external",
+      "file": "orbit/changes/d6-pr-lifecycle/design.md",
+      "line": 178,
+      "classification": "trivial_fix",
+      "action": "The Risks bullet now states adoption covers only a branch already carrying the stem name: enabling per-architecture here would not adopt `d-arc` — phase 1 would create `d-arc-arbitered-flow` off the resolved default, cutting the worktree to main's tree; adoption needs a rename or the deferred override. It also names the per-proposal consequence: a standalone change proposed from `d-arc` gets its branch cut from `origin/main`. The proposal's Dogfood bullet gained the matching caveat (run the dogfood once main carries the d-arc work, or from a checkout whose default is the intended base) — an operational note the user should read before exit criterion 1.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Surface the HEAD-mismatch observation at archive ENTRY, not only in the post-move tail",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/pr-choreography.ts",
+      "line": 251,
+      "classification": "trivial_fix",
+      "action": "Archive Step 5.45 (read-only preflight) now also observes whether HEAD's branch equals `pr_attachment.branch` and, on mismatch, says so in the consent preview when one fires and otherwise as one line BEFORE any archive write, naming both branches — so the user can switch first instead of carrying uncommitted sync/move/emit writes across a `git switch`. The reference's HEAD precondition notes the early observation and remains the guard.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/templates/workflows/archive-change.ts",
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Define \"this change's own artifact commits\" for per-proposal compatibility",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/pr-choreography.ts",
+      "line": 105,
+      "classification": "trivial_fix",
+      "action": "Step 5's per-proposal compatibility is now a PATH test, never a commit-message test: every path `git diff --name-only <remote>/<default>...<branch>` lists is under `orbit/changes/<change-name>/` (or a deletion under `orbit/explore/<change-name>/`); any other path is a collision, skip naming the foreign path. The transcription replaces the subject-contains-branch heuristic with the same diff filter and names the first foreign path in its note; the harness collision case asserts the named path (`unrelated.md`).",
+      "ripple_cascade": {
+        "applied": [
+          "test/integration/pr-lifecycle/phase1.ts",
+          "test/integration/pr-lifecycle/phase1.test.ts",
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Propose's commit-scope prohibition on directory prefixes is stricter than the archive's, for the same kind of orbit-created directory",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/pr-choreography.ts",
+      "line": 132,
+      "classification": "trivial_fix",
+      "action": "The propose commit scope is now an explicit file set — proposal.md, design.md, tasks.md, every specs/<capability>/spec.md, `.openspec.yaml` (named with the reason: it carries the stamped base fingerprints), the moved staging material (explore.md, sketches, the moved `.orbit-runs/` trail files — listed), and the staging-directory deletions — with the `-A` / bare-prefix prohibition kept. Chose the explicit list over a symmetric prefix exception because the two forgettable files are exactly the ones a prefix would silently include or a hurried enumeration would miss; naming them is the safer form.",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Step 5.8 echo is unspecified for the attached-but-positively-invalidated archive",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/archive-change.ts",
+      "line": 389,
+      "classification": "trivial_fix",
+      "action": "Step 5.8 gained the clause: after a tail whose PR half was SKIPPED on positive invalidation (commit and push landed; rewrite/append and flip did not), name the specific reason and that any action on that pull request is the user's.",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "11 of 12 resolved, 1 stale-suppressed with evidence (the CRITICAL both externals shared, closed by the Codex walk); 0 unresolved markers in scope. Three decision-lane findings ratified in chat as option A each: PR titles and the program body at birth are now specified (titles once, adapted on both paths); the attachment record is committed and pushed as the propose seam's final act so a fresh checkout can never strand a draft PR; the architect skill ships the shared resolution algorithm as references/pr-resolution.md, byte-identical to the seams. Eight obvious fixes: the Position paragraphs' phase labels corrected and pinned by test (a regression from walk 10); stage-entry append is read-append-write in the reference and the spec; reference step 6 (remote-ahead fast-forward / diverged skip) transcribed with two harness cases and the tail-side task clauses rescoped honestly; the mid-flight-adoption bullet corrected with the dogfood base caveat carried into the proposal; the early HEAD-mismatch observation at archive preflight; own-artifact-commits as a path test in reference, transcription, and harness; the propose commit set enumerated explicitly; the Step 5.8 echo for positive invalidation. 2000 -> 2004 tests green across 91 files; four templates' parity hashes re-pinned (eight lines); local surface refreshed; strict-valid; fingerprints 5/5. Working tree left uncommitted.",
+  "iteration": 12,
+  "next_recommended": "/orbit:review --as system d6-pr-lifecycle"
+}

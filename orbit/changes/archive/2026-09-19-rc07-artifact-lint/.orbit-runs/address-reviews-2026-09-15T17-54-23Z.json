@@ -1,0 +1,428 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-15T17:54:23Z",
+  "change": "rc07-artifact-lint",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "source": "internal-review",
+  "source_path": "orbit/changes/rc07-artifact-lint/.orbit-runs/review-proposal-2026-09-15T17-29-37Z.json",
+  "source_command": "review",
+  "source_token": "2026-09-15T17-29-37Z",
+  "walk_mode": "walk",
+  "walk_mode_source": "default",
+  "input_findings_summary": "14 findings from the first fresh proposal-mode pass: 2 CRITICAL, 8 WARNING, 4 SUGGESTION.",
+  "pushback_verification": "All 14 verified against current state before any edit; zero stale. The sharp claims were re-verified independently rather than taken from the report: the live rulings index carries ten `R-crc-N` entries against a doc stem of `clean-up-review-cycle` (finding 1 holds); the four conforming in-backtick markers are at the cited sites in design.md, proposal.md and explore.md (finding 2 holds); `README_OLD.md` and `adopter-report-openspec-to-orbit-dir.md` are both tracked (finding 4); `docs/cli.md`'s validate flags table has no `--sources` row (finding 13); the measured file domain is 50 after the declared exclusions against the charter's claimed 61, and the real stage count is 18 against the charter's example of 17 (finding 11). Edits were applied only after every anchor in the edit set was verified in a read-only pass and counted — the ENUMERATE move applied to the edit set itself, after three aborted multi-edit scripts earlier in this program. Correction note: this is the SECOND time in this program that a walk's resolution titles were paraphrased rather than copied verbatim, so the fix this time is mechanical — entries are generated FROM the review emit's findings array, which makes the paraphrase unrepresentable rather than merely discouraged.",
+  "resolution_summary": {
+    "resolved": 14,
+    "stale": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "finding": 1,
+      "severity": "CRITICAL",
+      "title": "architecture.ruling-count's grammar matches nothing in the doc it was earned by, and the dogfood span passes anyway",
+      "file": "orbit/changes/rc07-artifact-lint/design.md",
+      "line": 106,
+      "outcome": "resolved",
+      "lane": "decision",
+      "action": "Ratified option B — the prefix is a DECLARED registry parameter (`prefix: R-crc`), never derived from the doc stem. Spec requirement 1 gains the v1 source table with the grammar and a malformed-source scenario (zero matches under a declared prefix FAILS, never counts zero); design D3 records the correction and the reason a derivation is inference; task 1.1 takes `(doc, prefix)` and tests the wrong-prefix malformed path. The reviewer's compounding case is closed by construction: the dogfood marks the range ENDPOINT alone, not `R-crc-1..10`, so the span text is exactly the count.",
+      "ratified_via": "chat",
+      "resolution": "Option B (declared prefix), plus: the source emits the COUNT and the marked span is drawn tight around the range endpoint, since count and highest-id coincide only while ids stay contiguous.",
+      "recommendation_fork": {
+        "source": "structured",
+        "options_presented": [
+          "A — prefix-agnostic",
+          "B — declared prefix"
+        ],
+        "ratified": "B"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+          "orbit/changes/rc07-artifact-lint/design.md",
+          "orbit/changes/rc07-artifact-lint/tasks.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "reason": "architecture doc — stage declarations and charters belong to /orbit:architect (ratified tier boundary); recorded in design.md's charter-divergence table and recommended by task 5.4"
+          },
+          {
+            "path": "orbit/specs/orbit-conventions/spec.md",
+            "reason": "baseline spec; resolved instead by an ownership sentence in orbit-source-lint's first requirement rather than a second MODIFIED capability"
+          }
+        ]
+      }
+    },
+    {
+      "finding": 2,
+      "severity": "CRITICAL",
+      "title": "Inertness covers fenced blocks but not inline code spans, so the change's own artifacts break the check it ships",
+      "file": "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+      "line": 26,
+      "outcome": "resolved",
+      "lane": "decision",
+      "action": "Ratified option A — a marker inside an inline code span is INERT alongside fenced blocks and non-matching comments. Spec requirement 2 states the three inert cases and why the third is required; the syntax-example scenario covers a conforming opener OR closer in backticks. Design D4b names the cost the reviewer flagged: markdown-fence.ts is line-based and fence-only, so task 2.2 carries inline-backtick-span tracking explicitly. Option B (anchor the opener to line start) was rejected because it forbids mid-sentence marking — which finding 1's endpoint span requires. The change's own four in-backtick markers become the fixtures in task 5.2.",
+      "ratified_via": "chat",
+      "resolution": "Option A (skip inline code spans); option B rejected on the ground that it would outlaw this change's own dogfood.",
+      "recommendation_fork": {
+        "source": "structured",
+        "options_presented": [
+          "A — skip inline code spans",
+          "B — anchor the opener"
+        ],
+        "ratified": "A"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+          "orbit/changes/rc07-artifact-lint/design.md",
+          "orbit/changes/rc07-artifact-lint/tasks.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "reason": "architecture doc — stage declarations and charters belong to /orbit:architect (ratified tier boundary); recorded in design.md's charter-divergence table and recommended by task 5.4"
+          },
+          {
+            "path": "orbit/specs/orbit-conventions/spec.md",
+            "reason": "baseline spec; resolved instead by an ownership sentence in orbit-source-lint's first requirement rather than a second MODIFIED capability"
+          }
+        ]
+      }
+    },
+    {
+      "finding": 3,
+      "severity": "WARNING",
+      "title": "Spec and design disagree on the registry file's top-level shape",
+      "file": "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+      "line": 11,
+      "outcome": "resolved",
+      "lane": "obvious-fix",
+      "action": "Adopted the `sources:` wrapper as the single shape, with the rationale (a later top-level key becomes an addition rather than a format break). Spec requirement 1 text + its scenario, design D2's YAML block, and task 4.1 now agree verbatim.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+          "orbit/changes/rc07-artifact-lint/design.md",
+          "orbit/changes/rc07-artifact-lint/tasks.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "reason": "architecture doc — stage declarations and charters belong to /orbit:architect (ratified tier boundary); recorded in design.md's charter-divergence table and recommended by task 5.4"
+          },
+          {
+            "path": "orbit/specs/orbit-conventions/spec.md",
+            "reason": "baseline spec; resolved instead by an ownership sentence in orbit-source-lint's first requirement rather than a second MODIFIED capability"
+          }
+        ]
+      }
+    },
+    {
+      "finding": 4,
+      "severity": "WARNING",
+      "title": "The spec's exclusion table drops the HISTORICAL category its own explore and charter declare",
+      "file": "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+      "line": 68,
+      "outcome": "resolved",
+      "lane": "obvious-fix",
+      "action": "Added the HISTORICAL row to the spec's exclusion table with its reason, noting it carries the only glob-shaped entries (`README_OLD.md`, `adopter-report-*.md`) and that both remain decidable by path. Both files verified tracked.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+          "orbit/changes/rc07-artifact-lint/design.md",
+          "orbit/changes/rc07-artifact-lint/tasks.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "reason": "architecture doc — stage declarations and charters belong to /orbit:architect (ratified tier boundary); recorded in design.md's charter-divergence table and recommended by task 5.4"
+          },
+          {
+            "path": "orbit/specs/orbit-conventions/spec.md",
+            "reason": "baseline spec; resolved instead by an ownership sentence in orbit-source-lint's first requirement rather than a second MODIFIED capability"
+          }
+        ]
+      }
+    },
+    {
+      "finding": 5,
+      "severity": "WARNING",
+      "title": "Substring containment silently passes a stale span whose source value is a substring of the stale text",
+      "file": "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+      "line": 26,
+      "outcome": "resolved",
+      "lane": "obvious-fix",
+      "action": "Added a stated-residual paragraph to the containment requirement: a stale span CONTAINING the current value passes (`9` inside `19`, `0` inside `R-crc-1..10`). Mitigation is authorial and is a RECORD — draw spans tight — and a token-boundary rule is explicitly NOT introduced, since deciding where a figure's token ends in prose is the inference this capability avoids.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+          "orbit/changes/rc07-artifact-lint/design.md",
+          "orbit/changes/rc07-artifact-lint/tasks.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "reason": "architecture doc — stage declarations and charters belong to /orbit:architect (ratified tier boundary); recorded in design.md's charter-divergence table and recommended by task 5.4"
+          },
+          {
+            "path": "orbit/specs/orbit-conventions/spec.md",
+            "reason": "baseline spec; resolved instead by an ownership sentence in orbit-source-lint's first requirement rather than a second MODIFIED capability"
+          }
+        ]
+      }
+    },
+    {
+      "finding": 6,
+      "severity": "WARNING",
+      "title": "The dogfood targets a live capability-count and schema-version claim in CLAUDE.md that does not exist",
+      "file": "orbit/changes/rc07-artifact-lint/tasks.md",
+      "line": 25,
+      "outcome": "resolved",
+      "lane": "decision",
+      "action": "Ratified option A — the dogfood WRITES the present tense it then marks. Task 4.2 rewritten: add ONE current-state line to CLAUDE.md (live stage count, rulings endpoint, baseline capability count, schema version) and mark each figure; mark NO figure inside an archived-stage narrative. Spec requirement 3 gains the general rule the finding exposed — the path boundary separates living files from records BETWEEN files, but WITHIN a file the AUTHOR'S MARKER is the boundary — plus a scenario for a historical figure in a living file. Design D6b records why this is the finding rather than a workaround.",
+      "ratified_via": "chat",
+      "resolution": "Option A — add a marked current-state line to CLAUDE.md. Options B (narrow the dogfood to 2 of 4 sources) and C (drop two sources from v1) were presented and not taken.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+          "orbit/changes/rc07-artifact-lint/design.md",
+          "orbit/changes/rc07-artifact-lint/tasks.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "reason": "architecture doc — stage declarations and charters belong to /orbit:architect (ratified tier boundary); recorded in design.md's charter-divergence table and recommended by task 5.4"
+          },
+          {
+            "path": "orbit/specs/orbit-conventions/spec.md",
+            "reason": "baseline spec; resolved instead by an ownership sentence in orbit-source-lint's first requirement rather than a second MODIFIED capability"
+          }
+        ]
+      }
+    },
+    {
+      "finding": 7,
+      "severity": "WARNING",
+      "title": "The registry requirement specifies no malformed-input behavior",
+      "file": "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+      "line": 5,
+      "outcome": "resolved",
+      "lane": "obvious-fix",
+      "action": "Added a malformed-registry scenario covering unparseable YAML, a non-map `sources:`, a scalar entry, and a duplicate source name — failing loudly and NAMED as unreachable by the absent-file silence, closing the swallow-it temptation the reviewer identified. Requirement text now names missing-`engine:`, missing required parameter, unknown key, and name uniqueness.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+          "orbit/changes/rc07-artifact-lint/design.md",
+          "orbit/changes/rc07-artifact-lint/tasks.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "reason": "architecture doc — stage declarations and charters belong to /orbit:architect (ratified tier boundary); recorded in design.md's charter-divergence table and recommended by task 5.4"
+          },
+          {
+            "path": "orbit/specs/orbit-conventions/spec.md",
+            "reason": "baseline spec; resolved instead by an ownership sentence in orbit-source-lint's first requirement rather than a second MODIFIED capability"
+          }
+        ]
+      }
+    },
+    {
+      "finding": 8,
+      "severity": "WARNING",
+      "title": "Span-pairing edges live in the design but not in the requirement",
+      "file": "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+      "line": 57,
+      "outcome": "resolved",
+      "lane": "obvious-fix",
+      "action": "Promoted D4's pairing rule into the requirement as a five-row CLOSED table (opener/closer, second opener, orphan closer, opener-at-EOF, empty span) with the outcome stated per row, plus an orphan-closer scenario the artifacts previously left undefined in both places. Placed before the scenario block so requirement structure stays well-formed.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+          "orbit/changes/rc07-artifact-lint/design.md",
+          "orbit/changes/rc07-artifact-lint/tasks.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "reason": "architecture doc — stage declarations and charters belong to /orbit:architect (ratified tier boundary); recorded in design.md's charter-divergence table and recommended by task 5.4"
+          },
+          {
+            "path": "orbit/specs/orbit-conventions/spec.md",
+            "reason": "baseline spec; resolved instead by an ownership sentence in orbit-source-lint's first requirement rather than a second MODIFIED capability"
+          }
+        ]
+      }
+    },
+    {
+      "finding": 9,
+      "severity": "WARNING",
+      "title": "The arc doc's rc07 stage declaration is stale against three decisions this change made",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 881,
+      "outcome": "resolved",
+      "lane": "obvious-fix",
+      "action": "NOT edited — the stage declaration is /orbit:architect's tier. All three divergences (Touches:, the audit-drift clause, exit criterion 3's 'live commands') are recorded in a new design.md charter-divergence table with the reason for each, and task 5.4 RECOMMENDS the architect amendment without performing it.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+          "orbit/changes/rc07-artifact-lint/design.md",
+          "orbit/changes/rc07-artifact-lint/tasks.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "reason": "architecture doc — stage declarations and charters belong to /orbit:architect (ratified tier boundary); recorded in design.md's charter-divergence table and recommended by task 5.4"
+          },
+          {
+            "path": "orbit/specs/orbit-conventions/spec.md",
+            "reason": "baseline spec; resolved instead by an ownership sentence in orbit-source-lint's first requirement rather than a second MODIFIED capability"
+          }
+        ]
+      }
+    },
+    {
+      "finding": 10,
+      "severity": "WARNING",
+      "title": "Domain membership flips on `git add`, and neither the non-git nor the untracked case reaches a requirement",
+      "file": "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+      "line": 64,
+      "outcome": "resolved",
+      "lane": "obvious-fix",
+      "action": "Requirement 3 now states both consequences of git being the authority — untracked files are outside the domain until added (the tree lints differently before and after `git add`) and a non-git checkout degrades to an EMPTY domain with a named reason, exit zero — each with its own scenario so both are testable.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+          "orbit/changes/rc07-artifact-lint/design.md",
+          "orbit/changes/rc07-artifact-lint/tasks.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "reason": "architecture doc — stage declarations and charters belong to /orbit:architect (ratified tier boundary); recorded in design.md's charter-divergence table and recommended by task 5.4"
+          },
+          {
+            "path": "orbit/specs/orbit-conventions/spec.md",
+            "reason": "baseline spec; resolved instead by an ownership sentence in orbit-source-lint's first requirement rather than a second MODIFIED capability"
+          }
+        ]
+      }
+    },
+    {
+      "finding": 11,
+      "severity": "SUGGESTION",
+      "title": "'61 today' and 'stages = 17' are themselves stale restated figures, in the charter for the stage that fixes stale restated figures",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 864,
+      "outcome": "resolved",
+      "lane": "obvious-fix",
+      "action": "NOT edited — same architect tier as finding 9. Measured values recorded in the design's charter-divergence section (50 after the declared exclusions, 48 including HISTORICAL; real stage count 18) and named in task 5.4.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+          "orbit/changes/rc07-artifact-lint/design.md",
+          "orbit/changes/rc07-artifact-lint/tasks.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "reason": "architecture doc — stage declarations and charters belong to /orbit:architect (ratified tier boundary); recorded in design.md's charter-divergence table and recommended by task 5.4"
+          },
+          {
+            "path": "orbit/specs/orbit-conventions/spec.md",
+            "reason": "baseline spec; resolved instead by an ownership sentence in orbit-source-lint's first requirement rather than a second MODIFIED capability"
+          }
+        ]
+      }
+    },
+    {
+      "finding": 12,
+      "severity": "SUGGESTION",
+      "title": "orbit-conventions owns the repo's marker conventions and will not know about the third one",
+      "file": "orbit/specs/orbit-conventions/spec.md",
+      "line": 32,
+      "outcome": "resolved",
+      "lane": "obvious-fix",
+      "action": "Took the cheap half: an ownership sentence in orbit-source-lint's first requirement stating that the `src:` family is owned here and deliberately NOT declared in orbit-conventions, with the one-mechanism reason. A second MODIFIED capability was declined — a cross-reference is not a split, and the baseline spec is an OUT-category ripple.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+          "orbit/changes/rc07-artifact-lint/design.md",
+          "orbit/changes/rc07-artifact-lint/tasks.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "reason": "architecture doc — stage declarations and charters belong to /orbit:architect (ratified tier boundary); recorded in design.md's charter-divergence table and recommended by task 5.4"
+          },
+          {
+            "path": "orbit/specs/orbit-conventions/spec.md",
+            "reason": "baseline spec; resolved instead by an ownership sentence in orbit-source-lint's first requirement rather than a second MODIFIED capability"
+          }
+        ]
+      }
+    },
+    {
+      "finding": 13,
+      "severity": "SUGGESTION",
+      "title": "--sources gets no documentation row and the --all --json shape change is unstated",
+      "file": "orbit/changes/rc07-artifact-lint/tasks.md",
+      "line": 18,
+      "outcome": "resolved",
+      "lane": "obvious-fix",
+      "action": "Added task 5.3 for the `docs/cli.md` validate-flags row (scoped so it does not widen into the deferred branding pass) and design D5b stating exactly what `--all --json` gains — `source_findings` and `source_coverage` — and that D6's byte-identical promise is scoped to the no-registry case only.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+          "orbit/changes/rc07-artifact-lint/design.md",
+          "orbit/changes/rc07-artifact-lint/tasks.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "reason": "architecture doc — stage declarations and charters belong to /orbit:architect (ratified tier boundary); recorded in design.md's charter-divergence table and recommended by task 5.4"
+          },
+          {
+            "path": "orbit/specs/orbit-conventions/spec.md",
+            "reason": "baseline spec; resolved instead by an ownership sentence in orbit-source-lint's first requirement rather than a second MODIFIED capability"
+          }
+        ]
+      }
+    },
+    {
+      "finding": 14,
+      "severity": "SUGGESTION",
+      "title": "architecture.stage-count is ambiguous about malformed stage headings",
+      "file": "orbit/changes/rc07-artifact-lint/design.md",
+      "line": 99,
+      "outcome": "resolved",
+      "lane": "obvious-fix",
+      "action": "Pinned the source to `parseArchitectureDoc(...).stages.length` (well-formed only) in design D3 and task 1.2, and stated that a MALFORMED or LEGACY doc ERRORS naming the doc rather than emitting a count that quietly omits a near-miss — the same failure mode as finding 1, closed the same way.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+          "orbit/changes/rc07-artifact-lint/design.md",
+          "orbit/changes/rc07-artifact-lint/tasks.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "reason": "architecture doc — stage declarations and charters belong to /orbit:architect (ratified tier boundary); recorded in design.md's charter-divergence table and recommended by task 5.4"
+          },
+          {
+            "path": "orbit/specs/orbit-conventions/spec.md",
+            "reason": "baseline spec; resolved instead by an ownership sentence in orbit-source-lint's first requirement rather than a second MODIFIED capability"
+          }
+        ]
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "CORRECTIVE RE-EMIT of the 2026-09-15T17-53-44Z walk, which resolved all 14 findings but keyed its entries on paraphrased titles with no `file`, so clause (b)'s (title, file) coverage check could not match them and the gate correctly reported the pass unresolved. No resolution changed; the entries are now keyed byte-exactly off the review emit's own findings array rather than retyped. The original record stays on the trail unmodified. All 14 findings resolved: 11 through the obvious-fix lane, 3 through the decision lane with chat ratification. Two resolutions are RECORDED rather than applied — both edits land on the architecture doc, which belongs to /orbit:architect, and task 5.4 recommends them. The change gained no tasks (18, inside R-crc-1's ceiling) because every decision-lane resolution folded into an existing task; it gained one spec table, five scenarios, three design sections and a stated residual.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal rc07-artifact-lint"
+}

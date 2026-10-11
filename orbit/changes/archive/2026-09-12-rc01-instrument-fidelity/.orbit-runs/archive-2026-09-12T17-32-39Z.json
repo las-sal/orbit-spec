@@ -1,0 +1,44 @@
+{
+  "command": "archive",
+  "timestamp": "2026-09-12T17:32:39Z",
+  "change": "rc01-instrument-fidelity",
+  "kind": "lifecycle",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "Archived rc01-instrument-fidelity to orbit/changes/archive/2026-09-12-rc01-instrument-fidelity/ — the first stage of clean-up-review-cycle. The cycle's test instruments now DERIVE from a recorded real-CLI contract rather than remembered structure: gh-contract.json captured from gh 2.91.0 by `npm run capture:gh` (seven commands with usage shapes and per-flag {long, short, takes_value, value_type}, both error-rule strings verbatim, an availability probe, two orbit-side qualification rules), ONE CommonJS validator shared by the harness stub and the docs sweep, and a schema-table parity test deriving each schema reference's AI-supplied field set from every full-record block AND its field-note prose. Two ADDED requirements synced (orbit-pr-lifecycle 9→10, orbit-emit-composition 7→8); baseline stays at 20 capabilities. Archived through a recorded review-system gate override: the reason counts the external pass's 3 CRITICAL, all closed with re-run reproductions, and the two findings since were self-found and closed with measurements. 2041 tests green across 93 files, green again with no host gh on PATH.",
+  "archive_path": "orbit/changes/archive/2026-09-12-rc01-instrument-fidelity/",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": [
+      "orbit-pr-lifecycle",
+      "orbit-emit-composition"
+    ],
+    "added": 2,
+    "modified": 0,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
+  "user_decision": "proceeded_with_no_critical",
+  "consent": "user-invoked",
+  "warnings": [
+    "Pre-archive audit (library mode, no separate emit): 0 CRITICAL / 1 WARNING / 0 SUGGESTION — category 3 cross-doc: CLAUDE.md called rc01 'in flight', false once archived; rewritten in-flow to an ARCHIVED paragraph naming what shipped and the cycle it went through. Category 1 pattern set empty; category 4 clean with consent recorded on the apply emit; category 5 skipped silently (touchpoints.actual is null — no committed apply work at archive time); category 6 no staging explorations; categories 2 and 5's lens passes absent.",
+    "KNOWN DIVERGENCE carried forward by ratified decision (option B, 2026-09-12): the audit-drift schema reference documents the shape two archived requirements mandate (orbit-conventions' editorial-emit extensions and scenario keep findings_summary/finding_titles; orbit-run-summary-emit types categories_run as an object of named booleans) while the engine's payload table accepts a third. Reconciling three voices needs MODIFIED deltas against two more capabilities, past this stage's R-crc-1 size ceiling. Pinned as an EXACT six-key set in two assertions of the parity test and dated in the reference itself; owned by stage rc07 (artifact lint)."
+  ],
+  "gate_overridden": {
+    "gate": "review-system",
+    "state": "unpassed",
+    "reason": "latest independent pass carried 3 CRITICAL; cadence repeats external until none"
+  },
+  "next_recommended": "Change archived. Run /orbit:new or /orbit:explore to start the next change, or /orbit:audit-drift for a project-wide drift check."
+}

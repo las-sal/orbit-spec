@@ -1,0 +1,167 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-07T17:06:32Z",
+  "change": "rc18-walk-is-next",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc18-walk-is-next/.orbit-runs/review-proposal-2026-10-07T17-04-12Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-07T17-04-12Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 4
+  },
+  "pushback_verification": "All four verified at HEAD. The explore.md row sits at line 27, not the line 23 the pass cited; the claim holds.",
+  "resolution_summary": {
+    "resolved": 4,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "SUGGESTION",
+      "title": "Touchpoints still count five scenarios and one revised exit",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc18-walk-is-next/design.md",
+      "line": 141,
+      "classification": "trivial_fix",
+      "action": "Touchpoints now name the table's rows, the order's steps and the eight new scenarios, and say exit (2) revised and exit (3) widened.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the table's rows and the five scenarios",
+          "exit (2) revised."
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc18-walk-is-next/design.md",
+            "text": "the eight new scenarios"
+          },
+          {
+            "path": "orbit/changes/rc18-walk-is-next/design.md",
+            "text": "exit (2) revised and exit (3) widened"
+          }
+        ],
+        "searched": [
+          "five scenarios",
+          "exit (2) revised"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The invoked-slot table's column and a preference scenario still say 'canonical next'",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc18-walk-is-next/specs/orbit-engine-gates/spec.md",
+      "line": 399,
+      "classification": "trivial_fix",
+      "action": "Renamed the invoked table's third column to 'slot's command'. Qualified both preference scenarios ('The preference changes only the presented command' and 'The default preference presents the pair command') with 'no pass is unresolved or unwalked'. The half-landed-pair scenario stays as written, since the open pair is the order's first step.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "| state at the bound | reason | canonical next |"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc18-walk-is-next/specs/orbit-engine-gates/spec.md",
+            "text": "| state at the bound | reason | slot's command |"
+          },
+          {
+            "path": "orbit/changes/rc18-walk-is-next/specs/orbit-engine-gates/spec.md",
+            "text": "no pass is unresolved or unwalked, and `review_preference` maps that gate to"
+          },
+          {
+            "path": "orbit/changes/rc18-walk-is-next/specs/orbit-engine-gates/spec.md",
+            "text": "no pair launch is open, no pass is unresolved or unwalked, and `review_preference` is absent"
+          }
+        ],
+        "searched": [
+          "canonical next is"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "explore.md's D-rc18-5 Mechanism row still says an unpassed gate's next is unchanged",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc18-walk-is-next/explore.md",
+      "line": 23,
+      "classification": "trivial_fix",
+      "action": "Took the design-record option (settled under R-crc-3; explore.md stays as the exploration recorded it, the same call walk 1 made). design.md's Mechanism → artifacts record now says the proposal walk superseded D-rc18-5's unpassed row and that the spec table is the rule.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc18-walk-is-next/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc18-walk-is-next/design.md",
+            "text": "superseded one row of D-rc18-5's domain"
+          }
+        ],
+        "searched": [
+          "unchanged: its own canonical next"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": ".openspec.yaml changed by the walk is outside every entry's edit record",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc18-walk-is-next/.openspec.yaml",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "Recorded here: the change to .openspec.yaml after the external return is the third base fingerprint, stamped add-missing-only by `orbit fingerprint` when walk 1 added `The first review slot covers what the user invoked` to the delta. No edit.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc18-walk-is-next/.openspec.yaml",
+            "text": "The first review slot covers what the user invoked"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "final_assessment": "Four of four resolved: the Touchpoints counts, the invoked-slot column and two scenarios, the design record of D-rc18-5's superseded row, and the fingerprint stamp named.",
+  "iteration": 3,
+  "next_recommended": "/orbit:apply rc18-walk-is-next — user-invoked",
+  "ripple_misses": 0
+}

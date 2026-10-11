@@ -1,0 +1,314 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-09T16:28:05Z",
+  "change": "rc05b-git-grammar",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc05b-git-grammar/.orbit-runs/review-proposal-2026-10-09T16-06-45Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-09T16-06-45Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 6,
+    "suggestion": 2
+  },
+  "pushback_verification": "All eight verified against current state. F5 measured over every shell-fence line and tool-headed inline span: one unquoted ( (external-handoff.md:151). F1, F2 and F4 rest on real-git reproductions the reviewer ran; the probe table still reads as written.",
+  "resolution_summary": {
+    "resolved": 5,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 3
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The -h probe row cannot classify a value-taking flag: the flag consumes -h and the command runs",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md",
+      "line": 40,
+      "classification": "unresolvable",
+      "action": "escalated: closing it needs a new probe form for value-taking flags under the -h strategy (a stand-in value before -h, value-taking decided first), which no spike has measured and no review has read",
+      "evidence": "re-read orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md; the reproduction stands against the probe table as written",
+      "remedy": "redesign",
+      "routed_to": "orbit/changes/rc05b-git-grammar/explore.md",
+      "outcome": "escalated"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The run-strategy row records correct surface flags REJECTED on commands that print usage without a positional (rev-list --count, check-ref-format --branch)",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md",
+      "line": 41,
+      "classification": "unresolvable",
+      "action": "escalated: closing it needs a per-command positional fixture and a rule separating a missing-positional usage page from flag rejection, unmeasured and unreviewed mechanism",
+      "evidence": "re-read orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md; the reproduction stands against the probe table as written",
+      "remedy": "redesign",
+      "routed_to": "orbit/changes/rc05b-git-grammar/explore.md",
+      "outcome": "escalated"
+    },
+    {
+      "severity": "WARNING",
+      "title": "D3's `=value` rule cannot be implemented from D3's own contract shape, and the validator says nothing about `=value` on a no-value flag",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc05b-git-grammar/design.md",
+      "line": 68,
+      "classification": "decision_required",
+      "action": "descoped (Sal: A): the validator accepts --name=value on any accepted long flag; the post-capture =value on a no-value flag is a named limit in the ADDED requirement; D3 and D5 say so",
+      "ratified_via": "chat",
+      "resolution": "A — descope: drop D3's promise, state the limit in the validator paragraph, record no per-flag forms",
+      "evidence": "design.md D3 promised a post-capture =value fails; the flag entry {name, takes_value, accepted, message?} cannot distinguish it, as the reproduction shows",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "It fails as an unrecorded form, asking for re-capture.",
+          "probing the surface's own `=value` form covers the rest"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md",
+            "text": "accept `--name=value` on any accepted long flag"
+          },
+          {
+            "path": "orbit/changes/rc05b-git-grammar/design.md",
+            "text": "descoped at the proposal walk rather than recording per-flag forms"
+          }
+        ],
+        "searched": [
+          "=value",
+          "unrecorded form",
+          "attached"
+        ],
+        "scope": [
+          "orbit/changes/rc05b-git-grammar/proposal.md",
+          "orbit/changes/rc05b-git-grammar/tasks.md"
+        ],
+        "kept": [
+          {
+            "path": "orbit/changes/rc05b-git-grammar/explore.md",
+            "why": "the exploration record, moved unchanged at propose; it quotes the mechanism as explored, and the redesign entries route back to it"
+          }
+        ]
+      },
+      "remedy": "descope",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "No rule decides whether a git segment's second word is a subcommand (worktree remove) or a positional (push <remote>)",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md",
+      "line": 39,
+      "classification": "unresolvable",
+      "action": "escalated: closing it needs an empirical command-key discovery procedure (or a declared command-group rule with its limits), unmeasured and unreviewed mechanism",
+      "evidence": "re-read orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md; the reproduction stands against the probe table as written",
+      "remedy": "redesign",
+      "routed_to": "orbit/changes/rc05b-git-grammar/explore.md",
+      "outcome": "escalated"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The `(` refusal applies to every shell-fence line, and today's surface carries one: rc05's orbit sweep and exit (1) go red",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md",
+      "line": 147,
+      "classification": "decision_required",
+      "action": "applied A (Sal): a ( opening a segment and its matching ) are grouping, stripped; $(, backtick and ;; stay refused; measured: the only unquoted ( on any shell-fence line or tool-headed span is external-handoff.md:151",
+      "ratified_via": "chat",
+      "resolution": "A — strip subshell grouping; refuse substitution only",
+      "evidence": "probe over every generated surface: external-handoff.md:151 is the one unquoted ( (others quoted or in # comments)",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc05b-git-grammar/design.md",
+          "orbit/changes/rc05b-git-grammar/tasks.md",
+          "orbit/changes/rc05b-git-grammar/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "`$(`, backtick, `(` or `;;`",
+          "backtick or `(` fails extraction",
+          "substitution and grouping are refused, never parsed",
+          "grouping are refused rather than parsed."
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md",
+            "text": "grouping, stripped; the commands inside are segments like any other"
+          },
+          {
+            "path": "orbit/changes/rc05b-git-grammar/design.md",
+            "text": "so the runner launch's subshell in `external-handoff.md` yields ordinary segments"
+          }
+        ],
+        "searched": [
+          "`(`",
+          "grouping",
+          "substitution",
+          "$("
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/rc05b-git-grammar/explore.md",
+            "why": "the exploration record, moved unchanged at propose; it quotes the mechanism as explored, and the redesign entries route back to it"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Which inline spans the operator split reads is unstated: keeping the `starts with <tool> ` gate contradicts the FALSIFY claim; dropping it fails extraction on prose spans",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc05b-git-grammar/tasks.md",
+      "line": 4,
+      "classification": "decision_required",
+      "action": "applied A (Sal): extractInline keeps rc05's gate; within a tool-headed span every segment of the tool is extracted; a tool command after an operator in a span beginning with another word joins the places residual",
+      "ratified_via": "chat",
+      "resolution": "A — keep the begins-with-tool gate; name the rest in the places residual",
+      "evidence": "test/helpers/surface-snippets.ts extractInline skips a span unless it starts with the tool and a space",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md",
+          "orbit/changes/rc05b-git-grammar/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "in an extracted line or span |"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md",
+            "text": "an inline span beginning with any other word is not read"
+          },
+          {
+            "path": "orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md",
+            "text": "a command after an operator in a single-backtick span that begins with another word"
+          },
+          {
+            "path": "orbit/changes/rc05b-git-grammar/design.md",
+            "text": "`extractInline` keeps rc05's gate"
+          }
+        ],
+        "searched": [
+          "inline span",
+          "extractInline",
+          "begins with"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/rc05b-git-grammar/explore.md",
+            "why": "the exploration record, moved unchanged at propose; it quotes the mechanism as explored, and the redesign entries route back to it"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "\"No generated-surface text\" conflicts with task 2.4's template fixes",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc05b-git-grammar/proposal.md",
+      "line": 66,
+      "classification": "trivial_fix",
+      "action": "qualified the non-goal in proposal.md and design.md: generated-surface text changes only for a flag the capture records rejected by real git (task 2.4)",
+      "evidence": "proposal.md:66 and design.md:32 excluded all surface text while task 2.4 directs template fixes",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc05b-git-grammar/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "no generated-surface text, and no adopter-visible change",
+          "- Any generated-surface text, engine code, or adopter-visible behaviour."
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc05b-git-grammar/proposal.md",
+            "text": "Generated-surface text changes only where the capture records a surface"
+          },
+          {
+            "path": "orbit/changes/rc05b-git-grammar/design.md",
+            "text": "except a template fix for a surface flag the"
+          }
+        ],
+        "searched": [
+          "generated-surface text",
+          "surface text"
+        ],
+        "scope": [
+          "orbit/changes/rc05b-git-grammar/tasks.md"
+        ],
+        "kept": [
+          {
+            "path": "orbit/changes/rc05b-git-grammar/explore.md",
+            "why": "the exploration record, moved unchanged at propose; it quotes the mechanism as explored, and the redesign entries route back to it"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The bare-name table speaks of spans, but after the split it is a per-segment question",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md",
+      "line": 16,
+      "classification": "trivial_fix",
+      "action": "stated the bare-name rule per segment of an inline span and renamed the table rows to segments",
+      "evidence": "the table spoke of spans while D1 emits per segment",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "| an inline span whose tokens resolve to a key"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md",
+            "text": "rule SHALL apply to each segment of an inline span"
+          }
+        ],
+        "searched": [
+          "bare-name",
+          "inline span whose"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/rc05b-git-grammar/explore.md",
+            "why": "the exploration record, moved unchanged at propose; it quotes the mechanism as explored, and the redesign entries route back to it"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Five of eight resolved: two by Sal's A on the decision lane (subshell grouping stripped; the inline gate kept with its residual named), one descoped (the =value promise becomes a named limit), two obvious fixes. Three escalated as an essential redesign of the capture's probe table (value-taking flags under -h, positional fixtures, command-key discovery), routed to the change's explore.md; this pass stays outstanding.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc05b-git-grammar",
+  "ripple_misses": 0
+}

@@ -1,0 +1,193 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-25T14:36:32Z",
+  "change": "bounded-closure-semantics",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "source": "from-file",
+  "source_path": "orbit/changes/bounded-closure-semantics/.orbit-runs/review-system-2026-09-25T14-18-36Z.json",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 5,
+    "suggestion": 4
+  },
+  "pushback_verification": "All 9 findings verified against the tree AFTER the external walk (address-reviews-2026-09-25T14-32-52Z): 2 stale — resolved by that walk with the parity test and the GFM clause as evidence; 7 still applied and were fixed.",
+  "resolution_summary": {
+    "resolved": 7,
+    "stale_suppressed": 2,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The onboard body still teaches a 5-section explore.md, and the residue grep cannot see the numeral spelling",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/onboard.ts",
+      "line": 79,
+      "classification": "trivial_fix",
+      "action": "onboard.ts Phase 1 sentence now reads 'a six-section convention (Premise / Mechanism / Decisions / Open questions / Considered & out / References)'; both orbit-onboard hash pins re-pinned; task 3.1's acceptance pattern widened to (five|5)[- ]sections? in the task, the design's exemption entry and the surface test's negative match; the widened grep over src/ returns exactly the five listed exemptions and nothing else.",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/templates/skill-templates-parity.test.ts",
+          "orbit/changes/bounded-closure-semantics/tasks.md",
+          "orbit/changes/bounded-closure-semantics/design.md",
+          "test/core/templates/orbit-generated-surface.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The spec-owned grammar and the body's copy already diverge on two production lines, with no parity instrument between them",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/explore.ts",
+      "line": 476,
+      "classification": "stale",
+      "action": "stale finding suppressed: resolved by the external walk's CRITICAL of the same shape (address-reviews-2026-09-25T14-32-52Z, resolution 1) — option A of this finding was the ratified direction: the two lines are aligned by writing each block once in the owning spec and deriving the body copy, and the generated-surface test 'owned productions and tables: the body carries byte-equal MIRRORS' asserts byte-equality of all three fences and both tables (passing, 2254 green).",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The BOUNDED production — the change's headline — has no conforming instance anywhere, so the fixture seam never exercises the residual slots",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/explore.ts",
+      "line": 544,
+      "classification": "decision_required",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Ship a second, minimal conforming entry in the same fenced exemplar block whose Closure is BOUNDED with both residual slots (the nine-move set itself is the natural candidate — its kind and method are already written), and extend the test to walk both entries so both branches of the production are asserted."
+          },
+          {
+            "label": "B",
+            "body": "Record in design.md Risks and the rc13b handoff that the BOUNDED production has no fixture and rc13b must construct one before its parser is trusted on that branch; leave the single exemplar as is."
+          }
+        ],
+        "chosen": "A"
+      },
+      "resolution": "A, taken as a METHOD call under R-crc-3 and Sal's 'walk them' delegation (no scope change: the exemplar block and the exploration are both this change's artifacts). The nine-move rule was a decision the change had made in design.md without an ID — the 'rule never written down' residual — so it is now a REAL entry, D-bcs-12, in the exploration (dated decision, Kind: rule) with a Mechanism entry whose Closure is BOUNDED and whose two residual slots carry the kind and method the spec already stated; the body's exemplar block carries D-bcs-3 and D-bcs-12 verbatim, and the test walks every entry in the block and asserts at least one CLOSED and one BOUNDED token, so the residual-slot branch runs on the shipped surface.",
+      "action": "Added D-bcs-12 (decision + BOUNDED Mechanism entry) to explore.md; body exemplar block now carries both entries verbatim; test walks all entries and requires both closure outcomes; proposal/design/spec/tasks say two exemplars.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/bounded-closure-semantics/explore.md",
+          "src/core/templates/workflows/explore.ts",
+          "test/core/templates/orbit-generated-surface.test.ts",
+          "orbit/changes/bounded-closure-semantics/specs/orbit-explore-modifications/spec.md",
+          "orbit/changes/bounded-closure-semantics/proposal.md",
+          "orbit/changes/bounded-closure-semantics/design.md",
+          "orbit/changes/bounded-closure-semantics/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The grammar is silent on GFM pipe escaping in Domain cells, the change's own artifact uses one, and the recorded edge lives only in an apply emit",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/bounded-closure-semantics/specs/orbit-conventions/spec.md",
+      "line": 51,
+      "classification": "stale",
+      "action": "stale finding suppressed: resolved by the external walk's WARNING of the same shape (address-reviews-2026-09-25T14-32-52Z, resolution 4) — the grammar's table line now carries 'cells follow GFM — \\| is a literal pipe, never a separator' in the owning spec and the mirrored body; the test's CELL_ROW is escape-aware and asserts D-bcs-8's exact row; design.md Risks names that row as rc13b's fixture.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The conclude record's properties are stated in full in both capabilities — the restatement the in-context walk fixed for two other rules and left here",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/bounded-closure-semantics/specs/orbit-explore-modifications/spec.md",
+      "line": 58,
+      "classification": "trivial_fix",
+      "action": "The conclude-verb paragraph keeps its ordered steps (the body's behaviour, which it owns) and replaces the record clauses with a pointer: 'What the record IS — the two tokens, what is written and what is not, the kept citation, the directory staying in place, and that conclude is no consent-marked seam — is orbit-conventions' concluded-outcome requirement; this requirement names it and does not restate it.' Reopening now points at that requirement's scenario.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The resume-in-place cell never reads the header of the change-directory file, though the KNOWN limit says a concluded file can reach one",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/explore.ts",
+      "line": 377,
+      "classification": "trivial_fix",
+      "action": "One sentence under the table's edge paragraph, in the owning spec and the body: the status-header production is read on the change-directory file too; a concluded header inside orbit/changes/<name>/explore.md (a name promoted without reopening) resolves as the third row — state the conclusion and its trigger, reopen only on the user's word — never as a silent resume.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/bounded-closure-semantics/specs/orbit-explore-modifications/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Step 4 of the conclude verb speaks in the present tense about a rung that does not exist, while the emit it fires recommends propose",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/explore.ts",
+      "line": 576,
+      "classification": "trivial_fix",
+      "action": "Step 4 rephrased in present terms (the emit's counts describe the concluded file; its next_recommended is the maturity grid's, count-derived, until the maturity-signal stage lands — the LAST record on a concluded trail carries a count-derived recommendation, stated so it is not a surprise); the KNOWN list names the trail's own terminal emit as where the orientation row reads its next line; the spec's conclude-verb paragraph says the same in one clause.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/bounded-closure-semantics/specs/orbit-explore-modifications/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Task 3.1 says the residue exemptions are listed in the design; the design says they are listed at task 3.1",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/bounded-closure-semantics/tasks.md",
+      "line": 43,
+      "classification": "trivial_fix",
+      "action": "The five exemptions (and the corrected sixth, onboard.ts:79) are listed ONCE, in design.md's retained-titles Risks entry; task 3.1 points there and does not restate them.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/bounded-closure-semantics/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Touchpoints omits the hash-pin file the apply emit says went red, and predicts a change-own path the engine excludes by rule",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/bounded-closure-semantics/design.md",
+      "line": 142,
+      "classification": "trivial_fix",
+      "action": "Touchpoints now names skill-templates-parity.test.ts (with the rc04c lesson stated) and onboard.ts, and drops the change-own explore.md line the engine excludes by rule; the boot readout's divergence is now empty (actual_unpredicted / predicted_unsatisfied both clear, the architecture doc having been touched by the R-crc-14 corollary).",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": "walk them — Sal, 2026-09-25, after ratifying the checked-mirror direction for the R-crc-14 CRITICAL in chat; method calls (R-crc-3) settled by the AI and recorded with rationale, no scope change taken.",
+  "final_assessment": "All 9 findings of the fresh system pass walked to zero: 2 stale (resolved by the external walk that preceded this one, with the parity test and the GFM clause as evidence), 6 obvious fixes, and one structured fork (the BOUNDED fixture) resolved as option A under the standing method delegation — the nine-move rule became a real entry, D-bcs-12, BOUNDED with both residual slots, and the body's exemplar block now shows both closure outcomes with the test walking every entry. The onboard body no longer teaches a five-section format; the residue pattern sees the numeral spelling; the conclude record is stated once; the concluded-header-in-change-directory edge is named; step 4 speaks in the present tense. Both explore and both onboard hash pins re-pinned. 2254 tests green; validate --sources 26/26 with rulings=14; fingerprints 5/5; explore.md conformance zero drift with nine entries; boot touchpoints divergence clear.",
+  "iteration": 4,
+  "next_recommended": "/orbit:review --as system bounded-closure-semantics"
+}

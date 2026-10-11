@@ -1,0 +1,38 @@
+{
+  "command": "review",
+  "timestamp": "2026-07-16T19:42:13Z",
+  "change": null,
+  "doc": "d-arc-arbitered-flow",
+  "mode": "architecture",
+  "reviewer_class": "in-context",
+  "iteration": 1,
+  "depth": "full",
+  "scorecard": {
+    "correctness": { "critical": 0, "warning": 0, "suggestion": 0 },
+    "completeness": { "critical": 0, "warning": 0, "suggestion": 0 },
+    "coherence": { "critical": 0, "warning": 0, "suggestion": 0 }
+  },
+  "passes": {
+    "1": "cohesion/traceability: rulings index R-d-1..10 each cite a real home section; stage charters trace to the three goals; premise's motivating incidents map to their stages",
+    "2": "completeness/exit-criteria: all six stages carry falsifiable exit-criteria blocks (doc lines 122/165/187/208/261/297); charter items covered by stage content",
+    "3": "dependencies/sequencing: Depends-on slots (d2←d1; d3,d4,d5←d2; d6←d1) match the Sequencing prose (D1 first, D2 second, D3–D6 flexible with D6-after-D1); graph acyclic; orbit architecture validate passes",
+    "4": "layer-fit: D2's section points at its change per R-d-7; D1's section is summary-plus-pointer (the change is the decision record); no stage-level detail newly hoisted to arc level",
+    "5": "route-level alternatives: Considered & out records the rejected directions (harness hooks deferred with named re-entry trigger R-d-2, et al.)",
+    "6": "economy self-audit: position is engine-computed (status header + CLAUDE.md both point at orbit architecture status); single-stage loading via show works and was exercised this cycle; hand-maintained state re-narration deleted (R-d-4 subtraction)"
+  },
+  "findings": [],
+  "stale_suppressed": [],
+  "iteration_note": "First architecture review for this doc.",
+  "final_assessment": "No findings. The architecture trail records this pass. (First evidence in the architecture trail — D2 exit criterion 3 satisfied as stated: the review ran from the generated body against the retrofitted doc; user-sanctioned via the C2 resolution fork of the external system review.)",
+  "next_recommended": "No findings. The architecture trail records this pass.",
+  "handoff": {
+    "boot_sequence": [
+      "orbit/architecture/d-arc-arbitered-flow.md — the program doc (parseable; position is computed, do not read state from prose)",
+      "orbit architecture status — the computed program position (d1 complete; d2 in-change; d3–d6 premised)",
+      "orbit/changes/d2-architect/ — the active stage change (explore.md D-d2-1..7 for decision detail)"
+    ],
+    "next_command": "orbit architecture status",
+    "model_hint": null,
+    "seam": "first architecture-mode review pass (post-D2-apply, during the external system-review resolution)"
+  }
+}

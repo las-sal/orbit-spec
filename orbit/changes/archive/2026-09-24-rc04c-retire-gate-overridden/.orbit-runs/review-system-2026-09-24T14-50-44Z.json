@@ -1,0 +1,170 @@
+{
+  "command": "review",
+  "timestamp": "2026-09-24T14:50:44Z",
+  "change": "rc04c-retire-gate-overridden",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 2
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "pass": "4",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "src/core/templates/workflows/apply-change.ts",
+      "line": 205,
+      "title": "Both bodies tell the composing AI to enumerate EVERY external-<mode>-<TS>.md as a citable pass, but the write gate's set excludes rejected returns — so 'cannot be unresolvable' is false in exactly the case the stage's spec calls its non-obvious half",
+      "recommendation": "The AT THIS SEAM paragraph (apply-change.ts:205) and the Step 3.4 continuation paragraph (archive-change.ts:285) both close with: list .orbit-runs/, take each review-<mode>-<TS>.json whose reviewer_class is fresh or external 'plus each external-<mode>-<TS>.md — that set is exactly what the write gate resolves citations against, so a token read this way cannot be unresolvable.' The gate resolves against readTrail(...).passes (emit-composition.ts:969 filters reviewerClass fresh/external), and readTrail routes an unparseable external-<mode>-<TS>.md into rejectedExternals, never passes — I confirmed through the built CLI that a trail whose ONLY member is a rejected return ACCEPTS formed_against: [] and that citing such a file is refused as unresolvable. An AI following the enumeration on that trail will either cite the rejected token (refused) or conclude a pass exists and decline to write [] — which is the record-lost outcome the totality rule was shipped to prevent. This sentence predates rc04c at Step 5.5 (archive-change.ts:386), but rc04c REWROTE the two proceed-anyway paragraphs and its own delta (orbit-run-summary-emit, 'a REJECTED external return is NOT a member') makes the exclusion normative, so the shipped instruction now contradicts the shipped rule. Fix in all three sites: qualify the enumeration to 'each external-<mode>-<TS>.md the trail reader ACCEPTED as a pass — a return the gate's reason names as rejected is not a member; citing it is refused, and on a trail holding only such returns the empty citation is the correct one' and drop the absolute 'cannot be unresolvable'. The gate reason already names rejected returns unconditionally (gates.ts:762), so the AI has a surface to consult."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "src/core/templates/workflows/archive-change.ts",
+      "line": 95,
+      "title": "The emptiness rule AND its resolution set are now stated in the shipped schema reference, both bodies and two capabilities — the FOURTH instance the tasks preamble said to stop on, and it has already produced a divergence (the rejected-external clause is present at line 95 and contradicted at line 285)",
+      "recommendation": "orbit-run-summary-emit's delta says it 'states the predicate and its SET once' and orbit-archive-modifications 'deliberately does NOT restate the condition: a rule restated in a second place is a rule with two extensions'. On the tree the predicate is restated with its full extension in the archive schema reference field note (archive-change.ts:95: 'no independent pass (reviewer_class fresh or external, any mode; a REJECTED external return is not one) precedes this emit's own token'), again in the Step 3.4 paragraph (:285), twice in apply-change.ts (the payload bullet at :204 and AT THIS SEAM at :205), in orbit-emit-composition's edge (d), and in CLAUDE.md:227 — and the divergence the preamble predicted is already on the tree: the :95 note carries the rejected-external exclusion while the :285 and :205 enumerations include every external .md (previous finding). The apply emit's final_assessment states 'no fourth instance of the rule-stated-twice watch appeared'; I read the tree as saying it did. Per the preamble this is a structural signal to SAY, not a repair to make quietly.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Collapse the body-side statements to a NAME plus the observable consequence: the bodies and the schema reference say 'formed_against may be [] on a continuation/proceed only when the trail carries no independent pass the reader accepted; the gate refuses it naming the latest such pass otherwise' and point at orbit-run-summary-emit for the set — never restating the class list or the rejected-external clause. One extension survives (the spec's), the enumeration sentence is fixed once, and the schema-reference ↔ table parity test keeps covering keys, which is all it ever covered."
+        },
+        {
+          "label": "B",
+          "body": "Keep the reference as a deliberate MIRROR (the same stance orbit-emit-composition takes for payload keys) but make it a checked one: pin the reference's judgements field note and the Step 3.4 / AT THIS SEAM paragraphs to a shared template literal in one source (pr-choreography.ts already does this for the PR tail) so the three bodies cannot diverge, and record in the change's readiness accepted list that the rule is intentionally stated in two places (spec + one shared body literal) with a test holding them together."
+        }
+      ]
+    },
+    {
+      "pass": "0",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc04c-retire-gate-overridden/tasks.md",
+      "line": 20,
+      "title": "The tasks preamble states the task count as 35; the file holds 36 checked boxes, the engine reports 36/36, and the charter's ratified breach says 34 — three figures for one count in the artifact that warns about stale figures",
+      "recommendation": "Line 20 says 'R-crc-9's breach was ratified at THIRTY-FOUR; the count is now 35, the additions being handoff RECORDS (5.1e, 5.1f)' — 34 + 2 = 36, which is what grep -c '^- \\[x\\]' and the apply gate ('36/36 tasks complete') both report, so the preamble's own arithmetic is off by one. Correct the preamble to 36 in this change (it is the change's own artifact, not architect-owned), and keep the sentence that hands the 34-vs-36 reconciliation to the next /orbit:architect session — the stage section's '34 tasks (22 work items plus 12 verification and handoff records)' is the figure the breach was ratified at and should be updated there, not here."
+    },
+    {
+      "pass": "1",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc04c-retire-gate-overridden/specs/orbit-run-summary-emit/spec.md",
+      "line": 239,
+      "title": "Scenario 'An empty formed_against is refused when a pass was available to cite' ranges over ANY judgement entry but promises a refusal that names the LATEST preceding pass — for readiness and spend the refusal is structural and names nothing",
+      "recommendation": "The WHEN reads 'a judgement entry carries formed_against: []' with no kind qualifier; the THEN promises the emit is refused 'naming the LATEST preceding independent pass'. On the shipped engine a readiness or spend entry with [] is refused by validateJudgements ('must be a NON-EMPTY array of pass tokens') before the ordering check runs, so no pass is named — I confirmed this through the CLI on an archive emit. The next scenario already covers readiness/spend with 'refused regardless of trail state'. Scope this scenario's WHEN to 'a continuation/proceed entry' so the two scenarios partition the domain instead of overlapping with different THENs."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "test/core/judgement-record-fixture.test.ts",
+      "line": 228,
+      "title": "The readTrail-based narrowing witnesses less than tasks.md 4.2(a) claims: readTrail never inspects an apply emit beyond its token and user_validation_tasks, so 'a reader tolerates the retired field' is vacuously true of this reader",
+      "recommendation": "readTrail's ingestJson pushes apply tokens and reads only user_validation_tasks (trail.ts ingestJson), so an apply emit carrying gate_overridden — or any unknown key — cannot fail it; the assertion 'the reader surfaced both apply tokens' would pass identically if the field were absent. What the test DOES pin is valuable (the archived artifact still carries the field with the clause-(c) reason, and readTrail parses the whole rc02c trail with rejectedExternals: []), so keep it, but state that honestly in the test comment and in 4.2 rather than as 'orbit's readers tolerate a prior-generation emit'. If a stronger executable witness is wanted, the reader that could plausibly reject an archived emit is orientation's spine validation on the global-LAST scan (src/core/orientation.ts) — an assertion that the rc02c archived apply emit passes that read is the half 4.2(b) currently covers only by hand. Also remove the now-unused `extra` parameter on emitDerived (line 107) — it existed to pass gate_overridden alongside the record and has no caller."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 1631,
+      "title": "Live cross-doc drift left standing by design: the rc04a stage section still states formed_against as unconditionally NON-EMPTY and the rc04c charter still says the no-pass case 'is omitted and gate_overridden stands alone' — recorded in tasks 5.1a/5.1b but carried only in an artifact that archives with the change",
+      "recommendation": "Both passages are architect-owned and the change correctly edits neither. The risk is the carrier: tasks.md's RECORDED notes move to orbit/changes/archive/ at archive and nothing in the program doc points back at them. Put the two pending amendments (line 1631 NON-EMPTY contract; lines 1804-1805 'the entry is omitted and gate_overridden stands alone') into the archive emit's readiness accepted list as a {claim, why} pair, so the next /orbit:architect session finds them where the WAITING band already looks; and state in the pair that the charter's 'four archived apply emits' figure is ten emits across four changes (verified on this tree: 10 apply emits, 4 changes)."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc04c-retire-gate-overridden/design.md",
+      "line": 70,
+      "title": "Design and proposal cite engine line numbers that no longer resolve after the apply (validateJudgements:533 → 534, judgementOrderingCheck:958 → 944, the guard at 606-632 → deleted)",
+      "recommendation": "These were true when written ('re-verified present before this design named them') and read as history, so no rewrite of the reasoning is needed; but a cold reader following design.md D1 or proposal.md:9 to the engine lands on the wrong function or on nothing. Append a one-line dated note under D1 ('post-apply: 534 / 944; the guard block is gone') rather than editing the original figures, matching how the change records corrections elsewhere."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "title": "The totality rule has no body-side task: archive-change.ts still instructs OMITTING the entry in the no-pass case",
+      "evidence": "archive-change.ts:285 now reads 'If the trail carries NO independent pass earlier than this emit, the entry IS STILL WRITTEN, with formed_against: []'; apply-change.ts:205 carries the same write rule; orbit-content-fidelity pins 'formed_against: []' on both bodies; the CLI probe on an empty-trail archive wrote exactly one archive emit."
+    },
+    {
+      "title": "The new emptiness refusal contradicts an UNMODIFIED baseline requirement: orbit-emit-composition's ordering refusal says the engine SHALL NOT evaluate whether enough passes were cited",
+      "evidence": "orbit-emit-composition's delta now MODIFIES 'Write-gate validation via the shared normalizers' with edge (d) and the 'well-formedness, NOT sufficiency' paragraph; the 'Sufficiency above zero remains outside the engine' scenario is satisfied (a one-of-two citation was accepted through the CLI)."
+    },
+    {
+      "title": "The empty-citation successor contradicts the capability's unchanged membership rule",
+      "evidence": "orbit-run-summary-emit's delta re-grounds membership on CADENCE POSITION ('the exclusion is by CADENCE POSITION, not by citation count'); both bodies' judgements bullets were rewritten to 'a decision holding a CADENCE POSITION, whether or not independent output existed to cite'."
+    },
+    {
+      "title": "The only rebuild occurs before the final engine removals",
+      "evidence": "Task 2.6 exists and was executed: dist/core/emit-composition.js and the three body .js files are byte-identical to a fresh tsc build into scratch; dist carries zero gate_overridden / GATE_FIELD_PAIRS; the built CLI refuses the legacy key on apply and archive with no file written."
+    },
+    {
+      "title": "Retirement has no standing negative test for the retired payload key",
+      "evidence": "test/core/emit-composition.test.ts:1265 and :1275 assert the unknown-key refusal on apply and archive and that no file is written."
+    },
+    {
+      "title": "The new tests do not pin which preceding pass the refusal names",
+      "evidence": "The refusal case seeds fresh @10:00 and external @11:00, asserts the message contains the EXTERNAL token, does NOT contain FRESH, and names judgements[1]."
+    },
+    {
+      "title": "A live engine error message names the retired field, and none of the stage's three sweeps looks at src/core/",
+      "evidence": "The message now reads 'the record carries the gate, its state and its reason at decision time'; grep -rn gate_overridden src/ returns nothing outside comments in tests, and task 4.1 measures src/core/emit-composition.ts."
+    },
+    {
+      "title": "CLAUDE.md states the retired contract in the present tense and no task updates it",
+      "evidence": "CLAUDE.md:223-229 now records the hole as CLOSED and the record as TOTAL, dated to the apply; line 59-60 names the continuation/proceed entry; orbit validate --sources is clean (stages 22, rulings 13, capabilities 21, schema-version 4)."
+    },
+    {
+      "title": "The prior-generation exit cannot be exercised through the named report surface",
+      "evidence": "Task 4.2 no longer names --report; it routes (a) through readTrail and (b) through bare orbit status, which I re-ran: exit 0, no degraded row, over 20 archived emits carrying the field."
+    },
+    {
+      "title": "The emptiness predicate is stated in two capabilities with DIFFERENT extensions",
+      "evidence": "orbit-archive-modifications' delta now defers to orbit-run-summary-emit for both predicate and set; orbit-emit-composition's edge (d) names run-summary-emit as owner. The two CAPABILITIES agree; the residual divergence I report is between the bodies, not the specs."
+    },
+    {
+      "title": "The proposal exceeds R-crc-1 on both delta size and task count",
+      "evidence": "R-crc-1 gained the changed-bytes clarification (clean-up-review-cycle.md:121-126) and the rc04c stage section records the task breach as R-crc-9's first ratified one (line 1742); the residual is the count figure itself, reported separately."
+    }
+  ],
+  "commentary": "The engine half of this change is sound and I could not break it. I drove the BUILT CLI (bin/orbit.js → dist/, confirmed byte-identical to a fresh tsc build into scratch) against a scratch project on all four trail states the brief names — two independent passes, only an in-context pass, only a rejected external return, nothing — on BOTH the apply and archive seams: the empty citation was refused naming the latest pass (the external, not the older fresh) with the entry index and no file written on state (a), and accepted with exactly one emit written on (b), (c) and (d). A two-entry archive emit (readiness citing both passes + continuation with []) was refused on judgements[1] with nothing written; a legacy gate_overridden payload was refused as an unknown key on both seams with nothing written; a readiness with [] on an empty trail was refused structurally; a one-of-two citation was accepted (sufficiency stays outside the engine). Every scenario in the three deltas maps to a body instruction, an engine branch, or a test, and the trail-count claims the design leans on (ten clause-(c) apply emits across four changes; twenty archived emits carrying the field) are what the tree holds. 2241 tests green; validate --strict and --sources clean. The pattern behind what I did find is the one the tasks preamble predicted and the apply emit says did not occur: the totality rule is now written in prose in more places than the specs claim, and the copies have already diverged on the rejected-external clause — the schema reference field note carries the exclusion, the Step 3.4 and apply AT THIS SEAM enumerations tell the AI to treat every external .md as citable and promise it 'cannot be unresolvable'. That is a correctness gap for the composing AI in precisely the state the stage was built to close, and it is the descope-sweep corollary arriving from the other side: prose that was correct when the guard existed (a rejected return was never citable, but the AI was never asked to write []) became load-bearing the moment the empty citation became a checked claim. Risk texture: the empty-citation edge is unobserved in practice on this repo (every archived override has an earlier independent pass, usually proposal-mode, and 'any mode' means it will stay unobserved at archive), so a wrong body instruction there would not surface for a long time; the negative regression for the retired key and the LATEST-naming refusal test are the pins that will actually fire. Not reported as findings but probed: an independent pass with a token LATER than the emit is not 'preceding', so [] is accepted beside it — consistent with the strictly-earlier rule; the archive-seam refusal direction of edge (d) has no unit test (only the acceptance via 'bar'), covered here by the CLI probe; the generated .claude/ surface carries no gate_overridden and its mtime matches the dist build.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6"
+  ],
+  "passes_skipped": [],
+  "final_assessment": "0 critical, 3 warning, 4 suggestion.",
+  "iteration": 2,
+  "next_recommended": "/orbit:address-reviews rc04c-retire-gate-overridden --from-file orbit/changes/rc04c-retire-gate-overridden/.orbit-runs/review-system-2026-09-24T14-50-44Z.json"
+}

@@ -1,0 +1,199 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-23T19:05:00Z",
+  "change": "rc04c-retire-gate-overridden",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc04c-retire-gate-overridden/.orbit-runs/external-proposal-2026-09-23T02-21-43Z.md",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-5 Codex",
+  "walk_mode": "per_finding",
+  "walk_mode_source": "flag",
+  "input_findings_summary": {
+    "critical": 3,
+    "warning": 2,
+    "suggestion": 1
+  },
+  "pushback_verification": "All 6 verified against current state before any edit; 0 stale. Every substantive claim was REPRODUCED rather than accepted: `bin/orbit.js` read (3 lines, imports ../dist/cli/index.js) for C2; R-crc-1's four dimensions read and all four measured for C3; the membership clause read at spec.md:132 for C1; `orbit status --change rc02c-confirmation-semantics --report` RUN and observed failing with 'Change not found' for W1, plus judgement-record-fixture confirmed using raw JSON.parse; emit-schema-parity's negative test read and confirmed one-way for W2; task 3.6's wording read for S1. Two citations were checked and found to understate rather than overstate: C3's figures were correct when written and are now WORSE (57,418 B / 34 tasks after this walk), and the reviewer's proposed split for C3 would not reduce capabilities at all — the totality amendment touches one requirement in each of the same three.",
+  "resolution_summary": {
+    "resolved": 6,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "The empty-citation successor still contradicts the record's defining membership rule",
+      "marker_source": "external",
+      "file": "orbit/changes/rc04c-retire-gate-overridden/specs/orbit-run-summary-emit/spec.md",
+      "line": 132,
+      "classification": "decision_required",
+      "action": "Option C — re-ground the EXCLUSION on cadence position rather than broadening the inclusion or moving the carrier. The requirement's defining clause excluded a zero-citation record because it 'has no ordering to check'; edge (d) makes that reason obsolete, since an empty citation IS checked (the trail is read to confirm the emptiness is true). So the exclusion now reads by CADENCE POSITION — method calls, scope calls and process notes are excluded because they occupy no cadence seam, not because of how many passes they name — and the criterion and the constraint stay ONE thing, which was the sentence's actual point. Option A (broaden the qualifying test) was declined because it weakens 'cite your evidence' into 'cite your evidence unless there wasn't any'; option B (a different carrier) is D-rc04c-1's already-rejected option D, two records for one fact.",
+      "ratified_via": "chat",
+      "resolution": "User replied \"c\" to a three-option briefing. The finding offered two paths (broaden the definition / different carrier); C was a third the briefing derived — narrow the exclusion instead of broadening the inclusion — on the ground that the failing sentence's stated REASON, not its scope, is what edge (d) invalidates.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc04c-retire-gate-overridden/specs/orbit-archive-modifications/spec.md",
+          "orbit/changes/rc04c-retire-gate-overridden/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Broaden the qualifying test to 'formed against the available cadence state', naming the evidence-free proceed as a member, and reconcile every sentence deriving placement from independent output."
+          },
+          {
+            "label": "B",
+            "body": "Keep the definition and give the zero-pass decision a carrier other than judgements."
+          },
+          {
+            "label": "C",
+            "body": "Re-ground the exclusion on cadence position: the failing clause excluded by 'nothing to check', which edge (d) makes false."
+          }
+        ],
+        "chosen": "C"
+      }
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "The only rebuild occurs before the final engine removals",
+      "marker_source": "external",
+      "file": "orbit/changes/rc04c-retire-gate-overridden/tasks.md",
+      "line": 75,
+      "classification": "trivial_fix",
+      "action": "Added task 2.6: a SECOND mandatory `npm run build && orbit update --force` after 2.5a/2.5b, plus a smoke test through the BUILT CLI (`node bin/orbit.js emit ...`) asserting the unknown-key refusal on both apply and archive. Verified the premise rather than trusting it: `bin/orbit.js` is three lines and imports `../dist/cli/index.js`, so the installed surface would have kept the guard and kept accepting the retired key while `src/` grep and the whole Vitest suite passed green. Recorded in the task that THE F5 REORDER CREATED THIS GAP — before it the removals were in section 1 and 2.4's build followed everything; moving them after the bodies stranded the only build in the middle. A reorder that fixes one ordering hazard can create another, and the build step is what to re-check whenever work crosses it.",
+      "ratified_via": "chat",
+      "resolution": "Previewed in the obvious-fix lane; user directed the walk order.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "The proposal is already over two explicit R-crc-1 ceilings",
+      "marker_source": "external",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 114,
+      "classification": "decision_required",
+      "action": "Option B — record an architecture ruling clarifying the ceiling, drafted here as task 5.1c and NOT performed (rulings are architect-owned, D-d2-4). The draft splits deliberately: (a) the BYTE ceiling should measure CHANGED bytes, since the MODIFIED format forces a delta to carry each requirement's full text and only ~150 of 57,418 bytes' worth of lines differ from baseline — for a retirement stage the figure measures format, not scope, and R-crc-1 was calibrated on a mechanism stage; (b) the TASK overage is NOT explained away but proposed as R-crc-9's first RATIFIED breach, because redefining what counts as a task to get under 20 is exactly the 'hide the overage by coalescing checkboxes' the reviewer named. The proposal's Impact was corrected to state all four dimensions instead of the one that flattered it. 5.1c GATES the stage: until the ruling lands, R-crc-1 says an over-ceiling proposal is split before review.",
+      "ratified_via": "chat",
+      "resolution": "User replied \"B\" to a three-option briefing (split / record a ruling / declare a ratified breach). The briefing supplied two measurements that shaped it: ~43KB of the delta is verbatim carriage the MODIFIED format requires, and the reviewer's proposed split would NOT reduce capabilities — the totality amendment touches one requirement in each of the same three capabilities, which is D-rc04c-4's recorded objection to splitting by seam.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc04c-retire-gate-overridden/proposal.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "reason": "architect-owned ruling; drafted as RECOMMEND task 5.1c rather than edited"
+          }
+        ]
+      },
+      "outcome": "resolved",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Split the totality amendment into a prerequisite stage, keeping the retirement in rc04c."
+          },
+          {
+            "label": "B",
+            "body": "Record an architecture ruling clarifying which dimensions bind and how bytes are measured for a retirement stage."
+          },
+          {
+            "label": "C",
+            "body": "Declare the breach and proceed with it as recorded residual risk under R-crc-9."
+          }
+        ],
+        "chosen": "B"
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "The prior-generation exit cannot be exercised through the named report surface",
+      "marker_source": "external",
+      "file": "orbit/changes/rc04c-retire-gate-overridden/tasks.md",
+      "line": 128,
+      "classification": "decision_required",
+      "action": "Option C — fix the verification without widening the stage, and record the surface gap separately. Task 3.5's derivation now reaches the archived emits through `readTrail` (verified at `src/core/artifact-graph/trail.ts:152`, which takes a change DIRECTORY and so can address `orbit/changes/archive/<dated-name>/`) instead of raw `fs.readFileSync` + `JSON.parse` — the raw read only demonstrated that JSON parses as JSON, which was never the claim. Task 4.2 was rewritten to two commands that actually run (the 3.5 regression, and bare `orbit status`, which scans archived trails for global-LAST) after external iter 1 PROVED the original instruction impossible by running it: `orbit status --change <archived> --report` fails with 'Change not found' because `--report` resolves through `validateChangeExists`, which enumerates active changes only. Reproduced that failure directly before accepting the finding.",
+      "ratified_via": "chat",
+      "resolution": "User replied \"c\". Option A (make --report resolve archived changes) was declined in the briefing because it is an engine change in a capability this stage neither touches nor fingerprints — it would take the stage to FOUR capabilities and breach the one R-crc-1 dimension still intact, which matters acutely while C3 is open.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc04c-retire-gate-overridden/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Make `--report` resolve archived changes so 4.2's command works as written."
+          },
+          {
+            "label": "B",
+            "body": "Replace 4.2 with a targetable reader and an exact command; route 3.5 through a real reader."
+          },
+          {
+            "label": "C",
+            "body": "B, plus record the --report limitation as a handoff for whoever owns that surface."
+          }
+        ],
+        "chosen": "C"
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "Retirement has no standing negative test for the retired payload key",
+      "marker_source": "external",
+      "file": "orbit/changes/rc04c-retire-gate-overridden/tasks.md",
+      "line": 88,
+      "classification": "trivial_fix",
+      "action": "Added task 3.5b: standing regressions submitting `gate_overridden` to apply AND archive, asserting the unknown-key refusal and that no emit file is written. Verified the gap is real rather than assumed — `emit-schema-parity`'s negative test is one-way (documented keys must be accepted), so it stays green if an undocumented legacy key is silently re-added, and 4.1's grep is a one-time apply-day check rather than a standing pin. Also verified the transcription target exists: `emit-composition.test.ts:1016` already asserts `unknown payload key 'pr_attachment' for 'archive'`, so this is pattern-following, not new machinery.",
+      "ratified_via": "chat",
+      "resolution": "Previewed in the obvious-fix lane; user directed the walk order.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The new tests do not pin which preceding pass the refusal names",
+      "marker_source": "external",
+      "file": "orbit/changes/rc04c-retire-gate-overridden/tasks.md",
+      "line": 139,
+      "classification": "trivial_fix",
+      "action": "Task 3.6's refusal case now REQUIRES at least two preceding independent passes and asserts the error names the LATEST token (preferably asserting it does not name the older), plus the entry index. The looser wording would have been satisfied by a single-pass fixture while an implementation naming the oldest still violated the spec — and 'latest' was made normative in 1.2 during the previous walk precisely because the ordinary trail carries several passes, so the test and the requirement had drifted apart in the same session that made the requirement precise.",
+      "ratified_via": "chat",
+      "resolution": "Previewed in the obvious-fix lane; user directed the walk order.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "External iteration 1 (GPT-5 Codex) walked to zero: 3 CRITICAL, 2 WARNING, 1 SUGGESTION, none stale. Three went through the decision lane with chat ratification (C1 option C, C3 option B, W1 option C); three were obvious-fix.\n\nTHE PATTERN, AND IT IS ABOUT THE PREVIOUS WALK RATHER THAN THE PROPOSAL. Three of the six findings are wake from the fresh pass's own fixes. C2 exists BECAUSE F5's reorder moved the engine removals after the bodies and stranded the only build in the middle — a reorder that closed one ordering hazard opened another, and nothing re-checked the build step when work crossed it. C1 is the descope-sweep corollary failing on my own edit: I replaced the coexistence paragraph with the totality rule and never looked UP at the definition governing it, and my own sweep (4.5) greps `coexist`/`strict widening`/`GATE_FIELD_PAIRS`, none of which appear in a definitional clause. W1 is F9 applied faithfully to a derivation that did not guarantee what F9 claimed — preserving a raw `JSON.parse` as the 'standing regression pin' for prior-generation readability, when it only ever proved JSON parses as JSON. The fresh pass named this shape as 'a boundary drawn one line short'; the external pass found three more instances of it, inside the fixes.\n\nC1 IS THE SHARPEST AND THE FIX IS SMALLER THAN THE FINDING PROPOSED. The requirement excluded a zero-citation record because it 'has no ordering to check'. Edge (d) makes that reason false — an empty citation IS checked, against the trail. So the exclusion was re-grounded on CADENCE POSITION, which is what it always meant, rather than broadening the qualifying test (weakening 'cite your evidence') or moving the carrier (D-rc04c-1's already-rejected two-records-for-one-fact).\n\nC3 IS UNRESOLVED IN SUBSTANCE AND DELIBERATELY SO. The ruling is drafted at task 5.1c and NOT performed, because rulings are architect-owned; it GATES this stage, since until it lands R-crc-1 says an over-ceiling proposal is split before review rather than reviewed. The draft is split honestly: the byte ceiling is proposed to measure CHANGED bytes (the format forces verbatim carriage of full requirement bodies, and ~43 KB of this delta is exactly that), while the TASK overage is proposed as R-crc-9's first ratified breach rather than defined away. The figures ROSE during this walk — 56,262 B / 30 tasks when the finding was written, 57,418 B / 34 now — and that is recorded in both the task and the proposal rather than restated at the smaller number, because a ceiling argument that quietly cites stale figures is the failure this stage keeps finding in others.\n\nONE TRAIL CONDITION worth naming for whoever reads this next: the change carries TWO `external-proposal-*.md` files for iteration 1 (02-10-20Z and 02-21-43Z), the same reviewer's first run and its sharpened re-run. This walk ingested 02-21-43Z, the strict superset. The gate keys on 02-10-20Z, whose five findings are all genuinely resolved by the same edits but under different titles, so a separate coverage record follows this one rather than leaving a resolved pass reading unresolved. That the trail counts both as independent spend (now 3) is a real effect of a reviewer re-running rather than editing in place, and it is worth knowing before reading the spend figure as three distinct reviews.",
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc04c-retire-gate-overridden --from-file orbit/changes/rc04c-retire-gate-overridden/.orbit-runs/external-proposal-2026-09-23T02-10-20Z.md"
+}

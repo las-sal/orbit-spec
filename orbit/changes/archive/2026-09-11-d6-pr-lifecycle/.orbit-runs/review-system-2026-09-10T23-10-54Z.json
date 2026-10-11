@@ -1,0 +1,120 @@
+{
+  "command": "review",
+  "timestamp": "2026-09-10T23:10:54Z",
+  "change": "d6-pr-lifecycle",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": [],
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "3",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "src/core/templates/workflows/pr-choreography.ts",
+      "line": 370,
+      "title": "The architect's new `references/pr-resolution.md` carries the seams' config-order section verbatim, whose `never → RETURN IMMEDIATELY, probe nothing` rule would suppress the arc-done readout under a later `pr: never` — contradicting the body's `readout is NEVER SUPPRESSED` and the attachment-decides rule.",
+      "recommendation": "`PR_RESOLUTION_REFERENCE` interpolates `PR_RESOLUTION_SECTION` whole, and that constant ends with `## Config resolution order` (generated file, `.claude/skills/orbit-architect/references/pr-resolution.md` line 42 onward): read `pr` from `orbit status --json`; on `never` (or absent/inert) RETURN IMMEDIATELY, probe nothing, no note. The archive tail overrides this in its own section (`Scope: the ATTACHMENT decides, not the live config` — setting `pr: never` stops NEW attachments, never abandons an open PR), and the architect body states the readout is surfaced once per program and never suppressed by any validation outcome. The architect reference has NO such override, so a performing AI at arc-done in a repo whose owner has since set `pr: never` reads a rule that tells it to return before the readout — exactly the silent-readout case the body calls indistinguishable from an unfinished program. Introduced by the 2026-09-10 walk (finding 7, option A).",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Split the shared constant: `PR_RESOLUTION_SECTION` keeps only the remote/default-branch resolution (through the degradation sentence), and a new `PR_CONFIG_ORDER_SECTION` carries the config-order text; `PR_CHOREOGRAPHY_REFERENCE` and `PR_ARCHIVE_TAIL_REFERENCE` interpolate both (byte-identical output for the seams — the fidelity slice at `## Config resolution order` still holds), while `PR_RESOLUTION_REFERENCE` interpolates only the resolution. Re-pin the architect hash only."
+        },
+        {
+          "label": "B",
+          "body": "Keep the section and add an explicit override sentence to `PR_RESOLUTION_REFERENCE`'s header: the arc-done readout is gated by the ATTACHMENT (a URL-bearing per-architecture record), never by the live `pr:` value — the config-order section below governs propose/ff/archive, not this readout. Minimal diff; the misleading text stays and is disclaimed."
+        }
+      ]
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "test/core/templates/orbit-content-fidelity.test.ts",
+      "line": 342,
+      "title": "The repository-qualified `gh` invocation sweep covers only the propose and archive references; the architect's new reference (which carries a `gh pr list --repo …` invocation) is outside the loop.",
+      "recommendation": "The test iterates `reference(propose, 'pr-choreography.md')` and `reference(archive, 'pr-archive-tail.md')`. Add `reference(architect, 'pr-resolution.md')` to the array so the four-axis query added on 2026-09-10 (and any future edit to it) stays under the same `--repo` guarantee the seams have; `getArchitectSkillTemplate` is already imported in this file."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "pass": "2",
+      "title": "The bodies read the PR regime from `orbit status --json` field `pr`, but the bare tier's no-active-changes rung emits `{changes: [], message}` with NO `pr` key",
+      "evidence": "Resolved (walk 10, option A): `grep -c 'pr: orientation.pr' src/commands/workflow/status.ts` = 3 (all three ladder rungs); rung-3 test `ladder rung 3: zero live workstreams + zero parseable docs → the no-changes JSON still carries pr` passes; orbit-orientation delta present with the rung-3 scenario."
+    },
+    {
+      "pass": "2",
+      "title": "Generation-input precondition triggers on worktree PRESENCE (both externals)",
+      "evidence": "Resolved (walk 11): reference, delta, tasks, and transcription key on TRACKED state (`grep -rn 'exists in the worktree but not on'` across src/, test/, and the change artifacts returns nothing); `generationInputGuard` runs ahead of both switch paths; three harness cases (31 → 34 → now 36 integration cases with step 6)."
+    },
+    {
+      "pass": "0",
+      "title": "Both Position paragraphs mislabel Phase 2",
+      "evidence": "Resolved (walk 12): `grep -rn 'Phase 2 (the no-CI\\|Phase 2 follows' src/` returns nothing; fidelity assertion `the Position paragraphs use the reference's phase numbering` passes for propose and ff."
+    },
+    {
+      "pass": "0",
+      "title": "Stage-entry APPEND has no read-current-body step",
+      "evidence": "Resolved (walk 12): `PR_ARCHIVE_TAIL_SECTION` carries `APPEND means READ-APPEND-WRITE` with the `gh pr view --repo <owner>/<repo> <url> --json body -q .body` read; the recovery bullet names the composed body; the orbit-pr-lifecycle landmark requirement states the rule."
+    },
+    {
+      "pass": "2",
+      "title": "The attachment record rides no D6-guaranteed push until archive",
+      "evidence": "Resolved (walk 12, option A): `grep -c \"COMMIT and PUSH the record\" pr-choreography.ts` = 1; both bodies' emit steps carry `the emit is NOT the last act`; orbit-propose-modifications phase 3 + scenario `The attachment record reaches the branch`."
+    },
+    {
+      "pass": "0",
+      "title": "Verification claims in checked tasks exceed the harness",
+      "evidence": "Resolved (walk 12): step 6 transcribed in phase1.ts (`merge-base --is-ancestor` both ways; `merge --ff-only` when behind; diverged skip) with two harness cases; 6.2a/6.2b tail-side clauses carry dated RESCOPED notes."
+    },
+    {
+      "pass": "6",
+      "title": "Design's mid-flight-adoption bullet is inaccurate for this repo",
+      "evidence": "Resolved (walk 12): design.md Risks bullet names the stem-vs-branch mismatch and the create-off-default consequence; proposal.md Dogfood bullet carries the base caveat."
+    },
+    {
+      "pass": "2",
+      "title": "A present null `pr:` value bypasses the invalid-value warning (Codex)",
+      "evidence": "Resolved (walk 11, option A): `grep -c \"Empty 'pr' field\" src/core/project-config.ts` = 1; the codifying test now asserts the warning; delta clause + scenario `Present-but-empty config key warns`."
+    },
+    {
+      "pass": "6",
+      "title": "CLI tests break when the checkout path contains spaces (Codex)",
+      "evidence": "Resolved (walk 11, option A): 0 unquoted `node ${bin}` sites remain across the seven files; reproduced pass/fail both ways in a real copy at a path with a space."
+    }
+  ],
+  "commentary": "This pass is the in-context confirm after four passes and three walks in one day, so I spent it on two questions: did the twenty-three resolutions land as the logs claim, and what did the walks themselves introduce. The first answer is yes — every retired phrasing is gone from source, tests, and artifacts; every new scenario resolves to implementing text; the harness carries thirty-six cases; the on-disk surface is fifteen skills and fifteen commands with references exactly where the templates declare them. The second answer is one real thing: the fix that gave the architect skill the shared resolution algorithm carried the seams' config-order section along with it, and that section's early-return rule reads as a gate on a readout the body says is never gated. It is the same shape as the walk-10 rung-3 miss — a shared constant reused one context past the one it was written for — which suggests the shared-section boundaries deserve a moment's attention whenever a new consumer is added. Zero engine git still holds (the only child-process use under src/ is the read-only diff inspection and upstream's feedback auth check). Passes 4 and 5 are skips — no lenses in this repo. Residual risk is unchanged from every prior pass: the outward half of the choreography is prose a performing AI executes, and only the dogfood exercises it.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "6"
+  ],
+  "passes_skipped": [
+    "4",
+    "5"
+  ],
+  "final_assessment": "0 critical, 1 warning, 1 suggestion.",
+  "iteration": 5,
+  "next_recommended": "/orbit:address-reviews d6-pr-lifecycle --from-file orbit/changes/d6-pr-lifecycle/.orbit-runs/review-system-2026-09-10T23-10-54Z.json"
+}

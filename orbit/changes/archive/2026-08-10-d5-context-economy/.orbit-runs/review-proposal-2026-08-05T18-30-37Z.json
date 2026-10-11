@@ -1,0 +1,112 @@
+{
+  "command": "review",
+  "timestamp": "2026-08-05T18:30:37Z",
+  "change": "d5-context-economy",
+  "final_assessment": "0 critical, 0 warning, 1 suggestion.",
+  "next_recommended": "/orbit:address-reviews d5-context-economy --from-file orbit/changes/d5-context-economy/.orbit-runs/review-proposal-2026-08-05T18-30-37Z.json",
+  "kind": "editorial",
+  "model": "claude-fable-5",
+  "mode": "proposal",
+  "iteration": 8,
+  "depth": "full",
+  "reviewer_class": "fresh",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "passes_run": [
+    "1. Structure & Delta Integrity",
+    "2. Internal Coherence",
+    "3. Cross-Doc Coherence",
+    "4. Archive Consistency",
+    "5. Codegen Readiness",
+    "6. Gap Hunt",
+    "7. Drift Hunt",
+    "8. Inline Review Marker Residue",
+    "9. Pre-Handoff Sweep"
+  ],
+  "passes_skipped": [],
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    }
+  },
+  "findings": [
+    {
+      "pass": "5. Codegen Readiness",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "title": "Task 2.2's trail-location enumeration omits the archived-trail branch",
+      "file": "orbit/changes/d5-context-economy/tasks.md",
+      "line": 29,
+      "recommendation": "Task 2.2 glosses trail-location resolution as \"(change/explore/architecture)\" while the orbit-emit-composition delta additionally specifies the project-scope location (covered at CLI level by task 3.1) and the archive emit's distinctive post-move resolution — scanning orbit/changes/archive/ for *-<name>/ matches, taking the lexically greatest, with the clean not-found error — which no engine or test task names (the group-2/3 test enumerations and the 9.3 smoke also skip the archive emit). The spec is unambiguous, so this is a coverage gloss rather than a fork risk, but extending 2.2's parenthetical to \"(change/explore/architecture/archived/project)\" and adding the archived-trail landing to a test bullet would close the gap the same way task 4.3 closed the orientation one."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "title": "Architecture-scoped address-reviews emits have no legal path through the surface",
+      "evidence": "emit-composition's target-resolution contract now makes review and address-reviews DUAL-SCOPE via --change/--doc, explicitly serving orbit-address-reviews' architecture-scoped resolution logs"
+    },
+    {
+      "title": "Clean architecture-mode review emit composes an invalid change-report pointer",
+      "evidence": "deterministic-facts requirement now routes architecture-mode clean passes to the payload's architect-owned handoff.next_command, MIRRORED — no change-report pointer composed"
+    },
+    {
+      "title": "No task implements the orientation surfaced-skip-note behavior",
+      "evidence": "task 4.3 now covers the ⚠ invalid-emit-skipped line on bare/--full/boot renders plus the skipped_emits array in both JSON tiers, with fixture tests"
+    },
+    {
+      "title": "Boot mode-split enumerates architecture, which a change trail never holds",
+      "evidence": "boot-render requirement now splits review emits per mode as proposal/system only, stating architecture-mode review emits persist to the architecture trail and never appear on a change trail"
+    },
+    {
+      "title": "Design D8's 'no validation of the hint value' lags the gates delta's boundary check",
+      "evidence": "design D8 now names the rendering-boundary well-formedness check (single line, ≤80 chars, no control characters; malformed entries inert) per the gates delta"
+    },
+    {
+      "title": "Post-sync the architect sweep is stated normatively in two requirements",
+      "evidence": "architect delta now cites the baseline 'Architect authoring stance and capture' requirement's R-d-8 sweep as the ONE normative home (verified present at orbit/specs/orbit-architect/spec.md:33); scenario diff confirms no baseline scenario dropped — the one-home dedup is the ratified state, not a drop"
+    },
+    {
+      "title": "Apply's verify-first recommendation contradicts the post-write by-construction contract",
+      "evidence": "apply per-chunk-end rule 1 and the renamed apply-complete scenario now recommend the engine's post-landing canonical next_command; the pre-gates verify-first vocabulary is explicitly retired"
+    },
+    {
+      "title": "Predicted Touchpoints map omits the six registry files tasks 6.3 mandates touching",
+      "evidence": "design.md Touchpoints now carries the grouped templates/index.ts + profiles.ts + init.ts + update.ts entry citing task 6.3"
+    },
+    {
+      "title": "Pre-computable self-pointer vs collision bump ordering unpinned",
+      "evidence": "spine requirement pins filename-token resolution INCLUDING any collision bump before deterministic-fact composition; task 2.2's collision test asserts the self-pointer equals the final post-bump path"
+    },
+    {
+      "title": "At-archive note wrapped across two H3 heading lines",
+      "evidence": "tasks.md now has a single '### At-archive notes' heading with 9.4/9.5/9.7 as list items"
+    },
+    {
+      "title": "gates.ts cited line numbers",
+      "evidence": "read-before-reference check: src/core/artifact-graph/gates.ts lines 77 and 397 both carry the retired /orbit:review-external invocation exactly as design D3 cites"
+    },
+    {
+      "title": "Task 9.4 Purpose-paragraph claim",
+      "evidence": "both orbit-run-summary-emit and orbit-review-external baseline Purpose paragraphs verified to still describe the standalone invocation — the at-archive note is accurate"
+    }
+  ],
+  "commentary": "Strict validation and 25/25 fingerprints green; zero @review: residue outside trail records; the scenario diff across all eleven modified capabilities shows no silent drops — the two apparent removals are the deliberate verify-first retirement and the 6-to-7 spine-field bump, and the architect sweep dedup leaves scenario sets byte-identical with the one normative home verified in baseline. The architecture-seam family closure from the latest walk held at every anchor I probed: dual-scope target resolution, the handoff mirror for both the architect emit and the architecture-clean review, the doc-scoped walk's confirm pointer, and the per-doc iteration ordinal all read as one voice now. The change remains conspicuously self-compliant — its own chunk preamble parses under the grammar it specifies, its explore.md carries the zero-entry open-questions case its counter must handle, and its design.md hosts the first authored Touchpoints instance in the entry grammar the checks parse. Engine citations (gates.ts :77/:397, the schema v3 phase ids, the R-d-8 sweep home) were spot-verified against source and held. The only residual softness is enumeration glosses in tasks.md relative to the fully-specified deltas — the archived-trail resolution being the one branch no task or test bullet names — which is a late-catch risk, not a fork risk."
+}

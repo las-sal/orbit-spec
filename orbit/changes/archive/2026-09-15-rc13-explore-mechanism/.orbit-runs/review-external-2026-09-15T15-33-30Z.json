@@ -1,0 +1,13 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-09-15T15:33:30Z",
+  "change": "rc13-explore-mechanism",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "mode": "proposal",
+  "prompt_path": "orbit/changes/rc13-explore-mechanism/.orbit-runs/external-prompt-proposal-2026-09-15T15-32-30Z.md",
+  "target": "rc13-explore-mechanism",
+  "final_assessment": "External-review prompt packaged for rc13-explore-mechanism (proposal mode, external iteration 1; third pass on the shared axis). Handoff preflight satisfied: tree clean, no unpushed commits, prompt committed at 6176c15 and pushed to origin/d-arc. The prompt carries cycle context because this is a SEQUENTIAL iteration, not a blind-pair member — review-proposal's cadence is [independent, in-context] and declares no pair, so prior-findings context is correct here rather than a blindness leak. It names the descope as the single largest thing to judge, and asks for two specific falsification attempts: a TENTH move class against the catalogued record in explore.md Cases 1, 7 and 10 (three prior attempts at closing that set were each falsified by classifying one more record), and verification that the change really touches two capabilities after a prior pass found it was silently four wide.",
+  "awaiting_findings": true,
+  "next_recommended": "Paste orbit/changes/rc13-explore-mechanism/.orbit-runs/external-prompt-proposal-2026-09-15T15-32-30Z.md into the target AI, save the response as orbit/changes/rc13-explore-mechanism/.orbit-runs/external-proposal-<TS>.md, then /orbit:address-reviews rc13-explore-mechanism --from-file <path>"
+}

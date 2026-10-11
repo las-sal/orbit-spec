@@ -1,0 +1,13 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-07-22T22:12:00Z",
+  "change": "d4-review-consistency",
+  "final_assessment": "External review prompt packaged for d4-review-consistency (iter 1, mode proposal); awaiting findings. Prompt briefs the reviewer on the internal fresh pass (16 findings, 5 CRITICAL, all resolved — the resolutions flagged as least-reviewed: the final-assessment collapse with the retired synthetic pass, the two rewritten address blocks, the normalized fence-aware external parse, the three user forks), names classes (a) and (d) as the live risks over the FIVE new MODIFIED blocks, and carries the eight-cycle CRITICAL-class history plus the environmental test caveat.",
+  "next_recommended": "Paste orbit/changes/d4-review-consistency/.orbit-runs/external-prompt-proposal-2026-07-22T22-11-59Z.md into the target AI, save the response as orbit/changes/d4-review-consistency/.orbit-runs/external-proposal-<TS>.md, then /orbit:address-reviews d4-review-consistency --from-file <path>",
+  "kind": "editorial",
+  "mode": "proposal",
+  "reviewer_class": "external",
+  "prompt_path": "orbit/changes/d4-review-consistency/.orbit-runs/external-prompt-proposal-2026-07-22T22-11-59Z.md",
+  "target": null,
+  "awaiting_findings": true
+}

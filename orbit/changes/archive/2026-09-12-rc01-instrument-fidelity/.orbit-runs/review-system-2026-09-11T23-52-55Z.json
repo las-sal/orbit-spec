@@ -1,0 +1,64 @@
+{
+  "command": "review",
+  "timestamp": "2026-09-11T23:52:55Z",
+  "change": "rc01-instrument-fidelity",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": [],
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "src/core/templates/workflows/audit-drift.ts",
+      "line": 72,
+      "title": "The corrected audit-drift schema reference's field notes still describe four fields its JSON block no longer carries (`context`, `caller`, `categories_skipped`, `findings_summary.by_category`) — the mirror now contradicts itself.",
+      "recommendation": "Task 4.3 rewrote the extensions sentence (line 29) and the JSON block (the top-level keys are now `categories_run`, `findings_by_category`, `findings_total`, `findings`, `stale_suppressed` + spine), but the `## Field notes` bullets at audit-drift.ts:72–75 were left as written: `context` is \"standalone\" in every emit; `caller` is null; `categories_run` / `categories_skipped` are strings; `findings_summary.by_category` keys are category IDs. A reader of the generated `references/run-summary-schema.md` meets a block without those keys and notes that explain them. Rewrite the four bullets to the block's vocabulary: drop the `context`/`caller` bullets (state once that only standalone invocations write the file and that context, caller, depth, and flags live in the report header), make the categories bullet name `categories_run` alone (skipped categories are report-body facts), and rename the by-category note to `findings_by_category` (keys \"1\"–\"6\"). The apply walk's own residue sweep should have caught this: the replacement targeted a wrapped line and silently did not match."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "test/core/emit-schema-parity.test.ts",
+      "line": 34,
+      "title": "The parity test reads only JSON blocks, so a schema reference's prose field notes can name a key its block lacks without failing — exactly the residue the warning above found.",
+      "recommendation": "`documentedKeys` collects top-level keys from the ```json blocks only (test/core/emit-schema-parity.test.ts:34–44). Add a second derivation over the `## Field notes` section: every bullet of the form `- **\\`<name>\\`**` (and dotted forms `<name>.<sub>`) names a key that must appear in the union of block keys or the engine-owned list; assert the set difference is empty per reference. This closes the one gap the audit-drift correction just exposed and costs a dozen lines; it belongs in rc01 rather than rc07 because it guards the mirrors rc01 itself corrected."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "This session wrote the code under review, so I confined the pass to what grep-level evidence can settle and left judgment to the blind pair. Pass 0 held: 13/13 tasks, and every one of the six delta scenarios traces to an executing test — the stub's real-message rejections, the selector rule, sweep-and-stub sharing one validator with five negative fixtures, the whole suite passing on a PATH with no host gh, the archive table's conditional fields, both review blocks read. Baseline compliance held the way that mattered most: the orbit-run-summary-emit baseline already documents the audit-drift emit as findings_by_category/findings_total, so the mirror correction moved the reference toward the spec, not away from it, and no baseline mentions an architecture-mode findings_summary. The surface is 15+15 and the refresh changed exactly the two corrected references. The one thing I found is my own: the audit-drift field-note bullets were not rewritten because a replacement targeted a wrapped line and did not match, and nothing failed loudly — the same shape as every instrument gap this program exists to close, and the parity test as written cannot see prose. Residual risk is in what an in-context pass cannot judge: whether the capture parser holds on the next gh release, and whether the validator's positional rule is right for verbs the references do not yet use.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "6"
+  ],
+  "passes_skipped": [
+    "4",
+    "5"
+  ],
+  "final_assessment": "0 critical, 1 warning, 1 suggestion.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc01-instrument-fidelity --from-file orbit/changes/rc01-instrument-fidelity/.orbit-runs/review-system-2026-09-11T23-52-55Z.json"
+}

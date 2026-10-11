@@ -1,0 +1,28 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-07-14T17:39:22Z",
+  "change": "d2-architect",
+  "final_assessment": "All 12 fresh-pass iter-1 findings resolved (1 CRITICAL, 6 WARNING, 5 SUGGESTION); 0 stale/deferred/escalated. CRITICAL: the un-delta'd orbit-review final-assessment requirement is now MODIFIED — scoped to the two change-review modes with explicit delegation of --as architecture to the new gate-less requirement (composed programmatically from baseline). W: conventions stock-phrasings gains the gate-less architecture scenario; NEW 9th delta (orbit-address-reviews) extends the cascade OUT-set audit-trail category to all four .orbit-runs locations + ADDED architecture-scoped resolution-log destination (also settles the S3 evidence-chain question); the three-directories residue fixed; citation-resolution ownership aligned to the majority (change validation owns; architecture validate = doc structure; design notes validate.ts hosts the helper); --fresh MODIFIED to all modes; Purposes update added to tasks 5.4. S: iteration-note anchored per-doc (MODIFIED block + scenario); CLI edge scenarios added (legacy show, nonexistent stage, zero docs, legacy-doc review error); explore.md's false fenced-diagrams claim corrected with a dated correction note; CLAUDE.md position-pointer fix moved to the apply seam (task 3.1). Ripple: proposal counts 8->9 modified; arc D2 state line amended (29 delta requirements, 13/13 fingerprints). Validates --strict; fingerprints 13 verified 0 diverged.",
+  "next_recommended": "/orbit:review --as proposal --fresh d2-architect — the independent pass yielded new findings (now resolved); the no-new-findings confirm requires an independent pass that yields none",
+  "kind": "editorial",
+  "source": "--from-file orbit/changes/d2-architect/.orbit-runs/review-proposal-2026-07-14T17-30-59Z.json",
+  "source_path": "orbit/changes/d2-architect/.orbit-runs/review-proposal-2026-07-14T17-30-59Z.json",
+  "source_format": "internal-review",
+  "walk_mode": "per_finding",
+  "walk_mode_source": "flag",
+  "resolution_summary": { "resolved": 12, "stale": 0, "deferred": 0, "escalated": 0 },
+  "ripple_cascade": {
+    "applied": [
+      "orbit/changes/d2-architect/specs/orbit-review/spec.md",
+      "orbit/changes/d2-architect/specs/orbit-conventions/spec.md",
+      "orbit/changes/d2-architect/specs/orbit-address-reviews/spec.md",
+      "orbit/changes/d2-architect/specs/orbit-architecture-engine/spec.md",
+      "orbit/changes/d2-architect/proposal.md",
+      "orbit/changes/d2-architect/design.md",
+      "orbit/changes/d2-architect/tasks.md",
+      "orbit/changes/d2-architect/explore.md",
+      "orbit/architecture/d-arc-arbitered-flow.md"
+    ],
+    "flagged_not_applied": []
+  }
+}

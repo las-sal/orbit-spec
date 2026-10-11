@@ -1,0 +1,203 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-11T20:08:41Z",
+  "change": "rc09b-tool-inventory",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc09b-tool-inventory/.orbit-runs/review-proposal-2026-10-11T20-01-09Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-11T20-01-09Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 3
+  },
+  "pushback_verification": "All five verified against current state: the tokenizer counts only `(` groups (surface-snippets.ts tokenize), spec.md 118-119 were two blank lines, design.md:11 and proposal.md:26 said five, design.md D5 claimed two places members.",
+  "resolution_summary": {
+    "resolved": 5,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "A declared head launders the tool it runs, and the named limit omits that member",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-cli-grammar/spec.md",
+      "line": 54,
+      "classification": "trivial_fix",
+      "action": "option A: the named limit's Residual kind gains a tool run as an argument of a declared head (`command <tool>`, `sh -c`, `node <script>`, `node bin/orbit.js`) or after a declared reserved word; the Residual method gains reading the arguments of every declared head that runs a command; carried verbatim into the explore.md Mechanism entry. Option B (reading past `command`) is mechanism no pass has reviewed, so R-crc-6 routes it out of a walk.",
+      "evidence": "tokenize('command jq -r .x') yields one segment headed `command`, a declared utility; the named limit did not name the class",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc09b-tool-inventory/explore.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the tokenizer refuses; or one invoked only in prose"
+        ],
+        "introduced": [
+          {
+            "path": "specs/orbit-cli-grammar/spec.md",
+            "text": "a tool run as an argument of a declared head"
+          },
+          {
+            "path": "orbit/changes/rc09b-tool-inventory/explore.md",
+            "text": "a tool run as an argument of a declared head"
+          }
+        ],
+        "searched": [
+          "Residual kind",
+          "Residual method",
+          "node bin/orbit.js"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The read table says a group's grouping is stripped, but the tokenizer strips only a subshell",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-cli-grammar/spec.md",
+      "line": 29,
+      "classification": "trivial_fix",
+      "action": "narrowed the row to a subshell `( … )`; added a row reading a brace group, reserved word or `!`/`time` prefix as the head as written, failing until declared under `utility`, whose description now admits reserved words; a declared one hides what follows, the wrapper residual above; the Mechanism table and task 1.3 follow",
+      "evidence": "surface-snippets.ts tokenize increments `groups` only on `(`",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc09b-tool-inventory/explore.md",
+          "orbit/changes/rc09b-tool-inventory/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "a subshell or group"
+        ],
+        "introduced": [
+          {
+            "path": "specs/orbit-cli-grammar/spec.md",
+            "text": "the tokenizer strips no other grouping"
+          },
+          {
+            "path": "orbit/changes/rc09b-tool-inventory/tasks.md",
+            "text": "a brace group read as the head"
+          }
+        ],
+        "searched": [
+          "grouping",
+          "group",
+          "reserved word"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The stale-table count compares five POSIX rows against twelve heads that include node and sh",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 11,
+      "classification": "trivial_fix",
+      "action": "design.md and proposal.md now say the old table names seven of the twelve utility heads, naming the five missing",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc09b-tool-inventory/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "names five"
+        ],
+        "introduced": [
+          {
+            "path": "design.md",
+            "text": "names seven of the twelve utility heads"
+          }
+        ],
+        "searched": [
+          "five",
+          "stale"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "D5 says the inventory catches two members of the places table's residual; it catches one",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 64,
+      "classification": "trivial_fix",
+      "action": "D5 restated: one places member (the `$ ` prompt), one retired tool-set member (a path head), and the assignment-prefix member named as not caught",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "That catches two"
+        ],
+        "introduced": [
+          {
+            "path": "design.md",
+            "text": "catches one member of the places table's"
+          }
+        ],
+        "searched": [
+          "places",
+          "residual"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Two consecutive blank lines where the tool-set table was removed",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-cli-grammar/spec.md",
+      "line": 118,
+      "classification": "trivial_fix",
+      "action": "collapsed to one blank line",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [],
+        "searched": [],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Five of five resolved as repairs: the wrapper class added to the inventory's named limit (option A, R-crc-6 — reading past `command` would be unreviewed mechanism), the read table narrowed to what the tokenizer strips with brace groups and reserved words read as heads, and three wording corrections.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc09b-tool-inventory",
+  "ripple_misses": 0
+}

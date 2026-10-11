@@ -5,14 +5,18 @@ import os from 'os';
 import { InitCommand } from '../../src/core/init.js';
 import { saveGlobalConfig, getGlobalConfig } from '../../src/core/global-config.js';
 
-const { confirmMock, showWelcomeScreenMock, searchableMultiSelectMock } = vi.hoisted(() => ({
+const { confirmMock, selectMock, showWelcomeScreenMock, searchableMultiSelectMock } = vi.hoisted(() => ({
   confirmMock: vi.fn(),
+  selectMock: vi.fn(),
   showWelcomeScreenMock: vi.fn().mockResolvedValue(undefined),
   searchableMultiSelectMock: vi.fn(),
 }));
 
 vi.mock('@inquirer/prompts', () => ({
   confirm: confirmMock,
+  // rc17d: interactive init now carries the external-runner setup step; "none" writes nothing.
+  select: selectMock,
+  input: vi.fn(),
 }));
 
 vi.mock('../../src/ui/welcome-screen.js', () => ({
@@ -41,6 +45,8 @@ describe('InitCommand', () => {
     vi.spyOn(console, 'log').mockImplementation(() => { });
     confirmMock.mockReset();
     confirmMock.mockResolvedValue(true);
+    selectMock.mockReset();
+    selectMock.mockResolvedValue('none');
     showWelcomeScreenMock.mockClear();
     searchableMultiSelectMock.mockReset();
   });
@@ -96,7 +102,6 @@ describe('InitCommand', () => {
         'orbit-verify-change',
         'orbit-onboard',
         'orbit-review',
-        'orbit-review-external',
         'orbit-address-reviews',
         'orbit-audit-drift',
       ];
@@ -131,7 +136,6 @@ describe('InitCommand', () => {
         'orbit/verify.md',
         'orbit/onboard.md',
         'orbit/review.md',
-        'orbit/review-external.md',
         'orbit/address-reviews.md',
         'orbit/audit-drift.md',
       ];
@@ -489,6 +493,8 @@ describe('InitCommand - profile and detection features', () => {
     vi.spyOn(console, 'log').mockImplementation(() => {});
     confirmMock.mockReset();
     confirmMock.mockResolvedValue(true);
+    selectMock.mockReset();
+    selectMock.mockResolvedValue('none');
     showWelcomeScreenMock.mockClear();
     searchableMultiSelectMock.mockReset();
   });
@@ -754,7 +760,7 @@ describe('InitCommand - profile and detection features', () => {
       'orbit-propose', 'orbit-explore', 'orbit-apply-change', 'orbit-archive-change',
       'orbit-new-change', 'orbit-continue-change', 'orbit-ff-change', 'orbit-sync-specs',
       'orbit-bulk-archive-change', 'orbit-verify-change', 'orbit-onboard',
-      'orbit-review', 'orbit-review-external', 'orbit-address-reviews', 'orbit-audit-drift',
+      'orbit-review', 'orbit-address-reviews', 'orbit-audit-drift',
     ]) {
       expect(await fileExists(path.join(skillsDir, dirName, 'SKILL.md'))).toBe(false);
     }

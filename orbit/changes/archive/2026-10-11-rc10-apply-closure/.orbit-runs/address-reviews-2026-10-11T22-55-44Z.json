@@ -1,0 +1,270 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-11T22:55:44Z",
+  "change": "rc10-apply-closure",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc10-apply-closure/.orbit-runs/review-system-2026-10-11T22-50-41Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-11T22-50-41Z",
+  "latest_apply_token": "2026-10-11T22-05-30Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 3
+  },
+  "pushback_verification": "All five verified at HEAD: orbit/specs/orbit-emit-composition/spec.md:964 seeds one pass per formed_against token 'and nothing else'; bulk-archive-change.ts named orbit emit archive only in the post-move repair sentence and asserted inner /orbit:archive invocations that no step makes; the bulk brief sat in the Step 9 summary only; the requirement's DEFERRED rule named only the baseline after sync; the engine-gates delta named one limit and bulk archive reads no gates[] row.",
+  "resolution_summary": {
+    "resolved": 5,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The archive example's tasks.md seeding is attributed to a requirement that states one seeding rule and nothing else",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/archive-change.ts",
+      "line": 95,
+      "outcome": "resolved",
+      "remedy": "repair",
+      "classification": "decision_required",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Carry orbit-emit-composition's 'Payload schema references are proven by execution' as a MODIFIED block that states the tasks.md seeding rule beside the trail rule. This is a third capability, at R-crc-1's ceiling."
+          },
+          {
+            "label": "B",
+            "body": "Point the reference sentence only at what the owner states, and name the tasks.md seeding as a test-local rule in design.md's Risks, leaving the baseline for a later carry."
+          }
+        ],
+        "chosen": "A"
+      },
+      "action": "applied the ratified direction A: orbit-emit-composition's `Payload schema references are proven by execution` is carried as a MODIFIED block whose Seeding paragraph states both rules (a pass per formed_against token, an unchecked (User-validation task per deferred_validations task) and whose residual names both; the archive-example scenario names the tasks.md seeding; the 9 carried scenarios are declared by tags on the round-trip tests that assert them. The reference sentence at archive-change.ts:95 now cites an owner that states the rule, so it is unchanged. Third capability, at R-crc-1's ceiling (3 capabilities, 5 requirements).",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc10-apply-closure/specs/orbit-emit-composition/spec.md",
+          "orbit/changes/rc10-apply-closure/proposal.md",
+          "orbit/changes/rc10-apply-closure/design.md",
+          "orbit/changes/rc10-apply-closure/tasks.md",
+          "test/core/reference-roundtrip.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "to stay at two capabilities",
+          "33 delta scenarios to declare",
+          "Declare the 20 carried scenarios"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc10-apply-closure/specs/orbit-emit-composition/spec.md",
+            "text": "**The tasks file.**"
+          },
+          {
+            "path": "orbit/changes/rc10-apply-closure/proposal.md",
+            "text": "states its second seeding rule"
+          },
+          {
+            "path": "orbit/changes/rc10-apply-closure/design.md",
+            "text": "One block is carried for the opposite reason"
+          },
+          {
+            "path": "test/core/reference-roundtrip.test.ts",
+            "text": "Payload schema references are proven by execution :: A genre-dependent key is exempt by name, and only by name"
+          }
+        ],
+        "searched": [
+          "and nothing else",
+          "two capabilities",
+          "20 carried",
+          "33 delta"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "Bulk archive never tells the AI to write the per-change archive emit that is meant to carry its deferrals",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/bulk-archive-change.ts",
+      "line": 121,
+      "outcome": "resolved",
+      "remedy": "repair",
+      "classification": "trivial_fix",
+      "action": "bulk archive gains a 'Per-change archive emit' step after each change's 8b move, composing the payload as orbit-archive-change's Step 5.5 does with that change's consent, fingerprint fields and Step 3.2 deferred_validations, and invoking orbit emit archive; the Scope section's claim that each inner /orbit:archive invocation emits now points at that step; the ADDED requirement names the emit; design D8's premise sentence is restated",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc10-apply-closure/specs/orbit-archive-modifications/spec.md",
+          "orbit/changes/rc10-apply-closure/design.md",
+          "test/core/templates/archive-user-validation.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "invocation emits its own",
+          "syncs and moves each change itself and then writes"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/templates/workflows/bulk-archive-change.ts",
+            "text": "## Per-change archive emit (rc10"
+          },
+          {
+            "path": "orbit/changes/rc10-apply-closure/specs/orbit-archive-modifications/spec.md",
+            "text": "write each change's archive"
+          },
+          {
+            "path": "orbit/changes/rc10-apply-closure/design.md",
+            "text": "so a per-change emit step after the move is added"
+          }
+        ],
+        "searched": [
+          "orbit emit archive",
+          "inner archive emit",
+          "writes each change"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "On the bulk path the deferral brief arrives only after every move, so the user cannot abort on a weak why",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/bulk-archive-change.ts",
+      "line": 307,
+      "outcome": "resolved",
+      "remedy": "repair",
+      "classification": "trivial_fix",
+      "action": "bulk archive briefs each change's dispositions in chat before that change's sync and move, and repeats them in the Step 9 summary; the ADDED requirement and design D8 say the same",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc10-apply-closure/specs/orbit-archive-modifications/spec.md",
+          "orbit/changes/rc10-apply-closure/design.md",
+          "test/core/templates/archive-user-validation.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "brief each change's dispositions in its batch summary",
+          "briefs the dispositions in its batch summary",
+          "summary BRIEFS each change"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/templates/workflows/bulk-archive-change.ts",
+            "text": "BEFORE its sync and move"
+          },
+          {
+            "path": "orbit/changes/rc10-apply-closure/specs/orbit-archive-modifications/spec.md",
+            "text": "that change's dispositions there and again in its batch summary"
+          }
+        ],
+        "searched": [
+          "batch summary",
+          "BRIEFS"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Task 4.4 asserts a fact that exists only after the step that must dispose of it",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc10-apply-closure/tasks.md",
+      "line": 28,
+      "outcome": "resolved",
+      "remedy": "repair",
+      "classification": "trivial_fix",
+      "action": "the ADDED requirement's after-sync sentence is widened to any state that exists only after Step 3.2 (the baseline after sync, the archived directory, the archive emit), and the archive body's Step 3.2 says the same; task 4.4 is therefore DEFERRED at this change's own archive by rule",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc10-apply-closure/specs/orbit-archive-modifications/spec.md",
+          "src/core/templates/workflows/archive-change.ts",
+          "test/core/templates/archive-user-validation.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "about the baseline after sync is DEFERRED",
+          "about the baseline AFTER sync is DEFERRED"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc10-apply-closure/specs/orbit-archive-modifications/spec.md",
+            "text": "the archived directory, or the archive emit"
+          },
+          {
+            "path": "src/core/templates/workflows/archive-change.ts",
+            "text": "the archived directory, or the archive emit"
+          }
+        ],
+        "searched": [
+          "after sync",
+          "precedes the sync"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Bulk archive has no gate prompt, so the defect rc10 closes for /orbit:archive persists through /orbit:bulk-archive",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc10-apply-closure/specs/orbit-engine-gates/spec.md",
+      "line": 14,
+      "outcome": "resolved",
+      "remedy": "repair",
+      "classification": "trivial_fix",
+      "action": "the override contract names a second limit: /orbit:bulk-archive fires no gate prompt, so a batch archive past a listed gate records no decision; design Risks records it. A bulk gate prompt would be new mechanism, outside this change",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc10-apply-closure/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc10-apply-closure/specs/orbit-engine-gates/spec.md",
+            "text": "A second named limit"
+          },
+          {
+            "path": "orbit/changes/rc10-apply-closure/design.md",
+            "text": "Bulk archive fires no gate prompt."
+          }
+        ],
+        "searched": [
+          "bulk-archive",
+          "gate prompt"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": "walk all, A",
+  "final_assessment": "Five findings resolved: the round-trip seeding requirement is carried as a third capability (Sal: A), bulk archive gains its per-change emit and a pre-move brief, the DEFERRED rule covers post-move state, and bulk archive's missing gate prompt is a named limit.",
+  "iteration": 4,
+  "next_recommended": "/orbit:address-reviews rc10-apply-closure",
+  "ripple_misses": 0
+}

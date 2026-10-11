@@ -1,0 +1,121 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-25T23:24:02Z",
+  "change": "rc13b-explore-maturity-signal",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc13b-explore-maturity-signal/.orbit-runs/external-system-2026-09-25T20-06-14Z.md",
+  "external_reviewer": "GPT-5 Codex",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 1,
+    "warning": 4,
+    "suggestion": 1
+  },
+  "pushback_verification": "All 6 findings verified against the reviewed commit 69adda5d and then against the working tree after log 1; 4 already fixed by log 1 (stale-suppressed with the fixture or artifact as evidence), 2 still applying and fixed here.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 4,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "Repeated sections discard earlier rule evidence and falsely render Accounted",
+      "marker_source": "external",
+      "file": "src/core/parsers/explore-counter.ts",
+      "line": 97,
+      "classification": "stale",
+      "action": "Already fixed at HEAD by log 1 (address-reviews-2026-09-25T23-20-44Z.json, the fresh half's same finding at explore-counter.ts:98): collectSections merges a same-named `##` section into the earlier one in file order and records every heading line; the form parse notes each extra heading. The external reproduction is now a fixture (explore-rules.test.ts: second Mechanism section → D-x-1 no-closure, D-x-9 orphan, later D-x-1 duplicate; rung Unaccounted), executed green. Evidence: the fixture and src/core/parsers/explore-counter.ts `Section.headings`.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Slots outside a Decisions list item can silently opt its rule out",
+      "marker_source": "external",
+      "file": "src/core/parsers/explore-counter.ts",
+      "line": 114,
+      "classification": "trivial_fix",
+      "action": "collectSections now ENDS a list item (CommonMark) at an ATX heading of level 3+ and, after a blank line, at an unindented line that is not itself a top-level item; lines that follow belong to the section, not the entry. A lazy continuation (no blank before) and an indented slot still belong. Measured before the edit: ZERO column-zero slot lines exist in any explore.md on the record (staging, active, archived), so no existing attribution changes; the Standing-recommendation counter follows the same boundary. The external reproduction (H3 then column-zero `Kind: fact` after D-x-1) is a fixture: rules_total 1, D-x-1 absent.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/parsers/explore-counter.ts",
+          "test/core/parsers/explore-rules.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Valid Domain-table whitespace is rejected as a malformed rule",
+      "marker_source": "external",
+      "file": "src/core/explore-grammar.ts",
+      "line": 102,
+      "classification": "stale",
+      "action": "Already fixed at HEAD by log 1 (address-reviews-2026-09-25T23-20-44Z.json, the fresh half's same finding at explore-grammar.ts:102): GFM row predicates (splitTableRow / isMemberRow / isTableHeader) replaced the padding-strict regexes; `|a|case|`, padded cells, trailing whitespace and an escaped pipe accept, three cells and an empty cell stay MALFORMED — fixtures executed green. Evidence: src/core/explore-grammar.ts and explore-rules.test.ts.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "A concluded explore regains the eligibility label when metadata is degraded",
+      "marker_source": "external",
+      "file": "src/commands/workflow/status.ts",
+      "line": 307,
+      "classification": "trivial_fix",
+      "action": "orientation.ts's degraded branch now carries the explore entry's POSITION (trail-derived from the newest valid emit's status token, trustworthy exactly as `next` is) through a metadata failure, so renderNextLine's concluded rule still fires: a broken .openspec.yaml renders the concluded prose BARE in --full text and `position: concluded` on the degraded JSON row (both asserted by the CLI test) and the unit test covers concluded and exploring degraded rows. The metadata error is still reported; nothing rereads the live header.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/orientation.ts",
+          "test/core/orientation.test.ts",
+          "test/commands/status-orientation.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Generated explore instructions still teach the retired count-only Mature rung",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/explore.ts",
+      "line": 673,
+      "classification": "stale",
+      "action": "Already fixed at HEAD by log 1 (address-reviews-2026-09-25T23-20-44Z.json, the fresh half's same finding at explore.ts:673, decision lane, option B ratified by Sal): the parenthetical is a pointer to orbit-run-summary-emit's maturity requirement; the orbit-explore pins were re-recorded with the two-acts note (task 1.3's unchanged-pin measurement stood first; this repair moved the pin second), and the regenerated SKILL.md diffs at exactly that one line. The checked grammar mirrors are untouched. Evidence: test/core/templates/skill-templates-parity.test.ts comment and the diff.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "stale"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Reconcile the remaining contradictory field-shape descriptions",
+      "marker_source": "external",
+      "file": "orbit/changes/rc13b-explore-maturity-signal/design.md",
+      "line": 73,
+      "classification": "stale",
+      "action": "Already fixed at HEAD by log 1 (address-reviews-2026-09-25T23-20-44Z.json, the fresh half's findings at design.md:73 and the emit-composition delta:52): the stale orphan-in-rules_open phrase is deleted from design; the delta, design and exploration now distinguish the exactly-one AUTHORING obligation (orbit-conventions') from the reader's first-wins recovery with a note per further carrier. Implementation unchanged, as the finding asked. Evidence: the three artifacts' dated 2026-09-25 amendments.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "stale"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "6 of 6 external findings (GPT-5 Codex, system iter 1; 1C/4W/1S) walked: 4 were already closed by log 1, because the blind pair CONVERGED on them — the repeated-section collector (the external CRITICAL, an ENUMERATE failure it named as such), the GFM row regex, the retired Mature-rung prose, and the field-shape contradictions — each suppressed with the executed fixture or the dated artifact as evidence; the 2 the fresh half did not see are fixed here: a list item now ends at an H3 or a post-blank unindented line (measured safe: zero column-zero slot lines exist on the record), and a degraded explore row keeps its trail-derived position so a broken .openspec.yaml cannot put the eligibility label back on concluded prose. No decision lane fired. 2322 tests green (2319 after log 1, 2312 at apply). Task 6.4's datum is now complete across both halves: fresh 0 of 0, external 1 of 1 (ENUMERATE).",
+  "iteration": 5,
+  "next_recommended": "/orbit:review --as system rc13b-explore-maturity-signal"
+}

@@ -1,0 +1,47 @@
+{
+  "command": "audit-drift",
+  "timestamp": "2026-09-25T23:48:40Z",
+  "change": null,
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "final_assessment": "No critical issues. 2 warning(s) to consider.",
+  "categories_run": [
+    "1",
+    "3",
+    "4"
+  ],
+  "findings_by_category": {
+    "1": 0,
+    "3": 3,
+    "4": 0
+  },
+  "findings_total": 3,
+  "findings": [
+    {
+      "category": "3",
+      "severity": "WARNING",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 1393,
+      "title": "The rc13b stage section still reads 'BLOCKED 2026-09-15 on rc13a, which has not shipped' while the engine computes the stage quiescent (archived 2026-09-25) and rc13a complete-ratified",
+      "recommendation": "Architecture staleness check (a): the dated BLOCKED paragraph in the rc13b section has no later dated line saying the block lifted, so the section's prose contradicts the computed state (`orbit architecture status`: rc13b quiescent, awaiting ratification, cited by archived-change 2026-09-25-rc13b-explore-maturity-signal; rc13a complete, ratified 2026-09-25). Append ONE dated line under the BLOCKED paragraph — never delete it (the ledger is append-only): rc13a shipped 2026-09-25 as bounded-closure-semantics; rc13b applied, walked through the blind pair, and archived the same day. The ratification session is the natural place; the engine's state line stays computed (R-d-4)."
+    },
+    {
+      "category": "3",
+      "severity": "WARNING",
+      "file": "CLAUDE.md",
+      "line": 306,
+      "title": "CLAUDE.md still says 'the convention is ADVISORY until rc13b's readout lands' and carries no rc13b paragraph — the governing doc lags the archived stage",
+      "recommendation": "The sentence was true when written (rc13a's paragraph) and is false at HEAD: rc13b's readout landed and the four synced baselines (orbit-conventions, orbit-emit-composition, orbit-orientation, orbit-run-summary-emit) now say the engine READS the Mechanism section. A future implementer reading CLAUDE.md alone would believe the maturity grid still grades on heading count. Add the customary per-stage paragraph for rc13b under the rc13a one (archived 2026-09-25; the form parse, six-rung grid, five engine-owned fields, the concluded row; the blind-pair cadence; task 6.4's first measurement; 2322 tests) and amend the ADVISORY clause to say it landed — leaving every src:-marked figure untouched, since none changed (validate --sources passes: stages 24, rulings 14, capabilities 21, schema version 4)."
+    },
+    {
+      "category": "3",
+      "severity": "SUGGESTION",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 3688,
+      "title": "The program doc's status log has no entry for rc13b's archive, where every prior stage's archive has one",
+      "recommendation": "Append a dated status-log entry after the rc13a second-attempt entry: rc13b archived 2026-09-25 through a COMPUTED PASSED review-system gate via the blind pair (fresh 0C/5W/4S + external GPT-5 Codex 1C/4W/1S, zero critical overlap by key but four defects found by both; in-context confirm 0C/1W/2S; 18 findings, three walk logs), the D-rc13b-7 measurement (fresh 0 of 0, external 1 of 1 ENUMERATE), and the residuals the readiness record accepted. State stays computed; the entry is narrative."
+    }
+  ],
+  "stale_suppressed": [],
+  "next_recommended": "/orbit:address-reviews --from-file orbit/.orbit-runs/audit-drift-2026-09-25T23-48-40Z.json — 3 drift(s) detected project-wide; resolve before next workflow step"
+}

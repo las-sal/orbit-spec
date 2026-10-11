@@ -23,6 +23,7 @@ import { CORE_WORKFLOWS, ALL_WORKFLOWS, getProfileWorkflows } from '../core/prof
 import { OPENSPEC_DIR_NAME } from '../core/config.js';
 import { UpdateCommand } from '../core/update.js';
 import { hasProjectConfigDrift } from '../core/profile-sync-drift.js';
+import type { ProgramOptions } from '../cli/program.js';
 
 type ProfileAction = 'both' | 'delivery' | 'workflows' | 'keep';
 
@@ -206,19 +207,23 @@ function maybeWarnConfigDrift(
  * Register the config command and all its subcommands.
  *
  * @param program - The Commander program instance
+ * @param options - `hooks: false` skips registering the preAction hook
  */
-export function registerConfigCommand(program: Command): void {
+export function registerConfigCommand(program: Command, options: ProgramOptions = {}): void {
   const configCmd = program
     .command('config')
     .description('View and modify global OpenSpec configuration')
-    .option('--scope <scope>', 'Config scope (only "global" supported currently)')
-    .hook('preAction', (thisCommand) => {
+    .option('--scope <scope>', 'Config scope (only "global" supported currently)');
+
+  if (options.hooks !== false) {
+    configCmd.hook('preAction', (thisCommand) => {
       const opts = thisCommand.opts();
       if (opts.scope && opts.scope !== 'global') {
         console.error('Error: Project-local config is not yet implemented');
         process.exit(1);
       }
     });
+  }
 
   // config path
   configCmd
@@ -337,6 +342,12 @@ export function registerConfigCommand(program: Command): void {
     .action((key: string) => {
       const config = getGlobalConfig() as Record<string, unknown>;
       const existed = deleteNestedValue(config, key);
+      // rc17d system walk (fresh S1): unsetting the runner's one nested path leaves an empty record,
+      // which every later read warns on as malformed — drop the emptied parent with it.
+      const runner = config.externalRunner;
+      if (key.startsWith('externalRunner.') && runner !== null && typeof runner === 'object' && !Array.isArray(runner) && Object.keys(runner).length === 0) {
+        delete config.externalRunner;
+      }
 
       if (existed) {
         saveGlobalConfig(config as GlobalConfig);

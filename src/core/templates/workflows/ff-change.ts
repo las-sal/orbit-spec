@@ -5,6 +5,7 @@
  * templates file into workflow-focused modules.
  */
 import type { SkillTemplate, CommandTemplate } from '../types.js';
+import { PR_CHOREOGRAPHY_REFERENCE } from './pr-choreography.js';
 
 export function getFfChangeSkillTemplate(): SkillTemplate {
   return {
@@ -105,13 +106,14 @@ After completing all artifacts, summarize:
 
 # Orbit additions
 
-## Three execution disciplines (apply throughout this command)
+## Four execution disciplines (epitome)
 
-The three execution disciplines from \`orbit-conventions\` bracket the authoring lifecycle; they're embedded in every orbit command for self-contained reliability.
+The four disciplines from \`orbit-conventions\`, embedded per body; detail lives where each fires.
 
-- **Read-before-reference (authoring-time)**: before naming a specific construct (function, type, file path, capability, spec requirement, command flag), read its actual definition — never infer a plausible reference. If you can't verify, ask the user or leave a \`@review:\` marker instead of guessing.
-- **Change completeness (modification-time)**: apply substantive modifications fully across ALL affected artifacts before calling them done; after mechanical edits, sweep for residue the pattern missed AND new bugs the replacement introduced.
+- **Read-before-reference (authoring-time)**: read a construct's actual definition before naming it; unverifiable → ask or leave a \`@review:\` marker, never guess.
+- **Change completeness (modification-time)**: apply substantive modifications fully across ALL affected artifacts; after mechanical edits, sweep for residue AND new bugs the replacement introduced.
 - **Pushback (review-time)**: verify each flagged issue against current state before acting; suppress stale findings with evidence rather than re-fixing already-fixed state.
+- **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line — gate \`passed\` means *eligible*, not *commanded*.
 
 ## Base-fingerprint capture (NEW step)
 
@@ -130,43 +132,60 @@ add-missing-only (\`--refresh\` is the deliberate re-stamp after reconciling a d
 ADDED-only changes stamp nothing; a "skipped — requirement not found in live baseline" warning
 means the delta references a nonexistent requirement (fix the delta; validation also catches it).
 
-## Run-summary emit (one-shot at command completion)
+## PR lifecycle (config-gated — D-arc Stage D6)
 
-(Per \`orbit-run-summary-emit\` capability)
+\`ff\` is propose-in-one-breath, so it carries the IDENTICAL choreography — a change is never
+treated differently for how it was started.
 
-\`/orbit:ff\` is a one-shot command per \`orbit-run-summary-emit\`'s \`Emit timing semantics\` requirement (emit ONCE on natural command completion). After all artifacts (proposal/design/tasks/specs) are generated, write:
+**Position (this section is placed last for reading, not for running).** Phase 1 (select +
+switch) runs BEFORE Step 2 (\`orbit new change\`): that step writes
+\`orbit/changes/<name>/.openspec.yaml\`, a path a compatible branch already TRACKS, so a
+switch attempted after it is exactly the \`git switch\` refusal the ordering exists to
+prevent. Phase 2 (generation + validation, ON that branch) IS Steps 2–4; phase 3 (the no-CI
+note, then commit → push → draft PR, then the attachment record's own commit + push) runs
+after Step 5's final status, with the commit scope enumerating the change's generated
+artifacts.
 
+Read the RESOLVED regime from the engine FIRST
+— \`orbit status --json\`, field \`pr\` (never parse \`orbit/config.yaml\` yourself: the value
+set is closed and every inert path already resolves to \`never\` with the reader's warning):
+\`never\`, absent, or an inert value/shape means RETURN IMMEDIATELY — probe nothing, emit no
+note. Only an ACTIVE mode loads \`references/pr-choreography.md\` and follows it, including
+the three ordered phases (select + switch BEFORE generation), every precondition, the
+program-PR adopt-or-open query, degradation, and the \`pr_attachment\` record.
+
+(\`/orbit:new\` and \`/orbit:continue\` are explicitly NOT extended: they never attach, and a
+change built that way reaches archive unattached — the tail's PR path terminates there before
+any remote or \`gh\` work.)
+
+## Run-summary emit (one-shot at command completion — via the engine emit surface)
+
+(Per \`orbit-run-summary-emit\`; composed and written via \`orbit emit ff\` — \`orbit-emit-composition\`.)
+
+At command completion, compose the narrative payload (\`final_assessment\`, the required
+nullable \`model\`, and — when the PR choreography ran — the \`pr_attachment\` object per
+\`references/pr-choreography.md\`) into a temp file and invoke:
+
+\`\`\`bash
+orbit emit ff --change <name> --payload <payload-file>
 \`\`\`
-orbit/changes/<name>/.orbit-runs/ff-<TS>.json
-\`\`\`
 
-Where \`<TS>\` is ISO-8601 UTC with hyphens. Create \`.orbit-runs/\` if it doesn't exist. The filename prefix is \`ff-\` (NOT \`propose-\`) to preserve entry-point provenance per the per-variant filename rule.
+The ENGINE owns the spine, the trail path, timestamp + collision handling, and \`next_recommended\` composition (propose-shaped: the review-gate pointer). Never hand-compose the JSON.
 
-### JSON shape
-
-Per the universal spine in \`orbit-conventions\`'s \`Internal-run JSON summary format\` + per-command extensions:
-
-\`\`\`json
-{
-  "command": "ff",
-  "timestamp": "<ISO-8601 UTC>",
-  "change": "<name>",
-  "final_assessment": "<narrative, e.g., 'Fast-forwarded <name>: generated all artifacts (proposal/design/tasks/specs) in one pass.'>",
-  "next_recommended": "/orbit:review <name> — all proposal artifacts ready; review before apply",
-  "kind": "workflow",
-  "artifacts_created": ["proposal", "design", "tasks", "specs/<capability>"],
-  "delta_count": <int — sum of normative requirements across spec deltas>,
-  "from": "scratch"
-}
-\`\`\`
-
-### \`next_recommended\` — always recommend review next
-
-Per \`orbit-run-summary-emit\`'s \`Propose-shaped and artifact-completion-aware recommendation logic\` requirement, \`/orbit:ff\` ALWAYS recommends \`/orbit:review\` next, never \`/orbit:apply\` directly. Same rule as \`/orbit:propose\` (both are propose-shaped — produce the canonical artifact set in one invocation). \`/orbit:new\` and \`/orbit:continue\` follow a different rule (artifact-completion-aware; defer to upstream \`isComplete\`).
+When the choreography OPENED or ADOPTED a PR (the emit's \`pr_attachment\` carries \`url\`), the
+emit is NOT the last act: commit and push the just-written emit file per the reference's
+"Recording the attachment" section — the attachment record the archive tail dereferences must
+reach the branch. After a mid-flight failure the emit stays LOCAL; landing it is part of the
+manual recovery the failure note names.
 
 **Completion-prompt override (chat)**: where the upstream steps above prompt "Run \`/orbit:apply\` or ask me to implement", instead prompt: "Run \`/orbit:review <name>\` — review the artifacts before implementation."
-
-A downstream status reader parses the leading \`/orbit:review <name>\` token into \`command\`/\`args\`.`,
+`,
+    references: [
+      {
+        name: 'pr-choreography.md',
+        content: PR_CHOREOGRAPHY_REFERENCE,
+      },
+    ],
     license: 'MIT',
     compatibility: 'Requires orbit CLI.',
     metadata: { author: 'openspec', version: '1.0' },

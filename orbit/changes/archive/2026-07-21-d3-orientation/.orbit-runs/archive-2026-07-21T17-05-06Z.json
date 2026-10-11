@@ -1,0 +1,23 @@
+{
+  "command": "archive",
+  "timestamp": "2026-07-21T17:05:06Z",
+  "change": "d3-orientation",
+  "final_assessment": "Archived d3-orientation to orbit/changes/archive/2026-07-21-d3-orientation/ after a full consent-clean flow: user-typed invocation (zero consent prompts; schema_version 3, no era stamp needed), zero @review: markers, artifacts complete, 17/17 tasks, gate review-system PASSED (no inflection prompt), fingerprints 7/7 verified (no divergence prompt), pre-archive audit clean (no CRITICAL; vocabulary hits are deliberate retirement records; no name collision; CLAUDE.md count claims verified true). Sync ran with inherited consent: NEW baseline orbit-orientation (9 requirements, real Purpose) + 7 MODIFIED blocks replaced byte-identical across orbit-run-summary-emit/orbit-explore-modifications/orbit-engine-gates/orbit-architect — baseline capabilities 16 → 17; validate --specs 17/17 passed; 1754 tests green. Change lifetime: 15 review passes (proposal 6 internal + 2 external; system 4 internal + 2 external), 55 findings, ALL resolved, none re-opened; apply via one recorded gate_overridden (review-proposal, R-d-10 interim path); consent user-invoked end-to-end.",
+  "next_recommended": "Stage d3-orientation renders quiescent post-archive — completion ratification is yours (an architect session or hand-edit writes the mark); /orbit:architect d-arc-arbitered-flow when you choose",
+  "kind": "lifecycle",
+  "consent": "user-invoked",
+  "archived_to": "orbit/changes/archive/2026-07-21-d3-orientation/",
+  "gate": { "id": "review-system", "state": "passed" },
+  "markers_found": 0,
+  "fingerprints": { "checked": 7, "verified": 7, "diverged": 0, "unverified": 0, "missing": 0 },
+  "audit": { "ran": true, "critical": 0, "warning": 0, "suggestion": 0, "note": "focused pre-archive sweep: vocabulary residue (clean outside deliberate retirement records), cross-doc counts (CLAUDE.md D15 claim verified true), collision check (clean), fingerprint tally (7/7)" },
+  "sync": {
+    "synced": true,
+    "capabilities_touched": 5,
+    "added_capabilities": ["orbit-orientation"],
+    "modified_blocks": { "orbit-run-summary-emit": 3, "orbit-explore-modifications": 1, "orbit-engine-gates": 2, "orbit-architect": 1 },
+    "delta_requirements": 16,
+    "baseline_capabilities": "16 → 17",
+    "verification": "fence-aware extractor: all 16 touched blocks byte-identical to deltas; validate --specs 17 passed; 1754 tests green"
+  }
+}

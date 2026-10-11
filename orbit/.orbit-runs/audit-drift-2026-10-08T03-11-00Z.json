@@ -1,0 +1,35 @@
+{
+  "command": "audit-drift",
+  "timestamp": "2026-10-08T03:11:00Z",
+  "change": null,
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "final_assessment": "No critical issues. 0 warning(s) to consider.",
+  "categories_run": [
+    "1",
+    "3",
+    "4",
+    "5",
+    "6"
+  ],
+  "findings": [
+    {
+      "category": "3",
+      "severity": "SUGGESTION",
+      "file": "orbit/specs/orbit-run-summary-emit/spec.md",
+      "line": 424,
+      "title": "The verify-pass scenario's example names the v4 command while the shipped schema is v5",
+      "recommendation": "The scenario 'Verify pass emit recommends review-as-system canonically' illustrates the graph's lead with '\"/orbit:review --as system --fresh foo\"' under spec-driven v4, whose first uncovered system slot was blind-pair. spec-driven is version 5: with nothing standing, its invoked slot presents the pair command (`/orbit:review --as system --reviewer blind-pair foo`), and since rc18 an outstanding review pass makes the walk lead instead. The rule the scenario states (the lead is the graph's command, never a literal) is still right; only its example is a superseded schema's. Restate the example under v5, or drop the version-specific example and keep the rule. rc18 carried this block and left the example as it found it."
+    }
+  ],
+  "stale_suppressed": [],
+  "findings_total": 1,
+  "findings_by_category": {
+    "1": 0,
+    "3": 1,
+    "4": 0,
+    "5": 0,
+    "6": 0
+  },
+  "next_recommended": "/orbit:address-reviews --from-file orbit/.orbit-runs/audit-drift-2026-10-08T03-11-00Z.json — 1 drift(s) detected project-wide; resolve before next workflow step"
+}

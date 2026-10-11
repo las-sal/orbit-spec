@@ -1,0 +1,9 @@
+{
+  "command": "propose",
+  "timestamp": "2026-10-04T23:16:28Z",
+  "change": "rc06b-map-readers",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Proposed rc06b-map-readers from its exploration (consume mode): verify's Scenario Coverage step reads the scenario map by one closed table, and every Pass 0 reader (internal through verify, the external prompt's item 0) reads the same surface; the pristine-upstream rule is narrowed and stated once in orbit-conventions' Generated-file disposition, with orbit-run-summary-emit's wrapper requirement pointing at it. Three capabilities at R-crc-1's ceiling (orbit-verify-modifications ADDED; orbit-conventions, orbit-run-summary-emit MODIFIED), 20 delta scenarios, 11 tasks; validates --strict, fingerprints 2/2. Q-rc06b-1 resolved at propose as D-rc06b-8 (the post-apply stop is rc10's). One READ correction recorded in explore.md: the upstream-portion rule was also stated in orbit-conventions, found at propose.",
+  "next_recommended": "/orbit:review rc06b-map-readers — proposal artifacts ready; review before apply"
+}

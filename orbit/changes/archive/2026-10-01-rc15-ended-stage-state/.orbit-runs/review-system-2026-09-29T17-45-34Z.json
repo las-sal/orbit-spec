@@ -1,0 +1,129 @@
+{
+  "command": "review",
+  "timestamp": "2026-09-29T17:45:34Z",
+  "change": "rc15-ended-stage-state",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 3
+    }
+  },
+  "findings": [
+    {
+      "pass": "1",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/specs/orbit-orientation/spec.md",
+      "line": 44,
+      "title": "Orientation's closed data-source scenario says 'never artifact-content parsing' while the PROGRAM band now reads explore.md headers through stage-state computation",
+      "recommendation": "The `No live inference beyond engine and trail` scenario (line 44) closes orientation's sources and ends with `never artifact-content parsing`; the explore-chip requirement (line 94-95) then says the concluded glyph is read `from the TRAIL, never from the file (per the bare-status requirement's closed data-source scenario)`. After rc15, `orbit status --full`'s PROGRAM band goes through `buildArchitectureBuckets` -> `computeStageStates` -> `readConcluded` (state.ts:103-111) and parses the first non-blank line of every citing staging directory's `explore.md`; my probe rendered `s-bom - ended-from-explore [explore:s-bom-conc (concluded)]` two lines above a row whose chip came from the trail. The design's Risks section records the two-source window as an accepted residual but names neither the scenario nor the chip sentence that state the contrary, so the baseline will carry a rationale that is now false in letter. This is a spec-truth defect, not a behavioral one: no test or WAITING derivation regresses.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Add a one-clause `orbit-orientation` delta to the `No live inference` scenario: `architecture stage-state computation (which reads the concluded header of citing staging directories per orbit-architecture-engine)`, and soften the chip sentence's `never from the file` to `the ROW's chip is read from the trail`. Cost: a fourth capability directory, over R-crc-1's three-capability ceiling and against exit (3)'s recorded `ls specs/` measurement (though exit (3) itself protects only the WAITING-set requirement, which stays untouched) - so this lane needs an R-crc-9 declaration or a ratified exception."
+        },
+        {
+          "label": "B",
+          "body": "Keep the capability count at three: record the residual in the archive's readiness record naming BOTH sentences by requirement and line (`orbit-orientation` `No live inference` THEN clause; the explore-chip `never from the file (per ...)` parenthetical), and hand the one-clause repair to the same retirement-class sweep at-archive note 5.4 already feeds - it is the same class (a living sentence describing the reader's pre-rc15 limit) as the two sentences 5.4 names."
+        }
+      ]
+    },
+    {
+      "pass": "4",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "src/core/templates/workflows/architect.ts",
+      "line": 109,
+      "title": "The unprompted route's UNDATED and live-citer tests are not stated in the status JSON's own field names, and the `concluded` flag on `citing[]` entries has no spec home",
+      "recommendation": "The route tells the adopter's AI to read the observed state `from orbit architecture status --json` and then to decide UNDATED (`absent, or [ ]`) and, on a live stage, to `name the live citing artifact` - but neither test is named in the payload's terms, and an adopter's installed skill has neither our specs nor the engine source. The payload does carry everything needed: `ratified` and `ended` both `false` <=> undated (absent and `[ ]` are indistinguishable there and need not be distinguished); the live citer is the `citing[]` entry of kind `active-change`, else the `explore` entry without `concluded: true`. Name those two derivations in the body's unprompted paragraph. Separately, the `concluded` boolean on explore citing entries (state.ts:52, rendered by buckets.ts:67 as ` (concluded)`) is the only JSON signal distinguishing a live explore citer from a concluded one, yet the delta's JSON sentence (`specs/orbit-architecture-engine/spec.md:161`) names only `ended`, `endedDate`, `endedWho`; add `concluded` on explore citing entries to that sentence so the body has an owner to point at."
+    },
+    {
+      "pass": "0",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc15-ended-stage-state/proposal.md",
+      "line": 104,
+      "title": "proposal.md and design.md still state two plan facts the apply corrected only in tasks.md (the audit-drift hash pin; live-arc.test.ts as rc03a's pin)",
+      "recommendation": "Task 4.1 measured that no `orbit-audit-drift` hash pin exists (`grep -rnE 'AuditDrift.*[0-9a-f]{64}' test` -> 0, re-run by me) and task 2.5 measured that `live-arc.test.ts` reads `d-arc-arbitered-flow` only (confirmed: lines 13/28/37 load that doc; no `clean-up-review-cycle` read), so it passes 5.3 trivially. Both corrections live in tasks.md and the apply emit; proposal.md:104 (`Two hash pins move, each once`), proposal.md:111-112 (`live-arc.test.ts ... passes through rc03a's mark once written (it asserts no inconsistent stage)`), design.md:108, design.md:149 (`live-arc.test.ts is the live pin`) and design.md:153 (`[Two hash pins move] -> ... orbit-audit-drift (check (b))`) still assert the uncorrected versions. The archive keeps proposal and design as the change's record while syncing only specs, so append a dated one-line correction at each site (or strike the audit-drift pin and the live-arc claim) rather than leaving the record self-contradicting."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "CLAUDE.md",
+      "line": 414,
+      "title": "CLAUDE.md's D2 paragraph still states the four-rung precedence in-change > exploring > quiescent > premised",
+      "recommendation": "The D-arc section is labelled historical, and this line records what D2 shipped, so it is not wrong as history - but CLAUDE.md is read by every session and this is the only place outside archived material that still states the old precedence (`git ls-files | xargs grep` over tracked markdown: one hit, this line; the program doc's line 2457 is rc15's own charter problem statement). When the archive updates CLAUDE.md's ACTIVE-program section for rc15, add a parenthetical here - `(four rungs then; rc15 inserted concluded between quiescent and premised)` - so a reader who stops at the D2 paragraph does not carry the four-rung model forward. The declared residue sentences (orbit-conventions:1022 and explore.ts:610) are NOT re-flagged; they belong to at-archive note 5.4."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "pass": "1",
+      "title": "The unchanged ratified-detail branch will call a concluded exploration live",
+      "evidence": "external proposal iter 1 W1, resolved. state.ts:216-217 carries the concluded branch (`a concluded exploration is not evidence that the exit criteria were met`); real-CLI probe on a temp project rendered `s-concluded-ratified - INCONSISTENT - Complete: mark is ratified but the observed state is 'concluded' - a concluded exploration is not evidence that the exit criteria were met; the mark is not honored`, with no `live citing work` text; engine.test.ts asserts `not.toContain('live citing work')` for the cell."
+    },
+    {
+      "pass": "0",
+      "title": "The test task does not execute all fifteen composition cells",
+      "evidence": "external proposal iter 1 W2, resolved. engine.test.ts `the composition table - five observations x three marks (rc15)`: `it.each` over FIXTURES x three marks (15 cases) plus `covers all fifteen cells exactly once` (Object.keys(TABLE) equals the fixture observations); npm test 2375/2375 green on d864ed1c; my independent 14-stage temp-project probe agreed with the delta's table cell for cell."
+    },
+    {
+      "pass": "4",
+      "title": "The architect scaffold will keep publishing the obsolete two-production grammar",
+      "evidence": "external proposal iter 1 W4, resolved. architect.ts:81 now reads `Complete: [ ]` / `Complete: [x] <YYYY-MM-DD> (<who>)` / `Complete: [~] <YYYY-MM-DD> (<who>)` - unratified, ratified, ENDED; orbit-content-fidelity.test.ts:293 pins the mirror exactly once and before `### 3. Resume`; the regenerated .claude/skills/orbit-architect/SKILL.md (13:09 today) carries it."
+    },
+    {
+      "pass": "2",
+      "title": "The unprompted route keys on OBSERVED state, so it reaches a `complete` stage - what happens to an existing `[x]` or `[~]` in the slot is unstated",
+      "evidence": "fresh proposal iter 2 W2, resolved (Sal: 2A). architect.ts:109 gates the write on `premised`, `quiescent` or `concluded` AND an UNDATED slot; architect.ts:112 declines on a dated `[x]` or `[~]` naming the mark and pointing at the hand edit; delta spec `Unprompted ended on a slot that already carries a dated mark is declined` scenario present; fidelity marker `name the existing mark and point at the hand edit as the way to reverse or re-date it` asserted."
+    },
+    {
+      "pass": "1",
+      "title": "Check (b)'s ratified-mark enumeration omits the new `concluded` observation the delta's own table makes INCONSISTENT",
+      "evidence": "fresh proposal iter 2 W3, resolved. audit-drift.ts:255 now points at the table (`this check consumes that rule and enumerates none of its observations - read rendered and the inconsistency detail from the status JSON`); `grep -n 'observed \\\\ mark\\|ended-from-explore\\|no citing artifacts at all' src/core/templates/workflows/audit-drift.ts` -> 0 lines (re-run); fidelity negative markers pin both absences."
+    },
+    {
+      "pass": "3",
+      "title": "The citing suffix renders a concluded explore identically to a live one, so the `quiescent`-beside-`concluded` cell reads as 'archived + live explore'",
+      "evidence": "fresh proposal iter 2 S3, resolved. buckets.ts:67 appends ` (concluded)`; real-CLI probe rendered `s-quiescent-concluded - quiescent - completion awaiting your ratification [archived-change:2026-09-02-qc-work, explore:s-qc-conc (concluded)]` and `s-mixed - exploring [explore:s-mixed-conc (concluded), explore:s-mixed-live]`."
+    }
+  ],
+  "commentary": "Pattern: the engine half of this change is tight - one regex alternation, one exported reader, one composition function that is literally the spec's table - and every defect I could find sits at the seams where prose describes the engine (an archived orientation rationale, the change's own plan record, CLAUDE.md's history paragraph, and a body instruction that assumes the adopter can see the payload's field names). Nothing correctness-grade survived execution.\n\nProbes EXECUTED: (1) `npm test` on d864ed1c: 100 files, 2375 tests, all green. (2) A temp project (scratchpad, deleted afterwards) with a 14-stage doc covering every cell of the five-by-three table plus the mixed concluded+live explore, a BOM+CRLF concluded header, an `explore.md` that is a DIRECTORY (unreadable -> live `exploring`, as the leniency clause promises), a fenced slot line, and a slotless stage; `orbit architecture status` (text and `--json`) matched the delta's table cell for cell, the ended detail took the one declared form naming the first live citer in precedence order, and `--json` carried `ended`/`endedDate`/`endedWho` gated on the mark. (3) `orbit architecture validate` on three malformed docs: bare `[~]`, `soon (someone)`, the ` - withdrawn` suffix, `[X]`, and a double-space `[~]  2026-09-28` each fail naming the line and all three productions; one `[x]` beside one `[~]` is the duplicate-slot violation with the first line standing; `show` on a malformed doc points at validate. (4) `orbit status --full` and `--full --json` on the same project: WAITING held exactly the one quiescent-awaiting stage; the PROGRAM band rendered byte-identical stage lines to `architecture status`. (5) The change's own flow on a COPY of clean-up-review-cycle.md: rc03a rendered awaiting with its archived citer, the `[ ]` -> `[~] 2026-09-29 (Sal)` replacement validated clean and rendered `ended (declared 2026-09-29 by Sal)`, WAITING dropped it, and a new live change citing it flipped the render to INCONSISTENT naming that change - the re-entry path as specified. (6) `orbit emit architect` accepted `stages_ended` and wrote it beside `completions_ratified`; a misspelled key is refused. (7) `orbit validate --strict` valid, `orbit fingerprint --check` 5/5, `orbit validate --sources` clean, the three deltas carry MODIFIED blocks only (no ADDED/REMOVED/RENAMED), touchpoints divergence shows `actual_unpredicted: []` with only the archive-synced specs unsatisfied. (8) Task measurements re-run: `state.ts` has no `Status` regex of its own (only the imported `readStatus` and docblock prose); no test keys stage-payload key-set equality; no audit-drift hash pin exists; `live-arc.test.ts` loads `d-arc-arbitered-flow` only.\n\nRisk texture and things I chose NOT to raise as findings: `stages_ended` (like its sibling `completions_ratified`) is accepted as any JSON type - I wrote it as a string and the emit landed - the payload table checks keys, not shapes, which is pre-existing parity, not an rc15 defect. The architect body heading `(the body's one AskUserQuestion)` and the proposal's `AskUserQuestion count stays one` are true of section 5 only: the bare-mode doc selector at architect.ts:40 is a second `**AskUserQuestion**` (three tokens in the body), and the fidelity test counts section 5 alone - inherited from D2, unchanged by this change. In a probe project with no explore emits, a concluded staging directory's workstream row still renders `Ready when you are: /orbit:explore <name> - continue capturing thinking` beneath a PROGRAM line that says `ended-from-explore` - the D3 trail-not-file rule the design already records as a residual; on the real repo the conclude verb's emit closes that window. Lens files (`orbit/lenses/perspectives.md`, `critical-paths.md`) and `orbit/project.md` are ABSENT, so pass 4 ran only the adopter perspective the prompt named and pass 5 only the change's own flow plus re-entry and the exploration-layer paths; audit-drift categories 1, 2 and 4 had nothing rc15-specific to scan (no RENAMED/REMOVED deltas, no lenses, the change unarchived) and checks (a)-(d) against live `architecture status --json` found no inconsistent stage, no `*State:*` line, and no dangling citation.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6"
+  ],
+  "passes_skipped": [],
+  "final_assessment": "0 critical, 1 warning, 3 suggestion.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc15-ended-stage-state --from-file orbit/changes/rc15-ended-stage-state/.orbit-runs/review-system-2026-09-29T17-45-34Z.json"
+}

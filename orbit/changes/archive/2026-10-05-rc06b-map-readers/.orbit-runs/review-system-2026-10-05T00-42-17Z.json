@@ -1,0 +1,98 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-05T00:42:17Z",
+  "change": "rc06b-map-readers",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc06b-map-readers/design.md",
+      "line": 8,
+      "title": "Walk 2 made verify run `orbit validate`, falsifying three premises that system mode never runs it",
+      "recommendation": "Walk 2's Fail-mode classification step has verify run `orbit validate <name>`, and system Pass 0 invokes verify, so system mode now runs validate. Three statements still say it does not: design.md:8 (Context: 'System mode never runs `orbit validate`, so after apply, Pass 0 is the only agent-flow reader of an undeclared scenario'), design.md D3 ('Pass 0 composes no block: it does not run validate'), and proposal.md's Why ('because system mode never runs `orbit validate`'). Repair each to the post-walk truth: Pass 0 reaches validate through verify's classification step, so after apply an undeclared delta scenario surfaces twice in one verify run — the map's WARNING row and, because validate reports it at ERROR once the apply gate passes, a mode-③ fail_mode whose recommendation carries the validator message. Say that this is the classification working, not a block Pass 0 composes (D3's no-block call still holds: Pass 0 still composes no `blocks` entry). The dated explore.md record stays as written. Walk 2's cascade grepped 'classif' and 'precedence' only; grep for the old form 'run(s) `orbit validate`' when repairing.",
+      "walk_entry": {
+        "title": "Simultaneous verify failures do not follow the stated precedence",
+        "file": "src/core/emit-composition.ts"
+      }
+    }
+  ],
+  "commentary": "Graded nine move-shaped claims across five walk entries by reading each sweep scope at the working tree. Walk 1's three edits are present at every site they claim — the placeholder reaches the regenerated mode-sections reference, the carried Emit scope block differs from its baseline in exactly the one narrowed clause (49 lines each, one line differs), and the rider routing sits in the at-archive note. Walk 2's ledger entry renders as a separate observed column beside the text tag. The one regression is a cascade gap, not a defect in the edit: making verify own classification gave it a validate run, and the change's own premises about validate's absence were never searched because the walk swept for the classification vocabulary rather than the behaviour it added. The residual check found every file changed since the external pass's commit inside a walk's sweep scope.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5"
+  ],
+  "passes_skipped": [
+    "0 — VERIFICATION genre: verify-change is a whole-change pass, not run over the walks' sweep scopes",
+    "6 — VERIFICATION genre: audit-drift is a whole-project pass",
+    "4, 5 — orbit/lenses/ is absent; no perspectives or critical paths to walk"
+  ],
+  "verification": [
+    {
+      "title": "External item 0 names the surface with a `<name>` placeholder in a reference that substitutes `<change-name>`",
+      "file": "src/core/templates/workflows/review.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "`Emit scope` still calls `orbit-sync-specs` \"upstream primitive, unmodified by orbit\"",
+      "file": "orbit/specs/orbit-run-summary-emit/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The stage's rider says a title containing ` :: ` renders ORPHAN; the shipped pin shows it renders MALFORMED",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Simultaneous verify failures do not follow the stated precedence",
+      "file": "src/core/emit-composition.ts",
+      "verdict": "regressed"
+    },
+    {
+      "title": "The upstream-verbatim declaration checks only the additions",
+      "file": "test/core/templates/verify-scenario-map.test.ts",
+      "verdict": "landed"
+    }
+  ],
+  "final_assessment": "0 critical, 1 warning, 0 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-10-05T00-36-22Z",
+    "2026-10-05T00-40-52Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc06b-map-readers --from-file orbit/changes/rc06b-map-readers/.orbit-runs/review-system-2026-10-05T00-42-17Z.json"
+}

@@ -1,0 +1,89 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-07T15:33:53Z",
+  "change": "rc17c-short-review-next",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "pass": "3",
+      "title": "explore.md's FALSIFY move still gives the retired reason the review example is held harder",
+      "file": "orbit/changes/rc17c-short-review-next/explore.md",
+      "line": 81,
+      "recommendation": "The Mechanism entry for D-rc17c-7 says the review example 'is held harder because the renderer grades values'. The external half showed the renderer grades only the values the engine recomposes, and the walk's direction B now holds the example harder by comparing its engine-composed values under its own change name. The walk saw this line and left it as the exploration's record, but the exploration is still live (Status: exploring) and its Mechanism entry is a parsed, current statement, not a dated note. Restate the FALSIFY clause's reason to match the requirement's paragraph (the review example's engine-composed values other than timestamp are compared with the written emit), or record why the line stays."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Graded the four resolved entries over their sweep scopes as they stand at 55b1ab65, re-reading each edit site and re-running the three touched suites. F1's qualification reads correctly against both owners: the walk clause is line 35 of the outstanding-passes requirement, and the half-landed-pair clause is stated as a contrast, not cited, which is right because that behaviour lives in the canonical-next computation requirement. F3 and X2 were each shown able to fail by mutation during the walk; the comparison X2 added holds on the real example today because every engine-composed review value but the clock is reproducible on a fresh trail under the example's own change name. The residual diff from the base file's commit lists eight files, every one inside some entry's edit record. The one finding is the place the walk declined to edit: a live exploration's Mechanism line still carrying the reasoning the external half refuted.",
+  "passes_run": [
+    "1",
+    "2",
+    "3"
+  ],
+  "passes_skipped": [
+    "0 (VERIFICATION genre: verify-change is whole-change)",
+    "4 (no orbit/lenses/perspectives.md)",
+    "5 (no orbit/lenses/critical-paths.md)",
+    "6 (VERIFICATION genre: audit-drift is whole-project)"
+  ],
+  "verification": [
+    {
+      "title": "\"Same invocation as the gate's canonical next\" holds only when the gate names a walk",
+      "file": "orbit/changes/rc17c-short-review-next/specs/orbit-emit-composition/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Universal-spine and workflow-shape scenarios declared on a three-example test",
+      "file": "test/core/canonical-examples.test.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "requirementSource selects an active delta by substring, not by a MODIFIED heading line",
+      "file": "test/core/canonical-examples.test.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "The documented guard limit omits stale engine-owned review values",
+      "file": "orbit/changes/rc17c-short-review-next/specs/orbit-conventions/spec.md",
+      "verdict": "landed"
+    }
+  ],
+  "final_assessment": "0 critical, 0 warning, 1 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-10-07T15-29-22Z",
+    "2026-10-07T15-30-36Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc17c-short-review-next"
+}

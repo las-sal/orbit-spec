@@ -1,0 +1,116 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-11T18:52:57Z",
+  "change": "rc09a-size-record",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "src/core/change-size.ts",
+      "line": 224,
+      "title": "The Size-section parser diverges from its CommonMark line table at three edges",
+      "recommendation": "Bring parseSizeDeclaration to the requirement's own terms, or narrow the requirement's table to what the classifier reads: (1) SECTION_END and the `## Size` opener accept a heading indented up to three spaces, as CommonMark does, so ` ## Next` ends the section; (2) a top-level list item indented two or three spaces with no preceding item is classified (declares or MALFORMED), not silently skipped as a continuation; (3) a thematic break (`* * *`, `- - -`) is not a list item and is not reported MALFORMED. Each is a one-line regex change plus a declaration-table row and a test.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Widen the classifier to CommonMark's indentation and thematic-break rules and add the three rows' tests."
+        },
+        {
+          "label": "B",
+          "body": "Keep the column-0/1 classifier and state its limit in the declaration requirement's table (headings and items read at indent 0-1 only; a thematic break reads MALFORMED)."
+        }
+      ],
+      "reproduction": "Probe through a throwaway vitest file over parseSizeDeclaration: '## Size\\n\\n  - tasks: two-space top-level item\\n' returns declared [] with no malformed line (the item is silently dropped; the breach then reads undeclared with no hint why); '## Size\\n- capabilities: x\\n\\n* * *\\n' reports line 4 MALFORMED, so a thematic break fails --strict; ' ## Other\\n## Size\\n- tasks: y\\n ## Next\\n- capabilities: z\\n' declares tasks AND capabilities, the second from under a level-2 heading the table says ends the section."
+    },
+    {
+      "pass": "3",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc09a-size-record/specs/orbit-propose-modifications/spec.md",
+      "line": 20,
+      "title": "The Split route does not say whether Step 0d's move and the PR choreography's Phase 3 still run",
+      "recommendation": "State in the requirement (and in the propose body's Split bullet, src/core/templates/workflows/propose.ts:331) what happens to the rest of the flow after Split. The requirement says only that the artifacts stay in place, the completion emit is still written and the review prompt is replaced. An implementation can read 'stay in place' as stopping before Step 0d, leaving orbit/explore/<name>/ beside orbit/changes/<name>/ (the state propose's Step 0 refuses on a later run, and the one /orbit:explore <name> then meets), or can run on through Phase 3 and open a draft PR, under per-proposal, for a change the user just chose to split. Name the intended continuation: the move runs, and Phase 3 runs or is skipped.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Split continues the whole flow: the move runs, Phase 3 opens the draft PR, the emit is written; only the closing chat line changes."
+        },
+        {
+          "label": "B",
+          "body": "Split runs the move and writes the emit but skips Phase 3 (no draft PR for a change being split), saying so in chat."
+        }
+      ]
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "src/core/templates/workflows/propose.ts",
+      "line": 336,
+      "title": "Declare says to re-run orbit validate --strict, but the propose body never runs it first",
+      "recommendation": "Write 'run' instead of 're-run', or name where the first strict validation happens. The body's only validate command is this one; the brief's Position line says the artifacts are already 'validated', which an installed skill cannot trace to a command."
+    },
+    {
+      "pass": "0",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "src/commands/validate.ts",
+      "line": 169,
+      "title": "Only the single-change human printer shows size issues on a valid report",
+      "recommendation": "Design D3's reason (a WARNING must not exist only in --json) also holds for `orbit validate --changes` in human mode and the deprecated `orbit change validate`, which both print a valid change without its size WARNING. Either widen those printers or record the limit beside the requirement's 'Human-mode orbit validate <change>' sentence, which is correctly scoped and is not violated."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "The engine half is tight. computeChangeSize, sizeBreaches and the status/validate wiring match the four tables row by row. Size is composed at the command layer and never enters ChangeStatus, so the gate, position and next cannot see it, and the byte-equality test holds that. resolveSizeCeiling reads its key alone, and readProjectConfig never parses size_ceiling, so no new warning reaches other commands. Archive validates non-strict, so size can never block an archive, which matches the requirement. The parity test, the rc04c pin and the scenario map are green. I ran the two new suites, `orbit validate rc09a-size-record --strict` and the status Size line myself. The soft spots are both at the edges of the prose grammar. The parser is a line classifier standing in for a CommonMark reading, which is Q-crc-15's recurring shape in a small form. And the Split route leaves the rest of the propose flow unstated, which matters most in consume mode and under a per-proposal PR regime. Neither loses data: an unread declaration still surfaces as an undeclared breach.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3"
+  ],
+  "passes_skipped": [
+    "4: no perspectives defined (orbit/lenses/ absent); skip Pass 4",
+    "5: no critical paths defined (orbit/lenses/ absent); skip Pass 5",
+    "6: the full audit-drift library run was not invoked by this fresh worker; a scoped residue sweep (proximity / until-it-ships / size_ceiling wording across orbit/specs, src/core/templates, CLAUDE.md, the program doc) ran instead and found only the baseline sentence the orbit-engine-gates delta replaces at sync"
+  ],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The mechanism does what the stage charter asks, and the exit criterion is met by tests that run the real validate and status surfaces. Both open points are narrow statements a walk can repair or bound. The parser's edges are a one-regex fix or a stated limit. The Split route needs one sentence naming whether the move and the draft PR still run. Neither calls for redesign or another review round on the mechanism."
+  },
+  "final_assessment": "0 critical, 2 warning, 2 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc09a-size-record"
+}

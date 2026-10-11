@@ -1,0 +1,63 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-11T23:57:29Z",
+  "change": "rc01-instrument-fidelity",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc01-instrument-fidelity/.orbit-runs/review-system-2026-09-11T23-52-55Z.json",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 1
+  },
+  "pushback_verification": "Both verified against current state before disposition; neither stale. The four field-note bullets were read at audit-drift.ts:72–75 and still carried the pre-correction vocabulary; `documentedKeys` was read at emit-schema-parity.test.ts:34–44 and collected block keys only.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The corrected audit-drift schema reference's field notes still describe four fields its JSON block no longer carries (`context`, `caller`, `categories_skipped`, `findings_summary.by_category`) — the mirror now contradicts itself.",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/audit-drift.ts",
+      "line": 72,
+      "classification": "trivial_fix",
+      "action": "The four stale bullets are rewritten to the corrected block's vocabulary: the `context` and `caller` bullets are replaced by one sentence stating that only STANDALONE invocations write the file and that context, caller, depth, and flags live in the report header; the categories bullet names `categories_run` alone (skipped categories are report-body facts); the by-category note is now `findings_by_category` with `findings_total` named beside it. The generated reference carries zero `categories_skipped` / `findings_summary` mentions after `orbit update --force`.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The parity test reads only JSON blocks, so a schema reference's prose field notes can name a key its block lacks without failing — exactly the residue the warning above found.",
+      "marker_source": "internal-review",
+      "file": "test/core/emit-schema-parity.test.ts",
+      "line": 34,
+      "classification": "trivial_fix",
+      "action": "The parity test gained a second derivation, `fieldNoteKeys`, over each reference's `## Field notes` section: every `- **`name`**` bullet (dotted forms contribute their parent) must name a key the block union carries, or an engine-owned key, or one of the enumerated nested/finding-level keys; the difference is asserted empty per reference. It IMMEDIATELY found a third instance of the same defect class that neither the fresh review nor the system pass had seen: the address-reviews reference documents `delegation_directive` in its notes while its JSON block omitted it (the engine's table accepts the field, so the BLOCK was the stale voice) — the block now carries it. 2032 → 2036 tests; the surface refresh changed exactly the audit-drift and address-reviews references.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/templates/workflows/address-reviews.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "2 of 2 resolved; 0 unresolved markers in scope. The stale field notes are rewritten to the corrected block's vocabulary, and the parity test now derives field-note claims as well as block keys — an extension that immediately found a THIRD instance of the same defect class (address-reviews documented `delegation_directive` in prose while its block omitted it; the engine accepts the field, so the block was corrected). That is the stage's thesis operating on itself: the instrument, once built, found what three review passes had not. 2032 → 2036 tests green across 93 files; the surface refresh changed exactly the two references touched; strict-valid. Working tree left uncommitted.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as system --reviewer external rc01-instrument-fidelity"
+}

@@ -1,0 +1,343 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-05T02:48:21Z",
+  "change": "rc08a-sweep-evidence",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc08a-sweep-evidence/.orbit-runs/external-system-2026-10-05T01-56-05Z.md",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-6 (Codex)",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 2,
+    "warning": 5,
+    "suggestion": 1
+  },
+  "pushback_verification": "All 8 verified: both CRITICAL reproductions re-run and reproduced; W1 half-stale and W4 stale with evidence naming system walk 1.",
+  "resolution_summary": {
+    "resolved": 7,
+    "stale_suppressed": 1,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "Sweep validation runs before the record is frozen",
+      "marker_source": "external",
+      "file": "src/core/emit-composition.ts:1907",
+      "line": 1907,
+      "classification": "trivial_fix",
+      "reproduction_rerun": "reproduced",
+      "evidence": "Re-ran the reproduction on the walk-1 tree: {\"outcome\":\"resolved\",\"has_sweep\":false}. After the fix the same toJSON swap is refused naming resolutions[0].sweep (test C1).",
+      "action": "validateWalkResolutions now runs on the materialized (frozen) record just before writeGate, and ripple_misses is counted from that record; two regression tests; the trail-swap fixture modernized to a current-generation entry; the requirement and design D3a state it.",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/emit-walk-sweep.test.ts",
+          "test/core/emit-composition.test.ts",
+          "test/core/rc03b-untouched-modules.test.ts",
+          "orbit/changes/rc08a-sweep-evidence/specs/orbit-emit-composition/spec.md",
+          "orbit/changes/rc08a-sweep-evidence/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "emit.ripple_misses = validateWalkResolutions((payload as any).resolutions"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/emit-composition.ts",
+            "text": "materialized.ripple_misses = validateWalkResolutions(materialized.resolutions"
+          },
+          {
+            "path": "orbit/changes/rc08a-sweep-evidence/specs/orbit-emit-composition/spec.md",
+            "text": "The checks run on the record as frozen for writing"
+          }
+        ],
+        "searched": [
+          "validateWalkResolutions",
+          "payload as any).resolutions",
+          "materialized"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "Explicit scope paths bypass the never-read directory exclusions",
+      "marker_source": "external",
+      "file": "src/core/emit-composition.ts:409",
+      "line": 409,
+      "classification": "trivial_fix",
+      "reproduction_rerun": "reproduced",
+      "evidence": "Re-ran: exit 1, \"retired 'old wording' still occurs at dist/out.txt:1\". After the fix, scope ['dist'], scope ['node_modules/pkg/out.txt'] and a cascaded dist path all write (test C2).",
+      "action": "isNeverRead excludes a path under .git/, node_modules/, dist/ or build/ however it entered the scope (segments read below the change directory for its own files); the owner fence and both body mirrors say so.",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/emit-walk-sweep.test.ts",
+          "test/core/rc03b-untouched-modules.test.ts",
+          "orbit/changes/rc08a-sweep-evidence/specs/orbit-emit-composition/spec.md",
+          "src/core/templates/workflows/review.ts",
+          "src/core/templates/workflows/address-reviews.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "listFilesUnder(abs, d => d === path.resolve(ctx.runsDir), files);"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/emit-composition.ts",
+            "text": "function isNeverRead("
+          },
+          {
+            "path": "orbit/changes/rc08a-sweep-evidence/specs/orbit-emit-composition/spec.md",
+            "text": "are never read, however the path entered the scope"
+          },
+          {
+            "path": "src/core/templates/workflows/review.ts",
+            "text": "are never read, however the path entered the scope"
+          },
+          {
+            "path": "src/core/templates/workflows/address-reviews.ts",
+            "text": "are never read, however the path entered the scope"
+          }
+        ],
+        "searched": [
+          "SWEEP_SKIP_DIRS",
+          "never read"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Kept paths are neither required to exist nor restricted to files",
+      "marker_source": "external",
+      "file": "src/core/emit-composition.ts:597",
+      "line": 597,
+      "classification": "trivial_fix",
+      "action": "Half stale: an unresolved kept path has been refused since system walk 1 (address-reviews-2026-10-05T02-39-33Z, fresh W1). The other half fixed: a kept path naming a directory is refused, and a kept file exempts that exact file only.",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/emit-walk-sweep.test.ts",
+          "orbit/changes/rc08a-sweep-evidence/specs/orbit-emit-composition/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "kept.some(k => isInside(f, k))"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/emit-composition.ts",
+            "text": "a kept element is one file, and exempts that file only."
+          },
+          {
+            "path": "orbit/changes/rc08a-sweep-evidence/specs/orbit-emit-composition/spec.md",
+            "text": "a `kept` path that resolves to a directory is refused"
+          }
+        ],
+        "searched": [
+          "isKept",
+          "sweep.kept"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Read failures become successful absence checks",
+      "marker_source": "external",
+      "file": "src/core/emit-composition.ts:482",
+      "line": 482,
+      "classification": "trivial_fix",
+      "action": "A scope member that cannot be listed, stat-ed or read refuses the emit naming its path (readText, listFilesUnder, expandPath); a chmod-000 test, skipped as root; the requirement states it.",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/emit-walk-sweep.test.ts",
+          "orbit/changes/rc08a-sweep-evidence/specs/orbit-emit-composition/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "src/core/emit-composition.ts",
+            "text": "the sweep check cannot complete over an unreadable member of its scope"
+          },
+          {
+            "path": "orbit/changes/rc08a-sweep-evidence/specs/orbit-emit-composition/spec.md",
+            "text": "an unread file is not evidence of absence"
+          }
+        ],
+        "searched": [
+          "catch {",
+          "readText",
+          "readdirSync"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Ripple pointers do not use the trail reader's complete key normalization",
+      "marker_source": "external",
+      "file": "src/core/emit-composition.ts:530",
+      "line": 530,
+      "classification": "trivial_fix",
+      "action": "trail.ts exports toRepoRelative unchanged; the path resolver and both sides of the pointer key through stripLineSuffix(toRepoRelative(x)), the reader's exact key; a whitespace-beside-suffix test; the trail.ts pin moved as a recorded act.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/artifact-graph/trail.ts",
+          "test/core/emit-walk-sweep.test.ts",
+          "test/core/rc03b-untouched-modules.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "stripLineSuffix((ptr.file as string).replace(",
+          "stripLineSuffix(String(e.file ?? '').replace("
+        ],
+        "introduced": [
+          {
+            "path": "src/core/emit-composition.ts",
+            "text": "stripLineSuffix(toRepoRelative(ptr.file as string))"
+          },
+          {
+            "path": "src/core/artifact-graph/trail.ts",
+            "text": "export function toRepoRelative("
+          }
+        ],
+        "searched": [
+          "stripLineSuffix(",
+          "toRepoRelative"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Installed verification skills cannot read the path-resolution rule they must follow",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/review.ts:939",
+      "line": 939,
+      "classification": "stale",
+      "action": "Stale with evidence: system walk 1 (address-reviews-2026-10-05T02-39-33Z, fresh S2, Sal: B) moved the check scope and path rule into one owner fence mirrored byte-equal into both bodies (test/core/sweep-path-parity.test.ts); its PATH line states the root-then-change-directory precedence the finding asks for.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The gate baseline still says resolution entries are never validated",
+      "marker_source": "external",
+      "file": "orbit/specs/orbit-engine-gates/spec.md:274",
+      "line": 274,
+      "classification": "decision_required",
+      "ratified_via": "chat",
+      "resolution": "B — leave the baseline sentence; it rides rc08b's charter (which already names orbit-engine-gates) and this stage's readiness record names it as an accepted residual; a fourth capability declined under R-crc-1",
+      "action": "rc08b's charter carries the rider; an at-archive note in tasks.md puts it on the readiness record.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/architecture/clean-up-review-cycle.md",
+          "orbit/changes/rc08a-sweep-evidence/tasks.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/specs/orbit-engine-gates/spec.md",
+            "reason": "baseline spec; add a delta to your current change's specs/<capability>/spec.md to capture this ripple"
+          }
+        ]
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "text": "It carries one rider from rc08a (system walk 2, external W5, Sal: B)"
+          },
+          {
+            "path": "orbit/changes/rc08a-sweep-evidence/tasks.md",
+            "text": "At-archive note (not a task; system walk 2, external W5, Sal: B)"
+          }
+        ],
+        "searched": [
+          "none of the entry shapes"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Name the directory scan's symlink limitation",
+      "marker_source": "external",
+      "file": "src/core/emit-composition.ts:390",
+      "line": 390,
+      "classification": "trivial_fix",
+      "action": "The owner fence names it — a symlink met inside a directory is not followed; a path named explicitly is read at its target — and both body mirrors carry it, held by the parity test.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc08a-sweep-evidence/specs/orbit-emit-composition/spec.md",
+          "src/core/templates/workflows/review.ts",
+          "src/core/templates/workflows/address-reviews.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "a directory contributing its files."
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc08a-sweep-evidence/specs/orbit-emit-composition/spec.md",
+            "text": "a symlink met inside a directory is not followed"
+          },
+          {
+            "path": "src/core/templates/workflows/review.ts",
+            "text": "a symlink met inside a directory is not followed"
+          },
+          {
+            "path": "src/core/templates/workflows/address-reviews.ts",
+            "text": "a symlink met inside a directory is not followed"
+          }
+        ],
+        "searched": [
+          "symlink",
+          "contributing its files"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "System walk 2 (the external half): 7 resolved, 1 stale. The walk checks run on the frozen record; the never-read directories hold however a path entered the scope; a kept element is one file; an unreadable scope member refuses; the pointer keys as the reader does; the symlink limit is named in the fence. The engine-gates baseline sentence rides rc08b (B).",
+  "iteration": 5,
+  "next_recommended": "/orbit:review --as system rc08a-sweep-evidence",
+  "ripple_misses": 0
+}

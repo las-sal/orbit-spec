@@ -1,0 +1,23 @@
+{
+  "command": "architect",
+  "timestamp": "2026-09-11T20:41:33Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-fable-5-1",
+  "final_assessment": "Sizing review inside the second architect session: the six proposed stages calibrated against every archived stage's measured cost (capabilities touched predicts passes: >5 caps cost 12–17 passes; c2-parallel-merge at 2 caps / 21 KB converged in 7). A ceiling proposed (≤ 3 caps, ~12 requirements, ~40 KB, < 20 tasks) and a seven-change re-cut recorded in a new Sizing section: c0 split into c0a gate-semantics / c0c review-genres / c0b finding-scoped-freshness, c1+c4 merged, c3 cut to Considered-&-out with recurrence as re-entry, c5 split into c5a propose-hygiene / c5b apply-self-trace. Stage headings left as scaffolded pending ratification; no ruling spoken.",
+  "stages_touched": [],
+  "rulings_captured": [],
+  "completions_ratified": [],
+  "handoff": {
+    "boot_sequence": [
+      "orbit/architecture/clean-up-review-cycle.md — the Sizing review section (proposed re-cut + ceiling) is the pending decision; the stage headings still reflect the pre-sizing scaffold",
+      "orbit/architecture/.orbit-runs/architect-2026-09-11T20-36-35Z.json — the prior boundary (six candidate rulings put to Sal)",
+      "orbit/changes/archive/ — the archived stages whose measured sizes calibrate the ceiling"
+    ],
+    "next_command": "/orbit:architect clean-up-review-cycle",
+    "model_hint": null,
+    "seam": "architect session boundary — a proposed ceiling and seven-change re-cut await Sal's ratification; on ratification the stage headings are re-cut and the first rulings captured"
+  },
+  "next_recommended": "/orbit:architect clean-up-review-cycle"
+}

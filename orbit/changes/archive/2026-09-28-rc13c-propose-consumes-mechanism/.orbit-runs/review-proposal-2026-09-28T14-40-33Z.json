@@ -1,0 +1,127 @@
+{
+  "command": "review",
+  "timestamp": "2026-09-28T14:40:33Z",
+  "change": "rc13c-propose-consumes-mechanism",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": [],
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 2
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 2
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "title": "A duplicate-ID second entry is \"not in rules_open\" and therefore ACCOUNTED under the partition's own definition — rows 3/4 would carry it before row 5 is reached",
+      "file": "specs/orbit-propose-modifications/spec.md",
+      "line": 7,
+      "recommendation": "Cell-by-cell against the parser: a second Decisions entry with an already-used ID is a `key_defects` duplicate, EXCLUDED from `rules_total` and never placed in `rules_open`. Under \"a live rule is ACCOUNTED exactly when it is NOT in `rules_open`\" and rows tested in order, that entry is a live rule (row 1 fails), not in `rules_open` (row 2 fails), hence accounted — so row 3 or 4 carries its content before row 5 (`key_defects`) is ever tested. Two repairs, take both: move the `key_defects` row to FIRST position (an entry whose ID is in `key_defects` is disposed of before any other row is tested), and define ACCOUNTED as \"counted in `rules_total` AND not in `rules_open`\" so the definition alone excludes it. Update the design's D-rc13c-4 text and task 3.3's row order to match."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "title": "The pre-move grep checks \"every BOUNDED entry\" — but a BOUNDED entry on a non-live owner is deliberately NOT carried (row 1), so the check fails on exactly the history the table permits",
+      "file": "specs/orbit-propose-modifications/spec.md",
+      "line": 23,
+      "recommendation": "Scope the record paragraph's pre-move grep to row-4 entries only: \"every BOUNDED entry the table sent to row 4 (a live, accounted rule)\". A superseded rule that kept a BOUNDED entry (the shape rc13a's own D-bcs history has) would otherwise fail a check whose purpose is to catch a missed carry, not to re-carry history. Mirror the scoping in task 3.3's grep sentence."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "The precedence scenario's \"Regenerate from explore → concluded check → refuse\" path has no task: 1.1 adds the header read to the resolve-mode sub-step only",
+      "file": "tasks.md",
+      "line": 3,
+      "recommendation": "The delta's `A concluded staging directory beside an active change` scenario (and the requirement's PRECEDENCE clause (1)) says that after the conflict prompt's \"Regenerate from explore\" choice the concluded check runs and refuses. Task 1.1 places the check in sub-step 3 (Resolve mode) and says nothing about the conflict sub-step's Regenerate branch, which in the body today proceeds straight to \"overwrite the existing change directory\". Add to 1.1: the Regenerate option's text gains one sentence — \"then the resolve-mode check runs; a concluded staging file is refused here too\" — and task 1.3's position assertion checks that sentence sits inside sub-step 2."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "The record's D-rc13c-4 row says \"the decision table verbatim\", but the delta carries the partition rewritten at the external walk, not the exploration's table",
+      "file": "design.md",
+      "line": 133,
+      "recommendation": "The row's shape claim is false as written: `explore.md`'s D-rc13c-4 domain table (closure token × owner state, five rows, not a partition) is NOT what the ADDED requirement carries — the delta's table is the revised partition (two facts, five rows in test order, `key_defects` and 'accounted' defined by pointer). This is the mapping's first execution, so the record must be exact: reword to \"the decision table as REVISED at the external walk (a normative TABLE shape; the exploration's table was superseded by the partition — see the amended D-rc13c-4)\" and keep the token column reading DERIVED with a note that the derivation was amended."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "title": "Risks [Size] still counts \"eight decisions (seven rules)\" after Context was updated to six live rules",
+      "file": "design.md",
+      "line": 168,
+      "recommendation": "Match the Context paragraph: \"eight decisions at promotion; six live rules after two walks (D-rc13c-2 revised, D-rc13c-4 amended, D-rc13c-8 superseded)\"."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "title": "Proposal Impact / Templates carries a garbled fragment from the walk edit: \"Step 0b (the Mechanism read after the last file write), (the entry format)\"",
+      "file": "proposal.md",
+      "line": 88,
+      "recommendation": "Rewrite as \"Step 0b (the entry format; the Mechanism read after the last file write)\"."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "title": "Proposal Impact / Tests names only the section-list parity assertion; task 2.4 now also holds the decision table and shape list byte-equal to the ADDED requirement",
+      "file": "proposal.md",
+      "line": 93,
+      "recommendation": "Add \"and the Step 0c.6 decision table and four-shape list byte-equal to this change's `Mechanism section consumption` requirement\" to the Tests bullet, so the proposal's test list matches the plan."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "Task 2.2 runs \"after Step 0b's last write\" but sits under the section headed \"Step 0a — … the Mechanism read\"",
+      "file": "tasks.md",
+      "line": 6,
+      "recommendation": "Either move 2.2 into section 3 (Steps 0b, 0c, 0c.6) as 3.0, or rename the section-2 heading to drop \"the Mechanism read\". The design's Touchpoints already places the read under Step 0b."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "Two consecutive blank lines after the partition table in the delta",
+      "file": "specs/orbit-propose-modifications/spec.md",
+      "line": 17,
+      "recommendation": "Collapse to one blank line (a leftover of the table rewrite; the requirement-block parser is unaffected, but the synced baseline would carry it)."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "title": "The refuse text names \"the live CONCLUDED entry's Re-entry: slot\" without saying what happens when two entries carry a live slot",
+      "file": "specs/orbit-propose-modifications/spec.md",
+      "line": 64,
+      "recommendation": "The readout already resolves this case (first in file order, with a note — `orbit-run-summary-emit`'s maturity requirement and the parser's recovery rule). Add five words: \"the live CONCLUDED entry's slot (first in file order when two carry one, as the readout resolves it)\" so propose and the readout name the same trigger."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "This pass read the two surfaces the external walk rewrote — the partition table and the Step 0 precedence — cell by cell against the parser's actual state model rather than against the prose that describes it, which is where the one substantive finding came from: the partition's definition of ACCOUNTED (\"not in `rules_open`\") is exactly right for every entry the parser COUNTS and exactly wrong for the one kind it excludes from counting, the duplicate-ID second entry, which is neither open nor counted and so falls through to the carrier rows before the key-defects row can catch it. That is the same failure class the external pass named — a partition that is not one — one cell smaller, and it survived because the repair reasoned about `rules_open`'s five states and did not re-read what `rules_total` excludes. The pre-move grep has the mirror-image defect: it was written before the table had a history row and now contradicts it. Both are repairs, not descopes.\n\nThe remaining findings are the residue two rapid walks leave behind: a record row whose shape claim predates the table it describes, a Risks figure that Context outgrew, a garbled fragment, a task under the wrong heading, a task that does not reach one branch of a scenario the same walk added. None of them is mechanism. What I probed hardest: every row of the partition against `explore-rules.ts`'s join (open states, the excluded duplicate, orphans, the non-live owner with and without an entry); the three Step 0 scenarios' WHEN clauses for disjointness (they are disjoint now — the conflict scenario is the only one whose WHEN does not name the header, which is correct because precedence (1) fires before the header is read); every scenario in the delta against a task; the delta's pointer discipline (`ask nothing else` and the table header row both absent; the residual stated once; the identifier rule and the state set pointed at); and the mirror-corollary coverage (section list, decision table, shape list all under task 2.4). What I could not do that an independent reader could: unlearn the two walks. I wrote every line under review except the two reviewers' findings, and an in-context pass over rewritten mechanism is the weakest slot in this cadence by design; the record says so rather than the tail.",
+  "passes_run": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "passes_skipped": [],
+  "final_assessment": "0 critical, 4 warning, 6 suggestion.",
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc13c-propose-consumes-mechanism --from-file orbit/changes/rc13c-propose-consumes-mechanism/.orbit-runs/review-proposal-2026-09-28T14-40-33Z.json"
+}

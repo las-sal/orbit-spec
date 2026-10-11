@@ -1,0 +1,77 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-19T17:43:48Z",
+  "change": "rc07-artifact-lint",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc07-artifact-lint/.orbit-runs/external-system-2026-09-19T17-31-23Z.md",
+  "external_reviewer": "GPT-5 Codex",
+  "walk_mode": "per_finding",
+  "walk_mode_source": "flag",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 4,
+    "suggestion": 1
+  },
+  "pushback_verification": "All 5 verified before any edit; zero stale. Two reproduced with runnable probes: a symlinked `orbit/specs` emitted 3 from an outside tree, and the marker-error CLI test was read to confirm it asserted `passed: 1` for a source whose only marker sat in an abandoned file. The reviewer's GOOD news was verified too rather than taken on trust — a legacy anonymous-closer pair fails loudly at its opener with an error naming the replacement, which was the migration failure mode I had flagged as my largest worry about the descope. Entry keys are parsed from the findings file and substantive coverage asserted before the emit.",
+  "resolution_summary": {
+    "resolved": 5,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "A marker-aborted file still lets every resolved source report passed",
+      "marker_source": "external",
+      "file": "src/commands/validate.ts",
+      "line": 389,
+      "classification": "trivial_fix",
+      "action": "RESOLVED STRUCTURALLY, together with the summary half of the lstat finding. Completeness is now CARRIED rather than inferred: `SourceLintResult.scanComplete` is cleared at EVERY point the lint fails to fully examine a domain file — the domain unlistable, a path uninspectable, a file unreadable, a file skipped by policy, and a parse ABANDONED after a marker error — and `summarizeSources` reads that one field instead of deducing incompleteness from whichever finding kinds it happened to inspect. This is a subtraction: the inference is gone, so a further uncovered scope cannot exist without clearing the flag. The reviewer's own diagnosis in the iteration-3 notes is what made this the shape — four rounds had each widened the inference and each left a new scope. The assertion the finding named is reversed: the marker-error CLI test now expects `{items: 2, passed: 0, failed: 1, unverified: 1}` plus `scan_complete: false`, with the failed pseudo-item retained so the run still exits non-zero. `source_domain` gains `scan_complete` so the JSON answers the question directly."
+    },
+    {
+      "severity": "WARNING",
+      "title": "`lstat` errors other than absence are still silently treated as deletion",
+      "marker_source": "external",
+      "file": "src/core/source-lint.ts",
+      "line": 328,
+      "classification": "trivial_fix",
+      "action": "Fixed: only `ENOENT` continues silently; every other error code emits a `domain` finding naming the code and clears `scanComplete`. The regression makes the PARENT DIRECTORY unsearchable rather than chmodding the file, exactly as the finding noted — a chmodded file reaches the later `readFileSync` catch and cannot cover this branch. Verified the new test exercises the lstat path by asserting the finding names the nested file."
+    },
+    {
+      "severity": "WARNING",
+      "title": "`specs.capability-count` can still resolve outside the project through symlinks",
+      "marker_source": "external",
+      "file": "src/core/sources-registry.ts",
+      "line": 306,
+      "classification": "trivial_fix",
+      "action": "Fixed: the fourth filesystem-backed source now gets the same policy as the parameterised three. A new `specsTierRoot` refuses an absent tier and a symlinked one (lstat on the tier's own entry), and each counted `spec.md` goes through the shared `resolveWithinTier`, so a symlinked capability directory is not counted. Reproduced first — a symlinked `orbit/specs` emitted `3` from an outside tree — and the regression covers both the tier root and an individual symlinked spec file. The spec's containment paragraph now says the policy governs EVERY filesystem-backed source, not only the parameterised ones."
+    },
+    {
+      "severity": "WARNING",
+      "title": "Completed tasks and a regression test still assert the deleted inline-code contract",
+      "marker_source": "external",
+      "file": "orbit/changes/rc07-artifact-lint/tasks.md",
+      "line": 12,
+      "classification": "trivial_fix",
+      "action": "Fixed in all four places the finding named. Tasks 2.2 and 5.2 are rewritten to the shipped design and marked as rewritten at this review, with the original intent left recoverable from design D4c and the trail rather than silently overwritten. The `parseMarkedSpans` JSDoc states the two current inertness cases and says plainly that backticks confer none. The live-domain sweep is renamed to what it actually asserts — no living document carries a malformed marker, and every live span names a declared source — and its token regex no longer matches the retired anonymous closer, which had let it satisfy itself on tokens the parser no longer recognises."
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The migration plan still calls a breaking marker-format change additive",
+      "marker_source": "external",
+      "file": "orbit/changes/rc07-artifact-lint/design.md",
+      "line": 337,
+      "classification": "trivial_fix",
+      "action": "Fixed: the migration section now opens by calling this a PRE-ARCHIVE BREAKING FORMAT REPLACEMENT, records `<!-- /src -->` to `<!-- /src:NAME -->` as the upgrade, and states why shipping it pre-archive is safe — the transition fails LOUD, since the anonymous closer is no longer a delimiter and the opener runs to EOF with an error naming the exact replacement. A legacy-pair regression pins that diagnostic. The proposal's 'No migration' line is corrected the same way."
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": "walk them",
+  "final_assessment": "All 5 resolved, none deferred; the pass carried ZERO CRITICAL, the first in this change's system cadence. The headline is not any single finding but the root cause the reviewer named: completeness was being INFERRED from selected finding kinds rather than carried, which is why four consecutive rounds each found a new uncovered scope. That inference is now deleted in favour of a carried `scanComplete` flag, so the fourth instance is closed structurally rather than by a fifth conditional. The other three were mechanical, including the fourth filesystem-backed source that the earlier containment repair had missed. The lint caught its own design doc twice during this walk — a real-named delimiter pair written inside backticks in prose is LIVE by design — which is the authoring rule working on its author, loudly, and is exactly the trap the iteration-3 prompt asked the reviewer to probe. 2202 tests green; validate --all --strict clean; fingerprint verified; marker sweep zero; the no-registry path byte-identical to the pre-change build.",
+  "iteration": 12,
+  "next_recommended": "/orbit:archive rc07-artifact-lint — user-invoked"
+}

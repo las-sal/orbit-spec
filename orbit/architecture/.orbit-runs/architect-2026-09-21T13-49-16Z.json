@@ -1,0 +1,28 @@
+{
+  "command": "architect",
+  "timestamp": "2026-09-21T13:49:16Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "Recorded what rc02c's apply established, ahead of its system review so the blind pair reads a program doc that matches what shipped. Four captures, no new rulings. (1) rc02c's R-crc-11 IMPACT block is SUPERSEDED in place rather than rewritten: its dated claim that the ruling 'does not delete clause (c)' stands as the record of what was expected, with a new note stating that the stage deletes the predicate outright and why — 'what is MISSING from the cadence' is COVERAGE, and clause (a) already computes it, so the shrunken predicate would have been a second voice on one question. The rc04 boundary is unchanged; what changed is that rc02c ships no predicate for the record to be read by. (2) The stage's exit criteria are AMENDED: (1) and (2) presuppose a shipped predicate and dissolve with it, (3) is satisfied BY the dissolution, and two replacement criteria are stated against which the stage is actually judged — both met at apply. (3) Q-crc-19 marked DELIVERED with what shipped. (4) Q-crc-14 gains a SECOND instance that is sharper than its first and one layer up: a deliberate tripwire pinning this doc's ruling count went unserviced when R-crc-11 was recorded, and sat red through a whole stage's propose, two reviews, two walks and an apply. It supplies the cheap test of whether Q-crc-14's standing recommendation suffices — wiring the lint into two lifecycle bodies would NOT have caught it, because what fired was a unit test — and it supports the broader reading that the ARCHITECT seam should run the doc's dependent checks. The status log carries the cycle: the gate demonstrating the case for its own removal before removing it, the 19-change verdict diff (13 changed, 44 identical, zero unexplained), and both walks leaving residue at their own edges. rc03a's ratification offer was surfaced and DECLINED, which is the doc's own standing position — ticking it would assert criteria a withdrawn stage never met — and the decline itself sharpened Q-crc-11's honest counter: the cost is RECURRING, not one-time, because the readout asks at every architect session forever.",
+  "stages_touched": [
+    "rc02c-confirmation-semantics",
+    "rc03a-blind-prompt"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [],
+  "handoff": {
+    "next_command": "/orbit:review --as system --fresh rc02c-confirmation-semantics",
+    "model_hint": "the blind pair is one fresh (clean-context) and one external (GPT-5 Codex, run by Sal); both must be in flight on this tree before either is walked",
+    "seam": "rc02c is applied at 18/18 with its review-system gate unpassed on an uncovered blind-pair slot. The architecture doc now matches what shipped, so an independent reviewer reading the stage charter against the diff will not re-derive the charter divergence D6 already records.",
+    "boot_sequence": [
+      "orbit/architecture/clean-up-review-cycle.md — the live program; read rc02c's stage section INCLUDING the 2026-09-21 SUPERSEDED note and the amended exit criteria before judging the change against its charter",
+      "orbit/changes/rc02c-confirmation-semantics/design.md — D1 carries the observed clause-(c) instance; D6 carries the charter divergence; the size section records the R-crc-1 measurement",
+      "orbit/changes/rc02c-confirmation-semantics/.orbit-runs/ — the full cycle: two review passes, two walks, two apply emits",
+      "src/core/artifact-graph/gates.ts — where clause (c) and the budget signal were removed",
+      "Q-crc-14 in the program doc — its second instance is new as of this session and is evidence about the architect seam, not only the lint"
+    ]
+  },
+  "next_recommended": "/orbit:review --as system --fresh rc02c-confirmation-semantics"
+}

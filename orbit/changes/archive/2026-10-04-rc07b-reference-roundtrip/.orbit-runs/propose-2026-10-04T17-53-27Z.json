@@ -1,0 +1,9 @@
+{
+  "command": "propose",
+  "timestamp": "2026-10-04T17:53:27Z",
+  "change": "rc07b-reference-roundtrip",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Consume-mode proposal from the rc07b exploration (seven decisions; three live rules, all accounted; no open questions). Four capabilities, the ceiling breach declared by one and ratified at exploration (D-rc07b-7): orbit-emit-composition (2 ADDED: the round trip with its BOUNDED named limit verbatim and named residuals; audit-drift counts engine-computed — 1 MODIFIED: the parity requirement admits no exemption), orbit-run-summary-emit (1 MODIFIED: owns the audit-drift payload), orbit-conventions and orbit-audit-drift (1 MODIFIED each: pointer substitutions). Design refines two exploration entries on read: examples are one per SCHEMA BLOCK (six across five references, not one per reference), and findings_by_category keys on the union of categories_run and the categories findings carry, so the two counts agree by construction. Two hash pins sized as planned acts (rc03b untouched-modules on emit-composition.ts; the archive-change function hash). 19 tasks; validates --strict; fingerprints 4/4; architecture citation carried.",
+  "next_recommended": "/orbit:review rc07b-reference-roundtrip — proposal artifacts ready; review before apply"
+}

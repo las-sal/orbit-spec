@@ -29,9 +29,9 @@ export const ALL_WORKFLOWS = [
   'verify',
   'onboard',
   'review',
-  'review-external',
   'address-reviews',
   'audit-drift',
+  'architect',
 ] as const;
 
 export type WorkflowId = (typeof ALL_WORKFLOWS)[number];

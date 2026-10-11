@@ -1,0 +1,68 @@
+{
+  "command": "review",
+  "timestamp": "2026-09-28T16:32:59Z",
+  "change": "rc13c-propose-consumes-mechanism",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": [],
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "The proposal's first What-Changes bullet never learned the both-exist refuse the system walk added to Step 0",
+      "file": "orbit/changes/rc13c-propose-consumes-mechanism/proposal.md",
+      "line": 26,
+      "recommendation": "The delta's consume-mode requirement and the body's conflict sub-step now refuse a concluded staging directory beside an active change BEFORE any prompt, naming both paths (log 1, external #1 → B). The proposal bullet still describes only the standalone refuse and naming inference. Add one sentence: 'Beside an active change of the same name, a concluded staging directory is refused before the conflict prompt, naming both paths — no Step 0 path deletes or overwrites a concluded record.' The proposal is what a ratifier reads; the delta and design already carry it."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "Proposal Impact and design Risks still say the orbit-propose hash pin moves 'once'; it moved at apply and again at the system walk",
+      "file": "orbit/changes/rc13c-propose-consumes-mechanism/proposal.md",
+      "line": 93,
+      "recommendation": "Both pins were re-recorded twice, each with a dated comment in `test/core/templates/skill-templates-parity.test.ts` (the apply; the system blind-pair walk's body edits). Reword proposal.md:93 and design.md:170 to 'moved at apply and once more at the system walk, each re-record carrying its dated reason' — the plan named the move, and the record should count it honestly."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "The in-context confirm after the blind pair; its job was the mechanism both walks rewrote and nothing wider. Read as a user would from the regenerated skill: the conflict sub-step refuses a concluded directory before its prompt and Continue is unreachable for one; the Step 0b Mechanism read carries the grammar module's production inside a fence, byte-equal to the explore body's copy; Step 0c.6's row 1 carries its record shape and reports at the read; 'accounted' is defined from the file as full conformance with the failing clause named; the record header is fixed. The delta's consume-mode block, the body and the position test agree on the four-step precedence, and the fidelity block now asserts the both-exist refuse's position and the refuse phrase's single occurrence rather than a fence-blind slice. Baseline compliance: the body fires no emit before its completion emit and reads no prior one; the residency-sweep rule is not implicated; the residue grep is zero; neither the re-entry table's header row nor its predicate appears. Cohesion: ff-change does not consume explorations (confirmed by the fresh half, re-read here). Surfaces: no CLI or public-function surface changed.\n\nOne thing this pass found about the PROCESS rather than the change, recorded here because it would otherwise be invisible: the regenerated local skill was STALE at the start of this pass — it still carried the pre-walk row 1 and no grammar fence — because the walk script that edited the body aborted on a later anchor, its chained `npm run build` never ran, and the `update --force` in the following command regenerated from a stale dist. The tests never saw it (vitest reads source), the tracked tree was correct throughout, and the gitignored render is now current after a rebuild; but a user reading the local skill between those two commands would have read the old body. That is exactly the shape task 4.3 exists to catch, and it was caught by re-diffing the render against the template at the start of this pass rather than trusting the earlier command's exit. Zero CRITICALs, so the READ/ENUMERATE/COHERE tally is 0/0/0. What this pass cannot do: unlearn the walks it performed — it is the weakest slot in the cadence by design, and the two findings it raised are the prose-lag class both walks left behind, not mechanism.",
+  "passes_run": [
+    0,
+    1,
+    2,
+    3,
+    6
+  ],
+  "passes_skipped": [
+    {
+      "pass": 4,
+      "reason": "no perspectives defined; skip Pass 4 (orbit/lenses/ absent)"
+    },
+    {
+      "pass": 5,
+      "reason": "no critical paths defined; skip Pass 5 (orbit/lenses/ absent)"
+    }
+  ],
+  "final_assessment": "0 critical, 0 warning, 2 suggestion.",
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc13c-propose-consumes-mechanism --from-file orbit/changes/rc13c-propose-consumes-mechanism/.orbit-runs/review-system-2026-09-28T16-32-59Z.json"
+}

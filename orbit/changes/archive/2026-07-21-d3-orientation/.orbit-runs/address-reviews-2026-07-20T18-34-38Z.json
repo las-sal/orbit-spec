@@ -1,0 +1,77 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-07-20T18:34:38Z",
+  "change": "d3-orientation",
+  "source": "--from-file",
+  "source_path": "orbit/changes/d3-orientation/.orbit-runs/external-proposal-2026-07-20T18-27-33Z.md",
+  "source_format": "external-markdown",
+  "external_reviewer": "GPT-5 Codex",
+  "external_iteration": 2,
+  "walk_mode": "per_finding",
+  "kind": "editorial",
+  "resolutions": [
+    {
+      "finding": "Degraded rows contradict the mandatory full-tuple shape",
+      "severity": "CRITICAL",
+      "file": "orbit/changes/d3-orientation/specs/orbit-orientation/spec.md",
+      "pushback": "still applies — the two requirements this cadence added (the --full tuple mandate, external iter 1 CRITICAL; the fault-isolation degraded row, external iter 1 W2) issued conflicting SHALLs with no JSON degraded variant and no bare degraded-sprint policy",
+      "classification": "trivial fix (the reviewer's discriminated-union recommendation, single-path)",
+      "action": "Resolved jointly with W4 as ONE shared discriminated workstream-entry shape defined in the JSON-output requirement: healthy {name, kind, stage?, strip, position, last, next, gates?}; degraded {name, kind, degraded: true, error} + trustworthy fields; absent fields omitted, never null. The --full tuple mandate now names the degraded entry as its SOLE exception; fault isolation specifies the bare degraded-SPRINT render (degraded row in place of the strip, trustworthy last, next omitted with the error note when its source failed, also line, exit 0); new scenario 'Degraded entry emits the degraded variant in both tiers'. Tasks 2.2/2.3/2.4/5.1 assert the policy in text and JSON.",
+      "ripple_cascade": { "applied": ["orbit/changes/d3-orientation/specs/orbit-orientation/spec.md", "orbit/changes/d3-orientation/design.md", "orbit/changes/d3-orientation/tasks.md", "orbit/changes/d3-orientation/proposal.md"], "flagged_not_applied": [] }
+    },
+    {
+      "finding": "Equal timestamp tokens have no recency tie-break",
+      "severity": "WARNING",
+      "file": "orbit/changes/d3-orientation/specs/orbit-orientation/spec.md",
+      "pushback": "still applies — the name tie-break existed only on the emit-less metadata rung; second-granular tokens can collide across workstreams",
+      "classification": "trivial fix",
+      "action": "Continuity requirement gains the deterministic tie-break: equal <TS> tokens break by lexicographic workstream name, then lexicographic full filename — explicitly SHARED by sprint anchoring and the global LAST band. New scenario 'Same-second emits resolve deterministically'; task 1.2 carries the rule and 1.4 the tie fixtures (both comparison sites).",
+      "ripple_cascade": { "applied": ["orbit/changes/d3-orientation/specs/orbit-orientation/spec.md", "orbit/changes/d3-orientation/design.md", "orbit/changes/d3-orientation/tasks.md"], "flagged_not_applied": [] }
+    },
+    {
+      "finding": "Archived change trails are not carried into global LAST collection",
+      "severity": "WARNING",
+      "file": "orbit/changes/d3-orientation/design.md",
+      "pushback": "still applies — the spec demanded a global LAST while design D1 and task 1.1 enumerated only the four live trail locations; the just-archived archive-*.json (the most important no-live transition) could be silently omitted",
+      "classification": "trivial fix",
+      "action": "The --full requirement now sources LAST from the four trail locations PLUS archived changes' relocated trails (orbit/changes/archive/*/.orbit-runs/) with the scope stated both ways: LAST-band ONLY, never live enumeration or sprint anchoring. New scenario 'Archived trail surfaces in global LAST without reviving the workstream'; design D1/D5 and task 1.1 carry the sourcing; task 1.4's archive-emit fixture now asserts BOTH halves (no sprint anchor AND LAST inclusion).",
+      "ripple_cascade": { "applied": ["orbit/changes/d3-orientation/specs/orbit-orientation/spec.md", "orbit/changes/d3-orientation/design.md", "orbit/changes/d3-orientation/tasks.md"], "flagged_not_applied": [] }
+    },
+    {
+      "finding": "Parseable but spine-invalid emits have no malformed-input policy",
+      "severity": "WARNING",
+      "file": "orbit/changes/d3-orientation/specs/orbit-orientation/spec.md",
+      "pushback": "still applies — the policy covered unreadable/JSON-invalid only; a parseable {} could win recency and leave last/next/WAITING undefined",
+      "classification": "trivial fix (skip-like-invalid-JSON chosen — consistent with the requirement's existing per-FILE-skip vs per-WORKSTREAM-degrade split)",
+      "action": "Fault isolation clause (a) broadened to SPINE-INVALID: parseable JSON missing or non-string command/final_assessment/next_recommended (the universal-spine fields per orbit-conventions, verified against the live baseline), or missing/non-string mode on a review-external T0 emit (the WAITING discriminator). A skipped emit never wins recency and never counts in WAITING arithmetic. New scenario 'Spine-invalid newest emit is skipped like invalid JSON'; tasks 1.3 (counts exclude spine-invalid) and 1.4 (shape-invalid-newest fixture) carry it.",
+      "ripple_cascade": { "applied": ["orbit/changes/d3-orientation/specs/orbit-orientation/spec.md", "orbit/changes/d3-orientation/design.md", "orbit/changes/d3-orientation/tasks.md"], "flagged_not_applied": [] }
+    },
+    {
+      "finding": "Bare JSON has no staging-explore sprint shape",
+      "severity": "WARNING",
+      "file": "orbit/changes/d3-orientation/specs/orbit-orientation/spec.md",
+      "pushback": "still applies — bare sprint was defined as embedding the per-change payload, impossible for a staging explore",
+      "classification": "trivial fix (the reviewer's define-once-reuse recommendation)",
+      "action": "The JSON-output requirement now defines the discriminated shape ONCE, reused by bare sprint and --full workstreams: kind change|explore; change entries embed the per-change payload + gates; explore entries carry no gates, no per-change payload, and position is the stage-state vocabulary literal 'exploring' (verified as a real state literal at src/core/architecture/state.ts:18); stage present only when metadata cites; absence rules explicit (omitted, never null). New scenario 'Explore sprint emits the explore variant'; the --full requirement's entry-shape sentence now cites the shared definition; tasks 2.3/2.4 carry the variants.",
+      "ripple_cascade": { "applied": ["orbit/changes/d3-orientation/specs/orbit-orientation/spec.md", "orbit/changes/d3-orientation/design.md", "orbit/changes/d3-orientation/tasks.md"], "flagged_not_applied": [] }
+    },
+    {
+      "finding": "Design's delta map still mentions only the Mode B scenario",
+      "severity": "SUGGESTION",
+      "file": "orbit/changes/d3-orientation/design.md",
+      "pushback": "still applies — D6's closing delta map read '(Mode B scenario gains the emit)' after the Mode C reword landed elsewhere",
+      "classification": "trivial fix",
+      "action": "Delta map updated: 'Mode B AND Mode C scenarios gain the mode-aware emit — Mode C back-fills first, then fires it with back-filled counts'. Residue grep confirms the stale phrase is gone from all artifacts.",
+      "ripple_cascade": { "applied": ["orbit/changes/d3-orientation/design.md"], "flagged_not_applied": [] }
+    }
+  ],
+  "resolution_summary": {
+    "resolved": 6,
+    "stale": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "post_state": "orbit validate d3-orientation --strict passes; fingerprints 6/6 verified; still 15 delta requirements (9 ADDED + 6 MODIFIED) across 4 files — the resolutions amended existing requirements (orientation spec scenarios 21 → 26); 16 tasks",
+  "final_assessment": "All 6 external iter-2 findings resolved. The CRITICAL (this cadence's own two additions — the full-tuple mandate and the degraded row — issuing conflicting SHALLs) and the bare-JSON WARNING resolved jointly as ONE shared discriminated workstream-entry shape with change/explore/degraded variants defined once in the JSON requirement and cited everywhere; recency gained a deterministic same-second tie-break shared by sprint anchoring and global LAST; global LAST now explicitly sources archived changes' relocated trails (LAST-band only); fault isolation broadened to spine-invalid emits (skip + WAITING exclusion); the D6 delta map caught up to the Mode C reword. The external carried a CRITICAL, so the confirm predicate requires a fresh independent pass yielding none.",
+  "next_recommended": "/orbit:review --as proposal --fresh d3-orientation"
+}

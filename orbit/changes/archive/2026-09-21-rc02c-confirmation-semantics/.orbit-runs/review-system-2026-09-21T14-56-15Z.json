@@ -1,0 +1,87 @@
+{
+  "command": "review",
+  "timestamp": "2026-09-21T14:56:15Z",
+  "change": "rc02c-confirmation-semantics",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "The Scenario accounting now CLAIMS to be derived by diff, and a diff still does not reproduce it",
+      "file": "orbit/changes/rc02c-confirmation-semantics/design.md",
+      "line": 247,
+      "recommendation": "The walk rewrote this section to say the list 'was DERIVED by mechanically diffing each delta requirement against its live baseline, not restated from memory'. Re-running that diff after the walk finds SIX requirements with scenario deltas; the section names FOUR. The two it misses are whitespace-only — `spec-driven v1 gates and cadence` / `A v3-era archived trail still computes` and `The gate reason names the rule that fired and the rule about to fire` / `Deferred suggestions surfaced on a passed gate` each differ from baseline by exactly one trailing blank line — so nothing substantive is hidden. But two things are still wrong. First, the section states of `spec-driven v1 gates and cadence`: 'No scenario removed or rewritten; all four are preserved byte-identically.' That is literally false. Second, the section DOES disclose the equivalent whitespace diff for `orbit-run-summary-emit` / `Per-chunk touched files computed from the diff` ('differs only in trailing whitespace'), so it is inconsistent with itself about whether whitespace counts. This is the third time in this change that a completeness claim has failed re-derivation, and the first time it has failed inside the sentence asserting it was derived — the claim was true when written and went stale when the walk kept editing, which is the same recompute-never-hand-adjust discipline that caught the size figures twice.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Normalize the three trailing-blank-line differences in the delta so every unnamed scenario is byte-identical in the literal sense, then the claim needs no caveat and the accounting needs no whitespace disclosures at all."
+        },
+        {
+          "label": "B",
+          "body": "Keep the whitespace differences and make the claim precise: correct the `spec-driven v1 gates and cadence` line, name all three whitespace-only diffs, and state that byte-identity is asserted modulo trailing whitespace."
+        }
+      ]
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "title": "Two rules ADDED BY THIS WALK ship into baseline with no scenario",
+      "file": "orbit/changes/rc02c-confirmation-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 518,
+      "recommendation": "The walk added two normative rules in response to the blind pair, and neither carries a scenario. (a) The JSON key-omission rule at lines 516-520 — the projection 'OMITS either key entirely when its value is absent rather than emitting it undefined-valued: an in-process consumer testing key presence must not be told a gate declares a budget it does not' — resolves the external half's projection-layer finding and is asserted only by a unit test added in the same walk. (b) The declaration-survives-mode-underivability rule in `Review budget reported beside the gate state` — 'it STILL REPORTS ITS `budget` when one is declared' — resolves finding F7 and is likewise test-only. Both requirements otherwise follow a scenario-per-rule convention (`Gate-aware status...` carries four scenarios, `Review budget reported...` twelve), and a rule that syncs into baseline with no scenario is invisible to rc06-scenario-test-map, whose whole premise is that every requirement's scenarios map to tests. Add one scenario each: a gate declaring no budget whose JSON row does not carry the key at all, and a mode-underivable gate that reports its declaration and no spend. Both behaviours are already executed by tests, so the scenarios are transcription rather than new design."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "The Scenario accounting has grown into a maintained artifact that goes stale on every walk",
+      "file": "orbit/changes/rc02c-confirmation-semantics/design.md",
+      "line": 247,
+      "recommendation": "This section has now been rewritten three times in one change — once at propose, once when the first walk added a requirement, once when the blind pair found it incomplete — and each rewrite was triggered by a reviewer or a sweep rather than by the edit that invalidated it. It is a hand-maintained derived figure sitting next to the thing it derives from, which is the shape R-crc-10 and Q-crc-17 both describe. Not actionable inside this change, and the section earns its keep: its whole value is that a future reader can audit which scenarios a change removed. But the pattern is worth carrying to rc09 or rc10 as a candidate for computation — `orbit` already diffs delta requirements against baselines for fingerprinting, so the scenario-level inventory is derivable from data the engine holds rather than from prose an author must remember to refresh."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "This is the trailing in-context slot, and the spec is explicit about what it is for: the check on the walk that resolved the pair's findings. So I pointed it there rather than re-reading the change, and I should be equally explicit about what it cannot do — I authored that walk, so nothing here is independent evidence about the change's substance. What it can do is re-run the mechanical checks the walk's own claims rest on, and that is where both findings came from.\n\nThe subtraction and the pair's repairs hold under execution. I verified the hoisted declaration by running the engine over a constructed mode-underivable gate in BOTH the live and blocked branches: it reports its declaration and no spend in each, which is what the ratified option asked for and what the amended requirement now says. I checked that the reason-string change had no consumer and no scenario assertion depending on it — `converged` appears nowhere in the engine outside the line that was changed. I checked that the field split reaches only the five modules that were edited. Fingerprints verify eight of eight, strict validation is clean, and the suite is green after a rewrite that touched the engine, the spec, the tests and four record artifacts.\n\nWhat did not hold is a claim about claims. The walk rewrote the Scenario accounting to say it had been derived by diffing every delta requirement against its baseline — and then kept editing. Re-running that diff finds two requirements with scenario deltas the section does not name. Both are a single trailing blank line, so nothing substantive is concealed, and I want to be careful not to inflate that: the risk here is not a lost scenario, it is a sentence that tells a future reader it was computed when it was written. That is the third completeness claim in this change to fail re-derivation, after the size figures failed twice, and the pattern across all three is identical — the claim was accurate at the moment it was authored and went stale when the same session kept working. The discipline that caught all three was the same one, applied after the fact rather than as part of the edit: recompute, never hand-adjust.\n\nThe second finding is the more consequential of the two even though it reads smaller. Both rules this walk added in response to the blind pair — the key-omission rule and the declaration-survives-mode-underivability rule — ship into baseline asserted only by unit tests. The surrounding requirements carry a scenario per rule, and rc06-scenario-test-map exists on the premise that scenarios are what tests map to. A rule that arrives in baseline with no scenario is not wrong, it is invisible: it will not appear in that map, and the next reader auditing whether the spec is covered will find coverage they cannot trace. Both behaviours already execute in tests, so closing it is transcription.",
+  "passes_run": [
+    0,
+    1,
+    2,
+    3,
+    6
+  ],
+  "passes_skipped": [
+    4,
+    5
+  ],
+  "final_assessment": "0 critical, 2 warning, 1 suggestion.",
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc02c-confirmation-semantics --from-file orbit/changes/rc02c-confirmation-semantics/.orbit-runs/review-system-2026-09-21T14-56-15Z.json"
+}

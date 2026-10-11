@@ -1,0 +1,18 @@
+schema: spec-driven
+created: 2026-07-20
+schema_version: 3
+architecture:
+  doc: d-arc-arbitered-flow
+  stage: d3-orientation
+base_fingerprints:
+  orbit-explore-modifications:
+    Three invocation modes supported: sha256:4cf2f9ee5044cd7b17c00691d47d2a9a5c1ba94faf29b958bc64d77ffe80c5b6
+  orbit-run-summary-emit:
+    Emit scope: sha256:fa7141da308f1013d59f4588cc36b9b076a8234ffac7e14c59ec95c17269728b
+    Emit timing semantics: sha256:b4ece347b22a6beea7e3bda7b850c56c893a20001fdece4a6b8d31d271721b62
+    Bare-mode explore non-emission and crystallization warning: sha256:d1f47e52858b919ea21d32e52c61e928ee80212fed32980c452f91dace986d82
+  orbit-engine-gates:
+    Gate declaration in schema YAML: sha256:d35cfc90f01e5381414726b552426e1d3534b3c7dc6794f02deb466265368983
+    Gate-aware status and instructions with position readout: sha256:baef9d9a1203e98c4da787c1429719ca72133f6f64a9f9ee9648397b524ecab0
+  orbit-architect:
+    Architect run-summary emit with handoff section: sha256:f4af86df25bb3b15323f763b79f07b8f6778a4797533008ca41edfaf9028854d

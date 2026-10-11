@@ -1,0 +1,31 @@
+{
+  "command": "audit-drift",
+  "timestamp": "2026-10-05T03:00:48Z",
+  "change": null,
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "final_assessment": "No critical issues. 0 warning(s) to consider.",
+  "categories_run": [
+    "1",
+    "3",
+    "4"
+  ],
+  "findings": [
+    {
+      "category": "3",
+      "severity": "SUGGESTION",
+      "file": "orbit/specs/orbit-emit-composition/spec.md",
+      "line": 1034,
+      "title": "A baseline requirement cites change-local walk provenance ('system walk 1, Sal: B') that resolves only in an archived trail",
+      "recommendation": "The sentence introducing `The walk write gate checks sweep evidence`'s CHECK SCOPE / PATH fence opens '(system walk 1, Sal: B — an installed skill cannot open this spec, ...)'. It is the only such citation across the 23 baselines (grep for 'walk 1', 'walk 2', 'Sal: A', 'Sal: B' over orbit/specs/*/spec.md matches this line alone), and a reader of the living spec cannot resolve 'walk 1' to anything. Drop the provenance and keep the reason: '(an installed skill cannot open this spec, so the review and walk bodies carry it as a CHECKED MIRROR held byte-equal by a parity test)'. Carried as an accepted residual on rc08a's readiness record (archive-2026-10-05T02-53-30Z.json); the parity test reads only the fence, so the edit moves no mirror."
+    }
+  ],
+  "stale_suppressed": [],
+  "findings_total": 1,
+  "findings_by_category": {
+    "1": 0,
+    "3": 1,
+    "4": 0
+  },
+  "next_recommended": "/orbit:address-reviews --from-file orbit/.orbit-runs/audit-drift-2026-10-05T03-00-48Z.json — 1 drift(s) detected project-wide; resolve before next workflow step"
+}

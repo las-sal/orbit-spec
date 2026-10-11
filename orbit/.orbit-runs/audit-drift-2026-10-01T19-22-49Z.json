@@ -1,0 +1,33 @@
+{
+  "command": "audit-drift",
+  "timestamp": "2026-10-01T19:22:49Z",
+  "change": null,
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "final_assessment": "No drift detected. Project-wide standalone run after rc16-retirement-sweep's archive — exit (3)'s instrument. Category 1: 28 archives carry NO RENAMED or REMOVED block (confirmed by header grep), so the residue pattern set is empty. Category 3: the src: markers validate (25/14/21/4); CLAUDE.md carries no sentence of the retired class as a claim — line 407 quotes the retired phrases as the record of what rc16 retired, and line 434 (\"answers position / last / next per workstream with no artifact reads\", the D3 line in the section headed historical) is NOTED and NOT raised: true of orientation's module, false of the composed --full view only transitively since rc15, outside Q-crc-28's set by the proposal's explicit scoping, and carried as an accepted residual on rc16's readiness record; architecture staleness (a)-(d): no inconsistent stage, no *State:* line, no malformed doc, no change or explore citation to dangle (zero active changes, zero staging explores). Category 4: the last five archives (bounded-closure-semantics, rc13b, rc13c, rc15, rc16) propagate every ADDED block and carry no REMOVED/RENAMED; the consent tripwire finds every checked apply/archive emit carrying its record (all five are schema_version 4). Categories 2, 5, 6 skipped: orbit/lenses/ absent; no active change for touchpoints; no staging exploration. The two findings of the prior project-wide run (2026-10-01T16-53-35Z) are stale with evidence. Exit (3) of rc16's charter is MET on this run; Q-crc-28 may CLOSE on it with a dated line naming this emit, the two src/core/orientation.ts comments (lines 22 and 50) named as true of the module and deliberately untouched, and the class C re-entry trigger (D-rc16-1) carried in its closed record — that line is a program-doc edit outside this scan-only command.",
+  "categories_run": [
+    "1",
+    "3",
+    "4"
+  ],
+  "findings_by_category": {
+    "1": 0,
+    "3": 0,
+    "4": 0
+  },
+  "findings_total": 0,
+  "findings": [],
+  "stale_suppressed": [
+    {
+      "category": "3",
+      "title": "Nine living sentences across three capabilities and the explore body still describe reader limits the shipped tree has retired — the Q-crc-28 retirement-class set, grown from three sites to nine",
+      "evidence": "Resolved by rc16-retirement-sweep (archived 2026-10-01, archive-2026-10-01T18-48-08Z): the nine sites were repaired by pointer or deleted in three capabilities and the explore body; the eleven quoted sentences grep to 0 over the synced baselines (orbit/specs/orbit-conventions, orbit-explore-modifications, orbit-orientation) and src/core/templates/workflows/explore.ts — re-run at this audit; Category 3 raises nothing on the set."
+    },
+    {
+      "category": "3",
+      "title": "The architect body's §5 heading says 'the body's one AskUserQuestion' while the body carries three AskUserQuestion prompts",
+      "evidence": "Resolved at the prior audit's walk (orbit/.orbit-runs/address-reviews-*.json after 2026-10-01T16-53-35Z, commit 023d49ac): the architect §5 heading scoped to the completion flow; src/core/templates/workflows/architect.ts re-read at this audit carries the scoped parenthetical and the pin was re-recorded once."
+    }
+  ],
+  "next_recommended": "No project-wide drifts detected. Run /orbit:audit-drift periodically to catch new drift."
+}

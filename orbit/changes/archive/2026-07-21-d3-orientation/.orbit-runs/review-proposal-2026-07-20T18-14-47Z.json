@@ -1,0 +1,65 @@
+{
+  "command": "review",
+  "timestamp": "2026-07-20T18:14:47Z",
+  "change": "d3-orientation",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "iteration": 3,
+  "depth": "full",
+  "scorecard": {
+    "completeness": { "critical": 0, "warning": 0, "suggestion": 1 },
+    "correctness": { "critical": 0, "warning": 0, "suggestion": 0 },
+    "coherence": { "critical": 0, "warning": 1, "suggestion": 2 }
+  },
+  "findings": [
+    {
+      "pass": 3,
+      "severity": "WARNING",
+      "file": "orbit/changes/d3-orientation/specs/orbit-explore-modifications/spec.md",
+      "line": 35,
+      "title": "Mode C scenario still says 'the BEGIN emit, as in Mode B' — a residual ripple of the resolved mode-aware CRITICAL",
+      "recommendation": "The Mode C accept scenario reads '...creates explore.md (and the minimal .openspec.yaml and the BEGIN emit, as in Mode B), back-fills the Premise and Decisions sections...'. Two problems cutting against the option-A resolution: (1) 'as in Mode B' grammatically covers the BEGIN emit — a content-identity reading (zero counts + Early canonical) contradicts orbit-run-summary-emit's Mode C scenario (BACK-FILLED counts); (2) the sentence orders the emit BEFORE the back-fill, while the emit must carry the back-filled counts. The other four artifacts are unambiguous, so implementation risk is low — but this is the one normative scenario still permitting the pre-resolution reading. Reword: create explore.md → back-fill → write metadata (as in Mode B) → fire the BEGIN emit (mode-aware, back-filled counts per orbit-run-summary-emit's Mode C scenario) → continue as Mode B."
+    },
+    {
+      "pass": 6,
+      "severity": "SUGGESTION",
+      "file": "orbit/changes/d3-orientation/specs/orbit-orientation/spec.md",
+      "line": 178,
+      "title": "Fault-isolation's emit-less fallback pointer aims at the wrong requirement",
+      "recommendation": "The fault-isolation requirement says 'next falls back per the sourcing requirement' — but the sourcing requirement defines no emit-less fallback (it asserts the begin emit guarantees one exists); the actual fallback lives in the continuity requirement's emit-less scenario. Aim the pointer at the continuity requirement's emit-less rule (or add the fallback clause to the sourcing requirement)."
+    },
+    {
+      "pass": 2,
+      "severity": "SUGGESTION",
+      "file": "orbit/changes/d3-orientation/tasks.md",
+      "line": 38,
+      "title": "Tasks 2.2/2.3 predate the --full tuple amendment and don't name the per-entry tuple or JSON entry shape",
+      "recommendation": "The amendment landed in the spec and in test task 5.1, but build tasks 2.2/2.3 still describe --full as bands + nesting and the top-level JSON shape only. Not carrier-less (5.1's test forces it) — but adding 'each entry carrying its full orientation tuple' to 2.2 and the workstream entry shape to 2.3 closes the seam where an implementer builds from pre-amendment task text."
+    },
+    {
+      "pass": 9,
+      "severity": "SUGGESTION",
+      "file": "orbit/changes/d3-orientation/design.md",
+      "line": 78,
+      "title": "Design mislabels the external review's provenance as 'iter-2 external'",
+      "recommendation": "D4 (line 78) says 'external W4' in an 'iter-2' framing and D5 (line 90) says 'iter-2 external CRITICAL', but the external file self-labels iteration 1; internal iters 1-2 were the in-context and fresh passes. Relabel both to 'external iter 1' (D6's 'iter-2 CRITICAL resolution' at line 99 is correct — that WAS the internal fresh pass) so audit-trail citations stay greppable."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "title": "Conventions-scenario scope call (iter 1)",
+      "evidence": "User ruled LEAVE IT; verified no conventions baseline text contradicts the orientation surface. Not re-flagged."
+    },
+    {
+      "title": "External W2 (fault isolation) and S1 (truncation claim)",
+      "evidence": "Both resolved on disk (the requirement exists with fixtures tasked; the design records unbounded width). Not re-flagged."
+    },
+    {
+      "title": "External's '14 requirements' count",
+      "evidence": "Now 15 — the fault-isolation requirement was ADDED as that review's own resolution. Not a discrepancy."
+    }
+  ],
+  "iteration_note": "Note: 0 of these findings appeared in prior runs. 4 new this run (trend: 4 → 6 → 6-external → 4, severity now 1 W + 3 S). All six external resolutions verified landed and mutually consistent (--full tuple + JSON entry shape + task 5.1; mode-aware begin emit across four artifacts incl. the amended D-d3-4; count-based WAITING with verified T0 mode field and glob-safety; collision bump grounded at review-external.ts:358). The three CRITICAL-class sweeps clean: unified diffs of all 6 MODIFIED blocks show only intended edits; 15/15 task carriers; remaining bare orbit-status baseline mentions verified generic and true post-change.",
+  "final_assessment": "No critical issues. 1 warning + 3 suggestions — the warning is the last un-rippled corner of the mode-aware resolution (the explore-modifications Mode C scenario's 'as in Mode B' phrasing); the suggestions are a mis-aimed pointer, task-text staleness (test-carried), and provenance labels.",
+  "next_recommended": "/orbit:address-reviews d3-orientation --from-file orbit/changes/d3-orientation/.orbit-runs/review-proposal-2026-07-20T18-14-47Z.json"
+}

@@ -1,0 +1,13 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-07-14T17:47:13Z",
+  "change": "d2-architect",
+  "final_assessment": "External review prompt packaged for d2-architect (iter 1, mode proposal); awaiting findings. One internal fresh pass preceded (12 findings, all resolved incl. the un-delta'd final-assessment CRITICAL and the new 9th delta). The prompt carries the contradiction-class sweep as an explicit probe (incl. review-external's own two-mode flag as a deliberate omission to verify), plus computed-state edge cases, merge determinism, and R-d-9 handoff-shape conformance.",
+  "next_recommended": "Paste orbit/changes/d2-architect/.orbit-runs/external-prompt-proposal-2026-07-14T17-47-12Z.md into the target AI (pull https://github.com/las-sal/orbit-spec.git branch d-arc), save the response as orbit/changes/d2-architect/.orbit-runs/external-proposal-<TS>.md, then /orbit:address-reviews d2-architect --from-file <that path>",
+  "kind": "editorial",
+  "mode": "proposal",
+  "reviewer_class": "external",
+  "prompt_path": "orbit/changes/d2-architect/.orbit-runs/external-prompt-proposal-2026-07-14T17-47-12Z.md",
+  "target": null,
+  "awaiting_findings": true
+}

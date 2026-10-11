@@ -1,0 +1,50 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-07-21T16:34:29Z",
+  "change": "d3-orientation",
+  "source": "--from-file",
+  "source_path": "orbit/changes/d3-orientation/.orbit-runs/review-system-2026-07-21T16-30-30Z.json",
+  "source_format": "internal-review",
+  "source_mode": "system",
+  "source_iteration": 4,
+  "walk_mode": "per_finding",
+  "kind": "editorial",
+  "resolutions": [
+    {
+      "finding": "--full text render drops an uncited twin-named workstream (missed kind+name site)",
+      "severity": "WARNING",
+      "file": "src/commands/workflow/status.ts",
+      "pushback": "still applies — citedNames.add(entry.name) / has(w.name) verified name-only at :336/:348/:360",
+      "classification": "trivial fix",
+      "action": "The printed-entry set is now citedKeys keyed `kind:name`; the standalone filter matches identity. CLI fixture: cited change 'alpha' + uncited explore 'alpha' → the explore renders under standalone ('alpha (explore)' after the standalone marker).",
+      "ripple_cascade": { "applied": ["src/commands/workflow/status.ts", "test/commands/status-orientation.test.ts"], "flagged_not_applied": [] }
+    },
+    {
+      "finding": "Generated bodies still direct bare `orbit status --json` for per-change gate payloads",
+      "severity": "WARNING",
+      "file": "src/core/templates/workflows/apply-change.ts",
+      "pushback": "still applies — exactly four bare sites confirmed (apply-change :138/:228/:266; archive-change :193); all other references already used the --change form",
+      "classification": "trivial fix",
+      "action": "All four scoped to `orbit status --change <name> --json` — the position-readout convention site additionally states WHY (bare is the D3 orientation surface whose sprint may be a DIFFERENT change). Rebuilt, surface refreshed via update --force (on-disk apply skill carries 7 scoped references), and the four parity hashes re-pinned (getApplyChangeSkillTemplate, getArchiveChangeSkillTemplate, orbit-apply-change, orbit-archive-change).",
+      "ripple_cascade": { "applied": ["src/core/templates/workflows/apply-change.ts", "src/core/templates/workflows/archive-change.ts", "test/core/templates/skill-templates-parity.test.ts"], "flagged_not_applied": [] }
+    },
+    {
+      "finding": "Two spec phrasings, one render, for the empty-last line",
+      "severity": "SUGGESTION",
+      "file": "orbit/changes/d3-orientation/specs/orbit-orientation/spec.md",
+      "pushback": "still applies — clause (a) said 'no readable emits' while the emit-less scenario and the implementation use 'no emits yet'",
+      "classification": "trivial fix (unified on the implemented phrase — one shared empty-trail line for both indistinguishable cases)",
+      "action": "Clause (a) now reads: 'last reports the shared empty-trail line — `no emits yet`, the same render as a never-emitted workstream'. One phrase, one render, aligned before the archive sync.",
+      "ripple_cascade": { "applied": ["orbit/changes/d3-orientation/specs/orbit-orientation/spec.md"], "flagged_not_applied": [] }
+    }
+  ],
+  "resolution_summary": {
+    "resolved": 3,
+    "stale": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "post_state": "Build green; 1753 tests green (1752 + 1); strict validation passes; fingerprints 7/7; surface refreshed (16 skills; scoped references on disk)",
+  "final_assessment": "All 3 fresh system iter-4 findings resolved: the fourth kind+name comparison site closed (citedKeys), the four generated-body bare `orbit status --json` references scoped to the --change form with parity re-pins and a refreshed surface, and the empty-last spec letter unified on the implemented phrase before sync. With these resolutions on disk the ENGINE computes gate review-system PASSED (position: ... review(system) ✓ → archive ready) — verdict read from orbit status --change --json, not authored.",
+  "next_recommended": "/orbit:archive d3-orientation — user-invoked"
+}

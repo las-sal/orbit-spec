@@ -1,0 +1,48 @@
+{
+  "command": "architect",
+  "timestamp": "2026-09-14T07:49:23Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "Captured the session's diagnosis at the program layer rather than inside the change that produced it, which is R-crc-6 operating on its own first day. rc02's four proposal passes ran 0C/9W/4S then 3C/7W/1S then 3C/8W/2S then 4C/9W/4S with ZERO repeat findings across the whole shared axis, so the premise's churn mechanism does not describe them: each walk answered findings by inventing mechanism, and each pass correctly found defects in mechanism nobody had reviewed. Nine of the ten CRITICALs were in mechanism that did not exist when the exploration closed. Two rulings recorded — R-crc-6 (the walk authors nothing; repair, descope, redesign, with redesign routing back to explore) and R-crc-7 (explore produces mechanism to the fidelity the artifact demands, executes the procedure once before specifying it, and specifies procedures as decision tables). One new stage, rc13-explore-mechanism, carries the fix at its root: the explore surface has no mechanism section, grades maturity by decision count, and never asks the author to falsify — all three verified against the shipped surface. Four charters gained measured evidence rather than new scope (rc03 blind review and execute-don't-read, rc04 the churn-versus-authoring diagnostic, rc08 the three lanes, rc09 the generalized spike). Two directions declined and recorded with re-entry triggers: rewriting rc02's criterion as a table before applying it, and splitting rc02 again on the byte overage. rc01 ratified complete. Thirteen stages.",
+  "stages_touched": [
+    "rc01-instrument-fidelity",
+    "rc03-review-genres",
+    "rc04-cost-visibility",
+    "rc08-walk-completeness",
+    "rc09-propose-hygiene",
+    "rc13-explore-mechanism"
+  ],
+  "rulings_captured": [
+    "R-crc-6",
+    "R-crc-7"
+  ],
+  "completions_ratified": [
+    "rc01-instrument-fidelity"
+  ],
+  "handoff": {
+    "boot_sequence": [
+      {
+        "path": "orbit/architecture/clean-up-review-cycle.md",
+        "why": "the live program: premise, goals G0-G4, rulings R-crc-1 through R-crc-7, thirteen stages in four phases, and the status log's narrative ledger"
+      },
+      {
+        "path": "orbit/changes/rc02-gate-semantics/",
+        "why": "the in-flight change: four proposal passes and four walks on its trail, all findings resolved, three capabilities at the R-crc-1 ceiling and 51.3 KB over the byte guide, both recorded in its design"
+      },
+      {
+        "path": "src/core/artifact-graph/gates.ts",
+        "why": "the engine rc02 rewrites: evaluateReviewed's three clauses, computeReviewedStatus's fresh-versus-all freshness split, and commandForClass's fall-through"
+      },
+      {
+        "path": "orbit/changes/rc02-gate-semantics/.orbit-runs/",
+        "why": "the evidence for R-crc-6: the shared-axis trend line and four address-reviews logs recording what each walk authored"
+      }
+    ],
+    "next_command": "/orbit:review --as proposal rc02-gate-semantics",
+    "model_hint": "a reasoning-heavy model; the open work is a decision procedure whose defects have all been quantifier ambiguity rather than missing information",
+    "seam": "rc02's review-proposal gate is unpassed on its last uncovered cadence slot with every finding resolved; the recommended close is one in-context pass run as a VERIFICATION read of the walk diff (the genre rc03 will formalize) rather than a fifth fresh review, then apply"
+  },
+  "next_recommended": "/orbit:review --as proposal rc02-gate-semantics"
+}

@@ -1,0 +1,158 @@
+{
+  "command": "review",
+  "timestamp": "2026-09-28T23:32:39Z",
+  "change": "rc15-ended-stage-state",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 3,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-architect/spec.md",
+      "line": 15,
+      "title": "An ended stage has no stated treatment in the arc-done predicate, and a premised-ended stage can never satisfy it",
+      "recommendation": "ARC-DONE is 'every declared stage archived AND the closing architecture review recorded' (orbit/specs/orbit-pr-lifecycle/spec.md:230-231; the architect body's section 5.5 at src/core/templates/workflows/architect.ts:110-112 reads it from `orbit architecture status --json`). The composition table makes `ended` reachable on `premised` (D-rc15-1's own named case: declared and withdrawn before any work) and `ended-from-explore` on `concluded` — neither observation has an archived change, so a program carrying either stage can never observe arc-done, and its program PR's human-acts readout never fires. The change is silent on this: the non-goals list `Depends-on` semantics and the CLI-surface text but not arc-done. State the treatment once, in the requirement that owns arc-done (or, if it is deliberately out of scope, add it to the declared non-goals with the consequence named as an accepted residual): most naturally, an `ended`/`ended-from-explore` stage counts as archived-or-ended for the predicate, since ending is the doc-layer Considered & out and a withdrawn stage should not hold a program open. The live doc is unaffected today (rc03a observes `quiescent`), which is why this is a WARNING rather than higher."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-architect/spec.md",
+      "line": 18,
+      "title": "The unprompted route keys on OBSERVED state, so it reaches a `complete` stage — what happens to an existing `[x]` or `[~]` in the slot is unstated",
+      "recommendation": "The requirement writes the ended production 'when the stage's observed state is `premised`, `quiescent` or `concluded`' and declines only on live observations. A `complete` stage (observed `quiescent`, slot `[x]`) and an already-`ended` stage (slot `[~]`) both sit inside that written set, yet the offer sentence says a `complete`/`ended` stage 'is offered nothing' — that clause governs the PROMPT, not the unprompted write. The insert rule covers the slotless case and the `[ ]` case is an obvious replace; a present `[x]` (overwriting a ratified mark whose id an earlier emit recorded under `completions_ratified`) and a present `[~]` (re-dating an existing ended mark) are transitions the flow neither refuses nor specifies. D-rc15-3's Mechanism domain enumerated WHERE the mark is written, not what the slot already held. Close the slot-content dimension in the requirement: either (A) the unprompted route on a stage whose slot already carries a dated mark DECLINES naming the mark and points at the hand edit (the reversible path the offer text already names), or (B) it replaces on the user's word and the emit records the id under `stages_ended` with the prior mark named in `final_assessment`. Add one scenario for the chosen branch and name it in task 3.1.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Unprompted ended on a stage whose slot already carries `[x]` or `[~]` is DECLINED, naming the existing mark and pointing at the hand edit as the reversal path; the written set is `premised`/`quiescent`/`concluded` with an UNDATED slot (absent or `[ ]`)."
+        },
+        {
+          "label": "B",
+          "body": "The unprompted route REPLACES a present dated mark on the user's word; the emit records the id under `stages_ended` and the narrative names the mark it replaced; a scenario covers `[x]` → `[~]`."
+        }
+      ]
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-audit-drift/spec.md",
+      "line": 9,
+      "title": "Check (b)'s ratified-mark enumeration omits the new `concluded` observation the delta's own table makes INCONSISTENT",
+      "recommendation": "The `[x]` clause reads 'a ratified `Complete: [x]` mark on a stage whose observed state is not quiescent — live citing work OR no citing artifacts at all (`premised`) → CRITICAL'. After this change a third non-quiescent observation exists — `concluded` — and the engine delta's table renders `[x]` + `concluded` INCONSISTENT with a detail that must never say 'live citing work' (specs/orbit-architecture-engine/spec.md:223-226). The (b) enumeration therefore names two of three inconsistent observations, and the body it generates carries the same two-item list (src/core/templates/workflows/audit-drift.ts:255), which task 4.1 leaves untouched while adding only the ended clause. This is the W1 pattern one surface further out: the leading clause 'not quiescent' is still correct, so the mechanism does not break, but a body author following the enumeration will phrase the finding as 'falsified by live work' for a citer the change defines as not live. Either extend the enumeration with 'OR a concluded exploration only' in the delta and in task 4.1's body edit (with the scenario), or drop the enumeration and let 'not quiescent' point at the engine's table — the latter is also what 'restates none of it' would then be true of."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "proposal.md",
+      "line": 37,
+      "title": "The proposal says the state reader imports the grammar module's regex; design, spec and task 2.1 say it calls the explore parser's exported `readStatus`",
+      "recommendation": "proposal.md:36-37 reads '(the reader imports the grammar module's one regex)'; design D-rc15-2 (design.md:60-63) explicitly REJECTS importing `STATUS_HEADER` directly as a second matching site with its own first-non-blank-line logic, task 2.1 exports `readStatus` from `src/core/parsers/explore-rules.ts` (which today is unexported at line 274 and already normalises BOM/whitespace), and the engine delta says 'consumes the engine's ONE reader of that production (the explore parser's)'. The Impact section (proposal.md:92-93) hedges with 'or'. Align the What-Changes bullet with the design's decision so the proposal does not describe the mechanism the design rejected."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "tasks.md",
+      "line": 11,
+      "title": "'The five existing state tests stay byte-unchanged' — the `computed stage state` describe holds six, and the first one's title names the four-rung precedence",
+      "recommendation": "test/core/architecture/engine.test.ts:221-286 has six `it` blocks under `computed stage state` (precedence, completion composes, re-exploration, ratified-on-premised, ratified-on-live, citation-scan tolerance); design.md:135 repeats 'five'. Either say 'the six existing tests in that describe' or name the five meant. Separately, the first test is titled 'precedence: in-change > exploring > quiescent > premised' (line 222) — byte-unchanged keeps it green but its title states the pre-rc15 four-rung order beside a new table-driven test asserting five; a title edit is a second act, so record whether the byte-unchanged pin includes titles or only assertions."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "tasks.md",
+      "line": 10,
+      "title": "The citing suffix renders a concluded explore identically to a live one, so the `quiescent`-beside-`concluded` cell reads as 'archived + live explore'",
+      "recommendation": "`renderStageLine` (src/core/architecture/buckets.ts:61-62) prints `[<kind>:<name>]` from `c.kind`, and task 2.3 keeps the suffix unchanged while task 2.2 adds `concluded?: boolean` to the explore citer. A stage cited by one archived change and one concluded exploration renders `quiescent — completion awaiting your ratification [archived-change:x, explore:y]` — a reader who knows the precedence expects `exploring` and has to open the directory to learn why not. Since the boolean is already on the artifact, consider `explore:y (concluded)` in the suffix (one branch in 2.3; the byte-identical PROGRAM-band assertion in 2.5 still holds because both surfaces go through the shared builder). Polish, not a gap."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "design.md",
+      "line": 80,
+      "title": "D-rc15-4 attributes the production to 'Q-crc-11's ledger spelling', but the ledger spelled it WITH the suffix this production rejects",
+      "recommendation": "Q-crc-11's standing recommendation (orbit/architecture/clean-up-review-cycle.md:504) reads `Complete: [~] <date> (<who>) — withdrawn`; the assignment entry (line 535-540) says that spelling is 'the stage's starting shape, not its specification'. D-rc15-4 makes the trailing suffix a near-miss and cites the ledger as its source in the same sentence. Say 'the ledger's `[~]` mark, with the suffix dropped' so the design does not claim continuity with a spelling it deliberately rejects (explore.md:153 carries the same phrasing as history)."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "pass": "2",
+      "title": "The unchanged ratified-detail branch will call a concluded exploration live",
+      "evidence": "tasks.md:9 now reads 'its inconsistency detail gains a THIRD branch for `concluded` (\"a concluded exploration is not evidence that the exit criteria were met\")'; specs/orbit-architecture-engine/spec.md:223-226 carries the scenario 'Ratified mark with only a concluded exploration is an inconsistency' asserting the detail never contains 'live citing work'; walk address-reviews-2026-09-28T23-14-08Z.json resolution 1."
+    },
+    {
+      "pass": "2",
+      "title": "The test task does not execute all fifteen composition cells",
+      "evidence": "tasks.md:11 now requires 'ONE table-driven test over ALL FIFTEEN `(observed, mark) → rendered` cells' with five observation fixtures × three slot lines; walk resolution 2."
+    },
+    {
+      "pass": "6",
+      "title": "The unprompted route both permits any stage and promises never to write an unsupported mark",
+      "evidence": "specs/orbit-architect/spec.md:19-22 now declines on `in-change`/live `exploring` naming the live citer and the supportable act, with the scenario 'Unprompted ended on a live stage is declined' at lines 51-54; design.md:69-75 records the amendment (Sal: 3A); walk resolution 3."
+    },
+    {
+      "pass": "3",
+      "title": "The architect scaffold will keep publishing the obsolete two-production grammar",
+      "evidence": "tasks.md:16 (task 3.1) now names the §2 scaffold-format sentence as an edit target for all three productions and task 3.3 pins it with a fidelity marker; design.md:159 Touchpoints lists it; src/core/templates/workflows/architect.ts:81 is the body line, edited at apply per plan; walk resolution 4."
+    },
+    {
+      "pass": "2",
+      "title": "The design names the wrong JSON surface",
+      "evidence": "design.md:97 now reads '`status --json` carries the new fields for free (`show --json` returns an index or a section slice and computes no state — corrected at the external iter-1 walk)'; walk resolution 5."
+    },
+    {
+      "pass": "5",
+      "title": "The claimed closed production leaves attribution and calendar near-misses undecided",
+      "evidence": "specs/orbit-architecture-engine/spec.md:14-16 declares the shared lexical limit (date shape-only; attribution opaque up to the final paren) and lines 85-88 carry the scenario 'The lexical limit is shared and declared'; tasks.md:4 (task 1.2) asserts `2026-99-99` and `(Sal))` → `Sal)`; design.md:84-90 records 6A; walk resolution 6."
+    }
+  ],
+  "commentary": "Probed hardest: every cell of the 5×3 composition table against the shipped `compose()`/`observe()` (src/core/architecture/state.ts:122-144) — the table is internally consistent, the `[x]` column's five outcomes match today's branches, the `[ ]` column's `concluded → ended-from-explore` cell is the one place the unratified path stops returning the raw observation, and task 2.2's five-rung `observe()` is equivalent to the spec's numbered precedence (rung 4 is reachable only when every citer is a concluded explore). The near-miss set is complete for the regex given: the lazy `(.+?)\\)\\s*$` rejects the suffix form and admits `(Sal))` exactly as declared. The six external resolutions all landed in the current artifacts; none is re-reported. What the review found instead sits one surface further out than the external pass looked — the same pattern its walk named: a domain enumerated in the exploration was re-enumerated where the external pass pointed but not one hop beyond. The audit-drift ratified clause still lists two of the three non-quiescent observations; the unprompted route was closed over OBSERVED state and left the slot's prior content open, so a `complete` stage is inside the written set; and the arc-done predicate in `orbit-pr-lifecycle` counts archived stages while D-rc15-1 deliberately makes `ended` reachable with no archive at all. None of the three breaks the shipped mechanism — each is a rule the body author or the program would have to invent at apply or later. Not verified: whether `readStatus`'s BOM/whitespace normalisation is wanted unchanged when called from the state scan (task 2.1 says 'behaviour unchanged', which is the right default); the 24.6 KB size figure (the deltas are ~25.5 KB after the walk's edits — immaterial to the ceiling); and the R-crc-14 claim that audit-drift's sentence 'restates none of' the rule while enumerating its consistent states — I read that as the one sentence the charter permits and did not file it separately, but the third finding's second option would make the claim literally true. Delta blocks against baseline: every baseline scenario survives in each of the five MODIFIED blocks (the C2 defect class), and no `orbit-orientation` directory exists under specs/ — exit (3)'s zero-delta half already measures as the plan says.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "final_assessment": "0 critical, 3 warning, 4 suggestion.",
+  "iteration": 2,
+  "next_recommended": "/orbit:address-reviews rc15-ended-stage-state --from-file orbit/changes/rc15-ended-stage-state/.orbit-runs/review-proposal-2026-09-28T23-32-39Z.json"
+}

@@ -1,0 +1,53 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-24T14:08:15Z",
+  "change": "rc04c-retire-gate-overridden",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc04c-retire-gate-overridden/.orbit-runs/review-proposal-2026-09-24T14-05-45Z.json",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "walk_mode_source": "flag",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 0
+  },
+  "pushback_verification": "The single finding re-verified live before editing: both sentences read at their cited lines, and the re-read made it SHARPER than the finding stated — `orbit-emit-composition`'s edge (d) explicitly says `orbit-run-summary-emit` 'owns the rule's statement and its scope' while itself evaluating over the resolution set, so the capability that DEFERS scope was stating a narrower one than the capability that OWNS it. The invocation arrived with the literal ellipsis from the report's path; resolved to the actual emit and confirmed it exists rather than erroring on a paste artifact.",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The emptiness predicate is stated in two capabilities with DIFFERENT extensions, and they diverge exactly at the rejected-external case this repo has already had to reason about",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04c-retire-gate-overridden/specs/orbit-run-summary-emit/spec.md",
+      "line": 187,
+      "classification": "trivial_fix",
+      "action": "The owning statement in `orbit-run-summary-emit` now evaluates over the trail's PASS SET — the same set the ordering check resolves citations against — instead of a bare `reviewer_class` test, and states the non-obvious exclusion explicitly: a REJECTED external return is NOT a member. The reasoning is recorded in the requirement rather than left to be rediscovered: a rejected return carries the `external` reviewer class and counts toward recorded spend, so a predicate phrased on reviewer class alone reads it as a pass and refuses a legal empty citation — in exactly the case where there was nothing citable, since the ordering check refuses CITING a rejected return.\n\nCASCADE APPLIED AS DE-DUPLICATION rather than as alignment, which is the finding's actual lesson. Two other sites restated the predicate — `orbit-run-summary-emit`'s field-table row and `orbit-archive-modifications`' edge paragraph — and both now CITE the totality rule instead of restating it. Aligning their wording would have left three statements that merely happen to agree today; removing the restatements leaves one. The archive site says so in its own text: a rule restated in a second place is a rule with two extensions, and this one already diverged once that way.",
+      "ratified_via": "chat",
+      "resolution": "Single finding, obvious-fix lane, previewed at triage; user invoked the walk.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc04c-retire-gate-overridden/specs/orbit-run-summary-emit/spec.md",
+          "orbit/changes/rc04c-retire-gate-overridden/specs/orbit-archive-modifications/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "One WARNING, resolved, with the cascade done as DE-DUPLICATION rather than alignment — which is the whole point of the finding and the reason this walk is worth more than its size.\n\nThe defect was one rule stated in two capabilities with two extensions, differing at the rejected-external return. The obvious fix is to make the second statement agree with the first. That would have been wrong in the same way the original was: three sentences that happen to agree today are three chances to diverge tomorrow, and this predicate had already diverged once. So the owning capability now states the predicate and its SET once, and the two restating sites — a field-table row and the archive capability's edge paragraph — cite it instead. `orbit-archive-modifications` says the reason in its own text, so a later editor tempted to 'helpfully' restate the condition reads why not to.\n\nThis is the change's THIRD instance of one defect class, and the trajectory is worth noting: external iter 1's C1 was a rule contradicted by a clause in the SAME requirement; this pass found the same shape across TWO capabilities; and the fix in both cases was to reduce the number of places the rule is stated rather than to reconcile the statements. rc07's one-voice-for-facts work named this, and rc04d's site-2 edit — reversed twice before landing on removal rather than redirection — was an earlier instance of the same correction being learned the hard way.\n\nVerified after: validate --strict passes, fingerprints 10/10, 2238/2238 green. The deltas changed but no baseline did, so no fingerprint moved.",
+  "iteration": 5,
+  "next_recommended": "/orbit:apply rc04c-retire-gate-overridden — user-invoked"
+}

@@ -1,0 +1,297 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-21T14:47:59Z",
+  "change": "rc02c-confirmation-semantics",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc02c-confirmation-semantics/.orbit-runs/external-system-2026-09-21T14-11-34Z.md",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-5 Codex",
+  "walk_mode": "per_finding",
+  "walk_mode_source": "flag",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 12,
+    "suggestion": 5
+  },
+  "pushback_verification": "All 17 verified against current state before any fix, across both halves: instruction-loader.ts:427, gates.ts:731 and the seven comment sites read directly; the delta spec lines for the unbounded, new-finding-match, status-row and version-pin findings read directly; the architecture doc grepped for every live budgetExhausted reference and the two FORWARD-LOOKING ones separated from the many historical mentions; the mode-less test case read and its stale property access confirmed; the scenario-accounting claim re-derived by diffing all eight delta requirements against their live baselines, which CONFIRMED the external half is third rewrite. ZERO stale. One finding I nearly suppressed on a bad probe (touchpoints read the wrong JSON key and returned null) turned out to be exactly as reported.",
+  "resolution_summary": {
+    "resolved": 17,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Undeclared budget survives in the public status object as an undefined key",
+      "marker_source": "external",
+      "file": "src/core/artifact-graph/instruction-loader.ts",
+      "line": 427,
+      "classification": "trivial_fix",
+      "action": "Replaced the unconditional row reconstruction in `formatChangeStatus` with conditional spreads for budget, independentSpend and deferredSuggestions, so an absent value omits the KEY rather than emitting it undefined-valued. Carried the rule into the spec (the gate-row requirement now states that the JSON projection omits either key entirely when absent, naming the in-process consumer testing key presence), and added a regression test asserting it at the formatChangeStatus layer on a tracked gate.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The status requirement promises a human-row budget the implementation intentionally removed",
+      "marker_source": "external",
+      "file": "orbit/changes/rc02c-confirmation-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 503,
+      "classification": "trivial_fix",
+      "action": "Rewrote the gate-row sentence and gave the surface split its own normative paragraph: the HUMAN row renders independentSpend ALONE, never beside the declaration; the JSON projection carries budget and independentSpend as SEPARATE named fields, composing neither. The old sentence promised a human-row budget the implementation deliberately removed.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "A public gate reason still claims convergence",
+      "marker_source": "external",
+      "file": "src/core/artifact-graph/gates.ts",
+      "line": 731,
+      "classification": "trivial_fix",
+      "action": "Changed the passed-gate reason from \"converged with N SUGGESTION-grade findings deferred\" to \"passed with N ...\". The finding is right that this is not a variable name: a public reason claiming convergence is the exact readiness claim this change moves to rc04, emitted by the engine that no longer computes it. No scenario or test asserted the old string.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The retained budget is still documented as a bound",
+      "marker_source": "external",
+      "file": "orbit/changes/rc02c-confirmation-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 436,
+      "classification": "trivial_fix",
+      "action": "Swept as a CLASS with the fresh half’s sibling finding rather than site by site. Nine sites: gates.ts (the GateStatus.budget doc calling it a ceiling, the PASS-LIST QUANTIFICATION doc naming clauses (a) and (c), the coverage/confirm comment, the below-the-ceiling comment), instruction-loader.ts (the four-field bundle doc), trail.ts x2 (spend as something the budget counts), types.ts (ceiling; absent means unbounded), AND the delta spec itself at the gate-declaration requirement (absent means unbounded). The spec now says absent means NO EXPECTATION IS DECLARED, never \"unbounded\", which would imply the present form bounds something. Also renamed budgetFields -> spendFields and blockedBudget -> blockedSpend.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The modified requirement normatively references a deleted matching rule",
+      "marker_source": "external",
+      "file": "orbit/changes/rc02c-confirmation-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 88,
+      "classification": "trivial_fix",
+      "action": "Specified the key directly at both sites as the tuple (TRIMMED TITLE, REPO-RELATIVE FILE), with the reason stated in place: the new-finding match it used to cite was retired with clause (c), and a key defined by reference to a deleted rule cannot be derived without archaeology.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The scenario-accounting section is not the full audit it claims to be",
+      "marker_source": "external",
+      "file": "orbit/changes/rc02c-confirmation-semantics/design.md",
+      "line": 247,
+      "classification": "trivial_fix",
+      "action": "Merged with the fresh half’s sibling finding; THIS half was the complete one. Verified mechanically: a THIRD rewrite exists that the fresh half missed — `Apply-complete recommends the engine’s canonical next` under orbit-run-summary-emit changed body (the assigned-residue de-pin). The accounting now names all four requirements that changed scenarios, records that the list was DERIVED by diffing each delta requirement against its live baseline rather than restated, and says plainly that the last three entries were found by the blind pair and not by authoring.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The active rc10 charter still requires the deleted exhaustion signal",
+      "marker_source": "external",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 1476,
+      "classification": "decision_required",
+      "action": "RATIFIED BY SAL as option (A): recorded, not amended. Added design D7 naming both forward-looking instructions (rc10-apply-closure’s charter and Q-crc-12’s standing recommendation) and the reason the amendment is a RE-FRAME rather than a deletion — the seam defect they point at survives budgetExhausted’s retirement untouched; only the vocabulary died. Extended task 5.4 to recommend both. The architecture doc is not edited: R-crc-6, the same boundary D6 observes.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "reason": "architecture doc; stage declarations belong to /orbit:architect (R-crc-6 — the walk authors nothing). Recorded as design D7 and recommended in task 5.4."
+          }
+        ]
+      },
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "resolution": "Option (A), ratified by Sal in chat as \"e7-a\". Recorded in design D7 and recommended in task 5.4; the architecture doc is NOT edited, per R-crc-6 and the precedent D6 set earlier in this cycle."
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The mode-less spend test still reads the retired field and misses the surviving invariant",
+      "marker_source": "external",
+      "file": "test/core/artifact-graph/rc02-gate-semantics.test.ts",
+      "line": 742,
+      "classification": "trivial_fix",
+      "action": "The stale property access is gone and the LIVE invariant is asserted instead: a mode-underivable gate reports no independentSpend, checked structurally through Record<string, unknown> as the sibling rc02c tests do. Also renamed the case, whose title claimed \"reports NO budget\" — which finding F7 then made false.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Retired clause-(c) and budget-ceiling vocabulary survives in seven engine comments, one of which asserts exactly the reading the delta forbids",
+      "marker_source": "internal-review",
+      "file": "src/core/artifact-graph/gates.ts",
+      "line": 43,
+      "classification": "trivial_fix",
+      "action": "Merged into the vocabulary sweep with the external half’s sibling; see that entry. THIS half found trail.ts and three gates.ts comments the external half did not, and trail.ts is absent from Touchpoints, which is why no earlier sweep reached it.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "merged_into": "external #4 (vocabulary sweep)"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The Scenario accounting claims a full audit and asserts byte-identity across all eight requirements; two further scenarios were rewritten and renamed",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02c-confirmation-semantics/design.md",
+      "line": 270,
+      "classification": "trivial_fix",
+      "action": "Merged with the external half’s sibling, which was the more complete of the two; see that entry.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "merged_into": "external #6 (scenario accounting)"
+    },
+    {
+      "severity": "WARNING",
+      "title": "CLAUDE.md still asserts clause (c) in the present tense, one paragraph outside the range task 5.2b swept",
+      "marker_source": "internal-review",
+      "file": "CLAUDE.md",
+      "line": 194,
+      "classification": "trivial_fix",
+      "action": "Rewrote CLAUDE.md:194 to carry the fact without the retired mechanism — PASSED meant every finding was resolved, not that a clean independent pass stood on the final tree — with a parenthetical stating that clause (c) was retired by rc02c and the distinction survives its retirement. Left CLAUDE.md:165 alone: it records what the engine computed at rc07’s archive and is genuinely historical.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Task 4.1's version-pin sweep reports 'ONE further pin found'; a fourth pin sits inside a requirement this delta itself rewrites",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02c-confirmation-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 601,
+      "classification": "trivial_fix",
+      "action": "De-pinned the fourth example: \"for `spec-driven` v4: review-proposal, apply, review-system\" becomes \"under the active schema, e.g. ...\". The finding is right that task 4.1’s carve-out does not reach it — the carve-out covers a requirement whose SUBJECT is the shipped version, and this delta rewrites the requirement in question.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The engine's own touchpoints check reports two substantive engine source files as unpredicted",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02c-confirmation-semantics/design.md",
+      "line": 214,
+      "classification": "trivial_fix",
+      "action": "Added src/core/artifact-graph/schema.ts, types.ts and trail.ts to the Touchpoints map, with the annotation recording that task 1.2 named the first two from the start and they were absent until the engine’s own divergence check was read. My first probe of this finding read the wrong JSON key and returned null — the finding stands; the instrument was mine and wrong.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Two baseline requirements will point at a bare `design.md` that becomes unlocatable the moment the change archives",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02c-confirmation-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 131,
+      "classification": "trivial_fix",
+      "action": "Both baseline-bound pointers now name the change: \"(`rc02c-confirmation-semantics`’s `design.md`, \\\"Scenario accounting\\\")\". The finding is right that every other design.md mention in orbit/specs/ is parametric, and that a bare filename becomes unlocatable the moment the change moves into the dated archive directory.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "A reviewed gate whose mode cannot be derived suppresses the `budget` DECLARATION along with the spend, though the declaration does not depend on mode",
+      "marker_source": "internal-review",
+      "file": "src/core/artifact-graph/gates.ts",
+      "line": 715,
+      "classification": "decision_required",
+      "action": "RATIFIED BY SAL as option (A): hoisted. `budget` is now emitted whenever declared, independent of the mode check; only independentSpend stays behind it, because a spend summed across every mode’s passes would be attributed to the wrong cadence. Applied in BOTH gates.ts branches (live and blocked), carried into the spec’s mode-attribution sentence, and the test updated — including the assertion I had added minutes earlier in this same walk, which option (A) makes wrong.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "ratified_via": "prompt",
+      "recommendation_fork": {
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Hoist the declaration: emit `budget` whenever `gate.budget !== undefined`, independent of `spendReportable`, and keep only `independentSpend` behind the mode check — matching 'SEPARATE named fields'."
+          },
+          {
+            "label": "B",
+            "body": "Keep the code as-is and amend the mode-attribution sentence in `Review budget reported beside the gate state` to say a gate whose mode cannot be derived reports neither the spend nor the declaration, so the two sentences stop disagreeing."
+          }
+        ],
+        "chosen": "A"
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The claim that the separate commit keeps this change's Touchpoints honest is contradicted by the engine's touchpoints computation",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02c-confirmation-semantics/tasks.md",
+      "line": 30,
+      "classification": "trivial_fix",
+      "action": "Rewrote what the commit separation actually bought: a reviewable diff and a commit message that explains it. It did NOT isolate Touchpoints — the divergence check is diff-scoped, not commit-scoped, so both instrument test files appear in actual_unpredicted regardless and will surface at the pre-archive sweep. Stated as expected rather than left to read as a surprise.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Task 5.1's closure edit left a garbled line that states two different suite counts and a dangling emphasis marker",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02c-confirmation-semantics/tasks.md",
+      "line": 30,
+      "classification": "trivial_fix",
+      "action": "Rewrote task 5.1’s head as one current-state sentence (build green, 2205/2205, validate clean at 26 items) with the blocked-then-cleared narrative moved behind explicit sub-bullets. The dangling `**`, the \"(see below)\" pointing at nothing, and the contradictory 2204/2202 pair are gone; asterisk parity checked across the file.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": "walk all",
+  "final_assessment": "The system blind pair walked as ONE walk, per R-crc-4. Both halves merged: 8 external (GPT-5 Codex) + 9 fresh (clean-context Opus) = 17 findings, 2 overlapping, 15 distinct, ZERO CRITICAL from either half and ZERO stale under pushback. Thirteen took the obvious-fix lane and two the decision lane, both ratified by Sal (E7 as option A, F7 as option A). The pair earned its cost: overlap was 2 of 15, and capture-recapture on 9 and 8 with 2 shared puts the population near 36, so roughly 58 percent of what exists was still unfound after two independent reads. Each half also found what the other could not. Codex alone found the projection layer defect (formatChangeStatus reconstructing every row unconditionally, putting budget back as an undefined-valued key on the public object after computeGateStates had correctly omitted it), the passed-gate reason still saying \"converged with\" in the change whose thesis is that the engine no longer computes convergence, the dangling normative reference to a matching rule clause (c) took with it, and the two FORWARD-LOOKING architecture instructions that still require budgetExhausted. The fresh half alone found trail.ts, the fourth version pin, the touchpoints divergence, and four record-level defects in the change is own artifacts. Where they overlapped, Codex was the more complete both times, including a third unaccounted scenario rewrite the fresh half missed. The diagnosis both halves reached independently is the one worth carrying: the engine fields were deleted with real rigour and the PROSE around them was swept by instance rather than by class, so this walk swept by VOCABULARY instead. Nine sites for budget-as-ceiling, both sites for the dangling match key, every surviving mention of the retired vocabulary across comments, spec prose, projections, tests and records. Two process notes. My first probe of the touchpoints finding read the wrong JSON key and returned null; the finding stood and my instrument was wrong, which is the rc01 lesson landing on the walker. And the recorded delta-size figures went stale for the second time in this change, caught again by the post-fix sweep rather than by any review, and recomputed rather than hand-adjusted: 63,985 B, 156 percent of R-crc-1 is byte ceiling, 78 percent mandatory MODIFIED reproduction. Suite 2205 of 2205, validate --all --strict clean at 26 items, fingerprints 8 of 8, zero markers.",
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc02c-confirmation-semantics --from-file orbit/changes/rc02c-confirmation-semantics/.orbit-runs/review-system-2026-09-21T14-12-34Z.json"
+}

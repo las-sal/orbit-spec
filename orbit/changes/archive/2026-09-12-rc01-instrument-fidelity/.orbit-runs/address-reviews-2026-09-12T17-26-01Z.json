@@ -1,0 +1,69 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-12T17:26:01Z",
+  "change": "rc01-instrument-fidelity",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc01-instrument-fidelity/.orbit-runs/review-system-2026-09-12T17-21-06Z.json",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 0
+  },
+  "pushback_verification": "Verified against current state: the flag heuristic was read at orbit-content-fidelity.test.ts:336 and the 9-vs-15 coverage gap re-measured across all three references before the fix; the single source of the `gh pr` family mention was located in PR_RESOLUTION_SECTION (rendered into all three references).",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The walk's copyable-vs-prose filter is narrower than the spec's 'every invocation-shaped snippet': a flagless but argumented invocation is skipped, and a bare `gh pr` mention escapes the contract entirely.",
+      "marker_source": "internal-review",
+      "file": "test/core/templates/orbit-content-fidelity.test.ts",
+      "line": 336,
+      "classification": "decision_required",
+      "ratified_via": "chat",
+      "resolution": "A — contract-based prose test plus rewording the family mention; settled under R-crc-3 (method), not briefed.",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Contract-based prose test as described, and reword the three bare `gh pr` prose mentions in the references (they name a command family, not a command, so `the `gh pr` verbs` reads correctly and extracts as prose)."
+          },
+          {
+            "label": "B",
+            "body": "Contract-based prose test, and leave the `gh pr` mentions as-is so the sweep fails until the references are reworded — a louder signal, at the cost of a red suite until the wording lands in the same walk."
+          }
+        ],
+        "chosen": "A"
+      },
+      "action": "Option A, settled under R-crc-3 (how a reference phrases a command-family mention, and how the sweep decides copyable-vs-prose, are method questions). The flag heuristic is replaced by a CONTRACT-BASED prose test: a snippet is prose only when its command resolves in `contract.commands` (longest leading key) and nothing follows it; an unresolved command is always validated, so an invented or mistyped verb fails rather than escaping. The shared resolution section's family mention was reworded from ``The `gh pr` verbs`` to ``gh``'s PR verbs`` — it named a family, not a command, and the validator was right to reject `gh pr` as unknown. Measured coverage: 12 of 20 snippets validated across the three references, up from 9 under the heuristic; the 8 excluded are all bare command names (`gh repo view`, `gh pr create` erroring), which is what prose means. Two new fixtures pin the rule: a bare command name is prose while the same command with an argument is validated, and an unknown verb fails WITH OR WITHOUT flags (the heuristic let the bare form pass). Design D5 now describes the shipped rule and records both superseded proxies — the `repo|pr` family regex and the carries-a-flag test — since each was a remembered answer to a question the contract owns.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/templates/workflows/pr-choreography.ts",
+          "test/core/templates/skill-templates-parity.test.ts",
+          "orbit/changes/rc01-instrument-fidelity/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": "R-crc-3 (Sal, 2026-09-11): method decisions are settled by the authoring AI and recorded with rationale, not briefed for ratification.",
+  "final_assessment": "1 of 1 resolved; 0 unresolved markers in scope. The sweep's copyable-vs-prose decision now belongs to the contract rather than to a heuristic, closing the last of the three layers where this stage had substituted a remembered proxy for the contract's own answer. Coverage measured 9 -> 12 of 20 snippets, the excluded 8 being bare command names; the family mention that the validator correctly rejected as an unknown command is reworded at its single source. Four parity hashes re-pinned for the reworded shared section; design D5 records the shipped rule and both superseded proxies. 2040 -> 2041 tests green across 93 files, and green again with no host gh on PATH; strict-valid.",
+  "iteration": 4,
+  "next_recommended": "/orbit:review --as system --reviewer external rc01-instrument-fidelity"
+}

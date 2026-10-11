@@ -1,0 +1,164 @@
+{
+  "command": "review",
+  "timestamp": "2026-09-22T21:17:10Z",
+  "change": "rc04c-retire-gate-overridden",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 1,
+      "warning": 0,
+      "suggestion": 2
+    },
+    "correctness": {
+      "critical": 2,
+      "warning": 2,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 0
+    }
+  },
+  "findings": [
+    {
+      "pass": "6",
+      "severity": "CRITICAL",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc04c-retire-gate-overridden/tasks.md",
+      "line": 27,
+      "title": "The totality rule has no body-side task: archive-change.ts still instructs OMITTING the entry in the no-pass case, and both bodies still declare `formed_against` NON-EMPTY.",
+      "recommendation": "The stage's headline claim is that the successor record becomes TOTAL over the override's domain, and the archive delta makes it normative (`specs/orbit-archive-modifications/spec.md:41` — \"the entry SHALL still be written, with an empty `formed_against`\"). The engine half is tasked (1.1, 1.2); the AI-facing half is not. `src/core/templates/workflows/archive-change.ts:287` currently reads \"If the trail carries NO independent pass earlier than this emit, OMIT the entry and let `gate_overridden` stand alone: `formed_against` must be non-empty, so a record cannot be written here\" — an instruction that, left standing, produces NO record in exactly the case this stage exists to close, and that names a field the same task retires. `src/core/templates/workflows/apply-change.ts:205` independently states the contract as \"`formed_against` (NON-EMPTY array of independent pass `<TS>` tokens...)\", which is false for `continuation`/`proceed` after 1.1. Task 2.1 says only that Step 3.4 \"stops composing `gate_overridden` and composes only the `continuation`/`proceed` entry\", and task 2.2 says \"same, at the `review-proposal` inflection\" — neither names the omit branch or the NON-EMPTY declaration. Add explicit sub-tasks: (a) archive-change Step 3.4 replaces the OMIT branch with the write-with-`formed_against: []` rule, stating the condition (no independent pass earlier than this emit); (b) both bodies' `judgements` field notes restate `formed_against` as non-empty EXCEPT on `continuation`/`proceed` where the emptiness must be true; (c) the shipped `archive-summary-schema.md` field note for `judgements` (archive-change.ts:97) says the same, since it is what an AI composing the archive emit reads."
+    },
+    {
+      "pass": "2",
+      "severity": "CRITICAL",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc04c-retire-gate-overridden/tasks.md",
+      "line": 50,
+      "title": "Task 3.3 names one site in `emit-composition.test.ts`; the file holds four more that the engine tasks break, including the coexistence suite that must be DELETED — a fourth kind of break the D3 classification does not carry.",
+      "recommendation": "Design D3 says the test impact was \"measured by reading each site\", and 3.3 reduces `test/core/emit-composition.test.ts` to \"the assertion on `persisted.gate_overridden` becomes an assertion on the `continuation` entry\" (that is the site at :187). Reading the whole file turns up: `:1178` 'accepts a continuation/proceed that AGREES with gate_overridden' (passes `gate_overridden` in the payload — refused as an unknown key once 1.4 lands, and it tests the guard 1.3 deletes); `:1245`, inside 'admits BOTH kinds on one archive emit', which passes `gate_overridden` in an archive payload although the test is about kinds — a fixture-only break like 3.4's; and `:1259-1281`, three parameterized 'refuses a continuation/proceed whose <field> disagrees with gate_overridden' cases whose regexes assert the guard's error text. Those three cannot be updated — they die with the guard, and they are the regression a prior external review earned (the comment at :1254 records that the first implementation compared only one of the three fields). Enumerate them in section 3 with their dispositions (delete the coexistence cases; strip the field from the 'admits BOTH kinds' payload; update the conditional-fields test at :169 including its title, which names four conditional fields), and correct D3's \"three kinds of break\" to include DELETION. Otherwise 4.4's \"no OTHER test may need editing\" reads as satisfied while the stage's own sizing evidence is wrong."
+    },
+    {
+      "pass": "4",
+      "severity": "CRITICAL",
+      "dimension": "correctness",
+      "file": "orbit/specs/orbit-emit-composition/spec.md",
+      "line": 322,
+      "title": "The new emptiness refusal contradicts an UNMODIFIED baseline requirement: `orbit-emit-composition`'s ordering refusal says the engine SHALL NOT evaluate \"whether enough of them were cited\".",
+      "recommendation": "The rule task 1.2 adds lives in `judgementOrderingCheck` — the function `orbit-emit-composition`'s 'THE ORDERING REFUSAL (rc04a)' requirement governs (baseline :307-350). That requirement enumerates what the check refuses (a token not strictly earlier; an unresolvable token; edges (a) in-context, (b) rejected external, (c) mode deliberately unchecked) and then states flatly: \"The engine SHALL NOT evaluate whether the judgement was correct, whether the cited passes were clean, or whether enough of them were cited — it refuses only a claim that COULD NOT have been informed by the evidence it names.\" Refusing an emit because it cited ZERO passes while one was available is, on those words, a sufficiency judgement, and it is not a claim that could not have been informed by evidence it names — it names none. The change's delta for this capability touches only the schema-parity requirement, so post-apply two live baselines disagree about what the write gate may do. Resolve it inside this stage rather than leaving the reader to reconcile them.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Add a MODIFIED block for 'THE ORDERING REFUSAL (rc04a)' to `specs/orbit-emit-composition/spec.md` that carries the emptiness-truthfulness refusal as a fourth named rule and narrows the SHALL-NOT clause to sufficiency ABOVE zero (the engine still never judges whether N cited passes are enough; it only refuses a false claim that there were none). Costs one more requirement against the stage's 9."
+        },
+        {
+          "label": "B",
+          "body": "Keep the rule solely in `orbit-run-summary-emit` but add, to the same delta, an explicit statement that the emptiness check is a WELL-FORMEDNESS check on the citation — the same class as edges (a) and (b) — and not a sufficiency evaluation, and reword task 1.2 to implement it as such. Cheaper, but leaves the SHALL-NOT sentence in the other capability unqualified."
+        }
+      ]
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc04c-retire-gate-overridden/proposal.md",
+      "line": 61,
+      "title": "The proposal's `orbit-emit-composition` bullet describes two changes that are not in that capability's delta.",
+      "recommendation": "The bullet says \"the coexistence refusal is removed from the write gate's checks, and the emptiness-truthfulness check is added to the ordering check\". The delta at `specs/orbit-emit-composition/spec.md` contains exactly one MODIFIED requirement — 'Payload tables agree with their schema references' — whose only edit drops `gate_overridden` from one scenario's documented-field list. The coexistence refusal is specified in `orbit-run-summary-emit` (baseline :699-704) and is removed by THAT delta; the emptiness rule is likewise added there. Rewrite the bullet to say what this capability's delta actually does (the archive schema reference stops documenting the field, so the parity scenario's field set drops to three), and move the two engine-check claims to the `orbit-run-summary-emit` bullet — or, if finding on the ordering-refusal requirement is taken up, restate it accordingly. As written, a reader checking the proposal against the deltas finds neither claim."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc04c-retire-gate-overridden/tasks.md",
+      "line": 18,
+      "title": "The stated task order puts 1.4 (payload-table removal) BEFORE the bodies stop composing the field — the likelier mid-flight refusal, and the opposite of the hazard the preamble names.",
+      "recommendation": "The section-1 preamble justifies engine-first by one hazard: \"the ordering check must accept a legal empty BEFORE the bodies stop writing the legacy object\". That is true of 1.1/1.2. It is not true of 1.4: `validatePayload` refuses unknown payload keys outright (`src/core/emit-composition.ts:471-472`), so in the window between 1.4 and 2.1/2.2 the installed bodies still instruct composing `gate_overridden` (apply-change.ts:63 and :206, archive-change.ts:286) and any apply or archive emit taken in that window is refused entirely. This is not hypothetical for this repo — the archive table's own comment at `emit-composition.ts:179-181` records that omitting these conditional fields \"made the fail-loud gate reject the first proceed-anyway archive routed through the surface\". It is also live for this change: `review-proposal` is unpassed, so a proceed-anyway apply follows the OLD installed body (the surface is not refreshed until 2.4). State the order as 1.1, 1.2 -> 2.1, 2.2, 2.3, 2.4 -> 1.3, 1.4, and give the preamble both hazards rather than one.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Reorder: relax + add the check first, then the bodies, then the guard removal and the payload-table removal last. The window is then safe in both directions and the preamble's rationale becomes complete."
+        },
+        {
+          "label": "B",
+          "body": "Keep the written order but state explicitly that sections 1 and 2 land in ONE commit with no emit taken between them, and say so in the preamble instead of the (partial) ordering argument."
+        }
+      ]
+    },
+    {
+      "pass": "3",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "CLAUDE.md",
+      "line": 228,
+      "title": "CLAUDE.md states the retired contract in the present tense (\"`formed_against` is required non-empty, so the entry cannot be written when no independent pass exists at all\") and no task updates it.",
+      "recommendation": "That sentence is the named hole this stage closes; after apply it is simply false, and it explicitly hands the hole forward (\"rc04c inherits it\"). The repo's own precedent is that the change carrying the behaviour change rewrites the stale passage — see `orbit/changes/archive/2026-09-21-rc02c-confirmation-semantics/tasks.md` task 5.2b, which rewrote CLAUDE.md's rc02 paragraph for exactly this reason (\"The surrounding archive narrative stays as history; this passage does not, because it reads as live engine description\"). Add a task that rewrites CLAUDE.md:227-229 to record the hole as CLOSED and the record as total, leaving the archive narrative and any `src:` marked spans untouched. Check CLAUDE.md:60 in the same pass (the C1 paragraph describes gate inflection prompts as \"surfaced + recorded via `gate_overridden`\", which also reads as live engine description). Separately, `orbit/architecture/clean-up-review-cycle.md:1611` states the same NON-EMPTY contract inside rc04a's stage section — that doc is architect-owned, so RECOMMEND the amendment in section 5 rather than performing it."
+    },
+    {
+      "pass": "7",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "src/core/emit-composition.ts",
+      "line": 588,
+      "title": "A live engine error message names the retired field, and none of the stage's three sweeps looks at `src/core/`.",
+      "recommendation": "`judgementError(i, \"'${req}' is required on a continuation/proceed — it carries what gate_overridden carried.\")` sits inside `validateJudgements`, five lines above the check task 1.1 edits, and survives every task in the change. After the retirement it points a user at a field the same engine now refuses as an unknown key. Nothing catches it: exit check 4.1 greps `src/core/templates/` only, and the descope sweep 4.5 greps the change's artifacts and the touched specs. Since 1.1 already rewrites this function, reword the message in place (e.g. \"...it carries the gate facts at decision time\") and widen 4.1's grep — or add a sibling check — to cover `src/core/emit-composition.ts`, so the retirement's own file is measured by the stage that claims it. Do NOT widen to `override` vocabulary elsewhere; the charter NON-GOAL holds, and this is the retired FIELD NAME, not the word."
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc04c-retire-gate-overridden/tasks.md",
+      "line": 11,
+      "title": "\"NAMING the pass that should have been cited\" does not say which pass is named when several precede the emit.",
+      "recommendation": "Task 1.2 and the delta (`specs/orbit-run-summary-emit/spec.md:178-179`, and the archive scenario at :117) all say the refusal NAMES the pass. Where the trail carries several independent passes earlier than the emit — the ordinary case — two implementers will split between naming the latest and naming all of them, and the error text is what a user acts on. Say which (the latest preceding independent pass reads as the natural choice, matching how the rest of the check reports a single offending token), or say \"naming at least one\". One clause in the requirement, no new mechanism."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc04c-retire-gate-overridden/tasks.md",
+      "line": 58,
+      "title": "The prior-generation readability claim (exit 2) has only a one-time manual check; the narrowing in 3.5 can silently drop the standing pin that exists today.",
+      "recommendation": "`test/core/judgement-record-fixture.test.ts:213-220` reads the REAL archived rc02c apply emits and selects the one carrying `gate_overridden`. That read is, incidentally, the only standing regression pin that an archived emit carrying the retired field still parses — exactly what task 4.2 verifies by hand once. Task 3.5 says only \"replace the coexistence body with the assertion that a `continuation`/`proceed` entry carries all three gate facts\", which an implementer can satisfy with synthesized values. Add one clause: the narrowed test keeps deriving the three gate facts FROM the archived emit, so the prior-generation claim stays executable rather than becoming a sentence in a spec. It costs nothing — the archived emit is not rewritten by this change."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc04c-retire-gate-overridden/design.md",
+      "line": 24,
+      "title": "\"Four archived apply emits record `reason: \"latest independent pass yielded new findings\"`\" — the count is ten emits across four changes.",
+      "recommendation": "Counting `gate_overridden.reason` over every emit on disk gives 10 apply emits carrying that string (d3 x1, d4 x1, d5 x5, d6 x3); the four is the number of CHANGES. The argument is unaffected — strengthened, if anything — but this design's Context is the place the unreconstructible-reason claim is made, and the stage is one of a program that keeps finding restated figures disagreeing with their source. Either write \"four archived changes (ten apply emits)\" or drop the figure and cite the property. Same wording appears in `explore.md:37` and in the charter, which is architect-owned; recommend rather than edit there."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "I spent most of this review trying to break three claims, and only one of them broke.\n\nThe first was the delta-integrity claim, because these deltas were built by extracting baseline blocks and editing them. I diffed every MODIFIED requirement against the live baseline mechanically: nine blocks, three capabilities, no scenario dropped, none duplicated, none reworded by accident. Every difference traces to a stated intent, and the replacement scenarios (the empty citation legal, refused, and not extended to readiness or spend) are stronger than what they replace. The fingerprints are nine verified, zero diverged. This half of the change is in good shape, and I want that said plainly before the findings land.\n\nThe second was the five surviving `gate_overridden` mentions. I checked each: four are unambiguously historical narration, and the fifth (the archive requirement's prior-generation clause) carries a soft obligation about READERS rather than writers, which is defensible — the awkwardness is that the obligation's only executable evidence is a test the change narrows, which is why I suggested keeping that test's derivation from the real archive.\n\nThe third was the totality claim, and that is where the change's weight sits. The engine half is worked out to a level I rarely see — the split across two functions is right, the trail-access argument is right, the scope to proceed-alone is right, and I verified the line numbers rather than trusting them. But the claim is end-to-end, and I could only trace it to the engine's edge: the bodies are what actually compose these payloads, and the archive body's standing instruction in the no-pass case is to write nothing. That is the one finding I would hold the change on by itself.\n\nThe pattern behind the rest is the same shape the program has been recording about itself: a fix landing where the edit was and stopping at the edge of what it described. The proposal describes changes in one capability's bullet that live in another's delta; the ordering preamble names the hazard the author was thinking about and not the likelier one in the opposite direction; the test-site reading covered the site the author had in mind and not the four beneath it in the same file; the sweeps cover templates and specs, and the engine file the stage is named after is swept by nothing. None of those is careless — each is a boundary drawn one line short.\n\nRisk texture: the irreversible-feeling part (deleting the only executable comparison between the two records) is honestly stated as unfalsifiable-after and I would not argue with it. The recoverable parts are the ones I filed, and the mid-flight refusal window is the one that could bite during this change's own apply rather than later.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "final_assessment": "3 critical, 4 warning, 3 suggestion.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc04c-retire-gate-overridden --from-file orbit/changes/rc04c-retire-gate-overridden/.orbit-runs/review-proposal-2026-09-22T21-17-10Z.json"
+}

@@ -6,6 +6,7 @@ import { Validator } from '../core/validation/validator.js';
 import type { Spec } from '../core/schemas/index.js';
 import { isInteractive } from '../utils/interactive.js';
 import { getSpecIds } from '../utils/item-discovery.js';
+import type { ProgramOptions } from '../cli/program.js';
 
 const SPECS_DIR = 'orbit/specs';
 
@@ -108,15 +109,17 @@ export class SpecCommand {
   }
 }
 
-export function registerSpecCommand(rootProgram: typeof program) {
+export function registerSpecCommand(rootProgram: typeof program, options: ProgramOptions = {}) {
   const specCommand = rootProgram
     .command('spec')
     .description('Manage and view OpenSpec specifications');
 
   // Deprecation notice for noun-based commands
-  specCommand.hook('preAction', () => {
-    console.error('Warning: The "orbit spec ..." commands are deprecated. Prefer verb-first commands (e.g., "orbit show", "orbit validate --specs").');
-  });
+  if (options.hooks !== false) {
+    specCommand.hook('preAction', () => {
+      console.error('Warning: The "orbit spec ..." commands are deprecated. Prefer verb-first commands (e.g., "orbit show", "orbit validate --specs").');
+    });
+  }
 
   specCommand
     .command('show [spec-id]')

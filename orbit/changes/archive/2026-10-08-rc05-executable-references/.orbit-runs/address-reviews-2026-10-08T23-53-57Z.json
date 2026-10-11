@@ -1,0 +1,262 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-08T23:53:57Z",
+  "change": "rc05-executable-references",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc05-executable-references/.orbit-runs/review-system-2026-10-08T23-38-30Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-08T23-38-30Z",
+  "latest_apply_token": "2026-10-08T21-30-48Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 3
+  },
+  "pushback_verification": "verified",
+  "resolution_summary": {
+    "resolved": 5,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "marker_source": "internal-review",
+      "severity": "WARNING",
+      "title": "An unclosed quote on a non-orbit shell line hides every later orbit line in the fence",
+      "file": "test/helpers/surface-snippets.ts",
+      "line": 220,
+      "action": "The tokenizer follows the shell's backslash rule (outside quotes the next character; inside double quotes \", \\, $ and a backtick; inside single quotes nothing), and a quote still open at a shell fence's end fails extraction whatever the opening line's first token, so a line of another tool cannot hide the orbit lines after it. Ungating the failure surfaced a real mis-tokenized line on today's surface (external-handoff.md:151, the runner launch): its redirect `< '<run-dir>/…'` was read as a <…> placeholder that swallowed the quote; a `<` followed by whitespace is now a redirect. The sweep's figures are unchanged (129 parsed, 35 bare, 0 failures, 0 guard hits). Tests: both swallow cases in the places table, the backslash and redirect rules in the tokenizer, and two injections into a real reference fence; all five fail against the HEAD helper. The spec's quoted-argument row and tokenizer paragraph and design D3 state the rules.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc05-executable-references/specs/orbit-cli-grammar/spec.md",
+          "orbit/changes/rc05-executable-references/design.md",
+          "test/core/cli-grammar/surface-snippets.test.ts",
+          "test/core/cli-grammar/injections.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "tokenizeFirstWord",
+          "Inside double quotes, `\\\"` does not close the quote.",
+          "inside double quotes, `\\\"` does not close."
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc05-executable-references/specs/orbit-cli-grammar/spec.md",
+            "text": "a quote still open at the fence's end fails extraction whatever the opening line's first token"
+          },
+          {
+            "path": "orbit/changes/rc05-executable-references/specs/orbit-cli-grammar/spec.md",
+            "text": "A `<` followed by whitespace is a redirect, never a placeholder's opener."
+          },
+          {
+            "path": "test/helpers/surface-snippets.ts",
+            "text": "is a shell redirect, never a placeholder's opener"
+          },
+          {
+            "path": "test/core/cli-grammar/injections.test.ts",
+            "text": "a non-orbit line before an injected defect cannot hide it"
+          }
+        ],
+        "searched": [
+          "tokenizeFirstWord",
+          "does not close",
+          "still open at",
+          "quote",
+          "placeholder"
+        ],
+        "scope": [
+          "orbit/changes/rc05-executable-references/tasks.md",
+          "orbit/changes/rc05-executable-references/proposal.md",
+          "test/helpers/orbit-sweep.ts"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "marker_source": "internal-review",
+      "severity": "WARNING",
+      "title": "The accepted-codes rule rejects `orbit help <command>`, which the real CLI accepts with exit 0",
+      "file": "orbit/changes/rc05-executable-references/specs/orbit-cli-grammar/spec.md",
+      "line": 21,
+      "action": "A thrown exit is accepted exactly when commander's exit code is 0, as the CLI's process exits: --help, --version and help <command>. ACCEPTED_EXIT_CODES is retired for acceptedExit(error). Measured on both the neutral parse and the real CLI: help status 0, help frobnicate 1, help 0, external 1, external save 1. The builder test accepts help status and rejects help frobnicate (it fails against the HEAD helper); the spec's exits row and the group scenario name the exit code, and design D2 says why the error code cannot decide.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc05-executable-references/design.md",
+          "test/helpers/neutral-program.ts",
+          "test/core/cli-grammar/builder.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "ACCEPTED_EXIT_CODES",
+          "its code is `commander.helpDisplayed`",
+          "A `CommanderError` is accepted exactly when its code is"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc05-executable-references/specs/orbit-cli-grammar/spec.md",
+            "text": "an exit is accepted exactly when commander's exit code is 0"
+          },
+          {
+            "path": "test/helpers/neutral-program.ts",
+            "text": "return error.exitCode === 0;"
+          },
+          {
+            "path": "test/core/cli-grammar/builder.test.ts",
+            "text": "accepts `help <command>` and rejects `help` of an unknown command, by exit code"
+          }
+        ],
+        "searched": [
+          "ACCEPTED_EXIT_CODES",
+          "helpDisplayed",
+          "commander.help"
+        ],
+        "scope": [
+          "orbit/changes/rc05-executable-references/tasks.md",
+          "test/core/cli-grammar/"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "marker_source": "internal-review",
+      "severity": "SUGGESTION",
+      "title": "The places limit omits three forms the extractor and guard both miss",
+      "file": "orbit/changes/rc05-executable-references/specs/orbit-cli-grammar/spec.md",
+      "line": 87,
+      "action": "The places limit's residual kind names the double-backtick inline span and, inside a shell fence, a `$ ` or assignment prefix and a trailing-backslash continuation (a false failure); the residual method no longer claims the guard reads every line — it reads every line outside a shell fence — and names how the shell-fence members are found.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the guard itself reads every line"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc05-executable-references/specs/orbit-cli-grammar/spec.md",
+            "text": "a command in a double-backtick inline span"
+          }
+        ],
+        "searched": [
+          "reads every line",
+          "Residual method"
+        ],
+        "scope": [
+          "orbit/changes/rc05-executable-references/design.md"
+        ],
+        "kept": [
+          {
+            "path": "orbit/changes/rc05-executable-references/explore.md",
+            "why": "the concluded exploration record, quoting the wording as explored; propose consumed it and it is not living prose"
+          }
+        ]
+      }
+    },
+    {
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "marker_source": "internal-review",
+      "severity": "SUGGESTION",
+      "title": "The no-hook assertion cannot see the root hook's effect",
+      "file": "test/core/cli-grammar/builder.test.ts",
+      "line": 45,
+      "action": "The no-hook test clears NO_COLOR, runs `--no-color list` with the rest, and asserts NO_COLOR is still unset, restoring any prior value. Shown able to fail: with the root hook registered regardless of the option, the test fails.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "test/core/cli-grammar/builder.test.ts",
+            "text": "expect(process.env.NO_COLOR).toBeUndefined();"
+          }
+        ],
+        "searched": [
+          "NO_COLOR"
+        ],
+        "scope": [
+          "src/cli/program.ts"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "marker_source": "internal-review",
+      "severity": "SUGGESTION",
+      "title": "The neutralisation closure leaves out requiredOption, which the CLI uses",
+      "file": "orbit/changes/rc05-executable-references/specs/orbit-cli-grammar/spec.md",
+      "line": 29,
+      "action": "The neutralisation table gains a requiredOption row (external save's --as and --from: kept and enforced, a missing one rejecting with commander.missingMandatoryOptionValue), and the closure lists requiredOption. A re-grep of the CLI's register sources for every commander setting found only allowUnknownOption and requiredOption beyond the table's rows. The builder test asserts the rejection and the accepted full form.",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/cli-grammar/builder.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "allowUnknownOption, allowExcessArguments"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc05-executable-references/specs/orbit-cli-grammar/spec.md",
+            "text": "kept and enforced: a missing one rejects with `commander.missingMandatoryOptionValue`"
+          },
+          {
+            "path": "test/core/cli-grammar/builder.test.ts",
+            "text": "keeps and enforces a required option"
+          }
+        ],
+        "searched": [
+          "requiredOption",
+          "Closure:",
+          "addOption",
+          "argument("
+        ],
+        "scope": [
+          "src/cli/program.ts",
+          "src/commands/spec.ts",
+          "src/commands/config.ts",
+          "src/commands/schema.ts"
+        ],
+        "kept": [
+          {
+            "path": "orbit/changes/rc05-executable-references/explore.md",
+            "why": "the concluded exploration record, quoting the wording as explored; propose consumed it and it is not living prose"
+          }
+        ]
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Five of five resolved, all repairs: the tokenizer follows the shell's quoting and an open quote fails whatever line opened it (which surfaced and fixed a redirect read as a placeholder), acceptance is by exit code so help <command> parses, and three smaller repairs to the places limit, the no-hook test and the closure.",
+  "iteration": 4,
+  "next_recommended": "/orbit:address-reviews rc05-executable-references",
+  "ripple_misses": 0
+}

@@ -1,0 +1,212 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-05T22:53:54Z",
+  "change": "rc17a-invoked-coverage",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 3,
+      "suggestion": 3
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 3
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-engine-gates/spec.md",
+      "line": 98,
+      "title": "Pair membership never says which pass list it is read over (stale passes, rejected returns)",
+      "recommendation": "State the membership domain once in `A pair's membership is computed from its launch`: whether 'the FIRST fresh pass' and 'the FIRST external return' are read over every relevant pass of the mode (stale included) or over the list the PASS-LIST QUANTIFICATION paragraph hands clause (a), and whether a REJECTED external return (trail.rejectedExternals, not a TrailPass) is a 'return' that takes the member position. The fixed choice decides openPair, so it must be one reading for both the fresh-list and the full-list (stale-discrimination) evaluations. Add apply tokens and a rejected return to the oracle's event set (design D9) so exit (1) measures the choice; today its events are passes, launches and walks only.",
+      "reproduction": "System mode, cadence [invoked, in-context]: review-external T0 pair:true mode system at T1; fresh review-system at T2 carrying a WARNING; apply-*.json at T3; external-system return at T4. Reading A (membership over the whole trail): members are T2 and T4; T2 is stale, so on the fresh list there is no complete pair and T4 is not a single; no openPair. Reading B (membership over the fresh list evaluateReviewed is given): T2 is absent, T4 is the only member, PAIR-OPEN {missing: fresh}, openPair is set and the walk stops at discovery row 4. Same trail, two gate rows. The same split occurs when the first external return after T1 is rejected as malformed and a second, accepted return follows: member, or single?",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Membership over every relevant pass of the mode, stale included, rejected returns excluded; a stale member makes the pair non-covering on the fresh list."
+        },
+        {
+          "label": "B",
+          "body": "Membership over the list the quantification convention hands clause (a), so a stale member drops out and the next pass of its class takes its place."
+        }
+      ]
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "specs/orbit-engine-gates/spec.md",
+      "line": 53,
+      "title": "BROKEN row presents a command whose pass is absorbed as the broken pair's member",
+      "recommendation": "Under order membership, the first pass of each class after a launch is a member forever (until the next launch), so on BROKEN the preference's command can produce a pass that cannot cover. Either present a command whose pass will be a single (a second pass of the landed member's class), or let BROKEN close the launch so later passes are singles, or present a new launch. Also reconcile with the membership table's BROKEN row (line 113), which says the remedy is 'a new launch or the recorded proceed', not the preference's command.",
+      "reproduction": "review-system, cadence [invoked, in-context], no review_preference (default blind-pair): pair:true T0 at T1; external return at T2 carrying a WARNING; a --from-file walk of it at T3. Presentation: row 1 fails (T2 is not pairable), row 3 matches (BROKEN, the one landed member not pairable), so canonical next = the preference's command = the fresh review. Run it: fresh pass at T4 is the FIRST fresh pass after T1, so it is the launch's member, not a single; the walk at T3 lies inside [T2, T4], so the pair is BROKEN and does not cover. The slot stays uncovered, the row presents the fresh review again, and only a second fresh pass at T5 (a single) covers. The engine's own canonical next cost an independent pass that satisfies no slot. The same shape occurs on [external, invoked] where the landed member is consumed at the bound.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "On BROKEN (and the at-or-below-bound case), present the class of the landed member: its second pass is a single and covers."
+        },
+        {
+          "label": "B",
+          "body": "Define membership so a BROKEN launch is closed: passes after the breaking walk are singles."
+        },
+        {
+          "label": "C",
+          "body": "Present a new launch on BROKEN, and say what the user types until rc17b ships a command for it."
+        }
+      ]
+    },
+    {
+      "pass": "4",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "specs/orbit-engine-gates/spec.md",
+      "line": 834,
+      "title": "Carried scenarios still describe review-system as a blind-pair gate, false under version 5",
+      "recommendation": "The MODIFIED requirements carry their baseline scenarios unchanged, and three of them name the shipped review-system gate (or a system pass) without a cadence while asserting blind-pair behaviour: 'Open blind pair announced before the walk' (line 834: an external system pass with no fresh partner reports an open pair), 'Two fresh passes and no external still report the open pair' (line 917), and 'An open pair is a field' (line 907, which names the blind-pair slot but the review-system gate). Under v5 with no launch, a single external or fresh pass covers the invoked slot and no openPair is set. State the cadence in each WHEN ('a gate with cadence [blind-pair, in-context]') or re-point them to the invoked/launch case, so the scenario map does not pin a v4 reading onto v5's gate."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-address-reviews/spec.md",
+      "line": 96,
+      "title": "'Nothing to walk' still conditions only on unresolvedPasses being empty",
+      "recommendation": "Add `unwalkedPasses: []` to the WHEN of `Scenario: Nothing to walk`: as written, a change whose gate reports `unresolvedPasses: []` and one unwalked SUGGESTION-only pass meets the WHEN, yet discovery row 5 walks that pass, so the THEN is false. The body carries the same condition at address-reviews.ts:502 (the 'Nothing discovered' line) and an 'outstanding passes come from ... unresolvedPasses' sentence at address-reviews.ts:345; task 5.1 names only the prose saying a SUGGESTION-only pass is reached by --from-file (lines 349 and 1040), so name 345 and 502 there too."
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-engine-gates/spec.md",
+      "line": 734,
+      "title": "`invoked` is listed as a models: key that is never read",
+      "recommendation": "The model-hint garnish lists `invoked` among the valid cadence-slot keys, then says that for an invoked slot the entry read is the presented command's class, and nextSlot is never `invoked`. A `models: {invoked: ...}` entry therefore garnishes nothing, and one implementer will fall back to it when the class key is absent while another will not. Either drop `invoked` from the key list and say a key naming it is inert, or state the fallback order (class entry, then `invoked`, then the phase entry)."
+    },
+    {
+      "pass": "3",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "tasks.md",
+      "line": 24,
+      "title": "Task 4.2's sweep names CLAUDE.md and the program doc, but generated bodies and a fourth baseline state v4 as current",
+      "recommendation": "Living prose stating v4's cadence as current also sits in src/core/templates/workflows/apply-change.ts:64 ('under spec-driven v4 the first uncovered slot is blind-pair'; the orbit-apply-change body is hash-pinned in skill-templates-parity), in the review body's worked example at review.ts:1100 (an engine line, 'blind pair open: the fresh pass on this state has no external partner', that v5 without a launch never prints), and in orbit-run-summary-emit's 'Verify pass emit recommends review-as-system canonically' scenario ('under spec-driven v4, whose first uncovered system slot is blind-pair'). Name these sites in 4.2 and the apply pin in 1.1, and decide the baseline one explicitly: a named residual (R-crc-1 holds the change at three capabilities) or a declared fourth capability."
+    },
+    {
+      "pass": "3",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "design.md",
+      "line": 65,
+      "title": "Three departures from the stage charter are recorded only in the design",
+      "recommendation": "The charter Sal declared says 'a v4 change keeps its cadence', 'one new engine-composed record, the pair LAUNCH' and 'the fresh emit stamped with its launch'. D3, D2 and D4 reverse each, with reasons, but no task records the reversal where the stage is graded (the program doc's rc17a section), and D3 relaxes the system gate for every v4-stamped change, which is a scope call rather than method. Add a task recording the three departures beside the charter, and brief D3 to Sal as a scope call before apply."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "design.md",
+      "line": 121,
+      "title": "Design D7's presentation table disagrees with the spec's in order and in one row's condition",
+      "recommendation": "D7 lists NO-LAUNCH first with 'a launch whose members are all at or below the bound'; the spec tests rows in order with that row last as 'anything else ... a launch with a landed member at or below the bound'. A launch with one member at the bound and one above matches no design row. Copy the spec's table into D7 or point at it. The spec row's reason, 'no outside review stands on this state', is also untrue when a landed member stands at the bound; consider a reason that names the launch."
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "design.md",
+      "line": 144,
+      "title": "The oracle has no named engine seam: computeGateStates reads the trail from disk",
+      "recommendation": "Every cadence of length 1-3 over six tokens is 258 cadences; with five-event trails over passes, launches and walk targets the product runs into millions of evaluations, which cannot go through on-disk fixtures. Name the exported pure entry the oracle calls (for example evaluateReviewed, or a coverage function over an in-memory Trail) beside task 3.1's membership export, so it is a planned seam rather than one invented at apply."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "specs/orbit-engine-gates/spec.md",
+      "line": 16,
+      "title": "A review_preference key naming no reviewed gate is unspecified",
+      "recommendation": "The requirement says what an unknown VALUE does (warn, resolve to blind-pair) but not an unknown KEY, such as a typo 'review-sytem'. Say whether it warns naming the key or is inert like an unknown models: key, so a misspelt preference is not silently ignored by one implementation and flagged by another."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "specs/orbit-engine-gates/spec.md",
+      "line": 410,
+      "title": "'Independent review is NOT weakened' now reads against the change's own move",
+      "recommendation": "The sentence was about retiring clause (c). Under v5 the system gate takes a single independent pass where it took a blind pair, which is a relaxation this change makes on purpose. Scope the sentence to clause (c) ('Retiring clause (c) weakens no review') so it does not appear to deny what R-crc-4's amendment did."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "specs/orbit-engine-gates/spec.md",
+      "line": 85,
+      "title": "Preference scenario says 'every other field' is identical, but nextSlot differs",
+      "recommendation": "Across external, fresh, unknown and absent, nextSlot moves between external and fresh with the command. Say 'every field other than nextCommand and nextSlot', as the requirement and task 6.2 do."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "design.md",
+      "line": 75,
+      "title": "D3 says this repo has no active change, two sentences after naming this change as one",
+      "recommendation": "Line 67-68 places rc17a among the v4-stamped changes v5 will gate; line 75 (and the Risks bullet) says 'no active change'. Say 'no active change other than this one, whose system review is meant to run under v5'."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "design.md",
+      "line": 84,
+      "title": "'Lets a pair run by hand today' has no surface that writes pair: true",
+      "recommendation": "The review body's external handoff composes the T0 payload without `pair`, and no task changes it, so until rc17b a launch exists only if someone hand-edits the payload. Say so in D4, so nobody reads the interim as offering a hand-run pair through the shipped bodies."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Most of the probing went into the new launch and membership mechanism, since that is where the stage invents state the trail never carried. The interval and pairability rules carry over cleanly, and I checked the slot-bound diagnosis against assignCadence's memo key: with both classes pairable above the lowest bound, blindness follows from pairability, so retiring foreclosed holds. The monotonicity argument in D3 also holds for trails without launches. The weak point is that order membership makes the first pass of each class after a launch a member until the next launch, and the spec never fixes which list 'first' is read over or what happens to passes after a pair breaks. Both gaps show up as gate rows that disagree, or as recommendations that cannot cover, and the oracle's event set as designed includes no apply token or rejected return, so it would not catch either.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "direction": {
+    "disposition": "hold",
+    "reasoning": "Walk before apply. The membership rule leaves two choices open (which pass list 'first' reads over, and what follows a broken pair), and the engine's own recommendation depends on both, so code written to the spec as it stands could ship a gate that recommends a pass which cannot cover. Each repair is a sentence or a table row in the owning requirement plus a wider oracle event set, so this is a short walk, not a redesign. The scenario and sweep gaps are wording, and fixing them now costs less than finding them in the scenario map after apply."
+  },
+  "final_assessment": "0 critical, 7 warning, 7 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc17a-invoked-coverage --from-file orbit/changes/rc17a-invoked-coverage/.orbit-runs/review-proposal-2026-10-05T22-53-54Z.json"
+}

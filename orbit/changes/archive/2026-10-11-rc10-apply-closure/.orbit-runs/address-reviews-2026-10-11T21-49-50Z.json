@@ -1,0 +1,189 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-11T21:49:50Z",
+  "change": "rc10-apply-closure",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc10-apply-closure/.orbit-runs/external-proposal-2026-10-11T21-44-36Z.md",
+  "source_command": null,
+  "source_token": "2026-10-11T21-44-36Z",
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-6 (Codex)",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 4,
+    "suggestion": 1
+  },
+  "pushback_verification": "All five verified: the disposition pair left an available-but-unperformed validation without an honest label; parseCheckboxes counts a box only inside a ## group (apply-state.ts, `if (box && current)`); the emit runs after the move; bulk-archive-change.ts syncs and moves itself and each inner archive emits (lines 282, 331); explore.md's D-rc10-1 and D-rc10-3 entries still read as live.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 2,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "OBSERVED and FORWARD do not cover a skipped validation",
+      "marker_source": "external",
+      "file": "orbit/changes/rc10-apply-closure/specs/orbit-archive-modifications/spec.md",
+      "line": 7,
+      "classification": "decision_required",
+      "action": "applied the ratified direction A, taken on the fresh pass's paired finding: DEFERRED replaces FORWARD and covers a validation that could have run and did not, with its reason in a required why; scenario 'An available but unperformed validation is deferred with its reason' added",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc10-apply-closure/design.md",
+          "orbit/changes/rc10-apply-closure/proposal.md",
+          "orbit/changes/rc10-apply-closure/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "FORWARD — the validation can happen only after the change ships"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc10-apply-closure/specs/orbit-archive-modifications/spec.md",
+            "text": "An available but unperformed validation is deferred with its reason"
+          },
+          {
+            "path": "orbit/changes/rc10-apply-closure/specs/orbit-archive-modifications/spec.md",
+            "text": "or it could have happened and has not"
+          }
+        ],
+        "searched": [
+          "FORWARD",
+          "OBSERVED"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "resolution": "A — two dispositions (OBSERVED / DEFERRED) partitioned by the checkbox, every deferral carrying a required why"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The selected parser cannot enforce the stated task domain",
+      "marker_source": "external",
+      "file": "orbit/changes/rc10-apply-closure/design.md",
+      "line": 43,
+      "classification": "trivial_fix",
+      "action": "the seam and the write gate share one domain: a marked unchecked line parseCheckboxes places in no ## group is found by a fence-aware line scan and refused by its text, at Step 3.2 before the move and at the write gate; scenario added; design D4 and the two-reader risk rewritten; task 1.2 carries the scan",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc10-apply-closure/specs/orbit-archive-modifications/spec.md",
+          "orbit/changes/rc10-apply-closure/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "Accepted for this change: no tasks file on record has either shape"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc10-apply-closure/specs/orbit-archive-modifications/spec.md",
+            "text": "a marked unchecked line the reader places in no `## ` task group"
+          },
+          {
+            "path": "orbit/changes/rc10-apply-closure/design.md",
+            "text": "an ungrouped marked line is refused by its text"
+          },
+          {
+            "path": "orbit/changes/rc10-apply-closure/tasks.md",
+            "text": "outside every `## ` group"
+          }
+        ],
+        "searched": [
+          "parseCheckboxes",
+          "## group",
+          "current"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "A predictable write-gate refusal occurs after the active change is gone",
+      "marker_source": "external",
+      "file": "orbit/changes/rc10-apply-closure/specs/orbit-archive-modifications/spec.md",
+      "line": 22,
+      "classification": "stale",
+      "action": "converged with the fresh half's finding at the same site, walked in its log",
+      "evidence": "resolved in address-reviews-2026-10-11T21-49-31Z (the earlier pass's log), entry 'Every deferral refusal lands AFTER the Step 5 move, and an id-less marked task is unfixable there without editing the archived tasks.md' — the pre-move check and the post-move recovery (re-run the emit, never the sync or the move) landed there",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Bulk archive has no concrete integration for the new closure contract",
+      "marker_source": "external",
+      "file": "orbit/changes/rc10-apply-closure/design.md",
+      "line": 58,
+      "classification": "trivial_fix",
+      "action": "bulk archive runs Step 3.2 per change before that change's sync and move and carries the dispositions in its batch summary (ADDED requirement, design D8, task 2.6, touchpoint, proposal Impact); bulk archive's rules live in orbit-archive-modifications, so no capability is added",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc10-apply-closure/specs/orbit-archive-modifications/spec.md",
+          "orbit/changes/rc10-apply-closure/tasks.md",
+          "orbit/changes/rc10-apply-closure/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc10-apply-closure/specs/orbit-archive-modifications/spec.md",
+            "text": "The bulk-archive workflow SHALL run Step 3.2 per change"
+          },
+          {
+            "path": "orbit/changes/rc10-apply-closure/design.md",
+            "text": "D8 — Bulk archive runs Step 3.2 per change"
+          },
+          {
+            "path": "orbit/changes/rc10-apply-closure/tasks.md",
+            "text": "Bulk archive (`bulk-archive-change.ts`)"
+          },
+          {
+            "path": "orbit/changes/rc10-apply-closure/proposal.md",
+            "text": "Bulk archive runs the same step per change"
+          }
+        ],
+        "searched": [
+          "bulk-archive",
+          "bulk archive"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Exploration still describes superseded mechanism as live",
+      "marker_source": "external",
+      "file": "orbit/changes/rc10-apply-closure/explore.md",
+      "line": 24,
+      "classification": "stale",
+      "action": "converged with the fresh half's finding (the mechanism record against design D3/D4), walked in its log",
+      "evidence": "resolved in address-reviews-2026-10-11T21-49-31Z (the earlier pass's log), entry \"D-rc10-3's closure is still DERIVED on 'the same reader the tracked gate uses', which design D4 refutes\" — explore.md gained Case 4 and pointers on both refined Domain lines naming design.md as the live statement",
+      "outcome": "stale"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": "walk all, take recs",
+  "final_assessment": "Three resolved as repairs — the skipped validation by the same A ruling (DEFERRED with a why), the ungrouped marked line refused by a fence-aware scan at both checks, bulk archive's per-change Step 3.2 within the same capability — and two stale as converged with the fresh half's findings, walked in its log.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal rc10-apply-closure",
+  "ripple_misses": 0
+}

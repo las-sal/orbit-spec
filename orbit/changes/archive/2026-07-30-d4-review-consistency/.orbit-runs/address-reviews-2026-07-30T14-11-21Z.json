@@ -1,0 +1,26 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-07-30T14:11:21Z",
+  "change": "d4-review-consistency",
+  "source": "--from-file",
+  "source_path": "orbit/changes/d4-review-consistency/.orbit-runs/review-system-2026-07-30T13-42-46Z.json",
+  "source_format": "internal-review",
+  "source_mode": "system",
+  "source_iteration": 4,
+  "walk_mode": "per_finding",
+  "kind": "editorial",
+  "resolutions": [
+    { "finding": "Adjacent surfaces show two different iteration numbers for the same mode: the strip's ⟲N counts internal emits only while the report ordinal counts the shared internal+external axis", "severity": "SUGGESTION", "file": "src/core/orientation.ts", "pushback": "still applies — verified live: strip rendered review ⟲2 for system mode while the report header rendered Iteration: 4", "classification": "decision required (decision lane: prose briefing presented with both options and tradeoffs; user ratified by chat directive)", "ratified_via": "chat", "recommendation_fork": { "detected": true, "source": "structured", "options_presented": [ { "label": "A", "body": "Extend the strip's ⟲N to the shared pass axis via an orbit-orientation delta in this change (one ordinal everywhere)" }, { "label": "B", "body": "Annotate both spec letters and the orientation strip comment that the chip counts internal emits while the report ordinal counts the shared axis — a deliberate, named divergence" } ], "chosen": "A" }, "action": "The strip's ⟲N now counts the SHARED pass axis: spine-valid internal review emits (fault isolation unchanged) PLUS confident external findings files via the new exported countConfidentExternalPasses in report-render.ts (the report capability's lenient confidence gate — header + all three severity sections; unreadable/unconfident files contribute nothing). The D4 orientation delta gained a MODIFIED 'Sprint strip composition' block (shared-axis definition + a new external-passes scenario; fingerprint stamped, 19/19). Live verification: strip renders review ⟲9 / review ⟲4 matching the report ordinals exactly.", "ripple_cascade": { "applied": ["src/core/report-render.ts", "src/core/orientation.ts", "orbit/changes/d4-review-consistency/specs/orbit-orientation/spec.md", "test/commands/status-orientation.test.ts"], "flagged_not_applied": [] } },
+    { "finding": "A mid-document `# External Review` line re-opens the header region and silently truncates an open Description/Notes body", "severity": "SUGGESTION", "file": "src/core/report-render.ts", "pushback": "still applies — the `# External Review` branch fired anywhere outside a fence, resetting section=null", "classification": "trivial fix (obvious-fix lane; previewed at triage, covered by the user's 'fix suggestions')", "action": "The header region now LATCHES closed at the first `## ` heading (a headerRegion boolean; every `## ` branch latches it): a later `# External Review` line — and Reviewer/Date-shaped prose — inside an open Description/Notes body falls through to verbatim body content under the blockquote containment. Fixture added: a quoted header + Reviewer line inside a Description renders verbatim, nothing truncates, the file parses. The delta letter's header-region clause names the latch and the quoted-header case.", "ripple_cascade": { "applied": ["src/core/report-render.ts", "test/core/report-render-hardening.test.ts", "orbit/changes/d4-review-consistency/specs/orbit-report-rendering/spec.md"], "flagged_not_applied": [] } },
+    { "finding": "The schema reference declares findings_summary RETIRED unscoped, then documents it as the live architecture-mode shape 75 lines later", "severity": "SUGGESTION", "file": "src/core/templates/workflows/review.ts", "pushback": "still applies — the retirement sentence carried no mode scoping while the architecture section presents findings_summary as current", "classification": "trivial fix (obvious-fix lane; previewed)", "action": "Retirement sentence scoped: 'RETIRED in CHANGE MODES', with a parenthetical connecting to the architecture-mode interim path documented below (no render surface covers the architecture trail yet). Surface refreshed via update --force.", "ripple_cascade": { "applied": ["src/core/templates/workflows/review.ts"], "flagged_not_applied": [] } }
+  ],
+  "resolution_summary": {
+    "resolved": 3,
+    "stale": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "post_state": "Build green; 1819 tests green (1817 + the latch fixture + the shared-axis chip test); strict validation passes; fingerprints 19/19 (the strip-composition requirement newly stamped); surface refreshed; live strip and report ordinals agree (⟲9/⟲4 vs Iteration 9/4)",
+  "final_assessment": "All 3 fresh iter-4 findings resolved. The ordinal divergence took the decision lane: prose briefing on the structured A/B fork, the user's 'A' chat directive ratified extending the strip's ⟲N to the shared pass axis — implemented by exporting the report capability's confidence-gated external counter and adding a MODIFIED strip-composition block to the orientation delta, verified live against the report ordinals. The header-region latch closed the silent-truncation path with a quoted-header fixture, and the findings_summary retirement sentence is now mode-scoped.",
+  "next_recommended": "/orbit:review --as system d4-review-consistency"
+}

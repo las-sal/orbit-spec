@@ -105,9 +105,9 @@ describe('config profile interactive flow', () => {
       'orbit-verify-change',
       'orbit-onboard',
       'orbit-review',
-      'orbit-review-external',
       'orbit-address-reviews',
       'orbit-audit-drift',
+      'orbit-architect',
     ];
     for (const dirName of allSkillDirs) {
       const skillPath = path.join(projectDir, '.claude', 'skills', dirName, 'SKILL.md');
@@ -115,19 +115,26 @@ describe('config profile interactive flow', () => {
       fs.writeFileSync(skillPath, `name: ${dirName}\n`, 'utf-8');
     }
 
-    // archive declares a reference (orbit-skill-generation); a synced surface carries it
-    const archiveRefPath = path.join(
-      projectDir, '.claude', 'skills', 'orbit-archive-change', 'references', 'archive-summary-schema.md'
-    );
-    fs.mkdirSync(path.dirname(archiveRefPath), { recursive: true });
-    fs.writeFileSync(archiveRefPath, '# archive run-summary schema\n', 'utf-8');
+    // archive declares references (orbit-skill-generation); a synced surface carries them.
+    // D6 added pr-archive-tail.md alongside the summary schema.
+    for (const refName of ['archive-summary-schema.md', 'pr-archive-tail.md']) {
+      const archiveRefPath = path.join(
+        projectDir, '.claude', 'skills', 'orbit-archive-change', 'references', refName
+      );
+      fs.mkdirSync(path.dirname(archiveRefPath), { recursive: true });
+      fs.writeFileSync(archiveRefPath, `# ${refName}\n`, 'utf-8');
+    }
 
-    // B3 editorial skills declare references too; a synced surface carries them
+    // B3 editorial skills declare references too; a synced surface carries them.
+    // D6 added the shared PR choreography to propose and ff.
     const editorialRefs: Record<string, string[]> = {
-      'orbit-review': ['run-summary-schema.md'],
-      'orbit-review-external': ['mode-sections.md', 'prompt-template.md'],
-      'orbit-address-reviews': ['external-findings-format.md', 'internal-findings-format.md', 'run-summary-schema.md'],
-      'orbit-audit-drift': ['run-summary-schema.md'],
+      'orbit-explore': ['capture-formats.md'],
+      'orbit-propose': ['pr-choreography.md'],
+      'orbit-ff-change': ['pr-choreography.md'],
+      'orbit-architect': ['pr-resolution.md'],
+      'orbit-review': ['run-summary-schema.md', 'passes-proposal.md', 'passes-system.md', 'passes-architecture.md', 'external-handoff.md', 'blind-pair.md', 'mode-sections.md', 'prompt-template.md', 'flags-detail.md'],
+      'orbit-address-reviews': ['external-findings-format.md', 'internal-findings-format.md', 'resolution-detail.md', 'run-summary-schema.md'],
+      'orbit-audit-drift': ['run-summary-schema.md', 'worked-example.md'],
     };
     for (const [dirName, refNames] of Object.entries(editorialRefs)) {
       for (const refName of refNames) {
@@ -137,7 +144,7 @@ describe('config profile interactive flow', () => {
       }
     }
 
-    const allCommands = ['propose', 'explore', 'apply', 'archive', 'new', 'continue', 'ff', 'sync', 'bulk-archive', 'verify', 'onboard', 'review', 'review-external', 'address-reviews', 'audit-drift'];
+    const allCommands = ['propose', 'explore', 'apply', 'archive', 'new', 'continue', 'ff', 'sync', 'bulk-archive', 'verify', 'onboard', 'review', 'address-reviews', 'audit-drift', 'architect'];
     for (const commandId of allCommands) {
       const commandPath = path.join(projectDir, '.claude', 'commands', 'orbit', `${commandId}.md`);
       fs.mkdirSync(path.dirname(commandPath), { recursive: true });

@@ -1,0 +1,127 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-08-10T03:06:19Z",
+  "change": "d5-context-economy",
+  "kind": "editorial",
+  "model": "claude-fable-5",
+  "source": "from-file",
+  "source_path": "orbit/changes/d5-context-economy/.orbit-runs/external-system-2026-08-10T02-50-05Z.md",
+  "source_command": null,
+  "external_reviewer": "OpenAI Codex (GPT-5)",
+  "walk_mode": "per_finding",
+  "walk_mode_source": null,
+  "input_findings_summary": {
+    "critical": 2,
+    "warning": 3,
+    "suggestion": 1
+  },
+  "pushback_verification": "All 6 verified live before acting: the unchecked mkdirSync on runsDir read at the write site (:740, matching their reproduction); the group!==null filter read in the coverage check and parseCheckboxes' unnumbered-group counting confirmed (pre-header checkboxes ignored — the exposure is exactly ## <title> groups); the applyStarted trail-gate re-read post-iter-1 fix; the Number(x ?? 0) coercion read at the project branch; the divergence-fields-absent wording re-read against boot's always-when-present malformed; the stale parenthetical read at delta line 84. 0 stale suppressions.",
+  "resolution_summary": {
+    "resolved": 6,
+    "stale": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "marker": "src/core/emit-composition.ts:740 — symlinked .orbit-runs child escapes the parent-level containment check",
+      "severity": "CRITICAL",
+      "source": "external",
+      "classification": "trivial fix",
+      "status": "resolved",
+      "action": "assertContained(runsDir, dirname(runsDir)) at the write boundary, after creation and before any write — dirname-uniform, so every scope (change/explore/archived/doc/project) is covered by one check. Regressions: symlinked .orbit-runs at change, project, and doc scopes all refuse with nothing written outside. Delta containment sentence extended to name the trail child.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/emit-composition.ts",
+          "test/core/emit-composition.test.ts",
+          "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md"
+        ],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "marker": "src/core/parsers/chunk-preamble.ts:104 — unnumbered checkbox groups bypass coverage, contradictory chunk_complete possible",
+      "severity": "CRITICAL",
+      "source": "external",
+      "classification": "trivial fix",
+      "status": "resolved",
+      "action": "Parser rule (the stronger of their two offered paths, noted at triage): when a preamble exists, any unnumbered group carrying checkboxes (checked OR unchecked — both distort arithmetic) is malformed → no-chunking fallback; prose-only unnumbered groups stay fine. Composer test proves the emit degrades (chunk null, honest tasks_remaining, chunk_complete false) when a stray unnumbered task exists behind completed declared chunks. Delta coverage bullet extended with the undeclarable-work rule.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/parsers/chunk-preamble.ts",
+          "test/core/parsers/chunk-preamble.test.ts",
+          "test/core/emit-composition.test.ts",
+          "orbit/changes/d5-context-economy/specs/orbit-run-summary-emit/spec.md"
+        ],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "marker": "src/core/boot-render.ts:99 — committed apply work hidden until an apply emit exists",
+      "severity": "WARNING",
+      "source": "external",
+      "classification": "trivial fix",
+      "status": "resolved",
+      "action": "The applyStarted trail-gate is deleted: the committed diff is computed whenever the change has a first commit, and the non-empty non-bookkeeping portion alone is the lifecycle discriminator — closing the second half of the rule iter-1 half-fixed (emit-before-commit must not fabricate ACTUAL; commit-before-emit must show it). Regression: committed work with an empty trail renders the ACTUAL map. Code now matches the delta wording ratified last round — no spec edit.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/boot-render.ts",
+          "test/core/boot-render.test.ts"
+        ],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "marker": "src/core/emit-composition.ts:857 — missing remaining_markers_in_scope coerces to a clean engine recommendation",
+      "severity": "WARNING",
+      "source": "external",
+      "classification": "trivial fix",
+      "status": "resolved",
+      "action": "The count is now a REQUIRED non-negative integer at project scope, failing loud before filename creation (the warnings_count precedent): missing, non-numeric, NaN, fractional, and negative all throw with no file written (two-sided count assertion). Delta's bare-scope sentence names the required count and the never-defaulted rule.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/emit-composition.ts",
+          "test/core/emit-composition.test.ts",
+          "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md"
+        ],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "marker": "src/core/templates/workflows/audit-drift.ts:297 — body reports pre-apply malformed entries against the skip-silently rule",
+      "severity": "WARNING",
+      "source": "external",
+      "classification": "trivial fix",
+      "status": "resolved",
+      "action": "Category 5's gate is now explicit: touchpoints.actual !== null gates the ENTIRE category including malformed — boot keeps surfacing pre-apply malformed entries as parse diagnostics for the authoring flow, but pre-capability changes are never category-5 findings. Body + audit-drift delta aligned; surface regenerated.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/templates/workflows/audit-drift.ts",
+          "orbit/changes/d5-context-economy/specs/orbit-audit-drift/spec.md"
+        ],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "marker": "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md:81 — stale bare-scope exception excludes address-reviews",
+      "severity": "SUGGESTION",
+      "source": "external",
+      "classification": "trivial fix",
+      "status": "resolved",
+      "action": "The exception now names both project-scoped commands (audit-drift and address-reviews); the nearby engine comment ('Bare project-scoped invocation') swept to match. The requirement is self-consistent again.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md",
+          "src/core/emit-composition.ts"
+        ],
+        "flagged_not_applied": []
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": null,
+  "final_assessment": "All 6 iteration-2 external findings (2 CRITICAL / 3 WARNING / 1 SUGGESTION, OpenAI Codex GPT-5) walked and resolved — every one an edge-hardening of an iter-1 fix: the trail-child symlink gap closed with one dirname-uniform write-boundary check; unnumbered checkbox groups now degrade chunking as undeclarable work; the boot transition keys on committed work alone (trail presence fully removed); the project-scope marker count fails loud instead of defaulting clean; audit-drift's category-5 gate made explicit including malformed; the stale bare-scope parenthetical fixed. Their notes confirm all eight iter-1 resolutions hold on their covered paths. 1914 tests green (1910 → 1914); strict validation; fingerprints 26/26; surface regenerated.",
+  "iteration": 13,
+  "next_recommended": "/orbit:review --as system --reviewer external d5-context-economy"
+}

@@ -1,0 +1,25 @@
+{
+  "command": "explore",
+  "timestamp": "2026-10-06T17:46:54Z",
+  "change": "rc17b-blind-pair-command",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Re-read the assigned rules (D-bpc-3, -4, -13) against what rc17a and rc17d shipped (D-rc17b-2): most of the one-command step order already exists as rc17d's Step 9 and is pointed at; two acts are new — the pair defers the external save until the fresh pass file is committed (D-rc17b-3, keeps blindness physical and fixes token order), and every external half of a pair reads the pair's BASE, including a re-run of the missing half, which today reads its committed partner (D-rc17b-4, BOUNDED). Shorthands (D-rc17b-5) and the default preference presenting the pair command (D-rc17b-6) written as decision tables. Capability re-measure found orbit-onboard's axis enumeration as a fourth (D-rc17b-7); Sal: A, declared four over R-crc-1's ceiling (D-rc17b-8). Four live rules, all accounted; no open questions. Ready for propose.",
+  "decisions_captured": 8,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 4,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [
+    {
+      "id": "D-rc17b-4",
+      "kind": "a reader that goes past the commit it was told to read — a human-carried external AI that pulls HEAD, or a fresh re-run subagent that reads the live checkout",
+      "method": "reading the walked return's `**Reviewer**:` line and file citations for paths that exist only after BASE, when a re-run or a paste completes a pair"
+    }
+  ],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose rc17b-blind-pair-command — 4 live rules accounted, 1 bounded residual named (D-rc17b-4); formalize when you are ready (or /orbit:explore rc17b-blind-pair-command to keep refining)"
+}

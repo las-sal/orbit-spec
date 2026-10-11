@@ -1,0 +1,44 @@
+{
+  "command": "audit-drift",
+  "timestamp": "2026-09-24T17:04:42Z",
+  "change": null,
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "final_assessment": "No critical issues. 1 warning to consider. Project-wide standalone sweep on the tree at de4af354, immediately after rc04c's archive. Category 1: zero residue patterns exist across every archive (no RENAMED/REMOVED requirement has ever shipped), so nothing to grep. Category 2 skipped: lenses absent. Category 3: no INCONSISTENT or MALFORMED stage, no hand-written state line, no dangling citation (the one explore citation resolves), the four marked spans agree with the engine (stages 22, rulings 14, capabilities 21, schema-version 4); ONE cross-doc warning — CLAUDE.md's handoff narrative has no rc04c archive paragraph, unlike every prior stage. Category 4 over the last five archives (rc07, rc02c, rc04a, rc04d, rc04c): every ADDED requirement present in baseline, no REMOVED requirement surviving, consent present on every post-capability apply/archive emit. Category 5: no active changes, nothing to gate. Category 6: bounded-closure-semantics' newest emit (5 decisions, 0 open questions) matches a fresh parse. RECORD-ONLY CORRECTION to a prior record: the pre-archive audit inside archive-2026-09-24T15-44-24Z.json states that `orbit status --change --boot --json` carries no `touchpoints` key; it does, nested under `boot.touchpoints` exactly as orbit-orientation specifies (boot-render.ts:151) — the pre-archive reader looked at the top level. The archive emit is audit trail and stands; this is the correction.",
+  "categories_run": [
+    "1",
+    "3",
+    "4",
+    "5",
+    "6"
+  ],
+  "findings_by_category": {
+    "1": 0,
+    "3": 1,
+    "4": 0,
+    "5": 0,
+    "6": 0
+  },
+  "findings_total": 1,
+  "findings": [
+    {
+      "category": "3",
+      "severity": "WARNING",
+      "file": "CLAUDE.md",
+      "line": 212,
+      "title": "The handoff narrative stops at rc04c 'applied' and carries no archive paragraph — every prior rc-stage got one at its archive, and a cold session reading this file would not learn that the stage shipped through a computed gate",
+      "recommendation": "Append the customary archive paragraph after the rc04d one (line 235ff): rc04c ARCHIVED 2026-09-24 through a COMPUTED PASSED review-system gate — the blind pair (external GPT-5 Codex 2C/1W, fresh 0C/3W/4S, zero critical overlap) plus an in-context confirm; the field retired from the write path with its normative footprint in orbit/specs/ at zero; R-crc-14 ratified from the fourth restated-rule instance; Q-crc-24..26 opened; 2243 tests green — and update line 212's 'Three more stages have shipped since' to four (the 'SIX stages complete' count is still right: rc04c is archived, not ratified). Line 230's '(rc04c, applied 2026-09-24)' reads correctly as history and can stand. The rulings count is marked and already reads 14; keep the new paragraph's figures out of marked spans unless a source exists for them."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "title": "Two ADDED requirements in 2026-09-15-rc13-explore-mechanism absent from orbit-explore-modifications (category 4)",
+      "evidence": "Out of the default five-archive window on this tree, and in any case a deliberate, user-ratified no-sync recorded in that archive's own emit (sync_specs.ran: false with the reason) — not a propagation failure. Suppressed for the same reason at rc04c's pre-archive sweep."
+    },
+    {
+      "title": "Pre-archive instrument note: --boot --json carries no touchpoints key",
+      "evidence": "Not drift — a reader error in the prior record. boot-render.ts:151 composes `boot.touchpoints`; orbit-orientation's boot scenario names the same nesting. Corrected here; the archive emit is not edited."
+    }
+  ],
+  "next_recommended": "/orbit:address-reviews --from-file orbit/.orbit-runs/audit-drift-2026-09-24T17-04-42Z.json — 1 drift(s) detected project-wide; resolve before next workflow step"
+}

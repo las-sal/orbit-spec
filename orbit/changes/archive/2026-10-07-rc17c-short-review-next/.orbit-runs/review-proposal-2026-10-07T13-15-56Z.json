@@ -1,0 +1,97 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-07T13:15:56Z",
+  "change": "rc17c-short-review-next",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "orbit-review's MODIFIED requirement body still states the --from-file self pointer its own scenario retires",
+      "file": "orbit/changes/rc17c-short-review-next/specs/orbit-review/spec.md",
+      "line": 5,
+      "recommendation": "The block's requirement sentence still reads: `next_recommended` is the deterministic pointer — the `/orbit:address-reviews <change> --from-file <this emit's own path>` invocation when the pass has findings. Only the scenario at line 25 was changed (a diff against the baseline block shows exactly one changed line). Synced at archive, the baseline would carry the old pointer in its SHALL and the new one in its scenario, and an implementer or adopter reading the SHALL builds the old pointer. The sentence also states one rule for every mode, while architecture mode keeps `--from-file`. Repair it the way D3 repairs the body: replace the clause with a pointer to `orbit-emit-composition`'s `Deterministic facts are engine-composed per command`, which owns the composition (R-crc-14). Then re-grep the four deltas for `own path` / `--from-file <` outside architecture-mode and prior-generation contexts. Task 3.2's grep covers only `src/` and the generated surface, so it would not have caught this.",
+      "reproduction": "diff the delta's `Internal run summary persisted per mode` block against orbit/specs/orbit-review/spec.md: the only changed line is the `Spine fields carry deterministic facts under persist-first` THEN; the requirement paragraph (delta line 5) is byte-identical to the baseline and names `--from-file <this emit's own path>`."
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "title": "The chunked tasks.md seeding and its unchunked fallback cannot affect what the guard checks",
+      "file": "orbit/changes/rc17c-short-review-next/design.md",
+      "line": 78,
+      "recommendation": "`computeApply` always writes `chunk`, `chunk_name`, `chunk_complete`, `files_touched` and `diff_base`, as null when unchunked or outside git (src/core/emit-composition.ts:1492-1535, 1929-1940). The guard subtracts those keys from the payload and compares top-level key sets only. So the written key set is the same whether or not the seeded tasks.md carries a chunk preamble, and the rewrite-as-unchunked fallback changes no key either. That leaves two options. One: drop the seeding and the fallback from D6, task 4.2 and task 4.3, and keep only the minimal `tasks.md` that `computeApply` reads. Two: keep the seeding and say plainly that it is for realism and checks no chunk value, which the named limit already concedes (`a stale value under a current key ... passes for apply`). As written, the apply author may spend effort on a fallback that cannot change the result."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "Two stated counts disagree with measurement (182 self-pointer emits; 35 delta scenarios)",
+      "file": "orbit/changes/rc17c-short-review-next/design.md",
+      "line": 18,
+      "recommendation": "design.md:18 and proposal.md:56 say 182 archived proposal/system emits carry the self pointer. There are 182 such emits under orbit/changes/archive, but only 155 contain `--from-file`; the rest are clean or earlier generations. explore.md:94's own wording (182 emits; 250 lines naming `--from-file`) was the accurate one. design.md:126 says 35 delta scenarios, while `orbit status --change rc17c-short-review-next --scenarios` reports `delta scenarios 36` (7 + 11 + 9 + 9). Restate both from the measurement. Also consider moving D8 after D7 so the Decisions list reads in order."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "title": "The delta's 'discovers every pass' justification holds only while the change is active",
+      "file": "orbit/changes/rc17c-short-review-next/specs/orbit-emit-composition/spec.md",
+      "line": 9,
+      "recommendation": "The parenthetical says that the change-scoped walk discovers every pass that carries a finding, per `orbit-address-reviews`' `Address-reviews command available`. That requirement's own row 6 says an ARCHIVED change's review passes are reached only by `--from-file`. After archive, then, an emit's short pointer names a walk that does not reach the pass. The consequence is low, because an archived trail's `next_recommended` is historical and the gate passed or was overridden. Still, the claim is broader than its cited owner. Qualify it as 'on an active change', or point at the discovery rows without paraphrasing them."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "I probed the guard's feasibility directly. Against `SPINE_FIELDS` and `ENGINE_OWNED_EXTRA` in emit-composition.ts, the subtraction leaves exactly the payload each command's table accepts. Against rc17b's archived review, apply and archive emits, the example key sets match the written ones, `pass` on findings and the elided-when-empty `user_validation_tasks` included. Exit (2) holds structurally: the renderer rebuilds `emitRepoPath` as `orbit/changes/<change>/.orbit-runs/<basename>`, the same string `path.relative` produced at write time. The architecture branch and the audit-drift pointers are untouched in both code and spec. The pattern behind the one real finding is a familiar one: a MODIFIED block whose scenario moved while its requirement paragraph stayed put. The body sweep (task 3.2) is scoped to code and the generated surface, so the spec delta's own prose fell between the sweep and the edit. Readings came from the live checkout. A grep for `@review:` incidentally matched the pair's packaged prompt file in the trail; it carries no findings, and nothing else in the trail was opened.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The mechanism is small and sound. One composer branch changes, and the renderer accepts two values by value, both rebuilt from the emit itself. Key sets measured against rc17b's real emits match the three refreshed examples. The subtract-then-submit guard is feasible against the engine's own lists, because review's `final_assessment` and apply's chunk fields are engine-owned while archive's `final_assessment` stays payload. One spec sentence needs repair before apply: orbit-review's SHALL still names the self pointer its scenario retires. It is a one-clause pointer edit of the kind D3 already performs on the body, and it changes no design decision."
+  },
+  "final_assessment": "0 critical, 1 warning, 3 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc17c-short-review-next --from-file orbit/changes/rc17c-short-review-next/.orbit-runs/review-proposal-2026-10-07T13-15-56Z.json"
+}

@@ -1,0 +1,61 @@
+{
+  "command": "review",
+  "timestamp": "2026-07-20T19:41:49Z",
+  "change": "d3-orientation",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "iteration": 1,
+  "depth": "full",
+  "scorecard": {
+    "completeness": { "critical": 0, "warning": 0, "suggestion": 0 },
+    "correctness": { "critical": 0, "warning": 2, "suggestion": 0 },
+    "coherence": { "critical": 0, "warning": 0, "suggestion": 2 }
+  },
+  "findings": [
+    {
+      "pass": 0,
+      "severity": "WARNING",
+      "file": "src/commands/workflow/status.ts",
+      "line": 175,
+      "title": "Pending review chips render bare 'review' — both normative strip scenarios show 'review ⟲'",
+      "recommendation": "The requirement's canonical strip (spec :73) and both scenarios (:89 staging explore; the mid-apply example) render pending review chips as 'review ⟲' — the loop glyph is part of the chip's identity, with N appended only when iterations exist. renderStrip currently composes ['review', detail, glyph] where detail is absent at 0 iterations, so the live render shows '→ review → archive' (verified on this repo). Fix the text render: review chips always carry ⟲ ('review ⟲' at 0 iterations, 'review ⟲6 ✓' with count+gate); the JSON chip keeps detail absent at 0 (the array is data, the ⟲ identity is the text grammar). Update the CLI test assertions to the scenario literals."
+    },
+    {
+      "pass": 0,
+      "severity": "WARNING",
+      "file": "src/core/orientation.ts",
+      "line": 391,
+      "title": "WAITING external line inserts the mode word inside the spec's quoted literal",
+      "recommendation": "The requirement (spec :169) and the concurrent-handoff scenario (:185) render `N external review(s) packaged, M returned` — no mode word inside the phrase. deriveWaiting renders '2 external proposal review(s) packaged, 1 returned', which does not contain the normative literal. Align the render: emit the exact literal, appending the mode OUTSIDE the quoted phrase if desired for per-mode disambiguation (counting stays per change+mode either way), e.g. '<name>: 2 external review(s) packaged, 1 returned (proposal)'. Update the module test assertion to the literal."
+    },
+    {
+      "pass": 2,
+      "severity": "SUGGESTION",
+      "file": "src/commands/workflow/status.ts",
+      "line": 24,
+      "title": "getAvailableChanges imported but no longer used",
+      "recommendation": "Its only call site was the removed bare-invocation error block. Drop the import (cohesion residue from the error-path claim)."
+    },
+    {
+      "pass": 6,
+      "severity": "SUGGESTION",
+      "file": "CLAUDE.md",
+      "line": 99,
+      "title": "Deferred-follow-ups line still lists orbit-status absorption as pending",
+      "recommendation": "CLAUDE.md:99 says 'Deferred follow-ups: orbit-status absorption (post-parity, issue #3)...' — D3 shipped it today and issue #3 is closed. Either fix now or fold into the archive-time CLAUDE.md D3 completion entry (task 5.4's archive-time notes); do not leave it past archive."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "title": "Pre-archive baseline window: live orbit-engine-gates/orbit-architect text still unscoped",
+      "evidence": "The MODIFIED deltas land at archive sync by design; nothing regressed (bare --json previously errored with changes, so no baseline consumer existed). Not a finding — the delta is the fix."
+    },
+    {
+      "title": "Pass 0 verify: tasks 17/17 checked; design adherence verified",
+      "evidence": "orientation.ts matches design D1 exactly (reuses loadChangeContext/formatChangeStatus/computeStageStates/parseTsToken; no artifact inference; read-only asserted two-sided by test); all 12 CLI + 18 module tests trace to spec scenarios; 1742 suite green."
+    }
+  ],
+  "iteration_note": "First system review for this change. Record-only correction carried onto the audit record per the user conversation post-apply: the proposal iteration-6 emit's 'Gate review-proposal PASSED' was a hand-authored verdict — the engine computed unpassed (latest independent pass was iter 4, which carried findings; iters 5-6 were in-context and cannot fill the confirm slot), and the iteration-5 next_recommended dropped the --fresh form the engine's nextCommand specified. The trail is never edited retroactively; this note is the correction. Both of this pass's WARNINGs are text-render divergences from normative scenario literals — the strip and WAITING grammars — caught by rendering against the live repo rather than fixtures alone.",
+  "final_assessment": "No critical issues. 2 warnings — both text-render divergences from normative literals (pending review chips missing the ⟲ identity; the WAITING external phrase carrying an inserted mode word) — plus an unused import and a stale CLAUDE.md deferred line. The engine, module composition, JSON shapes, fault isolation, and both regression surfaces verified faithful to spec.",
+  "next_recommended": "/orbit:address-reviews d3-orientation --from-file orbit/changes/d3-orientation/.orbit-runs/review-system-2026-07-20T19-41-49Z.json"
+}

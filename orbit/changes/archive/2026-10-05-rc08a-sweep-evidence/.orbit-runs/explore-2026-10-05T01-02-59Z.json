@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-10-05T01:02:59Z",
+  "change": "rc08-walk-completeness",
+  "kind": "workflow",
+  "model": null,
+  "final_assessment": "Measured the walk trail (205 logs, 1404 resolutions; ripple_cascade records edited files, never the search) and, on Sal's delegation of method, settled the exploration: D-rc08-1 splits rc08 into rc08a (sweep evidence: charter jobs 1 and 3) and rc08b (walk routing: jobs 2, 4, 5, 6); D-rc08-2 a resolved entry carries sweep {retired, introduced, searched, scope, kept}; D-rc08-3 the write gate refuses a log whose retired strings survive or whose introduced text is absent, over a computed whitespace-normalised scope; D-rc08-4 ripple misses are attributed by the walker (ripple_miss_of, kind query|scope|judgement) with ripple_misses engine-computed; D-rc08-5 (fact) about two-thirds of recorded leftovers are stale wording. Three rules, all accounted; rc08a sits at three capabilities. The split must be declared in an architect session before propose.",
+  "decisions_captured": 5,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 3,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose rc08-walk-completeness — 3 live rules accounted; formalize when you are ready (or /orbit:explore rc08-walk-completeness to keep refining)"
+}

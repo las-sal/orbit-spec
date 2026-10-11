@@ -1,0 +1,111 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-03T23:44:04Z",
+  "change": "rc04b-forward-recommendation",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 3
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "title": "The independent-class predicate is restated 500 lines below the write gate that exports it to avoid exactly that",
+      "file": "src/core/emit-composition.ts",
+      "line": 1113,
+      "recommendation": "The ADDED requirement `The review payload carries direction` says the owed check keys on \"the gate model's independent classes, by the ONE predicate `orbit-engine-gates`' cadence vocabulary already defines, exported rather than restated\", and `validateReviewDirection` (line 607) does call `isIndependent`. In the SAME module, rc04c's `judgementOrderingCheck` builds its accepted-passes set with `pp.reviewerClass === 'fresh' || pp.reviewerClass === 'external'` — a second statement of the two-class set, which is the R-crc-14 pattern this stage's own preamble counts (a reader of the spec would believe no restatement survives in the write-gate module). Replace the literal comparison with `isIndependent(pp.reviewerClass)` — the import already exists at line 7 — so the three sites that decide \"independent\" (gate model, write gate, renderer) and this fourth one cannot drift if the class set ever moves.",
+      "reproduction": "grep -n \"reviewerClass === 'fresh' || pp.reviewerClass === 'external'\" src/core/emit-composition.ts → line 1113; grep -n \"isIndependent(\" src/core/emit-composition.ts → line 607 only. Two statements of one set in one file."
+    },
+    {
+      "pass": "1",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "`Commentary is a first-class quarantined slot` still frames commentary as THE quarantine now that Direction is a second verbatim reviewer-voiced section",
+      "file": "orbit/specs/orbit-report-rendering/spec.md",
+      "line": 113,
+      "recommendation": "The baseline requirement (no delta) says \"model-to-model variance lives inside this field, never leaking into the structured sections\" and calls `### Commentary` \"the single delimited\" section. After this change the reviewer's voice renders in TWO verbatim sections inside the quarantined zone (Direction, then Commentary), and the ADDED Direction requirement leans on this one (\"as the Commentary requirement owns commentary's\"). Nothing an implementer builds would diverge, so this is a wording note: at archive, or in a rider, qualify the sentence to \"the reviewer's prose voice\" (the direction's reasoning being the other quarantined slot, per the Direction requirement) so the two requirements read as one zone with two slots rather than one slot that the other contradicts."
+    },
+    {
+      "pass": "4",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "The prompt's `## Direction` placeholder tells the external reviewer about `[no direction]` but not `[direction malformed]`",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 661,
+      "recommendation": "Simulating an external reviewer who has ONLY the prompt: the placeholder says a return without the section renders `[no direction]`, but says nothing about what a non-conforming opener, an opener with no body, or a second `## Direction` produces — the walk's copy (address-reviews.ts line 51) names both marks. A reviewer who writes `**Disposition**: forward.` or `**Disposition**: Forward` learns their direction was dropped only when someone renders the report. Add the second mark in one clause (\"…renders it `[no direction]`; a section whose first non-blank line is not exactly the opener renders `[direction malformed]` with no body\"). NOTE: this line sits inside the output-format fence that `test/core/severity-ladder-parity.test.ts` holds byte-equal to the `orbit-review-external` owner's fence, so the edit lands in the delta's fence (or the baseline's after archive) and the template together, as task 3.2 did."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "title": "The write gate's shape check is open on extra keys inside `direction`, so nested noise persists verbatim while top-level typos are refused",
+      "file": "src/core/emit-composition.ts",
+      "line": 616,
+      "recommendation": "Observed with the real CLI in a scratch project: a fresh payload carrying `\"direction\": {\"disposition\":\"forward\",\"reasoning\":\"ok\",\"extra\":1}` was ACCEPTED and the emit wrote the object verbatim, `extra` included; the renderer's read-side twin (`normalizeInternalPass`) also accepts it, so the two readers AGREE — nothing breaks, which is why this is not graded higher. But the payload contract's stance at the top level is \"a key in neither the table nor the engine-owned set is REJECTED naming the key\", and the ADDED requirement defines the slot as the two-key object `{disposition, reasoning}`. Consider refusing unknown keys inside `direction` naming `direction.<key>`, mirroring the top-level rule, so the record's shape is closed where it is produced; if left open, say so in the requirement (\"extra keys are carried, never read\") so the openness is declared rather than discovered."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "title": "The apply emit's `files_touched` omits the stage's three NEW files because the engine lists tracked diffs only",
+      "file": "src/core/parsers/apply-state.ts",
+      "line": 155,
+      "recommendation": "`filesTouchedSince` runs `git diff --name-only <base>`, which never lists untracked files. On this trail the apply emit (`apply-2026-10-03T23-27-39Z.json`) was written before Sal committed, so its `files_touched` (23 entries) lacks `test/core/trail-rc04b.test.ts`, `test/fixtures/report-golden/nearmiss-direction.json` and `nearmiss-direction.golden.md` — the three files the diff stat `0e183d93..2f482e65` adds and the design's Touchpoints name. A pre-existing engine limit, surfaced by a stage whose instrument IS a new fixture pair: either append `git ls-files --others --exclude-standard` to the working-tree view, or document on the apply emit's field note that the list is tracked-only until commit (the boot render's committed view is correct once the commit lands)."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "A second `## Direction` is MALFORMED (\"two claims on one truth\") while a second `## Notes` silently keeps the LAST body",
+      "file": "src/core/report-render.ts",
+      "line": 559,
+      "recommendation": "Observed through `orbit status --report` on a scratch external file with two `## Notes` sections: the Commentary slot rendered only the second body; the first was dropped with no mark. The format owner now states the rule for Direction — a second section is malformed because two sections are two claims — and the same reasoning applies to Notes, which this stage did not touch (correctly: out of scope). Name it for whichever stage next touches the external format: either mark a duplicate Notes the same way or declare last-wins in `orbit-conventions`' format requirement, so the two sibling sections do not carry two unstated duplicate-handling rules."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "The pattern behind the findings is seams the stage touched but did not own: the restated class set sits in rc04c's ordering check in the same module as the new gate; the quarantine wording lives in a requirement no delta carried; the files_touched gap is the apply-state reader's, exposed only because this stage's instrument is a pair of new fixtures. Probing: I ran the write gate (absent slot at fresh/external/--doc, string, null, trailing-space disposition, extra nested key, class 'Fresh'), the render over seven external shapes (conforming, absent, bad opener, heading inside a finding, `## Direction (final)`, lower-case after Notes with a fenced body, section ending the Description body) and two internal generations, then read the gate's JSON over the same trail to confirm the readers agree — the one case that could split them (the heading inside a finding) rejects in both. The engine's applySpecs merged the five deltas into a temp copy byte-equal on all ten blocks. I re-verified every proposal-cycle walk resolution on the final tree rather than the walk logs' word (fresh W5 external class set; W6 nested allowlist; external W2 D4 boundary; W3 architecture containment) — all hold, so nothing to suppress. Risk texture: low. The content contract is unenforced by design (R-crc-10) and its first live measurement is this very emit; the one open question I would hand the readiness author is the asymmetry between a refused typo at the top level and carried noise inside the slot, which is a declaration to make, not a defect to fix.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6"
+  ],
+  "passes_skipped": [],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "Forward. The mechanism does what the five deltas say under every input I could construct against the real CLI: the write gate refuses a fresh or external payload without the slot (empty stdout, no file, in change mode and under --doc), refuses a mis-shaped one at any class, and refuses an unrecognised class naming the three values; the render prints the section between Suppressed and Commentary with the engine tail after it, marks a renderable prior-generation fresh emit and a section-less external file [no direction], marks a bad opener [direction malformed] with no body, reads the section case-insensitively wherever it sits, and still fails a pre-D4 emit at the existing boundary. The two places that could have disagreed did not: a `## Direction` heading dropped between a finding's File and Description lines is a rejected return in the trail reader AND a render failure naming the same finding, and the gate's spend counts moved by zero with the section present. The engine merge of the ten delta blocks into a scratch copy of the baselines was byte-equal, fingerprints and strict validation stand, and the installed surface matches the source. What I found is adjacent, not inside: one restated predicate in the file that exports the predicate, and record-and-wording residue. Nothing here would be made worse by moving on; the warning is a one-line consolidation that can ride the walk."
+  },
+  "final_assessment": "0 critical, 1 warning, 5 suggestion.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc04b-forward-recommendation --from-file orbit/changes/rc04b-forward-recommendation/.orbit-runs/review-system-2026-10-03T23-44-04Z.json"
+}

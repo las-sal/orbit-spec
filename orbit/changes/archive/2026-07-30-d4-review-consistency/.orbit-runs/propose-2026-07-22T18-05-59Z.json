@@ -1,0 +1,11 @@
+{
+  "command": "propose",
+  "timestamp": "2026-07-22T18:05:59Z",
+  "change": "d4-review-consistency",
+  "final_assessment": "Generated proposal/design/tasks/specs for d4-review-consistency; consumed the prior explore.md (6 ratified decisions D-d4-1..6 seeded — the last promoted from the deferred list via a three-question Step 0b fork the user answered strict-loud / parsed-form / ride-D4). Deltas: orbit-report-rendering ADDED (7 requirements — the pure render, the sandwiching grammar, render-time computed context, the quarantined commentary slot, strict validation, one-grammar internal+external, the status-gateway surface), orbit-review +1 ADDED (run-and-paste report contract, loose form) +2 MODIFIED (commentary field on the emit; renderer-computed iteration note), orbit-address-reviews 3 MODIFIED (lane-preview lifecycle; classification-as-lanes; the fork requirement rewritten present→discuss→ratify with chat ratification, optional closure prompt, dismissed-re-presents, batch prompts dead / delegation alive). 13 delta requirements (8 ADDED + 5 MODIFIED) across 3 files; 15 tasks in 5 groups; fingerprints 5/5 stamped and verified; --strict valid; baseline 17 → 18 at archive. Staging moved in (recovery note: the metadata merge script hit a missing yaml module AFTER the staged file was already read — the architecture citation was re-added by hand from its known content and verified: the stage renders in-change).",
+  "next_recommended": "/orbit:review d4-review-consistency — proposal artifacts ready; review before apply",
+  "kind": "workflow",
+  "artifacts_created": ["proposal", "design", "tasks", "specs/orbit-report-rendering", "specs/orbit-review", "specs/orbit-address-reviews"],
+  "delta_count": 13,
+  "from": "explore"
+}

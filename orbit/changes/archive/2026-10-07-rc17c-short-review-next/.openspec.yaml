@@ -1,0 +1,15 @@
+schema: spec-driven
+created: 2026-10-07
+schema_version: 5
+architecture:
+  doc: clean-up-review-cycle
+  stage: rc17c-short-review-next
+base_fingerprints:
+  orbit-conventions:
+    Internal-run JSON summary format: sha256:48aff96f23e41e9dd211ee85b3e1a1ac2e24c975e0fdf8085ad62cc392a2b1df
+  orbit-emit-composition:
+    Deterministic facts are engine-composed per command: sha256:4870b967ba30a80ecbc4307f8a75d0a941a485dda3e5b0757af24dfa695987f0
+  orbit-report-rendering:
+    Strict input validation — fail loud, no partial render: sha256:6b2d463338cd9e5952560cda1e3475095df8a252a7084d9cbb5728b47344522e
+  orbit-review:
+    Internal run summary persisted per mode: sha256:2389dc5feaab6c405925d8f7ddbd84ddfe6d9ffea8aed60a83663832d58b2515

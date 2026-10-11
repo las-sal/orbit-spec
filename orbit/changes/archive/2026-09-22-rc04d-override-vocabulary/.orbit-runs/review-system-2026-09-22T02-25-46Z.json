@@ -1,0 +1,111 @@
+{
+  "command": "review",
+  "timestamp": "2026-09-22T02:25:46Z",
+  "change": "rc04d-override-vocabulary",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m] (fresh clean-context subagent)",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "Site 4a ships wording absent from the stage's own ratified table, narrowing the SHALL to `review-system`, and the correction was never cascaded",
+      "file": "orbit/changes/rc04d-override-vocabulary/specs/orbit-pr-lifecycle/spec.md",
+      "line": 14,
+      "recommendation": "The shipped text reads \"A change archived via a recorded proceed-anyway override at the `review-system` gate SHALL still flip READY\". The stage's verbatim source table (explore.md D-rc04d-2 row 4a) and design.md D1 both specify \"A change archived via a recorded proceed-anyway override SHALL still flip READY\" — no gate qualifier. The qualifier is a real improvement (it resolves the fresh proposal pass's WARNING that de-naming 4a would widen the rule across two distinct archive-seam overrides, `gate_overridden` vs `fingerprint_overridden`) and it is true of the engine: schemas/spec-driven/schema.yaml declares exactly two reviewed gates, and only `review-system` (`before: archive`) can be unpassed at the archive seam. The defect is that the edit is untraceable and contradicted by its own artifacts: the walk record (.orbit-runs/address-reviews-2026-09-22T00-44-41Z.json) resolves that finding with an EMPTY resolution string; explore.md row 4a was never marked CORRECTED the way row 2 was; design.md D1 still lists 4a among the \"plain substitutions\"; tasks.md 1.4 is checked [x] claiming \"Confirm against rows 4a and 4b\", which the shipped text does not match; and tasks.md's own section-1 preamble declares precisely this state (\"if a task here requires NEW wording, the delta and explore.md D-rc04d-2 have diverged and that is the finding\"). It also propagates: task 3.3 directs rc04c's author to read explore.md D-rc04d-2 as the corrected source, and orbit/explore/rc04c-retire-gate-overridden/explore.md:101 carries the same superseded 4a form that task 3.3 does not flag (it flags only the engine-gates row at :100). This is the same cascade-incompleteness class the in-context proposal pass already named once for site 2. Fix: mark row 4a CORRECTED in explore.md D-rc04d-2 with the two-override rationale, amend design.md D1's site list to name 4a as gate-scoped rather than a plain substitution, restate tasks.md 1.4 against the text actually shipped, extend task 3.3 to name explore.md:101, and re-wrap the 112-char line (the file wraps at ~95; the identical cosmetic defect was found and fixed at site 2 in the same walk)."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "title": "The rc04c handoff inventories two red pins; at least four test sites hard-pin `gate_overridden` and will break",
+      "file": "orbit/changes/rc04d-override-vocabulary/tasks.md",
+      "line": 51,
+      "recommendation": "Task 3.1 and design.md's Risks section (\"rc04c inherits two red pins.\") name only test/core/templates/orbit-content-fidelity.test.ts's `apply-change` and `archive-change` body pins. A direct `grep -rn gate_overridden test/` finds these additional hard dependencies that go red the moment rc04c removes the field from COMMANDS.archive.payloadFields / the bodies: test/core/emit-schema-parity.test.ts:165-170 (\"regression: the archive table accepts the four conditional fields its schema defines\" — asserts payloadFieldsFor('archive') contains gate_overridden); test/core/emit-schema-parity.test.ts:212-221 (the negative test asserts `rejected` equals exactly ['gate_overridden']); test/core/emit-composition.test.ts:169-190 (asserts persisted.gate_overridden on a real archive emit); and test/core/judgement-record-fixture.test.ts:212-249 (emitDerived([continuation], { gate_overridden: go }), only partly covered by the arc doc's \"removal of the coexistence guard\"). The root cause is instrument scope: D-rc04d-1's measurement was `grep -c \"orbit/specs\"` on ONE test file plus an enumeration of tests that READ specs. That correctly answers exit (2)'s question (verified: the count is 0, and only source-lint and sources-registry read orbit/specs/, both counting capabilities) — but the handoff claim built on top of it is about what rc04c BREAKS, which that grep never measured. Fix: record the full `grep -rn gate_overridden test/ src/` inventory in task 3.1 and correct design.md's \"two red pins\" figure."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "title": "D2's justification for the two-owner correction misstates `orbit-run-summary-emit`'s scope, and rc04c inherits the misstatement",
+      "file": "orbit/changes/rc04d-override-vocabulary/design.md",
+      "line": 76,
+      "recommendation": "D2 argues the single-owner form was wrong because \"That capability's Purpose scopes it to WORKFLOW commands and its gate_overridden entry sits inside Apply per-chunk-end emission\". The second clause is sound and sufficient (verified: orbit/specs/orbit-run-summary-emit/spec.md:324-327 and its scenario at :359 state the apply shape; the archive shape is at orbit/specs/orbit-archive-modifications/spec.md:111). The first clause is false against the text: that Purpose (spec.md:5) reads \"...for orbit workflow commands (...) plus the external-handoff branch ... — alongside the existing editorial and lifecycle emit-producing commands\"; its `Emit scope` requirement explicitly covers /orbit:archive; and its `Where a judgement record may appear` requirement (spec.md:760-775) is a CLOSED three-row table whose third row IS the archive emit. So orbit-run-summary-emit does speak normatively about the archive emit. This matters downstream rather than here — the shipped clause itself is correct and complete (verified against src/core/emit-composition.ts:53-180: gate_overridden is an admissible payload field for exactly apply and archive, no third command can carry it, and /orbit:bulk-archive emits nothing of its own per orbit-run-summary-emit's Emit-scope exclusion) — but rc04c's scope INCLUDES orbit-run-summary-emit, and the judgement-record relocation it must perform lives in the very requirement this rationale implies is out of scope. Relatedly, D2 asserts the two-owner clause is \"true today AND after rc04c\", which is the stated reason for moving ownership now; post-rc04c the archive override becomes a judgements continuation entry whose ARRAY shape is owned by orbit-run-summary-emit (per orbit/specs/orbit-emit-composition/spec.md:309) and whose archive-specific entry sits at orbit-archive-modifications:156 — so the pointer is a re-check rc04c must perform, not a settled inheritance. Fix: replace the Purpose-scoping sentence with the field-table argument, and record the post-rc04c re-check explicitly rather than asserting the clause survives."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "The AT-ARCHIVE NOTE is cited as being \"at the end of this section\" but tasks 2.4 and 2.5 follow it",
+      "file": "orbit/changes/rc04d-override-vocabulary/tasks.md",
+      "line": 35,
+      "recommendation": "Tasks 2.1 and 2.3 both defer their post-sync halves to \"the AT-ARCHIVE NOTE at the end of this section\", but the note is placed between 2.3 and 2.4, with two further checkboxes after it. The note carries the only surviving statement of exit criterion (1) at its charter scope and exit criterion (3)'s post-sync half, so its discoverability at the archive seam is load-bearing rather than cosmetic. This is the same ordering class the in-context proposal pass already found and fixed in section 3 (\"tasks read 3.1, 3.3, 3.4, 3.2\"). Fix: move the note below 2.5, or re-word both pointers to \"the AT-ARCHIVE NOTE below\"."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "pass": "0",
+      "title": "MODIFIED deltas silently drop baseline scenarios (the repo's characteristic defect)",
+      "evidence": "Checked mechanically rather than trusting the authoring script. Split both delta and live baseline on `^### Requirement: ` / `^#### Scenario: `, set-compared scenario titles per requirement, then unified-diffed each requirement body. Result: 27 scenarios in the deltas (engine-gates 5+2+13, pr-lifecycle 2, conventions 5), set-equal AND order-equal to baseline, zero dropped, zero added. Every changed line across all three files is one of the five named substitutions — six changed lines total, nothing else moved. Instrument hazard checked per task 2.5 / Q-crc-15: the three delta files contain zero fence lines; the conventions baseline's 8 fence lines are all at 204-306, well above the requirement at 783, and balanced — so the splitter's fence-naivety cannot have mis-parsed here. `orbit fingerprint --check --json` reports 5/5 verified."
+    },
+    {
+      "pass": "0",
+      "title": "Exit (2) breached — a `src/` or `test/` file in the change's diff",
+      "evidence": "`git diff --name-only 8acbd40..a9e40ba` returns 18 paths, all under orbit/changes/rc04d-override-vocabulary/; the `^(src|test)/` filter returns nothing. `git status --porcelain` is empty, so there is no uncommitted breach either. `npm test`: 98 files, 2238 tests passed, no test file edited."
+    },
+    {
+      "pass": "2",
+      "title": "The ownership pointer is incomplete — some third command can carry the override record",
+      "evidence": "Traced to the engine rather than reasoned. src/core/emit-composition.ts's COMMANDS table admits gate_overridden in payloadFields for exactly two commands, apply (line 74) and archive (line 183); every other command's list omits it and the write gate rejects unlisted payload keys. schemas/spec-driven/schema.yaml:171-197 declares exactly two reviewed gates — review-proposal (before: apply) and review-system (before: archive) — so no third phase can fire the inflection prompt. /orbit:bulk-archive is explicitly excluded from emitting by orbit-run-summary-emit's Emit-scope requirement, and its body fires only the fingerprint-divergence prompt. Both named owners check out: apply shape at orbit-run-summary-emit:324,359, archive shape at orbit-archive-modifications:111,156, and the cited precedent at orbit-run-summary-emit:567 is the consent field pointing the archive half at orbit-archive-modifications verbatim."
+    },
+    {
+      "pass": "6",
+      "title": "The interim state (specs de-named, bodies still naming the field) trips a fidelity, lint, or drift check",
+      "evidence": "Re-measured independently. `grep -c \"orbit/specs\" test/core/templates/orbit-content-fidelity.test.ts` returns 0; the only test files referencing orbit/specs at all are source-lint.test.ts and sources-registry.test.ts, both of which count capabilities rather than read requirement prose. Audit-drift Category 1's declared inputs (src/core/templates/workflows/audit-drift.ts:198) are archived deltas' RENAMED FROM / REMOVED declarations against orbit/specs/*, CLAUDE.md, orbit/project.md and root *_convention.md — no workflow body is an input to any category. `orbit validate rc04d-override-vocabulary --strict` passes; `orbit validate --sources` passes with stages=22 / rulings=12 / capabilities=21 / schema-version=4 all matching their markers in CLAUDE.md."
+    },
+    {
+      "pass": "6",
+      "title": "rc04c's charter `Touches:` line is stale and contradicts its own scope paragraph",
+      "evidence": "Real, and already owned: orbit/architecture/clean-up-review-cycle.md:1571 is byte-identical to rc04d's own line at 1489, while the scope paragraph at 1556-1559 assigns rc04c orbit-emit-composition, orbit-run-summary-emit, orbit-archive-modifications; 1557 also still calls rc04d \"5 requirements, pure de-naming\". Both are recorded verbatim, with correct line numbers, in task 3.2 as RECOMMEND-not-perform, because stage declarations belong to /orbit:architect. Not re-raised as a finding."
+    }
+  ],
+  "commentary": "The mechanical half of this stage is the strongest part of it, and it survived the hardest instrument I could point at it. I went after scenario preservation first and independently — heading-split both trees, set-compared titles per requirement, then unified-diffed every requirement body line by line, and separately checked the fence hazard the stage's own task 2.5 warns about before trusting the splitter. The deltas are exactly as narrow as advertised: six changed lines, 27 scenarios preserved in order, fingerprints verified, suite green, and not one byte under src/ or test/ anywhere in the history or the working tree. The unusual shape is genuinely the point rather than an oversight, and exit (2) does the job it was written to do.\n\nThe defects cluster where judgement lives, not where mechanism lives — and specifically at the SEAM between the shipped artifact and the records that are supposed to explain it. The ownership move at site 2 is the stage's one substantive edit and it is correct: I traced both named owners to their actual requirement text, walked the engine's payload table and the schema's gate declarations to confirm no third command can carry the record, and confirmed the cited precedent one requirement away is real and says what it is claimed to say. But the ARGUMENT recorded for it contains a false clause about the target capability's scope, and that capability is the one the sibling stage must edit next. The same pattern repeats at the other end: site 4a's shipped text is better than the text the stage ratified for it, and nothing in the change says so — the walk record for the finding that caused the edit is empty, the source table still carries the superseded row, the design still calls it a plain substitution, and the checkbox that claims to confirm it against that row is checked. A stage whose whole mechanism is \"transcribe the table rather than paraphrase\" cannot afford an untracked improvement to the table.\n\nRisk texture: nothing here can break a build, and the interim state really is invisible to every instrument in the repo — I re-ran that measurement rather than accepting it. The exposure is entirely forward. Three of the four things I found are inputs the sibling stage is explicitly told to read: a red-pin inventory that undercounts by at least four test sites because the measurement behind it answered a narrower question than the claim it now supports, a rationale that will mislead about which capability governs the archive emit, and a de-naming table whose pr-lifecycle row no longer matches what shipped. Each is cheap to fix now and expensive to discover mid-apply on a stage that has to touch three capabilities and three workflow bodies at once. I probed hardest at the two places the brief flagged as most likely wrong — scenario drops and the ownership pointer — and both held; the pressure that found anything came from asking, for every claim, which instrument actually measured it.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "6"
+  ],
+  "passes_skipped": [
+    "4 — orbit/lenses/perspectives.md absent",
+    "5 — orbit/lenses/critical-paths.md absent"
+  ],
+  "final_assessment": "0 critical, 3 warning, 1 suggestion.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc04d-override-vocabulary --from-file orbit/changes/rc04d-override-vocabulary/.orbit-runs/review-system-2026-09-22T02-25-46Z.json"
+}

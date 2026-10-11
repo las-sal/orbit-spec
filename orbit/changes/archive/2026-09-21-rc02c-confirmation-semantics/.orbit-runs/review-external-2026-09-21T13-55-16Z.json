@@ -1,0 +1,13 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-09-21T13:55:16Z",
+  "change": "rc02c-confirmation-semantics",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "mode": "system",
+  "prompt_path": "orbit/changes/rc02c-confirmation-semantics/.orbit-runs/external-prompt-system-2026-09-21T13-53-58Z.md",
+  "target": null,
+  "final_assessment": "External review prompt packaged for rc02c-confirmation-semantics (iter 1, mode system); awaiting findings. This is the EXTERNAL half of the review-system gate's blind-pair slot — the fresh half has not been spawned, and per R-crc-4 both members must be in flight on this tree before either is walked. The cycle context hands over ZERO open findings, so this handoff carries no anchor: the conflict rc03a records between orbit-review-external's cycle-context requirement and the blind-pair blindness requirement does not bite here, because both proposal passes were walked to zero and there is nothing outstanding to include. Handoff preflight satisfied at packaging time: clean tree, no unpushed commits, remote reachable.",
+  "awaiting_findings": true,
+  "next_recommended": "Paste orbit/changes/rc02c-confirmation-semantics/.orbit-runs/external-prompt-system-2026-09-21T13-53-58Z.md into the target AI, save the response as orbit/changes/rc02c-confirmation-semantics/.orbit-runs/external-system-<TS>.md, then /orbit:address-reviews rc02c-confirmation-semantics --from-file <path>"
+}

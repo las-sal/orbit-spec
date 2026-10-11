@@ -1,0 +1,25 @@
+{
+  "command": "explore",
+  "timestamp": "2026-10-04T15:07:41Z",
+  "change": "rc03c-verification-record",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "All five gaps and the remaining surfaces settled as twelve decisions (ten rules, each with an accounted Mechanism entry; two scope calls), no open questions. The walk set is engine-computed with the pass genre and the AI supplies only verdicts, checked COMPLETE over resolved entries (D-rc03c-1/2); landed means the edit holds, regressed covers every failure (D-rc03c-3); findings link through walk_entry to any walk entry, renamed from the charter's regresses (D-rc03c-4); W stays the table's unnarrowed set (D-rc03c-5); the sweep scope adds ripple_cascade.applied, correcting D-rc03-4's proxy, BOUNDED with a git-diff residual method (D-rc03c-6); genre function outside gates.ts, accepted-set mode resolution, render-time recompute (D-rc03c-7); render section outside the quarantine with two by-absence marks (D-rc03c-8); body branch (D-rc03c-9); exit (3) instrument stated up front with an UNMEASURED outcome (D-rc03c-10); no status field (D-rc03c-11); three capabilities at the ceiling (D-rc03c-12). Ready for propose.",
+  "decisions_captured": 12,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 10,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [
+    {
+      "id": "D-rc03c-6",
+      "kind": "an edit the walk record does not list — a resolved entry written without `ripple_cascade` (126 of 986 resolved entries across the archive, 2026-10-04), an edit made outside the walk's log, or a cascade path recorded wrongly",
+      "method": "at the verification pass, compare the scope against `git diff --name-only` of the working tree and of the commits since the latest accepted independent pass's token, and name any file in the diff but outside the scope as a finding without `walk_entry` — it is then counted by the mark"
+    }
+  ],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose rc03c-verification-record — 10 live rules accounted, 1 bounded residual named (D-rc03c-6); formalize when you are ready (or /orbit:explore rc03c-verification-record to keep refining)"
+}

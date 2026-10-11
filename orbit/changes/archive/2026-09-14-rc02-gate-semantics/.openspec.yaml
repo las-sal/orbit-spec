@@ -1,0 +1,18 @@
+schema: spec-driven
+created: 2026-09-12
+schema_version: 3
+architecture:
+  doc: clean-up-review-cycle
+  stage: rc02-gate-semantics
+base_fingerprints:
+  orbit-engine-gates:
+    Gate declaration in schema YAML: sha256:d3528e9b069e5be568d48df14526907d2cf068b8e7499e2b3d3cc0ce91b05608
+    Reviewed-gate pass condition — the computed convergence criterion: sha256:dc2826f04dbcba9ec492a22552e871d4d0f7e67025066e12f87fd18fec960aad
+    spec-driven v1 gates and cadence: sha256:ac5d9951f2aa7b54d58b2dea506d6db84fdfdbe946372186d5e3fc69eef1e27c
+    Gate-aware status and instructions with position readout: sha256:0eb7b9eed26c4b42904f4aa3d1e6c2f628319ad4e6c8261502de634f2b3e4ed2
+    Single-voiced canonical-next computation: sha256:dec4edb678da570f75dcd14e84cc78c18cdb22d2607d7965968dd98c0df4e67b
+  orbit-run-summary-emit:
+    Reviewer-class field on review-cycle emits: sha256:9ede334e7efa1a5eab5096cb616657e861e7bf9449862ff9cdf7f1b240797df5
+    Verify pass recommendation: sha256:57dc5e6a75c20bf2fec8d752f4c6c874c84f26f833f9dd2f92703580915d3594
+  orbit-lifecycle-consent:
+    Consent-era metadata marker: sha256:144e9cf397281588e837113b2d5d7ea386277107b3ee82dd0fcc7c8099702dcf

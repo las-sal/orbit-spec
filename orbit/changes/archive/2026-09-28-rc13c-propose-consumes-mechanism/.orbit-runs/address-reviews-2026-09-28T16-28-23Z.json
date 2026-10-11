@@ -1,0 +1,172 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-28T16:28:23Z",
+  "change": "rc13c-propose-consumes-mechanism",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc13c-propose-consumes-mechanism/.orbit-runs/review-system-2026-09-28T15-23-42Z.json",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 4,
+    "suggestion": 3
+  },
+  "pushback_verification": "All 7 findings verified against the tree AFTER log 1 (address-reviews-2026-09-28T16-17-16Z.json); 2 stale-suppressed with content evidence — both row-1 findings converged with the external half's key-defect record-shape repair and were closed there; the remaining 5 still applied and were walked.",
+  "resolution_summary": {
+    "resolved": 5,
+    "stale_suppressed": 2,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Row 1 reports key defects 'at the structure check', but the Mechanism read that finds them runs after Step 0b's last write",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc13c-propose-consumes-mechanism/specs/orbit-propose-modifications/spec.md",
+      "line": 11,
+      "classification": "stale",
+      "action": "Already fixed in log 1 (address-reviews-2026-09-28T16-17-16Z.json, the external walk's key-defect record-shape resolution): row 1 now reads \"reported in chat at the Mechanism read (after Step 0b's last write, before generation)\" — measured present once in the delta and mirrored in the body.",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The position test's section slicer is fence-blind: 'Consume-mode flow' ends at the fenced `## Touchpoints` example, so the negative assertion never reads Step 0c.6 or Step 0d",
+      "marker_source": "internal-review",
+      "file": "test/core/templates/orbit-content-fidelity.test.ts",
+      "line": 188,
+      "classification": "decision_required",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Replace line 188 with a whole-body count: `expect(body.split('this exploration concluded on').length - 1).toBe(1)` — the Mode-detection positional assertions above it already prove where that one occurrence sits. No fence logic in the test."
+          },
+          {
+            "label": "B",
+            "body": "Make `sections()` fence-aware by running the body through `createFenceTracker` and splitting only on unfenced `## ` lines, keeping the negative assertion over the (now complete) consume-mode slice."
+          }
+        ],
+        "chosen": "A"
+      },
+      "action": "Option A ratified (Sal: \"a\"): the fence-blind section-slice negative assertion is replaced by a whole-body single-occurrence count of the refuse phrase; the Mode-detection positional checks above it prove where that occurrence sits; a comment records why the slice was retired.",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/templates/orbit-content-fidelity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The 'Mechanism section absent' scenario restates the section COUNT ('the six-section format') one paragraph under a requirement that says it states neither the list nor its count",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc13c-propose-consumes-mechanism/specs/orbit-propose-modifications/spec.md",
+      "line": 173,
+      "classification": "trivial_fix",
+      "action": "The Mechanism-absent scenario's WHEN now reads 'written before the Mechanism section joined the format' — no number.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13c-propose-consumes-mechanism/specs/orbit-propose-modifications/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Four living surfaces still describe this stage as a pending follow-on — the conventions baseline now asserts a fact about propose that this change made false",
+      "marker_source": "internal-review",
+      "file": "orbit/specs/orbit-conventions/spec.md",
+      "line": 1022,
+      "classification": "decision_required",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Descope lane (R-crc-6): add a second AT-ARCHIVE NOTE beside 4.5 naming the four sites by file:line and handing them to the retirement-class sweep rc13a's design already opened; record the stale baseline sentence as an accepted residual in the readiness entry. No delta on orbit-conventions."
+          },
+          {
+            "label": "B",
+            "body": "Repair lane: a one-sentence MODIFIED delta on orbit-conventions' `Concluded exploration outcome` requirement replacing the propose clause of the KNOWN paragraph with 'propose refuses a concluded staging directory (per orbit-propose-modifications)', declared under R-crc-9 as the second capability; the explore-body clauses still go to the sweep."
+          }
+        ],
+        "chosen": "A"
+      },
+      "action": "Option A ratified (Sal: \"a\", the descope lane): AT-ARCHIVE NOTE 4.6 added beside 4.5 naming FIVE sites by file:line (orbit-conventions 980/994/1022; explore.ts 610/657 — the walk found one more than the finding named) and handing them to the retirement-class sweep rc13a's design opened; a design Risks entry records the stale baseline sentence as an accepted residual for the archive's readiness record. No delta on orbit-conventions; one capability kept.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13c-propose-consumes-mechanism/tasks.md",
+          "orbit/changes/rc13c-propose-consumes-mechanism/design.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/specs/orbit-conventions/spec.md",
+            "reason": "baseline spec; deliberately NOT deltaed — descoped to the retirement-class sweep per the ratified option"
+          },
+          {
+            "path": "src/core/templates/workflows/explore.ts",
+            "reason": "outside this change's capability (orbit-explore-modifications); handed to the sweep by the at-archive note"
+          }
+        ]
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The pointer names the owner as `explore.md five-section format` (one code span); the requirement's title is `` `explore.md` five-section format ``",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc13c-propose-consumes-mechanism/specs/orbit-propose-modifications/spec.md",
+      "line": 164,
+      "classification": "trivial_fix",
+      "action": "The pointer now spells the owner's title as the owner does: `` `explore.md` five-section format ``.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13c-propose-consumes-mechanism/specs/orbit-propose-modifications/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The record's D-rc13c-3 row points at the wrong task for its test",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc13c-propose-consumes-mechanism/design.md",
+      "line": 135,
+      "classification": "trivial_fix",
+      "action": "The record's D-rc13c-3 row now points at task 2.4.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13c-propose-consumes-mechanism/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Row 1's owner-state cell reads 'any' although an orphan, by definition, has no owner",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc13c-propose-consumes-mechanism/specs/orbit-propose-modifications/spec.md",
+      "line": 11,
+      "classification": "stale",
+      "action": "Already fixed in log 1 (address-reviews-2026-09-28T16-17-16Z.json): row 1's owner cell now reads \"any, or none — tested FIRST\" — measured present once in the delta and mirrored in the body.",
+      "outcome": "stale"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Log 2 of 2 for the system blind pair (the fresh half, walked after the external half's log). 5 resolved, 2 stale against log 1, 0 deferred. Two decision-lane findings ratified in chat: the fence-blind test slicer replaced by a whole-body single-occurrence check (A), and the five living surfaces that still call this stage a pending follow-on DESCOPED to the retirement-class sweep by at-archive note 4.6 with the stale baseline sentence recorded as an accepted residual (A). Three wording fixes: the Mechanism-absent scenario no longer restates a count, the owner's title is spelled as the owner spells it, the record's D-rc13c-3 row points at 2.4. Strict validation green, fingerprints 5/5, template tests 217 green after the walk. Both halves of the pair are now walked; the tree since the external return is uncommitted (fresh emit, two logs, the walks' edits).",
+  "iteration": 5,
+  "next_recommended": "/orbit:review --as system rc13c-propose-consumes-mechanism"
+}

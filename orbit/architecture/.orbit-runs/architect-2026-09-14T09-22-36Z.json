@@ -1,0 +1,35 @@
+{
+  "command": "architect",
+  "timestamp": "2026-09-14T09:22:36Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "Two disciplines captured from rc02's sixth seam, both from evidence rather than theory, and both small. rc03 gains the rule that a walk resolving BY REMOVAL is confirmed by a VERIFICATION pass over the diff rather than by another review: the reviewed gate reads a pass's immutable CRITICAL count and cannot distinguish a fix-in-place from a removal, so only the genre split makes the distinction available — and rc02's own seam is the first instance, with two CRITICALs resolved by deleting the clause they lived in while the gate still asks for a fresh review. rc08 gains the walk-execution discipline the day exposed twice: an edit set is applied so a failure cannot leave it partial, and each edit is verified against the artifact before the log records it. The status log records R-crc-8's first application, in which the walk shrank the change for the first time and every size figure fell.",
+  "stages_touched": [
+    "rc03-review-genres",
+    "rc08-walk-completeness"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [],
+  "handoff": {
+    "boot_sequence": [
+      {
+        "path": "orbit/architecture/clean-up-review-cycle.md",
+        "why": "the live program: rulings R-crc-1 through R-crc-8, fourteen stages, and a status log whose last four entries carry this session's diagnosis"
+      },
+      {
+        "path": "orbit/changes/rc02-gate-semantics/",
+        "why": "the in-flight change after six proposal passes and six walks, scope narrowed twice; clause (c) removed to rc02c"
+      },
+      {
+        "path": "orbit/changes/rc02-gate-semantics/tasks.md",
+        "why": "the 18 tasks apply will execute, each demanding its own tests — the instrument the cadence hands off to"
+      }
+    ],
+    "next_command": "/orbit:apply rc02-gate-semantics",
+    "model_hint": "a reasoning-heavy model; the work is engine changes to one capability with a test per rule",
+    "seam": "the review-proposal gate is unpassed because the sixth pass carried 2 CRITICAL, both of which were resolved by REMOVING the clause they described rather than by fixing it — the gate reads the pass's immutable count and cannot see that; R-crc-8 says this is where the cadence stops, and apply is a user-invoked decision at an inflection prompt"
+  },
+  "next_recommended": "/orbit:apply rc02-gate-semantics"
+}

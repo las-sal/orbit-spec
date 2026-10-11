@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-10-07T01:50:48Z",
+  "change": "rc17c-short-review-next",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Three rules with Mechanism entries, all SOURCED: the short next (D-rc17c-1), prior-generation acceptance by value (D-rc17c-2), and executed canonical examples (D-rc17c-7). Sal ruled the stale orbit-conventions examples fixed now (D-rc17c-6): a fourth capability, declared one over R-crc-1's ceiling; all three examples are stale (Case 3). No open questions.",
+  "decisions_captured": 7,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 3,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose rc17c-short-review-next — 3 live rules accounted; formalize when you are ready (or /orbit:explore rc17c-short-review-next to keep refining)"
+}

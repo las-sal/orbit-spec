@@ -1,0 +1,174 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-08-26T13:57:52Z",
+  "change": "d6-pr-lifecycle",
+  "kind": "editorial",
+  "model": "claude-opus-5",
+  "source": "from-file",
+  "source_path": "orbit/changes/d6-pr-lifecycle/.orbit-runs/external-proposal-2026-08-25T23-21-45Z.md",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-5 Codex",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 1,
+    "warning": 4,
+    "suggestion": 2
+  },
+  "pushback_verification": "All 7 verified against current artifact content before disposition; none suppressed as stale. The CRITICAL was confirmed by reading both halves of the contradiction in place — the fallback's absence trigger and the scope rule's unattached-equals-pre-capability clause — and by confirming `new`/`continue` produce no attachment. The branch-reuse warning was confirmed against the choreography's stated ordering and the compatibility definition; the reviewer had already reproduced the git refusal in a disposable repository.",
+  "resolution_summary": {
+    "resolved": 7,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "An absent attachment both triggers discovery and prohibits the tail",
+      "marker_source": "external",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-archive-modifications/spec.md",
+      "classification": "trivial_fix",
+      "action": "A WHOLLY ABSENT `pr_attachment` now TERMINATES the PR path before any remote or `gh` work; the fallback query serves ONE narrow case — an attachment that EXISTS but lacks `url` (branch work succeeded, PR creation failed). This closes a contradiction created by this cycle's own attachment-authority ratification: absence meant unattached-and-pre-capability in the scope rule while simultaneously triggering discovery in the rule above it. The concrete failure is named in the requirement — `/orbit:new` + `/orbit:continue` never produce an attachment, so a change started that way whose branch name matched a hand-opened PR would have been committed, pushed, rewritten, and flipped after a consent preview that omitted the outward-writes line precisely because the change is unattached. Scenario + task 4.2.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "`pr: never` has incompatible output contracts",
+      "marker_source": "external",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-pr-lifecycle/spec.md",
+      "classification": "trivial_fix",
+      "action": "Defined resolution order as CONFIG FIRST, AVAILABILITY SECOND. Absent/`never`/inert config returns IMMEDIATELY — probing nothing (no remote enumeration, no `gh`) and emitting no availability note, so `never`'s promise of byte-identical silence holds in a repo that also lacks a remote. Availability resolution and its degradation note run ONLY once a recognized ACTIVE mode is selected. Also stated that inert-value and invalid-shape warnings are independent of availability: they name a config problem, need no probe, and are never suppressed or duplicated by a degradation note that will not run.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Compatible per-proposal branches can be impossible to reuse at the specified seam",
+      "marker_source": "external",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-propose-modifications/spec.md",
+      "classification": "decision_required",
+      "action": "Ratified option A — the choreography is now THREE ORDERED PHASES with branch selection FIRST: (1) resolve, validate, and SWITCH to the target branch, local-only, before any artifact exists; (2) generate and validate on that branch; (3) outward writes only after validation succeeds. The old ordering mandated an impossible step — a compatible per-proposal branch is DEFINED as carrying this change's artifact commits, so it already tracks the paths generation had just written as untracked files, and `git switch` refuses rather than overwrite them (the reviewer reproduced this in a disposable repo). Reachable by an ordinary sequence: propose, degrade for want of `gh`, fix, propose again. The guarantee that nothing leaves the machine before validation is preserved exactly, since phase 1 is local-only; a validation failure now leaves the user on the target branch and the note NAMES it with `git switch <default>` as recovery. Preconditions restated as phase-1 (a skip writes nothing and the change proceeds unattached); two scenarios and two harness cases added.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "resolution": "A — select and switch to the branch before generating artifacts; phase 1 is local-only",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Select and switch to the branch before generating artifacts."
+          },
+          {
+            "label": "B",
+            "body": "Transport the artifacts across the switch via stash/restore."
+          },
+          {
+            "label": "C",
+            "body": "Never reuse a per-proposal branch; treat an existing one as a collision."
+          }
+        ],
+        "chosen": "A"
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "Archive failures strand a non-rerunnable tail without completion commands",
+      "marker_source": "external",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-archive-modifications/spec.md",
+      "classification": "trivial_fix",
+      "action": "Brought EVERY tail step inside the degradation contract (staging and commit included, not only push/`gh`) and enumerated the four partial states with their repository-qualified completing command and consequence: staging/commit failed (`git add`+`commit`; writes present but uncommitted, PR untouched), push failed (`git push <resolved-remote> <branch>`; the PR lacks its own archive commit, which is why the ordering invariant already forbids the flip there), description rewrite failed (`gh pr edit <url> --body-file <path>`; PR current in code, stale intent narrative), flip failed (`gh pr ready --repo <owner>/<repo> <number>`; complete and accurate but DRAFT — a safe resting state). Stated explicitly that `/orbit:archive` is NOT a retry path, since the change has already moved and emitted.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Arc-done lookup validates a recorded URL but defines no invalid-URL branch",
+      "marker_source": "external",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-pr-lifecycle/spec.md",
+      "classification": "decision_required",
+      "action": "Ratified option A. Defined THREE validation outcomes under one invariant — the readout is NEVER SUPPRESSED, because arc-done is surfaced once per program and a silent readout is indistinguishable from an unfinished program: valid → surface; query FAILED → surface with `state unverified`; positively INVALID (closed, merged, retargeted, foreign repository) → FALL THROUGH to the constrained `--head <program-branch>` query and surface what it finds, or state that no open replacement exists. Recorded why this is deliberately the OPPOSITE of the archive tail's answered-not-retried rule: the seams differ in RISK, not vocabulary — the tail writes, so a second chance there could rewrite and flip the wrong PR, while this readout only reports and the worst a fall-through can do is name a better URL.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "resolution": "A — fall through to the constrained query on positive invalidity; never suppress the readout",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Fall through to the constrained query, and always surface."
+          },
+          {
+            "label": "B",
+            "body": "Mirror the tail: answered, not missing — report the invalid record without hunting."
+          },
+          {
+            "label": "C",
+            "body": "Scan older URL-bearing records, then query."
+          }
+        ],
+        "chosen": "A"
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Attachment state is not permanently draft by construction",
+      "marker_source": "external",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-pr-lifecycle/spec.md",
+      "classification": "trivial_fix",
+      "action": "Corrected the premise while keeping the conclusion: `pr_attachment.state` is a POINT-IN-TIME OBSERVATION recorded at the attaching invocation and never updated, so it goes stale whatever its initial value — usually `\"draft\"`, but legitimately `\"ready\"` for an ADOPTED program PR, which is why the schema admits both. The consequence is now stated symmetrically: a readout gated on the recorded value would either nag forever after the human flips READY, or fall silent against a PR since reopened as a draft.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The no-CI probe has no specified Git ref",
+      "marker_source": "external",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-propose-modifications/spec.md",
+      "classification": "trivial_fix",
+      "action": "Bound the check to ONE ref — the resolved remote's default-branch ref, the same ref branch creation uses and one the existence check has already fetched — never the pre-switch worktree and never the target branch. Those three can disagree (a long-lived program branch may carry workflows the base lacks, or the reverse), and the note describes the CI context the NEW PR INHERITS, which is the base's.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "7 of 7 resolved; 0 unresolved markers in scope. The reviewer's diagnosis — authority at NEGATIVE and PARTIAL states — held: the happy paths carried strong identity constraints while 'no attachment', 'invalid recorded URL', and 'some tail steps already completed' each still admitted materially different outward decisions. Two decision-lane findings ratified in chat. The CRITICAL was self-inflicted by this cycle's own attachment-authority ratification and would have allowed an unpreviewed push on an explicitly out-of-scope path. The branch-reuse finding identified a specified path that could not execute at all, resolved by reordering propose into three phases with local-only selection first — the largest structural change of this cycle, and one that strengthens rather than weakens the nothing-leaves-the-machine-before-validation guarantee. Capabilities 7; tasks 31; fingerprints 4/4 verified; strict validation passes; 1918 tests green.",
+  "iteration": 7,
+  "next_recommended": "/orbit:review --as proposal --fresh d6-pr-lifecycle"
+}

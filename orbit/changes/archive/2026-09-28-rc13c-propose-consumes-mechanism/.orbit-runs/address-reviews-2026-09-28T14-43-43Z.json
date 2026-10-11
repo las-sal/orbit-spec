@@ -1,0 +1,193 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-28T14:43:43Z",
+  "change": "rc13c-propose-consumes-mechanism",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc13c-propose-consumes-mechanism/.orbit-runs/review-proposal-2026-09-28T14-40-33Z.json",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 4,
+    "suggestion": 6
+  },
+  "pushback_verification": "All 10 findings verified against the current artifacts before any edit; 0 stale. The duplicate-ID claim was re-checked against the parser: a second entry under a used ID is a key defect excluded from rules_total and never in rules_open, so the previous definition of ACCOUNTED did admit it.",
+  "resolution_summary": {
+    "resolved": 10,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "A duplicate-ID second entry is \"not in rules_open\" and therefore ACCOUNTED under the partition's own definition — rows 3/4 would carry it before row 5 is reached",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-propose-modifications/spec.md",
+      "line": 7,
+      "classification": "trivial_fix",
+      "action": "`key_defects` is now row 1, tested FIRST; ACCOUNTED is redefined as 'counted in `rules_total` AND not in `rules_open`' so a duplicate-ID second entry never reaches a carrier row; rows renumbered and the three scenarios' row references updated; a new scenario pins the duplicate case; design D-rc13c-4 amended (dated, naming the in-context walk) and task 3.3 states the row order and the definition.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13c-propose-consumes-mechanism/specs/orbit-propose-modifications/spec.md",
+          "orbit/changes/rc13c-propose-consumes-mechanism/design.md",
+          "orbit/changes/rc13c-propose-consumes-mechanism/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The pre-move grep checks \"every BOUNDED entry\" — but a BOUNDED entry on a non-live owner is deliberately NOT carried (row 1), so the check fails on exactly the history the table permits",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-propose-modifications/spec.md",
+      "line": 23,
+      "classification": "trivial_fix",
+      "action": "The record paragraph's pre-move grep is scoped to entries the table sent to row 5 (a live, accounted rule — never a history row); task 3.3's grep sentence mirrors it.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13c-propose-consumes-mechanism/specs/orbit-propose-modifications/spec.md",
+          "orbit/changes/rc13c-propose-consumes-mechanism/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The precedence scenario's \"Regenerate from explore → concluded check → refuse\" path has no task: 1.1 adds the header read to the resolve-mode sub-step only",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 3,
+      "classification": "trivial_fix",
+      "action": "Task 1.1 adds one sentence to sub-step 2's 'Regenerate from explore' option ('then the resolve-mode check runs; a concluded staging file is refused here too'); task 1.3's position assertion also checks that sentence sits inside sub-step 2.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13c-propose-consumes-mechanism/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The record's D-rc13c-4 row says \"the decision table verbatim\", but the delta carries the partition rewritten at the external walk, not the exploration's table",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 133,
+      "classification": "trivial_fix",
+      "action": "Record row reworded: 'the decision table as REVISED at the external and in-context walks, a normative TABLE shape; the exploration's own table was superseded by the partition'; token column reads 'DERIVED (derivation amended twice)'.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13c-propose-consumes-mechanism/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Risks [Size] still counts \"eight decisions (seven rules)\" after Context was updated to six live rules",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 168,
+      "classification": "trivial_fix",
+      "action": "Risks [Size] now reads 'eight decisions at promotion; six live rules after two walks (D-rc13c-2 revised, D-rc13c-4 amended, D-rc13c-8 superseded)'.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13c-propose-consumes-mechanism/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Proposal Impact / Templates carries a garbled fragment from the walk edit: \"Step 0b (the Mechanism read after the last file write), (the entry format)\"",
+      "marker_source": "internal-review",
+      "file": "proposal.md",
+      "line": 88,
+      "classification": "trivial_fix",
+      "action": "Fragment rewritten as 'Step 0b (the entry format; the Mechanism read after the last file write)'.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13c-propose-consumes-mechanism/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Proposal Impact / Tests names only the section-list parity assertion; task 2.4 now also holds the decision table and shape list byte-equal to the ADDED requirement",
+      "marker_source": "internal-review",
+      "file": "proposal.md",
+      "line": 93,
+      "classification": "trivial_fix",
+      "action": "Tests bullet now names the decision-table and four-shape parity beside the section-list parity, through the same single-active-owner lookup.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13c-propose-consumes-mechanism/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Task 2.2 runs \"after Step 0b's last write\" but sits under the section headed \"Step 0a — … the Mechanism read\"",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 6,
+      "classification": "trivial_fix",
+      "action": "Section-2 heading renamed 'Steps 0a–0b — six sections by pointer, the mirror, the Mechanism read after the last file write'.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13c-propose-consumes-mechanism/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Two consecutive blank lines after the partition table in the delta",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-propose-modifications/spec.md",
+      "line": 17,
+      "classification": "trivial_fix",
+      "action": "Collapsed by the table rewrite; measured zero double-blank lines in the delta afterwards.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13c-propose-consumes-mechanism/specs/orbit-propose-modifications/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The refuse text names \"the live CONCLUDED entry's Re-entry: slot\" without saying what happens when two entries carry a live slot",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-propose-modifications/spec.md",
+      "line": 64,
+      "classification": "trivial_fix",
+      "action": "The refuse text now reads '…first in file order when two entries carry one, as the readout resolves it; `(no Re-entry: slot found)` when none'.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13c-propose-consumes-mechanism/specs/orbit-propose-modifications/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "10 of 10 resolved, 0 stale, 0 deferred; all obvious-fix lane (Sal: 'walk all'), no decision fork. The one substantive repair: the partition's `key_defects` row moves to FIRST and ACCOUNTED becomes 'counted in rules_total AND not in rules_open', closing the duplicate-ID hole the external-walk repair left; a scenario pins it. The pre-move grep is scoped to the BOUNDED carrier row; the Regenerate→refuse branch has a task and a position check; the record's D-rc13c-4 row says what the delta actually carries; the Size figure, the garbled fragment, the Tests bullet, the section heading, the double blank and the two-live-slots wording are all corrected. Strict validation green, fingerprints 5/5, exit (2) greps 1/1, exit (3) zero occurrences of the header row or `ask nothing else`, 16 tasks, 32 scenarios. explore.md untouched by rule.",
+  "iteration": 3,
+  "next_recommended": "/orbit:apply rc13c-propose-consumes-mechanism — user-invoked"
+}

@@ -1,0 +1,133 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-11T15:54:54Z",
+  "change": "d6-pr-lifecycle",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "source": "from-file",
+  "source_path": "orbit/changes/d6-pr-lifecycle/.orbit-runs/external-system-2026-09-11T15-27-09Z.md",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-5 Codex",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 1,
+    "warning": 5,
+    "suggestion": 0
+  },
+  "pushback_verification": "All 6 verified against current state before disposition (during the evaluation turn and at walk time); none stale. The selector-less `gh pr view` was reproduced against the real CLI and the corrected form checked the same way; the recovery bullet, the requirement prose and scenario, task 3.1a, the full onboarding sentence, the diff call's discarded status, and the harness's `absent` handling were each read at their cited lines.",
+  "resolution_summary": {
+    "resolved": 6,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "The archive state-observation command lacks the selector required with --repo",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/pr-choreography.ts",
+      "line": 305,
+      "classification": "trivial_fix",
+      "action": "Reproduced (`argument required when using the --repo flag`). Tail step 4 now reads `gh pr view --repo <owner>/<repo> <url> --json isDraft`, addressing the PR by the URL step 2 validated or step 3 discovered, with the selector named as REQUIRED and the observation stated as independent of the checkout branch; the corrected form is accepted by the real CLI (it reaches GitHub). The fidelity sweep gained a selector rule: every selector-taking `gh pr` verb (view/edit/ready/merge/close/reopen/checkout) must carry `<url>` or `<number>` after `--repo <owner>/<repo>` — `--repo` alone is no longer accepted as qualification. Archive and architect reference hashes re-pinned.",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/templates/orbit-content-fidelity.test.ts",
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The archive spec's recovery command still bypasses commit isolation",
+      "marker_source": "external",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-archive-modifications/spec.md",
+      "line": 223,
+      "classification": "trivial_fix",
+      "action": "The failure-branch recovery bullet now prescribes `git add <paths> && git commit --only <paths>` and states why (a plain `git commit` in recovery would publish the whole index, defeating the ratified isolation on exactly the path a user follows by hand). The reference's own recovery bullet already carried `--only`; the spec now agrees. No scenario carried the old form (grep-verified).",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The normative repository-qualification rule still requires the rejected flag form",
+      "marker_source": "external",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-pr-lifecycle/spec.md",
+      "line": 150,
+      "classification": "trivial_fix",
+      "action": "Swept the WHOLE requirement, not the example: the prose now says qualification is IN THE GRAMMAR EACH COMMAND ACCEPTS (`--repo` on the `gh pr` verbs; positional on `gh repo view`, which has no `--repo` flag; selector-taking verbs additionally carry the PR's URL or number); the fork-checkout scenario says the same; task 3.1a reworded with a dated note that its universal-flag wording was the invalid grammar's last surviving statement. `grep 'on EVERY .gh. invocation'` now hits only the corrected sentence.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Onboarding teaches that stage archive flips program PRs READY",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/onboard.ts",
+      "line": 99,
+      "classification": "trivial_fix",
+      "action": "The archive teach-in now splits PER GRANULARITY: per-change PR — rewrite the description and flip READY; program PR — append this stage's entry and flip NOTHING, stage archives never flip the program PR, its READY flip is the human's act at arc-done where the architect readout surfaces it. A fidelity assertion pins the split on the onboarding body and asserts the old unconditional sentence is gone. Onboard hashes re-pinned.",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/templates/orbit-content-fidelity.test.ts",
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The phase-1 transcription treats a failed compatibility diff as an empty compatible diff",
+      "marker_source": "external",
+      "file": "test/integration/pr-lifecycle/phase1.ts",
+      "line": 182,
+      "classification": "trivial_fix",
+      "action": "The per-proposal path test now requires the diff to RESOLVE: a non-zero `git diff <default>...<tip>` exit (no merge base — an unrelated root) is a named collision skip, never an empty compatible diff. The reference's compatibility bullet states the failed-observation rule (a failed observation is a skip, not a pass). Regression case: a same-named orphan branch with a foreign file skips with `no merge base` in the note, HEAD unmoved on main, and the foreign file never exposed.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/templates/workflows/pr-choreography.ts",
+          "test/integration/pr-lifecycle/phase1.test.ts",
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The phase-1 transcription can create a branch with gh genuinely absent",
+      "marker_source": "external",
+      "file": "test/integration/pr-lifecycle/phase1.ts",
+      "line": 110,
+      "classification": "trivial_fix",
+      "action": "The reference's resolution section gained `gh availability — checked FIRST, before any branch work`: an absent `gh` takes the degraded path with no branch created, switched, or fast-forwarded, and a missing executable is a distinct fact from an installed CLI whose query fails — the symbolic-ref fallback is now stated as ONLY for the latter. The transcription probes `gh --version` on the repo's PATH before default-branch resolution and skips on ENOENT or non-zero. The harness's `gh: 'absent'` now builds a PATH of the (empty) stub dir plus `/usr/bin:/bin` — git present, no host `gh` — via a new `envPath` field every command honors. Regression case: absent gh + a resolvable remote HEAD → skip naming gh, HEAD on main, no branch created.",
+      "ripple_cascade": {
+        "applied": [
+          "test/integration/pr-lifecycle/harness.ts",
+          "test/integration/pr-lifecycle/phase1.test.ts",
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "6 of 6 resolved; 0 unresolved markers in scope. The CRITICAL — the tail's state observation lacked the PR selector the real CLI requires with `--repo` — is closed with the validated URL and, at the instrument, a selector rule in the fidelity sweep so `--repo` alone no longer passes as qualification. The three ripple misses from the iteration-3 walk are closed (the archive recovery recipe isolated; the requirement prose, scenario, and task swept to command-specific grammar; the failed compatibility diff a named collision). Onboarding now teaches the per-granularity tail with a fidelity pin. The transcription gates on gh availability before any branch work and the harness's absent mode is genuinely absent. 2008 -> 2011 tests green across 91 files; six parity hash lines re-pinned across five templates; local surface refreshed and verified; strict-valid; fingerprints 5/5. Working tree left uncommitted.",
+  "iteration": 15,
+  "next_recommended": "/orbit:review --as system --reviewer external d6-pr-lifecycle"
+}

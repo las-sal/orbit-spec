@@ -1,0 +1,118 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-05T00:40:52Z",
+  "change": "rc06b-map-readers",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc06b-map-readers/.orbit-runs/external-system-2026-10-05T00-30-25Z.md",
+  "source_command": "review",
+  "source_token": "2026-10-05T00-30-25Z",
+  "latest_apply_token": "2026-10-05T00-22-45Z",
+  "tie_break_rationale": null,
+  "external_reviewer": "GPT-6 Codex",
+  "walk_mode": "per_finding",
+  "walk_mode_source": null,
+  "walk_mode_shifted_at_finding": null,
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 1
+  },
+  "pushback_verification": "Both verified against current state; W1 held wider than stated (verify ran no orbit validate at all); none stale.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Simultaneous verify failures do not follow the stated precedence",
+      "marker_source": "external",
+      "file": "src/core/emit-composition.ts",
+      "line": 1630,
+      "classification": "decision_required",
+      "ratified_via": "chat",
+      "resolution": "A — say what is true and make the body do it: verify CLASSIFIES (an `orbit validate <name>` run, then the first mode by precedence validator-error > tasks-incomplete > scenarios-fail, in its `# Orbit additions`); the emit layer composes from the mode it is handed and classifies nothing.",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Revise the contract so verify classifies and the emit composes; verify additions gain the validate + precedence step."
+          },
+          {
+            "label": "B",
+            "body": "Engine enforces precedence from raw signals — new mechanism, routed to explore; carry the false requirement as a residual."
+          },
+          {
+            "label": "C",
+            "body": "Descope only the declaration: ledger the precedence scenario; keep the contract text."
+          }
+        ],
+        "chosen": "A"
+      },
+      "action": "orbit-run-summary-emit delta: the wrapper bullet and Verify fail-mode recommendations now say verify classifies and the emit composes; the precedence scenario's THEN says verify hands `fail_mode: \"validator-error\"`; verify's additions gained `## Fail-mode classification` (run orbit validate, first mode by precedence) and the emit paragraph stopped restating the precedence; the precedence text test now asserts that step; verify's two hashes re-pinned as a second recorded act; proposal capability line names it",
+      "evidence": "read emit-composition.ts:1629-1640 — next_recommended is composed from payload fail_mode alone; the tasks-incomplete branch never reads validator_message; and verify's body ran no `orbit validate` anywhere (grep) — mode ③ had no producer",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc06b-map-readers/specs/orbit-run-summary-emit/spec.md",
+          "src/core/templates/workflows/verify-change.ts",
+          "test/core/templates/verify-scenario-map.test.ts",
+          "test/core/templates/skill-templates-parity.test.ts",
+          "orbit/changes/rc06b-map-readers/proposal.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/specs/orbit-run-summary-emit/spec.md",
+            "reason": "baseline spec; add a delta to your current change's specs/<capability>/spec.md to capture this ripple"
+          }
+        ]
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The upstream-verbatim declaration checks only the additions",
+      "marker_source": "external",
+      "file": "test/core/templates/verify-scenario-map.test.ts",
+      "line": 254,
+      "classification": "decision_required",
+      "ratified_via": "chat",
+      "resolution": "A — a second declaration on the same scenario: the text tag keeps the additions half; a ledger `observed` entry cites the fresh system pass's independent upstream/v1.3.1 diff for the unchanged-body half.",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Add a ledger observed entry for the unchanged-body half beside the text tag."
+          },
+          {
+            "label": "B",
+            "body": "A git-backed test comparing against upstream/v1.3.1, skipping without the tag."
+          }
+        ],
+        "chosen": "A"
+      },
+      "action": "orbit/scenario-ledger.yaml gained an `observed` entry for `Upstream-verbatim — kept unchanged` citing review-system-2026-10-05T00-27-56Z.json; the map lists text and observed separately for it",
+      "evidence": "read verify-scenario-map.test.ts:254 — the test inspects only the additions section; no test in the repo reads git history (grep)",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/scenario-ledger.yaml"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": null,
+  "final_assessment": "Two of two resolved, both by Sal's A: the verify fail-mode contract now says what the engine does — verify classifies after an orbit validate run, the emit composes from the mode it is handed — with verify's additions carrying the step; the upstream-verbatim scenario's unchanged-body half is declared as a dated observation beside its text test. Map 36/36 declared, validate --strict clean, 2712 tests green.",
+  "iteration": 5,
+  "next_recommended": "/orbit:review --as system rc06b-map-readers"
+}

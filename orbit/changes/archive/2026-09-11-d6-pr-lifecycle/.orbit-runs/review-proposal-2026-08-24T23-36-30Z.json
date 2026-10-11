@@ -1,0 +1,155 @@
+{
+  "command": "review",
+  "timestamp": "2026-08-24T23:36:30Z",
+  "change": "d6-pr-lifecycle",
+  "kind": "editorial",
+  "model": "claude-opus-5",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": [
+    "--fresh"
+  ],
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 5,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 1,
+      "warning": 3,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "severity": "CRITICAL",
+      "dimension": "correctness",
+      "title": "Zero-engine-git requirement still names pr_url/pr_state on the propose emit — retired by the pr_attachment record",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-pr-lifecycle/spec.md",
+      "line": 245,
+      "recommendation": "This sentence declares the engine's total surface as \"the `pr:` config reader and the optional `pr_url`/`pr_state` narrative payload fields on the propose/archive emits\". The propose side was superseded within this change's own cadence: `orbit-run-summary-emit`'s attachment requirement makes propose AND ff carry the structured `pr_attachment` object, and task 2.1 requires `pr_url` to be REJECTED as an unknown key on propose at the fail-loud write gate. Two implementers reading the two requirements build opposite payload tables. Rewrite the clause to: \"the `pr:` config reader, the optional structured `pr_attachment` object on the propose and ff emit payloads, and the optional `pr_url`/`pr_state` pass-through fields on the archive emit (per `orbit-emit-composition`)\"."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "title": "Archive tail never states it must be ON the attachment's branch — a HEAD mismatch pushes the archive commit elsewhere",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-archive-modifications/spec.md",
+      "line": 14,
+      "recommendation": "The tail says `branch` \"names what to commit to\" but specifies no precondition that HEAD equals it, no checkout step, and no failure path when it does not. If the user archives from the default branch, the enumerated archive writes are committed and pushed there — the ordering invariant is still satisfied while the PR never receives its own archive commit, and a push to the default branch is the most consequential outward write in the change. Add an explicit tail precondition mirroring the propose side: verify HEAD == `pr_attachment.branch` before staging; if it differs, SKIP the tail with a one-line note naming both branches (never auto-checkout across a dirty tree), and state that the local branch missing entirely is the same skip."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "title": "\"Open the program PR if it does not yet exist\" specifies no existence check — Shape A's one-PR rule is unenforced at propose",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-propose-modifications/spec.md",
+      "line": 14,
+      "recommendation": "The archive tail received a four-axis constrained discovery query precisely because a branch does not identify a PR; the propose side's birth condition has no such rule, so implementers will variously (a) scan trails for a `pr_attachment` with a matching `doc`, (b) run `gh pr list`, or (c) call `gh pr create` and treat the duplicate error as success — with a second program PR the observable failure. State the check normatively: before opening a program PR, resolve existence by the SAME constrained `gh pr list` query the tail uses (head = program branch, state open, base = resolved default branch), treating a query error as degradation-skip rather than \"absent\"; exactly one survivor = adopt it into the emit's `pr_attachment` without creating; more than one = skip with the ambiguity note."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "Tail scope is attachment-driven and config-driven at once; an attached change under a later `pr: never` is undefined",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-archive-modifications/spec.md",
+      "line": 60,
+      "recommendation": "One sentence scopes the tail to \"PR-ATTACHED changes\" and the next says \"with `pr: never` ... the archive flow ends exactly as pre-capability\". A change proposed under `per-proposal` and archived after the key was set to `never` satisfies both antecedents with opposite outcomes, and the reverse is only covered for the `new`/`continue` path. Pick one authority explicitly and say so in the SCOPE sentence.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Attachment wins: the tail runs whenever a `pr_attachment` resolves, regardless of the current `pr:` value — config is consulted only at the attaching invocation (the same freeze-at-commitment discipline the citation already gets), and the SCOPE sentence is reworded to \"unattached changes — including every change proposed under `pr: never` — end exactly as pre-capability\"."
+        },
+        {
+          "label": "B",
+          "body": "Config wins: `pr: never` at archive suppresses the tail even for an attached change, and the flow emits a one-line note naming the PR that is being left DRAFT so the dangling outward artifact is never silent."
+        }
+      ]
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "title": "Arc-done readout's stop condition (\"until the PR is no longer draft\") names no source for the PR's current state",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-pr-lifecycle/spec.md",
+      "line": 138,
+      "recommendation": "The readout is required to be idempotent and to re-appear \"until the PR is no longer draft\", but the only state the located record carries is `pr_attachment.state`, frozen at propose and therefore permanently `\"draft\"` by construction. An implementer reading the frozen record produces a readout that never stops nagging after the human flips READY; one calling `gh pr view --json isDraft` produces the specified behavior. State that the architect readout resolves the CURRENT draft state with a read-only `gh` query against the located PR URL (explicitly permitted — the body performs no outward WRITE), and that a failed or unavailable query degrades to surfacing the readout with a one-line \"state unverified\" note rather than suppressing it."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "title": "Archive tail consumes \"the RESOLVED REMOTE\" and \"the RESOLVED BASE\" with no resolution rule in its own scope",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-archive-modifications/spec.md",
+      "line": 18,
+      "recommendation": "The four-axis discovery constraint depends on a resolved remote and resolved default branch, but the only place those are defined is `orbit-propose-modifications`' branch preconditions, whose text is scoped to the propose choreography. At archive an implementer will most likely fall back to `gh`'s implicit default, which silently disagrees with propose in exactly the multi-remote/fork case the `--repo` constraint exists to defend. Hoist the remote- and default-branch-resolution algorithm into a shared requirement in `orbit-pr-lifecycle` and have BOTH seams cite it, or add one sentence to the tail: \"remote and default branch are resolved by the same algorithm as `orbit-propose-modifications`' branch preconditions; an unresolvable remote or base is a degradation skip, not a zero result.\""
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "title": "Propose's commit scope is unenumerated and its dirty-tree guard covers only TRACKED modifications",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-propose-modifications/spec.md",
+      "line": 89,
+      "recommendation": "The choreography says only \"commit the generated artifacts (and moved staging material)\", and the precondition skips on \"any tracked modification outside the change's own generated artifacts and moved staging material\" — untracked paths are outside both. An implementer reaching for `git add -A` (the obvious way to capture newly-created artifacts) sweeps unrelated untracked files into the first commit of a PR, the same hazard the archive tail forbids explicitly one seam later. Give propose the archive tail's discipline: an ENUMERATED file list — `orbit/changes/<name>/` (artifacts plus the moved staging tree) and the staging-directory deletions the move produced — never `git add -A` and never a bare directory sweep; and extend the dirty check's note to name unrelated UNTRACKED paths as left-behind rather than ignoring them."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "The citation-edited-after-propose no-op note has a scenario but no task instructing any body to detect or emit it",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-pr-lifecycle/spec.md",
+      "line": 62,
+      "recommendation": "The freeze rule requires that a citation added or removed after propose be \"surfaced as a one-line note at the next seam\", and the scenario asserts the tail \"notes the ignored citation in one line\". Nothing in tasks.md carries it: task 4.2 only says the frozen `granularity`/`branch` are \"neither re-derived\", which is silent about comparing them to the live citation. Add the comparison to task 4.2 — the tail reads `.openspec.yaml`'s current `architecture:` block, compares its presence/`doc` against `pr_attachment.granularity`/`doc`, and emits the divergence note before acting on the frozen record — and add the mismatch case to the 6.2e harness list so the note is asserted, not assumed."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "Archive's AI-mediated consent preview is unmodified, so it under-describes the outward writes the tail now rides on",
+      "file": "orbit/specs/orbit-archive-modifications/spec.md",
+      "line": 244,
+      "recommendation": "The live baseline fixes the prompt content as \"position readout + what the archive will write (N deltas across M capabilities synced to baseline, change moved to archive — Proceed / Abort)\", and `orbit-lifecycle-consent` holds that \"writes always follow\" consent. The delta states the tail's outward writes ride that same entry consent yet leaves the preview enumerating only in-repo writes, so a prompted user consents to a sync-and-move and gets a push plus a PR-description rewrite plus a READY flip. Add a MODIFIED block for `Consent prompt on AI-mediated archive entry` extending the preview: when the change is PR-attached, the prompt additionally names the branch, the push, and the READY flip (or, for program PRs, the appended stage entry)."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "title": "Impact promises a CLAUDE.md D6 entry at archive; no task or at-archive note carries it",
+      "file": "orbit/changes/d6-pr-lifecycle/proposal.md",
+      "line": 106,
+      "recommendation": "The Docs (at archive) bullet lists \"CLAUDE.md D6 entry + the outward-actions note\", but tasks.md's at-archive notes cover only arc-doc work (5.5 stage-section retirement, 5.7 rulings index, 5.8 subtraction exception, 5.6 status log), and the outward-actions note is an APPLY task (5.4), not an at-archive one. Either add an at-archive note \"5.9 Add the D6 entry to root CLAUDE.md (stage summary, in the D1-D5 house style)\" — matching every prior stage's practice, which is what keeps CLAUDE.md accurate post-archive — or correct the Impact bullet to promise only what the tasks carry."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "\"11 decisions\" in proposal.md and design.md no longer matches explore.md's decision record",
+      "file": "orbit/changes/d6-pr-lifecycle/proposal.md",
+      "line": 16,
+      "recommendation": "explore.md's `## Decisions` section carries twelve bullets (including the two promotion-resolved questions (i) and (j)), plus six `### Post-promotion revisions` entries dated 2026-08-12/2026-08-20 that the count ignores entirely — the same stale \"11 decisions, 5 rejections, 2 promotion-resolved questions\" appears at design.md:9 (the rejection count of five is correct). Restate both as \"10 decisions + 2 promotion-resolved questions + 6 post-promotion revisions, 5 rejections\", or drop the numbers and cite the sections, so the cadence's own revisions are visible from the summary docs."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "At-archive notes are listed 5.5, 5.7, 5.8, 5.6 — the status-log entry reads as an afterthought",
+      "file": "orbit/changes/d6-pr-lifecycle/tasks.md",
+      "line": 145,
+      "recommendation": "Reorder the At-archive notes to 5.5 -> 5.6 -> 5.7 -> 5.8, or renumber so the sequence is monotonic. It matters slightly more than cosmetics here: the archive tail's program-mode stage entry is specified to adapt \"the arc STATUS-LOG entry written at this same archive\", so the log note's position in the list is the reader's cue about whether it precedes the tail."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "The artifacts are strong where the change has been attacked before: the freeze-at-commitment attachment record, the four-axis discovery query, the enumerated archive commit scope, and the arc-done ownership reversal all hold up under direct reading, and the three MODIFIED blocks reproduce their baselines faithfully (byte-checked against orbit-archive-modifications, orbit-emit-composition, and orbit-onboard, all original scenarios intact with the new ones appended). The pattern behind what surfaced is ASYMMETRY BETWEEN THE TWO SEAMS: propose received a long, explicit preconditions requirement, and the archive tail received an equally long discovery requirement, but each silently borrows the other's unstated half — the tail assumes propose's remote resolution and assumes it is standing on the attachment's branch, while propose assumes the tail's staging discipline and the tail's PR-existence rigor. The hardest probe was the state machine: which record is authoritative at each seam, what happens when config or citation changes between them, and whether every observation the specs require is actually obtainable at the moment they require it — that last probe is what surfaced the readout's stop condition resting on a permanently-frozen state value. The vocabulary residue in the zero-engine-git requirement is the one place where an earlier round's fix did not sweep to completion, and it is worth fixing precisely because the engine's write gate is fail-loud: the contradiction becomes a runtime error rather than a wrong field. Residual risk sits almost entirely in the non-happy paths that only the integration harness can exercise — the group-6 harness case list is unusually well-specified, and several findings are effectively requests that the normative text say what the harness already intends to assert. The consent-preview finding is the only one reaching outside this change's deltas, and it is a small MODIFIED block rather than a design question. Nothing found requires re-opening a ratified decision.",
+  "passes_run": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "passes_skipped": [],
+  "final_assessment": "1 critical, 9 warning, 2 suggestion.",
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews d6-pr-lifecycle --from-file orbit/changes/d6-pr-lifecycle/.orbit-runs/review-proposal-2026-08-24T23-36-30Z.json"
+}

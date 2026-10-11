@@ -1,0 +1,13 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-09-26T18:31:19Z",
+  "change": "rc13c-propose-consumes-mechanism",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "mode": "proposal",
+  "prompt_path": "orbit/changes/rc13c-propose-consumes-mechanism/.orbit-runs/external-prompt-proposal-2026-09-26T18-31-17Z.md",
+  "target": null,
+  "final_assessment": "External review prompt packaged for rc13c-propose-consumes-mechanism (iter 1, mode proposal); awaiting findings. This covers the review-proposal cadence's declared independent slot after one fresh pass (14 findings, all walked; two decision-lane forks ratified in chat — the consume-time emit DESCOPED, the refuse stating the Re-entry: slot). The prompt points the reviewer at the seams the walk rewrote: the ADDED requirement's first paragraph and two scenarios, the optional newest-emit cross-check's definedness, the refuse text against its two owners, and the first Mechanism → artifacts record. Handoff preflight at packaging: the change directory is UNTRACKED (dirty tree) and the prompt file is uncommitted; the pull invocation is withheld until commit + push.",
+  "awaiting_findings": true,
+  "next_recommended": "Paste orbit/changes/rc13c-propose-consumes-mechanism/.orbit-runs/external-prompt-proposal-2026-09-26T18-31-17Z.md into the target AI, save the response as orbit/changes/rc13c-propose-consumes-mechanism/.orbit-runs/external-proposal-<TS>.md, then /orbit:address-reviews rc13c-propose-consumes-mechanism --from-file <path>"
+}

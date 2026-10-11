@@ -1,0 +1,109 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-24T14:59:59Z",
+  "change": "rc04c-retire-gate-overridden",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc04c-retire-gate-overridden/.orbit-runs/external-system-2026-09-24T14-43-22Z.md",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-5 Codex",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 2,
+    "warning": 1,
+    "suggestion": 0
+  },
+  "pushback_verification": "3 of 3 verified against the tree before triage (the four body sites read; the delta's definition paragraph read; the preamble count and the program doc's ratified figure read); 0 stale. All three still applied.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "The workflow bodies mistake every external return for a readable pass",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/archive-change.ts",
+      "line": 285,
+      "classification": "decision_required",
+      "action": "Option A applied: the token-source sentence — ONE paragraph pasted into four bodies (apply's AT THIS SEAM, archive Step 3.4, archive Step 5.5, review's spend record) — now qualifies the enumeration to returns the trail reader ACCEPTED as a pass, states that a REJECTED return is not a member and citing it is refused, states that on a rejected-only trail nothing is citable (a continuation/proceed writes formed_against: [] checked against the trail; no other kind can be written there), and DELETES the 'cannot be unresolvable' promise. A fidelity pin ('ACCEPTED as a pass') holds the qualifier in apply, archive and — via a new reference-content assertion, because review's copy lives in the external-handoff reference rather than the skill body — review. Surface rebuilt (npm run build && orbit update --force); the template hash pin re-pinned for the two bodies it covers. Option B (a reader-backed engine surface that prints the citable set) RECORDED as a follow-up under tasks.md 5.1f for the architect session, not performed: authoring after the pair read the tree, at a stage already at the capability ceiling. RECORD-ONLY CORRECTION to the audit trail: the apply emit apply-2026-09-24T14-27-44Z.json's assessment states 'no fourth instance of the rule-stated-twice watch appeared'; both halves of the blind pair read the tree as saying it did, and this walk agrees — the token-source sentence is the fourth instance, and it had already diverged from the schema reference's field note on the rejected-external clause. The emit is audit trail and is not edited; the correction stands here.",
+      "ratified_via": "chat",
+      "resolution": "a with b as a follow up. will go into architecture after this to canonize in the program",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Repair the sentence once, everywhere it appears: qualify the enumeration to reader-accepted passes, state that a rejected return is not citable and that the empty citation is correct on a rejected-only trail, delete the 'cannot be unresolvable' promise; fidelity pin on the qualifier. Repair lane."
+          },
+          {
+            "label": "B",
+            "body": "Give the bodies a reader-backed engine surface that prints the citable token set so no body re-enumerates filenames. Authoring lane; declined inside this stage, recorded as a follow-up."
+          }
+        ],
+        "chosen": "A"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "src/core/templates/workflows/apply-change.ts",
+          "src/core/templates/workflows/archive-change.ts",
+          "src/core/templates/workflows/review.ts",
+          "test/core/templates/orbit-content-fidelity.test.ts",
+          "test/core/templates/skill-templates-parity.test.ts",
+          "orbit/changes/rc04c-retire-gate-overridden/tasks.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/changes/rc04c-retire-gate-overridden/.orbit-runs/apply-2026-09-24T14-27-44Z.json",
+            "reason": "audit-trail file; cascade skipped by policy — the false 'no fourth instance' claim is corrected in this log, not in the emit"
+          }
+        ]
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "The owning requirement still defines the zero-pass record out of existence",
+      "marker_source": "external",
+      "file": "orbit/changes/rc04c-retire-gate-overridden/specs/orbit-run-summary-emit/spec.md",
+      "line": 132,
+      "classification": "trivial_fix",
+      "action": "The requirement's opening definition rewritten around CADENCE POSITION and the former exclusion paragraph folded into it, so the rule is stated ONCE: a cadence judgement SHALL be recorded; it is a decision taken at a cadence position (proceed past an unpassed gate / buy a further pass / assert readiness); the qualifying test is the position, not the citation count; formed_against names the readable independent evidence available there; a proceed with nothing to cite is admitted and its emptiness is checked. The contradicting 'formed against INDEPENDENT REVIEW OUTPUT ... the qualifying test is exactly that' sentence is DELETED, not reconciled (the fourth deletion under the preamble's watch). One instrument note: orbit validate --strict reads only the FIRST LINE of a requirement for SHALL/MUST (validator.ts extractRequirementText), so the first reflow — SHALL on line 3 — was refused and the sentence was reordered to lead with it. Ripple: the two bodies' judgements bullets already say cadence position (rewritten at apply), so no cascade edit; the archive-modifications delta's readiness wording ('formed against the independent passes it names') describes readiness specifically and stands.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The final task-count record is arithmetically stale in two places",
+      "marker_source": "external",
+      "file": "orbit/changes/rc04c-retire-gate-overridden/tasks.md",
+      "line": 18,
+      "classification": "trivial_fix",
+      "action": "Preamble corrected to 36 with the arithmetic shown (34 + 5.1e + 5.1f) and the off-by-one named. The 34-versus-36 reconciliation in the program doc's rc04c stage section is architect-owned (D-d2-4) and stays RECORDED under 5.1c for the architect session Sal intends next; the ratification stands (it ratified a breach, not a number). The option-B follow-up was appended as a note under 5.1f rather than a new checkbox, so the count does not move again.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "reason": "architect-owned stage section (D-d2-4); recorded as a recommendation under tasks.md 5.1c, not edited by this walk"
+          }
+        ]
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "All three external findings resolved, none stale: the token-source sentence repaired ONCE across its four body copies (option A, chat-ratified; option B recorded as the architect follow-up), the owning requirement's definition rewritten around cadence position with the contradicting sentence DELETED, the preamble count corrected to 36. Surface rebuilt and refreshed; template hash pin re-pinned; 2242 tests green (2241 + the new reference-content pin); orbit validate --strict and --sources clean. Record-only correction: the apply emit's 'no fourth instance' claim was false — the fourth instance was on the tree, and this walk closed it by deletion.",
+  "iteration": 6,
+  "next_recommended": "/orbit:address-reviews rc04c-retire-gate-overridden --from-file orbit/changes/rc04c-retire-gate-overridden/.orbit-runs/review-system-2026-09-24T14-50-44Z.json"
+}

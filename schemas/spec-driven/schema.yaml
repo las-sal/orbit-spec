@@ -1,5 +1,5 @@
 name: spec-driven
-version: 2
+version: 5
 description: Default OpenSpec workflow - proposal → specs → design → tasks
 artifacts:
   - id: proposal
@@ -147,14 +147,46 @@ artifacts:
 
 # Gates (C1 engine gates). `apply` is a first-class tracked gate; the two review
 # gates make the engine review-aware. Cadences live here (tuning = a version bump).
+# `consent: user-invoked` (D1) marks the gate's `before:` phase as entered only on
+# an explicit user invocation — the engine surfaces the marker; bodies prompt.
+#
+# v5 (rc17a): BOTH reviewed gates open with the `invoked` slot — covered by what the
+# user INVOKED: a single fresh or external pass that is not a pair member, or a
+# COMPLETE blind pair (a `review-external` T0 carrying `pair: true` launches one; its
+# members are the first fresh pass and the first external return after it). A pair
+# with one half landed covers nothing and reports `openPair`; walking its landed
+# half ENDS the pair, and that half then covers alone. The trailing `in-context`
+# slot is the check on the walk that resolved the leading slot's findings, and
+# clause (a) requires that pass to be later than those resolution records.
+# `review_preference` in orbit/config.yaml (blind-pair | fresh | external, per gate;
+# default blind-pair) shapes ONLY which command the readout presents when nothing
+# covers the slot — never what covers it. There is no versioned cadence: v5 gates
+# every change, including one stamped with an earlier schema_version, and the move
+# from v4 only relaxes (a v4 trail has no launch, so every pass on it is a single).
+# `independent` and `blind-pair` stay in the grammar; no shipped gate declares them.
+# rc02c: `budget` is a DECLARED EXPECTATION and NOTHING CONSULTS IT. Both reviewed
+# gates declare `budget: 3` — what the cadence is expected to cost in independent
+# passes — but the engine never compares it to actual spend, derives no exhaustion
+# signal from it, and lets it colour no state, reason, token or recommendation. The
+# RECORD is `independentSpend`, reported beside the state and rendered alone: effort
+# is RECORDED, never TARGETED (R-crc-11(h)), because a cost target distorts the
+# behaviour it measures while a cost record is how the tool gets better.
+#
+# rc02c: `confirm` likewise stays ACCEPTED and is INERT. Both values below are kept
+# so existing schemas validate without a version bump, but `confirm` selected the
+# retired clause (c) and nothing reads it. Convergence is clauses (a) and (b) only:
+# a cadence ends when the AI judges the work ready knowing what the independent
+# reviewers returned, not when reviewers stop finding things.
 gates:
   - id: review-proposal
     kind: reviewed
     requires: [proposal, specs, design, tasks]
     inputs: [proposal, specs, design, tasks]
-    cadence: [independent, in-context]
+    cadence: [invoked, in-context]
     confirm: no-new-findings
+    budget: 3
     before: apply
+    consent: user-invoked
 
   - id: apply
     kind: tracked
@@ -167,6 +199,8 @@ gates:
   - id: review-system
     kind: reviewed
     requires: [apply]
-    cadence: [in-context, external, in-context]
+    cadence: [invoked, in-context]
     confirm: findings-resolved
+    budget: 3
     before: archive
+    consent: user-invoked

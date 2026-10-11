@@ -1,0 +1,13 @@
+{
+  "command": "review",
+  "timestamp": "2026-07-25T10:00:00Z",
+  "change": "golden-change",
+  "final_assessment": "No critical issues. 3 warnings to consider.",
+  "next_recommended": "/orbit:address-reviews golden-change",
+  "kind": "editorial",
+  "mode": "proposal",
+  "iteration": 1,
+  "depth": "full",
+  "findings_summary": { "critical": 0, "warning": 3, "suggestion": 2 },
+  "finding_titles": ["Legacy title one", "Legacy title two"]
+}

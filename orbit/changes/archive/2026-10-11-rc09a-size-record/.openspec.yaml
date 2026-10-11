@@ -1,0 +1,9 @@
+schema: spec-driven
+created: 2026-10-10
+schema_version: 5
+base_fingerprints:
+  orbit-engine-gates:
+    spec-driven v1 gates and cadence: sha256:5053fdc2576e58a76bbbaaeab03a53e366d95c2516b8319725b319109bcdb222
+architecture:
+  doc: clean-up-review-cycle
+  stage: rc09a-size-record

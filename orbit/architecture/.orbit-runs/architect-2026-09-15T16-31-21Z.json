@@ -1,0 +1,29 @@
+{
+  "command": "architect",
+  "timestamp": "2026-09-15T16:31:21Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "Three captures, each the reason for the next. The PREMISE now states what the program is for — orbit adapts a workflow to how its owner thinks and to how AIs in different forms drive work, and this program is where that is stress-tested, so digging in and failing IS the product and the breakages export. A stage is judged by what its cycle taught and recorded, not only by what it merged; rc03a and rc13a shipped no baseline and their trails are the evidence base for four rulings. With the distinction that makes the claim usable: failing in a NEW way is the product, failing the SAME way twice is the signal to codify. R-crc-10 RATIFIED is what the repeat earned — mechanize only what the engine can observe; name the inputs; where any is prose, intent or a judgment, the deliverable is a RECORD not a CHECK. It complies with itself (observability is a judgment, so nothing checks it) and rc09 carries only the QUESTION as a design.md slot a human judges. BOUNDED then settled in ONE sitting because of the ruling: the obligation is ACCOUNTED not CLOSED, a residual names its KIND and METHOD or discharges nothing, and the tier difference is VISIBILITY never blocking. The test was run against every bounded claim on the record and rejected one of the previous attempt's own residuals. D-bcs-5 closes the recursion deliberately — the move set went five to six to eight to nine by that route, and naming the stopping point is what the day's failures bought.",
+  "stages_touched": [
+    "rc13a-explore-mechanism-convention",
+    "rc09-propose-hygiene"
+  ],
+  "rulings_captured": [
+    "R-crc-10"
+  ],
+  "completions_ratified": [],
+  "handoff": {
+    "boot_sequence": [
+      "orbit/architecture/clean-up-review-cycle.md — the Premise now leads with what the program is FOR; R-crc-10 is the newest ruling; rc13a's prerequisite is SETTLED and points at the exploration.",
+      "orbit/explore/bounded-closure-semantics/explore.md — five decisions and one worked case; consumed when rc13a's next attempt proposes.",
+      "orbit/changes/archive/2026-09-15-rc13-explore-mechanism/ and .../2026-09-15-rc03a-blind-prompt/ — the two trails R-crc-10 was derived from.",
+      "Q-crc-11 and Q-crc-12 — the two second-occurrence gaps; only the second was assigned."
+    ],
+    "next_command": "/orbit:explore",
+    "model_hint": "The program's remaining premised stages are ordinary work whose mechanisms the engine CAN observe — rc07 (consistency becomes a lint), rc06 (scenarios are the test contract), rc05 (documented commands run in CI). After two stages spent on the explore surface, those are where review cost actually falls.",
+    "seam": "No active changes. R-crc-10 binds every future stage from here. rc13a's prerequisite is settled and its next attempt can consume the exploration whenever it opens; rc13b stays blocked on rc13a. Nothing is blocked on the user."
+  },
+  "next_recommended": "/orbit:explore"
+}

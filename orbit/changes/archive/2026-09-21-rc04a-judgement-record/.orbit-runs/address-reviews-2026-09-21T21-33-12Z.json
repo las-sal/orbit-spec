@@ -1,0 +1,185 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-21T21:33:12Z",
+  "change": "rc04a-judgement-record",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc04a-judgement-record/.orbit-runs/review-system-2026-09-21T19-48-15Z.json",
+  "walk_mode": "per_finding",
+  "walk_mode_source": "flag",
+  "input_findings_summary": {
+    "critical": 1,
+    "warning": 6,
+    "suggestion": 4
+  },
+  "pushback_verification": "All 11 verified before any edit; ZERO stale. The four claims made by execution were re-executed rather than read: `status --change --json` carries no pass tokens and errors outright post-move (F2, wrong twice over as reported); `kind: \"toString\"` crashes on the inherited function (F3); a `readiness` writes cleanly onto a `review-external` emit (F4); the grep for `Judgement`, `ReadinessJudgement`, `ContinuationJudgement` and `@ts-expect-error` returns nothing outside the four declaration lines (F5). F5 was then verified ONE STEP FURTHER than the finding went, and that step changed the fix: `tsconfig.json` excludes `test/`, so a compile-negative could not have run against the union either — which is why it was deleted rather than given a test.",
+  "resolution_summary": {
+    "resolved": 11,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "The archive body is never told to write the `continuation/proceed` record the capability admits and rc04c depends on",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/archive-change.ts",
+      "line": 282,
+      "classification": "trivial_fix",
+      "action": "MERGED with the external half's CRITICAL — the two halves independently found this; resolved once, certified on both records. See that record for the full resolution: Step 3.4's Proceed-anyway bullet now carries the continuation instruction and the pre-move token capture, the archive schema block shows both admissible entry shapes, `orbit-archive-modifications` gained the requirement paragraph and a scenario, and a new test emits one archive carrying both kinds.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "`formed_against`'s named source cannot answer: `orbit status --change --json` carries no pass tokens, and post-move it does not resolve the change at all",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/archive-change.ts",
+      "line": 381,
+      "classification": "trivial_fix",
+      "action": "Verified by executing both halves of the claim, exactly as reported: the change-tier status payload carries gate spend counts and reason strings and no pass tokens, and post-move `status --change` errors outright because the active path is gone. The instruction that makes this change non-inert at its primary seam named a source that was wrong twice over. Replaced in ALL THREE bodies (archive, apply, review) with one shared sentence naming the TRAIL: list the `.orbit-runs/` directory and take the `<TS>` of each `review-<mode>-<TS>.json` whose `reviewer_class` is fresh or external, plus each `external-<mode>-<TS>.md` — which is exactly the set `readTrail` resolves citations against, so a token read this way cannot be unresolvable. The archive body additionally says the trail MOVED at Step 5 and instructs reading `<archive_path>/.orbit-runs/` or reusing the tokens Step 3.4 captured before the move. This is the Q-crc-17 hazard in a new field, which is why it was worth fixing at WARNING.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "`kind` membership is tested with `in` on a plain object, so `kind: \"toString\"` crashes instead of refusing by name",
+      "marker_source": "internal-review",
+      "file": "src/core/emit-composition.ts",
+      "line": 557,
+      "classification": "trivial_fix",
+      "action": "Confirmed by execution: `kind: \"toString\"` passed the `in` check, resolved to the inherited function, and crashed with `allowed.has is not a function` — exit code and no-write held, but the refusal named an internal identifier instead of the offending value, against task 2.5's stated contract. Switched to `Object.prototype.hasOwnProperty.call`. Added the prototype case to the refusal table so the edge is executed rather than reasoned about.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The closed `admits` table is unenforced — a `not-ready` readiness writes cleanly onto a `review-external` T0 emit, where nothing reads it",
+      "marker_source": "internal-review",
+      "file": "src/core/emit-composition.ts",
+      "line": 540,
+      "classification": "trivial_fix",
+      "action": "MERGED with the external half's carrier-kinds WARNING — the two halves independently found this; resolved once, certified on both records. Took option (A), enforce: `JUDGEMENT_KINDS_BY_COMMAND` consulted in `validateJudgements`, the requirement now states both halves of the table are enforced, a scenario each in the delta and the suite, and a real-CLI probe confirms the refusal.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Task 4.4's type-level layer does not exist: the `Judgement` union has no consumer and no test",
+      "marker_source": "internal-review",
+      "file": "src/core/emit-composition.ts",
+      "line": 523,
+      "classification": "trivial_fix",
+      "action": "Conceded and resolved by SUBTRACTION rather than by adding the missing test. The grep is right — the union had no consumer, no signature and no test. And a compile-negative could not have rescued it: `tsconfig.json` excludes `test/`, so a `@ts-expect-error` in the suite would never be typechecked by `npm run build`, and vitest transpiles without typechecking. So the type layer could not be made real with the tooling in the repo. Deleted `JudgementBase` / `ContinuationJudgement` / `ReadinessJudgement` / `Judgement`; the file comment now says there is ONE enforcement layer and records why the union was removed, so a later reader does not re-add it. Task 4.4 rewritten to claim one layer — the finding's own observation that the file's comment already contradicted the task is the tell, and claiming two layers while shipping one is precisely the defect this stage exists to make visible.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "\"ONE computed rule, and only one\" is false of what shipped — the gate_overridden agreement check is a second computed rule",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04a-judgement-record/proposal.md",
+      "line": 44,
+      "classification": "trivial_fix",
+      "action": "Correct, and it is the change-completeness discipline: the walk landed the second mechanism and left the thesis statement behind. The spec was already right (it specifies the agreement refusal and justifies it under R-crc-10); the two framing documents were not swept. `proposal.md`'s bullet now reads ONE computed rule about the record's RELATION TO ITS EVIDENCE and names the two further refusals as being about SHAPE and LOCATION — the carrier table's kind half, and the `gate_overridden` agreement constraint that retires with the field in rc04c. `design.md`'s D3 heading gained the same qualifier and a paragraph saying why neither is a counterexample, closing on what does stay off limits: whether the judgement was RIGHT, including whether the cited passes were clean, enough, or the right mode.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Stage exit criterion (3) says THREE `accepted` pairs; the change ships TWO and the recommended architect note still claims the criteria are met",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04a-judgement-record/tasks.md",
+      "line": 42,
+      "classification": "trivial_fix",
+      "action": "Correct, and the omission was in the one artifact a later reader acts on. Task 6.4's architect note now opens with the exit-(3) revision as the FIRST thing to record: the number moved from THREE `accepted` pairs to TWO because task 5.1 re-derived the sort under the qualifying test this change SHIPS, and the criterion was written from the exploration's earlier sort, which counted the stale cross-reference that the shipped test disqualifies. Stated as the general form — a criterion written before the test cannot grade the test — so the architect records the reason rather than a later reader rediscovering three-versus-two and reconstructing the argument.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "`judgements` is the only conditional archive field with no `## Field notes` entry — and the parity instrument reads field notes",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/archive-change.ts",
+      "line": 81,
+      "classification": "trivial_fix",
+      "action": "Resolved with the CRITICAL above, and the instrument implication is the reason it was worth doing rather than deferring: `emit-schema-parity` derives the `## Field notes` bullet keys as well as the JSON-block keys, so an absent note is invisible to the only check that reads this file. Added the bullet — present only when a cadence judgement was taken at this seam, both admissible archive kinds named, and distinguished from `gate_overridden` (a refusal to be blocked), `user_decision` (audit outcome) and `warnings` (seam-arising notes, formed against no pass) — and added `judgements` to the opening enumeration.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Pass MODE is a third observable citation edge left unsettled: a terminal readiness at archive may cite only proposal-phase passes",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04a-judgement-record/specs/orbit-emit-composition/spec.md",
+      "line": 48,
+      "classification": "trivial_fix",
+      "action": "Settled explicitly in the delta rather than left unstated, and settled the way the finding's own second option suggests: mode is DELIBERATELY NOT CHECKED. The reasoning is now written down — a proposal-phase pass genuinely CAN inform a terminal judgement (a design objection raised before apply and accepted without resolution is exactly an `accepted` pair), so refusing it would be the engine ruling on whether the cited evidence was the RIGHT evidence, which is the judgement R-crc-10 puts off limits. Edges (a) and (b) are well-formedness of the CITATION; mode would be an opinion about the JUDGEMENT. That line is what makes the third edge settled rather than overlooked.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "design.md's \"twenty decisions, zero open questions\" contradicts the engine's own explore emit and design.md's own Open Questions section",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04a-judgement-record/design.md",
+      "line": 7,
+      "classification": "trivial_fix",
+      "action": "Verified against the engine's own explore emit, which computes `decisions_captured: 18` and `open_questions_count: 2`. Rewritten to the stronger claim the finding proposes: eighteen decisions, two open questions both carrying standing recommendations and neither owned by this child — which shows the open questions were TRIAGED rather than absent, and no longer contradicts design.md's own Open Questions section three screens later.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "`CLAUDE.md` still names `residual_risk` as rc04's deliverable; the shipped name is `accepted` inside `judgements`",
+      "marker_source": "internal-review",
+      "file": "CLAUDE.md",
+      "line": 168,
+      "classification": "trivial_fix",
+      "action": "Fixed at the one site outside the architecture doc's ownership, exactly as the finding scopes it. `CLAUDE.md:168` now says rc04 owns replacing the override with a judgement record, names the field this change actually ships (`judgements`, whose `readiness` entry carries residuals as `accepted: [{claim, why}]` pairs), and notes that the earlier working name survives in the architecture doc as rc04's to reconcile. The seven architecture-doc sites stay untouched — task 6.4 already records them for `/orbit:architect`, and a stage change does not edit program-layer docs.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": null,
+  "final_assessment": "The fresh half of rc04a's system blind pair, walked in ONE SITTING with the external half and recorded on its own source. 1 CRITICAL, 6 WARNING, 4 SUGGESTION, all resolved, zero stale, none deferred. Two findings (the archive continuation record, the unenforced carrier kinds) were found independently by both halves and are certified on both records. Two resolutions went by SUBTRACTION rather than addition: the `Judgement` union was deleted once verification established that no compile-negative could ever have run against it, and the routing framing left rc04a entirely under the pair's one decision. The half's distinctive contribution is the sweep class — F6, F7, F10 and F11 are all one defect in four places, a mechanism landing while the sentence that describes it stays behind, which is the same class this program has been naming since rc02.",
+  "iteration": 4,
+  "next_recommended": "/orbit:review --as system rc04a-judgement-record"
+}

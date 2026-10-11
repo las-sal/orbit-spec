@@ -1,0 +1,108 @@
+{
+  "command": "review",
+  "timestamp": "2026-09-24T15:29:13Z",
+  "change": "rc04c-retire-gate-overridden",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "src/core/templates/workflows/archive-change.ts",
+      "line": 285,
+      "title": "The token-source procedure in four bodies still carries the CLASS LIST — the one thing R-crc-14's boundary names as a definition — and no surface exists yet that would let it point instead",
+      "recommendation": "After the fresh walk's rewrite the four token-source paragraphs (apply :205, archive :285 and :386, review :481) say 'this body names the rule and does not restate it' — and in the same sentence enumerate the set: take each review-<mode>-<TS>.json whose reviewer_class is fresh or external, plus each accepted external-<mode>-<TS>.md. R-crc-14's boundary is explicit that the class list is definition, not pointer, and the ruling's own test applies: this sentence can be wrong on its own, and it was. The reason it survives is not oversight but a mechanism gap the program has already recorded: no body-readable surface prints the trail reader's accepted independent passes (the change-tier status payload carries spend COUNTS and reason strings; the report renders ordinals), so a body that stopped enumerating would leave the composing AI with no procedure at all. That is Q-crc-24's standing recommendation, and it is the only fix that satisfies the ruling. Resolve by RECORDING, not rewording: carry this as an accepted residual in the archive's readiness record — claim: the four token-source paragraphs enumerate the citable set by class until Q-crc-24 ships; why: no printing surface exists, the fidelity pin holds the four copies identical, and the enumeration is now correct as far as a filename rule can be. A reworded sentence that hides the list behind 'the passes the reader accepts' would still be an enumeration in the AI's hands and would lose the one operational instruction it has."
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "test/core/emit-composition.test.ts",
+      "line": 1222,
+      "title": "Edge (d)'s REFUSAL direction is unit-tested on the apply seam only; the archive seam — where the decision is most often taken — has the acceptance case and a CLI probe, no pinned refusal",
+      "recommendation": "The refusal-naming-the-LATEST-pass case runs through emitApply on the 'foo' trail; the archive seam has the empty-trail acceptance (the 'bar' conditional-fields test) and the fresh pass's CLI probe, which does not survive the session. Mirror the refusal case through emitArchive on the seeded trail: a continuation/proceed with formed_against: [] after archived(), asserting the LATEST token, the entry index, and zero archive-* files written. One case, same fixture, closes the asymmetry the fresh pass noted in its commentary."
+    },
+    {
+      "pass": "0",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "test/core/emit-composition.test.ts",
+      "line": 1240,
+      "title": "The 'Sufficiency above zero remains outside the engine' scenario is covered only IMPLICITLY — the both-kinds fixture cites one of two preceding passes and writes, but nothing names that as the property under test",
+      "recommendation": "The 'admits BOTH kinds on one archive emit' case carries a continuation citing [FRESH] alone on a trail holding FRESH and EXTERNAL, and the emit writes — which IS the sufficiency scenario's acceptance — but the test's title and assertions are about kinds. Either add a one-line comment on that fixture naming the second property it pins, or add a dedicated case titled after the scenario; the first is cheaper and enough, since the fixture is not going anywhere."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "title": "Both bodies tell the composing AI to enumerate EVERY external-<mode>-<TS>.md as a citable pass (fresh W1)",
+      "evidence": "resolved 3ae28fee — ACCEPTED-as-a-pass qualifier at all four sites, 'cannot be unresolvable' gone, fidelity pins green"
+    },
+    {
+      "title": "The emptiness rule AND its resolution set are stated in the reference, both bodies and two capabilities (fresh W2)",
+      "evidence": "resolved 19dca35c under R-crc-14 — no class list, 'any mode' or rejected-return clause remains in the reference or the payload bullets; the residual in the token-source PROCEDURE is reported above as its own finding, because it is a different sentence with a different reason for surviving"
+    },
+    {
+      "title": "The tasks preamble states the task count as 35 (fresh W3)",
+      "evidence": "resolved 3ae28fee — preamble reads 36 with the arithmetic; program doc states 34 ratified / 36 final"
+    },
+    {
+      "title": "Scenario ranges over ANY judgement entry but promises a named-pass refusal (fresh S1)",
+      "evidence": "resolved 19dca35c — WHEN scoped to continuation/proceed; validate --strict clean"
+    },
+    {
+      "title": "The readTrail-based narrowing witnesses less than 4.2(a) claims (fresh S2)",
+      "evidence": "resolved 19dca35c — stated at real strength in the test comment and tasks.md 4.2; unused parameter removed"
+    },
+    {
+      "title": "Live cross-doc drift in the rc04a stage section and the rc04c charter (fresh S3)",
+      "evidence": "resolved 3ae28fee — architect session amended both; nothing left to carry"
+    },
+    {
+      "title": "Design and proposal cite engine line numbers that no longer resolve (fresh S4)",
+      "evidence": "resolved 19dca35c — dated post-apply notes beside the original figures"
+    }
+  ],
+  "commentary": "This is the confirm pass over the tree both walks produced, and the engine did not need re-proving: emit-composition.ts is unchanged since the apply commit, the fresh half drove the built CLI through every trail state on both seams, and dist/ has been rebuilt twice since for prose-only changes — I re-checked that the generated skill surface matches the source (the qualifier present in apply, archive and the review reference; no 'any mode' left in the shipped schema reference). Pass 1 was done by requirement rather than by grep: every baseline requirement that still names the retired field is one the delta MODIFIES, in all three capabilities, and no other baseline names it, so sync at archive leaves the field's normative footprint at zero. Pass 2: the only reader of the judgement record in src/ is the engine file that validates it, which is what the retirement intended. The pattern behind the one substantive finding is worth stating plainly: R-crc-14 was ratified between the two walks and applied in the second, and the application stopped exactly where the mechanism ran out. The bodies could stop restating the predicate because the spec owns it and the gate enforces it; they cannot stop enumerating the SET because nothing prints it, and a body that says 'cite what the reader accepts' with no way to read the reader has told the AI nothing. That is Q-crc-24 in one sentence, and the honest disposition is to record the residual at archive rather than pretend a reworded enumeration is a pointer. Risk texture: the edge that produced all of this — a proceed-anyway on a trail with only a rejected external return — remains unobserved on this repo and probably stays so; the pins that will actually fire are the four-copy fidelity marker, the retired-key negative regression, and the LATEST-naming refusal. Not reported: the review-proposal gate reads stale post-apply, which is the freshness rule doing its job; the two suggestions are test-shape, not behaviour.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6"
+  ],
+  "passes_skipped": [],
+  "final_assessment": "0 critical, 1 warning, 2 suggestion.",
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc04c-retire-gate-overridden --from-file orbit/changes/rc04c-retire-gate-overridden/.orbit-runs/review-system-2026-09-24T15-29-13Z.json"
+}

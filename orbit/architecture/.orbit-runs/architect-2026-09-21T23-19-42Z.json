@@ -1,0 +1,33 @@
+{
+  "command": "architect",
+  "timestamp": "2026-09-21T23:19:42Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "Post-archive architect session for rc04a-judgement-record. COMPLETION RATIFIED (Sal, 2026-09-21) — the program's fourth complete stage. R-crc-12 CAPTURED: a criterion written before the test cannot grade the test; when a stage's shipped mechanism invalidates its own exit criterion's terms the stage revises the criterion and records why, with the boundary stated so the ruling cannot be abused — a criterion the mechanism can still measure and does not meet is a MISS. Two instances produced it (rc07's exit ratified as a miss; rc04a's exit (3) revised THREE to TWO with its derivation). Q-crc-21 OPENED: the Touchpoints parser anchors LIST_ITEM to a line where orbit-propose-modifications defines an entry as a markdown list item, so a wrapped +-joined group silently loses its continuation members and does not report them malformed — observed live on rc04a's own design.md, and the third instance of one class (with Q-crc-15's fence grammars and rc07's retired inline-code scanner). Its standing recommendation is to fold it into Q-crc-15's stage rather than charter a fourth, because the class rather than the instance is the right unit of work. Four residues routed here by rc04a's task 6.4 are repaired in the doc's forward-looking prose: exit (3)'s count with its reason, the ONE-COMPUTED-RULE claim qualified to name what it is a rule ABOUT, the rc04 parent's boundary-with-rc02c paragraph (it described a relationship with the clause-(c) predicate rc02c DELETED, so the boundary has had one side since 2026-09-21), and the residual_risk field name in the one forward-looking place it still steered something. The other four residual_risk occurrences sit in the status log and in resolved-question records and are deliberately left: a ledger rewritten to match what later happened stops being evidence. rc04c's charter now carries the NAMED HOLE in its own strict-subset premise, inherited rather than left to discover. CLAUDE.md corrected on two counts the pre-archive audit found: it called Q-crc-16 live where this doc records it RESOLVED 2026-09-20, and its inline ruling enumeration had stopped at R-crc-10 — both now fixed, with the paragraph relabelled so it no longer reads as the program's full live set. The marked ruling count ripples 11 to 12 and orbit validate --sources is clean at 25.",
+  "stages_touched": [
+    "rc04a-judgement-record",
+    "rc04-readiness-record",
+    "rc04c-retire-gate-overridden"
+  ],
+  "rulings_captured": [
+    "R-crc-12"
+  ],
+  "completions_ratified": [
+    "rc04a-judgement-record"
+  ],
+  "handoff": {
+    "seam": "post-archive architect session; rc04a complete-ratified, rc04c unblocked",
+    "next_command": "/orbit:explore rc04c-retire-gate-overridden",
+    "model_hint": "a reasoning-heavy model; rc04c is small in code and subtle in contract",
+    "boot_sequence": [
+      "orbit/architecture/clean-up-review-cycle.md — the live program; read the rulings index (now 12) and the Open questions section before any stage work",
+      "orbit architecture status — position is COMPUTED; never trust a position written in prose",
+      "orbit/changes/archive/2026-09-21-rc04a-judgement-record/.orbit-runs/archive-2026-09-21T23-08-19Z.json — the program's first readiness record, and the shape rc04c's retirement argument depends on",
+      "orbit/changes/archive/2026-09-21-rc04a-judgement-record/explore.md — the SHARED source for rc04b and rc04c; read D-rc04-19 first, it supersedes parts of D-rc04-15",
+      "orbit/specs/orbit-run-summary-emit/spec.md — the judgement record's shape and its CLOSED carrier table, both halves enforced"
+    ]
+  },
+  "next_recommended": "/orbit:explore rc04c-retire-gate-overridden"
+}

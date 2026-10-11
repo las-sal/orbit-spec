@@ -1,0 +1,158 @@
+{
+  "command": "review",
+  "timestamp": "2026-09-25T19:51:20Z",
+  "change": "rc13b-explore-maturity-signal",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": [],
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 2
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 3,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "src/core/parsers/explore-counter.ts",
+      "line": 98,
+      "title": "A duplicated `## Decisions` or `## Mechanism` heading silently replaces the earlier section, dropping a live rule and reporting a false orphan",
+      "recommendation": "`collectSections` does `sections.set(name, current)` on every H2, so a second same-named heading discards the first section's lines and entries with no note. Executed: a file with `## Decisions` holding D-x-1 (accounted), then a second `## Decisions` holding D-x-2 → `rules_total: 1`, `rules_open: [D-x-2 absent]`, `key_defects: [{id: D-x-1, kind: orphan, line: 11}]` — a live rule escaped the obligation and its real Mechanism entry is reported as a key defect; a second `## Mechanism` (even empty) makes every accounted rule read `absent`. The shared collector now feeds the form parse, so the counter's pre-existing silence is a false FORM judgement. Merge same-named sections (append lines and entries) or keep the first and push a stderr note naming the duplicate heading's line; add a fixture for each."
+    },
+    {
+      "pass": "0",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "src/core/explore-grammar.ts",
+      "line": 102,
+      "title": "`TABLE_CELL_ROW` rejects GFM-valid member rows, so trailing whitespace flips an accounted rule into the verb-changing Unaccounted cell",
+      "recommendation": "The row regex demands exactly `| cell | cell |` with single-space padding and end-of-line at the closing pipe. Executed: `| a | b | ` (one trailing space) and the compact GFM form `|a|b|` both draw `malformed-entry` (\"Domain: table row is not two cells\") on an otherwise SOURCED entry, so K rises by one and the rung reads `1 of 1 live rules has an open domain (D-x-1 at line 13)` — a false withholding named at a line the author cannot see anything wrong with. The owning grammar says cells follow GFM and its MALFORMED list names only wrong column count, no separator row, or no member rows; `TABLE_HEADER` already tolerates trailing whitespace (`\\s*$`), so the two row expressions disagree with each other. Parse a member row GFM-style — trim, strip one optional leading and trailing pipe, split on unescaped `|`, require exactly two non-empty cells — and add both inputs as fixtures."
+    },
+    {
+      "pass": "3",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "src/commands/workflow/status.ts",
+      "line": 371,
+      "title": "The bare tier's `also:` line still renders a concluded exploration as `(exploring)`",
+      "recommendation": "The `also` render derives the phase word from `w.kind === 'explore' ? 'exploring' : phaseOf(w)`, never from `w.position`. Executed with a real concluded emit in a staging directory demoted below the change's newest emit: bare `orbit status` printed `also: zz-fresh-probe (exploring)` while `--full` rendered the same workstream `explore ■` and `--json` position `concluded`. The strip requirement says the chip is how a concluded row stops reading as active work, and the bare-status requirement names other workstreams as `name (phase)`; this is the one text surface that still claims the exploration is live. Render `(${w.position})` for explore entries (`exploring` / `concluded`) and add the case to the bare-tier scenario set."
+    },
+    {
+      "pass": "0",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc13b-explore-maturity-signal/specs/orbit-emit-composition/spec.md",
+      "line": 52,
+      "title": "`re_entry` is specified as present \"iff exactly one\" live carrier and, in the same sentence, as the first of two",
+      "recommendation": "The computed-extensions text reads `re_entry` present iff concluded AND exactly one live entry carries a `Re-entry:` slot, then continues: when MORE than one live entry carries one the FIRST in file order wins and a stderr note names the second. The scenario `Concluded with no live Re-entry slot, and with two` asserts the second reading, and the shipped parser follows it (`explore-rules.ts:344-350` sets `re_entry` from `carriers[0]` and notes each extra). design.md:209 (`re_entry` present only when exactly one live entry carries the slot) and explore.md:104 (D-rc13b-4's `status` row) restate the first reading. Reword the normative sentence to `present iff concluded AND at least one live entry carries the slot — the first in file order; each further carrier draws a stderr note naming its line`, and align the design and exploration rows to it."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "src/core/templates/workflows/explore.ts",
+      "line": 673,
+      "title": "The explore body still tells the AI the engine grades `next_recommended` as `Early / Mid / Mature / Stalled from the counts`",
+      "recommendation": "The persist step's prose enumerates the retired four-rung, count-only grid (rendered at `.claude/skills/orbit-explore/SKILL.md:624`); the shipped grid is six rungs, header-first and form-derived, and `Mature` no longer exists. This is a restatement of a rule `orbit-run-summary-emit` owns (R-crc-14) and it is NOT among the deferrals design.md's Risks declare (only the two \"until the maturity-signal stage lands\" clauses are). Either declare it for the same retirement-class sweep, or repair it now.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Add the sentence to design.md's Risks beside the two declared \"until ... lands\" clauses, naming the same retirement-class sweep as its owner, so the system review and audit-drift do not rediscover it."
+        },
+        {
+          "label": "B",
+          "body": "Replace the parenthetical with a pointer — `the maturity-graded next_recommended (per orbit-run-summary-emit's maturity requirement)` — and re-pin `orbit-explore` in skill-templates-parity, recording that task 1.3's unchanged-pin check was satisfied BEFORE this prose edit (the interpolation and the prose repair are two acts)."
+        }
+      ]
+    },
+    {
+      "pass": "0",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc13b-explore-maturity-signal/design.md",
+      "line": 73,
+      "title": "D-rc13b-8 in design.md and explore.md still carries the pre-amendment model (orphan \"reported in `rules_open`\", duplicate ID as MALFORMED)",
+      "recommendation": "design.md:70-73 says `duplicate ID → MALFORMED naming the second` and `orphan Mechanism entry → MALFORMED naming the heading, reported in rules_open with key_defects kind orphan` inside the same paragraph that states the disjoint two-array model — the exact predicate the external proposal pass rejected. explore.md:235-243 (the D-rc13b-8 Decisions entry) says the same; its Mechanism entry was amended, the Decisions entry was not. Delete the two stale clauses from the design paragraph and add a dated amendment line to the Decisions entry pointing at the Mechanism entry's amended rows, so a reader of either artifact alone reconstructs the shipped model."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "src/core/parsers/explore-rules.ts",
+      "line": 270,
+      "title": "`readStatus` is byte-anchored: a UTF-8 BOM or trailing whitespace on the header line silently reads `exploring`",
+      "recommendation": "The first non-blank line is matched against the anchored production without normalisation. Executed: `\\uFEFF> **Status**: concluded 2026-09-25.` and `> **Status**: concluded 2026-09-25. ` (one trailing space) both yield `status.token: exploring`, so the emit renders a count-derived rung on a file the author concluded, with no note — the neither-token rule is by design, but a trailing space is invisible. Strip a leading BOM and `trimEnd()` the line before matching (the owned production is unchanged; whitespace normalisation precedes it), or push a near-miss stderr note when the line begins `> **Status**:` and matches neither token."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "src/core/parsers/explore-rules.ts",
+      "line": 173,
+      "title": "A `D-`-prefixed heading that fails the ID grammar is reported as an orphan keyed by its whole heading text",
+      "recommendation": "For an H3 beginning `D-` that does not match `MECHANISM_ENTRY_HEADING`, the key becomes the text before the first ` — `. Executed: `### D-x-1: a rule` → `key_defects: [{id: \"D-x-1: a rule\", kind: \"orphan\", line: 11}]`, rendered `1 key defect (D-x-1: a rule at line 11)`, plus `D-x-1` in `rules_open` as `absent` — two reports for one typo, and an `id` that is not an ID. The owning grammar lists `a malformed ID` as its own MALFORMED failure. Key such a heading by its ID-shaped prefix (`/^D-[a-z0-9]+-[0-9]+/`) so it joins its Decisions entry and judges `malformed-entry` naming the heading line, or give it a distinct `key_defects` kind so the identifier rule always renders an ID."
+    },
+    {
+      "pass": "0",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "src/core/explore-grammar.ts",
+      "line": 73,
+      "title": "The opener prefix requires `: ` with a trailing space, so a title wrapped immediately after the colon loses its ID and orphans its entry",
+      "recommendation": "`DECISION_OPENER_PREFIX` ends in `: `. Executed: `- **2026-09-25 — D-x-1:` followed by `  a title** prose.` on the next line reads `open` by line AND its Mechanism entry `D-x-1` becomes an orphan — the same double report the wrapped-opener rule was added to prevent, reached by a wrap one character earlier. Accept end-of-line as the prefix terminator (`:(?: |$)`) and state it as a clarification of the owner's prefix sentence in `orbit-conventions`."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "pass": "2",
+      "title": "The new parser is directed toward a fence scanner that is not CommonMark-correct",
+      "evidence": "src/core/parsers/explore-counter.ts:2 imports createFenceTracker from ../markdown-fence.js and collectSections uses it (lines 74-92); explore-rules.ts consumes collectSections; probe: a four-backtick fence enclosing a three-backtick decoy is not structure (test explore-rules.test.ts:257 green)"
+    },
+    {
+      "pass": "0",
+      "title": "A duplicate Mechanism heading has no home in either array",
+      "evidence": "explore-rules.ts:309-311 records a second heading as key_defects kind duplicate and never judges it; executed: first heading no-closure + second SOURCED → rules_open [D-x-1 no-closure], key_defects [{D-x-1 duplicate line 26}]; scenario at delta orbit-emit-composition/spec.md:139"
+    },
+    {
+      "pass": "0",
+      "title": "The requirement still says FOUR inputs after the key-defect clause made it five",
+      "evidence": "delta orbit-run-summary-emit/spec.md:3 reads 'computed from FIVE inputs' and names key_defects as the fifth"
+    },
+    {
+      "pass": "0",
+      "title": "The first-line-prefix opener rule lives outside the specification that owns the production",
+      "evidence": "delta orbit-conventions/spec.md:6 states the FIRST-LINE PREFIX rule with the scenario 'A wrapped title keeps its ID'; task 6.1 grep for 'closing \\*\\*' over the emit-composition delta returns zero lines; fingerprint --check 6 verified, 0 diverged"
+    }
+  ],
+  "commentary": "Read blind: no external system findings, no prior system emit. Method: every mechanism was executed rather than read — 38 hand-built inputs through the compiled parser and grid (CRLF, BOM, duplicated H2s, fenced Closure/Kind decoys, indented moves and Domain lines, uppercase and colon-wrapped IDs, `*` and ordered-list openers, superseded Re-entry carriers, trailing-whitespace rows and headings, compact GFM rows, two Closure lines, an H4 inside an entry), the archived exemplar (12/9/0/0/1 as claimed) and this change's own file (7 live, 0 open, as the apply emit recorded), every archived explore.md (all pre-rc13a files render total = open, the declared migration surface, none crash), then two real emits through `orbit emit explore` against a scratch staging directory — Unaccounted with an orphan and a BOUNDED residual, then concluded — rendered through bare, `--json` and `--full`, plus the boot render over the change's trail. The orientation path holds end to end from the trail (chip, position, bare next, closed entry keys, waiting untouched); the one leak is the bare tier's `also:` word. The pattern behind the findings is a single shape: the grammar module's regexes are stricter than the prose grammar they extend at exactly the places GFM is permissive (row padding, trailing whitespace, the colon-then-wrap), and the section collector the counter always had is now asked to make FORM judgements it was never built for (a duplicated H2 replaces rather than merges). Both are in the demanding direction except the duplicated `## Decisions` case, which drops a live rule and invents an orphan. Not probed: Codex-side rendering, concurrent trails, the propose path over a concluded name (rc13c's). Passes 4 and 5 skipped — `orbit/lenses/` does not exist in this tree (no perspectives defined; no critical paths defined). Pass 0 by hand rather than by delegation: 17 of 18 tasks verified against artifacts, 6.4 the declared handoff; both task greps return zero. Task 6.4's record: READ/ENUMERATE/COHERE CRITICALs: 0 of 0. Cosmetic, recorded here not as findings: a Re-entry text ending in a period renders `..`, and the Concluded rung followed by a key-defect clause joins as `.;` — both exactly what the spec's concatenation says. Residual risk texture: the false-withholding class (a GFM-valid row read as malformed) is the one that would bite a real author first, because the readout names a line with nothing visibly wrong on it.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "6"
+  ],
+  "passes_skipped": [
+    "4",
+    "5"
+  ],
+  "final_assessment": "0 critical, 5 warning, 4 suggestion.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc13b-explore-maturity-signal --from-file orbit/changes/rc13b-explore-maturity-signal/.orbit-runs/review-system-2026-09-25T19-51-20Z.json"
+}

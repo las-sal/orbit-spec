@@ -1,0 +1,16 @@
+{
+  "command": "review",
+  "timestamp": "2026-07-13T16:36:02Z",
+  "change": "explicit-lifecycle-consent",
+  "final_assessment": "All checks passed (in-context pass). Pass 0 (verify): 16/16 tasks; all 12 delta requirements map to landed implementation (engine consent vocabulary + v3 schema + metadata markers; body consent steps; 15-body no-chaining echo; tripwire; phrasing sweep); design D1-D7 adhered (incl. D3 consent-orthogonal-to-gate-state, D6 three-tier era rule, D7 subtraction via readout-verbatim completion sections). Pass 1 (baseline): no baseline behavior broken — C2 fingerprint guard untouched and verified live post-stamp (8/8); emit spine additive-only; v2-compat schemas byte-identical (tested). Pass 2 (cohesion): all writeChangeMetadata callers spread the full metadata object (fingerprints.ts preserves the new fields — verified live); nextAfterPass signature change is module-internal; GateStatusRow consumers tolerate the additive consent field; codex surface parity covered by the real-init e2e test. Pass 3 (surface walk): status/instructions JSON additive; orbit new change writes schema_version: 3 (verified by live scaffold in temp dir); consent marker surfaces in gates[] live; 15/15 skills regenerated. Passes 4-5 skipped (no orbit/lenses/). Pass 6 (audit-drift as library): no vocabulary residue in live governing docs (baseline three-disciplines mentions are pre-sync deltas, expected; fork-and-orbify is a historical record); Cat-4 tripwire evaluated live over the only active change — this change's own apply emit is era-checked (at-stamp) and carries consent: user-invoked. Non-finding observation for the external pass: the ' — user-invoked' marker is embedded in the next_command JSON VALUE (not display-only) so bodies rendering verbatim inherit it; tier-1 leading-token parse is unaffected — the external reviewer should independently weigh that reading of the eligibility-phrasing delta. Known deferral (documented in tasks 4.4 + arc log, not drift): CLAUDE.md's execution-disciplines section gains no-chaining at archive-time sync.",
+  "next_recommended": "/orbit:review-external --as system explicit-lifecycle-consent — external cross-check required by the review cadence before archive (per orbit-conventions Review mode decision framework; in an early dogfooding cycle, in-context system review missed 3 of 3 real implementation bugs — all caught by external review)",
+  "kind": "editorial",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "iteration": 1,
+  "depth": "full",
+  "passes_run": ["0", "1", "2", "3", "6"],
+  "passes_skipped": { "4": "no perspectives defined", "5": "no critical paths defined" },
+  "findings_summary": { "critical": 0, "warning": 0, "suggestion": 0 },
+  "finding_titles": []
+}

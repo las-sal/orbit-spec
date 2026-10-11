@@ -1,0 +1,111 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-01T18:29:42Z",
+  "change": "rc16-retirement-sweep",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc16-retirement-sweep/.orbit-runs/review-system-2026-10-01T18-20-51Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-01T18-20-51Z",
+  "latest_apply_token": "2026-10-01T18-03-47Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 1
+  },
+  "pushback_verification": "All 3 findings verified against the working tree before triage: both candidate owners of the concluded-rung render rule read (orbit-orientation's sourcing requirement, baseline 140-152, states it; orbit-run-summary-emit's maturity requirement owns the rung's text and cross-references orientation at 205); design.md:82 and SKILL.md's 'this requirement' read; the A4 delta line and the grammar requirement's line 36 read side by side. 0 stale. Sal's single letter 'c' ratified finding 2 and left the obvious-fix preview standing.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "A3's second clause attributes the row's concluded-rung render to orbit-run-summary-emit; orbit-orientation's sourcing requirement owns it",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc16-retirement-sweep/specs/orbit-conventions/spec.md",
+      "line": 74,
+      "classification": "trivial_fix",
+      "action": "The 'Owned, since shipped' paragraph's middle parenthetical now names `orbit-orientation`'s `Next-recommendation sourcing is time-shifted, never live` — the requirement that STATES the rule the clause describes (the newest spine-valid emit's concluded token → the Concluded rung's prose rendered BARE from the trail); the maturity requirement owns the rung's TEXT only. Delta line 74 and body line 610 edited together (D-rc16-3), byte-equality re-checked IDENTICAL; design row A3 (which quotes the delta) and task 1.3's note ripple; the two explore pins moved a second time with a dated note.",
+      "ratified_via": "chat",
+      "resolution": "pointer moved to the row's render-rule owner, orbit-orientation's sourcing requirement",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/templates/workflows/explore.ts",
+          "orbit/changes/rc16-retirement-sweep/design.md",
+          "orbit/changes/rc16-retirement-sweep/tasks.md",
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Repair-table row A3'' says 'in the body's voice'; the tree carries the delta paragraph verbatim, so the skill says 'this requirement' to a reader who has none",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc16-retirement-sweep/design.md",
+      "line": 82,
+      "classification": "decision_required",
+      "action": "Option C, off-menu, ratified by Sal in chat ('c'): the sentence was re-voiced ONCE in the delta so it is true on both surfaces — 'None of the three is a limit of concluding; each is named here so a reader of the conclude flow knows who owns the behaviour the conclusion depends on' — the body stays byte-equal (re-checked IDENTICAL), and design row A3'' now reads 'the delta's paragraph VERBATIM, backtick-escaped (task 1.3)' with the re-voicing and the finding-1 pointer move recorded in the row. A keeps the byte-equality check but leaves the dangling referent in the skill; B honours the row but puts two wordings of one sentence on two surfaces — the shape this change exists to remove.",
+      "ratified_via": "chat",
+      "resolution": "C — re-voice the sentence once in the delta (true on both surfaces), keep the body verbatim, fix the row to say VERBATIM",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Keep the body verbatim; edit design.md row A3'' to say VERBATIM; accept the 'this requirement' wording in the skill as the price of the byte-equality check."
+          },
+          {
+            "label": "B",
+            "body": "Honour the row: reword the body's closing sentence in the conclude section's own voice, drop task 1.3's byte-equality claim, move the pins once more."
+          }
+        ],
+        "chosen": "off-menu"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc16-retirement-sweep/specs/orbit-conventions/spec.md",
+          "src/core/templates/workflows/explore.ts",
+          "orbit/changes/rc16-retirement-sweep/tasks.md",
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "A4 restates the grammar requirement's reader's-judgement clause beside the pointer to it",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc16-retirement-sweep/specs/orbit-conventions/spec.md",
+      "line": 113,
+      "classification": "trivial_fix",
+      "action": "The `Kind:` bullet's tail trimmed to the bare pointer — '— the stated residual, per `Mechanism entry grammar and accounted closure` (R-crc-10).' — naming and pointing, re-expressing none of the owner's predicate (the fresh pass's suggested form kept 'a reader's judgement'; the external half's CRITICAL on the same site asked for no re-expression at all, so the trim goes to the purest form that satisfies both). Delta line 113 and body line 472 edited together; design row A4 and task 1.5's note record the second form.",
+      "ratified_via": "chat",
+      "resolution": "trimmed to the bare pointer",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/templates/workflows/explore.ts",
+          "orbit/changes/rc16-retirement-sweep/design.md",
+          "orbit/changes/rc16-retirement-sweep/tasks.md",
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "3 of 3 fresh findings resolved (2 WARNING, 1 SUGGESTION; 0 stale) — walk log 1 of the blind pair. The sweep's own disease a third time: A3's middle clause pointed at the capability owning the rung's TEXT where the row's RENDER rule lives in orientation's sourcing requirement — the pointer moved; the paragraph's closing sentence re-voiced once in the delta so it is true on both surfaces (Sal: C), the body kept byte-equal; A4 trimmed to the bare pointer, the site the external half also raised. Two body sentences moved with their owners, the explore pins moved a second time with a dated note; validate --strict valid; fingerprints 6/6; 2376 tests green. The external findings file (external-system-2026-10-01T18-21-12Z.md) is walked next as log 2, its A4 CRITICAL stale against this log.",
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc16-retirement-sweep --from-file orbit/changes/rc16-retirement-sweep/.orbit-runs/external-system-2026-10-01T18-21-12Z.md"
+}

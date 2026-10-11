@@ -1,0 +1,455 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-11T16:48:04Z",
+  "change": "rc09a-size-record",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc09a-size-record/.orbit-runs/review-proposal-2026-10-10T21-52-58Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-10T21-52-58Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 6,
+    "suggestion": 4
+  },
+  "pushback_verification": "All ten verified against the artifacts at the walk; none stale.",
+  "resolution_summary": {
+    "resolved": 10,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Three statements of what --strict fails on disagree; the DUPLICATE row also fails strict",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-change-size/spec.md",
+      "line": 166,
+      "classification": "decision_required",
+      "action": "applied the ratified direction A: DUPLICATE stays a WARNING; the validate requirement's strict sentence lists every WARNING row and is the one statement; proposal.md and design.md point at it",
+      "ratified_via": "chat",
+      "resolution": "take your recs",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Keep DUPLICATE a WARNING. Rewrite spec.md:166 to say strict fails on an undeclared breach or any MALFORMED or DUPLICATE line, and reword proposal.md:28 to point at it."
+          },
+          {
+            "label": "B",
+            "body": "Make DUPLICATE an INFO, since the first item declares. Keep spec.md:166 as written and reword proposal.md:28 to match it."
+          }
+        ],
+        "chosen": "A"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc09a-size-record/proposal.md",
+          "orbit/changes/rc09a-size-record/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "fails exactly an undeclared breach",
+          "fails only on an undeclared one",
+          "a malformed declaration stands"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc09a-size-record/specs/orbit-change-size/spec.md",
+            "text": "an undeclared breach, a MALFORMED or DUPLICATE `## Size` line, or a figure that could"
+          },
+          {
+            "path": "orbit/changes/rc09a-size-record/proposal.md",
+            "text": "what `--strict` fails on is stated once, in that requirement"
+          }
+        ],
+        "searched": [
+          "--strict",
+          "strict"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/rc09a-size-record/explore.md",
+            "why": "the exploration record; it travels unchanged into the change as the history of how the change took shape"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "A map with no valid entry is OFF here but ON-comparing-nothing in the explored rule, and the change does not record it",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-change-size/spec.md",
+      "line": 76,
+      "classification": "decision_required",
+      "action": "applied the ratified direction A: OFF kept; the narrowing and its reason recorded as design D7(b); explore.md unchanged",
+      "ratified_via": "chat",
+      "resolution": "take your recs",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Keep OFF. Add the narrowing and its reason to design.md D7, beside the dropped merge note."
+          },
+          {
+            "label": "B",
+            "body": "Restore the explored row: ON, comparing nothing. Set `ceiling: {}` in status, and keep malformed-line warnings live."
+          }
+        ],
+        "chosen": "A"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc09a-size-record/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc09a-size-record/design.md",
+            "text": "Two narrowings from the exploration, recorded"
+          }
+        ],
+        "searched": [
+          "zero valid entries",
+          "no valid entry"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/rc09a-size-record/explore.md",
+            "why": "the exploration record; it travels unchanged into the change as the history of how the change took shape"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "'Size never moves a gate' cannot be tested by moving the change's figures: the tasks figure is the apply gate's own input",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 21,
+      "classification": "trivial_fix",
+      "action": "task 4.3 and the 'Size never moves a gate' scenario now hold one change fixed and move size_ceiling from maxima above every figure to maxima below",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc09a-size-record/specs/orbit-change-size/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "under and an over fixture",
+          "move from under to over every maximum"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc09a-size-record/tasks.md",
+            "text": "ONE change held fixed"
+          },
+          {
+            "path": "orbit/changes/rc09a-size-record/specs/orbit-change-size/spec.md",
+            "text": "one change is held fixed and `size_ceiling` moves"
+          }
+        ],
+        "searched": [
+          "never moves a gate",
+          "under",
+          "over fixture"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The size brief's place relative to the PR choreography's commit is unspecified, so a Declare can land outside the draft PR",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-propose-modifications/spec.md",
+      "line": 5,
+      "classification": "trivial_fix",
+      "action": "the brief runs after generation and validation, before Step 0d's move, the PR choreography's Phase 3 and the completion emit; a scenario covers a declaration landing before the PR commit; design D5 and task 5.1 carry the order",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc09a-size-record/design.md",
+          "orbit/changes/rc09a-size-record/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "before the completion emit, in both modes"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc09a-size-record/specs/orbit-propose-modifications/spec.md",
+            "text": "before the PR choreography's Phase 3 (commit, push, draft PR)"
+          },
+          {
+            "path": "orbit/changes/rc09a-size-record/specs/orbit-propose-modifications/spec.md",
+            "text": "A declaration lands before the PR commit"
+          }
+        ],
+        "searched": [
+          "completion emit",
+          "Phase 3"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The byte rule leaves the line and block boundaries open, and the rc04c regression in task 2.4 cannot pin them",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-change-size/spec.md",
+      "line": 19,
+      "classification": "trivial_fix",
+      "action": "the line rule stated once (trimmed text split on newlines, both sides; every counted line +1, blank lines included); task 2.4 pins rc04c at exactly 14,438 bytes against baseline commit bc4c12fc, computed under the rule at the walk",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc09a-size-record/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "14.1K new-side",
+          "its full UTF-8 bytes",
+          "| its full bytes |"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc09a-size-record/specs/orbit-change-size/spec.md",
+            "text": "exactly 14,438 bytes"
+          },
+          {
+            "path": "orbit/changes/rc09a-size-record/tasks.md",
+            "text": "exactly 14,438 bytes"
+          }
+        ],
+        "searched": [
+          "full bytes",
+          "newline",
+          "14.1K"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/rc09a-size-record/explore.md",
+            "why": "the exploration record; it travels unchanged into the change as the history of how the change took shape"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Declaration edge cases split implementations: unconfigured dimensions, other bullet markers, reason-on-continuation, heading spelling",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-change-size/spec.md",
+      "line": 122,
+      "classification": "trivial_fix",
+      "action": "four rulings settled under R-crc-3 and added as declaration-table rows: an unconfigured declared dimension reads stale; only '-' declares; the reason begins on the item's first line; the heading is exactly '## Size'; scenarios added; design D8 records them",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc09a-size-record/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc09a-size-record/specs/orbit-change-size/spec.md",
+            "text": "only `-` declares"
+          },
+          {
+            "path": "orbit/changes/rc09a-size-record/specs/orbit-change-size/spec.md",
+            "text": "Declaring an unconfigured dimension is stale"
+          },
+          {
+            "path": "orbit/changes/rc09a-size-record/design.md",
+            "text": "Declaration edge rulings, settled at the proposal walk"
+          }
+        ],
+        "searched": [
+          "continuation",
+          "nested bullet",
+          "## Size"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "No failure path for the size computation on the status surface every body reads gate state from",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-change-size/spec.md",
+      "line": 194,
+      "classification": "trivial_fix",
+      "action": "an existing-but-unreadable input nulls its figure and is listed in size.errors; status still exits as without size; validate reports a size WARNING naming the file; scenarios and tasks added",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc09a-size-record/tasks.md",
+          "orbit/changes/rc09a-size-record/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc09a-size-record/specs/orbit-change-size/spec.md",
+            "text": "exists but cannot be read"
+          },
+          {
+            "path": "orbit/changes/rc09a-size-record/specs/orbit-change-size/spec.md",
+            "text": "A read failure does not fail status"
+          }
+        ],
+        "searched": [
+          "unreadable",
+          "cannot be read",
+          "errors"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The Size: line's figure format and status-flag reach are unpinned",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-change-size/spec.md",
+      "line": 199,
+      "classification": "trivial_fix",
+      "action": "one example Size line with bytes as a raw integer; the field rides plain change status only, never --boot, --scenarios or --report",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc09a-size-record/design.md",
+          "orbit/changes/rc09a-size-record/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc09a-size-record/specs/orbit-change-size/spec.md",
+            "text": "15012 bytes changed"
+          },
+          {
+            "path": "orbit/changes/rc09a-size-record/specs/orbit-change-size/spec.md",
+            "text": "rides the plain change status only"
+          }
+        ],
+        "searched": [
+          "--boot",
+          "--scenarios",
+          "Size: line"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The at-archive note omits the baseline capability count that moves 25 → 26",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 37,
+      "classification": "trivial_fix",
+      "action": "at-archive note 6.4 added: move CLAUDE.md's marked capability figure 25 → 26 and its prose in the archive commit",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc09a-size-record/tasks.md",
+            "text": "AT-ARCHIVE NOTE 6.4"
+          }
+        ],
+        "searched": [
+          "src:capabilities",
+          "AT-ARCHIVE"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Changes generated by /orbit:ff or /orbit:continue get no size brief",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-propose-modifications/spec.md",
+      "line": 3,
+      "classification": "trivial_fix",
+      "action": "design Non-Goals names ff and continue as out of scope for the brief; they hear about a breach from orbit validate --strict",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc09a-size-record/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc09a-size-record/design.md",
+            "text": "A size brief at `/orbit:ff` or `/orbit:continue`"
+          }
+        ],
+        "searched": [
+          "ff",
+          "continue"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Ten of ten resolved: the two decision findings by direction A on the user's word (DUPLICATE stays a WARNING with the strict rule stated once; the empty-map narrowing recorded in design D7), eight repairs in place. No mechanism added.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc09a-size-record",
+  "ripple_misses": 0
+}

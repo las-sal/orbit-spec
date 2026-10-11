@@ -1,0 +1,80 @@
+{
+  "command": "archive",
+  "timestamp": "2026-09-25T23:42:01Z",
+  "change": "rc13b-explore-maturity-signal",
+  "kind": "lifecycle",
+  "model": "claude-fable-5-1",
+  "final_assessment": "Archived rc13b-explore-maturity-signal to orbit/changes/archive/2026-09-25-rc13b-explore-maturity-signal/ — the explore readout reads the rc13a convention: a form parse over explore.md through one grammar module held byte-equal to the owning spec, a six-rung header-first grid that reports and never vouches, five engine-owned emit fields, and a concluded orientation row read from the trail. Four capability deltas (one over the R-crc-1 ceiling by one sentence, declared and ratified), seven blocks synced 7/7 byte-verified. The third rc-stage to archive through a COMPUTED PASSED review-system gate and the second through the blind-pair cadence: fresh 0C/5W/4S and external GPT-5 Codex 1C/4W/1S converged blind on four defects, two more each; in-context confirm 0C/1W/2S; three walk logs, 18 findings, all resolved, none re-opened. Task 6.4's first measurement: one ENUMERATE failure (the repeated-section collector), found by execution. 2322 tests green.",
+  "archive_path": "orbit/changes/archive/2026-09-25-rc13b-explore-maturity-signal/",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 6
+    },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": [
+      "orbit-conventions",
+      "orbit-emit-composition",
+      "orbit-orientation",
+      "orbit-run-summary-emit"
+    ],
+    "added": 1,
+    "modified": 6,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
+  "user_decision": "proceeded_with_no_critical",
+  "consent": "user-invoked",
+  "warnings": [
+    "Task 6.4 (user-validation) was ticked AT THIS SEAM by Sal, with a dated note naming both recorded counts; the apply emit recorded it pending and the position line annotated it until now.",
+    "Pre-archive audit, Category 5 (touchpoints, engine-computed): actual_unpredicted = orbit/architecture/clean-up-review-cycle.md (edited at propose for the rc13c/rc15 declarations, committed-only ACTUAL is measured from change start), test/commands/status-orientation.test.ts, test/core/explore-grammar-parity.test.ts, test/helpers/owner-text.ts (tests and a lifted helper riding along); predicted_unsatisfied = src/core/markdown-fence.ts (the design named it 'no edit expected' and none was needed). All SUGGESTION; no source path drifted.",
+    "Pre-archive audit, Category 3: the two declared 'until the maturity-signal stage lands' clauses are now historical (see the readiness record's fourth accepted residual); no other cross-doc disagreement; orbit validate --sources passes with every marked figure unchanged (stages 24, rulings 14, capabilities 21, schema version 4 — this change added no capability and did not bump the schema).",
+    "Sync landed with delta and baseline both holding the seven blocks until this move; the generated-surface mirror test and the grammar parity test resolved the single active owner throughout and stay green now that the baseline alone owns them.",
+    "The orbit-explore skill hash pin moved TWICE after task 1.3's unchanged-pin measurement stood — both moves are one sentence (the persist step's grid parenthetical, then its trim to a bare pointer), recorded in the parity test comment and a dated note under task 1.3; the regenerated SKILL.md differs from the pre-change snapshot at exactly that line."
+  ],
+  "judgements": [
+    {
+      "kind": "readiness",
+      "formed_against": [
+        "2026-09-25T15-54-12Z",
+        "2026-09-25T17-51-42Z",
+        "2026-09-25T19-51-20Z",
+        "2026-09-25T20-06-14Z"
+      ],
+      "disposition": "ready",
+      "reasoning": "The review-system gate computed PASSED through the blind-pair cadence (spec-driven v4: fresh + external GPT-5 Codex on the pushed apply commit 69adda5d, blind to each other, then an in-context confirm), independent spend 2. The two halves converged blind on the same four defects — the repeated-section collector (the external CRITICAL, an ENUMERATE failure), the GFM row regex, the retired Mature-rung prose and the field-shape contradictions — and each found two the other did not; all were resolved in three walk logs with executed fixtures, and the confirm found only record coherence in the walks' own additions. The mechanism now does what the four deltas say, executed rather than read: the form parse, the six-rung grid, the concluded orientation row, and the grammar module held byte-equal to the owning spec. 2322 tests green; strict validation and 6/6 fingerprints at the seam; sync 7/7 byte-verified. Task 6.4's datum landed from both halves (fresh 0 of 0, external 1 of 1 ENUMERATE) and was validated by Sal at this seam.",
+      "ratified_by": "ai",
+      "accepted": [
+        {
+          "claim": "PASSED means every substantive finding on the trail has a resolution; no independent pass stood clean on the FINAL tree — the last independent passes saw 69adda5d, and the three walks plus the in-context confirm are the only reads of the tree that ships.",
+          "why": "This is the cadence's designed shape (rc07 recorded the same distinction) — the confirm read the walks' additions line by line and executed them, and every edit after the pair was a sentence, a loop bound, a regex predicate or a fixture, each with an executed test; buying a third independent pass would be effort targeted, not recorded (R-crc-11h)."
+        },
+        {
+          "claim": "The list-item boundary rule is a CommonMark APPROXIMATION: an H3+ heading, or a post-blank unindented non-item line, ends the entry; a lazy continuation (no blank line) still belongs, so a column-zero slot written as a lazy continuation attributes to the preceding entry.",
+          "why": "Measured before landing: zero column-zero slot lines exist in any explore.md on the record, so no existing attribution changed; the lazy-continuation attribution is what the owning requirement's 'lazy-continuation line qualifies' sentence asks for; a full block parser is Q-crc-15's shape and out of this stage's ceiling."
+        },
+        {
+          "claim": "A Domain-table row is detected only by a leading pipe (up to three spaces of indent); a GFM row written without a leading pipe is prose to the parser, and a `## Mechanism` entry whose table uses that form judges malformed-entry.",
+          "why": "The grammar's own fence writes every row pipe-led and the two exemplars follow it; within a row, padding and the trailing pipe are GFM-optional and accepted. The bound is stated in the fixture test rather than hidden."
+        },
+        {
+          "claim": "The 'until the maturity-signal stage lands' clauses in orbit-conventions' concluded-outcome requirement and in the explore body's KNOWN paragraph are now history, not falsehood, and survive this archive.",
+          "why": "Declared in design.md Risks before apply: retiring them is a further capability and belongs to the retirement-class sweep rc13a deferred its five-section titles to; both blind-pair halves read the declaration and did not re-find it."
+        },
+        {
+          "claim": "`re_entry` is a first-wins RECOVERY over a file that breaks the exactly-one-live-slot authoring rule, with a stderr note per further carrier; the reader never withholds on the violation.",
+          "why": "The decoder reports and never rules (R-crc-13); the authoring obligation stays stated once in orbit-conventions and the delta, design and exploration were reconciled to say which is which at the fresh half's finding."
+        }
+      ]
+    }
+  ],
+  "next_recommended": "Change archived. Run /orbit:new or /orbit:explore to start the next change, or /orbit:audit-drift for a project-wide drift check."
+}

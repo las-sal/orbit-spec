@@ -1,0 +1,49 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-05T00:13:47Z",
+  "change": "rc06b-map-readers",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc06b-map-readers/.orbit-runs/review-proposal-2026-10-05T00-11-37Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-05T00-11-37Z",
+  "latest_apply_token": null,
+  "tie_break_rationale": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 1
+  },
+  "pushback_verification": "Re-read spec.md line 5: the opening still said exhaustive over the surface's JSON fields; not stale.",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "SUGGESTION",
+      "title": "The requirement opening still claims exhaustiveness over every JSON field",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc06b-map-readers/specs/orbit-verify-modifications/spec.md",
+      "line": 5,
+      "classification": "trivial_fix",
+      "action": "opening sentence narrowed to the JSON fields that carry coverage facts",
+      "evidence": "spec.md line 5 read before and after the edit",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "One of one resolved: the requirement opening now limits exhaustiveness to the coverage-fact fields, agreeing with the paragraph after the table.",
+  "iteration": 3,
+  "next_recommended": "/orbit:apply rc06b-map-readers — user-invoked"
+}

@@ -1,0 +1,108 @@
+{
+  "command": "review",
+  "timestamp": "2026-08-05T20:54:40Z",
+  "change": "d5-context-economy",
+  "kind": "editorial",
+  "model": "claude-fable-5",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "src/core/shared/skill-generation.ts",
+      "line": 356,
+      "title": "update --force leaves the retired orbit-review-external skill + launcher on pre-existing surfaces (no retired-dir cleanup)",
+      "recommendation": "Fresh init yields the clean 15-skill surface, but an EXISTING project that upgrades and runs update keeps the retired orbit-review-external skill dir + review-external.md launcher loadable (reconciliation only converges declared workflows; the retired dir is no longer a known workflow id, so nothing removes it). Either (A) extend update reconciliation with a retired-artifacts list (e.g. RETIRED_SKILL_DIRS consulted on both update paths, removing known-retired dirs + launchers), or (B) accept and document manual removal as an upgrade note, filing a follow-up issue.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "extend update reconciliation with a retired-artifacts list consulted on both update paths (remove known-retired skill dirs + launcher files)"
+        },
+        {
+          "label": "B",
+          "body": "accept the gap; document manual removal as an upgrade note and file a follow-up issue"
+        }
+      ]
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/d5-context-economy/design.md",
+      "line": 197,
+      "title": "Touchpoints divergence (Category 5, dogfooded): 9 substantive source files in actual-but-not-predicted",
+      "recommendation": "The engine set-arithmetic over the frozen predicted map vs the committed actual map surfaces real scope evolution: src/core/artifact-graph/instruction-loader.ts, src/core/artifact-graph/trail.ts, src/core/boot-render.ts, src/core/model-hints.ts, src/core/project-config.ts, src/core/profile-sync-drift.ts, src/core/shared/skill-generation.ts, src/core/shared/tool-detection.ts, src/core/templates/skill-templates.ts were touched but never predicted (boot render and model hints landed as NEW modules; the registry sweep hit different files than the four named; the config loader was project-config.ts, anticipated only in the entry's prose annotation). The predicted map is FROZEN at apply by design, so the resolution is record-not-edit: acknowledge the divergence on the trail (this finding IS the record) so the archive narrative carries it; no artifact edit.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "accept-and-record: this finding on the trail is the divergence record; no artifact edit (the frozen-map rule)"
+        },
+        {
+          "label": "B",
+          "body": "additionally append a dated post-apply addendum BELOW the frozen section (plan-vs-landed), if you want the divergence readable in design.md itself"
+        }
+      ]
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/d5-context-economy/design.md",
+      "line": 197,
+      "title": "Touchpoints predicted-but-never-touched (pre-archive): 5 targets the plan overshot",
+      "recommendation": "src/core/report-render.ts (its normalizers were imported by the write gate, not edited), src/core/templates/index.ts, src/core/init.ts, src/core/update.ts (the retirement sweep needed different files), and orbit/config.yaml (the predicted commented models: example never landed). Informational per the severity ladder — the one actionable item: add the commented models: example to orbit/config.yaml (or drop it from intent) before archive."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "title": "Retired /orbit:review-external invocation in baseline specs (conventions:180/307/554, engine-gates:290, review:196, run-summary-emit:386 et al.)",
+      "evidence": "every hit sits inside a requirement block this change's own deltas MODIFY (fingerprints 25/25 verified) — archive sync rewrites them; the remaining Purpose-paragraph mentions are the acknowledged at-archive note 9.4"
+    },
+    {
+      "title": "CLAUDE.md current-state surface counts still say 16 (lines 26-27, 91)",
+      "evidence": "deliberate deferral — tasks.md at-archive note 9.7 sweeps present-tense counts to 15 during the archive flow"
+    }
+  ],
+  "commentary": "The most interesting result is reflexive: the change's own Category-5 check, run for the first time as part of this review, correctly caught the change's own scope evolution — the predicted map named where features would land, the implementation legitimately created new modules, and the set arithmetic surfaced exactly that with zero false positives once the change-own-directory exclusion applied. Engine correctness was probed hardest (full suite, live smoke of render/boot/hints/T0, frozen-vocabulary grep pins all intact); the surviving risk class is upgrade-path hygiene, not behavior — the one WARNING that needs a real decision is the stale-surface GC gap, which only bites pre-existing installs. Passes 4-5 skipped: no lenses defined in this repo.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "6"
+  ],
+  "passes_skipped": [
+    "4 (no perspectives defined)",
+    "5 (no critical paths defined)"
+  ],
+  "final_assessment": "0 critical, 2 warning, 1 suggestion.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews d5-context-economy --from-file orbit/changes/d5-context-economy/.orbit-runs/review-system-2026-08-05T20-54-40Z.json"
+}

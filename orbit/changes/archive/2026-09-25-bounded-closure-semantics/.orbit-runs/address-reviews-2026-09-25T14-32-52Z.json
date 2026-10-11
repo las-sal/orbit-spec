@@ -1,0 +1,127 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-25T14:32:52Z",
+  "change": "bounded-closure-semantics",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "source": "from-file",
+  "source_path": "orbit/changes/bounded-closure-semantics/.orbit-runs/external-system-2026-09-25T14-13-59Z.md",
+  "external_reviewer": "gpt-6-astra",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 2,
+    "warning": 2,
+    "suggestion": 1
+  },
+  "pushback_verification": "All 5 findings verified against HEAD d0284d0f before acting: every cited line read and matched (conventions 140/143/156, explore-modifications 46/53/56, test 356); 0 stale.",
+  "resolution_summary": {
+    "resolved": 5,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "The owning specs and the shipped workflow body define the same rules twice",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/explore.ts",
+      "line": 407,
+      "classification": "decision_required",
+      "ratified_via": "chat",
+      "resolution": "Keep the two delta specs as owners and make the body's copies CHECKED MIRRORS: each of the three fenced productions (status header, Decisions entry, Mechanism grammar) and the two tables (nine moves, re-entry) is tagged '*Mirror of <capability>' <requirement> — the owner*', and a new generated-surface test extracts each block from the rendered SKILL.md and from the owning spec (exactly one file may hold it: the baseline once synced, the active delta until then) and asserts byte-equality. The two lines the fresh pass found diverged were aligned by writing the block once in the spec and deriving the body from it. Recorded as R-crc-14's MIRROR COROLLARY in the program doc (rulings count unchanged — corollaries append inside the ruling). The fuller form — one TypeScript constant read by body, spec check, test and parser — is handed to rc13b in design.md Risks. Direction: the AI's recommendation, ratified by Sal in chat ('let's go with your rec') after a briefing of three options (delete body copy / invert ownership / checked mirror); the finding's own 'delete rather than reconcile' was not taken because the body cannot resolve the owning spec in an adopter's project.",
+      "action": "Tagged five mirrors in explore.ts; rewrote the spec fences/tables once and derived the body copies; added the parity test and the R-crc-14 mirror corollary; rc13b constants-module handoff in design.md.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/templates/workflows/explore.ts",
+          "orbit/changes/bounded-closure-semantics/specs/orbit-conventions/spec.md",
+          "orbit/changes/bounded-closure-semantics/specs/orbit-explore-modifications/spec.md",
+          "orbit/changes/bounded-closure-semantics/design.md",
+          "orbit/architecture/clean-up-review-cycle.md",
+          "test/core/templates/orbit-generated-surface.test.ts",
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "The three-fact re-entry table depends on an undeclared fourth fact",
+      "marker_source": "external",
+      "file": "orbit/changes/bounded-closure-semantics/specs/orbit-explore-modifications/spec.md",
+      "line": 46,
+      "classification": "trivial_fix",
+      "action": "Declared the fourth fact (the active change carries explore.md, defined only when the change exists) and split the cell: the table is now four facts, nine cells, four refused, six rows, with the former edge sentence as its own row; the Mode B summary and the body's 'edge' paragraph now point at the table instead of extending it. Rippled to the proposal, design D-bcs-7, the exploration's D-bcs-7 entry and decision (AMENDED, dated), the body, and the re-entry test rows.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/templates/workflows/explore.ts",
+          "orbit/changes/bounded-closure-semantics/proposal.md",
+          "orbit/changes/bounded-closure-semantics/design.md",
+          "orbit/changes/bounded-closure-semantics/explore.md",
+          "test/core/templates/orbit-generated-surface.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The status production does not encode the two fixed tokens",
+      "marker_source": "external",
+      "file": "orbit/changes/bounded-closure-semantics/specs/orbit-conventions/spec.md",
+      "line": 140,
+      "classification": "trivial_fix",
+      "action": "Production is now ^> \\*\\*Status\\*\\*: (exploring\\.( .*)?|concluded \\d{4}-\\d{2}-\\d{2}\\.)$ — the literal period on both tokens, optional prose only after 'exploring.', end-anchored. The Status-header scenario now states the concluded token's final period. The body mirrors it (parity-checked) and a new test EXECUTES the production from the rendered body against both tokens and four near-misses (exploring-bad, exploring without the period, concluded without the period, concluded with a trailing suffix).",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/templates/workflows/explore.ts",
+          "test/core/templates/orbit-generated-surface.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The table matcher rejects a legal row in the change's own conformance artifact",
+      "marker_source": "external",
+      "file": "test/core/templates/orbit-generated-surface.test.ts",
+      "line": 356,
+      "classification": "trivial_fix",
+      "action": "The grammar's table line now states the cell language ('cells follow GFM — \\| is a literal pipe, never a separator') in the owning spec and the mirrored body; the test's cell pattern is escape-aware and D-bcs-8's exact 'move dispositions' row is asserted against it as the fixture rc13b's parser must also accept; design.md Risks names the row as that fixture.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/bounded-closure-semantics/specs/orbit-conventions/spec.md",
+          "src/core/templates/workflows/explore.ts",
+          "orbit/changes/bounded-closure-semantics/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The declared interim recommendation is narrower than the behavior observed",
+      "marker_source": "external",
+      "file": "orbit/changes/bounded-closure-semantics/specs/orbit-conventions/spec.md",
+      "line": 114,
+      "classification": "trivial_fix",
+      "action": "'keeps recommending propose' replaced with the measured behaviour — the orientation row's next line stays COUNT-DERIVED, the maturity grid's explore-or-propose, never the conclusion — in the conventions spec, the body's KNOWN list, design.md Risks, and the exploration's D-bcs-6 entry and decision (amended, dated).",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/templates/workflows/explore.ts",
+          "orbit/changes/bounded-closure-semantics/design.md",
+          "orbit/changes/bounded-closure-semantics/explore.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "All 5 findings of the external system pass (GPT-6 Astra, iter 1) walked to zero: one decision-lane CRITICAL ratified in chat (checked mirrors + R-crc-14's mirror corollary; the rulings count stays 14), four obvious fixes. The re-entry table gained its fourth fact (nine cells, four refused); the status production is end-anchored with literal periods and is now EXECUTED by a test; the grammar names GFM cell escaping with D-bcs-8's row as fixture; the interim-recommendation limit states the measured behaviour. Both explore hash pins re-pinned; 2254 tests green; validate --sources 26/26 with rulings=14; fingerprints 5/5; explore.md conformance zero drift after its dated amendments. The fresh half of the blind pair (review-system-2026-09-25T14-18-36Z) is walked next in its own invocation.",
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews bounded-closure-semantics --from-file orbit/changes/bounded-closure-semantics/.orbit-runs/review-system-2026-09-25T14-18-36Z.json"
+}

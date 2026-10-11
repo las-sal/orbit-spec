@@ -1,0 +1,6 @@
+schema: spec-driven
+created: 2026-10-08
+schema_version: 5
+architecture:
+  doc: clean-up-review-cycle
+  stage: rc05-executable-references

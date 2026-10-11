@@ -42,6 +42,7 @@ gates:
 `;
 
 describe('artifact-graph/schema — gates (C1)', () => {
+  // @scenario behaviour orbit-engine-gates :: Gate declaration in schema YAML :: Valid gates list parses
   it('parses a valid gates list', () => {
     const schema = parseSchema(GATED_YAML);
     expect(schema.gates).toHaveLength(3);
@@ -52,6 +53,7 @@ describe('artifact-graph/schema — gates (C1)', () => {
     expect(rp.confirm).toBe('no-new-findings');
   });
 
+  // @scenario behaviour orbit-engine-gates :: Gate declaration in schema YAML :: Unknown kind rejected
   it('rejects an unknown gate kind, naming the gate id', () => {
     const yaml = GATED_YAML.replace('kind: tracked', 'kind: scored');
     expect(() => parseSchema(yaml)).toThrow(SchemaValidationError);
@@ -184,6 +186,65 @@ describe('artifact-graph/gates — computation', () => {
     expect(passed.nextCommand).toBeUndefined(); // apply has no `before`
   });
 
+  describe('D5 user-validation subset rule (tracked gate)', () => {
+    const UV_TASKS = '- [x] 1.1 build it\n- [ ] 9.6 (User-validation handoff) every-seam boot test\n';
+    const applyEmit = (uv?: string[]) =>
+      writeJson('apply-2026-07-01T10-00-00Z.json', {
+        command: 'apply', final_assessment: 'done.', next_recommended: 'x',
+        ...(uv ? { user_validation_tasks: uv } : {}),
+      });
+
+    it('passes-for-flow when every unchecked box is a declared, self-described handoff', () => {
+      writeFile('tasks.md', UV_TASKS);
+      applyEmit(['9.6']);
+      const { gates, position } = computeGateStates(schema, 'c', dir, allArtifacts);
+      const apply = gates.find(g => g.id === 'apply')!;
+      expect(apply.state).toBe('passed');
+      expect(apply.userValidationPending).toEqual(['9.6']);
+      expect(apply.reason).toContain('awaiting user validation: 9.6');
+      expect(position).toContain('apply ✓ (awaiting user validation: 9.6)');
+      // supersession fires: review-proposal is (past); the frontier moves forward
+      const rp = gates.find(g => g.id === 'review-proposal')!;
+      expect(rp.superseded).toBe(true);
+      const rs = gates.find(g => g.id === 'review-system')!;
+      expect(rs.state).not.toBe('blocked');
+    });
+
+    it('a NEW ordinary unchecked task breaks the subset — the gate drops back to ready', () => {
+      writeFile('tasks.md', UV_TASKS + '- [ ] 10.1 fix the regression\n');
+      applyEmit(['9.6']);
+      const apply = computeGateStates(schema, 'c', dir, allArtifacts).gates.find(g => g.id === 'apply')!;
+      expect(apply.state).toBe('ready');
+      expect(apply.userValidationPending).toBeUndefined();
+    });
+
+    it('declared but not self-described (no (User-validation marker) does not count', () => {
+      writeFile('tasks.md', '- [x] 1.1 build it\n- [ ] 9.6 ordinary-looking task\n');
+      applyEmit(['9.6']);
+      const apply = computeGateStates(schema, 'c', dir, allArtifacts).gates.find(g => g.id === 'apply')!;
+      expect(apply.state).toBe('ready');
+    });
+
+    it('no declaration on the trail → plain arithmetic (unchanged behavior)', () => {
+      writeFile('tasks.md', UV_TASKS);
+      applyEmit(); // apply emit without the field
+      const apply = computeGateStates(schema, 'c', dir, allArtifacts).gates.find(g => g.id === 'apply')!;
+      expect(apply.state).toBe('ready');
+    });
+
+    it('the declaration is STICKY: a later field-less apply emit never silently regresses the readout', () => {
+      writeFile('tasks.md', UV_TASKS);
+      applyEmit(['9.6']);
+      // A later apply emit without the field — the standing declaration governs.
+      writeJson('apply-2026-07-02T10-00-00Z.json', {
+        command: 'apply', final_assessment: 'follow-up chunk.', next_recommended: 'x',
+      });
+      const apply = computeGateStates(schema, 'c', dir, allArtifacts).gates.find(g => g.id === 'apply')!;
+      expect(apply.state).toBe('passed');
+      expect(apply.userValidationPending).toEqual(['9.6']);
+    });
+  });
+
   it('review-proposal unpassed with no independent pass → recommends --fresh', () => {
     // only an in-context pass exists
     writeJson('review-proposal-2026-06-30T10-00-00Z.json', {
@@ -231,7 +292,8 @@ describe('artifact-graph/gates — computation', () => {
     });
     const rp = computeGateStates(schema, 'mychange', dir, allArtifacts).gates.find(g => g.id === 'review-proposal')!;
     expect(rp.state).toBe('unpassed');
-    expect(rp.nextCommand).toMatch(/^\/orbit:address-reviews mychange --from-file /);
+    // rc08b (task 1.5, recorded act): the walk next names no file — discovery reads the gate's list.
+    expect(rp.nextCommand).toBe('/orbit:address-reviews mychange');
   });
 
   it('no-new-findings: a finding first seen in an in-context pass is NOT new when an independent pass re-surfaces it', () => {
@@ -265,7 +327,11 @@ describe('artifact-graph/gates — computation', () => {
     expect(rp.state).toBe('passed'); // in-context finding counts toward the independent's known-set
   });
 
-  it('review-proposal unpassed on new findings even after resolution (no-new-findings confirm)', () => {
+  // rc02c: this case ASSERTED clause (c)'s new-finding match. Its intent — "the gate does not
+  // falsely converge" — is DELIBERATELY retired: a cadence ends when the work is judged ready
+  // knowing what the reviewers returned, not when reviewers stop finding things. Rewritten to
+  // assert what the same trail now computes, so the behaviour change is pinned rather than lost.
+  it('rc02c: a resolved NEW finding no longer holds the gate — coverage + resolution are the whole criterion', () => {
     writeJson('review-proposal-2026-06-30T10-00-00Z.json', {
       command: 'review', mode: 'proposal', reviewer_class: 'fresh',
       findings_summary: { critical: 0, warning: 1, suggestion: 0 },
@@ -281,9 +347,10 @@ describe('artifact-graph/gates — computation', () => {
       findings_summary: { critical: 0, warning: 0, suggestion: 0 }, findings: [],
     });
     const rp = computeGateStates(schema, 'mychange', dir, allArtifacts).gates.find(g => g.id === 'review-proposal')!;
-    // resolved, but the fresh pass yielded a NEW finding → confirm not met → repeat independent
-    expect(rp.state).toBe('unpassed');
-    expect(rp.nextCommand).toBe('/orbit:review --as proposal --fresh mychange');
+    // Cadence [independent, in-context] is covered and every substantive finding is resolved.
+    // Pre-rc02c this was `unpassed` with nextCommand `--fresh` (confirm: no-new-findings matched
+    // the WARNING as new). There is no third clause to fail now.
+    expect(rp.state).toBe('passed');
   });
 
   // --- Regression tests for the external-system-review bypass findings ---

@@ -1,0 +1,13 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-07-20T16:24:14Z",
+  "change": "d3-orientation",
+  "final_assessment": "External review prompt packaged for d3-orientation (iter 1, mode proposal); awaiting findings. Prompt briefs the reviewer on both internal passes (10 findings resolved incl. iter-2's Mode C begin-emit CRITICAL and its option-A mode-aware resolution — flagged as the least-reviewed text), the three historical CRITICAL classes, and the known environmental test-failure class.",
+  "next_recommended": "Paste orbit/changes/d3-orientation/.orbit-runs/external-prompt-proposal-2026-07-20T16-23-28Z.md into the target AI, save the response as orbit/changes/d3-orientation/.orbit-runs/external-proposal-<TS>.md, then /orbit:address-reviews d3-orientation --from-file <path>",
+  "kind": "editorial",
+  "mode": "proposal",
+  "reviewer_class": "external",
+  "prompt_path": "orbit/changes/d3-orientation/.orbit-runs/external-prompt-proposal-2026-07-20T16-23-28Z.md",
+  "target": null,
+  "awaiting_findings": true
+}

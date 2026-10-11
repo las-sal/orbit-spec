@@ -1,0 +1,141 @@
+{
+  "command": "review",
+  "timestamp": "2026-07-14T17:30:59Z",
+  "change": "d2-architect",
+  "final_assessment": "1 critical issue(s) found. Fix before /orbit:apply.",
+  "next_recommended": "/orbit:address-reviews d2-architect --from-file orbit/changes/d2-architect/.orbit-runs/review-proposal-2026-07-14T17-30-59Z.json",
+  "kind": "editorial",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "iteration": 1,
+  "depth": "full",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "findings_summary": {
+    "critical": 1,
+    "warning": 6,
+    "suggestion": 5
+  },
+  "finding_titles": [
+    "Un-delta'd final-assessment requirement contradicts gate-less architecture mode",
+    "Stock final-assessment phrasings don't admit gate-less architecture reviews",
+    "Cascade OUT-set audit-trail category misses the new architecture trail",
+    "'three directories' residue inside the 'all four locations' scenario",
+    "Citation-resolution ownership inconsistent across artifacts",
+    "Baseline Purpose enumerations obsoleted with no carrier",
+    "--fresh requirement says '(both modes)' and is silent on architecture mode",
+    "Iteration-note anchored to 'same change and mode'",
+    "CLI edge paths unspecified",
+    "Resolution-log destination for architecture-findings walks unspecified",
+    "False claim that the arc doc contains fenced stage look-alikes",
+    "CLAUDE.md position-pointer goes stale at apply, fix deferred to archive"
+  ],
+  "findings": [
+    {
+      "pass": "4",
+      "severity": "CRITICAL",
+      "file": "orbit/specs/orbit-review/spec.md",
+      "line": 128,
+      "title": "Un-delta'd final-assessment requirement contradicts gate-less architecture mode",
+      "recommendation": "Baseline 'Final assessment phrasings depend on mode' says the final assessment 'always renders the computed gate state plus one canonical next command' and frames the mode set as 'BOTH modes' (also the as-of-completion scenario). The delta's ADDED no-gate architecture assessment directly contradicts this un-delta'd SHALL — the class that produced all 5 D1-cycle CRITICALs. Add a MODIFIED block scoping the baseline requirement to the two change-review modes and delegating architecture mode to the new requirement."
+    },
+    {
+      "pass": "4",
+      "severity": "WARNING",
+      "file": "orbit/specs/orbit-conventions/spec.md",
+      "line": 372,
+      "title": "Stock final-assessment phrasings don't admit gate-less architecture reviews",
+      "recommendation": "'Final-assessment phrasings' requires review reports to use gate-referencing stock phrasings; architecture mode's ('No findings. The architecture trail records this pass.') matches none. orbit-conventions is already delta'd — extend the enumeration or scope it to gated contexts via a MODIFIED block."
+    },
+    {
+      "pass": "4",
+      "severity": "WARNING",
+      "file": "orbit/specs/orbit-address-reviews/spec.md",
+      "line": 233,
+      "title": "Cascade OUT-set audit-trail category misses the new architecture trail",
+      "recommendation": "The OUT list enumerates only changes/<name>/.orbit-runs and orbit/.orbit-runs; this change creates orbit/architecture/.orbit-runs/ AND routes its findings into address-reviews, so cascade could legally edit architecture-trail emits. (orbit/explore/<name>/.orbit-runs/ likewise absent — pre-existing gap.) Add a 9th modified capability covering the location(s); ripple the proposal's 8-modified count."
+    },
+    {
+      "pass": "4",
+      "severity": "WARNING",
+      "file": "orbit/changes/d2-architect/specs/orbit-conventions/spec.md",
+      "line": 42,
+      "title": "'three directories' residue inside the 'all four locations' scenario",
+      "recommendation": "The THEN still reads 'none of the three directories should be in .gitignore' under the four-locations heading — internally contradictory and would sync into baseline. Change three to four."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "file": "orbit/changes/d2-architect/proposal.md",
+      "line": 34,
+      "title": "Citation-resolution ownership inconsistent across artifacts",
+      "recommendation": "Proposal excludes citations from 'orbit architecture validate' ('Change validation additionally resolves...'); design D1 puts citation resolution in validate.ts; the engine spec's CLI requirement excludes it while its metadata scenario says 'change validation (or orbit architecture validate) resolves'. Pick one owner and align all four statements."
+    },
+    {
+      "pass": "4",
+      "severity": "WARNING",
+      "file": "orbit/specs/orbit-review/spec.md",
+      "line": 5,
+      "title": "Baseline Purpose enumerations obsoleted with no carrier",
+      "recommendation": "orbit-review's Purpose says 'either proposal mode ... or system mode'; orbit-run-summary-emit's Purpose enumerates workflow emitters without architect. Deltas carry requirement blocks only and no task updates Purposes. Add an archive-time item to tasks 5.4 covering both Purpose texts."
+    },
+    {
+      "pass": "4",
+      "severity": "WARNING",
+      "file": "orbit/specs/orbit-review/spec.md",
+      "line": 288,
+      "title": "--fresh requirement says '(both modes)' and is silent on architecture mode",
+      "recommendation": "Stale two-mode enumeration once a third mode exists; whether --fresh applies to --as architecture is undefined. Add a MODIFIED block ('all modes' or explicit exclusion)."
+    },
+    {
+      "pass": "4",
+      "severity": "SUGGESTION",
+      "file": "orbit/specs/orbit-review/spec.md",
+      "line": 327,
+      "title": "Iteration-note anchored to 'same change and mode'",
+      "recommendation": "Architecture-mode iterations live per-doc in the shared trail; state the semantics: prior review-architecture-*.json with the same doc field."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "file": "orbit/changes/d2-architect/specs/orbit-architecture-engine/spec.md",
+      "line": 100,
+      "title": "CLI edge paths unspecified",
+      "recommendation": "State behavior for: show on a legacy doc or nonexistent stage id; status with zero parseable docs; --as architecture targeting an explicitly-named legacy doc (error vs empty index vs allowed)."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "file": "orbit/changes/d2-architect/specs/orbit-review/spec.md",
+      "line": 29,
+      "title": "Resolution-log destination for architecture-findings walks unspecified",
+      "recommendation": "address-reviews --from-file <review-architecture emit> has no change positional; the walk's address-reviews-<TS>.json destination for architecture scope is undefined (likely orbit/.orbit-runs/, splitting the evidence chain). State the intended location — plausibly orbit/architecture/.orbit-runs/."
+    },
+    {
+      "pass": "7",
+      "severity": "SUGGESTION",
+      "file": "orbit/changes/d2-architect/explore.md",
+      "line": 61,
+      "title": "False claim that the arc doc contains fenced stage look-alikes",
+      "recommendation": "D-d2-3's fence-awareness justification cites 'the arc doc itself contains fenced diagrams' — d-arc-arbitered-flow.md contains zero fences (they are in fork-and-orbify.md). Fence-awareness stands on the C1 requirement-blocks lesson; correct the cited evidence."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "file": "orbit/changes/d2-architect/tasks.md",
+      "line": 87,
+      "title": "CLAUDE.md position-pointer goes stale at apply, fix deferred to archive",
+      "recommendation": "CLAUDE.md's 'Position lives in the arc doc's stage-state lines + status log' breaks when task 3.1 deletes those lines at apply. Name the position-pointer sentence explicitly in 5.4 and consider updating it at the apply seam rather than archive."
+    }
+  ],
+  "iteration_note": "First proposal-mode run for this change (fresh-context reviewer; covers the cadence's independent slot). All 12 citations spot-verified by the orchestrating session, including a false evidence claim in the authoring session's own explore capture and a residue line inside a programmatically-composed delta block."
+}

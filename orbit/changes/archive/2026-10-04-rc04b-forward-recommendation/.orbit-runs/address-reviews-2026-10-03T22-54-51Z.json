@@ -1,0 +1,85 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-03T22:54:51Z",
+  "change": "rc04b-forward-recommendation",
+  "kind": "editorial",
+  "model": null,
+  "source": "from-file",
+  "source_path": "orbit/changes/rc04b-forward-recommendation/.orbit-runs/external-proposal-2026-10-03T22-49-13Z.md",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-6 Codex",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 3,
+    "suggestion": 0
+  },
+  "pushback_verification": "3 of 3 verified against the current tree at the evaluation step and again before each edit (design.md:139 grep; the pre-boundary fixture carries no scorecard; the three Direction-line sites located); 0 stale; 0 CRITICAL",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The design still instructs adding a top-level field to the nested allowlist",
+      "marker_source": "external",
+      "file": "orbit/changes/rc04b-forward-recommendation/design.md",
+      "line": 139,
+      "classification": "trivial_fix",
+      "action": "Touchpoints bullet rewritten to match task 1.5: `direction` documented top-level in the schema block, never added to `nested`; `disposition`/`reasoning` only if they become field-note subjects. Walk 1's cascade had stopped at tasks.md — the design carried the stale instruction.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc04b-forward-recommendation/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The prior-generation render promise crosses the existing D4 boundary",
+      "marker_source": "external",
+      "file": "orbit/changes/rc04b-forward-recommendation/specs/orbit-emit-composition/spec.md",
+      "line": 40,
+      "classification": "trivial_fix",
+      "action": "Scenario qualified: trail reader and gate accept a prior-generation emit; the `[no direction]` mark is for renderable D4-generation passes; a pre-D4 emit still fails as `pre-capability emit` and the requirement does not relax the boundary. Ripple: the ADDED render requirement's absence scenario and task 1.3 carry the same qualification and retain the existing boundary test.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc04b-forward-recommendation/specs/orbit-emit-composition/spec.md",
+          "orbit/changes/rc04b-forward-recommendation/specs/orbit-report-rendering/spec.md",
+          "orbit/changes/rc04b-forward-recommendation/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Architecture-mode direction has no safe multiline rendering rule",
+      "marker_source": "external",
+      "file": "orbit/changes/rc04b-forward-recommendation/specs/orbit-review/spec.md",
+      "line": 5,
+      "classification": "trivial_fix",
+      "action": "The interim architecture report prints `Direction: <disposition>` then every reasoning line under `> ` containment, as the change-mode renderer does; its scenario names a second-line `Ready when you are:` rendered contained. Ripple: task 3.1 (the body text), task 1.6 (a multiline near-miss pinned in the fidelity check), design D2.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc04b-forward-recommendation/specs/orbit-review/spec.md",
+          "orbit/changes/rc04b-forward-recommendation/tasks.md",
+          "orbit/changes/rc04b-forward-recommendation/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Walk 2 of the proposal cadence (external GPT-6 Codex, iter 1): 3 of 3 resolved, 0 stale, every finding a repair of prose — one a cascade miss from walk 1 (the design's Touchpoints bullet), one an overclaim across the D4 render boundary now qualified, one a containment gap in the architecture interim shape now closed. After the walk: `orbit validate --strict` valid, fingerprints 8 verified, every baseline scenario retained across the eight MODIFIED blocks.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal rc04b-forward-recommendation"
+}

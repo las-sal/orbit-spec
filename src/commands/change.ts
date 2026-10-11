@@ -226,8 +226,10 @@ export class ChangeCommand {
       } else {
         console.error(`Change "${changeName}" has issues`);
         report.issues.forEach(issue => {
-          const label = issue.level === 'ERROR' ? 'ERROR' : 'WARNING';
-          const prefix = issue.level === 'ERROR' ? '✗' : '⚠';
+          // rc06a: three-level, as `orbit validate` labels it — the scenario map's INFO issues
+          // reach this printer, and an INFO line printed as `[WARNING]` misstates its level.
+          const label = issue.level;
+          const prefix = issue.level === 'ERROR' ? '✗' : issue.level === 'WARNING' ? '⚠' : 'ℹ';
           console.error(`${prefix} [${label}] ${issue.path}: ${issue.message}`);
         });
         // Next steps footer to guide fixing issues

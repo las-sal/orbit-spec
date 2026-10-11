@@ -1,0 +1,13 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-10-04T03:16:01Z",
+  "change": "rc03b-pass-genres",
+  "kind": "editorial",
+  "model": null,
+  "mode": "proposal",
+  "prompt_path": "orbit/changes/rc03b-pass-genres/.orbit-runs/external-prompt-proposal-2026-10-04T03-15-34Z.md",
+  "target": null,
+  "final_assessment": "External review prompt packaged for rc03b-pass-genres (iter 1, mode proposal — a second independent pass on the proposal cadence; the gate's `independent` slot is already covered by the fresh pass and the gate is UNPASSED on its in-context slot, so this is not a spend past a passed gate and carries no judgement record); awaiting findings. Handoff preflight NOT satisfied at packaging: seven working-tree entries are uncommitted (the change directory, the moved exploration, the charter amendments, the architect emit and this prompt), nothing unpushed. Built from the SHIPPED template, so its Cycle context carries the fresh pass's resolved titles and its project-context list points at .orbit-runs/ — the last prompt built under the rule this change retires, and the before-state for task 3.5's measure.",
+  "awaiting_findings": true,
+  "next_recommended": "Paste orbit/changes/rc03b-pass-genres/.orbit-runs/external-prompt-proposal-2026-10-04T03-15-34Z.md into the target AI, save the response as orbit/changes/rc03b-pass-genres/.orbit-runs/external-proposal-<TS>.md, then /orbit:address-reviews rc03b-pass-genres --from-file <path>"
+}

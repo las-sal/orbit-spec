@@ -1,0 +1,585 @@
+{
+  "gh_version": "gh version 2.91.0 (2026-04-22)",
+  "captured_at": "2026-09-12",
+  "availability_probe": {
+    "argv": [
+      "--version"
+    ],
+    "stdout": "gh version 2.91.0 (2026-04-22)\nhttps://github.com/cli/cli/releases/tag/v2.91.0\n"
+  },
+  "commands": {
+    "repo view": {
+      "usage": "gh repo view [<repository>] [flags]",
+      "positional": {
+        "shape": "[<repository>]",
+        "required": false
+      },
+      "flags": [
+        {
+          "long": "--branch",
+          "short": "-b",
+          "takes_value": true,
+          "value_type": "string"
+        },
+        {
+          "long": "--jq",
+          "short": "-q",
+          "takes_value": true,
+          "value_type": "string"
+        },
+        {
+          "long": "--json",
+          "short": null,
+          "takes_value": true,
+          "value_type": "string"
+        },
+        {
+          "long": "--template",
+          "short": "-t",
+          "takes_value": true,
+          "value_type": "string"
+        },
+        {
+          "long": "--web",
+          "short": "-w",
+          "takes_value": false,
+          "value_type": "boolean"
+        },
+        {
+          "long": "--help",
+          "short": null,
+          "takes_value": false,
+          "value_type": "boolean"
+        }
+      ]
+    },
+    "pr list": {
+      "usage": "gh pr list [flags]",
+      "positional": {
+        "shape": "",
+        "required": false
+      },
+      "flags": [
+        {
+          "long": "--app",
+          "short": null,
+          "takes_value": true,
+          "value_type": "string"
+        },
+        {
+          "long": "--assignee",
+          "short": "-a",
+          "takes_value": true,
+          "value_type": "string"
+        },
+        {
+          "long": "--author",
+          "short": "-A",
+          "takes_value": true,
+          "value_type": "string"
+        },
+        {
+          "long": "--base",
+          "short": "-B",
+          "takes_value": true,
+          "value_type": "string"
+        },
+        {
+          "long": "--draft",
+          "short": "-d",
+          "takes_value": false,
+          "value_type": "boolean"
+        },
+        {
+          "long": "--head",
+          "short": "-H",
+          "takes_value": true,
+          "value_type": "string"
+        },
+        {
+          "long": "--jq",
+          "short": "-q",
+          "takes_value": true,
+          "value_type": "string"
+        },
+        {
+          "long": "--json",
+          "short": null,
+          "takes_value": true,
+          "value_type": "string"
+        },
+        {
+          "long": "--label",
+          "short": "-l",
+          "takes_value": true,
+          "value_type": "string"
+        },
+        {
+          "long": "--limit",
+          "short": "-L",
+          "takes_value": true,
+          "value_type": "int"
+        },
+        {
+          "long": "--search",
+          "short": "-S",
+          "takes_value": true,
+          "value_type": "string"
+        },
+        {
+          "long": "--state",
+          "short": "-s",
+          "takes_value": true,
+          "value_type": "string"
+        },
+        {
+          "long": "--template",
+          "short": "-t",
+          "takes_value": true,
+          "value_type": "string"
+        },
+        {
+          "long": "--web",
+          "short": "-w",
+          "takes_value": false,
+          "value_type": "boolean"
+        },
+        {
+          "long": "--help",
+          "short": null,
+          "takes_value": false,
+          "value_type": "boolean"
+        },
+        {
+          "long": "--repo",
+          "short": "-R",
+          "takes_value": true,
+          "value_type": "string"
+        }
+      ]
+    },
+    "pr create": {
+      "usage": "gh pr create [flags]",
+      "positional": {
+        "shape": "",
+        "required": false
+      },
+      "flags": [
+        {
+          "long": "--assignee",
+          "short": "-a",
+          "takes_value": true,
+          "value_type": "string"
+        },
+        {
+          "long": "--base",
+          "short": "-B",
+          "takes_value": true,
+          "value_type": "string"
+        },
+        {
+          "long": "--body",
+          "short": "-b",
+          "takes_value": true,
+          "value_type": "string"
+        },
+        {
+          "long": "--body-file",
+          "short": "-F",
+          "takes_value": true,
+          "value_type": "string"
+        },
+        {
+          "long": "--draft",
+          "short": "-d",
+          "takes_value": false,
+          "value_type": "boolean"
+        },
+        {
+          "long": "--dry-run",
+          "short": null,
+          "takes_value": false,
+          "value_type": "boolean"
+        },
+        {
+          "long": "--editor",
+          "short": "-e",
+          "takes_value": false,
+          "value_type": "boolean"
+        },
+        {
+          "long": "--fill",
+          "short": "-f",
+          "takes_value": false,
+          "value_type": "boolean"
+        },
+        {
+          "long": "--fill-first",
+          "short": null,
+          "takes_value": false,
+          "value_type": "boolean"
+        },
+        {
+          "long": "--fill-verbose",
+          "short": null,
+          "takes_value": false,
+          "value_type": "boolean"
+        },
+        {
+          "long": "--head",
+          "short": "-H",
+          "takes_value": true,
+          "value_type": "string"
+        },
+        {
+          "long": "--label",
+          "short": "-l",
+          "takes_value": true,
+          "value_type": "string"
+        },
+        {
+          "long": "--milestone",
+          "short": "-m",
+          "takes_value": true,
+          "value_type": "string"
+        },
+        {
+          "long": "--no-maintainer-edit",
+          "short": null,
+          "takes_value": false,
+          "value_type": "boolean"
+        },
+        {
+          "long": "--project",
+          "short": "-p",
+          "takes_value": true,
+          "value_type": "string"
+        },
+        {
+          "long": "--recover",
+          "short": null,
+          "takes_value": true,
+          "value_type": "string"
+        },
+        {
+          "long": "--reviewer",
+          "short": "-r",
+          "takes_value": true,
+          "value_type": "string"
+        },
+        {
+          "long": "--template",
+          "short": "-T",
+          "takes_value": true,
+          "value_type": "string"
+        },
+        {
+          "long": "--title",
+          "short": "-t",
+          "takes_value": true,
+          "value_type": "string"
+        },
+        {
+          "long": "--web",
+          "short": "-w",
+          "takes_value": false,
+          "value_type": "boolean"
+        },
+        {
+          "long": "--help",
+          "short": null,
+          "takes_value": false,
+          "value_type": "boolean"
+        },
+        {
+          "long": "--repo",
+          "short": "-R",
+          "takes_value": true,
+          "value_type": "string"
+        }
+      ]
+    },
+    "pr view": {
+      "usage": "gh pr view [<number> | <url> | <branch>] [flags]",
+      "positional": {
+        "shape": "[<number> | <url> | <branch>]",
+        "required": false
+      },
+      "flags": [
+        {
+          "long": "--comments",
+          "short": "-c",
+          "takes_value": false,
+          "value_type": "boolean"
+        },
+        {
+          "long": "--jq",
+          "short": "-q",
+          "takes_value": true,
+          "value_type": "string"
+        },
+        {
+          "long": "--json",
+          "short": null,
+          "takes_value": true,
+          "value_type": "string"
+        },
+        {
+          "long": "--template",
+          "short": "-t",
+          "takes_value": true,
+          "value_type": "string"
+        },
+        {
+          "long": "--web",
+          "short": "-w",
+          "takes_value": false,
+          "value_type": "boolean"
+        },
+        {
+          "long": "--help",
+          "short": null,
+          "takes_value": false,
+          "value_type": "boolean"
+        },
+        {
+          "long": "--repo",
+          "short": "-R",
+          "takes_value": true,
+          "value_type": "string"
+        }
+      ]
+    },
+    "pr edit": {
+      "usage": "gh pr edit [<number> | <url> | <branch>] [flags]",
+      "positional": {
+        "shape": "[<number> | <url> | <branch>]",
+        "required": false
+      },
+      "flags": [
+        {
+          "long": "--add-assignee",
+          "short": null,
+          "takes_value": true,
+          "value_type": "string"
+        },
+        {
+          "long": "--add-label",
+          "short": null,
+          "takes_value": true,
+          "value_type": "string"
+        },
+        {
+          "long": "--add-project",
+          "short": null,
+          "takes_value": true,
+          "value_type": "string"
+        },
+        {
+          "long": "--add-reviewer",
+          "short": null,
+          "takes_value": true,
+          "value_type": "string"
+        },
+        {
+          "long": "--base",
+          "short": "-B",
+          "takes_value": true,
+          "value_type": "string"
+        },
+        {
+          "long": "--body",
+          "short": "-b",
+          "takes_value": true,
+          "value_type": "string"
+        },
+        {
+          "long": "--body-file",
+          "short": "-F",
+          "takes_value": true,
+          "value_type": "string"
+        },
+        {
+          "long": "--milestone",
+          "short": "-m",
+          "takes_value": true,
+          "value_type": "string"
+        },
+        {
+          "long": "--remove-assignee",
+          "short": null,
+          "takes_value": true,
+          "value_type": "string"
+        },
+        {
+          "long": "--remove-label",
+          "short": null,
+          "takes_value": true,
+          "value_type": "string"
+        },
+        {
+          "long": "--remove-milestone",
+          "short": null,
+          "takes_value": false,
+          "value_type": "boolean"
+        },
+        {
+          "long": "--remove-project",
+          "short": null,
+          "takes_value": true,
+          "value_type": "string"
+        },
+        {
+          "long": "--remove-reviewer",
+          "short": null,
+          "takes_value": true,
+          "value_type": "string"
+        },
+        {
+          "long": "--title",
+          "short": "-t",
+          "takes_value": true,
+          "value_type": "string"
+        },
+        {
+          "long": "--help",
+          "short": null,
+          "takes_value": false,
+          "value_type": "boolean"
+        },
+        {
+          "long": "--repo",
+          "short": "-R",
+          "takes_value": true,
+          "value_type": "string"
+        }
+      ]
+    },
+    "pr ready": {
+      "usage": "gh pr ready [<number> | <url> | <branch>] [flags]",
+      "positional": {
+        "shape": "[<number> | <url> | <branch>]",
+        "required": false
+      },
+      "flags": [
+        {
+          "long": "--undo",
+          "short": null,
+          "takes_value": false,
+          "value_type": "boolean"
+        },
+        {
+          "long": "--help",
+          "short": null,
+          "takes_value": false,
+          "value_type": "boolean"
+        },
+        {
+          "long": "--repo",
+          "short": "-R",
+          "takes_value": true,
+          "value_type": "string"
+        }
+      ]
+    },
+    "pr merge": {
+      "usage": "gh pr merge [<number> | <url> | <branch>] [flags]",
+      "positional": {
+        "shape": "[<number> | <url> | <branch>]",
+        "required": false
+      },
+      "flags": [
+        {
+          "long": "--admin",
+          "short": null,
+          "takes_value": false,
+          "value_type": "boolean"
+        },
+        {
+          "long": "--author-email",
+          "short": "-A",
+          "takes_value": true,
+          "value_type": "string"
+        },
+        {
+          "long": "--auto",
+          "short": null,
+          "takes_value": false,
+          "value_type": "boolean"
+        },
+        {
+          "long": "--body",
+          "short": "-b",
+          "takes_value": true,
+          "value_type": "string"
+        },
+        {
+          "long": "--body-file",
+          "short": "-F",
+          "takes_value": true,
+          "value_type": "string"
+        },
+        {
+          "long": "--delete-branch",
+          "short": "-d",
+          "takes_value": false,
+          "value_type": "boolean"
+        },
+        {
+          "long": "--disable-auto",
+          "short": null,
+          "takes_value": false,
+          "value_type": "boolean"
+        },
+        {
+          "long": "--match-head-commit",
+          "short": null,
+          "takes_value": true,
+          "value_type": "string"
+        },
+        {
+          "long": "--merge",
+          "short": "-m",
+          "takes_value": false,
+          "value_type": "boolean"
+        },
+        {
+          "long": "--rebase",
+          "short": "-r",
+          "takes_value": false,
+          "value_type": "boolean"
+        },
+        {
+          "long": "--squash",
+          "short": "-s",
+          "takes_value": false,
+          "value_type": "boolean"
+        },
+        {
+          "long": "--subject",
+          "short": "-t",
+          "takes_value": true,
+          "value_type": "string"
+        },
+        {
+          "long": "--help",
+          "short": null,
+          "takes_value": false,
+          "value_type": "boolean"
+        },
+        {
+          "long": "--repo",
+          "short": "-R",
+          "takes_value": true,
+          "value_type": "string"
+        }
+      ]
+    }
+  },
+  "rules": {
+    "repo_view_rejects_repo_flag": "unknown flag: --repo",
+    "pr_selector_required_with_repo": "argument required when using the --repo flag",
+    "pr_verbs_require_repo": true,
+    "repo_view_requires_positional": true
+  }
+}

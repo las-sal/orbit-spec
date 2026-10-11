@@ -1,0 +1,42 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-04T04:16:02Z",
+  "change": "example-change",
+  "final_assessment": "0 critical, 1 warning, 1 suggestion.",
+  "next_recommended": "/orbit:address-reviews example-change --from-file orbit/changes/example-change/.orbit-runs/review-system-2026-10-04T04-16-02Z.json",
+  "kind": "editorial",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "scorecard": {
+    "completeness": { "critical": 0, "warning": 0, "suggestion": 1 },
+    "correctness": { "critical": 0, "warning": 1, "suggestion": 0 },
+    "coherence": { "critical": 0, "warning": 0, "suggestion": 0 }
+  },
+  "findings": [
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "The repair stops one artifact short",
+      "file": "orbit/changes/example-change/design.md",
+      "line": 40,
+      "recommendation": "Carry the re-pointed owner into design.md as the walk did in the delta.",
+      "walk_entry": { "title": "Pointer names the wrong owner", "file": "design.md" }
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "title": "An edit no walk entry lists",
+      "file": "src/core/x.ts",
+      "line": 12,
+      "recommendation": "Name the file in the walk record, or revert the edit."
+    }
+  ],
+  "verification": [
+    { "title": "Field note restates the owner", "file": "specs/orbit-review/spec.md", "verdict": "landed" },
+    { "title": "Pointer names the wrong owner", "file": "design.md", "verdict": "regressed" }
+  ],
+  "pass_genre": "VERIFICATION",
+  "verified_walks": ["2026-10-04T04-08-51Z", "2026-10-04T04-12-35Z"],
+  "commentary": "The walks' own additions held except the one re-point."
+}

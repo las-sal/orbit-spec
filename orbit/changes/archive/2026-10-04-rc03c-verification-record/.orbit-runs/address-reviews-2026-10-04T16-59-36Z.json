@@ -1,0 +1,99 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-04T16:59:36Z",
+  "change": "rc03c-verification-record",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc03c-verification-record/.orbit-runs/external-system-2026-10-04T16-40-56Z.md",
+  "external_reviewer": "GPT-6",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 1,
+    "warning": 1,
+    "suggestion": 1
+  },
+  "pushback_verification": "All 3 findings verified against current state; 0 stale. The CRITICAL's reproduction was re-run verbatim on the built engine and reproduced; the collision loop was read checking only the command's own filename.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "A same-second walk is invisible to its follow-up verification",
+      "marker_source": "external",
+      "file": "src/core/artifact-graph/pass-genre.ts",
+      "line": 61,
+      "classification": "decision_required",
+      "action": "Option B: the emit surface's collision bump now clears a token against EVERY file in the trail (any command, any extension), not only the command's own filename, so within one trail token order is write order for every strict-order reader. New MODIFIED block `Engine-owned spine composition and filename discipline` in the orbit-emit-composition delta (collision sentence + scenario widened, a same-second-walk scenario added), stamped (6/6 verified); regression test composes a review in the walk's second and computes VERIFICATION with the token bumped past the walk and a prompt file. pass-genre.ts needed no edit: the cause was the token, not the ordering rule.",
+      "evidence": "reproduction re-run verbatim on dist: sameSecond {\"passGenre\":\"REVIEW\",\"verifiedWalks\":[]}, nextSecond {\"passGenre\":\"VERIFICATION\",\"verifiedWalks\":[\"2026-10-04T12-01-00Z\"]}; emit-composition.ts collision loop checked only `${filePrefix}-${token}.json`.",
+      "reproduction_rerun": "reproduced",
+      "ratified_via": "chat",
+      "resolution": "B — make trail tokens unique per trail directory (the bump clears any file carrying the token); A (equal-token-precedes in the genre function) and C (record as residual) not taken.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/emit-composition.ts",
+          "test/core/emit-composition.test.ts",
+          "orbit/changes/rc03c-verification-record/specs/orbit-emit-composition/spec.md",
+          "orbit/changes/rc03c-verification-record/proposal.md",
+          "orbit/changes/rc03c-verification-record/design.md",
+          "test/core/rc03b-untouched-modules.test.ts",
+          "CLAUDE.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/specs/orbit-emit-composition/spec.md",
+            "reason": "baseline spec; add a delta to your current change's specs/<capability>/spec.md to capture this ripple"
+          }
+        ]
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The residual check has no base when verification follows only in-context passes",
+      "marker_source": "external",
+      "file": "orbit/changes/rc03c-verification-record/specs/orbit-review/spec.md",
+      "line": 5,
+      "classification": "trivial_fix",
+      "action": "Defined the residual check's BASE FILE once in orbit-review's `Verification-genre passes grade the walk record`: the latest accepted independent pass's file, or, when the mode has none, the file of the pass the earliest verified walk walked (HEAD when uncommitted); the residual-method sentence, the residual kind and the co-committed scenario now name the base file; a new scenario covers the no-independent trail. The body's step (d) carries the same definition and its KNOWN LIMIT names the base file.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/templates/workflows/review.ts",
+          "orbit/changes/rc03c-verification-record/design.md",
+          "orbit/changes/rc03c-verification-record/tasks.md",
+          "test/core/templates/review-verification-branch.test.ts",
+          "CLAUDE.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "A verification row can lose its engine-derived walk token",
+      "marker_source": "external",
+      "file": "src/core/report-render.ts",
+      "line": 911,
+      "classification": "trivial_fix",
+      "action": "The row now prints `· walk (no walk on the trail carries this key)` in the token's place when no readable walk on the current trail carries the key resolved — never a silently shorter row; stated in orbit-report-rendering's `Verification renders as its own section and its absence is marked` with a scenario; render test added.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc03c-verification-record/specs/orbit-report-rendering/spec.md",
+          "test/core/report-render.test.ts",
+          "test/core/rc03b-untouched-modules.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Walk 1 of the system blind pair (the external half, GPT-6): 3 of 3 resolved, 0 stale. The CRITICAL took option B by chat — trail tokens are unique per trail directory, one new MODIFIED block in orbit-emit-composition; the two obvious fixes landed as previewed. 2554 tests green.",
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc03c-verification-record --from-file orbit/changes/rc03c-verification-record/.orbit-runs/review-system-2026-10-04T16-41-51Z.json"
+}

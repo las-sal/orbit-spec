@@ -1,0 +1,60 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-07-15T15:31:36Z",
+  "change": "d2-architect",
+  "source": "--from-file",
+  "source_path": "orbit/changes/d2-architect/.orbit-runs/review-proposal-2026-07-15T15-25-04Z.json",
+  "source_format": "internal-review-json",
+  "walk_mode": "per_finding",
+  "kind": "editorial",
+  "resolutions": [
+    {
+      "finding": "--fast (and --focus) behavior unspecified for architecture mode",
+      "severity": "SUGGESTION",
+      "file": "orbit/changes/d2-architect/specs/orbit-review/spec.md",
+      "pushback": "still applies — the ADDED `Architecture mode runs six passes` requirement disposed only of `--parallel`; verified by read at spec.md:16",
+      "classification": "trivial fix",
+      "action": "Extended the flag-disposition sentence: `--fast` and `--focus <lens>` are likewise accepted but no-ops in architecture mode (all six passes run — no per-mode subset or lens table defined), noted in the report the same way as `--parallel`.",
+      "ripple_cascade": {
+        "applied": ["orbit/changes/d2-architect/specs/orbit-review/spec.md"],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "finding": "Named/crystallized-explore creation descriptions elsewhere don't mention the new minimal .openspec.yaml",
+      "severity": "SUGGESTION",
+      "file": "orbit/changes/d2-architect/specs/orbit-conventions/spec.md",
+      "pushback": "still applies — the already-MODIFIED staging-dir requirement's `Created by explore in named/crystallized modes` scenario said only 'with an `explore.md` file'; verified by read at spec.md:219-222",
+      "classification": "decision required",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          { "label": "A", "body": "Extend only the already-MODIFIED orbit-conventions scenario (add \"and the minimal .openspec.yaml per orbit-explore-modifications\"); leave the run-summary-emit baseline untouched as non-contradictory." },
+          { "label": "B", "body": "Also add a 19th MODIFIED block for orbit-run-summary-emit's crystallization-warning requirement so consequence 1 and the confirmed-crystallization scenario name the metadata file." }
+        ],
+        "chosen": "A",
+        "discuss_invoked": false
+      },
+      "action": "Applied option A: the scenario's THEN now reads '...created with an `explore.md` file and the minimal `.openspec.yaml` metadata file (D-arc Stage D2; contents per `orbit-explore-modifications`)'. The edit is inside an existing MODIFIED block, so no new fingerprint and no count changes.",
+      "ripple_cascade": {
+        "applied": ["orbit/changes/d2-architect/specs/orbit-conventions/spec.md"],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/specs/orbit-run-summary-emit/spec.md",
+            "reason": "baseline spec; per the user's option A the two non-exhaustive mentions (lines ~155/~170) stay untouched — accurate, non-contradictory; a later touch may pick them up"
+          }
+        ]
+      }
+    }
+  ],
+  "resolution_summary": {
+    "resolved": 2,
+    "stale": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "post_state": "orbit validate d2-architect --strict passes; fingerprint --check 18/18 verified (both edits inside existing/ADDED blocks — no new fingerprints); counts unchanged (34 delta requirements, 16 ADDED + 18 MODIFIED, 20 tasks)",
+  "final_assessment": "Both iteration-6 SUGGESTIONs resolved (one trivial flag-disposition sentence; one user-forked scenario extension, option A chosen — conventions only). No stale suppressions, no deferrals.",
+  "next_recommended": "/orbit:review --as proposal --fresh d2-architect"
+}

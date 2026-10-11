@@ -1,0 +1,241 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-08-06T19:08:12Z",
+  "change": "d5-context-economy",
+  "kind": "editorial",
+  "model": "claude-fable-5",
+  "source": "auto-discovery",
+  "source_path": "orbit/changes/d5-context-economy/.orbit-runs/review-system-2026-08-06T18-15-14Z.json",
+  "source_command": "review",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "walk_mode_source": null,
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 4,
+    "suggestion": 5
+  },
+  "pushback_verification": "All 9 verified against current state before acting: the hint-gap sites re-read (5 render sites confirmed, 2 beyond the finding's 3), the verify composer branch + baseline requirement read side-by-side, each of the 5 review-external residue sites read in the template sources (1 same-class 6th found), the sticky-declaration semantics traced through trail.ts + the empty-list elision, the tmp write window read at emit-composition.ts:918-920, the JSON row mapping + boot actual list + test titles confirmed live. 0 stale suppressions.",
+  "resolution_summary": {
+    "resolved": 9,
+    "stale": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "marker": "src/core/report-render.ts:698 — model-hint garnish missing from the report tail and orientation eligibility lines",
+      "severity": "WARNING",
+      "source": "internal-review",
+      "classification": "trivial fix",
+      "status": "resolved",
+      "action": "Threaded the hint through ALL five unhinted render sites (the finding named three; change-completeness swept the --full view's two printWorkstreamEntry lines too): report-render.ts tail composition applies withModelHint(status.next_command, modelHintFor(projectRoot, status.next_hint_keys)); status.ts gains one renderNextLine(entry) helper using the change entry's nested status.next_hint_keys (explore/degraded entries have none — hint resolves null, line unchanged) applied at the sprint view (both branches) and both --full entry lines. Tests both ways at both surfaces: report tail (hint appears when a models map resolves; stripped output byte-identical to unconfigured) and bare/--full orientation.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/report-render.ts",
+          "src/commands/workflow/status.ts",
+          "test/commands/status-report.test.ts",
+          "test/commands/status-orientation.test.ts"
+        ],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "marker": "src/core/templates/workflows/onboard.ts:133 — retired /orbit:review-external taught as live at five current-state sites",
+      "severity": "WARNING",
+      "source": "internal-review",
+      "classification": "trivial fix",
+      "status": "resolved",
+      "action": "Swept all 5 cited sites to the merged '/orbit:review --as <mode> --reviewer external' form, plus a same-class 6th the pass missed (address-reviews.ts:46 named the retired orbit-review-external SKILL as the findings-format source of truth — now points at orbit-review's references/prompt-template.md). Frozen record vocabulary deliberately untouched (command: \"review-external\" T0 emit, filename families, the 'formerly invoked as' historical note, the rejected-command example). Surface regenerated via update --force; parity fidelity hashes re-pinned for the archive-change and onboard templates.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/templates/workflows/address-reviews.ts",
+          "src/core/templates/workflows/archive-change.ts",
+          "src/core/templates/workflows/onboard.ts",
+          "src/core/templates/workflows/review.ts",
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "marker": "src/core/artifact-graph/instruction-loader.ts:407 — status --json gate rows drop the typed userValidationPending field",
+      "severity": "SUGGESTION",
+      "source": "internal-review",
+      "classification": "trivial fix",
+      "status": "resolved",
+      "action": "Added userValidationPending?: string[] to GateStatusRow and the row mapping; live status --change d5-context-economy --json now carries userValidationPending: [\"9.6\"] as a typed field. Test asserts the ids ride the typed field, not only the prose reason.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/artifact-graph/instruction-loader.ts",
+          "test/core/artifact-graph/instruction-loader.test.ts"
+        ],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "marker": "src/core/boot-render.ts — boot ACTUAL touchpoints view includes the change's own .orbit-runs/ bookkeeping",
+      "severity": "SUGGESTION",
+      "source": "internal-review",
+      "classification": "trivial fix",
+      "status": "resolved",
+      "action": "The ACTUAL map now applies the same orbit/changes/<name>/** exclusion audit-drift's divergence arithmetic uses: change-own files collapse out of the list into one summary line with their count (typed as optional actual_change_own_count on the boot JSON). The d5 orbit-orientation delta's requirement text, JSON shape, and post-apply scenario updated in cascade.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/boot-render.ts",
+          "test/core/boot-render.test.ts",
+          "orbit/changes/d5-context-economy/specs/orbit-orientation/spec.md"
+        ],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "marker": "test/core/templates/orbit-generated-surface.test.ts:157 — stale '16 registered' test titles",
+      "severity": "SUGGESTION",
+      "source": "internal-review",
+      "classification": "trivial fix",
+      "status": "resolved",
+      "action": "Both it() titles renamed to count-free phrasing ('exactly the registered skills/commands') — survives future surface-count changes instead of trading one pinned number for another.",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/templates/orbit-generated-surface.test.ts"
+        ],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "marker": "orbit/changes/d5-context-economy/proposal.md:47 — stated ≤20k reduction target missed at 28.5k, never surfaced or ratified",
+      "severity": "WARNING",
+      "source": "internal-review",
+      "classification": "decision required",
+      "status": "resolved",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "accept 28.5k: amend the arc exit-criterion-1 reading (and the at-archive narrative) to record the achieved number plus the deferred-work rationale, with explicit user ratification on the trail"
+          },
+          {
+            "label": "B",
+            "body": "hold the ≤20k target: scope a follow-up change delivering engine work-list items #2/#3 before D5 stage completion is ratified"
+          }
+        ],
+        "chosen": "A"
+      },
+      "action": "Option A ratified by chat directive: proposal.md's target sentence gains the bracketed Outcome note (achieved 28.5k / −30%, target NOT hit, residual attributed to deferred engine work-list items #2 findings resolver and #3 archive preflight, ratified 2026-08-06 by Sal via this walk); the arc doc's d5 exit-criterion 1 gains the RATIFIED READING with the same attribution — accepted as met-in-intent rather than expanding D5's scope. Arc doc still parses (architecture status renders all stages); this emit is the trail record of the ratification.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d5-context-economy/proposal.md",
+          "orbit/architecture/d-arc-arbitered-flow.md"
+        ],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "marker": "src/core/emit-composition.ts:787 — verify recommendation composer cannot express the baseline's warn-state and incomplete-run recommendations",
+      "severity": "WARNING",
+      "source": "internal-review",
+      "classification": "decision required",
+      "status": "resolved",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "extend the verify payload contract (e.g. fail_mode 'warnings' + a warnings count, and an 'incomplete' mode) and add the two missing engine branches matching the baseline strings"
+          },
+          {
+            "label": "B",
+            "body": "delta the baseline 'Verify fail-mode recommendations' requirement down to the four-mode vocabulary the surface actually owns"
+          }
+        ],
+        "chosen": "A"
+      },
+      "action": "Option A ratified by chat directive: verify payload contract extended with fail_mode 'warnings' (+ required positive-integer warnings_count — absent count fails loud, never a plausible 'clean') and 'incomplete'; engine branches emit the baseline's strings ('verification passed with N warnings; system review recommended' / 'Re-run /orbit:verify <name> — prior verify run incomplete...'); the mode-② string now matches the baseline template and carries the optional scenarios_failed count. Verify body's payload documentation updated; parity hash re-pinned; new tests cover warn, fail-loud-without-count, incomplete, and the counted mode-②.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/emit-composition.ts",
+          "src/core/templates/workflows/verify-change.ts",
+          "test/core/emit-composition.test.ts",
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "marker": "src/core/artifact-graph/trail.ts:163 — latest DECLARING apply emit wins, diverging from the delta's 'LATEST apply emit' wording",
+      "severity": "SUGGESTION",
+      "source": "internal-review",
+      "classification": "decision required",
+      "status": "resolved",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "implement latest-emit semantics: a newest apply emit lacking the field clears the standing declaration (and stop eliding the empty list so retraction is expressible)"
+          },
+          {
+            "label": "B",
+            "body": "amend the delta wording to 'the most recent apply emit carrying the declaration', documenting the tasks.md marker edit as the retraction path"
+          }
+        ],
+        "chosen": "B"
+      },
+      "action": "Option B ratified by chat directive — the sticky semantics are the SAFER semantics (a declaration is a durable fact about the task; latest-emit semantics would let one forgotten payload field silently regress the readout, the exact bug class fixed this morning). Delta reworded to 'the MOST RECENT apply emit CARRYING one' with the stickiness and tasks.md retraction path explicit; new scenario pins sticky-across-field-less-emits; new gate test proves a later field-less apply emit keeps the gate passed.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d5-context-economy/specs/orbit-engine-gates/spec.md",
+          "test/core/artifact-graph/gates.test.ts"
+        ],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "marker": "src/core/emit-composition.ts:894 — crash window strands .tmp in the trail dir; spec claims 'a crash at any point leaves NO file'",
+      "severity": "SUGGESTION",
+      "source": "internal-review",
+      "classification": "decision required",
+      "status": "resolved",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "wrap the write+rename in try/catch with an unlink of the tmp on failure"
+          },
+          {
+            "label": "B",
+            "body": "soften the spec sentence to 'no RECORD ever exists on the trail'"
+          }
+        ],
+        "chosen": "A+B"
+      },
+      "resolution": "A+B combined (user-typed off-menu direction): the options aren't symmetric — the unlink only fires when the process survives (a hard kill skips any catch), so A alone can't make the sentence true and B alone leaves throw-path cleanup on the table.",
+      "action": "Code: write+rename wrapped, tmp unlinked on any surviving failure (best-effort, original error rethrown). Spec: the parenthetical rewritten to claim what's guaranteed — no RECORD ever (the dot-tmp never parses as an emit name), cleanup on every failure the process survives, a hard kill MAY strand an inert temp file the trail never reads. New test: a write failure past the gate leaves no emit and no dot-tmp (read-only trail dir, two-sided snapshot).",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/emit-composition.ts",
+          "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md",
+          "test/core/emit-composition.test.ts"
+        ],
+        "flagged_not_applied": []
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": null,
+  "final_assessment": "All 9 findings from the fresh system pass walked and resolved: 5 obvious-fix (hint garnish at all 5 render surfaces, review-external residue sweep incl. a 6th same-class site, typed userValidationPending, boot change-own collapse, count-free test titles) and 4 decisions ratified by chat (A: the ≤20k miss accepted at 28.5k with the arc criterion-1 ratified reading; A: verify warn/incomplete vocabulary extended to the baseline strings; B: sticky user-validation declaration spec'd with the tasks.md retraction path; A+B: tmp cleanup plus the honest atomicity claim). 1900 tests green (1894 → 1900); strict validation passes; fingerprints 26/26.",
+  "iteration": 11,
+  "next_recommended": "/orbit:review --as system d5-context-economy"
+}

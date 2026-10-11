@@ -1,0 +1,196 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-05T03:41:05Z",
+  "change": "rc08b-walk-routing",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 3,
+      "suggestion": 4
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 3,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "pass": "4",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "specs/orbit-engine-gates/spec.md",
+      "line": 75,
+      "title": "The rider swaps one false exhaustive claim for another: walk entries are also checked by the ripple-miss requirement",
+      "recommendation": "The new sentence says the emit surface's checks on a walk entry ARE those `The walk write gate checks sweep evidence` names. They are not all of them: `orbit-emit-composition`'s `A ripple-miss pointer resolves and is counted` (baseline spec line 1082-1084) also refuses walk entries (`ripple_miss_of` shape, the named walk existing and preceding, the matched resolved entry), and `validateWalkResolutions` (src/core/emit-composition.ts:562-583) runs both. Name both requirements, or make the sentence non-exhaustive (\"the emit surface checks some entry fields at write time — `The walk write gate checks sweep evidence` and `A ripple-miss pointer resolves and is counted` — and written logs are never re-validated\"). Sweep design.md D7 (line 83-85) for the same single-owner wording."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "design.md",
+      "line": 45,
+      "title": "The gate's own canonical next stays a single-pass --from-file aim, which bypasses the discovery this change builds",
+      "recommendation": "D1 keeps `nextCommand` byte-identical, and for an unresolved pass that command is `/orbit:address-reviews <change> --from-file <first pass>` (src/core/artifact-graph/gates.ts:807-809). So the engine's eligibility line — the one voice the T0 requirement now defers to — recommends exactly the one-half walk the T0 delta (specs/orbit-run-summary-emit/spec.md:22) calls the thing to avoid, skips the openPair stop and the cross-pass triage, and walks the pair's halves one invocation at a time. Risks (design.md:104-108) names the review emit's and the external chat note's --from-file aims as residuals but not this one, which is the most-followed of the three. Choose and record it.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Change the unresolved-pass canonical next in gates.ts to the change-scoped bare form `/orbit:address-reviews <change>` (same capability, orbit-engine-gates; readout/next goldens move and D1's byte-identical claim narrows to `reason` and the readout)."
+        },
+        {
+          "label": "B",
+          "body": "Keep it, and add it to Risks as a third named residual beside the review emit's and the chat note's aims, stating that following the eligibility line walks one pass per invocation and never reaches discovery."
+        }
+      ]
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-address-reviews/spec.md",
+      "line": 20,
+      "title": "Markers no longer suppress discovery, but a --mark'ed review's markers duplicate its own pass's findings",
+      "recommendation": "The old marker-first rule existed partly so `/orbit:review --as proposal --mark` (which writes `@review:` markers at the pass's CRITICAL/WARNING sites AND emits the pass JSON) was walked once. Under the union row every such finding is discovered twice — as a marker and as a virtual marker of the outstanding pass — and the one-log-per-source rule writes it into both the pass's log and the markers' log. The converged-finding rule covers two PASSES only. State what triage does when a marker restates a discovered pass's finding (e.g. the marker is walked as that pass's finding and removed, and the markers' log omits it), and add a scenario."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "specs/orbit-address-reviews/spec.md",
+      "line": 96,
+      "title": "A SUGGESTION-only or clean pass is never outstanding, so the --mark scenario's unconditional claim is false",
+      "recommendation": "`passResolved` returns true for any pass with zero CRITICAL+WARNING (gates.ts:186), so such a pass never appears in `unresolvedPasses` and discovery prints `Nothing to walk.` — a behaviour change from today's newest-by-TS rule, which walked it. The scenario `--mark is not a prerequisite` says the just-written pass \"is discovered as outstanding and walked\" unconditionally. Qualify it (\"a just-written pass carrying a CRITICAL or WARNING\"), add a scenario for the suggestion-only case (reached by `--from-file`, as the review emit's own next line already does), and name the change in the design."
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-address-reviews/spec.md",
+      "line": 12,
+      "title": "\"proceeds as the active-change row\" is ambiguous between the openPair-stop row and the union row",
+      "recommendation": "Two rows key on an active-change positional (the openPair STOP at line 14 and the UNION at line 15). A bare invocation resolved to the single active change \"proceeds as the active-change row\" — an implementer can read that as the union row only and skip the stop, which is exactly the bare case exit (1) measures. Say \"then re-enters the table as a positional resolving to that change (so the openPair stop applies)\", and add the bare + openPair case to `An open blind pair stops the walk`."
+    },
+    {
+      "pass": "3",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "design.md",
+      "line": 57,
+      "title": "The body carries the normative discovery table with no parity test, unlike the rc08a pattern it cites",
+      "recommendation": "D2 says the body's copy is not a second statement because it works \"the way rc08a's walk body carries its check scope\". That copy is a CHECKED MIRROR held byte-equal by test/core/sweep-path-parity.test.ts (address-reviews.ts:1005 says so); task 3.1 only asserts Step 1 \"carries the discovery table (pointing at ...)\". Under R-crc-14 and its mirror corollary an unchecked copy of an eight-row normative table is the rule-stated-twice shape rc04c watched diverge. Either fence the table in the delta and add a byte-equal parity assertion in task 3.1, or carry only a pointer plus procedure that restates no row."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-address-reviews/spec.md",
+      "line": 232,
+      "title": "A settled disagreement does not say what happens to the losing claim's entry in the EARLIER log",
+      "recommendation": "Logs are written in token order, so the earlier pass's log — carrying the contradicting finding — is written first, and only the later log's entry carries `disagreement` and a disposition that \"follows what was observed\". If the test refutes the EARLIER pass's claim, its entry still needs a disposition the gate reads (completeness requires every substantive finding matched). State the earlier entry's disposition when the test goes against it (e.g. `stale` with the test as evidence, the test run at triage before either log is written), and add that case to `A contradiction is settled by one test`."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "specs/orbit-address-reviews/spec.md",
+      "line": 206,
+      "title": "A pass held by an escalated or deferred entry is rediscovered by every later walk",
+      "recommendation": "An essential redesign's `escalated` entry keeps its pass in `unresolvedPasses`, so each later change-scoped walk re-discovers the whole pass and re-presents its already-resolved findings. Say what triage does with a rediscovered pass whose latest log exists (e.g. list prior dispositions and re-walk only the open entries, carrying the rest forward so the new log stays complete for the gate's completeness check)."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "specs/orbit-address-reviews/spec.md",
+      "line": 183,
+      "title": "Walk order across sources is implied, not stated",
+      "recommendation": "\"An interrupted walk leaves the logs it completed\" only holds if each source's log is written when its findings finish, i.e. the walk proceeds source by source in token order after one shared triage. Say so; the baseline's per-finding walk-mode order says nothing about sources."
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "specs/orbit-address-reviews/spec.md",
+      "line": 203,
+      "title": "The separable-redesign row omits that its resolved entry owes a sweep",
+      "recommendation": "The row is `resolved`, and the write gate refuses a resolved entry without `sweep` (emit-composition.ts:586-587). Only the descope row mentions `sweep`; add the same parenthetical to the separable-redesign row so the body and its `json example` carry it."
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "specs/orbit-engine-gates/spec.md",
+      "line": 296,
+      "title": "\"otherwise short of computing resolution\" names no state, and D1 omits the passed-gate return path",
+      "recommendation": "Name the states that carry the fields (unpassed, stale, passed — and superseded as a flag on those). D1 describes only the convergence loop, but a passed gate returns from a separate branch of `computeReviewedStatus` (gates.ts:531-551) that must also add `unresolvedPasses: []` for `A resolved gate lists nothing` to hold."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "specs/orbit-run-summary-emit/spec.md",
+      "line": 22,
+      "title": "The T0 turn's eligibility line is computed before the save it is said to follow",
+      "recommendation": "\"What follows the save is the engine's eligibility line on the same turn: on a blind pair it names the missing member\" — when the fresh half ran first, the missing member at T0 is the external just packaged, so that line re-recommends the packaging command. Reword to say the eligibility line read AFTER the return is saved names the walk or the remaining member."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "design.md",
+      "line": 112,
+      "title": "The scenario-declaration load is measured at 58 uncovered, not the 22 the design frames",
+      "recommendation": "`orbit status --change rc08b-walk-routing --scenarios` reports 66 delta scenarios, 8 covered, 58 uncovered (the rider's 22, the gate's 4 ADDED, the 15 + 8 address-reviews, the 3 + 6 run-summary). Record the measured figure in D7/Risks so task group 5 is sized against it."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "tasks.md",
+      "line": 11,
+      "title": "Task 2.2 misses the review body's prose that describes the T0 line as ending in a follow-up command",
+      "recommendation": "review.ts (T0 section, line ~610) says the recommendation is \"the user action plus the follow-up command (per D14)\" — not caught by task 3.3's address-reviews grep. Name that sentence in 2.2."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "The mechanism is small and well-sourced: collecting instead of returning in one loop, and a body table that reads the gate's list, closes the two-voices defect without touching the trail reader. Every claim about code I checked held (the loop, the openPair pre-computation, the blocked branch, the basename key, the open per-resolution keys, the T0 composition site, the hash pin). The weak points are all at the seams the change does not own: the gate's own next line, the --mark flow that the retired marker-first rule was quietly protecting, suggestion-only passes falling out of discovery, and a rider whose replacement pointer names one of two owners. None needs new mechanism; each is a sentence or a recorded choice.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The design closes the defect it names with no new mechanism beyond a collected list and a body table, and its code claims hold on reading. What remains is wording at the seams plus one scope choice about the engine's own walk recommendation; walk those and the proposal is ready to apply."
+  },
+  "final_assessment": "0 critical, 7 warning, 7 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc08b-walk-routing --from-file orbit/changes/rc08b-walk-routing/.orbit-runs/review-proposal-2026-10-05T03-41-05Z.json"
+}

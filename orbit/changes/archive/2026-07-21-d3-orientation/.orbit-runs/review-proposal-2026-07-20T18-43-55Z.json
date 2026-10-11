@@ -1,0 +1,61 @@
+{
+  "command": "review",
+  "timestamp": "2026-07-20T18:43:55Z",
+  "change": "d3-orientation",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "iteration": 4,
+  "depth": "full",
+  "scorecard": {
+    "completeness": { "critical": 0, "warning": 0, "suggestion": 1 },
+    "correctness": { "critical": 0, "warning": 1, "suggestion": 0 },
+    "coherence": { "critical": 0, "warning": 1, "suggestion": 0 }
+  },
+  "findings": [
+    {
+      "pass": 4,
+      "severity": "WARNING",
+      "file": "orbit/specs/orbit-architect/spec.md",
+      "line": 103,
+      "title": "Architect's 'named-mode-explore emit-timing genre' citation goes stale under the timing delta",
+      "recommendation": "The live orbit-architect baseline says architect emits at conversation boundaries '(the named-mode-explore emit-timing genre)' — but the delta reclassifies named-mode explore to the begin+boundary genre while architect's bullet in the delta'd timing requirement stays boundary-only. Post-archive the baselines contradict: an implementer following the genre citation could give architect a begin emit D3 deliberately does not grant. Exactly the un-delta'd-enumeration class (not CRITICAL: architect's operative SHALLs remain unambiguous). Add a one-line MODIFIED delta to orbit-architect's 'Architect run-summary emit' requirement rewording the parenthetical (e.g. 'the conversation-boundary timing per orbit-run-summary-emit; architect fires no begin emit — the begin+boundary genre is explore's')."
+    },
+    {
+      "pass": 5,
+      "severity": "WARNING",
+      "file": "orbit/changes/d3-orientation/specs/orbit-orientation/spec.md",
+      "line": 232,
+      "title": "Two shape points inside the shared workstream entry are still implementer-divergent",
+      "recommendation": "(a) 'a CHANGE entry embeds the same per-change status payload --change --json emits' — the enumerated shape {name, kind, stage?, strip, position, last, next, gates?} reads closed, so it is undefined whether the payload's fields SPREAD into the entry or NEST under a key; two implementers produce incompatible JSON. (b) `strip` has no declared JSON type — the requirement's 'computed chips ride on its strip field' plus the design's layout-control risk line point at a structured chip array, but nothing forbids a pre-rendered string. Pin both in the JSON-output requirement: name the embedding (e.g. the payload nests under a `status` key) and declare strip's type (e.g. an ordered array of {phase, glyph, detail?} chips from the closed glyph mapping, with the text render derived from it). Ripple tasks 2.3/5.1."
+    },
+    {
+      "pass": 6,
+      "severity": "SUGGESTION",
+      "file": "orbit/changes/d3-orientation/specs/orbit-orientation/spec.md",
+      "line": 28,
+      "title": "No explicit read-only guarantee on the orientation surface",
+      "recommendation": "engine-gates' slice has 'No new files written by state computation'; orientation's collection has only the design-level 'pure recompute, no caching' note — the spec's data-source limits constrain reads, not writes. Add one clause ('the surface creates and modifies no files') to the no-live-inference scenario or fault-isolation clause (c), making task 5.1's fs-access assertion two-sided."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "title": "engine-gates:106/:302 and orbit-review:135/:170 generic `orbit status` references left un-scoped",
+      "evidence": "Verified NOT contradictions: post-D3 bare `orbit status` also computes gate state from disk, writes nothing, and renders non-imperatively — both sentences stay true for both forms; the 4th-delta-file scoping deliberately touched only the two gate-row/consent-marker rendering blocks."
+    },
+    {
+      "title": "Maturity 0-decision scenario phrasing vs the Mode B Early canonical string",
+      "evidence": "No divergence — the requirement bullet defines Early canonically as the exact string the delta mandates; the scenario's differing phrase is a soft 'e.g.'."
+    },
+    {
+      "title": "WAITING arithmetic on legacy trails (findings predating any T0 → negative outstanding)",
+      "evidence": "Covered by the requirement's explicit outstanding > 0 render guard — almost flagged, verified handled."
+    },
+    {
+      "title": "All 10 prior-batch resolutions (iter 3 + external iter 2)",
+      "evidence": "Re-verified landed and mutually consistent at HEAD: the shared discriminated entry shape (sole-exception mandate + degraded-sprint render), tie-break, archived-LAST sourcing (relocation is baseline fact per orbit-archive-modifications), spine-invalid skip + WAITING exclusion, explore variant, D6 map, Mode C back-fill-then-fire, re-aimed fallback pointer, tuple task text, provenance labels."
+    }
+  ],
+  "iteration_note": "Note: 0 of these findings appeared in prior runs. 3 new this run (trend: 4 → 6 → 6-external → 4 → 6-external → 3; first pass with zero CRITICAL-or-WARNING in the delta'd core — both WARNINGs sit at the edges: one un-delta'd baseline citation in a FIFTH capability, one JSON pinning gap in the newest text). All six external iter-2 resolutions verified landed; all 6 MODIFIED blocks diffed verbatim-plus-intended-edits against live baselines; carrier map 15/15; counts verified (15/4/16; baseline 16→17; surface 16); grounding code confirmed (status.ts throw, trail.ts:60, state.ts:18, review-external.ts:358); zero markers.",
+  "final_assessment": "No critical issues. 2 warnings to consider — the orbit-architect genre citation (the un-delta'd-enumeration class, in a fifth capability file) and two unpinned points in the shared JSON entry shape (payload embedding, strip type) — plus a read-only-guarantee suggestion. The delta'd core survived all four CRITICAL-class sweeps clean for the first time.",
+  "next_recommended": "/orbit:address-reviews d3-orientation --from-file orbit/changes/d3-orientation/.orbit-runs/review-proposal-2026-07-20T18-43-55Z.json"
+}

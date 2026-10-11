@@ -1,0 +1,84 @@
+{
+  "command": "review",
+  "timestamp": "2026-09-24T14:05:45Z",
+  "change": "rc04c-retire-gate-overridden",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    }
+  },
+  "findings": [
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc04c-retire-gate-overridden/specs/orbit-run-summary-emit/spec.md",
+      "line": 187,
+      "title": "The emptiness predicate is stated in two capabilities with DIFFERENT extensions, and they diverge exactly at the rejected-external case this repo has already had to reason about",
+      "recommendation": "Both deltas state the same rule and scope it differently. `orbit-emit-composition`'s edge (d) says an empty `formed_against` is refused when 'any independent pass in the RESOLUTION SET is strictly earlier than the emit's own token' — and that requirement defines the resolution set explicitly as the trail reader's PASS SET (`trail.passes`), which its own edge (b) distinguishes from `trail.rejectedExternals`. `orbit-run-summary-emit`:187 states the same rule as '`[]` is accepted IF AND ONLY IF the trail carries NO independent pass (`reviewer_class` `fresh` or `external`, any mode)' — naming a reviewer_class test rather than the pass set. A REJECTED external return is an external attempt that carries that reviewer class and is NOT a pass: `orbit-engine-gates` already settles this, counting it toward recorded spend while refusing it as cadence coverage, and edge (b) refuses CITING one. So the correct behaviour exists and is knowable — a rejected external must NOT block a legal empty citation, because it is precisely a case where there was nothing citable. But an implementer reading only `orbit-run-summary-emit` would refuse the empty, and an implementer reading only `orbit-emit-composition` would accept it, on the same trail. Scope the run-summary-emit sentence to the same pass set the check consults (and say that a rejected external return does not count, since that is the non-obvious half), so the two capabilities specify one predicate rather than two. NOTE this is the SAME CLASS as external iter 1's C1 — one rule stated in two places with different extensions — recurring at a different pair after C1 was fixed."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "pass": "3",
+      "title": "CLAUDE.md states the retired contract in the present tense and no task updates it",
+      "evidence": "Resolved and verified COMPLETE this pass: task 5.0 names both live-engine-description sites (CLAUDE.md:59 and :227-229). The other five mentions (:166, :232, :277, :302, :424) are archive narrative — historical statements about how past changes archived — which 5.0's scope guard explicitly and correctly excludes."
+    },
+    {
+      "pass": "2",
+      "title": "The only rebuild occurs before the final engine removals",
+      "evidence": "Resolved: task 2.6 now rebuilds after 2.5a/2.5b and smoke-tests the built CLI. Re-verified `bin/orbit.js` is a 3-line shim importing ../dist/cli/index.js, so the hazard was real and the fix addresses it at the right layer."
+    },
+    {
+      "pass": "6",
+      "title": "The empty-citation successor still contradicts the record's defining membership rule",
+      "evidence": "Resolved: the exclusion in `orbit-run-summary-emit` is re-grounded on CADENCE POSITION rather than citation count, and re-read this pass — the definition and the totality rule no longer contradict."
+    },
+    {
+      "pass": "1",
+      "title": "Delta integrity — scenario loss or accidental rewording",
+      "evidence": "Not re-derived from scratch this pass: external iter 1 mechanically diffed all ten MODIFIED blocks against live baselines and reported all 55 baseline scenarios accounted for. Spot-confirmed here that all three deltas carry `## MODIFIED Requirements` only, validate --strict passes, and fingerprints read 10/10 verified."
+    }
+  ],
+  "commentary": "Third pass on this proposal and the first from in-context, after a fresh internal pass (10 findings) and an external pass (6 across two files) both walked to zero. One finding, and I want to be explicit that the low count is a measurement rather than a courtesy: passes 1, 3, 4, 7, 8 came back genuinely clean and I checked them rather than assuming them — validate strict passes, all three deltas carry MODIFIED sections only, zero `@review:` markers, the five surviving `gate_overridden` mentions in the deltas are descriptive prior-generation narration with none inside a SHALL, and CLAUDE.md's live-description sites are both tasked while its five archive-narrative mentions are correctly left as history.\n\nWhat I found is the same SHAPE the external pass found and fixed, recurring one pair over. Its C1 was a rule contradicted by the defining clause forty lines above it, inside one requirement. This is a rule stated in TWO capabilities with two different extensions: `orbit-emit-composition` scopes the emptiness check to the trail's PASS SET, `orbit-run-summary-emit` scopes it to a reviewer_class test, and those two sets differ at exactly one member — the rejected external return, which carries the reviewer class but is not a pass. That member is not hypothetical here; `orbit-engine-gates` already spends a paragraph keeping rejected returns counted as spend while refused as coverage, because this repo hit the case.\n\nThe thing worth noticing is WHY it survived three passes. Both sentences are correct in isolation and each was reviewed in its own requirement's context; the divergence only exists in the relation between them, and no single requirement read reveals it. That is the third distinct instance this change has produced of one defect class — a rule whose statement is split across locations that were each individually right. It suggests the productive question for the remaining cadence is not 'is this requirement correct' but 'is this rule stated once', which is what rc07's one-voice-for-facts work was about and what the stage's own site-2 edit was originally trying to do.\n\nWhat I probed and could not break: the task ordering after 2.6 (the window is now closed in both directions), the prior-generation verification path (3.5 through readTrail plus 4.2's two runnable commands — I re-ran the failing `--report` invocation to confirm the original instruction really was impossible), and requirement-to-work coverage (every one of the ten has real change, and each change has an implementing or verifying task; the two smallest, +1/-1 edits, are distinctness-list renames the body tasks carry).",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "final_assessment": "0 critical, 1 warning, 0 suggestion.",
+  "iteration": 4,
+  "next_recommended": "/orbit:address-reviews rc04c-retire-gate-overridden --from-file orbit/changes/rc04c-retire-gate-overridden/.orbit-runs/review-proposal-2026-09-24T14-05-45Z.json"
+}

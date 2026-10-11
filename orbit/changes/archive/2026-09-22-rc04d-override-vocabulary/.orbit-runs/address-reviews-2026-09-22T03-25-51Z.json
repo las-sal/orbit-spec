@@ -1,0 +1,271 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-22T03:25:51Z",
+  "change": "rc04d-override-vocabulary",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc04d-override-vocabulary/.orbit-runs/review-system-2026-09-22T03-10-50Z.json",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "walk_mode_source": "flag",
+  "input_findings_summary": {
+    "critical": 2,
+    "warning": 5,
+    "suggestion": 2
+  },
+  "pushback_verification": "All 9 findings re-verified against current state before any edit; 0 stale. The source pass was written 23:10 against a tree last modified 23:00 and `git status` was byte-identical at walk start, so no finding had drifted. Each edit was re-read after application; two self-caught defects were fixed in flow (see resolutions for #1 and #6).",
+  "resolution_summary": {
+    "resolved": 9,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "Task 3.3 directs rc04c's author to \"the corrected two-owner form\" — the formulation this change reversed — in the record that exists to stop exactly that propagation",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04d-override-vocabulary/tasks.md",
+      "line": 30,
+      "classification": "trivial_fix",
+      "action": "Rewrote task 3.3's closing sentences. The pointer now names the SHIPPED DELTA as the authority (`specs/orbit-engine-gates/spec.md`'s `Inflection-prompt override contract`) rather than any narrative retelling of it, states both superseded formulations explicitly (single-owner refuted for the archive half, two-owner refuted as false-after-rc04c), and cites R-crc-13 as the line. Also repaired a garbled clause in the same sentence group (\"names NO owner at all of the site-2 wording\").",
+      "ratified_via": "chat",
+      "resolution": "Previewed in the obvious-fix lane; user directed \"walk all nine in that order\".",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/explore/rc04c-retire-gate-overridden/explore.md",
+            "reason": "cross-change ripple; cascade scope is current change only"
+          }
+        ]
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The proposal's only substantive bullet ends mid-sentence, and the Modified Capabilities entry carries a dangling verb from the same edit",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04d-override-vocabulary/proposal.md",
+      "line": 22,
+      "classification": "trivial_fix",
+      "action": "Deleted the severed fragment \"That requirement\" at :22; changed \"the override contract moves / stops restating\" to \"also stops restating\" at :32.",
+      "ratified_via": "chat",
+      "resolution": "Previewed in the obvious-fix lane; user directed \"walk all nine in that order\".",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "proposal.md says four of five sites are plain substitutions; design.md D1 says three, and the delta agrees with the design",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04d-override-vocabulary/proposal.md",
+      "line": 17,
+      "classification": "trivial_fix",
+      "action": "Rewrote the What-Changes bullet to the shipped shape: THREE plain substitutions (named), a FOURTH that substitutes AND narrows its SHALL to the `review-system` gate, and the FIFTH that stops restating shape. Cascaded to the Modified Capabilities `orbit-pr-lifecycle` bullet, which now states the narrowing and why only `review-system` can be unpassed at the archive seam.",
+      "ratified_via": "chat",
+      "resolution": "Previewed in the obvious-fix lane; user directed \"walk all nine in that order\".",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc04d-override-vocabulary/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The \"two pins\" figure the fresh pass corrected to FOUR survives in three places, including the concluding sentence of the corrected bullet itself",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04d-override-vocabulary/tasks.md",
+      "line": 27,
+      "classification": "trivial_fix",
+      "action": "Swept to FOUR at tasks.md:27 (\"All FOUR go RED\"), design.md:33 (Non-Goals now names all four test files with a pointer to tasks 3.1), and proposal.md:45 (Impact likewise). The cascade surfaced a FOURTH site the finding had missed — explore.md:50 in D-rc04d-1 — handled by keeping the original decision text intact and appending a dated CORRECTED block naming all four files and the cause of the undercount (the grep measured spec-to-body coupling; the claim built on it was about what rc04c breaks, a different question).",
+      "ratified_via": "chat",
+      "resolution": "Previewed in the obvious-fix lane; user directed \"walk all nine in that order\".",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc04d-override-vocabulary/explore.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The Premise table's row 2 has five cells against a three-column header and now holds replacement text in a column headed \"the text naming the field\"",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04d-override-vocabulary/explore.md",
+      "line": 18,
+      "classification": "trivial_fix",
+      "action": "Restored row 2 to three cells carrying the CURRENT text only, with a pointer to D-rc04d-2 row 2 for the replacement and its corrections — so the Premise table keeps its stated job (what was read before anything was written) and the correction history lives in one place.",
+      "ratified_via": "chat",
+      "resolution": "Previewed in the obvious-fix lane; user directed \"walk all nine in that order\".",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "The stage's designated source-of-truth table still carries the REFUTED two-owner wording, and tasks.md 1.2 certifies it as recording both corrections",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04d-override-vocabulary/explore.md",
+      "line": 73,
+      "classification": "decision_required",
+      "action": "Option C applied — D-rc04d-2 re-voiced as one coherent account rather than a corrected cell inside a stale paragraph. (1) Decision retitled to what it settled, with the ratification provenance and the 2026-09-22 revision both on the title line. (2) The argument AS RATIFIED kept verbatim and labelled as such, because the reversal is only legible against it. (3) A REVERSAL block records both refutations and R-crc-13 as the line that ended the attempt. (4) Row 2's `to` cell now carries the shipped text, with BOTH superseded formulations beneath it marked \"NOT to be transcribed\" and each paired with why it failed. (5) The closing paragraph re-argued on the after-rc04c invariance instead of the abandoned rationale. Self-caught in flow: the correction note first landed as a 5th cell against a 4-column header — the same defect as finding #8, one table over — and was folded into the `to` cell the way row 4a does.",
+      "ratified_via": "chat",
+      "resolution": "User replied \"c\" to the briefing's three options, selecting the full re-voicing over the cell-only fix (A) and the marked-inert-history fix (B). Briefing had surfaced three additional stale sites (the decision title, the rationale paragraph, the closing) beyond the finding's single cell.",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Rewrite row 2's cell to the shipped text, extend its note to CORRECTED TWICE. Minimal; closes the tripwire; leaves the surrounding D-rc04d-2 prose stale."
+          },
+          {
+            "label": "B",
+            "body": "Keep the two-owner text visible but inert — move it into the note prefixed SUPERSEDED, put the shipped form in the `to` cell, so a transcriber can only reach the live form."
+          },
+          {
+            "label": "C",
+            "body": "B plus re-voice D-rc04d-2 as a whole: retitle the decision, mark the rationale paragraph as the superseded argument with the refutation beneath it, fix the closing."
+          }
+        ],
+        "chosen": "C"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc04d-override-vocabulary/explore.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "D2's closing paragraph and section heading still argue the ownership move the same section records as reversed",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04d-override-vocabulary/design.md",
+      "line": 84,
+      "classification": "decision_required",
+      "action": "Option B with C's heading. Heading now reads \"D2 — site 2 STOPS RESTATING THE RECORD'S SHAPE (R-crc-13: a gate reports, an emit records)\". The closing paragraph replaced with the bar-clearing argument: every form must be true today, site 2 alone must also be true AFTER rc04c, which is the bar both superseded formulations failed and removal passes trivially. Risks bullet retitled from \"Site 2's extra clause\" with a note that the shipped edit is a net REMOVAL and the old framing should not be carried into sizing rc04c's scope. Alternatives bullet rewritten: both halves of the second rejection have since failed, and a new paragraph states precisely what was NOT adopted — minimal de-naming leaves the shape restatement in place, the shipped form deletes it and names no owner, so shipping removal is a third position neither rejection had on the table rather than a reversal of the entry.",
+      "ratified_via": "chat",
+      "resolution": "User replied \"your rec\" to the briefing, adopting the recommended B+C combination (surgical fixes plus re-voiced Risks/Alternatives plus R-crc-13 promoted into the heading), over A (surgical only) and C alone.",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Surgical — fix the heading, replace the closing paragraph, mark :137 superseded. Leaves the Risks \"extra clause\" framing."
+          },
+          {
+            "label": "B",
+            "body": "A plus re-voice the Risks and Alternatives entries so every D2-adjacent claim describes the removal that shipped."
+          },
+          {
+            "label": "C",
+            "body": "Promote R-crc-13 into D2's heading so the ruling that settled it is visible without reading the body."
+          }
+        ],
+        "chosen": "off-menu"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc04d-override-vocabulary/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Exit (2)'s instrument is an unscoped `git diff --name-only`, and the working tree currently gives it a `test/` hit",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04d-override-vocabulary/tasks.md",
+      "line": 17,
+      "classification": "decision_required",
+      "action": "Option C — scoped check AND record. Task 2.2 restated as PATH-SCOPED (`git diff --name-only <base>..HEAD -- src/ test/` over the commits carrying this change's artifacts, plus the uncommitted remainder), with the correction recorded in full: an unscoped `git diff` measures the WORKING TREE, so on a tree carrying concurrent work the claim exit (2) exists to make falsifiable becomes unfalsifiable. The concrete occurrence is named (`test/core/sources-registry.test.ts`, the ruling-count pin bumped 12 → 13 when the architect session recorded R-crc-13 — the ruling design.md D2 now rests on) with the measurement beside it: nothing under `src/` touched at all, 2238/2238 green, no rc04d-authored test edit. The charter/task scope difference is stated (the charter says only `src/`; the `test/` clause is this task's tightening). An explicit R-crc-12 BOUNDARY paragraph separates the observable half (which commits carry this change — legitimate check) from the judgement half (whether an edit belongs to this stage — a RECORD). AT-ARCHIVE NOTE gained clause (c) specifying the readiness-record `accepted` entry. design.md D4 cascaded to describe the scoped instrument and the same boundary.",
+      "ratified_via": "chat",
+      "resolution": "User replied \"will take your rec\", adopting C (scope the instrument AND record the exception) over A (scope + split the commit) and B (record only). The recommendation rested on R-crc-12: commit membership is observable so a check is legitimate, but attributing an individual edit to a workstream is judgement no scoping converts into a check.",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Scope the instrument to the change and land the R-crc-13 bump in a separate architect commit so the stage's diff is clean by construction."
+          },
+          {
+            "label": "B",
+            "body": "Keep the unscoped instrument and record the `test/` touch as an accepted named exception in the archive readiness record."
+          },
+          {
+            "label": "C",
+            "body": "Both — scope the instrument and record the exception, since the R-crc-13 bump is genuinely entangled with rc04d."
+          }
+        ],
+        "chosen": "C"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc04d-override-vocabulary/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The design claims site 2 says NOTHING about shape; the shipped text makes a (weaker) locational claim — \"belong to the emit layer\"",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04d-override-vocabulary/design.md",
+      "line": 22,
+      "classification": "decision_required",
+      "action": "Option A — the description was fixed, the requirement was not. The Goals bullet now reads \"by NAMING NO SHAPE OWNER, not by redirecting to a different one\", with a parenthetical stating that the shipped text DOES say field and shape \"belong to the emit layer\" — a direction that keeps the sentence readable — and that what it never does is name the capability, which is the claim R-crc-13 puts outside this capability's standing. D2's \"names NOTHING about the record's shape\" changed to \"names NO OWNER of the record's shape\". Cascaded to tasks.md:9. THE DELTA WAS NOT TOUCHED: `git diff --stat` on `specs/` is byte-identical to its pre-walk state and fingerprints verify 5/5.",
+      "ratified_via": "chat",
+      "resolution": "User replied \"take your rec\", adopting A (soften the description) over B (drop four words from the shipped requirement) and C (soften plus add an explanatory paragraph). The recommendation was that the shipped sentence is right — a bare \"are not named here\" would leave a reader unsure the facts are recorded anywhere — so the defect is the description, and B would spend a converged requirement's stability on four words that are not wrong.",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Soften the design's self-description to \"names no shape OWNER\" — exactly true, and already the wording tasks.md:9 uses. Zero delta impact."
+          },
+          {
+            "label": "B",
+            "body": "Drop \"belong to the emit layer\" from the requirement so the claim matches \"says nothing about shape\" literally. Edits shipped delta text."
+          },
+          {
+            "label": "C",
+            "body": "Soften the description AND add a line to D2 explaining that \"the emit layer\" is a direction, not an ownership claim."
+          }
+        ],
+        "chosen": "A"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc04d-override-vocabulary/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "All 9 findings resolved, 0 stale, 0 deferred — 5 through the obvious-fix lane and 4 through the decision lane, every one ratified by chat directive. The walk's character: every finding was wake from the 03:02 reversal, which had landed perfectly in the delta and raggedly in the prose explaining it, so the work was making four artifacts tell one story. NOTHING NORMATIVE MOVED — the three delta specs are byte-identical to their pre-walk state, fingerprints 5/5, validate --strict clean, 2238/2238 green — and that was a decision, not an accident: finding #9's option B would have edited a converged requirement for four words and was declined in favour of fixing the description that misdescribed it. Two self-caught defects are worth the record. Finding #1's correction note first landed as a 5th cell against a 4-column header, reproducing finding #8's exact defect one table over, caught by running #8's own cell count on the table I had just edited. Finding #6's cascade surfaced a fourth residue site the finding had missed (explore.md:50), handled by appending a dated CORRECTED block rather than rewriting the decision text. The heaviest single resolution was #1 option C: D-rc04d-2 is cited by name three times as the stage's authority, and a source-of-truth correct in its table and wrong in its prose is worse than one uniformly stale, because the table's correctness is what persuades a reader to trust the paragraph. Finding #7 is the one that leaves a residual: exit (2)'s instrument is now path-scoped and honest about the R-crc-12 boundary, but the scoped check still reports test/core/sources-registry.test.ts while the R-crc-13 ruling bump sits uncommitted in the shared tree. AT-ARCHIVE NOTE (c) now specifies the readiness-record entry; landing that bump in its own architect commit would make the check read clean, and that is a commit-boundary call for the user.",
+  "iteration": 5,
+  "next_recommended": "/orbit:archive rc04d-override-vocabulary — user-invoked"
+}

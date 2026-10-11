@@ -1,0 +1,21 @@
+{
+  "command": "apply",
+  "timestamp": "2026-07-29T22:17:49Z",
+  "change": "d4-review-consistency",
+  "final_assessment": "Applied d4-review-consistency: 18/18 tasks. NEW src/core/report-render.ts — the pure engine render over review records (D2b's grammar exactly: genre-conditional header, as-of iteration/trend under ONE total pass order, internal-only scorecard table, blockquote-contained verbatim bodies with single-line options, the Suppressed and Commentary sections, the engine tail computed at render time with each line only-when-computed) with per-genre strict validation, the scorecard/findings consistency check, and the D4-generation boundary (pre-boundary error fixtures copied byte-for-byte from the real B2/D3 archives); surfaced as `orbit status --change <name> --report [<TS>]` (raw resolution over all trail emits, genre dispatch, zero-passes/--json/non-renderable clean errors, read-only) — happy path and all error paths smoke-verified live, byte-determinism pinned two ways. The four template rewrites landed: review.ts persist-first + run-and-paste with the final-assessment machinery and synthetic pass DELETED (greppable prohibition, architecture exempt, commentary authoring contract, deterministic spine facts); address-reviews.ts three-lane walk (triage preview, decision-lane present→discuss→ratify, entry-level ratified_via/resolution, [discuss] retired, delegation recorded); review-external.ts Notes contract at both the template and the instructions; onboard.ts re-taught both retired models; both address-side reference docs updated. Fidelity/parity/surface suites updated (review/address/review-external/onboard markers; 2 parity re-pins); local surface refreshed and spot-checked. 1783 tests green (1754 baseline + 29 new: 19 renderer + 10 CLI); strict validation passes; fingerprints 18/18. Build flow note: the renderer subagent stalled twice mid-build and was resumed each time with state intact (module → CLI → tests); its ambiguity calls are recorded in its report. R-d-9 seam audit 2026-07-29 (this emit is the dated evidence carrier per task 5.4): residency verified, boot chain current, charter coverage complete — criterion 1 carried by the golden byte-identity suite, criterion 2's checkable half by the fidelity greps with the one-observed-cycle half pending post-apply — code touchpoints as declared.",
+  "next_recommended": "/orbit:review --as system d4-review-consistency",
+  "kind": "workflow",
+  "tasks_completed": 18,
+  "tasks_remaining": 0,
+  "user_validation_remaining": 0,
+  "chunk": null,
+  "chunk_name": null,
+  "chunk_complete": true,
+  "tasks_completed_this_session": 18,
+  "consent": "user-invoked",
+  "gate_overridden": {
+    "gate": "review-proposal",
+    "state": "unpassed",
+    "reason": "latest independent pass yielded new findings"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-07-30T12:48:05Z",
+  "change": "d4-review-consistency",
+  "final_assessment": "External review prompt packaged for d4-review-consistency (iter 1, mode system); awaiting findings. Prompt briefs the reviewer on the applied state (18/18 tasks, 1787 tests), the full system phase incl. the fresh iter-2 batch as least-reviewed (the scenario-axis CRITICAL, the fail-loud forging fix chat-ratified under the new decision-lane protocol, the added equivalence test), notes the observed-cycle milestone for exit criterion 2, and instructs rendering every surface incl. the boundary and forging error paths. Notably: the prompt's Notes instruction now carries the D4 Commentary contract — this external's Notes will render into the report's quarantined slot.",
+  "next_recommended": "Paste orbit/changes/d4-review-consistency/.orbit-runs/external-prompt-system-2026-07-30T12-48-04Z.md into the target AI, save the response as orbit/changes/d4-review-consistency/.orbit-runs/external-system-<TS>.md, then /orbit:address-reviews d4-review-consistency --from-file <path>",
+  "kind": "editorial",
+  "mode": "system",
+  "reviewer_class": "external",
+  "prompt_path": "orbit/changes/d4-review-consistency/.orbit-runs/external-prompt-system-2026-07-30T12-48-04Z.md",
+  "target": null,
+  "awaiting_findings": true
+}

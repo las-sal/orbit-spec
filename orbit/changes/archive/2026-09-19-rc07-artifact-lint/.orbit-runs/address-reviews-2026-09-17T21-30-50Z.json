@@ -1,0 +1,159 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-17T21:30:50Z",
+  "change": "rc07-artifact-lint",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc07-artifact-lint/.orbit-runs/external-system-2026-09-17T20-48-15Z.md",
+  "external_reviewer": "GPT-5 Codex",
+  "walk_mode": "per_finding",
+  "walk_mode_source": "flag",
+  "input_findings_summary": {
+    "critical": 2,
+    "warning": 9,
+    "suggestion": 2
+  },
+  "pushback_verification": "All 13 verified against the built tree before any edit; ZERO stale. Six were reproduced empirically rather than reasoned about, each with a runnable case: the nested-fence ruling miscount (returned 2, correct answer 1), the schema traversal (emitted 777 from outside both tiers), the prototype key (raw TypeError, not the clean error), the compact-comment marker parsing live, the empty sources map yielding a silent present-but-inert registry, and the escaped-backtick mask swallowing a marker.",
+  "resolution_summary": {
+    "resolved": 12,
+    "stale_suppressed": 0,
+    "deferred": 1,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "The modified opacity contract is false of the existing parser API",
+      "marker_source": "external",
+      "file": "orbit/changes/rc07-artifact-lint/specs/orbit-architecture-engine/spec.md",
+      "line": 12,
+      "classification": "unresolvable",
+      "action": "DEFERRED by explicit user ratification. Verified real before deferring: ParsedArchitectureDoc.lines is a public field carrying the whole document, sliceStageSection reads it downstream for `architecture show`, and countRulingEntries obtains the rulings THROUGH that same field — so the delta's 'nothing downstream of parseArchitectureDoc may read it' and its single-named-exception claim are both false of the shipped API. Not repaired here: the fix is either separating raw bytes from the parsed model or rewriting the requirement around what 'reads' means and naming every permitted reader, which is a spec REDESIGN and routes back to explore under R-crc-6 rather than being invented inside a walk.",
+      "ratified_via": "chat",
+      "resolution": "Intentionally defer external C1; walk the remaining list."
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "The ruling source counts entries inside valid fenced code",
+      "marker_source": "external",
+      "file": "src/core/sources-registry.ts",
+      "line": 96,
+      "classification": "decision_required",
+      "action": "Applied option A: countRulingEntries now builds its line mask from the SHARED createFenceTracker (new fenceMaskFor helper) instead of the requirement-block depth heuristic. Reproduced the defect first — a four-backtick fence around a three-backtick example returned 2 where the answer is 1, admitting both fenced bullets and masking the live one — and confirmed it returns 1 after the fix while the live R-crc count stays 10. Two regressions added (nested fence; three-backtick line cannot close a four-backtick fence).",
+      "ratified_via": "chat",
+      "resolution": "Option A (contained fix) settled under R-crc-3 and applied under the user's blanket directive; migrating the architecture PARSER off the heuristic is recorded in design.md D3 as a declared residual with kind and method, because it is engine-wide grammar unification consumed by status/show/validate and inventing it inside a walk is what R-crc-6 forbids.",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "change only countRulingEntries to use the shared tracker"
+          },
+          {
+            "label": "B",
+            "body": "also migrate architecture/parser.ts so the engine has one fence grammar"
+          }
+        ],
+        "ratified_option": "A"
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "Marker recognition accepts comments outside the specified exact grammar",
+      "marker_source": "external",
+      "file": "src/core/source-lint.ts",
+      "line": 65,
+      "classification": "trivial_fix",
+      "action": "Tightened OPENER_REGEX/CLOSER_REGEX to the exact literal delimiters (one space, NAME the only pattern). Verified the compact form parsed live before the fix. Four inertness regressions added: compact, tabbed, double-spaced, split-across-lines; plus one asserting the canonical form still parses. Spec's inertness paragraph now states what EXACTLY means."
+    },
+    {
+      "severity": "WARNING",
+      "title": "Escaped backticks incorrectly hide live markers",
+      "marker_source": "external",
+      "file": "src/core/markdown-fence.ts",
+      "line": 128,
+      "classification": "trivial_fix",
+      "action": "computeCodeRegionMask now counts immediately-preceding backslashes and drops an escaped leading backtick from the candidate run. Reproduced first (a marker between two escaped backticks vanished). Regressions for odd and even backslash counts; the spec's inline-code table gained the row."
+    },
+    {
+      "severity": "WARNING",
+      "title": "An empty registry file disables the lint without any output",
+      "marker_source": "external",
+      "file": "src/core/sources-registry.ts",
+      "line": 303,
+      "classification": "trivial_fix",
+      "action": "`sources:` declaring no entries is now a SourceRegistryError naming the file and telling the author to delete it rather than empty it. Reproduced first (sources: {} yielded registryPresent true with zero findings, zero coverage, silent exit 0). The malformed-registry scenario gained the clause; the absent-file-silence test now covers present-but-null AND present-but-empty."
+    },
+    {
+      "severity": "WARNING",
+      "title": "Schema parameters can traverse outside the schema namespace",
+      "marker_source": "external",
+      "file": "src/core/sources-registry.ts",
+      "line": 187,
+      "classification": "trivial_fix",
+      "action": "findSchemaFile now requires the kebab SCHEMA_NAME_REGEX and enforces resolved-path containment within each tier (realpath, so symlinks cannot escape either). Reproduced first: `schema: ../../schemas/spec-driven` resolved a planted schema OUTSIDE both tiers and emitted 777. Regression covers four spellings; the spec states the identifier-not-path rule and gains a scenario."
+    },
+    {
+      "severity": "WARNING",
+      "title": "Tracked markdown read failures are silently reported as scanned",
+      "marker_source": "external",
+      "file": "src/core/source-lint.ts",
+      "line": 275,
+      "classification": "trivial_fix",
+      "action": "A tracked path with no working-tree file is still skipped silently (a deleted file is legitimately still tracked), but every OTHER read failure is now a marker-kind finding naming the file, and filesScanned counts files actually READ. Three regressions: non-ASCII name, deleted file, unreadable file (chmod 000) with a stale sibling proving the rest still lints."
+    },
+    {
+      "severity": "WARNING",
+      "title": "Unmatched backtick runs cause repeated whole-suffix scans",
+      "marker_source": "external",
+      "file": "src/core/markdown-fence.ts",
+      "line": 138,
+      "classification": "trivial_fix",
+      "action": "Pairing is now linear: each run's next equal-length partner is pre-indexed in one backward sweep, replacing the per-unmatched-run re-scan of the remaining group. Regression drives 400 unmatched runs of 17 distinct lengths under a time bound and still finds the live span."
+    },
+    {
+      "severity": "WARNING",
+      "title": "Prototype properties bypass the closed engine-source membership check",
+      "marker_source": "external",
+      "file": "src/core/sources-registry.ts",
+      "line": 331,
+      "classification": "trivial_fix",
+      "action": "Object.hasOwn replaces the `in` operator. Reproduced first: `engine: toString` threw `TypeError: definition.params is not iterable` instead of the clean unknown-source error. Regression covers toString, constructor and hasOwnProperty, asserting the error lists the four exposed names."
+    },
+    {
+      "severity": "WARNING",
+      "title": "The four motivating fixtures do not exercise the lint implementation",
+      "marker_source": "external",
+      "file": "test/core/source-lint.test.ts",
+      "line": 31,
+      "classification": "trivial_fix",
+      "action": "MERGED with the fresh pass's identical finding (review-system-2026-09-17T20-53-54Z, correctness/WARNING at :33). The three numeric defects now run through runSourceLint in a real git fixture and assert the discriminated mismatch record; the compound case runs through parseMarkedSpans plus a newly-exported checkSpanAgainstValue — the one comparison the CLOSED v1 table cannot produce as a source value — so it touches the product rather than String.prototype. An agreeing span of the same shape is asserted too, so the four failures mean something."
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Use NUL-delimited git output for the project file domain",
+      "marker_source": "external",
+      "file": "src/core/source-lint.ts",
+      "line": 106,
+      "classification": "trivial_fix",
+      "action": "MERGED with the fresh pass's CRITICAL at the same line (silent non-ASCII domain drop). resolveFileDomain now runs `git ls-files -z -- '*.md'`, splits on NUL and never trims paths. Reproduced the fresh pass's case first (a tracked dé-café.md with a stale span produced no finding, no warning, no coverage). Regressions: non-ASCII name and a path with surrounding spaces."
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The live ruling-count test derives its oracle from the same raw-text assumptions",
+      "marker_source": "external",
+      "file": "test/core/sources-registry.test.ts",
+      "line": 21,
+      "classification": "trivial_fix",
+      "action": "The live test now PINS the contract value (10) as task 1.1 asked, and keeps the hand-scan as a second independent witness that must agree. A shared section/fence/bold mistake can no longer pass both sides."
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": "let's just go ahead and apply the fixes",
+  "final_assessment": "Half one of the SYSTEM-mode blind pair. 12 of 13 resolved; external C1 (the orbit-architecture-engine opacity contract being false of the shipped parser API) DEFERRED by explicit user ratification — verified real before deferring, and left because its fix is a spec redesign that routes back to explore under R-crc-6 rather than being invented inside a walk. Both CRITICALs from this half were genuine engine defects: one deferred, one (the ruling parse reading a second fence grammar) repaired by importing the shared tracker, with the engine-wide parser unification recorded as a declared residual. Three decision-lane calls were settled under R-crc-3 and applied under the user's blanket directive; the other nine were obvious fixes previewed at triage. 2197 tests green; validate --all --strict clean; the no-registry path re-verified byte-identical against the pre-change HEAD build.",
+  "iteration": 6,
+  "next_recommended": "/orbit:address-reviews rc07-artifact-lint --from-file orbit/changes/rc07-artifact-lint/.orbit-runs/external-system-2026-09-17T20-48-15Z.md"
+}

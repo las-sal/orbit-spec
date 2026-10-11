@@ -1,0 +1,119 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-07T00:39:22Z",
+  "change": "rc17b-blind-pair-command",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "The stale-member notice keys on the gate's reason, which names the stale member only when coverage is the failing clause",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 459,
+      "recommendation": "Decide staleness from the trail, not the reason string: the latest pair: true launch L of the mode, its landed member (the first fresh or first accepted external of the mode later than L), and an apply-*.json token later than that member's token. Restate the condition that way in orbit-review-external's 'A pair's external half reads the pair's reviewed state' (its paragraph and the stale-member row), in Step 3b's bullet and in the trunk's fresh re-run paragraph, and rebuild the harness's stale-member test on a member that carries a finding.",
+      "reproduction": "Disposable project, real CLI: a pair: true T0 at 10-00-00Z, a fresh review-system pass at 10-01-00Z carrying one WARNING, an apply-*.json at 10-02-00Z. `orbit status --change x --json` reports for review-system: openPair absent, reason 'pass 2026-10-06T10-01-00Z has unresolved substantive findings'. Step 3b's stale bullet tests for 'cannot fill this slot: its <class> member is stale' in the reason, does not match, and falls to 'Any other state' — a silent single, although the member is stale and an external run would become that pair's member and cover nothing. The harness's stale test passes only because its member carries no finding.",
+      "walk_entry": {
+        "title": "Supersession notice is skipped when an apply makes the member stale",
+        "file": "src/core/templates/workflows/review.ts"
+      }
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "I graded the nine resolutions over their edit records, and the residual diff from the external return's commit matched those records exactly. A′ holds against the engine. The openPair rows in gates.ts set openPair only when the landed member is usable, which means emitted after any apply. So 'an apply later than L with openPair standing' does imply a post-apply member, and the first-parent read of that member's commit is free of the partner. I re-derived that from presentInvoked rather than trusting the walk's harness. The one regression is the walk's own sibling to E3. The notice keys on a reason string, and the gate's reason text is chosen by whichever clause fails first, not by pair state. That makes it a poor signal for anything other than the readout. The same string-keyed test sits in the trunk's fresh re-run paragraph. A smaller imprecision: the fresh re-run's apply case takes M as the earliest external-<mode>-*.md later than L, which would mis-pick a hand-saved return the trail reader rejected. orbit external save cannot produce such a file, so I left it here rather than as a finding.",
+  "passes_run": [
+    "1",
+    "2",
+    "3"
+  ],
+  "passes_skipped": [
+    "0 (VERIFICATION genre: a whole-change pass, not run over the walks' sweep scopes)",
+    "4 (no orbit/lenses/ perspectives file)",
+    "5 (no orbit/lenses/ critical-paths file)",
+    "6 (VERIFICATION genre: a whole-project pass, not run over the walks' sweep scopes)"
+  ],
+  "verification": [
+    {
+      "title": "The apply-later-than-L branch runs an 'ordinary single' that the engine counts as the open pair's member, so a non-blind pair covers the invoked slot",
+      "file": "orbit/changes/rc17b-blind-pair-command/specs/orbit-review-external/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "On a re-run, the launch route's session-end recovery line still saves with --launch <T0 token>, the re-run's own token",
+      "file": "src/core/templates/workflows/review.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "The behaviour declaration for 'A re-run after an apply is a single' never sets up its WHEN and never checks what the gate computes",
+      "file": "test/integration/external-runner/pair.test.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "Row 13 and the pair reference's Step 13 state the open pair's openPair value without the both-missing case",
+      "file": "orbit/changes/rc17b-blind-pair-command/specs/orbit-review/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Fresh re-run still uses live-state CLI reads",
+      "file": "src/core/templates/workflows/review.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "Pasted system prompt still directs a HEAD diff",
+      "file": "src/core/templates/workflows/review.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "Supersession notice is skipped when an apply makes the member stale",
+      "file": "src/core/templates/workflows/review.ts",
+      "verdict": "regressed"
+    },
+    {
+      "title": "Session-end recovery assumes a fresh pass file exists",
+      "file": "src/core/templates/workflows/review.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "Config guidance still describes the interim default",
+      "file": "orbit/config.yaml",
+      "verdict": "landed"
+    }
+  ],
+  "final_assessment": "0 critical, 1 warning, 0 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-10-06T22-25-20Z",
+    "2026-10-06T22-25-40Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc17b-blind-pair-command --from-file orbit/changes/rc17b-blind-pair-command/.orbit-runs/review-system-2026-10-07T00-39-22Z.json"
+}

@@ -1,0 +1,117 @@
+{
+  "command": "audit-drift",
+  "timestamp": "2026-09-14T14:18:48Z",
+  "change": null,
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "No critical issues. 5 warning(s) to consider.",
+  "categories_run": {
+    "1": true,
+    "2": false,
+    "3": true,
+    "4": true,
+    "5": false,
+    "6": false
+  },
+  "findings_by_category": {
+    "1": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "2": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "3": {
+      "critical": 0,
+      "warning": 5,
+      "suggestion": 1
+    },
+    "4": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "5": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "6": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    }
+  },
+  "findings_total": 6,
+  "findings": [
+    {
+      "category": "3",
+      "severity": "WARNING",
+      "file": "CLAUDE.md",
+      "line": 365,
+      "title": "CLAUDE.md names two different programs as live",
+      "recommendation": "Line 365 (When in doubt) says 'the live program is orbit/architecture/d-arc-arbitered-flow.md'; lines 107-110 say the ACTIVE program is clean-up-review-cycle and the D-arc is quiescent. Point line 365 at clean-up-review-cycle.md and keep the d-arc pointer as the historical-record reference it now is."
+    },
+    {
+      "category": "3",
+      "severity": "WARNING",
+      "file": "CLAUDE.md",
+      "line": 145,
+      "title": "Newest spec-driven version claim is stale: says version 3, schema is version 4",
+      "recommendation": "schemas/spec-driven/schema.yaml:2 reads version: 4 (rc02's bump; review-system cadence [blind-pair, in-context], both reviewed gates budget: 3). CLAUDE.md:145 asserts version 3 and CLAUDE.md:62 asserts version 2 — both present-tense inside stage sections. No line states the current version. Fold the correction into the rc02 stage section CLAUDE.md gains post-archive, and consider one current-state line so the newest claim is never a superseded one."
+    },
+    {
+      "category": "3",
+      "severity": "WARNING",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 807,
+      "title": "Status log carries the superseded R-crc-4 wording the ruling itself records as corrected",
+      "recommendation": "Line 807 reads 'R-crc-4 AMENDED — the pair is SPAWNED SIMULTANEOUSLY rather than packaged and awaited'. R-crc-4 (lines 115-122) records that this exact wording overreached and was CORRECTED the same day: external means a cross-vendor handoff a human runs in another tool, and orbit inside one assistant cannot spawn an agent of a different vendor. The log is append-only by design, so the fix is an appended pointer to the correction, never a rewrite of the entry."
+    },
+    {
+      "category": "3",
+      "severity": "WARNING",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 807,
+      "title": "Neither narrative record captures rc02's close",
+      "recommendation": "The status log's last entry is the blind-pair measurement; it does not record walk 9 (the shared-fence-tracker CRITICAL), the archive, or the budget-exhaustion gate override — and CLAUDE.md's program section has no rc02 stage section, unlike every prior archived stage. rc02 is the first stage archived with no entry in either record. An architect session on clean-up-review-cycle closes both and is the same session that would ratify the stage's Complete slot.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Run /orbit:architect clean-up-review-cycle: append the status-log entry, add the R-crc-4 correction pointer, and take the ratification offer in one sitting."
+        },
+        {
+          "label": "B",
+          "body": "Append the status-log entry now and defer the CLAUDE.md stage section to the next stage's propose, matching how earlier stage sections were written in batch."
+        }
+      ]
+    },
+    {
+      "category": "3",
+      "severity": "SUGGESTION",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 141,
+      "title": "Exit criterion 3 leaves the budget-spent record shape ambiguous",
+      "recommendation": "rc02's exit criterion 3 reads 'the next archive on this repo proceeds through the stop rule, or with the gate reporting its budget spent — never a gate_overridden for \"no clean pass yet\"'. The 2026-09-14 archive satisfies it — the override's reason IS the budget-spent clause — but the record shows a gate_overridden either way, so telling the sanctioned case from the prohibited one requires reading the reason string. rc04 (cost visibility, which already owns what the user decides at archive) is the place to make budget-spent proceeds distinguishable at a glance."
+    },
+    {
+      "category": "3",
+      "severity": "WARNING",
+      "file": ".claude/skills/orbit-audit-drift/references/run-summary-schema.md",
+      "line": 30,
+      "title": "Shipped audit-drift payload schema is rejected by the engine on first use",
+      "recommendation": "Every per-command field the reference documents (context, caller, depth, flags, categories_skipped, findings_summary) is refused by emit-composition.ts:141-149, whose table is [final_assessment, categories_run, findings_by_category, findings_total, findings, stale_suppressed]. This run's standalone emit failed with \"unknown payload key 'context'\" and only completed after the payload was rewritten against the source. The reference already dates the three-way divergence and assigns it to rc07 (artifact-lint), with the parity test recording it as a named exception — but nothing records that the documented shape does not merely diverge in TYPE, it fails outright, so the command's own Step 10 is unfollowable from its shipped reference. Worth raising in rc07's charter as the concrete failure the stage removes."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "category": "3",
+      "title": "R-crc-4's near-ceiling proposal pair has no owning stage",
+      "evidence": "Verified false: clean-up-review-cycle.md:735 assigns it — 'R-crc-4's near-ceiling proposal pair is assigned to rc09, which owns the size ceiling'. Line 547 records the interim reading (exercised by choice until rc09 makes it cadence)."
+    }
+  ],
+  "next_recommended": "/orbit:address-reviews --from-file orbit/.orbit-runs/audit-drift-2026-09-14T14-18-48Z.json — 6 drift(s) detected project-wide; resolve before next workflow step"
+}

@@ -1,0 +1,31 @@
+{
+  "command": "architect",
+  "timestamp": "2026-10-07T14:36:01Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Declared rc18-walk-is-next (premised, depends on rc17a) from rc17c's proposal cycle, on Sal's word: a passed gate whose mode carries an unwalked pass names /orbit:address-reviews <change> as its single canonical next; eligibility unchanged. The two-line alternative is recorded as not this stage's direction (it would reverse Single-voiced canonical-next computation, Sal's call). Stage count 36 -> 37 at three marked sites.",
+  "stages_touched": [
+    "rc18-walk-is-next"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      {
+        "path": "orbit/architecture/clean-up-review-cycle.md",
+        "why": "rc18's charter, under Program stages"
+      },
+      {
+        "path": "orbit/changes/rc17c-short-review-next/",
+        "why": "the active change; its proposal gate passed with three unwalked SUGGESTIONs"
+      }
+    ],
+    "next_command": "/orbit:address-reviews rc17c-short-review-next",
+    "model_hint": null,
+    "seam": "rc17c's three verification SUGGESTIONs are unwalked; rc18 is premised behind it"
+  },
+  "next_recommended": "/orbit:address-reviews rc17c-short-review-next"
+}

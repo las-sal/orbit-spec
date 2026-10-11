@@ -4,7 +4,8 @@ import { getSchemaDir, resolveSchema } from './resolver.js';
 import { ArtifactGraph } from './graph.js';
 import { detectCompleted } from './state.js';
 import { normalizeGates } from './schema.js';
-import { computeGateStates } from './gates.js';
+import { computeGateStates, passedFrontierHoldsUnwalked } from './gates.js';
+import type { TrailOverlay } from './trail.js';
 import { resolveSchemaForChange } from '../../utils/change-metadata.js';
 import { FileSystemUtils } from '../../utils/file-system.js';
 import { readProjectConfig, validateConfigRules } from '../project-config.js';
@@ -122,6 +123,8 @@ export interface ChangeStatus {
   gates: GateStatusRow[];
   /** C1: one-line position readout of the canonical flow (undefined for ungated schemas). */
   position?: string;
+  /** D5 hint garnish: the keys (phase id + covered slot) driving next_command. */
+  next_hint_keys?: { phase?: string; slot?: string };
   /** C1: the single canonical next command for the current state, if any. */
   next_command?: string;
 }
@@ -135,8 +138,27 @@ export interface GateStatusRow {
   checked?: number;
   total?: number;
   nextCommand?: string;
+  /** D1: consent marker from the gate declaration (entry into `before:` is user-invoked). */
+  consent?: string;
   /** C1: the gate's `before` phase already ran — moot / no longer the frontier. */
   superseded?: boolean;
+  /** D5 subset rule: unchecked user-validation handoff ids when the tracked gate passed-for-flow. */
+  userValidationPending?: string[];
+  /** rc02c: the inert DECLARATION (present only when declared) and the RECORDED COST. The
+   *  trigger count and the exhaustion annotation are retired.
+   *  This projection is field-by-field and EXPLICIT: a new gate-status field reaches JSON only by
+   *  being named here. The human gate row is an INDEPENDENT surface with its own rules — rc02c
+   *  deliberately splits them, so `budget` is projected here while the terminal row renders the
+   *  recorded spend ALONE. Do NOT reintroduce a rule requiring a field to appear on both. */
+  budget?: number;
+  independentSpend?: number;
+  /** rc02: reported, never blocking. */
+  deferredSuggestions?: number;
+  /** rc08b: every outstanding pass (`[]` when none; absent on a blocked gate), and the open pair. */
+  unresolvedPasses?: Array<{ token: string; file: string; mode: string | null; source: string }>;
+  /** rc17a: unwalked passes carrying any finding — the discovery set beside the hold. */
+  unwalkedPasses?: Array<{ token: string; file: string; mode: string | null; source: string }>;
+  openPair?: { missing: string };
 }
 
 /**
@@ -343,7 +365,7 @@ function getUnlockedArtifacts(graph: ArtifactGraph, artifactId: string): string[
  * @param context - Change context
  * @returns Formatted change status
  */
-export function formatChangeStatus(context: ChangeContext): ChangeStatus {
+export function formatChangeStatus(context: ChangeContext, overlay?: TrailOverlay): ChangeStatus {
   // Derive apply-phase requires from the normalized `apply` gate (folds the
   // upstream `apply:` block or a declared tracked gate; C1).
   const schema = context.schema;
@@ -390,12 +412,14 @@ export function formatChangeStatus(context: ChangeContext): ChangeStatus {
   let gateRows: GateStatusRow[] = [];
   let position: string | undefined;
   let nextCommand: string | undefined;
+  let nextHintKeys: { phase?: string; slot?: string } | undefined;
   if (hasGates) {
     const computation = computeGateStates(
       context.schema,
       context.changeName,
       context.changeDir,
-      context.completed
+      context.completed,
+      overlay
     );
     gateRows = computation.gates.map(g => ({
       id: g.id,
@@ -405,21 +429,64 @@ export function formatChangeStatus(context: ChangeContext): ChangeStatus {
       checked: g.checked,
       total: g.total,
       nextCommand: g.nextCommand,
+      consent: g.consent,
       superseded: g.superseded,
+      userValidationPending: g.userValidationPending,
+      // rc02c: OPTIONAL fields are spread conditionally, never emitted as undefined-valued keys.
+      // `Object.hasOwn(row, 'budget')` must be false on a gate that declares none — JSON hides an
+      // undefined value, but an in-process consumer of this exported function does not.
+      ...(g.budget !== undefined ? { budget: g.budget } : {}),
+      ...(g.independentSpend !== undefined ? { independentSpend: g.independentSpend } : {}),
+      ...(g.deferredSuggestions !== undefined ? { deferredSuggestions: g.deferredSuggestions } : {}),
+      ...(g.unresolvedPasses !== undefined ? { unresolvedPasses: g.unresolvedPasses } : {}),
+      ...(g.unwalkedPasses !== undefined ? { unwalkedPasses: g.unwalkedPasses } : {}),
+      ...(g.openPair !== undefined ? { openPair: g.openPair } : {}),
     }));
     position = computation.position;
+    // D1: entry into the apply phase carries the ` — user-invoked` marker when the
+    // gate declaring `before: apply` is consent-marked (eligibility phrasing).
+    const applyConsentMarked = computation.gates.some(
+      g => g.before === 'apply' && g.consent === 'user-invoked'
+    );
     for (const g of computation.gates) {
-      if (g.state === 'passed') continue;
+      if (g.state === 'passed') {
+        // rc18 (D1): the SAME predicate that set the row's walk. A passed gate's command is taken
+        // only on it, never because the row carries one (a passed `review-proposal` carries
+        // `/orbit:apply`, which would name apply again after apply passed).
+        if (passedFrontierHoldsUnwalked(g, computation.gates)) {
+          nextCommand = `/orbit:address-reviews ${context.changeName}`;
+          nextHintKeys = { phase: g.id };
+          break;
+        }
+        continue;
+      }
       // C1: skip a reviewed gate whose gated phase already ran (moot) — the frontier
       // has advanced past it, so it must not drive the canonical next command.
       if (g.superseded) continue;
       if (g.nextCommand) {
         nextCommand = g.nextCommand;
+        nextHintKeys = { phase: g.id, slot: g.nextSlot };
         break;
       }
       if (g.kind === 'tracked' && g.state === 'ready') {
-        nextCommand = `/orbit:apply ${context.changeName}`;
+        nextCommand =
+          `/orbit:apply ${context.changeName}` + (applyConsentMarked ? ' — user-invoked' : '');
+        nextHintKeys = { phase: g.id };
         break;
+      }
+    }
+    // Single-voiced canonical-next: ONE command per change state — including the
+    // all-gates-passed state, where no unpassed gate supplies one. Fall through to
+    // the flow-latest PASSED gate's before-phase command (e.g. review-system passed
+    // → `/orbit:archive <name> — user-invoked`), so the eligibility line never goes
+    // silent at exactly the lifecycle seam.
+    if (!nextCommand) {
+      for (const g of [...computation.gates].reverse()) {
+        if (g.state === 'passed' && g.nextCommand) {
+          nextCommand = g.nextCommand;
+          nextHintKeys = g.before ? { phase: g.before } : { phase: g.id };
+          break;
+        }
       }
     }
   }
@@ -433,5 +500,6 @@ export function formatChangeStatus(context: ChangeContext): ChangeStatus {
     gates: gateRows,
     position,
     next_command: nextCommand,
+    next_hint_keys: nextHintKeys,
   };
 }

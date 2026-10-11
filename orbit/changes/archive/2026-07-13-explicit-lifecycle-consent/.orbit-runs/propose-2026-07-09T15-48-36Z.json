@@ -1,0 +1,11 @@
+{
+  "command": "propose",
+  "timestamp": "2026-07-09T15:48:36Z",
+  "change": "explicit-lifecycle-consent",
+  "final_assessment": "Generated proposal/design/specs/tasks for explicit-lifecycle-consent (D-arc Stage D1); consumed explore.md (10 decisions D-elc-1..10 seeded; 0 open questions to walk). New capability orbit-lifecycle-consent (4 requirements: provenance rule, consent prompts at consent-marked seams, engine-never-prompts, consent emit field) + 5 modified capabilities (engine-gates: consent gate attribute + eligibility phrasing 'Ready when you are:'; conventions: no-chaining contract; archive-modifications: AI-mediated-entry consent prompt + summary field + schema reference; run-summary-emit: apply-emit consent field; audit-drift: missing-consent-record tripwire). Design settles the deferred era-boundary detail (schema-version-based, D6) and pins the exact eligibility label for testability. All 4 MODIFIED blocks containment-verified against baseline; base fingerprints stamped (4 requirements); validates --strict. Arc exit criteria are the change's acceptance tests.",
+  "next_recommended": "/orbit:review explicit-lifecycle-consent — proposal artifacts ready; review before apply",
+  "kind": "workflow",
+  "artifacts_created": ["proposal", "design", "tasks", "specs/orbit-lifecycle-consent", "specs/orbit-engine-gates", "specs/orbit-conventions", "specs/orbit-archive-modifications", "specs/orbit-run-summary-emit", "specs/orbit-audit-drift"],
+  "delta_count": 12,
+  "from": "explore"
+}

@@ -1,0 +1,125 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-08T02:54:02Z",
+  "change": "rc18-walk-is-next",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "pass": "2",
+      "title": "Two gates.ts comments still state the superseded test in phase terms",
+      "file": "src/core/artifact-graph/gates.ts",
+      "line": 62,
+      "walk_entry": {
+        "title": "The frontier is defined as the owner's superseded test negated, but the owner states that test in phase terms",
+        "file": "orbit/changes/rc18-walk-is-next/specs/orbit-engine-gates/spec.md"
+      },
+      "recommendation": "F1 narrowed the owner sentence to the gate-id test and searched for 'phase is already complete' with gates.ts in its sweep scope, but two comments there still say it: the `superseded` field's docstring (line 62, 'true when this reviewed gate's `before` phase is already complete') and the marking loop's comment (line 934, 'mark reviewed gates whose `before` phase is already complete as superseded'). Line 934's next sentence states the gate-id test, so only line 62 reads wrong on its own. Reword both to the gate-id test: a non-passed reviewed gate whose `before` names a gate that has passed. Comment-only; the rc03b pin for gates.ts moves."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "pass": "2",
+      "title": "The verify walk clause names a next review that a passed system gate does not owe",
+      "file": "src/core/emit-composition.ts",
+      "line": 277,
+      "walk_entry": {
+        "title": "The verify fallback risk is stated for the passed gate only; the unpassed walk now diverges too",
+        "file": "orbit/changes/rc18-walk-is-next/design.md"
+      },
+      "recommendation": "VERIFY_WALK_CLAUSE reads 'walk the outstanding review findings before the next review'. On an unpassed system gate that is true. On a passed system gate holding an unwalked last-slot pass, the walk returns the phase command, `/orbit:archive`, so no review follows, and the clause tells the reader one does. The delta's pass scenario applies the text to the passed gate explicitly ('the system gate unpassed or passed'). Make the clause gate-neutral, e.g. 'walk the outstanding review findings first', in the code constant, the three delta texts (orbit-run-summary-emit spec lines 24, 35, 54-56, 81) and the test's CLAUSE."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "pass": "1",
+      "title": "The fingerprint stamp in .openspec.yaml is outside every walk entry's edit record",
+      "file": "orbit/changes/rc18-walk-is-next/.openspec.yaml",
+      "line": 1,
+      "recommendation": "The residual check from a22bf82c lists .openspec.yaml, which no entry's file or ripple_cascade.applied names. It carries the four fingerprints stamped for the newly carried requirements (F1's Gate-aware block and F3's three orbit-run-summary-emit blocks); `orbit fingerprint --check` verifies 7 of 7. A record gap, not a defect: name it in F1's and F3's cascade on the next walk."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Graded the system walk's six resolved entries over their sweep scopes at a26d384f, and checked the external log's one stale call: it is right, since HEAD's systemReviewNext returns the walk and the verify tests hold both gate states. Four entries landed cleanly: the tracked blocked row, the stale mid-apply shape in D2, the pair-reason risk bullet, and the charter's qualified sentence, whose pointer to the revision note resolves. The two regressions are the two decision-lane entries, which made the widest edits, and both are small. F1 fixed the owner sentence and the delta's pointer but left the same phase wording in two code comments its own search phrase matches. F3's engine change is right; only its new clause overstates on the passed-gate branch, where archive rather than a review follows the walk. The frontier pointer now resolves: the narrowed owner sentence and gates.ts's passedGateIds.has(s.before) on s.state !== 'passed' state one test. The residual diff lists ten files; nine are inside the edit records, and the tenth is the fingerprint stamp.",
+  "passes_run": [
+    "1",
+    "2",
+    "3"
+  ],
+  "passes_skipped": [
+    "0 — whole-change pass, not run by a VERIFICATION-genre pass",
+    "4 — orbit/lenses/ absent",
+    "5 — orbit/lenses/ absent",
+    "6 — whole-project pass, not run by a VERIFICATION-genre pass"
+  ],
+  "verification": [
+    {
+      "title": "The frontier is defined as the owner's superseded test negated, but the owner states that test in phase terms",
+      "file": "orbit/changes/rc18-walk-is-next/specs/orbit-engine-gates/spec.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "The selection table's DERIVED closure counts two tracked-gate states, but a tracked gate can also be blocked",
+      "file": "orbit/changes/rc18-walk-is-next/specs/orbit-engine-gates/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The verify fallback risk is stated for the passed gate only; the unpassed walk now diverges too",
+      "file": "orbit/changes/rc18-walk-is-next/design.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "D2's mid-apply consequence covers one of two shapes",
+      "file": "orbit/changes/rc18-walk-is-next/design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "A launched pair with no member landed shows a reason that says nothing is walked yet beside a next that names the walk",
+      "file": "orbit/changes/rc18-walk-is-next/design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The stage declaration still says walking cannot start a review loop",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "verdict": "landed"
+    }
+  ],
+  "final_assessment": "0 critical, 0 warning, 3 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-10-08T01-55-35Z",
+    "2026-10-08T01-55-47Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc18-walk-is-next"
+}

@@ -1,0 +1,27 @@
+{
+  "command": "architect",
+  "timestamp": "2026-10-11T19:45:34Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Architect session on clean-up-review-cycle: rc09a-size-record ratified through the offer (its exit criterion MET as written); the status log and CLAUDE.md carry it. Its split sibling rc09b-tool-inventory is premised and unblocked, beside rc10-apply-closure and rc12-engine-owned-choreography.",
+  "stages_touched": [
+    "rc09a-size-record"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [
+    "rc09a-size-record"
+  ],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      "orbit/architecture/clean-up-review-cycle.md — rc09b-tool-inventory's charter and its starting record D-rc09-12",
+      "orbit/changes/archive/2026-10-11-rc09a-size-record/explore.md — the rc09 exploration whose split declared rc09b; D-rc09-11/12 and Q-crc-33 are its starting material"
+    ],
+    "next_command": "/orbit:explore rc09b-tool-inventory",
+    "model_hint": null,
+    "seam": "post-ratification: rc09a complete; rc09b is named because it is rc09a's split sibling with its starting record already written — which premised stage goes next (rc09b, rc10 or rc12) is Sal's priority call"
+  },
+  "next_recommended": "/orbit:explore rc09b-tool-inventory"
+}

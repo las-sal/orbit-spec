@@ -1,0 +1,111 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-06T17:00:10Z",
+  "change": "rc17d-external-runner",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc17d-external-runner/.orbit-runs/review-system-2026-10-06T16-55-24Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-06T16-55-24Z",
+  "latest_apply_token": "2026-10-06T15-21-30Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "walk_mode_source": null,
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 2
+  },
+  "pushback_verification": "Both verified against current state; neither stale.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "SUGGESTION",
+      "title": "The launch requirement's refusal row names only the trail reader, not the save's two new refusals",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc17d-external-runner/specs/orbit-review-external/spec.md",
+      "line": 28,
+      "classification": "trivial_fix",
+      "action": "Widened the launch requirement's refusal row to name every save refusal, pointing at orbit-external-runner's save requirement for the list rather than restating it.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "names another change, or is rejected by the trail reader |"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc17d-external-runner/specs/orbit-review-external/spec.md",
+            "text": "or is refused by `orbit external save` for any other cause (per `orbit-external-runner`'s `The engine saves an external return into the trail`)"
+          }
+        ],
+        "searched": [
+          "rejected by the trail reader"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "After a failed handoff push, the fallback's handoff-blocked text tells the user to commit a prompt that is already committed",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 556,
+      "classification": "trivial_fix",
+      "action": "Step 9d's failed-run paragraph now prints a launch-route blocked line when the handoff push did not land — 'Handoff blocked: the handoff commit <short-sha> is not pushed. Push, then hand off: …' — never Step 8's commit-the-pending-work text; the failed-run row and scenario in orbit-review-external say the same; the template test asserts the new line and the absence of the old one in that paragraph.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc17d-external-runner/specs/orbit-review-external/spec.md",
+          "test/core/templates/external-runner-branch.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the Step 8 handoff-blocked output when it did not",
+          "the handoff-blocked output when it did not"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/templates/workflows/review.ts",
+            "text": "Handoff blocked: the handoff commit <short-sha> is not pushed. Push, then hand off"
+          },
+          {
+            "path": "orbit/changes/rc17d-external-runner/specs/orbit-review-external/spec.md",
+            "text": "a launch-route handoff-blocked line naming the unpushed handoff commit with the push leading"
+          }
+        ],
+        "searched": [
+          "handoff-blocked",
+          "Handoff blocked"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/rc17d-external-runner/tasks.md",
+            "why": "completed task 4.4 records what apply wrote; a checked task is history, not the live rule, which the body and the delta now state"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Two of two resolved, both repairs: the launch requirement's refusal row names every save refusal by pointer, and the failed-run fallback's blocked line leads with the push alone.",
+  "iteration": 6,
+  "next_recommended": "/orbit:archive rc17d-external-runner — user-invoked",
+  "ripple_misses": 0
+}

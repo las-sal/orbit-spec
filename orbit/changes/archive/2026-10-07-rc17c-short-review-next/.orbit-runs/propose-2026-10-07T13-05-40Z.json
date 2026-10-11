@@ -1,0 +1,9 @@
+{
+  "command": "propose",
+  "timestamp": "2026-10-07T13:05:40Z",
+  "change": "rc17c-short-review-next",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Proposed from the rc17c exploration (consume mode, no open questions): the short review next (D1), prior-generation acceptance by value (D2), the review body pointing at the owner (D3), the T0 clause repaired to its owner (D4), three canonical examples refreshed from real emits (D5) and executed by a guard that reads the requirement as it will stand (D6, D8). Four capabilities, declared one over R-crc-1's ceiling on Sal's word (D7); 4 MODIFIED blocks, fingerprints 4/4; validate --strict clean; 37 delta scenarios to declare at apply.",
+  "next_recommended": "/orbit:review rc17c-short-review-next — proposal artifacts ready; review before apply"
+}

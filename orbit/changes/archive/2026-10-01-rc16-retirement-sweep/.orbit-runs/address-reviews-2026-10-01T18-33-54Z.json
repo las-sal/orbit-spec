@@ -1,0 +1,115 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-01T18:33:54Z",
+  "change": "rc16-retirement-sweep",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc16-retirement-sweep/.orbit-runs/external-system-2026-10-01T18-21-12Z.md",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": "2026-10-01T18-03-47Z",
+  "external_reviewer": "GPT-5 Codex",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 1,
+    "warning": 2,
+    "suggestion": 2
+  },
+  "pushback_verification": "All 5 findings verified against the working tree after walk log 1 (address-reviews-2026-10-01T18-29-42Z): the A4 site re-read in the delta and the body (trimmed to the bare pointer — stale); the five stale-count lines read verbatim; the fresh proposal emit's commentary read for a pattern list (none); the widened grep RE-RUN on the tree (24 lines, 8 IN / 16 OUT); the apply emit's files_touched read; tasks.md:20 read. 1 stale with evidence naming log 1. Sal's 'walk all' settled scoping; no decision-lane item.",
+  "resolution_summary": {
+    "resolved": 4,
+    "stale_suppressed": 1,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "A4 restates the owner rule instead of only pointing to it",
+      "marker_source": "external",
+      "file": "orbit/changes/rc16-retirement-sweep/specs/orbit-conventions/spec.md",
+      "line": 113,
+      "classification": "stale",
+      "action": "Already resolved at walk log 1 of the blind pair (address-reviews-2026-10-01T18-29-42Z, the fresh pass's SUGGESTION on the same site): the `Kind:` bullet's tail now reads '— the stated residual, per `Mechanism entry grammar and accounted closure` (R-crc-10).' in the delta (line 113) and the body (explore.ts:472), re-expressing none of the owner's predicate — the form this finding asked for; design row A4 and task 1.5 record the trim. Re-read at this walk: no restatement remains. No edit.",
+      "ratified_via": "chat",
+      "resolution": "stale — resolved at walk log 1",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Living design text still carries the superseded two-capability/four-pair scope",
+      "marker_source": "external",
+      "file": "orbit/changes/rc16-retirement-sweep/design.md",
+      "line": 5,
+      "classification": "trivial_fix",
+      "action": "design.md:5 → 'three capabilities'; :12 → 'six paraphrases of the conventions and explore-modifications sentences'; :17 → 'R-crc-1 (three capabilities, measured — at the ceiling, which the charter budgets)'; :50 (D-rc16-3) → 'Six (body line, owning sentence) pairs'; proposal.md:7 → 'in three capabilities'. design.md:15's 'two capabilities' describes class C's RENAMED blocks and is correct, left as is. explore.md untouched (superseded history by rule). Residue grep over proposal/design/tasks for the four stale phrases → only line 15.",
+      "ratified_via": "chat",
+      "resolution": "living counts moved to three capabilities / six pairs",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc16-retirement-sweep/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The SOURCED widened-grep measurement is not exactly reproducible from the trail",
+      "marker_source": "external",
+      "file": "orbit/changes/rc16-retirement-sweep/design.md",
+      "line": 98,
+      "classification": "trivial_fix",
+      "action": "Verified the claim: the fresh proposal emit's commentary describes the widening and lists no patterns; no trail artifact carries the fourteen. The Mechanism record now carries a SECOND CORRECTION paragraph stating that, the exact command as a fenced block (git ls-files minus archives, every trail and this change, piped to grep -nE over the seven task-1.7 alternations plus an unanchored `maturity-signal`), and its result re-run at this walk on the current tree: 24 lines — 8 IN (conventions 923/980/994/1022, explore-modifications 227, orientation 44/94/128; the six body sites 0) and 16 OUT, each named with its reason. The command is the live closure and is re-run at archive for exit (1).",
+      "ratified_via": "chat",
+      "resolution": "the exact command and its measured partition recorded; the unrecoverable pattern set said so",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The pairing-risk evidence claims files the apply emit does not contain",
+      "marker_source": "external",
+      "file": "orbit/changes/rc16-retirement-sweep/design.md",
+      "line": 133,
+      "classification": "trivial_fix",
+      "action": "The risk row now cites the whole-change range as the evidence that the deltas (landed at propose) and explore.ts (landed at apply) travel in one change, states what the apply emit's files_touched actually carries (explore.ts, tasks.md, two tests — not the deltas), and names orbit-generated-surface.test.ts as the actual-unpredicted instrument correction the emit records. The frozen Touchpoints section is untouched.",
+      "ratified_via": "chat",
+      "resolution": "risk evidence corrected to the whole-change range; the unpredicted test named",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The archive note both closes Q-crc-28 and leaves an open item on it",
+      "marker_source": "external",
+      "file": "orbit/changes/rc16-retirement-sweep/tasks.md",
+      "line": 20,
+      "classification": "trivial_fix",
+      "action": "AT-ARCHIVE NOTE 3.3's last sentence now reads: the class C re-entry trigger (D-rc16-1) is carried in Q-crc-28's CLOSED record, not as an open item — the question reopens only if that trigger fires. This is the design's Considered & out shape (D-rc16-1); the note had said both.",
+      "ratified_via": "chat",
+      "resolution": "close Q-crc-28 with the trigger in its closed record; reopen only if it fires",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "4 of 5 external (GPT-5 Codex) findings resolved, 1 stale with evidence naming walk log 1 — walk log 2 of the blind pair. The CRITICAL was the pair's one converged defect (A4's restatement beside its pointer), already trimmed at log 1. The four unique findings were all record truth: the living proposal and design carried the superseded two-capability/four-pair scope (moved to three/six; the class-C line kept); the SOURCED closure's grep had no written pattern set (the exact command now recorded as a fenced block with its re-run partition on the current tree — 24 lines, 8 IN / 16 OUT — and the unrecoverable fourteen said so); the risk row cited emit evidence the emit lacks (corrected to the whole-change range, the unpredicted test named); the at-archive note both closed Q-crc-28 and kept an item open on it (closed with the trigger in its record). No code moved in this log; validate --strict valid; the walk-1 pins stand.",
+  "iteration": 4,
+  "next_recommended": "/orbit:review --as system rc16-retirement-sweep"
+}

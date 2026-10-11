@@ -1,0 +1,30 @@
+{
+  "command": "architect",
+  "timestamp": "2026-09-21T01:58:47Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "The Q-crc-19 schema fork is settled: `budget` stays in the grammar as an inert declaration rather than being removed, avoiding a version bump and a migration of every declaring schema for no behavioural gain. Settled under R-crc-3 in the same breath, because an inert field that LOOKS live is a landmine and this program has already spent two stages on that defect: the retained declaration is given a JOB rather than left vestigial. `budget` becomes the cadence's DECLARED EXPECTATION — what a pair plus one repeat is expected to cost, which is useful at the moment a schema is authored — while effort records what it actually cost, and nothing compares the two automatically. That gap is the point rather than an omission: a declared expectation informs an author, while an automatic comparison against it is a target, which R-crc-11(h) forbids. rc02c's implementation scope is now fully named: a MODIFIED delta on orbit-engine-gates retiring budgetExhausted, the distinct position token and the budget clause in the reason string while restating budget as a declared expectation, plus the schema comment and the baseline prose at lines 324-326 that prices the repeat. No schema version bump. Nothing now blocks rc02c or rc04 from proposing.",
+  "stages_touched": [
+    "rc02c-confirmation-semantics"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [],
+  "handoff": {
+    "boot_sequence": [
+      {
+        "path": "orbit/architecture/clean-up-review-cycle.md",
+        "why": "R-crc-11(a)-(i); Q-crc-16/18/19 resolved; Q-crc-14/15/17/20 open; rc02 carries its partial-reversal note and rc02c its full implementation scope"
+      },
+      {
+        "path": "orbit/explore/rc04-readiness-record/explore.md",
+        "why": "eight decisions, three open questions, unblocked"
+      }
+    ],
+    "next_command": "orbit architecture status",
+    "model_hint": "any",
+    "seam": "architect session end; the program rework is complete and nothing blocks proposing"
+  },
+  "next_recommended": "orbit architecture status"
+}

@@ -1,0 +1,13 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-07-16T18:41:16Z",
+  "change": "d2-architect",
+  "final_assessment": "External review prompt packaged for d2-architect (iter 1, mode system); awaiting findings. Prompt orients the reviewer to the shipped third engine tier, the retrofitted arc doc, the 16-workflow surface, the recorded gate-override provenance, and the known environmental test-failure class (workspace paths with spaces).",
+  "next_recommended": "Paste orbit/changes/d2-architect/.orbit-runs/external-prompt-system-2026-07-16T18-40-14Z.md into the target AI, save the response as orbit/changes/d2-architect/.orbit-runs/external-system-<TS>.md, then /orbit:address-reviews d2-architect --from-file <path>",
+  "kind": "editorial",
+  "mode": "system",
+  "reviewer_class": "external",
+  "prompt_path": "orbit/changes/d2-architect/.orbit-runs/external-prompt-system-2026-07-16T18-40-14Z.md",
+  "target": null,
+  "awaiting_findings": true
+}

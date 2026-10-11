@@ -1,0 +1,102 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-01T15:08:26Z",
+  "change": "d6-pr-lifecycle",
+  "kind": "editorial",
+  "model": "claude-opus-5",
+  "source": "from-file",
+  "source_path": "orbit/changes/d6-pr-lifecycle/.orbit-runs/review-system-2026-09-01T14-59-24Z.json",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 1
+  },
+  "pushback_verification": "All 3 verified against current state before disposition; none stale. The unreachable-reader claim was confirmed by grep across `src/` (only the definition and its tests) and by confirming no CLI surfaced the resolved mode. The Touchpoints gap was confirmed against the engine's own computed `predicted` list rather than by reading the section, and the freeze window confirmed open via `touchpoints.actual: null`.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The `pr:` reader's inert-value warnings are unreachable — no engine path calls them, and the reference misattributes them",
+      "marker_source": "internal-review",
+      "file": "src/core/project-config.ts",
+      "classification": "decision_required",
+      "ratified_via": "chat",
+      "resolution": "A — give the reader a consumer the bodies invoke; surface the resolved regime on the orientation surface",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Surface the resolved mode through a read-only CLI the bodies invoke."
+          },
+          {
+            "label": "B",
+            "body": "Delete the reader; move inert-detection into the reference as the body's job."
+          },
+          {
+            "label": "C",
+            "body": "Keep both and fix only the false attribution."
+          }
+        ],
+        "chosen": "A"
+      },
+      "action": "`Orientation` gained a `pr: PrMode` field resolved via `readProjectConfig` + `resolvePrMode`, surfaced on BOTH JSON tiers of the bare orientation surface (sprint and full). The shared reference and both body pointers now instruct: read the RESOLVED regime from `orbit status --json`, field `pr` — never parse `orbit/config.yaml` yourself — with the reason stated inline: the value set is CLOSED and every failure path inert, so a body parsing YAML would re-derive that resolution in prose, quietly accepting a typo the reader rejects and never emitting the promised warning. The false attribution is gone; the reference now says any config warning already came from the reader and must not be restated. Chose A over deleting the reader because this change uses engine-computes/body-reads everywhere else (gates, position, emits, boot) and this converts the closed-set enforcement from a promise into something that actually happens. Six orientation tests cover it, including that an unrecognized value and the superseded two-key block both resolve to `never` — the typo never reaches the choreography — and that a malformed config never throws.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/orientation.ts",
+          "src/commands/workflow/status.ts",
+          "src/core/templates/workflows/pr-choreography.ts",
+          "src/core/templates/workflows/propose.ts",
+          "src/core/templates/workflows/ff-change.ts",
+          "test/core/orientation.test.ts",
+          "test/commands/status-orientation.test.ts",
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Touchpoints omits `pr-choreography.ts`, the change's one new source file, and freezes at the first apply commit",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d6-pr-lifecycle/design.md",
+      "classification": "trivial_fix",
+      "action": "Added the entry to the predicted map, describing the file as the single source for the shared resolution, propose phases, and archive tail emitted as a `references/` file into all three seams. Verified via `orbit status --change d6-pr-lifecycle --boot --json` that `predicted` now carries it (13 entries). Applied inside the freeze window deliberately: `touchpoints.actual` is still null because no apply work is committed, and the section becomes unamendable from the first apply commit — so this was the last moment it could be fixed rather than carried as a permanent false positive at every audit-drift category-5 sweep.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Scaffolding residue in the new harness fixture: a no-op git call and a CommonJS require in an ESM module",
+      "marker_source": "internal-review",
+      "file": "test/integration/pr-lifecycle/phase1.ts",
+      "classification": "trivial_fix",
+      "action": "Deleted the discarded `rev-parse --show-toplevel` probe (a subprocess per invocation that read as meaningful) and hoisted `spawnSync` to a top-level import, matching every other module in the repo. 28 harness cases still pass.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "3 of 3 resolved; 0 unresolved markers in scope. One decision-lane finding ratified in chat toward connecting the engine surface rather than deleting it: the resolved `pr` regime is now a field on the orientation surface that the bodies read, so the closed value set is enforced once by the reader instead of re-derived in prose at three seams — and the reference no longer claims warnings come from a reader nothing invoked. The Touchpoints entry landed inside the freeze window, which closes at the first apply commit. Both warnings were the same shape the review named: implementation correct in isolation, not connected. 1988 -> 1996 tests green across 91 files; five parity hashes re-pinned after verifying only the three edited templates changed (32 unchanged).",
+  "iteration": 9,
+  "next_recommended": "/orbit:review --as system --reviewer external d6-pr-lifecycle"
+}

@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-10-07T16:39:26Z",
+  "change": "rc18-walk-is-next",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "The charter's safety claim held only for the last pass: walking an earlier-slot SUGGESTION pass after the gate passed un-passes it (Case 1, measured on rc17c's trail), because rc17a's ratified 2A makes every walk raise the next slot's bar. Sal kept 2A (D-rc18-4): the walk is named and may owe one bounded in-context check, and exit (2) is revised to say so. D-rc18-5 states the rule (a passed frontier gate with an unwalked pass names /orbit:address-reviews <change>) with a DERIVED domain; the fix lives in the change-level selection loop, not only the gate row (D-rc18-3). One capability, orbit-engine-gates (D-rc18-6). Ready to propose.",
+  "decisions_captured": 6,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 1,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose rc18-walk-is-next — 1 live rule accounted; formalize when you are ready (or /orbit:explore rc18-walk-is-next to keep refining)"
+}

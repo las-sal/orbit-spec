@@ -460,7 +460,7 @@ archive merge bug (§7) if you choose to.
 
 > **Note:** this section is the pre-decomposition framing (workstreams + decisions). The **ratified
 > phased program** (the 6 changes A1→C2 across 3 arcs, with the parity milestone and per-phase
-> dependencies) lives in `openspec/explore/fork-and-orbify/explore.md` **D9** — that is the
+> dependencies) lives in `orbit/architecture/fork-and-orbify.md` **D9** — that is the
 > authoritative plan; the decisions below feed it.
 
 **Cleanly forkable** because the architecture cooperates:

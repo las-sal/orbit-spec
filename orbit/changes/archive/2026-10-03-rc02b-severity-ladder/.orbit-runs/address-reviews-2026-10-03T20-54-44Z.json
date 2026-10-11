@@ -1,0 +1,101 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-03T20:54:44Z",
+  "change": "rc02b-severity-ladder",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc02b-severity-ladder/.orbit-runs/external-system-2026-10-03T20-35-49Z.md",
+  "source_command": "review-external",
+  "source_token": "2026-10-03T20-35-49Z",
+  "latest_apply_token": "2026-10-03T17-24-00Z",
+  "external_reviewer": "GPT-6 Codex",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 1,
+    "warning": 2,
+    "suggestion": 0
+  },
+  "pushback_verification": "All three findings verified against HEAD 299556df (the external's own commit) before any edit. Step 3a step (0) ran FIRST on the CRITICAL: its node script was executed verbatim against dist/ and REPRODUCED (readTrail: pass absent, 1 rejected external; normalizeExternalPass: the finding keyed on specs/a with its reproduction) — the entry carries reproduction_rerun: reproduced and the post-fix re-run (both readers agree, 0 rejected) as closing evidence. W1 verified by reading review.ts Pass 0/Pass 1 and the two orbit-review delta scenarios: none stated the user-path/data-loss consequence. W2 verified by grep: the four-tuple stood at review.ts:68/:97/:624, address-reviews.ts:31, emit-composition.ts:538, CLAUDE.md:427 and the review-external delta :126 beside the owner fence and the two checked mirrors. 0 stale. The file's ## Blocks section (None. + a heading-shaped probe) parsed as no blocks, so the triage listed none. Titles and files are taken from the source file verbatim, never retyped. All three were obvious-fix lane as previewed at triage; no decision-lane finding, no prompt.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "A multiline Description disappears from the gate trail",
+      "marker_source": "external",
+      "file": "src/core/artifact-graph/trail.ts",
+      "line": 420,
+      "classification": "trivial_fix",
+      "reproduction_rerun": "reproduced",
+      "evidence": "Re-run of the finding's own script before the fix: {\"trail\":\"absent\",\"rejected\":1,\"render\":[[\"Real finding\",\"specs/a/spec.md\",…]]}. After the fix (dist rebuilt): {\"trail\":[{\"title\":\"Real finding\",\"file\":\"specs/a/spec.md\",\"severity\":\"CRITICAL\",\"hasFile\":true,\"hasDescription\":true}],\"rejected\":0,\"render\":[[\"Real finding\",\"specs/a/spec.md\"]]}.",
+      "action": "trail.ts parseExternalMarkdown: the `**Description**:` label OPENS the body whether or not text follows on the same line (regex `\\s?(.*)$`); `hasDescription` is set by a non-blank body line — same-line or later, fenced lines included, the `**Reproduction**:` label excluded — so the trail reader's has-a-body test is the renderer's blank-body rejection read from the other side; a Description with no non-blank body is rejected by BOTH. The reading is stated ONCE in orbit-conventions' `External-review findings markdown format` (requirement text + the BOTH-readers scenario's WHEN). Three cases added to test/core/trail-rc02b.test.ts: next-line body keyed the same in both readers; blank body rejected by both; fence-only body present in both. Both halves of the blind pair converged on this defect (fresh W2 graded it WARNING on the measured absence of the shape in 62 real files; the external graded CRITICAL by consequence — the gate drops a renderable pass); the fix is the one both recommended.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02b-severity-ladder/specs/orbit-conventions/spec.md",
+          "test/core/trail-rc02b.test.ts",
+          "orbit/changes/rc02b-severity-ladder/tasks.md",
+          "orbit/changes/rc02b-severity-ladder/design.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/specs/orbit-conventions/spec.md",
+            "reason": "baseline spec; add a delta to your current change's specs/<capability>/spec.md to capture this ripple"
+          }
+        ]
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "System passes can grade a harmless requirement violation CRITICAL",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 222,
+      "classification": "trivial_fix",
+      "action": "Pass 0's fold rule and Pass 1 now carry the ladder's consequence: a violated requirement is CRITICAL ONLY when the violation breaks a user path or loses data (with the requirement and the observed behaviour as the reproduction); a violated formatting or documentation requirement with neither consequence is WARNING. The two orbit-review delta scenarios (Pass 0 delegates to upstream verify-change; Pass 1 — Baseline Compliance) moved in the same edit. The remaining CRITICAL sites already carry the consequence in their condition (P2 downstream broken, P4 contradiction naming the behaviour that breaks, S3 surface removed, P5 path breakage).",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02b-severity-ladder/specs/orbit-review/spec.md",
+          "orbit/changes/rc02b-severity-ladder/tasks.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/specs/orbit-review/spec.md",
+            "reason": "baseline spec; add a delta to your current change's specs/<capability>/spec.md to capture this ripple"
+          }
+        ]
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The review schema reference restates the severity definition",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 97,
+      "classification": "trivial_fix",
+      "action": "The field note at review.ts:97 and the write-gate message at emit-composition.ts:538 point at orbit-conventions' Severity ladder and define nothing. Change completeness widened the sweep to the four sibling sites the fresh half enumerated (its W3, now stale against this entry): the schema example placeholder (review.ts:68), the prompt's CRITICAL placeholder (review.ts:624, with its byte-equal twin in the review-external delta's reference template — now `<the re-executable case the ## Severity paragraph above defines>`, the output-format parity test green), address-reviews.ts:31, and CLAUDE.md's rc02b paragraph. grep for the four-tuple now hits only the owner's requirement text and fence and the two checked mirrors. Gate tests match the message's retained clause; 2426 tests green after rebuild and update --force.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/emit-composition.ts",
+          "src/core/templates/workflows/address-reviews.ts",
+          "orbit/changes/rc02b-severity-ladder/specs/orbit-review-external/spec.md",
+          "CLAUDE.md",
+          "orbit/changes/rc02b-severity-ladder/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Walk 1 (the external half of the system blind pair): 3 of 3 resolved, 0 stale. The CRITICAL reproduced on HEAD before the fix and does not after it; the two WARNINGs were prose that defined or omitted what the ladder owns. 2426 tests green; validate --strict valid; fingerprints 13/13; validate --sources green. The fresh half's emit (review-system-2026-10-03T20-45-06Z) is on the trail uncommitted and is walked next in its own log, where its W2 and W3 are stale with evidence naming this log.",
+  "iteration": 4,
+  "next_recommended": "/orbit:address-reviews rc02b-severity-ladder --from-file orbit/changes/rc02b-severity-ladder/.orbit-runs/review-system-2026-10-03T20-45-06Z.json"
+}

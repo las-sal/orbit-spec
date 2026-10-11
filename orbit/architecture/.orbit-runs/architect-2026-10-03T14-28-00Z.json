@@ -1,0 +1,26 @@
+{
+  "command": "architect",
+  "timestamp": "2026-10-03T14:28:00Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": null,
+  "final_assessment": "Architect session on clean-up-review-cycle after rc02b-severity-ladder's exploration was walked (2026-10-03): nothing awaited ratification, not arc-done (no program PR; ten premised). The exploration's one program-level fact recorded in the charter: the stage measured FIVE capabilities (orbit-review owns the finding entry shape, the external prompt and sixteen per-pass severity rules; orbit-report-rendering owns the external parser) against R-crc-1's three, and Sal HELD it as one change — a declared exception to R-crc-1's never-reviewed-as-one clause in rc04c's task-overage shape, the split declined and recorded in the exploration's Considered & out. Three settled points carried into the charter because it is graded on them (per-pass rules become pointers, the sixth R-crc-14 instance; lifecycle blocks leave the scorecard; audit-drift's site is a named residual outside the five). Exit criteria stand as written. Status log appended. The doc validates; the source lint is clean (25/14/21/4 — no count moved).",
+  "stages_touched": [
+    "rc02b-severity-ladder"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      "orbit/architecture/clean-up-review-cycle.md — `### Stage rc02b-severity-ladder`, the MEASURED 2026-10-03 paragraph (five capabilities, the declared breach, the three settled points) and the 2026-10-03 status-log entry",
+      "orbit/explore/rc02b-severity-ladder/explore.md — six decisions, three Mechanism entries (D-rc02b-2/3/5), Considered & out (the declined split)",
+      "orbit architecture status — rc02b exploring; nothing awaiting on this doc"
+    ],
+    "next_command": "/orbit:propose rc02b-severity-ladder — user-invoked (3 live rules accounted; the proposal declares the five-capability breach and runs the proposal-mode blind pair)",
+    "model_hint": null,
+    "seam": "post-exploration; rc02b eligible for propose; twelve complete, three ended"
+  },
+  "next_recommended": "/orbit:propose rc02b-severity-ladder — user-invoked (3 live rules accounted; the proposal declares the five-capability breach and runs the proposal-mode blind pair)"
+}

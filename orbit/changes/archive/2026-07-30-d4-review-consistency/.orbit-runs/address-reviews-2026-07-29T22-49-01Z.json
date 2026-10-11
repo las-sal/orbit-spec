@@ -1,0 +1,28 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-07-29T22:49:01Z",
+  "change": "d4-review-consistency",
+  "source": "--from-file",
+  "source_path": "orbit/changes/d4-review-consistency/.orbit-runs/review-system-2026-07-29T22-38-35Z.json",
+  "source_format": "internal-review",
+  "source_mode": "system",
+  "source_iteration": 2,
+  "walk_mode": "per_finding",
+  "kind": "editorial",
+  "resolutions": [
+    { "finding": "First-run scenario literal contradicted by the render when a prior external pass exists", "severity": "CRITICAL", "file": "orbit/changes/d4-review-consistency/specs/orbit-review/spec.md", "pushback": "still applies — the first-run WHEN keyed on internal emits only, verified at :82", "classification": "trivial fix (obvious-fix lane; previewed at triage)", "action": "The iteration-note requirement and both scenarios aligned to the shared pass axis: first-run WHEN = no prior same-mode review pass of EITHER genre; subsequent-run WHEN names both genres; the prose reads 'prior same-mode passes exist (internal review emits OR external findings files — the shared pass axis)'.", "ripple_cascade": { "applied": ["orbit/changes/d4-review-consistency/specs/orbit-review/spec.md"], "flagged_not_applied": [] } },
+    { "finding": "Single-line grammar slots accept embedded newlines — record-sourced text can forge column-0 report grammar", "severity": "WARNING", "file": "src/core/report-render.ts", "pushback": "still applies — the validator checked emptiness, not line-shape", "classification": "decision required (decision lane: prose briefing presented; two defensible fixes)", "ratified_via": "chat", "resolution": "fail loud", "recommendation_fork": { "detected": true, "source": "heuristic", "options_presented": [ { "label": "A", "body": "Fail loud: normalizeInternalPass rejects newlines in title, stale_suppressed title/evidence, reviewer_class, depth with the clean field-naming error (fits the strict/loud policy)" }, { "label": "B", "body": "Collapse to one space (the option-body treatment) — never blocks but silently rewrites record content" } ], "chosen": "A" }, "action": "normalizeInternalPass now fails loud on embedded newlines in finding title, stale_suppressed[].title/evidence, reviewer_class, and depth (clean error naming the field); the strict-validation requirement's letter names the single-line rule; three forging fixtures added (title forging ## CRITICAL/---; evidence forging ### Findings; reviewer_class).", "ripple_cascade": { "applied": ["src/core/report-render.ts", "orbit/changes/d4-review-consistency/specs/orbit-report-rendering/spec.md", "test/core/report-render-hardening.test.ts"], "flagged_not_applied": [] } },
+    { "finding": "Task 5.1's claimed cross-source equivalence test does not exist", "severity": "WARNING", "file": "orbit/changes/d4-review-consistency/tasks.md", "pushback": "still applies", "classification": "trivial fix (obvious-fix lane: ADD the test — the honest side, previewed)", "action": "The equivalence test now exists (test/core/report-render-hardening.test.ts): the same finding through both genres asserts an equal section-heading sequence, an identical finding-entry line, and byte-identical tails. Task 5.1's claim is now true as written.", "ripple_cascade": { "applied": ["test/core/report-render-hardening.test.ts"], "flagged_not_applied": [] } },
+    { "finding": "Retired [discuss] vocabulary in a worked-example heading", "severity": "WARNING", "file": "src/core/templates/workflows/address-reviews.ts", "pushback": "still applies — verified at :468", "classification": "trivial fix (obvious-fix lane; previewed)", "action": "Heading renamed '### (c) Decision-fork ratified by chat directive'; surface regenerated and verified on disk; no parity pin covers this template (fidelity markers only).", "ripple_cascade": { "applied": ["src/core/templates/workflows/address-reviews.ts"], "flagged_not_applied": [] } },
+    { "finding": "Double period typo renders into the generated schema reference", "severity": "SUGGESTION", "file": "src/core/templates/workflows/review.ts", "pushback": "still applies", "classification": "trivial fix (obvious-fix lane; previewed)", "action": "Single period; surface regenerated.", "ripple_cascade": { "applied": ["src/core/templates/workflows/review.ts"], "flagged_not_applied": [] } }
+  ],
+  "resolution_summary": {
+    "resolved": 5,
+    "stale": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "post_state": "Build green; 1787 tests green (1783 + 4 hardening: 3 forging + 1 cross-source equivalence); strict validation passes; fingerprints 18/18; surface regenerated with the renamed heading",
+  "final_assessment": "All 5 system iter-2 findings resolved — and this walk IS the observed cycle exit criterion 2 required: the triage opened with the obvious-fix lane preview before any fix landed, the forging finding got its full-prose decision-lane briefing, the user's chat directive ('fail loud') was the ratification with no AskUserQuestion fired, and the resolution log records ratified_via/resolution at the entry level. The scenario-axis CRITICAL aligned to the shared pass order; the forging hole closed fail-loud with the spec letter matching; task 5.1's claim made true by adding the test; the heading and typo fixed.",
+  "next_recommended": "/orbit:review --as system d4-review-consistency"
+}

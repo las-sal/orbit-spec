@@ -1,0 +1,13 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-07-21T16:36:14Z",
+  "change": "d3-orientation",
+  "final_assessment": "External review prompt packaged for d3-orientation (iter 2, mode system) — the final external pass before archive; awaiting findings. Prompt briefs the reviewer on the full 14-pass / 53-findings-all-resolved history, flags the fresh iter-4 resolution batch as the least-reviewed code (the fourth kind+name site, the four scoped template references, the unified empty-last letter), names the two dominant finding genres (scenario-literal divergence caught by rendering; change-completeness residue in an unswept LAYER), and notes the gate is engine-computed PASSED so this pass is adversarial confirmation.",
+  "next_recommended": "Paste orbit/changes/d3-orientation/.orbit-runs/external-prompt-system-2026-07-21T16-36-13Z.md into the target AI, save the response as orbit/changes/d3-orientation/.orbit-runs/external-system-<TS>.md, then /orbit:address-reviews d3-orientation --from-file <path>",
+  "kind": "editorial",
+  "mode": "system",
+  "reviewer_class": "external",
+  "prompt_path": "orbit/changes/d3-orientation/.orbit-runs/external-prompt-system-2026-07-21T16-36-13Z.md",
+  "target": null,
+  "awaiting_findings": true
+}

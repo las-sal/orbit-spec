@@ -1,0 +1,164 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-06T14:53:12Z",
+  "change": "rc17d-external-runner",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc17d-external-runner/.orbit-runs/review-proposal-2026-10-06T14-51-19Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-06T14-51-19Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 4
+  },
+  "pushback_verification": "All four verified against current state; none stale.",
+  "resolution_summary": {
+    "resolved": 4,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "SUGGESTION",
+      "title": "design Risks still says the save command's domain is written only as scenarios",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc17d-external-runner/design.md",
+      "line": 153,
+      "classification": "trivial_fix",
+      "action": "Reworded the D-rc17d-8 Risks entry: no Mechanism entry (UNACCOUNTED), its domain is the save requirement's own table, which the review reads as the open domain.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "written only as the requirement's scenarios"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc17d-external-runner/design.md",
+            "text": "save requirement's own domain table, written at the proposal walk"
+          }
+        ],
+        "searched": [
+          "written only as",
+          "open domain",
+          "scenarios"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_miss_of": {
+        "walk": "2026-10-06T14-46-45Z",
+        "title": "The save command's open domain misses inputs the observed runner and the prompt itself make likely",
+        "file": "specs/orbit-external-runner/spec.md",
+        "kind": "query"
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The proposal's capability summary omits the two requirements walk 2 modified",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc17d-external-runner/proposal.md",
+      "line": 49,
+      "classification": "trivial_fix",
+      "action": "Added the two requirements walk 2 modified to the proposal's orbit-review-external line.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc17d-external-runner/proposal.md",
+            "text": "`Recommended-session note in chat output` is emitted only when the"
+          }
+        ],
+        "searched": [
+          "Modified Capabilities",
+          "Recommended-session",
+          "command available"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_miss_of": {
+        "walk": "2026-10-06T14-47-28Z",
+        "title": "The retirement misses a contradictory fourth capability",
+        "file": "orbit/changes/rc17d-external-runner/proposal.md",
+        "kind": "query"
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The fingerprint re-stamp in .openspec.yaml sits outside every walk entry's edit record",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc17d-external-runner/.openspec.yaml",
+      "line": 7,
+      "classification": "trivial_fix",
+      "action": "Recorded the record gap: walk 2's `orbit fingerprint` stamped the two new MODIFIED blocks (Review-external command available, Recommended-session note in chat output) into .openspec.yaml, add-missing-only; both hashes checked against the baseline blocks at stamp time. No edit.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [],
+        "searched": [
+          "base_fingerprints"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The commit-alone scenario asserts the push unconditionally",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc17d-external-runner/specs/orbit-review-external/spec.md",
+      "line": 82,
+      "classification": "trivial_fix",
+      "action": "Put the push in the scenario's condition: '…returns a well-formed review and the push lands'.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc17d-external-runner/specs/orbit-review-external/spec.md",
+            "text": "returns a well-formed review and the push lands"
+          }
+        ],
+        "searched": [
+          "is pushed",
+          "and pushed"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "All four SUGGESTIONs of the in-context verification pass resolved: two cascades that stopped one artifact short (design Risks, the proposal's capability line), a record gap recorded, and a scenario's push made conditional (Sal: walk all).",
+  "iteration": 3,
+  "next_recommended": "/orbit:apply rc17d-external-runner — user-invoked",
+  "ripple_misses": 2
+}

@@ -1,0 +1,118 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-10T14:31:41Z",
+  "change": "rc05b-git-grammar",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 2
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "scripts/capture-git-contract.capture.ts",
+      "line": 125,
+      "title": "The capture probes only the first-written form of each flag name, so a second form on the surface is never probed",
+      "recommendation": "Key the probe set by the written form, not the name: probe every distinct written token per key (it is still one entry per name in the contract, rejected if any written form is rejected, with that form's message), or record per-form acceptance. Add a capture unit case: two segments writing `--only <p>` and `--only=<p>` on `commit` both reach a probe. Then the ADDED requirement's line 37 claim holds as stated.",
+      "reproduction": "The per-key loop keeps one WrittenFlag per name: `if (!written.has(flag.name)) written.set(flag.name, flag)`. The surface already writes `git commit --only <emit-path>`; a body that also writes `git commit --only=<p>` puts both in the candidate set, the capture probes only `git commit --only -h` (usage, accepted), and the validator then accepts `--only=<p>` through its `--name=value` branch. Real git refuses it: `git commit --only=x -h` prints `error: option `only' takes no value` (run against git 2.50.1 in a scratch repo). The requirement (spec.md:37, :51) and design D3 promise that an `=value` written ON the surface is probed as written; the named limit only excuses one written AFTER capture."
+    },
+    {
+      "pass": "1",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md",
+      "line": 184,
+      "title": "Substitution inside double quotes is neither refused nor parsed, though the operator rows' closure says substitution is refused",
+      "recommendation": "Either refuse `$(`, a backtick and `<(` inside double quotes too (the shell runs them there; single quotes stay literal), or narrow the closure sentence and add a named member to the places residual: a command inside a double-quoted substitution or a process substitution is not extracted. Add a tokenizer case for `\"$(x)\"` beside the existing single-quoted one (surface-snippets.test.ts:280).",
+      "reproduction": "tokenize('git commit -m \"$(cat msg)\" --only x') returns {ok: true, segments: [[\"git\",\"commit\",\"-m\",\"$(cat msg)\",\"--only\",\"x\"]]}, so `orbit status --change \"$(orbit frobnicate --bogus)\"` would hide an orbit command from the sweep and the guard. The double-quote branch copies everything to the closing quote, and the backtick and `$(` checks run only outside quotes. POSIX XCU 2.2.3 keeps `$(` and backtick live inside double quotes, and the surface itself says so (review/references/external-handoff.md:162: `-m \"…\"`, where backticks and `$(…)` would run). Process substitution `<(…)` is also read as a literal. Nothing on today's surface uses either form inside a shell fence or tool-headed span, so no live snippet is hidden."
+    },
+    {
+      "pass": "1",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md",
+      "line": 70,
+      "title": "The forms limit names one direction only: a flag git accepts only as `--name=value`, written bare, also passes",
+      "recommendation": "Extend the named limit's example to the converse: a flag recorded from its `=` form (`log --format`, `log --diff-filter`) and later written bare is accepted, though git refuses it. One clause; no mechanism.",
+      "reproduction": "The contract records `log --format` with takes_value false, accepted (probed from `--format=%h`). validate(['log','--format','%h'], contract) returns ok; real git: `git log --format HEAD` prints `fatal: unrecognized argument: --format`."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "review/references/external-handoff.md",
+      "line": 162,
+      "title": "A prose mention `git commit --only` is extracted and validated as a command real git refuses",
+      "recommendation": "Either write it as `git commit --only <path>` (it names the act precisely and is a real invocation), or accept it as prose and leave it: positional counts are a stated non-goal. Not a grammar defect under exit (3)'s terms, since the flag itself is right.",
+      "reproduction": "The span is the one ['git','commit','--only'] segment in the sweep; it validates. `git commit --only` with no paths prints `fatal: No paths with --include/--only does not make sense.`"
+    },
+    {
+      "pass": "0",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md",
+      "line": 110,
+      "title": "`The suite needs no git` is declared `behaviour` on a test that asserts neither of its THEN's last two clauses",
+      "recommendation": "Narrow the THEN to what the freshness test asserts (the file parses, records a version, carries the surface's keys), or tag the no-spawn clause on evidence that checks it. The THEN's `asserts only` is also contradicted by the same file's key-coverage test.",
+      "reproduction": "test/integration/cli-contracts/git-contract.test.ts:25 tags the scenario on a test checking `git_version`, `captured_at` and one rule; the file's next test also asserts every surface key is in the contract, and nothing asserts that no process spawns git."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "CLAUDE.md",
+      "line": 744,
+      "title": "CLAUDE.md still says rc05b consumes the extractor unchanged",
+      "recommendation": "At archive, when CLAUDE.md gains rc05b's paragraph, correct the rc05 paragraph's parenthesis the way the header comment was corrected (task 1.2). The proposal's `six gh snippets in SKILL.md bodies are validated` also counts two bare names: four are validated, two are prose (`gh pr ready`, `gh pr merge`)."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Probed hard: the tokenizer against fifteen hand-built shell lines (redirects, fd duplication, glued operators, subshells, assignments, heredoc openers), the validator against twelve vectors (attached values, `=` forms, a leading global flag, a group alone), and seven forms against real git 2.50.1 in a scratch repository. The operator split, the per-segment classification, the contract-keyed bare-name tree and the gh move all hold. Every git and gh snippet the sweep extracts was read as tokens, and none is a grammar defect. The two warnings are the same kind of gap at two layers: a rule's domain counted as covered when one member is not. The capture deduplicates by flag NAME where the requirement promises every written FORM, and the tokenizer treats double quotes as inert where the shell does not. Neither fires on today's surface. Pass 0 ran as a structural check: validate --strict, the scenario map (28 of 28 behaviour), the targeted suites (14 files, 416 tests), and a reading of tasks against code. /orbit:verify was not invoked. Pass 6 was a residue sweep, not a full audit-drift run. Readings came from the live checkout at HEAD b6bc64e1.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "6"
+  ],
+  "passes_skipped": [
+    "4: no perspectives defined (orbit/lenses/ absent); skip Pass 4",
+    "5: no critical paths defined (orbit/lenses/ absent); skip Pass 5"
+  ],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The stage does what its charter says. The shared extractor reads chains as the shell does, git has a contract that real git decided, gh's second extractor is gone, and the injection matrix shows each check can fail. Both warnings are false-pass holes in mechanism this stage added, and neither hides anything on the surface today. Each is a narrow repair: probe every written form, and refuse or name double-quoted substitution. A walk can close both without reopening the design."
+  },
+  "final_assessment": "0 critical, 2 warning, 4 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc05b-git-grammar"
+}

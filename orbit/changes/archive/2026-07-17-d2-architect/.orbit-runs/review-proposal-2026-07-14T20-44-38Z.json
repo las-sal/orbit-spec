@@ -1,0 +1,87 @@
+{
+  "command": "review",
+  "timestamp": "2026-07-14T20:44:38Z",
+  "change": "d2-architect",
+  "final_assessment": "2 critical issue(s) found. Fix before /orbit:apply.",
+  "next_recommended": "/orbit:address-reviews d2-architect --from-file orbit/changes/d2-architect/.orbit-runs/review-proposal-2026-07-14T20-44-38Z.json",
+  "kind": "editorial",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "iteration": 2,
+  "depth": "full",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "findings_summary": {
+    "critical": 2,
+    "warning": 1,
+    "suggestion": 3
+  },
+  "finding_titles": [
+    "orbit-address-reviews delta has no implementation carrier",
+    "Un-delta'd Emit timing semantics enumeration contradicts the architect emitter",
+    "Falsified-mark surfacing owner is contradictory",
+    "Onboard quick-reference table row not explicitly carried",
+    "Spine change annotation now incomplete",
+    "--parallel undefined for architecture mode"
+  ],
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "CRITICAL",
+      "file": "orbit/changes/d2-architect/tasks.md",
+      "line": 60,
+      "title": "orbit-address-reviews delta has no implementation carrier",
+      "recommendation": "The 9th delta (iter-1 fix) modifies the cascade OUT-set and ADDs the architecture-scoped resolution-log destination, but no task edits the address-reviews body and proposal Impact omits it — the generated body hard-codes the contradicted OUT table (two trail locations, address-reviews.ts:722) and destinations (:317/:814). Add task 4.x editing address-reviews.ts (OUT table gains explore + architecture trails; destination list gains the architecture route) and add address-reviews.ts to Impact's edited-templates list (4.5's re-pin then covers it)."
+    },
+    {
+      "pass": "4",
+      "severity": "CRITICAL",
+      "file": "orbit/specs/orbit-run-summary-emit/spec.md",
+      "line": 74,
+      "title": "Un-delta'd Emit timing semantics enumeration contradicts the architect emitter",
+      "recommendation": "Baseline claims 'Three categories cover the full command surface' with /orbit:explore as the only multi-turn conversational command, while the same capability's Emit scope is delta'd to add /orbit:architect with explore-genre conversation-boundary timing. Add a MODIFIED block listing /orbit:architect under multi-turn conversational commands (timing owned by orbit-architect); stamp the 14th fingerprint."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "file": "orbit/changes/d2-architect/specs/orbit-architecture-engine/spec.md",
+      "line": 49,
+      "title": "Falsified-mark surfacing owner is contradictory",
+      "recommendation": "Computed-state says the inconsistency is 'surfaced by validation and the audit-drift staleness check' while the CLI requirement + task 1.3 make orbit architecture validate structure-only (per the iter-1 ownership fix). Pick one owner: either add the completion-composition check to validate's enumerated checks, or reword to 'surfaced by the status render and the audit-drift staleness check'."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "file": "orbit/changes/d2-architect/tasks.md",
+      "line": 76,
+      "title": "Onboard quick-reference table row not explicitly carried",
+      "recommendation": "Task 4.4 doesn't name adding the /orbit:architect row to the quick-reference table the baseline requires to list every command. Add the clause."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "file": "orbit/changes/d2-architect/specs/orbit-conventions/spec.md",
+      "line": 71,
+      "title": "Spine change annotation now incomplete",
+      "recommendation": "The spine table's 'change string|null … (or null for project-scope commands)' predates architecture-scoped nulls. Widen to 'project-scope and architecture-scoped commands' in the conventions delta; the run-summary-emit copy can ride the finding-2 MODIFIED block."
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "file": "orbit/specs/orbit-review/spec.md",
+      "line": 295,
+      "title": "--parallel undefined for architecture mode",
+      "recommendation": "One line: declare which architecture passes parallelize, or state the flag is a no-op in architecture mode."
+    }
+  ],
+  "iteration_note": "Second proposal-mode run (fresh; independent slot). RESOLUTION VERIFICATION: all 15 prior findings verifiably landed and are mutually consistent — with one incompleteness that IS finding 1 (the iter-1 cascade fix added the 9th spec delta but never rippled into tasks/Impact, leaving it carrier-less). All 13 MODIFIED blocks re-verified baseline-verbatim + intended edits only; no dropped scenarios. Both CRITICALs spot-verified by the orchestrating session (no address-reviews carrier; the un-delta'd three-categories coverage claim; the body's hard-coded two-location OUT table)."
+}

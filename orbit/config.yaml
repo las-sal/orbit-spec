@@ -18,3 +18,76 @@ schema: spec-driven
 #       - Always include a "Non-goals" section
 #     tasks:
 #       - Break tasks into chunks of max 2 hours
+
+# Model hints (optional — D-arc Stage D5)
+# When set, the eligibility line ("Ready when you are: ...") appends " — hint: <value>".
+# Keys are schema phase ids (review-proposal, review-system, apply, archive) or review
+# cadence slot names (in-context, fresh, external, independent, blind-pair); a slot entry wins
+# over a phase entry. Under spec-driven v5 a first review slot is `invoked`, and its hint is
+# read from the CLASS of the command presented (fresh or external) — a key naming
+# `independent` or `blind-pair` garnishes only a schema that declares that slot. Values must
+# be single-line, <= 80 chars. Unknown keys are inert.
+# Example:
+#   models:
+#     fresh: "any frontier model, clean context"
+#     external: "a different AI from the session's"
+#     review-system: "strongest available reviewer"
+
+# PR lifecycle (optional — D-arc Stage D6)
+# A SINGLE scalar with exactly three values. Absent is the same as `never`.
+#
+#   never             No PR machinery anywhere; byte-identical to pre-capability behavior.
+#                     Nothing is probed and nothing is printed.
+#   per-proposal      Every change gets its own `<change-name>` branch and its own PR.
+#   per-architecture  A change CITING an architecture doc rides that doc's program branch
+#                     under the single-program-PR semantics. A change with NO citation
+#                     FALLS BACK to per-proposal behavior (its own branch, its own PR), so
+#                     a standalone change never loses its outward window.
+#
+# In every active mode a draft PR opens at propose (or, for a cited change under
+# per-architecture, the single program PR is adopted or opened). The archive flow then:
+#   per-proposal      commits, pushes, rewrites the description, and flips the PR READY.
+#   per-architecture  commits, pushes, and APPENDS this stage's entry to the program PR —
+#                     stage archives never flip it; the READY flip is YOUR act at arc-done.
+# MERGING IS ALWAYS THE USER'S ACT.
+#
+# Degradation: with no git remote or no `gh` CLI, an ACTIVE mode degrades to `never`
+# behavior for that invocation and says so in one line — the lifecycle never blocks on the
+# PR layer. Under `never` (or absent) nothing is probed and no note is emitted.
+# Example:
+#   pr: per-architecture
+
+# Review preference (optional — orbit-engine-gates, rc17a)
+# A map from reviewed-gate id to blind-pair | fresh | external: which review the readout
+# PRESENTS when nothing covers a gate's first (`invoked`) slot. It never changes what covers
+# the slot — a single fresh or external pass, or a complete blind pair, covers whatever this
+# says. Absent = blind-pair for every gate, which presents the one-command pair
+# (/orbit:review --as <mode> --reviewer blind-pair <change>). An unknown value warns and resolves to blind-pair; a key naming no reviewed
+# gate warns and is ignored; a non-map value warns and is ignored.
+# Example:
+#   review_preference:
+#     review-proposal: fresh
+#     review-system: blind-pair
+
+# Scenario map (optional — orbit-scenario-map, rc06a)
+# Turns on the declaration check: `orbit validate <change>` reports every delta scenario no
+# `// @scenario <behaviour|text> <capability> :: <requirement> :: <scenario>` tag (in the files
+# these globs match) and no `orbit/scenario-ledger.yaml` entry declares — INFO until the change's
+# apply gate passes, ERROR after. Absent = off, and validate behaves exactly as before.
+# Read the map with: orbit status --change <name> --scenarios
+scenario_map:
+  tests: ['test/**/*.test.ts']
+
+# Size ceiling (optional — orbit-change-size, rc09a)
+# The maxima for a change's four size figures: capabilities touched, requirements touched,
+# new-side changed delta bytes, and tasks. A figure STRICTLY GREATER than its maximum is a
+# breach. `orbit validate <change>` reports an undeclared breach at WARNING (so `--strict`
+# fails) and a declared one at INFO; a breach is declared in a `## Size` section of
+# proposal.md, one `- <dimension>: <reason>` item per breached dimension. `orbit status
+# --change <name>` prints a `Size:` line. Size never moves a gate. Absent = off; a dimension
+# with no entry is not compared. These are R-crc-1's figures read as exact maxima.
+size_ceiling:
+  capabilities: 3
+  requirements: 12
+  changed_bytes: 40960
+  tasks: 19

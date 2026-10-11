@@ -1,0 +1,47 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-04T19:15:50Z",
+  "change": null,
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "from-file",
+  "source_path": "orbit/.orbit-runs/audit-drift-2026-10-04T19-14-51Z.json",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 1
+  },
+  "pushback_verification": "Verified against current state: the stage section had no Shipped as paragraph and its origin paragraph read in the present tense.",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "SUGGESTION",
+      "title": "rc07b's stage section has no Shipped as line, so its present-tense origin paragraph reads as the live tree",
+      "marker_source": "audit-drift",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 2545,
+      "classification": "trivial_fix",
+      "action": "inserted a Shipped as (2026-10-04; …) paragraph after rc07b's exit criteria, in rc03c's form: per-schema-block examples, the archived scope word, one address-reviews example per provenance, the shared helper, the null-prototype union-keyed counts and the type-only category check, and exit (2)'s first branch; doc grammar and source lint re-run clean",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "One of one resolved: rc07b's stage section carries a Shipped as paragraph naming where the shipped mechanism departs from the declared charter.",
+  "iteration": 9,
+  "next_recommended": "No markers remain in scope; the project trail records this walk."
+}

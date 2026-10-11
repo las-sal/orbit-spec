@@ -1,0 +1,141 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-28T16:17:16Z",
+  "change": "rc13c-propose-consumes-mechanism",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc13c-propose-consumes-mechanism/.orbit-runs/external-system-2026-09-28T15-18-12Z.md",
+  "external_reviewer": "GPT-5 Codex",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 2,
+    "warning": 2,
+    "suggestion": 0
+  },
+  "pushback_verification": "All 4 findings verified against the shipped body and delta before any edit; 0 stale. The Continue branch's 'discard the explore staging directory' text was read in the body; the generated orbit-propose skill's reference set (pr-choreography.md only) confirmed the adopter-blindspot claim.",
+  "resolution_summary": {
+    "resolved": 4,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "Continue deletes a concluded exploration",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/propose.ts",
+      "line": 142,
+      "classification": "decision_required",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "continue from the active change while preserving the concluded directory (status-aware Continue)"
+          },
+          {
+            "label": "B",
+            "body": "refuse the concluded-plus-conflict case before any prompt, naming both paths — the explore body's own both-exist shape"
+          }
+        ],
+        "chosen": "B"
+      },
+      "action": "Option B ratified (Sal: \"b\"). Precedence now: (1) both directories exist AND the staging header is `concluded` → REFUSED before any prompt, naming both paths and the conclusion date — none of the conflict choices is offered, nothing deleted/overwritten/moved, no branch cut; (2) both exist, staging live → the conflict prompt; (3) concluded → refuse; (4) consume. The requirement text, the both-exist scenario and the conflict scenario's WHEN (now 'staging live') rewritten; the earlier Regenerate-then-refuse sentence removed from the body and its assertion replaced by a both-exist-refuse position check inside sub-step 2; fidelity marker `second claim on one truth`; task 1.1 and 1.3 revised and dated; design D-rc13c-1 amended (COHERE named, alternative recorded).",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13c-propose-consumes-mechanism/specs/orbit-propose-modifications/spec.md",
+          "src/core/templates/workflows/propose.ts",
+          "test/core/templates/orbit-content-fidelity.test.ts",
+          "orbit/changes/rc13c-propose-consumes-mechanism/tasks.md",
+          "orbit/changes/rc13c-propose-consumes-mechanism/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "The installed skill cannot derive parser-owned states",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/propose.ts",
+      "line": 180,
+      "classification": "decision_required",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "ship the Mechanism grammar in the propose body as a checked mirror (the grammar module's constant) and define 'accounted' as full conformance to it, the failing clause named when no readout is at hand"
+          },
+          {
+            "label": "B",
+            "body": "a read-only engine surface returning the fresh form parse (a second capability)"
+          },
+          {
+            "label": "C",
+            "body": "narrow the claim — stop saying the states are parser-judged"
+          }
+        ],
+        "chosen": "A"
+      },
+      "action": "Option A ratified (Sal: \"a\"). `EXPLORE_MECHANISM_ENTRY_PRODUCTION` is interpolated into the propose body under Step 0b (the same import and parity the explore body has; a new fidelity assertion pins it to the module and to one occurrence); the ADDED requirement and Step 0c.6 define ACCOUNTED from the file as FULL conformance to that grammar (heading ID matching a Decisions entry; Domain line + table with ≥1 member row; a Closure token; residual slots iff BOUNDED; nine move lines each once), an entry failing any clause or absent is OPEN with the failing clause named in the record's state column when no readout is at hand; key defects defined (orphan / duplicate); row 3 and the record paragraph updated; a scenario 'Accounted is decidable from the file alone' added. Design D-rc13c-4 amended a third time (READ named; alternatives recorded); tasks 2.2/3.3 revised; proposal bullet updated.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13c-propose-consumes-mechanism/specs/orbit-propose-modifications/spec.md",
+          "src/core/templates/workflows/propose.ts",
+          "test/core/templates/orbit-content-fidelity.test.ts",
+          "orbit/changes/rc13c-propose-consumes-mechanism/tasks.md",
+          "orbit/changes/rc13c-propose-consumes-mechanism/design.md",
+          "orbit/changes/rc13c-propose-consumes-mechanism/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Key defects have no unambiguous record shape",
+      "marker_source": "external",
+      "file": "orbit/changes/rc13c-propose-consumes-mechanism/specs/orbit-propose-modifications/spec.md",
+      "line": 22,
+      "classification": "trivial_fix",
+      "action": "Row 1 now states its record row: the heading's ID plus `line N`, the defect kind (`orphan` / `duplicate`) in the state column, owner `none` (orphan) or `duplicate` (a second claim), destination `none`; the record paragraph's columns say the same; two scenarios added (orphan; duplicate Mechanism heading). Row 1's owner cell reads 'any, or none' and its timing 'at the Mechanism read (after Step 0b's last write, before generation)' — the fresh half's two row-1 findings converge here and will be logged stale-with-evidence against this log. Task 3.3 carries the shape; the body mirror moved with the owner (parity held).",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13c-propose-consumes-mechanism/specs/orbit-propose-modifications/spec.md",
+          "src/core/templates/workflows/propose.ts",
+          "orbit/changes/rc13c-propose-consumes-mechanism/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The four-shape parity test permits extensions",
+      "marker_source": "external",
+      "file": "test/core/templates/orbit-content-fidelity.test.ts",
+      "line": 230,
+      "classification": "trivial_fix",
+      "action": "The four-shape assertion now extracts the body's own clause (anchored on its heading and 'Which shape fits'), asserts equality after trailing-whitespace trim, and asserts exactly one occurrence of the owner's clause in the body.",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/templates/orbit-content-fidelity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Log 1 of 2 for the system blind pair (external half walked first; the fresh half follows in its own log). 4 of 4 resolved, 0 stale. Both CRITICALs were repairs in place at one capability: B on the concluded-plus-conflict case (refuse before any prompt, naming both paths — the explore body's own both-exist shape; no Step 0 path can delete a concluded record), A on the adopter blind spot (the Mechanism grammar ships in the propose body as the grammar module's checked mirror, and 'accounted' is decidable from the file as full conformance, the failing clause named when no readout exists). Row 1 gained its record-row shape; the four-shape parity is equality plus single occurrence. Body edited in Step 0 (sub-step 2), Step 0b and Step 0c.6; the orbit-propose pins re-recorded once for this walk with a dated reason; template tests 217 green; strict validation green; fingerprints 5/5.",
+  "iteration": 4,
+  "next_recommended": "/orbit:address-reviews rc13c-propose-consumes-mechanism --from-file orbit/changes/rc13c-propose-consumes-mechanism/.orbit-runs/review-system-2026-09-28T15-23-42Z.json"
+}

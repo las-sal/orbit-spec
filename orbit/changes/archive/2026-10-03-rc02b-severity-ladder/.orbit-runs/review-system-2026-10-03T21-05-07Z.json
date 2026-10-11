@@ -1,0 +1,87 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-03T21:05:07Z",
+  "change": "rc02b-severity-ladder",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "title": "The trail reader's has-a-body test reads a fenced `**Reproduction**:` line as the label; the renderer reads it as content",
+      "file": "src/core/artifact-graph/trail.ts",
+      "line": 376,
+      "recommendation": "Walk 1's `markDescriptionBody` is called for in-fence lines too (so a fenced line counts as description body, matching the renderer) — but its first branch tests the Reproduction label before the fence check, so a `**Reproduction**:` line INSIDE a code fence flips `reproOpen` in the trail reader while `normalizeExternalPass` keeps it as recommendation text. Executed against dist: no observable divergence exists today, because the fence's opening delimiter is a non-blank body line that sets `hasDescription` before any fenced label is seen, and `reproOpen` affects nothing else — so this is a latent asymmetry, SUGGESTION per `orbit-conventions`' Severity ladder. Close it in one line: pass an `inFence` flag to `markDescriptionBody` (or test it in the caller) and skip the label branch for fenced lines, with the fenced-label case added to the three two-reader tests in test/core/trail-rc02b.test.ts so the symmetry is pinned rather than argued."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "The repaired `Review mode decision framework` text carries a dated measurement inside its normative sentence",
+      "file": "orbit/changes/rc02b-severity-ladder/specs/orbit-conventions/spec.md",
+      "line": 224,
+      "recommendation": "Walk 2's option-A repair reads: 'no README or `docs/` section states review-mode guidance (measured 2026-10-03)'. A measurement with a date is a RECORD; a requirement's prose is living text that the archive syncs into baseline and that audit-drift Category 3 will read on every future run — the moment a user doc states the framework, this sentence is false while the scenario beside it is doing its job. Drop the parenthetical and the present-tense fact, keeping the rule: 'The framework is stated HERE; a user-facing counterpart belongs to the deferred user-docs rewrite (issue #1), and any user doc that states it is held to this requirement, never the reverse.' The measurement already lives where records live — tasks.md 5.2 and the walk-2 log."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "pass": "2",
+      "title": "A third external-format reader (lenientExternalCounts) still takes the LAST **File**: line (fresh W1)",
+      "evidence": "walked at address-reviews-2026-10-03T20-59-44Z entry 1; re-executed: the Reproduction-quoted path case renders (1 repeat, 0 new); the sweep over all 63 real external files finds ONE File-after-Description line, the external reviewer's own probe"
+    },
+    {
+      "pass": "1",
+      "title": "A multiline Description disappears from the gate trail (external CRITICAL) / the two readers disagree on where a Description body opens (fresh W2)",
+      "evidence": "walked at address-reviews-2026-10-03T20-54-44Z entry 1; re-executed five edge cases (fenced label, whitespace-only same-line tail, repro after a blank body, text after the repro label, two findings in sequence): both readers accept and reject identically and key the same files"
+    },
+    {
+      "pass": "6",
+      "title": "The reproduction's four-tuple definition is restated beside its pointer at six sites (fresh W3 / external W2)",
+      "evidence": "walked at address-reviews-2026-10-03T20-54-44Z entry 3; grep for the tuple now hits only the owner's requirement text and fence and the two checked mirrors; severity-ladder-parity and output-format parity green"
+    }
+  ],
+  "commentary": "The confirm read the two walks' own additions as new mechanism, because that is where a confirm earns its slot. The headline from the pair — one external grammar stated three times, two of the three disagreeing about where a Description opens — closed cleanly: five constructed edge cases through readTrail and normalizeExternalPass agree on acceptance, rejection and key, and the sweep over every real external file on the trail (63 files, 394 findings) found the trend counter's new latch touches exactly one line, the probe the external reviewer planted to test it. What is left is texture, not mechanism: a fenced label that one reader notices for a has-a-body test and the other does not, with no input that makes the difference visible; and a dated measurement that walk 2 wrote into a requirement's living sentence when the record beside it already carries the date. Pass 0 in-line: 24 of 25, the handoff unchanged; every walk note under its task holds on the tree; the design's Touchpoints now diverge only by the archive-time spec glob. Passes 4 and 5 skipped: no perspectives defined; no critical paths defined. Pass 6 ran scoped to the walked sites: the retired README claim survives only in the baseline the archive replaces and in archives; the corrected counts reached every live sentence. Risk texture: low — the never-re-grade invariant and the gate's counting rule were untouched by both walks, and the suite grew by three tests per walk without a golden moving.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "6"
+  ],
+  "passes_skipped": [
+    "4",
+    "5"
+  ],
+  "final_assessment": "0 critical, 0 warning, 2 suggestion.",
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc02b-severity-ladder --from-file orbit/changes/rc02b-severity-ladder/.orbit-runs/review-system-2026-10-03T21-05-07Z.json"
+}

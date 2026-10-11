@@ -1,0 +1,12 @@
+{
+  "command": "explore",
+  "timestamp": "2026-09-21T02:26:38Z",
+  "change": "rc02c-confirmation-semantics",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "Sal's practice corrected the stage's direction a second time. The session built `stands` — an independent pass stands iff it carried zero substantive findings, no substantive walk followed it, and no earlier independent pass has unwalked substantive findings — worked it through twelve constructed cells (the table exposing a real hole in my first formulation at cell F, where the rule leaned on clause (b) to catch unwalked findings in a blind pair's earlier member), and validated it against all eleven real trails with the same verdicts. Then Sal said the cadence never ends on a clean review and never will: it ends on a walk of a review with findings, and that is fine. The trail agrees — only 3 of 11 archives ever had a pass standing. So a predicate reporting no-pass-stands reports the normal case as a deficiency. The correction is that clause (c) was asking about CONVERGENCE at all, not which pass it reads. It is REPLACED rather than refined: does a readiness record exist, and does it post-date every independent pass it cites? That demands nothing extra, is trivially computable, and is identical to rc04's one mechanical rule, so the two stages meet at one obligation instead of a policed boundary. Independent passes remain required by clause (a), so removing (c) removes no review. `stands` is re-homed as a recorded fact under R-crc-11(h) with its executable table kept as a sketch. Seven decisions captured; the rejection of `stands`-as-clause is recorded at length because the sequence is the lesson — a careful redesign of the wrong question still yields the wrong answer, and this is the second direction correction in one session to come from experience rather than analysis.",
+  "decisions_captured": 7,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "next_recommended": "/orbit:propose rc02c-confirmation-semantics — substantial thinking captured; ready to formalize the design (or /orbit:explore rc02c-confirmation-semantics to keep refining)"
+}

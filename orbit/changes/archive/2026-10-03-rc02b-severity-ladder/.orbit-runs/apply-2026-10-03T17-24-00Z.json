@@ -1,0 +1,24 @@
+{
+  "command": "apply",
+  "timestamp": "2026-10-03T17:24:00Z",
+  "change": "rc02b-severity-ladder",
+  "kind": "workflow",
+  "model": "claude-fable-5-1",
+  "user_validation_tasks": [
+    "5.4"
+  ],
+  "consent": "user-invoked",
+  "tasks_completed": 24,
+  "tasks_remaining": 1,
+  "user_validation_remaining": 1,
+  "chunk": null,
+  "chunk_name": null,
+  "chunk_complete": true,
+  "tasks_completed_this_session": 0,
+  "files_touched": [
+    "orbit/changes/rc02b-severity-ladder/tasks.md"
+  ],
+  "diff_base": "710f84f83903410c3258cf0034426a9b7ba1660e",
+  "final_assessment": "24 of 25 tasks done. CORRECTIVE emit, same session, no task work between the two: the first apply emit (apply-2026-10-03T17-22-26Z.json) composed its next_recommended while task 5.4's line lacked the literal `(User-validation` marker the tracked gate's subset rule reads (gates.ts, D5), so the gate read `ready` at 24/25 and the graph pointed at a STALE proposal review. The line now carries the marker (substance unchanged; the correction is recorded under the task), the gate reads passed-for-flow with 5.4 pending, and this emit carries the apply-complete pointer. The first emit stays on the trail as the record of that moment. Everything else stands as the first emit states it: 24 of 25 done, 2423 tests green, validate --strict valid, fingerprints 13/13, nothing committed.",
+  "next_recommended": "/orbit:review --as system --fresh rc02b-severity-ladder"
+}

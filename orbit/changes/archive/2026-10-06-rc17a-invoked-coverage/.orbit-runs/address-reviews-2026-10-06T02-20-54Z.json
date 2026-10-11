@@ -1,0 +1,168 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-06T02:20:54Z",
+  "change": "rc17a-invoked-coverage",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc17a-invoked-coverage/.orbit-runs/external-system-2026-10-06T02-01-46Z.md",
+  "source_command": null,
+  "source_token": "2026-10-06T02-01-46Z",
+  "latest_apply_token": "2026-10-06T01-53-00Z",
+  "external_reviewer": "GPT-6 Codex",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 1,
+    "warning": 2,
+    "suggestion": 0
+  },
+  "pushback_verification": "3 of 3 verified against current state: the CRITICAL's reproduction re-ran against the built engine and reproduced; both WARNINGs reproduced through the in-memory seam; 0 stale. No finding converged with the fresh half.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "Formatting an invalid review preference can crash status",
+      "marker_source": "external",
+      "file": "src/core/project-config.ts",
+      "line": 200,
+      "classification": "trivial_fix",
+      "action": "Replaced the coercing String(pref) with describeInertValue, which names a map, a list or an empty value and never coerces; a map-shaped preference now warns and falls back to blind-pair, tested through formatChangeStatus and in the exit (2) preference table.",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/artifact-graph/invoked-coverage.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "${String(pref)}"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/project-config.ts",
+            "text": "function describeInertValue(v: unknown): string"
+          },
+          {
+            "path": "test/core/artifact-graph/invoked-coverage.test.ts",
+            "text": "a map-shaped preference leaves orbit status usable"
+          }
+        ],
+        "searched": [
+          "String(pref)",
+          "String(value)"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved",
+      "reproduction_rerun": "reproduced",
+      "evidence": "resolveReviewPreference over a config whose review-system value is {toString: external} threw 'Cannot convert object to primitive value' against the built engine before the fix; after it, the same call warns \"'review-system': a map\" and returns blind-pair."
+    },
+    {
+      "severity": "WARNING",
+      "title": "“Walk now” cannot end a pair whose landed half is clean",
+      "marker_source": "external",
+      "file": "orbit/changes/rc17a-invoked-coverage/specs/orbit-address-reviews/spec.md",
+      "line": 16,
+      "classification": "decision_required",
+      "action": "Option B, ratified in chat ('walk all' over the briefed recommendation): discovery row 4 offers stop-or-walk only when the landed half is listed in unresolvedPasses or unwalkedPasses; when it carries no finding, the walk says no walk can end the pair, names the routes that can (a further review of its class, a single that covers, or a continuation/proceed judgement) and writes no log. Owner fence, checked mirror, the body's degradation line, a new scenario, and the engine-gates proceed row follow.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/templates/workflows/address-reviews.ts",
+          "orbit/changes/rc17a-invoked-coverage/specs/orbit-engine-gates/spec.md",
+          "test/core/templates/walk-routing.test.ts",
+          "test/core/artifact-graph/invoked-coverage.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "canonical next command, and offer two choices",
+          "or to walk now, which ends the pair (row 4)"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc17a-invoked-coverage/specs/orbit-address-reviews/spec.md",
+            "text": "When the landed half is listed in neither (it carries no finding), no walk can end the pair"
+          },
+          {
+            "path": "src/core/templates/workflows/address-reviews.ts",
+            "text": "When the landed half is listed in neither (it carries no finding), no walk can end the pair"
+          },
+          {
+            "path": "orbit/changes/rc17a-invoked-coverage/specs/orbit-address-reviews/spec.md",
+            "text": "Scenario: A clean landed half cannot be walked past"
+          }
+        ],
+        "searched": [
+          "walk now",
+          "ends the pair",
+          "openPair"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "resolution": "B"
+    },
+    {
+      "severity": "WARNING",
+      "title": "A return tied with its launch silently becomes a covering single",
+      "marker_source": "external",
+      "file": "orbit/changes/rc17a-invoked-coverage/specs/orbit-engine-gates/spec.md",
+      "line": 102,
+      "classification": "trivial_fix",
+      "action": "The tie fail-safe now holds at the launch boundary: a pass sharing its launch's token is neither member nor single and covers nothing (computePairMembership's ambiguousFiles); the presentation names it; the membership and presentation tables carry the rows; the oracle gained the launch-and-return tie event U, with a unit test for the class-agnostic fresh case.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/artifact-graph/gates.ts",
+          "test/helpers/invoked-oracle.ts",
+          "test/core/invoked-coverage-oracle.test.ts",
+          "orbit/changes/rc17a-invoked-coverage/design.md",
+          "test/core/artifact-graph/invoked-coverage.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc17a-invoked-coverage/specs/orbit-engine-gates/spec.md",
+            "text": "a pass shares the launch's own token"
+          },
+          {
+            "path": "src/core/artifact-graph/gates.ts",
+            "text": "ambiguousFiles: Set<string>"
+          },
+          {
+            "path": "test/helpers/invoked-oracle.ts",
+            "text": "the LAUNCH TIE `U`"
+          }
+        ],
+        "searched": [
+          "launch.token",
+          "p.token > launch.token",
+          "tie"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "All three findings of the external system half resolved: the preference-formatting crash, the clean-half walk promise (option B, Sal), and the launch-boundary tie.",
+  "iteration": 5,
+  "next_recommended": "/orbit:review --as system rc17a-invoked-coverage",
+  "ripple_misses": 0
+}

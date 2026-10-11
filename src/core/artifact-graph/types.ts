@@ -25,18 +25,31 @@ export const ApplyPhaseSchema = z.object({
 // pass-condition plugin. See spec: orbit-engine-gates "Gate declaration in schema YAML".
 export const GateKindSchema = z.enum(['tracked', 'reviewed']);
 
-// Reviewed-gate confirm predicate (clause (c) selector). CLOSED set.
+// Reviewed-gate `confirm` — the RETIRED clause (c) selector. CLOSED set, still ACCEPTED by the
+// grammar so existing schemas validate without a version bump, and INERT since rc02c: nothing
+// reads it. Convergence is clauses (a) and (b) only.
 export const GateConfirmSchema = z.enum(['no-new-findings', 'findings-resolved']);
 
 // Cadence-entry vocabulary: the three reviewer classes plus the cadence-only
 // meta-class `independent` (satisfied by a `fresh` OR `external` pass; never
 // `in-context`). `independent` is NOT a value the `reviewer_class` emit field carries.
-export const CADENCE_ENTRIES = ['in-context', 'fresh', 'external', 'independent'] as const;
+// `blind-pair` (rc02) is a COMPOUND slot: two passes of distinct independent classes, read blind
+// of each other. Like `independent` it is cadence-only — `reviewer_class` never carries it.
+// `invoked` (rc17a) is covered by what the user INVOKED: a single independent pass that is not a
+// pair member, or a COMPLETE pair whose membership is computed from its launch. Cadence-only too.
+export const CADENCE_ENTRIES = ['in-context', 'fresh', 'external', 'independent', 'blind-pair', 'invoked'] as const;
 export const CadenceEntrySchema = z.enum(CADENCE_ENTRIES);
 
 // Lifecycle-phase tokens that a gate's `before` may target (in addition to a
 // declared gate/artifact id).
 export const LIFECYCLE_PHASE_TOKENS = ['apply', 'archive'] as const;
+
+// Consent vocabulary (D-arc Stage D1, per orbit-lifecycle-consent): a CLOSED set of
+// one. Declares that entry into the gate's `before:` phase requires an explicit user
+// invocation. The engine parses and surfaces the marker; workflow bodies prompt.
+// Consent changes NO gate pass-condition computation.
+export const CONSENT_VALUES = ['user-invoked'] as const;
+export type ConsentValue = (typeof CONSENT_VALUES)[number];
 
 export const GateSchema = z.object({
   id: z.string().min(1, { error: 'Gate ID is required' }),
@@ -48,12 +61,21 @@ export const GateSchema = z.object({
   tracks: z.string().nullable().optional(),
   // reviewed kind: freshness scope (artifact ids whose change invalidates a pass; defaults to `requires`)
   inputs: z.array(z.string()).optional(),
-  // reviewed kind: ordered slot list (cadence-entry vocabulary)
-  cadence: z.array(CadenceEntrySchema).optional(),
-  // reviewed kind: independent-confirmation predicate (defaults to `no-new-findings`)
+  // reviewed kind: ordered slot list (cadence-entry vocabulary). Validated against the closed set
+  // in schema.ts — as `kind` is — so the error can name the GATE ID rather than an array index.
+  cadence: z.array(z.string()).optional(),
+  // reviewed kind: the RETIRED independent-confirmation selector (defaults to `no-new-findings`).
+  // Accepted and INERT — see GateConfirmSchema.
   confirm: GateConfirmSchema.optional(),
+  // reviewed kind: the DECLARED EXPECTATION of what the cadence costs in independent passes
+  // (rc02, demoted by rc02c). Validated as a positive integer in schema.ts so the error can name
+  // the gate id. NOTHING CONSULTS IT — it is not a ceiling; the record is `independentSpend`.
+  budget: z.number().optional(),
   // Target this gate blocks: a declared gate id, a declared artifact id, or a lifecycle-phase token
   before: z.string().optional(),
+  // Optional consent marker. Validated against the closed set in schema.ts so the
+  // error can name the gate id and the single legal value.
+  consent: z.string().optional(),
   instruction: z.string().optional(),
 });
 
@@ -89,7 +111,11 @@ export interface NormalizedGate {
   inputs: string[];
   cadence: CadenceEntry[];
   confirm: GateConfirm;
+  /** rc02c: the DECLARED EXPECTATION of what the cadence costs; absent means no expectation is
+   *  declared. It is not a ceiling and bounds nothing — nothing consults it. */
+  budget?: number;
   before?: string;
+  consent?: ConsentValue;
   instruction?: string;
 }
 
@@ -105,6 +131,47 @@ export const ChangeMetadataSchema = z.object({
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, {
       message: 'created must be YYYY-MM-DD format',
+    })
+    .optional(),
+
+  // Optional: the loaded schema's declared version at scaffold time (D-arc D1).
+  // Written by `orbit new change`. ABSENCE is the consent-era signal: a change whose
+  // metadata lacks the field predates the consent capability (see orbit-lifecycle-consent
+  // "Consent-era metadata marker"); >= 3 marks a consent-era change.
+  schema_version: z.number().int().positive().optional(),
+
+  // Optional: straddler transition stamp (migrate-on-touch, D-arc D1). Written by
+  // consent-scoped workflow bodies at entry against a change lacking schema_version.
+  // Tripwire semantics are three-tier: schema_version >= 3 → all lifecycle emits
+  // checked; consent_era_from present → emits at-or-after the stamp checked; neither
+  // → fully pre-capability, exempt.
+  consent_era_from: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/, {
+      message: 'consent_era_from must be ISO-8601 UTC (YYYY-MM-DDTHH:MM:SSZ)',
+    })
+    .optional(),
+
+  // Optional: architecture citation (D-arc D2). Links a change or explore to the
+  // program stage it serves: `doc` is an architecture doc's filename stem under
+  // orbit/architecture/, `stage` a stage id declared in that doc. Valid in change
+  // AND explore metadata; resolvability is checked by change validation (two-level:
+  // dangling doc vs dangling stage); re-pointable by hand-edit. Absence = unlinked.
+  architecture: z
+    .object({
+      // doc is a FILENAME STEM (canonical identity) — never a path. Separators and
+      // traversal would let validation and the state scan disagree on one doc.
+      doc: z
+        .string()
+        .min(1, { message: 'architecture.doc is required when the field is present' })
+        .refine((v) => !/[\\/]/.test(v) && !v.startsWith('.') && !v.includes('..'), {
+          message: 'architecture.doc must be a filename stem (no path separators, no traversal segments)',
+        }),
+      stage: z
+        .string()
+        .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, {
+          message: 'architecture.stage must be a kebab-case stage id',
+        }),
     })
     .optional(),
 

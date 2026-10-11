@@ -1,0 +1,131 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-04T03:55:35Z",
+  "change": "rc03b-pass-genres",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 808,
+      "title": "The REVIEW-genre brief's own mandated reads still surface prior passes: git log commit messages and the status gate reason",
+      "recommendation": "The brief rule says a REVIEW-genre reviewer is handed NO prior pass and NO finding, and the residual lists only instructions outside review.ts. Two reads that review.ts itself mandates carry prior-pass content. (1) Step 4 says to estimate <change-start> from `git log` against `orbit/changes/<name>/`, and mode-sections line 534 says the same for the external. That log includes the trail commits, and the prompt template's own commit-message instruction (review.ts:673, `<one-line summary: severity counts + headline finding if any>`) puts each external pass's counts and headline finding into that log. So in a blind pair, the second half reads the first half's headline. (2) Step 4's `orbit status --change \"<name>\" --json` (review.ts:796) renders the gate reason `pass <TS> has unresolved substantive findings — and the blind pair is OPEN …` (gates.ts:466) once one half has landed and nothing has walked it. That reason names a prior pass and says it found substantive findings. Repair: give `<change-start>` directly (the dispatching brief or the T0 emit names the proposal commit), or make the log instruction exclude the trail (`git log -- orbit/changes/<name>/ ':!orbit/changes/<name>/.orbit-runs'`; apply commits' subjects can still carry counts, so naming the commit is the stronger fix). Also add the status-JSON reason to the owner's residual, or have REVIEW-genre passes read only `artifacts`/`contextFiles` from status. Then extend the brief grep or the residual method to cover commit-message content.",
+      "reproduction": "git log --format='%h %s' -- orbit/changes/rc03b-pass-genres/  → lists 1c175fb7 'External review (proposal, iter 1)'; git log --format=%B -1 1c175fb7 → body '0 critical, 3 warnings, 2 suggestions: brief grep and genre probe need repair' — a prior pass's counts and headline, read through the instruction a REVIEW-genre pass is told to run."
+    },
+    {
+      "pass": "1",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc03b-pass-genres/specs/orbit-conventions/spec.md",
+      "line": 27,
+      "title": "The genre probe counts external returns by filename, while design D1 names the trail reader's accepted passes; a rejected return decides differently",
+      "recommendation": "The owner's probe, the ADDED requirement's (d) and Step 5 all identify independent passes with `external-<mode>-*.md` by FILENAME. Design D1 (design.md:41) says the rule's inputs are `TrailPass.reviewerClass`/`TrailPass.mode`, and rc03c will compute the genre from them. The trail reader puts a shape-rejected external return in `rejectedExternals`, not in `passes` (trail.ts:196-201), and rc04c already ruled that a rejected return is not a member. Constructed case: pair → walk W → a rejected external return R → in-context pass P. Under the filename probe, the latest independent pass is R, so W does not qualify and P is REVIEW. Under TrailPass it is the pair, so W qualifies and P is VERIFICATION. The body today and rc03c's function would disagree on the same trail. Pick one and state it in the owner. Either say 'an ACCEPTED external return (per the trail reader; a rejected return is not an independent pass here)', or declare the filename reading as the rule and amend D1's input list.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Owner, ADDED (d), Step 5 and D1 all say an ACCEPTED external return. The body cannot see acceptance from a filename, so add one sentence: a body-side probe that cannot tell acceptance treats the file as a pass, a named residual until rc03c's function prints it."
+        },
+        {
+          "label": "B",
+          "body": "Declare the filename reading normative (a rejected return still bounds the walk set) and amend design D1's inputs so rc03c builds to the same rule."
+        }
+      ]
+    },
+    {
+      "pass": "3",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 534,
+      "title": "The external prompt's system-mode pathspec uses `<name>` where every other line of the substituted block uses `<change-name>`",
+      "recommendation": "The handoff branch substitutes the mode-sections block into the prompt, and that block's convention is `<change-name>` (line 533: `orbit/changes/<change-name>/proposal.md …`). The new pathspec on the next line uses `<name>`: `':!orbit/changes/<name>/.orbit-runs'`. Suppose a packager substitutes only the block's own placeholder. The external reviewer then gets a pathspec that excludes a literal `orbit/changes/<name>/.orbit-runs`, which matches nothing, so the diff it reads includes the trail. That is the one property this line exists to give. Write `<change-name>` in the mode-sections line and in the review-external delta's matching scenario text. Then extend the fidelity assertion to check that the prompt-bound block uses one placeholder."
+    },
+    {
+      "pass": "1",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc03b-pass-genres/specs/orbit-conventions/spec.md",
+      "line": 29,
+      "title": "The owner's list of what a brief names omits the project-context files the shipped prompt and Step 4 hand every reviewer",
+      "recommendation": "The brief rule says a REVIEW-genre brief 'names the change directory's artifacts …, the baseline specs under `orbit/specs/`, the lens files, and — in system mode — the apply commit range'. The shipped prompt's 'Project context (read first)' names `CLAUDE.md`, `orbit/project.md` and `*_convention.md`, and the body's Step 4 adds `sketches/`. None of these is on the list. Read as an allowlist, which is how the rc03c record or any future check would read 'names X', the shipped prompt breaks its own owner. The list also matters for substance: `CLAUDE.md` is where this repo writes stage narratives, so it is the most likely carrier of prior-pass content. Either add the project-context files to the owner's list and point at CLAUDE.md in the residual, or say explicitly that the list is illustrative and only the prohibitions are normative."
+    },
+    {
+      "pass": "0",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc03b-pass-genres/design.md",
+      "line": 139,
+      "title": "Touchpoints omit the propose body and the two new tests under test/core/",
+      "recommendation": "The apply touched `src/core/templates/workflows/propose.ts` (the 'run trail' rewording, recorded in task 1.1) and added `test/core/pass-genre-parity.test.ts` and `test/core/rc03b-untouched-modules.test.ts`. The Touchpoints section names only `test/core/templates/*.test.ts`. The engine's divergence computation will report these as actual-unpredicted. A one-line amendment naming them would keep the prediction honest, or accept them as recorded divergence at archive."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 815,
+      "title": "'the ONLY trail read a REVIEW-genre pass makes' is literally false in system mode",
+      "recommendation": "System-mode Pass 6 runs audit-drift as a library, and audit-drift scans each in-scope change's `.orbit-runs/` apply/archive emits for the consent field. That is a trail read, though not of findings. The same overclaim sits in the ADDED requirement's (d). Narrow the sentence to 'the only read of the trail's pass and walk records' (or 'of findings, suppressed lists or resolutions'), so a literal check of the sentence does not fail on Pass 6."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "test/core/templates/review-genre-brief.test.ts",
+      "line": 58,
+      "title": "The REGION rule exempts whole output sections, so a read instruction inside them passes",
+      "recommendation": "`promptTemplateRegionHits` exempts everything from `## Output format — write to:` through the closing four-backtick fence, by section. A sentence planted there, such as 'before writing, compare against the prior `.orbit-runs/external-*.md` files', is green. The spec chose section-level exemption deliberately. Consider adding the case as a planted-pointer test that documents the blind spot, or narrowing the exemption to lines that also carry a write verb or the `external-<as>-<TS>.md` destination token."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Probed against the generated surface, which is byte-identical to a fresh `orbit init --tools claude` in a scratch repo. Also ran strict validate, the fingerprint check, the full suite and the new instruments. The table, the mirror pin, the hash pin and the deleted cycle-context bullets are all solid. The brief grep does what it claims over the text it reads. The pattern behind the findings is one thing: the change closed the channels a reviewer is TOLD about and left the channels a reviewer is told to RUN. `git log` and `orbit status` are commands whose output carries prior-pass content, and the commit-message template writes that content there on purpose. The residual names only prose outside review.ts. These two sit inside it and are neither grep-reachable nor listed. The other findings are the usual edges of a rule stated in three places: filename versus accepted-pass identity, a placeholder that breaks the block's own convention, and an allow-list that is shorter than what ships. Lenses are absent, so Passes 4 and 5 did not run. Pass 0 and Pass 6 were run inline as reads, not as separate skill emits.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "6"
+  ],
+  "passes_skipped": [
+    "4",
+    "5"
+  ],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The mechanism is sound and small: one owner, one checked mirror, prose-only edits held by a hash pin. Nothing here breaks a user path. Move forward through a walk, not a redesign. The git-log and status-reason channel is the one item worth fixing before archive rather than carrying as residual, because it undercuts the property the stage exists to give: the second half of a blind pair can read the first half's headline from the commands its own brief tells it to run. Naming <change-start> directly and narrowing the status read is a repair, not new mechanism. The filename-versus-accepted-pass question should be settled in the owner now so rc03c builds to one rule. The placeholder and allow-list items are cheap edits in the same walk."
+  },
+  "final_assessment": "0 critical, 4 warning, 3 suggestion.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc03b-pass-genres --from-file orbit/changes/rc03b-pass-genres/.orbit-runs/review-system-2026-10-04T03-55-35Z.json"
+}

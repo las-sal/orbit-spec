@@ -1,0 +1,287 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-08T01:55:35Z",
+  "change": "rc18-walk-is-next",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc18-walk-is-next/.orbit-runs/review-system-2026-10-07T17-25-35Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-07T17-25-35Z",
+  "latest_apply_token": "2026-10-07T17-18-28Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 5
+  },
+  "pushback_verification": "verified",
+  "resolution_summary": {
+    "resolved": 6,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The frontier is defined as the owner's superseded test negated, but the owner states that test in phase terms",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc18-walk-is-next/specs/orbit-engine-gates/spec.md",
+      "line": 69,
+      "classification": "decision_required",
+      "action": "Sal ratified B in chat. The delta now carries `Gate-aware status and instructions with position readout` as a MODIFIED block whose superseded sentence is narrowed to the gate-id test the engine computes (a non-passed reviewed gate whose `before` names a gate that has passed; an artifact, a non-gate phase or nothing never marks a gate superseded), with a new scenario for the artifact case. The frontier sentence now points at that owner instead of restating its rule, and design D2 records why. The block's five carried scenarios plus the new one are declared by tests; the requirement is fingerprinted.",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "source": "structured",
+        "options": [
+          "A",
+          "B"
+        ],
+        "chosen": "B"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc18-walk-is-next/design.md",
+          "orbit/changes/rc18-walk-is-next/proposal.md",
+          "test/core/artifact-graph/outstanding-passes.test.ts"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/specs/orbit-engine-gates/spec.md",
+            "reason": "baseline spec; add a delta to your current change's specs/<capability>/spec.md to capture this ripple"
+          }
+        ]
+      },
+      "sweep": {
+        "retired": [
+          "That is exactly the test that marks a non-passed reviewed gate",
+          "That narrower rule is stated in the spec rather than"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc18-walk-is-next/specs/orbit-engine-gates/spec.md",
+            "text": "The test is on gate ids only (rc18)"
+          },
+          {
+            "path": "orbit/changes/rc18-walk-is-next/specs/orbit-engine-gates/spec.md",
+            "text": "A before naming an artifact never marks a gate superseded"
+          },
+          {
+            "path": "orbit/changes/rc18-walk-is-next/design.md",
+            "text": "frontier points at it (system walk, Sal: B)"
+          }
+        ],
+        "searched": [
+          "superseded",
+          "phase is already complete",
+          "exactly the test",
+          "nothing more"
+        ],
+        "scope": [
+          "orbit/specs/orbit-engine-gates/spec.md",
+          "src/core/artifact-graph/gates.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_miss_of": {
+        "walk": "2026-10-07T17-02-17Z",
+        "title": "Frontier completion is ambiguous for legal artifact targets",
+        "file": "orbit/changes/rc18-walk-is-next/design.md",
+        "kind": "judgement"
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The selection table's DERIVED closure counts two tracked-gate states, but a tracked gate can also be blocked",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc18-walk-is-next/specs/orbit-engine-gates/spec.md",
+      "line": 88,
+      "classification": "trivial_fix",
+      "action": "Added the row `tracked gate blocked | nothing; selection continues` and changed the closure line to the three tracked-gate states.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "plus the two tracked-gate states"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc18-walk-is-next/specs/orbit-engine-gates/spec.md",
+            "text": "| tracked gate `blocked` | nothing; selection continues |"
+          }
+        ],
+        "searched": [
+          "two tracked"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The verify fallback risk is stated for the passed gate only; the unpassed walk now diverges too",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc18-walk-is-next/design.md",
+      "line": 118,
+      "classification": "decision_required",
+      "action": "Converged with the external return's WARNING (walked here, the earlier pass). Reproduced first: an unpassed review-system holding a SUGGESTION-only pass had the walk as its graph next while a clean verify emit led with `/orbit:review --as system c`. Sal ratified A in chat: `systemReviewNext` now keeps the graph's next when it is the change-scoped walk, and the verify pass, warn and mode-② recommendations lead with it and carry the walk clause (no archive alternative). `orbit-run-summary-emit` is the stage's second capability: MODIFIED `Verify pass recommendation`, `Verify fail-mode recommendations` and `No forward-look at planned future behavior changes` (its verify-pass scenario reads the graph's leading command). Tests cover the unpassed and passed system gate and were shown able to fail by dropping the walk branch; the reader-parse scenario is ledgered untestable; the design risk line is rewritten; the rc03b pin moved for emit-composition.ts.",
+      "ratified_via": "chat",
+      "resolution": "A: repair in this stage — verify leads with the walk when the graph names it; orbit-run-summary-emit added as the second capability, under the ceiling.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/emit-composition.ts",
+          "orbit/changes/rc18-walk-is-next/specs/orbit-run-summary-emit/spec.md",
+          "orbit/changes/rc18-walk-is-next/proposal.md",
+          "test/core/artifact-graph/outstanding-passes.test.ts",
+          "orbit/scenario-ledger.yaml",
+          "test/core/rc03b-untouched-modules.test.ts"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/specs/orbit-run-summary-emit/spec.md",
+            "reason": "baseline spec; add a delta to your current change's specs/<capability>/spec.md to capture this ripple"
+          }
+        ]
+      },
+      "sweep": {
+        "retired": [
+          "so nothing new is introduced",
+          "keeps the graph's next only when it names a system review"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/emit-composition.ts",
+            "text": "walk the outstanding review findings before the next review"
+          },
+          {
+            "path": "orbit/changes/rc18-walk-is-next/specs/orbit-run-summary-emit/spec.md",
+            "text": "When a review pass is outstanding, the walk leads."
+          },
+          {
+            "path": "orbit/changes/rc18-walk-is-next/design.md",
+            "text": "Resolved at the system"
+          }
+        ],
+        "searched": [
+          "systemReviewNext",
+          "verification clean",
+          "verification passed with",
+          "system review recommended"
+        ],
+        "scope": [
+          "orbit/specs",
+          "src/core/templates"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "D2's mid-apply consequence covers one of two shapes",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc18-walk-is-next/design.md",
+      "line": 67,
+      "classification": "trivial_fix",
+      "action": "D2 now states the second mid-apply shape: after a partial-apply emit the proposal gate reads stale, is not superseded because apply has not passed, and names the walk through D5's step (2); `orbit status` shows it while the apply emit's own next stays `/orbit:apply`.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc18-walk-is-next/design.md",
+            "text": "names the walk through D5's step (2)"
+          }
+        ],
+        "searched": [
+          "mid-apply",
+          "during apply"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "A launched pair with no member landed shows a reason that says nothing is walked yet beside a next that names the walk",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc18-walk-is-next/design.md",
+      "line": 114,
+      "classification": "trivial_fix",
+      "action": "Added a risk bullet: the reason's \"either\" names the pair's members; the walk the next names is of an earlier pass outside the pair, and walking it leaves the pair intact (the fresh pass's probe).",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc18-walk-is-next/design.md",
+            "text": "names the pair's MEMBERS"
+          }
+        ],
+        "searched": [
+          "before either is walked"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The stage declaration still says walking cannot start a review loop",
+      "marker_source": "internal-review",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 3244,
+      "classification": "trivial_fix",
+      "action": "Qualified the charter's measurement sentence in place: walking the last slot's pass cannot start a review loop, on the measured branch, with a pointer to the exits' revision note for the off-path case.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "so walking cannot start a review loop"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "text": "walking the last slot's pass cannot start a review loop"
+          }
+        ],
+        "searched": [
+          "review loop"
+        ],
+        "scope": [
+          "orbit/changes/rc18-walk-is-next"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Six of six resolved: the frontier now points at a narrowed owner sentence (Sal: B), verify leads with the walk as a second capability (Sal: A, converged with the external WARNING), and four prose repairs.",
+  "iteration": 4,
+  "next_recommended": "/orbit:address-reviews rc18-walk-is-next",
+  "ripple_misses": 1
+}

@@ -1,0 +1,78 @@
+{
+  "command": "archive",
+  "timestamp": "2026-10-01T18:48:08Z",
+  "change": "rc16-retirement-sweep",
+  "kind": "lifecycle",
+  "model": "claude-fable-5-1",
+  "final_assessment": "Archived rc16-retirement-sweep to orbit/changes/archive/2026-10-01-rc16-retirement-sweep/ through a COMPUTED PASSED review-system gate — the sixth rc-stage through one, the fifth through the blind pair (fresh 0C/2W/1S and external GPT-5 Codex 1C/2W/2S on the pushed apply commit 0bc97a37, blind to each other, zero CRITICAL overlap, ONE converged defect — A4's restatement beside its pointer, SUGGESTION to one half and CRITICAL to the other; walked in two logs; an in-context confirm 0C/2W/1S over the walks' additions walked to zero in the record layer). Specs synced 6/6 byte-verified on two independent reads (six MODIFIED blocks across orbit-conventions, orbit-explore-modifications, orbit-orientation; no ADDED/REMOVED/RENAMED); fingerprints 6/6 verified before the sync; pre-archive audit 0 CRITICAL / 0 WARNING / 4 SUGGESTION (all category 5, engine-computed); no unresolved markers; 2376 tests green on the archived tree; validate --sources unchanged (25/14/21/4). EXIT (1) MEASURED: the eleven quoted sentences grep to 0 over the three synced baselines and the explore body — the eight baseline sites the sync retired now read their pointer forms. Exit (2) MET as written (three directories, MODIFIED only). Exit (3) is the post-archive project-wide audit-drift, its own invocation; Q-crc-28 closes on that run (at-archive note 3.3).",
+  "archive_path": "orbit/changes/archive/2026-10-01-rc16-retirement-sweep",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 4
+    },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": [
+      "orbit-conventions",
+      "orbit-explore-modifications",
+      "orbit-orientation"
+    ],
+    "added": 0,
+    "modified": 6,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
+  "user_decision": "proceeded_with_no_critical",
+  "consent": "user-invoked",
+  "warnings": [
+    "AT-ARCHIVE NOTE 3.3 is PENDING, by design: exit (3) is the project-wide /orbit:audit-drift run AFTER this archive — a separate user-invoked command under the no-chaining rule, not executed inside this flow. Q-crc-28 CLOSES on that run with a dated line naming its audit emit; the two src/core/orientation.ts comments (lines 22 and 50) are to be named there as true of the module and deliberately untouched; the class C re-entry trigger (D-rc16-1) is carried in Q-crc-28's closed record and reopens it only if it fires.",
+    "Pre-archive audit's four SUGGESTIONs are category 5 (touchpoints divergence), engine-computed from the boot JSON: actual_unpredicted = test/core/templates/orbit-generated-surface.test.ts (the instrument correction the apply emit records — a test riding along), and predicted_unsatisfied = the three baseline specs, which THIS sync satisfied. Categories 2 and 6 skipped (orbit/lenses/ absent; orbit/explore/ empty); categories 1, 3 and 4 clean over the last five archives; architecture staleness (a)-(d) found no inconsistent stage, no *State:* line, no dangling citation.",
+    "The marker grep over the change directory returned three '@review:' hits, none a marker: two are the orbit-explore-modifications delta's own description of the marker convention inside the carried `Nine moves` requirement (now baseline text), one is quoted inside a trail JSON's commentary. No prompt fired; unresolved_markers is empty on that reading.",
+    "The source lint's git-index domain (Q-crc-14): the moved change and the three synced baselines were staged with git add before npm test ran, so the suite saw the archived tree; the commit remains the user's act.",
+    "Two instrument notes from the cycle, seam-level: (a) at apply, the generated-surface mirror test's owner lookup was corrected per anchor — this change's conventions delta was the first active delta to hold the Mechanism-grammar block without the status-header block; recorded in the apply emit as the unpredicted touchpoint. (b) the review-external T0 emit's timestamp token (18-07-45Z) precedes its prompt file's token (18-08-12Z) because the prompt's token was set by hand rather than from the clock; prompt_path is explicit, nothing keys on the order."
+  ],
+  "judgements": [
+    {
+      "kind": "readiness",
+      "disposition": "ready",
+      "ratified_by": "ai",
+      "formed_against": [
+        "2026-10-01T17-31-53Z",
+        "2026-10-01T18-20-51Z",
+        "2026-10-01T18-21-12Z"
+      ],
+      "reasoning": "Three independent readings — a fresh pass on the proposal, then the blind pair on the shipped apply commit — each found the sweep's own disease (a pointer chosen from a title, not a read body) and each found it in a place the previous reading had not: the enumeration short by three sites, A4 and A5 pointed at owners that did not state the claim, A3's middle clause attributed to the rung-text owner instead of the row-render owner. Every one was repaired in the owning text and its body copy together, byte-equality re-checked, and the pair converged on the one restatement that survived. The work is prose and pointers with no engine code; every exit-criterion measurement was re-run by at least two readers (the fresh system pass re-ran all of them; the external re-ran the block diff and the residue grep), and the archive re-ran exit (1) on the synced baselines itself. I believe the retired set is gone from the baseline and the body says what the spec says.",
+      "accepted": [
+        {
+          "claim": "PASSED means every finding was resolved, not that an independent pass stood clean on the final tree: the last edits — three record sentences in the proposal and D-rc16-2's owner list, from the in-context confirm — were read in-context only.",
+          "why": "rc07's distinction, carried on every rc-stage archive. The three edits touch no delta, body, test or baseline; the in-context confirm itself re-ran every measurement on the tree the deltas and body already had, and those did not move afterward."
+        },
+        {
+          "claim": "The regenerated explore skill's exemplar fence still says 'rc13b' four times inside two verbatim-quoted bounded-closure-semantics entries — a stage id the body never defines, visible to an adopter.",
+          "why": "Both halves of the pair examined it and judged it sound as out-of-set: the entries are declared verbatim quotes of an archived change, D-rc16-2's domain is classes A and B, and rewriting quoted exemplars would make them no longer exemplars."
+        },
+        {
+          "claim": "CLAUDE.md:413 ('answers position / last / next per workstream with no artifact reads') is the one living sentence a strict Category 3 reading could set against the synced orientation clause.",
+          "why": "It sits in the section headed historical (the D3 record), the external pass read it as true of the reader rather than denying the stage-state source's header read, and the fresh pass judged exit (3) not at risk from it; the post-archive audit is the instrument that decides, and Q-crc-28 stays open if it fires."
+        },
+        {
+          "claim": "An adopter whose installed skill carries neither our specs nor our parser cannot act on a requirement title the repaired sentences now name.",
+          "why": "The fresh pass's adopter perspective: that was equally true of the 'until <stage> lands' prose it replaced, and a pointer at least names a stable thing; the reopen procedure and Step 0c.6 the body points at are in bodies the adopter does have."
+        },
+        {
+          "claim": "The widened grep's OUT count differs by two between two runs of nominally the same command — the fresh system pass reported 26 lines / 18 OUT, the walk's recorded run 24 / 16 — while the IN set (the eight baseline sites) was identical in both.",
+          "why": "The IN set is what the exit criteria measure and it agreed; the recorded command in the design's Mechanism record is now the single re-runnable closure, so the next run resolves the discrepancy rather than inheriting it; the external pass flagged exactly this unreproducibility and the record now carries the command."
+        }
+      ]
+    }
+  ],
+  "next_recommended": "Change archived. Run /orbit:new or /orbit:explore to start the next change, or /orbit:audit-drift for a project-wide drift check."
+}

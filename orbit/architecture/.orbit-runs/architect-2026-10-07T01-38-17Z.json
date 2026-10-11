@@ -1,0 +1,33 @@
+{
+  "command": "architect",
+  "timestamp": "2026-10-07T01:38:17Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Ratified rc17b-blind-pair-command (both exits MET as written); the split parent rc17 stays premised with rc17c its only open child.",
+  "stages_touched": [
+    "rc17b-blind-pair-command"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [
+    "rc17b-blind-pair-command"
+  ],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      {
+        "path": "orbit/architecture/clean-up-review-cycle.md",
+        "why": "the live program; rc17c's stage section is the next charter"
+      },
+      {
+        "path": "CLAUDE.md",
+        "why": "the program's shipped-stage narrative through rc17b"
+      }
+    ],
+    "next_command": "/orbit:explore rc17c-short-review-next",
+    "model_hint": null,
+    "seam": "rc17 has one open child, rc17c, whose only dependency (rc17a) is complete; its charter sits at R-crc-1's ceiling of three capabilities"
+  },
+  "next_recommended": "/orbit:explore rc17c-short-review-next"
+}

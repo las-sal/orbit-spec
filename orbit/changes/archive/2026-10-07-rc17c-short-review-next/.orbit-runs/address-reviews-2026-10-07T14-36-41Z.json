@@ -1,0 +1,140 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-07T14:36:41Z",
+  "change": "rc17c-short-review-next",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc17c-short-review-next/.orbit-runs/review-proposal-2026-10-07T13-22-11Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-07T13-22-11Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 3
+  },
+  "pushback_verification": "All three re-verified at HEAD: the scope word at spec line 5, ApplyComputed.chunk_complete: boolean (emit-composition.ts 1393), and the 152 count by the renderer's exact self-pointer predicate run in this walk.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "SUGGESTION",
+      "title": "The repaired orbit-review sentence says the requirement restates no pointer value, while its own scenario states one",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc17c-short-review-next/specs/orbit-review/spec.md",
+      "line": 5,
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "action": "narrowed the scope word: 'this paragraph names it and restates neither its values nor its per-mode split' — the scenario's expected value stays, as a test case should",
+      "sweep": {
+        "retired": [
+          "this requirement names it and restates neither"
+        ],
+        "introduced": [
+          {
+            "path": "specs/orbit-review/spec.md",
+            "text": "this paragraph names it and restates neither its values nor its per-mode split"
+          }
+        ],
+        "searched": [
+          "restates neither",
+          "names it"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "D6 says the apply chunk keys are written as null when unused, but chunk_complete is a boolean",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc17c-short-review-next/design.md",
+      "line": 76,
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "action": "qualified the parenthetical to the nullable keys: 'on every apply emit (the nullable ones as `null` when unused)' — ApplyComputed types chunk_complete as boolean",
+      "sweep": {
+        "retired": [
+          "apply emit (as `null` when unused)"
+        ],
+        "introduced": [
+          {
+            "path": "design.md",
+            "text": "(the nullable ones as `null` when unused)"
+          }
+        ],
+        "searched": [
+          "null when unused",
+          "chunk_complete"
+        ],
+        "scope": [
+          "src/core/emit-composition.ts"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The restated self-pointer count is 152, not 155",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc17c-short-review-next/design.md",
+      "line": 18,
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc17c-short-review-next/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "action": "restated 152 from a measurement this walk ran: next_recommended equal to the exact self pointer rebuilt from each archived proposal/system review emit's change and basename — 152 of 182",
+      "sweep": {
+        "retired": [
+          "155 carry the self pointer",
+          "The 155 archived proposal/system emits"
+        ],
+        "introduced": [
+          {
+            "path": "design.md",
+            "text": "review emits, 152 carry the self pointer."
+          },
+          {
+            "path": "proposal.md",
+            "text": "The 152 archived proposal/system emits"
+          }
+        ],
+        "searched": [
+          "155",
+          "152",
+          "182"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Three of three resolved in the obvious-fix lane: a scope word narrowed, a type claim qualified, and a count restated from a measurement this walk ran (152).",
+  "iteration": 3,
+  "next_recommended": "/orbit:apply rc17c-short-review-next — user-invoked",
+  "ripple_misses": 0
+}

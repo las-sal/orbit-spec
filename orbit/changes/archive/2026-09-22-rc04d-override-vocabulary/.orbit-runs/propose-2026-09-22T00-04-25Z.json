@@ -1,0 +1,9 @@
+{
+  "command": "propose",
+  "timestamp": "2026-09-22T00:04:25Z",
+  "change": "rc04d-override-vocabulary",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "Consume-mode propose for rc04d-override-vocabulary — the de-naming half of the rc04c split, generated from an exploration carrying TWO decisions and ZERO open questions, so Step 0b fired no prompts. Five MODIFIED requirements across three capabilities: orbit-engine-gates (3), orbit-pr-lifecycle (1, two sites within it), orbit-conventions (1). AT R-crc-1's ceiling rather than over it. The delta specs were BUILT FROM BASELINE BY SCRIPT WITH ASSERTIONS rather than hand-patched — the authoring mode that dropped four baseline scenarios earlier in this program — and then checked a SECOND time by an independent scenario-level diff, because trusting the authoring script's own assertions is the instrument-error class this program has recorded five times. Result: 27 scenarios preserved, 0 dropped, and every changed scenario body changed by exactly its named substitution, each diff inspected line by line. Four sites are plain substitutions; the fifth is the stage's one substantive edit, moving ownership of the override record's SHAPE from orbit-engine-gates to orbit-run-summary-emit, which already owns it — a one-voice-for-facts fix landing inside a requirement already being edited. 12 tasks, three of them verification and two of them handoffs recording what rc04c inherits: the two orbit-content-fidelity pins that go red when the bodies stop writing the field, and the three-capability scope that remains. Fingerprints 5/5 verified; validate --strict clean. The stage's real mechanism is exit (2) — no src/ and no test/ change anywhere in the diff — which turns 'this is pure vocabulary' into something the stage can fail.",
+  "next_recommended": "/orbit:review rc04d-override-vocabulary — proposal artifacts ready; review before apply"
+}

@@ -1,0 +1,49 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-08-10T03:25:54Z",
+  "change": "d5-context-economy",
+  "kind": "editorial",
+  "model": "claude-fable-5",
+  "source": "from-file",
+  "source_path": "orbit/changes/d5-context-economy/.orbit-runs/external-system-2026-08-10T03-19-30Z.md",
+  "source_command": null,
+  "external_reviewer": "OpenAI Codex (GPT-5)",
+  "walk_mode": "per_finding",
+  "walk_mode_source": null,
+  "input_findings_summary": {
+    "critical": 1,
+    "warning": 0,
+    "suggestion": 0
+  },
+  "pushback_verification": "Verified live before acting: assertContained's `real !== realRoot &&` clause read at the predicate — the `.orbit-runs -> .` alias resolves to exactly realRoot and is explicitly accepted, matching their reproduction; the sibling-alias and cross-scope-descendant variants follow from the same ancestry predicate. 0 stale suppressions.",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "marker": "src/core/emit-composition.ts:745 — trail containment accepts in-container aliases (ancestry, not canonical identity)",
+      "severity": "CRITICAL",
+      "source": "external",
+      "classification": "trivial fix",
+      "status": "resolved",
+      "action": "New assertCanonicalTrailDir replaces the ancestry check at the write boundary: the resolved trail dir must EQUAL path.join(realpath(parent), '.orbit-runs') exactly — identity, not containment. The iter-3 reproduction (.orbit-runs -> ., landing records beside tasks.md), an in-container sibling alias, and a project-trail alias into another scope's directory are all refused with nothing written; the iter-2 outside-container regressions re-pointed at the new error and still green. assertContained remains for the workstream-container scope checks, where containment IS the right predicate. Delta containment sentence upgraded from containment to canonical identity, naming the alias cases.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/emit-composition.ts",
+          "test/core/emit-composition.test.ts",
+          "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md"
+        ],
+        "flagged_not_applied": []
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": null,
+  "final_assessment": "The single iteration-3 external finding (1 CRITICAL, OpenAI Codex GPT-5) walked and resolved: trail-dir validation upgraded from ancestry to canonical identity — the resolved .orbit-runs must physically BE its container's .orbit-runs child, refusing in-container aliases (.orbit-runs -> ., sibling redirects, cross-scope descendants) exactly like outside escapes. Codex confirmed all five other iter-2 resolutions hold. 1915 tests green (1914 → 1915); strict validation; fingerprints 26/26. The external convergence trend: 8 → 6 → 1 findings, the last confined to one predicate in one function.",
+  "iteration": 14,
+  "next_recommended": "/orbit:review --as system --reviewer external d5-context-economy"
+}

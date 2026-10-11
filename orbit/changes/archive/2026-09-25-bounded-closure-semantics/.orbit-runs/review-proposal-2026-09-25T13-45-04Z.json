@@ -1,0 +1,117 @@
+{
+  "command": "review",
+  "timestamp": "2026-09-25T13:45:04Z",
+  "change": "bounded-closure-semantics",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 2
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 3,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 13,
+      "title": "The Kind: regex excludes the nested-bullet form the same sentence admits",
+      "recommendation": "Line 9 says a slot line may be a lazy-continuation line OR a nested bullet; the production at line 13 is `^\\s*Kind:\\s*(rule|fact|scope)\\s*$`, which a nested bullet (`- Kind: rule`) never matches. One of the two is wrong. Make the regex `^\\s*(?:[-*+]\\s+)?Kind:\\s*(rule|fact|scope)\\s*$` and state that `Disposition:` and `Re-entry:` are matched with the same optional bullet prefix — or strike `or a nested bullet` from line 9. The walk wrote both halves in one edit and did not execute the regex against the second form; D-bcs-8's COHERE line should record the correction."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "specs/orbit-explore-modifications/spec.md",
+      "line": 167,
+      "title": "The walk restated two rules in both capabilities — the R-crc-14 shape, introduced by the walk itself",
+      "recommendation": "(a) `a rule left with no entry is a visible open domain, never a downgraded Kind` is stated at line 167 (the sweep scenario) AND at line 109 (`rather than downgrading the Kind to escape it`, the capture scenario); task 2.5 says it is stated once, in the sweep. (b) The reopen steps — inverse edit, dated entry, prior CONCLUDED entry `Disposition: superseded <new ID>` — are stated at line 58 AND in `orbit-conventions`' reopen scenario (spec.md:127). Both were single statements before the walk; the walk's ripple copied the predicate instead of pointing. Fix: line 167 → `a rule left with no entry stays a visible open domain (per the capture scenario)`; line 58's reopen clause → `Reopening follows orbit-conventions' reopen scenario, then a boundary emit`; correct task 2.5 to name the capture scenario as the owner. R-crc-14(b): delete the copy, keep the owner."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 138,
+      "title": "The status header has two fixed tokens and no production — the one slot the fifth rung reads first",
+      "recommendation": "The Decisions slots and the Mechanism entry got fenced productions after the fresh pass; the header did not. `> **Status**: exploring. …` and `> **Status**: concluded <YYYY-MM-DD>.` are described in prose at line 138 and line 148. Add one production beside them: `^> \\*\\*Status\\*\\*: (exploring\\b|concluded \\d{4}-\\d{2}-\\d{2}\\.)` matched on the file's first non-blank line, with the rule that any other first line is neither token (resolved as not-concluded per the re-entry requirement, never MALFORMED). rc13b's fifth rung keys on exactly this line."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "tasks.md",
+      "line": 12,
+      "title": "Four clauses the walk added to the specs have no task line, and task 1.3 now says ONE fenced block where the delta has two",
+      "recommendation": "(1) 1.2 names `the opener grammar as the ID slot` but not the fenced Decisions production with its slot-line regex (conventions:11-16); (2) 1.3 says `ONE normative fenced block` — the Decisions production is a second; (3) the Mode B resume clause `a file lacking a Mechanism section gains one (add-only)` and the re-entry sentence `a staging directory without explore.md, or whose header carries neither token, resolves as not-concluded` (explore-mods:56) have no home in 2.3; (4) 2.4 says `assert it in 4.1` but 4.1's assertion list does not include the no-metadata sentence. Edit 1.2, 1.3, 2.3 and 4.1 to name each; the count stays 16."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 19,
+      "title": "Disposition: is used on scope entries (the CONCLUDED entry) but defined only by its consequence for rules",
+      "recommendation": "Line 19 defines `Disposition:` through `A rule is IN the accounting obligation only while…`; line 105 and line 127 use it on a `Kind: scope` entry to retire a `Re-entry:` slot. State the slot's meaning once, generally — `live` means the entry's claim stands; `superseded`/`assigned` mean it does not — and list its two consequences: obligation membership for rules, slot liveness for concluded entries."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 72,
+      "title": "A Domain: table with a header and separator but zero member rows is neither MALFORMED nor accounted",
+      "recommendation": "The wrong-shape row covers column count and the separator; an empty enumeration passes it and would read as an accounted CLOSED domain with no members. Add `a Domain: table with no member rows (naming the table's first line)` to the MALFORMED list — an enumeration of nothing is not an enumeration."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "explore.md",
+      "line": 376,
+      "title": "D-bcs-10 hands rc13b a fifth rung and a withholding predicate without saying which wins when both apply",
+      "recommendation": "A concluded exploration may still carry live rules with open domains. D-bcs-10 says the fifth rung `recommends neither verb` and the FORM predicate withholds Mature on open rules, but not their precedence. Add one sentence to D-bcs-10 (and its CONSUME move line): the header token is read first; a concluded file renders the fifth rung regardless of open rules, and the open-rule list is rendered beside it as a record, never as a withholding. It is rc13b's to build, and this file is the record it will read."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "This pass is the reaction the cadence expects: I authored every edit the fresh pass provoked, so I read the walk's own output as the thing most likely to be wrong in a new place, and it was. Three of the four warnings are defects the walk INTRODUCED — a regex written beside prose that admits a form the regex rejects, two predicates copied into a second capability by the ripple cascade that R-crc-14 says should have pointed, and four clauses of new spec text that no task line names. That is the descope-sweep corollary running in reverse: a repair sweep is the expensive lane for artifacts, and each parallel edit is a chance to restate. The fourth warning is the one slot the fresh pass's grammar findings did not reach — the status header, which the fifth rung reads before anything else. I probed the walk's B decision hard and found it consistent everywhere the sweep touched: no `concluded:` key survives in any normative sentence, the two-token record is stated identically in both capabilities, the order entry → header → emit is the same in four places, and the three KNOWN limits each name an owner. The fresh pass's sixteen resolutions all hold at the cited lines; the gate already keys them, so none is re-reported here. Residual texture: everything left is a production or a pointer, cheap to land, and the one new thought for rc13b (rung precedence) is a record in explore.md rather than a change to this proposal's scope.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "final_assessment": "0 critical, 4 warning, 3 suggestion.",
+  "iteration": 2,
+  "next_recommended": "/orbit:address-reviews bounded-closure-semantics --from-file orbit/changes/bounded-closure-semantics/.orbit-runs/review-proposal-2026-09-25T13-45-04Z.json"
+}

@@ -1,0 +1,12 @@
+{
+  "command": "explore",
+  "timestamp": "2026-09-15T16:47:13Z",
+  "change": "rc07-artifact-lint",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "Five decisions. The lint's domain is the WHOLE PROJECT rather than orbit/ — three of four restated-figure defects this session were in CLAUDE.md, which no validator reads — and it closes three ways, all SOURCED: files over `git ls-files` minus DECLARED exclusions (61 today), sources over a registry file, markers by grep. The exclusions forced a principle rather than a preference: the lint reads LIVING documents, never RECORDS, because a figure in an archived change or an emit was TRUE WHEN WRITTEN and linting it would demand rewriting history to match the present — and living-versus-record is decidable by PATH, so R-crc-10 holds throughout. The residual is stated per the kind-and-method rule: an UNMARKED restatement stays invisible, so exit criterion 1 must say MARKED; the mitigation is per-source marker coverage, a record that counts rather than judges. And half (B), the payload round-trip, SPLITS into its own stage — the notable thing being WHEN: R-crc-9's first application came after two passes and 48 findings; this one fired at exploration, before anything was written. A ruling that only works in post-mortem costs a stage every time.",
+  "decisions_captured": 5,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "next_recommended": "/orbit:propose rc07-artifact-lint — substantial thinking captured; ready to formalize the design (or /orbit:explore rc07-artifact-lint to keep refining)"
+}

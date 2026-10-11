@@ -1,0 +1,101 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-14T07:59:35Z",
+  "change": "rc02-gate-semantics",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc02-gate-semantics/.orbit-runs/review-proposal-2026-09-14T07-54-59Z.json",
+  "source_command": "review",
+  "source_token": "2026-09-14T07-54-59Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "walk_mode_source": null,
+  "input_findings_summary": {
+    "critical": 1,
+    "warning": 4,
+    "suggestion": 0
+  },
+  "pushback_verification": "The findings were verified before acting by grepping the artifact for every string the prior log claimed to have written; seven of seventeen returned zero. After re-applying, the same probe set was re-run and every expected string returned its expected count, including two NEGATIVE probes for the retired phrasings. Grepping the phrase rather than the passage found two sites the finding did not name — a blind-pair scenario WHEN and task 4.1 — both of which restated freshness after the predicate had stopped doing so.",
+  "resolution_summary": {
+    "resolved": 5,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "Three CRITICAL resolutions from the last walk never landed, and the delta now ships scenarios its own requirement text contradicts",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 256,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "action": "All seven missing edits re-applied as ONE set, then each VERIFIED BY GREP rather than by assertion. The three CRITICAL ones now read as the prior walk intended: EXISTENCE FIRST is scoped to 'any SUBSTANTIVE (CRITICAL or WARNING) finding' with suggestion-only passes explicitly needing no walk; readability requires a NON-EMPTY ARRAY and the unreadable list names EMPTY alongside absent and non-array; succession makes the empty-R case terminal ('When R is EMPTY the current set is FINAL') and bounds the successor on BOTH axes. The three scenarios that had been contradicting their own rules now match them. Verification probes and their results are recorded in this entry's action rather than asserted: PASS-LIST QUANTIFICATION 1, EMPTY SETS ARE NEVER VACUOUSLY SATISFYING 1, substantive-existence 1, NON-EMPTY ARRAY 1, 'absent, EMPTY, or not an' 1, 'When R is EMPTY the current set is FINAL' 1, 'Among the assignments that satisfy the WHOLE cadence' 1, 'repeat is NOT BOUNDED BY THE ENGINE' 1, and the two retired phrases REPEAT IS BOUNDED BY 0 and 'both fresh' 0.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02-gate-semantics/design.md",
+          "orbit/changes/rc02-gate-semantics/tasks.md"
+        ]
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "The quantifier-convention preamble is absent, so freshness is still restated inside the pair predicate and the `stale` state stays unreachable",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 235,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "action": "Both conventions re-applied as the pass condition's opening. Freshness now has exactly one home: the pair predicate's 'both are fresh per the freshness rule' is gone, and so is the residual restatement in the blind-pair scenario's WHEN and in task 4.1's instruction — three sites, not the one the finding named, found by grepping the phrase rather than the passage. NEW task 2.0 requires the conventions be implemented once and asserts freshness is not restated inside any slot predicate.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02-gate-semantics/tasks.md"
+        ]
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "The earliest-pair subordination is absent, so the clause still endorses two different algorithms",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 228,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "action": "Re-applied: selection now happens 'among the assignments that satisfy the WHOLE cadence', described explicitly as a DETERMINISM rule over successful assignments and never a pre-filter, with the foreclosure case spelled out. The clause no longer prescribes fix-earliest and backtracking at once.",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The repeat-bound overclaim survives at line 313",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 313,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "action": "Re-applied: the text now reads that the repeat is NOT bounded by the engine, that the budget PRICES it, and that the decision to stop is the user's at the inflection prompt since exhaustion is a report and never a block. A gate declaring no budget repeats with no reported ceiling.",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The walk log records 17 of 17 resolved, which is false on seven counts, and the gate reads that log",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 1,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "action": "CORRECTION RECORDED RATHER THAN OVERWRITTEN, per the finding's own recommendation. The prior log (address-reviews-2026-09-12T20-30-24Z.json) states 17 of 17 resolved; SEVEN of its entries describe edits that never reached the artifact, because that walk applied its changes through two scripts and the first aborted before its single write. The seven over-reported entries are the ones whose resolutions this walk has now actually applied: the three CRITICALs (succession vacuity, empty-array readability, severity-blind existence) and four WARNING-grade edits (the quantifier-convention preamble, the freshness home, the earliest-pair subordination, the repeat-bound restatement). The remaining ten entries in that log were accurate. A reader of the trail alone can now see what happened without diffing the artifact. Method change carried forward into this walk and recorded in the design: every claimed edit is verified by grep before the log is written.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02-gate-semantics/design.md"
+        ]
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": "R-crc-3 (Sal, 2026-09-11): method decisions are settled by the authoring AI and recorded with rationale, not briefed for ratification.",
+  "final_assessment": "5 of 5 resolved; 0 unresolved markers in scope. The whole walk was a re-application: seven edits the fourth walk's log claimed but never wrote, re-applied as one set and each verified by grep rather than by assertion. The three CRITICAL rules now read as intended and the three scenarios that had been contradicting them match. Two further freshness restatements surfaced that the finding had not named, found by grepping the phrase instead of the passage. The prior log's over-reporting is CORRECTED ON THE TRAIL rather than silently overwritten: this entry names the seven inaccurate entries and confirms the other ten. The method change is the durable part and is recorded in the design — a walk verifies every claimed edit against the artifact before writing its log, because a log that certifies work which did not happen is the one failure no independent reviewer can see.",
+  "iteration": 5,
+  "next_recommended": "/orbit:review --as proposal --fresh rc02-gate-semantics"
+}

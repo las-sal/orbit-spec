@@ -1,0 +1,41 @@
+{
+  "command": "apply",
+  "timestamp": "2026-10-07T17:18:28Z",
+  "change": "rc18-walk-is-next",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "user_validation_tasks": [
+    "4.4"
+  ],
+  "consent": "user-invoked",
+  "tasks_completed": 14,
+  "tasks_remaining": 1,
+  "user_validation_remaining": 1,
+  "chunk": null,
+  "chunk_name": null,
+  "chunk_complete": true,
+  "tasks_completed_this_session": 14,
+  "files_touched": [
+    "orbit/architecture/clean-up-review-cycle.md",
+    "orbit/changes/rc18-walk-is-next/.openspec.yaml",
+    "orbit/changes/rc18-walk-is-next/.orbit-runs/address-reviews-2026-10-07T17-01-55Z.json",
+    "orbit/changes/rc18-walk-is-next/.orbit-runs/address-reviews-2026-10-07T17-02-17Z.json",
+    "orbit/changes/rc18-walk-is-next/.orbit-runs/address-reviews-2026-10-07T17-06-32Z.json",
+    "orbit/changes/rc18-walk-is-next/.orbit-runs/external-prompt-proposal-2026-10-07T16-43-49Z.md",
+    "orbit/changes/rc18-walk-is-next/.orbit-runs/external-proposal-2026-10-07T16-48-24Z.md",
+    "orbit/changes/rc18-walk-is-next/.orbit-runs/review-external-2026-10-07T16-44-03Z.json",
+    "orbit/changes/rc18-walk-is-next/.orbit-runs/review-proposal-2026-10-07T16-48-02Z.json",
+    "orbit/changes/rc18-walk-is-next/.orbit-runs/review-proposal-2026-10-07T17-04-12Z.json",
+    "orbit/changes/rc18-walk-is-next/design.md",
+    "orbit/changes/rc18-walk-is-next/proposal.md",
+    "orbit/changes/rc18-walk-is-next/specs/orbit-engine-gates/spec.md",
+    "orbit/changes/rc18-walk-is-next/tasks.md",
+    "src/core/artifact-graph/gates.ts",
+    "src/core/artifact-graph/instruction-loader.ts",
+    "test/core/artifact-graph/outstanding-passes.test.ts",
+    "test/core/rc03b-untouched-modules.test.ts"
+  ],
+  "diff_base": "f976e2f532996ed7580a938de9bfb5c144311075",
+  "final_assessment": "14 of 15 tasks done. the passed-frontier predicate and the unpassed gate's walk step shipped in gates.ts and the selection loop; 16 new tests (3039 → 3055), each new assertion shown able to fail by three clean mutations; task 2.3 updated no existing test — the oracle shards and invoked-coverage ran unchanged, none asserting a review next on a state holding an unwalked pass; rc03b pin moved for gates.ts and instruction-loader.ts as a recorded planned act; charter exits (2) and (3) revised with the reasons recorded; 4.4 is the user-validation handoff observed on this stage's system cycle",
+  "next_recommended": "/orbit:review --as system --reviewer blind-pair rc18-walk-is-next"
+}

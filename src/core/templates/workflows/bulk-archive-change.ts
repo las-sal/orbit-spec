@@ -5,6 +5,7 @@
  * templates file into workflow-focused modules.
  */
 import type { SkillTemplate, CommandTemplate } from '../types.js';
+import { DEFERRAL_REFUSALS } from './archive-change.js';
 
 export function getBulkArchiveChangeSkillTemplate(): SkillTemplate {
   return {
@@ -42,7 +43,7 @@ This skill allows you to batch-archive changes, handling spec conflicts intellig
       - Note which artifacts are \`done\` vs other states
 
    b. **Task completion** - Read \`orbit/changes/<name>/tasks.md\`
-      - Count \`- [ ]\` (incomplete) vs \`- [x]\` (complete)
+      - Count \`- [ ]\` (incomplete) vs \`- [x]\` (complete), excluding every unchecked task carrying the \`(User-validation\` marker — the per-change user-validation closure owns those (orbit named edit, per \`orbit-archive-modifications\`' \`User-validation closure at the archive seam\`), so a change whose only unchecked tasks carry the marker is never classed incomplete or offered for skipping
       - If no tasks file exists, note as "No tasks"
 
    c. **Delta specs** - Check \`orbit/changes/<name>/specs/\` directory
@@ -250,6 +251,71 @@ No active changes found. Create a new change to get started.
 
 # Orbit additions
 
+## Four execution disciplines (epitome)
+
+The four disciplines from \`orbit-conventions\`, embedded per body; detail lives where each fires.
+
+- **Read-before-reference (authoring-time)**: read a construct's actual definition before naming it; unverifiable → ask or leave a \`@review:\` marker, never guess.
+- **Change completeness (modification-time)**: apply substantive modifications fully across ALL affected artifacts; after mechanical edits, sweep for residue AND new bugs the replacement introduced.
+- **Pushback (review-time)**: verify each flagged issue against current state before acting; suppress stale findings with evidence rather than re-fixing already-fixed state.
+- **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line — gate \`passed\` means *eligible*, not *commanded*.
+
+## Per-change consent (D1 — per \`orbit-lifecycle-consent\`)
+
+Archive is a consent-scoped command; the bulk wrapper applies the provenance rule PER CHANGE:
+
+- **User-typed \`/orbit:bulk-archive\`**: the Step 7 batch confirmation IS the user's invocation for the confirmed set — no per-change consent prompt fires, and each inner archive's run summary records \`consent: "user-invoked"\`.
+- **AI-mediated arrival** (delegation, inference, handoff — no explicit same-turn user invocation of the bulk command): fire the consent **AskUserQuestion** per change BEFORE that change's writes (position readout + what that archive will write: deltas/capabilities to sync + the move — Proceed / Abort). Proceed records \`consent: "prompted"\` in that change's run summary; Abort skips that change (no writes, no summary for it) without stopping the rest of the batch.
+- **When provenance is uncertain, treat the arrival as AI-mediated.**
+
+**Consent-era stamp (migrate-on-touch, per change)**: once consent is established for a change, read its \`.openspec.yaml\`; if it lacks \`schema_version\`, stamp \`consent_era_from: <current UTC timestamp, YYYY-MM-DDTHH:MM:SSZ>\` (add-only) before proceeding with that change.
+
+**Sync inheritance (no double-prompt)**: each inner sync-specs step (Step 8a) inherits its containing archive's consent — it never fires a separate consent prompt.
+
+## PR layer: bulk-archive runs NO tail (D-arc Stage D6)
+
+Bulk-archive archives SEVERAL changes in one invocation, and the PR-attached tail is
+inherently SINGLE-BRANCH: HEAD can be on only one branch, so under \`pr: per-proposal\` — where
+every attached change has its own — the tail's HEAD precondition would skip all but at most
+one change, and WHICH one would depend on the incidental fact of where the user was standing.
+Rather than let outward behavior fall out of that accident, this flow performs no tail at all.
+
+Each change is synced, moved, and emitted exactly as pre-capability. NO commit, push,
+description rewrite, or READY flip occurs for any change in the batch, whatever \`pr:\` reads.
+The per-change consent preview accordingly OMITS the outward-writes line (there are none to
+preview).
+
+The **Bulk Archive Complete** readout SHALL NAME the PR-attached changes it left DRAFT, with
+their PR URLs, so a batch never silently strands a pull request — reporting, never acting, per
+\`orbit-conventions\`' residual outward-actions rule. Resolve each change's attachment exactly
+as single-archive Step 5.45 does: read \`pr_attachment\` from the LATEST attachment-bearing
+PROPOSE or FF emit on that change's trail (read-only — no \`gh\` query, since the bulk flow
+performs no remote work); report its \`url\` when present, and \`attached, no PR recorded\`
+when the record lacks one; a change with no attachment at all is not named (it never had a
+PR). Single-change \`/orbit:archive\` is the seam that flips.
+
+## Per-change user-validation closure (rc10 — NEW step inside upstream Step 8)
+
+(Per \`orbit-archive-modifications\`' \`User-validation closure at the archive seam\`)
+
+For EACH confirmed change, before its fingerprint check, its Step 8a sync and its Step 8b move, run \`orbit-archive-change\`'s Step 3.2 for that change: dispose of every unchecked \`(User-validation\` task in its \`tasks.md\` as OBSERVED (check the box with a one-line evidence note) or DEFERRED (compose a \`deferred_validations\` entry \`{task, why, when, where}\` for that change's own archive run summary), and check each case of the production below — a CHECKED MIRROR of the owner's fence — against the composed deferrals. A marked task with no id, in no group, or with an id another task line carries (cases 2, 3 and 8), or an unreadable \`tasks.md\`, is reported to the user, who repairs it or skips that change (record it as Skipped in the Step 9 summary) without stopping the rest of the batch.
+
+\`\`\`
+${DEFERRAL_REFUSALS}
+\`\`\`
+
+BRIEF that change's dispositions in chat right there, BEFORE its sync and move — one line per task: the change, the task id, OBSERVED or DEFERRED and, for a deferral, its \`why\` — so a weak \`why\` reaches the user while the change is still active, and repeat them in the Step 9 **Bulk Archive Complete** summary. The brief reports; it does not prompt (halting that change stays the user's, by stopping the batch).
+
+## Per-change archive emit (rc10 — NEW step inside upstream Step 8, after 8b)
+
+After each change's Step 8b move, write that change's archive run summary exactly as \`orbit-archive-change\`'s Step 5.5 does — compose the payload its \`references/archive-summary-schema.md\` lists, carrying this change's \`consent\`, its fingerprint fields when its check produced any, and its Step 3.2 \`deferred_validations\` — and invoke:
+
+\`\`\`bash
+orbit emit archive --change <name> --payload <payload-file>
+\`\`\`
+
+The engine resolves the change's archived directory itself. Each emit is checked by the same write gate as a single archive's; a refusal after the move is repaired by re-running that change's \`orbit emit archive\`, never by repeating its sync or move.
+
 ## Per-change base-fingerprint check (C2 — NEW step inside upstream Step 8)
 
 (Per \`orbit-base-fingerprints\` and \`orbit-archive-modifications\`' \`Fingerprint-divergence inflection prompt\` requirement)
@@ -285,7 +351,7 @@ user's explicit choice, and record the per-change outcome in the Step 9 summary 
 
 (Per \`orbit-run-summary-emit\` capability)
 
-\`/orbit:bulk-archive\` is a wrapper around \`/orbit:archive\`; each inner \`/orbit:archive\` invocation emits its own \`archive-<TS>.json\` per the universal-spine convention. The outer \`/orbit:bulk-archive\` wrapper adds NO additional "what's next" signal and SHALL NOT emit a separate \`bulk-archive-<TS>.json\`.
+\`/orbit:bulk-archive\` is a wrapper around \`/orbit:archive\`; each archived change gets its own \`archive-<TS>.json\`, written by the per-change archive emit step above per the universal-spine convention. The outer \`/orbit:bulk-archive\` wrapper adds NO additional "what's next" signal and SHALL NOT emit a separate \`bulk-archive-<TS>.json\`.
 
 Downstream consumers see N \`archive-<TS>.json\` files (one per inner archive) and read each independently.`,
     license: 'MIT',

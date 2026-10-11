@@ -1,0 +1,125 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-01T12:47:08Z",
+  "change": "rc15-ended-stage-state",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc15-ended-stage-state/.orbit-runs/review-system-2026-09-29T17-45-34Z.json",
+  "source_command": "review",
+  "source_token": "2026-09-29T17-45-34Z",
+  "latest_apply_token": "2026-09-29T17-11-18Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 3
+  },
+  "pushback_verification": "All 4 findings verified against HEAD dd011bd7 plus log 1's uncommitted edits (each cited line read: orientation spec lines 44 and 94-95; architect.ts §5's unprompted paragraph; proposal.md:104/111-112 and design.md:108/149/153; CLAUDE.md:414-416). 1 stale — CLAUDE.md:414 was repaired in log 1 (address-reviews-2026-09-30T13-13-20Z, external W2). Finding 1 partially applies: the scenario's source list already names stage-state computation, so the clause is true of orientation's module and false of the composed view — a spec-truth gap, as the pass said. Log 2 of the blind pair's two walks.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 1,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Orientation's closed data-source scenario says 'never artifact-content parsing' while the PROGRAM band now reads explore.md headers through stage-state computation",
+      "marker_source": "internal-review",
+      "file": "orbit/specs/orbit-orientation/spec.md",
+      "line": 44,
+      "classification": "decision_required",
+      "action": "Option B ratified by chat (Sal: 'b', 2026-10-01): the capability count stays at three. Both sentences are now NAMED by requirement and line at HEAD dd011bd7 in two places — design.md's two-source-window residual (the readiness record's source) and at-archive note 5.4's sweep handoff (with the one-clause repair the sweep should apply: qualify the THEN clause as 'orientation itself parses no artifact content; the stage-state source it consumes reads the concluded header per orbit-architecture-engine', soften the chip parenthetical to 'the ROW's chip is read from the trail'). Option A — a one-clause orbit-orientation delta — was briefed and declined: a fourth capability over R-crc-1, and exit (3)'s recorded 'no orbit-orientation delta' measure would become a MISS under R-crc-12 (still measurable, not met) unless the charter were revised. The baseline sentences are OUT of cascade (baseline spec) by rule and were not edited.",
+      "ratified_via": "chat",
+      "resolution": "B — named residual in the readiness record; repair handed to the retirement-class sweep via note 5.4; no fourth capability",
+      "recommendation_fork": {
+        "source": "structured",
+        "options": [
+          {
+            "label": "A",
+            "body": "Add a one-clause `orbit-orientation` delta to the `No live inference` scenario: `architecture stage-state computation (which reads the concluded header of citing staging directories per orbit-architecture-engine)`, and soften the chip sentence's `never from the file` to `the ROW's chip is read from the trail`. Cost: a fourth capability directory, over R-crc-1's three-capability ceiling and against exit (3)'s recorded `ls specs/` measurement (though exit (3) itself protects only the WAITING-set requirement, which stays untouched) - so this lane needs an R-crc-9 declaration or a ratified exception."
+          },
+          {
+            "label": "B",
+            "body": "Keep the capability count at three: record the residual in the archive's readiness record naming BOTH sentences by requirement and line (`orbit-orientation` `No live inference` THEN clause; the explore-chip `never from the file (per ...)` parenthetical), and hand the one-clause repair to the same retirement-class sweep at-archive note 5.4 already feeds - it is the same class (a living sentence describing the reader's pre-rc15 limit) as the two sentences 5.4 names."
+          }
+        ],
+        "selected": "B"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc15-ended-stage-state/tasks.md",
+          "orbit/changes/rc15-ended-stage-state/design.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/specs/orbit-orientation/spec.md",
+            "reason": "baseline spec; add a delta to your current change's specs/<capability>/spec.md to capture this ripple — declined by the ratified option B (R-crc-1); handed to the retirement-class sweep by at-archive note 5.4"
+          }
+        ]
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The unprompted route's UNDATED and live-citer tests are not stated in the status JSON's own field names, and the `concluded` flag on `citing[]` entries has no spec home",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/architect.ts",
+      "line": 109,
+      "classification": "trivial_fix",
+      "action": "The unprompted paragraph now states both tests in the status JSON's own field names, no doc re-read: UNDATED = `ratified` and `ended` both false (absent and `[ ]` indistinguishable there and need not be told apart); the live citer = the `citing[]` entry of kind `active-change`, else the `explore` entry lacking `concluded: true`. The delta's JSON sentence (orbit-architecture-engine, `Computed stage state`) now gives `concluded` its spec home: each explore entry of `citing[]` carries `concluded: true | false`, and the text render prints ` (concluded)` after such a citer. Two fidelity markers pin the body sentences; the orbit-architect pins (both lines) moved with this edit and were re-recorded under the same walk note as log 1's mirror edit (one re-record for the walk's two body edits). Surface regenerated; validate --strict valid; fingerprints 5/5 (the delta edit touches no baseline fingerprint).",
+      "ratified_via": "chat",
+      "resolution": "derivations stated in the payload's terms; concluded given its owner sentence",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc15-ended-stage-state/specs/orbit-architecture-engine/spec.md",
+          "test/core/templates/orbit-content-fidelity.test.ts",
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "proposal.md and design.md still state two plan facts the apply corrected only in tasks.md (the audit-drift hash pin; live-arc.test.ts as rc03a's pin)",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc15-ended-stage-state/proposal.md",
+      "line": 104,
+      "classification": "trivial_fix",
+      "action": "Dated one-line CORRECTED notes appended at all five sites (proposal.md:104 and :111-112; design.md:108, :149, :153) — the uncorrected text is kept as the record and the correction sits beside it: no orbit-audit-drift pin exists and the orbit-architect pin is two lines that moved at apply and again at this walk; live-arc.test.ts pins the D-arc doc only and never sees rc03a, the fifteen-cell table and 5.3's own observation being the pin.",
+      "ratified_via": "chat",
+      "resolution": "dated corrections beside the record at each site",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc15-ended-stage-state/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "CLAUDE.md's D2 paragraph still states the four-rung precedence in-change > exploring > quiescent > premised",
+      "marker_source": "internal-review",
+      "file": "CLAUDE.md",
+      "line": 414,
+      "classification": "stale",
+      "action": "Stale: repaired in log 1 (address-reviews-2026-09-30T13-13-20Z, external W2 'Living orientation surfaces still publish the retired state vocabulary') — CLAUDE.md:414-416 now reads 'the four rungs THEN; rc15 inserted `concluded` between quiescent and premised and the owner is `orbit-architecture-engine`'s state requirement' (read at this walk); the finding's own suggested parenthetical, in substance. No edit.",
+      "ratified_via": "chat",
+      "resolution": "stale naming log 1",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "stale"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "3 of 4 fresh findings resolved, 1 stale naming log 1 (1 WARNING, 3 SUGGESTION). The WARNING was the pair's one scope call: Sal ratified B — the two orbit-orientation sentences rc15 makes false in letter are NAMED by requirement and line in the design's residual and in at-archive note 5.4's sweep handoff, a fourth capability declined under R-crc-1 and exit (3). Two obvious fixes: the unprompted route stated in the status JSON's own field names with `concluded` given its owner sentence; dated corrections beside the two plan facts in proposal and design. Pattern across both logs: every finding of the pair sat in prose about the engine, none in the engine; the external half found the ungoverned grammar copy, the fresh half found the baseline rationale the new file read falsifies — zero CRITICAL, one shared finding, the two WARNINGs disjoint. npm test 2376 green; validate --strict valid; fingerprints 5/5; surface regenerated.",
+  "iteration": 5,
+  "next_recommended": "/orbit:review --as system rc15-ended-stage-state"
+}

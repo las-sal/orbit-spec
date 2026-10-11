@@ -1,0 +1,9 @@
+{
+  "command": "propose",
+  "timestamp": "2026-10-07T16:42:51Z",
+  "change": "rc18-walk-is-next",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Proposed from the rc18 exploration in consume mode: one capability, orbit-engine-gates, two MODIFIED requirements. Single-voiced canonical-next computation gains the change-level selection table (D-rc18-5, DERIVED) and five scenarios, including the walk that un-passes an earlier slot under rc17a's kept 2A (D-rc18-4). A reviewed gate lists its outstanding passes narrows 'never reads it' to the gate's STATE. Design: one frontier predicate in gates.ts sets the passed gate's row nextCommand and the selection loop reads it. 12 tasks, including the rc03b pin move and the charter's exit (2) revision. Validates --strict; fingerprints 2/2.",
+  "next_recommended": "/orbit:review rc18-walk-is-next — proposal artifacts ready; review before apply"
+}

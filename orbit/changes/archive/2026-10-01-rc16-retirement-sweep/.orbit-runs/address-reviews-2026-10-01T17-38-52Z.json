@@ -1,0 +1,205 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-01T17:38:52Z",
+  "change": "rc16-retirement-sweep",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc16-retirement-sweep/.orbit-runs/review-proposal-2026-10-01T17-31-53Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-01T17-31-53Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 1,
+    "warning": 3,
+    "suggestion": 6
+  },
+  "pushback_verification": "All 10 findings verified against the working tree (each cited line read: conventions 923 and explore-modifications 227 with their body twins 472/534; the design table rows; the task ids; CLAUDE.md 398/413; the orientation baseline's 'no PROGRAM band' at 193/215). 0 stale. One scripting fact recorded: the first edit script aborted at a proposal anchor after the spec and task edits had landed; the remainder ran as a second script against the actual text — every edit verified by grep afterwards, fingerprints 6/6, validate --strict valid.",
+  "resolution_summary": {
+    "resolved": 10,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "Enumeration misses three in-set sites: orbit-explore-modifications:227, orbit-conventions:923 and explore.ts lines 472/534",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc16-retirement-sweep/design.md",
+      "line": 91,
+      "classification": "trivial_fix",
+      "action": "Method settled under R-crc-3 and recorded: a THIRD delta (`orbit-explore-modifications`, MODIFIED `Nine moves applied per rule in the Mechanism section` — the exemplar scenario now points at `orbit-emit-composition`'s `The explore grammar has one source in code`, the owner of the fixture parse) and a FIFTH `orbit-conventions` block (MODIFIED `Decision entry identity and classification` — the `Kind:` bullet's 'maturity-signal successor' now names the readout whose limit it is, `orbit-run-summary-emit`'s `Named-mode explore recommendation by maturity`); fingerprints stamped (6 verified); tasks 1.5 (explore.ts 472 ↔ conventions 923) and 1.6 (534 ↔ explore-modifications 227) added as pairs, the body sweep renumbered 1.7 and widened to the three new phrases; proposal and design re-measured: THREE capabilities at the ceiling, six MODIFIED blocks, six body pairs, twelve tasks; the design's repair table gained A4/A5/A4'/A5'. The owner pointers were chosen so no repaired sentence names a stage (D-rc16-2).",
+      "ratified_via": "chat",
+      "resolution": "third delta + fifth block + two body pairs; three capabilities at the ceiling",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc16-retirement-sweep/specs/orbit-conventions/spec.md",
+          "orbit/changes/rc16-retirement-sweep/specs/orbit-explore-modifications/spec.md",
+          "orbit/changes/rc16-retirement-sweep/tasks.md",
+          "orbit/changes/rc16-retirement-sweep/proposal.md",
+          "orbit/changes/rc16-retirement-sweep/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Exit (2) narrowed from the charter's three directories to two without an R-crc-12 revision record",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc16-retirement-sweep/tasks.md",
+      "line": 16,
+      "classification": "trivial_fix",
+      "action": "Dissolved by the CRITICAL's repair rather than by a revision: with the third delta the charter's exit (2) — 'the three directories' — is measurable and MET as written; task 3.1 now measures exactly `orbit-conventions orbit-explore-modifications orbit-orientation` and the proposal states that the measured count was wrong, not the charter, so no R-crc-12 revision is recorded.",
+      "ratified_via": "chat",
+      "resolution": "exit (2) grades as written; no revision",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc16-retirement-sweep/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Design repair table's A3 text differs from the delta's A3 sentence it claims to source",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc16-retirement-sweep/design.md",
+      "line": 73,
+      "classification": "trivial_fix",
+      "action": "The A3 row now quotes the delta's `**Owned, since shipped**` paragraph VERBATIM and says the delta is canonical; the A3' row now ends in exactly task 1.2's text (the parenthetical pointer included).",
+      "ratified_via": "chat",
+      "resolution": "table quotes the delta verbatim; A3' matches task 1.2",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Design cites the pin and skill-read tasks as 3.1/3.2; tasks.md holds them at 2.1/2.2, and 'tasks under ten' is false",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc16-retirement-sweep/design.md",
+      "line": 120,
+      "classification": "trivial_fix",
+      "action": "Task ids corrected to the list on disk (pins 2.1, the skill read 2.2; validate 3.1); 'tasks under ten' replaced by the true count (twelve, one an at-archive note); the propose emit's 'eight tasks' left as the record it is.",
+      "ratified_via": "chat",
+      "resolution": "ids and count corrected",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "B3's 'PROGRAM band beside it' holds only under --full",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc16-retirement-sweep/specs/orbit-orientation/spec.md",
+      "line": 78,
+      "classification": "trivial_fix",
+      "action": "B3 now reads 'under `--full`, the PROGRAM band beside it may already render …'; the design's B3 row mirrors it.",
+      "ratified_via": "chat",
+      "resolution": "qualified under --full",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc16-retirement-sweep/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Proposal cites CLAUDE.md:414 for the rc15 parenthetical; it sits at line 398",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc16-retirement-sweep/proposal.md",
+      "line": 71,
+      "classification": "trivial_fix",
+      "action": "Cites CLAUDE.md:398 (the Q-crc-28 handoff sentence) and says the D3-era 'with no artifact reads' line at CLAUDE.md:413 is left as the historical record it sits in.",
+      "ratified_via": "chat",
+      "resolution": "cite 398; 413 left as history, said so",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "A2 names orbit-run-summary-emit by capability only while A1 names the requirement",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc16-retirement-sweep/specs/orbit-conventions/spec.md",
+      "line": 46,
+      "classification": "trivial_fix",
+      "action": "A2 now names the requirement as A1 does: 'per `orbit-run-summary-emit`'s `Named-mode explore recommendation by maturity`'; one pointer form across both clauses; the design's A2 row mirrors it.",
+      "ratified_via": "chat",
+      "resolution": "one pointer form",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc16-retirement-sweep/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The Mechanism record keeps D-rc16-2's closure as SOURCED on a source now known wrong by four members",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc16-retirement-sweep/design.md",
+      "line": 84,
+      "classification": "trivial_fix",
+      "action": "The Mechanism → artifacts record now carries a correction paragraph: D-rc16-2's SOURCED closure rests on the WIDENED grep (patterns, HEAD f3bfd0e2, hit count and partition named), the exploration's six-phrase grep is superseded history; the D-rc16-2 row and D-rc16-4's amendment say the same.",
+      "ratified_via": "chat",
+      "resolution": "source replaced and named; exploration superseded",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Task 1.3's 'in the body's voice' leaves the body paragraph's text to codegen",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc16-retirement-sweep/tasks.md",
+      "line": 5,
+      "classification": "trivial_fix",
+      "action": "Task 1.3 now says the body takes the delta's A3 paragraph VERBATIM, backtick-escaped — no paraphrase licensed.",
+      "ratified_via": "chat",
+      "resolution": "verbatim",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Named-out orientation.ts comment set disagrees across proposal, design and task 3.3",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc16-retirement-sweep/proposal.md",
+      "line": 76,
+      "classification": "trivial_fix",
+      "action": "The proposal names out both `orientation.ts` comments (22 and 50) with the reason each is true, matching the design and task 3.3.",
+      "ratified_via": "chat",
+      "resolution": "both comments named out",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "10 of 10 fresh findings resolved (1 CRITICAL, 3 WARNING, 6 SUGGESTION; 0 stale), all obvious-fix lane. The CRITICAL was the stage's own thesis turned on itself — an enumeration closed on remembered phrases — and its repair is a third delta, a fifth conventions block and two body pairs: three capabilities at R-crc-1's ceiling, which the charter budgeted, so exit (2) grades as written and the first WARNING dissolved with it. The Mechanism record now names the widened grep as the SOURCED closure's source. Fingerprints 6/6; validate --strict valid; no stage id or 'follow-on' survives in any delta.",
+  "iteration": 1,
+  "next_recommended": "/orbit:review --as proposal rc16-retirement-sweep"
+}

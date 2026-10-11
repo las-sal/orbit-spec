@@ -1,0 +1,150 @@
+{
+  "command": "review",
+  "timestamp": "2026-09-11T21:49:43Z",
+  "change": "rc01-instrument-fidelity",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": [
+    "--fresh"
+  ],
+  "scorecard": {
+    "completeness": {
+      "critical": 1,
+      "warning": 3,
+      "suggestion": 2
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "6",
+      "severity": "CRITICAL",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc01-instrument-fidelity/tasks.md",
+      "line": 20,
+      "title": "The parity test as specified cannot be green for audit-drift while task 5.1 forbids any change under src/: the audit-drift schema reference documents six AI-supplied keys its payload table rejects today.",
+      "recommendation": "Task 4.1 asserts, per schema reference, (top-level keys of the first JSON block) − (engine-owned list) ⊆ that command's `payloadFields`; task 5.1 (tasks.md:25) and design.md:5 require 'no file under src/ changed'. The current tree makes both impossible at once. The audit-drift reference (src/core/templates/workflows/audit-drift.ts, the Schema block at lines 36–62 and the extensions sentence above it) documents `context`, `caller`, `depth`, `flags`, `categories_run`, `categories_skipped`, `findings_summary`, `findings`, `stale_suppressed` at top level; the audit-drift table at src/core/emit-composition.ts:135–142 is `final_assessment`, `categories_run`, `findings_by_category`, `findings_total`, `findings`, `stale_suppressed`. After subtracting the spine, `context`, `caller`, `depth`, `flags`, `categories_skipped`, `findings_summary` remain and none is in the table (the body at audit-drift.ts:332 lists a third set that matches the table, so the REFERENCE is the stale voice). The other three references check out: review block 0, address-reviews block 0, and archive block 0 (including the four conditional fields) are each within their tables. A fresh implementer stalls at 4.1 with a red audit-drift case and no sanctioned fix path. Decide which way the change resolves it and record it in design D6, tasks 4.x, and the 5.1 constraint.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Admit ONE bounded src/ edit: correct the audit-drift reference (the extensions sentence and its JSON block in audit-drift.ts) to the table's set (`categories_run`, `findings_by_category`, `findings_total`, `findings`, `stale_suppressed`, plus spine) — the reference is documented as the mirror, so the mirror moves. Make it the second named regression case in task 4.2, and reword 5.1 to 'no engine behavior change; the only src/ diff is the audit-drift schema reference (a generated-surface diff of one references/ file, expected)'. The `update --force` no-op claim in 5.1 must be dropped or scoped accordingly."
+        },
+        {
+          "label": "B",
+          "body": "Keep src/ untouched: the parity test carries an explicit per-command KNOWN-DIVERGENCE list (`audit-drift: [context, caller, depth, flags, categories_skipped, findings_summary]`), asserted to be exactly the observed gap so any new key still fails loudly, and a task files the reference fix for rc07 (the artifact-lint stage that owns one-voice-for-facts). This preserves 5.1 literally but records a remembered exception — the anti-pattern rc01 retires — so state that trade-off in design D6 and the Risks list."
+        }
+      ]
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc01-instrument-fidelity/design.md",
+      "line": 22,
+      "title": "The contract's flag entries and the validator's split rule are underspecified on value arity and short aliases, and two swept snippets need both to validate.",
+      "recommendation": "D1 (design.md:20) shapes each command as `flags: [...]` and D3 (design.md:22) says the validator splits `--flag value` and `--flag=value` 'per the contract's flag list' — but nothing says an entry records whether the flag TAKES a value or what its short alias is. Both are needed for snippets that exist today: src/core/templates/workflows/pr-choreography.ts:225 is `gh pr create --repo <owner>/<repo> --draft --base <resolved-base> …` — `--draft` is boolean, so a validator that treats every flag as value-taking eats `--base` as `--draft`'s value and `<resolved-base>` becomes a positional, which `gh pr create [flags]` (zero positionals) rejects; a validator that treats no flag as value-taking turns `<owner>/<repo>` into a positional with the same result. pr-choreography.ts:383 is `gh pr view --repo <owner>/<repo> <url> --json body -q .body` — `-q` is the short alias of `--jq` (`gh pr view --help` FLAGS: `-q, --jq expression`); a long-names-only list rejects it as unknown or makes `-q`/`.body` extra positionals. Specify the entry shape in D1 (e.g. `{ long: '--jq', short: '-q', takes_value: true }`) derived from the FLAGS/INHERITED FLAGS line grammar (`-x, --long TYPE` → takes a value; no TYPE → boolean), and have task 1.1 parse it and task 2.1 consume it."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc01-instrument-fidelity/tasks.md",
+      "line": 5,
+      "title": "The `--version` command entry contradicts the freshness assertion: `gh --version --help` prints the version banner, so that entry has no usage line and no flags.",
+      "recommendation": "Task 1.1 runs `gh <cmd> --help` for every command in the set including `--version`; task 1.3 asserts 'every command has a usage line and ≥ 1 flag' (design.md:31 repeats it); task 1.2 says 'hand-check the seven usage lines' for an eight-entry set. On gh 2.91.0, `gh --version --help` outputs only `gh version 2.91.0 (2026-04-22)` — no USAGE, FLAGS, or INHERITED FLAGS — so 1.1's parser yields nothing and 1.3 fails on that entry unless an implementer invents a special case. Also unstated: what the stub returns for `gh --version` on success (today the fall-through `process.stdout.write('{}')` at test/integration/pr-lifecycle/harness.ts:188; test/integration/pr-lifecycle/phase1.ts:108 checks only the exit status). Pick one: (a) drop `--version` from `commands` and record it as a top-level `availability_probe: { argv: ['--version'], stdout: '<captured banner>' }` beside `gh_version`, with the stub answering it from the contract and the freshness test asserting it exists; or (b) keep it in `commands` with an explicit `usage: null, flags: []` allowance and exempt it in 1.3. Then align 1.2's 'seven' and design.md:31 with the choice.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Drop `--version` from `commands`; record it as a top-level `availability_probe: { argv: ['--version'], stdout: '<captured banner>' }` beside `gh_version`; the stub answers it from the contract; the freshness test asserts the probe exists."
+        },
+        {
+          "label": "B",
+          "body": "Keep `--version` in `commands` with an explicit `usage: null, flags: []` allowance and exempt it from the freshness assertion."
+        }
+      ]
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc01-instrument-fidelity/design.md",
+      "line": 20,
+      "title": "The rules list drops a qualification the current stub enforces: `gh repo view` without a positional repository would pass both instruments under the new contract.",
+      "recommendation": "The real usage is `gh repo view [<repository>] [flags]` — positional OPTIONAL — so 'enforce the positional shape' (D3) accepts `gh repo view --json defaultBranchRef`, which lets `gh` pick a repository by its own heuristics; the shared resolution at src/core/templates/workflows/pr-choreography.ts:36–38 requires EVERY gh invocation to be qualified and says repo view takes the repository POSITIONALLY. The current stub enforces exactly that at test/integration/pr-lifecycle/harness.ts:176 ('stub: gh repo view requires a positional <owner>/<repo>'), and the current sweep at test/core/templates/orbit-content-fidelity.test.ts:378 asserts `^gh repo view <owner>/<repo>`; D1's rules carry `pr_verbs_require_repo` but no counterpart for repo view, and the charter (clean-up-review-cycle.md:196–197) names 'missing qualification the contract requires' as one of the two rejection directions. Add an orbit-side rule to D1 (e.g. `repo_view_requires_positional: true`), have the validator apply it, and add the negative case (`gh repo view --json defaultBranchRef` rejected) to task 2.3 and the sweep in 3.1."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc01-instrument-fidelity/design.md",
+      "line": 25,
+      "title": "'Parse the first JSON block' skips the review reference's architecture-mode block, which documents `findings_summary` — a key the review table rejects — so the test would pass over a live instance of the exact defect it exists to catch.",
+      "recommendation": "The review reference has two full-record JSON blocks: block 0 (change modes) whose remainder is within the table, and block 1 at src/core/templates/workflows/review.ts:110–120 (architecture mode) carrying `findings_summary` (line 117); review.ts:28 states architecture-mode emits KEEP `findings_summary`, and review.ts:821 says architecture-mode payloads go through the same engine surface. The review table at src/core/emit-composition.ts:92–104 has no `findings_summary`, so `orbit emit review` would reject such a payload as an unknown key — yet D6's first-block rule never reads block 1 (the only architecture review emit on the trail, orbit/architecture/.orbit-runs/review-architecture-2026-07-16T19-42-13Z.json, predates D5 and carries no such key, so nothing has exercised it). Either parse EVERY full-record block in a reference (define 'full-record' as a block whose top-level keys include `command`) and union the derived sets, or state in D6 why block 1 is excluded and file the architecture-mode `findings_summary` mismatch explicitly (it is the same shape as the audit-drift gap in the CRITICAL above)."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc01-instrument-fidelity/design.md",
+      "line": 3,
+      "title": "Three restated counts disagree with their sources: 'fourteen' payload tables (13), 'ten' commands without a schema reference (9), and '33' existing harness cases (39).",
+      "recommendation": "Source for the first two is the `COMMANDS` table at src/core/emit-composition.ts:43–174: explore, propose, new, continue, ff, apply, verify, architect, review, address-reviews, audit-drift, review-external, archive = 13 entries, so 13 − 4 documented = 9 without a schema reference (design.md:3 says fourteen; design.md:16 and proposal.md:27 say ten; explore D-rc01-9 says ten). Source for the third is `npx vitest run test/integration/pr-lifecycle/phase1.test.ts` → 39 tests (design.md:5, design.md:38, tasks.md:11, tasks.md:25 say 33). Correct each to the source, or — in the rc07 spirit — replace the numbers with 'every table' / 'every existing harness case'."
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc01-instrument-fidelity/tasks.md",
+      "line": 26,
+      "title": "Task 5.2's grep criterion cannot be satisfied as written: four legitimate `spawnSync('gh'` sites exist outside the stub and the capture script, all routed to the stub via PATH.",
+      "recommendation": "`grep -rn \"spawnSync('gh'\" test/` hits test/integration/pr-lifecycle/phase1.ts:108 (the `--version` probe) and :289 (`repo view`), and test/integration/pr-lifecycle/phase1.test.ts:106, :109, :113 — every one passes `env: { PATH: repo.envPath }` / the stub-first PATH, so they spawn the stub, not a real gh. Restate the criterion as what it means: every `spawnSync('gh'` in the test tree passes an env whose PATH begins with the harness bin dir (or the `absent` PATH), and the whole suite passes with a PATH containing no host `gh` — the second is the real proof of the spec's 'no test process spawns a real gh' scenario."
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc01-instrument-fidelity/design.md",
+      "line": 22,
+      "title": "State the validator's argv convention and command lookup so the stub and the sweep tokenize identically.",
+      "recommendation": "D3's `validate(argv, contract)` does not say whether argv includes the leading `gh` token: the stub feeds `process.argv.slice(2)` (test/integration/pr-lifecycle/harness.ts:169 — no `gh`), while the sweep's snippets start with `gh ` (the regex at test/core/templates/orbit-content-fidelity.test.ts:363). Say argv EXCLUDES `gh`, the sweep drops the first token, and command lookup matches the longest leading key in `contract.commands` (`pr view` before `pr`) — with `--version` (a flag-shaped key) matched before flag splitting if it stays a command entry — so both consumers call the same function on the same shape."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "CLAUDE.md",
+      "line": 107,
+      "title": "Post-apply, CLAUDE.md still names the D-arc as 'The ACTIVE program' while the engine renders clean-up-review-cycle with rc01 in-change.",
+      "recommendation": "`node bin/orbit.js architecture status` lists clean-up-review-cycle first with rc01-instrument-fidelity in-change and every D-arc stage complete or quiescent; CLAUDE.md:107 ('The ACTIVE program: the D-arc') and the surrounding orientation prose point readers at orbit/architecture/d-arc-arbitered-flow.md. Pre-existing rather than introduced by this change, but rc01 is the first citing change of the new program, so a one-paragraph pointer to orbit/architecture/clean-up-review-cycle.md (goals G0–G4, rulings R-crc-1..5) belongs in the project context before or at this change's archive."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "I grounded every design claim against the code it names: ran the two error probes and the eight `--help` pages on the installed gh 2.91.0, extracted the top-level keys of every JSON block in the four schema-reference template constants and diffed them against the `COMMANDS` tables by hand, read the current stub, transcription, and sweep, and counted the harness cases by running the file. The pattern behind the findings is that the artifacts were written from the D6 memory of the instruments rather than from a fresh read of the sources they will derive from — the audit-drift reference already diverges from its table in the exact way rc01 hunts, the `--help` grammar carries arity and short aliases the contract shape omits, and `gh --version` has no help page. The CRITICAL is structural (two normative sentences plus the current tree cannot all hold), the WARNINGs are each a concrete step where a fresh implementer would have to invent a rule. Residual risk after these are addressed is low: the thesis is sound, the archive/review/address-reviews parity cases check out today, and the harness's `absent` mode already proves the suite can run without a host gh.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "final_assessment": "1 critical, 4 warning, 4 suggestion.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc01-instrument-fidelity --from-file orbit/changes/rc01-instrument-fidelity/.orbit-runs/review-proposal-2026-09-11T21-49-43Z.json"
+}

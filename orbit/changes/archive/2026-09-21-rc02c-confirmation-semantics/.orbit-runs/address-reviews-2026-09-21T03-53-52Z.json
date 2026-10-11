@@ -1,0 +1,334 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-21T03:53:52Z",
+  "change": "rc02c-confirmation-semantics",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc02c-confirmation-semantics/.orbit-runs/review-proposal-2026-09-21T03-29-28Z.json",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "walk_mode_source": "flag",
+  "input_findings_summary": {
+    "critical": 6,
+    "warning": 8,
+    "suggestion": 3
+  },
+  "pushback_verification": "All 17 verified against current state before any fix — each claim re-derived from the cited file, plus gates.ts:751/938, status.ts:195-235, the live baseline requirement blocks, R-crc-1/4/8 verbatim, and orbit fingerprint --check. ZERO stale: the tree had not moved since propose and no finding had been overtaken.",
+  "resolution_summary": {
+    "resolved": 17,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "The requirement's opening SHALL still demands ALL THREE clauses while its body says there is no third",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02c-confirmation-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 5,
+      "classification": "trivial_fix",
+      "action": "Rewrote the requirement opening: \"ALL of the three clauses\" -> \"BOTH of the two clauses\". The follow-on \"every rule in them\" reads correctly over two.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "Three scenarios declared 'preserved byte-identically' still assert budgetExhausted and the BUDGET-SPENT token",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02c-confirmation-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 386,
+      "classification": "trivial_fix",
+      "action": "Rewrote all three scenarios off the retired signal. \"A stale gate reports its spend\": state stays stale, token reads STALE, spend appears only as independentSpend. \"A blocked reviewed gate reports the spend already on its trail\": dropped the budgetExhausted: false clause. \"The closed-set consumers are untouched\": WHEN restated as an unpassed gate whose recorded spend exceeds its declaration, and dropped the claim that the override record carries the spend inside reason (the reason no longer carries it). Corrected the inventory to REMOVED (2) / REWRITTEN (6) — the reviewer counted five; the sixth is the scenario finding 16 also touched.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "The gate-reason requirement still lists 'the spend clause' among the notes its reason carries",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02c-confirmation-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 671,
+      "classification": "trivial_fix",
+      "action": "Replaced \"Two further notes ride the same slot: the spend clause and ...\" with \"One further note rides the same slot: a passed gate whose walk deferred SUGGESTION-grade findings (reported, never blocking).\"",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "The status row's `spend N/budget` ratio - the `4 of 3` readout Q-crc-19 names as the harm - is neither retired nor specified",
+      "marker_source": "internal-review",
+      "file": "src/commands/workflow/status.ts",
+      "line": 226,
+      "classification": "trivial_fix",
+      "action": "Added a NO SURFACE RENDERS SPEND AGAINST THE DECLARATION paragraph to the budget requirement — independentSpend renders ALONE, never as a fraction of budget, on every surface including the terminal gate row the existing four-output prohibition did not reach. Added task 2.2b specifying the replacement at BOTH status.ts render sites (live row ~226, superseded row ~205) and flagging the now-contrastless \"fresh, N total\" clause.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": [
+          {
+            "path": "src/commands/workflow/status.ts",
+            "reason": "source edit is apply-time work on a proposal-stage change; specified as task 2.2b instead"
+          }
+        ]
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "The baseline requirement `spec-driven v1 gates and cadence` keeps confirm's repeat rules and budget-sized-for-a-repeat, and is not in the delta",
+      "marker_source": "internal-review",
+      "file": "orbit/specs/orbit-engine-gates/spec.md",
+      "line": 528,
+      "classification": "decision_required",
+      "action": "Added \"spec-driven v1 gates and cadence\" as the 7th MODIFIED requirement: confirm restated as DECLARED and INERT (both values kept so existing schemas validate without a version bump), both repeat-rule sentences removed, and the budget-sizing sentence replaced with R-crc-11(h) recorded-not-targeted prose. All four scenarios preserved byte-identically. Base fingerprint stamped — check now reports 8 verified, 0 unverified.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/specs/orbit-engine-gates/spec.md",
+            "reason": "baseline spec; add a delta to your current change specs/<capability>/spec.md to capture this ripple — done: added as the 7th MODIFIED requirement, fingerprint stamped"
+          }
+        ]
+      },
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "resolution": "Option (A), ratified in chat as part of \"your recs\". Ground: this is not a staleness risk but a falsehood shipped into baseline — normative prose describing mechanism this very change deletes — and it directly defeats design D3, which writes \"nothing consults it\" one screen from a requirement explaining how the budget is sized to permit a repeat. Cost accepted: +3.5 KB on a delta already over the byte ceiling, recorded in the design size section rather than hidden."
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "The stage's three exit criteria presuppose a shipped predicate, and the change names no amendment",
+      "marker_source": "internal-review",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 982,
+      "classification": "decision_required",
+      "action": "Added design decision D6 recording the charter divergence in full: exit criteria (1) and (2) dissolve with the predicate, (3) is satisfied BY the dissolution (evidenced by the confirmFailed branch becoming unreachable once clause (c) is gone), and the R-crc-11 IMPACT block line that the ruling \"does not delete clause (c)\" is superseded. Extended task 5.4 to recommend both amendments. The architecture doc itself is NOT edited.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "reason": "architecture doc; stage declarations belong to /orbit:architect (R-crc-6 — the walk authors nothing). Recorded as design D6 and recommended in task 5.4."
+          }
+        ]
+      },
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "resolution": "Option (A), ratified in chat as part of \"your recs\". Option (C) — honour the charter by shrinking clause (c) to a missing-work reporter — was declined because \"what is missing from the cadence\" is COVERAGE and clause (a) already computes it, so the shrunken predicate would be a second voice on one question, which is the defect class clause (c) kept producing. Option (B) — block apply on the amendment — was declined because R-crc-6 says the walk authors nothing and stage declarations belong to /orbit:architect; making an architecture amendment a precondition inverts that layering."
+    },
+    {
+      "severity": "WARNING",
+      "title": "The position-token sentence is left mangled, and now lists both `STALE` and `stale`",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02c-confirmation-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 494,
+      "classification": "trivial_fix",
+      "action": "Dropped the spurious lowercase \"stale\" from the position-token list (the engine renders STALE — gates.ts:938 — and never a lowercase form) and removed the orphan \"and a stale gate’s / has,\" fragment inherited from the damaged baseline, so the parenthetical closes cleanly.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Deleted spend prose leaves two preserved scenarios unsupported and mode-less gates unspecified",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02c-confirmation-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 317,
+      "classification": "trivial_fix",
+      "action": "Restored both deleted normative sentences, trimmed of exhaustion vocabulary. (a) The trail reader surfaces rejected artifacts separately and the gate reason SHALL NAME them, with an explicit note that naming a rejected return names the RULE THAT FIRED rather than reporting the spend — so it survives the new NEVER-the-spend rule and the preserved scenario that asserts it. (b) Mode attribution, with the fallback restated as \"reports NO SPEND at all\" for a mode-underivable gate — the rule behind the live mode !== null guard at gates.ts:751.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "`independentSpend` becomes unconditional on a declared budget, and no task directs the change",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02c-confirmation-semantics/tasks.md",
+      "line": 11,
+      "classification": "trivial_fix",
+      "action": "Added task 2.3b removing the budget-PRESENCE condition from spend reporting (gates.ts reportable, plus both status.ts render sites), keeping the mode !== null half since mode attribution is live spec. The rewritten scenario already asserted the new behaviour; the task list was behind the spec, not ahead of it.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": [
+          {
+            "path": "src/core/artifact-graph/gates.ts",
+            "reason": "source edit is apply-time work on a proposal-stage change; specified as task 2.3b instead"
+          }
+        ]
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The touched `orbit-run-summary-emit` requirement carries no base fingerprint",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02c-confirmation-semantics/.openspec.yaml",
+      "line": 4,
+      "classification": "trivial_fix",
+      "action": "Ran orbit fingerprint rc02c-confirmation-semantics (add-missing-only). orbit-run-summary-emit / \"Apply per-chunk-end emission\" stamped sha256:a256346776ed...; --check now reports 8 verified, 0 diverged, 0 unverified, 0 missing.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "CLAUDE.md's live description of the budget signal goes stale at apply, and no task updates it",
+      "marker_source": "internal-review",
+      "file": "CLAUDE.md",
+      "line": 140,
+      "classification": "trivial_fix",
+      "action": "Added task 5.2b rewriting CLAUDE.md lines ~139-143, which describe budgetExhausted, the spend clause in the reason, the distinct position token and independentSpendFresh-as-trigger in the PRESENT tense. CLAUDE.md is not edited now: every one of those sentences is still true until apply lands.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": [
+          {
+            "path": "CLAUDE.md",
+            "reason": "still TRUE until apply lands; editing it now would make it false in the other direction. Specified as task 5.2b instead."
+          }
+        ]
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "A third version-pinned example sits one requirement away and is outside the delta",
+      "marker_source": "internal-review",
+      "file": "orbit/specs/orbit-run-summary-emit/spec.md",
+      "line": 385,
+      "classification": "decision_required",
+      "action": "Amended task 4.1 to record orbit/specs/orbit-run-summary-emit/spec.md:385 as a KNOWN, currently-accurate pin deliberately left to the stage that next touches that requirement. The sweep now has a defined answer instead of an open one.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Add `Verify pass recommendation` as a second MODIFIED requirement in the orbit-run-summary-emit delta (with its base fingerprint) and de-pin the example the same way."
+          },
+          {
+            "label": "B",
+            "body": "Keep the delta at one requirement and amend task 4.1 to record line 385 as a known, currently-accurate pin deliberately left to the stage that next touches that requirement - so the sweep has a defined answer instead of an open one."
+          }
+        ],
+        "chosen": "B"
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "The delta is ~58 KB against R-crc-1's ~40 KB ceiling and no artifact records the measurement",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02c-confirmation-semantics/design.md",
+      "line": 123,
+      "classification": "decision_required",
+      "action": "Added a \"Size against R-crc-1 (measured, not estimated)\" section to design.md: 2 capabilities / 8 requirements / 18 tasks / 62,555 B delta, with the measured split (12,117 B changed lines; 50,438 B — 81% — verbatim baseline text the MODIFIED format obliges) and the c2 calibration contrast (c2 was 21,623 B with 7 of its 9 requirements ADDED, where bytes and novel content are nearly the same quantity). Records that the proposal cadence runs as DECLARED, citing the 2026-09-14 status-log assignment of the near-ceiling pair to rc09, and records that R-crc-8 forbids reading this pass’s six CRITICAL as a license for another.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Add a short size paragraph to design.md recording all four dimensions, noting that the byte figure is dominated by mandatory MODIFIED reproduction, and stating that the proposal cadence therefore runs as declared."
+          },
+          {
+            "label": "B",
+            "body": "Record the measurement AND run the proposal blind pair by choice (an external pass alongside this fresh one), per R-crc-4's near-ceiling clause and the baseline note that the proposal cadence is not conditional in the engine."
+          }
+        ],
+        "chosen": "A"
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "The carried-forward sketch carries no header saying it is rejected mechanism",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02c-confirmation-semantics/sketches/stands-decision-table.py",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "Added a module docstring naming the sketch REJECTED MECHANISM / NOT SHIPPED, the rejecting decisions (D-rc02c-5/6), the re-homing as a recorded fact under R-crc-11(h), the intended future reader (Q-crc-18 reading surface / rc04), how to run it, and the scope caveat the reviewer caught: the file holds the twelve constructed cells only — the eleven-real-trail validation explore.md line 105 credits it with is not reproduced in it. Re-ran after editing: 12 cells, 0 mismatches.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The `eleven archived changes / only THREE` measurement states no population",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02c-confirmation-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 111,
+      "classification": "trivial_fix",
+      "action": "Named the population: \"Measured across the eleven gate-era archives that ran a system review, only THREE ever had an independent pass standing clean on the final state\".",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "A preserved scenario still frames itself `against budget: 3`",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02c-confirmation-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 379,
+      "classification": "trivial_fix",
+      "action": "Dropped the inert \", against budget: 3\" framing from the scenario WHEN — the declaration no longer participates in what the scenario asserts.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Two change-scoped audit paragraphs will live in the baseline permanently",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02c-confirmation-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 130,
+      "classification": "decision_required",
+      "action": "Trimmed both SCENARIOS REMOVED/REWRITTEN inventories in the spec to a one-line pointer, and moved the full accounting to a new \"Scenario accounting\" section in design.md — which also records that the last three of the six budget-requirement rewrites were caught by this review rather than by authoring.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "resolution": "Ratified in chat as part of \"your recs\", off-menu relative to the reviewer’s \"keep them in design.md OR trim them\": did both. The baseline requirement now describes only what is true, and the auditability the reviewer valued is preserved in the change record, where a reader can actually see the change it describes."
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": "your recs",
+  "final_assessment": "All 17 findings from the first fresh proposal pass walked to resolution; zero stale, zero deferred, zero escalated. Twelve took the obvious-fix lane and five the decision lane, all five ratified by one chat directive. The pass diagnosis held under the walk: the scenario BODIES were byte-identical as the change claimed, and what had rotted was what the surviving scenarios ASSERT — three still demanded budgetExhausted and the BUDGET-SPENT token beneath a paragraph declaring both retired. One shape produced most of the findings: the change swept its vocabulary through the paragraphs it rewrote and stopped at their edges — the requirement own opening SHALL, the scenarios below it, a sibling requirement outside the delta, and a terminal render two files over. Three consequences worth carrying. (1) The delta gained a 7th MODIFIED requirement, spec-driven v1 gates and cadence, because leaving it would ship a falsehood into baseline; that took the delta to 62,555 B — 153% of R-crc-1 byte ceiling — now RECORDED with its measured 81% mandatory-reproduction split rather than explained away, and inside the ceiling on all three dimensions R-crc-1 trusts more. (2) Finding 12 near-identical-looking version pin was deliberately NOT fixed, on the distinction that it is currently TRUE where finding 5 prose is FALSE; task 4.1 now carries that answer so the sweep is closed rather than open. (3) Design D6 records that this change DIVERGES from its own stage charter by deleting the predicate the charter said R-crc-11 does not delete — the reversal is sound and user-grounded, and it was previously unrecorded anywhere. The architecture doc is untouched; the amendment is recommended to /orbit:architect per R-crc-6.",
+  "iteration": 1,
+  "next_recommended": "/orbit:review --as proposal rc02c-confirmation-semantics"
+}

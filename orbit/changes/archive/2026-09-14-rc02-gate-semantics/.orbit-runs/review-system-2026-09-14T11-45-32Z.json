@@ -1,0 +1,62 @@
+{
+  "command": "review",
+  "timestamp": "2026-09-14T11:45:32Z",
+  "change": "rc02-gate-semantics",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": [],
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "title": "The design's R-crc-1 self-measurement is stale on two axes after the walk that added a fourth requirement block",
+      "file": "orbit/changes/rc02-gate-semantics/design.md",
+      "line": 419,
+      "description": "The size bullet reads THREE capabilities, nine requirement blocks, 69 scenarios across all three deltas, ~55 KB, 18 tasks. Measured after the walk: 3 capabilities, 18 tasks and 69 scenarios are correct, but there are TEN requirement blocks and 57,943 delta bytes. The walk added a MODIFIED block for `orbit-run-summary-emit`'s 'Verify pass recommendation' to close a baseline break, which is the tenth; the byte figure moved with it and the overage against the ~40 KB guide is now 45% rather than the ~38% the bullet implies. Both numbers were accurate when written and went stale in the same sitting — which is the class R-crc-7's authoring corollary and rc07's one-voice-for-facts rule both exist to remove.",
+      "recommendation": "Correct the figures to ten requirement blocks and 57.9 KB, and restate the overage. Longer term this bullet should be DERIVED rather than transcribed, which is rc07's business."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "`blindness-broken` is now near-unreachable, so its scenario and reason string describe a path the pairability filter forecloses",
+      "file": "src/core/artifact-graph/gates.ts",
+      "line": 350,
+      "description": "Once diagnosis filters candidates through `isPairable` with the inclusive bound, any record that breaks blindness also makes the member it references unpairable, so the member drops out of the candidate set before the blindness test runs. The `blindness-broken` branch survives only for a record referencing the LATER member with an earlier token, which a real trail cannot produce because a walk record is written after the pass it closes. The delta still ships a scenario ('A walk between the pair breaks blindness') whose reason expectation the walk already had to relax, and the reason string remains in the vocabulary. Not a defect: the behaviour is correct and the diagnosis is strictly more useful than before. But a reason the engine can essentially never emit is dead vocabulary, and the same class the token-tie scenario was just corrected for.",
+      "recommendation": "Either state in the requirement that blindness-broken is subsumed by the pairability filter and kept only as a defensive branch, or drop it and let `foreclosed` and the missing-class cases carry the diagnosis."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Run as a VERIFICATION pass over the two walks' diff rather than a fourth reading of the artifact — the genre rc03 will formalize, chosen here because three independent passes have already covered this change whole and a fourth reading by the author who wrote the code is the weakest instrument available. The method was reconciliation: take each of the 22 resolutions the two walk logs claim, and probe the artifact for the thing the log says was written. All 27 probes landed, including six negative probes for retired phrasings. That is the number this slot exists to produce, and it is the number that was WRONG two walks ago, when seven claimed edits had never reached the artifact. The regression half: 2097 tests green across 94 files, strict validation clean, fingerprints 8 of 8, all 15 archived changes compute under the new completeness rule without throwing, and the orientation surface renders. Executed rather than read where it mattered: the trail reader classifies all 8 of this change's own walk records readable, sees exactly one external and one fresh system pass, and rejects nothing — which is the blind pair the cadence asked for, intact. The two findings are both coherence and both about vocabulary rather than behaviour. Neither is a regression: no resolution landed wrong, and nothing outside the walk's diff changed. Worth naming for the trail: the gate's own reason moved from 'blind pair open' to 'cadence class in-context has no fresh pass' across these walks, which is the first time this repo has watched a blind pair close on a real change.",
+  "passes_run": [
+    "0",
+    "6"
+  ],
+  "passes_skipped": [
+    "1-3 — VERIFICATION genre: this slot reads the walk's diff and answers landed/regressed per resolution, and does not re-read the whole artifact. Three independent passes have covered it.",
+    "4 — no perspectives defined (orbit/lenses/perspectives.md absent)",
+    "5 — no critical paths defined (orbit/lenses/critical-paths.md absent)"
+  ],
+  "final_assessment": "0 critical, 1 warning, 1 suggestion.",
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc02-gate-semantics --from-file orbit/changes/rc02-gate-semantics/.orbit-runs/review-system-2026-09-14T11-45-32Z.json"
+}

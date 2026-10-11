@@ -1,0 +1,32 @@
+schema: spec-driven
+created: 2026-07-14
+schema_version: 3
+architecture:
+  doc: d-arc-arbitered-flow
+  stage: d2-architect
+base_fingerprints:
+  orbit-conventions:
+    "`.orbit-runs/` per-change persistence": sha256:bdcb9e3a86891ee1fb3f2d40bf2eb22f22427d3e620cc399d171e83165134d53
+    Internal-run JSON summary format: sha256:30ee51ddf661fab51a43de04525a9f94391d1a807469f1b5aad535c2eefb42bf
+    Final-assessment phrasings: sha256:d91fcd60f90c82f566ad379d0efbdf5bb8a77fb5086e0d98202b84f3247e79da
+    "`orbit/explore/<name>/` staging directory": sha256:1872f43d663c95439e2cc2d0046480b1f23e12c6d22856be151ad1991f56f5ea
+    Generated-file disposition: sha256:51f2d02a7c487a5003e2ae423744fea96ccbc638671617b3e98e5555c7f78499
+  orbit-explore-modifications:
+    Three invocation modes supported: sha256:49cc34895e603f9aae936f3b72c511813d473d36e553db696c7962d249d4dc3f
+  orbit-onboard:
+    Identity statement section: sha256:5165540000ca1df1bf186ee2baae5d6c4867e1b437729fac4ba725f63aa4bece
+  orbit-propose-modifications:
+    Move staging directory to changes: sha256:ffc6df7ff4e1fd9dd77366579b8026bb854d7690f14106489f28116056597807
+  orbit-review:
+    Review command available with `--as` mode flag: sha256:68792aed6f6739f2e6d58380b805c9f24b5f366c4b7ef07f3e431df4bbdaad06
+    Internal run summary persisted per mode: sha256:c8fdec171a6db12e0da1294e0ce8f3ad4393c5e8ecff99098057ef6ca317816b
+    Final assessment phrasings depend on mode: sha256:1db290f95462d68e8574dc8a31f8a30befee564ea98ba53bd449293daba4f7e0
+    "`--fresh` runs pass work in a clean execution context": sha256:570e2828520f8ccec1ffffd096e1f11b8ef188247f6675fddd1000af886d0e2e
+    Iteration note when prior runs exist: sha256:d5ecab9a15a71655293b2b8d0cf4c2ed7bad81ae450edc1ecf134ef2c445ffc9
+    Optional `recommendation_options` field on finding entries: sha256:ec8eee4b446c3a60bc5e1e48ed67392ea8845650479d9b96c37c399ef132cf0f
+  orbit-run-summary-emit:
+    Emit scope: sha256:558ed6e586a6935ed3bc03c4ecfea3b332aea3357fda45b9bcc7993b19492b77
+    Emit timing semantics: sha256:52340ff044b9eb51ba29d540aeef4bcfb41b117dbbb8db9c1b8a0c5f153c2d67
+    Workflow-kind emit shape (extends the universal spine): sha256:f44ed2acce3858a8e5bb995cb6c37fc31ae414d2798aacdff8476a5fc173e53f
+  orbit-address-reviews:
+    Ripple cascade by default: sha256:594aee741f4e1bde8ff62c59327cf6048dcfa660f051310b038cf3df48f2d3db

@@ -1,0 +1,17 @@
+schema: spec-driven
+created: 2026-09-25
+schema_version: 4
+architecture:
+  doc: clean-up-review-cycle
+  stage: rc13b-explore-maturity-signal
+base_fingerprints:
+  orbit-emit-composition:
+    Per-command computed extensions: sha256:1d1cf9cf95b69888cc49404d89b1ad03e3aaed1391ada7ed96c5cec55bf9999f
+  orbit-orientation:
+    Sprint strip composition: sha256:27f93051e08f6f5108c560ab2edc1f5f91d531f1ef2dcb6729d5a65adbfdfcfd
+    JSON output for both tiers: sha256:a7a6a11221a072ff8a0ba10a2ab9e6a2694aa88fba18c7ca694105f044ea325a
+    Next-recommendation sourcing is time-shifted, never live: sha256:333ae0fc006ffb5b15e303befb693798a244ae52a424d3e99e28a561a6973ee7
+  orbit-run-summary-emit:
+    Named-mode explore recommendation by maturity: sha256:21599f15f0d5b7a4c2d046b341a4aef787df855b26a859342e2a149110a53752
+  orbit-conventions:
+    Decision entry identity and classification: sha256:085b9e87548b3b4e78e6bd47a898178738145a7e98f786f03389beccbc589953

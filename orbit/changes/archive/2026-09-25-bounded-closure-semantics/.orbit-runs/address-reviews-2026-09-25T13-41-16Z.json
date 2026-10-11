@@ -1,0 +1,296 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-25T13:41:16Z",
+  "change": "bounded-closure-semantics",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "source": "from-file",
+  "source_path": "orbit/changes/bounded-closure-semantics/.orbit-runs/review-proposal-2026-09-25T13-32-50Z.json",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 1,
+    "warning": 9,
+    "suggestion": 6
+  },
+  "pushback_verification": "16 findings verified against current state before editing (every cited line read; the CRITICAL re-measured against dist/utils/change-metadata.js: the key is stripped at both levels); 0 stale suppressions — this is the first walk on this change. (Record re-emitted once: the first emit paraphrased titles and used a different file base, so the gate keyed zero resolutions to findings — the Q-crc-17 shape; titles and files are now verbatim from the review emit.)",
+  "resolution_summary": {
+    "resolved": 16,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "The concluded: citation key is silently STRIPPED by the metadata helpers — at both the nested and the sibling level — so the third token cannot survive any helper round-trip",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 100,
+      "classification": "decision_required",
+      "action": "Applied option B: the concluded record is TWO tokens (header + Re-entry: slot); nothing is written to metadata; the citation is kept unchanged; Q-crc-11 reads the header from the citation-located directory. Swept the requirement, both conclude scenarios, the staging-dir scenario, explore-mods conclude paragraph + scenario, D-bcs-6/D-bcs-7 decision text and Mechanism entries (dated amendments), design D-bcs-6 bullet + risk row + Q-crc-11 row, proposal What-Changes bullet + Q-crc-11 handoff, tasks 1.5/2.4/6.2, Considered & out note.",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Keep the key and make it durable: extend the architecture Zod object with optional concluded, add a round-trip scenario to orbit-architecture-engine, correct No engine change, take the third-capability question to Sal."
+          },
+          {
+            "label": "B",
+            "body": "Descope the key: the concluded record is two tokens (header + Re-entry: slot); Q-crc-11 reads the header token from the staging directory the kept citation locates; sweep every artifact that names the key."
+          }
+        ],
+        "chosen": "B"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/bounded-closure-semantics/specs/orbit-explore-modifications/spec.md",
+          "orbit/changes/bounded-closure-semantics/design.md",
+          "orbit/changes/bounded-closure-semantics/proposal.md",
+          "orbit/changes/bounded-closure-semantics/tasks.md",
+          "orbit/changes/bounded-closure-semantics/explore.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The open-domain scenario's THEN prescribes behaviour at PROMOTION that no task, body edit or touched capability implements",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 77,
+      "classification": "trivial_fix",
+      "action": "Reworded the scenario THEN and the TRAVELS paragraph: the two slots are the origin every reader reads; where the residual travels is the AUTHORING rule; the mechanisms are named (maturity-signal rung surfaces; propose-consumption follow-on carries into spec text).",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "`a lifecycle transition under orbit-lifecycle-consent` claims a capability whose three mechanisms do not attach to conclude",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 96,
+      "classification": "trivial_fix",
+      "action": "Replaced both pointers (conventions requirement + explore-mods conclude paragraph) with: user-declared, recommend never infer; NOT a consent-marked seam — no gate, no prompt, no consent field on the explore emit. Ripple: tasks 1.5, D-bcs-6 CONFORM line and decision text.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/bounded-closure-semantics/specs/orbit-explore-modifications/spec.md",
+          "orbit/changes/bounded-closure-semantics/tasks.md",
+          "orbit/changes/bounded-closure-semantics/explore.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "`a MODIFIED delta cannot retitle` is true and beside the point — the delta format has RENAMED, so retaining a title that contradicts its body is a choice, not a constraint",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 90,
+      "classification": "trivial_fix",
+      "action": "Kept the titles; corrected the justification in design and proposal: RENAMED exists and the validator handles RENAMED+MODIFIED, but the rename pulls three pointer sites in two other capabilities into scope (four capabilities), so it is DEFERRED to a retirement-class change, not impossible.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/bounded-closure-semantics/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The program doc points at `orbit/explore/bounded-closure-semantics/` for the settled reasoning; propose already moved it, and task 6.2's architect-tier list does not carry the correction",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 62,
+      "classification": "trivial_fix",
+      "action": "Task 6.2 now carries: correct the settled-in pointer to the archived path; mark the charter's two superseded sentences with 'superseded by the archived change — see SETTLED'.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The `Closure:` production admits only a bare token, but every entry in the exploration — including the shipped exemplar D-bcs-3 — writes `Closure: <TOKEN> — <justification>`",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 43,
+      "classification": "trivial_fix",
+      "action": "Production is now `Closure: <TOKEN>[ — <justification>]`, token matched from line start to the first ` — ` or EOL. Ripple: D-bcs-8's closure row in explore.md (dated).",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/bounded-closure-semantics/explore.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The Decisions-entry slots (`Kind:`, `Disposition:`, `Re-entry:`) have no production — `nested` is not a syntax",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 9,
+      "classification": "trivial_fix",
+      "action": "Added a fenced Decisions production (opener + Kind/Disposition/Re-entry lines, matched anywhere within the entry's list-item lines, with the regex for Kind) and named ` — ` as the literal em-dash in both the opener and the move lines. Ripple: D-bcs-8's entry-identity row.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/bounded-closure-semantics/explore.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The MALFORMED list has no row for a duplicated entry ID, an orphan Mechanism entry, an entry for a non-live rule, or a domain table of the wrong shape",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 65,
+      "classification": "trivial_fix",
+      "action": "Added the four rows with the reviewer's dispositions: duplicate ID -> MALFORMED naming the second heading; orphan -> MALFORMED naming the heading; non-live rule's entry -> permitted history, outside the obligation; wrong-shaped table -> MALFORMED naming its first line. Ripple: D-bcs-8's failure row.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/bounded-closure-semantics/explore.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Conclude → reopen → conclude produces two `Re-entry:` slots, which line 98 forbids, and nothing says which one rc13b's fifth rung reads",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 119,
+      "classification": "trivial_fix",
+      "action": "Uniqueness is now 'exactly one LIVE entry carries the slot'; the reopen scenario supersedes the prior CONCLUDED entry (Disposition: superseded <new ID>); new scenario 'A reopened exploration concludes again'. Ripple: explore-mods conclude paragraph, D-bcs-7's concluded row, tasks 2.4.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/bounded-closure-semantics/specs/orbit-explore-modifications/spec.md",
+          "orbit/changes/bounded-closure-semantics/explore.md",
+          "orbit/changes/bounded-closure-semantics/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "`/orbit:propose <name>` on a CONCLUDED staging directory consumes it as if live — the one transition the re-entry table cannot see",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-explore-modifications/spec.md",
+      "line": 52,
+      "classification": "trivial_fix",
+      "action": "Stated as a KNOWN limit with an owner in the conventions requirement's KNOWN paragraph and in the proposal's follow-on handoff (propose keys on explore.md presence; the follow-on refuses or treats as the reopen). Ripple: tasks 1.5 counts three known limits.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/bounded-closure-semantics/specs/orbit-conventions/spec.md",
+          "orbit/changes/bounded-closure-semantics/proposal.md",
+          "orbit/changes/bounded-closure-semantics/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Two inputs the re-entry table's facts do not define: a staging directory without `explore.md`, and a header carrying neither token",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-explore-modifications/spec.md",
+      "line": 46,
+      "classification": "trivial_fix",
+      "action": "Added the one-sentence rule: resolves as not-concluded, resumes with stub/header added (add-only), never MALFORMED.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Two stale figures in the design: `one Mechanism entry per rule, D-bcs-1 through D-bcs-10` (eight entries) and `only one live exploration exists` (orbit/explore/ is empty)",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 10,
+      "classification": "trivial_fix",
+      "action": "'eight Mechanism entries, one per rule (D-bcs-1,2,3,6,7,8,9,10; 4, 5, 11 are scope)'; 'the rules among them carry a Mechanism entry'; migration surface restated as zero staging directories plus never-parsed change-directory records.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The requirement says it NAMES the format rather than restating it, then restates the six-section list — and the Mode B scenario restates it a third time",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-explore-modifications/spec.md",
+      "line": 84,
+      "classification": "trivial_fix",
+      "action": "Dropped both lists; the requirement and the Mode B scenario now say 'the six sections in the order orbit-conventions' format requirement states'; the stub scenario keeps the count.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The exploration models visibility-never-blocking on `budgetExhausted`, a field rc02c retired",
+      "marker_source": "internal-review",
+      "file": "explore.md",
+      "line": 68,
+      "classification": "trivial_fix",
+      "action": "Both citations rephrased to R-crc-10's record-beside-the-state shape, with a dated note that rc02c retired the field and independentSpend rendered alone is the surviving form.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "rc13a's OWN exit criterion (2) says `every live rule's domain closed`; 6.2 corrects rc13b's sentence but never says how rc13a's grades under the vocabulary it ships",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 62,
+      "classification": "trivial_fix",
+      "action": "Task 6.2 states: exit (2) graded AS WRITTEN — all eight live-rule domains CLOSED (DERIVED/SOURCED), MET (R-crc-12: a grade, not a revision); ACCOUNTED wording is for rc13b's sentence only.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "`this change's D-bcs-3` will sit in the BASELINE spec after sync, where `this change` has no referent",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-explore-modifications/spec.md",
+      "line": 27,
+      "classification": "trivial_fix",
+      "action": "Now reads '(D-bcs-3 of the archived bounded-closure-semantics change)'.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "All 16 findings of the fresh proposal pass walked to zero in one sitting: 1 decision-lane (the CRITICAL, ratified B in chat — the concluded record is two tokens and writes no metadata; the helpers strip unknown keys at both levels, re-measured before briefing) and 15 obvious-fix. The grammar gained the productions its own exemplar needed (Closure justification slot, the Decisions slot lines, four MALFORMED rows, the reopen/second-conclude state machine); two false pointers were replaced with what is actually meant (consent seam; RENAMED deferred not impossible); three limits gained owners (propose-on-concluded to the follow-on, the settled-in pointer and exit-(2) grading to the archive tail). Every ripple landed in the change directory; no baseline, archive or trail file was touched. Validate --strict green; 5/5 fingerprints verified; explore.md still 11 decisions / 8 entries x 9 moves.",
+  "iteration": 1,
+  "next_recommended": "/orbit:review --as proposal bounded-closure-semantics"
+}

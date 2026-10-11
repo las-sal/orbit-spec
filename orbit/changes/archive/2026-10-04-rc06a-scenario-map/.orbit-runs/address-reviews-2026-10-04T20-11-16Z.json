@@ -1,0 +1,69 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-04T20:11:16Z",
+  "change": "rc06a-scenario-map",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc06a-scenario-map/.orbit-runs/review-proposal-2026-10-04T20-09-52Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-04T20-09-52Z",
+  "latest_apply_token": null,
+  "tie_break_rationale": null,
+  "external_reviewer": null,
+  "walk_mode": "walk",
+  "walk_mode_source": "default",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 0
+  },
+  "pushback_verification": "Both verified against current state at 328b2bee; neither stale.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The INFO-level requirement still assigns an UNKEYABLE scenario the gate-following level",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc06a-scenario-map/specs/orbit-scenario-map/spec.md",
+      "line": 233,
+      "classification": "trivial_fix",
+      "action": "grepped every INFO/level statement in the change first; the owner (`A declaration is owed…`) now says an UNKEYABLE scenario is ERROR whatever the gate state and whether or not the change context loads, reported ONLY as UNKEYABLE (not as undeclared, not in `scenarios`, not in `counts.uncovered`, only in `malformed` with source spec); the INFO-level requirement gains one sentence naming the exception and pointing at its owner (R-crc-14); tasks 4.1 and 2.4 assert the single report",
+      "evidence": "verified against spec.md at 328b2bee before the edit (lines 189/233/244 and 199); each new sentence re-grepped after",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc06a-scenario-map/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The OFF clause still promises byte-identical validate output for a malformed key",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc06a-scenario-map/specs/orbit-scenario-map/spec.md",
+      "line": 199,
+      "classification": "trivial_fix",
+      "action": "grepped every byte-identical / OFF statement first: line 199 now says absent key = byte-identical, malformed key = only the one warning the opt-in requirement assigns; design.md:67 and proposal.md:12/32 already say 'without the key' / 'absent' and needed no edit; task 4.1 asserts the malformed-OFF case adds exactly one warning",
+      "evidence": "verified against spec.md at 328b2bee before the edit (lines 189/233/244 and 199); each new sentence re-grepped after",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc06a-scenario-map/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Two of two resolved, both obvious fixes: each rule's every statement in the change was grepped first and edited together this time, the gap the verification pass named. validate --strict clean; 34 scenarios, 19 tasks unchanged.",
+  "iteration": 3,
+  "next_recommended": "/orbit:apply rc06a-scenario-map — user-invoked"
+}

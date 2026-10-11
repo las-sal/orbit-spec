@@ -1,0 +1,13 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-09-24T14:36:12Z",
+  "change": "rc04c-retire-gate-overridden",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "mode": "system",
+  "prompt_path": "orbit/changes/rc04c-retire-gate-overridden/.orbit-runs/external-prompt-system-2026-09-24T14-36-11Z.md",
+  "target": null,
+  "final_assessment": "External review prompt packaged for rc04c-retire-gate-overridden (iter 1, mode system) — the EXTERNAL HALF of the review-system blind pair, covering a declared uncovered slot (no spend record); handoff preflight FAILED on a dirty tree (the apply's 11 modified files + its emit are uncommitted; 0 unpushed commits), so the pull invocation is withheld until commit + push; awaiting findings.",
+  "awaiting_findings": true,
+  "next_recommended": "Paste orbit/changes/rc04c-retire-gate-overridden/.orbit-runs/external-prompt-system-2026-09-24T14-36-11Z.md into the target AI, save the response as orbit/changes/rc04c-retire-gate-overridden/.orbit-runs/external-system-<TS>.md, then /orbit:address-reviews rc04c-retire-gate-overridden --from-file <path>"
+}

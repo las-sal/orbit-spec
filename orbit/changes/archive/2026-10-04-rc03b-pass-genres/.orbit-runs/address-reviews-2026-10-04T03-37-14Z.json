@@ -1,0 +1,99 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-04T03:37:14Z",
+  "change": "rc03b-pass-genres",
+  "kind": "editorial",
+  "model": null,
+  "source": "from-file",
+  "source_path": "orbit/changes/rc03b-pass-genres/.orbit-runs/review-proposal-2026-10-04T03-34-25Z.json",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 3
+  },
+  "pushback_verification": "4 of 4 verified against the current tree before classification (each site re-read in the in-context pass minutes earlier; grep confirmed the owner sentence, the scenario THEN, the four stale phrases, the positional word and the task restatement all still present); 0 stale; 0 CRITICAL",
+  "resolution_summary": {
+    "resolved": 4,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The owner's brief rule still forbids every `.orbit-runs/` path, while walk 2's REGION rule permits the prompt's three required output paths",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 28,
+      "classification": "trivial_fix",
+      "action": "Qualified the owner once: the brief names no .orbit-runs/ path 'as something to READ — the destinations a brief tells the reviewer to WRITE to (the findings file it produces and the commit line that lands it) are not reads and are exempt'; the scenario's THEN now says 'to READ (its write destinations are exempt)' and points at orbit-review's grep scenario for how output sections are told apart; cascaded 'for the reviewer to READ' into review-external's Prompt file contents scenario. The owner and the mechanism agree again.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc03b-pass-genres/specs/orbit-conventions/spec.md",
+          "orbit/changes/rc03b-pass-genres/specs/orbit-review-external/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Four stale words survive the two walks' sweeps in design.md and proposal.md",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 117,
+      "classification": "trivial_fix",
+      "action": "Replaced the four stale phrases: design's Mechanism → artifacts row reads 'no-qualifying-walk rows'; Touchpoints reads 'the fenced pass-genre table mirrored from the owner'; proposal's orbit-review Capabilities bullet names 'the fresh-dispatch step and its brief by pointer' and the in-context metadata probe; the size paragraph reads 'three new test instruments (the brief grep, the fence parity pin, the hash pin)'.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc03b-pass-genres/design.md",
+          "orbit/changes/rc03b-pass-genres/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The `--fresh` requirement points at the ADDED requirement positionally ('below'), a word the archive sync will not honour",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-review/spec.md",
+      "line": 37,
+      "classification": "trivial_fix",
+      "action": "The --fresh MODIFIED block names the ADDED requirement by title instead of 'below'.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc03b-pass-genres/specs/orbit-review/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Task 2.6 restates the owner's positive content list that walk 1 reduced to one statement",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 15,
+      "classification": "trivial_fix",
+      "action": "Task 2.6 now says 'hand it the brief — what orbit-conventions' review-genre brief rule lists, and nothing from the trail (no items restated here)'; the positive list stands once, in the owner.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc03b-pass-genres/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Walk 3 (the in-context pass, VERIFICATION genre by this change's own table): 4 of 4 resolved, 0 stale, all trivial — the walk-2 regression repaired at the owner (the brief rule forbids .orbit-runs/ paths to READ; write destinations exempt; the scenario and review-external's Prompt file contents cascaded), four stale phrases replaced, the positional word named, task 2.6 pointing at the owner. After the walk: orbit validate --strict valid, fingerprints 5 verified, both BOUNDED residual lines verbatim in the owner, the residue grep for every old phrase empty. Keys taken verbatim from the review emit.",
+  "iteration": 4,
+  "next_recommended": "/orbit:apply rc03b-pass-genres — user-invoked"
+}

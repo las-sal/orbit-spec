@@ -5,6 +5,7 @@
  * templates file into workflow-focused modules.
  */
 import type { SkillTemplate, CommandTemplate } from '../types.js';
+import { PR_ARCHIVE_TAIL_REFERENCE } from './pr-choreography.js';
 
 
 // Reference: full schema for the Step 5.5 archive run summary. Migrated from the overlay
@@ -12,22 +13,30 @@ import type { SkillTemplate, CommandTemplate } from '../types.js';
 // unresolved_markers is an ARRAY; sync delta counts sit directly under sync_specs; exactly
 // three user_decision values (abort writes no summary); flat audit_skipped_via_flag; orbit
 // vocabulary throughout (no opsx/openspec-era residue).
+// rc10: the DEFERRAL REFUSALS production, a CHECKED MIRROR of the fence in
+// `orbit-archive-modifications`' `User-validation closure at the archive seam` (held byte-equal by
+// test/core/deferral-refusals-parity.test.ts). The owner is the spec; no engine surface runs the
+// write gate before the move, so Step 3.2 carries the production rather than a prose list.
+export const DEFERRAL_REFUSALS = `DEFERRAL REFUSALS — the archive write gate refuses each, naming the task or line, and Step 3.2 checks each before the move:
+1 an unchecked task carrying the (User-validation marker, with no deferral naming it
+2 a marked unchecked task with no task id, which no deferral can key
+3 a marked unchecked line the reader places in no ## task group, found by a fence-aware line scan the reader's set lacks
+4 a deferral naming a checked task, an unchecked task without the marker, or no task
+5 a second deferral naming one task
+6 a deferral whose why, when or where is missing, not a string, or empty
+7 a deferral carrying a key other than task, why, when and where
+8 a marked unchecked task whose task id another task line also carries, checked or not, naming both lines
+A missing tasks.md is an empty marked set; any other failure to read it is refused, naming the error. An empty deferred_validations array is accepted and written as absent.`;
+
 const ARCHIVE_SUMMARY_SCHEMA_REFERENCE = `# Reference: archive run-summary schema
 
 The orbit additions to \`/orbit:archive\` write a JSON summary to \`orbit/changes/archive/<YYYY-MM-DD>-<change-name>/.orbit-runs/archive-<TS>.json\` after a successful archive operation (the \`<YYYY-MM-DD>-\` prefix is added by upstream's archive move step). An aborted archive writes NO summary.
 
 ## Universal spine inheritance
 
-This schema inherits the 6-field **universal spine** from \`orbit-conventions\`'s \`Internal-run JSON summary format\` requirement (see \`orbit/specs/orbit-conventions/spec.md\`):
+The spine every emit carries is owned by \`orbit-conventions\`' \`Internal-run JSON summary format\` requirement, and is not restated here; the write gate refuses every field the engine composes. For archive, \`final_assessment\` is the payload's narrative of what was archived (e.g. \`"Archived <change-name> to <archive_path>."\`), and \`next_recommended\` is the engine's fixed post-archive line shown in the block below.
 
-- \`command\` (here: \`"archive"\`)
-- \`timestamp\` (ISO-8601 UTC; JSON field \`YYYY-MM-DDTHH:MM:SSZ\`; filename \`<TS>\` token \`YYYY-MM-DDTHH-MM-SSZ\` with colons replaced by hyphens for filesystem safety)
-- \`change\` (change name string)
-- \`final_assessment\` (narrative of what was archived, e.g., \`"Archived <change-name> to <archive_path>."\`)
-- \`next_recommended\` (verbatim recommendation, e.g., \`"Change archived. Run /orbit:new or /orbit:explore to start the next change, or /orbit:audit-drift for a project-wide drift check."\`)
-- \`kind: "lifecycle"\` (archive is THE lifecycle command per the kind taxonomy — transitions a change out of the active set)
-
-The schema below documents the per-command extensions ADDED to that spine (\`archive_path\`, \`audit\`, \`sync_specs\`, \`unresolved_markers\`, \`user_decision\`, \`warnings\`), per the \`kind: "lifecycle"\` extensions in \`orbit-conventions\`, plus the conditional \`gate_overridden\` (C1) and \`fingerprint_overridden\` / \`fingerprints_unverified\` (C2) fields.
+The schema below documents the per-command extensions ADDED to that spine (\`archive_path\`, \`audit\`, \`sync_specs\`, \`unresolved_markers\`, \`user_decision\`, \`warnings\`), per the \`kind: "lifecycle"\` extensions in \`orbit-conventions\`, plus the \`consent\` field (D1), the conditional \`fingerprint_overridden\` / \`fingerprints_unverified\` (C2) fields, the conditional \`judgements\` array (rc04a), and the conditional \`deferred_validations\` array (rc10). A \`continuation\`/\`proceed\` entry of that array is the SOLE record of a proceed-anyway past a gate the Step 3.4 prompt listed (the gate set \`orbit-engine-gates\`' \`Inflection-prompt override contract\` owns): the C1-era field it once accompanied is RETIRED (rc04c), and emits written before that retirement carry it as a PRIOR GENERATION that readers continue to accept.
 
 **Note on \`sync_specs\`**: this field reports the result of the archive flow invoking the \`orbit-sync-specs\` upstream primitive (kept upstream-verbatim per \`orbit-conventions\`' \`Generated-file disposition\`).
 
@@ -60,12 +69,21 @@ The schema below documents the per-command extensions ADDED to that spine (\`arc
   },
   "unresolved_markers": ["<file>:<line> — <marker text>"],
   "user_decision": "proceeded_with_no_critical" | "proceeded_despite_critical" | "audit_skipped_via_flag",
-  "gate_overridden": { "gate": "review-system", "state": "<unpassed|stale>", "reason": "<gate reason at decision time>" },
+  "consent": "user-invoked" | "prompted",
+  "pr_url": "<D6, optional: the attached PR's URL as observed by the read-only preflight>",
+  "pr_state": "draft" | "ready",  // D6, optional: OBSERVED at preflight; elided when unobservable OR positively invalid (closed/merged/retargeted) — that condition is off the draft/ready axis
+  "judgements": [
+    { "kind": "continuation", "disposition": "proceed", "formed_against": ["<independent pass TS>"], "reasoning": "<prose>", "ratified_by": "ai|user", "gate": "<a gate the Step 3.4 prompt listed>", "gate_state": "<unpassed|stale|blocked>", "gate_reason": "<gate reason at decision time>" },
+    { "kind": "readiness", "formed_against": ["<independent pass TS>"], "disposition": "ready|not-ready", "reasoning": "<prose>", "ratified_by": "ai|user", "accepted": [ { "claim": "<what was left unresolved>", "why": "<why that was acceptable>" } ] }
+  ],
   "fingerprint_overridden": [
     { "capability": "<name>", "requirement": "<name>", "base_hash": "sha256:<hex>", "live_hash": "sha256:<hex>" }
   ],
   "fingerprints_unverified": [
     { "capability": "<name>", "requirement": "<name>" }
+  ],
+  "deferred_validations": [
+    { "task": "<task id>", "why": "<why it was not observed at this seam>", "when": "<the moment it will be>", "where": "<the place>" }
   ],
   "warnings": [
     "<text — e.g., 'Archived with 2 incomplete artifacts'>"
@@ -73,18 +91,79 @@ The schema below documents the per-command extensions ADDED to that spine (\`arc
 }
 \`\`\`
 
+## Example payload
+
+A payload file the archive writes after the move — here an archive that took every conditional branch at once (\`--skip-audit\`, a proceed-anyway past an unpassed \`review-system\` gate, a fingerprint override, an unverified requirement, a deferred user-validation task, an attached draft PR), so one payload carries every key the block documents. Real JSON, accepted by \`orbit emit archive --change <name>\` against the ARCHIVED directory, carrying no engine-owned key. An archive that took none of those branches simply omits the conditional keys. A test submits this block, unchanged, through the write gate, with the archived trail seeded with the pass its \`formed_against\` arrays name and the archived \`tasks.md\` with the \`(User-validation\` task its deferral names (\`orbit-emit-composition\`'s \`Payload schema references are proven by execution\`).
+
+\`\`\`json example archived
+{
+  "final_assessment": "Archived add-detail-flag to orbit/changes/archive/2026-10-04-add-detail-flag/.",
+  "archive_path": "orbit/changes/archive/2026-10-04-add-detail-flag/",
+  "audit": { "ran": false, "failure_reason": null, "findings_summary": { "critical": 0, "warning": 0, "suggestion": 0 }, "summary_path": null },
+  "audit_skipped_via_flag": true,
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": ["orbit-status-output"],
+    "added": 1,
+    "modified": 2,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
+  "user_decision": "audit_skipped_via_flag",
+  "consent": "user-invoked",
+  "pr_url": "https://github.com/example/repo/pull/42",
+  "pr_state": "draft",
+  "judgements": [
+    {
+      "kind": "continuation",
+      "disposition": "proceed",
+      "formed_against": ["2026-10-03T14-20-00Z"],
+      "reasoning": "The one unresolved WARNING is a scenario title's wording; another pass would not change what the archive syncs.",
+      "ratified_by": "user",
+      "gate": "review-system",
+      "gate_state": "unpassed",
+      "gate_reason": "one WARNING unresolved on the external pass"
+    },
+    {
+      "kind": "readiness",
+      "formed_against": ["2026-10-03T14-20-00Z"],
+      "disposition": "ready",
+      "reasoning": "The external pass found nothing the walk left open beyond the accepted residual.",
+      "ratified_by": "ai",
+      "accepted": [{ "claim": "The --detail flag is untested on Windows paths", "why": "No Windows runner exists here; recorded for the first adopter report." }]
+    }
+  ],
+  "fingerprint_overridden": [
+    { "capability": "orbit-status-output", "requirement": "Detail flag", "base_hash": "sha256:1111111111111111111111111111111111111111111111111111111111111111", "live_hash": "sha256:2222222222222222222222222222222222222222222222222222222222222222" }
+  ],
+  "fingerprints_unverified": [
+    { "capability": "orbit-status-output", "requirement": "Compact flag" }
+  ],
+  "deferred_validations": [
+    { "task": "5.3", "why": "The flag's first real use is the next change's review, after this one merges.", "when": "the next change that runs orbit status --detail", "where": "that change's review cycle" }
+  ],
+  "warnings": ["Sync skipped one MODIFIED block already byte-equal to the baseline"],
+  "model": "claude-opus-5-5"
+}
+\`\`\`
+
 ## Field notes
 
 - **\`audit.ran\`** = \`false\` either because \`--skip-audit\` was set (then the top-level \`audit_skipped_via_flag: true\` is recorded) or because audit-drift failed (then \`failure_reason\` is set). The two cases are disambiguated by those flags.
-- **\`audit.findings_summary\`** mirrors the audit-drift run summary's counts; the full audit detail lives at the path in \`audit.summary_path\`.
+- **\`audit.findings_summary\`** is the severity count (\`critical\` / \`warning\` / \`suggestion\`) of the pre-archive sweep's findings — the archive's own record; the standalone audit-drift emit carries no severity summary.
 - **\`audit_skipped_via_flag\`** (top-level boolean): recorded as \`true\` only when \`/orbit:archive --skip-audit\` was used; omit the field otherwise. This is the flat field the skill body and the \`orbit-archive-modifications\` baseline require — it is NOT nested inside \`audit\`.
 - **\`sync_specs.capabilities_updated\`** lists capability names whose \`orbit/specs/<capability>/spec.md\` was edited; the delta counts (\`added\`/\`modified\`/\`removed\`/\`renamed\`) sit DIRECTLY under \`sync_specs\`, mirroring \`orbit-conventions\`' canonical lifecycle example.
 - **\`unresolved_markers\`** is an ARRAY of the \`@review:\` markers still present when the archive proceeded (empty array when none) — one \`"<file>:<line> — <marker text>"\` entry per marker. Marker-prompt outcomes that halt the archive write no summary at all.
 - **\`user_decision\`** captures the AUDIT-drift prompt decision and has exactly three values: \`proceeded_with_no_critical\` (clean audit or warnings only), \`proceeded_despite_critical\` (user explicitly proceeded past CRITICAL findings), \`audit_skipped_via_flag\` (\`--skip-audit\` used). An abort at the critical-findings prompt cancels the archive and writes no summary.
-- **\`gate_overridden\`** (C1) is DISTINCT from \`user_decision\` (which is the audit-drift outcome): it is present ONLY when the \`review-system\` gate was unpassed/stale at archive and the user chose **Proceed anyway** at the gate inflection prompt (Step 3.4); shape \`{gate, state, reason}\` captured at decision time. Absent when no gate override occurred.
-- **\`fingerprint_overridden\`** (C2) is present ONLY when the Step 3.45 fingerprint check reported \`diverged\` requirement(s) and the user chose **Proceed anyway** at the divergence inflection prompt — one \`{capability, requirement, base_hash, live_hash}\` entry per diverged requirement, captured at decision time. Absent when no fingerprint override occurred; REQUIRED when proceed-anyway was chosen. DISTINCT from \`gate_overridden\` (review-cadence override) and \`user_decision\` (audit-drift outcome).
+- **\`pr_url\` / \`pr_state\`** (D6, per \`orbit-pr-lifecycle\`) record the attached PR's identity and the state the READ-ONLY PREFLIGHT observed — normally \`"draft"\`, and truthfully \`"ready"\` when the PR was already flipped by the USER at an earlier point (including at a prior program's arc-done, for an adopted program PR; never by a stage). The preflight runs BEFORE this emit, so the value is an OBSERVATION, never a forward-looking claim about the flip the tail is about to perform. On POSITIVE invalidation \`pr_state\` is ELIDED while \`pr_url\` is still recorded — the identity that was validated and rejected. Both absent for UNATTACHED changes; present whenever an attachment resolves, EVEN IF \`pr:\` now reads \`never\` (attachment authority).
+- **\`consent\`** (D1, per \`orbit-lifecycle-consent\`) records the invocation's consent story from the Step 0 provenance check: \`"user-invoked"\` (user-typed \`/orbit:archive\`, or a user-typed \`/orbit:bulk-archive\` whose flow confirmed the batch) or \`"prompted"\` (AI-mediated arrival, consent prompt fired, user proceeded). Exactly two values — a consent Abort writes NO summary. REQUIRED on every post-capability archive emit; absence is the audit-drift tripwire condition. DISTINCT from \`user_decision\` (audit outcome), the \`continuation\` judgement entry (cadence decision), and the fingerprint fields (content guard).
+- **\`fingerprint_overridden\`** (C2) is present ONLY when the Step 3.45 fingerprint check reported \`diverged\` requirement(s) and the user chose **Proceed anyway** at the divergence inflection prompt — one \`{capability, requirement, base_hash, live_hash}\` entry per diverged requirement, captured at decision time. Absent when no fingerprint override occurred; REQUIRED when proceed-anyway was chosen. DISTINCT from the \`continuation\` judgement entry (review-cadence decision) and \`user_decision\` (audit-drift outcome).
 - **\`fingerprints_unverified\`** (C2) is present ONLY when the archive proceeded past requirement(s) whose fingerprint status was \`unverified\` (no base recorded — e.g. a hand-authored or pre-C2 delta) — one \`{capability, requirement}\` entry each. Absent when every touched requirement was verified.
-- **\`warnings\`** captures the upstream warning surfaces (incomplete artifacts, incomplete tasks, sync skipped) — kept human-readable since they vary in shape.
+- **\`judgements\`** (rc04a) is present ONLY when a CADENCE JUDGEMENT was taken at this seam — a decision that holds a CADENCE POSITION, whether or not independent output existed to cite; the key is OMITTED when none was, so its presence means a judgement happened. The archive is the ONE emit admitting both kinds: a \`continuation/proceed\` (composed at Step 3.4 as the SOLE record of a proceed-anyway, ONE per gate the prompt listed — the gate set \`orbit-engine-gates\`' \`Inflection-prompt override contract\` owns — carrying that gate, its state and its reason at decision time as \`gate\`/\`gate_state\`/\`gate_reason\`) and the terminal \`readiness\` (Step 5.5). \`formed_against\` may be EMPTY only on a \`continuation\`/\`proceed\`, and only when the trail carries no accepted independent pass earlier than this emit — the write gate refuses an empty citation naming the latest preceding pass otherwise. Which passes count, and when an empty citation is legal, is \`orbit-run-summary-emit\`'s totality rule; this reference names it and does not restate it. DISTINCT from \`user_decision\` (the audit-drift outcome) and from \`warnings\` (SEAM-ARISING process notes, formed against no pass and holding no cadence position). A \`not-ready\` readiness is an ARCHIVE-TIME DISSENT — the author's own judgement, \`ratified_by\` either \`ai\` or \`user\` — and it RECORDS without blocking; Step 5.65 states it in the completion readout.
+- **\`deferred_validations\`** (rc10) is present ONLY when Step 3.2 DEFERRED an unchecked \`(User-validation\` task — one \`{task, why, when, where}\` entry each: the task id, and non-empty prose naming why it was not observed at this seam, the moment it will be, and the place. Its refusals are \`orbit-archive-modifications\`' \`User-validation closure at the archive seam\`'s production; the write gate checks the id set against the archived \`tasks.md\`, never whether the prose is true. An OBSERVED task is checked in \`tasks.md\` and carries no entry. DISTINCT from \`warnings\`, which no longer carries a validation handoff as an incomplete task.
+- **\`warnings\`** captures the upstream warning surfaces (incomplete artifacts, incomplete tasks other than user-validation ones, sync skipped) — kept human-readable since they vary in shape.
 `;
 
 export function getArchiveChangeSkillTemplate(): SkillTemplate {
@@ -123,7 +202,7 @@ export function getArchiveChangeSkillTemplate(): SkillTemplate {
 
    Read the tasks file (typically \`tasks.md\`) to check for incomplete tasks.
 
-   Count tasks marked with \`- [ ]\` (incomplete) vs \`- [x]\` (complete).
+   Count tasks marked with \`- [ ]\` (incomplete) vs \`- [x]\` (complete). Exclude every unchecked task carrying the \`(User-validation\` marker from the count — Step 3.2 owns those (orbit named edit, per \`orbit-archive-modifications\`' \`User-validation closure at the archive seam\`).
 
    **If incomplete tasks found:**
    - Display warning showing count of incomplete tasks
@@ -172,6 +251,7 @@ export function getArchiveChangeSkillTemplate(): SkillTemplate {
    - Archive location
    - Whether specs were synced (if applicable)
    - Note about any warnings (incomplete artifacts/tasks)
+   - One line per Step 3.2 deferral (orbit, rc10): \`deferred: <task> — <why>; when <when>, where <where>\`
 
 **Output On Success**
 
@@ -188,7 +268,7 @@ All artifacts complete. All tasks complete.
 
 **Guardrails**
 - Always prompt for change selection if not provided
-- Use artifact graph (orbit status --json) for completion checking
+- Use artifact graph (orbit status --change <name> --json) for completion checking
 - Don't block archive on warnings - just inform and confirm
 - Preserve .openspec.yaml when moving to archive (it moves with the directory)
 - Show clear summary of what happened
@@ -199,15 +279,47 @@ All artifacts complete. All tasks complete.
 
 # Orbit additions
 
-The sections below describe orbit-specific additions on top of upstream's archive flow. The upstream content above is unchanged. Orbit adds a **pre-archive \`audit-drift\` sweep**, a \`--skip-audit\` opt-out, an **unresolved \`@review:\` marker warning**, a **base-fingerprint divergence check** (C2), an **archive run summary** written to \`.orbit-runs/\`, and a small set of edge-case behaviors.
+The sections below describe orbit-specific additions on top of upstream's archive flow. The upstream content above is as \`orbit-conventions\`' \`Generated-file disposition\` records it. Orbit adds a **consent check at entry** (D1), a **pre-archive \`audit-drift\` sweep**, a \`--skip-audit\` opt-out, an **unresolved \`@review:\` marker warning**, a **user-validation closure** (rc10), a **base-fingerprint divergence check** (C2), an **archive run summary** written to \`.orbit-runs/\`, and a small set of edge-case behaviors.
 
-## Three execution disciplines (apply throughout this command)
+## Four execution disciplines (epitome)
 
-**Read-before-reference (authoring-time)**. The archive run summary cites the pre-archive audit findings, user decision, and sync-specs results. Read the audit-drift output and the sync-specs assessment before writing the summary — don't infer counts from intent. The summary becomes the audit trail for the archived change; false claims corrupt later inspection.
+The four disciplines from \`orbit-conventions\`, embedded per body; detail lives in the step where each fires.
 
-**Change completeness (modification-time)**. The archive flow modifies multiple artifacts: it moves the change directory, runs \`sync-specs\` (which writes to baseline), and writes the archive run summary. Apply these fully: a moved change should not leave dangling references in baseline; a sync-specs run should not leave delta-only requirements unreflected in baseline. Sweep after each step to confirm completion before proceeding to the next.
+- **Read-before-reference (authoring-time)**: the run summary cites audit findings, the user decision, and sync-specs results — read the actual outputs before composing it; false claims corrupt the archived trail.
+- **Change completeness (modification-time)**: the flow moves the change dir, writes baseline via sync-specs, and emits the summary — sweep after each step so no dangling baseline references or unreflected deltas survive.
+- **Pushback (review-time)**: second-pass-verify each pre-archive audit finding against current session state; stale findings get a note in the summary, not a re-prompt.
+- **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line — gate \`passed\` means *eligible*, not *commanded*.
 
-**Pushback (review-time)**. The pre-archive audit produces findings. Before presenting them to the user, verify each against current state (audit-drift's own pushback discipline applies, but apply a second-pass check at the archive layer): is the finding still applicable given any commits since the audit ran in the current session? Stale findings get a note in the summary, not a re-prompt.
+## NEW Step 0 — Consent at entry (provenance rule, per \`orbit-lifecycle-consent\`)
+
+BEFORE any other step — before the Step 1.5 marker scan, the Step 3.4 gate prompt, and every write. Archive is a consent-scoped command (the \`review-system\` gate carries \`consent: user-invoked\`); consent asks "should we be here at all", the anomaly prompts (gate, fingerprint, audit) ask "is the state sound".
+
+**Ordering invariant**: provenance is CLASSIFIED at entry (a fact about the triggering turn); the consent prompt itself — and the era stamp below — fire AFTER read-only discovery (change selection; the read-only look at \`orbit/changes/<name>/specs/\` that supplies the write preview) and BEFORE any write or anomaly prompt. Read-only steps never require consent; writes always follow it.
+
+Determine invocation provenance — an observable transcript fact, never a judgment of delegated intent:
+
+- **User-invoked**: the triggering turn contains an explicit user invocation — the typed \`/orbit:archive\` command, or an unambiguous same-turn prose request naming the act ("archive it"). Proceed with ZERO added prompts (only the anomaly prompts may interrupt); the run summary records \`consent: "user-invoked"\`.
+- **AI-mediated**: everything else — delegation phrases ("finish the cadence"), inference ("continue"), a handoff document, or an eligibility readout pointing here. Fire a consent **AskUserQuestion** BEFORE any of the command's writes: the position readout, what the archive will write (N deltas across M capabilities synced to baseline + the change moved to archive — from a read-only look at \`orbit/changes/<name>/specs/\`), and exactly two options — **Proceed** / **Abort**. When the change is PR-ATTACHED (D6 — resolve this from the change's trail as part of the same read-only discovery), the preview ADDITIONALLY names the tail's OUTWARD writes: the branch the archive commit lands on, the PUSH to the resolved remote, and — for a per-proposal PR — the READY FLIP, or for a program PR the APPENDED stage entry. This is required precisely because the tail rides this same entry consent and fires no second prompt: a preview enumerating only in-repo writes would obtain consent for a spec sync and a directory move, then push to a remote and flip a pull request public. The outward line is OMITTED for unattached changes, so the pre-capability prompt is unchanged wherever no PR exists — and it is likewise omitted under \`/orbit:bulk-archive\`, which runs no tail. Proceed records \`consent: "prompted"\` in the run summary; **Abort leaves no baseline write, no sync, no move, and no run summary**.
+- **When provenance is uncertain, treat the arrival as AI-mediated** — erring toward one extra click, never toward a silent proceed.
+
+**Consent-era stamp (migrate-on-touch)**: once consent is established (user-typed provenance, or Proceed at the prompt), read the change's \`.openspec.yaml\`. If it lacks \`schema_version\`, stamp \`consent_era_from: <current UTC timestamp, YYYY-MM-DDTHH:MM:SSZ>\` into it (add-only; never overwrite an existing stamp) — this marks a pre-capability change as tripwire-covered from this touch onward.
+
+**Sync inheritance (no double-prompt)**: the sync-specs step this flow invokes (upstream Step 4) inherits THIS flow's consent — it never fires a separate consent prompt.
+
+## NEW Step 0.7 — PR-attachment entry observation (READ-ONLY, every provenance path — D-arc Stage D6)
+
+Before ANY archive write — before upstream Step 1, before sync (Step 4) and the move (Step 5)
+— resolve whether this change is PR-ATTACHED: read \`pr_attachment\` from the LATEST
+attachment-bearing PROPOSE or FF emit on the change's trail (the same read the consent
+preview in Step 0 uses on the AI-mediated path, and the same read Step 5.45 will use). This
+step mutates nothing and runs on EVERY provenance path, user-typed included. When attached,
+compare HEAD's branch (\`git branch --show-current\`) with \`pr_attachment.branch\`. On mismatch,
+SAY SO NOW — in the consent preview when one fires, otherwise as one line before Step 1 —
+naming both branches and the case-specific switch (\`git switch <branch>\` locally; the
+tracking form when only the remote has it). The tail's HEAD precondition (in the reference)
+remains the GUARD that skips the PR half; this observation is the early warning that lets the
+user switch first instead of carrying uncommitted sync, move, and emit writes across a
+\`git switch\` afterward. Unattached changes see nothing here.
 
 ## NEW Step 1.5 — Unresolved \`@review:\` marker warning
 
@@ -233,17 +345,37 @@ Prompt via \`AskUserQuestion\`:
 
 If no markers, proceed without prompting.
 
-## NEW Step 3.4 — review-system gate inflection prompt (C1)
+## NEW Step 3.2 — User-validation closure (rc10)
 
-After upstream Step 3 (task-completion check) but before the audit sweep (Step 3.5) — the gate prompt fires FIRST per the gated-phase contract:
+After upstream Step 3 (task-completion check) and BEFORE the Step 3.4 gate prompt — so the brief informs the gate decision, and so every predictable refusal surfaces while the change is still active. The rule is \`orbit-archive-modifications\`' \`User-validation closure at the archive seam\`; this step carries it out.
 
-Query the gate: \`orbit status --change "<change-name>" --json\` and read the \`gates[]\` entry with \`id: "review-system"\` (there is NO \`orbit instructions archive\` phase — the archive workflow sources gate state from \`status\`). If that gate's \`state\` is \`unpassed\` or \`stale\`, fire the inflection prompt via **AskUserQuestion** with the gate's \`reason\` and the top-level \`next_command\` shown:
+Find every unchecked task in \`tasks.md\` whose line carries the \`(User-validation\` marker — whether or not an apply emit declared it — and dispose of EACH as exactly one of:
 
-- **Address the gate** — halt; run the canonical \`next_command\` (e.g. \`/orbit:review-external --as system <change>\`).
-- **Proceed anyway** — continue the archive; record \`gate_overridden: {gate: "review-system", state, reason}\` in the archive run summary (captured at decision time).
+- **OBSERVED** — the validation has happened (during the change's own cycle, or here). Check the box and append to the task line a one-line note naming the evidence (an emit token, a commit, what was seen). No deferral entry.
+- **DEFERRED** — the validation was not observed at this seam: it can happen only after the change ships (a merge, a later stage, a later session), OR it could have happened and has not. The box stays unchecked; compose a \`deferred_validations\` entry \`{task, why, when, where}\` for the Step 5.5 payload — \`why\` saying honestly which case it is. A task whose assertion is about state that exists only AFTER this step — the baseline after sync, the archived directory, or the archive emit — is DEFERRED here: this step precedes the sync and the move.
+
+Then check every case of the production below against \`tasks.md\` and the composed deferrals. A marked task with no id, in no \`## \` group, or with an id another task line carries (cases 2, 3 and 8), or a \`tasks.md\` that cannot be read, is REPORTED to the user, who repairs \`tasks.md\` before the archive proceeds, or aborts; fix any other case in the composed deferrals yourself. This is a CHECKED MIRROR of the production \`orbit-archive-modifications\`' \`User-validation closure at the archive seam\` states once — no engine surface runs the write gate before the move, so the step carries the production itself:
+
+\`\`\`
+${DEFERRAL_REFUSALS}
+\`\`\`
+
+**BRIEF the user before the move** — in chat, one line per task: its id, its disposition and, for a deferral, its \`why\` (and \`when\`/\`where\`). The brief is a REPORT, not a prompt: it asks nothing, and halting stays the user's, by aborting. When no marked task is unchecked, the step says nothing.
+
+**Recovery after the move**: if \`orbit emit archive\` still refuses at Step 5.5, repair the payload and re-run the emit against the archived directory — NEVER repeat the sync or the move.
+
+## NEW Step 3.4 — Gate inflection prompt (C1; every reviewed gate since rc10)
+
+After Step 3.2 but before the audit sweep (Step 3.5) — the gate prompt fires FIRST among the anomaly prompts per the gated-phase contract:
+
+Query \`orbit status --change "<change-name>" --json\` (there is NO \`orbit instructions archive\` phase — the archive workflow sources gate state from \`status\`) and read EVERY \`gates[]\` row whose \`kind\` is \`reviewed\`. LIST each one whose \`state\` is not \`passed\` and whose \`superseded\` field is not \`true\` — the gate set at archive is \`orbit-engine-gates\`' \`Inflection-prompt override contract\`'s, which this body points at rather than restates. When at least one gate is listed, fire ONE inflection prompt via **AskUserQuestion** showing each listed gate with its \`state\` and \`reason\` (its \`independentSpend\` MAY be shown; it never decides whether a gate is listed) and the top-level \`next_command\`:
+
+- **Address the gate** — halt; run the canonical \`next_command\` the CLI returned — its CLASS depends on the schema's cadence, so it is read rather than predicted.
+- **Proceed anyway** — continue the archive; record the decision in the archive run summary as the \`continuation\` entries described below (captured at decision time), ONE PER LISTED GATE.
+  **THE CONTINUATION RECORD (rc04a; the SOLE record as of rc04c).** This seam — not apply's — is where the proceed-anyway decision is most often taken. For EACH listed gate, compose a \`judgements\` entry \`{kind: "continuation", disposition: "proceed", gate: <id>, gate_state: <state>, gate_reason: <reason>}\` carrying that gate's state and reason AS THE CLI REPORTED THEM at decision time, with \`formed_against\` naming the independent pass tokens the decision was taken knowing about and \`reasoning\` saying why proceeding was right anyway. **CAPTURE THE TOKENS NOW, HERE, BEFORE THE MOVE** — carry them forward to Step 5.5, where the change directory no longer exists under its active path. **If the trail carries NO independent pass earlier than this emit, the entry IS STILL WRITTEN, with \`formed_against: []\`.** The emptiness is legal precisely when it is true of the trail — the write gate reads the trail and REFUSES an empty citation, naming the latest preceding pass, when one exists — so the decision is recorded rather than lost, and inventing a token is refused. The token source is the TRAIL ITSELF, not \`orbit status\`: the change-tier status payload reports gate spend COUNTS and reason strings, never pass tokens. List \`orbit/changes/<change-name>/.orbit-runs/\` and take the \`<TS>\` of each \`review-<mode>-<TS>.json\` whose \`reviewer_class\` is \`fresh\` or \`external\`, plus each \`external-<mode>-<TS>.md\` the trail reader ACCEPTED as a pass — a return the gate's \`reason\` names as REJECTED is not citable, and enumerating filenames alone over-counts by exactly those. Which passes count is \`orbit-run-summary-emit\`'s rule (the trail reader's pass set); this body names it and does not restate it — the write gate enforces it and names the pass it refuses on.
 - **Abort** — cancel the archive; no move, no sync-specs, no summary.
 
-The gate NEVER hard-blocks (apply-parity): the engine reports, the skill prompts, the user decides, the trail records. If \`review-system\` is \`passed\` (or the schema declares no such gate), proceed without prompting. This gate prompt is DISTINCT from the fingerprint prompt (Step 3.45) and the audit-drift prompt (Step 3.5); all three MAY fire in one archive invocation (gate first, then fingerprints, then audit).
+The gate NEVER hard-blocks (apply-parity): the engine reports, the skill prompts, the user decides, the trail records. When no gate is listed (every reviewed gate passed or superseded, or the schema declares none), proceed without prompting. This gate prompt is DISTINCT from the Step 0 consent prompt (consent asks "should we be here at all"; this asks "is the state sound"), the fingerprint prompt (Step 3.45), and the audit-drift prompt (Step 3.5); a single invocation MAY fire consent first and the anomaly prompts after (gate, then fingerprints, then audit).
 
 ## NEW Step 3.45 — Base-fingerprint divergence check (C2)
 
@@ -314,17 +446,77 @@ After upstream Step 3 (task-completion check) but before Step 4 (sync-specs):
 
 When \`/orbit:archive --skip-audit <name>\` is invoked, the entire Step 3.5 audit is skipped. The archive run summary records \`audit_skipped_via_flag: true\`. Use case: the user has just run \`/orbit:audit-drift\` manually and doesn't need to repeat it.
 
+## NEW Step 5.45 — PR preflight (READ-ONLY, before the emit — D-arc Stage D6)
+
+Before composing the Step 5.5 emit, resolve whether this change is PR-ATTACHED and observe
+the PR's current state. This step MUTATES NOTHING.
+
+Read \`pr_attachment\` from the LATEST attachment-bearing PROPOSE **or FF** emit on the
+change's trail. A WHOLLY ABSENT attachment TERMINATES the PR path here — no discovery query,
+no remote or \`gh\` work, and no tail at Step 5.6 — the archive ends exactly as
+pre-capability. (\`/orbit:new\` + \`/orbit:continue\` changes never attach.) Otherwise load
+\`references/pr-archive-tail.md\` and follow its preflight: validate a stored \`url\` live,
+fall back to the constrained query only when the record lacks \`url\`, and observe the current
+draft/ready state.
+
+Feed that ONE observation to BOTH the Step 5.5 emit and the Step 5.6 tail so they cannot
+disagree. Cannot observe (no \`gh\`, failed query) → elide the emit's PR fields and skip the
+tail; never block the archive.
+
+(The HEAD-vs-attachment observation already fired at Step 0.7, before any archive write; this
+step observes the PR's LIVE state only. The tail re-checks HEAD immediately before staging as
+its guard.)
+
 ## NEW Step 5.5 — Archive run summary
 
-After upstream Step 5 (move-to-archive) completes successfully, write a JSON summary to:
+After upstream Step 5 (move-to-archive) completes, compose the payload — narrative + the extension fields \`references/archive-summary-schema.md\` lists (\`archive_path\`, \`audit\`, \`sync_specs\`, \`unresolved_markers\`, \`user_decision\`, \`consent\`, \`warnings\`, plus Step 3.2's \`deferred_validations\` when it deferred any task) — write it to a temp file, and invoke:
 
+**COMPOSE THE READINESS RECORD (rc04a).** When this archive CONCLUDES A REVIEW CADENCE — readable as the change's trail carrying independent passes — the payload SHALL carry a \`judgements\` entry with \`kind: "readiness"\`. Its \`formed_against\` is those passes' \`<TS>\` tokens; its \`disposition\` is your own judgement; its \`accepted\` list is where RESIDUAL RISK goes, one \`{claim, why}\` pair each. Where Step 3.4 fired **Proceed anyway**, its \`continuation\` entries sit in the SAME array — the archive is the one emit admitting both kinds, which is why the carrier is an array.
+
+The token source is the TRAIL ITSELF, not \`orbit status\`: the change-tier status payload reports gate spend COUNTS and reason strings, never pass tokens. List \`<archive_path>/.orbit-runs/\` and take the \`<TS>\` of each \`review-<mode>-<TS>.json\` whose \`reviewer_class\` is \`fresh\` or \`external\`, plus each \`external-<mode>-<TS>.md\` the trail reader ACCEPTED as a pass — a return the gate's \`reason\` names as REJECTED is not citable, and enumerating filenames alone over-counts by exactly those. Which passes count is \`orbit-run-summary-emit\`'s rule (the trail reader's pass set); this body names it and does not restate it — the write gate enforces it and names the pass it refuses on. The trail MOVED with the change at Step 5, so the ACTIVE path no longer resolves and \`orbit status --change <name> --json\` now errors — read the archived directory, or reuse the tokens Step 3.4 captured before the move.
+
+A \`disposition: "not-ready"\` is an ARCHIVE-TIME DISSENT, not a routing decision: it says the work was archived against your own judgement, and \`ratified_by\` records honestly whether that belief was yours (\`ai\`) or the user's (\`user\`). It does NOT block — the seam already carries consent, gate and audit prompts for stopping — and Step 5.65 states it where a human is looking. (Routing a cadence back to architecture instead of archiving is a real judgement with no carrier here, deliberately: the archive readout is this record's only reader, and in the routing case there is no archive to read it.)
+
+**\`accepted\` versus \`warnings\`, and the test that separates them**: a residual formed AGAINST the independent passes is an \`accepted\` pair; something that arose at the SEAM ITSELF and was formed against no pass — a divergence observed at archive, a correction made in flow — stays a \`warnings\` entry. The test is whether independent review output informed it, which is also what makes the ordering check possible; a \`warnings\` entry cites nothing and can be ordered against nothing. Writing a pass-formed residual into \`warnings\` is the practice this record replaces.
+
+\`\`\`bash
+orbit emit archive --change <name> --payload <payload-file>
 \`\`\`
-orbit/changes/archive/<YYYY-MM-DD>-<change-name>/.orbit-runs/archive-<TS>.json
-\`\`\`
 
-Where \`<YYYY-MM-DD>\` is the date prefix upstream's move step added (per \`mv orbit/changes/<name> orbit/changes/archive/YYYY-MM-DD-<name>\` at Step 5). The \`.orbit-runs/\` directory should be present already — it moved with the change content. If somehow absent, create it.
+The ENGINE resolves the post-move landing itself (the lexically-greatest \`orbit/changes/archive/*-<name>/\` scan) and owns the spine, filename, and collision handling — never hand-compose the JSON or the path.
 
-Full schema lives at \`references/archive-summary-schema.md\` — read that file when composing the summary.
+## NEW Step 5.6 — The PR-attached tail (AFTER the emit, BEFORE the completion readout — D-arc Stage D6)
+
+Runs ONLY when Step 5.45 resolved an attachment. Follow \`references/pr-archive-tail.md\`:
+its preconditions (\`gh\` availability and the HEAD-branch check, both BEFORE any staging),
+then commit → push → description rewrite (per-change) or stage-entry append (program) →
+\`gh pr ready\` for per-change PRs only.
+
+The tail's outward writes ride the archive's OWN entry consent — no second prompt. Every
+step's failure is inside the degradation contract: skip the remainder with a note naming
+completed vs skipped steps AND the repository-qualified completing command for the step that
+failed. The archive itself (sync, move, emit) has already succeeded and never rolls back.
+
+## NEW Step 5.65 — The readiness line in the completion readout (rc04a)
+
+When the archive emit carried a \`readiness\` entry with \`disposition: "not-ready"\`, the completion readout SHALL state it in ONE line, naming the record AND RENDERING \`ratified_by\`, because that field says WHOSE dissent it was and a line that presupposes one value misreports the other: \`readiness: NOT READY — archived against this session's own judgement; see archive-<TS>.json\` when \`ratified_by\` is \`ai\`, and \`readiness: NOT READY — archived against the user's ratified judgement; see archive-<TS>.json\` when it is \`user\`. A \`ready\` disposition renders NOTHING: the ordinary case needs no announcement, and a readout that speaks on every archive teaches readers to skip it.
+
+This line is the record's READER, and it is not decoration. A judgement record that no surface consumes would repeat exactly the defect this program already found in the RETIRED field this record superseded — written by every body, read by nothing — inside the change that exists to fix it. A change archived against the author's own judgement should say so where a human is looking, not only inside a JSON field.
+
+## NEW Step 5.7 — Stage-line garnish in the completion readout (D-arc Stage D2)
+
+When the archived change's metadata carries an \`architecture: {doc, stage}\` citation, the "Archive Complete" readout gains ONE stage line: after the move, run \`orbit architecture status --json\` and render the cited stage's post-archive computed position (e.g. \`stage d2-architect: now quiescent — completion is yours to ratify\`). One line riding the existing position render — no prompt, no doc edit; ratification never happens here (D-d2-4). Uncited changes see no stage line.
+
+## NEW Step 5.8 — Residual outward-actions echo (per \`orbit-conventions\`)
+
+When the flow hands control back at an OUTWARD seam, the completion readout echoes the
+residual rule in ONE line — outward acts orbit did not design into a lifecycle step stay the
+human's. After a tail that flipped a per-change PR READY: "merging is yours:
+\`gh pr merge --repo <owner>/<repo> <number>\` when satisfied." After a program-PR append:
+the program PR is named and the flip stays at arc-done. After a tail whose PR half was
+SKIPPED on positive invalidation (the commit and push landed; the rewrite/append and flip did
+not): name the specific reason and that any action on that pull request is the user's. No
+echo fires for an unattached change — there is no outward seam to hand back at.
 
 ## \`.orbit-runs/\` moves with the change
 
@@ -362,6 +554,10 @@ This is a deliberate choice (per \`orbit-archive-modifications\`' \`Audit inform
       {
         name: 'archive-summary-schema.md',
         content: ARCHIVE_SUMMARY_SCHEMA_REFERENCE,
+      },
+      {
+        name: 'pr-archive-tail.md',
+        content: PR_ARCHIVE_TAIL_REFERENCE,
       },
     ],
     license: 'MIT',

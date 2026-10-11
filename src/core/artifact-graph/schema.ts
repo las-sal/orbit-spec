@@ -4,12 +4,14 @@ import {
   SchemaYamlSchema,
   CADENCE_ENTRIES,
   LIFECYCLE_PHASE_TOKENS,
+  CONSENT_VALUES,
   type SchemaYaml,
   type Artifact,
   type NormalizedGate,
   type GateKind,
   type GateConfirm,
   type CadenceEntry,
+  type ConsentValue,
 } from './types.js';
 
 export class SchemaValidationError extends Error {
@@ -63,8 +65,10 @@ export function parseSchema(yamlContent: string): SchemaYaml {
 /**
  * Normalizes a schema's gates into a flat NormalizedGate[]: the upstream `apply:`
  * block is folded in as a `kind: tracked` gate (id `apply`) unless a declared gate
- * already claims that id; `inputs` defaults to `requires`; `confirm` defaults to
- * `no-new-findings`. This is the shape gate-state computation consumes. Pure.
+ * already claims that id; `inputs` defaults to `requires`; `confirm` still defaults to
+ * `no-new-findings` but is INERT (rc02c retired clause (c)) — the default is kept so the
+ * normalized shape stays stable for readers, not because anything consumes it.
+ * This is the shape gate-state computation consumes. Pure.
  */
 export function normalizeGates(schema: SchemaYaml): NormalizedGate[] {
   const gates: NormalizedGate[] = [];
@@ -79,8 +83,10 @@ export function normalizeGates(schema: SchemaYaml): NormalizedGate[] {
       tracks: g.tracks ?? null,
       inputs: g.inputs ?? requires,
       cadence: (g.cadence ?? []) as CadenceEntry[],
+      ...(g.budget === undefined ? {} : { budget: g.budget }),
       confirm: (g.confirm ?? 'no-new-findings') as GateConfirm,
       before: g.before,
+      consent: g.consent as ConsentValue | undefined,
       instruction: g.instruction,
     });
   }
@@ -135,9 +141,33 @@ function validateGates(schema: SchemaYaml): void {
       );
     }
 
+    // rc02: name the GATE ID for both new fields. The Zod enum names an INDEX
+    // (`gates.2.cadence.0`), while every surrounding error here names the gate.
+    if (g.kind === 'reviewed' && g.cadence) {
+      for (const entry of g.cadence) {
+        if (!(CADENCE_ENTRIES as readonly string[]).includes(entry)) {
+          throw new SchemaValidationError(
+            `Reviewed gate '${g.id}': unknown cadence entry '${entry}' (allowed: ${CADENCE_ENTRIES.join(', ')})`
+          );
+        }
+      }
+    }
+    if (g.budget !== undefined && (!Number.isInteger(g.budget) || g.budget <= 0)) {
+      throw new SchemaValidationError(
+        `Gate '${g.id}': budget must be a positive integer (got ${g.budget})`
+      );
+    }
     if (g.kind === 'reviewed' && (!g.cadence || g.cadence.length === 0)) {
       throw new SchemaValidationError(
         `Reviewed gate '${g.id}': cadence must declare at least one slot (${CADENCE_ENTRIES.join(', ')})`
+      );
+    }
+
+    // Consent vocabulary is a CLOSED set of one (D-arc D1) — name the gate id and
+    // the single legal value, matching the kind-validation error shape.
+    if (g.consent !== undefined && !(CONSENT_VALUES as readonly string[]).includes(g.consent)) {
+      throw new SchemaValidationError(
+        `Gate '${g.id}': invalid consent '${g.consent}' (allowed: ${CONSENT_VALUES.join(', ')})`
       );
     }
   }

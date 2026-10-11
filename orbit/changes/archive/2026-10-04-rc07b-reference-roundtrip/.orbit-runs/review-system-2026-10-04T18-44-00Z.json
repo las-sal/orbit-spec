@@ -1,0 +1,95 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-04T18:44:00Z",
+  "change": "rc07b-reference-roundtrip",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "src/core/emit-composition.ts",
+      "line": 577,
+      "title": "computeAuditDriftCounts keys a plain object, so a prototype-named category corrupts or drops its count",
+      "recommendation": "Build findings_by_category on Object.create(null) (or a Map serialized to an object) and count with an own-property check, or narrow the write gate to refuse a category outside the owner's category-id grammar (\"1\"..\"6\", digit strings). Add the three probe categories below as a test of 'the two counts agree by construction'.",
+      "reproduction": "In a temp project, composeAndWriteEmit('audit-drift', {}, {final_assessment:'x', categories_run:['1'], findings:[{category:C, severity:'WARNING', file:'a', line:1, title:'t', recommendation:'r'}], model:null}) from dist/. Expected (orbit-emit-composition's `Audit-drift counts are engine-computed`: the value is the number of findings carrying that category; the two counts agree by construction): findings_by_category {\"1\":0, C:1}. Observed: C='constructor' -> {\"1\":0,\"constructor\":\"function Object() { [native code] }1\"}; C='toString' -> {\"1\":0,\"toString\":\"function toString() { [native code] }1\"}; C='__proto__' -> {\"1\":0} with findings_total 1, so the sum is 0 against a total of 1. The validator accepts all three (non-empty strings)."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "src/core/templates/workflows/address-reviews.ts",
+      "line": 618,
+      "title": "The address-reviews example is submitted to doc and project scopes carrying change-scoped values no body would write there",
+      "recommendation": "Either narrow the requirement's 'EXACTLY a payload file the skill's body tells the AI to write' for multi-scope examples to KEY acceptance per scope (the reference already says only values differ), or give the example only the scope its values describe (change, archived) and accept the key-identical scopes by the existing sentence. The round trip currently submits source 'auto-discovered' with a change-trail source_path to a bare whole-repo walk and an architecture-doc walk, which the gate accepts because it checks neither value (the named limit)."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "src/core/templates/workflows/audit-drift.ts",
+      "line": 64,
+      "title": "The audit-drift example's final_assessment is not one of Step 9's stock phrasings",
+      "recommendation": "Use the standalone WARNING/SUGGESTION stock phrasing from Step 9 (line 332: 'No critical issues. Y warning(s) to consider.' — here 'No critical issues. 1 warning(s) to consider.'), since Step 10 now tells the AI to compose its payload in the example's shape and an author copying the example would write a phrasing the body never prescribes."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "test/core/emit-schema-parity.test.ts",
+      "line": 37,
+      "title": "The two suites define 'full-record schema block' with two different block grammars",
+      "recommendation": "Move the block finder into test/helpers/schema-references.ts beside topLevelKeys, read through createFenceTracker with the info string exactly 'json', and use it in both suites. Today the parity test's local regex (```json\\n…```) and the round trip's fence-tracker read (info string exactly 'json') agree on the five references only by their current formatting — a ~~~json or `json ` (trailing space) schema block is seen by one suite and not the other, the Q-crc-15 defect class design D2 cites."
+    }
+  ],
+  "commentary": "Probed the engine change by executing it rather than reading it: the full suite on the apply tree, the built CLI against a throwaway project in both scopes with the reference's own example (exit 3 held — both emits written, findings_total 2), the recorded audit-drift emits against the proposal's 13-of-13 claim (held; the one emit lacking findings records 0 and counts as empty), and the computed counts against odd but accepted category strings, which is where the one real defect sits. The template rewrites, the retired exemption and the pointer deltas read clean against the baselines; the generated surface matches source byte-for-byte. No lens files exist, so Passes 4 and 5 had nothing to walk. Pass 0 and Pass 6 ran inline — task state, scenario coverage and a residue sweep — without writing the verify or audit-drift emits their skills would, because this worker writes nothing but its own review emit.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "6"
+  ],
+  "passes_skipped": [
+    "4",
+    "5"
+  ],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The stage does what it set out to do: the references are now executed through the real write gate, the exemption is gone, and audit-drift's counts are computed rather than supplied. The one defect worth fixing before archive is small and local — the counts object inherits from Object.prototype, so the 'agree by construction' claim fails for a handful of string ids nobody should write but the gate accepts; a null-prototype object or a tighter category grammar closes it in a line. The rest is wording and instrument tidiness that can ride the walk."
+  },
+  "final_assessment": "0 critical, 1 warning, 3 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc07b-reference-roundtrip --from-file orbit/changes/rc07b-reference-roundtrip/.orbit-runs/review-system-2026-10-04T18-44-00Z.json"
+}

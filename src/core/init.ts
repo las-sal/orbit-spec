@@ -41,7 +41,8 @@ import {
   generateSkillContent,
   type ToolSkillStatus,
 } from './shared/index.js';
-import { getGlobalConfig, type Delivery, type Profile } from './global-config.js';
+import { getGlobalConfig, saveGlobalConfig, type Delivery, type Profile } from './global-config.js';
+import { checkRunnerShape, isOnPath, EXTERNAL_RUNNER_FIELD } from './external-runner.js';
 import { getProfileWorkflows, CORE_WORKFLOWS, ALL_WORKFLOWS } from './profiles.js';
 import { WORKFLOW_TO_SKILL_DIR } from './profile-sync-drift.js';
 import { validateSkillTemplates, reconcileSkillReferences, ensureRealSkillDir } from './shared/skill-generation.js';
@@ -144,6 +145,12 @@ export class InitCommand {
 
     // Create config.yaml if needed
     const configStatus = await this.createConfig(openspecPath, extendMode);
+
+    // rc17d: the external-runner setup step — interactive only; non-interactive init leaves the record alone.
+    if (canPrompt) {
+      const { select, input } = await import('@inquirer/prompts');
+      await runExternalRunnerSetup({ select, input });
+    }
 
     // Display success message
     this.displaySuccessMessage(projectPath, validatedTools, results, configStatus);
@@ -803,5 +810,108 @@ export class InitCommand {
     }
 
     return removed;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// EXTERNAL RUNNER SETUP (rc17d, `orbit-external-runner`)
+// ═══════════════════════════════════════════════════════════
+
+export interface RunnerSetupPrompts {
+  select(opts: { message: string; choices: Array<{ name: string; value: string }>; default?: string }): Promise<string>;
+  input(opts: { message: string }): Promise<string>;
+}
+
+export interface RunnerSetupDeps {
+  env?: NodeJS.ProcessEnv;
+  log?: (line: string) => void;
+}
+
+export type RunnerSetupOutcome = 'kept' | 'preset' | 'argv' | 'none';
+
+/**
+ * The ONE setup step: explains the runner in init's own output, then offers the Codex preset (only
+ * when `codex` resolves on PATH), an own argv typed as one JSON array, or none. A well-formed record
+ * is shown and kept by default; a malformed one is shown with its warning and none of the choices
+ * keeps it. `none` removes a present record and writes nothing when there is none.
+ */
+export async function runExternalRunnerSetup(
+  prompts: RunnerSetupPrompts,
+  deps: RunnerSetupDeps = {}
+): Promise<RunnerSetupOutcome> {
+  const env = deps.env ?? process.env;
+  const log = deps.log ?? ((line: string) => console.log(line));
+  const config = getGlobalConfig() as Record<string, unknown>;
+  const present = Object.prototype.hasOwnProperty.call(config, EXTERNAL_RUNNER_FIELD);
+  const current = present ? checkRunnerShape(config[EXTERNAL_RUNNER_FIELD]) : null;
+
+  log('');
+  log(chalk.bold('External review runner'));
+  log(
+    'An external runner is another AI that reviews a change from a packaged prompt. orbit launches it for'
+  );
+  log(
+    '`/orbit:review --reviewer external` only because you record it here; with none recorded, the prompt is'
+  );
+  log('printed for you to paste. This is a per-user setting (`orbit config` edits it later).');
+  if (current?.ok) {
+    log(`Current: ${JSON.stringify(config[EXTERNAL_RUNNER_FIELD])}`);
+  } else if (current && !current.ok) {
+    log(chalk.yellow(`Current: ${JSON.stringify(config[EXTERNAL_RUNNER_FIELD])} — malformed: ${EXTERNAL_RUNNER_FIELD} ${current.reason}`));
+  }
+
+  const choices: Array<{ name: string; value: string }> = [];
+  if (current?.ok) choices.push({ name: 'Keep the current runner', value: 'kept' });
+  if (isOnPath('codex', env)) choices.push({ name: 'Codex (codex exec, read-only)', value: 'preset' });
+  choices.push({ name: 'My own command (one JSON array, with {output})', value: 'argv' });
+  choices.push({ name: 'None — print the prompt for paste', value: 'none' });
+
+  const answer = (await prompts.select({
+    message: 'External review runner:',
+    choices,
+    default: current?.ok ? 'kept' : 'none',
+  })) as RunnerSetupOutcome;
+
+  const write = (value: unknown): void => {
+    const next = { ...config };
+    if (value === undefined) delete next[EXTERNAL_RUNNER_FIELD];
+    else next[EXTERNAL_RUNNER_FIELD] = value;
+    saveGlobalConfig(next);
+  };
+
+  if (answer === 'kept') return 'kept';
+  if (answer === 'preset') {
+    write({ preset: 'codex' });
+    return 'preset';
+  }
+  if (answer === 'none') {
+    if (present) write(undefined);
+    return 'none';
+  }
+  if (answer !== 'argv') {
+    throw new Error(`Unexpected external-runner setup answer: ${String(answer)}`);
+  }
+  for (;;) {
+    const raw = await prompts.input({
+      message: 'Runner argv as one JSON array, e.g. ["my-reviewer", "--out", "{output}"]:',
+    });
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(raw);
+    } catch {
+      log(chalk.yellow('Not valid JSON — type one JSON array of strings.'));
+      continue;
+    }
+    if (!Array.isArray(parsed)) {
+      log(chalk.yellow('Not an array — type one JSON array of strings.'));
+      continue;
+    }
+    const shape = checkRunnerShape({ argv: parsed });
+    if (!shape.ok) {
+      log(chalk.yellow(`Refused: ${EXTERNAL_RUNNER_FIELD} ${shape.reason}.`));
+      continue;
+    }
+    write({ argv: parsed });
+    return 'argv';
   }
 }

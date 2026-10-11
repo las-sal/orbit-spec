@@ -1,0 +1,30 @@
+{
+  "command": "archive",
+  "timestamp": "2026-07-30T14:26:29Z",
+  "change": "d4-review-consistency",
+  "final_assessment": "Archived d4-review-consistency to orbit/changes/archive/2026-07-30-d4-review-consistency/ after syncing 27 delta blocks (8 ADDED + 19 MODIFIED) across 7 capabilities to baseline — orbit-report-rendering created as the 18th baseline capability with a real Purpose section; all 27 blocks verified byte-identical post-sync; validate --all --strict green (19 passed); fingerprints were 19/19 verified at the pre-move check. The review-system gate was PASSED at entry (no inflection prompt): the system cadence converged over five shared-axis passes — in-context clean → fresh (5 findings) → external GPT-5 Codex (10 findings) → fresh confirm (3 suggestions) → in-context confirm CLEAN — 23 system-phase findings all resolved, none re-opened.",
+  "next_recommended": "Change archived. Run /orbit:new or /orbit:explore to start the next change, or /orbit:audit-drift for a project-wide drift check.",
+  "kind": "lifecycle",
+  "archive_path": "orbit/changes/archive/2026-07-30-d4-review-consistency/",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": { "critical": 0, "warning": 1, "suggestion": 0 },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": ["orbit-report-rendering", "orbit-review", "orbit-address-reviews", "orbit-conventions", "orbit-engine-gates", "orbit-orientation", "orbit-review-external"],
+    "added": 8,
+    "modified": 19,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
+  "user_decision": "proceeded_with_no_critical",
+  "consent": "user-invoked",
+  "warnings": [
+    "Pre-archive audit WARNING (in-flow library sweep, no standalone summary file): CLAUDE.md carries no D4 entry yet — the standard post-archive CLAUDE.md update addresses it in the same session; retired-vocabulary greps over generated surface and templates were clean (all hits are marked retirement notes or reader-tolerance documentation)."
+  ]
+}

@@ -1,0 +1,108 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-18T14:31:11Z",
+  "change": "rc07-artifact-lint",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc07-artifact-lint/.orbit-runs/external-system-2026-09-18T13-57-07Z.md",
+  "external_reviewer": "GPT-5 Codex",
+  "walk_mode": "per_finding",
+  "walk_mode_source": "flag",
+  "input_findings_summary": {
+    "critical": 2,
+    "warning": 4,
+    "suggestion": 2
+  },
+  "pushback_verification": "All 8 verified before any edit; zero stale. Four were reproduced with runnable probes rather than read: both CRITICALs (each returned 0 spans where CommonMark requires 1), the partial-domain summary (domainReason null, source counted passed while its only marker sat in an unread file), and the taxonomy residue (two files saying 'four' above a five-member union). Entry keys are parsed from the findings file, and substantive coverage was asserted before the emit was written.",
+  "resolution_summary": {
+    "resolved": 8,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "Backslash escape handling is incorrectly applied inside an open code span",
+      "marker_source": "external",
+      "file": "src/core/markdown-fence.ts",
+      "line": 151,
+      "classification": "decision_required",
+      "action": "RESOLVED BY DELETION. The inline-code scanner this defect lives in no longer exists. Verified with the reviewer's own reproduction: `` `code\\` <marker> tail` `` now yields ONE live span where the shipped scanner yielded zero. Kept as a regression alongside three block-boundary cases.",
+      "ratified_via": "chat",
+      "resolution": "Descope (option B), ratified by Sal after the cost was laid out. The alternative was to make the scanner context-sensitive about escapes — more heuristic on a function four reviewers had already beaten, with zero independent budget left to check it."
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "Inline-code pairing still crosses nonblank Markdown block boundaries",
+      "marker_source": "external",
+      "file": "src/core/markdown-fence.ts",
+      "line": 99,
+      "classification": "decision_required",
+      "action": "RESOLVED BY DELETION, and this is the finding that decided the descope. It named the shape rather than another instance: inline elements never cross CommonMark BLOCK boundaries, and a blank line is only one of the things that ends a block — headings, list items, block quotes, thematic breaks and HTML blocks all do it without one. The blank-line repair had fixed a symptom, not the invariant. Reviewer's reproduction plus list-item and block-quote variants are kept as regressions; all four now yield a live span.",
+      "ratified_via": "chat",
+      "resolution": "Descope (option B). Naming the closer `<!-- /src:NAME -->` lets the marker NAME GRAMMAR make prose inert — the same rule that always protected the opener — so no inline scanner is needed. Measured: the 42-line scanner deleted, computeCodeRegionMask 112 → 45 lines and fence-only over the shared tracker, the spec's six-row inline-code table and its scenario deleted, and every pre-existing document that MENTIONS the old anonymous closer goes silent for free. Cost: a format change to the capability's core, four prose examples moved to placeholder names, four dogfood closers renamed. Gained: a closer naming the wrong source is now a DETECTABLE authoring error instead of a silent re-pairing."
+    },
+    {
+      "severity": "WARNING",
+      "title": "Symlink containment is bypassed by a symlinked tier root and by architecture-doc symlinks",
+      "marker_source": "external",
+      "file": "src/core/sources-registry.ts",
+      "line": 225,
+      "classification": "trivial_fix",
+      "action": "Both halves fixed with ONE shared rule, `resolveWithinTier`, now used for the schema and the doc parameter alike. The tier root is no longer realpath'd before the comparison (which made containment tautological); instead the tier's own DIRECTORY ENTRY must not be a symlink, checked with lstat. A first attempt compared realpath(root) to the lexical path and was wrong — it rejected any project under a symlinked ANCESTOR, which on macOS is every temp directory; the test suite caught it immediately. `loadArchitectureDoc` is deliberately NOT widened: it is shared by architecture status/show/validate, so the containment this capability requires is enforced on the source-lint side. Regression covers a symlinked schema tier and a symlinked architecture tier."
+    },
+    {
+      "severity": "WARNING",
+      "title": "`existsSync` silently drops a tracked dangling symlink from the lint domain",
+      "marker_source": "external",
+      "file": "src/core/source-lint.ts",
+      "line": 309,
+      "classification": "trivial_fix",
+      "action": "`lstatSync` replaces `existsSync`: a missing DIRECTORY ENTRY is still the one correct silence (tracked-but-deleted), while a dangling symlink — an entry that exists pointing at nothing — is now a `domain` finding. A deterministic symlink POLICY is stated rather than left to what the filesystem resolves: any tracked symlink is a `domain` fault, because git tracks the link text and following it would lint bytes outside the tracked set. Two regressions: dangling, and a symlink to a real in-repo file."
+    },
+    {
+      "severity": "WARNING",
+      "title": "A partial domain failure still reports every declared source as passed",
+      "marker_source": "external",
+      "file": "src/commands/validate.ts",
+      "line": 385,
+      "classification": "trivial_fix",
+      "action": "The `unverified` rule now fires when the domain is INCOMPLETE — unresolvable in whole, or any member unread — instead of only when git fails entirely. The domain pseudo-failure is retained so the run still exits non-zero. Spec gains the normative sentence and a scenario; a CLI regression drives a real chmod-000 file holding the source's only marker. This was the THIRD instance of one pattern in this cycle, which the reviewer named explicitly: fix the symptom the reviewer stated, leave the claim underneath."
+    },
+    {
+      "severity": "WARNING",
+      "title": "The live-repository inertness test forbids legitimate future marker adoption",
+      "marker_source": "external",
+      "file": "test/core/source-lint.test.ts",
+      "line": 195,
+      "classification": "trivial_fix",
+      "action": "The exclusive-file-set assertion is gone. The test still derives its subject from the lint's own domain and still requires every living document to parse without a malformed marker, but instead of pinning WHICH files carry live spans it now asserts every live span names a DECLARED source — a property that stays true however the dogfood grows. Adding a marked claim to any other living document no longer fails a unit test."
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The five-kind reporting taxonomy is still described as four and incompletely documented",
+      "marker_source": "external",
+      "file": "orbit/changes/rc07-artifact-lint/design.md",
+      "line": 244,
+      "classification": "trivial_fix",
+      "action": "`source-lint.ts` and design D5b both said 'four failures' above a five-member union; both now say five. `docs/cli.md`'s pseudo-item list gains the DOMAIN fault and states how an incomplete domain interacts with passed/unverified, which the partial-domain fix above had just settled."
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The parser module header still states the opacity contract that the delta just repaired",
+      "marker_source": "external",
+      "file": "src/core/architecture/parser.ts",
+      "line": 5,
+      "classification": "trivial_fix",
+      "action": "Rewritten in the delta's vocabulary: the parser INTERPRETS stage structure and CARRIES the raw lines as passthrough, with `sliceStageSection` and the source lint's ruling reader named as the readers of that passthrough and a pointer to the spec as the list any new reader joins. The false engine-wide wording that prompted the iteration-1 CRITICAL is gone from the code as well as the spec."
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": "let's go with B",
+  "final_assessment": "All 8 resolved, none deferred. The two CRITICALs were resolved by DELETION rather than repair: naming the closer removed the need for the inline-code scanner, and with it the defect class four independent reviewers had each found a different instance of. That was a user-ratified descope, priced before it was chosen — 42 lines of scanner and a six-row spec table deleted against a format change and ten edits. The remaining six were repairs, one of which (partial-domain unverified) closed the third instance of this cycle's signature failure: fixing the symptom a reviewer named and leaving the claim underneath. One of my own fixes was wrong on the first attempt (comparing realpath to lexical path rejected every project under a symlinked ancestor) and the suite caught it. 2199 tests green; validate --all --strict clean; the no-registry path byte-identical to the pre-change build.",
+  "iteration": 11,
+  "next_recommended": "/orbit:review --as system --reviewer external rc07-artifact-lint"
+}

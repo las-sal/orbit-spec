@@ -1,0 +1,207 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-03T20:59:44Z",
+  "change": "rc02b-severity-ladder",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc02b-severity-ladder/.orbit-runs/review-system-2026-10-03T20-45-06Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-03T20-45-06Z",
+  "latest_apply_token": "2026-10-03T17-24-00Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 4,
+    "suggestion": 5
+  },
+  "pushback_verification": "All nine findings verified against HEAD 299556df plus walk 1's uncommitted edits before any action. Two are STALE against walk 1 (orbit/changes/rc02b-severity-ladder/.orbit-runs/address-reviews-2026-10-03T20-54-44Z.json): W2 (the Description opening point — the same defect the external graded CRITICAL) and W3 (the four-tuple restatements, which walk 1 widened to every site this finding lists). W1 verified by reading lenientExternalCounts and by re-running the finding's repeat/new case (0 repeat, 1 new → 1 repeat, 0 new after the fix). W4 verified by grep (0 README/docs hits) and briefed as the one decision-lane finding (structured A/B); Sal: a. S1–S5 verified by reading each site; S2's divergence re-measured through `orbit status --boot --json` after the edit. No CRITICAL in the set, so no reproduction_rerun entries. Titles, files and lines are taken from the source emit's JSON, never retyped.",
+  "resolution_summary": {
+    "resolved": 7,
+    "stale_suppressed": 2,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "A third external-format reader (lenientExternalCounts) still takes the LAST **File**: line, so the trend's repeat/new count re-files a finding whose Reproduction quotes a path",
+      "marker_source": "internal-review",
+      "file": "src/core/report-render.ts",
+      "line": 902,
+      "provenance_detail": "2",
+      "classification": "trivial_fix",
+      "action": "lenientExternalCounts (report-render.ts) — the trend/ordinal counter, a THIRD copy of the external grammar — now follows the field-line rule: a `**Description**:` label (with or without same-line text) closes field recognition for that finding, so a `**File**:` line inside a Description or Reproduction body no longer re-files it in the repeat/new set. Test added in test/core/report-render.test.ts: an external pass whose Reproduction quotes `specs/b/spec.md:99` followed by an internal emit keyed (Guard bypassed, specs/a/spec.md) renders `(1 repeat, 0 new)`. The comment at the site names it Q-crc-15's shape one wider than counted; collapsing the three copies is that question's, not this patch's (R-crc-6: repair, not redesign).",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/report-render.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The two readers still disagree on WHERE a Description body opens: an external file with `**Description**:` and the body on the next line renders as a valid pass but is rejected by the gate's reader",
+      "marker_source": "internal-review",
+      "file": "src/core/artifact-graph/trail.ts",
+      "line": 420,
+      "provenance_detail": "1",
+      "classification": "stale",
+      "action": "Stale with evidence: resolved at system walk 1 (the external CRITICAL on the same defect) — orbit/changes/rc02b-severity-ladder/.orbit-runs/address-reviews-2026-10-03T20-54-44Z.json entry 1. trail.ts opens the Description body on the bare label and sets hasDescription on a non-blank body line (fenced lines count, the Reproduction label ends it); the reading is stated once in the conventions format requirement; three two-reader cases in test/core/trail-rc02b.test.ts. This finding's own reproduction, re-derived against HEAD: the next-line-body file is now a pass in readTrail (0 rejected) and renders the same key.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The reproduction's four-tuple definition is restated beside its pointer at six sites, and one copy already diverges from the owner's wording (R-crc-14; design D2's own pointer test)",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 97,
+      "provenance_detail": "6",
+      "classification": "stale",
+      "action": "Stale with evidence: resolved at system walk 1 (the external W2, widened by change completeness to all six sites this finding enumerates) — orbit/changes/rc02b-severity-ladder/.orbit-runs/address-reviews-2026-10-03T20-54-44Z.json entry 3. grep for the four-tuple over src/core, CLAUDE.md and the deltas now hits only the owner's requirement text and fence and the two checked mirrors; the prompt placeholder reads `<the re-executable case the ## Severity paragraph above defines>` in both the template and the review-external delta (output-format parity green).",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "`Review mode decision framework` (carried MODIFIED in this change) names a README 'Choosing a review mode' section that does not exist, so its own drift-detection scenario can never fire",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02b-severity-ladder/specs/orbit-conventions/spec.md",
+      "line": 224,
+      "provenance_detail": "6",
+      "classification": "decision_required",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Repair the two sentences inside the already-carried MODIFIED block (delta lines 224 and 249): remove the README complement claim; make the drift scenario name a doc that exists or state the framework is spec-only pending the user-docs rewrite."
+          },
+          {
+            "label": "B",
+            "body": "Leave the text; record 'the framework requirement names a README section that does not exist' as an accepted residual in the archive's readiness record, owner: the deferred user-docs rewrite (issue #1)."
+          }
+        ],
+        "chosen": "A"
+      },
+      "action": "Option A ratified (Sal: a). Inside the carried MODIFIED block `Review mode decision framework`: the requirement text no longer calls itself the complement of a README section — it states the framework is spec-only today (measured 2026-10-03: no README or docs/ section states review-mode guidance) and that a user-facing counterpart belongs to issue #1 and is held to this requirement; the scenario is retitled `A user doc stating the framework is held to this requirement` and fires on any user doc that states drifting guidance, with the spec-only state named. This reverses the apply's task-5.2 deferral (a scope read of mine, recorded under 5.2). Baseline sync at archive carries it.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02b-severity-ladder/tasks.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/specs/orbit-conventions/spec.md",
+            "reason": "baseline spec; add a delta to your current change's specs/<capability>/spec.md to capture this ripple"
+          }
+        ]
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The corrected measurements (fourteen sites, six capabilities) did not reach the charter's MEASURED paragraph or two explore Decision entries, which still say SIXTEEN and FIVE",
+      "marker_source": "internal-review",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 1643,
+      "provenance_detail": "6",
+      "classification": "trivial_fix",
+      "action": "The dated charter paragraph is left as the record of what the exploration measured; explore.md's D-rc02b-1 and D-rc02b-3 gained the `(CORRECTED 2026-10-03 at walk 1: fourteen — see D-rc02b-2)` parenthetical their sibling already carried; tasks.md gained an AT-ARCHIVE NOTE that the stage's status entry states the corrected figures (fourteen sites; six capabilities, breach declared and ratified at six).",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02b-severity-ladder/explore.md",
+          "orbit/changes/rc02b-severity-ladder/tasks.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "reason": "dated MEASURED paragraph is a record, not living prose; the at-archive status entry carries the correction (per the finding's own recommendation)"
+          }
+        ]
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Touchpoints divergence (Category 5): four unpredicted paths and a 'NOT touched' entry the engine reads as a prediction",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02b-severity-ladder/design.md",
+      "line": 137,
+      "provenance_detail": "6",
+      "classification": "trivial_fix",
+      "action": "design.md Touchpoints now holds only predictions and all of them: `test/core/templates/orbit-content-fidelity.test.ts`, the two goldens (one bullet each — the entry grammar reads one path per bullet), `CLAUDE.md`, and the two new test files named under the `test/core/*.test.ts` entry; the apply-change.ts 'NOT touched' sentence moved to prose under the list. Measured after the edit: `orbit status --boot --json` → actual_unpredicted: [], predicted_unsatisfied: ['orbit/specs/*/spec.md'] (archive-time, expected).",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "A blank-string `reproduction` is 'present' on an internal pass (renders an empty `> Reproduction:` blockquote) but 'absent' on an external one",
+      "marker_source": "internal-review",
+      "file": "src/core/report-render.ts",
+      "line": 300,
+      "provenance_detail": "2",
+      "classification": "trivial_fix",
+      "action": "normalizeInternalPass now reads a trimmed-blank `reproduction` as ABSENT (the external parser's reading of a blank body), so no empty `> Reproduction:` blockquote renders and a prior-generation CRITICAL carrying `\"\"` takes the `[unreproduced]` mark; the orbit-report-rendering ADDED requirement states the blank-is-absent reading for both genres; test added beside the mistyped case.",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/report-render.test.ts",
+          "orbit/changes/rc02b-severity-ladder/specs/orbit-report-rendering/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "`- None.` under `## Blocks` is collected as a block named 'None.'",
+      "marker_source": "internal-review",
+      "file": "src/core/report-render.ts",
+      "line": 528,
+      "provenance_detail": "3",
+      "classification": "trivial_fix",
+      "action": "A bulleted `- None.` (case-insensitive, optional period) under `## Blocks` is the empty-section sentinel, not a block — skipped at collection; stated in the conventions format requirement's Blocks sentence; test added (`- None.` and `- none` → no blocks; `- None of the validators ran` → a block).",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/report-render.test.ts",
+          "orbit/changes/rc02b-severity-ladder/specs/orbit-conventions/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "address-reviews' external-findings-format reference names the prompt template as the format's 'source of truth' while this change's deltas make `orbit-conventions` the owner",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/address-reviews.ts",
+      "line": 51,
+      "provenance_detail": "6",
+      "classification": "trivial_fix",
+      "action": "The Notes placeholder in address-reviews' external-findings-format block now says the format is owned by `orbit-conventions`' External-review findings markdown format and the prompt template is its checked copy — one owner, one pointer.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Walk 2 (the fresh half of the system blind pair): 7 of 9 resolved, 2 stale with evidence naming walk 1. The third external-grammar reader now follows the field-line rule; blank internal reproductions read as absent; a bulleted None. under Blocks is no block; the format has one named owner in the walk's reference; Touchpoints hold only predictions (divergence now the archive-time glob alone); the corrected counts reached the two explore entries and an at-archive note; the framework requirement no longer names a README section that does not exist (A). 2429 tests green; validate --strict valid; fingerprints 13/13; validate --sources green. Both halves walked; everything since the apply commit is uncommitted, including the fresh emit and both logs.",
+  "iteration": 5,
+  "next_recommended": "/orbit:review --as system rc02b-severity-ladder"
+}

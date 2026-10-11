@@ -1,0 +1,101 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-04T04:18:05Z",
+  "change": "rc03b-pass-genres",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc03b-pass-genres/.orbit-runs/review-system-2026-10-04T04-16-02Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-04T04-16-02Z",
+  "latest_apply_token": "2026-10-04T03-47-51Z",
+  "walk_mode": "per_finding",
+  "walk_mode_source": null,
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 2
+  },
+  "pushback_verification": "4 of 4 verified against the committed tree (0dfca127) before editing: review.ts:766's Step 1 still carried `git log --oneline`; the scenario parenthetical at orbit-review delta:15 lacked flags.fresh; design.md:56, proposal.md:31-32 and CLAUDE.md:528 described the probe without it; tasks 2.7/3.4 read 2498. 0 stale.",
+  "resolution_summary": {
+    "resolved": 4,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Step 1's mode inference still runs `git log --oneline`, the subject-printing read walk 1 retired from Step 4",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 766,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "Verified at review.ts:766 (`git log --oneline -- orbit/changes/<name>/` in Step 1's mode inference). Now `git log --format=%h -- orbit/changes/<name>/ ':!orbit/changes/<name>/.orbit-runs'` — hashes only, trail excluded, with the reason inline. The fidelity test pins it in Step 1 and asserts `git log --oneline` appears nowhere in the review body. The external-handoff's Step 2 heuristic is the packager's read and stays.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/templates/workflows/review.ts",
+          "test/core/templates/orbit-content-fidelity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The ADDED requirement's prior-run scenario still lists the probe as (filenames, reviewer_class, source_path), without the flags.fresh rule",
+      "file": "orbit/changes/rc03b-pass-genres/specs/orbit-review/spec.md",
+      "line": 15,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "Verified at the `Prior-run inspection skipped for review genre` scenario. Its parenthetical now reads (filenames, `reviewer_class` or — absent it — `flags.fresh`, `source_path`), matching the owner, (d) and the in-context scenario. Same requirement block; fingerprints 5/5.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc03b-pass-genres/specs/orbit-review/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Proposal, design D1 and CLAUDE.md describe the probe without the accepted-pass bound's flags.fresh rule",
+      "file": "orbit/changes/rc03b-pass-genres/design.md",
+      "line": 56,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "Verified at design.md:56, proposal.md:31-32 and CLAUDE.md:528. Each now names `flags.fresh` (absent reviewer_class) and the ACCEPTED bound (design dated to system walk 1). Swept the change, CLAUDE.md and the charter for the OLD probe description (reviewer_class/source_path without flags.fresh): no other live site; task 1.3's line keeps the old wording as the plan's record of a completed task.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc03b-pass-genres/design.md",
+          "orbit/changes/rc03b-pass-genres/proposal.md",
+          "CLAUDE.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "tasks.md's recorded counts and exit-(2) wording predate the walks",
+      "file": "orbit/changes/rc03b-pass-genres/tasks.md",
+      "line": 22,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "Re-measured after this walk's edits: full suite 2507 green; exit (2) under the rule as the walks left it — 0 PHRASE hits over all 15 generated skills, 0 REGION hits (prompt template by-line, fresh brief, and each of the five read references with ':!' exclusions exempt); the untouched-modules diff 46a43e00..HEAD over the engine paths is empty. Tasks 2.7, 3.3 and 3.4 and CLAUDE.md:535 amended with dated re-measurements naming the walks as the reason; the apply-time figures stay beside them.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc03b-pass-genres/tasks.md",
+          "CLAUDE.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Walk 3 (the in-context confirm, VERIFICATION genre): 4 of 4 resolved, all obvious fixes — the walks' own cascade carried one site further: Step 1's mode inference is now hash-only like Step 4, the last scenario parenthetical names flags.fresh, the descriptive prose names the accepted bound, and the recorded counts and exit (2) are re-measured on the post-walk tree (2507 green; 0 hits under both rules; engine paths untouched). This time the sweep searched for the OLD form of each repaired instruction across the change, not the finding's file. Validate --strict valid; fingerprints 5/5; validate --sources green.",
+  "iteration": 7,
+  "next_recommended": "/orbit:archive rc03b-pass-genres — user-invoked"
+}

@@ -1,0 +1,56 @@
+{
+  "command": "review",
+  "timestamp": "2026-07-20T15:44:12Z",
+  "change": "d3-orientation",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "iteration": 1,
+  "depth": "full",
+  "scorecard": {
+    "completeness": { "critical": 0, "warning": 1, "suggestion": 1 },
+    "correctness": { "critical": 0, "warning": 0, "suggestion": 1 },
+    "coherence": { "critical": 0, "warning": 0, "suggestion": 1 }
+  },
+  "findings": [
+    {
+      "pass": 4,
+      "severity": "WARNING",
+      "file": "orbit/changes/d3-orientation/specs/orbit-run-summary-emit/spec.md",
+      "line": 69,
+      "title": "The MODIFIED Emit-timing block retains the unqualified 'no emit fires for that session' limitation — contradicted by the begin emit for first sessions",
+      "recommendation": "The Known-limitation paragraph (line 69) and the 'User abandons conversation without explicit signal' scenario (lines 95-97) still say 'no emit fires for that session'. With the begin emit, a FIRST session that scaffolds and dies always has one emit (the begin) — only the BOUNDARY emit is missed. Qualify both: the limitation becomes 'no BOUNDARY emit fires for that session (a first session's begin emit still recorded the workstream's start)'; the scenario's THEN likewise. Same-class as the un-delta'd-enumeration CRITICALs of prior cycles, caught inside the change's own composed block."
+    },
+    {
+      "pass": 6,
+      "severity": "SUGGESTION",
+      "file": "orbit/changes/d3-orientation/specs/orbit-orientation/spec.md",
+      "line": null,
+      "title": "Bare --json shape unspecified when the degradation ladder falls back to the full view",
+      "recommendation": "The continuity requirement says zero live workstreams → bare renders the --full view; the JSON requirement defines distinct shapes per tier. One sentence should state that bare --json in the fallback state emits the FULL shape ({program, workstreams, last, waiting}) — the natural reading, but two implementers could split (full shape vs sprint shape with nulls)."
+    },
+    {
+      "pass": 4,
+      "severity": "SUGGESTION",
+      "file": "orbit/specs/orbit-conventions/spec.md",
+      "line": 106,
+      "title": "Conventions staging-dir creation scenario becomes non-exhaustive again (begin emit adds .orbit-runs/ at creation)",
+      "recommendation": "The 'Created by explore in named/crystallized modes' scenario (extended at D2 to name explore.md + .openspec.yaml) will omit the begin emit's .orbit-runs/ after D3. Non-contradictory (not an exclusive claim) — the same judgment call as the D2-cycle finding. Either (A) add a small orbit-conventions MODIFIED block extending the scenario's THEN with the begin emit, or (B) leave it non-exhaustive as was chosen for the run-summary-emit mentions last cycle.",
+      "recommendation_options": [
+        { "label": "A", "body": "Add an orbit-conventions MODIFIED block extending the creation scenario with the begin emit (delta grows to 12 requirements; fingerprint re-stamp)" },
+        { "label": "B", "body": "Leave the scenario non-exhaustive (accurate, non-exclusive) — consistent with last cycle's option-A scope choice which extended conventions only because it was already modified" }
+      ]
+    },
+    {
+      "pass": 2,
+      "severity": "SUGGESTION",
+      "file": "orbit/changes/d3-orientation/.orbit-runs/propose-2026-07-20T15-30-29Z.json",
+      "line": null,
+      "title": "Propose emit misrecorded '20 tasks in 5 groups' — tasks.md holds 16",
+      "recommendation": "The artifacts themselves are internally consistent (no count pin in proposal/design/tasks); only the propose emit's final_assessment misstated the count (16 actual). The trail is not edited (audit policy) — this review JSON records the correction for downstream readers; no artifact fix required."
+    }
+  ],
+  "stale_suppressed": [],
+  "iteration_note": "First proposal-mode run for this change. Three-CRITICAL-class sweeps: (a) un-delta'd contradictions — one found INSIDE the change's own composed block (W1, the known-limitation paragraph); the maturity-rule interaction checked clean (begin emit at 0 decisions renders the Early-state recommendation, consistent with the recommendation-by-maturity requirement); (b) every delta requirement has a task carrier (16 tasks across 5 groups; carrier map verified); (c) triggered obligations carried (CLAUDE.md pointer 4.1; no-slash-surface check 5.3; parity/fidelity 3.2). Counts: 11 delta requirements (8 ADDED + 3 MODIFIED... 8 ADDED orbit-orientation + 2 MODIFIED emit + 1 MODIFIED explore = 11), fingerprints 3/3, --strict valid, 0 markers.",
+  "final_assessment": "No critical issues. 1 warning + 3 suggestions — the warning is a real catch (the change's own MODIFIED block retains a now-contradicted limitation sentence); the suggestions are a JSON-shape clarification, the recurring conventions-scenario exhaustiveness call (user fork), and a trail-misstatement correction.",
+  "next_recommended": "/orbit:address-reviews d3-orientation --from-file orbit/changes/d3-orientation/.orbit-runs/review-proposal-2026-07-20T15-44-12Z.json"
+}

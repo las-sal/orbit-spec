@@ -13,9 +13,22 @@ import {
 import { parseDeltaSpec, normalizeRequirementName } from '../parsers/requirement-blocks.js';
 import { findMainSpecStructureIssues } from '../parsers/spec-structure.js';
 import { FileSystemUtils } from '../../utils/file-system.js';
+import { parse as parseYamlSync } from 'yaml';
+import { resolveScenarioMapConfig, resolveSizeCeiling, type ScenarioMapConfig } from '../project-config.js';
+import { computeChangeSize, readSizeDeclaration, sizeBreaches, type SizeCeiling } from '../change-size.js';
+import { computeScenarioMap, scanDeclarations, joinKey, type ScenarioScan } from '../scenario-map.js';
+import { loadChangeContext, formatChangeStatus } from '../artifact-graph/instruction-loader.js';
 
 export class Validator {
   private strictMode: boolean;
+  /**
+   * rc06a: the scenario-map config and declaration scan, taken ONCE per Validator — one
+   * command invocation — so a bulk `orbit validate` reads the config, scans the test files and
+   * raises its warnings once, then reuses them for every change (design D6).
+   */
+  private scenarioRun?: { root: string; config: ScenarioMapConfig; scan?: ScenarioScan };
+  /** rc09a: the size ceiling, read ONCE per Validator so a bulk run warns once (the rc06a pattern). */
+  private sizeRun?: { root: string; ceiling: SizeCeiling | null };
 
   constructor(strictMode: boolean = false) {
     this.strictMode = strictMode;
@@ -270,7 +283,218 @@ export class Validator {
       issues.push({ level: 'ERROR', path: 'file', message: this.enrichTopLevelError('change', VALIDATION_MESSAGES.CHANGE_NO_DELTAS) });
     }
 
+    issues.push(...(await this.validateArchitectureCitation(changeDir)));
+    issues.push(...this.validateScenarioDeclarations(changeDir));
+    issues.push(...this.validateChangeSize(changeDir));
+
     return this.createReport(issues);
+  }
+
+  /**
+   * rc09a size check (`orbit-change-size`'s `Validate reports each breach as declared or
+   * undeclared` — that requirement's table is the rule; this method is its rows). Every issue
+   * carries the path `size`. With the check OFF it contributes nothing. The level REPORTS; no gate
+   * reads it.
+   */
+  private validateChangeSize(changeDir: string): ValidationIssue[] {
+    const root = this.projectRootFor(changeDir);
+    if (!root) return [];
+    if (!this.sizeRun || this.sizeRun.root !== root) {
+      this.sizeRun = { root, ceiling: resolveSizeCeiling(root) };
+    }
+    const ceiling = this.sizeRun.ceiling;
+    if (!ceiling) return [];
+
+    const issues: ValidationIssue[] = [];
+    const size = computeChangeSize(root, changeDir);
+    for (const e of size.errors) {
+      issues.push({
+        level: 'WARNING',
+        path: 'size',
+        message: `${e.figure} could not be computed: ${e.path} exists but cannot be read (${e.message}); ${e.figure} is not compared`,
+      });
+    }
+    const { declaration, error } = readSizeDeclaration(changeDir);
+    if (error) {
+      issues.push({
+        level: 'WARNING',
+        path: 'size',
+        message: `${error.path} exists but cannot be read (${error.message}); nothing is declared, so every breach is undeclared`,
+      });
+    }
+    for (const m of declaration.malformed) {
+      issues.push({
+        level: 'WARNING',
+        path: 'size',
+        message: `malformed '## Size' line ${m.line}: "${m.text.trim()}" declares nothing (expected '- <dimension>: <reason>', dimension one of capabilities | requirements | changed_bytes | tasks)`,
+      });
+    }
+    for (const d of declaration.duplicate) {
+      issues.push({
+        level: 'WARNING',
+        path: 'size',
+        message: `duplicate '## Size' line ${d.line}: "${d.text.trim()}" repeats a dimension already declared; the first item declares`,
+      });
+    }
+    const { breaches, stale } = sizeBreaches(size, ceiling, declaration);
+    for (const b of breaches) {
+      issues.push(
+        b.declared
+          ? { level: 'INFO', path: 'size', message: `${b.dimension} ${b.figure} > ${b.maximum}: declared` }
+          : {
+              level: 'WARNING',
+              path: 'size',
+              message: `${b.dimension} ${b.figure} > ${b.maximum}: undeclared (split the change, or declare it with '- ${b.dimension}: <reason>' under '## Size' in proposal.md)`,
+            }
+      );
+    }
+    for (const st of stale) {
+      issues.push({
+        level: 'INFO',
+        path: 'size',
+        message:
+          st.maximum === null
+            ? `${st.dimension} is declared but has no configured maximum: the declaration is stale`
+            : `${st.dimension} ${st.figure ?? '?'} <= ${st.maximum} is declared: the declaration is stale`,
+      });
+    }
+    return issues;
+  }
+
+  /**
+   * rc06a declaration check (`orbit-scenario-map`). With the check ON, every undeclared delta
+   * scenario is reported at the level the change's `apply` gate assigns — INFO until it passes,
+   * ERROR after — and every UNKEYABLE delta title at ERROR whatever the gate's state. Validate
+   * reports those two and nothing else from the map (design D5): ORPHAN and MALFORMED live on the
+   * `--scenarios` surface. With the check OFF it contributes nothing, so a repo without the key
+   * gets a byte-identical report.
+   */
+  private validateScenarioDeclarations(changeDir: string): ValidationIssue[] {
+    const root = this.projectRootFor(changeDir);
+    if (!root) return []; // not an orbit/changes layout — nothing to resolve against
+    if (!this.scenarioRun || this.scenarioRun.root !== root) {
+      this.scenarioRun = { root, config: resolveScenarioMapConfig(root) };
+    }
+    const run = this.scenarioRun;
+    if (run.config.check !== 'on') return [];
+    if (!run.scan) run.scan = scanDeclarations(root, run.config.tests, { warnOnZeroMatch: true });
+
+    const map = computeScenarioMap(root, changeDir, { config: run.config, scan: run.scan });
+    const issues: ValidationIssue[] = [];
+    for (const m of map.malformed) {
+      if (m.source !== 'spec') continue;
+      issues.push({
+        level: 'ERROR',
+        path: 'scenario-map',
+        message: `unkeyable delta scenario in ${m.capability}: requirement "${m.requirement}", scenario "${m.scenario}" — its key cannot name exactly one scenario (a title contains " :: ", or the scenario title repeats within its requirement), so no tag or ledger entry can declare it; rename it`,
+      });
+    }
+    const undeclared = map.scenarios.filter((s) => s.uncovered);
+    if (undeclared.length === 0) return issues;
+    const level = this.scenarioLevel(root, changeDir);
+    for (const s of undeclared) {
+      issues.push({
+        level,
+        path: 'scenario-map',
+        message: `undeclared delta scenario: ${joinKey(s.capability, s.requirement, s.scenario)} (no @scenario tag or ledger entry; see orbit status --change ${map.change} --scenarios)`,
+      });
+    }
+    return issues;
+  }
+
+  /**
+   * The level for an undeclared, keyable delta scenario, read from the SAME gate computation
+   * `orbit status --change` renders (design D4), so validate and status cannot disagree about
+   * whether apply passed. No `apply` row, or a context that cannot load, is INFO — never a throw.
+   */
+  private scenarioLevel(root: string, changeDir: string): ValidationLevel {
+    try {
+      // The metadata's schema is passed EXPLICITLY: the default resolution silently falls back to
+      // the project's schema when the named one does not resolve, which would grade an unknown
+      // schema's change against a gate it does not declare. Explicit, an unknown schema throws,
+      // and a context that cannot load reads INFO (the requirement's last row).
+      const schema = this.metadataSchema(changeDir);
+      const status = formatChangeStatus(loadChangeContext(root, path.basename(changeDir), schema));
+      const apply = status.gates.find((g) => g.id === 'apply');
+      return apply?.state === 'passed' ? 'ERROR' : 'INFO';
+    } catch {
+      return 'INFO';
+    }
+  }
+
+  /** The `schema:` string from the change's metadata; undefined when absent; throws when unreadable. */
+  private metadataSchema(changeDir: string): string | undefined {
+    const metaPath = path.join(changeDir, '.openspec.yaml');
+    let raw: string;
+    try {
+      raw = readFileSync(metaPath, 'utf-8');
+    } catch {
+      return undefined; // no metadata: the default resolution applies
+    }
+    const parsed = parseYamlSync(raw) as { schema?: unknown } | null;
+    return typeof parsed?.schema === 'string' ? parsed.schema : undefined;
+  }
+
+  /** `<root>/orbit/changes/<name>` or `<root>/orbit/changes/archive/<name>`; null otherwise. */
+  private projectRootFor(changeDir: string): string | null {
+    const abs = path.resolve(changeDir);
+    const parent = path.dirname(abs);
+    if (path.basename(parent) === 'changes' && path.basename(path.dirname(parent)) === 'orbit') {
+      return path.dirname(path.dirname(parent));
+    }
+    const grand = path.dirname(parent);
+    if (
+      path.basename(parent) === 'archive' &&
+      path.basename(grand) === 'changes' &&
+      path.basename(path.dirname(grand)) === 'orbit'
+    ) {
+      return path.dirname(path.dirname(grand));
+    }
+    return null;
+  }
+
+  /**
+   * Two-level architecture-citation resolution (D-arc D2). Change validation OWNS
+   * citation resolution: the citation lives in the change's metadata, so it is
+   * validated where metadata is validated (`orbit architecture validate` checks doc
+   * structure only). Absence of the field imposes nothing.
+   */
+  private async validateArchitectureCitation(changeDir: string): Promise<ValidationIssue[]> {
+    const metaPath = path.join(changeDir, '.openspec.yaml');
+    let raw: string;
+    try {
+      raw = await fs.readFile(metaPath, 'utf-8');
+    } catch {
+      return []; // no metadata — nothing to resolve
+    }
+    let parsed: unknown;
+    try {
+      const yaml = await import('yaml');
+      parsed = yaml.parse(raw);
+    } catch {
+      return []; // unreadable metadata is surfaced by the metadata readers, not here
+    }
+    const arch = (parsed as { architecture?: unknown } | null)?.architecture;
+    if (arch === undefined || arch === null) return [];
+    const citation = arch as { doc?: unknown; stage?: unknown };
+    if (typeof citation.doc !== 'string' || typeof citation.stage !== 'string') {
+      return [
+        {
+          level: 'ERROR',
+          path: '.openspec.yaml',
+          message: `architecture citation must be an object of shape {doc: <name>, stage: <id>}`,
+        },
+      ];
+    }
+    const { resolveArchitectureCitation } = await import('../architecture/validate.js');
+    const projectRoot = path.resolve(changeDir, '../../..');
+    // Archived changes live one level deeper (orbit/changes/archive/<name>).
+    const root = path.basename(path.dirname(changeDir)) === 'archive' ? path.resolve(changeDir, '../../../..') : projectRoot;
+    const resolution = resolveArchitectureCitation(root, { doc: citation.doc, stage: citation.stage });
+    if (!resolution.ok) {
+      return [{ level: 'ERROR', path: '.openspec.yaml', message: resolution.message }];
+    }
+    return [];
   }
 
   private convertZodErrors(error: ZodError): ValidationIssue[] {

@@ -1,0 +1,185 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-29T14:09:02Z",
+  "change": "rc15-ended-stage-state",
+  "kind": "editorial",
+  "model": null,
+  "source": "from-file",
+  "source_path": "orbit/changes/rc15-ended-stage-state/.orbit-runs/review-proposal-2026-09-28T23-32-39Z.json",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 3,
+    "suggestion": 4
+  },
+  "pushback_verification": "All 7 findings verified against HEAD (the pr-lifecycle arc-done sentence, the architect body's arc-done readout, the audit delta's (b) clause, the six-it describe, buckets' citing suffix, the program doc's ledger spelling, the proposal's regex sentence all read); 0 stale.",
+  "resolution_summary": {
+    "resolved": 7,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "An ended stage has no stated treatment in the arc-done predicate, and a premised-ended stage can never satisfy it",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-architect/spec.md",
+      "line": 15,
+      "classification": "decision_required",
+      "action": "Declared a non-goal: the arc-done predicate is orbit-pr-lifecycle's (a fourth capability, over R-crc-1). Proposal 'Not in scope' and design Non-Goals name it with the consequence; a design Risks entry accepts it as a residual for the readiness record; AT-ARCHIVE NOTE 5.5 opens it as a program question with the reviewer's natural treatment (ended counts as archived-or-ended) as the standing recommendation.",
+      "ratified_via": "chat",
+      "resolution": "1B — non-goal + accepted residual + at-archive note opening a program question; the treatment lands in its owner as its own change",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc15-ended-stage-state/proposal.md",
+          "orbit/changes/rc15-ended-stage-state/design.md",
+          "orbit/changes/rc15-ended-stage-state/tasks.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/specs/orbit-pr-lifecycle/spec.md",
+            "reason": "baseline spec; add a delta to your current change's specs/<capability>/spec.md to capture this ripple — deliberately NOT added: a fourth capability breaches R-crc-1; handed to at-archive note 5.5"
+          }
+        ]
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The unprompted route keys on OBSERVED state, so it reaches a `complete` stage — what happens to an existing `[x]` or `[~]` in the slot is unstated",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-architect/spec.md",
+      "line": 18,
+      "classification": "decision_required",
+      "action": "The unprompted write lands only on an UNDATED slot (absent or [ ]); a present [x] or [~] is declined naming the existing mark and pointing at the hand edit as the reversal path. New scenario 'Unprompted ended on a slot that already carries a dated mark is declined'. Design D-rc15-3 amended again; proposal and task 3.1 aligned.",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Unprompted ended on a stage whose slot already carries [x] or [~] is DECLINED, naming the existing mark and pointing at the hand edit as the reversal path; the written set is premised/quiescent/concluded with an UNDATED slot (absent or [ ])."
+          },
+          {
+            "label": "B",
+            "body": "The unprompted route REPLACES a present dated mark on the user's word; the emit records the id under stages_ended and the narrative names the mark it replaced; a scenario covers [x] → [~]."
+          }
+        ],
+        "chosen": "A"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc15-ended-stage-state/design.md",
+          "orbit/changes/rc15-ended-stage-state/proposal.md",
+          "orbit/changes/rc15-ended-stage-state/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Check (b)'s ratified-mark enumeration omits the new `concluded` observation the delta's own table makes INCONSISTENT",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-audit-drift/spec.md",
+      "line": 9,
+      "classification": "trivial_fix",
+      "action": "Both (b) clauses now POINT at the engine's composition table (a ratified or ended mark on a stage whose observed state the rule renders INCONSISTENT → CRITICAL) and enumerate no observations — the reviewer's second option, which makes the 'consumes, restates none' claim literally true (R-crc-14). New scenario for [x] + concluded-only named as a conclusion. Task 4.1's body edit drops the body's two-item list with a negative fidelity marker.",
+      "ratified_via": "chat",
+      "resolution": "drop both enumerations; point at the table (method, R-crc-3)",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc15-ended-stage-state/tasks.md",
+          "orbit/changes/rc15-ended-stage-state/proposal.md",
+          "orbit/changes/rc15-ended-stage-state/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The proposal says the state reader imports the grammar module's regex; design, spec and task 2.1 say it calls the explore parser's exported `readStatus`",
+      "marker_source": "internal-review",
+      "file": "proposal.md",
+      "line": 37,
+      "classification": "trivial_fix",
+      "action": "Proposal's What-Changes bullet and Impact now say the explore parser's exported status reader, one reader in the engine; the 'or' hedge removed.",
+      "ratified_via": "chat",
+      "resolution": "align with design D-rc15-2",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "'The five existing state tests stay byte-unchanged' — the `computed stage state` describe holds six, and the first one's title names the four-rung precedence",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 11,
+      "classification": "trivial_fix",
+      "action": "Task 2.4 and the design's Risks say SIX existing tests keep their ASSERTIONS byte-unchanged, and the first test's title is retitled to the five-rung order as a named second act (the pin covers assertions, not titles).",
+      "ratified_via": "chat",
+      "resolution": "six; retitle recorded as a second act",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc15-ended-stage-state/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The citing suffix renders a concluded explore identically to a live one, so the `quiescent`-beside-`concluded` cell reads as 'archived + live explore'",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 10,
+      "classification": "trivial_fix",
+      "action": "Task 2.3 renders a concluded explore citer as `explore:<name> (concluded)` (one branch; the live form unchanged); task 2.2 notes the boolean is what the suffix reads; design Touchpoints names it.",
+      "ratified_via": "chat",
+      "resolution": "adopt the suffix branch",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc15-ended-stage-state/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "D-rc15-4 attributes the production to 'Q-crc-11's ledger spelling', but the ledger spelled it WITH the suffix this production rejects",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 80,
+      "classification": "trivial_fix",
+      "action": "D-rc15-4 now reads 'the ledger's [~] mark with its — withdrawn suffix DROPPED'; explore.md keeps the earlier phrasing as history.",
+      "ratified_via": "chat",
+      "resolution": "suffix dropped, stated",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/changes/rc15-ended-stage-state/explore.md",
+            "reason": "explore.md persists unchanged at promotion (history by rule)"
+          }
+        ]
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "7 of 7 fresh-pass findings resolved (3 WARNING, 4 SUGGESTION; 0 stale). Two decision-lane findings ratified in chat (1B: arc-done over ended stages is a declared non-goal and accepted residual, opened as a program question by at-archive note 5.5 — a fourth capability would breach R-crc-1; 2A: the unprompted route writes only into an undated slot and declines on a present dated mark). Five obvious fixes: audit-drift (b) points at the table for both marks and enumerates nothing; the proposal names the one header reader; six tests not five, with the retitle recorded as a second act; the concluded citing suffix; the ledger attribution corrected. Change validates --strict; fingerprints unchanged (5 kept); 14 tasks; deltas ~27 KB.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal rc15-ended-stage-state"
+}

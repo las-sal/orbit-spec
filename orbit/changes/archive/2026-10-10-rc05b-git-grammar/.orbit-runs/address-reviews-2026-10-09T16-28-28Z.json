@@ -1,0 +1,104 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-09T16:28:28Z",
+  "change": "rc05b-git-grammar",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc05b-git-grammar/.orbit-runs/external-proposal-2026-10-09T16-07-07Z.md",
+  "source_command": null,
+  "source_token": "2026-10-09T16-07-07Z",
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-6 Codex",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 4,
+    "suggestion": 2
+  },
+  "pushback_verification": "Five converged with the fresh pass (same site, same claim) and take its log's dispositions; X6 checked against the propose body's consume-mode rule.",
+  "resolution_summary": {
+    "resolved": 0,
+    "stale_suppressed": 4,
+    "deferred": 0,
+    "escalated": 2
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Valid flags can be recorded as rejected when a probe omits required positionals",
+      "marker_source": "external",
+      "file": "orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md",
+      "line": 41,
+      "classification": "unresolvable",
+      "action": "converged with the fresh half's finding, walked in its log and escalated there as an essential redesign",
+      "evidence": "address-reviews-2026-10-09T16-28-05Z (the earlier pass's log) escalated \"The run-strategy row records correct surface flags REJECTED on commands that print usage without a positional (rev-list --count, check-ref-format --branch)\" with remedy redesign, routed to orbit/changes/rc05b-git-grammar/explore.md",
+      "remedy": "redesign",
+      "routed_to": "orbit/changes/rc05b-git-grammar/explore.md",
+      "outcome": "escalated"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The contract cannot represent the attached-value distinction the design promises",
+      "marker_source": "external",
+      "file": "orbit/changes/rc05b-git-grammar/design.md",
+      "line": 58,
+      "classification": "stale",
+      "action": "converged with the fresh half's finding, walked in its log",
+      "evidence": "address-reviews-2026-10-09T16-28-05Z (the earlier pass's log) resolved \"D3's `=value` rule cannot be implemented from D3's own contract shape, and the validator says nothing about `=value` on a no-value flag\"",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Inline extraction scope conflicts with per-segment classification",
+      "marker_source": "external",
+      "file": "orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md",
+      "line": 141,
+      "classification": "stale",
+      "action": "converged with the fresh half's finding, walked in its log",
+      "evidence": "address-reviews-2026-10-09T16-28-05Z (the earlier pass's log) resolved \"Which inline spans the operator split reads is unstated: keeping the `starts with <tool> ` gate contradicts the FALSIFY claim; dropping it fails extraction on prose spans\"",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Command-key discovery is unspecified for the surface-derived capture",
+      "marker_source": "external",
+      "file": "orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md",
+      "line": 39,
+      "classification": "unresolvable",
+      "action": "converged with the fresh half's finding, walked in its log and escalated there as an essential redesign",
+      "evidence": "address-reviews-2026-10-09T16-28-05Z (the earlier pass's log) escalated \"No rule decides whether a git segment's second word is a subcommand (worktree remove) or a positional (push <remote>)\" with remedy redesign, routed to orbit/changes/rc05b-git-grammar/explore.md",
+      "remedy": "redesign",
+      "routed_to": "orbit/changes/rc05b-git-grammar/explore.md",
+      "outcome": "escalated"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Tasks permit template changes that the declared scope excludes",
+      "marker_source": "external",
+      "file": "orbit/changes/rc05b-git-grammar/tasks.md",
+      "line": 15,
+      "classification": "stale",
+      "action": "converged with the fresh half's finding, walked in its log",
+      "evidence": "address-reviews-2026-10-09T16-28-05Z (the earlier pass's log) resolved \"\"No generated-surface text\" conflicts with task 2.4's template fixes\"",
+      "outcome": "stale"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Exploration status still says decisions are awaiting promotion",
+      "marker_source": "external",
+      "file": "orbit/changes/rc05b-git-grammar/explore.md",
+      "line": 1,
+      "classification": "stale",
+      "action": "not applied: the propose flow moves explore.md into the change unchanged as the historical record; the header is the explore convention's, and re-entry in place reads it",
+      "evidence": "the propose body's consume mode: \"explore.md persists unchanged as the historical record of how the change took shape\"; the walk also routes three redesign entries back to this file, which resumes it in place",
+      "outcome": "stale"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Six findings: three stale as converged with the fresh half's resolved entries, one stale by the explore convention (the moved explore.md keeps its header), two escalated as converged with the fresh half's redesign entries, routed to the change's explore.md; this pass stays outstanding.",
+  "iteration": 2,
+  "next_recommended": "/orbit:address-reviews rc05b-git-grammar",
+  "ripple_misses": 0
+}

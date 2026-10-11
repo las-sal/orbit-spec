@@ -1,0 +1,97 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-11T21:17:32Z",
+  "change": "rc09b-tool-inventory",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {},
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    }
+  },
+  "findings": [
+    {
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "title": "Design D6 and task 3.1 still define the non-vacuity floor as the Case 2 heads",
+      "file": "orbit/changes/rc09b-tool-inventory/design.md",
+      "line": 77,
+      "recommendation": "The walk narrowed the floor in the test to the recorded tools' Case 2 counts, so that an exemption can leave with its last use, but its sweep stayed in the test file. design.md:77 still says 'The day-one sweep also asserts a non-vacuity floor: at least the Case 2 heads are read', and tasks.md 3.1 says 'a non-vacuity floor of the Case 2 heads'. An implementation built to D6 would pin every exemption head again, which is the defect the external WARNING named. Restate both: the floor holds the recorded tools' Case 2 counts, and the declared heads are held read by the exactness rule.",
+      "walk_entry": {
+        "title": "The derivation test and the non-vacuity floor restate the lists the inventory derives and declares",
+        "file": "test/core/cli-grammar/tool-inventory.test.ts"
+      }
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Graded over each entry's sweep scope. The two read-table rows match what analyseHeads does: the new unit cases read jq from a blockquote-nested fence and read the continuation's first token as its own head. The continuation row also agrees with the places table's existing residual for orbit, where a trailing backslash reaches the parser as an argument and the continued line stands alone. The charter paragraph validates, and the source lint is clean. The cleanup hook kept the temp directory count flat across a run. The residual check from the commit that added the external return lists only files inside the walks' edit records. The one regression is a cascade that swept the test's wording but not the design and task sentences that define the floor the test implements.",
+  "passes_run": [
+    1,
+    2,
+    3
+  ],
+  "passes_skipped": [
+    {
+      "pass": 0,
+      "reason": "VERIFICATION genre: verify-change is a whole-change pass"
+    },
+    {
+      "pass": 4,
+      "reason": "no perspectives defined; skip Pass 4"
+    },
+    {
+      "pass": 5,
+      "reason": "no critical paths defined; skip Pass 5"
+    },
+    {
+      "pass": 6,
+      "reason": "VERIFICATION genre: audit-drift is a whole-project pass"
+    }
+  ],
+  "verification": [
+    {
+      "title": "The read table omits two fence members the head walk reads: a blockquote-nested fence and a backslash-continued line",
+      "file": "orbit/changes/rc09b-tool-inventory/specs/orbit-cli-grammar/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The derivation test and the non-vacuity floor restate the lists the inventory derives and declares",
+      "file": "test/core/cli-grammar/tool-inventory.test.ts",
+      "verdict": "regressed"
+    },
+    {
+      "title": "The stage charter still states the residual as 'a tool invoked only in an inline span'",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Temporary fixture repositories are never removed",
+      "file": "test/core/cli-grammar/tool-inventory.test.ts",
+      "verdict": "landed"
+    }
+  ],
+  "final_assessment": "0 critical, 1 warning, 0 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-10-11T21-14-36Z",
+    "2026-10-11T21-14-49Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc09b-tool-inventory"
+}

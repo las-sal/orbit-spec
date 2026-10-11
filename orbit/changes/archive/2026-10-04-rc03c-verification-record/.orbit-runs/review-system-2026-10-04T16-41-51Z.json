@@ -1,0 +1,113 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-04T16:41:51Z",
+  "change": "rc03c-verification-record",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "3",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 827,
+      "title": "The installed VERIFICATION branch grades landed/regressed by a definition the installed skill does not carry",
+      "recommendation": "Step (c) tells the grading AI to grade `landed` or `regressed` 'by the definition ... `orbit-emit-composition`'s ... owns', and test 1.5 (`review-verification-branch.test.ts:38-43`) asserts the branch must NOT carry the conjuncts (PRESENT / COMPLETE across / NOT UNDONE). Grepping the whole generated `.claude/skills/orbit-review/` tree for `undone`, `cannot decide` or `COMPLETE across` returns nothing, and no refusal message carries the definition either. In this repo the AI can open `orbit/specs/`; in an adopter's project the installed skill is the only text the verifier has, so the non-obvious parts of the definition — 'not undone by a later edit' and 'a claim the pass cannot decide is `regressed`' — are unknowable, and an adopter's verifier will plausibly grade an undecidable claim `landed`. The body already resolves this exact tension for `direction` (Step 8 carries the owner's content contract 'because a reviewer reads this body, not the spec') and for the genre table (a CHECKED MIRROR). Apply R-crc-14's mirror corollary: carry the verdict definition in the branch as a checked mirror of the owner's sentence, held byte-equal by a parity test, and flip test 1.5's negative assertion into that parity assertion.",
+      "reproduction": "grep -rn 'undone\\|cannot decide\\|COMPLETE across' .claude/skills/orbit-review/  -> no output; sed -n 38,43p test/core/templates/review-verification-branch.test.ts -> asserts the branch does not match /PRESENT|NOT UNDONE|COMPLETE across/."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 825,
+      "title": "Probe/engine reconciliation is one-directional; a probe-VERIFICATION, engine-REVIEW pass has no recovery path",
+      "recommendation": "Step (a) and the `orbit-review` delta's (a) name the refusal as the reconciling channel only for the probe-REVIEW / engine-VERIFICATION direction (owed record missing, key omitted, verdict not owed). The reverse direction is real: (i) the owner's named limit — a walk of a rejected external return — and (ii) a NEW divergence the owner's KNOWN LIMIT does not name: `computePassGenre` resolves a walk's mode through the accepted pass set by basename, so a walk whose `source_path` names a `review-<mode>-*.json` that is not on this trail is MODE-LESS to the engine, while the body's probe (and rc03b's own probe model) reads its mode from the filename. In both cases the body runs a scoped verification, composes `verification`, and gets 'verification is refused on a REVIEW-genre pass' — a refusal the branch does not mention and whose message does not say the pass now owes a whole-artifact REVIEW. Name the reverse refusal in step (a) (drop `verification`/`walk_entry` AND re-run as a REVIEW-genre pass), and either widen the owner's KNOWN LIMIT to the second case or make the probe read 'source names a pass file present in the listing'.",
+      "reproduction": "Constructed trail in a scratch dir: address-reviews-2026-10-04T05-00-00Z.json with source_path orbit/changes/other/.orbit-runs/review-system-2026-10-04T04-00-00Z.json and one resolved entry; then node with dist computePassGenre(readTrail(dir),'in-context','system','2026-10-04T05-05-00Z') -> {passGenre:'REVIEW',verifiedWalks:[]}. The body's probe (basename regex, as test/core/pass-genre-probe.test.ts's probeGenre models it) reads that walk as system-mode and no independent pass precedes it -> VERIFICATION."
+    },
+    {
+      "pass": "0",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 828,
+      "title": "'Run this mode's passes over the sweep scopes' is undefined for system-mode Pass 0 and Pass 6",
+      "recommendation": "In system mode 'this mode's passes' include Pass 0 (verify-change — change-wide by definition: task completion, spec coverage) and Pass 6 (audit-drift — project-wide by definition). Neither can be restricted to a file set, so an AI following step (d) literally either re-runs them whole — producing findings no walk entry names, which render `[outside the walk record]` and, at WARNING, count as a MISS on design D9's exit-(3) instrument — or skips them on its own judgement. The branch (and the `orbit-review` delta's (d), 'with the passes the body already runs for its mode') should say which passes a VERIFICATION-genre system pass runs over the scope and whether Pass 0 and Pass 6 are skipped with a note, so exit (3) is graded against a stated procedure rather than an interpretation."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "test/core/pass-genre-probe.test.ts",
+      "line": 53,
+      "title": "rc03b's probe decision table still compares against a hand model of the engine, not computePassGenre",
+      "recommendation": "`trailGenre` is documented as 'what an engine computation reads' and resolves walk mode by filename; the shipped `computePassGenre` resolves it through the accepted pass set. The pin 'agree everywhere except the one named case' therefore witnesses a model that has diverged from the engine (see the reconciliation finding). Replace `trailGenre` with a call to `computePassGenre` so the table measures the real function."
+    },
+    {
+      "pass": "1",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc03c-verification-record/specs/orbit-review/spec.md",
+      "line": 5,
+      "title": "The residual check's co-committed limit swallows the whole walk whenever the fresh half is the later pass",
+      "recommendation": "`<C>` is the commit that first added the LATEST accepted independent pass's file. When the fresh half's token is later than the external's and the fresh emit is committed together with the walks (rc03b's fresh pass file and both walk logs share one adding commit, by hash), every walk edit is in `<C>` and the residual check lists nothing. The Residual kind words this as an edge ('an edit committed in the same commit'); state that it is the ordinary case under that commit ordering, or have the body commit independent pass files before walking, so a reader of an empty residual listing does not take it as coverage.",
+      "reproduction": "git log --diff-filter=A --format=%h -- orbit/changes/rc03b-pass-genres/.orbit-runs/{review-system-2026-10-04T03-55-35Z.json,address-reviews-2026-10-04T04-08-51Z.json,address-reviews-2026-10-04T04-12-35Z.json} | sort -u -> one hash (0dfca127) for all three."
+    },
+    {
+      "pass": "0",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc03c-verification-record/tasks.md",
+      "line": 5,
+      "title": "Task 1.3 and the design's Touchpoints name report-render-hardening.test.ts, which the apply never touched",
+      "recommendation": "The stage's diff carries no change to `test/core/report-render-hardening.test.ts`; the read-side-twin tests landed in `report-render.test.ts` (e.g. line 1179). Either drop the file from task 1.3 and design.md's Touchpoints (line 137), or record under 1.3 that the hardening cases live in report-render.test.ts, so the touchpoint divergence reads as intended rather than missed."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "The engine half is tight: the genre function, the owed-set ledger, the write gate and the render agree with each other and with the deltas, the rc03b archived trail computes exactly the VERIFICATION over 04-08-51Z and 04-12-35Z the spec's worked scenario names (9 owed entries, no shared keys), gates.ts and trail.ts carry no diff, and every baseline scenario survives the three MODIFIED blocks. The weight of this pass sits on the BODY side — the text an AI actually executes when it verifies. Two of the three warnings are the same shape: the branch points at an owner the installed skill cannot open (the verdict definition) or at a reconciliation that only runs one way (probe vs engine). The third is a procedural hole that bears directly on exit (3), which is graded by counting unlinked findings — so how much of system mode a verification runs is not a style question. Probed with a scratch trail against the built dist; nothing in the repo was written beyond this emit.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3"
+  ],
+  "passes_skipped": [
+    "4: no perspectives defined (orbit/lenses/ absent)",
+    "5: no critical paths defined (orbit/lenses/ absent)",
+    "6: audit-drift not invoked — it persists its own emit, outside this worker's one-write brief; a residue grep for the retired names ran instead (zero field hits)"
+  ],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The mechanism is sound and the gate stays untouched; what remains is body text and two test-fidelity notes, each repairable in a walk without new mechanism.\nRepair the verdict-definition mirror and the two procedural gaps before the in-context confirm, because that confirm IS exit (3)'s measurement and it will execute exactly this branch."
+  },
+  "final_assessment": "0 critical, 3 warning, 3 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc03c-verification-record --from-file orbit/changes/rc03c-verification-record/.orbit-runs/review-system-2026-10-04T16-41-51Z.json"
+}

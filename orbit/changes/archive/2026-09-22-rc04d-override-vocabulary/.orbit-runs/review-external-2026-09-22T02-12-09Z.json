@@ -1,0 +1,13 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-09-22T02:12:09Z",
+  "change": "rc04d-override-vocabulary",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "mode": "system",
+  "prompt_path": "orbit/changes/rc04d-override-vocabulary/.orbit-runs/external-prompt-system-2026-09-22T02-11-54Z.md",
+  "target": null,
+  "final_assessment": "External review prompt packaged for rc04d-override-vocabulary (iter 1, mode system); awaiting findings. This handoff COVERS A DECLARED, STILL-UNCOVERED CADENCE SLOT — the review-system gate reads unpassed with 'blind pair open: no independent pass stands on this state', independentSpend 0 — so it is NOT a spend decision past a passed gate and carries NO judgements entry, per the rule rc04a shipped. HANDOFF PREFLIGHT FAILED on a dirty working tree: six modified artifacts and five untracked trail emits from the proposal cadence and apply, plus this prompt file itself. Zero unpushed commits. The pull invocation is therefore WITHHELD — the external AI pulls the repo and would see a state without this change's walked artifacts. The prompt directs the reviewer at the one claim that carries this stage: that every de-named form is TRUE OF THE ENGINE AS IT STANDS, checked against behaviour rather than against its predecessor's wording. It also names the ownership pointer as a claim to attack, disclosing that an earlier version of that clause named only one owner and was wrong — so the fix may be wrong in a new way. Lens files are absent; passes 4 and 5 are declared skipped in the prompt rather than left for the reviewer to discover.",
+  "awaiting_findings": true,
+  "next_recommended": "Paste orbit/changes/rc04d-override-vocabulary/.orbit-runs/external-prompt-system-2026-09-22T02-11-54Z.md into the target AI, save the response as orbit/changes/rc04d-override-vocabulary/.orbit-runs/external-system-<TS>.md, then /orbit:address-reviews rc04d-override-vocabulary --from-file <path>"
+}

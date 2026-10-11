@@ -1,0 +1,27 @@
+{
+  "command": "architect",
+  "timestamp": "2026-09-14T14:44:42Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "Ordering resolved and two findings made file-resident. rc13-explore-mechanism MOVED to phase 1 and is the next stage — recorded as R-crc-2 applied correctly rather than as an exception to it, since the stage had been filed by its mechanism when phase 1's own criterion describes its leverage exactly. Its charter's ordering note, which had surfaced the recommendation and declined to take it unilaterally, now records the resolution, the measurement cost of the misfiling, and the by-hand R-crc-7 discipline its own exploration runs under. Also captured: the delta-scope defect reported from another project and verified here by execution against the compiled engine, with a standing recommendation for a new stage; and a standing observation that three review instruments have never run in this repo because orbit/lenses/ does not exist. No ruling added or amended; no stage reached ratification this session.",
+  "stages_touched": [
+    "rc13-explore-mechanism",
+    "rc10-apply-closure"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [],
+  "handoff": {
+    "boot_sequence": [
+      "orbit/architecture/clean-up-review-cycle.md — rc13-explore-mechanism now sits in phase 1 and is next; its charter carries the ordering resolution and the by-hand R-crc-7 instruction for its own exploration.",
+      "orbit architecture status — computed position; rc01 and rc02 complete-ratified, twelve stages premised.",
+      "The status log's last four entries — rc02's close, the ordering move, the delta-scope defect with its standing recommendation, and the lenses observation.",
+      "src/core/specs-apply.ts:258,411-417 and src/core/templates/workflows/address-reviews.ts:823 — the two halves of the delta-scope contradiction, if rc14 is opened."
+    ],
+    "next_command": "/orbit:explore rc13-explore-mechanism",
+    "model_hint": "rc13's deliverable is a decision procedure and its exploration runs under manual R-crc-7 discipline — write the Mechanism section and execute the procedure once before specifying. Use the strongest available model for the exploration rather than saving it for propose.",
+    "seam": "Program bookkeeping is closed. rc13 is the next stage and nothing blocks it (Depends-on: none). Two acts remain outward and the user's: filing the drafted delta-scope issue, and closing issue #8 with a pointer to rc02, which rc02's task 7.3 asked for."
+  },
+  "next_recommended": "/orbit:explore rc13-explore-mechanism"
+}

@@ -1,4 +1,9 @@
 import { describe, expect, it } from 'vitest';
+import { COMPLETE_SLOT_PRODUCTIONS } from '../../../src/core/architecture/parser.js';
+import { ownerText } from '../../helpers/owner-text.js';
+import { analyseRecorded, recordedTool, sweepRecorded } from '../../helpers/recorded-sweep.js';
+import fs from 'node:fs';
+import path from 'node:path';
 
 import {
   getExploreSkillTemplate,
@@ -21,17 +26,19 @@ import {
   getBulkArchiveChangeSkillTemplate,
   getVerifyChangeSkillTemplate,
   getArchiveChangeSkillTemplate,
+  getArchitectSkillTemplate,
   getOnboardSkillTemplate,
+  getSyncSpecsSkillTemplate,
   getReviewSkillTemplate,
   getOrbitReviewCommandTemplate,
-  getReviewExternalSkillTemplate,
-  getOrbitReviewExternalCommandTemplate,
   getAddressReviewsSkillTemplate,
   getOrbitAddressReviewsCommandTemplate,
   getAuditDriftSkillTemplate,
   getOrbitAuditDriftCommandTemplate,
   type SkillTemplate,
 } from '../../../src/core/templates/skill-templates.js';
+import { ownerText } from '../../helpers/owner-text.js';
+import { EXPLORE_MECHANISM_ENTRY_PRODUCTION } from '../../../src/core/explore-grammar.js';
 
 /**
  * Fidelity guard for B1 (relocate-modified-upstream-workflows): asserts orbit's
@@ -40,35 +47,72 @@ import {
  * silently drops orbit content, reintroduces the /opsx: namespace, or points at
  * the old openspec/ working dir fails loudly.
  *
- * sync-specs is intentionally absent: orbit never modified it (a no-op for B1).
+ * sync-specs joined RELOCATED in D1 (explicit-lifecycle-consent): it gained the
+ * disciplines block + the consent-inheritance note (it was a B1 no-op before).
  */
 // Per-workflow REQUIRED markers (every listed marker must appear in the skill body).
 // A workflow that silently loses its disciplines block, run-summary section, or
 // completion-prompt override fails its own assertion — no disjunctive escape hatch.
+//
+// rc04c (2026-09-24): the `gate_overridden` pins on apply-change and archive-change RETIRED
+// with the bodies — the field is gone from the write path, and the continuation/proceed
+// judgement entry is the sole record of a proceed-anyway. A pin going red on deliberate work
+// is the pin doing its job; the successor marker (`continuation`) takes its slot so a body
+// that silently drops the record's instruction still fails here.
+//
+// rc04c system blind pair (2026-09-24): `ACCEPTED as a pass` pins the token-source qualifier in
+// every body that enumerates citable passes (apply, archive ×2, review's spend record) — both
+// halves of the pair found the enumeration counting REJECTED external returns as citable, which
+// the write gate refuses. The sentence is stated in four bodies; this pin is what keeps the
+// qualifier from dropping out of one of them silently.
 const RELOCATED: Array<[string, () => SkillTemplate, string[]]> = [
-  ['explore', getExploreSkillTemplate, ['execution disciplines', 'Run-summary emit']],
-  ['propose', getOrbitProposeSkillTemplate, ['execution disciplines', 'Run-summary emit', 'Completion-prompt override']],
+  ['explore', getExploreSkillTemplate, ['execution disciplines', 'Run-summary emit', 'BEGIN emit', 'orbit emit explore', 'No retro-fire', 'BACK-FILLED counts']],
+  // rc13c (propose-consumes-mechanism): the concluded refuse in Step 0, live-only naming inference, the
+  // section-list mirror, the Mechanism read after the last file write, the Step 0c.6 record and its
+  // no-engine-record header, the rule-answer note at Step 0b. Position and parity assertions live in
+  // the `rc13c propose consume-mode integrity` block below.
+  ['propose', getOrbitProposeSkillTemplate, ['execution disciplines', 'Run-summary emit', 'Completion-prompt override', 'this exploration concluded on', 'is never reached', 'LIVE staging director', 'Mechanism → artifacts', 'no engine record', 'Residual kind:', 'no Mechanism entry is authored at propose', 'second claim on one truth']],
   ['new-change', getNewChangeSkillTemplate, ['execution disciplines', 'Run-summary emit']],
   ['continue-change', getContinueChangeSkillTemplate, ['execution disciplines', 'Run-summary emit', 'Completion-prompt override']],
-  ['apply-change', getApplyChangeSkillTemplate, ['execution disciplines', 'Run-summary emit', 'Completion-prompt override', 'blocked-by-gate', 'gate_overridden']],
+  ['apply-change', getApplyChangeSkillTemplate, ['execution disciplines', 'Run-summary emit', 'Completion-prompt override', 'blocked-by-gate', 'continuation', 'formed_against: []', 'ACCEPTED as a pass', 'Consent at entry', 'consent_era_from', '"user-invoked" | "prompted"', 'orbit emit apply']],
   ['ff-change', getFfChangeSkillTemplate, ['execution disciplines', 'Run-summary emit', 'Completion-prompt override']],
-  ['bulk-archive-change', getBulkArchiveChangeSkillTemplate, ['# Orbit additions']],
+  ['bulk-archive-change', getBulkArchiveChangeSkillTemplate, ['# Orbit additions', 'execution disciplines', 'Per-change consent', 'consent_era_from', 'Per-change user-validation closure']],
   ['verify-change', getVerifyChangeSkillTemplate, ['execution disciplines', 'Run-summary emit']],
-  ['archive-change', getArchiveChangeSkillTemplate, ['execution disciplines', 'run summary', 'review-system gate inflection', 'gate_overridden']],
-  ['onboard', getOnboardSkillTemplate, ['execution disciplines', 'self-contained']],
+  ['archive-change', getArchiveChangeSkillTemplate, ['execution disciplines', 'run summary', 'Gate inflection prompt', 'User-validation closure', 'DEFERRAL REFUSALS', 'continuation', 'formed_against: []', 'ACCEPTED as a pass', 'Consent at entry', 'consent_era_from', 'Sync inheritance']],
+  ['onboard', getOnboardSkillTemplate, ['execution disciplines', 'self-contained', 'Four execution disciplines']],
+  ['sync-specs', getSyncSpecsSkillTemplate, ['execution disciplines', 'Consent inheritance']],
   // B3 editorial workflows (net-new relocation; parity proof per D-b3-4)
-  ['review', getReviewSkillTemplate, ['execution disciplines', 'convergence states', 'Persist the run summary', 'recommendation_options', 'gate review-proposal', 'reviewer_class']],
-  ['review-external', getReviewExternalSkillTemplate, ['execution disciplines', 'Run-summary emit (T0', 'awaiting_findings', 'Handoff preflight', 'Prompt committed']],
-  ['address-reviews', getAddressReviewsSkillTemplate, ['execution disciplines', 'Ripple cascade', 'Decision-fork detection', 'resolution log']],
+  ['review', getReviewSkillTemplate, ['execution disciplines', 'orbit status --change <name> --report', 'Paste the output VERBATIM', 'hand-rendering them is PROHIBITED', 'architecture mode is EXEMPT', 'recommendation_options', 'reviewer_class', 'commentary', 'REVIEWER axis', 'references/external-handoff.md', 'references/passes-<mode>.md', 'orbit emit review']],
+  ['address-reviews', getAddressReviewsSkillTemplate, ['execution disciplines', 'Ripple cascade', 'obvious-fix lane preview', 'present → discuss → ratify', "AFTER the finding's discussion concludes", 'RE-PRESENTS the finding', 'one prompt NEVER spans multiple findings', 'ratified_via', 'delegation_directive', 'resolution log']],
   ['audit-drift', getAuditDriftSkillTemplate, ['execution disciplines', 'Vocabulary residue', 'Persist the run summary', 'recommendation_options']],
+];
+
+// D1 (explicit-lifecycle-consent): every generated body echoes the no-chaining
+// contract as the FOURTH disciplines entry, and no body renders an imperative
+// `Next:` label — eligibility phrasing (`Ready when you are:`) is the only
+// recommendation label. Exit-criterion greps per the D-arc D1 acceptance tests.
+const ALL_SURFACE_SKILLS: Array<[string, () => SkillTemplate]> = [
+  ['explore', getExploreSkillTemplate],
+  ['propose', getOrbitProposeSkillTemplate],
+  ['new-change', getNewChangeSkillTemplate],
+  ['continue-change', getContinueChangeSkillTemplate],
+  ['apply-change', getApplyChangeSkillTemplate],
+  ['ff-change', getFfChangeSkillTemplate],
+  ['sync-specs', getSyncSpecsSkillTemplate],
+  ['bulk-archive-change', getBulkArchiveChangeSkillTemplate],
+  ['verify-change', getVerifyChangeSkillTemplate],
+  ['archive-change', getArchiveChangeSkillTemplate],
+  ['onboard', getOnboardSkillTemplate],
+  ['review', getReviewSkillTemplate],
+  ['address-reviews', getAddressReviewsSkillTemplate],
+  ['audit-drift', getAuditDriftSkillTemplate],
 ];
 
 // dirName -> exact reference declarations for the B3 multi-file editorial skills
 const B3_REFERENCES: Array<[string, () => SkillTemplate, string[]]> = [
-  ['review', getReviewSkillTemplate, ['run-summary-schema.md']],
-  ['review-external', getReviewExternalSkillTemplate, ['mode-sections.md', 'prompt-template.md']],
-  ['address-reviews', getAddressReviewsSkillTemplate, ['external-findings-format.md', 'internal-findings-format.md', 'run-summary-schema.md']],
-  ['audit-drift', getAuditDriftSkillTemplate, ['run-summary-schema.md']],
+  ['review', getReviewSkillTemplate, ['run-summary-schema.md', 'passes-proposal.md', 'passes-system.md', 'passes-architecture.md', 'external-handoff.md', 'blind-pair.md', 'mode-sections.md', 'prompt-template.md', 'flags-detail.md']],
+  ['address-reviews', getAddressReviewsSkillTemplate, ['external-findings-format.md', 'internal-findings-format.md', 'resolution-detail.md', 'run-summary-schema.md']],
+  ['audit-drift', getAuditDriftSkillTemplate, ['run-summary-schema.md', 'worked-example.md']],
 ];
 
 // Every generated /orbit:* command is a thin launcher delegating to its skill —
@@ -86,10 +130,207 @@ const LAUNCHERS: Array<[string, () => { content: string }, string]> = [
   ['onboard', getOrbitOnboardCommandTemplate, 'orbit-onboard'],
   ['propose', getOrbitProposeCommandTemplate, 'orbit-propose'],
   ['review', getOrbitReviewCommandTemplate, 'orbit-review'],
-  ['review-external', getOrbitReviewExternalCommandTemplate, 'orbit-review-external'],
   ['address-reviews', getOrbitAddressReviewsCommandTemplate, 'orbit-address-reviews'],
   ['audit-drift', getOrbitAuditDriftCommandTemplate, 'orbit-audit-drift'],
 ];
+
+describe('D4 external prompt output-format block: delta <-> shipped template byte-equality', () => {
+  it('the orbit-review-external delta carries the SHIPPED inner block verbatim', () => {
+    const fs = require('node:fs');
+    const path = require('node:path');
+    const root = path.resolve(__dirname, '..', '..', '..');
+    const deltaPath = path.join(root, 'orbit', 'changes', 'd4-review-consistency', 'specs', 'orbit-review-external', 'spec.md');
+    if (!fs.existsSync(deltaPath)) return; // post-archive: the block lives in the baseline; parity holds transitively
+    const delta = fs.readFileSync(deltaPath, 'utf-8');
+    const extract = (text) => {
+      const i = text.indexOf('Use this exact markdown structure:');
+      const a = text.indexOf('```markdown', i);
+      const b = text.indexOf('\n```\n', a) + 4;
+      return text.slice(a, b);
+    };
+    const template = getReviewSkillTemplate().references.find((r) => r.name === 'prompt-template.md').content;
+    expect(extract(delta)).toBe(extract(template));
+  });
+
+  it("review's spend-record token source carries the ACCEPTED-as-a-pass qualifier (rc04c system blind pair)", () => {
+    // The fourth copy of the token-source sentence lives in the external-handoff REFERENCE, not
+    // the skill body, so the body-marker table above cannot pin it; this does.
+    const ref = getReviewSkillTemplate().references.find((r) => r.name === 'external-handoff.md')!.content;
+    expect(ref).toContain('ACCEPTED as a pass');
+    expect(ref).not.toContain('cannot be unresolvable');
+  });
+});
+
+describe('rc13c propose consume-mode integrity (Mechanism section consumption)', () => {
+  const body = getOrbitProposeSkillTemplate().instructions;
+  const sections = (text: string): Record<string, string> => {
+    const out: Record<string, string> = {};
+    const parts = text.split(/\n(?=## )/);
+    for (const part of parts) {
+      const m = part.match(/^## (.+)$/m);
+      if (m) out[m[1].trim()] = part;
+    }
+    return out;
+  };
+  const stripTrailing = (t: string) => t.split('\n').map((l) => l.replace(/\s+$/, '')).join('\n');
+
+  it('the concluded refuse sits inside Mode detection, after the conflict sub-step and before the consume-mode flow (exit 3)', () => {
+    const sec = sections(body);
+    const mode = sec['Mode detection (NEW Step 0 — runs before upstream Step 1)'];
+    expect(mode, 'Mode detection section present').toBeTruthy();
+    const conflict = mode.indexOf('**Check for conflict**');
+    const refuse = mode.indexOf('this exploration concluded on');
+    expect(conflict).toBeGreaterThan(-1);
+    expect(refuse).toBeGreaterThan(conflict);
+    // The concluded-plus-conflict refuse sits INSIDE the conflict sub-step, before its prompt (precedence 1).
+    const bothRefuse = mode.indexOf('second claim on one truth');
+    const regen = mode.indexOf('**Regenerate from explore**');
+    expect(bothRefuse).toBeGreaterThan(conflict);
+    expect(regen).toBeGreaterThan(bothRefuse);
+    expect(mode).not.toContain('refused here too');
+    // The refuse is taught ONCE in the whole body — and the positional checks above prove that one
+    // occurrence sits in Mode detection. (A section-slice negative assertion was retired at the system
+    // blind-pair walk: the slicer is fence-blind and a fenced `## Touchpoints` example truncated the
+    // consume-mode slice, so it reported coverage it did not have.)
+    expect(body.split('this exploration concluded on').length - 1).toBe(1);
+  });
+
+  it('points at the re-entry rule and never restates it (exit 3)', () => {
+    expect(body).not.toContain('| staging dir | concluded |');
+    expect(body).not.toContain('ask nothing else');
+  });
+
+  it("carries no 'five-section' residue (rc13a's declared exemption closed)", () => {
+    expect(body).not.toMatch(/(five|5)[- ]sections?/);
+  });
+
+  it("the section-list mirror is byte-equal to orbit-conventions' format requirement (emphasis stripped)", async () => {
+    const owner = await ownerText('orbit-conventions', 'fixed SIX-section format');
+    const m = owner.match(/fixed SIX-section format for `explore\.md`, in this order: ([^.]+)\./);
+    expect(m, 'the owner states the list in one "in this order:" clause').toBeTruthy();
+    const ownerList = m![1].replace(/\*\*/g, '').trim();
+    expect(body).toContain(`in its order — ${ownerList}.`);
+  });
+
+  it("the Step 0c.6 decision table is byte-equal to the ADDED requirement's (trailing whitespace trimmed)", async () => {
+    const owner = await ownerText('orbit-propose-modifications', 'a PARTITION of the entries and live rules');
+    const rows = (text: string) => {
+      const start = text.indexOf('| row | owner\'s Decisions state | accounting state | lands in |');
+      expect(start, 'table header present').toBeGreaterThan(-1);
+      const lines = text.slice(start).split('\n');
+      const table: string[] = [];
+      for (const l of lines) {
+        if (!l.startsWith('|')) break;
+        table.push(l.replace(/\s+$/, ''));
+      }
+      return table;
+    };
+    const ownerRows = rows(owner);
+    expect(ownerRows.length).toBe(7); // header + separator + five rows
+    expect(rows(body)).toEqual(ownerRows);
+  });
+
+  it("the four-shape list is byte-equal to the ADDED requirement's clause", async () => {
+    const owner = await ownerText('orbit-propose-modifications', 'a PARTITION of the entries and live rules');
+    const m = owner.match(/lands in requirement text as one of four shapes, each observed on the record: ([\s\S]+?)\. Which shape fits/);
+    expect(m, 'the owner states the four shapes in one clause').toBeTruthy();
+    const bm = body.match(/\*\*The CLOSED shapes\*\* \(a checked mirror of the requirement's list\): ([\s\S]+?)\. Which shape fits/);
+    expect(bm, 'the body states its four shapes in one clause').toBeTruthy();
+    expect(stripTrailing(bm![1])).toBe(stripTrailing(m![1]));
+    expect(body.split(stripTrailing(m![1])).length - 1, 'exactly one occurrence in the body').toBe(1);
+  });
+
+  it('the Step 0b entry form interpolates the grammar constant (no hand-written variant)', () => {
+    expect(body).toContain('- **<YYYY-MM-DD> — <ID>: <title>** <prose…>');
+    expect(body).not.toContain('D-<tag>-<n>');
+  });
+
+  it('the Step 0b Mechanism grammar mirror is the grammar module\'s production (adopter-safe, one source)', () => {
+    expect(body).toContain('```\n' + EXPLORE_MECHANISM_ENTRY_PRODUCTION + '\n```');
+    expect(body.split(EXPLORE_MECHANISM_ENTRY_PRODUCTION).length - 1).toBe(1);
+  });
+});
+
+describe('rc15 ended-stage-state: the architect §5 offer, the unprompted route, audit-drift check (b) by pointer', () => {
+  const architect = getArchitectSkillTemplate().instructions;
+  const auditDrift = getAuditDriftSkillTemplate().instructions;
+  const h3 = (text: string, prefix: string): string => {
+    const parts = text.split(/\n(?=### )/);
+    const part = parts.find((p) => p.startsWith(`### ${prefix}`));
+    expect(part, `section '### ${prefix}' present`).toBeTruthy();
+    return part!;
+  };
+
+  it('§5 carries the third answer, the ended write, stages_ended, and offers an ended stage nothing', () => {
+    const s5 = h3(architect, '5. Completion-ratification flow');
+    expect(s5).toContain('**ratify** / **not yet** / **ended**');
+    expect(s5).toContain('the stage\'s exit criteria will not be met, the stage renders `ended`, and the mark is a slot edit that can be reversed by hand');
+    expect(s5).toContain('write `Complete: [~] <YYYY-MM-DD> (<who>)` into that stage\'s slot with the same insert rule');
+    expect(s5).toContain('under `stages_ended` — never under `completions_ratified`');
+    expect(s5).toContain('a stage rendering `ended`, `ended-from-explore` or `complete` is offered nothing');
+  });
+
+  it('§5 carries the unprompted route, written on premised/quiescent/concluded + an undated slot, declined on live work and on a dated mark', () => {
+    const s5 = h3(architect, '5. Completion-ratification flow');
+    expect(s5).toContain('**The unprompted route**');
+    expect(s5).toContain('the only route for a `premised` stage');
+    expect(s5).toContain('is `premised`, `quiescent` or `concluded` AND its `Complete:` slot is UNDATED (absent, or `[ ]`)');
+    expect(s5).toContain('name the live citing artifact and the act that would make the mark supportable — archive the change, or conclude the exploration');
+    // fresh system pass S1: both tests are stated in the status JSON's own field names (adopter-safe).
+    expect(s5).toContain('the stage is UNDATED when its `ratified` and `ended` fields are both `false`');
+    expect(s5).toContain('the `citing[]` entry of kind `active-change`, else the `explore` entry that lacks `concluded: true`');
+    expect(s5).toContain('name the existing mark and point at the hand edit as the way to reverse or re-date it');
+    expect(s5).toContain('the ended mark is supported wherever no live work contradicts it, `premised` included');
+    // R-crc-14: the composition table is named, never restated, in this body.
+    expect(s5).toContain('this body names it and restates none of it');
+    expect(architect).not.toContain('| observed');
+  });
+
+  it('§5 contains exactly ONE AskUserQuestion prompt', () => {
+    const s5 = h3(architect, '5. Completion-ratification flow');
+    expect(s5.split('**AskUserQuestion**').length - 1).toBe(1);
+  });
+
+  it('the §2 scaffold sentence is a CHECKED MIRROR of the owner: the parser constant equals the owning spec\'s inline production, and the body interpolates it once (external system pass W1)', async () => {
+    // Body-level: the h3 slicer is fence-blind and §2's scaffold fence carries a `### Stage` line
+    // that would truncate the slice (the rc13c lesson above). The sentence is stated once.
+    // The owner is read through the single-active-owner lookup (an active delta holding the
+    // production, else the baseline) so parity is enforceable mid-change and after sync alike.
+    const owner = await ownerText('orbit-architecture-engine', COMPLETE_SLOT_PRODUCTIONS);
+    expect(owner).toContain(COMPLETE_SLOT_PRODUCTIONS);
+    expect(architect.split(COMPLETE_SLOT_PRODUCTIONS).length - 1).toBe(1);
+    expect(architect.indexOf(COMPLETE_SLOT_PRODUCTIONS)).toBeLessThan(architect.indexOf('### 3. Resume'));
+    // The mirror says it is one, and names its owner.
+    expect(architect).toContain("are a CHECKED MIRROR of `orbit-architecture-engine`'s `Parseable architecture-doc format` requirement");
+    expect(architect).toContain('`stages_ended` (the stage ids this session declared ended');
+  });
+
+  it('audit-drift check (b) names both marks and points at the composition rule, enumerating no observations', () => {
+    expect(auditDrift).toContain('ratified `[x]` or ended `[~]` — on a stage whose observed state the engine\'s composition rule renders INCONSISTENT');
+    expect(auditDrift).toContain('this check consumes that rule and enumerates none of its observations');
+    expect(auditDrift).toContain('the ended claim is contradicted by live work');
+    // The dropped enumerations, and the table itself, are absent.
+    expect(auditDrift).not.toContain('no citing artifacts at all (`premised`)');
+    expect(auditDrift).not.toContain('live citing work OR');
+    expect(auditDrift).not.toContain('| observed');
+    expect(auditDrift).not.toContain('ended-from-explore');
+  });
+});
+
+describe('D4 decision-lane protocol integrity (address-reviews body)', () => {
+  const body = getAddressReviewsSkillTemplate().instructions;
+
+  it('no instruction surfaces decision options via AskUserQuestion outside the closure role', () => {
+    // The prompt is an OPTIONAL CLOSURE DEVICE (3b.5); no earlier step may
+    // instruct firing it to present options (the pre-D4 imperative class).
+    expect(body).not.toMatch(/options via \*\*AskUserQuestion\*\*/);
+    expect(body).not.toMatch(/surface .{0,40}options .{0,20}AskUserQuestion/);
+  });
+
+  it('the closure-only rule is stated', () => {
+    expect(body).toContain('post-discussion closure');
+  });
+});
 
 describe('orbit content fidelity (B1 relocation)', () => {
   describe.each(RELOCATED)('%s', (_name, getTemplate, requiredMarkers) => {
@@ -108,6 +349,43 @@ describe('orbit content fidelity (B1 relocation)', () => {
     });
   });
 
+  describe('D1 lifecycle-consent exit criteria (every surface body)', () => {
+    describe.each(ALL_SURFACE_SKILLS)('%s', (_name, getTemplate) => {
+      const skill = getTemplate().instructions;
+
+      it('echoes the no-chaining contract (fourth discipline)', () => {
+        expect(skill).toContain('No-chaining');
+        expect(skill).toContain('execution disciplines');
+      });
+
+      it('renders no imperative Next: label', () => {
+        expect(skill).not.toContain('Next:');
+      });
+    });
+
+    it('consent-scoped bodies instruct the provenance-gated prompt (user-typed = zero prompts)', () => {
+      for (const getTemplate of [getApplyChangeSkillTemplate, getArchiveChangeSkillTemplate]) {
+        const skill = getTemplate().instructions;
+        expect(skill).toContain('User-invoked');
+        expect(skill).toContain('AI-mediated');
+        expect(skill).toContain('ZERO added prompts');
+        expect(skill).toContain('uncertain, treat the arrival as AI-mediated');
+      }
+      const bulk = getBulkArchiveChangeSkillTemplate().instructions;
+      expect(bulk).toContain("the user's invocation for the confirmed set");
+      expect(bulk).toContain('treat the arrival as AI-mediated');
+    });
+  });
+
+  it('onboard teaches the per-granularity archive tail: per-change flips READY, program archives append only (external iter 4)', () => {
+    const body = getOnboardSkillTemplate().instructions;
+    expect(body).toMatch(/for a per-change PR, rewrite the description[^.]*flip the PR \*\*READY\*\*/);
+    expect(body).toMatch(/for a PROGRAM PR[^.]*APPEND this stage's entry[^.]*flip NOTHING/);
+    expect(body).toContain("stage archives never flip the program PR");
+    // The old unconditional sentence must not survive.
+    expect(body).not.toMatch(/\(or append this stage's entry, for a program PR\), and flip the PR/);
+  });
+
   it('onboard reflects the self-contained fork, not the dead overlay model', () => {
     const skill = getOnboardSkillTemplate().instructions;
     // new orbit-spec framing present
@@ -122,13 +400,33 @@ describe('orbit content fidelity (B1 relocation)', () => {
   });
 
   describe('references declarations (orbit-skill-generation, D-b2-4 lean scope)', () => {
-    it('archive-change declares exactly archive-summary-schema.md', () => {
+    it('archive-change declares its exact reference set (D6 added the PR tail)', () => {
       const refs = getArchiveChangeSkillTemplate().references ?? [];
-      expect(refs.map((r) => r.name)).toEqual(['archive-summary-schema.md']);
+      expect(refs.map((r) => r.name)).toEqual(['archive-summary-schema.md', 'pr-archive-tail.md']);
+    });
+
+    it('propose and ff declare exactly the shared PR choreography (D6)', () => {
+      for (const getTemplate of [getOrbitProposeSkillTemplate, getFfChangeSkillTemplate]) {
+        const refs = getTemplate().references ?? [];
+        expect(refs.map((r) => r.name)).toEqual(['pr-choreography.md']);
+      }
+    });
+
+    it('explore declares exactly capture-formats.md (D5 body-economy move)', () => {
+      const refs = getExploreSkillTemplate().references ?? [];
+      expect(refs.map((r) => r.name)).toEqual(['capture-formats.md']);
     });
 
     it('no other workflow declares references', () => {
-      const withReferences = new Set(['archive-change', ...B3_REFERENCES.map(([n]) => n)]);
+      // D6 added references to propose and ff (the shared PR choreography).
+      const withReferences = new Set([
+        'archive-change',
+        'explore',
+        'propose',
+        'ff-change',
+        'architect', // D6 (external iter 1): the arc-done readout carries the shared resolution
+        ...B3_REFERENCES.map(([n]) => n),
+      ]);
       for (const [name, getTemplate] of RELOCATED) {
         if (withReferences.has(name)) continue;
         expect(getTemplate().references ?? [], `${name} must not declare references`).toEqual([]);
@@ -151,6 +449,8 @@ describe('orbit content fidelity (B1 relocation)', () => {
       }
     });
 
+    // @scenario text orbit-archive-modifications :: Archive summary schema reference ships with the skill :: Schema shapes match the baselines, not the overlay source
+    // @scenario text orbit-archive-modifications :: Archive summary schema reference ships with the skill :: No predecessor-era vocabulary survives
     it('archive schema content matches the baseline-canonical shape and vocabulary', () => {
       const schema = (getArchiveChangeSkillTemplate().references ?? [])[0].content;
       // canonical shapes (orbit-archive-modifications delta scenarios)
@@ -182,5 +482,600 @@ describe('orbit content fidelity (B1 relocation)', () => {
       expect(content).not.toContain('.claude/skills/');
       expect(content).not.toMatch(/openspec\/(changes|specs|explore|lenses)/);
     });
+  });
+});
+
+/**
+ * D-arc Stage D6 — the PR lifecycle layer.
+ *
+ * The choreography is defined ONCE in `pr-choreography.ts` and consumed as a `references/`
+ * file by propose, ff, and archive. These assertions guard the two properties the spec makes
+ * load-bearing: that no seam resolves a remote or base independently (a seam that did would
+ * defeat the `--repo` constraint the other seam relies on), and that every copyable `gh`
+ * invocation is repository-qualified.
+ */
+describe('D6 PR lifecycle surface', () => {
+  const propose = getOrbitProposeSkillTemplate();
+  const ff = getFfChangeSkillTemplate();
+  const archive = getArchiveChangeSkillTemplate();
+  const bulk = getBulkArchiveChangeSkillTemplate();
+
+  function reference(tpl: SkillTemplate, name: string): string {
+    const ref = (tpl.references ?? []).find((r) => r.name === name);
+    expect(ref, `${tpl.name} is missing references/${name}`).toBeDefined();
+    return ref!.content;
+  }
+
+  // The recorded real-CLI contract and the ONE validator the stub also loads, through the
+  // shared extractor (rc05b design D2: rc01's inline regex extractor is retired;
+  // the sweep over every generated surface is test/core/cli-grammar/recorded-sweep.test.ts).
+  const gh = recordedTool('gh');
+
+  /** The `gh` snippets the shared extractor finds in one synthetic surface, and the bare names it sets aside. */
+  function ghExtract(text: string) {
+    return analyseRecorded([{ workflowId: 'fixture', file: 'references/fixture.md', text }], 'gh', gh.contract);
+  }
+
+  it('propose and ff ship the SAME choreography reference (identical bytes)', () => {
+    const a = reference(propose, 'pr-choreography.md');
+    const b = reference(ff, 'pr-choreography.md');
+    expect(a).toBe(b);
+  });
+
+  it('archive ships the tail reference', () => {
+    expect(reference(archive, 'pr-archive-tail.md')).toContain('The read-only PR preflight');
+  });
+
+  it('both references carry the ONE shared resolution algorithm, byte-identical', () => {
+    const choreography = reference(propose, 'pr-choreography.md');
+    const tail = reference(archive, 'pr-archive-tail.md');
+    const marker = '## Remote and default-branch resolution (SHARED — both seams)';
+    expect(choreography).toContain(marker);
+    expect(tail).toContain(marker);
+    // The shared section runs from its heading to the next heading in each reference: the
+    // config-order gate in the attaching seams' reference, the preflight in the tail's.
+    const seamSlice = (s: string) => s.slice(s.indexOf(marker), s.indexOf('## Config resolution order'));
+    const tailSlice = (s: string) => s.slice(s.indexOf(marker), s.indexOf('## The read-only PR preflight'));
+    expect(seamSlice(choreography)).toBe(tailSlice(tail));
+    expect(seamSlice(choreography).length).toBeGreaterThan(200);
+    // The archive tail is attachment-gated: no live-config return gate (external iter 3).
+    expect(tail).not.toContain('## Config resolution order');
+    expect(tail).not.toContain('RETURN IMMEDIATELY');
+  });
+
+  it('no seam resolves a remote or default branch independently', () => {
+    // The bodies POINT at the reference; only the shared section states the algorithm.
+    for (const tpl of [propose, ff, archive]) {
+      expect(tpl.instructions).not.toMatch(/git symbolic-ref refs\/remotes/);
+      expect(tpl.instructions).not.toMatch(/prefer\s+`?origin`?\s+when present/i);
+    }
+  });
+
+  // @scenario behaviour orbit-pr-lifecycle :: Test instruments derive from a recorded real-CLI contract :: The sweep and the stub cannot disagree
+  it('the sweep rejects what the stub rejects: negative fixtures run through the SHARED extractor', () => {
+    const cases: Array<[string, string]> = [
+      ['`gh repo view --repo <owner>/<repo> --json defaultBranchRef`', 'unknown flag: --repo'],
+      ['`gh repo view --json defaultBranchRef`', 'requires a positional'],
+      ['`gh pr list --head <branch> --state open --json url`', 'must carry --repo'],
+      ['`gh pr view --repo <owner>/<repo> --json isDraft`', 'argument required when using the --repo flag'],
+      ['`gh pr frobnicate --repo <owner>/<repo>`', 'unknown command'],
+      // An unknown TOP-LEVEL command family must not escape the contract (external iter 1),
+      // with or without flags (in-context iter 2: the flag heuristic let the bare form pass).
+      ['`gh frobnicate --repo <owner>/<repo>`', 'unknown command'],
+      ['`gh frobnicate`', 'unknown command'],
+      // Value parse, reproducing the real CLI (external iter 1).
+      ['`gh repo view <owner>/<repo> --web=garbage`', 'ParseBool'],
+      ['`gh pr list --repo <owner>/<repo> --limit=garbage`', 'ParseInt'],
+    ];
+    for (const [snippet, message] of cases) {
+      // Through the shared extractor, exactly as a surface's content would be.
+      const failures = sweepRecorded(ghExtract(`Run ${snippet} here.\n`), gh.validate, gh.contract);
+      expect(failures, `extractor missed: ${snippet}`).toHaveLength(1);
+      expect(failures[0], snippet).toContain(message);
+    }
+  });
+
+  it('a bare command name is prose; the same command with an argument is validated', () => {
+    // The contract decides, so coverage does not depend on whether a snippet carries a flag.
+    const prose = ghExtract('prose `gh repo view` and `gh pr create` name commands\n');
+    expect(prose.snippets).toEqual([]);
+    expect(prose.bareNames.map((s) => s.text)).toEqual(['gh repo view', 'gh pr create']);
+    const argumented = ghExtract('the positional form is `gh repo view <owner>/<repo>`\n');
+    expect(argumented.snippets).toHaveLength(1);
+    expect(sweepRecorded(argumented, gh.validate, gh.contract)).toEqual([]);
+  });
+
+  it('a quoted value is ONE token, so the sweep and the stub see the same argv', () => {
+    const extracted = ghExtract('`gh pr create --repo <owner>/<repo> --draft --base <b> --title "Fix the title" --body-file <p>`\n');
+    expect(extracted.snippets).toHaveLength(1);
+    const argv = extracted.snippets[0].tokens.slice(1);
+    expect(argv).toContain('Fix the title');
+    expect(gh.validate(argv, gh.contract).ok).toBe(true);
+    // The same argv a shell hands the stub.
+    const shellArgv = ['pr', 'create', '--repo', 'x/y', '--draft', '--base', 'b', '--title', 'Fix the title', '--body-file', 'p'];
+    expect(gh.validate(shellArgv, gh.contract).ok).toBe(true);
+  });
+
+  it('propose adds NO consent prompt at entry (D-d6-6: propose is not consent-scoped)', () => {
+    expect(propose.instructions).toContain('fires NO consent prompt');
+    const prSection = propose.instructions.slice(propose.instructions.indexOf('## PR lifecycle'));
+    expect(prSection).not.toContain('AskUserQuestion');
+  });
+
+  it('the Position paragraphs use the reference\'s phase numbering (phase 2 = generate + validate; phase 3 carries the no-CI note)', () => {
+    for (const tpl of [propose, ff]) {
+      const position = tpl.instructions.slice(tpl.instructions.indexOf('**Position'));
+      expect(position).toMatch(/Phase 2 \(generation \+\s+validation, ON that branch\)/);
+      expect(position).toMatch(/[Pp]hase 3 \(the no-CI\s+note/);
+      expect(position).not.toMatch(/Phase 2 \(the no-CI/);
+    }
+  });
+
+  it('the architect skill carries the shared resolution algorithm as references/pr-resolution.md, byte-identical to the seams', () => {
+    const architect = getArchitectSkillTemplate();
+    const ref = (architect.references ?? []).find((r) => r.name === 'pr-resolution.md');
+    expect(ref, 'architect is missing references/pr-resolution.md').toBeDefined();
+    const marker = '## Remote and default-branch resolution (SHARED — both seams)';
+    // The seams follow the shared resolution with the config-order gate; the architect
+    // reference deliberately omits that gate (the readout is attachment-gated) and follows
+    // it with the four-axis query — so each is sliced at its own next heading.
+    const seamSlice = (s: string) => s.slice(s.indexOf(marker), s.indexOf('## Config resolution order'));
+    const architectSlice = (s: string) => s.slice(s.indexOf(marker), s.indexOf('## The four-axis constrained query'));
+    expect(architectSlice(ref!.content)).toBe(seamSlice(reference(propose, 'pr-choreography.md')));
+    expect(architectSlice(ref!.content).length).toBeGreaterThan(200);
+    expect(ref!.content).not.toContain('## Config resolution order');
+    expect(ref!.content).not.toContain('RETURN');
+    expect(architect.instructions).toContain('references/pr-resolution.md');
+  });
+
+  it('config-first resolution order is stated in the bodies, not only the reference', () => {
+    for (const tpl of [propose, ff]) {
+      expect(tpl.instructions).toMatch(/RETURN IMMEDIATELY/);
+      expect(tpl.instructions).toMatch(/probe nothing/i);
+    }
+  });
+
+  it('archive positions the preflight BEFORE the emit and the tail AFTER it', () => {
+    const b = archive.instructions;
+    // Anchor on the HEADINGS: the prose carries forward references to later steps.
+    const entryObservation = b.indexOf('## NEW Step 0.7');
+    const preflight = b.indexOf('## NEW Step 5.45');
+    expect(entryObservation).toBeGreaterThan(-1);
+    expect(entryObservation).toBeLessThan(b.indexOf('## NEW Step 1.5')); // before any archive write
+    const emit = b.indexOf('## NEW Step 5.5 — Archive run summary');
+    const tail = b.indexOf('## NEW Step 5.6 — The PR-attached tail');
+    const garnish = b.indexOf('## NEW Step 5.7 — Stage-line garnish');
+    expect(preflight).toBeGreaterThan(-1);
+    expect(preflight).toBeLessThan(emit);
+    expect(emit).toBeLessThan(tail);
+    expect(tail).toBeLessThan(garnish); // numbering follows the text order: emit → tail → readout
+  });
+
+  it('archive consent preview names the outward writes for an attached change', () => {
+    expect(archive.instructions).toContain('PR-ATTACHED');
+    expect(archive.instructions).toMatch(/READY FLIP|READY flip/);
+    expect(archive.instructions).toContain('fires no second prompt');
+  });
+
+  it('bulk-archive runs NO tail and names what it left draft', () => {
+    expect(bulk.instructions).toContain('runs NO tail');
+    expect(bulk.instructions).toMatch(/NAME the PR-attached changes it left DRAFT/i);
+    expect(bulk.instructions).not.toMatch(/`gh pr ready`/);
+  });
+
+  it('new and continue are NOT extended with the PR layer', () => {
+    for (const tpl of [getNewChangeSkillTemplate(), getContinueChangeSkillTemplate()]) {
+      expect(tpl.instructions).not.toContain('pr_attachment');
+      expect((tpl.references ?? []).some((r) => r.name.startsWith('pr-'))).toBe(false);
+    }
+  });
+});
+
+describe('rc02b severity ladder: the generated bodies NAME the ladder and define nothing of their own (task 1.6)', () => {
+  const review = getReviewSkillTemplate();
+  const walk = getAddressReviewsSkillTemplate();
+  const ref = (t: SkillTemplate, name: string) => t.references!.find(r => r.name === name)!.content;
+  const LADDER = /per the ladder|Severity ladder/;
+
+  it('every per-pass severity site in the two pass references points at the ladder (no `CRITICAL on|when|for` line without it)', () => {
+    for (const name of ['passes-proposal.md', 'passes-system.md']) {
+      const lines = ref(review, name).split('\n');
+      const offenders = lines.filter(l => /\bCRITICAL (on|when|for)\b/.test(l) && !LADDER.test(l));
+      expect(offenders, `${name}: severity sites defining a grade without naming the ladder`).toEqual([]);
+      // Every pass paragraph that assigns a severity names the ladder on that line.
+      const assigning = lines.filter(l => /^\*\*Pass \d+ — /.test(l) && /\b(CRITICAL|WARNING|SUGGESTION)\b/.test(l));
+      expect(assigning.filter(l => !LADDER.test(l)), `${name}: pass paragraphs assigning a severity without the pointer`).toEqual([]);
+    }
+  });
+
+  it('the proposal pass table and Pass 8 report a BLOCK, not a CRITICAL; the ambiguity-inverts-the-bias clause is gone', () => {
+    const p = ref(review, 'passes-proposal.md');
+    expect(p).not.toContain('(CRITICAL — must address before apply)');
+    expect(p).not.toContain('classify as CRITICAL');
+    const pass8 = p.split('**Pass 8 — ')[1].split('**Pass 9 — ')[0];
+    expect(pass8).toMatch(/BLOCK/);
+    expect(pass8).toContain('blocks');
+    const pass1 = p.split('**Pass 1 — ')[1].split('**Pass 2 — ')[0];
+    expect(pass1).toMatch(/BLOCK/);
+  });
+
+  it("the system Pass 0 fold rule grades verify-change's findings by the ladder as the body's own", () => {
+    const s = ref(review, 'passes-system.md');
+    const pass0 = s.split('**Pass 0 — ')[1].split('**Pass 1 — ')[0];
+    expect(pass0).toMatch(LADDER);
+    expect(pass0).toContain('WARNING');
+    expect(pass0).toContain('reproduction');
+  });
+
+  it('the body\'s general bias line names the ladder; the flags table says --strict stops on a block and --mark writes none', () => {
+    const body = review.instructions;
+    const bias = body.split('### Pushback bias')[1].split('###')[0];
+    expect(bias).toMatch(LADDER);
+    const strictRow = body.split('\n').find(l => l.startsWith('| `--strict`'))!;
+    expect(strictRow).toMatch(/block/i);
+    const markGist = body.split('### 11. Rarely-used flags')[1].split('## Special cases')[0];
+    expect(markGist).toMatch(/no marker for a block|never for a block/i);
+  });
+
+  it('Step 9\'s field enumeration names `reproduction` (required on CRITICAL) and `blocks`', () => {
+    const step9 = review.instructions.split('### 9. Persist via the emit surface')[1].split('### 10.')[0];
+    expect(step9).toContain('`reproduction`');
+    expect(step9).toMatch(/required.*CRITICAL|CRITICAL.*required/i);
+    expect(step9).toContain('`blocks`');
+  });
+
+  it('the prompt template carries `## Severity`, the Reproduction line in the CRITICAL quadruple, and `## Blocks`', () => {
+    const t = ref(review, 'prompt-template.md');
+    expect(t).toContain('## Severity\n\n');
+    expect(t).toContain('**Reproduction**: <');
+    expect(t).toContain('quadruple');
+    expect(t).toContain('## Blocks');
+    // The two enumerations of what the parser reads — the handoff reference's Step 7 and the
+    // template reference's preamble — name both additions beside File/Description.
+    const handoff = ref(review, 'external-handoff.md');
+    const stepSeven = handoff.split('### 7.')[1].split('### 8.')[0];
+    expect(stepSeven).toContain('**Reproduction**:');
+    expect(stepSeven).toContain('## Blocks');
+    expect(t.split('## Template')[0]).toContain('**Reproduction**:');
+    expect(t.split('## Template')[0]).toContain('## Blocks');
+  });
+
+  it('`references/run-summary-schema.md` names `reproduction` on the finding entry and `blocks` on the payload', () => {
+    const schema = ref(review, 'run-summary-schema.md');
+    expect(schema).toMatch(/"reproduction":/);
+    expect(schema).toMatch(/"blocks":/);
+    expect(schema).toContain('- **`reproduction`**');
+    expect(schema).toContain('- **`blocks`**');
+  });
+
+  it('both address-reviews mapping tables carry a `reproduction` row; the JSON path lists blocks[] first at triage', () => {
+    const ext = ref(walk, 'external-findings-format.md');
+    const int = ref(walk, 'internal-findings-format.md');
+    expect(ext.split('\n').some(l => l.startsWith('| `reproduction`'))).toBe(true);
+    expect(int.split('\n').some(l => l.startsWith('| `reproduction`'))).toBe(true);
+    expect(ext).toContain('**Reproduction**:');
+    expect(ext).toContain('## Blocks');
+    expect(int).toContain('blocks[]');
+    expect(int).toMatch(/"blocks":/);
+  });
+
+  // @scenario text orbit-address-reviews :: Resolution-log JSON shape extensions for walk-mode / decision-forks / cascade :: A CRITICAL entry carries its re-run result
+  it('Step 3a carries step (0): re-run the reproduction first and record `reproduction_rerun`; the triage lists blocks first', () => {
+    const body = walk.instructions;
+    const step3a = body.split('#### 3a. Apply pushback')[1].split('#### 3b.')[0];
+    // rc08a task 4.2: the scenario's second half — a WARNING or SUGGESTION entry carries no such field.
+    expect(step3a).toContain('Below CRITICAL the field is absent.');
+    expect(step3a).toMatch(/^0\. /m);
+    expect(step3a).toContain('reproduction_rerun');
+    for (const v of ['reproduced', 'not-reproduced', 'cannot-run', 'unreproduced']) expect(step3a).toContain(v);
+    const triage = body.split('### 2. Triage')[1].split('### 3. Walk each marker')[0];
+    expect(triage).toMatch(/blocks/i);
+    expect(triage).toContain('## Blocks');
+    expect(triage).toContain('blocks[]');
+    const schema = ref(walk, 'run-summary-schema.md');
+    expect(schema).toMatch(/"reproduction_rerun":/);
+  });
+});
+
+describe('rc04b-forward-recommendation: the generated surface carries the direction (task 1.6)', () => {
+  const review = getReviewSkillTemplate();
+  const walk = getAddressReviewsSkillTemplate();
+  const ref = (t: SkillTemplate, name: string) => t.references!.find(r => r.name === name)!.content;
+  const RENDER_OWNER = 'Direction renders as its own section and its absence is marked on independent passes';
+  const SHAPE_OWNER = 'The review payload carries `direction`';
+
+  it('Step 8 authors the direction under the owner\'s contract: which way and why, never counts / gate state / a command token; owed on fresh and external, optional in-context, refused by the surface otherwise', () => {
+    const body = review.instructions;
+    expect(body).toContain('### 8. Author the direction and the commentary');
+    const step8 = body.split('### 8. Author the direction and the commentary')[1].split('### 9. Persist via the emit surface')[0];
+    expect(step8).toContain('`direction`');
+    expect(step8).toMatch(/`forward`.*`hold`|`forward` \| `hold`/);
+    expect(step8).toMatch(/WHICH WAY and WHY|which way and why/);
+    expect(step8).toMatch(/never states? finding counts, the gate's state,? or a command token/i);
+    expect(step8).toMatch(/`fresh`.*`external`/);
+    expect(step8).toMatch(/optional/i);
+    expect(step8).toContain(RENDER_OWNER);
+    expect(step8).toContain(SHAPE_OWNER);
+    expect(step8).toContain('`orbit-report-rendering`');
+    expect(step8).toContain('`orbit-emit-composition`');
+  });
+
+  it('Step 9\'s field enumeration names `direction` with the owed/optional rule', () => {
+    const step9 = review.instructions.split('### 9. Persist via the emit surface')[1].split('### 10.')[0];
+    expect(step9).toContain('`direction`');
+    expect(step9).toMatch(/OWED|owed/);
+    expect(step9).toMatch(/optional/i);
+  });
+
+  it('the prompt template carries `## Direction` between `## Blocks` and `## Notes` with the `**Disposition**:` opener (exit (3)); the preamble and the handoff\'s Step 7 name it', () => {
+    const t = ref(review, 'prompt-template.md');
+    const i = t.indexOf('Use this exact markdown structure:');
+    const a = t.indexOf('```markdown', i);
+    const b = t.indexOf('\n```\n', a);
+    const block = t.slice(a, b);
+    expect(block.indexOf('## Direction')).toBeGreaterThan(block.indexOf('## Blocks'));
+    expect(block.indexOf('## Direction')).toBeLessThan(block.indexOf('## Notes'));
+    expect(block).toContain('## Direction\n\n**Disposition**: <forward | hold>\n');
+    expect(block.split('## Direction').length - 1).toBe(1);
+    const section = block.split('## Direction')[1].split('## Notes')[0];
+    expect(section).toMatch(/WHICH WAY and WHY/);
+    expect(section).toMatch(/Never state finding counts, the gate's state, or a next command/);
+    expect(section).toContain('`[no direction]`');
+    expect(section).toContain("`orbit-conventions`' External-review findings markdown format");
+    // The preamble's "preserve the Output format block" sentence and the handoff's Step 7 enumeration.
+    expect(t.split('## Template')[0]).toContain('`## Direction`');
+    expect(t.split('## Template')[0]).toContain('`**Disposition**:`');
+    const handoff = ref(review, 'external-handoff.md');
+    const stepSeven = handoff.split('### 7.')[1].split('### 8.')[0];
+    expect(stepSeven).toContain('`## Direction`');
+    expect(stepSeven).toContain('`**Disposition**:`');
+    // The chat-output instruction after the block enumerates the section.
+    expect(t.split('## After completing the review')[1]).toContain('`## Direction`');
+  });
+
+  it('`references/run-summary-schema.md` documents `direction` in the block, in the field notes (by pointer to the judgement record\'s vocabulary), and in the schema-intro field list', () => {
+    const schema = ref(review, 'run-summary-schema.md');
+    expect(schema).toMatch(/"direction":\s*\{/);
+    expect(schema).toContain('- **`direction`**');
+    const note = schema.split('- **`direction`**')[1].split('\n')[0];
+    expect(note).toMatch(/`fresh`.*`external`/);
+    // R-crc-14 (system blind pair, external W2): the note names its owners and re-lists nothing —
+    // the closed set, the reasoning predicate and the content prohibitions live with the owners
+    // and at the two authoring sources (Step 8, the prompt template), never in this third place.
+    expect(note).not.toMatch(/`forward`.*`hold`/);
+    expect(note).not.toMatch(/non-empty/);
+    expect(note).not.toMatch(/finding counts/);
+    expect(note).toContain('`orbit-emit-composition`');
+    expect(note).toContain('`orbit-report-rendering`');
+    expect(note).toContain(RENDER_OWNER);
+    expect(note).toContain(SHAPE_OWNER);
+    expect(note).toMatch(/judgement record|`orbit-run-summary-emit`/);
+    const intro = schema.split('## Field notes')[0].split('```json')[0];
+    expect(intro).toContain('`direction`');
+  });
+
+  it('the address-reviews expected-file-format block carries `## Direction`, says it is never walked, and names the owner (D6)', () => {
+    const ext = ref(walk, 'external-findings-format.md');
+    const fmt = ext.split('## Expected file format')[1].split('## Parser contract')[0];
+    expect(fmt.indexOf('## Direction')).toBeGreaterThan(fmt.indexOf('## Blocks'));
+    expect(fmt.indexOf('## Direction')).toBeLessThan(fmt.indexOf('## Notes'));
+    expect(fmt).toContain('**Disposition**: <forward | hold>');
+    const section = fmt.split('## Direction')[1].split('## Notes')[0];
+    expect(section).toMatch(/never walked/i);
+    expect(section).toContain("`orbit-conventions`' External-review findings markdown format");
+  });
+
+  // @scenario text orbit-review :: Internal run summary persisted per mode :: Architecture-mode fresh pass prints its direction
+  it('the architecture interim shape prints `Direction: <disposition>` and contains every reasoning line under `> `; a multiline near-miss with `Ready when you are:` on its second line is pinned contained (walk 2, external W3)', () => {
+    const body = review.instructions;
+    const interim = body.split('#### Architecture mode — NO gate')[1].split('### 11.')[0];
+    expect(interim).toContain('Direction: <disposition>');
+    expect(interim).toMatch(/every reasoning line/i);
+    expect(interim).toMatch(/^> Ready when you are: /m);
+    // Inside the interim shape's example, no reasoning line sits at column 0.
+    const example = interim.split('```')[1] ?? '';
+    expect(example).toContain('Direction: ');
+    expect(example).toMatch(/^> Ready when you are: /m);
+    expect(example.split('\n').filter(l => /^Ready when you are: /.test(l))).toEqual([]);
+    expect(example.split('\n').filter(l => /^Gate /.test(l))).toEqual([]);
+  });
+});
+
+describe('rc03b-pass-genres: the review-genre brief carries nothing from the trail (task 1.3)', () => {
+  const review = getReviewSkillTemplate();
+  const ref = (t: SkillTemplate, name: string) => t.references!.find(r => r.name === name)!.content;
+  const PATHSPEC = "':!orbit/changes/<name>/.orbit-runs'";
+
+  it('the external-handoff Step 5 gathers the iteration number ONLY', () => {
+    const step5 = ref(review, 'external-handoff.md').split('### 5.')[1].split('### 6.')[0];
+    expect(step5).toMatch(/iteration number ONLY/i);
+    expect(step5).not.toMatch(/still open|Resolved since|resolved-finding titles/);
+    expect(step5).toContain('iteration 1');
+    expect(step5).toContain("`orbit-conventions`' `Review mode decision framework`");
+  });
+
+  it("Step 6's iteration-3+ line reads \"previously-unused AI\"; option (a) and the trade-off sentence are gone; the worked example carries the new wording", () => {
+    const handoff = ref(review, 'external-handoff.md');
+    const step6 = handoff.split('### 6.')[1].split('### 7.')[0];
+    expect(step6).toContain('**Iteration 3+**: `Fresh session in a previously-unused AI recommended (maximum independence); when every available AI has reviewed this change in this mode, a fresh session of the least-recently-used.`');
+    expect(step6).toMatch(/oldest/);
+    expect(handoff).not.toContain('Same-vs-fresh trade-off');
+    expect(handoff).not.toMatch(/carry context|same-AI continuation/);
+    const example = handoff.split('## Worked example')[1].split('## Out of scope')[0];
+    expect(example).toContain('previously-unused AI');
+  });
+
+  it('the prompt template\'s `## Cycle context` is exactly the iteration line, and its project-context list carries no trail entry', () => {
+    const t = ref(review, 'prompt-template.md');
+    const cycle = t.split('## Cycle context\n')[1].split('\nDo not push back')[0];
+    expect(cycle.trim()).toBe('- Iteration: <N>');
+    const project = t.split('## Project context (read first)')[1].split('## Cycle context')[0];
+    expect(project).not.toContain('.orbit-runs');
+  });
+
+  it('the system-mode read list (mode-sections) and the body\'s Step 4 carry the trail-excluding pathspec', () => {
+    const sys = ref(review, 'mode-sections.md').split('## System mode — "What to read for THIS review"')[1].split('## System mode — "What to look for"')[0];
+    // Each block carries its own change placeholder (system walk 1, fresh W3): mode-sections is
+    // substituted into the prompt under `<change-name>`; the body's Step 4 uses `<name>`.
+    expect(sys).toContain("git diff <change-start>..HEAD -- . ':!orbit/changes/<change-name>/.orbit-runs'");
+    expect(sys).not.toMatch(/<name>/);
+    // The start commit is found by a hash-only read, never from commit subjects (fresh W1).
+    expect(sys).toContain('git log --diff-filter=A --format=%h -- orbit/changes/<change-name>/proposal.md | tail -1');
+    const step4 = review.instructions.split('### 4. Load context')[1].split('### 5.')[0];
+    expect(step4).toContain(`git diff <change-start>..HEAD -- . ${PATHSPEC}`);
+    expect(step4).toContain('git log --diff-filter=A --format=%h -- orbit/changes/<name>/proposal.md | tail -1');
+    expect(step4).not.toMatch(/estimate `<change-start>` from `git log`/);
+    // Step 1's mode inference reads hashes only, never subjects (system in-context confirm, W1).
+    const step1 = review.instructions.split('### 1. Resolve the mode')[1].split('### 2.')[0];
+    expect(step1).toContain("git log --format=%h -- orbit/changes/<name>/ ':!orbit/changes/<name>/.orbit-runs'");
+    expect(review.instructions).not.toContain('git log --oneline');
+  });
+
+  it("Step 5 is scoped to VERIFICATION pass genre; the REVIEW-genre branch names the bounded metadata probe as its only read of the trail's pass and walk records", () => {
+    const step5 = review.instructions.split('### 5. Inspect prior runs')[1].split('### 6.')[0];
+    expect(step5).toContain('VERIFICATION');
+    expect(step5).toContain('REVIEW');
+    expect(step5).toContain('`reviewer_class`');
+    expect(step5).toContain('`source_path`');
+    expect(step5).toMatch(/filenames?/);
+    expect(step5).toMatch(/ONLY read of the trail's pass and walk records/i);
+    expect(step5).toMatch(/unreadable/i);
+    expect(step5).toMatch(/exemption/i);
+    // The pushback epitome names no prior-run comparison.
+    const epitome = review.instructions.split('- **Pushback (review-time)')[1].split('\n')[0];
+    expect(epitome).not.toMatch(/comparing against prior|\.orbit-runs/);
+    expect(epitome).toMatch(/current state/);
+  });
+
+  it('the `--reviewer`/`--fresh` prose carries the repaired class words, and the fresh dispatch step points at the owner\'s brief rule', () => {
+    const body = review.instructions;
+    expect(body).toContain('same model, clean context');
+    expect(body).toContain('different AI in a separate session');
+    const dispatch = body.split('### Dispatching a fresh pass')[1].split(/\n### /)[0];
+    expect(dispatch).toContain("`orbit-conventions`' `Review mode decision framework`");
+    expect(dispatch).toContain('orbit emit review');
+  });
+});
+
+describe('rc08a-sweep-evidence: the walk body records its sweep and attributes ripple misses (task 2.1)', () => {
+  const walk = getAddressReviewsSkillTemplate();
+  const body = walk.instructions;
+  const schema = walk.references!.find(r => r.name === 'run-summary-schema.md')!.content;
+
+  // @scenario text orbit-address-reviews :: A resolved walk entry records its sweep evidence :: A resolved entry carries all five keys
+  it('Step 3d.5 "Record the sweep" sits after the cascade and before marker removal, composing the five keys with their meanings and the owner pointer', () => {
+    const iCascade = body.indexOf('#### 3d. Ripple cascade');
+    const iSweep = body.indexOf('#### 3d.5. Record the sweep');
+    const iRemove = body.indexOf('#### 3e. Remove the marker');
+    expect(iSweep).toBeGreaterThan(iCascade);
+    expect(iRemove).toBeGreaterThan(iSweep);
+    const step = body.slice(iSweep, iRemove);
+    for (const k of ['retired', 'introduced', 'searched', 'scope', 'kept']) {
+      expect(step.split('\n').some(l => l.startsWith(`- \`${k}\``)), `a one-line meaning for \`${k}\``).toBe(true);
+    }
+    expect(step).toContain("`orbit-address-reviews`' `A resolved walk entry records its sweep evidence`");
+    expect(step).toContain('orbit emit address-reviews');
+    expect(step).toMatch(/stale/);
+  });
+
+  // @scenario text orbit-address-reviews :: A ripple miss is attributed by the walk that finds it :: A system-review finding is attributed to the proposal walk that missed it
+  // @scenario text orbit-address-reviews :: A ripple miss is attributed by the walk that finds it :: An unrelated finding carries no attribution
+  it('Step 2 carries the attribution read: earlier walks of the change, `ripple_miss_of`, and the three kind values', () => {
+    const triage = body.split('### 2. Triage')[1].split('### 3. Walk each marker')[0];
+    expect(triage).toContain('ripple_miss_of');
+    expect(triage).toContain('(the site lay outside that entry\'s check scope)');
+    expect(triage).toContain('a finding no earlier entry touched carries none');
+    for (const k of ['`scope`', '`query`', '`judgement`']) expect(triage).toContain(k);
+    expect(triage).toContain("`A ripple miss is attributed by the walk that finds it`");
+  });
+
+  it('the schema reference documents `sweep` and `ripple_miss_of` in its block and field notes, and `ripple_misses` as engine-computed', () => {
+    const block = schema.split('## Schema (v2)')[1].split('## Example payloads')[0];
+    expect(block).toMatch(/"sweep": \{/);
+    expect(block).toMatch(/"ripple_miss_of": \{/);
+    expect(block).toMatch(/"ripple_misses": [^\n]*engine-computed/);
+    const notes = schema.split('## Field notes')[1].split('## Worked-example')[0];
+    expect(notes).toMatch(/^- \*\*`sweep`\*\*/m);
+    expect(notes).toMatch(/^- \*\*`ripple_miss_of`\*\*/m);
+    expect(notes).toMatch(/^- \*\*`ripple_misses`\*\*[^\n]*engine-computed/m);
+    // The notes point at the owners and restate no rule.
+    const sweepNote = notes.split('\n').find(l => l.startsWith('- **`sweep`**'))!;
+    expect(sweepNote).toContain('`A resolved walk entry records its sweep evidence`');
+    expect(sweepNote).toContain('`The walk write gate checks sweep evidence`');
+  });
+
+  it('every `json example` carries `sweep` on its resolved entries, with `introduced: []` and `scope: []`', () => {
+    const examples = schema.split('## Example payloads')[1].split('## v1 → v2')[0];
+    const blocks = [...examples.matchAll(/```json example[^\n]*\n([\s\S]*?)\n```/g)].map(m => JSON.parse(m[1]));
+    // rc08b (recorded act): five provenances — the external half of a pair and a discovered audit-drift emit added.
+    expect(blocks.length).toBe(5);
+    for (const b of blocks) {
+      for (const r of b.resolutions) {
+        if (r.outcome !== 'resolved') continue;
+        expect(r.sweep, r.title).toBeDefined();
+        expect(r.sweep.introduced).toEqual([]);
+        expect(r.sweep.scope).toEqual([]);
+      }
+    }
+  });
+});
+
+describe('rc08a task 4.2: the walk body and its schema reference carry the lifecycle and resolution-log scenarios its MODIFIED blocks carry', () => {
+  const walk = getAddressReviewsSkillTemplate();
+  const body = walk.instructions;
+  const schema = walk.references!.find(r => r.name === 'run-summary-schema.md')!.content;
+  const notes = schema.split('## Field notes')[1].split('## Worked-example')[0];
+  const triage = body.split('### 2. Triage')[1].split('### 3. Walk each marker')[0];
+  const step3 = body.split('### 3. Walk each marker')[1].split('#### 3a.')[0];
+
+  // @scenario text orbit-address-reviews :: Discover → triage → walk → ripple flag → report lifecycle :: Triage scoping
+  it('triage scoping: the user may walk a subset', () => {
+    expect(triage).toContain('Scoping (walk all — the default — / a subset / only-critical / cancel)');
+  });
+
+  // @scenario text orbit-address-reviews :: Discover → triage → walk → ripple flag → report lifecycle :: Lane preview before any fix
+  it('the obvious-fix lane is previewed before any fix lands, and a word moves an item to the decision lane', () => {
+    expect(triage).toContain('**obvious-fix lane preview**');
+    expect(triage).toContain('BEFORE any fix lands, so the user can pull any item into the decision lane with a word');
+  });
+
+  // @scenario text orbit-address-reviews :: Discover → triage → walk → ripple flag → report lifecycle :: Walk-mode lifecycle order per finding
+  it('walk-mode: each finding completes its inner cycle before the next pushback; an interrupted walk logs partial completion', () => {
+    expect(step3).toContain("each marker receives its own complete inner cycle — pushback → classify → resolve per LANE → ripple-cascade → remove-marker — before the next marker's pushback begins");
+    expect(step3).toContain('the resolution log captures partial completion if interrupted');
+  });
+
+  // @scenario text orbit-address-reviews :: Discover → triage → walk → ripple flag → report lifecycle :: Batch-mode lifecycle order
+  // @scenario text orbit-address-reviews :: Resolution-log JSON shape extensions for walk-mode / decision-forks / cascade :: Batch-mode resolution log structure
+  it('batch-mode: resolve all, then one aggregated cascade; decisions still briefed per finding; recorded as batch with its source', () => {
+    expect(step3).toContain('all markers complete pushback + classify + resolve before ripples apply once as a single aggregated step');
+    expect(step3).toContain('decision-lane findings STILL get their per-finding briefing and ratification');
+    expect(step3).toContain('the `--batch` flag (`"flag"`)');
+    expect(schema).toContain('"walk_mode": "per_finding" | "batch"');
+    expect(notes).toContain('`flag` (`--batch` argv)');
+  });
+
+  // @scenario text orbit-address-reviews :: Resolution-log JSON shape extensions for walk-mode / decision-forks / cascade :: Walk-mode resolution log structure
+  // @scenario text orbit-address-reviews :: Resolution-log JSON shape extensions for walk-mode / decision-forks / cascade :: Resolution log omits recommendation_fork for findings without forks
+  it('per-finding log: walk_mode per_finding, per-entry ripple_cascade split, and no recommendation_fork without a fork', () => {
+    expect(notes).toContain('`per_finding` (default');
+    expect(notes).toContain('splits each resolution\'s ripples into `applied`');
+    expect(notes).toContain('`flagged_not_applied`');
+    expect(notes).toContain('absence IS the no-fork representation');
+    expect(body).toContain('NO `recommendation_fork` object is recorded (absence IS the no-fork representation)');
+  });
+
+  // @scenario text orbit-address-reviews :: Resolution-log JSON shape extensions for walk-mode / decision-forks / cascade :: Forked decision records its ratification channel at the entry level
+  // @scenario text orbit-address-reviews :: Resolution-log JSON shape extensions for walk-mode / decision-forks / cascade :: Non-fork decision still records its channel
+  // @scenario text orbit-address-reviews :: Resolution-log JSON shape extensions for walk-mode / decision-forks / cascade :: Off-menu chat ratification recorded
+  it('decision-lane recording: ratified_via at the entry level for every decision, resolution verbatim when unforked or off-menu, the fork carrying detection only', () => {
+    expect(body).toMatch(/every decision-lane resolution records `ratified_via: "chat" \| "prompt"` at the ENTRY level, plus a verbatim `resolution` string when no fork was detected or the ratified direction is off-menu/);
+    expect(notes).toMatch(/^- \*\*`ratified_via`\*\* \(per-resolution, REQUIRED for every decision-lane resolution — forked or not\)/m);
+    expect(notes).toContain('`chosen` (a presented label, or `"off-menu"` with the entry-level `resolution` carrying the direction)');
+  });
+
+  // @scenario text orbit-address-reviews :: Resolution-log JSON shape extensions for walk-mode / decision-forks / cascade :: --no-cascade resolution log records all ripples as flagged_not_applied
+  it('--no-cascade records every ripple under flagged_not_applied with the one suppression reason', () => {
+    expect(body).toContain('ALL ripple-flagged files are recorded under `ripple_cascade.flagged_not_applied[]` with reason `--no-cascade suppressed`');
   });
 });

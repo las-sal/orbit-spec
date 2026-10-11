@@ -1,0 +1,29 @@
+{
+  "command": "architect",
+  "timestamp": "2026-10-07T01:44:43Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": null,
+  "final_assessment": "Resume session, nothing captured: no stage awaiting ratification, the doc is not arc-done. Surfaced (not written) that the split parent rc17-blind-pair-command has every exit criterion owned by a ratified child; its ended mark is Sal's word. Sal moved on to explore rc17c.",
+  "stages_touched": [],
+  "rulings_captured": [],
+  "completions_ratified": [],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      {
+        "path": "orbit/architecture/clean-up-review-cycle.md",
+        "why": "the live program; rc17c's stage section is the charter being explored"
+      },
+      {
+        "path": "CLAUDE.md",
+        "why": "the program's shipped-stage narrative through rc17b"
+      }
+    ],
+    "next_command": "/orbit:explore rc17c-short-review-next",
+    "model_hint": null,
+    "seam": "rc17c's only dependency (rc17a) is complete; the rc17 parent's ended mark remains an open offer for Sal"
+  },
+  "next_recommended": "/orbit:explore rc17c-short-review-next"
+}

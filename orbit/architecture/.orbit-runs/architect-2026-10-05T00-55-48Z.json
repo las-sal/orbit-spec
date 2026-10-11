@@ -1,0 +1,27 @@
+{
+  "command": "architect",
+  "timestamp": "2026-10-05T00:55:48Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": null,
+  "final_assessment": "Declared rc06-scenario-test-map ENDED (Sal, unprompted route): the retained split parent observed premised with an undated slot, every exit criterion owned by rc06a or rc06b, both ratified. Fifth ended mark; status-log entry appended. No stage awaited ratification; the program is not arc-done (rc05, rc08, rc09, rc10, rc12 premised).",
+  "stages_touched": [
+    "rc06-scenario-test-map"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [],
+  "stages_ended": [
+    "rc06-scenario-test-map"
+  ],
+  "handoff": {
+    "boot_sequence": [
+      "orbit/architecture/clean-up-review-cycle.md — the live program doc; read the premised stages' charters (rc05, rc08, rc09, rc10, rc12) to pick the next",
+      "orbit architecture status — the computed position; rc12 is the only premised stage with an unmet dependency (rc05)"
+    ],
+    "next_command": "/orbit:explore",
+    "model_hint": null,
+    "seam": "between stages: no change active, nothing awaiting ratification in this doc; next stage choice is the user's"
+  },
+  "next_recommended": "/orbit:explore"
+}

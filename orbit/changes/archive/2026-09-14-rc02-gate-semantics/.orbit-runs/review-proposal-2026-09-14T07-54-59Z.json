@@ -1,0 +1,99 @@
+{
+  "command": "review",
+  "timestamp": "2026-09-14T07:54:59Z",
+  "change": "rc02-gate-semantics",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": [],
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 1,
+      "warning": 3,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    }
+  },
+  "findings": [
+    {
+      "severity": "CRITICAL",
+      "dimension": "correctness",
+      "title": "Three CRITICAL resolutions from the last walk never landed, and the delta now ships scenarios its own requirement text contradicts",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 256,
+      "description": "The fourth walk's log records 17 of 17 findings resolved. Seven of its edits are absent from the delta, and three of those were the walk's CRITICAL fixes. (1) EXISTENCE FIRST still reads 'A pass carrying ANY findings SHALL have at least one record' — the severity-blind form that makes a SUGGESTION-only pass gate. (2) Readability still reads 'when `resolutions` is an ARRAY' without NON-EMPTY, so an empty array is still vacuously readable and still outranks a summary reporting deferrals. (3) Succession still reads 'strictly later than every record in R' with no current-set bound and no empty-R terminal case, so the iteration still diverges on a clean confirming set. Worse than the defects surviving: the walk's SCENARIOS did land, so the delta now asserts the fixed behaviour in three scenarios while its normative text states the opposite. 'An unwalked SUGGESTION-only pass does not block', 'An empty `resolutions` array is unreadable', and 'A clean confirming set terminates the iteration' each contradict the rule they are meant to illustrate. An implementer building from the requirement and an implementer building from the scenarios produce different engines, and `orbit validate --strict` passes because validation is structural rather than semantic.",
+      "recommendation": "Re-apply the seven missing edits from the fourth walk as one set, then re-verify each by grep rather than by assertion. The three CRITICAL ones are: scope EXISTENCE FIRST to substantive findings; require a NON-EMPTY array for readability and add EMPTY to the unreadable list; bound succession on both axes with the empty-R case terminal.",
+      "reproduction": "grep the delta for the strings the walk's log claims it wrote. `grep -c 'EMPTY SETS ARE NEVER VACUOUSLY SATISFYING'` returns 0; `'PASS-LIST QUANTIFICATION'` 0; `'When R is EMPTY the current set is FINAL'` 0; `'NON-EMPTY ARRAY'` 0; `'any SUBSTANTIVE (CRITICAL or WARNING) finding SHALL have'` 0; `'Among the assignments that satisfy the WHOLE cadence'` 0; `'repeat is NOT BOUNDED BY THE ENGINE'` 0. Meanwhile `grep -n 'EXISTENCE FIRST' -A1` returns 'A pass carrying ANY findings', and the three scenarios asserting the fixed behaviour are present at lines 363, 395 and 472. Root cause: the walk applied its edits through two scripts; the first aborted on a failed string match before its single write at the end, so none of its seven replacements were written, and only the second script's edits landed.",
+      "pass": "1"
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "The quantifier-convention preamble is absent, so freshness is still restated inside the pair predicate and the `stale` state stays unreachable",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 235,
+      "description": "The walk recorded a PASS-LIST QUANTIFICATION convention stated once at the top of the pass condition (clauses (a) and (c) over the fresh list, clause (b) over every relevant pass, the stale discrimination re-evaluating over the full list) plus an EMPTY SETS ARE NEVER VACUOUSLY SATISFYING convention. Neither is present. The consequence the walk was fixing survives: line 235 still carries 'both are fresh per the freshness rule' inside the blind-pair predicate, which is the formulation that makes `computeReviewedStatus`'s all-passes evaluation fail too and renders a converged-then-staled system gate `unpassed` rather than `stale`.",
+      "recommendation": "Re-apply both conventions as the pass condition's opening, and remove the freshness clause from the pair predicate so the filter has one home.",
+      "pass": "1"
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "The earliest-pair subordination is absent, so the clause still endorses two different algorithms",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 228,
+      "description": "Clause (a) now states coverage existentially and requires a greedy implementation to backtrack, but the pair-selection sentence fourteen lines later still reads 'when several qualifying pairs exist the EARLIEST is taken … which makes the slot compose with clause (a)'s greedy earliest-satisfying walk'. The walk recorded a replacement subordinating selection to assignments that satisfy the whole cadence; it is not there. The delta therefore still prescribes fix-earliest and backtracking in the same clause and ships a scenario for each.",
+      "recommendation": "Re-apply the subordination: select among assignments that satisfy the whole cadence, as a determinism rule over successful assignments rather than a pre-filter.",
+      "pass": "2"
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "The repeat-bound overclaim survives at line 313",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 313,
+      "description": "The text still reads 'The REPEAT IS BOUNDED BY THE GATE'S `budget` AND BY NOTHING ELSE', which the same delta contradicts twice by stating that exhaustion is a report and never a block and that a budget-exhausted gate is precisely unpassed with every consumer unchanged. The walk recorded the truthful restatement; it is not present.",
+      "recommendation": "Re-apply the restatement: the repeat is not bounded by the engine, the budget prices it, and the decision to stop is the user's at the inflection prompt.",
+      "pass": "2"
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "title": "The walk log records 17 of 17 resolved, which is false on seven counts, and the gate reads that log",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 1,
+      "description": "`address-reviews-2026-09-12T20-30-24Z.json` carries `resolution_summary: {resolved: 17, deferred: 0, escalated: 0}` and per-entry `outcome: \"resolved\"` on every one. Seven of those entries describe edits that are not in the artifact. The gate's clause (b) reads exactly this record to decide the prior pass is resolved, so the trail currently certifies work that did not happen — which is the audit-trail failure mode the whole capability exists to prevent. This is a record-accuracy finding distinct from the missing edits themselves: fixing the delta does not fix the log.",
+      "recommendation": "After re-applying the edits, record the correction on the trail rather than silently: the resolving walk should state that the prior log over-reported and name the seven entries, so a reader of the trail alone can see what happened.",
+      "pass": "1"
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "This is the cadence's in-context slot and I ran it as a VERIFICATION read of the last walk's diff rather than a fifth whole-artifact review — the genre rc03 will formalize, applied here by choice because four independent passes have already covered the artifact whole and a fifth reading by the author who wrote it is the weakest instrument available. The method was mechanical: take each of the seventeen resolutions the walk's log claims, and grep the artifact for the string the log says was written. That is the entire pass. It took minutes and it found that seven of the seventeen were never written, including all three of the walk's CRITICAL fixes, because the walk applied its edits through two scripts and the first aborted on a failed string match before its single write at the end. I saw that traceback, fixed only the replacement that failed, and never re-ran the other six. Passes 5, 6 and 8 were skipped as out of genre: gap-hunting, codegen-readiness and marker residue are whole-artifact questions that four fresh and external passes have already answered, and re-asking them here would be the churn this program exists to remove. What this pass says about the cadence is more interesting than what it says about the change. The weakest reviewer in the rotation found the largest single defect, because it was the only one that checked the diff against the record instead of reading the artifact for correctness. Independent reviewers read what IS there; none of them can see what a walk CLAIMED to write and did not, because that claim lives on the trail rather than in the artifact. The verification genre is not a lesser review, and a cadence that ends with a reading rather than a reconciliation has no instrument for this failure mode at all.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "7",
+    "9"
+  ],
+  "passes_skipped": [
+    "5",
+    "6",
+    "8"
+  ],
+  "final_assessment": "1 critical, 4 warning, 0 suggestion.",
+  "iteration": 5,
+  "next_recommended": "/orbit:address-reviews rc02-gate-semantics --from-file orbit/changes/rc02-gate-semantics/.orbit-runs/review-proposal-2026-09-14T07-54-59Z.json"
+}

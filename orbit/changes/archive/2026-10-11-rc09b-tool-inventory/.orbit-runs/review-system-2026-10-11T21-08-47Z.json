@@ -1,0 +1,86 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-11T21:08:47Z",
+  "change": "rc09b-tool-inventory",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc09b-tool-inventory/specs/orbit-cli-grammar/spec.md",
+      "line": 22,
+      "title": "The read table omits two fence members the head walk reads: a blockquote-nested fence and a backslash-continued line",
+      "recommendation": "Widen the first read row to name a fence nested in a blockquote (the fence table's own row), and add a row for a line continued by a trailing backslash: its next line's first token is read as a head, so a continuation beginning with a flag fails as an unknown head and must be rewritten onto one line, never declared. A probe through analyseHeads read `yq` from a `> ```bash` fence, and read `--change` as a head from `orbit status \\` followed by `  --change x --json`. Neither occurs on today's surface; the rows tell the next author what the failure means before they reach for the exemption block."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "test/core/cli-grammar/tool-inventory.test.ts",
+      "line": 308,
+      "title": "The derivation test and the non-vacuity floor restate the lists the inventory derives and declares",
+      "recommendation": "Line 308 pins recordedHeads() to ['orbit', 'git', 'gh'], so gaining a contract also edits the inventory test, against design D3's 'Nothing in the inventory is edited'. Line 314's floor repeats the twelve utilities, the placeholder and the four prose heads beside the spec's block. Assert the derivation structurally (orbit first, then exactly recordedTools()' tools), and take the floor's declared heads from readInventory over the real source, keeping only orbit, git and gh as a literal floor."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 2967,
+      "title": "The stage charter still states the residual as 'a tool invoked only in an inline span'",
+      "recommendation": "D-rc09b-1 widened the domain to flagged inline segments, and the shipped residual is the requirement's named limit: flagless, path-prefixed or refused inline spans, arguments of declared heads, and prose. At archive, have the stage's Shipped-as paragraph point at that named limit as the residual's owner rather than leave the charter's sentence as the only stage-level statement."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "The head walk is a clean reuse of the extractor's own parse: the shellLines arithmetic after the visitor refactor is unchanged, refused fence lines are still failed by every sweep, and the inventory's reader resolves the requirement as it stands, with the reader cases covering the delta/baseline/two-delta paths and fenced or REMOVED decoys. Probed by a throwaway analyseHeads run: tilde, list-nested, blockquote-nested and table-cell inline spans are read, an inline pipe after orbit reads the second head, a quoted multi-line argument hides data lines as data (not a command), and a trailing backslash continuation is the one shape that yields a non-command head. Pass 0 was run by hand rather than through /orbit:verify: 11/11 tasks checked, validate --strict passes, 21 of 21 delta scenarios declared behaviour, the full suite green at the count tasks.md records. Pass 6 was narrowed to orbit validate --sources (clean) plus a grep for residue of the retired tool-set table across specs, tests, src and the program doc (none); a full audit-drift was not run.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "6"
+  ],
+  "passes_skipped": [
+    "4: no perspectives defined (orbit/lenses/ absent); skip Pass 4",
+    "5: no critical paths defined (orbit/lenses/ absent); skip Pass 5"
+  ],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The mechanism does what the requirement says and the exit criterion is met on today's surface with every scenario exercised by an injection. What remains is wording: two read-table members to state, a test that restates lists it should derive, and the charter's residual sentence. None of it changes how the inventory behaves, so walk it in place and archive."
+  },
+  "final_assessment": "0 critical, 0 warning, 3 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc09b-tool-inventory"
+}

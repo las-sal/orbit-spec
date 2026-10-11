@@ -1,0 +1,70 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-07T15:34:55Z",
+  "change": "rc17c-short-review-next",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc17c-short-review-next/.orbit-runs/review-system-2026-10-07T15-33-53Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-07T15-33-53Z",
+  "latest_apply_token": "2026-10-07T14-50-05Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 1
+  },
+  "pushback_verification": "Verified at ba0a1578: explore.md:81 still read 'held harder because the renderer grades values'; no other file carries the phrase.",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "SUGGESTION",
+      "title": "explore.md's FALSIFY move still gives the retired reason the review example is held harder",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc17c-short-review-next/explore.md",
+      "line": 81,
+      "classification": "trivial_fix",
+      "action": "restated the FALSIFY clause's reason: the review example's engine-composed values other than timestamp are compared with the written emit under the example's own change name, since the renderer alone grades only the values the engine recomposes; the explore form re-parsed clean (3 rules, none open, no key defects)",
+      "evidence": "explore.md:81 gave the renderer as the reason, which the external half showed grades only recomposed values",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "held harder because the renderer grades values"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc17c-short-review-next/explore.md",
+            "text": "its engine-composed values other than `timestamp` are compared with the written emit"
+          }
+        ],
+        "searched": [
+          "renderer grades values",
+          "held harder"
+        ],
+        "scope": [
+          "src",
+          "test"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "One of one resolved as an obvious fix: the D-rc17c-7 Mechanism entry's FALSIFY line now gives the reason the review example is held harder that the requirement states.",
+  "iteration": 6,
+  "next_recommended": "/orbit:archive rc17c-short-review-next — user-invoked",
+  "ripple_misses": 0
+}

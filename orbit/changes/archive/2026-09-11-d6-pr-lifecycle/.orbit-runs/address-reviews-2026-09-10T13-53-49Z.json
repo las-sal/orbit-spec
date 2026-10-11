@@ -1,0 +1,182 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-10T13:53:49Z",
+  "change": "d6-pr-lifecycle",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "source": "from-file",
+  "source_path": "orbit/changes/d6-pr-lifecycle/.orbit-runs/review-system-2026-09-10T01-54-45Z.json",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 1,
+    "warning": 5,
+    "suggestion": 2
+  },
+  "pushback_verification": "All 8 verified against current state before disposition; none stale. Each cited line was re-read (status ladder rung 3, the tail's step 2 and its `Cannot observe` clause, the zero-engine-git enumeration in three artifacts, both PR-section headings, config.yaml lines 43-44, the archive step headings, the bulk readout sentence) and the CRITICAL was additionally confirmed by the rung-3 literal object having no `pr` key while the shared reference names exactly that key.",
+  "resolution_summary": {
+    "resolved": 8,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "The bodies read the PR regime from `orbit status --json` field `pr`, but the bare tier's no-active-changes rung emits `{changes: [], message}` with NO `pr` key — so in any repo with zero active changes and no architecture doc the PR layer silently resolves to `never` on the first propose.",
+      "marker_source": "internal-review",
+      "file": "src/commands/workflow/status.ts",
+      "line": 129,
+      "classification": "decision_required",
+      "action": "Option A applied. Rung 3 of the status degradation ladder now emits `{changes: [], message, pr}` — `pr: orientation.pr` added to the literal object in `status.ts`, the ladder comment no longer promises the JSON shape is unchanged (the TEXT is; the shape gained the key every other rung carries). New test `ladder rung 3: zero live workstreams + zero parseable docs → the no-changes JSON still carries pr` writes `pr: per-proposal` into an otherwise empty project and asserts the exact key set `['changes','message','pr']`, `pr === 'per-proposal'`, and the byte-identical text render; the existing artifact-workflow no-changes JSON test (asserting `changes`/`message` values) still passes. Chose A over B because the bodies already name the bare tier and B would have documented the hole instead of closing it.",
+      "ripple_cascade": {
+        "applied": [
+          "src/commands/workflow/status.ts",
+          "test/commands/status-orientation.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Add `pr: orientation.pr` to the rung-3 JSON object at status.ts:129 so every bare-tier `--json` shape carries the field, and add a status-orientation test for the zero-changes/zero-docs case asserting `payload.pr`. Ripple: `orbit-orientation`'s JSON requirement text (`the existing no-changes message, unchanged`, status.ts:119 comment; spec line 349-350) needs a delta line acknowledging the added key — this finding then merges with the missing-`orbit-orientation`-delta finding below."
+          },
+          {
+            "label": "B",
+            "body": "Change the reference (pr-choreography.ts:50 and :297) and both body pointers (propose.ts:274, ff-change.ts:138) to read `orbit status --full --json`, whose `printFullView` path is unconditional and already carries `pr` on every rung (verified in the scratch project). No engine change; keeps rung 3 byte-identical. Still needs the one-line orientation delta documenting `pr` on the `--full` shape, and the reference should say WHY `--full` (the bare tier's ladder can omit the key)."
+          }
+        ],
+        "chosen": "A"
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "The archive-tail reference tells the AI to validate a stored URL live but never says what to DO when validation fails; its nearest clause (\"cannot observe → skip the tail\") points the reader at the opposite of the spec's behavior.",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/pr-choreography.ts",
+      "line": 209,
+      "classification": "trivial_fix",
+      "action": "Added an `On POSITIVE invalidation` bullet under tail step 2 in `PR_ARCHIVE_TAIL_SECTION`: skip ONLY the PR-writing steps (description rewrite OR stage-entry append, and the flip) with one note naming the specific reason (`closed` / `merged` / `retargeted to <base>` / `repository mismatch` / `not found`), commit and push still proceed, and a failed validation never triggers step 3's fallback query. Step 3 now spells the four query axes inline (`--repo`, `--head`, `--state open`, base-discard) so the tail reference is self-contained. The `Cannot observe` clause is reworded to say it is DISTINCT from positive invalidation (observation unavailable vs. observation answered). Verified the generated `references/pr-archive-tail.md` carries the bullet after `orbit update --force`; the repository-qualified-invocation fidelity test still passes.",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The resolved-regime field on the orientation surface — the ONE engine surface the bodies are now told to read — has no owning requirement, is absent from the zero-engine-git surface enumeration, and contradicts the archived `orbit-orientation` JSON-shape requirement with no delta.",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-pr-lifecycle/spec.md",
+      "line": 379,
+      "classification": "decision_required",
+      "action": "The spec half of option A, walked with finding 1. NEW delta `specs/orbit-orientation/spec.md` (MODIFIED `JSON output for both tiers`): reproduces the baseline requirement with `pr` on the bare and `--full` shapes, defines `pr` as the engine-resolved regime (absent/inert config → `never`, never an absent key), states it is present on EVERY bare-tier rung including the no-changes object, and adds the scenario `Every bare-tier JSON rung carries the resolved PR regime`. The zero-engine-git enumeration in `orbit-pr-lifecycle/spec.md`, design D-d6-7, and the proposal's Zero-engine-git bullet now include the read-only orientation `pr` field. `orbit validate --strict` valid; `orbit fingerprint` stamped the new base (5 verified, 0 diverged).",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/specs/orbit-orientation/spec.md",
+          "orbit/changes/d6-pr-lifecycle/specs/orbit-pr-lifecycle/spec.md",
+          "orbit/changes/d6-pr-lifecycle/design.md",
+          "orbit/changes/d6-pr-lifecycle/proposal.md",
+          "orbit/changes/d6-pr-lifecycle/.openspec.yaml"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "resolution": "Walked with finding 1 under option A: add the orbit-orientation MODIFIED delta naming pr on every bare-tier shape, and amend the zero-engine-git enumeration in the delta spec, D-d6-7, and the proposal."
+    },
+    {
+      "severity": "WARNING",
+      "title": "Neither body anchors phase 1 at a step position; for `ff` this is material because Step 2 (`orbit new change`) writes `orbit/changes/<name>/.openspec.yaml` before any 'artifact' exists, so a reader who reaches the PR section after Steps 1-5 reproduces the refused switch the ordering exists to prevent.",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/ff-change.ts",
+      "line": 135,
+      "classification": "trivial_fix",
+      "action": "Both PR-lifecycle sections gained a `Position` paragraph. propose: NEW Step 0.5 — phase 1 runs AFTER Step 0 mode detection and BEFORE Step 0a / upstream Step 1 (generation must land on the target branch; the generation-input precondition presupposes `orbit/explore/<name>/` still in place); phase 2 after generation + validation; phase 3 AFTER Step 0d's move, its commit scope naming the moved material and the staging deletions. ff: phase 1 BEFORE Step 2 (`orbit new change` writes `.openspec.yaml`, a path a compatible branch already tracks — the exact `git switch` refusal the harness demonstrates); phase 2 after Step 4's validation; phase 3 after Step 5. Both paragraphs say the section is placed last for reading, not for running. Propose and ff parity hashes re-pinned.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/templates/workflows/propose.ts",
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The shipped `pr:` config commentary tells the user that in EVERY active mode the archive flow flips the PR READY — false for `per-architecture`, where stage archives append only and the flip is the human's act at arc-done.",
+      "marker_source": "internal-review",
+      "file": "orbit/config.yaml",
+      "line": 43,
+      "classification": "trivial_fix",
+      "action": "Reworded the `pr:` commentary block in `orbit/config.yaml`: a draft PR opens at propose in every active mode (or the single program PR is adopted/opened for a cited change); then a two-line split — per-proposal: commit, push, rewrite, flip READY; per-architecture: commit, push, APPEND this stage's entry, stage archives never flip, the READY flip is yours at arc-done. `MERGING IS ALWAYS THE USER'S ACT` kept. Grepped `src/` and the change artifacts: no other copy of the `every active mode … flips it READY` sentence exists.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Category 5 Touchpoints divergence: four `actual_unpredicted` paths (two engine source files, two tests) — the engine-computed permanent record of the walk's option-A resolution, unexplained anywhere a cold reader will look.",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d6-pr-lifecycle/design.md",
+      "line": 175,
+      "classification": "trivial_fix",
+      "action": "Added a dated provenance sentence under design D-d6-7 (OUTSIDE the frozen `## Touchpoints` section, which was not touched): the orientation read surface entered scope after the map froze — the first system review found the reader unreachable, the walk ratified surfacing the regime on the orientation tier, the fresh review found rung 3 omitted the key and this walk closed it — so `status.ts`, `orientation.ts`, and their tests appear as `actual_unpredicted` in every category-5 sweep by decision. Re-ran `orbit status --change d6-pr-lifecycle --boot --json`: the same four `actual_unpredicted` paths, `predicted_unsatisfied: []`, now explained where a cold reader lands.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Archive body step numbering is out of order: 'NEW Step 5.7 — The PR-attached tail' is placed before 'NEW Step 5.6 — Stage-line garnish', so the numbers imply the readout garnish precedes the tail while the text order (correctly) runs emit → tail → readout.",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/archive-change.ts",
+      "line": 367,
+      "classification": "trivial_fix",
+      "action": "Renumbered (the cleaner of the two offered paths): the PR-attached tail is now `NEW Step 5.6` with `BEFORE the completion readout` in its heading, the stage-line garnish is `NEW Step 5.7`; the two forward references at the preflight (`no tail at Step 5.6`, `the Step 5.6 tail`) updated. No baseline or delta spec references either number (grepped `orbit/specs/`, the change's specs, `src/`, `test/`). The fidelity test now anchors on both full headings and asserts tail < garnish. Archive parity hash re-pinned.",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/templates/orbit-content-fidelity.test.ts",
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Bulk-archive's readout must name attached changes 'with their PR URLs' but the body names no source for the URL or the attachment, unlike the single archive's Step 5.45.",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/bulk-archive-change.ts",
+      "line": 287,
+      "classification": "trivial_fix",
+      "action": "Added the source clause to the Bulk Archive Complete readout requirement in the bulk body: resolve each change's `pr_attachment` exactly as single-archive Step 5.45 does (latest attachment-bearing propose or ff emit on that change's trail, read-only, no `gh` query since the bulk flow performs no remote work); report `url` when present, `attached, no PR recorded` when absent; unattached changes are not named. Bulk parity hash re-pinned.",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "8 of 8 resolved; 0 unresolved markers in scope. Two decision-lane findings ratified in chat as ONE decision (option A): the CRITICAL closed at the engine — the no-changes rung of the status ladder now carries `pr` like every other bare-tier shape, guarded by a rung-3 test that writes `pr: per-proposal` into an empty project — and its spec half landed as an eighth delta (`orbit-orientation`, fingerprint stamped) plus the enumeration amended in three artifacts. Six obvious fixes: the tail's positive-invalidation consequence is now performable text, both bodies anchor the three PR phases at step positions, the config commentary distinguishes the per-architecture append from the per-proposal flip, the Touchpoints divergence is explained by a provenance note outside the frozen map, the archive steps are numbered in text order, and the bulk readout names its source. 1996 -> 1997 tests green across 91 files; four parity hashes re-pinned after confirming only the four edited templates moved; local surface refreshed via `orbit update --force`. Working tree left uncommitted.",
+  "iteration": 10,
+  "next_recommended": "/orbit:review --as system --reviewer external d6-pr-lifecycle"
+}

@@ -1,0 +1,43 @@
+{
+  "command": "archive",
+  "timestamp": "2026-09-21T15:38:59Z",
+  "change": "rc02c-confirmation-semantics",
+  "kind": "lifecycle",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "rc02c-confirmation-semantics is ARCHIVED through a COMPUTED PASSED gate, no override — the third rc-stage to do so, and the first whose passing verdict is rendered in vocabulary the change itself introduced ('passed with 1 SUGGESTION-grade finding deferred', the string an external reviewer found still saying 'converged with' in the change whose thesis is that the engine no longer computes convergence). Clause (c) is gone: convergence is clauses (a) and (b) only, and the gate no longer computes whether a change has converged. The budget signal is demoted to an inert declared expectation with independentSpend surviving as the recorded cost, reporting on gate mode alone and rendering alone — the [spend 4/3] readout Q-crc-19 named as the harm cannot be produced by any surface. confirm stays accepted by the grammar and inert, with no version bump and no migration. Baseline capabilities stay at 21; 8 MODIFIED requirements across 2 capabilities synced and byte-verified 8/8, two independent ways. The cycle: propose, a fresh proposal pass (6 CRITICAL) walked to zero, an in-context pass walked to zero, apply through a recorded gate_overridden whose reason was clause (c) demanding a fourth pass over six RESOLVED CRITICALs, then a system blind pair (GPT-5 Codex external plus a clean-context fresh half, 2 of 15 overlapping) merged into ONE SITTING with TWO RECORDS, an in-context check on that walk, and finally a scoped iteration-2 external pass bought BY CHOICE over the already-passed gate to cover the one category the cadence structurally could not: mechanism the walk itself authored. Four independent passes, 35 findings, zero CRITICAL anywhere in the system phase, none re-opened. The archived trail carries all of it, including the two occasions a finding of mine came from my own bad probe and was overturned by executing the check rather than reading it.",
+  "archive_path": "orbit/changes/archive/2026-09-21-rc02c-confirmation-semantics/",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": {
+      "critical": 0,
+      "warning": 6,
+      "suggestion": 0
+    },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": [
+      "orbit-engine-gates",
+      "orbit-run-summary-emit"
+    ],
+    "added": 0,
+    "modified": 8,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
+  "user_decision": "proceeded_with_no_critical",
+  "consent": "user-invoked",
+  "warnings": [
+    "RESIDUAL RISK, recorded rather than implied. The review-system gate computed PASSED on clauses (a) coverage and (b) resolution. Under rc02c's own semantics that means the cadence was covered and every substantive finding on every relevant pass was resolved — it does NOT mean a clean independent pass stands on the final tree, and this change is the one that retired the predicate which used to assert that. The strongest available evidence in its place: the scoped iteration-2 external pass (GPT-5 Codex) executed a branch matrix over the engine and reported the walk-authored mechanism sound in the implementation, and its three findings were walked to zero afterwards.",
+    "RESIDUAL RISK, measured. The system blind pair returned 8 external and 9 fresh findings with only 2 overlapping; capture-recapture puts the population near 36, so roughly 58 percent of what exists was still unfound after two independent reads. rc02's first pair measured about 60 percent. Two pairs on different stages agreeing within a couple of points makes this a property of the pipeline rather than of this change, and it is the figure issue #13 exists to move.",
+    "SIZE, over the ceiling and recorded rather than explained away (R-crc-1): 64,751 B of delta against a ~40 KB ceiling, 158 percent — of which 77 percent is verbatim baseline text the MODIFIED delta format obliges. Inside the ceiling on all three dimensions R-crc-1 names as better predictors: 2 capabilities of 3, 8 requirements of ~12, 18 tasks of under 20. The design's size section carries the measurement and the c2 calibration contrast.",
+    "STALE CROSS-REFERENCE outside this change's touched set, found by the sync agent and deliberately NOT fixed here: orbit/specs/orbit-review/spec.md:155 still lists 'confirm predicates' among the routing 'formerly enumerated in this requirement' that now lives in orbit-engine-gates' reviewed-gate model. That model no longer has confirm predicates. It is a historical 'formerly enumerated' clause rather than a live behavioural assertion, and editing another capability's baseline requires a delta this change does not carry — so it is recorded for audit-drift or the next stage that touches orbit-review.",
+    "TOUCHPOINT DIVERGENCE at archive, all expected: three architect emits plus the architecture doc (program-layer work, correctly outside a change's predicted map), and test/core/source-lint.test.ts plus test/core/sources-registry.test.ts (the orbit-source-lint instrument fix, deliberately committed as separate work — task 5.1 records that the separation was drawn at the commit boundary while the divergence check is diff-scoped, so these surface here by design rather than by surprise).",
+    "AT-ARCHIVE CORRECTION, made in flow: the sync agent found that the synced 'Review budget reported beside the gate state' block still read 'Two scenarios were REMOVED with the signal and six REWRITTEN; every other scenario is preserved byte-identically' after the in-context pass added a ninth scenario under it. Corrected to name the ADDED scenario, applied to the delta AND the baseline together so the two stay byte-identical, and re-verified (fingerprints 8/8, validate clean). It was delta-authoring residue, not a sync artifact — and it is the same shape as most of this cycle's findings: a fix that landed on the instance and stopped at the edge of its class."
+  ],
+  "next_recommended": "Change archived. Run /orbit:new or /orbit:explore to start the next change, or /orbit:audit-drift for a project-wide drift check."
+}

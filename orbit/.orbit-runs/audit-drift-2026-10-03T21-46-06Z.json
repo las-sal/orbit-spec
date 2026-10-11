@@ -1,0 +1,41 @@
+{
+  "command": "audit-drift",
+  "timestamp": "2026-10-03T21:46:06Z",
+  "change": null,
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "final_assessment": "No critical issues. 0 warning(s) to consider; 2 suggestions. Project-wide standalone run after rc02b-severity-ladder's archive (ecef3c77). Category 1: 29 archives carry NO RENAMED or REMOVED sections, so the residue pattern set is empty — clean by construction. Category 2: orbit/lenses/ absent — skipped. Category 3: CLAUDE.md's four marked figures pass `orbit validate --sources` (stages 25, rulings 14, capabilities 21, schema-version 4); the architecture engine renders both parseable docs with zero INCONSISTENT stages (clean-up-review-cycle: 12 complete, 9 premised, 3 ended, 1 quiescent-awaiting-ratification — rc02b), no hand-written state lines, no dangling citations (no active changes, no staging explorations); two SUGGESTION-grade texture findings in living prose, both in text written during rc02b's own cycle. Category 4: the last five archives' ADDED and MODIFIED requirements are all present in baseline and no REMOVED survives; the consent tripwire checked 51 apply/archive emits across every change under the three-tier era rule and fired 0 times. Category 5: no active changes — gate closed. Category 6: no staging explorations — skipped.",
+  "categories_run": [
+    "1",
+    "3",
+    "4"
+  ],
+  "findings_by_category": {
+    "1": 0,
+    "3": 2,
+    "4": 0
+  },
+  "findings_total": 2,
+  "findings": [
+    {
+      "category": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 1659,
+      "title": "rc02b's stage section names a staging directory that no longer exists (`orbit/explore/rc02b-severity-ladder/`)",
+      "recommendation": "The closing sentence of the MEASURED paragraph reads 'Exploration: `orbit/explore/rc02b-severity-ladder/` — six decisions, three live rules with Mechanism entries, the engine's parse 3 accounted / 0 open.' The directory was consumed at propose (2026-10-03) and the file now travels in the archived change at orbit/changes/archive/2026-10-03-rc02b-severity-ladder/explore.md. The sentence is dated prose, so the cheapest honest fix is a pointer, not a rewrite: append '(consumed at propose; now orbit/changes/archive/2026-10-03-rc02b-severity-ladder/explore.md)'. It is the only such sentence in the doc — no other stage section names a live orbit/explore/ path."
+    },
+    {
+      "category": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/specs/orbit-conventions/spec.md",
+      "line": 842,
+      "title": "`Review mode decision framework` carries a dated measurement ('measured 2026-10-03') inside its normative sentence",
+      "recommendation": "Synced into baseline by rc02b's archive after walk 2's option-A repair; recorded there as an accepted residual (archive-2026-10-03T21-11-57Z, readiness accepted[2]). A requirement's prose is living text audit-drift reads on every run; a dated measurement is a record and belongs in the trail, where it already is (tasks.md 5.2; address-reviews-2026-10-03T20-59-44Z). Trim to the rule: 'The framework is stated HERE; a user-facing counterpart belongs to the deferred user-docs rewrite (issue #1), and any user doc that states it is held to this requirement, never the reverse.' A baseline edit, so it rides the next change that touches orbit-conventions (or a hotfix commit with the fingerprint re-stamped by that change)."
+    }
+  ],
+  "stale_suppressed": [],
+  "next_recommended": "/orbit:address-reviews --from-file orbit/.orbit-runs/audit-drift-2026-10-03T21-46-06Z.json — 2 drift(s) detected project-wide; resolve before next workflow step"
+}

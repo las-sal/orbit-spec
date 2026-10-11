@@ -1,0 +1,12 @@
+{
+  "command": "explore",
+  "timestamp": "2026-07-22T17:42:02Z",
+  "change": "d4-review-consistency",
+  "final_assessment": "Boundary: 5 decisions captured covering both charter moves. Rendering: D-d4-1 (engine-rendered report = pure function over the findings JSON; trend/gate/position ENGINE-COMPUTED at render time; AI commentary first-class via a designated JSON field, byte-identity preserved), D-d4-2 (loose form in chat — the rendered report grounds, free engagement follows; the frame sandwiches commentary with engine-owned gate/position lines dead last), D-d4-5 (the renderer lives under orbit status — the trail gateway: --change <name> --report [<TS>]; the sprint view's trimmed last: line becomes a zoom-in door; standalone render verb rejected to Considered & out). Walk protocol: D-d4-3 (three lanes — obvious-fix auto-resolves with no prompt; decision lane gets a full-prose briefing + real back-and-forth with AskUserQuestion demoted to optional closure; dismissed/inconclusive re-presents), D-d4-4 (chat directives always suffice as ratification; the lane-1 preview guard; batch delegation kept as user prerogative, batch prompts stay dead). Remaining for propose: --report schema strictness (lean strict/loud), external passes rendering from parsed form, the body-prose economy dividend.",
+  "next_recommended": "/orbit:propose d4-review-consistency — substantial thinking captured; ready to formalize the design (or /orbit:explore d4-review-consistency to keep refining)",
+  "kind": "workflow",
+  "mode": "named",
+  "decisions_captured": 5,
+  "open_questions_count": 0,
+  "crystallized_to_name": null
+}

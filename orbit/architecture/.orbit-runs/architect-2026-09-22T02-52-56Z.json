@@ -1,0 +1,29 @@
+{
+  "command": "architect",
+  "timestamp": "2026-09-22T02:52:56Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "R-crc-13 CAPTURED (Sal, 2026-09-22): a gate REPORTS, it never RULES — passage is a joint judgement taken on the facts by the AI and the user together, and an emit RECORDS that judgement and tracks position rather than grading how the past went. The ruling changes no behaviour, which is the point: orbit-engine-gates has carried the contract verbatim since C1 and D1 built consent on it, but it lived inside one capability as an enforcement note where a later stage could narrow it without the premise visibly moving. It is a program-level commitment now. Its corollaries are named in the entry so they are not rediscovered — R-crc-10 follows FROM it rather than sitting beside it, rc04a's ratified_by is its existing mechanism, and rc04a's never-blocks clause is load-bearing rather than a courtesy — as is the boundary, since 'joint' is easy to over-read: it means the decision is taken on shared facts, not that every decision needs a prompt; R-crc-3 and D1 still govern method and prompt placement. Q-crc-23 OPENED as the question the ruling exposes: you override something that had authority over you, and the gate never had any. The tension sits inside ONE requirement — title 'Inflection-prompt OVERRIDE contract', first scenario 'Override recorded, NOT PREVENTED' arguing with its own title, field gate_OVERRIDDEN — while rc04a's successor already names the event correctly without anyone having remarked on it. Measured rather than characterised: 48 occurrences of `override` across orbit/specs/, and 17 gate_overridden / 9 'Proceed anyway' / 5 proceed-anyway across the bodies, with the fingerprint, audit-drift and PR seams using the word for their OWN prompts — so it is the program's word for 'the human decided to continue' at FOUR seams, not one field's vocabulary. The scope consequence is named: rc04c believes it retires a FIELD, and if the frame is wrong the honest scope is a WORD across ten capabilities, past R-crc-1 on sight. Standing recommendation is to NOT widen rc04c and to declare the reframe an explicit non-goal in its charter. The rulings marker ripples 12 to 13 and the sources-registry pin went red on exactly the ruling just added, for the third consecutive time.",
+  "stages_touched": [
+    "rc04c-retire-gate-overridden"
+  ],
+  "rulings_captured": [
+    "R-crc-13"
+  ],
+  "completions_ratified": [],
+  "handoff": {
+    "seam": "post-ruling architect session; rc04d's blind pair is closed and still unwalked",
+    "next_command": "/orbit:address-reviews rc04d-override-vocabulary --from-file orbit/changes/rc04d-override-vocabulary/.orbit-runs/external-system-2026-09-22T02-21-40Z.md",
+    "model_hint": "a reasoning-heavy model; the open CRITICAL is settled in principle but not yet applied",
+    "boot_sequence": [
+      "orbit/architecture/clean-up-review-cycle.md — R-crc-13 and Q-crc-23 first if you are touching gate or override vocabulary; the rulings index now holds 13",
+      "orbit architecture status — position is COMPUTED; rc04d in-change, rc04c exploring",
+      "orbit/changes/rc04d-override-vocabulary/.orbit-runs/ — external-system-2026-09-22T02-21-40Z.md and review-system-2026-09-22T02-25-46Z.json are a closed blind pair, BOTH unwalked, to be walked together and recorded as two emits matched by source_path",
+      "orbit/specs/orbit-engine-gates/spec.md:736-743 — the requirement under edit; its closing line IS R-crc-13 and predates it by a full arc",
+      "Q-crc-22 — no invocation walks two passes together; assembling the combined list is still the operator's job"
+    ]
+  },
+  "next_recommended": "/orbit:address-reviews rc04d-override-vocabulary --from-file orbit/changes/rc04d-override-vocabulary/.orbit-runs/external-system-2026-09-22T02-21-40Z.md"
+}

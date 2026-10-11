@@ -1,0 +1,68 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-08-06T14:05:03Z",
+  "change": "d5-context-economy",
+  "kind": "editorial",
+  "model": "claude-fable-5",
+  "source": "verbal",
+  "source_path": null,
+  "source_command": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "walk_mode_source": null,
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 0
+  },
+  "pushback_verification": "The finding was derived live from the engine's own readout at this seam and traced to gates.ts:337 supersession + raw checkbox arithmetic; verified current before the fix.",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "marker": "src/core/artifact-graph/gates.ts — post-apply position readout points backward when only user-validation tasks remain (gate layer never learned D5's user-validation convention)",
+      "severity": "WARNING",
+      "source": "internal-review",
+      "classification": "decision required",
+      "status": "resolved",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "teach the tracked gate the user-validation subset rule: passed-for-flow-purposes with the pending ids annotated; supersession and canonical-next move forward"
+          },
+          {
+            "label": "B",
+            "body": "narrow fix: keep apply un-passed but point the recommendation forward instead of at the moot proposal gate"
+          }
+        ],
+        "chosen": "A"
+      },
+      "action": "Implemented option A end-to-end: (1) apply emits now PERSIST the engine-verified user_validation_tasks list (emit-composition; empty elided); (2) trail.ts reads the latest declaration (latestApplyUserValidation, overlay-aware); (3) gates.ts tracked branch computes the subset rule — every unchecked box must be declared AND carry the '(User-validation' self-describing marker — rendering 'apply ✓ (awaiting user validation: <ids>)', feeding supersession and forward canonical-next, recomputed from disk each render (a new ordinary task honestly drops the gate back to ready). Deltas: orbit-engine-gates MODIFIED 'Tracked-gate pass condition' (4 scenarios) + orbit-run-summary-emit persistence sentence; base fingerprint stamped (26/26). Tests: 4 new gate cases. Live demo shows the corrected readout; d5's own readout snaps forward at the next apply emit or when 9.6 is checked (historical emits are never rewritten).",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/emit-composition.ts",
+          "src/core/artifact-graph/trail.ts",
+          "src/core/artifact-graph/gates.ts",
+          "test/core/artifact-graph/gates.test.ts",
+          "orbit/changes/d5-context-economy/specs/orbit-engine-gates/spec.md",
+          "orbit/changes/d5-context-economy/specs/orbit-run-summary-emit/spec.md"
+        ],
+        "flagged_not_applied": []
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": null,
+  "final_assessment": "The user-logged gate-layer finding walked and resolved via option A (the user-validation subset rule): apply emits persist the verified task list, the tracked gate computes passed-for-flow with the pending ids annotated, supersession and canonical-next point forward. 1894 tests green; strict validation; fingerprints 26/26.",
+  "iteration": 10,
+  "next_recommended": "/orbit:review --as proposal --fresh d5-context-economy"
+}

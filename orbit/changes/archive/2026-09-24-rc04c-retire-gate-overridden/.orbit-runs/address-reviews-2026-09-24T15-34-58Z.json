@@ -1,0 +1,79 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-24T15:34:58Z",
+  "change": "rc04c-retire-gate-overridden",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc04c-retire-gate-overridden/.orbit-runs/review-system-2026-09-24T15-29-13Z.json",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 2
+  },
+  "pushback_verification": "3 of 3 verified against the tree at 19dca35c (unchanged since the pass that produced them); 0 stale.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The token-source procedure in four bodies still carries the CLASS LIST — the one thing R-crc-14's boundary names as a definition — and no surface exists yet that would let it point instead",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/archive-change.ts",
+      "line": 285,
+      "classification": "decision_required",
+      "action": "Resolved by RECORD, not rewording, per the finding's own recommendation and Sal's standing directive on the twin finding ('a with b as a follow up'): the accepted residual is now file-resident in tasks.md's AT-ARCHIVE NOTE (d) as the readiness record's {claim, why} pair — the four token-source paragraphs enumerate the citable set by class until Q-crc-24's printing surface ships; no such surface exists today, the enumeration is correct as far as a filename rule can be, and the ACCEPTED-as-a-pass fidelity pin holds the four copies identical. The bodies were deliberately NOT reworded: a sentence hiding the class list behind 'the passes the reader accepts' is still an enumeration in the composing AI's hands and loses the one operational instruction it has.",
+      "ratified_via": "chat",
+      "resolution": "Record as accepted residual, citing Q-crc-24 (Sal: 'a with b as a follow up'; R-crc-14 ratified with Q-crc-24 canonized as the mechanism).",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc04c-retire-gate-overridden/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Edge (d)'s REFUSAL direction is unit-tested on the apply seam only; the archive seam — where the decision is most often taken — has the acceptance case and a CLI probe, no pinned refusal",
+      "marker_source": "internal-review",
+      "file": "test/core/emit-composition.test.ts",
+      "line": 1222,
+      "classification": "trivial_fix",
+      "action": "Added the mirrored case through emitArchive on the seeded trail: a valid continuation/proceed at [0] and an empty one at [1], asserting the LATEST token (EXTERNAL) is named, FRESH is not, the index is [1], and zero archive-* files are written. File green (85 cases).",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The 'Sufficiency above zero remains outside the engine' scenario is covered only IMPLICITLY — the both-kinds fixture cites one of two preceding passes and writes, but nothing names that as the property under test",
+      "marker_source": "internal-review",
+      "file": "test/core/emit-composition.test.ts",
+      "line": 1240,
+      "classification": "trivial_fix",
+      "action": "The cheaper option taken: a comment on the both-kinds fixture names the second property it pins (one-of-two cited, emit writes; adequacy stays outside the engine; edge (d)'s boundary is zero). No new case.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "All three in-context findings resolved, none stale: the R-crc-14 residual recorded as the readiness record's accepted pair (file-resident at the at-archive note, formed against the fresh half's W2 and the in-context pass); the archive-seam refusal case added; the sufficiency property named on the fixture it already rides. Change validates --strict; the touched test file is green.",
+  "iteration": 8,
+  "next_recommended": "/orbit:archive rc04c-retire-gate-overridden — user-invoked"
+}

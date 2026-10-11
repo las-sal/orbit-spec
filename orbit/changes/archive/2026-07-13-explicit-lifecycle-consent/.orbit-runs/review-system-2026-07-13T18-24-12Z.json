@@ -1,0 +1,75 @@
+{
+  "command": "review",
+  "timestamp": "2026-07-13T18:24:12Z",
+  "change": "explicit-lifecycle-consent",
+  "final_assessment": "No critical issues. 3 warning(s) to consider. A prior gate-relevant pass has unresolved findings; gate review-system UNPASSED. Ready when you are: /orbit:address-reviews explicit-lifecycle-consent --from-file orbit/changes/explicit-lifecycle-consent/.orbit-runs/review-system-2026-07-13T18-24-12Z.json.",
+  "next_recommended": "/orbit:address-reviews explicit-lifecycle-consent --from-file orbit/changes/explicit-lifecycle-consent/.orbit-runs/review-system-2026-07-13T18-24-12Z.json",
+  "kind": "editorial",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "iteration": 2,
+  "depth": "full",
+  "passes_run": ["0", "1", "2", "3", "6"],
+  "passes_skipped": { "4": "no perspectives defined", "5": "no critical paths defined" },
+  "findings_summary": { "critical": 0, "warning": 3, "suggestion": 3 },
+  "finding_titles": [
+    "Stale three-execution-disciplines in review body's --parallel section",
+    "Delta spec placement language contradicts the shipped Step 0 ordering invariant",
+    "Hand-written 'If all done: suggest archive' survived the task 2.5 subtraction",
+    "next_command is null in the archive-ready state",
+    "all_done instruction advertises archive, skipping review-system",
+    "Stale 'awaits the user's /orbit:propose' in the arc doc's D1 section"
+  ],
+  "findings": [
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 427,
+      "title": "Stale three-execution-disciplines in review body's --parallel section",
+      "recommendation": "The --parallel section says 'Subagents inherit the three execution disciplines' while all 15 bodies now enumerate FOUR. Change to 'four execution disciplines' so subagent briefs don't omit exactly the D1 discipline. (Fictional worked-example transcript mentions at review.ts:498 and address-reviews.ts:602 are optional cleanup, not misinstruction.)"
+    },
+    {
+      "pass": "0",
+      "severity": "WARNING",
+      "file": "orbit/changes/explicit-lifecycle-consent/specs/orbit-lifecycle-consent/spec.md",
+      "line": 41,
+      "title": "Delta spec placement language contradicts the shipped Step 0 ordering invariant",
+      "recommendation": "Commit 907e2f9 added the ordering invariant to the apply/archive BODIES (provenance classified at entry; prompt + stamp after read-only discovery, before any write) but the delta specs still say the prompt fires 'at command entry, before any other step' (Placement bullet here; same phrasing in specs/orbit-archive-modifications/spec.md:6). At archive-sync this baseline text would misinstruct a fresh implementer into the pre-fix misexecution. Align both delta spots to the bodies' invariant wording. Residual spec/body divergence created by fixing bodies only — not a re-flag of the resolved external finding."
+    },
+    {
+      "pass": "0",
+      "severity": "WARNING",
+      "file": "src/core/templates/workflows/apply-change.ts",
+      "line": 102,
+      "title": "Hand-written 'If all done: suggest archive' survived the task 2.5 subtraction",
+      "recommendation": "Step 7's bullet 'If all done: suggest archive' is a hand-written next-step prose variant (task 2.5 / design D7 scope) and names the WRONG transition — post-apply the gate graph yields review-system, not archive; it nudges toward the seam D1 guards. The Completion-prompt override below negates it, but the contradictory bullet remains. Replace with 'If all done: render the engine's position + eligibility line (per Step 3 all_done handling)'."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "file": "src/core/artifact-graph/instruction-loader.ts",
+      "line": 419,
+      "title": "next_command is null in the archive-ready state",
+      "recommendation": "On an all-gates-passed change, top-level next_command is null (the loop skips passed gates) so orbit status prints no 'Ready when you are:' line at exactly the archive seam, while the passed review-system gate ROW carries nextCommand '/orbit:archive <name> — user-invoked'. Pre-existing C1 loop behavior, not a D1 regression. Consider falling through to a passed gate's before-phase command."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "file": "src/commands/workflow/instructions.ts",
+      "line": 320,
+      "title": "all_done instruction advertises archive, skipping review-system",
+      "recommendation": "Engine output 'All tasks are complete! This change is ready to be archived...' recommends archive readiness while the gate graph says review-system is next — stale against D1's eligibility framing. Pre-existing upstream-era text, un-delta'd, no Next: label so the greps miss it. Reword to defer to the gate readout."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "file": "orbit/architecture/d-arc-arbitered-flow.md",
+      "line": 95,
+      "title": "Stale 'awaits the user's /orbit:propose' in the arc doc's D1 section",
+      "recommendation": "The D1 state line was updated (in-change APPLIED) but the stage prose still says 'the stage awaits the user's /orbit:propose' — a self-contradiction inside the position-authority doc. Reword to past tense ('the stage proposed 2026-07-09') or delete the clause."
+    }
+  ],
+  "stale_suppressed": [],
+  "iteration_note": "Second system-mode run (first was in-context, 0 findings; then external iter 1: 3 findings, all resolved in 907e2f9 — confirmed resolved by this pass, not re-flagged). All 6 findings are NEW this run; 4 of 6 are pre-existing residue this fresh pass surfaced (2 pre-D1 engine/upstream texts, 1 pre-D1 arc-adjacent), 2 are residue of this change's own sweep (task 2.5 miss; 907e2f9 body-only fix)."
+}

@@ -1,0 +1,157 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-24T15:24:37Z",
+  "change": "rc04c-retire-gate-overridden",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc04c-retire-gate-overridden/.orbit-runs/review-system-2026-09-24T14-50-44Z.json",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 3,
+    "suggestion": 4
+  },
+  "pushback_verification": "7 of 7 verified against the tree at HEAD 3ae28fee (after the external walk and the architect session); 3 stale — two warnings and one suggestion were resolved by the external half's walk or the architect amendments, with commit evidence; 4 still applied.",
+  "resolution_summary": {
+    "resolved": 4,
+    "stale_suppressed": 3,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Both bodies tell the composing AI to enumerate EVERY external-<mode>-<TS>.md as a citable pass, but the write gate's set excludes rejected returns — so 'cannot be unresolvable' is false in exactly the case the stage's spec calls its non-obvious half",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/apply-change.ts",
+      "line": 205,
+      "classification": "stale",
+      "action": "Already fixed at commit 3ae28fee by the external half's walk (the same defect, found independently by both halves): all four sites carry the ACCEPTED-as-a-pass qualifier, 'cannot be unresolvable' is gone from every body, fidelity pins hold it (apply, archive; review via a reference-content assertion).",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The emptiness rule AND its resolution set are now stated in the shipped schema reference, both bodies and two capabilities — the FOURTH instance the tasks preamble said to stop on, and it has already produced a divergence (the rejected-external clause is present at line 95 and contradicted at line 285)",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/archive-change.ts",
+      "line": 95,
+      "classification": "decision_required",
+      "action": "Option A applied as R-crc-14's FIRST APPLICATION (the ruling was ratified in the architect session between the two halves' walks, earned by exactly this finding and its external twin). The shipped schema reference's judgements field note, apply's payload bullet, and the token-source paragraph at all four sites now NAME the totality rule and point at orbit-run-summary-emit as its owner, stating only the observable consequence (empty is legal only on continuation/proceed with no accepted independent pass earlier; the gate refuses it naming the latest preceding pass) — the class list, 'any mode', and the rejected-return membership clause no longer appear in any body or reference. orbit-emit-composition's edge (d) already names the owner and restates only the consequence; CLAUDE.md's rewritten passage states only the consequence. The fidelity pins (formed_against: [], ACCEPTED as a pass) survive. Surface rebuilt and refreshed; template hash pin re-pinned with a dated line. The 'no fourth instance' claim in the apply emit was corrected on the external walk's record.",
+      "ratified_via": "chat",
+      "resolution": "Sal: 'a with b as a follow up' (on the external twin of this finding) and 'ratify' (R-crc-14 — a rule is stated once, in the spec that owns it; every other surface names it and points). Option B is canonized at Q-crc-24.",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Collapse the body-side statements to a NAME plus the observable consequence, pointing at orbit-run-summary-emit for the set — never restating the class list or the rejected-external clause."
+          },
+          {
+            "label": "B",
+            "body": "Keep the reference as a deliberate MIRROR but make it a checked one: pin the field note and the two seam paragraphs to a shared template literal in one source, with a test holding them together; record the intentional two-place statement in the readiness accepted list."
+          }
+        ],
+        "chosen": "A"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "src/core/templates/workflows/apply-change.ts",
+          "src/core/templates/workflows/archive-change.ts",
+          "src/core/templates/workflows/review.ts",
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The tasks preamble states the task count as 35; the file holds 36 checked boxes, the engine reports 36/36, and the charter's ratified breach says 34 — three figures for one count in the artifact that warns about stale figures",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04c-retire-gate-overridden/tasks.md",
+      "line": 20,
+      "classification": "stale",
+      "action": "Already fixed: the preamble reads 36 with the arithmetic shown (external walk, 3ae28fee), and the program doc's rc04c stage section now states both figures — 34 ratified, 36 final — with why (architect session, same commit).",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "stale"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Scenario 'An empty formed_against is refused when a pass was available to cite' ranges over ANY judgement entry but promises a refusal that names the LATEST preceding pass — for readiness and spend the refusal is structural and names nothing",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04c-retire-gate-overridden/specs/orbit-run-summary-emit/spec.md",
+      "line": 239,
+      "classification": "trivial_fix",
+      "action": "The scenario's WHEN scoped to a continuation/proceed entry, so it and the next scenario (readiness/spend refused regardless of trail state) partition the domain instead of overlapping with different THENs. Change validates --strict.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The readTrail-based narrowing witnesses less than tasks.md 4.2(a) claims: readTrail never inspects an apply emit beyond its token and user_validation_tasks, so 'a reader tolerates the retired field' is vacuously true of this reader",
+      "marker_source": "internal-review",
+      "file": "test/core/judgement-record-fixture.test.ts",
+      "line": 228,
+      "classification": "trivial_fix",
+      "action": "Stated at its real strength rather than dismissed or strengthened: the test comment now says what the witness pins (the artifact still carries the field; the trail reader ingests the directory it sits in) and what it does not (readTrail reads only an apply emit's token and user_validation_tasks, so an unknown key cannot fail it), naming orientation's spine read as the stronger witness covered by hand at 4.2(b); tasks.md 4.2's MEASURED note carries the same qualification. The unused `extra` parameter on emitDerived removed. Adding an orientation-read assertion was NOT done — it would be new test mechanism after the pair read the tree, and the honest record is the deliverable here.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc04c-retire-gate-overridden/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Live cross-doc drift left standing by design: the rc04a stage section still states formed_against as unconditionally NON-EMPTY and the rc04c charter still says the no-pass case 'is omitted and gate_overridden stands alone' — recorded in tasks 5.1a/5.1b but carried only in an artifact that archives with the change",
+      "marker_source": "internal-review",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 1631,
+      "classification": "stale",
+      "action": "Already resolved by the architect session (commit 3ae28fee): rc04a's section carries the dated NON-EMPTY amendment; rc04c's omit-scenario sentence is marked superseded; the 'four archived apply emits' figure reads ten across four changes. Nothing remains to carry into the readiness accepted list.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "stale"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Design and proposal cite engine line numbers that no longer resolve after the apply (validateJudgements:533 → 534, judgementOrderingCheck:958 → 944, the guard at 606-632 → deleted)",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04c-retire-gate-overridden/design.md",
+      "line": 70,
+      "classification": "trivial_fix",
+      "action": "Dated post-apply notes appended beside the original figures in design.md D1 (:534 / :944; the guard block is gone) and proposal.md's Why paragraph (the block removed at apply), leaving the original figures as the record of what was checked when.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc04c-retire-gate-overridden/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Fresh half of the system blind pair walked: 4 resolved, 3 stale with commit evidence (the external walk and the architect session had already closed them), none deferred. The one live warning — the totality rule restated with its set in the shipped reference and the bodies — resolved as R-crc-14's first application: every body and reference now NAMES the rule and points at orbit-run-summary-emit, restating only the consequence. Three suggestions landed as a scenario scoping, an honest re-statement of what the readTrail witness pins, and dated post-apply line-reference notes. Surface rebuilt; template hash pin re-pinned; 2242 tests green; validate --strict clean.",
+  "iteration": 7,
+  "next_recommended": "/orbit:review --as system rc04c-retire-gate-overridden"
+}

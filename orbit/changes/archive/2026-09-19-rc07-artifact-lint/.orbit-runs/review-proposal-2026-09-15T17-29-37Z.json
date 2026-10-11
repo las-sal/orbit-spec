@@ -1,0 +1,200 @@
+{
+  "command": "review",
+  "timestamp": "2026-09-15T17:29:37Z",
+  "change": "rc07-artifact-lint",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m] (fresh clean-context subagent)",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 5,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 2,
+      "warning": 1,
+      "suggestion": 2
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "5",
+      "severity": "CRITICAL",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc07-artifact-lint/design.md",
+      "line": 106,
+      "title": "architecture.ruling-count's grammar matches nothing in the doc it was earned by, and the dogfood span passes anyway",
+      "recommendation": "Replace `R-<doc-stem>-<n>` with an explicit, doc-independent grammar and state it in the SPEC, not only the design: the doc stem is the filename stem (`clean-up-review-cycle`, per src/core/architecture/parser.ts's `name` field), so the pattern reads `R-clean-up-review-cycle-<n>` and matches zero of the ten live `- **R-crc-N**` entries. explore.md's D-rc07-3 had it right (`grep -c '^- \\*\\*R-crc-'`); the design generalised it and broke it. Also strike the 'a rulings section that matches nothing counts zero' tolerance for this source — a `## Rulings index` section that exists and yields zero entries is a malformed source, not a count of zero. The two defects compound: the source emits `0`, the planned dogfood span reads `R-crc-1..10`, and containment of `0` in that text is TRUE, so a span passes against a source that counted nothing.",
+      "recommendation_options": [
+        {
+          "label": "A — prefix-agnostic",
+          "body": "A ruling entry is a top-level list item whose first bold span matches `R-[a-z0-9]+(-[a-z0-9]+)*-<n>`. The abbreviation is whatever the doc uses; the count is of entries, not of a particular prefix. Requires entries in one section to share a prefix, which is checkable and worth a malformed error if violated."
+        },
+        {
+          "label": "B — declared prefix",
+          "body": "The registry entry carries the prefix as a parameter: `{engine: architecture.ruling-count, doc: clean-up-review-cycle, prefix: R-crc}`. Explicit, no inference, and it fits design D2's 'each engine source declares its required parameter names' shape exactly."
+        }
+      ]
+    },
+    {
+      "pass": "6",
+      "severity": "CRITICAL",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+      "line": 26,
+      "title": "Inertness covers fenced blocks but not inline code spans, so the change's own artifacts break the check it ships",
+      "recommendation": "Add inline code spans to the skip set in the requirement text and give it a scenario. Three conforming markers already sit in this change's own prose inside backticks: design.md:169 (an opener with no closer after it — under the spec's own unclosed-marker scenario, design.md FAILS validation), proposal.md:12 (a fully conforming span, checked for real), explore.md:83 (an opener whose nearest non-fenced closer is ~71 lines away, producing an accidental span). design.md:119 is the mirror case — a bare closer with no opener, which the spec does not define at all. The change dir is untracked right now so the domain misses it, but this repo commits active change dirs, and task 4.3 asserts a clean run over the live tree. Note in the design that this needs a CommonMark INLINE-code scanner on top of src/core/markdown-fence.ts, which is fence-only — give task 2.2 the extra work rather than leaving the implementer to discover it.",
+      "recommendation_options": [
+        {
+          "label": "A — skip inline code spans",
+          "body": "Treat a marker whose opener falls inside a backtick code span as inert, alongside fenced blocks. Matches author intent and fixes all three exhibits, but adds inline-span tracking the shared fence helper does not cover."
+        },
+        {
+          "label": "B — anchor the opener",
+          "body": "Require the opener to be preceded on its line only by whitespace, or require opener and closer on the same line with the opener first. Cheaper to implement and cheap to explain, but it constrains where an author may mark a figure mid-sentence — which is the common case the delimited form exists for."
+        }
+      ]
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+      "line": 11,
+      "title": "Spec and design disagree on the registry file's top-level shape",
+      "recommendation": "The spec calls orbit/sources.yaml 'a map from a source NAME to an ENGINE-computed fact' and its scenario declares `stages: {engine: ..., doc: ...}` at TOP LEVEL; design D2 nests every entry under a top-level `sources:` key; task 4.1 picks neither. Two competent implementers produce two incompatible file formats, and this is a user-facing contract. Pick one and make it appear identically in the spec scenario, design D2's YAML block, and task 4.1 — the `sources:` wrapper is the safer choice (room for future top-level keys without a format break), but the agreement matters more than the choice."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+      "line": 68,
+      "title": "The spec's exclusion table drops the HISTORICAL category its own explore and charter declare",
+      "recommendation": "explore.md declares a fifth exclusion — HISTORICAL: README_OLD.md, adopter-report-*.md, 'superseded by their own names' — and the charter agrees ('superseded files follow the same logic'). Both files are tracked and in the domain today. design.md never lists the exclusions at all, deferring to the spec table, so the spec's table is the only list an implementer reads and it is short by one category. Add the HISTORICAL row with its reason, or record in the design that the category was dropped and why. If kept, note that `adopter-report-*.md` is a filename glob rather than a directory prefix — still path-decidable, but the only entry of that shape."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+      "line": 26,
+      "title": "Substring containment silently passes a stale span whose source value is a substring of the stale text",
+      "recommendation": "`span.includes(sourceValue)` has a false-negative class the artifacts never name: any source value that is a substring of the stale prose passes. A rulings source emitting `0` is contained by the span `R-crc-1..10` (not hypothetical — see the ruling-count finding); a capability count falling from 19 to 9 leaves the stale span `19` containing `9`. Containment is the right primitive for the compound case and this is not an argument against it — but the spec asserts the check's adequacy without stating what it cannot catch, and this change's whole thesis is that residuals get stated rather than discovered. Add a sentence to the requirement naming the residual, state the mitigation (marked spans should be tight around the figure), and per R-crc-10 keep it a stated residual rather than inventing a token-boundary rule."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc07-artifact-lint/tasks.md",
+      "line": 25,
+      "title": "The dogfood targets a live capability-count and schema-version claim in CLAUDE.md that does not exist",
+      "recommendation": "Task 4.2 says to mark 'the baseline capability count in CLAUDE.md, and the schema version in CLAUDE.md', and the charter's exit criterion (3) requires CLAUDE.md to carry markers for each. CLAUDE.md has no LIVE claim of either: every capability figure is a transition inside an archived stage's narrative (11->12, 13->14, 16->17, 17->18, 'capabilities stay at 20') and every schema figure is likewise historical ('went to version 2 at this stage', 'went to version 3 here', 'spec-driven is version 4' inside rc02's paragraph). Marking any of these gates a RECORD that happens to live inside a living file — the category the living-vs-record principle resolves BY PATH and therefore cannot see. Add a task that introduces explicit current-state lines to CLAUDE.md (e.g. 'Current baseline: N capabilities; spec-driven schema version M') and mark those instead of narrative sentences; then add a sentence to the living-documents requirement acknowledging that a living file may contain historical statements and that the AUTHOR's marker, not the path, is the living/record boundary WITHIN a file."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+      "line": 5,
+      "title": "The registry requirement specifies no malformed-input behavior",
+      "recommendation": "Requirement 1 has three scenarios: a resolving entry, an unknown engine source, an absent file. Undefined: YAML that does not parse; a duplicate source name; an entry with no `engine:` key at all; an empty `sources:` map; a `sources:` value that is a scalar or list rather than a map; an entry that is a scalar. Because an absent file is defined as SILENCE, an implementer has a live temptation to treat 'unparseable' as 'absent' and swallow it — letting a corrupted registry disable the lint without a word. Add one scenario covering malformed registry input as a class (a file that exists but does not parse as a map of entries fails loudly naming the file and the parse error, explicitly distinct from absent-file silence) and name duplicate-name and missing-`engine:` handling in the requirement text."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+      "line": 57,
+      "title": "Span-pairing edges live in the design but not in the requirement",
+      "recommendation": "Design D4 rules that the closer is anonymous, nesting is unsupported, and an opener before the previous span closes is an unclosed-marker error. The spec's only pairing scenario is an opener with no matching closer. Unspecified in the spec: a second opener before the closer (design says error; an implementer reading only the spec would plausibly pair opener-1 with the closer and ignore opener-2, also defensible); a CLOSER WITH NO OPENER (undefined in both artifacts — and design.md:119 is exactly one); an empty span. R-crc-7's decision-table corollary applies directly: promote D4's pairing rule into the requirement and complete it as a small table — opener/closer, opener/opener, closer-with-no-opener, opener-at-EOF, empty span — one row each with the outcome stated."
+    },
+    {
+      "pass": "3",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 881,
+      "title": "The arc doc's rc07 stage declaration is stale against three decisions this change made",
+      "recommendation": "Three divergences, none amended by any task. (a) 'Touches: the validator, orbit-conventions' — the proposal declares one NEW capability orbit-source-lint and 'Modified Capabilities: none', explicitly rejecting the orbit-conventions split. (b) The charter says the check 'moves into orbit validate AND audit-drift' — design D1 rejects audit-drift outright with a good reason, but never notes that the charter names it. (c) Exit criterion (3) requires the four facts to be 'registry entries with LIVE COMMANDS' — D-rc07-7 removed commands from the registry entirely on a trust-boundary argument. The design's 'the exit criterion is restated to match' addresses only criterion (1). Add a task that RECOMMENDS amending the stage declaration (an architect act per the arc's rules of engagement — recommend, never perform it silently inside apply)."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+      "line": 64,
+      "title": "Domain membership flips on `git add`, and neither the non-git nor the untracked case reaches a requirement",
+      "recommendation": "Requirement 3 defines the domain as `git ls-files '*.md'` minus exclusions, with two scenarios both about INCLUSION. The design carries the non-git degradation as a risk and task 2.1 implements it, but no requirement or scenario states it, so nothing tests it. Separately, `git ls-files` lists TRACKED paths only: a newly authored, unstaged markdown file is invisible, and this change's own directory is untracked right now. The same working tree therefore validates differently before and after `git add`. Add a scenario for the non-git case (empty domain, named reason, no findings, exit 0) and one sentence stating that untracked files are outside the domain until tracked, with that consequence named."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 864,
+      "title": "'61 today' and 'stages = 17' are themselves stale restated figures, in the charter for the stage that fixes stale restated figures",
+      "recommendation": "The charter states the file domain is '61 today'; the measured values are 297 tracked *.md, 65 outside orbit/changes/archive/, and 50 after the four exclusions the spec declares (48 with HISTORICAL). No reading produces 61. The same doc gives the coverage example as `stages = 17 (2 markers)` while the real stage count is 18. Correct both during the dogfood, and either mark the coverage example's stage count if it stays a live example or reword it to a placeholder so it is a claim about FORMAT rather than about the count."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/specs/orbit-conventions/spec.md",
+      "line": 32,
+      "title": "orbit-conventions owns the repo's marker conventions and will not know about the third one",
+      "recommendation": "orbit-conventions holds the `@review:` marker convention and 'recognize two companion markers' — it reads as the place a contributor looks for 'what markers does this repo use'. After this lands there are three families and that capability names two. The proposal's argument against splitting the MECHANISM is sound and this does not reopen it; a cross-reference is not a split. Either add a one-line pointer scenario to orbit-conventions (making it a MODIFIED capability, still well inside the R-crc-1 ceiling at 2 capabilities), or add a sentence to orbit-source-lint's first requirement stating that the `src:` family is deliberately owned here and not in orbit-conventions."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc07-artifact-lint/tasks.md",
+      "line": 18,
+      "title": "--sources gets no documentation row and the --all --json shape change is unstated",
+      "recommendation": "docs/cli.md documents `orbit validate` with a flags table; no task adds `--sources` to it. Task 3.3 pins byte-identical output only for the NO-REGISTRY case; when a registry exists, `--all --json` gains a section, and the current summary shape is keyed conditionally on scope, so a consumer parsing it sees a new key. Add the `--sources` row to docs/cli.md's validate flag table as a one-line task, and state in the spec or design what `--all --json` emits when a registry is present. (docs/cli.md is already stale on branding — a declared deferral — so a full doc pass is plausibly out of scope.)"
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc07-artifact-lint/design.md",
+      "line": 99,
+      "title": "architecture.stage-count is ambiguous about malformed stage headings",
+      "recommendation": "D3 defines the source as 'count of parsed `### Stage` headings'. src/core/architecture/parser.ts splits the result into `stages` (well-formed) and `violations` (near-misses), and the NEAR-MISS rule means a heading failing the grammar is MALFORMED, not absent. Both readings agree today (18 either way), but they diverge the moment a stage heading is malformed, and a source value that silently drops a stage is the same failure mode as the ruling-count finding. Say explicitly that the count is `parseArchitectureDoc(...).stages.length` (well-formed only), and state what happens when the doc is MALFORMED or LEGACY — an error naming the doc is more honest than a count that silently omits a near-miss."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "The pattern behind the sharp findings is a single one, and it is the pattern the program itself keeps naming: the artifacts are strongest exactly where the exploration EXECUTED the procedure against real data, and weakest everywhere the design generalised past what explore had run. Case 2 in explore.md takes four real defects and walks each through the proposed marker form — that work is why the containment decision, the compound-string case and the numerals-only cost are all airtight. But both CRITICALs sit in the two rules nobody executed once: the rulings grammar (explore had the working pattern; the design abstracted it into a doc-stem form and nobody ran it against the doc) and the inertness rule (the design asserts its own prose is inert and it demonstrably is not, three times, in the change's own files). R-crc-7 says a decision procedure is worked out and executed once before spec prose is written; both defects are what the second half of that sentence costs when it is skipped for a rule that looks obvious.\n\nI probed hardest at the claim that the check needs no judgment from the engine, and the claim holds. Every rule resolves to a path predicate, a regex, or String.includes — the R-crc-10 table in the design is accurate, and the residual row (unmarked figures) is genuinely the only place intent enters, correctly not built. Where there was trouble it was never inference creeping back in; it was UNDER-DETERMINATION — the grammar is deterministic but unspecified at its edges (orphan closer, second opener, inline code, malformed YAML), which is a different and cheaper defect. The four-source table also survived a real attempt to break it against code: specs.capability-count maps onto getSpecIds, architecture.stage-count onto parseArchitectureDoc(...).stages, schema.version onto the schema loader. Three of four are free, exactly as claimed. The fourth is the one that breaks.\n\nThe risk actually sits in the DOGFOOD, not the engine. Tasks 4.1-4.3 are the only place this change meets reality, and that is where implementation will stall: task 4.2 names two CLAUDE.md figures that do not exist as live claims, and task 4.3 asserts a clean run over a tree that contains three conforming markers in the change's own prose. Both are discoverable in five minutes of implementation, but both then need a DECISION — where does a live claim go in a file that is 90% archived narrative? — and that is design work arriving inside apply, the R-crc-6 failure the program just ruled against. Naming it now is cheaper than a redesign lane later.\n\nUndetermined: whether orbit/sources.yaml is meant to be read by anything other than the validator. The D1 rejection of audit-drift is well argued, but the charter still routes the check there, and if audit-drift is later expected to consume the coverage record, the registry becomes a two-consumer file with only one consumer's needs specified. CRLF also went unassessed — nothing in the artifacts mentions line endings, markdown-fence.ts is line-based and would carry a trailing carriage return into a span's text, and whether that matters depends on the inline-code decision.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "final_assessment": "2 critical, 8 warning, 4 suggestion.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc07-artifact-lint --from-file orbit/changes/rc07-artifact-lint/.orbit-runs/review-proposal-2026-09-15T17-29-37Z.json"
+}

@@ -1,0 +1,12 @@
+{
+  "command": "explore",
+  "timestamp": "2026-09-21T01:34:37Z",
+  "change": "rc04-cost-visibility",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "Session reframed by Sal from COST to READINESS, and the reframe invalidated the stage as chartered rather than refining it. Eight decisions captured: the blind pair is the mechanism and the point, not merely a coverage device; reviews must not GROW the proposal, with scope-expanding findings routed to architecture and the AI making that call; budget is not the constraint; the AI decides more and the user steers; specs keep the AI aligned and reviews confirm independent agreement on that alignment; the in-context pass is a reaction to independent reviewers rather than a search; and independent reviews should carry a FORWARD RECOMMENDATION, which nothing emits today. Two measurements were taken and then deliberately set aside once the question changed — 11 of 16 archives ended on a walk, and budgetExhausted fires on 1 of 16 — both recorded under Considered & out because they measure process shape rather than judgement. Three open questions carry standing recommendations: the rc04/rc02c boundary, whether budget stops being a gate input (a ruling-level call, raised not taken), and how far D4's commentary prohibition narrows. Pausing here at Sal's direction to rework the program in architecture before exploring further, since the reframe plainly reaches past this one stage.",
+  "decisions_captured": 8,
+  "open_questions_count": 3,
+  "open_questions_with_recommendation": "3 of 3",
+  "next_recommended": "/orbit:explore rc04-cost-visibility — 8 decisions captured but 3 open questions remain; resolve open questions before formalizing"
+}

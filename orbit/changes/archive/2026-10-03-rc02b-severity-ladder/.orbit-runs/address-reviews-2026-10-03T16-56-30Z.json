@@ -1,0 +1,181 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-03T16:56:30Z",
+  "change": "rc02b-severity-ladder",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc02b-severity-ladder/.orbit-runs/review-proposal-2026-10-03T16-50-41Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-03T16-50-41Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 5,
+    "suggestion": 4
+  },
+  "pushback_verification": "All 9 findings verified against HEAD 68118e8f — the pass's own commit, which added only the emit; no edit between the pass and this walk — and each cited line re-read before editing. 0 stale. All nine were obvious-fix lane as previewed; finding 3's fold rule is a method call settled under R-crc-3 on the review's recommendation after Sal was offered the decision and did not weigh in — recorded with the `resolution` string so it can be struck. Titles and files copied from the source emit, never retyped.",
+  "resolution_summary": {
+    "resolved": 9,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The field-line rule as written makes `**Reproduction**:` content, contradicting the body-opener scenario beside it",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02b-severity-ladder/specs/orbit-conventions/spec.md",
+      "line": 62,
+      "classification": "trivial_fix",
+      "action": "The field-line scenario now states the ONE exception: `**Reproduction**:` is the sole field label recognised after a Description body opens — it ends the Description body and opens the Reproduction body (to the next `###`/`##`); every other field-shaped line inside any body is content. report-rendering's `One grammar` sentence points at the rule with the exception named; task 1.2 asserts the label ends the Description body.",
+      "ratified_via": "chat",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02b-severity-ladder/specs/orbit-report-rendering/spec.md",
+          "orbit/changes/rc02b-severity-ladder/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The report-rendering delta still asserts the external prompt template's markdown contract is UNCHANGED, which this change falsifies",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02b-severity-ladder/specs/orbit-report-rendering/spec.md",
+      "line": 44,
+      "classification": "trivial_fix",
+      "action": "The carried sentence 'The external prompt template's markdown contract is UNCHANGED' replaced with 'External AIs keep writing markdown — the contract's additions (the Reproduction body, the Blocks section) are `orbit-conventions`' External-review findings markdown format's, not this requirement's — and determinism applies from ingest onward.'",
+      "ratified_via": "chat",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "System Pass 0 folds verify-change's CRITICALs into the review emit the gate now refuses without a reproduction, and nothing says what the body does",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02b-severity-ladder/specs/orbit-review/spec.md",
+      "line": 41,
+      "classification": "trivial_fix",
+      "action": "Settled under R-crc-3 on the review's own recommendation (Sal did not weigh in when offered): the Pass 0 scenario now states the fold rule — verify-change's findings are graded by the ladder as the folding body's OWN (the body is their author, so not a reader's re-grade): incomplete task / uncovered scenario → WARNING; violated requirement → CRITICAL with the requirement and observed behaviour as reproduction; an unreproducible CRITICAL folds as WARNING; verify-change's own emit untouched. The ladder's known-limit sentence names verify-change beside audit-drift and points at the Pass 0 scenario; proposal (Out of scope; capability list), design (Non-Goals) and explore.md's D-rc02b-4 (dated note) carry it; task 3.1 names the fold rule.",
+      "ratified_via": "chat",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02b-severity-ladder/explore.md",
+          "orbit/changes/rc02b-severity-ladder/proposal.md",
+          "orbit/changes/rc02b-severity-ladder/design.md",
+          "orbit/changes/rc02b-severity-ladder/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "resolution": "the folding body grades verify-change's findings by the ladder as their author — settled under R-crc-3, Sal may strike"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Walk-1 and walk-2 counts did not reach every site: 'seventeen' survives at three places, 'fourteen blocks' at two, and the Tests line names one of three allowlist fields",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02b-severity-ladder/proposal.md",
+      "line": 116,
+      "classification": "trivial_fix",
+      "action": "Counts reconciled: proposal.md Impact 'fourteen per-pass sites, the report example, the bias line at 873'; design.md Mechanism row 'the fourteen members (plus the bias line)'; design Touchpoints 'fourteen per-pass sites, the report example and the bias line'; design Context and Risks now read SIXTEEN blocks (13 MODIFIED, 3 ADDED — walk 3 added the resolution-log shape block); proposal's Tests line names `reproduction`, `blocks`, `reproduction_rerun`; proposal size paragraph updated to sixteen blocks.",
+      "ratified_via": "chat",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "`reproduction_rerun` is defined in the ingest scenario while the resolution-log shape's owning requirement stays silent",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02b-severity-ladder/specs/orbit-address-reviews/spec.md",
+      "line": 60,
+      "classification": "trivial_fix",
+      "action": "`Resolution-log JSON shape extensions for walk-mode / decision-forks / cascade` is now a MODIFIED block in the address-reviews delta (copied from baseline by script) carrying the `reproduction_rerun` bullet with its four closed values and a scenario; the ingest scenario points at it instead of defining it. Thirteen MODIFIED blocks; the new block's fingerprint stamped (13/13 verified).",
+      "ratified_via": "chat",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02b-severity-ladder/proposal.md",
+          "orbit/changes/rc02b-severity-ladder/design.md",
+          ".openspec.yaml fingerprint (13th stamp)"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Task 3.4 documents only `reproduction` in the review schema reference; task 1.5 expects the reference to name `blocks` too",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02b-severity-ladder/tasks.md",
+      "line": 26,
+      "classification": "trivial_fix",
+      "action": "Task 3.4 now documents `blocks` in the review schema reference beside `reproduction`, so 1.5's derivation can go green.",
+      "ratified_via": "chat",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Task 1.1's opener still scopes the gate test to 'a proposal/system payload' while its tail says architecture mode is checked identically",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02b-severity-ladder/tasks.md",
+      "line": 3,
+      "classification": "trivial_fix",
+      "action": "Task 1.1 opens with 'a review payload in ANY mode'.",
+      "ratified_via": "chat",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Design's Non-Goals still say the engine checks 'presence of a non-empty value, nothing more'",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02b-severity-ladder/design.md",
+      "line": 37,
+      "classification": "trivial_fix",
+      "action": "Design Non-Goals now reads 'presence and shape (a non-empty string on a CRITICAL; a string wherever present; single-line blocks entries), never truth'.",
+      "ratified_via": "chat",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Design's Context keeps the 'checks top-level payload keys only' framing the fresh pass corrected elsewhere",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02b-severity-ladder/design.md",
+      "line": 12,
+      "classification": "trivial_fix",
+      "action": "Design Context now reads 'never inspected (its unknown-KEY check is top-level only; the rollup reads severity and dimension)'.",
+      "ratified_via": "chat",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Walk 3 (the in-context confirm): 9 of 9 resolved, 0 stale. The field-line rule gained its one exception (the Reproduction label ends the Description body; everything else inside a body is content); the falsified 'contract UNCHANGED' sentence rewritten; the Pass 0 fold rule stated (verify-change findings graded by the ladder as the folding body's own; verify-change named beside audit-drift as a known limit) — settled under R-crc-3; counts reconciled everywhere; `reproduction_rerun` moved to its owner (the resolution-log shape requirement, now the 13th MODIFIED block, fingerprint stamped) with the ingest scenario pointing; three wording fixes in tasks and design. The change reads 6 capabilities / 16 blocks (13 MODIFIED, 3 ADDED) / 25 tasks; strict validation passes; 13 fingerprints verified.",
+  "iteration": 3,
+  "next_recommended": "/orbit:apply rc02b-severity-ladder — user-invoked"
+}

@@ -1,0 +1,107 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-04T18:19:08Z",
+  "change": "rc07b-reference-roundtrip",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc07b-reference-roundtrip/.orbit-runs/external-proposal-2026-10-04T18-15-35Z.md",
+  "source_token": "2026-10-04T18-15-35Z",
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-6 Astra",
+  "walk_mode": "per_finding",
+  "walk_mode_source": null,
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 3,
+    "suggestion": 1
+  },
+  "pushback_verification": "4 of 4 verified at evaluation, before acting: W1 — `verification` is a top-level key of the review change-mode schema block (review.ts:91) and the gate refuses it on a REVIEW-genre pass; W2 — `model` is in emit-schema-parity.test.ts's ENGINE_OWNED (line 21) and no schema block documents it; W3 — review.ts:19 and address-reviews.ts:546 still say '6-field'; S1 — the review reference holds two full-record blocks and the info string names none. 0 stale.",
+  "resolution_summary": {
+    "resolved": 4,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The change-mode review example cannot execute `verification` under the prescribed seeding rule",
+      "file": "orbit/changes/rc07b-reference-roundtrip/design.md",
+      "line": 24,
+      "marker_source": "external",
+      "classification": "decision_required",
+      "action": "Settled under R-crc-3 (method; the same delegation as walk 1): DESCOPE, not new mechanism (R-crc-6). The review payload's `verification` is exempt from joint coverage BY NAME as the closed list's one GENRE-DEPENDENT key — a fresh trail computes REVIEW, where the gate refuses it — and is named in the requirement's residual; growing the seeding rule into a walk-and-pass fixture was declined, since rc03c's write-gate tests already execute the record. Scenario added; design D1, tasks 3.1/4.1/4.2 and the tasks preamble follow.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07b-reference-roundtrip/specs/orbit-emit-composition/spec.md",
+          "orbit/changes/rc07b-reference-roundtrip/design.md",
+          "orbit/changes/rc07b-reference-roundtrip/tasks.md",
+          "orbit/changes/rc07b-reference-roundtrip/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "resolution": "Descope: `verification` exempt from joint coverage by name (closed genre-dependent list), named in the residual; no walk-and-pass fixture."
+    },
+    {
+      "severity": "WARNING",
+      "title": "The example-key equality contradicts the mandatory `model` key",
+      "file": "orbit/changes/rc07b-reference-roundtrip/specs/orbit-emit-composition/spec.md",
+      "line": 5,
+      "marker_source": "external",
+      "classification": "trivial_fix",
+      "action": "The key equality now EXCLUDES `model` and asserts it present in every example separately; design D1 records why (it sits in the field-set test's engine-owned list yet every payload must carry it).",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07b-reference-roundtrip/specs/orbit-emit-composition/spec.md",
+          "orbit/changes/rc07b-reference-roundtrip/design.md",
+          "orbit/changes/rc07b-reference-roundtrip/tasks.md",
+          "orbit/changes/rc07b-reference-roundtrip/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Two edited references retain the obsolete six-field spine claim",
+      "file": "orbit/changes/rc07b-reference-roundtrip/tasks.md",
+      "line": 17,
+      "marker_source": "external",
+      "classification": "trivial_fix",
+      "action": "Tasks 3.1 and 3.3 replace the review and address-reviews references' \"6-field universal spine\" lists with a pointer to `orbit-conventions` by name (2.1 and 3.4 already did for audit-drift and archive); task 5.2 greps `src/core/templates/` for `6-field`, expecting none — all four sites by grep, not by citation (walk 1's S4 fix had stopped at the two cited).",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07b-reference-roundtrip/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Define how examples attach to individual schema blocks",
+      "file": "orbit/changes/rc07b-reference-roundtrip/specs/orbit-emit-composition/spec.md",
+      "line": 5,
+      "marker_source": "external",
+      "classification": "trivial_fix",
+      "action": "Attachment rule stated: an example belongs to the NEAREST PRECEDING full-record schema block in its reference; an example before every block fails. Scenario added (a field carried only by the other review block's example fails naming the block); task 4.2 carries the mutation.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07b-reference-roundtrip/specs/orbit-emit-composition/spec.md",
+          "orbit/changes/rc07b-reference-roundtrip/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": "can you resolve any of these with looking at best practices for ai development? (walk 1's delegation, applied to this walk's method calls)",
+  "final_assessment": "Four of four resolved. Two warnings (W1, W2) sat entirely in mechanism walk 1 added — the joint-coverage rule — and W3 was walk 1's own cascade miss (S4 fixed at the two cited sites, not by grep). W1 is answered by DESCOPE under R-crc-6: `verification` exempt by name as the one genre-dependent key and named in the residual, instead of growing the seeding rule. W2 excludes `model` from the equality and asserts it separately; S1 states the nearest-preceding-block attachment rule. All edits atomic, swept by grep (one cascade-missed scenario caught and fixed in the sweep); validates --strict.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal rc07b-reference-roundtrip"
+}

@@ -1,0 +1,114 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-06T15:27:33Z",
+  "change": "rc17d-external-runner",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 3,
+      "suggestion": 2
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 547,
+      "title": "Return commit message interpolates external-AI preamble lines into a double-quoted shell string",
+      "recommendation": "Step 9d shows `git commit --only <saved-path> -m \"... > <removed line>\"`: the removed lines are text an external AI wrote, and inside double quotes bash expands backticks and $(...). State the rule as Step 9c does for argv — pass the message with `-F <file>` (write the message to <run-dir>/commit-msg.txt) or single-quote each line with `'\\''` escaping — and make the launch harness (test/integration/external-runner/launch.ts, which passes the message as a spawn argv and so never exercises the shell form) transcribe that form.",
+      "reproduction": "A Codex preamble line such as: I could not write `orbit/changes/x/.orbit-runs/external-system-T.md` (read-only sandbox). Composed as the body shows, `git commit --only p -m \"...\n> I could not write \\`orbit/changes/x/...\\` (read-only sandbox).\"` makes bash run the backtick span as a command (\"No such file or directory\" on stderr) and commits a message with that span deleted; a `$(...)` span in a preamble runs whatever it names."
+    },
+    {
+      "pass": "1",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 485,
+      "title": "Failed-run paste fallback hands over a prompt whose ## Repo names the removed temp worktree",
+      "recommendation": "On the launch route the committed prompt's `## Repo` names `<run-dir>/worktree`; a failed run removes that worktree and then prints the pull invocation for the same prompt, so a manually-run reviewer is told to read a path that no longer exists (or, on another machine, never did). Either have the fallback say the `## Repo` line is superseded by the pull target, or name the repo URL/live path in `## Repo` and pass the worktree only through the runner's working directory/`-C`; add the case to the failed-run row of `A recorded runner launches the external review`."
+    },
+    {
+      "pass": "1",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 557,
+      "title": "Failed-run fallback prints the prompt for paste without the Recommended-session note the modified requirement owes",
+      "recommendation": "The MODIFIED `Recommended-session note in chat output` emits the note 'whenever the prompt is printed for paste' and suppresses it only when a runner launches; the failed-run fallback (Step 9d: 'the Step 8 item 4 pull invocation ... then Step 8 item 5') prints the prompt for paste after a launch but skips item 2. Either add Step 8 item 2 to the fallback, or narrow the requirement to say the failed-run fallback carries no session note (and why)."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "src/core/config-schema.ts",
+      "line": 67,
+      "title": "`orbit config unset externalRunner.preset` leaves a malformed `{}` record",
+      "recommendation": "The admitted nested path is also accepted by `unset`, which deletes `preset` and saves `{\"externalRunner\": {}}` without validation; every later `orbit external runner` then warns 'carries neither preset nor argv'. Either drop the emptied parent on unset of the one nested path, or name the case in the `written by init and edited by orbit config` table."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "src/core/external-runner.ts",
+      "line": 124,
+      "title": "`reachable` resolves a relative argv[0] against the caller's cwd while the launch runs it from the worktree",
+      "recommendation": "`isOnPath` resolves a path-bearing argv[0] (e.g. `./scripts/reviewer.sh`) against process.cwd(), but Step 9c runs the command after `cd <run-dir>/worktree`; an uncommitted or gitignored script reads reachable and then fails to launch. Either refuse a relative path-bearing argv[0] in the shape table or state that a recorded path must be absolute."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 565,
+      "title": "Manual recovery line omits the worktree cleanup, the --launch check and the commit-alone step",
+      "recommendation": "Item 5 of 9e tells the user to run `orbit external save ... --from <run-dir>/return.md` if the session ends first — without `--launch <T0 token>` (so the apply-after-launch refusal is skipped), without the commit-alone step, and without `git worktree remove --force <run-dir>/worktree` (the registered worktree is left behind). Print the T0 token in the recovery line and add the worktree removal."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "The engine half is tight: the save command's eight steps match the requirement line for line, the fence-aware cut, BOM drop, change-name check, staged trail-reader acceptance, the --launch freshness check and the collision bump all hold, and the targeted suites (90 tests) plus `orbit validate --strict` are green. The config path is careful — the merged-shape validation genuinely refuses preset-over-argv. Where it is weaker is exactly where the engine stops and the body starts: the launch route's failure and recovery branches. Every finding sits in a path the happy-path harness does not walk as written — the commit message is built by spawn argv in the harness but by a double-quoted shell string in the body, the failed-run fallback reuses a prompt pointed at a deleted directory, and the session-ended recovery drops the protections the main path carries. Passes 4 and 5 were skipped: orbit/lenses/ is absent. Pass 0 was run as a direct check (tasks 21/22 with 5.5 the declared user-validation handoff, scenario map 49 declared and 0 uncovered, strict validate) and Pass 6 as a source lint plus a residue grep (the only 'Does NOT run the review' residue is the baseline Purpose line task 6.3 owns).",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "6"
+  ],
+  "passes_skipped": [
+    "4",
+    "5"
+  ],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "Walk the three warnings, then let the user-validation run decide the rest. The engine surfaces are correct and tested; the defects are in the body's failure and recovery prose, each a local repair to the external-handoff reference (one quoting rule, one Repo-line rule, one fallback item) that needs no new mechanism. The real Codex run (task 5.5) is the right next evidence, and the commit-message quoting should be fixed before it, since a Codex preamble with inline code is the common case."
+  },
+  "final_assessment": "0 critical, 3 warning, 3 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc17d-external-runner --from-file orbit/changes/rc17d-external-runner/.orbit-runs/review-system-2026-10-06T15-27-33Z.json"
+}

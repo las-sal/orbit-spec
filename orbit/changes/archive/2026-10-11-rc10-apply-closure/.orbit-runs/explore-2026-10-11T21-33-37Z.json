@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-10-11T21:33:37Z",
+  "change": "rc10-apply-closure",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Direction set on Sal's word, framed by orbit's purpose (AIs develop, humans informed): an unchecked user-validation task at the archive seam is OBSERVED (checked with evidence) or FORWARD (a deferral the archive write gate checks for presence); the seam's gate prompt reads every non-passing, non-superseded frontier gate in one prompt; exit (2) revised at exploration; riders R1/R4 out, R3 folded in, R2 open with a leave-out leaning. Three rules accounted (one SOURCED, two DERIVED); three open questions, each with a standing recommendation; Case 3 lists what propose must execute.",
+  "decisions_captured": 7,
+  "open_questions_count": 3,
+  "open_questions_with_recommendation": "3 of 3",
+  "rules_total": 3,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:explore rc10-apply-closure — 7 decisions captured but 3 open questions remain; resolve open questions before formalizing"
+}

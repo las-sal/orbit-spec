@@ -1,0 +1,53 @@
+{
+  "command": "review",
+  "timestamp": "2026-07-21T16:30:30Z",
+  "change": "d3-orientation",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "iteration": 4,
+  "depth": "full",
+  "scorecard": {
+    "completeness": { "critical": 0, "warning": 1, "suggestion": 0 },
+    "correctness": { "critical": 0, "warning": 1, "suggestion": 0 },
+    "coherence": { "critical": 0, "warning": 0, "suggestion": 1 }
+  },
+  "findings": [
+    {
+      "pass": 2,
+      "severity": "WARNING",
+      "file": "src/commands/workflow/status.ts",
+      "line": 336,
+      "title": "--full text render drops an uncited twin-named workstream (missed kind+name site)",
+      "recommendation": "citedNames is name-only (add(entry.name); standalone filters !citedNames.has(w.name)) — with change 'alpha' cited to a stage and staging explore 'alpha' uncited, the explore is silently omitted from the --full TEXT view (neither nested nor standalone), violating the standalone-listing rule and the per-workstream cold-start mandate. JSON is unaffected (dumps workstreams directly), capping severity. This is the one comparison site the iter-2 'identity is kind+name everywhere' resolution missed. Track printed entries by kind:name key (or object identity) and filter standalone against that; add the cited-twin fixture."
+    },
+    {
+      "pass": 5,
+      "severity": "WARNING",
+      "file": "src/core/templates/workflows/apply-change.ts",
+      "line": 138,
+      "title": "Generated bodies still direct bare `orbit status --json` for per-change gate payloads",
+      "recommendation": "Three sites in apply-change.ts (:138 position-readout convention, :228 no-chunking rule, :266 completion-prompt override) and one in archive-change.ts (:193 guardrail) still say bare `orbit status --json` where the per-change gate payload is meant. Post-D3, bare --json returns the orientation shape {sprint, last, next, also, waiting} — no top-level position/gates — and in a multi-change repo the sprint may be a DIFFERENT change, so a literal reader records the wrong change's position/next in emits. The orbit-engine-gates delta scoped exactly this reference class in the SPECS; the template layer wasn't swept (change-completeness residue). Scope all four to `orbit status --change <name> --json`, rebuild + update --force, re-pin the orbit-apply-change/orbit-archive-change parity hashes."
+    },
+    {
+      "pass": 6,
+      "severity": "SUGGESTION",
+      "file": "orbit/changes/d3-orientation/specs/orbit-orientation/spec.md",
+      "line": 206,
+      "title": "Two spec phrasings, one render, for the empty-last line",
+      "recommendation": "Fault-isolation clause (a) says an all-invalid trail's 'last reports no readable emits' while the continuity emit-less scenario says 'last reports no emits yet'; the implementation renders 'no emits yet' in both cases (readValidEmits cannot distinguish never-emitted from all-invalid, and 'no emits yet' is strictly false when unreadable files exist). Before the letter fixes into baseline: unify the spec on one phrase, or render 'no readable emits' when .json files were present but none survived validation."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "title": "All 5 fresh iter-2 resolutions + the full prior cadence",
+      "evidence": "Each verified landed via 8 scratch-fixture workspaces and real renders: degraded-explore next matrix (fork A), one-line degraded rows, the ⟲N spine-valid spec letter, malformed quiescent siblings in WAITING, kind+name identity at the RESOLVED sites (sprint selection, ordering, also-line filters — the finding above is a missed FOURTH site). Byte-identity: printStatusText/gateIndicator diff-identical to pre-D3; --full program deep-equals architecture status --json; rung-3 no-changes output byte-identical. All 7 MODIFIED blocks diffed against live baselines: zero dropped scenarios, only intended edits. Tasks 17/17 honest (issue #3 closed via gh; arc log entry present; CLAUDE.md pointer at :112). 1752/1752 green; strict valid; fingerprints 7/7."
+    },
+    {
+      "title": "Bare-tier top-level last/next nulls; shared.ts's --change error string; frontier '(review)' for mid-propose changes",
+      "evidence": "All verified intended: the omit-never-null rule binds the workstream-entry shape (degraded entries verified omitting); validateChangeExists legitimately serves orbit instructions; the also-line frontier rule is the adjudicated engine-frontier behavior."
+    }
+  ],
+  "iteration_note": "Note: 0 of these findings appeared in prior runs. 3 new this run (system trend: 4 → 7-ext → 5 → 0 → 3). The adversarial pre-archive sweep caught: the FOURTH kind+name comparison site (the --full text citedNames filter — the iter-2 resolution said 'everywhere' and missed it), a template-layer residue of the engine-gates scoping class (the spec deltas scoped it; four generated-body sites weren't swept — the same reference class, different layer), and a two-phrase spec letter for one render. The gate had flipped PASSED at iter 3; this pass carries findings, so the engine recomputes.",
+  "final_assessment": "No critical issues. 2 warnings — the twin-name drop in --full text (a missed comparison site) and four generated-body bare `orbit status --json` references that post-D3 return the wrong shape (and possibly the wrong change) — plus a two-phrase spec-letter suggestion. Everything else verified faithful with byte/deep-equality checks.",
+  "next_recommended": "/orbit:address-reviews d3-orientation --from-file orbit/changes/d3-orientation/.orbit-runs/review-system-2026-07-21T16-30-30Z.json"
+}

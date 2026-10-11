@@ -3,9 +3,7 @@
 ## Purpose
 
 The `/orbit:audit-drift` command — project-wide scan for drift between captured knowledge and reality across four categories: (1) vocabulary residue (renamed/removed terms in non-delta'd docs), (2) lens staleness (perspectives/critical-paths referencing missing capabilities), (3) cross-doc consistency (`CLAUDE.md` / `project.md` / `*_convention.md` claims vs current state), (4) archive coherence (sync-specs propagation failures). Three invocation paths: standalone (user runs when "something feels off"), library call (system-mode review Pass 6), pre-archive (auto-invoked by `/orbit:archive`). Findings roll into the 3-dimension scorecard; final-assessment phrasing varies by invocation context.
-
 ## Requirements
-
 ### Requirement: Audit-drift command available
 
 The system SHALL expose a `/orbit:audit-drift` command that performs a project-wide scan for drift between captured knowledge and reality.
@@ -105,6 +103,59 @@ The system SHALL check recently archived changes (default: last 5; override with
 - **WHEN** Category 4 finds an archived change marked a requirement REMOVED but the requirement still appears in baseline
 - **THEN** a CRITICAL finding is reported
 
+### Requirement: Touchpoints divergence check
+
+Audit-drift SHALL check, for each active change whose design.md carries a `## Touchpoints`
+section and whose apply has committed work, the set difference between the PREDICTED map (the
+section) and the ACTUAL map (the engine-computed diff from the change's first commit) — the two
+representations of one fact the D5 split makes cross-validatable (the D4 scorecard-rollup
+pattern). The set difference itself is ENGINE-COMPUTED: the boot surface's typed
+`touchpoints.actual_unpredicted` / `touchpoints.predicted_unsatisfied` /
+`touchpoints.malformed` fields carry the arithmetic, parsed and matched per
+`orbit-propose-modifications`' Touchpoints ENTRY GRAMMAR (exact path / directory prefix /
+glob, `+`-grouped alternatives — defined THERE, one voice; a file under a predicted directory
+or matching a predicted glob is never false actual-not-predicted drift) — the check consumes
+the computed lists and performs NO matching of its own; only severity judgment stays with the
+reviewer. Paths in `actual_unpredicted` are surfaced as scope-drift findings (WARNING when
+substantive source paths, SUGGESTION for tests/docs riding along); `predicted_unsatisfied`
+entries surface at pre-archive context as SUGGESTION (the plan overshot — informational);
+each `malformed` entry is a SUGGESTION naming the line (the engine already excluded it from
+the arithmetic). The category gate is `touchpoints.actual !== null`: changes without the
+section or without committed apply work are skipped silently INCLUDING their `malformed`
+entries — boot surfaces those pre-apply as parse diagnostics for the authoring flow, but
+pre-capability changes are never category-5 findings.
+
+#### Scenario: Actual exceeds predicted
+
+- **WHEN** a change's diff touches `src/core/gates.ts` but the design.md Touchpoints section never names it
+- **THEN** audit-drift reports a scope-drift finding naming the file and both maps' sources
+
+#### Scenario: Pre-capability change skipped
+
+- **WHEN** an active change's design.md has no Touchpoints section
+- **THEN** the check is skipped for that change with no finding and no warning
+
+### Requirement: Emit attestation cross-check
+
+Audit-drift SHALL cross-check, for each staging exploration with emits, the most recent explore
+emit's engine-computed counts (`decisions_captured`, `open_questions_count`,
+`open_questions_with_recommendation`) against a fresh parse of the CURRENT `explore.md`
+(leak-hardening layer 3's closing loop — D-arc Stage D5). A mismatch is a WARNING naming both
+values and the file: either the file changed after the last boundary emit (a session ended
+without its sweep/emit) or an emit was produced outside the engine surface. Open-question
+entries missing the `Standing recommendation:` slot are reported per the five-section format
+(SUGGESTION — the explore body corrects them on next touch).
+
+#### Scenario: Counts drifted since the last emit
+
+- **WHEN** `explore.md` carries 5 decisions but the newest explore emit records `decisions_captured: 3`
+- **THEN** audit-drift reports a WARNING naming both counts and the staleness interpretation (un-emitted session or out-of-surface emit)
+
+#### Scenario: Missing standing-recommendation slot
+
+- **WHEN** an open-question entry has no `Standing recommendation:` line
+- **THEN** audit-drift reports a SUGGESTION naming the entry
+
 ### Requirement: Findings rolled into 3-dimension scorecard
 
 The system SHALL roll the four categories into the standard 3-dimension scorecard.
@@ -164,7 +215,7 @@ The system SHALL write a JSON run summary for **standalone** invocations only, p
 #### Scenario: Change-scoped standalone summary written
 
 - **WHEN** `/orbit:audit-drift <change-name>` completes
-- **THEN** a JSON summary is created at `orbit/changes/<change-name>/.orbit-runs/audit-drift-<TS>.json` with command name, timestamp, findings summary by category and severity, and finding titles
+- **THEN** a JSON summary is created at `orbit/changes/<change-name>/.orbit-runs/audit-drift-<TS>.json` carrying the payload `orbit-run-summary-emit`'s `Audit-drift standalone recommendations` owns, composed by `orbit emit audit-drift`
 
 #### Scenario: Project-wide standalone summary written
 
@@ -238,3 +289,97 @@ recommendation_options: [
 
 - **WHEN** an audit-drift category pass would emit a finding with `recommendation_options` where any entry has missing or empty `label` or `body`
 - **THEN** the producer SHALL either populate the field with a meaningful value, drop the malformed entry (and re-check the ≥ 2-entry rule), or refuse to emit. Equivalent to the orbit-review producer-side enforcement scenario for entry shape.
+
+### Requirement: Missing consent-record check in archive coherence
+
+The Category 4 (archive coherence) scan SHALL check consent-scoped lifecycle emits (apply,
+archive) for the `consent` field required by `orbit-lifecycle-consent`: a post-capability emit
+missing the field is a WARNING finding ("lifecycle emit lacks consent record — an unconsented or
+contract-violating transition may have occurred"). This is the empirical tripwire behind the
+D-arc's harness-hooks deferral (R-d-2): its firing is the named re-entry trigger for hard
+enforcement. Pre-capability emits are EXEMPT. **Era boundary mechanism (three-tier, per change — per
+`orbit-lifecycle-consent`'s `Consent-era metadata marker` requirement)**: `schema_version >= 3`
+in the change's `.openspec.yaml` → ALL its apply/archive emits are checked; `consent_era_from`
+present (a straddler stamped at first post-capability touch) → only emits with TS at-or-after
+the stamp are checked; NEITHER field → fully pre-capability, exempt. The metadata markers, not
+schema-name resolution and not any timestamp constant, are the authority — resolving the schema
+NAME to the current built-in definition would misclassify old archives as v3.
+
+#### Scenario: Post-capability emit without consent flagged
+
+- **WHEN** the audit scans an `apply-*.json` or `archive-*.json` that the three-tier rule marks
+  as checked (change has `schema_version >= 3`, OR has `consent_era_from` and the emit's TS is
+  at-or-after it), and the emit lacks the `consent` field
+- **THEN** a WARNING finding names the emit path and the missing field
+
+#### Scenario: Pre-capability emits exempt
+
+- **WHEN** the audit scans lifecycle emits of changes whose metadata lacks both `schema_version`
+  and `consent_era_from` (e.g. the C1/C2 archives, scaffolded before the fields existed and
+  never touched by a consent-scoped body)
+- **THEN** no finding is raised for the absent field
+
+#### Scenario: Straddler checked from its stamp onward
+
+- **WHEN** the audit scans a change whose metadata lacks `schema_version` but records
+  `consent_era_from` (a straddler stamped at first post-capability touch), and an `apply-*.json`
+  or `archive-*.json` whose filename `<TS>` token is at-or-after the stamp lacks the `consent`
+  field
+- **THEN** the WARNING finding is raised for that emit, while the change's pre-stamp emits raise
+  nothing
+
+### Requirement: Architecture staleness check
+
+The Category 3 (cross-doc consistency) scan SHALL additionally check parseable architecture docs
+against engine-computed reality — "a stale architecture doc is the most expensive drift there is"
+(D-arc Stage D2): (a) prose in a stage section that contradicts the stage's computed state (e.g.
+"awaits the user's propose" while a citing change is active) → WARNING; (b) a `Complete:` mark — ratified `[x]` or ended `[~]` — on a stage whose observed state the
+engine's composition rule renders INCONSISTENT (the table in `orbit-architecture-engine`'s
+`Computed stage state with completion-as-ratification`; this check consumes that rule and
+enumerates none of its observations) → CRITICAL (the completion claim is falsified or unsupported
+by observation; the ended claim is contradicted by live work); (c) a hand-written state line (`*State:*`
+form) in a parseable doc → WARNING (state is computed, never stored — flag for deletion);
+(d) dangling `architecture:` citations in change/explore metadata (either level) → CRITICAL
+(change citations also fail `orbit validate <change>`; explore citations have no validating
+surface and are caught ONLY here). Check (d)
+scans change/explore metadata INDEPENDENTLY of doc presence — a typo'd `doc:` name can itself
+create the no-parseable-docs condition, and must not suppress its own detection. Only the
+doc-side checks (a)–(c) are skipped when no parseable architecture docs exist, with the note
+`no parseable architecture docs; skip architecture staleness (doc-side)`. Architecture content is NEVER flagged for having originated
+outside an architect session (flow-entry ruling).
+
+#### Scenario: Falsified completion mark flagged
+
+- **WHEN** the audit scans a doc whose stage carries `Complete: [x]` while an active change cites that stage
+- **THEN** a CRITICAL finding names the stage, the mark, and the citing change
+
+#### Scenario: Ended mark contradicted by live work flagged
+
+- **WHEN** the audit scans a doc whose stage carries `Complete: [~]` while an active change or a live explore cites that stage
+- **THEN** a CRITICAL finding names the stage, the mark, and the live citing artifact
+
+#### Scenario: Ratified mark with only a concluded exploration is flagged as a conclusion
+
+- **WHEN** the audit scans a doc whose stage carries `Complete: [x]` and the stage's only citer is a concluded exploration
+- **THEN** a CRITICAL finding names the stage, the mark, and the concluded exploration — described as a conclusion that is not evidence the criteria were met, never as live work
+
+#### Scenario: Ended mark on a premised stage is not flagged
+
+- **WHEN** the audit scans a doc whose stage carries `Complete: [~]` and no artifact cites it
+- **THEN** no finding is raised — the engine renders `ended`, and the check consumes that rule
+
+#### Scenario: Hand-written state line flagged
+
+- **WHEN** a parseable doc contains a `*State:*`-form hand-written state line
+- **THEN** a WARNING finding recommends deleting it in favor of the computed readout
+
+#### Scenario: No architecture docs, doc-side skip only
+
+- **WHEN** the repo has no parseable architecture docs and no change/explore metadata carries an `architecture:` citation
+- **THEN** the doc-side checks are skipped with a note and no findings are raised
+
+#### Scenario: Dangling citation detected even with zero parseable docs
+
+- **WHEN** the repo has no parseable architecture docs BUT a change's metadata cites `architecture: {doc: missing-doc, stage: x}`
+- **THEN** check (d) still runs and raises the CRITICAL dangling-citation finding (the skip never suppresses citation scanning)
+

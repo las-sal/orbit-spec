@@ -24,10 +24,19 @@ export const WORKFLOW_TO_SKILL_DIR: Record<WorkflowId, string> = {
   'onboard': 'orbit-onboard',
   'propose': 'orbit-propose',
   'review': 'orbit-review',
-  'review-external': 'orbit-review-external',
   'address-reviews': 'orbit-address-reviews',
   'audit-drift': 'orbit-audit-drift',
+  'architect': 'orbit-architect',
 };
+
+/**
+ * Artifacts RETIRED from the generated surface (D5: the standalone review-external
+ * skill/launcher merged into review's `--reviewer` axis). Update reconciliation consults
+ * these so PRE-EXISTING surfaces converge — retirement is a first-class transition, never
+ * an unknown directory left behind. Grow these lists on any future retirement.
+ */
+export const RETIRED_SKILL_DIRS: readonly string[] = ['orbit-review-external'];
+export const RETIRED_COMMAND_IDS: readonly string[] = ['review-external'];
 
 function toKnownWorkflows(workflows: readonly string[]): WorkflowId[] {
   return workflows.filter(
@@ -125,6 +134,14 @@ export function hasToolProfileOrDeliveryDrift(
       }
     }
 
+    // A retired skill dir lingering on a pre-existing surface is drift (D5): it keeps a
+    // contradicting workflow body loadable, so plain update must reconcile it away.
+    for (const dirName of RETIRED_SKILL_DIRS) {
+      if (fs.existsSync(path.join(skillsDir, dirName))) {
+        return true;
+      }
+    }
+
     // Deselecting workflows in a profile should trigger sync.
     for (const workflow of ALL_WORKFLOWS) {
       if (desiredWorkflowSet.has(workflow)) continue;
@@ -157,6 +174,15 @@ export function hasToolProfileOrDeliveryDrift(
     for (const workflow of ALL_WORKFLOWS) {
       if (desiredWorkflowSet.has(workflow)) continue;
       const cmdPath = adapter.getFilePath(workflow);
+      const fullPath = path.isAbsolute(cmdPath) ? cmdPath : path.join(projectPath, cmdPath);
+      if (fs.existsSync(fullPath)) {
+        return true;
+      }
+    }
+
+    // A retired launcher lingering on a pre-existing surface is drift (D5).
+    for (const commandId of RETIRED_COMMAND_IDS) {
+      const cmdPath = adapter.getFilePath(commandId);
       const fullPath = path.isAbsolute(cmdPath) ? cmdPath : path.join(projectPath, cmdPath);
       if (fs.existsSync(fullPath)) {
         return true;

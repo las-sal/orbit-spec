@@ -1,0 +1,76 @@
+{
+  "command": "archive",
+  "timestamp": "2026-09-28T18:30:16Z",
+  "change": "rc13c-propose-consumes-mechanism",
+  "kind": "lifecycle",
+  "model": "claude-fable-5-1",
+  "final_assessment": "Archived rc13c-propose-consumes-mechanism to orbit/changes/archive/2026-09-28-rc13c-propose-consumes-mechanism/ through a COMPUTED PASSED review-system gate — the fourth rc-stage through one, the third through the blind pair (fresh 0C/4W/3S and external GPT-5 Codex 2C/2W/0S on the pushed apply commit, blind to each other, zero CRITICAL overlap; walked in two logs; an in-context confirm 0C/0W/2S applied in flow). Specs synced 6/6 byte-verified (1 ADDED, 5 MODIFIED in orbit-propose-modifications); fingerprints 5/5 verified; pre-archive audit 0 CRITICAL / 1 WARNING / 1 SUGGESTION; no unresolved markers; user-typed, consent user-invoked, zero consent prompts. Shipped: propose refuses a concluded staging directory in Step 0 (and refuses a concluded directory beside an active change before any prompt), naming the conclusion date and the live Re-entry: slot; naming inference counts live directories only; Step 0a checks the six sections by a checked mirror held to the owner by a parity test; Step 0b interpolates the Decision-entry AND Mechanism-entry productions from the grammar module; Step 0c.6 carries a five-row PARTITION over owner state × accounting state with accounted decidable from the file, the four CLOSED shapes with their BOUNDED residual stated once in the requirement, and the Mechanism → artifacts record with its no-engine-record header. Exit (1)-(3) measured as met on the archived tree. Task 4.4 remains the user-validation handoff to the next propose; 4.5 and 4.6 executed in flow as Q-crc-27 and Q-crc-28.",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": [
+      "orbit-propose-modifications"
+    ],
+    "added": 1,
+    "modified": 5,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
+  "user_decision": "proceeded_with_no_critical",
+  "consent": "user-invoked",
+  "warnings": [
+    "Archived with 1 incomplete task: 4.4 (user-validation — the next live /orbit:propose produces the Mechanism → artifacts record unprompted; observable only on the next change). Sal confirmed proceed at the archive prompt.",
+    "Task 4.5 (the read-only print question) and 4.6 (the retirement-class sweep) were AT-ARCHIVE NOTES, executed in flow: Q-crc-27 and Q-crc-28 appended to the program doc.",
+    "The in-context system confirm's two SUGGESTIONs (the proposal's first bullet lacking the both-exist refuse; 'the pin moves once' after it moved twice) were applied in flow before the sync — a seam correction, formed against no pass.",
+    "Pre-archive audit: 0 CRITICAL; 1 WARNING (cross-doc: orbit-conventions lines 980/994/1022 and the explore body lines 610/657 still call this stage a pending follow-on — handed to the sweep by Q-crc-28); 1 SUGGESTION (Touchpoints predicted_unsatisfied: the baseline spec path, satisfied by this sync). Categories 2 and 6 skipped (no lenses; no staging explorations).",
+    "The regenerated local orbit-propose skill LAGGED the template between the external-walk body edits and the in-context confirm (the walk script aborted before its chained build; update --force ran against a stale dist). Gitignored, never tracked; caught by re-diffing the render against the template and rebuilt. Recorded because it is the shape task 4.3 exists to catch."
+  ],
+  "judgements": [
+    {
+      "kind": "readiness",
+      "disposition": "ready",
+      "ratified_by": "ai",
+      "formed_against": [
+        "2026-09-26T18-17-21Z",
+        "2026-09-27T01-49-30Z",
+        "2026-09-28T15-18-12Z",
+        "2026-09-28T15-23-42Z"
+      ],
+      "reasoning": "Two blind pairs' worth of independent reading — fresh and external on the proposal, fresh and external on the shipped tree — with zero CRITICAL overlap in either pair and every substantive finding walked to zero across five logs. The mechanism that survived is smaller and more honest than the one the exploration settled: the consume-time emit and its cross-check are gone, the partition was repaired twice and then executed by the fresh half against the parser with every edge case, the grammar ships in the body so an adopter's skill can decide 'accounted' from the file, and no Step 0 path can delete a concluded record. The exit criteria measure as met on the archived tree: (1) the Mechanism row and the pointer-not-number scenario; (2) D-rc13c-5's two residual lines verbatim in the ADDED requirement with the design's Risks pointing at it; (3) the refuse position-tested and the re-entry requirement named, not restated. The gate computed PASSED on resolution; the residuals below say what that does and does not mean.",
+      "accepted": [
+        {
+          "claim": "PASSED means every finding was resolved, not that an independent pass stood clean on the final tree: the partition, the both-exist refuse and the grammar mirror were rewritten at walks and read clean only by the in-context confirm.",
+          "why": "The blind pair executed the partition against the parser and traced every Step 0 path before the last repairs; the confirm re-read the rewritten cells against the parser's states and the rendered body. rc07's distinction, carried rather than spent on a further pass (R-crc-11(h))."
+        },
+        {
+          "claim": "Five living surfaces still describe this stage as a pending follow-on (orbit-conventions 980/994/1022; explore body 610/657), so the conventions baseline asserts facts about propose the shipped tree contradicts.",
+          "why": "Outside this change's one capability; the same class rc13a and rc13b deferred; now tracked as Q-crc-28 with a standing recommendation, and each sentence is history-shaped rather than a rule a reader would execute."
+        },
+        {
+          "claim": "Task 4.4 is unobserved: whether a proposing AI produces the Mechanism → artifacts record unprompted, with the no-engine-record header, can only be seen on the next live propose.",
+          "why": "The record's columns, header and pre-move grep are pinned by fidelity and parity tests; the behaviour is the body's to follow and the next stage's propose is the measurement."
+        },
+        {
+          "claim": "An adopter's propose decides 'accounted' by full conformance to the mirrored grammar and names the failing clause, where the readout would name a state word — two vocabularies for one fact until a read-only print exists.",
+          "why": "Q-crc-27 carries the print with a standing recommendation; conformance is decidable from the grammar alone, and the record says which vocabulary it used."
+        },
+        {
+          "claim": "explore.md's D-rc13c-2 and D-rc13c-8 read as live rules to any parser of the archived file (D-rc13c-8 as an open domain), though both were revised or superseded at the walks.",
+          "why": "The exploration record persists unchanged by rule; the design's Decisions section is the live statement and its record names the revisions."
+        }
+      ]
+    }
+  ],
+  "next_recommended": "Change archived. Run /orbit:new or /orbit:explore to start the next change, or /orbit:audit-drift for a project-wide drift check."
+}

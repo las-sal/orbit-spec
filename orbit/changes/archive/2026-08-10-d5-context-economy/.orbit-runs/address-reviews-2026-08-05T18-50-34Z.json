@@ -1,0 +1,43 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-08-05T18:50:34Z",
+  "change": "d5-context-economy",
+  "final_assessment": "The single iter-8 finding walked and resolved: task 2.2's trail-location enumeration extended to change/explore/architecture/archived/project with the archive emit's post-move landing (lexically-greatest scan + not-found error) added to the tested set. Strict validation green.",
+  "next_recommended": "/orbit:review --as proposal --fresh d5-context-economy",
+  "kind": "editorial",
+  "model": "claude-fable-5",
+  "source": "from-file",
+  "source_path": "orbit/changes/d5-context-economy/.orbit-runs/review-proposal-2026-08-05T18-30-37Z.json",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 1
+  },
+  "pushback_verification": "1 verified against current state; 0 stale suppressions.",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "SUGGESTION",
+      "title": "Task 2.2's trail-location enumeration omits the archived-trail branch",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/tasks.md",
+      "line": 29,
+      "classification": "trivial_fix",
+      "action": "Task 2.2's parenthetical extended to (change/explore/architecture/archived/project) with the archive emit's post-move landing — lexically-greatest orbit/changes/archive/*-<name>/ scan + clean not-found error — named as tested.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": []
+}

@@ -1,0 +1,81 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-01T18:41:51Z",
+  "change": "rc16-retirement-sweep",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc16-retirement-sweep/.orbit-runs/review-system-2026-10-01T18-38-25Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-01T18-38-25Z",
+  "latest_apply_token": "2026-10-01T18-03-47Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 1
+  },
+  "pushback_verification": "All 3 findings verified: the tree is unchanged since the in-context pass wrote them (clean working tree, no commit between), and each cited line was re-read before editing. 0 stale. Sal's 'walk all' settled scoping; every finding was obvious-fix lane.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The proposal's Concluded-outcome bullet still names orbit-run-summary-emit's maturity requirement as the row-render owner the walk re-pointed to orbit-orientation",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc16-retirement-sweep/proposal.md",
+      "line": 26,
+      "classification": "trivial_fix",
+      "action": "The bullet's owner list now reads '(`orbit-architecture-engine`'s state requirement; `orbit-orientation`'s sourcing requirement — the row's render of the concluded rung; `orbit-propose-modifications`' Step 0 refuse)', matching the delta's paragraph at specs/orbit-conventions/spec.md:74. The maturity requirement stays named two sentences earlier for A1/A2, where it is the owner.",
+      "ratified_via": "chat",
+      "resolution": "the proposal's middle owner moved to orientation's sourcing requirement",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The proposal says A4's Kind: bullet points at the readout's maturity requirement; the delta has pointed internally at the grammar requirement since the proposal walk and now carries the bare pointer",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc16-retirement-sweep/proposal.md",
+      "line": 28,
+      "classification": "trivial_fix",
+      "action": "Both sites rewritten: the What Changes sentence now says the `Kind:` bullet 'points INTERNALLY at the grammar requirement that states the limit (`Mechanism entry grammar and accounted closure`, R-crc-10), no longer at a readout'; the Capabilities entry now says the phrase was 'replaced by a bare internal pointer at the grammar requirement'. Residue grep for 'readout's requirement' / 'readout whose limit' / 'maturity requirement' over proposal and design → only design row A4's history note, which records the earlier correction and is correct as written.",
+      "ratified_via": "chat",
+      "resolution": "both proposal sentences now describe the internal pointer",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "D-rc16-2's owner list is one owner short after walk 1, and its 'the concluded rung' parenthetical now reads as the row's render",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc16-retirement-sweep/design.md",
+      "line": 42,
+      "classification": "trivial_fix",
+      "action": "D-rc16-2 now names five owners: the maturity requirement's parenthetical narrowed to '(the rung that surfaces a residual; the Concluded rung's text)' and `orbit-orientation`'s `Next-recommendation sourcing is time-shifted, never live` added as '(the row's render of the concluded rung — the fifth owner, named since the system blind-pair walk)'. The decision's enumeration now matches every pointer the deltas and body carry.",
+      "ratified_via": "chat",
+      "resolution": "fifth owner added; maturity parenthetical narrowed to the rung's text",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "3 of 3 in-context findings resolved (2 WARNING, 1 SUGGESTION; 0 stale), all obvious-fix lane, all in the record layer — the proposal's two sentences and the design's D-rc16-2 owner list now describe the pointers the deltas and body actually carry (orientation's sourcing requirement for the row's render; the internal grammar-requirement pointer for A4). No delta, body, test or pin moved; validate --strict valid. The cascade-stops-one-artifact-short shape the pass named is closed at the proposal.",
+  "iteration": 5,
+  "next_recommended": "/orbit:archive rc16-retirement-sweep — user-invoked"
+}

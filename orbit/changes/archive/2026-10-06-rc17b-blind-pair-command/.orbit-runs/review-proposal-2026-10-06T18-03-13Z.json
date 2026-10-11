@@ -1,0 +1,161 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-06T18:03:13Z",
+  "change": "rc17b-blind-pair-command",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 3,
+      "suggestion": 2
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 2
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    }
+  },
+  "findings": [
+    {
+      "pass": "4",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "specs/orbit-engine-gates/spec.md",
+      "line": 69,
+      "title": "The presented class becomes blind-pair but the baseline model-hint rule still says an invoked slot's class is fresh or external",
+      "recommendation": "orbit/specs/orbit-engine-gates/spec.md:748-750 (requirement `Single-voiced canonical-next computation`, unchanged by this change) says: 'For an `invoked` slot, the slot entry read is the CLASS of the presented command (`fresh` or `external`), so a hint describes the command it garnishes'. The delta (lines 69-70) and task 1.1 make the presented class `blind-pair`, so that sentence goes false at archive and D9's capability count ('found no fifth') missed a restatement inside a capability already in scope. The widening also gives the `models:` key `blind-pair` two meanings: on a v4 `blind-pair` cadence slot it garnishes the fresh (or missing-class) single invocation, and on a v5 `invoked` slot it would garnish the pair command, which launches two different reviewers — one hint cannot describe both halves. Add a MODIFIED block for `Single-voiced canonical-next computation` (or reduce its parenthetical to a pointer at `The first review slot covers what the user invoked`) and state what a `blind-pair` hint means on the pair command; update the proposal's and D9's requirement count (nine, not eight).",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Modify `Single-voiced canonical-next computation` to read the presented class (`fresh`, `external` or `blind-pair`) and state that a `blind-pair` hint garnishes the pair command as a whole."
+        },
+        {
+          "label": "B",
+          "body": "Keep the hint key on the pair command unread (presented class `blind-pair`, but no hint garnish for it), and say so in the same modified sentence, so the v4 slot meaning of the key is not overloaded."
+        }
+      ]
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-review-external/spec.md",
+      "line": 29,
+      "title": "A failed RE-RUN's paste fallback sends the reviewer to the re-run's handoff commit, which holds the committed fresh partner",
+      "recommendation": "The launch requirement's failure row (line 29, unchanged in substance) and the handoff reference's failed-run paragraph print 'read the repository ... at commit <handoff-sha> instead'. On a re-run of a pair's missing external half the handoff commit is the RE-RUN's own, which the reviewed-state table (line 115) itself says 'holds the committed fresh partner'. So the one route this change makes physically blind falls back, on failure, to telling a pasted reviewer to read exactly the tree D-rc17b-4 exists to avoid. Add a row (or qualify the failure row) so a pair half's paste fallback names the pair's REVIEWED COMMIT, as the pasted rows at lines 114 and 116 already do, plus a scenario and a task under group 4 (4.1-4.4 do not cover the fallback line)."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "specs/orbit-review-external/spec.md",
+      "line": 57,
+      "title": "'No recorded runner is today's handoff, byte for byte' contradicts the pasted re-run's changed `## Repo` line",
+      "recommendation": "The kept scenario `No recorded runner is today's handoff` (lines 54-57) says that `--reviewer external` with no `externalRunner` record writes the files of the handoff before this requirement, byte for byte. The ADDED requirement's 're-run of the missing external half, pasted' row (line 116) and scenario `A pasted pair half names the reviewed commit` change that same invocation's prompt `## Repo` line whenever the gate reports `openPair: {missing: \"external\"}`. Two scenarios in one capability now give different outputs for the same input. Qualify the scenario's WHEN with 'and the gate reports no `openPair` for the mode' (the third scenario of the ADDED requirement already uses that guard), and make task 4.4's byte-identical check use the same guard."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-review-external/spec.md",
+      "line": 13,
+      "title": "Which token a re-run passes to `orbit external save --launch` is unstated, and the two readings diverge after an apply",
+      "recommendation": "Line 12-13 says the return is saved 'passed the launch's T0 token as `--launch`'. On a re-run there are two T0s: the pair's launch L and the re-run's own (pair-less) T0. The exploration chose the re-run's own token (explore.md:105) but the spec does not carry the choice. The readings diverge when an apply lands between L and a fresh member that landed after it (possible when a pair's two halves both failed and `--fresh` was run later): `openPair: {missing: \"external\"}` stands, so the re-run adds its worktree at BASE (pre-apply). With the re-run's token, the save accepts a review of a superseded state, against fresh evidence from the post-apply state; with L, every re-run is refused and the next re-run hits the same refusal, because the gate keeps presenting the missing half. State the token explicitly and the apply-between case.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "A re-run passes `--launch L`, and a re-run is not detected (single external at its own handoff commit) when an apply token is later than L; the pair ends unfillable as the stale-member row already describes."
+        },
+        {
+          "label": "B",
+          "body": "A re-run passes its own T0 token, and the reviewed-state requirement names the apply-between case as part of its named limit."
+        }
+      ]
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-review-external/spec.md",
+      "line": 120,
+      "title": "The launched half's isolation is claimed physical, but the fresh half's uncommitted pass file sits in the live checkout while the runner runs",
+      "recommendation": "Closure says 'physical isolation reaches only the launched routes', and the residual kind names only a pasted AI pulling HEAD and a fresh re-run reading the live checkout. On the first-run launched route, the fresh subagent emits its pass file into the live checkout's `.orbit-runs/` (row 5c) while the runner may still be running (row 6), and the runner's worktree carries a `.git` file naming the live repository's absolute gitdir. A runner whose sandbox permits reads outside its working directory (a read-only sandbox commonly permits reads anywhere) can reach that file. The worktree fixes the TREE the runner is pointed at; it does not confine the reader. Since the gate counts the pair blind regardless, the residual line is the only record: widen the residual kind to 'a launched runner that reads outside its worktree', and narrow the closure sentence to 'the launched routes fix the tree the runner is pointed at'."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "specs/orbit-review/spec.md",
+      "line": 114,
+      "title": "'Token order, commit order and the residual base agree on every run' holds only on the launched route",
+      "recommendation": "On the paste route (row 5b) the external AI chooses its own file token and commits and pushes its return itself, possibly before the fresh half's commit. The rationale paragraph here and design D2 say the order is fixed 'on every run'. Scope the claim to the launched route, or say that on the paste route the order follows the external AI's own commit."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "specs/orbit-review/spec.md",
+      "line": 97,
+      "title": "Row 5b says step 3 satisfies the snippet's preflight, but step 3 allows a failed push",
+      "recommendation": "Row 3 lets the run continue after a failed push or with no remote; row 5b and design D3 then say step 3 'satisfies its preflight', which is true only when the push landed. Say that the snippet prints whichever of its outputs the handoff push's actual state selects (the attestation and pull line, or the handoff-blocked line)."
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "tasks.md",
+      "line": 3,
+      "title": "Task 1.1 names `commandForClass`, but the invoked slot's command is rendered by `canonicalNextForReviewed`'s local `forClass`",
+      "recommendation": "In src/core/artifact-graph/gates.ts the `invoked` presentation reaches the command through `canonicalNextForReviewed` (`forClass(ev.invoked.cls)`, typed `'fresh' | 'external'`, falling through to the fresh command for any other value). `commandForClass`'s `invoked` case is reached only when no presentation was computed. Name `forClass` in task 1.1 and the Touchpoints line, so widening only `commandForClass` cannot leave the default row printing the fresh command."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "specs/orbit-review/spec.md",
+      "line": 99,
+      "title": "Row 6's 'never returns' has no decider",
+      "recommendation": "A hung subagent or runner is MISSING only when someone decides it is. Name that decider (the user stopping the background task, or the runner's own exit), so an implementation does not invent a timeout."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "The step order is careful and the core blindness move (defer the save past the fresh commit) is sound. The pattern in what remains is the pair's EDGES: the re-run route was designed for its success path, and the failure fallback, the paste-route scenario guard and the save token were inherited from rc17d's single-external text without being re-read for the pair. The one baseline miss is in a capability already in scope: the hint-key sentence in the canonical-next requirement, a restatement of the presented-class rule this change widens. Probed: the delta engine-gates block against the baseline by diff, the gate code's presentation path, the external-save token assignment (save-time, so the launched route's fresh-then-external order holds), and the handoff reference's failed-run text.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "Nothing here breaks the pair's main path. The launched first run is ordered correctly and the engine change is small. The open items are edge rows and one missed restatement, each a bounded edit to an artifact already in scope. Repair them in the walk, and do not reopen the design."
+  },
+  "final_assessment": "0 critical, 5 warning, 4 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc17b-blind-pair-command --from-file orbit/changes/rc17b-blind-pair-command/.orbit-runs/review-proposal-2026-10-06T18-03-13Z.json"
+}

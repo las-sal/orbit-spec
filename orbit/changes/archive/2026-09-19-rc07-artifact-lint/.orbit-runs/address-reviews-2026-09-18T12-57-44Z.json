@@ -1,0 +1,164 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-18T12:57:44Z",
+  "change": "rc07-artifact-lint",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc07-artifact-lint/.orbit-runs/review-system-2026-09-17T20-53-54Z.json",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "walk_mode_source": "flag",
+  "input_findings_summary": {
+    "critical": 2,
+    "warning": 4,
+    "suggestion": 4
+  },
+  "pushback_verification": "RECORD CORRECTION, no re-litigation: every resolution below is the one applied on 2026-09-17 and verified then; the fixes are in the tree and unchanged (2197 tests green, validate --all --strict clean). What was wrong was the RECORD. The prior log at 2026-09-17T21-31-37Z carried hand-RETYPED finding titles — abbreviated, em-dashes dropped, backticks lost — so not one of its six substantive entries matched the gate's (title, file) key, and the pass read as entirely uncovered while the log claimed 10 of 10 resolved. Titles here are copied programmatically from the pass JSON, with each pairing guarded on the file field and severity before the key is taken. Verified after writing: 6 of 6 substantive findings covered, 0 uncovered.",
+  "resolution_summary": {
+    "resolved": 10,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "The inertness instrument reads the LIVE change directory, so `npm test` breaks deterministically at this change's own archive — and the at-archive note does not cover it",
+      "marker_source": "internal-review",
+      "file": "test/core/source-lint.test.ts",
+      "line": 111,
+      "classification": "decision_required",
+      "action": "Applied option B: the test now derives its subject from resolveFileDomain(process.cwd()) instead of naming orbit/changes/rc07-artifact-lint, asserts every living document parses to zero malformed markers, counts the in-code-region tokens it found, and pins the only file carrying live spans as CLAUDE.md. It survives the archive untouched and covers the whole living project rather than one directory.",
+      "ratified_via": "chat",
+      "resolution": "Option B settled under R-crc-3 and applied under the user's blanket directive. Chosen over A (retarget in the archive commit) because A pins an instrument to a dated directory name forever, and over C (retire) because the synced baseline spec keeps carrying the syntax prose, so the assertion still has a live subject. B is smaller than what it replaces, which is the mitigation for writing new mechanism inside a walk.",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "RETARGET at archive via the §5 at-archive note"
+          },
+          {
+            "label": "B",
+            "body": "MAKE IT LOCATION-INDEPENDENT now, deriving the subject from the lint's own domain"
+          },
+          {
+            "label": "C",
+            "body": "RETIRE at archive with a recorded reason"
+          }
+        ],
+        "ratified_option": "B"
+      }
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "A tracked markdown file whose path git quotes (any non-ASCII or special character) is silently dropped from the domain, and the catch that drops it mislabels the cause",
+      "marker_source": "internal-review",
+      "file": "src/core/source-lint.ts",
+      "line": 106,
+      "classification": "trivial_fix",
+      "action": "MERGED with the external pass's SUGGESTION at the same line. Applied option A: `git ls-files -z -- '*.md'`, split on NUL, paths never trimmed — which closes the non-ASCII case and the newline/space case together. The mislabelling catch was fixed alongside (see the read-failure finding). Regressions: a tracked dé-café.md and a ' spaced .md' both enter the domain and fail correctly."
+    },
+    {
+      "severity": "WARNING",
+      "title": "The inline-code mask scans across blank lines, so two unrelated stray backticks in different paragraphs pair up and silently neutralize every marker between them",
+      "marker_source": "internal-review",
+      "file": "src/core/markdown-fence.ts",
+      "line": 95,
+      "classification": "trivial_fix",
+      "action": "Groups now break at BLANK lines as well as fences, because a code span is an inline construct that cannot cross a block boundary. Reproduced first. Regression added; the spec's inline-code decision table gained the row, so spec and implementation no longer agree on being wrong together."
+    },
+    {
+      "severity": "WARNING",
+      "title": "The headline instrument — 'the four real defects must FAIL' — asserts `String.prototype.includes` directly and never touches the lint, so it cannot detect a regression in the product",
+      "marker_source": "internal-review",
+      "file": "test/core/source-lint.test.ts",
+      "line": 33,
+      "classification": "trivial_fix",
+      "action": "MERGED with the external pass's identical finding at :31 — resolved once, recorded on both halves. The four defects now reach runSourceLint (three) and the newly-exported checkSpanAgainstValue via a real parsed span (the compound one)."
+    },
+    {
+      "severity": "WARNING",
+      "title": "The empty-domain reason reaches stderr only, so `--json` reports `failed: 0` over a run that read no files at all",
+      "marker_source": "internal-review",
+      "file": "src/commands/validate.ts",
+      "line": 198,
+      "classification": "trivial_fix",
+      "action": "Added a third source key, source_domain: {files_scanned, reason}, gated on a present registry alongside the other two so the no-registry byte-identity promise is untouched — re-verified against the pre-change HEAD build after the edit. files_scanned counts files actually READ, which also gives the previously-unread field its consumer. Spec, design D5b and docs/cli.md all updated; the documented example was regenerated from a real run after I first wrote an invented value into it."
+    },
+    {
+      "severity": "WARNING",
+      "title": "D1 rejected a new verb because existing paths 'pick the check up for free' — but no path in this repository runs `orbit validate --all` or `--sources`, least of all at the moments the defect class originates",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc07-artifact-lint/design.md",
+      "line": 62,
+      "classification": "decision_required",
+      "action": "Applied option C: design.md D1 now states what actually runs the check today (a hand-written close-out task inside a change) instead of asserting CI, the pre-archive sweep and a contributor's habit, and records the missing TRIGGER as a declared residual with kind and method per D-bcs-2.",
+      "ratified_via": "chat",
+      "resolution": "Option C for this change, naming A as the follow-up, settled under R-crc-3 and applied under the user's blanket directive. A (wiring the archive and address-reviews bodies) is a workflow-body change to two lifecycle bodies — scope this change never proposed and no reviewer has seen — so it belongs to a stage that declares it rather than to this walk.",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "WIRE THE LIFECYCLE SEAM: add orbit validate --sources to the archive pre-archive sweep and the address-reviews close-out"
+          },
+          {
+            "label": "B",
+            "body": "WIRE CI"
+          },
+          {
+            "label": "C",
+            "body": "RECORD IT AS A DECLARED RESIDUAL and correct D1's premise"
+          }
+        ],
+        "ratified_option": "C"
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "`specs.capability-count` emits a silent `'0'` when `orbit/specs/` is absent — the short-count failure mode the change argues against for the architecture sources",
+      "marker_source": "internal-review",
+      "file": "src/core/sources-registry.ts",
+      "line": 218,
+      "classification": "trivial_fix",
+      "action": "The source now declares a checkInputs precondition: an ABSENT specs directory errors naming the source, while a PRESENT but empty one still emits '0' because that is a truthful count. The precondition doctrine is now uniform across the source table. Spec table row and a scenario updated; regression covers both halves."
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The duplicate-source-name guard is unreachable, and its test accepts either error message, so nothing pins which path actually runs",
+      "marker_source": "internal-review",
+      "file": "src/core/sources-registry.ts",
+      "line": 319,
+      "classification": "trivial_fix",
+      "action": "Deleted the unreachable `seen` block and left a comment recording that parseYaml({uniqueKeys:true}) owns duplicate detection; the test's /not valid YAML|declared twice/ alternation is narrowed to the branch that actually fires, so the suite now records which contract is live."
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "`filesScanned` is computed and returned on every path but reaches no output surface",
+      "marker_source": "internal-review",
+      "file": "src/core/source-lint.ts",
+      "line": 59,
+      "classification": "trivial_fix",
+      "action": "Resolved together with the --json domain finding: filesScanned is now surfaced as source_domain.files_scanned and is computed from SUCCESSFUL reads, so it cannot overstate itself precisely when a read failed."
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The requirement justifies the `sources:` wrapper by forward-compatibility, but the implementation rejects any unknown top-level key",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+      "line": 5,
+      "classification": "trivial_fix",
+      "action": "Narrowed the rationale to what the code does: the wrapper RESERVES NAMESPACE, and introducing a top-level key stays a version-gated change. Fail-loud is kept and its reason stated — a registry that silently ignores something is a registry that can silently stop checking."
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": "let's just go ahead and apply the fixes",
+  "final_assessment": "SUPERSEDES address-reviews-2026-09-17T21-31-37Z for the fresh half of the system-mode blind pair. Same ten resolutions, same applied fixes — only the finding KEYS are corrected, copied verbatim from the pass instead of retyped, so the record certifies the pass it claims to certify. The defect was invisible from the gate's reason: coverage (clause a) is evaluated before resolution (clause b), so with the in-context cadence slot still empty the gate reported the missing slot and never reached the uncovered pass. A walk log that silently certifies nothing is the same class of failure as a review that reports itself clean over files it never read — the thing this whole stage exists to stop — and it argues for the emit surface validating entry keys against the source pass at write time.",
+  "iteration": 9,
+  "next_recommended": "/orbit:review --as system rc07-artifact-lint"
+}

@@ -1,0 +1,13 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-09-18T13:48:47Z",
+  "change": "rc07-artifact-lint",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "mode": "system",
+  "prompt_path": "orbit/changes/rc07-artifact-lint/.orbit-runs/external-prompt-system-2026-09-18T13-47-17Z.md",
+  "target": "rc07-artifact-lint",
+  "final_assessment": "External handoff packaged for SYSTEM-mode iteration 2, the pass clause (c) requires after the blind pair's external half carried 2 CRITICAL. Preflight satisfied: clean tree, zero unpushed commits, HEAD 77c5ddf on origin/d-arc. The subject is deliberately the DIFF rather than the change: 227 inserted / 69 deleted source lines across four files since the state iteration 1 reviewed, all of it written by three successive walks and read only by their authors or an in-context pass. The prompt tabulates what was done with each of iteration 1's twelve findings so the reviewer can check the work instead of rediscovering it, and it names the one fix already known to have addressed a reported symptom while leaving the concern underneath — as a pattern to look for elsewhere, not as an isolated slip. Six risk areas declared for attack, chief among them the thrice-rewritten code-region mask and the conditional shape change in summary.totals. This spends the third and last independent budget unit.",
+  "awaiting_findings": true,
+  "next_recommended": "Paste orbit/changes/rc07-artifact-lint/.orbit-runs/external-prompt-system-2026-09-18T13-47-17Z.md into the target AI, save the response as orbit/changes/rc07-artifact-lint/.orbit-runs/external-system-<TS>.md, then /orbit:address-reviews rc07-artifact-lint --from-file <path>"
+}

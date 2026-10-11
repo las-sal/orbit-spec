@@ -1,0 +1,12 @@
+{
+  "command": "explore",
+  "timestamp": "2026-09-11T21:31:41Z",
+  "change": "rc01-instrument-fidelity",
+  "kind": "workflow",
+  "model": "claude-fable-5-1",
+  "final_assessment": "rc01-instrument-fidelity explored to Mature in one session under R-crc-3: six decisions settled with rationale — a checked-in gh contract captured from the real binary (usage shapes, flag sets, the two empirically recorded error rules, the gh version), the stub as a generic argv validator over it, the sweep checking snippets against the same contract, deliberate re-capture with no live gh in CI, a schema-table parity test deriving the AI-supplied field set from each of the four schema references, and a two-delta spec footprint (orbit-pr-lifecycle + orbit-emit-composition). Four open questions each carry a standing recommendation (the contract set, git excluded, the ten schema-less commands deferred to rc07, error strings recorded). Three rejections recorded. Ready to propose.",
+  "decisions_captured": 6,
+  "open_questions_count": 4,
+  "open_questions_with_recommendation": "4 of 4",
+  "next_recommended": "/orbit:explore rc01-instrument-fidelity — 6 decisions captured but 4 open questions remain; resolve open questions before formalizing"
+}

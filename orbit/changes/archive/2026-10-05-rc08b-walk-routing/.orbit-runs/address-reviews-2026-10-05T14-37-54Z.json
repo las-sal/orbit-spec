@@ -1,0 +1,213 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-05T14:37:54Z",
+  "change": "rc08b-walk-routing",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc08b-walk-routing/.orbit-runs/external-system-2026-10-05T14-18-02Z.md",
+  "source_command": null,
+  "source_token": "2026-10-05T14-18-02Z",
+  "latest_apply_token": "2026-10-05T13-56-47Z",
+  "external_reviewer": "GPT-6 Codex",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 3,
+    "suggestion": 2
+  },
+  "pushback_verification": "All five verified against current state; W1 re-run against dist ([external, blind-pair], clean external T1, unwalked fresh WARNING T2: openPair absent, next /orbit:address-reviews demo); none stale. W2 shares spec.md:197 with the fresh pass's W1 under a different claim, so each is walked in its own log.",
+  "resolution_summary": {
+    "resolved": 5,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Blind-pair protection ignores passes consumed by earlier cadence slots",
+      "marker_source": "external",
+      "file": "src/core/artifact-graph/gates.ts",
+      "line": 469,
+      "classification": "decision_required",
+      "action": "routed as a separable redesign to orbit/explore/blind-pair-command/ and named as a residual in design.md Risks; no engine edit at the walk",
+      "evidence": "reproduced against dist; the diagnosis dates from 87df4c95 (rc02); the shipped [blind-pair, in-context] cadence never reaches it",
+      "ratified_via": "chat",
+      "resolution": "C: route the slot-bound pair diagnosis to a new exploration, blind-pair-command, beside Sal's one-command --reviewer blind-pair; the pair's lifecycle is one subject",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc08b-walk-routing/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc08b-walk-routing/design.md",
+            "text": "Routed as a separable REDESIGN to `orbit/explore/blind-pair-command/`"
+          }
+        ],
+        "searched": [
+          "diagnosePair(ordered0",
+          "openPair"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "redesign",
+      "routed_to": "orbit/explore/blind-pair-command/",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Rediscovery mandates stale dispositions even when a previous fix regressed",
+      "marker_source": "external",
+      "file": "orbit/changes/rc08b-walk-routing/specs/orbit-address-reviews/spec.md",
+      "line": 197,
+      "classification": "trivial_fix",
+      "action": "stale only when pushback finds the fix still standing; a reproduced finding is walked again with a fresh sweep; scenario updated and a regression scenario added; body copy and its text test moved with it",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/templates/workflows/address-reviews.ts",
+          "test/core/templates/walk-routing.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "re-checked by pushback and recorded `stale`"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc08b-walk-routing/specs/orbit-address-reviews/spec.md",
+            "text": "reproduced — the fix regressed — it is walked again like any finding"
+          }
+        ],
+        "searched": [
+          "re-checked by pushback",
+          "only the open findings"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Essential redesigns do not universally hold the gate",
+      "marker_source": "external",
+      "file": "orbit/changes/rc08b-walk-routing/specs/orbit-address-reviews/spec.md",
+      "line": 239,
+      "classification": "trivial_fix",
+      "action": "qualified: the hold applies to a CRITICAL or WARNING of a reviewed-gate pass; an escalated SUGGESTION or an audit-drift/marker entry records its route and holds nothing; added a scenario with a behaviour test against the engine; body and proposal moved with it",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/templates/workflows/address-reviews.ts",
+          "orbit/changes/rc08b-walk-routing/proposal.md",
+          "test/core/templates/walk-routing.test.ts",
+          "test/core/walk-discovery-e2e.test.ts"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/changes/rc08b-walk-routing/explore.md",
+            "reason": "the exploration's settled record (D-rc08b-5) quotes the unqualified rule as decided; history, not live prose"
+          }
+        ]
+      },
+      "sweep": {
+        "retired": [
+          "keeps its pass unresolved, so the gate holds",
+          "its pass stays unresolved and the gate holds"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc08b-walk-routing/specs/orbit-address-reviews/spec.md",
+            "text": "An essential redesign holds the gate only where the gate reads the entry"
+          }
+        ],
+        "searched": [
+          "gate holds",
+          "holds the gate",
+          "stays unresolved"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The degradation reference retains the old bare-scan exit",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/address-reviews.ts",
+      "line": 502,
+      "classification": "trivial_fix",
+      "action": "the two empty-result lines merged into one keyed on the fence's AFTER rule for every row",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "No markers found in bare or path/pattern scope"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/templates/workflows/address-reviews.ts",
+            "text": "Nothing discovered, by any row"
+          }
+        ],
+        "searched": [
+          "Nothing to do.",
+          "bare or path/pattern"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The example logs described as one pair do not belong to one pair",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/address-reviews.ts",
+      "line": 623,
+      "classification": "trivial_fix",
+      "action": "the intro now describes the five examples as independent, one per provenance",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the log for the external half of the same pair"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/templates/workflows/address-reviews.ts",
+            "text": "The five are independent"
+          }
+        ],
+        "searched": [
+          "same pair",
+          "half of"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Five of five resolved: two repairs to the rediscovery and remedy requirements (a regressed fix is walked again; an essential redesign holds the gate only on a substantive gate-pass finding), two reference repairs, and the pair-diagnosis gap routed as a separable redesign to orbit/explore/blind-pair-command/.",
+  "iteration": 4,
+  "next_recommended": "/orbit:address-reviews rc08b-walk-routing",
+  "ripple_misses": 0
+}

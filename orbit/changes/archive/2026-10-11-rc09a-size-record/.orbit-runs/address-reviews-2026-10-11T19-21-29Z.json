@@ -1,0 +1,118 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-11T19:21:29Z",
+  "change": "rc09a-size-record",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc09a-size-record/.orbit-runs/review-system-2026-10-11T19-13-32Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-11T19-13-32Z",
+  "latest_apply_token": "2026-10-11T18-46-52Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 1
+  },
+  "pushback_verification": "Both verified at HEAD: the sibling drop reproduced by the pass's probe input; the pin file confirmed absent from both earlier walk logs' edit records.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Sibling items indented two or three spaces read as nested, so the second item of an indented list is silently dropped",
+      "file": "src/core/change-size.ts",
+      "line": 268,
+      "marker_source": "internal-review",
+      "classification": "trivial",
+      "action": "a bullet now nests only at or beyond the CONTENT column of the item above it (indent + marker + the spaces after it, five or more counting as one), tracked per item in place of the itemAbove boolean, so sibling items indented two or three spaces each declare; the declaration table's ITEM OF THE SECTION and continuation rows restate the rule, its section-end row states that a `---` or `===` line is never a setext underline (the section ends only at an ATX heading), and design D8 points at that row instead of claiming the section is read as CommonMark reads it. Sibling, content-column and setext tests added; restoring the old rule turns the sibling test red",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc09a-size-record/specs/orbit-change-size/spec.md",
+          "orbit/changes/rc09a-size-record/design.md",
+          "test/core/change-size.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "no item above it in the current list",
+          "itemAbove",
+          "read as CommonMark reads it"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/change-size.ts",
+            "text": "indent < contentCol"
+          },
+          {
+            "path": "orbit/changes/rc09a-size-record/specs/orbit-change-size/spec.md",
+            "text": "less than the CONTENT COLUMN of the item above it"
+          },
+          {
+            "path": "orbit/changes/rc09a-size-record/specs/orbit-change-size/spec.md",
+            "text": "is never read as a setext underline"
+          },
+          {
+            "path": "orbit/changes/rc09a-size-record/design.md",
+            "text": "the table's section-end row states\nwhat it does not model"
+          }
+        ],
+        "searched": [
+          "itemAbove",
+          "item above",
+          "CommonMark",
+          "setext",
+          "thematic break"
+        ],
+        "scope": [
+          "src/core/templates/workflows/propose.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The walk moved both orbit-propose hash pins outside every entry's edit record",
+      "file": "test/core/templates/skill-templates-parity.test.ts",
+      "line": 138,
+      "marker_source": "internal-review",
+      "classification": "trivial",
+      "action": "recorded: this entry names test/core/templates/skill-templates-parity.test.ts, whose two orbit-propose pins the previous walk moved with an in-file comment naming rc09a's system walk; the file is now inside a walk entry's edit record, so the residual check from the base pass reads it as walked. No edit was needed",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "test/core/templates/skill-templates-parity.test.ts",
+            "text": "Moved a second time at rc09a's system walk"
+          }
+        ],
+        "searched": [
+          "orbit-propose"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Two of two resolved in the obvious-fix lane: nesting reads the content column of the item above, with the table and design D8 restated and the setext limit stated once in the owner's table; the pin move recorded. 3366 tests green.",
+  "iteration": 6,
+  "next_recommended": "/orbit:archive rc09a-size-record — user-invoked",
+  "ripple_misses": 0
+}

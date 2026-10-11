@@ -85,10 +85,30 @@ export function getVerifyChangeSkillTemplate(): SkillTemplate {
    **Scenario Coverage**:
    - For each scenario in delta specs (marked with "#### Scenario:"):
      - Check if conditions are handled in code
-     - Check if tests exist covering the scenario
-     - If scenario appears uncovered:
-       - Add WARNING: "Scenario not covered: <scenario name>"
-       - Recommendation: "Add test or implementation for scenario: <description>"
+     - If a scenario's conditions are not handled in code:
+       - Add WARNING: "Scenario not handled in code: <scenario name>"
+       - Recommendation: "Implement scenario: <description>"
+   - Take test coverage from the scenario map — never trace scenarios to tests by searching test files:
+     \`\`\`bash
+     orbit status --change "<name>" --scenarios --json
+     \`\`\`
+     Report what it returns by this table, a CHECKED MIRROR of \`orbit-verify-modifications\`' \`Verify's Scenario Coverage step reads the scenario map\`, held byte-equal to it by a parity test (an installed skill cannot open that spec). The table is exhaustive: \`change\` and \`tests\` carry no coverage fact and raise nothing.
+
+| what the surface returns | what verify reports |
+|---|---|
+| the command fails (a non-zero exit, or output that does not parse) | one note naming the error, and the check listed as skipped, per the body's Graceful Degradation; no other row applies |
+| \`check\` is \`"off"\` | one note: the scenario-map check is off because \`scenario_map:\` is absent from, or malformed in, \`orbit/config.yaml\`; no other row applies — no scenario, orphan or malformed finding, and no tracing by any other means |
+| \`check\` is \`"on"\`, \`scenarios\` is empty, and no \`malformed\` entry has \`source: "spec"\` | one note: the change has no delta scenarios; the rows below for \`orphans\`, \`malformed\` and \`counts\` still apply |
+| a \`scenarios\` entry with \`uncovered: true\` | a WARNING \`Scenario not covered: <capability> :: <requirement> :: <scenario>\`, recommending a \`@scenario\` tag above the test that exercises it, or a ledger entry |
+| a \`scenarios\` entry with any declaration | no finding; its declared kinds are listed as the surface gives them, never summed and never re-graded |
+| one or more \`malformed\` entries with \`source: "spec"\` (\`reason: "unkeyable"\`) | ONE WARNING per distinct capability, requirement and scenario triple, naming the triple and its number of entries, stating that \`orbit validate\` reports it at the level \`orbit-scenario-map\` assigns, and recommending the title be renamed; every \`orphans\` entry whose \`key\` equals that triple joined by \` :: \` is listed under it and is never a finding of its own |
+| any other \`orphans\` entry | a WARNING naming the tag's file and line, or the ledger index, and the key, stating that the key names no scenario of the baseline or this change's delta — a renamed, removed or mistyped key, or a scenario another active change adds, which the map does not distinguish — and recommending the tag or ledger entry be corrected unless it names another active change's scenario |
+| a \`malformed\` entry with source \`tag\` or \`ledger\` | a WARNING naming the file and line, or the ledger index, and the surface's \`reason\` |
+| a \`malformed\` entry with source \`ledger-file\` | a WARNING naming \`orbit/scenario-ledger.yaml\`, with no line, and the surface's \`reason\` |
+| \`counts\` | printed as counts; no ratio of covered scenarios appears in the report or its scorecard |
+| \`counts.baseline_undeclared\` | printed as a count, never a finding |
+
+   An uncovered, orphan or malformed finding is a WARNING for the run-summary emit's fail mode, which \`orbit-run-summary-emit\`'s \`Verify fail-mode recommendations\` owns, precedence included — never \`scenarios-fail\`. Judge nothing the surface computed: whether a declared test really exercises its scenario is the declaration's own record (its kind word).
 
 7. **Verify Coherence**
 
@@ -172,91 +192,37 @@ Use clear markdown with:
 
 # Orbit additions
 
-## Three execution disciplines (apply throughout this command)
+## Four execution disciplines (epitome)
 
-The three execution disciplines from \`orbit-conventions\` bracket the authoring lifecycle; they're embedded in every orbit command for self-contained reliability.
+The four disciplines from \`orbit-conventions\`, embedded per body; detail lives where each fires.
 
-- **Read-before-reference (authoring-time)**: before naming a specific construct (function, type, file path, capability, spec requirement, command flag), read its actual definition — never infer a plausible reference. If you can't verify, ask the user or leave a \`@review:\` marker instead of guessing.
-- **Change completeness (modification-time)**: apply substantive modifications fully across ALL affected artifacts before calling them done; after mechanical edits, sweep for residue the pattern missed AND new bugs the replacement introduced.
+- **Read-before-reference (authoring-time)**: read a construct's actual definition before naming it; unverifiable → ask or leave a \`@review:\` marker, never guess.
+- **Change completeness (modification-time)**: apply substantive modifications fully across ALL affected artifacts; after mechanical edits, sweep for residue AND new bugs the replacement introduced.
 - **Pushback (review-time)**: verify each flagged issue against current state before acting; suppress stale findings with evidence rather than re-fixing already-fixed state.
+- **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line — gate \`passed\` means *eligible*, not *commanded*.
 
-## Run-summary emit (one-shot at command completion)
+## Fail-mode classification
 
-(Per \`orbit-run-summary-emit\` capability)
+The fail mode is YOURS to classify — the engine composes its recommendation from the \`fail_mode\` you hand it and classifies nothing (\`orbit-run-summary-emit\`'s \`Verify fail-mode recommendations\` owns the modes and their precedence). Before composing the emit, run:
 
-\`/orbit:verify\` is a one-shot command per \`orbit-run-summary-emit\`'s \`Emit timing semantics\` requirement (emit ONCE on natural command completion). After verify-change reports its outcome, write:
-
-\`\`\`
-orbit/changes/<name>/.orbit-runs/verify-<TS>.json
-\`\`\`
-
-Where \`<TS>\` is ISO-8601 UTC with hyphens. Create \`.orbit-runs/\` if it doesn't exist.
-
-### What verify does (unchanged from upstream)
-
-\`/orbit:verify\` runs upstream \`verify-change\` and reports pass/fail/warn with findings. This emit-layer is a thin observability wrapper — it does NOT add marker-dropping, spec-edit shortcuts, or any other behavior that changes what verify itself does. The recommendation-classification logic below lives in the emit-layer, NOT in verify.
-
-### JSON shape
-
-Per the universal spine in \`orbit-conventions\`'s \`Internal-run JSON summary format\` + per-command extensions:
-
-\`\`\`json
-{
-  "command": "verify",
-  "timestamp": "<ISO-8601 UTC>",
-  "change": "<name>",
-  "final_assessment": "<narrative of verify outcome, e.g., 'Verification clean: 79/79 tasks done; 0 spec gaps.'>",
-  "next_recommended": "<per classification rules below>",
-  "kind": "workflow",
-  "verdict": "pass" | "fail" | "warn",
-  "findings_count": <int — 0 on clean pass>,
-  "findings_summary": { "critical": 0, "warning": 0, "suggestion": 0 }
-}
+\`\`\`bash
+orbit validate <name>
 \`\`\`
 
-### Verdict classification → \`next_recommended\`
+Then take the FIRST that holds, by the precedence validator-error > tasks-incomplete > scenarios-fail: \`validator-error\` when validate fails (its message verbatim as \`validator_message\`); \`tasks-incomplete\` when any task is unchecked; \`scenarios-fail\` when spec scenarios fail against the implementation; otherwise \`warnings\` on a pass with warnings, and no fail mode on a clean pass.
 
-Inspect verify-change's output and classify into one of these states, then compose \`next_recommended\` accordingly. **Precedence when multiple fail signals fire simultaneously** (highest first): mode ③ > mode ① > mode ② > warn. This directs the user to the root cause first (fix spec → complete impl → resolve gaps).
+## Run-summary emit (one-shot at command completion — via the engine emit surface)
 
-**Verdict: pass** — verify-change reports no failures.
+(Per \`orbit-run-summary-emit\`; composed and written via \`orbit emit verify\` — \`orbit-emit-composition\`.)
 
-\`\`\`
-next_recommended: "/orbit:review --as system <name> — verification clean; formal pre-archive review recommended (or /orbit:archive <name> if you're skipping the editorial pass)"
-\`\`\`
+At command completion, compose the narrative payload (\`final_assessment\`, \`verdict\`, \`fail_mode\`, \`validator_message\`, \`warnings_count\` (required when \`fail_mode: "warnings"\`), \`scenarios_failed\` (optional count with \`fail_mode: "scenarios-fail"\`), + the required nullable \`model\`) into a temp file and invoke:
 
-A downstream status reader parses the leading \`/orbit:review --as system <name>\` token into \`command\`/\`args\`. The \`/orbit:archive <name>\` alternative lives in the reason text for users who want to skip the formal review.
-
-**Verdict: fail — Mode ① (tasks-incomplete)** — tasks.md has unchecked items.
-
-\`\`\`
-next_recommended: "/orbit:apply <name> — N tasks remain unchecked; complete implementation before re-verifying"
+\`\`\`bash
+orbit emit verify --change <name> --payload <payload-file>
 \`\`\`
 
-**Verdict: fail — Mode ② (impl-vs-spec gap)** — tasks all checked but spec scenarios fail against the implementation.
-
-\`\`\`
-next_recommended: "/orbit:review --as system <name> — N spec scenarios fail against implementation; system review will surface findings in its scorecard for you to walk each as code fix or spec revision"
-\`\`\`
-
-The recommendation does NOT use \`/orbit:review --as system --mark\` because \`--mark\` is proposal-mode only and silently ignored in system mode (the rule lands formally with the \`orbit-review\` capability in a later phase; it is the operative rule now). Until system-mode marker writing exists, the user manually walks each system-review finding to decide whether it's a code bug (fix via \`/orbit:apply\` or direct edit) or a spec revision (edit specs directly).
-
-**Verdict: fail — Mode ③ (orbit-validate failure)** — \`orbit validate\` itself errors (e.g., malformed spec frontmatter).
-
-\`\`\`
-next_recommended: "Fix artifact validation errors: <validator message verbatim>"
-\`\`\`
-
-No leading orbit command in this case; the reason field carries the validator output. a downstream status reader's parse finds no leading slash command and preserves the full text in \`reason\`.
-
-**Verdict: warn** — verify passes but with non-blocking findings.
-
-\`\`\`
-next_recommended: "/orbit:review --as system <name> — verification passed with N warnings; system review recommended"
-\`\`\`
-
-### Partial / aborted verify runs (out of scope)
-
-If verify-change reports incomplete output (timed out, transient validator failure), the emit-layer SHALL emit \`next_recommended: "Re-run /orbit:verify <name> — prior verify run incomplete (see verify-change output for details)"\`. Otherwise these are upstream verify-change concerns; the emit-layer emits whatever verify-change reports.`,
+The ENGINE owns the spine, the trail path, timestamp + collision handling, and \`next_recommended\` composition (the fail-mode-conditional recommendation — validator-error / tasks-incomplete / scenarios-fail / warnings (pass WITH non-blocking findings — never recorded as clean) / incomplete (aborted or partial verify run) / clean — is composed from the payload's \`verdict\`/\`fail_mode\` — the mode you classified above, never re-classified). Never hand-compose the JSON.
+`,
     license: 'MIT',
     compatibility: 'Requires orbit CLI.',
     metadata: { author: 'openspec', version: '1.0' },

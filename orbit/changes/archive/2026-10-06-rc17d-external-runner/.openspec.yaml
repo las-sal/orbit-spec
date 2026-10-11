@@ -1,0 +1,15 @@
+schema: spec-driven
+created: 2026-10-06
+schema_version: 5
+architecture:
+  doc: clean-up-review-cycle
+  stage: rc17d-external-runner
+base_fingerprints:
+  orbit-conventions:
+    Review mode decision framework: sha256:47fc5c4a905410cd4272b3f207cdace27bd01f2fae077033ba2caf6b13af0a7f
+  orbit-review-external:
+    Command does not run the review or ingest findings: sha256:d2239a54f4fcdce35fd00f87c321bce74297a96287320ccfd0bd654e295174a2
+    Prompt written to versioned file with chat invocation snippet: sha256:8afccbacde0646556566da94754c41c845fcc6154351e9a758ac0dab3218c892
+    Handoff preflight blocks unusable pull invocations: sha256:89e5cde21c8f7d6c2cf3f4399eb1438688477304e3510542d6ae176cd1da46ab
+    Review-external command available: sha256:ebdb48173788e43626968c78755543a6ddd383ed188b3d8ac5b4671df5385486
+    Recommended-session note in chat output: sha256:11a463b9abed423945106edbbc6ed377410b822d49e7c43430168ece22cc6280

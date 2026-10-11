@@ -1,0 +1,15 @@
+schema: spec-driven
+created: 2026-10-04
+schema_version: 4
+base_fingerprints:
+  orbit-audit-drift:
+    Internal run summary persisted: sha256:0b0ef6c1140bb24cbfdc86279f8e1f28633863bd618a73d9429d5ca210cff71a
+  orbit-conventions:
+    Internal-run JSON summary format: sha256:6b081c7f91a9ece7f11ee82eff02bc727721be02dcae8b817613a39aca1557a1
+  orbit-emit-composition:
+    Payload tables agree with their schema references: sha256:dc1ffeada4d57b26d441405dab9f27bc4d449e4547c05455b76cee19ed441af3
+  orbit-run-summary-emit:
+    Audit-drift standalone recommendations: sha256:054865d253076a7550a69a679f97c65ae875bed5717575e08e59062a736007ba
+architecture:
+  doc: clean-up-review-cycle
+  stage: rc07b-reference-roundtrip

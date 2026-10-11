@@ -1,0 +1,248 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-11T19:04:25Z",
+  "change": "rc09a-size-record",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc09a-size-record/.orbit-runs/review-system-2026-10-11T18-52-57Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-11T18-52-57Z",
+  "latest_apply_token": "2026-10-11T18-46-52Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 2
+  },
+  "pushback_verification": "All four verified against HEAD at the walk; none stale. The parser edges re-derived by reading the classifier, the Split gap and the unnamed validation mode by reading the body and the PR choreography, the bulk printer by reading runBulkValidation.",
+  "resolution_summary": {
+    "resolved": 4,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The Size-section parser diverges from its CommonMark line table at three edges",
+      "file": "src/core/change-size.ts",
+      "line": 224,
+      "marker_source": "internal-review",
+      "classification": "decision_required",
+      "action": "applied the ratified direction A: the parser reads CommonMark indentation — headings at up to three spaces of indent open and end the section, a bullet indented two or three spaces is an item of the section when no item stands above it in the current list, the list ends at a heading or an unindented paragraph after a blank line, and a thematic break is not read; the declaration table carries the rows and design D8 records that \"exactly\" meant case and level, never a column",
+      "ratified_via": "chat",
+      "resolution": "take your recs",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Widen the classifier to CommonMark's indentation and thematic-break rules and add the three rows' tests."
+          },
+          {
+            "label": "B",
+            "body": "Keep the column-0/1 classifier and state its limit in the declaration requirement's table (headings and items read at indent 0-1 only; a thematic break reads MALFORMED)."
+          }
+        ],
+        "chosen": "A"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc09a-size-record/specs/orbit-change-size/spec.md",
+          "orbit/changes/rc09a-size-record/design.md",
+          "src/core/templates/workflows/propose.ts",
+          "test/core/change-size.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the heading is exactly",
+          "nested bullet under a well-formed item",
+          "indent under two columns"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/change-size.ts",
+            "text": "const topLevel = indent <= 1 || (indent <= 3 && !itemAbove);"
+          },
+          {
+            "path": "orbit/changes/rc09a-size-record/specs/orbit-change-size/spec.md",
+            "text": "a list item indented at most one space, or two or three spaces with no item above it in the current list"
+          },
+          {
+            "path": "orbit/changes/rc09a-size-record/design.md",
+            "text": "meant case and level, never a column"
+          }
+        ],
+        "searched": [
+          "exactly `## Size`",
+          "nested bullet",
+          "top-level item",
+          "SECTION_END",
+          "## Size"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The Split route does not say whether Step 0d's move and the PR choreography's Phase 3 still run",
+      "file": "orbit/changes/rc09a-size-record/specs/orbit-propose-modifications/spec.md",
+      "line": 20,
+      "marker_source": "internal-review",
+      "classification": "decision_required",
+      "action": "applied the ratified direction A: after Split the rest of the flow runs unchanged — Step 0d's move, the PR choreography's Phase 3 and the completion emit — and only the closing chat line differs; the body says --strict keeps failing on the undeclared breach until the change is split; design D5 records why neither the move nor Phase 3 is skipped",
+      "ratified_via": "chat",
+      "resolution": "take your recs",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Split continues the whole flow: the move runs, Phase 3 opens the draft PR, the emit is written; only the closing chat line changes."
+          },
+          {
+            "label": "B",
+            "body": "Split runs the move and writes the emit but skips Phase 3 (no draft PR for a change being split), saying so in chat."
+          }
+        ],
+        "chosen": "A"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "src/core/templates/workflows/propose.ts",
+          "orbit/changes/rc09a-size-record/design.md",
+          "test/core/size-declaration-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the completion emit is still written",
+          "the emit is still written"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc09a-size-record/specs/orbit-propose-modifications/spec.md",
+            "text": "The rest of the flow runs unchanged"
+          },
+          {
+            "path": "src/core/templates/workflows/propose.ts",
+            "text": "flow runs unchanged"
+          },
+          {
+            "path": "orbit/changes/rc09a-size-record/design.md",
+            "text": "nothing else changes: the move, Phase 3 and the emit all run"
+          }
+        ],
+        "searched": [
+          "Split",
+          "still written",
+          "Phase 3"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Declare says to re-run orbit validate --strict, but the propose body never runs it first",
+      "file": "src/core/templates/workflows/propose.ts",
+      "line": 336,
+      "marker_source": "internal-review",
+      "classification": "trivial",
+      "action": "named the validation before the brief as NON-STRICT `orbit validate <name>`, which size never fails, in the body's Position line, Step 0d's opener, the requirement and design D5; Declare now says \"run\" `orbit validate <name> --strict`",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc09a-size-record/specs/orbit-propose-modifications/spec.md",
+          "orbit/changes/rc09a-size-record/design.md",
+          "test/core/size-declaration-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "Then re-run",
+          "generated and validated"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/templates/workflows/propose.ts",
+            "text": "passes NON-STRICT"
+          },
+          {
+            "path": "orbit/changes/rc09a-size-record/specs/orbit-propose-modifications/spec.md",
+            "text": "passes NON-STRICT"
+          },
+          {
+            "path": "orbit/changes/rc09a-size-record/design.md",
+            "text": "NON-STRICT validation"
+          }
+        ],
+        "searched": [
+          "validated",
+          "validation passes",
+          "--strict",
+          "re-run"
+        ],
+        "scope": [
+          "src/core/templates/workflows/pr-choreography.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Only the single-change human printer shows size issues on a valid report",
+      "file": "src/commands/validate.ts",
+      "line": 169,
+      "marker_source": "internal-review",
+      "classification": "trivial",
+      "action": "recorded the limit beside the requirement's human-printer sentence: the bulk run prints one line per item and no issue of any kind in human mode, and the deprecated `orbit change validate` prints no issue beneath a valid report, so a size issue there reaches --json and, under --strict, the item's failure line only; the bulk printers are not widened for one capability",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc09a-size-record/specs/orbit-change-size/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc09a-size-record/specs/orbit-change-size/spec.md",
+            "text": "prints one line per item and no issue of any kind in human mode"
+          }
+        ],
+        "searched": [
+          "is valid",
+          "runBulkValidation",
+          "console.log"
+        ],
+        "scope": [
+          "src/commands/change.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Four of four resolved: the two decision findings by direction A on the user's word (the parser reads CommonMark indentation; Split runs the rest of the flow unchanged), two repairs in place. The parser change is mutation-checked: restoring the column-0/1 rule turns two new tests red.",
+  "iteration": 4,
+  "next_recommended": "/orbit:address-reviews rc09a-size-record",
+  "ripple_misses": 0
+}

@@ -1,0 +1,29 @@
+{
+  "command": "architect",
+  "timestamp": "2026-09-15T13:59:44Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "rc13's charter re-aimed after the stage falsified its own cure, and R-crc-9 ratified into the rulings index. The charter now states the unit as a CLOSED ENUMERATION per rule rather than an executed case, carries the six-move set DERIVED from the structure of a mechanism (READ/ENUMERATE/COHERE/EXECUTE/FALSIFY/CONFORM) with each move's status — two already exist as rulings nothing enforced at explore time, one was unnamed until yesterday, one is nobody's — and rewrites all three exit criteria, the third now naming the three classes that account for eleven of rc03a's fifteen CRITICALs. The charter also records that the derivation falsified the five-move list within the hour by classifying a record, which is the stage's own thesis operating on the stage. R-crc-9 (Sal): when the correct mechanism exceeds R-crc-1's ceiling, SPLIT it or DECLARE THE STAGE BLOCKED, never substitute a cheaper one — empirical origin rc03a, where attestation was deferred three times on ceiling grounds and each deferral bought a cheaper prevention mechanism that the next pass found wrong. rc03a's completion left UNRATIFIED by decision: its exit criteria were never met, so the mark would assert something false — leaving the program with its first stage that renders awaiting-ratification permanently, recorded as a known grammar gap. Leverage-governs-placement stays in the status log on one firing.",
+  "stages_touched": [
+    "rc13-explore-mechanism",
+    "rc03a-blind-prompt"
+  ],
+  "rulings_captured": [
+    "R-crc-9"
+  ],
+  "completions_ratified": [],
+  "handoff": {
+    "boot_sequence": [
+      "orbit/architecture/clean-up-review-cycle.md — rc13's re-aimed charter carries the six-move table and why each move exists; R-crc-9 is the newest ruling.",
+      "orbit/explore/rc13-explore-mechanism/explore.md — twelve decisions, one open question; Cases 6 and 7 are the falsification of the original cure and the derivation that replaced it.",
+      "orbit/changes/archive/2026-09-15-rc03a-blind-prompt/ — the withdrawn stage whose record the six-move set was derived against.",
+      "The status log's last entry — the re-aim, the ratification, and the withdrawn-stage grammar gap."
+    ],
+    "next_command": "/orbit:propose rc13-explore-mechanism",
+    "model_hint": "Before proposing, audit the exploration against its OWN new rule: every rule in Decisions needs a closed enumeration of its domain. That audit has not been done and is the first chance to apply the stage's thesis to the stage's own artifact.",
+    "seam": "rc13 is proposable with one open question carrying a recommendation. R-crc-9 binds it immediately — the stage sits AT the ceiling at three capabilities, and if review shows it over, the answer is to split rather than shrink. rc03a is archived and deliberately unratified. Nothing is blocked on the user."
+  },
+  "next_recommended": "/orbit:propose rc13-explore-mechanism"
+}

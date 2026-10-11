@@ -1,0 +1,214 @@
+{
+  "command": "review",
+  "timestamp": "2026-09-15T08:13:33Z",
+  "change": "rc03a-blind-prompt",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "fresh": true,
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "mark": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 3,
+      "warning": 1,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 2,
+      "warning": 2,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 3,
+      "suggestion": 3
+    }
+  },
+  "findings": [
+    {
+      "dimension": "correctness",
+      "severity": "CRITICAL",
+      "title": "`next_hint_keys.slot` is not gate-scoped: while the tracked `apply` gate is `ready`, the field carries no slot at all, so a system-mode blind pair run in that window is never blinded",
+      "file": "orbit/changes/rc03a-blind-prompt/specs/orbit-review-external/spec.md",
+      "line": 7,
+      "recommendation": "`next_hint_keys` is set by ONE loop over flow-ordered gates that BREAKS at the first unpassed gate (instruction-loader.ts:441-456). When the tracked `apply` gate is `ready` it hits the second branch and sets `nextHintKeys = { phase: g.id }` with NO slot (line 454) — review-system is `blocked by incomplete requires: apply` and never supplies one. Any unchecked task that is not a declared `(User-validation` handoff keeps the gate `ready` (gates.ts:672-701), and this change's OWN tasks 5.2/5.3 are `(Architect-tier)`, so rc03a's own system review would run with slot ABSENT and, under the new table, BOTH halves retain context — the second reading the first. System mode is explicitly selectable in that window (review.ts Step 1). The converse also holds: once apply passes, a `--as proposal` pass reads review-system's `blind-pair` slot and is blinded by another gate's state. Key on the slot of the gate matching the INVOKED `--as` mode. That field is not exposed today — per-gate rows omit `nextSlot` (instruction-loader.ts:419-433, confirmed against live status JSON) — so either add a requirement/task exposing it (an engine change the proposal forswears), or state the limit and use a gate-scoped signal the body can read today."
+    },
+    {
+      "dimension": "correctness",
+      "severity": "CRITICAL",
+      "title": "The non-leak proof is false: with the pair empty and a prior pass unwalked, the slot is ABSENT and the pair's first member runs with context retained",
+      "file": "orbit/changes/rc03a-blind-prompt/specs/orbit-review-external/spec.md",
+      "line": 20,
+      "recommendation": "The requirement asserts \"a pair member is runnable in exactly two states ... and both render the slot (the empty case from the needed-slot branch)\". The needed-slot branch (gates.ts:868) is reached ONLY after the resolution clause passes, because `evaluateReviewed` returns on the first unresolved pass (gates.ts:479-489), and `openPair` is set only when a PAIRABLE member already stands — `diagnosePair` returns `none-standing` when the pair is empty, and that does not set it (gates.ts:467-475, 385-408). So the reachable state \"pair empty + an in-context pass's findings stand unwalked\" yields `{cmd: '/orbit:address-reviews …'}` with NO slot (gates.ts:864-866), and a `--fresh` pass invoked there — which will be counted as the pair's FIRST member — retains prior findings. The member is primed on a third pass's findings its blinded partner may rediscover, raising overlap and DEFLATING the residual estimate: the invisible failure design.md calls the worse one. Correct the proof (an absent slot means no pairable PARTNER stands, not that no pair is forming) and either add the missing condition or record the residual in the ABSENT row."
+    },
+    {
+      "dimension": "completeness",
+      "severity": "CRITICAL",
+      "title": "The internal branch has a SECOND prior-findings read — the disciplines epitome — and task 2.7 protects the sentence that orders it",
+      "file": "orbit/changes/rc03a-blind-prompt/tasks.md",
+      "line": 29,
+      "recommendation": "review.ts:727 states the pushback discipline as \"...suppress stale findings with an evidence note, comparing against prior `.orbit-runs/review-<mode>-*.json` to surface only what's new or unresolved.\" That is a second, independently-actionable instruction to read the partner's emit, in the body's epitome block rather than Step 5 (review.ts:783, the only site tasks 1.2/2.4 name). Task 2.7 says \"Pushback discipline is UNCHANGED\", which as written PRESERVES that clause — so an implementer can satisfy every task and still ship a fresh half that opens `review-system-<TS>.json`. Add a task making the epitome's pushback line slot-conditional (verify-against-current-state survives; the prior-emit comparison is withheld), and reword 2.7 to say WHICH half of pushback is unchanged."
+    },
+    {
+      "dimension": "completeness",
+      "severity": "CRITICAL",
+      "title": "The fresh half's blindness is delivered by the launching brief, which no requirement or task constrains",
+      "file": "orbit/changes/rc03a-blind-prompt/specs/orbit-review/spec.md",
+      "line": 5,
+      "recommendation": "`--reviewer fresh` runs \"in a clean execution context (e.g., a clean-context subagent)\" (orbit/specs/orbit-review/spec.md:214-221); the body defines no contract for what the launching context puts in that subagent's brief (review.ts:746 flag table; the only brief guidance, under `--parallel`, says \"the pass description + the relevant context files\"). The ADDED requirement withholds only the ON-DISK read, so the orchestrator — which by construction holds the partner's findings when it dispatches the second half, and more so under rc13's D-rc13-4 one-invocation launch — can hand them over in prose and nothing in the change notices. This is the same defect as the external prompt, on the internal side: for a fresh member, THE BRIEF IS THE PROMPT. Add a requirement clause plus a task: on a blind-pair member the dispatch brief carries the change name, mode and pass set only, and names no prior finding, count or trend."
+    },
+    {
+      "dimension": "completeness",
+      "severity": "CRITICAL",
+      "title": "System mode's `git diff <change-start>..HEAD` carries the partner's committed emit — and the external handoff's preflight forces it to be committed first",
+      "file": "orbit/changes/rc03a-blind-prompt/proposal.md",
+      "line": 38,
+      "recommendation": "Both halves of a system-mode pair are instructed to read the change's whole commit range — the internal body at review.ts:778 and the external prompt's mode block at review.ts:528. `.orbit-runs/` files are committed, not gitignored (review.ts:368), and the handoff preflight WITHHOLDS the pull invocation unless the tree is clean and pushed (review.ts:325-330; baseline `Handoff preflight` at orbit-review-external spec.md:287-289) — so on the engine's default fresh-first order (gates.ts:878) the fresh half's `review-system-<TS>.json` is GUARANTEED to be inside the diff the external half is told to read. Removing the `.orbit-runs/` reading-list bullet (task 2.2) does not close this. Either exclude `.orbit-runs/` from the blind-path diff instruction in BOTH places and task it, or narrow the \"EVERY channel\" claim and record the residual."
+    },
+    {
+      "dimension": "coherence",
+      "severity": "WARNING",
+      "title": "Reversed-decision residue: the Migration Plan and Impact still cite \"the fail-closed default\" that D3 abolished",
+      "file": "orbit/changes/rc03a-blind-prompt/design.md",
+      "line": 108,
+      "recommendation": "design.md:50 states \"there is no fail-closed branch\", yet design.md:108 says \"Older trails never report a `blind-pair` slot, and D3's fail-closed default covers every path where the field is absent\", and proposal.md:68 repeats \"the fail-closed default covers them\". Under the shipped rule an absent field RETAINS; a reader following the migration note would implement the reversed behaviour on exactly the older-trail path it describes. Rewrite both sentences to say absence retains."
+    },
+    {
+      "dimension": "coherence",
+      "severity": "WARNING",
+      "title": "explore.md's Mechanism block — the R-crc-7 mechanism of record — still specifies the reversed fail-closed rule",
+      "file": "orbit/changes/rc03a-blind-prompt/explore.md",
+      "line": 38,
+      "recommendation": "The `### The rule` block still reads `slot unavailable → SUPPRESSED (fail closed — see D-rc03a-3)` and omits the class term entirely, while D-rc03a-3 (explore.md:206) is correctly marked SUPERSEDED and D-rc03a-7 (explore.md:110) states the conjunction. R-crc-7 makes the explore Mechanism the executed procedure of record, so the artifact that carries the mechanism contradicts both delta specs. Update the block to the conjunction, or mark it superseded in place and point at D-rc03a-7, the way Case 1's rows were corrected."
+    },
+    {
+      "dimension": "correctness",
+      "severity": "WARNING",
+      "title": "explore.md still asserts the external branch \"already makes\" the status call — the false premise corrected everywhere else",
+      "file": "orbit/changes/rc03a-blind-prompt/explore.md",
+      "line": 31,
+      "recommendation": "explore.md:30-32 (\"the SAME engine call it already makes for mode and gate state\") and D-rc03a-1 at explore.md:198-201 both survive unedited, while proposal.md, design.md D1 and tasks.md 1.1 were corrected to \"this is a NEW read\". Re-verified: review.ts:288-496 contains no `orbit status` invocation. Carry the correction into both explore sites so the evidence base does not re-seed the premise for rc03/rc13."
+    },
+    {
+      "dimension": "coherence",
+      "severity": "WARNING",
+      "title": "The `orbit-review` decision table has no row for (`blind-pair`, `external`), contradicting its own prose and R-crc-7's exhaustiveness rule",
+      "file": "orbit/changes/rc03a-blind-prompt/specs/orbit-review/spec.md",
+      "line": 13,
+      "recommendation": "Line 9 defines a member as slot `blind-pair` AND class independent — \"(`fresh` or `external`)\" — but the table's WITHHELD row names `fresh` only, and the catch-all row is keyed `any other value` on the SLOT axis, so the cell (`blind-pair`, `external`) falls through unstated. `orbit-review-external`'s table covers both classes in one row; the two tables must agree, and R-crc-7 requires empty cases explicit by construction."
+    },
+    {
+      "dimension": "correctness",
+      "severity": "WARNING",
+      "title": "Task 3.5's absence-grep is not implementable as stated — task 2.3 requires the same strings to remain in the generated surface",
+      "file": "orbit/changes/rc03a-blind-prompt/tasks.md",
+      "line": 46,
+      "recommendation": "3.5 asks to grep for the ABSENCE of a prior-findings list, a resolved-since list and the `.orbit-runs/` pointer. But 2.3 requires the non-member path to render byte-unchanged, so the generated `prompt-template.md` MUST still contain `Prior internal findings still open:` / `Resolved since last review:` (review.ts:578-580) and `external-handoff.md` must still contain Step 5's bullets (review.ts:344-346). A grep for absence therefore either fails or proves nothing about the blind path. Restate 3.5 as a STRUCTURAL assertion (each string appears ONLY inside a block whose guard names the blind-pair condition, and each guard names both conjunction terms) — which is what test/core/templates/orbit-generated-surface.test.ts can actually check."
+    },
+    {
+      "dimension": "completeness",
+      "severity": "WARNING",
+      "title": "The blinded external prompt still directs the reviewer into `.orbit-runs/` — to write, and to avoid colliding with the files already there",
+      "file": "orbit/changes/rc03a-blind-prompt/specs/orbit-review-external/spec.md",
+      "line": 22,
+      "recommendation": "The template's output block (review.ts:594-599) tells the reviewer to write to `.orbit-runs/external-<as>-<TS>.md` and to \"Pick a fresh timestamp so this file doesn't overwrite prior reviews\" — i.e. to inspect the directory holding the partner's emit — and the commit snippet at review.ts:655 names the same path. Removing the read-first bullet leaves that standing, so the \"every channel\" claim overstates what the change delivers. On the blind path add one explicit line (\"write only; do not read other files in this directory\") and task it, or scope the claim to the channels actually closed."
+    },
+    {
+      "dimension": "completeness",
+      "severity": "SUGGESTION",
+      "title": "Task 5.2 loses half of what the walk said it was deferring — the charter's `gates.ts:113` mis-citation",
+      "file": "orbit/changes/rc03a-blind-prompt/tasks.md",
+      "line": 63,
+      "recommendation": "The walk's resolution for the citation SUGGESTION recorded that clean-up-review-cycle.md:438 defers with the charter finding, but task 5.2 records only the `Touches:` line and the exit criteria. The charter still reads \"an empty `blind-pair` slot renders `--fresh` first (`gates.ts:113`)\" (clean-up-review-cycle.md:436) — verified wrong. Add the citation correction to 5.2's content so the architect session has it."
+    },
+    {
+      "dimension": "coherence",
+      "severity": "SUGGESTION",
+      "title": "`orbit-engine-gates` still defines blindness one-sidedly and gains no pointer to the new rule",
+      "file": "orbit/changes/rc03a-blind-prompt/design.md",
+      "line": 24,
+      "recommendation": "orbit/specs/orbit-engine-gates/spec.md:234-240 defines a blind pair purely as walk-absence between the two tokens. After this change blindness is a two-part property — engine-verified walk-absence plus body-enforced context withholding — and nothing in the gates capability says so, so a reader of the definitive spec still sees the definition this change proves insufficient. Either add a one-line non-normative cross-reference there (a third capability, still inside R-crc-1's ceiling) or state in Non-Goals that the definition deliberately stays single-sided until D-rc03a-6's attestation lands."
+    },
+    {
+      "dimension": "coherence",
+      "severity": "SUGGESTION",
+      "title": "Task 5.1 drops the charter's named instance for exit criterion 3",
+      "file": "orbit/changes/rc03a-blind-prompt/tasks.md",
+      "line": 59,
+      "recommendation": "The charter's exit criterion (3) is specific: \"rc13's own system-review pair runs under this stage and its external prompt is verifiably findings-free\" (clean-up-review-cycle.md:449-451). Task 5.1 generalizes to \"one real blind pair on a later change\", which cannot be traced back to the criterion at ratification time. Name rc13, or state in 5.2 that the criterion is being generalized and why."
+    },
+    {
+      "dimension": "coherence",
+      "severity": "SUGGESTION",
+      "title": "The deferred program-tier WARNING leaves the proposal gate unresolvable by construction; the intended path to apply is unstated",
+      "file": "orbit/changes/rc03a-blind-prompt/tasks.md",
+      "line": 63,
+      "recommendation": "`passResolved` returns false when the latest record carries any SUBSTANTIVE entry with disposition `deferred` (gates.ts:209-211), and the 07-59-32Z walk deferred a WARNING. Live status therefore reports review-proposal `unpassed` regardless of how many further passes converge. Say in tasks.md or design.md which path is intended — the architect session runs first and a later walk re-records the entry as resolved, or the change proceeds on a recorded override — so the state is a decision rather than a surprise at the seam."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "title": "The external-handoff branch makes no `orbit status --change --json` call — the \"call it already makes\" premise is false",
+      "evidence": "RESOLVED in the governing artifacts: specs/orbit-review-external/spec.md:7 now says \"This is a NEW read\"; design.md D1 carries \"CORRECTED after the first fresh pass\"; proposal.md and tasks.md 1.1 both say ADD. Re-verified against review.ts:288-496 — still no `orbit status` there. Residue remains only in explore.md, filed separately as active."
+    },
+    {
+      "title": "`next_hint_keys.slot` is ABSENT in two common current-engine states, so fail-closed withholds from exactly the sequential iterations D4 protects",
+      "evidence": "RESOLVED: design.md:50-58 replaces D3 with the positive-signal conjunction and records the reversal; both delta specs carry decision tables whose ABSENT rows name the unresolved-findings cause (gates.ts:864-866) and the all-gates-passed cause (instruction-loader.ts:463-471), both verified. The proof sentence attached to the fix is separately wrong — filed as active."
+    },
+    {
+      "title": "The ADDED requirement's fail-closed clause blinds every architecture-mode review, contradicting a live baseline requirement",
+      "evidence": "RESOLVED: specs/orbit-review/spec.md:18 carves architecture mode out and keeps its prior-run read MANDATORY, with a dedicated scenario; task 2.6 added. Consistent with orbit/specs/orbit-review/spec.md:272 and review.ts:783."
+    },
+    {
+      "title": "Suppressing the Cycle context section does not close the leak — the prompt template separately directs the external reviewer to read `.orbit-runs/`",
+      "evidence": "PARTLY RESOLVED as scoped: spec.md:22 withholds the project-context pointer (review.ts:573-574 verified), the scenario asserts the omission, prompt-template.md is named in Impact and Touchpoints, tasks 2.2/3.5/4.1 cover both references. The remaining pointers (write-path, git diff) are NEW findings, not this one."
+    },
+    {
+      "title": "Tasks 3.1-3.4 specify tests of behavior no engine code implements",
+      "evidence": "RESOLVED: section 3 recast as assertions over the generated surface with a preamble; design.md gains `Instruments — what can actually be measured`; touchpoint reads `test/`. The instrument class is real — test/core/templates/orbit-generated-surface.test.ts:43,57 already asserts over the emitted references."
+    },
+    {
+      "title": "The rule keys on the RECOMMENDED-NEXT slot, not on the class of the pass actually being run",
+      "evidence": "RESOLVED: the conjunction's second term is the INVOKED class in both delta specs, both tables carry an explicit (`blind-pair`, `in-context`) RETAIN row, task 2.5 added, scenario added. Verified against `passSatisfiesSlot` (gates.ts:92-95)."
+    },
+    {
+      "title": "The stated duplicate-findings cost understates it: a blinded re-report feeds the gate's convergence predicate and burns budget",
+      "evidence": "RESOLVED: the ratified-decision mechanism is named in the requirement's deliberate-cost paragraph and design.md's first risk bullet, recorded as ACCEPTED with the deflated-estimate reason. Matches gates.ts:537/555."
+    },
+    {
+      "title": "R-crc-7 requires a decision procedure to be a DECISION TABLE, not prose plus a blanket default",
+      "evidence": "RESOLVED: both delta specs carry decision tables with explicit ABSENT rows and causes. The orbit-review table's missing (`blind-pair`, `external`) cell is filed as a new finding."
+    },
+    {
+      "title": "Case 1's slot values for two of its five rows are wrong, in the evidence D4 rests on",
+      "evidence": "Already suppressed by the walk and confirmed here: explore.md:60-61 read `in-context`, 62-64 add the ABSENT rows, 66-72 carry the dated CORRECTED note."
+    },
+    {
+      "title": "Two gates.ts line citations are off-target",
+      "evidence": "RESOLVED in the change artifacts: design.md:13 and explore.md:12/96 cite gates.ts:878 (verified), and the References entry records why `commandForClass`'s case is unreachable. Only the program-tier site (clean-up-review-cycle.md:436) is outstanding, filed as a content gap in task 5.2."
+    }
+  ],
+  "commentary": "The pattern is narrower than last iteration's but sharper: the walk fixed every finding where it was pointed, and fixed almost nothing adjacent to where it was pointed. The reversed fail-closed decision landed in the two delta specs and in D3, and did not land in the Migration Plan, the Impact bullet, or the explore Mechanism block that R-crc-7 makes the procedure of record; the false \"call it already makes\" premise was corrected in three artifacts and left standing in the two explore passages that seeded it. The deeper pattern is the one this change inherited from its own subject — a claim about the machine written from the shape of the machine rather than from a read of it. I pressed hardest on pass 6, and on exactly the question the change answers with a proof: enumerate what `next_hint_keys.slot` can be. I read the only writer of that field (one loop, one break) and every branch of `canonicalNextForReviewed`, then checked live status output against them. Two things fall out that the decision tables treat as settled: the field is not scoped to the gate whose mode is being reviewed — it belongs to whichever gate the loop reaches first, which during apply is the tracked gate carrying no slot at all — and the empty-pair branch the proof cites is downstream of the resolution clause, so \"pair empty\" does not imply \"slot rendered\". Both make the ABSENT-retains row, which is correct policy, fire in states that are genuinely pair states. I then walked the channel question and found three more mouths the tasks never open: the disciplines epitome's own prior-emit comparison, the diff instruction both halves receive in system mode against a directory the handoff preflight guarantees is committed first, and the fresh half's launching brief — the one channel with no file behind it, and the one I am least able to test. That is where the residual sits. Everything here is prose an agent is asked to obey; the only enforcement surface is a grep over generated markdown, and the grep as specified asserts an absence the byte-unchanged requirement forbids.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "final_assessment": "5 critical, 6 warning, 4 suggestion.",
+  "iteration": 2,
+  "next_recommended": "/orbit:address-reviews rc03a-blind-prompt --from-file orbit/changes/rc03a-blind-prompt/.orbit-runs/review-proposal-2026-09-15T08-13-33Z.json"
+}

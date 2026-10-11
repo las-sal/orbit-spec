@@ -1,0 +1,115 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-14T11:42:49Z",
+  "change": "rc02-gate-semantics",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc02-gate-semantics/.orbit-runs/external-system-2026-09-14T10-02-06Z.md",
+  "source_command": null,
+  "source_token": "06Z",
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-5 Codex",
+  "walk_mode": "per_finding",
+  "walk_mode_source": null,
+  "input_findings_summary": {
+    "critical": 4,
+    "warning": 6,
+    "suggestion": 0
+  },
+  "pushback_verification": "Every claim executed before acting. The fence-unaware parser was reproduced by feeding the reader a document whose only severity headings sat inside a fence and watching it count as a clean pass. The same-token pair-candidate CRITICAL was DISPUTED by the other half of the pair and settled empirically: two artifacts of one class in one mode cannot share a token because the filename embeds it, so the engine gap is real but unreachable and the defect is in the scenario. The verify-emit baseline break was confirmed against the shipped requirement text. Walk entries were generated FROM what the trail reader actually parsed, not written by hand, because clause (b) now requires every substantive finding to be matched by title and file.",
+  "resolution_summary": {
+    "resolved": 10,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "A partial resolution record certifies findings it omits",
+      "file": "src/core/artifact-graph/gates.ts",
+      "outcome": "resolved",
+      "classification": "decision required",
+      "action": "Reproduced, then fixed: clause (b) now checks COMPLETENESS before disposition. Every substantive finding of a pass must be matched by an entry, keyed by trimmed title and repo-relative file exactly as the new-finding match is keyed; a record naming one of two WARNINGs certifies only that one and the pass stays UNRESOLVED. This overturns a v1 limit the fourth proposal pass had DECLINED as a cardinality guard — the external half showed the consequence was real, not theoretical. Two regressions: the omitting record blocks, the complete one converges."
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "Ambiguous same-token pair candidates are certified",
+      "file": "src/core/artifact-graph/gates.ts",
+      "outcome": "resolved",
+      "classification": "decision required",
+      "action": "DISAGREEMENT between the two halves, settled empirically rather than by argument. The fresh half called this scenario unreachable; the external filed it as a CRITICAL with a reproduction. Test: two external artifacts CANNOT share a token, because the filename embeds it — writing the second overwrites the first, and within one mode both the internal and external filenames are unique per token. The engine's missing cross-candidate ambiguity check is therefore real but UNREACHABLE, and the defect is in the SCENARIO. Resolved as the fresh half's SUGGESTION prescribed: the scenario now states only the reachable member-tie case and records why the pair-tie case is not stated, citing the disagreement that settled it."
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "A null outcome revives legacy status instead of failing safe",
+      "file": "src/core/artifact-graph/trail.ts",
+      "outcome": "resolved",
+      "classification": "decision required",
+      "action": "Reproduced and fixed. `normalizeDisposition` now tests PROPERTY PRESENCE with `hasOwnProperty` rather than string-ness: the legacy `status` key is consulted only when `outcome` is ABSENT, so `{outcome: null, status: 'resolved'}` makes the record unreadable instead of reviving a legacy key to override a value the emit actually carried. Spec and regression added."
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "The gate accepts external files the strict parser rejects",
+      "file": "src/core/artifact-graph/trail.ts",
+      "outcome": "resolved",
+      "classification": "decision required",
+      "action": "Reproduced live before fixing — a document whose only severity headings sat inside a fenced example parsed as a clean external pass. `parseExternalMarkdown` is now FENCE-AWARE (tracking ``` and ~~~ openers and skipping fenced content) and requires the format's `**Reviewer**:` field alongside the header and all three sections. The prompt template itself would have parsed as a pass before this. Two regressions: the fenced example and the metadata-less document are both recorded as rejected returns."
+    },
+    {
+      "severity": "WARNING",
+      "title": "Rejected external returns disappear from the reason below budget",
+      "file": "src/core/artifact-graph/gates.ts",
+      "outcome": "resolved",
+      "classification": "trivial fix",
+      "action": "Fixed: the rejected-return clause is composed whenever a rejected artifact exists and the gate reports a budget, with the exhaustion clause composing on top rather than gating it. Regression asserts the reason names the artifact while `budgetExhausted` is false."
+    },
+    {
+      "severity": "WARNING",
+      "title": "Mode-less reviewed gates report a cross-mode budget",
+      "file": "src/core/artifact-graph/gates.ts",
+      "outcome": "resolved",
+      "classification": "trivial fix",
+      "action": "Fixed: budget reporting is now gated on mode derivability, so a reviewed gate whose id encodes no mode reports no budget at all rather than one summed across every mode's passes — which is what the delta already required. Regression uses a `peer-check` gate over a mixed-mode trail."
+    },
+    {
+      "severity": "WARNING",
+      "title": "Blind-pair guidance uses weaker predicates than assignment",
+      "file": "src/core/artifact-graph/gates.ts",
+      "outcome": "resolved",
+      "classification": "trivial fix",
+      "action": "Fixed on both halves of the finding. `diagnosePair` now filters candidates through `isPairable`, the same predicate assignment uses, so the reason can never name a class the canonical command does not; and `isPairable` uses the INCLUSIVE bound the blindness interval uses, so it cannot recommend buying a partner for a pass that cannot form a valid pair. A new `foreclosed` diagnosis distinguishes a pair excluded by ordering from one broken by a walk."
+    },
+    {
+      "severity": "WARNING",
+      "title": "Cadence backtracking grows exponentially on valid custom schemas",
+      "file": "src/core/artifact-graph/gates.ts",
+      "outcome": "resolved",
+      "classification": "trivial fix",
+      "action": "Fixed with memoized failure states — and the memo key is the interesting part. Keying on (slot, consumed set, lower bound) is still combinatorial; the consumed set is REDUNDANT, because every slot's pass must strictly beat the previous slot's token, so an already-consumed pass can never be eligible again. Keying on (slot, lower bound) alone collapses the state space to slots x distinct tokens. The reviewer's 22-pass/12-slot case now runs in milliseconds; a 20-pass/11-slot adversarial regression asserts under 1.5s."
+    },
+    {
+      "severity": "WARNING",
+      "title": "Verify emits implement behavior absent from this change's delta",
+      "file": "src/core/emit-composition.ts",
+      "outcome": "resolved",
+      "classification": "trivial fix",
+      "action": "Confirmed a genuine baseline-compliance break I introduced, and closed it in the change rather than deferring: `orbit-run-summary-emit`'s 'Verify pass recommendation' requirement normatively fixed the leading token as the bare `/orbit:review --as system <name>` and this change's code now emits whatever the gate graph computes. A MODIFIED block is added to that capability — already one of this change's three, so no ceiling cost — stating that the leading token is the graph's canonical command, that a hardcoded form is PROHIBITED, and that the class qualifier travels in `args`."
+    },
+    {
+      "severity": "WARNING",
+      "title": "The removed confirmation-set rewrite remains in declared scope",
+      "file": "orbit/changes/rc02-gate-semantics/design.md",
+      "outcome": "resolved",
+      "classification": "trivial fix",
+      "action": "Fixed at all four sites both halves named: the design's Goals bullet now says the whole-slot confirmation goal LEFT with clause (c) and is rc02c's premise; Touchpoints no longer names the confirming pass set; D4's pseudocode no longer restates freshness inside the pair predicate; and the proposal's Modified Capabilities describes clause (b) and the new-finding match rather than a pass set."
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": "R-crc-3 (Sal, 2026-09-11): method decisions are settled by the authoring AI and recorded with rationale.",
+  "final_assessment": "10 of 10 resolved. The external half of the first blind pair: four CRITICALs, every one an engine defect only executing could find — a partial resolution record certifying findings it omits, a present-but-null `outcome` reviving the legacy key, a fence-unaware parser that would have counted the prompt template itself as a clean pass, and a same-token candidate case that turned out unreachable. Five fixes landed in the engine; the fifth was resolved as a scenario correction after the two halves disagreed and a thirty-second test settled it. The verify-emit finding closed a baseline-compliance break this change had introduced, with a MODIFIED block in a capability the change already touches.",
+  "iteration": 7,
+  "next_recommended": "/orbit:address-reviews rc02-gate-semantics --from-file orbit/changes/rc02-gate-semantics/.orbit-runs/review-system-2026-09-14T10-06-20Z.json"
+}

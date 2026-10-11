@@ -1,0 +1,15 @@
+schema: spec-driven
+created: 2026-10-05
+schema_version: 4
+architecture:
+  doc: clean-up-review-cycle
+  stage: rc08b-walk-routing
+base_fingerprints:
+  orbit-address-reviews:
+    Address-reviews command available: sha256:f4ea1c562fc253ba73eae45d7555edd36b5f13401801afe627ca015852cec9b7
+    Resolution-log JSON shape extensions for walk-mode / decision-forks / cascade: sha256:806cf55ce530e69b225430ed298ca459fc996266492ea7edcce8e64dcca8456a
+  orbit-engine-gates:
+    Reviewed-gate pass condition — the computed convergence criterion: sha256:e4fa00fb5a12a94a07891373085f2e1fded24719da808812974338046a4fd44f
+  orbit-run-summary-emit:
+    Review-external T0 multi-step recommendation: sha256:ce2019228e67e2bc26ac020fb81827ade71de4068aaabd836fb5b922958d38fb
+    Audit-drift standalone recommendations: sha256:6f23d3d11bf2d85143321b9adc922e7331b736745e01393c86607b5a45f4ed36

@@ -1,0 +1,173 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-25T18:09:59Z",
+  "change": "rc13b-explore-maturity-signal",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc13b-explore-maturity-signal/.orbit-runs/external-proposal-2026-09-25T17-51-42Z.md",
+  "external_reviewer": "GPT-5 Codex",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 1,
+    "warning": 3,
+    "suggestion": 3
+  },
+  "pushback_verification": "All 7 findings verified against the current artifacts and, where they cite code, against source (the counter's local fence scanner; the two exploration cells) before any edit; 0 stale.",
+  "resolution_summary": {
+    "resolved": 7,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "`rules_open` conflates open live rules with malformed non-rules, so the rung has no correct predicate",
+      "marker_source": "external",
+      "file": "orbit/changes/rc13b-explore-maturity-signal/specs/orbit-emit-composition/spec.md",
+      "line": 25,
+      "classification": "trivial_fix",
+      "action": "Discriminated, DISJOINT model stated once in the emit-composition delta: `rules_open` holds live rules only, one of five states tested in order (`open`, `absent`, `bounded-incomplete` with stated precedence over the grammar's MALFORMED naming, `no-closure`, `malformed-entry`), its length IS K; a NEW fifth field `key_defects` carries orphans and duplicate IDs by line, never in K, rendered in its own clause on every rung without changing the verb. Four isolated scenarios added (malformed unique live rule, orphan-only, duplicate-only, BOUNDED-incomplete) with exact strings; the maturity delta consumes K = rules_open.length and adds the key-defect clause + two scenarios. Recorded as dated amendments in explore.md D-rc13b-8 (states, precedence, the four fixtures executed) and D-rc13b-4 (fifth field); design, proposal, tasks follow.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13b-explore-maturity-signal/specs/orbit-run-summary-emit/spec.md",
+          "orbit/changes/rc13b-explore-maturity-signal/explore.md",
+          "orbit/changes/rc13b-explore-maturity-signal/design.md",
+          "orbit/changes/rc13b-explore-maturity-signal/proposal.md",
+          "orbit/changes/rc13b-explore-maturity-signal/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The new parser is directed toward a fence scanner that is not CommonMark-correct",
+      "marker_source": "external",
+      "file": "orbit/changes/rc13b-explore-maturity-signal/design.md",
+      "line": 76,
+      "classification": "decision_required",
+      "action": "Option A ratified (\"a\"): the opener rule now lives in its owner — `specs/orbit-conventions/spec.md` MODIFIED block (one sentence + one scenario), fingerprint stamped 6/6; the emit-composition delta's restatement replaced by a pointer; design records the fourth-capability breach under R-crc-9's declare branch; proposal's Capabilities lists orbit-conventions; explore.md D-rc13b-8 EXECUTE line records the move.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13b-explore-maturity-signal/specs/orbit-conventions/spec.md",
+          "orbit/changes/rc13b-explore-maturity-signal/specs/orbit-emit-composition/spec.md",
+          "orbit/changes/rc13b-explore-maturity-signal/design.md",
+          "orbit/changes/rc13b-explore-maturity-signal/proposal.md",
+          "orbit/changes/rc13b-explore-maturity-signal/explore.md",
+          "orbit/changes/rc13b-explore-maturity-signal/tasks.md",
+          "orbit/changes/rc13b-explore-maturity-signal/.openspec.yaml"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "resolution": "Option A: a one-sentence MODIFIED delta to orbit-conventions' Decision-entry requirement states the first-line-prefix rule (with one scenario); the emit-composition delta points at it; the fourth capability is a declared R-crc-1 breach in design Risks; fingerprint stamped on the owner's block.",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Put the prefix/wrapping rule in the owning orbit-conventions requirement and make the module extend that owner"
+          },
+          {
+            "label": "B",
+            "body": "Explicitly reduce/split scope to remain under the capability ceiling"
+          }
+        ],
+        "chosen": "A"
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "The first-line-prefix opener rule lives outside the specification that owns the production",
+      "marker_source": "external",
+      "file": "orbit/changes/rc13b-explore-maturity-signal/specs/orbit-emit-composition/spec.md",
+      "line": 43,
+      "classification": "trivial_fix",
+      "action": "Verified in source (explore-counter.ts:46-55 tracks three delimiter chars, closes on prefix, accepts any indent). Design D-rc13b-8 and task 2.1 now require both the counter and the new parser to import `createFenceTracker` from `src/core/markdown-fence.ts`; the emit-composition delta names the shared tracker and a nested-fence scenario (four-backtick outer, three-backtick inner decoy, over-indented fence); task 2.2 lists both fixtures; Q-crc-15's fence-grammar count noted as three in design and explore.md.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13b-explore-maturity-signal/specs/orbit-emit-composition/spec.md",
+          "orbit/changes/rc13b-explore-maturity-signal/tasks.md",
+          "orbit/changes/rc13b-explore-maturity-signal/explore.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "MALFORMED identifiers have contradictory rendering rules",
+      "marker_source": "external",
+      "file": "orbit/changes/rc13b-explore-maturity-signal/specs/orbit-run-summary-emit/spec.md",
+      "line": 14,
+      "classification": "trivial_fix",
+      "action": "ONE identifier rule in the maturity delta: `<id> at line <n>` when both exist, `<id>` alone, `line <n>` when no ID; every scenario and task 3.1 use it; the bound applies to all three rendered lists.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13b-explore-maturity-signal/tasks.md",
+          "orbit/changes/rc13b-explore-maturity-signal/specs/orbit-emit-composition/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The new spec-parity test ignores the active-delta owner used by the existing mirror test",
+      "marker_source": "external",
+      "file": "orbit/changes/rc13b-explore-maturity-signal/tasks.md",
+      "line": 4,
+      "classification": "trivial_fix",
+      "action": "The ADDED grammar-module requirement and task 1.2 now resolve the OWNING text via the generated-surface test's single-active-owner lookup (active delta first, baseline otherwise); design D-rc13b-5 says so.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13b-explore-maturity-signal/tasks.md",
+          "orbit/changes/rc13b-explore-maturity-signal/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The Accounted residual list is unordered and unbounded",
+      "marker_source": "external",
+      "file": "orbit/changes/rc13b-explore-maturity-signal/specs/orbit-run-summary-emit/spec.md",
+      "line": 12,
+      "classification": "trivial_fix",
+      "action": "`residuals` ordered by Decisions file order (emit-composition delta); the Accounted rung's residual list takes the same three-plus-`+N more` bound (maturity delta, scenario note); task 3.3 asserts five residuals → three IDs `+2 more`.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13b-explore-maturity-signal/specs/orbit-run-summary-emit/spec.md",
+          "orbit/changes/rc13b-explore-maturity-signal/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The recorded Mechanism still contains two pre-amendment claims",
+      "marker_source": "external",
+      "file": "orbit/changes/rc13b-explore-maturity-signal/explore.md",
+      "line": 104,
+      "classification": "trivial_fix",
+      "action": "Both cells amended, dated: D-rc13b-4's `status` row now says `re_entry` iff concluded AND exactly one live entry carries the slot; D-rc13b-9's CONFORM line now says ZERO new file reads, matching the trail-only amendment and the FEASIBILITY line.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": "a",
+  "final_assessment": "7 of 7 external findings (GPT-5 Codex, iter 1) resolved, 0 stale. The CRITICAL — one array carrying open live rules AND key defects, so the rung had no correct predicate — is closed by a DISCRIMINATED model: `rules_open` holds live rules only in five disjoint states (bounded-incomplete taking precedence over the grammar's MALFORMED naming) and its length is K; a fifth engine-owned field `key_defects` carries orphans and duplicate IDs, rendered in its own clause on every rung, never changing the verb; four isolated scenarios executed and recorded as dated amendments in explore.md D-rc13b-8 and D-rc13b-4. One decision-lane finding ratified by Sal (\"a\"): the opener rule moves to its OWNER — a one-sentence MODIFIED delta to orbit-conventions' Decision-entry requirement — making this a FOUR-capability change, one over R-crc-1, declared in design under R-crc-9's declare branch; fingerprint stamped on the owner's block (6/6). Both parsers now import the engine's one CommonMark fence tracker (the counter's local scanner was wrong, verified; Q-crc-15's count is three). One identifier rule, `residuals` ordered and bounded, the parity test resolving the active-delta owner, two stale exploration cells amended. Seven requirement blocks (six MODIFIED, one ADDED), 18 tasks; `orbit validate --strict` passes; the exploration's grammar check is clean (9 decisions, 7 entries). Five of seven findings sat in text the FIRST walk authored — rc02's lesson repeating one level down; this walk's edits are again unread by any independent pass, which the in-context confirm is for.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal rc13b-explore-maturity-signal"
+}

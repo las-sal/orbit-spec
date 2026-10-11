@@ -1,0 +1,28 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-07-14T21:05:13Z",
+  "change": "d2-architect",
+  "final_assessment": "All 3 external iter-2 findings (GPT-5 Codex: 1 CRITICAL, 2 WARNING) resolved; 0 stale/deferred/escalated. CRITICAL (README sync carrier — a THIRD carrier-class flavor: a triggered live-baseline obligation outside the delta set): task 4.4 gains the README install-surface audit+sync clause (counts, file lists, CLI invocations; no-edit-needed recordable only on proof) and task 5.3 gains the conditional fresh-sandbox verification the install-documentation baseline requires — 20-task structure preserved per the recommendation. W1 (silent legacy downgrade): near-miss rule added to the format requirement — a heading starting '### Stage ' that fails the exact grammar (or a stage-like slot line failing slot syntax) is a VALIDATION ERROR naming the line, and status lists the doc as malformed; LEGACY is redefined as zero stage-prefixed headings outside fences; two scenarios added + legacy scenario tightened. The format-marker alternative was rejected as contradicting D-d2-3's one-syntax minimalism. W2 (missing slot semantics): slots declared OPTIONAL with defined omission values (absent Depends-on = none; absent Complete = unratified; validate accepts omission); the architect ratification flow inserts the missing Complete line (placement pinned); slotless-stage scenario added. Validates --strict; fingerprints 15/15 (all edits in ADDED requirements — no new baseline blocks touched).",
+  "next_recommended": "/orbit:review --as proposal --fresh d2-architect — the external yielded new findings (now resolved); the no-new-findings confirm requires an independent pass that yields none",
+  "kind": "editorial",
+  "source": "--from-file orbit/changes/d2-architect/.orbit-runs/external-proposal-2026-07-14T20-57-12Z.md",
+  "source_path": "orbit/changes/d2-architect/.orbit-runs/external-proposal-2026-07-14T20-57-12Z.md",
+  "source_format": "external",
+  "external_reviewer": "GPT-5 Codex",
+  "walk_mode": "per_finding",
+  "walk_mode_source": "flag",
+  "resolution_summary": { "resolved": 3, "stale": 0, "deferred": 0, "escalated": 0 },
+  "resolutions": [
+    { "finding": "Generated-surface change has no README synchronization carrier", "severity": "CRITICAL", "classification": "trivial fix", "action": "Task 4.4 gains the README audit+sync clause; task 5.3 gains the conditional fresh-sandbox verification (baseline scenario verified exact before fixing)." },
+    { "finding": "A malformed stage heading can silently downgrade a doc to legacy", "severity": "WARNING", "classification": "trivial fix", "action": "Near-miss rule: stage-like headings/slots failing exact grammar are validation errors (status renders malformed, never silent legacy); legacy = zero stage-prefixed headings outside fences. Format-marker alternative rejected per D-d2-3 minimalism." },
+    { "finding": "Missing slot semantics are undefined", "severity": "WARNING", "classification": "trivial fix", "action": "Slots optional with pinned omission semantics (no-deps / unratified; validate accepts); ratification flow inserts the missing Complete line with placement defined; slotless scenario added." }
+  ],
+  "ripple_cascade": {
+    "applied": [
+      "orbit/changes/d2-architect/specs/orbit-architecture-engine/spec.md",
+      "orbit/changes/d2-architect/specs/orbit-architect/spec.md",
+      "orbit/changes/d2-architect/tasks.md"
+    ],
+    "flagged_not_applied": []
+  }
+}

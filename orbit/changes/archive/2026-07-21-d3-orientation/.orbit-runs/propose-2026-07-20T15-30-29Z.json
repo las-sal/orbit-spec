@@ -1,0 +1,11 @@
+{
+  "command": "propose",
+  "timestamp": "2026-07-20T15:30:29Z",
+  "change": "d3-orientation",
+  "final_assessment": "Generated proposal/design/specs/tasks for d3-orientation in consume mode; consumed explore.md (5 ratified decisions D-d3-1..5 seeded; 0 open questions — both resolved in-session, so no deferral prompts fired). One ADDED capability (orbit-orientation: 8 requirements — bare sprint view claiming today's error path, continuity predicate + degradation ladder, strip composition, time-shifted next sourcing, --full arc view, closed waiting set, JSON tiers, CLI-only + cold-start pointer) and two MODIFIED capabilities composed verbatim from live baselines (orbit-run-summary-emit: Emit scope + Emit timing gain the explore BEGIN emit; orbit-explore-modifications: Mode B/C scaffolding fires it). 20 tasks in 5 groups. Design D1-D7: composition-only orientation module; strip/last/next/also renderers; begin emit is body-layer; CLAUDE.md pointer at apply-seam. Staged-metadata merge exercised its first real run: architecture citation carried (stage flipped exploring → in-change at the move), fresh schema/created/schema_version won, staged file discarded. Fingerprints 3/3 verified; --strict valid.",
+  "next_recommended": "/orbit:review d3-orientation — proposal artifacts ready; review before apply",
+  "kind": "workflow",
+  "artifacts_created": ["proposal", "design", "tasks", "specs/orbit-orientation", "specs/orbit-run-summary-emit", "specs/orbit-explore-modifications"],
+  "delta_count": 11,
+  "from": "explore"
+}

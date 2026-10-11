@@ -1,0 +1,109 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-08-06T13:42:29Z",
+  "change": "d5-context-economy",
+  "kind": "editorial",
+  "model": "claude-fable-5",
+  "source": "auto-discovery",
+  "source_path": "orbit/changes/d5-context-economy/.orbit-runs/review-system-2026-08-05T20-54-40Z.json",
+  "source_command": "review",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "walk_mode_source": null,
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 1
+  },
+  "pushback_verification": "All 3 verified against current state (the stale-surface gap re-confirmed live; the divergence set re-derived from the committed diff; the absent models: example re-confirmed); 0 stale suppressions.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "marker": "src/core/shared/skill-generation.ts:356 — update leaves the retired orbit-review-external skill + launcher on pre-existing surfaces",
+      "severity": "WARNING",
+      "source": "internal-review",
+      "classification": "decision required",
+      "status": "resolved",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "extend update reconciliation with a retired-artifacts list consulted on both update paths (remove known-retired skill dirs + launcher files)"
+          },
+          {
+            "label": "B",
+            "body": "accept the gap; document manual removal as an upgrade note and file a follow-up issue"
+          }
+        ],
+        "chosen": "A"
+      },
+      "action": "Implemented option A: RETIRED_SKILL_DIRS + RETIRED_COMMAND_IDS registry in profile-sync-drift.ts; both update removal loops extended (removeUnselectedSkillDirs / removeUnselectedCommandFiles); retired-artifact presence now counts as profile drift so PLAIN update reconciles without --force. Tests: 2 drift-detection cases + a plain-update e2e (seed retired pair, update, both removed). Ripple: ADDED delta orbit-skill-generation 'Retired surface artifacts converge on update' (strict-valid; ADDED block needs no base fingerprint).",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/profile-sync-drift.ts",
+          "src/core/update.ts",
+          "test/core/profile-sync-drift.test.ts",
+          "test/core/templates/orbit-generated-surface.test.ts",
+          "orbit/changes/d5-context-economy/specs/orbit-skill-generation/spec.md"
+        ],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "marker": "orbit/changes/d5-context-economy/design.md:197 — Touchpoints divergence: 9 substantive source files actual-but-not-predicted",
+      "severity": "WARNING",
+      "source": "internal-review",
+      "classification": "decision required",
+      "status": "resolved",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "accept-and-record: this finding on the trail is the divergence record; no artifact edit (the frozen-map rule)"
+          },
+          {
+            "label": "B",
+            "body": "additionally append a dated post-apply addendum BELOW the frozen section (plan-vs-landed)"
+          }
+        ],
+        "chosen": "A"
+      },
+      "action": "Accept-and-record: the trail (the source review finding + this resolution entry, listing instruction-loader.ts, trail.ts, boot-render.ts, model-hints.ts, project-config.ts, profile-sync-drift.ts, skill-generation.ts, tool-detection.ts, skill-templates.ts) IS the divergence record; design.md's frozen predicted map untouched per the D6 rule — the engine's boot render shows actual beside predicted on demand.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "marker": "orbit/changes/d5-context-economy/design.md:197 — Touchpoints predicted-but-never-touched: 5 targets the plan overshot",
+      "severity": "SUGGESTION",
+      "source": "internal-review",
+      "classification": "trivial fix",
+      "status": "resolved",
+      "action": "Applied the one actionable item: the commented models: example added to orbit/config.yaml (key vocabulary + slot-wins rule + 80-char constraint documented inline); verified inert — eligibility line byte-identical with the example commented. The other 4 overshoot targets (report-render.ts imported-not-edited, templates/index.ts, init.ts, update.ts) are informational; update.ts was subsequently touched anyway by finding 1's fix.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/config.yaml"
+        ],
+        "flagged_not_applied": []
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": null,
+  "final_assessment": "All 3 system-review findings walked and resolved: the stale-surface GC gap fixed with the retired-artifacts registry (option A, +3 tests, ADDED orbit-skill-generation delta), the Touchpoints divergence accepted-and-recorded on the trail (option A, frozen-map rule holds), and the models: example landed in orbit/config.yaml. 1890 tests green; strict validation passes; fingerprints 25/25.",
+  "iteration": 9,
+  "next_recommended": "/orbit:review --as proposal --fresh d5-context-economy"
+}

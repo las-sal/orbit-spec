@@ -1,0 +1,28 @@
+{
+  "command": "archive",
+  "timestamp": "2026-07-13T20:08:20Z",
+  "change": "explicit-lifecycle-consent",
+  "final_assessment": "Archived explicit-lifecycle-consent to orbit/changes/archive/2026-07-13-explicit-lifecycle-consent/. D-arc Stage D1 delivered: consent gate vocabulary (spec-driven v3), provenance-conditioned consent prompts in the lifecycle bodies, the no-chaining fourth discipline in all 15 bodies, eligibility phrasing engine-wide, the consent emit field, the consent-era three-tier tripwire, and the single-voiced fall-through at the archive seam. Baseline capabilities 13 -> 14 (orbit-lifecycle-consent ADDED; 7 capabilities gained deltas: 9 ADDED + 8 MODIFIED requirements, all containment-verified verbatim). This archive ran under the change's own shipped contract: user-typed invocation, zero consent prompts, gate PASSED (no inflection), fingerprints 8/8 (no divergence prompt), clean audit, and this summary carries the consent field the change introduced.",
+  "next_recommended": "Change archived. Run /orbit:new or /orbit:explore to start the next change, or /orbit:audit-drift for a project-wide drift check.",
+  "kind": "lifecycle",
+  "archive_path": "orbit/changes/archive/2026-07-13-explicit-lifecycle-consent/",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": { "critical": 0, "warning": 0, "suggestion": 0 },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": ["orbit-lifecycle-consent", "orbit-engine-gates", "orbit-conventions", "orbit-archive-modifications", "orbit-run-summary-emit", "orbit-audit-drift", "orbit-review", "orbit-onboard"],
+    "added": 9,
+    "modified": 8,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
+  "user_decision": "proceeded_with_no_critical",
+  "consent": "user-invoked",
+  "warnings": []
+}

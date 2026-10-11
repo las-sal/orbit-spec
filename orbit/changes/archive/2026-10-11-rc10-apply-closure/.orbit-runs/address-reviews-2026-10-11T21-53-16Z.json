@@ -1,0 +1,160 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-11T21:53:16Z",
+  "change": "rc10-apply-closure",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc10-apply-closure/.orbit-runs/review-proposal-2026-10-11T21-51-49Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-11T21-51-49Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 1
+  },
+  "pushback_verification": "All three verified at HEAD: the ADDED requirement's Step 3.2 sentence said 'the same checks' with no fenced list and no engine surface runs the archive write gate before the move (emit-composition.ts:774-791); bulk-archive-change.ts:44-46 counts every unchecked box and :115 offers to skip incomplete changes; git diff 7b1a0711 shows only a key reorder in .openspec.yaml.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Step 3.2's pre-move check restates the write gate's refusal list with no held copy, so the two can diverge silently",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-archive-modifications/spec.md",
+      "line": 35,
+      "classification": "trivial_fix",
+      "action": "the refusals are stated ONCE as a fenced DEFERRAL REFUSALS production in the ADDED requirement; Step 3.2 checks each case of it before the move and the archive body carries it as a CHECKED MIRROR held byte-equal by a parity test (R-crc-14's mirror corollary); tasks 2.2/2.8, design D6 and the proposal follow",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc10-apply-closure/tasks.md",
+          "orbit/changes/rc10-apply-closure/design.md",
+          "orbit/changes/rc10-apply-closure/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "Step 3.2 SHALL run the same checks against the composed deferrals",
+          "run the write gate's checks against the composed deferrals",
+          "Step 3.2 runs the same checks before the move"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc10-apply-closure/specs/orbit-archive-modifications/spec.md",
+            "text": "DEFERRAL REFUSALS — the archive write gate refuses each"
+          },
+          {
+            "path": "orbit/changes/rc10-apply-closure/specs/orbit-archive-modifications/spec.md",
+            "text": "as a CHECKED MIRROR, held byte-equal to this fence by a parity test"
+          },
+          {
+            "path": "orbit/changes/rc10-apply-closure/tasks.md",
+            "text": "a parity test holding Step 3.2's `DEFERRAL REFUSALS` mirror"
+          },
+          {
+            "path": "orbit/changes/rc10-apply-closure/design.md",
+            "text": "the refusals are stated ONCE, as a fenced production in the requirement"
+          }
+        ],
+        "searched": [
+          "the same checks",
+          "write gate's checks",
+          "CHECKED MIRROR"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Bulk archive's own task count still classes a change whose only open tasks are validations as incomplete",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-archive-modifications/spec.md",
+      "line": 41,
+      "classification": "trivial_fix",
+      "action": "bulk archive's own task count excludes the marked tasks Step 3.2 owns, as upstream Step 3's does, so a validation-only change is never classed incomplete or offered for skipping; the bulk scenario, task 2.6, design D8 and the proposal follow",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc10-apply-closure/tasks.md",
+          "orbit/changes/rc10-apply-closure/design.md",
+          "orbit/changes/rc10-apply-closure/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc10-apply-closure/specs/orbit-archive-modifications/spec.md",
+            "text": "Its own task count SHALL exclude the marked tasks Step 3.2 owns"
+          },
+          {
+            "path": "orbit/changes/rc10-apply-closure/specs/orbit-archive-modifications/spec.md",
+            "text": "the change is not classed incomplete for that task"
+          },
+          {
+            "path": "orbit/changes/rc10-apply-closure/tasks.md",
+            "text": "exclude the marked tasks Step 3.2 owns from bulk archive's own task count"
+          },
+          {
+            "path": "orbit/changes/rc10-apply-closure/design.md",
+            "text": "Its own readiness count (every `- [ ]`) excludes the marked tasks Step 3.2 owns"
+          },
+          {
+            "path": "orbit/changes/rc10-apply-closure/proposal.md",
+            "text": "its own task count stops counting the marked tasks"
+          }
+        ],
+        "searched": [
+          "incomplete",
+          "skip incomplete",
+          "task count"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The walk's fingerprint re-stamp reordered .openspec.yaml outside every entry's edit record",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc10-apply-closure/.openspec.yaml",
+      "line": 4,
+      "classification": "trivial_fix",
+      "action": "recorded here, no edit: the `architecture:` block moved above `base_fingerprints` when walk 1 (address-reviews-2026-10-11T21-49-31Z) ran `orbit fingerprint rc10-apply-closure`, which rewrites the metadata file; the citation and all three fingerprints are unchanged",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [],
+        "searched": [
+          "git diff 7b1a0711 -- .openspec.yaml"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Three of three resolved as repairs: the refusal list is stated once as a fenced production that Step 3.2 carries as a checked mirror; bulk archive's own task count stops counting the marked tasks; the metadata reorder is recorded as walk 1's fingerprint re-stamp.",
+  "iteration": 3,
+  "next_recommended": "/orbit:apply rc10-apply-closure — user-invoked",
+  "ripple_misses": 0
+}

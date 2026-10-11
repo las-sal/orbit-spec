@@ -1,0 +1,88 @@
+{
+  "command": "archive",
+  "timestamp": "2026-10-04T01:49:43Z",
+  "change": "rc04b-forward-recommendation",
+  "kind": "lifecycle",
+  "model": "claude-fable-5-1",
+  "final_assessment": "Archived rc04b-forward-recommendation to orbit/changes/archive/2026-10-04-rc04b-forward-recommendation/ through a COMPUTED PASSED review-system gate — the eighth rc-stage through one, the seventh through the blind pair (external GPT-6 Codex 0C/2W/1S and fresh 0C/1W/5S on the pushed apply commit 2f482e65, blind to each other, zero CRITICAL on either half — the program's first system pair with none — and zero findings converged in location; the one converged PATTERN, a rule stated twice, was fixed at both sites on each log's own evidence), then an in-context confirm 0C/0W/3S whose three SUGGESTIONs ride the readiness record. Specs synced 2 ADDED + 9 MODIFIED across five capabilities, 11/11 blocks byte-verified on the real baselines; the capability count is unchanged at 21; fingerprints 9/9 (the ninth block stamped at walk 2); 2465 tests green; validate --strict and --sources green. Task 4.5 closed at archive by observation on both halves. Two open questions opened: Q-crc-30 (files_touched is tracked-only) and Q-crc-31 (duplicate-section handling diverges between Notes and Direction). The readiness record carries seven accepted residuals, headlined by rc07's distinction.",
+  "archive_path": "orbit/changes/archive/2026-10-04-rc04b-forward-recommendation/",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": [
+      "orbit-conventions",
+      "orbit-emit-composition",
+      "orbit-report-rendering",
+      "orbit-review",
+      "orbit-review-external"
+    ],
+    "added": 2,
+    "modified": 9,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
+  "user_decision": "proceeded_with_no_critical",
+  "consent": "user-invoked",
+  "warnings": [
+    "Task 4.5 (the user-validation handoff) was CLOSED AT ARCHIVE BY OBSERVATION, not prompted past: both halves of the blind pair ran under the new surface (the task line carries the evidence — the accepted fresh direction, the external return's conforming section with three contained probes, neither rendered marked).",
+    "The archive directory is dated 2026-10-04 (UTC) while the whole cycle ran 2026-10-03 local: the in-context confirm emit crossed midnight UTC (review-system-2026-10-04T01-04-14Z); the proposal, apply, both independent passes and both walks carry 2026-10-03 tokens.",
+    "The pre-archive audit-drift sweep ran IN FLOW as a library call (summary_path null); its one SUGGESTION — CLAUDE.md's apply-time paragraph stating the apply-time test count (2463) against a final tree at 2465 — is corrected in the same flow by the archive paragraph that supersedes it.",
+    "The sync ran through the engine's applySpecs directly (silent) rather than a sync-specs subagent, inheriting this invocation's consent; every delta block was byte-verified against the written baseline afterwards (11/11)."
+  ],
+  "judgements": [
+    {
+      "kind": "readiness",
+      "disposition": "ready",
+      "ratified_by": "ai",
+      "formed_against": [
+        "2026-10-03T22-29-59Z",
+        "2026-10-03T22-49-13Z",
+        "2026-10-03T23-41-11Z",
+        "2026-10-03T23-44-04Z"
+      ],
+      "reasoning": "Ready. The stage's three exit criteria are each carried by a measurement on the final tree rather than a claim: (1) an independent pass without a direction is refused where produced (eight write-gate tests plus the CLI-surface case) and marked where it cannot be (the two independent-pass goldens; the pre-D4 boundary retained), with the gate reading nothing new (the three-readers test; trail.ts absent from the stage's diff, gates.ts's diff exactly the export keyword); (2) the direction renders in its own section inside the quarantine with the engine tail last, and walk 1 closed the one real containment hole the cycle found — a bare carriage return — in one shared splitter over all four verbatim bodies, so the single-voiced rule is tighter at archive than at apply; (3) the prompt template carries `## Direction` as a named field, installed byte-equal from the owning delta and held by the parity test. The cadence's own evidence is the strongest input: both halves of the blind pair ran under the new surface and the slot worked in both — the fresh emit's direction was accepted first time, the external return's section rendered unmarked with three parser probes inside it — and the halves DISAGREED (hold against forward), which is the slot producing two cited views where before there was prose; I read both, and the hold's three reasons were each resolved at walk 1. Nineteen system-cadence findings across three passes, zero CRITICAL, zero repeats, no mechanism authored at either walk (two scope calls by chat: 2A a wording delta, 4A a declaration). What remains is listed below: rc07's distinction, the unenforced content contract, and five riders for other owners.",
+      "accepted": [
+        {
+          "claim": "The review-system gate PASSED means every substantive finding is resolved — NOT that an independent pass stood clean on the final tree. The two independent passes read the apply commit 2f482e65; the two walks and the confirm edited after it (the shared splitter, the predicate swap, the placeholder clause, the ninth MODIFIED block, the openness declaration), and no fresh or external pass has read those edits.",
+          "why": "rc07's distinction, carried on every rc-stage archive since. The walks' edits are each pinned by a test the confirm re-ran (2465 green), the confirm re-executed every exit-criterion measurement rather than reading the logs, and the engine merged all eleven blocks byte-equal; buying a third independent pass for five small edits would be effort targeted rather than recorded (R-crc-11(h))."
+        },
+        {
+          "claim": "The direction's CONTENT contract — which way and why; never counts, gate state or a command token — and the agreement between a direction's token and its reasoning are enforced nowhere (R-crc-10). This cycle's halves disagreed on direction, and nothing in the engine noticed.",
+          "why": "By design (D-rc04b-3/4): the engine judges presence and shape; whether the direction is RIGHT is the in-context reaction's and this record's judgement — which is exactly what happened here. The engine tail rendering last is the structural backstop, and walk 1's carriage-return fix closed the one way a reasoning line could have forged it."
+        },
+        {
+          "claim": "The design's Mechanism → artifacts table is one destination short: row D-rc04b-4 does not name the Commentary block walk 2 added (confirm S1), and the change is archived with the row as it stands.",
+          "why": "The proposal's Modified Capabilities list, design D4's remark and tasks 4.1 all carry the block; the table is the proposing AI's reading at propose time and the walk log records the addition. A record gap, not a divergence an implementation could make — carried here rather than edited at the seam."
+        },
+        {
+          "claim": "Keys inside `direction` beyond `disposition` and `reasoning` are CARRIED verbatim into the record and never read (4A, declared in the ADDED requirement) — nested noise can persist in emits while a top-level typo is refused.",
+          "why": "Sal chose the declaration over the check (R-crc-6: the walk authors no mechanism). Both readers agree (the normalizer drops the extras), so no surface changes; a future stage that wants the slot closed where produced has the scenario and the pin to invert."
+        },
+        {
+          "claim": "The gate's fallthrough reason reads `cadence class '<slot>' has no fresh pass` for every uncovered non-pair slot, including `in-context`; the new near-miss golden transcribes it faithfully (confirm S2).",
+          "why": "The wording is `orbit-engine-gates`' own (its external-slot scenario specifies the same string) — a capability this change does not declare (R-crc-1). Rider for the next stage touching that owner; the golden moves with the spec when it does."
+        },
+        {
+          "claim": "`orbit fingerprint`'s add-missing stamp re-serializes `.openspec.yaml` and moved the `architecture:` citation above `base_fingerprints` (confirm S3); the archived metadata carries that order.",
+          "why": "A serializer round-trip with no semantic change — validate --strict and the architecture citation both resolve. Owner is `orbit-base-fingerprints`; rider."
+        },
+        {
+          "claim": "Two fresh-half findings outside every delta here are deferred to the program's open questions, not fixed: the apply emit's `files_touched` lists tracked files only, so this stage's three NEW files were absent from its apply record (Q-crc-30); and a second `## Notes` section is silently last-wins while a second `## Direction` is MALFORMED (Q-crc-31).",
+          "why": "Both are other owners' mechanisms (the apply-state reader; the external format's Notes rule) and R-crc-1 declined a sixth and seventh capability. Each is recorded with its repair options at the walk and in the program doc, so the next stage that touches either owner inherits a decision, not a discovery."
+        }
+      ]
+    }
+  ],
+  "next_recommended": "Change archived. Run /orbit:new or /orbit:explore to start the next change, or /orbit:audit-drift for a project-wide drift check."
+}

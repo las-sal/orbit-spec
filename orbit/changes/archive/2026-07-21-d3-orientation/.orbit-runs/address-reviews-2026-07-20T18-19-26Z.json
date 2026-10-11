@@ -1,0 +1,59 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-07-20T18:19:26Z",
+  "change": "d3-orientation",
+  "source": "--from-file",
+  "source_path": "orbit/changes/d3-orientation/.orbit-runs/review-proposal-2026-07-20T18-14-47Z.json",
+  "source_format": "internal-review",
+  "source_mode": "proposal",
+  "source_iteration": 3,
+  "walk_mode": "per_finding",
+  "kind": "editorial",
+  "resolutions": [
+    {
+      "finding": "Mode C scenario still says 'the BEGIN emit, as in Mode B' — a residual ripple of the resolved mode-aware CRITICAL",
+      "severity": "WARNING",
+      "file": "orbit/changes/d3-orientation/specs/orbit-explore-modifications/spec.md",
+      "pushback": "still applies — verified the scenario at line 35 carried 'and the BEGIN emit, as in Mode B' ordered before the back-fill",
+      "classification": "trivial fix",
+      "action": "Scenario reworded per the reviewer's ordering: create explore.md + metadata (as in Mode B) → back-fill Premise/Decisions → THEN fire the BEGIN emit, explicitly mode-aware (back-filled counts + maturity-consistent recommendation per orbit-run-summary-emit's Mode C begin-emit scenario, 'NOT Mode B's zero-count shape'). Cited scenario heading verified to exist in the emit delta ('Mode C crystallization BEGIN emit carries the back-filled state').",
+      "ripple_cascade": { "applied": ["orbit/changes/d3-orientation/specs/orbit-explore-modifications/spec.md"], "flagged_not_applied": [] }
+    },
+    {
+      "finding": "Fault-isolation's emit-less fallback pointer aims at the wrong requirement",
+      "severity": "SUGGESTION",
+      "file": "orbit/changes/d3-orientation/specs/orbit-orientation/spec.md",
+      "pushback": "still applies — the sourcing requirement asserts the begin emit guarantees a recorded next exists; the emit-less fallback lives in the continuity requirement's emit-less scenario",
+      "classification": "trivial fix",
+      "action": "Pointer re-aimed at the continuity requirement's emit-less scenario, with the fallback spelled inline (Early canonical string for explores; engine next_command for changes — the change path is emit-independent per the sourcing requirement).",
+      "ripple_cascade": { "applied": ["orbit/changes/d3-orientation/specs/orbit-orientation/spec.md"], "flagged_not_applied": [] }
+    },
+    {
+      "finding": "Tasks 2.2/2.3 predate the --full tuple amendment and don't name the per-entry tuple or JSON entry shape",
+      "severity": "SUGGESTION",
+      "file": "orbit/changes/d3-orientation/tasks.md",
+      "pushback": "still applies — 2.2 described --full as bands + nesting only; 2.3 named only the top-level JSON shapes",
+      "classification": "trivial fix",
+      "action": "2.2 now names the per-entry orientation tuple (strip/position + own last + own next — the cold-start criterion tier) including on the flat-fleet degradation; 2.3 names the workstream entry shape {name, kind, stage?, strip, position, last, next, gates?} (verified verbatim against the --full requirement).",
+      "ripple_cascade": { "applied": ["orbit/changes/d3-orientation/tasks.md"], "flagged_not_applied": [] }
+    },
+    {
+      "finding": "Design mislabels the external review's provenance as 'iter-2 external'",
+      "severity": "SUGGESTION",
+      "file": "orbit/changes/d3-orientation/design.md",
+      "pushback": "still applies — D4 said 'iter-2 external W4', D5 said 'iter-2 external CRITICAL'; the external file self-labels iteration 1",
+      "classification": "trivial fix",
+      "action": "Both relabeled 'external iter 1'. D6's 'iter-2 CRITICAL resolution' left as-is per the reviewer (that WAS the internal fresh pass). Residue grep confirms 'iter-2 external' now appears only in the audit-trail JSON (never edited, by policy).",
+      "ripple_cascade": { "applied": ["orbit/changes/d3-orientation/design.md"], "flagged_not_applied": [] }
+    }
+  ],
+  "resolution_summary": {
+    "resolved": 4,
+    "stale": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "post_state": "orbit validate d3-orientation --strict passes; fingerprints 6/6 verified; counts unchanged (15 delta requirements across 4 files; 16 tasks)",
+  "final_assessment": "All 4 iteration-3 findings resolved as trivial fixes: the Mode C scenario reworded (back-fill before the mode-aware BEGIN emit — the last un-rippled corner of the mode-aware resolution), the fault-isolation fallback pointer re-aimed at the continuity requirement, tasks 2.2/2.3 caught up to the --full tuple amendment, and the external provenance labels corrected. The iteration-3 pass carried no CRITICAL, so the strict confirm predicate needs an independent pass with no findings to converge — alternatively, per R-d-10's ratified calibration (0 CRITICAL + 0 new WARNING-or-above), a recorded gate_overridden proceed-anyway at apply is the sanctioned interim path if the user judges the suggestion-tail converged.",
+  "next_recommended": "/orbit:review --as proposal --fresh d3-orientation"
+}

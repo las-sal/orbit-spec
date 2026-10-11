@@ -1,0 +1,39 @@
+{
+  "command": "apply",
+  "timestamp": "2026-10-04T03:47:51Z",
+  "change": "rc03b-pass-genres",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "user_validation_tasks": [
+    "3.5"
+  ],
+  "consent": "user-invoked",
+  "tasks_completed": 15,
+  "tasks_remaining": 1,
+  "user_validation_remaining": 1,
+  "chunk": null,
+  "chunk_name": null,
+  "chunk_complete": true,
+  "tasks_completed_this_session": 15,
+  "files_touched": [
+    "CLAUDE.md",
+    "orbit/architecture/clean-up-review-cycle.md",
+    "orbit/changes/rc03b-pass-genres/.orbit-runs/address-reviews-2026-10-04T03-31-28Z.json",
+    "orbit/changes/rc03b-pass-genres/.orbit-runs/address-reviews-2026-10-04T03-37-14Z.json",
+    "orbit/changes/rc03b-pass-genres/.orbit-runs/external-proposal-2026-10-04T03-23-12Z.md",
+    "orbit/changes/rc03b-pass-genres/.orbit-runs/review-proposal-2026-10-04T03-34-25Z.json",
+    "orbit/changes/rc03b-pass-genres/design.md",
+    "orbit/changes/rc03b-pass-genres/proposal.md",
+    "orbit/changes/rc03b-pass-genres/specs/orbit-conventions/spec.md",
+    "orbit/changes/rc03b-pass-genres/specs/orbit-review-external/spec.md",
+    "orbit/changes/rc03b-pass-genres/specs/orbit-review/spec.md",
+    "orbit/changes/rc03b-pass-genres/tasks.md",
+    "src/core/templates/workflows/propose.ts",
+    "src/core/templates/workflows/review.ts",
+    "test/core/templates/orbit-content-fidelity.test.ts",
+    "test/core/templates/skill-templates-parity.test.ts"
+  ],
+  "diff_base": "90de16e54edfa2a5858ea6f2b6117556bfa8c07e",
+  "final_assessment": "15 of 16 tasks done. 15 of 16 in one session; 3.5 is the user-validation handoff (read the committed external prompt at the next blind pair's walk — exit (3)). Red tests first: the brief grep (1.1, 11 red on the pre-apply tree — 10 PHRASE, 1 REGION; one PHRASE hit in the PROPOSE body's staging-move note, reworded to 'run trail' with its two template hashes re-pinned as a recorded act), the pass-genre fence parity pin (1.2), six fidelity cases (1.3), and the untouched-modules hash pin over 17 files (1.4, a guard, green throughout). Then the surface in review.ts: the handoff's Step 5 to the iteration number only, Step 6's iteration-3+ line installed from the delta (option (a) and the trade-off sentence deleted, worked example rewritten, the graceful-degradation residue removed), the prompt template's trail bullet and three cycle-context bullets removed (project-context + cycle-context sections equal to the delta fence), the trail-excluding pathspec in both system-mode read lists, Step 5 scoped to VERIFICATION genre with the bounded metadata probe, the pushback epitome naming no prior-run comparison, a 'Pass genre' section carrying the owner's fence as a checked mirror, a 'Dispatching a fresh pass' step, and the repaired class words on the --reviewer/--fresh rows. CLAUDE.md gained the rc03b paragraph. 2498 tests green (2465 -> 2498); validate --strict valid; fingerprints 5/5; validate --sources green; nothing committed — Sal commits and pushes before the external half runs (the blind pair runs on the pushed apply commit).",
+  "next_recommended": "/orbit:review --as system --fresh rc03b-pass-genres"
+}

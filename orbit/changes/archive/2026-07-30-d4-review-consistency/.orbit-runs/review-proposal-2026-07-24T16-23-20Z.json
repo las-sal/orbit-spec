@@ -1,0 +1,22 @@
+{
+  "command": "review",
+  "timestamp": "2026-07-24T16:23:20Z",
+  "change": "d4-review-consistency",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "iteration": 4,
+  "depth": "full",
+  "scorecard": {
+    "completeness": { "critical": 0, "warning": 0, "suggestion": 0 },
+    "correctness": { "critical": 0, "warning": 0, "suggestion": 0 },
+    "coherence": { "critical": 0, "warning": 0, "suggestion": 0 }
+  },
+  "findings": [],
+  "stale_suppressed": [
+    { "title": "All 7 iteration-3 resolutions", "evidence": "Verified landed on disk: the scorecard declared end-to-end (the persisted-summary scenario; the second conventions MODIFIED block whose editorial extensions, canonical example, and both scenarios carry the scorecard shape with findings_summary retired under two-generation tolerance — the remaining findings_summary hits are the retirement sentence itself and the archive-audit example that correctly keeps its own shape; task 3.4's schema-reference edits); the engine-gates delta diffs baseline-verbatim except the intended self-contained parenthetical; D2's phrasing aligned; skipped-pass notes homed; the detected:false variant killed; the ungated gate line specified. Strict valid; fingerprints 14/14; zero markers; per-file requirement counts 7+6+5+2+1+1 = 22 (8 ADDED + 14 MODIFIED) across SIX delta files; 18 tasks; proposal Impact enumerates exactly the six capabilities." }
+  ],
+  "iteration_note": "Note: 0 findings this run (trend: 16 → 12-ext → 7 → 0). Record-only correction carried on the trail: the iteration-3 address emit and its commit message stated '22 requirements across 7 files' — the true file count is SIX (the artifacts themselves carry no file-count claims, so nothing to fix on disk; this note is the correction, per the no-retroactive-edit discipline).",
+  "commentary": "The confirming in-context pass over the iteration-3 batch: every resolution verified at its site rather than trusted, including a full re-count of the per-file requirement totals — which surfaced my own file-count misstatement in the prior emit (trail-only, corrected by note). The spiral that started at 5 CRITICALs has closed: baseline text claimed, layer residue tasked, contract seams pinned, and the final pass's sweeps came back empty without manufacturing anything.",
+  "final_assessment": "No findings.",
+  "next_recommended": "/orbit:review --as proposal --fresh d4-review-consistency"
+}

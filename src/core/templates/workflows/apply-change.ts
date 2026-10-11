@@ -16,6 +16,19 @@ export function getApplyChangeSkillTemplate(): SkillTemplate {
 
 **Steps**
 
+0. **Consent at entry (provenance rule — per \`orbit-lifecycle-consent\`)**
+
+   Apply is a consent-scoped command (the \`review-proposal\` gate carries \`consent: user-invoked\`). Determine invocation provenance — an observable transcript fact, never a judgment of delegated intent:
+   - **User-invoked**: the triggering turn contains an explicit user invocation — the typed \`/orbit:apply\` command, or an unambiguous same-turn prose request naming the act ("apply it", "implement the change"). Proceed with ZERO added prompts (only anomaly prompts — the Step 3 gate inflection — may interrupt).
+   - **AI-mediated**: everything else — delegation phrases ("finish the cadence"), inference ("continue"), a handoff document, or an eligibility readout pointing here. Fire a consent **AskUserQuestion** BEFORE any write (after the read-only status/instructions loads in Steps 2–3, so the prompt can show real state): the position readout, what apply will write ("begin implementing N tasks from the artifacts"), and exactly two options — **Proceed** / **Abort**. On Abort: stop; no writes, no run summary.
+   - **When provenance is uncertain, treat the arrival as AI-mediated** — erring toward one extra click, never toward a silent proceed.
+
+   **Ordering invariant**: provenance is CLASSIFIED at entry (it is a fact about the triggering turn, known before anything runs); the consent prompt itself — and the era stamp below — fire AFTER read-only discovery (change selection, the Step 2–3 status/instructions loads) and BEFORE any write or anomaly prompt. Read-only steps never require consent; writes always follow it.
+
+   Record the consent story for this invocation: \`user-invoked\` (user-typed) or \`prompted\` (prompt fired, user proceeded) — it lands in every apply emit this session writes.
+
+   **Consent-era stamp (migrate-on-touch)**: once consent is established (user-typed provenance, or Proceed at the prompt), read the change's \`.openspec.yaml\`. If it lacks \`schema_version\`, stamp \`consent_era_from: <current UTC timestamp, YYYY-MM-DDTHH:MM:SSZ>\` into it (add-only; never overwrite an existing stamp). This marks a pre-capability change as tripwire-covered from this touch onward (per \`orbit-lifecycle-consent\`'s consent-era marker).
+
 1. **Select the change**
 
    If a name is provided, use it. Otherwise:
@@ -47,8 +60,8 @@ export function getApplyChangeSkillTemplate(): SkillTemplate {
 
    **Handle states:**
    - If \`state: "blocked"\` (missing artifacts): show message, suggest using orbit-continue-change
-   - If \`state: "blocked-by-gate"\` (C1 — the \`review-proposal\` gate is unpassed/stale at apply entry): fire the gate INFLECTION PROMPT via **AskUserQuestion** — **Address the gate** (halt; run the \`next_command\` the CLI returned, e.g. \`/orbit:review --as proposal --fresh <name>\`) / **Proceed anyway** / **Abort**. The gate NEVER hard-blocks (apply-parity). On **Proceed anyway**, record the override in this session's apply emit as \`gate_overridden: {gate, state, reason}\` (copied from the CLI's \`gate\` object) and continue to implementation. On **Address**, stop and run the next command. On **Abort**, stop with no changes.
-   - If \`state: "all_done"\`: congratulate, then render the ENGINE-computed next step — read \`next_command\` (and \`position\`) from \`orbit status --change "<name>" --json\` and surface it verbatim. Do NOT hard-code the next command: the gate graph owns the lifecycle flow. Post-apply this resolves to the \`review-system\` gate's first step (\`/orbit:review --as system <name>\`), which runs verify as its Pass 0 — verify is NOT a separate lifecycle step (it is Pass 0 of system review; a standalone verify gate would double-count).
+   - If \`state: "blocked-by-gate"\` (C1 — the \`review-proposal\` gate is unpassed/stale at apply entry): fire the gate INFLECTION PROMPT via **AskUserQuestion** — **Address the gate** (halt; run the \`next_command\` the CLI returned, e.g. \`/orbit:review --as proposal --fresh <name>\`) / **Proceed anyway** / **Abort**. The gate NEVER hard-blocks (apply-parity). On **Proceed anyway**, record the decision in this session's apply emit as a \`continuation\`/\`proceed\` judgement entry carrying the gate, its state and its reason (copied from the CLI's \`gate\` object at decision time — see the Run-summary emit section) and continue to implementation. On **Address**, stop and run the next command. On **Abort**, stop with no changes.
+   - If \`state: "all_done"\`: congratulate, then render the ENGINE-computed next step — read \`next_command\` (and \`position\`) from \`orbit status --change "<name>" --json\` and surface it verbatim. Do NOT hard-code the next command: the gate graph owns the lifecycle flow. Post-apply this resolves to the \`review-system\` gate's first step — which review that is depends on the schema's cadence and the project's review preference, so it is read rather than predicted — which runs verify as its Pass 0 — verify is NOT a separate lifecycle step (it is Pass 0 of system review; a standalone verify gate would double-count).
    - Otherwise (\`ready\`): proceed to implementation
 
 4. **Read context files**
@@ -86,7 +99,7 @@ export function getApplyChangeSkillTemplate(): SkillTemplate {
    Display:
    - Tasks completed this session
    - Overall progress: "N/M tasks complete"
-   - If all done: suggest archive
+   - If all done: render the engine's position + eligibility line (per Step 3's \`all_done\` handling — the gate graph owns what comes next)
    - If paused: explain why and wait for guidance
 
 **Output During Implementation**
@@ -119,10 +132,10 @@ Working on task 4/7: <task description>
 
 All tasks complete.
 Position: <the \`position\` string from \`orbit status --change <name> --json\` — e.g. \`propose ✓ → review(proposal) (past) → apply ✓ → review(system) unpassed → archive blocked-by-gate\`>
-Next: <the \`next_command\` from \`orbit status --change <name> --json\` — post-apply the gate graph yields \`/orbit:review --as system <change-name>\`>
+Ready when you are: <the \`next_command\` from \`orbit status --change <name> --json\`, rendered verbatim — post-apply the gate graph yields whichever class the first uncovered cadence slot needs, NEVER a hardcoded command>
 \`\`\`
 
-**Position-readout convention (C1, D-c1-2)**: every handoff — this completion output AND the emit's \`next_recommended\` — renders the GATE GRAPH's computed \`position\` + \`next_command\` from \`orbit status --json\`. The skill does NOT hand-write the next lifecycle command — the graph owns the flow (\`propose → review-proposal → apply → review-system → archive\`), so the "what's next" token is always read from the engine, never authored here. Post-apply the graph yields the \`review-system\` gate's first step (\`/orbit:review --as system\`), which executes verify as its Pass 0.
+**Position-readout convention (C1, D-c1-2)**: every handoff — this completion output AND the emit's \`next_recommended\` — renders the GATE GRAPH's computed \`position\` + \`next_command\` from \`orbit status --change <name> --json\` (the \`--change\` form; bare \`orbit status\` is the D3 orientation surface, whose sprint may be a DIFFERENT change). The skill does NOT hand-write the next lifecycle command — the graph owns the flow (\`propose → review-proposal → apply → review-system → archive\`), so the "what's next" token is always read from the engine, never authored here. Post-apply the graph yields the \`review-system\` gate's first step; WHICH CLASS that step needs depends on the schema's cadence, so it is read rather than predicted. It executes verify as its Pass 0.
 
 **Output On Pause (Issue Encountered)**
 
@@ -165,92 +178,40 @@ This skill supports the "actions on a change" model:
 
 # Orbit additions
 
-## Three execution disciplines (apply throughout this command)
+## Four execution disciplines (epitome)
 
-The three execution disciplines from \`orbit-conventions\` bracket the authoring lifecycle; they're embedded in every orbit command for self-contained reliability.
+The four disciplines from \`orbit-conventions\`, embedded per body; detail lives where each fires.
 
-- **Read-before-reference (authoring-time)**: before naming a specific construct (function, type, file path, capability, spec requirement, command flag), read its actual definition — never infer a plausible reference. If you can't verify, ask the user or leave a \`@review:\` marker instead of guessing.
-- **Change completeness (modification-time)**: apply substantive modifications fully across ALL affected artifacts before calling them done; after mechanical edits, sweep for residue the pattern missed AND new bugs the replacement introduced.
+- **Read-before-reference (authoring-time)**: read a construct's actual definition before naming it; unverifiable → ask or leave a \`@review:\` marker, never guess.
+- **Change completeness (modification-time)**: apply substantive modifications fully across ALL affected artifacts; after mechanical edits, sweep for residue AND new bugs the replacement introduced.
 - **Pushback (review-time)**: verify each flagged issue against current state before acting; suppress stale findings with evidence rather than re-fixing already-fixed state.
+- **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line — blanket delegation covers work WITHIN the requested command, never the next one; gate \`passed\` means *eligible*, not *commanded*.
 
-## Run-summary emit (chunk-aware)
+## Run-summary emit (chunk-aware — via the engine emit surface)
 
-(Per \`orbit-run-summary-emit\` capability)
+(Per \`orbit-run-summary-emit\`; composed and written via \`orbit emit apply\` — \`orbit-emit-composition\`.)
 
-\`/orbit:apply\` is a chunked multi-turn command. Emit timing differs from one-shot commands per \`orbit-run-summary-emit\`'s \`Apply per-chunk-end emission\` requirement:
+\`/orbit:apply\` is a chunked multi-turn command. Fire the emit at every chunk boundary, at a mid-chunk session pause, or once at session end for a no-chunking change — the conversation-boundary judgment is yours; everything else is engine-computed. Compose the payload into a temp file and invoke:
 
-\`\`\`
-orbit/changes/<name>/.orbit-runs/apply-<TS>.json
-\`\`\`
-
-Where \`<TS>\` is ISO-8601 UTC with hyphens. Create \`.orbit-runs/\` if it doesn't exist.
-
-### Chunk detection (parse tasks.md preamble)
-
-If the change's \`tasks.md\` opens with an HTML comment block declaring chunks, the apply emit fires at chunk boundaries. The preamble format (per the spec):
-
-\`\`\`
-<!--
-Implementation chunks:
-  Chunk 1 (groups 1):    Foundation
-  Chunk 2 (groups 2-3):  Workflow emits
-  Chunk 3 (groups 4):    Apply behavior
--->
+\`\`\`bash
+orbit emit apply --change <name> --payload <payload-file>
 \`\`\`
 
-**Format constraints**:
-- \`(groups X[-Y])\` supports a single group (\`X\`) or a contiguous range (\`X-Y\`). Non-contiguous group sets (\`groups 6,8,9\`) are NOT supported in v1.
-- Chunks MAY span multiple groups. The emit fires when the LAST group in the chunk completes its tasks, not on every group boundary.
-- **Malformed preamble handling** (graceful degradation): if the preamble comment block exists but cannot be parsed, log a warning to stderr (\`"warning: tasks.md preamble at <path> could not be parsed as chunk declarations; falling back to no-chunking mode"\`) and proceed under no-chunking-apply rules (single emit at session end with \`chunk: null\`).
+Payload fields (the ONLY things the AI supplies):
 
-### Emit rules
+- \`assessment_suffix\` (optional) — one clause appended to the engine's computed final-assessment core (blockers, session notes worth persisting).
+- \`user_validation_tasks\` (optional) — identifier list of unchecked tasks recognized as user-validation work (the ONE checkbox judgment the payload carries); the engine verifies each and derives the counts.
+- \`judgements\` (rc04a) — the CADENCE JUDGEMENT record, an ARRAY. Present when a CADENCE JUDGEMENT was taken at this seam — a decision holding a CADENCE POSITION, whether or not independent output existed to cite; the key is OMITTED entirely when none was, so its presence means a judgement happened. Each entry: \`kind\` (\`continuation\` | \`readiness\`), \`formed_against\` (array of independent pass \`<TS>\` tokens; may be EMPTY only on a \`continuation\`/\`proceed\` and only when the trail carries no accepted independent pass earlier than this emit — \`orbit-run-summary-emit\`'s totality rule, which the write gate enforces; named here, not restated), \`disposition\`, \`reasoning\` (prose), \`ratified_by\` (\`ai\` | \`user\` — never inferred). A \`continuation/proceed\` additionally carries \`gate\`/\`gate_state\`/\`gate_reason\`; a \`readiness\` carries \`accepted: [{claim, why}]\`. The CARRIER TABLE IS CLOSED and enforced by KIND as well as by command: **apply admits \`continuation\` only** (a \`readiness\` here is refused — the cadence does not end at apply). The write gate also REFUSES any entry citing a token that is not STRICTLY earlier than this emit's own, or that resolves to no independent pass on the trail, and an EMPTY citation on a \`continuation\`/\`proceed\` when an independent pass DOES precede the emit (naming the latest one) — belief is not observable, ordering is.
+  **AT THIS SEAM**: when Step 3's inflection prompt was answered **Proceed anyway**, compose a \`continuation\` entry with \`disposition: "proceed"\` carrying \`gate\`/\`gate_state\`/\`gate_reason\` as the CLI's \`gate\` object reported them at decision time — this entry is the SOLE record of the decision. \`formed_against\` is the independent pass tokens the decision was taken knowing about; when the trail carries none earlier than this emit, write the entry anyway with \`formed_against: []\` — the write gate accepts an empty citation exactly when the trail bears it out, and refuses it naming the latest preceding pass when it does not. The token source is the TRAIL ITSELF, not \`orbit status\`: the change-tier status payload reports gate spend COUNTS and reason strings, never pass tokens. List \`orbit/changes/<change-name>/.orbit-runs/\` and take the \`<TS>\` of each \`review-<mode>-<TS>.json\` whose \`reviewer_class\` is \`fresh\` or \`external\`, plus each \`external-<mode>-<TS>.md\` the trail reader ACCEPTED as a pass — a return the gate's \`reason\` names as REJECTED is not citable, and enumerating filenames alone over-counts by exactly those. Which passes count is \`orbit-run-summary-emit\`'s rule (the trail reader's pass set); this body names it and does not restate it — the write gate enforces it and names the pass it refuses on.
+- \`consent\` — \`"user-invoked" | "prompted"\` per Step 0's provenance classification (D1, \`orbit-lifecycle-consent\`); CONSTANT across one invocation's chunk emits; a consent Abort writes NO summary.
+- \`model\` — the emitting AI's model identity (required, nullable).
 
-Three cases:
+The ENGINE owns everything else: chunk detection from the tasks.md preamble (malformed preamble → stderr warning + no-chunking fallback), chunk identity + completion, task arithmetic, \`files_touched\` against the prior emit's \`diff_base\` tree snapshot, the whole \`next_recommended\` advancement (next chunk / mid-chunk resume / the gate graph's \`next_command\` on apply-complete), spine, filename, and collision handling. Never hand-compose them.
 
-1. **Chunk completion** (rule 1): when the last task in chunk N is checked, write \`apply-<TS>.json\` with \`chunk: "N of M"\`, \`chunk_complete: true\`, \`chunk_name: <name>\`. \`next_recommended\` advances to next chunk (\`/orbit:apply <name>\`) or, on apply-complete (chunk N == M), to the gate graph's \`next_command\` from \`orbit status --change <name> --json\` (post-apply: \`/orbit:review --as system <name>\`).
+**Completion-prompt override (chat)**: on \`all_done\`, do NOT congratulate-and-suggest-archive (upstream) and do NOT hand-write \`/orbit:verify\` — instead render the gate graph's computed \`next_command\` + \`position\` from \`orbit status --change <name> --json\`. The lifecycle flow lives in the gate graph, not in this body; verify is Pass 0 of the \`review-system\` step the graph points to, not a separate lifecycle node (D5 — a separate verify gate would double-count).
 
-2. **Mid-chunk session pause** (rule 2): when the user pauses or hands off mid-chunk-N (per the conversation-boundary signals in \`Emit timing semantics\` — explicit "stop"/"pause" OR AI-initiated wrap), emit with \`chunk: "N of M"\`, \`chunk_complete: false\`, and \`next_recommended: "/orbit:apply <name>"\` to resume.
-
-3. **No-chunking apply** (rule 3): when tasks.md has no chunk preamble, emit once at session end with \`chunk: null\`, \`chunk_complete: true\`, and \`next_recommended\` = the gate graph's \`next_command\` from \`orbit status --json\` on apply-complete (post-apply: \`/orbit:review --as system <name>\`), or \`/orbit:apply <name>\` if tasks remain.
-
-### JSON shape
-
-Per the universal spine in \`orbit-conventions\`'s \`Internal-run JSON summary format\` + per-command extensions:
-
-\`\`\`json
-{
-  "command": "apply",
-  "timestamp": "<ISO-8601 UTC>",
-  "change": "<name>",
-  "final_assessment": "<narrative, e.g., 'Completed chunk 2 of 5 (inventory+parsing); 28 of 76 tasks done.'>",
-  "next_recommended": "<per advancement rules below>",
-  "kind": "workflow",
-  "tasks_completed": <int — running total of checked tasks across all chunks>,
-  "tasks_remaining": <int — running total of unchecked tasks (includes user-validation if present)>,
-  "user_validation_remaining": <int — subset of tasks_remaining that are acknowledged user-validation; default 0>,
-  "chunk": "<N of M>" | null,
-  "chunk_name": "<from preamble>" | null,
-  "chunk_complete": true | false,
-  "tasks_completed_this_session": <int — delta since prior apply JSON, for forensic timeline>,
-  "gate_overridden": { "gate": "review-proposal", "state": "<unpassed|stale>", "reason": "<gate reason at decision time>" }
-}
-\`\`\`
-
-**\`gate_overridden\`** (C1) is present ONLY when the user chose **Proceed anyway** past an unpassed/stale \`review-proposal\` gate at the apply inflection prompt (Step 3); the shape is \`{gate, state, reason}\` captured at decision time. Absent when no override occurred; REQUIRED when proceed-anyway was chosen.
-
-### \`next_recommended\` advancement rules
-
-- **Chunk N done, more chunks** (N < M): \`/orbit:apply <name> — next chunk: <chunk N+1 name from preamble>\`
-- **Apply complete** (all chunks done OR no-chunking apply with all tasks done): the gate graph's \`next_command\` from \`orbit status --change <name> --json\` — post-apply this is \`/orbit:review --as system <name>\` (the \`review-system\` gate's first step, which runs verify as its Pass 0). Do NOT hard-code a lifecycle command here; read it from the engine.
-- **Mid-chunk pause**: \`/orbit:apply <name>\` (resume current chunk)
-
-A downstream status reader parses the leading \`/orbit:<verb> <name>\` token into \`command\`/\`args\`.
-
-**Completion-prompt override (chat)**: on \`all_done\`, do NOT congratulate-and-suggest-archive (upstream) and do NOT hand-write \`/orbit:verify\` — instead render the gate graph's computed \`next_command\` + \`position\` from \`orbit status --json\`. The lifecycle flow lives in the gate graph, not in this body; verify is Pass 0 of the \`review-system\` step the graph points to, not a separate lifecycle node (D5 — a separate verify gate would double-count).
-
-### Why chunk-aware (forensic + resumability)
-
-Per the design rationale: per-chunk emit enables forensic timeline reconstruction ("which chunk introduced this regression?") and provides clean resume boundaries between sessions. Without chunk-aware emit, post-apply regression bisection has to span the full task universe; with chunk-aware emit, blast radius is bounded to a single chunk's task set (typically 10-20× reduction).`,
+**Why chunk-aware**: per-chunk emits bound post-apply regression bisection to a single chunk's task set (typically 10-20× blast-radius reduction) and give clean resume boundaries between sessions.
+`,
     license: 'MIT',
     compatibility: 'Requires orbit CLI.',
     metadata: { author: 'openspec', version: '1.0' },

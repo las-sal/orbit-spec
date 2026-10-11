@@ -1,0 +1,56 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-05T00:50:35Z",
+  "change": null,
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "from-file",
+  "source_path": "orbit/.orbit-runs/audit-drift-2026-10-05T00-48-47Z.json",
+  "source_command": "audit-drift",
+  "source_token": "2026-10-05T00-48-47Z",
+  "latest_apply_token": null,
+  "tie_break_rationale": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "walk_mode_source": null,
+  "walk_mode_shifted_at_finding": null,
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 0
+  },
+  "pushback_verification": "Verified: archive-change.ts:259 read 'The upstream content above is unchanged.'; a rename-normalized diff against upstream/v1.3.1 shows its upstream portion edited (the guardrail's status call gained --change <name>); not stale.",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "archive-change's additions preamble says the upstream content above is unchanged, which Generated-file disposition's named limit contradicts",
+      "marker_source": "audit-drift",
+      "file": "src/core/templates/workflows/archive-change.ts",
+      "line": 259,
+      "classification": "trivial_fix",
+      "action": "replaced 'The upstream content above is unchanged' in archive-change.ts with a pointer — the upstream content above is as orbit-conventions' Generated-file disposition records it — and the same pointer in explore.ts and propose.ts, where the sentence was true but restated the owner's fact; regenerated the surface; re-pinned the three function and three generated-skill hashes with one dated note",
+      "evidence": "grep for 'upstream content above is unchanged' over src/, test/ and orbit/specs returns nothing after the edit; the regenerated orbit-archive-change, orbit-explore and orbit-propose SKILL.md each carry the pointer",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/templates/workflows/explore.ts",
+          "src/core/templates/workflows/propose.ts",
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": null,
+  "final_assessment": "One of one resolved: archive-change's additions preamble no longer claims an unchanged upstream portion; it and the matching sentences in explore and propose point at orbit-conventions' Generated-file disposition, which states the fact once. Six hash pins moved as one recorded act; 2712 tests green.",
+  "iteration": 10,
+  "next_recommended": "No markers remain in scope; the project trail records this walk."
+}

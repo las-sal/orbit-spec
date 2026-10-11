@@ -1,0 +1,13 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-10-03T16:21:43Z",
+  "change": "rc02b-severity-ladder",
+  "kind": "editorial",
+  "model": null,
+  "mode": "proposal",
+  "prompt_path": "orbit/changes/rc02b-severity-ladder/.orbit-runs/external-prompt-proposal-2026-10-03T16-21-36Z.md",
+  "target": null,
+  "final_assessment": "External review prompt packaged for rc02b-severity-ladder (iter 1, mode proposal) after the fresh pass was walked to zero; awaiting findings. This is R-crc-4's proposal-mode pair for a change over the R-crc-1 ceiling (six capabilities declared), not a spend past a passed gate — review-proposal reads unpassed (in-context slot open), so no continuation record is carried. The prompt points the reviewer hardest at the blocks carrier invented at walk 1 under option A, which no independent reader has yet seen, and asks for execution against dist/ with the ladder-by-consequence and a reproduction on every CRITICAL.",
+  "awaiting_findings": true,
+  "next_recommended": "Paste orbit/changes/rc02b-severity-ladder/.orbit-runs/external-prompt-proposal-2026-10-03T16-21-36Z.md into the target AI, save the response as orbit/changes/rc02b-severity-ladder/.orbit-runs/external-proposal-<TS>.md, then /orbit:address-reviews rc02b-severity-ladder --from-file <path>"
+}

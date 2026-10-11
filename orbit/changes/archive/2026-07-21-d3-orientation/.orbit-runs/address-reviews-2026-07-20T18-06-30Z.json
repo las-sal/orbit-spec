@@ -1,0 +1,87 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-07-20T18:06:30Z",
+  "change": "d3-orientation",
+  "source": "--from-file",
+  "source_path": "orbit/changes/d3-orientation/.orbit-runs/external-proposal-2026-07-20T16-30-05Z.md",
+  "source_format": "external-markdown",
+  "external_reviewer": "GPT-5 Codex",
+  "walk_mode": "per_finding",
+  "kind": "editorial",
+  "resolutions": [
+    {
+      "finding": "The specified bare/full payloads do not satisfy the per-change cold-start exit criterion",
+      "severity": "CRITICAL",
+      "file": "orbit/changes/d3-orientation/specs/orbit-orientation/spec.md",
+      "pushback": "still applies — bare carried per-workstream data only for the sprint; --full never normatively required per-workstream last/next; task 5.1 pointed at the wrong tier",
+      "classification": "trivial fix (tier choice determined by ratified decisions)",
+      "action": "The reviewer's 'most naturally --full' path applied — the alternative (bare carries everything) would contradict the user-ratified bare minimalism (D-d3-2/3). The --full requirement now mandates EVERY workstream entry carry its full orientation tuple (strip/position + own last + own next, text AND JSON, with the JSON entry shape specified), names --full as the criterion-satisfying tier, and gains the three-workstream scenario. Task 5.1 re-pointed at `orbit status --full --json` with per-entry multi-change assertions; design D5 and the proposal bullet rippled.",
+      "ripple_cascade": { "applied": ["orbit/changes/d3-orientation/specs/orbit-orientation/spec.md", "orbit/changes/d3-orientation/tasks.md", "orbit/changes/d3-orientation/design.md", "orbit/changes/d3-orientation/proposal.md"], "flagged_not_applied": [] }
+    },
+    {
+      "finding": "Ratified D-d3-4 still mandates the pre-resolution Mode C zero-count emit",
+      "severity": "WARNING",
+      "file": "orbit/changes/d3-orientation/explore.md",
+      "pushback": "still applies — and the reviewer's R-d-7 framing is correct: the explore is the OWNING decision record, so this was a live contradiction, not trail history",
+      "classification": "trivial fix",
+      "action": "D-d3-4 rewritten mode-aware with a dated amendment note (Mode B zero counts + Early canonical; Mode C back-filled counts + maturity-consistent; the crystallization's first emit IS the begin emit; the amendment names what the original wording contradicted).",
+      "ripple_cascade": { "applied": ["orbit/changes/d3-orientation/explore.md"], "flagged_not_applied": [] }
+    },
+    {
+      "finding": "Fleet collection has no malformed-input or fault-isolation contract",
+      "severity": "WARNING",
+      "file": "orbit/changes/d3-orientation/design.md",
+      "pushback": "still applies — trail reader skips, loadChangeContext throws; implementers would diverge",
+      "classification": "trivial fix",
+      "action": "New ADDED requirement 'Fault isolation and malformed-input policy' (orientation delta 8→9 requirements): invalid emits skipped with next-older-valid fallback; failed workstream renders a degraded row while healthy rows render, exit 0; deterministic, never artifact-consulting. Two scenarios (corrupt-newest-emit; one-broken-workstream). Design D1 and task 1.4 fixtures rippled.",
+      "ripple_cascade": { "applied": ["orbit/changes/d3-orientation/specs/orbit-orientation/spec.md", "orbit/changes/d3-orientation/design.md", "orbit/changes/d3-orientation/tasks.md"], "flagged_not_applied": [] }
+    },
+    {
+      "finding": "Second-resolution filenames cannot guarantee distinct begin and boundary emits",
+      "severity": "WARNING",
+      "file": "orbit/changes/d3-orientation/specs/orbit-run-summary-emit/spec.md",
+      "pushback": "still applies — both emits use explore-<TS>.json with second-granular tokens",
+      "classification": "trivial fix (precedent exists)",
+      "action": "Collision rule added to the timing entry: a same-second boundary emit bumps its token forward one second until the path is free, preserving lexical begin-before-boundary ordering (the review-external T0 bump-a-second precedent). Task 3.1 carries it.",
+      "ripple_cascade": { "applied": ["orbit/changes/d3-orientation/specs/orbit-run-summary-emit/spec.md", "orbit/changes/d3-orientation/tasks.md"], "flagged_not_applied": [] }
+    },
+    {
+      "finding": "A later unrelated external result can clear the wrong waiting item",
+      "severity": "WARNING",
+      "file": "orbit/changes/d3-orientation/specs/orbit-orientation/spec.md",
+      "pushback": "still applies — the later-file rule falsely clears on concurrent same-mode handoffs",
+      "classification": "decision required",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          { "label": "A", "body": "Pairing token: T0 emit and returned findings file share a recorded handoff id (requires a run-summary-emit delta + prompt-template change)" },
+          { "label": "B", "body": "Prohibit concurrent outstanding externals per change+mode as a v1 constraint" },
+          { "label": "C", "body": "Count-based arithmetic: outstanding = #T0 emits − #returned findings files per change+mode; renders 'N packaged, M returned'; no new fields" }
+        ],
+        "chosen": "C",
+        "discuss_invoked": false
+      },
+      "action": "User chose C (a third option beyond the reviewer's two): WAITING item (b) rewritten count-based per change+mode with the concurrent-handoff scenario (2 packaged / 1 returned never clears both); the v1 cannot-name-which limitation stated explicitly. Design D4 and task 1.3/1.4 rippled.",
+      "ripple_cascade": { "applied": ["orbit/changes/d3-orientation/specs/orbit-orientation/spec.md", "orbit/changes/d3-orientation/design.md", "orbit/changes/d3-orientation/tasks.md"], "flagged_not_applied": [] }
+    },
+    {
+      "finding": "Claimed strip truncation rules do not exist",
+      "severity": "SUGGESTION",
+      "file": "orbit/changes/d3-orientation/design.md",
+      "pushback": "still applies — the spec only caps the last-assessment text",
+      "classification": "trivial fix",
+      "action": "The false claim removed; unbounded strip width recorded as ACCEPTED v1 behavior (terminals wrap; --json carries structured data), deferred with the other render polish.",
+      "ripple_cascade": { "applied": ["orbit/changes/d3-orientation/design.md"], "flagged_not_applied": [] }
+    }
+  ],
+  "resolution_summary": {
+    "resolved": 6,
+    "stale": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "post_state": "orbit validate d3-orientation --strict passes; fingerprints 6/6 verified; change now at 15 delta requirements (9 ADDED + 6 MODIFIED) across 4 files; 16 tasks",
+  "final_assessment": "All 6 external findings resolved: the CRITICAL by making --full the criterion-satisfying tier (per-workstream orientation tuples, determined by the ratified bare-minimalism decisions); D-d3-4 amended mode-aware in the owning record; a new fault-isolation requirement; the bump-a-second collision rule; count-based WAITING clearing (user fork: option C); the truncation claim corrected to accepted-unbounded. The external carried a CRITICAL, so the confirm predicate requires a fresh independent pass yielding none.",
+  "next_recommended": "/orbit:review --as proposal --fresh d3-orientation"
+}

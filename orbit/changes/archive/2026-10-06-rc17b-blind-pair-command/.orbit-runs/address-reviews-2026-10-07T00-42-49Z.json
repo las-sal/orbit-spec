@@ -1,0 +1,90 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-07T00:42:49Z",
+  "change": "rc17b-blind-pair-command",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc17b-blind-pair-command/.orbit-runs/review-system-2026-10-07T00-39-22Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-07T00-39-22Z",
+  "latest_apply_token": "2026-10-06T20-42-57Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 0
+  },
+  "pushback_verification": "Verified against HEAD 82d04de3, which only added the pass file to the tree the verification read; the reproduction was re-run in the verification pass minutes earlier with the real CLI.",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The stale-member notice keys on the gate's reason, which names the stale member only when coverage is the failing clause",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 459,
+      "classification": "trivial_fix",
+      "action": "restated STALE from the trail as the engine's 'one member landed, stale' row — exactly one landed member later than L, no address-reviews record naming it, an apply token later than it — in orbit-review-external's paragraph and row (stated there once), Step 3b's bullet and the trunk's fresh re-run paragraph (inline: the fresh branch loads no handoff reference); the harness transcribes the trail test and its stale case uses a WARNING-bearing member (mutation-checked: the reason-string test goes red)",
+      "evidence": "Step 3b and the trunk matched 'cannot fill this slot: its <class> member is stale' in the gate reason, which a finding-bearing member never shows",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc17b-blind-pair-command/specs/orbit-review-external/spec.md",
+          "orbit/changes/rc17b-blind-pair-command/design.md",
+          "test/integration/external-runner/pair.ts",
+          "test/integration/external-runner/pair.test.ts",
+          "test/core/templates/blind-pair-command.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the gate's reason names a member of the latest launch as stale",
+          "the gate's reason naming a member",
+          "the gate names the latest launch's member stale"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/templates/workflows/review.ts",
+            "text": "and the latest launch's one landed member is STALE"
+          },
+          {
+            "path": "orbit/changes/rc17b-blind-pair-command/specs/orbit-review-external/spec.md",
+            "text": "read from the trail and never from the gate's reason"
+          },
+          {
+            "path": "test/integration/external-runner/pair.test.ts",
+            "text": "read from the trail, not the reason"
+          }
+        ],
+        "searched": [
+          "member is stale",
+          "gate's reason",
+          "reason names",
+          "staleNotice"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "test/core/templates/blind-pair-command.test.ts",
+            "why": "template test asserting the retired wording is absent"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "One of one resolved: staleness is read from the trail (one landed member, no walk naming it, an apply later than it), never from the gate's reason, in the spec, both bodies and design D10; the stale test now uses a finding-bearing member and is mutation-checked.",
+  "iteration": 6,
+  "next_recommended": "/orbit:archive rc17b-blind-pair-command — user-invoked",
+  "ripple_misses": 0
+}

@@ -1,0 +1,272 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-15T15:28:15Z",
+  "change": "rc13-explore-mechanism",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "source": "internal-review",
+  "source_path": "orbit/changes/rc13-explore-mechanism/.orbit-runs/review-proposal-2026-09-15T14-55-26Z.json",
+  "source_command": "review",
+  "source_token": "2026-09-15T14-55-26Z",
+  "walk_mode": "walk",
+  "walk_mode_source": "default",
+  "input_findings_summary": {
+    "critical": 7,
+    "warning": 13,
+    "suggestion": 5,
+    "total": 25
+  },
+  "pushback_verification": "Every finding was re-read against the DESCOPED state, because the architect session split the stage between the pass and the walk. Six are rc13b's and are recorded as resolved-by-descope WITH the reason and where they now live — never silently dropped; each names what rc13b's charter must carry. The pass's own pushback had already suppressed eleven candidates, including all four MODIFIED blocks re-verified line-for-line with zero drops, so none was re-checked here. TWO PROCESS FAILURES ARE RECORDED, both the same one. The first attempt at this walk's spec edits was a single multi-edit script with one trailing write; it ABORTED on a bad anchor and wrote NOTHING. I caught it, rewrote it — and the SECOND attempt aborted the same way on a different anchor, because the anchor text contained backticks I had not copied verbatim. That is the failure this repo has logged three times and assigned to rc08, committed twice in one walk WHILE walking a change about mechanisms that are correct and never invoked. The fix that worked was to VERIFY EVERY ANCHOR FIRST in a read-only pass, print the counts, and only then apply — which is the ENUMERATE move applied to my own edit set, and is what the third attempt did. Separately: placing the title-retention note directly under a requirement heading broke the validator's SHALL check; caught by validating after the edit rather than at the end, and fixed by moving the note below the SHALL paragraph.",
+  "resolution_summary": {
+    "resolved": 24,
+    "stale": 0,
+    "deferred": 1,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "The Mode B scenario the walk modified still scaffolds FIVE sections, contradicting the six-section requirement two screens above it",
+      "file": "orbit/changes/rc13-explore-mechanism/specs/orbit-explore-modifications/spec.md",
+      "line": 88,
+      "status": "resolved",
+      "lane": "obvious-fix",
+      "action": "The THEN now scaffolds the SIX sections including Mechanism. Task 3.2 extended to cover the THEN, not just the WHEN. The finding's framing is the useful part and is recorded: this was the first pass's CRITICAL recurring ONE LEVEL DOWN, inside the repair for it."
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "`orbit-emit-composition` is a FOURTH touched capability with no delta — its computed-extensions requirement enumerates the explore fields and the four-state grid, both falsified by this change",
+      "file": "orbit/changes/rc13-explore-mechanism/proposal.md",
+      "line": 56,
+      "status": "resolved",
+      "lane": "decision",
+      "action": "RATIFIED: this is what triggered the SPLIT. rc13 is now rc13a (this change) + rc13b, and the computed-extensions requirement, the fifth rung and the two engine fields are all rc13b's — so no capability is falsified by this change. The finding did not get patched; it got answered structurally, which is what R-crc-9 exists to make available.",
+      "ratified_via": "chat",
+      "resolution": "R-crc-9's SPLIT branch, applied at the architect session."
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "`rules_open` identifies rules `by DECISION ID`, and the explore format defines no decision IDs",
+      "file": "orbit/changes/rc13-explore-mechanism/specs/orbit-run-summary-emit/spec.md",
+      "line": 10,
+      "status": "resolved",
+      "lane": "obvious-fix",
+      "action": "The finding is the reason the split seam falls where it does. rc13a now SHIPS the decision-ID slot: each Decisions entry opens with a unique `**<ID>**`, stated in the conventions delta and tasked at 1.3. The rung that consumes it is rc13b's. The engine half was never buildable first — that is now the charter's stated dependency rather than an implicit assumption."
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "No parseable grammar is specified for a Mechanism entry, so `rules_open`/`rules_total` are not computable as specified",
+      "file": "orbit/changes/rc13-explore-mechanism/specs/orbit-run-summary-emit/spec.md",
+      "line": 19,
+      "status": "resolved",
+      "lane": "obvious-fix",
+      "action": "rc13a now ships the grammar the finding said was missing: a per-rule entry opening with the rule's identifier, then `Domain:` (the closed enumeration), `Closure:` (the declared form, plus the residual for BOUNDED), and one line per move recording its disposition. Tasked at 1.4. The slot idiom follows the capability's own stated precedent — AIs fill template slots far more reliably than they obey prose rules — which the first shape quoted and did not apply."
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "ENGINE-COMPUTED does not remove self-classification — it relocates it from the payload to the file, and an omitted rule is invisible",
+      "file": "orbit/changes/rc13-explore-mechanism/specs/orbit-run-summary-emit/spec.md",
+      "line": 19,
+      "status": "resolved",
+      "lane": "decision",
+      "action": "DESCOPED TO rc13b (R-crc-9). The finding is correct and is carried into rc13b's charter as a residual it must STATE rather than a loophole it may claim closed: the engine sees the rules an author declared, a rule never entered yields an empty gap list, and the top rung asserts. Reachable by OMISSION. Not patched here because the requirement it corrects is no longer in this change.",
+      "ratified_via": "chat",
+      "resolution": "Descoped to rc13b under R-crc-9; carried into that stage's charter rather than patched here."
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "The ADDED requirement is titled `Six moves applied per rule` and its scenario `records all six moves` while the requirement mandates EIGHT",
+      "file": "orbit/changes/rc13-explore-mechanism/specs/orbit-explore-modifications/spec.md",
+      "line": 3,
+      "status": "resolved",
+      "lane": "obvious-fix",
+      "action": "Retitled to `Nine moves applied per rule in the Mechanism section`, and the scenario title to `records all nine moves`. The finding's reasoning was decisive: this is an ADDED requirement, so unlike the deliberate `five-section format` retention there is no baseline identity or fingerprint key forcing the name."
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "Task 5.1 edits `propose.ts`'s five-section check, which `orbit-propose-modifications` specifies — while proposal.md declares that capability NOT touched",
+      "file": "orbit/changes/rc13-explore-mechanism/tasks.md",
+      "line": 54,
+      "status": "resolved",
+      "lane": "obvious-fix",
+      "action": "The propose site is REMOVED from the sweep and the exclusion is stated in both the task and the proposal: `propose.ts` is governed by `orbit-propose-modifications`, which this change does not touch, so propose keeps validating five sections until a follow-on stage lands. The contradiction the finding identified — one artifact declaring the capability untouched while a task mechanically invalidated its scenario — is gone in both directions."
+    },
+    {
+      "severity": "WARNING",
+      "title": "Task 5.1's residue enumeration is presented as complete and misses at least two live sites",
+      "file": "orbit/changes/rc13-explore-mechanism/tasks.md",
+      "line": 54,
+      "status": "resolved",
+      "lane": "obvious-fix",
+      "action": "The task now declares its member set SOURCED over a named grep — `grep -rn 'five-section\\|five sections' src/` — and requires re-running it to zero. The finding's own suggestion, taken: in the change that invents SOURCED closure, the residue sweep is the natural place to use it rather than listing sites from memory. The known hits are recorded as authoring-time context, not as the set. The four-state grid residue is rc13b's, with explore.ts:485."
+    },
+    {
+      "severity": "WARNING",
+      "title": "A NINTH class the eight moves lack, from this change's own record: the mechanism is correct and never runs",
+      "file": "orbit/changes/rc13-explore-mechanism/specs/orbit-explore-modifications/spec.md",
+      "line": 18,
+      "status": "resolved",
+      "lane": "obvious-fix",
+      "action": "ADDED as INVOKE — its trigger: the mechanism is correct, complete, and nothing ever causes it to run. The finding's evidence is this stage's own Case 8, and its pre-emptive block on the easy dismissal was right: medium choice is a REMEDY for this class, not the class. Recorded in the residual as the set's third correction, each one found by classifying a record rather than by further thought."
+    },
+    {
+      "severity": "WARNING",
+      "title": "The BOUNDED residual says what falsifies the set but not how it grows — and supplies an undisciplined dismissal branch beside it",
+      "file": "orbit/changes/rc13-explore-mechanism/specs/orbit-explore-modifications/spec.md",
+      "line": 18,
+      "status": "resolved",
+      "lane": "obvious-fix",
+      "action": "Both halves fixed. HOW IT GROWS: a set-finding is an `@review:` marker in the exploration that found it AND a review finding against this requirement, so growth carries the same evidence trail as any other defect and nothing grows silently. THE TEST: a candidate is IN when it names a way the mechanism ITSELF fails, OUT when it concerns how the rule is presented or authored; ties go IN, because over-covering costs one disposition line and under-covering costs a review cycle. The finding's charge that the dismissal branch had no test was exact — the walk had already exercised that branch once."
+    },
+    {
+      "severity": "WARNING",
+      "title": "The `every RULE in Decisions` domain fixes two dispositions but not the annotation vocabulary that expresses them",
+      "file": "orbit/changes/rc13-explore-mechanism/specs/orbit-run-summary-emit/spec.md",
+      "line": 17,
+      "status": "resolved",
+      "lane": "obvious-fix",
+      "action": "A `Disposition:` slot with a FIXED vocabulary — `live` (default when absent), `superseded`, `assigned`, `illustrative` — now lives in the conventions delta, so leaving the closure obligation is a named act rather than whatever word fit the sentence. The finding's evidence was this change's own file using SUPERSEDED, OVERTAKEN and a bare pointer interchangeably; the slot follows the `Standing recommendation:` precedent rather than asking an engine to recognise prose."
+    },
+    {
+      "severity": "WARNING",
+      "title": "Run the domain rule on this change's own file: D-rc13-3 and D-rc13-4 read as live-and-open",
+      "file": "orbit/changes/rc13-explore-mechanism/specs/orbit-run-summary-emit/spec.md",
+      "line": 17,
+      "status": "resolved",
+      "lane": "obvious-fix",
+      "action": "Task 6.1 requires this change's own explore.md to carry ID slots and `Disposition:` values, naming D-rc13-3 and D-rc13-4 specifically — their hand-away to rc08/rc03 is recorded only in an audit table, so the rule executed against its own file returns them open forever. The repair the finding asked for is the one the spec now specifies: the annotation lives ON the entry, not in commentary about it. rc13a's exit criterion 2 makes the artifact's conformance a condition of the stage."
+    },
+    {
+      "severity": "WARNING",
+      "title": "The conventions delta introduces a fourth disposition — `illustrative, governs no situations` — that the emit's domain statement does not carry",
+      "file": "orbit/changes/rc13-explore-mechanism/specs/orbit-conventions/spec.md",
+      "line": 7,
+      "status": "resolved",
+      "lane": "obvious-fix",
+      "action": "Resolved by the `Disposition:` vocabulary, which carries `illustrative` as a first-class value alongside `live`, `superseded` and `assigned` — so the two capabilities no longer disagree about the domain, because one vocabulary now states it. The consuming half is rc13b's and will read the same slot."
+    },
+    {
+      "severity": "WARNING",
+      "title": "The PRECEDENCE clause mandates Stalled text that the Stalled bullet and the Stalled scenario do not carry — and the states it arbitrates do not overlap",
+      "file": "orbit/changes/rc13-explore-mechanism/specs/orbit-run-summary-emit/spec.md",
+      "line": 13,
+      "status": "resolved",
+      "lane": "decision",
+      "action": "DESCOPED TO rc13b (R-crc-9). The rung, its states and their precedence are rc13b's. The finding's substance — that the states do not overlap so there is nothing to arbitrate, and that the mandated Stalled text contradicts the Stalled bullet and scenario — is carried into rc13b's charter as work its requirement must get right.",
+      "ratified_via": "chat",
+      "resolution": "Descoped to rc13b under R-crc-9; carried into that stage's charter rather than patched here."
+    },
+    {
+      "severity": "WARNING",
+      "title": "No instrument covers the only genuinely new engine behavior — extracting rules from the Mechanism section",
+      "file": "orbit/changes/rc13-explore-mechanism/tasks.md",
+      "line": 62,
+      "status": "resolved",
+      "lane": "decision",
+      "action": "DESCOPED TO rc13b (R-crc-9). The parse is rc13b's and so are its instruments. The finding's list of cases the parser owes — an entry with a declared form, one without, each out-of-domain disposition, a fenced block that must not count, a file with no Mechanism section — is exactly what rc13a's format makes writable, and rc13b's exit criterion 2 requires them.",
+      "ratified_via": "chat",
+      "resolution": "Descoped to rc13b under R-crc-9; carried into that stage's charter rather than patched here."
+    },
+    {
+      "severity": "WARNING",
+      "title": "Task 7.2's deferred charter correction names the grammar-keyed rule test but not the charter's six-move DERIVED table",
+      "file": "orbit/changes/rc13-explore-mechanism/tasks.md",
+      "line": 77,
+      "status": "resolved",
+      "lane": "obvious-fix",
+      "action": "Task 7.2 extended to name all four stale claims in the arc doc: the grammar-keyed rule test, the six-move table, the DERIVED claim, and the exit-criterion evidence sentence. The finding was right that an architect session executing the task as written would have fixed one and left three in the same document."
+    },
+    {
+      "severity": "WARNING",
+      "title": "At the ceiling, R-crc-4 owes this proposal a BLIND PAIR before any walk; the record shows fresh → walk → fresh, and no artifact reasons about it",
+      "file": "orbit/changes/rc13-explore-mechanism/design.md",
+      "line": 59,
+      "status": "deferred",
+      "lane": "decision",
+      "action": "ACCEPTED AND ACTED ON RATHER THAN PATCHED: the change is no longer at the ceiling — the split takes it to two capabilities — so R-crc-4's conditional pair no longer binds. The finding's underlying point stands and is being honoured anyway: the remaining budgeted pass will be run as the EXTERNAL half on the descoped state, which is worth more than a third internal pass on a change that has had two.",
+      "ratified_via": "chat",
+      "resolution": "The split removes the at-ceiling condition; the external pass is run regardless."
+    },
+    {
+      "severity": "WARNING",
+      "title": "Task 5.1 requires a title-retention note in the delta prose; no delta carries one",
+      "file": "orbit/changes/rc13-explore-mechanism/specs/orbit-conventions/spec.md",
+      "line": 3,
+      "status": "resolved",
+      "lane": "obvious-fix",
+      "action": "The note now lives IN the delta, as the finding required — authored artifacts cannot gain prose at apply without re-stamping fingerprints. Placed after the requirement's SHALL paragraph (an earlier placement directly under the heading broke the validator's SHALL check, caught and fixed in this walk), and task 5.1 is reduced to the code sweep."
+    },
+    {
+      "severity": "WARNING",
+      "title": "Two worked cases in explore.md carry claims this change's own later decisions falsified, unannotated",
+      "file": "orbit/changes/rc13-explore-mechanism/explore.md",
+      "line": 331,
+      "status": "resolved",
+      "lane": "obvious-fix",
+      "action": "Task 6.2 requires annotating Cases 9(a) and 9(b) in place — 9(a)'s DERIVED example is the claim Case 10 destroyed, 9(b)'s exactly-one partition is what the per-claim test replaced — matching the file's own convention for superseded material. The same task corrects the Mechanism section's disclaimer, which still says the section is not part of the shipped convention."
+    },
+    {
+      "severity": "WARNING",
+      "title": "`six moves` survives in proposal.md and design.md after the set became eight",
+      "file": "orbit/changes/rc13-explore-mechanism/proposal.md",
+      "line": 78,
+      "status": "resolved",
+      "lane": "obvious-fix",
+      "action": "All four sites corrected to nine, verified by a negative probe across every artifact in the change. The finding named the mechanism exactly — the six-to-eight edit landed in the What Changes bullet and the specs and stopped short of the Impact and Touchpoints lists, which are what an implementer reads to size the body edit."
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Task 2.2 ends in a dangling colon with nothing after it",
+      "file": "orbit/changes/rc13-explore-mechanism/tasks.md",
+      "line": 22,
+      "status": "resolved",
+      "lane": "obvious-fix",
+      "action": "Fixed in the tasks rewrite; the disposition shape is stated in 2.3 and 2.2 terminates."
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "explore.md's Mechanism-section disclaimer becomes false on ship",
+      "file": "orbit/changes/rc13-explore-mechanism/explore.md",
+      "line": 27,
+      "status": "resolved",
+      "lane": "obvious-fix",
+      "action": "Task 6.2 covers it: the disclaimer says the section is NOT part of the shipped convention and that whether it earns its place is an open question; both are now false, and this file archives as the convention's first worked example."
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The three-ID cap and the exit-criterion-2 equivalence were resolved in the same walk and interact unremarked",
+      "file": "orbit/changes/rc13-explore-mechanism/specs/orbit-run-summary-emit/spec.md",
+      "line": 10,
+      "status": "resolved",
+      "lane": "decision",
+      "action": "DESCOPED TO rc13b (R-crc-9). The rendering bound and exit criterion 2's reading are rc13b's. Carried: beyond three open rules the remainder are named by count only, so the naming-is-what-is-missing equivalence holds for a prefix, and rc13b's requirement should either accept that as the reading or point the overflow somewhere readable.",
+      "ratified_via": "chat",
+      "resolution": "Descoped to rc13b under R-crc-9; carried into that stage's charter rather than patched here."
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Nothing adds `rules_open`/`rules_total` to the engine-owned payload table, where the never-caller-supplied guarantee is enforced",
+      "file": "orbit/changes/rc13-explore-mechanism/tasks.md",
+      "line": 42,
+      "status": "resolved",
+      "lane": "decision",
+      "action": "DESCOPED TO rc13b (R-crc-9). `ENGINE_OWNED_EXTRA`'s explore row is rc13b's to extend. The finding's diagnostic point is carried: a field absent from the row is rejected by the generic unknown-key branch rather than the engine-owned refusal — same outcome, wrong error, and the row is the table a later reader consults.",
+      "ratified_via": "chat",
+      "resolution": "Descoped to rc13b under R-crc-9; carried into that stage's charter rather than patched here."
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Task 5.1's `grep-verify none survives` has no stated scope, and the deliberately retained titles guarantee hits",
+      "file": "orbit/changes/rc13-explore-mechanism/tasks.md",
+      "line": 56,
+      "status": "resolved",
+      "lane": "obvious-fix",
+      "action": "Scoped exactly as the finding prescribed: the check is `grep -rn 'five-section\\|five sections' src/` returning zero. The retained requirement TITLES live in orbit/specs/ and are outside that scope by construction, so the verification is executable and its passing means something."
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": 0,
+  "final_assessment": "25 findings walked against a DESCOPE. 24 resolved, 1 deferred. Seven were answered structurally rather than patched: the split to rc13a/rc13b under R-crc-9 removed the fourth-capability problem, and the two findings that proved the engine half unbuildable — no decision IDs, no entry grammar — became the format this stage now SHIPS. The ninth move (INVOKE) was added on the pass's own evidence, and the BOUNDED residual gained the two things it lacked: how the set grows, and the test separating a missing move from an out-of-domain concern.",
+  "iteration": 2,
+  "next_recommended": "/orbit:address-reviews rc13-explore-mechanism --from-file orbit/changes/rc13-explore-mechanism/.orbit-runs/review-proposal-2026-09-15T14-26-34Z.json"
+}

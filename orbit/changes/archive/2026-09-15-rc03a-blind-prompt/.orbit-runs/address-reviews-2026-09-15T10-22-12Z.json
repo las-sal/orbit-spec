@@ -1,0 +1,180 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-15T10:22:12Z",
+  "change": "rc03a-blind-prompt",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "source": "internal-review",
+  "source_path": "orbit/changes/rc03a-blind-prompt/.orbit-runs/review-proposal-2026-09-15T08-13-33Z.json",
+  "source_command": "review",
+  "source_token": "2026-09-15T08-13-33Z",
+  "walk_mode": "walk",
+  "walk_mode_source": "default",
+  "input_findings_summary": {
+    "critical": 5,
+    "warning": 6,
+    "suggestion": 4,
+    "total": 15
+  },
+  "pushback_verification": "Every finding was re-read against the REDESIGNED state rather than the reviewed state, because the mechanism changed between the pass and the walk. Six dissolved — the slot's gate-scoping defect, the false non-leak proof, the epitome's second read, the missing table row, the write-path pointer, and the unimplementable absence-grep were all defects in a per-site suppression mechanism the redesign abandoned. Dissolution is recorded as RESOLVED with the reason, never silently dropped, and each entry states what replaced the thing the finding was about. TWO findings SURVIVED the redesign and are the reason the new shape is not simply smaller: the system-mode diff carries the partner's committed emit by construction (the handoff preflight guarantees a clean, pushed tree), and the launching brief has no artifact behind it. Both are now requirement clauses with tasks. THIS WALK ALSO FALSIFIED ITS OWN EVIDENCE BASE: Case 4 claimed that under external-first the orchestrator 'holds nothing to leak at the moment it dispatches the fresh half'. That is false — the external findings land BEFORE the fresh half is dispatched, so the orchestrator holds them, and the brief is its own context rather than a file, so neither ordering nor the diff exclusion reaches it. The case was corrected in place with a note on how a wrong claim survived an enumeration that was otherwise correct: it was written in the same sitting. Catching it here rather than in a third pass is the only reason it is not a third-iteration CRITICAL. Also recorded as an open question: bare `/orbit:address-reviews` is defined as a whole-repo marker scan with no auto-discovery anchor, so with zero markers and exactly one active change carrying two unwalked passes, its defined behaviour is a clean no-findings exit; this walk proceeded by judgment.",
+  "resolution_summary": {
+    "resolved": 14,
+    "stale": 0,
+    "deferred": 1,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "`next_hint_keys.slot` is not gate-scoped: while the tracked `apply` gate is `ready`, the field carries no slot at all, so a system-mode blind pair run in that window is never blinded",
+      "file": "orbit/changes/rc03a-blind-prompt/specs/orbit-review-external/spec.md",
+      "line": 7,
+      "status": "resolved",
+      "lane": "decision",
+      "action": "DISSOLVED BY REDESIGN (D-rc03a-9/10/11, ratified before this walk). The finding is correct and is one of the two reasons the slot was abandoned as a signal. Nothing reads `next_hint_keys.slot` under the ordering mechanism; the gate-scoping defect is recorded in design.md D3 so it is not rediscovered as available.",
+      "ratified_via": "chat",
+      "resolution": "Dissolved by the redesign ratified before this walk (option A: ordering plus one exclusion)."
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "The non-leak proof is false: with the pair empty and a prior pass unwalked, the slot is ABSENT and the pair's first member runs with context retained",
+      "file": "orbit/changes/rc03a-blind-prompt/specs/orbit-review-external/spec.md",
+      "line": 20,
+      "status": "resolved",
+      "lane": "decision",
+      "action": "DISSOLVED BY REDESIGN (D-rc03a-9/10/11, ratified before this walk). Correct, and the second reason the slot was abandoned: the empty-pair branch sits downstream of the resolution clause, so `pair empty` does not imply `slot rendered`. No proof is required under ordering — the mechanism does not reason about slot presence. Recorded in design.md D3.",
+      "ratified_via": "chat",
+      "resolution": "Dissolved by the redesign ratified before this walk (option A: ordering plus one exclusion)."
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "The internal branch has a SECOND prior-findings read — the disciplines epitome — and task 2.7 protects the sentence that orders it",
+      "file": "orbit/changes/rc03a-blind-prompt/tasks.md",
+      "line": 29,
+      "status": "resolved",
+      "lane": "decision",
+      "action": "DISSOLVED BY REDESIGN (D-rc03a-9/10/11, ratified before this walk). The epitome's pushback comparison matches `review-<mode>-*.json`, and under external-first the partner's findings are `external-<as>-*.md`, which that glob cannot match. The channel is EMPTY rather than suppressed, so no task guards it and task 2.3 states explicitly that no prior-run-read edit is made anywhere.",
+      "ratified_via": "chat",
+      "resolution": "Dissolved by the redesign ratified before this walk (option A: ordering plus one exclusion)."
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "The fresh half's blindness is delivered by the launching brief, which no requirement or task constrains",
+      "file": "orbit/changes/rc03a-blind-prompt/specs/orbit-review/spec.md",
+      "line": 5,
+      "status": "resolved",
+      "lane": "obvious-fix",
+      "action": "SURVIVES THE REDESIGN and is now a first-class requirement clause plus task 2.2: a dispatched blind-pair member's brief carries the change name, mode and pass set only, naming no finding, count, severity or trend. This walk ALSO found that Case 4's claim that ordering retires this channel was FALSE — under external-first the orchestrator holds the external findings when it dispatches the fresh half — and corrected the case in place rather than leaving it for a third pass. design.md D2 and the Risks section both state that no artifact check can enforce it."
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "System mode's `git diff <change-start>..HEAD` carries the partner's committed emit — and the external handoff's preflight forces it to be committed first",
+      "file": "orbit/changes/rc03a-blind-prompt/proposal.md",
+      "line": 38,
+      "status": "resolved",
+      "lane": "obvious-fix",
+      "action": "SURVIVES THE REDESIGN as the one residual ordering does not empty, and is now a requirement clause plus task 2.1: the blind path's commit range excludes the change's own `.orbit-runs/`, in both places the instruction appears. The finding's causal chain — files committed, preflight requires clean-and-pushed, therefore inside the range by construction — is carried into the requirement verbatim."
+    },
+    {
+      "severity": "WARNING",
+      "title": "Reversed-decision residue: the Migration Plan and Impact still cite \"the fail-closed default\" that D3 abolished",
+      "file": "orbit/changes/rc03a-blind-prompt/design.md",
+      "line": 108,
+      "status": "resolved",
+      "lane": "obvious-fix",
+      "action": "Both artifacts were rewritten wholesale to the ordering shape, so the fail-closed sentences are gone with the mechanism that produced them. design.md's Migration Plan now reads 'the ordering change alters a recommendation; older trails receive the new one'."
+    },
+    {
+      "severity": "WARNING",
+      "title": "explore.md's Mechanism block — the R-crc-7 mechanism of record — still specifies the reversed fail-closed rule",
+      "file": "orbit/changes/rc03a-blind-prompt/explore.md",
+      "line": 38,
+      "status": "resolved",
+      "lane": "obvious-fix",
+      "action": "Fixed during the redesign session and extended here: the block is marked SUPERSEDED in place, retains the abandoned rule verbatim as the record, names all three ways it failed, and states the mechanism of record (ordering, Case 4)."
+    },
+    {
+      "severity": "WARNING",
+      "title": "explore.md still asserts the external branch \"already makes\" the status call — the false premise corrected everywhere else",
+      "file": "orbit/changes/rc03a-blind-prompt/explore.md",
+      "line": 31,
+      "status": "resolved",
+      "lane": "obvious-fix",
+      "action": "Corrected at both explore sites during the redesign session — the prose at explore.md:30-32 and D-rc03a-1, which is additionally marked SUPERSEDED. Re-verified: `review.ts:288-496` contains no `orbit status` invocation."
+    },
+    {
+      "severity": "WARNING",
+      "title": "The `orbit-review` decision table has no row for (`blind-pair`, `external`), contradicting its own prose and R-crc-7's exhaustiveness rule",
+      "file": "orbit/changes/rc03a-blind-prompt/specs/orbit-review/spec.md",
+      "line": 13,
+      "status": "resolved",
+      "lane": "decision",
+      "action": "DISSOLVED BY REDESIGN (D-rc03a-9/10/11, ratified before this walk). There is no decision table in either delta any more; the `orbit-review` delta is a single ADDED requirement about two named channels, and `orbit-review-external` is not touched at all.",
+      "ratified_via": "chat",
+      "resolution": "Dissolved by the redesign ratified before this walk (option A: ordering plus one exclusion)."
+    },
+    {
+      "severity": "WARNING",
+      "title": "Task 3.5's absence-grep is not implementable as stated — task 2.3 requires the same strings to remain in the generated surface",
+      "file": "orbit/changes/rc03a-blind-prompt/tasks.md",
+      "line": 46,
+      "status": "resolved",
+      "lane": "obvious-fix",
+      "action": "The grep is gone with the shape. Section 3 now asserts what is actually assertable: the ordering is UNIT-testable in `gates.ts` (3.1/3.2), and the two prose rules are generated-surface assertions (3.3/3.4). design.md's Instruments section states which is which, and that the brief constraint has no run-time check."
+    },
+    {
+      "severity": "WARNING",
+      "title": "The blinded external prompt still directs the reviewer into `.orbit-runs/` — to write, and to avoid colliding with the files already there",
+      "file": "orbit/changes/rc03a-blind-prompt/specs/orbit-review-external/spec.md",
+      "line": 22,
+      "status": "resolved",
+      "lane": "decision",
+      "action": "DISSOLVED BY REDESIGN (D-rc03a-9/10/11, ratified before this walk). The write-path instruction and its 'pick a fresh timestamp so this file doesn't overwrite prior reviews' aside are only a leak when there is something to collide with. Under external-first the prompt is composed when no pair member stands. Prior-iteration files may exist, and seeing them is legitimate under D-rc03a-10 — the members are blind to each other, not to shared walked history.",
+      "ratified_via": "chat",
+      "resolution": "Dissolved by the redesign ratified before this walk (option A: ordering plus one exclusion)."
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Task 5.2 loses half of what the walk said it was deferring — the charter's `gates.ts:113` mis-citation",
+      "file": "orbit/changes/rc03a-blind-prompt/tasks.md",
+      "line": 63,
+      "status": "resolved",
+      "lane": "obvious-fix",
+      "action": "Task 5.2 now carries all three architect-tier items: the charter's `Touches:` line (which now names a capability the change does not touch AT ALL), the exit criteria (phrased around suppressing the external prompt, where the mechanism is ordering), and the `gates.ts:113` mis-citation with the reason it is unreachable."
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "`orbit-engine-gates` still defines blindness one-sidedly and gains no pointer to the new rule",
+      "file": "orbit/changes/rc03a-blind-prompt/design.md",
+      "line": 24,
+      "status": "resolved",
+      "lane": "obvious-fix",
+      "action": "Overtaken by the redesign in the best way: `orbit-engine-gates` is now a MODIFIED capability in this change, and the ordering clause lands inside `Single-voiced canonical-next computation` stating why the order is a correctness property and that the blindness predicate cannot see prompt content. The definitive spec now says so."
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Task 5.1 drops the charter's named instance for exit criterion 3",
+      "file": "orbit/changes/rc03a-blind-prompt/tasks.md",
+      "line": 59,
+      "status": "resolved",
+      "lane": "obvious-fix",
+      "action": "Task 5.1 now names rc13's own system-review pair, matching the charter's exit criterion 3 verbatim."
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The deferred program-tier WARNING leaves the proposal gate unresolvable by construction; the intended path to apply is unstated",
+      "file": "orbit/changes/rc03a-blind-prompt/tasks.md",
+      "line": 63,
+      "status": "deferred",
+      "lane": "decision",
+      "action": "NOT RESOLVED, and correctly so — it is a real consequence, restated by this walk which again defers program-tier content (task 5.2). The intended path is now stated: the architect session raises the charter items, and the walk that follows records them resolved; until then `passResolved` will keep reporting the pass unresolved and that is the engine being right. Recorded in tasks 5.2/5.3 rather than papered over with a disposition that would make the record lie.",
+      "ratified_via": "chat",
+      "resolution": "Carried into the new shape."
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": 0,
+  "final_assessment": "15 findings walked against a change whose mechanism was redesigned between the pass and the walk. 14 resolved, 1 deferred. Six dissolved — they were defects in a suppression mechanism that no longer exists — and the two that SURVIVED the redesign became first-class requirement clauses: the system-mode diff exclusion and the launching-brief constraint. The walk also found and corrected a false claim in its own evidence base: Case 4 asserted ordering retires the launching-brief channel, and it does not.",
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc03a-blind-prompt --from-file orbit/changes/rc03a-blind-prompt/.orbit-runs/review-proposal-2026-09-15T07-38-59Z.json"
+}

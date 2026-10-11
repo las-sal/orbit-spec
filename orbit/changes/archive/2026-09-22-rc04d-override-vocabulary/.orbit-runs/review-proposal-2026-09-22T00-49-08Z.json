@@ -1,0 +1,101 @@
+{
+  "command": "review",
+  "timestamp": "2026-09-22T00:49:08Z",
+  "change": "rc04d-override-vocabulary",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "The CRITICAL's cascade stopped at the delta, design D2 and explore — proposal.md and design.md's Goals still assert the SINGLE-owner claim, and two of them state it as fact",
+      "file": "orbit/changes/rc04d-override-vocabulary/proposal.md",
+      "line": 20,
+      "recommendation": "The walk corrected the two-owner form in the delta, `design.md` D2's body, `explore.md`'s D-rc04d-2 row and `tasks.md` 1.2 — and missed four sites. `proposal.md:20` reads \"MOVES OWNERSHIP of the record's shape to `orbit-run-summary-emit`, **which already owns it**\"; `design.md:23`, inside GOALS, reads \"ownership moves to `orbit-run-summary-emit`, **which already holds it**\". Both assert sole ownership as established fact, and both are FALSE for the archive half — which is precisely what the CRITICAL established. `proposal.md:41` states the change's effect the same single-owner way in the Modified Capabilities list. `design.md:50` (\"a shape `orbit-run-summary-emit` owns\") is the weakest of the four, since it narrates the baseline defect and is true of the apply half, but it reads as the same claim. The normative artifact — the delta — is CORRECT, so nothing ships wrong; the defect is that the scope statement and the goal statement now contradict the requirement they describe, and a reader comparing proposal to delta sees a mismatch with no indication which is current. FIX: carry the two-owner form into all four, and in `proposal.md` and `design.md` Goals say it plainly — ownership moves to the EMITTING COMMAND'S OWN CAPABILITY, `orbit-run-summary-emit` for apply and `orbit-archive-modifications` for archive. NOTE for the walk: this is the same class the fresh pass named — a fix landing where the finding pointed and stopping at the edge of the class — occurring inside the walk that resolved that very finding."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "title": "design.md's Alternatives section does not record the option rejected during the walk",
+      "file": "orbit/changes/rc04d-override-vocabulary/design.md",
+      "line": 67,
+      "recommendation": "The CRITICAL's walk briefed two paths and the user ratified (A): name both owners. Option (B) — retreat to a plain substitution at site 2, make all five sites uniform, and leave the one-voice defect for rc04c — was considered and rejected on the ground that it forfeits the reason the ownership move was ratified in the first place. That rejection is recorded in the address-reviews emit, but `design.md`'s `## Alternatives considered` section is the artifact that exists to stop future rediscovery, and it lists four alternatives without this one. It is also the most likely of the five to be re-proposed, since 'this stage should have stayed pure vocabulary' is a reasonable thing for a later reader to think. FIX: add it with its date and rationale, alongside the four already there."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "Section 3's tasks read 3.1, 3.3, 3.4, 3.2 — the walk inserted before the anchor rather than after",
+      "file": "orbit/changes/rc04d-override-vocabulary/tasks.md",
+      "line": 26,
+      "recommendation": "The two tasks the walk added (3.3, the architect recommendation; 3.4, the cross-workstream flag) were inserted ahead of the pre-existing 3.2, so the file now reads 3.1, 3.3, 3.4, 3.2. Nothing parses task numbers — the apply flow keys on `- [ ]` checkboxes, so progress tracking is unaffected — which is why this is cosmetic rather than a defect. But `tasks.md` is read in order by whoever applies the change, and out-of-sequence numbering in a section whose whole content is 'record these four things for a sibling stage' invites a reader to wonder whether an item is missing. FIX: renumber 3.1-3.4 in document order."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "pass": "2",
+      "title": "The two-owner clause may itself be incomplete — a third command could carry `gate_overridden`",
+      "evidence": "This is the direct analogue of the defect just fixed, so I checked it rather than assumed. `payloadFieldsFor` accepts `gate_overridden` on exactly TWO commands: `apply` and `archive`. `ff-change.ts` has zero occurrences; `bulk-archive-change.ts`'s two hits are `fingerprint_overridden`, not this field, and `bulk-archive` is not a registered emit command at all. The clause names both owners and there is no third. NOT a finding."
+    },
+    {
+      "pass": "6",
+      "title": "The two-owner clause may go false after rc04c retires the field",
+      "evidence": "Task 1.2 already requires confirming the clause holds today AND after rc04c, so the forward check is owned. Traced it anyway: post-rc04c the override is carried by the `continuation/proceed` judgement record, whose spine shape is owned by `orbit-run-summary-emit` (`The judgement record — one spine, two kinds`) while the archive seam's instance is owned by `orbit-archive-modifications` (`THE CONTINUATION RECORD AT THIS SEAM`). The emitting-command's-own-capability formulation survives the retirement in both halves. NOT a finding."
+    },
+    {
+      "pass": "7",
+      "title": "`gate_overridden` still appears 33 times across the change's non-delta artifacts",
+      "evidence": "Counted: proposal 4, design 8, explore 15, tasks 6. Every one is either the quoted FROM side of a replacement table, prose describing what the field is, or a reference to the sibling stage that retires it. The deltas themselves are at ZERO, which is what exit (1) measures. Correct by construction, not drift."
+    },
+    {
+      "pass": "1",
+      "title": "The walk may have disturbed delta fidelity",
+      "evidence": "Re-ran the scenario-level check AFTER the walk, not before: 27 scenario titles set-equal to the live baselines across all five requirements, 0 mismatches, fingerprints 5/5 verified, validate --strict clean. Of the 21 changed lines, 18 are the named substitutions and 3 are trailing-blank removals at each file's LAST requirement block — end-of-file, so no blocks can join."
+    }
+  ],
+  "commentary": "This pass is the trailing in-context slot and it found what that slot exists to find: the walk's own edges, invisible to the fresh reviewer because the fresh reviewer read the pre-walk tree. All three findings are residue of resolving the previous pass's CRITICAL, and the WARNING is the sharpest of them — the cascade that carried the two-owner correction into the delta, the design decision, the exploration table and the task stopped four sites short, leaving the PROPOSAL and the GOALS asserting sole ownership as established fact. That is the identical class the fresh reviewer named one iteration ago (a fix landing where the finding pointed and stopping at the edge of the class), reproduced inside the walk that resolved that very finding. Five instances in one session now, and the pattern is stable enough to describe precisely: the cascade set gets computed from where the FINDING pointed, not from where the CLAIM lives, and a claim restated in four artifacts has four homes while the finding has one.\n\nWhat I probed hardest was the obvious analogue of the defect just fixed — whether the two-owner clause is itself incomplete. If naming one owner was wrong, naming two could be wrong the same way. It is not: exactly two commands' payload tables accept the field, ff-change has none, and bulk-archive's apparent hits are a different override entirely. I also traced whether the clause survives rc04c, since task 1.2 asserts it must: it does, in both halves, because the judgement record's spine and the archive seam's instance are owned by the two capabilities the clause names. Both checks came back clean, which is worth saying plainly — the substantive edit is now correct, and the remaining findings are about artifacts that DESCRIBE it rather than the requirement itself.\n\nThe honest limit on this pass: I wrote the wording under review, and I wrote it in response to a finding against my own earlier wording. An in-context reader is structurally poor at catching a claim that reads correctly and is false about the world — which is exactly what the fresh pass caught and what I could not have. Everything above is internal-consistency work and mechanical re-verification; none of it is independent confirmation that the two-owner sentence describes the repo correctly. The delta fidelity re-check after the walk is the one thing here I would call load-bearing evidence rather than argument.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [
+    "3 (partial) — orbit/project.md and root *_convention.md do not exist; Pass 3 ran its CLAUDE.md and architecture-doc cross-checks only, per the graceful-degradation rule"
+  ],
+  "final_assessment": "0 critical, 1 warning, 2 suggestion.",
+  "iteration": 2,
+  "next_recommended": "/orbit:address-reviews rc04d-override-vocabulary --from-file orbit/changes/rc04d-override-vocabulary/.orbit-runs/review-proposal-2026-09-22T00-49-08Z.json"
+}

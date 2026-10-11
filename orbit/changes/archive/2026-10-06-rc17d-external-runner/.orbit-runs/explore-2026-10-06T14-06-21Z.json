@@ -1,0 +1,32 @@
+{
+  "command": "explore",
+  "timestamp": "2026-10-06T14:06:21Z",
+  "change": "rc17d-external-runner",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Named exploration scaffolded for stage rc17d-external-runner (citation offered, not yet written). Three rules re-entered from rc17a archived exploration (D-bpc-1/-2/-11) with Mechanism entries owed; measured that the upstream `orbit config` CLI already edits the global config but rejects unknown keys. Four open questions with standing recommendations.",
+  "decisions_captured": 3,
+  "open_questions_count": 4,
+  "open_questions_with_recommendation": "3 of 4",
+  "rules_total": 3,
+  "rules_open": [
+    {
+      "id": "D-rc17d-1",
+      "state": "absent"
+    },
+    {
+      "id": "D-rc17d-2",
+      "state": "absent"
+    },
+    {
+      "id": "D-rc17d-3",
+      "state": "absent"
+    }
+  ],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:explore rc17d-external-runner — continue thinking, or /orbit:propose rc17d-external-runner if ready to formalize · open domains: D-rc17d-1, D-rc17d-2, D-rc17d-3"
+}

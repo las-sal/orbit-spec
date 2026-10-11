@@ -1,0 +1,50 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-07-10T16:55:20Z",
+  "change": "explicit-lifecycle-consent",
+  "final_assessment": "All 3 external iter-2 findings (GPT-5 Codex: 1 CRITICAL, 2 WARNING) resolved; 0 stale/deferred/escalated. CRITICAL (user-ratified fork option B, migrate-on-touch): consent-scoped bodies stamp consent_era_from at entry on changes lacking schema_version; tripwire becomes three-tier per change (schema_version → check all; consent_era_from → check emits at-or-after the stamp; neither → exempt) — the invariant 'post-capability body touch ⇒ tripwire coverage from that moment' now holds by construction, covering D1's own archive emit (D1 itself is the straddler specimen). Consent-era requirement + audit-drift delta + design D6 (second revision, attributed) + tasks 2.1/2.2/3.1/3.2 updated, incl. the straddler regression test. W1: conventions' canonical APPLY example now carries consent (the workflow-kind example was itself an apply emit — missed in the prior round's lifecycle-only fix). W2: task 3.1's stale 'timestamp fallback' wording replaced with the three-tier rule (NO timestamp fallback). Validates --strict; fingerprints 8/8 (delta-side edits don't move baseline fingerprints).",
+  "next_recommended": "/orbit:review --as proposal --fresh explicit-lifecycle-consent — the external again yielded new findings (now resolved); the no-new-findings confirm still requires an independent pass that yields none",
+  "kind": "editorial",
+  "source": "--from-file orbit/changes/explicit-lifecycle-consent/.orbit-runs/external-proposal-2026-07-10T16-25-19Z.md",
+  "source_path": "orbit/changes/explicit-lifecycle-consent/.orbit-runs/external-proposal-2026-07-10T16-25-19Z.md",
+  "source_format": "external",
+  "external_reviewer": "GPT-5 Codex",
+  "walk_mode": "per_finding",
+  "walk_mode_source": "flag",
+  "resolution_summary": { "resolved": 3, "stale": 0, "deferred": 0, "escalated": 0 },
+  "resolutions": [
+    {
+      "finding": "Change-level era exemption misses post-D1 emits from pre-D1 active changes",
+      "severity": "CRITICAL",
+      "classification": "decision required",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          { "label": "A", "body": "split the exemption so it covers archived pre-D1 emits, not all future emits from no-version changes" },
+          { "label": "B", "body": "define a migration/transition marker that lets active pre-D1 changes become consent-era without falsely flagging their older emits" },
+          { "label": "C", "body": "repo-level era floor derived from the consent change's own archive timestamp (analysis-added third option)" }
+        ],
+        "chosen": "B",
+        "discuss_invoked": false
+      },
+      "action": "Migrate-on-touch: consent-scoped bodies stamp consent_era_from at entry on unmarked changes; three-tier tripwire rule in orbit-lifecycle-consent (new Straddler scenario naming D1 itself as the shape) + orbit-audit-drift delta; design D6 second revision; tasks 2.1/2.2 (stamp), 3.1 (three-tier), 3.2 (straddler regression: pre-stamp emits exempt, at-or-after checked)."
+    },
+    {
+      "finding": "Canonical apply emit example still omits consent",
+      "severity": "WARNING",
+      "classification": "trivial fix",
+      "action": "conventions MODIFIED block: the workflow-kind canonical example (an apply emit) gains \"consent\": \"user-invoked\" — completing the prior round's lifecycle-example-only fix."
+    },
+    {
+      "finding": "Audit task still instructs a timestamp fallback",
+      "severity": "WARNING",
+      "classification": "trivial fix",
+      "action": "Task 3.1 reworded: three-tier rule per design D6, explicitly 'NO timestamp fallback' — the stale pre-revision wording removed."
+    }
+  ],
+  "ripple_cascade": {
+    "applied": ["specs/orbit-lifecycle-consent/spec.md", "specs/orbit-audit-drift/spec.md", "specs/orbit-conventions/spec.md", "design.md", "tasks.md"],
+    "flagged_not_applied": []
+  }
+}

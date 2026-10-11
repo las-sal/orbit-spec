@@ -1,0 +1,76 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-22T01:58:21Z",
+  "change": "rc04d-override-vocabulary",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc04d-override-vocabulary/.orbit-runs/review-proposal-2026-09-22T00-49-08Z.json",
+  "walk_mode": "per_finding",
+  "walk_mode_source": "flag",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 2
+  },
+  "pushback_verification": "All 3 verified before acting; ONE narrowed. The WARNING's four sites were confirmed by a CLAIM-DRIVEN sweep rather than by following the finding's file:line — grepping every phrasing that asserts ownership, which found exactly four and correctly excluded a fifth hit that quotes the old wording deliberately. That method is the finding's own diagnosis applied to its own resolution, and it is the difference between this walk and the one that produced the finding. The first SUGGESTION is PARTIALLY STALE and the fix is narrower than asked: design.md's Alternatives section already carried `Minimal de-naming at site 2 (rejected 2026-09-21)` from propose; what was missing was only the walk-time RE-rejection on different grounds, so the entry was amended rather than duplicated. The second SUGGESTION's premise — that nothing parses task numbers — was checked rather than assumed.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The CRITICAL's cascade stopped at the delta, design D2 and explore — proposal.md and design.md's Goals still assert the SINGLE-owner claim, and two of them state it as fact",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04d-override-vocabulary/proposal.md",
+      "line": 20,
+      "classification": "trivial_fix",
+      "action": "Swept from the CLAIM rather than from the finding's pointer — which is the mechanism this finding identified, applied immediately to its own resolution. A grep for every phrasing that asserts ownership (`already owns it`, `already holds it`, `ownership to orbit-run-summary-emit`, `shape orbit-run-summary-emit owns`) found exactly the four sites named and no fifth, and correctly EXCLUDED tasks.md:29, which quotes the old wording on purpose as the cross-workstream flag. All four now carry the two-owner form: proposal.md:20 (the What Changes bullet) and :41 (the Modified Capabilities list), design.md:23 (GOALS — the most load-bearing of the four, since it stated the goal wrongly) and :50 (D2's narration of the baseline defect, the weakest, now naming both owners for the two halves). Zero single-owner assertions remain in the change. The delta was already correct and was not touched, so fidelity is unchanged: fingerprints still 5/5.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc04d-override-vocabulary/proposal.md",
+          "orbit/changes/rc04d-override-vocabulary/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "design.md's Alternatives section does not record the option rejected during the walk",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04d-override-vocabulary/design.md",
+      "line": 67,
+      "classification": "trivial_fix",
+      "action": "PARTIALLY STALE — the fix is narrower than the finding asked, and pushback is why. The finding says design.md's Alternatives section 'does not record the option'. It DOES: `Minimal de-naming at site 2 (rejected 2026-09-21, explore.md Q-rc04d-a)` has been there since propose. What was genuinely missing is that the SAME option was re-raised during the walk — after the CRITICAL made the ownership move look costlier than presented — and rejected a SECOND time on a different argument (retreating forfeits the reason the move was ratified; the correct two-owner form turned out to be one clause with an existing precedent rather than new design). So the entry is amended rather than duplicated, and now records both rejections with their distinct reasoning plus the honest counter-argument, which is the thing most likely to be re-proposed by a later reader. A new entry would have implied two different alternatives where there is one considered twice.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Section 3's tasks read 3.1, 3.3, 3.4, 3.2 — the walk inserted before the anchor rather than after",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04d-override-vocabulary/tasks.md",
+      "line": 26,
+      "classification": "trivial_fix",
+      "action": "Renumbered section 3 into document order: 3.1, 3.2 (the architect recommendation), 3.3 (the cross-workstream flag), 3.4 (the remaining-scope record). Verified the finding's own premise first — nothing parses task numbers, the apply flow keys on `- [ ]` checkboxes — so this was cosmetic, which is why it stayed a SUGGESTION. Fixed anyway because the affected section's entire content is 'record these four things for a sibling stage', and out-of-sequence numbering there invites a reader to hunt for a missing item.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": null,
+  "final_assessment": "The trailing in-context pass walked to zero: 3 findings, 0 CRITICAL, all resolved, none deferred, one narrowed by pushback. Every finding was residue of the previous walk rather than a defect in the change, and the WARNING was the fifth instance in this session of one class — a fix landing where a finding pointed and stopping at the edge of the class it belonged to. Its resolution is the first in this session to use the countermeasure the class implies: compute the cascade set from the CLAIM (grep the assertion in all its phrasings) rather than from the finding's file:line, since a claim restated in five artifacts has five homes while the finding has one. That found exactly the four sites and correctly excluded a deliberate quotation of the old wording. The delta was not touched by this walk and its fidelity is unchanged — fingerprints 5/5, validate --strict clean. Worth recording for `rc08-walk-completeness`, which is premised and unbuilt: five instances in one session is real evidence for that charter, and the claim-driven cascade is a concrete mechanism it could own.",
+  "iteration": 2,
+  "next_recommended": "/orbit:apply rc04d-override-vocabulary — user-invoked"
+}

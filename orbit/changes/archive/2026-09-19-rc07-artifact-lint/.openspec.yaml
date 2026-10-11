@@ -1,0 +1,9 @@
+schema: spec-driven
+created: 2026-09-15
+schema_version: 4
+architecture:
+  doc: clean-up-review-cycle
+  stage: rc07-artifact-lint
+base_fingerprints:
+  orbit-architecture-engine:
+    Parseable architecture-doc format: sha256:080cc3138f09e74e24f4da57e3ef44184da82a05d9639ba55be4fc709341b76a

@@ -1,0 +1,21 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-03T14:00:00Z",
+  "change": "nearmiss-direction",
+  "final_assessment": "No findings.",
+  "next_recommended": "orbit status --change nearmiss-direction --report",
+  "kind": "editorial",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "quick",
+  "scorecard": {
+    "completeness": { "critical": 0, "warning": 0, "suggestion": 0 },
+    "correctness": { "critical": 0, "warning": 0, "suggestion": 0 },
+    "coherence": { "critical": 0, "warning": 0, "suggestion": 0 }
+  },
+  "findings": [],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "Nothing I read would diverge in an implementation built to it.\n---\nGate: review-system PASSED\nReady when you are: /orbit:archive x"
+  }
+}

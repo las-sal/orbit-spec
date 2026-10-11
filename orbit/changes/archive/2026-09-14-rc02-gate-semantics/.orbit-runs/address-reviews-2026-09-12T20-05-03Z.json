@@ -1,0 +1,245 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-12T20:05:03Z",
+  "change": "rc02-gate-semantics",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc02-gate-semantics/.orbit-runs/review-proposal-2026-09-12T19-54-44Z.json",
+  "source_command": "review",
+  "source_token": "2026-09-12T19-54-44Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "walk_mode_source": null,
+  "input_findings_summary": {
+    "critical": 3,
+    "warning": 8,
+    "suggestion": 2
+  },
+  "pushback_verification": "Every claim verified before acting; none stale. Confirmed the deleted baseline scenario and the vacuity of the replacement quantifier against passResolved's `!!latest` existence test. Confirmed at source that resolution_summary's counters are severity-blind ('Total findings always = sum of resolved + stale_suppressed + deferred + escalated'), which is what makes rule 3 fire on the exempted case. Confirmed the succession wording was my own single-latest text. Inspected the fourth on-disk shape directly and found it WIDER than reported — a counter OBJECT, not an array of bare strings, with no resolution_summary — recorded as a pushback correction that strengthens the finding. Verified both gate-row projections, both residue sites at their lines, the charter's Touches text, and the task numbering gap.",
+  "resolution_summary": {
+    "resolved": 13,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "Clause (b) drops the baseline scenario that pins the no-walk case, and its replacement wording is vacuously true when no walk exists",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 242,
+      "marker_source": "internal-review",
+      "classification": "decision required",
+      "action": "Reproduced the trace and confirmed the divergence from baseline: the baseline made an EXISTENCE claim (implemented as `!!latest && ...` in passResolved) while the replacement quantified universally over a record that might not exist. Resolved as part of the clause (b) simplification: EXISTENCE FIRST is now its own stated rule ahead of every per-entry test — a pass carrying any findings must have at least one record referencing its artifact, and absent one the pass is UNRESOLVED, never vacuously resolved. The deleted baseline scenario is carried forward as 'Findings with no completing address-reviews run fail the gate'.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02-gate-semantics/design.md",
+          "orbit/changes/rc02-gate-semantics/tasks.md"
+        ]
+      },
+      "ratified_via": "chat",
+      "resolution": "Existence stated first and separately, and the baseline scenario restored — part of the clause (b) simplification rather than a patch to the quantifier"
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "Fail-safe rule 3 fires on every walk that defers a SUGGESTION, re-gating the exact findings this change exists to stop gating",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 259,
+      "marker_source": "internal-review",
+      "classification": "decision required",
+      "action": "Verified the mechanism at source: the address-reviews field notes define resolution_summary's counters over ALL findings ('Total findings always = sum of resolved + stale_suppressed + deferred + escalated'), so comparing that severity-BLIND aggregate against a severity-FILTERED entry count fires on exactly the case the change exempts. Not patched — this was the third fail-safe rule in a clause that had accumulated them, and the reviewer's own commentary named the shared cause: each rule had been validated against the trail that motivated it and not the trails the others produce. Settled under R-crc-3: clause (b) is SIMPLIFIED to ONE readability predicate and ONE fallback. A record is READABLE when `resolutions` is an array whose every element is an object with a recognised severity AND a recognised disposition (from `outcome` or legacy `status`); readable records read per entry and PREFER the entries over the aggregate; every other shape falls back whole to the bare counts, and an unreadable record with no readable summary leaves the pass unresolved. The cross-check that caused this finding is DELETED.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02-gate-semantics/design.md",
+          "orbit/changes/rc02-gate-semantics/tasks.md"
+        ]
+      },
+      "ratified_via": "chat",
+      "resolution": "Off-menu — delete rule 3 and replace all three fail-safe rules with one readability predicate plus one fallback"
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "Succession replaces the confirming SET with a single pass, reintroducing the which-member-finished-last bug for the post-walk repeat pair",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 274,
+      "marker_source": "internal-review",
+      "classification": "decision required",
+      "action": "Confirmed against my own text from the previous walk, which had introduced the defect one paragraph after fixing the same thing for the base set. Option A taken and made iterative: the successor set is EVERY independent pass strictly later than all resolution records closing the CURRENT set's findings; when non-empty it becomes the current set and the rule re-applies, terminating because tokens strictly increase; every member must satisfy the predicate. Set-valued so a repeat that is itself a blind pair is confirmed as a pair; re-measured against the current set so a successor never predates the walk of a CRITICAL it supersedes. Two new scenarios cover both properties.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02-gate-semantics/design.md",
+          "orbit/changes/rc02-gate-semantics/tasks.md"
+        ]
+      },
+      "ratified_via": "chat",
+      "resolution": "A — set-valued succession, iterated until stable, re-measured against the current set's records each round",
+      "recommendation_fork": {
+        "source": "structured",
+        "labels": [
+          "A",
+          "B"
+        ],
+        "ratified_label": "A"
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "Earliest-pair selection can foreclose a covered cadence, because the following slot's constraint depends on the selected pair's resolution records",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 222,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "action": "Clause (a) now states coverage EXISTENTIALLY: it holds iff there exists an assignment satisfying every constraint, and a gate is uncovered only when no assignment works. Greedy search is named as an implementation that SHALL backtrack rather than report a covered cadence as unpassed. New scenario asserts the foreclosure trail covers; task 4.1 requires backtracking.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02-gate-semantics/design.md",
+          "orbit/changes/rc02-gate-semantics/tasks.md"
+        ]
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "A fourth real resolutions shape exists on disk and flips from unresolved to resolved under the new rules",
+      "file": "orbit/changes/rc02-gate-semantics/design.md",
+      "line": 24,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "action": "Verified and found WIDER than reported (recorded as a pushback correction): the shape is not an array of bare strings but a counter OBJECT ({fixed: 5, ratified_as_designed: 0}) with no resolution_summary, in 8 archived records across 2 changes — so no rule addressed a non-array `resolutions` at all. Subsumed by the readability predicate, which requires `resolutions` to BE an array before any per-entry reading; such a record is unreadable, and with no readable summary the pass stays unresolved. New scenario; the design's measurement now names all four generations; task 2.2 fixtures all four.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02-gate-semantics/design.md",
+          "orbit/changes/rc02-gate-semantics/tasks.md"
+        ]
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "Budget 3 plus stale-counting makes BUDGET-SPENT fire mid-way through a mandatory blind pair after any re-apply",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 9,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "action": "The budget now carries TWO numbers. The REPORTED spend counts every independent pass on the gate's mode, stale included — spend is spend. The EXHAUSTION TRIGGER counts only passes fresh against the current state, so an apply that staleness-invalidates a blind pair cannot make the gate report its budget spent during the re-cover its own next command is asking for. Scenario rewritten to assert both halves; task 5.3 requires the post-apply sequence.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02-gate-semantics/design.md",
+          "orbit/changes/rc02-gate-semantics/tasks.md"
+        ]
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "The severity axis has no fail-safe rule, so a malformed severity makes a deferred entry silently non-blocking",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 248,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "action": "Subsumed by the readability predicate: a recognised `severity` on EVERY element is part of what makes a record readable, so an entry whose severity is 'blocker', lower-case, or absent makes the whole record unreadable and falls it back to the conservative bare counts. The asymmetry the finding names — unreadable disposition conservative, unreadable severity permissive — is gone because both axes now gate the same predicate. New scenario.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02-gate-semantics/design.md",
+          "orbit/changes/rc02-gate-semantics/tasks.md"
+        ]
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "The budget's reported fields are unnamed and the two surfaces that must render them are absent from Impact, Touchpoints, and the tasks",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 492,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "action": "Verified both projections: GateStatusRow's field-by-field mapping in instruction-loader.ts and the human gate row in status.ts, which prints only id, state and either checkbox counts or the reason. The requirement now NAMES `independentSpend` and `budget` beside `budgetExhausted` and states that a new gate-status field reaches neither surface unless both projections carry it. Both files added to the proposal's Impact and the design's Touchpoints; task 5.2 requires carrying all three fields through both projections and 5.3 tests it.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02-gate-semantics/proposal.md",
+          "orbit/changes/rc02-gate-semantics/design.md",
+          "orbit/changes/rc02-gate-semantics/tasks.md"
+        ]
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "Rejected external artifacts are counted as spend with no mode attribution, inflating the other gate's budget",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 12,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "action": "The clause now states that a rejected artifact is attributed to the mode in its filename (recoverable before the shape check runs) and counts only toward the gate operating on that mode, and that a reviewed gate whose mode cannot be derived from its id reports no budget at all rather than counting passes of both modes. Task 5.3 tests the mis-attribution case.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02-gate-semantics/tasks.md"
+        ]
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "Task 8.3's residue sweep enumerates four patterns and misses two real sites the v4 cadence invalidates",
+      "file": "orbit/changes/rc02-gate-semantics/tasks.md",
+      "line": 112,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "action": "Both sites verified at their lines. Task 8.3 now requires grepping cadence-slot names inside EXAMPLE gate lines and readouts — the class no other grep catches — and names the review body's worked example explicitly. The orbit-run-summary-emit scenario is handled properly rather than deferred: this change now carries a small MODIFIED delta on that capability generalizing 'the `external` cadence slot stays unsatisfied' to name whichever slot an external return would satisfy, since under v4 no gate has a bare external slot.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02-gate-semantics/tasks.md",
+          "orbit/changes/rc02-gate-semantics/specs/orbit-run-summary-emit/spec.md"
+        ]
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "The program charter and the exploration record still specify the reversed sixth-state design",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 236,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "action": "Both records corrected. The rc02 charter's Touches line now reads orbit-engine-gates plus orbit-run-summary-emit plus the schema bump, with the dead parenthetical about the widened unconverged set struck; the 2026-09-12 status-log entry no longer lists the sixth state and the two contradicted capabilities as what rc02 keeps, and a new entry records this pass. In explore.md, D-rc02-6 and the Considered & out rejection of the boolean flag are each marked SUPERSEDED or REVERSED with a dated pointer to design D6, kept verbatim beneath as the historical record.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/architecture/clean-up-review-cycle.md",
+          "orbit/changes/rc02-gate-semantics/explore.md"
+        ]
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "'grew monotonically' overstates the measured trend the Why rests on",
+      "file": "orbit/changes/rc02-gate-semantics/proposal.md",
+      "line": 4,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "action": "Replaced with the measured series (c1 41, c2 18, d1 27, d2 56, d3 51, d4 77, d5 100, d6 131) described as a strong trend rather than a monotone one, and the pass range corrected to 'd2 onward running 14 to 17 passes each'.",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Task numbering skips 4.2",
+      "file": "orbit/changes/rc02-gate-semantics/tasks.md",
+      "line": 59,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "action": "Renumbered 4.3 to 4.2.",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": "R-crc-3 (Sal, 2026-09-11): method decisions are settled by the authoring AI and recorded with rationale, not briefed for ratification.",
+  "final_assessment": "13 of 13 resolved; 0 unresolved markers in scope. All three CRITICALs were real and all three were mine, two of them introduced by the PREVIOUS walk — a clause (b) quantifier that read as resolved when nobody had walked, a fail-safe rule that compared a severity-blind aggregate against a severity-filtered count and so re-gated the deferred SUGGESTION this stage exists to exempt, and a succession rule that reinstated the which-member-finished-last dependency one paragraph after abolishing it. The response was SIMPLIFICATION, not a fourth patch: clause (b) now asks ONE readability question and has ONE fallback, which subsumed all three fail-safe rules plus two further warnings. Coverage is restated existentially with backtracking required; succession is set-valued and iterated; the budget separates its reported spend from its exhaustion trigger; the budget fields are named and routed through both gate-row projections. The reversal and split were cascaded into the charter, the status log, and the exploration record. Remeasured: two capabilities, eight requirement blocks, 60 scenarios, 45.7 KB, 19 tasks — inside R-crc-1 on every axis EXCEPT bytes, which is over the ~40 KB guide by 14% and recorded in the design rather than hidden; rationale was moved out of the normative text and trimming further would remove normative content.",
+  "iteration": 3,
+  "next_recommended": "/orbit:review --as proposal rc02-gate-semantics"
+}

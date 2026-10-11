@@ -1,0 +1,100 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-08-25T22:53:45Z",
+  "change": "d6-pr-lifecycle",
+  "kind": "editorial",
+  "model": "claude-opus-5",
+  "source": "from-file",
+  "source_path": "orbit/changes/d6-pr-lifecycle/.orbit-runs/review-proposal-2026-08-25T22-50-57Z.json",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 4,
+    "suggestion": 1
+  },
+  "pushback_verification": "All 5 verified against current artifact content before disposition; none suppressed as stale. All five were authored by the immediately preceding in-context pass, so verification was confirmation that the cited text still read as reported rather than a search for drift since.",
+  "resolution_summary": {
+    "resolved": 5,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The proposal's Modified Capabilities list omits orbit-onboard — six named, seven deltas ship",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d6-pr-lifecycle/proposal.md",
+      "classification": "trivial_fix",
+      "action": "Added the `orbit-onboard` bullet to Modified Capabilities, naming what its two added scenarios actually require: the PR lifecycle taught at the two seams where it acts (draft PR in the propose paragraph, tail in the archive paragraph), the `pr:` config vocabulary, citation-selected granularity with the uncited fallback, the degradation path, and the merging-stays-human boundary — plus the note that the teaching is unconditional on the reading project's config because the body is a generated constant. The proposal now reports its full surface: seven capabilities, matching `specs/`.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The stored-URL validation-failure skip names only the per-change PR operations, leaving the program stage-entry append undefined",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-archive-modifications/spec.md",
+      "classification": "trivial_fix",
+      "action": "Restated the skip PATH-NEUTRALLY: a record failing live validation skips the tail's PR-WRITING STEPS — the description rewrite (per-change) OR the stage-entry append (program), and the flip — with the reason stated inline that appending a stage entry to a PR the user closed is the same harm as rewriting its description, so neither granularity is exempt. One clause now covers both paths instead of per-change vocabulary silently leaving the program path to the implementer.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The HEAD precondition's effect on the emit's PR fields is unspecified, while the gh precondition's is stated",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-archive-modifications/spec.md",
+      "classification": "trivial_fix",
+      "action": "Stated the rule and the PRINCIPLE behind the asymmetry: a HEAD mismatch skips the tail but does NOT suppress the emit's PR fields, because the preflight's observation ran before the branch check and is independent of it — the trail records what was actually seen. The no-`gh` path elides them because no observation exists at all. The discriminator is now explicit: whether an observation EXISTS, never whether the tail went on to act on it. Mirrored into task 4.4.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Touchpoints omits the integration-harness tree and root CLAUDE.md, which apply tasks require",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d6-pr-lifecycle/design.md",
+      "classification": "trivial_fix",
+      "action": "Added both missing entries to the predicted map: `test/integration/pr-lifecycle/` (the git + gh-stub harness that tasks 6.2 and 6.2a-f create as a new directory) and root `CLAUDE.md` (edited by apply task 5.4). Fixed pre-apply deliberately — the section FREEZES at apply and divergence is engine-computed from the diff, so without this every harness file would surface as `actual_unpredicted` at the first post-apply audit-drift run.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The Docs (at archive) bullet still files the outward-actions note as at-archive work; it is apply task 5.4",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d6-pr-lifecycle/proposal.md",
+      "classification": "trivial_fix",
+      "action": "Corrected the bullet to promise only what the at-archive notes carry — the CLAUDE.md D6 entry (note 5.9) — and to say inline that the outward-actions note is apply task 5.4, not at-archive work. Completes the half of external iteration 1's remedy that was left unapplied when note 5.9 was added.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "5 of 5 resolved; 0 unresolved markers in scope. No decision lane — every finding had one correct answer and none touched a ratified decision. Three were bookkeeping debt from the pace of the preceding two walks (the Impact list's missing capability, the Touchpoints map's missing harness tree, and half an earlier remedy left unapplied); two were one-sentence edges in recently written text, both closed by stating a principle rather than patching a case — the skip is now path-neutral across both granularities, and the emit-field question is answered by whether an observation exists rather than by which precondition failed. Capabilities 7; tasks 30; fingerprints 4/4 verified; strict validation passes; 1918 tests green.",
+  "iteration": 5,
+  "next_recommended": "/orbit:review --as proposal --fresh d6-pr-lifecycle"
+}

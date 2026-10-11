@@ -1,0 +1,13 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-10-05T14:14:36Z",
+  "change": "rc08b-walk-routing",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "prompt_path": "orbit/changes/rc08b-walk-routing/.orbit-runs/external-prompt-system-2026-10-05T14-14-28Z.md",
+  "target": null,
+  "final_assessment": "External review prompt packaged for rc08b-walk-routing (iter 1, mode system); awaiting findings.",
+  "awaiting_findings": true,
+  "next_recommended": "Paste orbit/changes/rc08b-walk-routing/.orbit-runs/external-prompt-system-2026-10-05T14-14-28Z.md into the target AI, and save the response as orbit/changes/rc08b-walk-routing/.orbit-runs/external-system-<TS>.md"
+}

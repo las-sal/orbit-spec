@@ -1,0 +1,13 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-09-28T15:10:35Z",
+  "change": "rc13c-propose-consumes-mechanism",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "mode": "system",
+  "prompt_path": "orbit/changes/rc13c-propose-consumes-mechanism/.orbit-runs/external-prompt-system-2026-09-28T15-10-34Z.md",
+  "target": null,
+  "final_assessment": "External review prompt packaged for rc13c-propose-consumes-mechanism (iter 1, mode system); awaiting findings. This is the external half of the review-system cadence's blind pair (spec-driven v4: [blind-pair, in-context]); the fresh half runs on the same pushed tree, neither reading the other. The prompt points the reviewer at the shipped body and its tests: the partition's coverage of the parser's states cell by cell, the refuse's unreachability by the PR layer on every path including the Regenerate branch, whether the new parity assertions pin what they claim and survive sync (the ownerText anchor), the interpolated entry-form fence, and the three exit criteria against what shipped. Handoff preflight at packaging: dirty tree (the apply — body, tests, revised artifacts and three trail files — is uncommitted) and the prompt file is uncommitted; the pull invocation is withheld until commit + push.",
+  "awaiting_findings": true,
+  "next_recommended": "Paste orbit/changes/rc13c-propose-consumes-mechanism/.orbit-runs/external-prompt-system-2026-09-28T15-10-34Z.md into the target AI, save the response as orbit/changes/rc13c-propose-consumes-mechanism/.orbit-runs/external-system-<TS>.md, then /orbit:address-reviews rc13c-propose-consumes-mechanism --from-file <path>"
+}

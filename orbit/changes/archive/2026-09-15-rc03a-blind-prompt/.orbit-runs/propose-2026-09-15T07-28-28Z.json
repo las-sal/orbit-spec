@@ -1,0 +1,9 @@
+{
+  "command": "propose",
+  "timestamp": "2026-09-15T07:28:28Z",
+  "change": "rc03a-blind-prompt",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "Generated from the rc03a-blind-prompt exploration in consume mode: two delta specs (orbit-review-external MODIFIED, orbit-review ADDED), design, and 17 tasks. Two capabilities of R-crc-1's three. The exploration arrived with mechanism already written and executed under R-crc-7 applied by hand, so the design's decisions are transcriptions rather than inventions — D1 through D5 each trace to a case in explore.md, and the Alternatives section records all three readings of the rejected scheduling swap so the argument is not rediscovered as new. The one open question was resolved at promotion: trail ATTESTATION of blindness (the gate verifying rather than trusting) is deferred as a declared follow-up, because it needs orbit-run-summary-emit and orbit-engine-gates on top of this stage's two and fixing the leak is separable from proving it fixed. Base fingerprint stamped and verified 1/1. Staged metadata merged with the architecture citation carried forward; staging moved into the change. No engine change, no schema bump, no migration.",
+  "next_recommended": "/orbit:review rc03a-blind-prompt — proposal artifacts ready; review before apply"
+}

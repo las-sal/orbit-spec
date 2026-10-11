@@ -1,0 +1,525 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-06T01:20:05Z",
+  "change": "rc17a-invoked-coverage",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc17a-invoked-coverage/.orbit-runs/review-proposal-2026-10-05T22-53-54Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-05T22-53-54Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 7,
+    "suggestion": 7
+  },
+  "pushback_verification": "All 14 verified against current state; none stale. F2 converges with the external pass's E1, F3/F4 with E4, F7 with E5; walked here, the earlier pass.",
+  "resolution_summary": {
+    "resolved": 14,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Pair membership never says which pass list it is read over (stale passes, rejected returns)",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-engine-gates/spec.md",
+      "line": 98,
+      "classification": "decision_required",
+      "action": "Membership is drawn from the trail reader's accepted passes (a rejected return takes no position); a walk of a landed member before its partner ends the pair; an apply ends nothing, the freshness rule keeping a stale member from covering. Design D10 records it.",
+      "evidence": "re-read the membership requirement: the window closed only at the mode's next launch and named no pass list",
+      "ratified_via": "chat",
+      "resolution": "Sal (chat): a pair stays open until a walk of its landed half, or a newer launch, ends it; the walk warns first and offers to stop; walking ends the pair and the walked half covers the slot as a single; an apply between the halves adds no rule (the freshness rule already applies).",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Membership over every relevant pass of the mode, stale included, rejected returns excluded; a stale member makes the pair non-covering on the fresh list."
+          },
+          {
+            "label": "B",
+            "body": "Membership over the list the quantification convention hands clause (a), so a stale member drops out and the next pass of its class takes its place."
+          }
+        ],
+        "chosen": "off-menu"
+      },
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "mode's next launch, if any. Every other independent pass is a single."
+        ],
+        "introduced": [
+          {
+            "path": "specs/orbit-engine-gates/spec.md",
+            "text": "drawn from the trail reader's ACCEPTED passes: a rejected external return is no member and takes no position"
+          },
+          {
+            "path": "design.md",
+            "text": "a walk ends a half-landed pair"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "BROKEN row presents a command whose pass is absorbed as the broken pair's member",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-engine-gates/spec.md",
+      "line": 53,
+      "classification": "decision_required",
+      "action": "The BROKEN state is replaced by ENDED: walking a landed half ends the pair and the walked member covers as a single, so the next pass the engine presents is a single; discovery row 4's stop becomes a warning offering stop or walk; the presentation's BROKEN row is replaced by the at-or-below-bound row presenting the landed member's class.",
+      "evidence": "re-derived the reproduction against the presentation table: BROKEN presented the preference's command, whose pass was the launch's member",
+      "ratified_via": "chat",
+      "resolution": "Sal (chat): a pair stays open until a walk of its landed half, or a newer launch, ends it; the walk warns first and offers to stop; walking ends the pair and the walked half covers the slot as a single; an apply between the halves adds no rule (the freshness rule already applies).",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "On BROKEN (and the at-or-below-bound case), present the class of the landed member: its second pass is a single and covers."
+          },
+          {
+            "label": "B",
+            "body": "Define membership so a BROKEN launch is closed: passes after the breaking walk are singles."
+          },
+          {
+            "label": "C",
+            "body": "Present a new launch on BROKEN, and say what the user types until rc17b ships a command for it."
+          }
+        ],
+        "chosen": "off-menu"
+      },
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "BROKEN: does not cover; a new launch or the recorded proceed",
+          "the walk stops (`orbit-address-reviews`' discovery row 4)",
+          "stop before triage; name the missing member and the gate's canonical next command; walk nothing; write no log."
+        ],
+        "introduced": [
+          {
+            "path": "specs/orbit-engine-gates/spec.md",
+            "text": "ENDED: the walked member reads as a single and covers the slot alone"
+          },
+          {
+            "path": "specs/orbit-address-reviews/spec.md",
+            "text": "Walking now ends the pair: on an invoked slot the walked half then covers alone"
+          },
+          {
+            "path": "specs/orbit-engine-gates/spec.md",
+            "text": "a further <class> review lands as a single"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/rc17a-invoked-coverage/explore.md",
+            "why": "the exploration's historical record, which travels with the change unchanged; it states the rule this fix revised"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Carried scenarios still describe review-system as a blind-pair gate, false under version 5",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-engine-gates/spec.md",
+      "line": 834,
+      "classification": "trivial_fix",
+      "action": "stated `[blind-pair, in-context]` in the WHEN of the four carried scenarios that assert structural-pair behaviour",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "a `review-system` gate's trail holds two pairable fresh passes",
+          "a `review-system` gate's trail holds a fresh pass and no external pass on the same state"
+        ],
+        "introduced": [
+          {
+            "path": "specs/orbit-engine-gates/spec.md",
+            "text": "a reviewed gate with cadence `[blind-pair, in-context]` holds two pairable fresh passes"
+          },
+          {
+            "path": "specs/orbit-engine-gates/spec.md",
+            "text": "on a gate with cadence `[blind-pair, in-context]`, an external system pass exists"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "'Nothing to walk' still conditions only on unresolvedPasses being empty",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-address-reviews/spec.md",
+      "line": 96,
+      "classification": "trivial_fix",
+      "action": "added `unwalkedPasses: []` to the WHEN of `Nothing to walk`; task 5.1 names address-reviews.ts:345 and :502",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "every reviewed gate reports `unresolvedPasses: []`, and every audit-drift"
+        ],
+        "introduced": [
+          {
+            "path": "specs/orbit-address-reviews/spec.md",
+            "text": "`unresolvedPasses: []` and `unwalkedPasses: []`"
+          },
+          {
+            "path": "tasks.md",
+            "text": "the nothing-discovered condition (`:502`)"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "`invoked` is listed as a models: key that is never read",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-engine-gates/spec.md",
+      "line": 734,
+      "classification": "trivial_fix",
+      "action": "removed `invoked` from the hint key list and declared a `models: invoked` key inert",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "`blind-pair`, `invoked`). For an `invoked` slot"
+        ],
+        "introduced": [
+          {
+            "path": "specs/orbit-engine-gates/spec.md",
+            "text": "a `models:` key naming `invoked` is never read"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Task 4.2's sweep names CLAUDE.md and the program doc, but generated bodies and a fourth baseline state v4 as current",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 24,
+      "classification": "trivial_fix",
+      "action": "task 1.1 names the apply body pin; task 4.2 names apply-change.ts:64 and review.ts:1100; the design records the version-qualified orbit-run-summary-emit sentence as a named residual, keeping three capabilities",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "tasks.md",
+            "text": "the apply body (`apply-change.ts:64`"
+          },
+          {
+            "path": "tasks.md",
+            "text": "the `orbit-apply-change` body pin"
+          },
+          {
+            "path": "design.md",
+            "text": "a named residual, not a fourth capability"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Three departures from the stage charter are recorded only in the design",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 65,
+      "classification": "decision_required",
+      "action": "recorded the three departures (D2, D3, D4) in a refined-at-propose note under rc17a's charter; D3's relaxation accepted as a scope call (decision 3A); the migration line now states the relaxation instead of claiming unchanged computation",
+      "ratified_via": "chat",
+      "resolution": "Sal (chat): 3A — accept; version 5 gates every change, including one stamped v4, a relaxation that never removes coverage.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/architecture/clean-up-review-cycle.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "Archived trails compute as before"
+        ],
+        "introduced": [
+          {
+            "path": "design.md",
+            "text": "Accepted as a scope call at the proposal walk"
+          },
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "text": "Refined at propose (2026-10-05; the change's design D2–D4"
+          },
+          {
+            "path": "design.md",
+            "text": "Coverage under v5 can only RELAX relative to v4"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Design D7's presentation table disagrees with the spec's in order and in one row's condition",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 121,
+      "classification": "trivial_fix",
+      "action": "design D7 now points at the spec's presentation table instead of restating it",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "design.md",
+            "text": "it is stated there once and not restated here"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The oracle has no named engine seam: computeGateStates reads the trail from disk",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 144,
+      "classification": "trivial_fix",
+      "action": "task 3.1 exports a pure entry evaluating one gate over an in-memory Trail; D9 names it as the oracle's seam",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "tasks.md",
+            "text": "the seam the oracle (6.1) calls"
+          },
+          {
+            "path": "design.md",
+            "text": "It calls the exported pure entry"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "A review_preference key naming no reviewed gate is unspecified",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-engine-gates/spec.md",
+      "line": 16,
+      "classification": "trivial_fix",
+      "action": "an entry whose key names no reviewed gate warns naming the key and is ignored",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "specs/orbit-engine-gates/spec.md",
+            "text": "An entry whose key names no reviewed gate of the active schema warns, naming the key, and is ignored"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "'Independent review is NOT weakened' now reads against the change's own move",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-engine-gates/spec.md",
+      "line": 410,
+      "classification": "trivial_fix",
+      "action": "scoped the sentence to clause (c)",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "**Independent review is NOT weakened"
+        ],
+        "introduced": [
+          {
+            "path": "specs/orbit-engine-gates/spec.md",
+            "text": "**Retiring clause (c) weakens no review"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Preference scenario says 'every other field' is identical, but nextSlot differs",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-engine-gates/spec.md",
+      "line": 85,
+      "classification": "trivial_fix",
+      "action": "the scenario now excepts nextCommand and nextSlot",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "reason and every other field are identical across the four"
+        ],
+        "introduced": [
+          {
+            "path": "specs/orbit-engine-gates/spec.md",
+            "text": "every field other than `nextCommand` and `nextSlot` are identical across the four"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "D3 says this repo has no active change, two sentences after naming this change as one",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 75,
+      "classification": "trivial_fix",
+      "action": "D3 and the Risks bullet now say no active change other than this one",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "has (no active change) and nothing"
+        ],
+        "introduced": [
+          {
+            "path": "design.md",
+            "text": "no active change other than this one"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "'Lets a pair run by hand today' has no surface that writes pair: true",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 84,
+      "classification": "trivial_fix",
+      "action": "D4 says a hand-run launch needs a hand-composed T0 payload, since no shipped body writes the field",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "lets a pair run by hand today"
+        ],
+        "introduced": [
+          {
+            "path": "design.md",
+            "text": "only through a hand-composed T0 payload"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": "walk all - then let's discuss the decisions one by one",
+  "final_assessment": "All 14 findings of the fresh proposal pass resolved: 11 obvious fixes and three decisions ratified in chat (the pair ends at a walk of its landed half; v5 gates every change).",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc17a-invoked-coverage",
+  "ripple_misses": 0
+}

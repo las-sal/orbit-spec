@@ -2,15 +2,15 @@
 
 ## Purpose
 
-Defines the emit-layer that writes per-command `.orbit-runs/<command>-<TS>.json` run-summary JSONs for orbit workflow commands (`explore`, `propose`, `new`, `continue`, `ff`, `apply`, `verify`) plus `/orbit:review-external` at T0 — alongside the existing editorial and lifecycle emit-producing commands. Specifies emit scope (which commands emit, which don't), the workflow-kind JSON shape (extends the universal spine from `orbit-conventions`), emit timing semantics (one-shot vs. multi-turn-phase-boundary vs. conversation-boundary), the wrapper architecture (upstream skill bodies are NOT modified), per-command recommendation logic (propose-shaped vs. artifact-completion-aware; explore maturity grid; apply per-chunk-end with chunk preamble parsing; verify pass/fail mode classification; review-external T0 multi-step prose; audit-drift standalone change-scoped vs. project-wide), and the no-forward-look discipline that keeps emit text scoped to today's behavior.
+Defines the emit-layer that writes per-command `.orbit-runs/<command>-<TS>.json` run-summary JSONs for orbit workflow commands (`explore`, `propose`, `new`, `continue`, `ff`, `apply`, `verify`, `architect`) plus the external-handoff branch of `/orbit:review --reviewer external` at T0 (the frozen `review-external` record vocabulary) — alongside the existing editorial and lifecycle emit-producing commands. Specifies emit scope (which commands emit, which don't), the workflow-kind JSON shape (extends the universal spine from `orbit-conventions`), emit timing semantics (one-shot vs. multi-turn-phase-boundary vs. conversation-boundary), the wrapper architecture (upstream skill bodies are NOT modified), per-command recommendation logic (propose-shaped vs. artifact-completion-aware; explore maturity grid; apply per-chunk-end with chunk preamble parsing; verify pass/fail mode classification; review-external T0 multi-step prose; audit-drift standalone change-scoped vs. project-wide), and the no-forward-look discipline that keeps emit text scoped to today's behavior.
 ## Requirements
 ### Requirement: Emit scope
 
-The following orbit commands SHALL emit `orbit/changes/<name>/.orbit-runs/<command>-<TS>.json` (or `orbit/explore/<name>/.orbit-runs/<command>-<TS>.json` for explore) when invoked. This requirement covers two categories:
+The following orbit commands SHALL emit `orbit/changes/<name>/.orbit-runs/<command>-<TS>.json` (or `orbit/explore/<name>/.orbit-runs/<command>-<TS>.json` for explore, or `orbit/architecture/.orbit-runs/<command>-<TS>.json` for architecture-scoped commands) when invoked — COMPOSED AND WRITTEN VIA THE ENGINE EMIT SURFACE (`orbit emit <command>` per `orbit-emit-composition`, D-arc Stage D5): generated bodies instruct the surface with a narrative-only payload and never hand-compose the JSON (hand-composition is the retired practice; pre-capability emits on the trail are historical records, readers tolerate both generations). This requirement covers two categories:
 
 - **New emit behavior** (commands that don't emit any run-summary JSON today):
-  - Workflow commands: `/orbit:explore` (named mode only — bare mode does NOT emit), `/orbit:propose`, `/orbit:new`, `/orbit:continue`, `/orbit:ff`, `/orbit:apply`, `/orbit:verify`
-  - `/orbit:review-external` at T0 (when the prompt is packaged, before findings return — today it writes only the `.md` prompt file)
+  - Workflow commands: `/orbit:explore` (named mode only — bare mode does NOT emit; named mode emits at BEGIN as well as at boundaries, per `Emit timing semantics` — D-arc Stage D3), `/orbit:propose`, `/orbit:new`, `/orbit:continue`, `/orbit:ff`, `/orbit:apply`, `/orbit:verify`, `/orbit:architect` (D-arc Stage D2; emits to the architecture trail with `change: null` + a `doc` field, shape owned by `orbit-architect`)
+  - The external-review packaging branch at T0 (when the prompt is packaged, before findings return — the `command: "review-external"` emit, invoked via `/orbit:review --reviewer external` per D-arc Stage D5's merge; record vocabulary frozen)
 - **Refined existing emit** (already emits today; this change refines the recommendation logic and aligns with the universal spine from orbit-conventions):
   - Standalone `/orbit:audit-drift` (schema documented in the `orbit-audit-drift` skill's `references/run-summary-schema.md`, shipped alongside the generated skill)
 
@@ -18,13 +18,25 @@ The following commands SHALL NOT emit additional JSONs as part of this change:
 
 - `/orbit:bulk-archive` — wrapper; each inner `/orbit:archive` invocation emits separately
 - `/orbit:onboard` — meta walkthrough; no change-state transition
-- `/orbit:sync` (the `orbit-sync-specs` skill) — upstream primitive, unmodified by orbit; no emit behavior is added to it
+- `/orbit:sync` (the `orbit-sync-specs` skill) — upstream primitive whose upstream portion orbit does not edit (per `orbit-conventions`' `Generated-file disposition`); no emit behavior is added to it
 
-Existing emit-producing commands (`/orbit:review`, `/orbit:address-reviews`, `/orbit:archive`, inline `/orbit:audit-drift` during archive) continue emitting as today; this change does not modify their emit behavior.
+Existing emit-producing commands (`/orbit:review`, `/orbit:address-reviews`, `/orbit:archive`, inline `/orbit:audit-drift` during archive) continue emitting as today — through the emit surface; `/orbit:review`'s architecture mode persists to the architecture trail per `orbit-review`'s per-mode persistence requirement — a location change for that mode, not a new emitter.
 
 #### Scenario: Named-mode /orbit:explore writes explore JSON
 - **WHEN** the user invokes `/orbit:explore foo` (named mode) and the session ends
-- **THEN** the emit-layer writes `orbit/explore/foo/.orbit-runs/explore-<TS>.json`
+- **THEN** the emit-layer writes `orbit/explore/foo/.orbit-runs/explore-<TS>.json` via `orbit emit explore`
+
+#### Scenario: Named-mode explore BEGIN emit at scaffold (D-arc Stage D3)
+- **WHEN** `/orbit:explore foo` creates the staging directory in Mode B (new named exploration)
+- **THEN** the emit-layer writes a begin `explore-<TS>.json` immediately — `decisions_captured: 0`, `next_recommended: "/orbit:explore foo — continue capturing thinking"` (the maturity requirement's Early canonical string), the `final_assessment` recording the scaffold and the citation decision (cited or declined) — so the trail records the workstream's start (and any `premised → exploring` stage transition) and the orientation surface can anchor from minute zero
+
+#### Scenario: Mode C crystallization BEGIN emit carries the back-filled state (D-arc Stage D3)
+- **WHEN** a bare-mode exploration crystallizes to `foo` (Mode C: the user confirmed the crystallization warning; 2+ substantive decisions are back-filled into `explore.md` at creation)
+- **THEN** the begin emit carries the BACK-FILLED counts (`decisions_captured` = the decisions written at creation, `open_questions_count` likewise) and a maturity-consistent `next_recommended` per the `Named-mode explore recommendation by maturity` requirement — the trail's first record states true on-disk state, never a knowingly-false zero; this begin emit IS the crystallization's first emit (see the modified crystallization requirement below); the counts are ENGINE-COMPUTED from the back-filled file by the emit surface
+
+#### Scenario: /orbit:architect writes to the architecture trail
+- **WHEN** an `/orbit:architect my-program` session reaches a conversation boundary
+- **THEN** the emit-layer writes `orbit/architecture/.orbit-runs/architect-<TS>.json` with `change: null` and `doc: "my-program"`
 
 #### Scenario: Bare-mode /orbit:explore writes no JSON
 - **WHEN** the user invokes `/orbit:explore` without a name argument
@@ -38,26 +50,31 @@ Existing emit-producing commands (`/orbit:review`, `/orbit:address-reviews`, `/o
 - **WHEN** the user invokes `/orbit:bulk-archive` to archive 3 changes
 - **THEN** 3 `archive-<TS>.json` files are written (one per inner archive), and no `bulk-archive-<TS>.json` file is written
 
+#### Scenario: Bodies instruct the surface, never hand-compose
+- **WHEN** any generated body reaches its emit step
+- **THEN** the body's instruction is to compose the narrative payload and invoke `orbit emit <command>` — no generated body contains JSON-shape prose for the spine, timestamp/collision rules, or deterministic-fact composition (those are engine-owned per `orbit-emit-composition`)
+
 ### Requirement: Workflow-kind emit shape (extends the universal spine)
 
-Every workflow-command run-summary JSON (per `Requirement: Emit scope`) SHALL include the universal spine defined in the `orbit-conventions` capability's `Internal-run JSON summary format` requirement — 6 required top-level fields:
+Every workflow-command run-summary JSON (per `Requirement: Emit scope`) SHALL include the universal spine defined in the `orbit-conventions` capability's `Internal-run JSON summary format` requirement — 7 required top-level fields (D-arc Stage D5 adds `model`):
 
 ```
 command          string       identifies which command emitted (matches filename prefix)
 timestamp        string       ISO-8601 UTC; JSON field uses standard colon format `YYYY-MM-DDTHH:MM:SSZ`. Filename embeds a colon-replaced `<TS>` token `YYYY-MM-DDTHH-MM-SSZ` (colons aren't filesystem-safe across all platforms).
-change           string|null  the change name (or null for project-scope commands)
+change           string|null  the change name (or null for project-scope and architecture-scoped commands)
 final_assessment string       narrative of what just happened (human-readable)
 next_recommended string       verbatim recommendation, suitable for best-effort parse by downstream status readers
 kind             enum         "workflow" | "editorial" | "lifecycle"  (always "workflow" for commands in this capability's scope)
+model            string|null  the emitting AI's model identity (provenance — D-arc Stage D5); null when unknown. REQUIRED in every post-capability payload (explicit null allowed); pre-capability emits lack the field and readers SHALL tolerate absence (both generations valid on the trail), per `orbit-conventions`.
 ```
 
 For workflow-kind emits specifically, `kind` SHALL equal `"workflow"`. Per-command extensions (defined in subsequent requirements in this capability) add command-specific state beyond the spine.
 
 Filenames SHALL use the per-command prefix (preserving entry-point provenance): `<command>-<TS>.json`. Propose-family variants (`new`, `continue`, `ff`) each use their own command-name prefix, NOT `propose-<TS>.json`. ("Propose-family" here is the entry-point grouping for the per-variant-filename rule; "propose-shaped" is the recommendation-class term defined in `Requirement: Propose-shaped and artifact-completion-aware recommendation logic` and applies only to `/orbit:propose` + `/orbit:ff`.)
 
-#### Scenario: explore emit includes all 6 spine fields
+#### Scenario: explore emit includes all 7 spine fields
 - **WHEN** the emit-layer writes `explore-<TS>.json` for a named-mode explore
-- **THEN** the JSON contains `command`, `timestamp`, `change`, `final_assessment`, `next_recommended`, and `kind` fields with valid values
+- **THEN** the JSON contains `command`, `timestamp`, `change`, `final_assessment`, `next_recommended`, `kind`, and `model` fields with valid values (`model` nullable; absent only on pre-capability emits, which readers tolerate)
 
 #### Scenario: apply emits with kind=workflow
 - **WHEN** the emit-layer writes `apply-<TS>.json`
@@ -79,13 +96,14 @@ The emit-layer SHALL fire at well-defined moments per command type. Three catego
 - `/orbit:propose`, `/orbit:new`, `/orbit:ff`, `/orbit:continue`
 - `/orbit:verify`
 - `/orbit:audit-drift` standalone (excluding the inline-during-archive case captured in `archive-<TS>.json`)
-- `/orbit:review-external` at T0 (when the prompt is packaged, before findings return)
+- The external-review packaging branch at T0 (`/orbit:review --reviewer external`, D-arc Stage D5's merge — when the prompt is packaged, before findings return; record vocabulary frozen per `orbit-review-external`)
 
 **Multi-turn commands with explicit phases** — emit at phase boundaries per the command-specific requirement:
 - `/orbit:apply` — emits per `Requirement: Apply per-chunk-end emission` (chunk completion is the primary trigger; mid-chunk pause is the secondary trigger per the conversation-boundary rules below)
 
 **Multi-turn conversational commands** — emit at conversation boundaries:
-- `/orbit:explore` (named mode) — emits per `Requirement: Named-mode explore recommendation by maturity` with the timing defined here
+- `/orbit:explore` (named mode) — a BEGIN emit at staging-dir creation (D-arc Stage D3; the begin+boundary genre, like apply's chunk+pause; content is MODE-AWARE — Mode B records zero counts, Mode C records the back-filled counts, per the Emit-scope scenarios) AND boundary emits per `Requirement: Named-mode explore recommendation by maturity` with the timing defined here; on a filename collision (a boundary emit within the same ISO second as the begin emit — the `<TS>` token is second-granular), the emit-layer bumps the later emit's token forward by one second until the path is free, preserving lexical begin-before-boundary ordering (the review-external T0 precedent); resuming a pre-D3 staging directory that has no emits does NOT retro-fire a begin emit (add-only, no backdating — the next boundary emit covers it)
+- `/orbit:architect` (D-arc Stage D2) — emits to the architecture trail with the conversation-boundary timing defined here; the emit's shape and extensions are owned by `orbit-architect`
 
 A **conversation boundary** for multi-turn conversational commands is defined as EITHER of (both rules are operational signals the emit-layer can detect at JSON-write time without requiring future-message inspection):
 
@@ -94,7 +112,7 @@ A **conversation boundary** for multi-turn conversational commands is defined as
 
 **Canonical orbit UX convention**: to make most natural handoffs become explicit boundaries, when the AI hands control back to the user after a multi-turn conversational command session (such as `/orbit:explore` named-mode), the AI SHOULD include an explicit wrap phrase suggesting the next step (e.g., "type `/orbit:propose <name>` when ready" or "type `/orbit:explore <name>` to continue capturing"). This turns the handoff itself into a rule-2 signal and triggers the emit naturally without requiring the AI to predict future user behavior.
 
-**Known limitation** (accepted tradeoff): if the user closes the conversation without either an explicit stop signal or an AI-initiated wrap (e.g., user simply walks away mid-session), no emit fires for that session. The change's state persists in on-disk artifacts (e.g., `explore.md`), but the `.orbit-runs/` JSON timeline misses the implicit boundary. Capturing the implicit case would require future-message inspection unavailable to the emit-layer at JSON-write time; explicit-signal-only is the operationally simpler tradeoff.
+**Known limitation** (accepted tradeoff): if the user closes the conversation without either an explicit stop signal or an AI-initiated wrap (e.g., user simply walks away mid-session), no BOUNDARY emit fires for that session (a FIRST session's begin emit still recorded the workstream's start — D-arc Stage D3; only the session's closing state goes uncaptured). The change's state persists in on-disk artifacts (e.g., `explore.md`), but the `.orbit-runs/` JSON timeline misses the implicit boundary. Capturing the implicit case would require future-message inspection unavailable to the emit-layer at JSON-write time; explicit-signal-only is the operationally simpler tradeoff.
 
 For `/orbit:apply` mid-chunk pause specifically, the same conversation-boundary rules apply — in addition to the explicit chunk-completion trigger.
 
@@ -122,7 +140,7 @@ For `/orbit:apply` mid-chunk pause specifically, the same conversation-boundary 
 
 #### Scenario: User abandons conversation without explicit signal (known limitation)
 - **WHEN** `/orbit:explore foo` has captured N decisions; AI returns control to user without an explicit wrap phrase; the user does not respond and the conversation effectively ends
-- **THEN** no emit fires for that session. The `orbit/explore/foo/explore.md` artifact retains captured state. The next `/orbit:explore foo` invocation picks up from disk and will emit at its own boundary; the prior session's implicit boundary is not captured in the `.orbit-runs/` timeline
+- **THEN** no boundary emit fires for that session (if this was the scaffolding session, the begin emit already recorded the start). The `orbit/explore/foo/explore.md` artifact retains captured state. The next `/orbit:explore foo` invocation picks up from disk and will emit at its own boundary; the prior session's implicit boundary is not captured in the `.orbit-runs/` timeline
 
 #### Scenario: AI-initiated wrap fires emit
 - **WHEN** during `/orbit:explore foo` the AI says "I've captured everything; type `/orbit:propose foo` when ready"
@@ -130,17 +148,17 @@ For `/orbit:apply` mid-chunk pause specifically, the same conversation-boundary 
 
 ### Requirement: Emit-layer wraps upstream skills without modifying them
 
-The emit-layer SHALL be implemented as a wrapper that runs after a command completes, inspects the command's output (artifact state, return codes, tasks state), and writes the JSON. Upstream skill bodies (the `# <skill-name>` markdown for upstream-authored skills like `orbit-verify-change`, `orbit-apply-change`, etc.) MUST NOT gain new behavior as part of this change.
+The emit-layer SHALL be implemented as a wrapper that runs after a command completes, inspects the command's output (artifact state, return codes, tasks state), and writes the JSON. The emit layer itself SHALL NOT change what the command it wraps does. Whether and how the upstream-authored portion of an orbit-modified body changes is owned by `orbit-conventions`' `Generated-file disposition`, which this requirement names and does not restate.
 
 Specifically:
 
-- `/orbit:verify` SHALL NOT gain marker-dropping, spec-edit shortcuts, or other behaviors that change what verify itself does. The recommendation-classification logic for verify-fail modes (per `Requirement: Verify fail-mode recommendations`) lives in the emit-layer, not in verify.
-- `/orbit:apply` SHALL NOT gain task-ordering changes, parallel-task execution, or other behaviors that change what apply itself does. The chunk-end emit logic (per `Requirement: Apply per-chunk-end emission`) lives in the emit-layer, not in apply.
-- Where orbit modifies an upstream skill via the `# Orbit additions` pattern (the orbit-modified workflows per `orbit-conventions`'s `Generated-file disposition` requirement), the emit-layer instructions MAY be added to those `# Orbit additions` sections; they MUST NOT modify the upstream-authored body above the additions marker.
+- The emit layer SHALL NOT give `/orbit:verify` marker-dropping, spec-edit shortcuts, or other behaviors that change what verify itself does. The fail-mode CLASSIFICATION (per `Requirement: Verify fail-mode recommendations`) is verify's own, stated in its `# Orbit additions`; the emit layer composes the recommendation from the mode verify hands it and classifies nothing.
+- The emit layer SHALL NOT give `/orbit:apply` task-ordering changes, parallel-task execution, or other behaviors that change what apply itself does. The chunk-end emit logic (per `Requirement: Apply per-chunk-end emission`) lives in the emit-layer, not in apply.
+- Where orbit modifies an upstream skill via the `# Orbit additions` pattern (the orbit-modified workflows per `orbit-conventions`'s `Generated-file disposition` requirement), the emit-layer instructions MAY be added to those `# Orbit additions` sections, and only there.
 
-#### Scenario: /orbit:verify upstream behavior unchanged
+#### Scenario: A cherry-picked verify body keeps the emit layer's additions
 - **WHEN** a deliberate engine upgrade cherry-picks a newer upstream `verify-change` body into orbit's bundled template
-- **THEN** the upstream-authored portion of the template is replaced wholesale while the `# Orbit additions` section (including any emit-layer instructions) carries over unchanged; the emit-layer never silently overrides upstream verify behavior
+- **THEN** the upstream-authored portion is handled as `orbit-conventions`' `Generated-file disposition` says, re-applying each named edit, while the `# Orbit additions` section (including any emit-layer instructions) carries over unchanged; the emit-layer never silently overrides upstream verify behavior
 
 #### Scenario: emit-layer does not modify task-checking
 - **WHEN** `/orbit:apply` runs and checks off tasks per upstream behavior
@@ -169,34 +187,70 @@ The AI MUST wait for explicit user confirmation before proceeding.
 
 #### Scenario: Confirmed crystallization writes first emit
 - **WHEN** the user confirms the crystallization warning
-- **THEN** the AI creates `orbit/explore/<name>/explore.md` and writes the first `explore-<TS>.json` capturing decisions to date
+- **THEN** the AI creates `orbit/explore/<name>/explore.md` and writes the first `explore-<TS>.json` capturing decisions to date — this first emit IS the Mode C BEGIN emit (D-arc Stage D3): it carries the back-filled `decisions_captured`/`open_questions_count` and a maturity-consistent recommendation, per the `Emit scope` begin-emit scenarios
 
 ### Requirement: Named-mode explore recommendation by maturity
 
-Named-mode `/orbit:explore` emits SHALL include `next_recommended` text that adapts to the count of decisions captured and the count of open questions remaining. Four mutually-exclusive maturity states cover the full grid:
+Named-mode `/orbit:explore` emits SHALL include `next_recommended` text computed from FIVE inputs read from the staging `explore.md` by the emit surface (per `orbit-emit-composition`'s computed-extensions requirement): the status-header token, the count of decisions captured, the count of open questions remaining, the LIVE rules whose domain is OPEN (`rules_open`), and the KEY DEFECTS (`key_defects`) — the fifth selects no rung and only ever adds a clause. The header is read FIRST. Six mutually-exclusive rungs cover the grid:
 
+- **Concluded (header token `concluded`, any counts)**: `"Concluded <YYYY-MM-DD>. Reopens when: <the live CONCLUDED entry's Re-entry: slot, verbatim>."` — PROSE naming no command. It is the only rung that points at nothing, which is its point (the exploration's own record says what would reopen it; the engine recommends neither `/orbit:explore` nor `/orbit:propose`). When the file carries the token but no live entry with a `Re-entry:` slot, the second sentence reads `Reopens when: (no Re-entry: slot found)`. Any open-rule list renders beside it as a record.
 - **Early (0–1 decisions captured)**: `"/orbit:explore <name> — continue capturing thinking"`
 - **Mid (2–3 decisions captured)**: `"/orbit:explore <name> — continue thinking, or /orbit:propose <name> if ready to formalize"`
-- **Mature (4+ decisions captured AND ≤1 open question)**: `"/orbit:propose <name> — substantial thinking captured; ready to formalize the design (or /orbit:explore <name> to keep refining)"`
 - **Stalled (4+ decisions captured AND >1 open question)**: `"/orbit:explore <name> — N decisions captured but M open questions remain; resolve open questions before formalizing"` (N = `decisions_captured`, M = `open_questions_count`). NOTE: this state does NOT surface `/orbit:propose` as an alternative because high open-question count signals NOT-ready regardless of decision count; the user is directed back to exploration to close out the open questions first.
+- **Unaccounted (4+ decisions captured AND ≤1 open question AND `rules_open` non-empty)**: `"/orbit:explore <name> — K of R live rules have open domains (<IDs>); account for them before formalizing"`, (K = `rules_open`'s LENGTH — that array holds open live rules and nothing else — and R = `rules_total`, both defined once in `orbit-emit-composition`'s computed-extensions requirement; this rung consumes them). Noun and verb agree with their count (`1 of 4 live rules has an open domain`; `2 of 4 live rules have open domains`). `/orbit:propose` is NOT surfaced: a rule whose domain is open silently is the condition the Mechanism section exists to forbid (`orbit-conventions`' accounted-closure requirement), and this is the ONE cell where the accounting changes the verb.
+- **Accounted (4+ decisions captured AND ≤1 open question AND `rules_open` = 0)**: `"/orbit:propose <name> — R live rules accounted, B bounded residuals named (<IDs>); formalize when you are ready (or /orbit:explore <name> to keep refining)"` (B = the count of accounted BOUNDED entries; the ENTIRE `, B bounded residual(s) named (<IDs>)` clause is omitted when B = 0, so the string reads `R live rules accounted; formalize when you are ready …`; noun and verb agree with the count — `1 live rule accounted`, `1 bounded residual named`). The top rung REPORTS — live-rule count, zero open, the named residuals — and does not vouch: eligibility phrasing, never an assertion of readiness. A complete BOUNDED entry is ACCOUNTED and never withholds this rung; its residual is NAMED beside it (`orbit-conventions`: the tier difference is visibility, never blocking).
 
-In each case the leading `/orbit:<verb> <name>` token is the canonical recommendation that a downstream status reader parses into `command`/`args`; the alternative path (when present, Mid and Mature only) lives in the reason text.
+The open-rule list renders as a RECORD beside the rungs whose own text does NOT name the open rules — Early, Mid, Stalled, and Concluded — when `rules_open` is non-empty, appended as ` · open domains: <IDs>`, so an open domain is visible at every rung and changes the recommendation only at the Unaccounted/Accounted seam; the Unaccounted rung names the same IDs inline and carries NO record suffix (its inline list IS the record), and Accounted has none to name. KEY DEFECTS (`key_defects`, per `orbit-emit-composition`: orphan Mechanism entries and duplicate Decisions IDs) NEVER change the verb and never enter K; when the array is non-empty EVERY rung — the Concluded rung included — appends the clause `; N key defect(s) (<IDs>)` (noun agreeing with N) after its text and before any open-domains record, so a key defect is always visible and never mistaken for an open domain. Wherever `<IDs>` appears — the open-domains list, the key-defects clause, and the Accounted rung's residual list alike — the render is BOUNDED: at most THREE identifiers in the source array's stated order, then ` +N more` when more remain; the emit's arrays carry the full lists (per `orbit-emit-composition`). ONE identifier rule: an entry with both an `id` and a `line` renders `<id> at line <n>`; an entry with an `id` alone renders `<id>`; an entry with no `id` renders `line <n>`. The Early, Mid and Stalled strings are byte-identical PREFIXES of their pre-capability forms — the record suffix, when present, is appended AFTER the unchanged string — so readers matching them are unaffected; the Accounted string keeps the leading `/orbit:propose <name>` token the retired Mature string carried.
+
+In each `exploring` rung the leading `/orbit:<verb> <name>` token is the recommendation; a downstream status reader MAY parse it best-effort, and a prose value (the Concluded rung, the archive emit) is preserved whole — the spine's own contract (`orbit-conventions`: "verbatim recommendation, suitable for best-effort parse"; this capability's shape requirement: extracted "if present"). No reader is required to parse it, and none in the engine does: `orbit-orientation` renders the recorded string verbatim.
 
 #### Scenario: 1-decision explore recommends continued exploration
 - **WHEN** named-mode explore emits with `decisions_captured: 1` and `open_questions_count: 3`
 - **THEN** `next_recommended` begins with `"/orbit:explore <name>"` and contains "continue capturing thinking"
 
-#### Scenario: 5-decision explore with 0 open questions recommends propose
-- **WHEN** named-mode explore emits with `decisions_captured: 5` and `open_questions_count: 0`
-- **THEN** `next_recommended` begins with `"/orbit:propose <name>"` and surfaces `/orbit:explore` as alternative in reason
+#### Scenario: 5 decisions, 0 open questions, one rule open — Unaccounted (the cell the retired Mature rung occupied)
+- **WHEN** named-mode explore emits with `decisions_captured: 5`, `open_questions_count: 0`, and `rules_open` naming one live rule (`D-x-3`, its Mechanism entry absent)
+- **THEN** `next_recommended` begins with `"/orbit:explore <name>"`, reads "1 of 4 live rules has an open domain (D-x-3)", carries NO ` · open domains:` suffix (the inline list is the record), and does NOT surface `/orbit:propose`
+
+#### Scenario: A key defect is reported beside the rung, never counted in K
+- **WHEN** named-mode explore emits with `rules_total: 4`, two live rules open (`D-x-3`, `D-x-4`) and one orphan Mechanism entry `D-x-9` at line 88
+- **THEN** `next_recommended` reads "2 of 4 live rules have open domains (D-x-3, D-x-4); account for them before formalizing; 1 key defect (D-x-9 at line 88)" — the orphan is absent from K and from the open-domains list
+
+#### Scenario: A key defect alone does not change the verb
+- **WHEN** named-mode explore emits with `decisions_captured: 5`, `open_questions_count: 0`, `rules_open: []`, `rules_total: 4`, `residuals: []` and one duplicate-ID defect `D-x-2` at line 61
+- **THEN** `next_recommended` begins with `"/orbit:propose <name>"`, reads "4 live rules accounted; formalize when you are ready (or /orbit:explore <name> to keep refining); 1 key defect (D-x-2 at line 61)" — Accounted, with the defect visible
+
+#### Scenario: A malformed entry on a live rule is an open domain
+- **WHEN** named-mode explore emits with `rules_total: 3` and one live rule `D-x-1` whose entry's `Domain:` table has no member rows (line 40)
+- **THEN** `next_recommended` begins with `"/orbit:explore <name>"` and reads "1 of 3 live rules has an open domain (D-x-1 at line 40)"
+
+#### Scenario: 5 decisions, 0 open questions, every rule accounted — the top rung reports
+- **WHEN** named-mode explore emits with `decisions_captured: 5`, `open_questions_count: 0`, `rules_total: 4`, `rules_open: []`, and one accounted BOUNDED entry `D-x-4`
+- **THEN** `next_recommended` begins with `"/orbit:propose <name>"`, reads "4 live rules accounted, 1 bounded residual named (D-x-4)" (a fifth residual would render `+2 more` after three IDs), carries "formalize when you are ready", and surfaces `/orbit:explore` as the alternative in the reason
 
 #### Scenario: 0-decision explore recommends continued exploration
 - **WHEN** named-mode explore emits with `decisions_captured: 0`
 - **THEN** `next_recommended` begins with `"/orbit:explore <name>"` and contains language acknowledging that thinking is just beginning (e.g., "continue capturing thinking — no decisions captured yet")
 
-#### Scenario: Stalled — 5 decisions captured but 3 open questions remain (Mature criteria for decisions met but open-question check fails)
+#### Scenario: Stalled — 5 decisions captured but 3 open questions remain (the 4+ decisions threshold met, the open-question check fails)
 - **WHEN** named-mode explore emits with `decisions_captured: 5` and `open_questions_count: 3`
 - **THEN** `next_recommended` begins with `"/orbit:explore <name>"` (NOT `/orbit:propose`); the text references both counts (e.g., "5 decisions captured but 3 open questions remain; resolve open questions before formalizing"); `/orbit:propose` is NOT surfaced as an alternative
+
+#### Scenario: Concluded header collapses every count
+- **WHEN** the staging `explore.md`'s first non-blank line is `> **Status**: concluded 2026-09-25.`, its live CONCLUDED entry carries `Re-entry: a third withdrawn stage`, and both `rules_open` and `key_defects` are empty, whatever the decision and question counts
+- **THEN** `next_recommended` is exactly `"Concluded 2026-09-25. Reopens when: a third withdrawn stage."` — no `/orbit:` token anywhere in it
+
+#### Scenario: Concluded with open domains carries the record after the prose
+- **WHEN** the same file has two live rules open
+- **THEN** `next_recommended` is exactly `"Concluded 2026-09-25. Reopens when: a third withdrawn stage. · open domains: D-x-1, D-x-2"` — the conclusion first, the record after, still no `/orbit:` token
+
+#### Scenario: Open-rule list is bounded in prose and total in the field
+- **WHEN** an Unaccounted rung has five open rules in file order `D-x-1` … `D-x-4` then an ID-less entry at line 212
+- **THEN** the recommendation text names `(D-x-1, D-x-2, D-x-3 +2 more)` — the first three in the array's order, the ID-less fifth would have rendered `line 212` — and the emit's `rules_open` field carries all five entries, the fifth as `{state: "open", line: 212}` with no `id`
+
+#### Scenario: Open domains are visible at Mid without changing the verb
+- **WHEN** named-mode explore emits with `decisions_captured: 3` and two live rules open
+- **THEN** `next_recommended` begins with the Mid string unchanged and ends with ` · open domains: D-x-1, D-x-2`
 
 ### Requirement: Propose-shaped and artifact-completion-aware recommendation logic
 
@@ -239,7 +293,7 @@ For `/orbit:new` specifically, `isComplete: false` is the typical case immediate
 
 ### Requirement: Apply per-chunk-end emission
 
-`/orbit:apply` SHALL emit `apply-<TS>.json` at chunk boundaries when chunks are explicitly declared in the change's tasks.md preamble. The chunk preamble SHALL use this format: an HTML comment block at the top of tasks.md (before the first `## <group-name>` header) containing lines of the form `Chunk N (groups X[-Y]): <chunk-name>`. Example:
+`/orbit:apply` SHALL emit `apply-<TS>.json` at chunk boundaries when chunks are explicitly declared in the change's tasks.md preamble — via `orbit emit apply`, whose ENGINE parses the preamble and computes the chunk/checkbox fields (D-arc Stage D5; the grammar below is engine data, no longer body prose). The chunk preamble SHALL use this format: an HTML comment block at the top of tasks.md (before the first `## <group-name>` header) containing lines of the form `Chunk N (groups X[-Y]): <chunk-name>`. Example:
 
 ```
 <!--
@@ -252,13 +306,14 @@ Implementation chunks:
 
 **Format constraints**:
 - The `(groups X[-Y])` portion supports a single group (`X`) or a contiguous range (`X-Y`). Non-contiguous group sets (e.g., `(groups 6,8,9)`) are NOT supported in v1 — restructure tasks.md groups to be contiguous, or split into multiple chunks.
-- **Malformed preamble handling** (graceful degradation): if the preamble comment block exists but cannot be parsed (missing parens, typo in `Chunk N`, malformed group range, etc.), the emit-layer SHALL log a single warning to stderr (`"warning: tasks.md preamble at <path> could not be parsed as chunk declarations; falling back to no-chunking mode"`) and proceed under no-chunking-apply rules (single emit at session end with `chunk: null`). The implementation is "tolerant on read, strict on write" — don't block the user's work; surface the parse issue so they can fix the preamble.
+- **Cross-declaration coverage rules**: across the declaration set, chunk numbers SHALL be in ascending order and group ranges SHALL be non-overlapping with no gap (a declared-range group covered by no chunk); and the declared span's ENDS SHALL match the numbered groups actually present in tasks.md (declared start == the lowest numbered group, declared end == the highest — an omitted leading or trailing group is the same uncovered-work hazard as an internal gap, from outside the span); and NO unnumbered group may carry checkboxes when a preamble exists (its tasks count in the arithmetic but no chunk can ever cover them — undeclarable work is incompatible with chunking). Overlap, gap, out-of-order chunk numbers, and omitted leading/trailing groups are all malformed-preamble cases handled per the next bullet — a tolerated omission would let rule 1 recommend verify at final-chunk completion while uncovered tasks remain unchecked, the wrong-but-plausible record class this capability exists to prevent.
+- **Malformed preamble handling** (graceful degradation): if the preamble comment block exists but cannot be parsed (missing parens, typo in `Chunk N`, malformed group range, overlapping/gapped/out-of-order declarations, etc.), the emit-layer SHALL log a single warning to stderr (`"warning: tasks.md preamble at <path> could not be parsed as chunk declarations; falling back to no-chunking mode"`) and proceed under no-chunking-apply rules (single emit at session end with `chunk: null`). The implementation is "tolerant on read, strict on write" — don't block the user's work; surface the parse issue so they can fix the preamble.
 
 The emit follows these rules:
 
-1. **Chunk completion**: when the last task in chunk N is checked, emit with `chunk: "N of M"`, `chunk_complete: true`, and `next_recommended` advancing to the next chunk (`/orbit:apply <name>`) or to `/orbit:verify <name>` on apply-complete (chunk N == M).
+1. **Chunk completion**: when the last task in chunk N is checked, emit with `chunk: "N of M"`, `chunk_complete: true`, and `next_recommended` = the engine's post-landing canonical `next_command` per `orbit-emit-composition`'s post-write-semantics class — `/orbit:apply <name>` while chunks remain (the engine MAY extend it with the engine-composed ` — next chunk: <chunk-name>` suffix; the next chunk's name is preamble data), or the schema's next phase command on apply-complete (chunk N == M — the SCHEMA's value, read from the gate graph and never transcribed here; a version-pinned example in this sentence goes stale at the next bump, as the `v3` one written here did). Never a hand-authored or fixed alternative — the pre-gates verify-first vocabulary is retired from this surface.
 2. **Mid-chunk session pause**: when the user pauses or hands off mid-chunk-N (e.g., "stopping here for now"), emit with `chunk: "N of M"`, `chunk_complete: false`, and `next_recommended: "/orbit:apply <name>"` to resume.
-3. **No-chunking apply**: when tasks.md has no explicit chunk preamble, emit once at session end with `chunk: null`, `chunk_complete: true`, and `next_recommended` advancing to `/orbit:verify <name>` on apply-complete or `/orbit:apply <name>` if tasks remain.
+3. **No-chunking apply**: when tasks.md has no explicit chunk preamble, emit once at session end with `chunk: null`; `chunk_complete` is COMPUTED by the same engine formula with the whole task set as the "current chunk" (all unchecked tasks minus the full user-validation set == 0 — never a constant), and `next_recommended` is the engine's post-landing canonical `next_command` — the schema's next phase command when that computation is true, `/orbit:apply <name>` while AI-doable tasks remain.
 
 The apply emit per-command extensions SHALL include the following fields beyond the spine:
 
@@ -268,19 +323,40 @@ tasks_remaining              int   running total of unchecked tasks (includes us
 user_validation_remaining    int   subset of tasks_remaining that are acknowledged user-validation tasks
                                    (acknowledged-convention work intentionally left unchecked at apply-time for runtime
                                    testing or user confirmation; surfaces as warnings at archive time, not blockers).
-                                   Default: 0. Set to a positive count when the AI recognizes specific unchecked tasks
-                                   as user-validation per their text (e.g., "Live-test ...", "(User-validation handoff)").
-chunk                        string | null   e.g., "3 of 5" or null
-chunk_name                   string | null   e.g., "phase+attention engine"
-chunk_complete               bool             true when AI-doable work in this chunk is done (i.e.,
-                                              tasks_remaining - user_validation_remaining == 0 for this chunk's tasks);
+                                   Default: 0. ENGINE-computed (D-arc Stage D5) as the length of the payload's
+                                   `user_validation_tasks` identifier list — the ONE checkbox judgment the payload
+                                   supplies: the task ids it recognizes as user-validation per their text (e.g.,
+                                   ["9.6", "9.7"] for "Live-test ...", "(User-validation handoff)"). Each named task
+                                   is validated to exist in tasks.md and be unchecked — a bad entry is rejected
+                                   naming it; payload supply of the count itself is rejected as engine-owned.
+                                   The VERIFIED identifier list PERSISTS on the emit as
+                                   `user_validation_tasks` (an empty list is elided) — it is the trail record
+                                   the tracked-gate user-validation subset rule consumes (per
+                                   `orbit-engine-gates`' Tracked-gate pass condition).
+chunk                        string | null   e.g., "3 of 5" or null — ENGINE-computed from the preamble
+chunk_name                   string | null   e.g., "phase+attention engine" — ENGINE-computed
+chunk_complete               bool             true when AI-doable work in this chunk is done — ENGINE-computed
+                                              (D-arc Stage D5): the current chunk's unchecked tasks minus its
+                                              user-validation subset == 0, where the per-chunk subset derives from
+                                              task → group → chunk membership via the preamble grammar and the
+                                              payload's `user_validation_tasks` list; when `chunk` is null
+                                              (no-chunking), the "current chunk" is the WHOLE task set and the
+                                              subset is the full list; payload supply rejected;
                                               user_validation_remaining > 0 does NOT block chunk_complete: true
-tasks_completed_this_session int             delta since prior apply JSON
-gate_overridden              object | absent  present ONLY when the user proceeds past an unpassed or stale gate
-                                              at the apply phase (the `review-proposal` gate gates `apply`, per
-                                              orbit-engine-gates) via the inflection prompt; shape
-                                              {gate, state, reason} captured at decision time. Absent when no
-                                              override occurred; REQUIRED when proceed-anyway was chosen.
+tasks_completed_this_session int             delta since prior apply JSON — ENGINE-computed from the trail
+files_touched                string[] | null  file paths changed since the previous apply emit's recorded
+                                              `diff_base` boundary — ENGINE-computed from the git diff against
+                                              the WORKING TREE (committed + uncommitted tracked changes; the
+                                              first apply emit — or one whose predecessor lacks `diff_base` —
+                                              references the change's first commit; boundary semantics per
+                                              orbit-emit-composition — D-arc Stage D5; the per-chunk half of the
+                                              predicted/actual touchpoints split); null outside a git repo or
+                                              when no base resolves; NEVER hand-listed
+diff_base                    string | null    the git TREE OID of the tracked working state at THIS emit's
+                                              boundary — ENGINE-captured (`git write-tree` on a temporary index,
+                                              per orbit-emit-composition; D-arc Stage D5); the next apply emit
+                                              diffs from it, making per-chunk lists exact under every commit
+                                              ordering; null outside a git repo; payload supply rejected
 ```
 
 **Semantic rule**: `chunk_complete: true` means "AI-doable work in this chunk is done." `tasks_remaining > 0` AND `user_validation_remaining == tasks_remaining` is the expected state at the final chunk's emit when user-validation tasks exist — the AI is done; the remaining work is user-driven runtime testing. `tasks_remaining > 0` AND `user_validation_remaining < tasks_remaining` with `chunk_complete: true` is a contradiction the emit-layer MUST NOT produce.
@@ -293,21 +369,29 @@ gate_overridden              object | absent  present ONLY when the user proceed
 - **WHEN** the user pauses mid-chunk-3 with 5 of 12 tasks in the chunk checked
 - **THEN** `apply-<TS>.json` is written with `chunk: "3 of 5"`, `chunk_complete: false`, `tasks_completed_this_session: 5`, and `next_recommended: "/orbit:apply foo"`
 
-#### Scenario: Apply-complete recommends verify
+#### Scenario: Apply-complete recommends the engine's canonical next
 - **WHEN** `/orbit:apply foo` completes the last task in the final chunk
-- **THEN** `apply-<TS>.json` is written with `chunk_complete: true` and `next_recommended` beginning with `"/orbit:verify foo"`
+- **THEN** `apply-<TS>.json` is written with `chunk_complete: true` and `next_recommended` equal to the engine's post-landing canonical `next_command` as the gate graph computes it for the change's schema — never a hand-authored alternative
 
 #### Scenario: No-chunking apply emits once at session end
-- **WHEN** `/orbit:apply foo` runs on a change with no explicit chunk preamble in tasks.md
-- **THEN** exactly one `apply-<TS>.json` is written at session end with `chunk: null` and `chunk_complete: true`
+- **WHEN** `/orbit:apply foo` runs on a change with no explicit chunk preamble in tasks.md and completes all AI-doable tasks
+- **THEN** exactly one `apply-<TS>.json` is written at session end with `chunk: null` and `chunk_complete: true` — the whole-task-set computation, not a constant
+
+#### Scenario: Overlapping chunk declarations fall back to no-chunking
+- **WHEN** tasks.md declares `Chunk 1 (groups 1-3)` and `Chunk 2 (groups 3-4)`
+- **THEN** the emit-layer logs the single malformed-preamble stderr warning and proceeds under no-chunking rules (`chunk: null`); no chunk arithmetic is attempted against overlapping declarations
 
 #### Scenario: Final chunk completes with user-validation tasks remaining
-- **WHEN** `/orbit:apply foo` completes the last AI-doable task in the final chunk, but 6 user-validation tasks (e.g., "9.1 Live-test ...", "9.9 (User-validation handoff)") remain explicitly unchecked per the user-validation convention
-- **THEN** `apply-<TS>.json` is written with `chunk_complete: true`, `tasks_remaining: 6`, `user_validation_remaining: 6` (matching `tasks_remaining`), and `next_recommended` begins with `"/orbit:verify foo"` — the AI is done; user-validation happens at verify time
+- **WHEN** `/orbit:apply foo` completes the last AI-doable task in the final chunk, but 6 user-validation tasks (e.g., "9.1 Live-test ...", "9.9 (User-validation handoff)") remain explicitly unchecked per the user-validation convention (the payload's `user_validation_tasks` list names them; the engine verifies each and derives the counts)
+- **THEN** `apply-<TS>.json` is written with `chunk_complete: true`, `tasks_remaining: 6`, `user_validation_remaining: 6` (matching `tasks_remaining`), and `next_recommended` equal to the engine's canonical `next_command` — the AI is done; user-validation happens through the review-system phase's verify pass
 
-#### Scenario: Apply past an unpassed proposal gate records the override
+#### Scenario: Apply past an unpassed proposal gate records the decision
 - **WHEN** the user invokes `/orbit:apply foo` while the `review-proposal` gate is unpassed or stale and chooses proceed-anyway at the inflection prompt
-- **THEN** the `apply-<TS>.json` emit includes `gate_overridden: {gate: "review-proposal", state: "<unpassed|stale>", reason: "<gate reason at decision time>"}`; emits for applies with no gate override omit the field entirely
+- **THEN** the `apply-<TS>.json` emit carries a `judgements` entry with `kind: "continuation"`, `disposition: "proceed"`, `gate: "review-proposal"`, and its `gate_state` and `gate_reason` captured at decision time; emits for applies where no such decision was taken omit the `judgements` key entirely
+
+#### Scenario: Per-chunk touched files computed from the diff
+- **WHEN** a chunk-completion emit fires in a git repository with commits and/or uncommitted tracked edits since the previous apply emit
+- **THEN** `files_touched` lists the changed paths engine-computed from the diff against the working tree; in a non-git workspace, or when no reference resolves, the field is `null` — never an AI-authored list
 
 ### Requirement: Verify pass recommendation
 
@@ -319,19 +403,37 @@ When standalone `/orbit:verify <name>` passes (verify-change reports no failures
  editorial pass)"
 ```
 
-The leading `/orbit:review --as system <name>` token is the canonical recommendation; a downstream status reader extracts this into `command`/`args`. The alternative `/orbit:archive <name>` path lives in the reason text and is surfaced to the user via the reader's `reason` field.
+The leading token is the GATE GRAPH's canonical system-review command, read from the graph rather
+than composed here (rc02): under a cadence whose first uncovered system slot is `blind-pair` it
+carries the class qualifier the graph computes — `/orbit:review --as system --fresh <name>` — and
+under a cadence whose first uncovered slot is `in-context` it is the bare `/orbit:review --as system
+<name>`. A hardcoded form is PROHIBITED, because a literal goes stale the moment a cadence changes
+and would then name a class satisfying no slot. A downstream status reader extracts the leading
+invocation into `command`/`args`; the class qualifier travels in `args` alongside the change name. The alternative `/orbit:archive <name>` path lives in the reason text and is surfaced to the user via the reader's `reason` field.
+
+**When a review pass is outstanding, the walk leads.** When the gate graph's canonical next for the
+change is the change-scoped walk, `/orbit:address-reviews <name>` (per `orbit-engine-gates`' `Single-voiced
+canonical-next computation`), the leading token is that walk and the text is
+`"/orbit:address-reviews <name> — verification clean; walk the outstanding review findings first"`,
+with no `/orbit:archive` alternative: verify never points at a review the gate's order puts after the walk.
+Any other graph next that is not a system review — the archive command once the system gate has passed with
+nothing outstanding — falls back to the bare `/orbit:review --as system <name>`.
 
 #### Scenario: Verify pass emit recommends review-as-system canonically
 - **WHEN** `/orbit:verify foo` passes
-- **THEN** `verify-<TS>.json`'s `next_recommended` begins with `"/orbit:review --as system foo"` and the reason text mentions `/orbit:archive foo` as alternative
+- **THEN** `verify-<TS>.json`'s `next_recommended` begins with the gate graph's canonical system-review invocation for that change — `"/orbit:review --as system --reviewer blind-pair foo"` under `spec-driven` v5 when nothing covers its first system slot, `invoked`, and the default review preference presents the pair command — and the reason text mentions `/orbit:archive foo` as alternative
+
+#### Scenario: A verify pass with a review pass outstanding leads with the walk
+- **WHEN** `/orbit:verify foo` passes and the gate graph's canonical next is `/orbit:address-reviews foo`, the system gate unpassed or passed
+- **THEN** `verify-<TS>.json`'s `next_recommended` is `"/orbit:address-reviews foo — verification clean; walk the outstanding review findings first"` and names no `/orbit:archive`
 
 #### Scenario: Status reader parses verify-pass recommendation
 - **WHEN** a downstream status reader reads the verify-pass JSON and best-effort parses
-- **THEN** `command` is `"/orbit:review --as system"`, `args` is the change name, `reason` is the full verbatim string
+- **THEN** `command` is `"/orbit:review --as system"`, `args` carries the class qualifier and the change name as the graph composed them, `reason` is the full verbatim string
 
 ### Requirement: Verify fail-mode recommendations
 
-When standalone `/orbit:verify <name>` fails, the emit-layer SHALL classify the failure mode based on verify-change's output and write `next_recommended` accordingly:
+When standalone `/orbit:verify <name>` fails, verify SHALL classify the failure mode from its own findings and an `orbit validate <name>` run, by the precedence below, and hand it to the emit layer as `fail_mode`; the emit layer SHALL write `next_recommended` from that mode:
 
 - **Mode ① (tasks-incomplete)**: tasks.md has unchecked items → `"/orbit:apply <name> — N tasks remain unchecked; complete implementation before re-verifying"`
 - **Mode ② (impl-vs-spec gap)**: tasks all checked but spec scenarios fail → `"/orbit:review --as system <name> — N spec scenarios fail against implementation; system review will surface findings in its scorecard for you to walk each as code fix or spec revision"`
@@ -339,7 +441,13 @@ When standalone `/orbit:verify <name>` fails, the emit-layer SHALL classify the 
 
 When verify completes with warnings (passes but with non-blocking findings), the emit-layer SHALL write `next_recommended: "/orbit:review --as system <name> — verification passed with N warnings; system review recommended"`.
 
-The classification SHALL happen in the emit-layer; verify itself does not gain marker-dropping or other behaviors (see `Requirement: Emit-layer wraps upstream skills without modifying them`). The mode-② recommendation does NOT use `/orbit:review --as system --mark` because that flag is proposal-mode only and silently ignored in system mode (per `orbit-review/spec.md`'s `Requirement: --mark flag is proposal-mode only`). The user manually walks each system-review finding to decide code-vs-spec.
+The leading `/orbit:review --as system <name>` of mode ② and of the warn state is the gate graph's canonical
+system-review command, as in `Verify pass recommendation`, and when that graph's next is the change-scoped walk
+the walk leads by the same rule: mode ② reads `"/orbit:address-reviews <name> — N spec scenarios fail against
+implementation; walk the outstanding review findings first"` and the warn state
+`"/orbit:address-reviews <name> — verification passed with N warnings; walk the outstanding review findings first"`.
+
+The classification is verify's, stated in its body's `# Orbit additions`, where `orbit-conventions`' `Generated-file disposition` puts orbit behavior; the emit layer classifies nothing, composes from the mode it is handed, and gives verify no marker-dropping or other behaviors (see `Requirement: Emit-layer wraps upstream skills without modifying them`). The mode-② recommendation does NOT use `/orbit:review --as system --mark` because that flag is proposal-mode only and silently ignored in system mode (per `orbit-review/spec.md`'s `Requirement: --mark flag is proposal-mode only`). The user manually walks each system-review finding to decide code-vs-spec.
 
 **Precedence when multiple fail signals fire simultaneously** (highest precedence first):
 
@@ -357,8 +465,12 @@ This precedence directs the user to the root cause first: fix the spec (mode ③
 - **THEN** `verify-<TS>.json`'s `next_recommended` begins with `"/orbit:apply foo"` and mentions the count of remaining tasks
 
 #### Scenario: Mode-② fail recommends /orbit:review --as system (without --mark)
-- **WHEN** `/orbit:verify foo` fails because spec scenarios don't pass against the implementation
+- **WHEN** `/orbit:verify foo` fails because spec scenarios don't pass against the implementation, and no review pass is outstanding
 - **THEN** `verify-<TS>.json`'s `next_recommended` begins with `"/orbit:review --as system foo"` (without `--mark` — that flag is proposal-mode only); reason text explains the user must walk each system-review finding as either a code fix or spec revision
+
+#### Scenario: Mode ② and the warn state lead with the walk when a review pass is outstanding
+- **WHEN** `/orbit:verify foo` fails in mode ②, or passes with warnings, and the gate graph's canonical next is `/orbit:address-reviews foo`
+- **THEN** `verify-<TS>.json`'s `next_recommended` begins with `"/orbit:address-reviews foo — "` and ends `"walk the outstanding review findings first"`
 
 #### Scenario: Mode-③ fail preserves verbatim validator message
 - **WHEN** `/orbit:verify foo` fails because `orbit validate` itself errors (e.g., malformed spec frontmatter)
@@ -366,11 +478,11 @@ This precedence directs the user to the root cause first: fix the spec (mode ③
 
 #### Scenario: Multiple fail signals — precedence ③ > ① > ②
 - **WHEN** `/orbit:verify foo` reports BOTH unchecked tasks (mode ① signal) AND `orbit validate` errors (mode ③ signal) simultaneously
-- **THEN** `verify-<TS>.json`'s `next_recommended` follows mode ③ (verbatim validator message), NOT mode ①; the user is directed to fix the spec validation error first, after which a re-run will surface the tasks-incomplete signal
+- **THEN** verify classifies the run as mode ③ and hands `fail_mode: "validator-error"` to the emit, so `verify-<TS>.json`'s `next_recommended` follows mode ③ (verbatim validator message), NOT mode ①; the user is directed to fix the spec validation error first, after which a re-run will surface the tasks-incomplete signal
 
 ### Requirement: Review-external T0 multi-step recommendation
 
-`/orbit:review-external` SHALL emit `review-external-<TS>.json` at T0 (when the prompt is packaged, before findings return from the external AI). The emit includes per-command extensions:
+The external-review packaging branch (`/orbit:review --as <mode> --reviewer external`, D-arc Stage D5's merge — record vocabulary frozen per `orbit-review-external`) SHALL emit `review-external-<TS>.json` at T0 (when the prompt is packaged, before findings return from the external AI). The emit includes per-command extensions:
 
 ```
 mode                  "proposal" | "system"
@@ -379,59 +491,74 @@ target                string|null   the named external AI (e.g., "codex", "gpt-5
 awaiting_findings     bool     always true at T0
 ```
 
-`next_recommended` SHALL be multi-step prose describing the user action plus the follow-up command:
+`next_recommended` SHALL be multi-step prose describing the USER ACTION ONLY, ending at the save step:
 
 ```
 "Paste orbit/changes/<name>/.orbit-runs/external-prompt-<mode>-<TS>.md
- into the target AI, save the response as
- orbit/changes/<name>/.orbit-runs/external-<mode>-<TS>.md,
- then /orbit:address-reviews <name> --from-file <path>"
+ into the target AI, and save the response as
+ orbit/changes/<name>/.orbit-runs/external-<mode>-<TS>.md"
 ```
+
+It SHALL name no walk command. What follows the save is whatever the gate's canonical next computes once the return is saved (`orbit-engine-gates`) — never written into this record; when that next is a walk, it discovers the saved return with no path (`orbit-address-reviews`' `Address-reviews command available`). A walk command written into the record would be a one-half walk recorded as the next step.
 
 A downstream status reader's best-effort parse will find no leading `/orbit:<verb>` (because the string leads with "Paste"); `command` and `args` are left null, and the full verbatim string is surfaced in `reason`. This is the expected behavior — multi-step user actions are accurately represented as prose, not collapsed into a single command.
 
-T1 (findings returned, `/orbit:address-reviews --from-file` invoked) is the existing `/orbit:address-reviews` emit and is unaffected by this requirement.
+T1 (findings returned and walked, by discovery or by `--from-file`) is the existing `/orbit:address-reviews` emit and is unaffected by this requirement.
 
 #### Scenario: Review-external T0 emit has awaiting_findings=true
-- **WHEN** `/orbit:review-external foo --as proposal` runs and packages the prompt
+- **WHEN** `/orbit:review foo --as proposal --reviewer external` runs and packages the prompt
 - **THEN** `review-external-<TS>.json` is written with `mode: "proposal"`, `awaiting_findings: true`, `prompt_path` pointing at the just-written `external-prompt-proposal-<TS>.md`
 
 #### Scenario: Review-external T0 recommendation is prose-only
 - **WHEN** a downstream status reader reads the review-external T0 JSON and best-effort parses `next_recommended`
 - **THEN** no leading slash command is found; `command` and `args` are null; the full multi-step instruction is preserved verbatim in `reason`
 
+#### Scenario: A clean return is not followed by a walk
+
+- **WHEN** the T0 emit packages an external whose return, once saved, will complete a clean blind pair (no substantive findings on either half) on a cadence that still owes an in-context slot
+- **THEN** the T0 record's `next_recommended` names the paste and save steps and no walk, and the eligibility line read after the return is saved names the in-context review, not a walk
+
+#### Scenario: The T0 recommendation names no walk
+
+- **WHEN** `/orbit:review foo --as system --reviewer external` packages its prompt
+- **THEN** the T0 emit's `next_recommended` ends at the `save the response as <path>` step and contains no `/orbit:address-reviews`
+
 ### Requirement: Audit-drift standalone recommendations
 
-Standalone `/orbit:audit-drift` already emits `audit-drift-<TS>.json` per the `orbit-audit-drift` skill's `references/run-summary-schema.md` (shipped alongside the generated skill). The emit SHALL include the universal spine from `orbit-conventions`'s `Internal-run JSON summary format` (with `kind: "editorial"`). The emit-layer recognizes TWO standalone invocation modes — **change-scoped** (`/orbit:audit-drift <name>`) and **project-wide** (`/orbit:audit-drift` with no argument) — each with distinct emit path, `change` value, and recommendation logic:
+Standalone `/orbit:audit-drift` emits `audit-drift-<TS>.json`, and THIS requirement owns that emit's payload: the `orbit-audit-drift` skill's `references/run-summary-schema.md` (shipped alongside the generated skill) MIRRORS it, never defines it, per `orbit-emit-composition`'s `Payload tables agree with their schema references`. The emit SHALL include the universal spine from `orbit-conventions`'s `Internal-run JSON summary format` (with `kind: "editorial"`). The emit-layer recognizes TWO standalone invocation modes — **change-scoped** (`/orbit:audit-drift <name>`) and **project-wide** (`/orbit:audit-drift` with no argument) — each with distinct emit path, `change` value, and recommendation logic:
 
 **Change-scoped standalone** (`/orbit:audit-drift <name>`):
 - Emit path: `orbit/changes/<name>/.orbit-runs/audit-drift-<TS>.json`
 - `change` field: the change name
-- `next_recommended` on findings: `"/orbit:address-reviews <name> — N drift(s) detected; resolve before next workflow step"`. The `--from-file <this-json>` argument is NOT required: `/orbit:address-reviews` auto-discovers the most-recent `audit-drift-*.json` in the change's `.orbit-runs/` per the orbit-address-reviews `Address-reviews command available` requirement's auto-discovery fallback. Address-reviews picks the audit-drift JSON via the recency rule (single global most-recent across `review-<mode>-*.json` + `audit-drift-*.json`); the just-written `audit-drift-<TS>.json` will be the most recent at recommendation-emit time, so auto-discovery resolves to it cleanly.
+- `next_recommended` on findings: `"/orbit:address-reviews <name> — N drift(s) detected; resolve before next workflow step"`. The `--from-file <this-json>` argument is NOT required: a change-scoped walk discovers every `audit-drift-*.json` no resolution log names, per `orbit-address-reviews`' `Address-reviews command available`, so the just-written emit is discovered with no path.
 - `next_recommended` on clean (zero findings): copy from the most recent prior `.orbit-runs/*.json` for the same change, excluding the just-written audit-drift JSON itself. `final_assessment` SHALL note "drift check clean; deferring to prior workflow state."
 
 **Project-wide standalone** (`/orbit:audit-drift` with no argument):
 - Emit path: `orbit/.orbit-runs/audit-drift-<TS>.json` (create the directory if it doesn't exist)
 - `change` field: `null` (no change scope)
-- `next_recommended` on findings: `"/orbit:address-reviews --from-file <this-json> — N drift(s) detected project-wide; resolve before next workflow step"`. The `--from-file <path>` argument IS required here: project-wide audit-drift has no change-directory anchor for `.orbit-runs/` lookup, so auto-discovery does NOT apply per the orbit-address-reviews spec's positional-resolution algorithm (no positional → bare invocation → grep-only; bare invocation skips auto-discovery).
+- `next_recommended` on findings: `"/orbit:address-reviews --from-file <this-json> — N drift(s) detected project-wide; resolve before next workflow step"`. The `--from-file <path>` argument IS required here: project-wide audit-drift writes to `orbit/.orbit-runs/`, which no change-scoped walk reads, so `orbit-address-reviews`' discovery never reaches it.
 - `next_recommended` on clean (zero findings): `"No project-wide drifts detected. Run /orbit:audit-drift periodically to catch new drift."` (no prior-workflow defer because project-wide audit-drift has no per-change workflow narrative to defer to). `final_assessment` SHALL note "project-wide drift check clean."
 
-(Historical note: `--from-file <this-json>` was historically required for the change-scoped recommendation because earlier versions of `/orbit:address-reviews` did not auto-discover internal JSON. Now that auto-discovery handles change-scoped invocations, the `--from-file` argument is dropped for change-scoped recommendations to give users the cleaner 2-command workflow. Project-wide invocations still require explicit `--from-file` because they have no change-directory anchor.)
+(Historical note: `--from-file <this-json>` was historically required for the change-scoped recommendation because earlier versions of `/orbit:address-reviews` did not discover internal JSON. Change-scoped walks now discover it, so the argument is dropped there; project-wide emits still need it, because no change-scoped walk reads `orbit/.orbit-runs/`.)
 
 Per-command extensions for audit-drift SHALL include:
 
 ```
-categories_run        object   { vocab_residue, lens_staleness, cross_doc_consistency, archive_coherence } — bools
-findings_by_category  object   counts per category
-findings_total        int
+categories_run        array    category-id strings, "1".."6" — the categories that ran; skip reasons belong in the report body
+findings              array    the finding entries, each carrying its own `category`, `severity`, `file`, `line`, `title`, `recommendation`, optional `recommendation_options`
+stale_suppressed      array    suppressed-finding entries ({category, title, evidence})
+findings_total        int      ENGINE-COMPUTED, refused in the payload — per orbit-emit-composition's `Audit-drift counts are engine-computed`
+findings_by_category  object   ENGINE-COMPUTED, refused in the payload — per the same requirement
 ```
+
+No other per-command extension is part of the payload; the write gate refuses any field outside the engine's audit-drift payload table.
 
 This requirement applies only to **standalone** `/orbit:audit-drift` invocations (both change-scoped and project-wide). Inline audit-drift during `/orbit:archive` is captured in `archive-<TS>.json` per the existing archive emit convention (unchanged).
 
 #### Scenario: Change-scoped standalone audit-drift with findings recommends address-reviews
 
 - **WHEN** `/orbit:audit-drift foo` runs and detects 3 drifts
-- **THEN** `orbit/changes/foo/.orbit-runs/audit-drift-<TS>.json` is written with `change: "foo"`, `findings_total: 3`, and `next_recommended` beginning with `"/orbit:address-reviews foo —"` (no `--from-file` argument; auto-discovery picks up the just-written audit-drift JSON via the recency rule)
+- **THEN** `orbit/changes/foo/.orbit-runs/audit-drift-<TS>.json` is written with `change: "foo"`, `findings_total: 3`, and `next_recommended` beginning with `"/orbit:address-reviews foo —"` (no `--from-file` argument; a change-scoped walk discovers the just-written audit-drift JSON because no resolution log names it yet)
 
 #### Scenario: Change-scoped clean audit-drift defers to prior workflow recommendation
 
@@ -441,7 +568,7 @@ This requirement applies only to **standalone** `/orbit:audit-drift` invocations
 #### Scenario: Project-wide standalone audit-drift with findings
 
 - **WHEN** `/orbit:audit-drift` runs with no change argument and detects 2 project-wide drifts
-- **THEN** `orbit/.orbit-runs/audit-drift-<TS>.json` is written with `change: null`, `findings_total: 2`, and `next_recommended` beginning with `"/orbit:address-reviews --from-file"` (still requires `--from-file` because project-wide invocations have no change-directory anchor; auto-discovery does not apply to bare `/orbit:address-reviews` invocations)
+- **THEN** `orbit/.orbit-runs/audit-drift-<TS>.json` is written with `change: null`, `findings_total: 2`, and `next_recommended` beginning with `"/orbit:address-reviews --from-file"` (still requires `--from-file`, because no change-scoped walk reads `orbit/.orbit-runs/`)
 
 #### Scenario: Project-wide clean audit-drift (no prior workflow to defer to)
 
@@ -452,6 +579,11 @@ This requirement applies only to **standalone** `/orbit:audit-drift` invocations
 
 - **WHEN** `/orbit:archive foo` runs and the inline audit-drift step produces findings
 - **THEN** the findings are captured in `archive-<TS>.json` per existing archive emit behavior; no separate `audit-drift-<TS>.json` is written for the inline pass
+
+#### Scenario: The payload is the owner's shape
+
+- **WHEN** a standalone audit-drift payload carries `categories_run: ["1", "3", "4"]`, `findings`, `stale_suppressed` and `final_assessment`
+- **THEN** the write gate accepts it; the same payload with `context`, `depth`, `flags`, `categories_skipped` or `findings_summary` added is refused naming the field
 
 ### Requirement: No forward-look at planned future behavior changes
 
@@ -464,7 +596,7 @@ When the planned change lands, every prior emit that recommended its command aut
 
 #### Scenario: Verify-pass recommendation does not reference planned reviewer-mode changes
 - **WHEN** the emit-layer writes a verify-pass JSON's `next_recommended`
-- **THEN** the text contains `"/orbit:review --as system <name>"` and does NOT contain qualifiers about external review, fresh-context, or reviewer-mode defaults
+- **THEN** its leading invocation is the one `Verify pass recommendation` names, read from the gate graph, and the text adds NO qualifier of its own about external review, fresh-context, or reviewer-mode defaults
 
 #### Scenario: Emit text contains no other-issue references
 - **WHEN** any run-summary JSON is inspected
@@ -489,10 +621,324 @@ A `review-external-<TS>.json` T0 emit is a PACKAGING record, NOT a completed pas
 #### Scenario: Packaged-but-unreturned external is not class coverage
 
 - **WHEN** a `review-external-<TS>.json` T0 emit exists with `awaiting_findings: true` but no corresponding `external-<as>-<TS>.md` findings file has landed
-- **THEN** the engine counts NO external pass for class coverage; the `external` cadence slot stays unsatisfied and the gate remains unpassed with the canonical next command targeting the external return
+- **THEN** the engine counts NO external pass for class coverage; whichever cadence slot the external return would satisfy (a bare `external` slot, an `independent` slot, or the external half of a `blind-pair`) stays unsatisfied and the gate remains unpassed, with the canonical next command being whatever `orbit-engine-gates`' single-voiced requirement computes for that uncovered slot — the external return when the slot is `external` or `independent` or a pairable partner already stands, and the fresh invocation when the uncovered slot is a `blind-pair` with no pairable pass standing (a T0 packaging emit is not a pass)
 
 #### Scenario: Legacy emits without the field degrade to inference
 
 - **WHEN** the engine reads an emit that predates this field
 - **THEN** the class is inferred — `flags.fresh: true` → `"fresh"`; `external-*.md` provenance → `"external"`; otherwise `"in-context"` — and the absence of the field never breaks gate computation
+
+### Requirement: Consent field on the apply emit
+
+The apply emit (`apply-<TS>.json`) SHALL carry the flat `consent: "user-invoked" | "prompted"`
+field per `orbit-lifecycle-consent`'s emit-field requirement — `user-invoked` when the apply was
+user-typed, `prompted` when the AI-mediated-entry consent prompt fired and the user proceeded.
+The field applies to every post-capability apply emit (all three emit rules: chunk completion,
+mid-chunk pause, no-chunking session end — the consent story is a property of the apply
+invocation, identical across its chunks' emits). Emits predating the consent capability lack the
+field and are exempt from the audit-drift tripwire (per `orbit-audit-drift`). Downstream parsers
+SHALL ignore the field if unknown (forward-compat, matching `recommendation_options` precedent).
+The archive emit's consent field is specified in `orbit-archive-modifications`' `Archive run
+summary written` requirement.
+
+#### Scenario: Apply emit carries consent
+
+- **WHEN** a user-typed `/orbit:apply` session writes its chunk-end emit
+- **THEN** the emit includes `consent: "user-invoked"` alongside the existing spine and
+  per-command extensions (the `judgements` record unchanged and independent)
+
+#### Scenario: Consent constant across one apply's chunk emits
+
+- **WHEN** a single apply invocation emits at multiple chunk boundaries
+- **THEN** every emit of that invocation carries the same consent value (provenance is a property
+  of the invocation, not the chunk)
+
+### Requirement: PR attachment record on the propose and ff emits
+
+The propose AND ff emits SHALL each carry an OPTIONAL structured `pr_attachment` object
+recording the PR ATTACHMENT resolved during that invocation (per `orbit-pr-lifecycle`'s
+config regimes). The attachment is ONE COMPOSITE FACT — born together at the
+artifact-creating invocation, read together at every later seam — so it is recorded as one
+object rather than scattered scalars:
+
+| key | required | value |
+|---|---|---|
+| `branch` | yes | the branch the change's work lands on — `<change-name>` on the per-proposal path, the architecture doc's filename stem on the program path |
+| `granularity` | yes | `"per-proposal"` or `"per-architecture"` — the RESOLVED regime for THIS change, not the repo's config value (an uncited change under `per-architecture` records `"per-proposal"`, the path it actually took) |
+| `url` | no | the PR's URL; elided when the branch choreography ran but PR creation did not (degraded or failed mid-flight) |
+| `state` | no | exactly one of the lowercase strings `"draft"` or `"ready"` AS OBSERVED at emit time; elided when no PR exists or the state cannot be observed |
+| `doc` | conditional | the architecture doc's name — REQUIRED when `granularity` is `"per-architecture"`, absent otherwise; without it a program PR cannot be correlated to its program once the birth change is archived, and a repo running two programs has two indistinguishable URLs |
+
+The WHOLE object is ELIDED when no branch or PR work occurred at all (`pr: never`, a
+degraded no-remote/no-`gh` repo, or a choreography skipped by a precondition) — an absent
+object is the honest record of "no attachment at this seam", never a null placeholder or an
+empty shell. When the choreography ran but PR creation failed, the object IS present with
+`branch` and `granularity` (AND `doc` when the granularity is `"per-architecture"` — the
+conditional key is required by the write gate whatever the PR outcome, so a program-path
+record omitting it is REJECTED and no emit is written at all) and no `url`/`state`, because
+the branch attachment is real even
+when the PR is not.
+
+The object is NARRATIVE pass-through in its VALUES: the emitting body observes and supplies
+them, and the engine neither computes nor verifies them (it cannot — the branch state and the
+PR live outside the records the engine reads). Its STRUCTURE is a different matter and IS
+engine-validated at the write gate, because this object is the AUTHORITATIVE record later
+bodies dereference: an emit carrying `{granularty: ...}`, a missing `branch`, a `state`
+outside the two-value enum, or `granularity: "per-architecture"` with no `doc` would sail
+through a seam advertised as FAIL-LOUD and then be read back at archive as truth. The gate
+SHALL therefore reject, by the same unknown-key/mistyped-field mechanism it already applies
+to the payload's top level: an unrecognized nested key; a missing required `branch` or
+`granularity`; a non-string value for any of `branch`/`url`/`state`/`doc`; a `granularity`
+outside `{"per-proposal", "per-architecture"}`; a `state` outside `{"draft", "ready"}`; and
+`doc` absent when `granularity` is `"per-architecture"` or present when it is
+`"per-proposal"`. Structure only — whether the branch exists, whether the URL resolves, and
+whether the PR is open remain BODY-owned observations the engine never second-guesses.
+The archive emit's flat `pr_url`/`pr_state` fields are type- and enum-checked on the same
+basis. It is the AUTHORITATIVE ATTACHMENT RECORD: the archive tail reads
+it back to discover which PR to act on and which granularity governs (per
+`orbit-archive-modifications`), and it is what FREEZES the change's granularity for its life
+(per `orbit-pr-lifecycle`) — later seams consult this record, never a fresh read of the
+mutable `architecture:` citation.
+
+#### Scenario: Malformed attachment structure is rejected at the gate
+
+- **WHEN** a propose payload carries `pr_attachment` with a misspelled key (`granularty`), a missing `branch`, a non-string `url`, a `state` outside `draft`/`ready`, or `granularity: "per-architecture"` without `doc`
+- **THEN** the write gate REJECTS the emit naming the offending nested field — the object never reaches the trail as an authoritative record — while a structurally valid object whose branch or PR later proves stale is written unchallenged (existence is body-owned, structure is not)
+
+#### Scenario: Propose or ff emit records the PR it opened
+
+- **WHEN** propose — or `/orbit:ff`, which carries the identical choreography — opens a draft PR under `pr: per-proposal`
+- **THEN** that command's emit carries `pr_attachment: {branch: "<change-name>", granularity: "per-proposal", url: "<url>", state: "draft"}` with no `doc` key, and the archive tail later reads that object to find both the PR and the governing granularity
+
+#### Scenario: Program attachment carries its doc
+
+- **WHEN** a change citing `{doc: my-program, stage: s2}` is proposed under `pr: per-architecture`
+- **THEN** the emit carries `pr_attachment: {branch: "my-program", granularity: "per-architecture", doc: "my-program", url: "<program PR url>", state: "draft"}` — so the architect readout can identify WHICH program's PR this is even after the change is archived, and a repo running two programs never confuses them
+
+#### Scenario: No attachment means no object
+
+- **WHEN** propose or ff runs under `pr: never`, in a repo with no remote, or after a precondition skipped the choreography entirely
+- **THEN** `pr_attachment` is elided from the emit — never present-and-null, never an empty object
+
+#### Scenario: Branch without a PR still records the attachment
+
+- **WHEN** the branch is created and pushed but `gh pr create` fails mid-flight
+- **THEN** `pr_attachment` is present with `branch` and `granularity` (and `doc` when the granularity is `per-architecture` — the conditional key is gate-required whatever the PR outcome) and WITHOUT `url`/`state` — the branch attachment is real even though the PR is not
+
+### Requirement: The judgement record — one spine, two kinds
+
+A CADENCE JUDGEMENT SHALL be recorded rather than left in narrative prose. It is a decision taken
+at a CADENCE POSITION — a seam where the review cadence is consulted: proceeding past a gate that
+has not passed, buying a further independent pass, or asserting readiness at the cadence's end.
+The qualifying test is the POSITION, not the citation count. Each record's `formed_against`
+names the readable independent evidence available at that position, and that is not a tidiness
+rule: citing the passes is the SAME property the write gate's ordering check consumes, so the
+criterion for belonging (the position) and the constraint that makes the record trustworthy (the
+citation) travel in ONE record. A decision CAN hold a cadence position while having nothing to
+cite: a gate is unpassed precisely when its cadence is incomplete, which INCLUDES the state where
+no independent pass has run at all, and a decision to proceed anyway is taken at a cadence seam
+whether or not evidence exists to name. Such a record is ADMITTED, and what the ordering check
+consumes there is the emptiness ITSELF: the entry asserts the trail is empty and the trail is read
+to confirm it (the rule and its scope are below; the check is `orbit-emit-composition`'s edge (d)).
+An empty citation is checked, not unchecked.
+
+**WHAT IS EXCLUDED, AND ON WHAT GROUND.** Method calls, scope calls and process notes keep their
+existing homes: they occupy no position in a cadence, so there is nothing about them for the
+ordering check to consume.
+
+**THE PAYLOAD KEY IS `judgements`, AND IT IS AN ARRAY.** It is a literal top-level payload key on
+the commands named below, and it is named here because `orbit-emit-composition`'s payload tables
+are a literal allowlist that refuses unknown keys — a record whose key is left to the implementer
+is a record that does not ship. It is an ARRAY because a single emit can legitimately carry more
+than one judgement: an archive may both continue past an unpassed gate AND assert readiness, and
+those are two decisions, not one with two faces. An emit carrying no judgement omits the key
+entirely rather than sending an empty array.
+
+Each entry SHALL carry:
+
+```
+kind            enum          "continuation" | "readiness"
+formed_against  string[]      list of independent pass <TS> tokens (fresh or external); NON-EMPTY
+                              except on `continuation`/`proceed`, where `[]` is legal under the
+                              totality rule below — which states the predicate and its SET once;
+                              this row does not restate either
+disposition     enum          kind-dependent; see below
+reasoning       string        prose — why, in the author's own words (a RECORD under R-crc-10)
+ratified_by     enum          "ai" | "user"
+```
+
+`formed_against` sits INSIDE each entry, never beside the array: two judgements on one emit may be
+formed against different passes, and the write gate's ordering check runs per entry.
+
+`ratified_by` is REQUIRED and is never inferred. The difference between the AI's own belief and a
+user's ratification is a fact about the decision that context will not preserve, and a record that
+leaves it implicit claims an authority it may not have.
+
+`formed_against` cites BY TOKEN, never in prose. A prose citation — the shape the RETIRED
+`gate_overridden` field used — cannot be ordered against anything, which is why no ordering check
+was ever possible on it.
+
+**`kind: "continuation"`** is formed MID-CADENCE and answers *given what came back, what next?*
+Its `disposition` is `proceed` (continue past a gate that has not passed, additionally carrying
+`gate`, `gate_state` and `gate_reason`) or `spend` (buy a further independent pass past a gate that
+HAS passed — a decision the cadence has no other home for).
+
+**`formed_against` MAY be EMPTY on a `continuation`/`proceed` entry, and ONLY when the emptiness is
+TRUE.** `[]` is accepted IF AND ONLY IF the trail's PASS SET carries no member
+(`reviewer_class` `fresh` or `external`, any mode) earlier than this emit's own token; where one
+exists the emit is REFUSED, NAMING the LATEST preceding such pass. **The set is the trail reader's
+PASS SET — the same one the ordering check resolves citations against — and a REJECTED external
+return is NOT a member of it.** That exclusion is the non-obvious half and is stated rather than
+left to be inferred: a rejected return carries the `external` reviewer class and counts toward
+recorded spend (per `orbit-engine-gates`), so a rule phrased on reviewer class alone would read it
+as a pass and refuse a legal empty citation — in precisely the case where there was nothing
+citable, since the ordering check REFUSES citing a rejected return. One predicate, one set, stated
+here and consulted by `orbit-emit-composition`'s edge (d). "Latest" is normative rather than
+incidental: the ordinary trail carries several preceding passes, and an unqualified "names the
+pass" leaves an implementer to choose between one and all while the error text is what a user
+acts on. This is what makes the record TOTAL over the
+proceed-anyway domain: a gate is unpassed precisely when its cadence is incomplete, which INCLUDES
+the state where no independent pass exists at all, so a record that could not be written there
+would leave that case with no successor. *"I cited nothing because there was nothing to cite"* is
+fully observable, so R-crc-10 permits a CHECK rather than only a record.
+
+**The exemption is scoped to `continuation`/`proceed` and to nothing else.** `continuation`/`spend`
+buys a further pass past a gate that HAS passed, so independent passes necessarily exist;
+`readiness` asserts a belief formed knowing what came back, and with nothing back there is no
+readiness judgement to record. An empty citation on either would be the uncheckable record this
+capability refuses.
+
+**`kind: "readiness"`** is formed at the cadence's END. Its `disposition` is `ready` or `not-ready`.
+
+A `not-ready` record is an ARCHIVE-TIME DISSENT: the work was archived against the author's own
+judgement. It is NOT a routing decision, and it carries no `destination`. Readiness is admitted
+only on `archive`, the archive's completion readout calls the record *the session's own
+judgement*, and routing a cadence back to architecture was already excluded from this capability
+for want of a reader — so requiring a routing destination here would re-import the excluded
+concept through the validator while refusing the honest dissent the one reader describes.
+Accordingly `ratified_by` on a `not-ready` record takes EITHER value and records which it was: `ai`
+when the belief is the authoring session's own, `user` when a human ratified it. That is the field
+doing its ordinary work — the difference between the AI's belief and a user's ratification is a
+fact about the decision, and here it is recorded rather than legislated. Every readiness record
+additionally carries `accepted`: a list of `{claim, why}` pairs naming what was accepted WITHOUT resolution and
+why that was acceptable. The accepted residuals are the assertion's CONTENT, not peer records —
+*"I accepted the residual because the scoped pass came back sound"* is one statement, and splitting
+it loses the because.
+
+A `not-ready` record RECORDS; it SHALL NOT block. Readiness is a judgement, and an engine that
+blocks on it acts on what it cannot observe (R-crc-10); the lifecycle already carries consent, gate
+and audit prompts for stopping.
+
+#### Scenario: A readiness record carries its acceptances as content
+
+- **WHEN** a cadence ends with residual risk the author judges acceptable
+- **THEN** the record's `accepted` list names each `{claim, why}`, and they appear there rather
+  than as separate judgement records
+
+#### Scenario: An empty formed_against is refused when a pass was available to cite
+
+- **WHEN** a `continuation`/`proceed` entry carries `formed_against: []` AND the trail carries an
+  independent pass earlier than this emit's own token
+- **THEN** the emit is REFUSED, naming the LATEST preceding independent pass — claiming an empty
+  cadence while one is on disk is not a cadence judgement, and the claim is checkable
+
+#### Scenario: An empty formed_against is LEGAL on proceed when the trail is genuinely empty
+
+- **WHEN** a `continuation`/`proceed` entry carries `formed_against: []` AND no independent pass
+  precedes this emit's own token
+- **THEN** the emit is ACCEPTED — the emptiness is the truth about the cadence. This is the one
+  case the retired `gate_overridden` field could express and the record previously could not, and
+  closing it is what makes the record TOTAL over the override's domain rather than nearly total
+
+#### Scenario: The empty exemption does not extend to readiness or to spend
+
+- **WHEN** a `readiness` entry, or a `continuation`/`spend` entry, carries `formed_against: []`
+- **THEN** the emit is REFUSED regardless of trail state — the exemption is scoped to
+  `continuation`/`proceed`, the only disposition whose trigger condition admits an empty cadence
+
+#### Scenario: ratified_by is never inferred
+
+- **WHEN** a judgement entry omits `ratified_by`
+- **THEN** the emit is refused naming the field — the engine SHALL NOT guess whether a human
+  ratified a decision
+
+#### Scenario: An AI-authored archive dissent is accepted
+
+- **WHEN** a `readiness` entry carries `disposition: "not-ready"` with `ratified_by: "ai"` and no
+  `destination`
+- **THEN** the emit is WRITTEN — the record is the authoring session's own dissent about work that
+  archived anyway, and refusing it would leave the archive readout describing a record the engine
+  will not accept
+
+#### Scenario: A routing destination is refused as an unknown key
+
+- **WHEN** a `readiness` entry carries `destination`
+- **THEN** the emit is refused naming the key — the record's shape is closed, and routing has no
+  carrier in this capability
+
+### Requirement: Where a judgement record may appear
+
+`judgements` SHALL appear ONLY on the emits written at the moments a cadence judgement is actually
+taken. There are THREE, and the enumeration is CLOSED:
+
+| emit | admits | because |
+|---|---|---|
+| `apply` | `continuation` | the proceed-past-`review-proposal` decision is taken here |
+| `review-external` (T0) | `continuation` | the spend decision is taken at the moment the handoff is packaged |
+| `archive` | `continuation` AND `readiness` | `review-system` is overridden here, and the cadence ends here |
+
+The archive admits BOTH kinds, which is why the carrier is an array. This is not symmetry for its
+own sake: the archive seam guards `review-system` while apply is gated by `review-proposal`, and
+the archive is where the proceed-anyway decision is most often actually taken. A
+`continuation/proceed` that could not be recorded at archive would leave the commonest override
+with no record at all.
+
+A judgement record supplied on any other emit is REFUSED naming the command. The record marks where
+a decision was TAKEN; admitting it anywhere would make its location meaningless, and the location
+is what the ordering check is anchored to.
+
+**BOTH HALVES OF THAT TABLE ARE ENFORCED.** The COMMAND half is the payload allowlist, which refuses
+the `judgements` key outright on any command outside the three. The KIND half is a separate refusal:
+an entry whose `kind` is not in the `admits` column for the command being emitted is REFUSED, naming
+the command and the kind. Without it the `admits` column reads as a contract and behaves as a
+comment — a `readiness` writes cleanly onto a `review-external` T0 emit, which no surface reads,
+producing exactly the write-only record this capability condemns. Kind-per-command is fully
+observable, so R-crc-10 permits a check rather than only a record.
+
+**DELIBERATELY NOT ADMITTED HERE: the `address-reviews` emit.** A cadence can also end by ROUTING
+the work back to architecture rather than archiving, and that judgement is real. It is NOT carried
+by this change, for a reason about READERS rather than size: the archive completion readout is the
+single reader that keeps this record from being write-only, and in the routing case there is no
+archive to read it. A routing-case record would be exactly the write-only record this capability
+condemns. Its carrier belongs with whatever surface reads it, which no stage has yet declared.
+
+#### Scenario: A continuation record names the passes it was formed against
+
+- **WHEN** a further independent pass is bought past a gate that has already passed
+- **THEN** the emit carries a `judgements` entry with `kind: "continuation"`,
+  `disposition: "spend"`, a non-empty `formed_against` of pass tokens, prose `reasoning`, and
+  `ratified_by`
+
+#### Scenario: One archive emit carries both kinds
+
+- **WHEN** an archive both continues past an unpassed `review-system` gate and asserts readiness
+- **THEN** `judgements` carries TWO entries — one `continuation/proceed`, one `readiness` — each
+  with its own `formed_against`, and the ordering check runs per entry
+
+#### Scenario: A judgement record on an emit that takes no judgement is refused
+
+- **WHEN** `judgements` is supplied on any command outside the closed three
+- **THEN** the emit is refused naming the command
+
+#### Scenario: A kind the seam does not admit is refused
+
+- **WHEN** a `readiness` entry is supplied on an `apply` or `review-external` emit — a command that
+  admits `judgements` but not that kind
+- **THEN** the emit is refused naming the command and the kind; no file is written
+
+#### Scenario: An emit with no judgement omits the key
+
+- **WHEN** an emit carries no cadence judgement
+- **THEN** `judgements` is absent entirely rather than present-and-empty, so key presence means a
+  judgement was taken
 

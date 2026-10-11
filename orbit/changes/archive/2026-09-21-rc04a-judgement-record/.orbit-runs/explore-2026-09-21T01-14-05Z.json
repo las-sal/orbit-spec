@@ -1,0 +1,12 @@
+{
+  "command": "explore",
+  "timestamp": "2026-09-21T01:14:05Z",
+  "change": "rc04-cost-visibility",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "Staging scaffolded for rc04-cost-visibility, the program's next stage after rc07 archived and ratified. The architecture citation is RECORDED (clean-up-review-cycle / rc04-cost-visibility), so the stage renders `exploring` rather than `premised`. Nothing is decided yet — the References section names the constructs this has to be grounded in rather than reasoned about: the gate's budgetExhausted/independentSpend shape in gates.ts, the archive emit's payload table (which has no residual_risk field today, so the record currently goes into `warnings` as free prose), orientation.ts where a cadence line would render, and the three archived trails that are this stage's fixtures.",
+  "decisions_captured": 0,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "next_recommended": "/orbit:explore rc04-cost-visibility — continue capturing thinking — no decisions captured yet"
+}

@@ -1,0 +1,12 @@
+{
+  "command": "explore",
+  "timestamp": "2026-07-08T22:59:39Z",
+  "change": "explicit-lifecycle-consent",
+  "final_assessment": "Session boundary: the exploration's scope outgrew a single explore and was promoted to a program-level architecture document — orbit/architecture/d-arc-arbitered-flow.md (the D-arc), created by hand as the dogfood predecessor of the /orbit:architect capability it contains as Stage D2. This exploration is now Stage D1 of that arc, unchanged in content: 7 decisions, 5 open questions (emit field shape, CLI-direct boundary, draft→READY trigger, PR-open ratification, branch bite-size) plus the Layer-1 consent-as-gate-data option. The arc adds a governing constraint for the remaining D1 decisions: token/context economy. Sibling stages (architect, orientation, review-consistency, context-economy+model-strategy) are premised in the architecture doc, not scaffolded as explores, per the arc's one-exploration-in-flight-per-stage rule.",
+  "next_recommended": "/orbit:explore explicit-lifecycle-consent — 7 decisions captured but 5 open questions remain; resolve open questions before formalizing",
+  "kind": "workflow",
+  "mode": "named",
+  "decisions_captured": 7,
+  "open_questions_count": 5,
+  "crystallized_to_name": null
+}

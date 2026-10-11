@@ -1,0 +1,9 @@
+{
+  "command": "propose",
+  "timestamp": "2026-09-15T17:16:54Z",
+  "change": "rc07-artifact-lint",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "Consume mode over a zero-open-question exploration: seven decisions became one new capability (orbit-source-lint) with four ADDED requirements, a design whose first section is R-crc-10's own test (the inputs named before anything else), and 16 tasks across five groups. The stage ships a CHECK over inputs the engine already owns — source values it computes, span text it can read, containment it can evaluate — and a RECORD (per-source marker coverage) for the one input it cannot: which unmarked number in prose restates which fact. That residual is declared in the spec, not papered over, and the charter's exit criterion is restated to match: a MARKED figure that disagrees fails validation. Half (B), the payload-reference round-trip, was split out at exploration time under R-crc-9 and is declared as rc07b-reference-roundtrip. One capability, four requirements, no MODIFIED deltas — fingerprint stamps nothing, which is correct for an ADDED-only change.",
+  "next_recommended": "/orbit:review rc07-artifact-lint — proposal artifacts ready; review before apply"
+}

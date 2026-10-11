@@ -1,0 +1,35 @@
+{
+  "command": "architect",
+  "timestamp": "2026-09-17T22:47:45Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "Architect session against the live program, opened after rc07's system-mode blind pair was walked. FIVE factual amendments applied to the rc07 stage declaration (Touches, the audit-drift clause, exit criterion 3's 'live commands', the stale '61 today' file-domain figure, and the 'stages = 17' coverage example) — each already recorded in the change's own charter-divergence table, and each corrected toward what shipped rather than toward what was planned. FOUR open questions opened, three carrying findings the blind pair produced and one found while applying the amendments. rc03a-blind-prompt's completion ratification was offered and DECLINED: the stage was withdrawn, so the mark would assert criteria it never met — Q-crc-11's case, third observation. Two of rc07 task 5.5's six recommendations are NOT applied and are file-resident as Q-crc-16 instead: the doc already carries a living present-tense stage count, so marking it in place supersedes writing a new sentence, and that mark is coupled to deleting a stale header blockquote because doing one without the other would leave a marked figure beside an unmarked duplicate — the exact rule rc07 exists to enforce.",
+  "stages_touched": [
+    "rc07-artifact-lint",
+    "rc03a-blind-prompt"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [],
+  "handoff": {
+    "boot_sequence": [
+      {
+        "path": "orbit/architecture/clean-up-review-cycle.md",
+        "why": "the live program; rc07's stage declaration now matches what shipped, and Q-crc-13..16 carry everything pending"
+      },
+      {
+        "path": "orbit/changes/rc07-artifact-lint/.orbit-runs/",
+        "why": "the blind pair and its two walk records — the evidence behind Q-crc-13, 14 and 15"
+      },
+      {
+        "path": "orbit/changes/rc07-artifact-lint/design.md",
+        "why": "D1 and D3 carry the same two residuals with kind and method, stated change-side"
+      }
+    ],
+    "next_command": "orbit architecture status",
+    "model_hint": "any",
+    "seam": "architect session end; rc07 remains in-change with review-system unpassed on a ratified deferral"
+  },
+  "next_recommended": "orbit architecture status"
+}

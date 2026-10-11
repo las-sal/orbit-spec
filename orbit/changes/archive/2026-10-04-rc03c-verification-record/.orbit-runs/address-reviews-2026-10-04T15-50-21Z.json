@@ -1,0 +1,112 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-04T15:50:21Z",
+  "change": "rc03c-verification-record",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc03c-verification-record/.orbit-runs/external-proposal-2026-10-04T15-45-10Z.md",
+  "source_command": "review",
+  "source_token": "2026-10-04T15-45-10Z",
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-6 Codex",
+  "walk_mode": "per_finding",
+  "walk_mode_source": null,
+  "input_findings_summary": {
+    "critical": 1,
+    "warning": 3,
+    "suggestion": 0
+  },
+  "pushback_verification": "4 of 4 verified before acting: C1's constructed case re-derived against the emit-composition spec (reproduced); W1 against the absent-field refusal sentence and orbit-review step (a); W2 against git show 76c5978e; W3 against trail.ts readResolutionEntries. 0 stale.",
+  "resolution_summary": {
+    "resolved": 4,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "A wrong stale call cannot be linked while an earlier resolution is landed",
+      "file": "orbit/changes/rc03c-verification-record/specs/orbit-emit-composition/spec.md",
+      "marker_source": "external",
+      "classification": "decision_required",
+      "action": "Reproduction re-derived against the current text: line 36 keeps (T,F) owed against W1 (walk 1's latest-RESOLVED rule), line 40 refuses a walk_entry naming an owed key whose verdict is landed — no truthful payload writes. Method call settled under Sal's delegation, previewed at triage ('walk all'): the landed-link refusal fires only when every entry carrying the key in W is resolved; in the shared-key case the link is accepted whatever the verdict, a DECLARED gap stated in the requirement and in design Risks. A walk token on walk_entry rejected (reintroduces the hand-typed token D1 removed).",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc03c-verification-record/specs/orbit-emit-composition/spec.md",
+          "orbit/changes/rc03c-verification-record/design.md",
+          "orbit/changes/rc03c-verification-record/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "reproduction_rerun": "reproduced",
+      "evidence": "Constructed case re-derived against specs/orbit-emit-composition/spec.md lines 36 and 40 at walk time: refused as described.",
+      "ratified_via": "chat",
+      "resolution": "Settled by the AI under Sal's method delegation and previewed at triage; Sal: \"walk all\"."
+    },
+    {
+      "severity": "WARNING",
+      "title": "An absent verification refusal does not supply the keys the body needs",
+      "file": "orbit/changes/rc03c-verification-record/specs/orbit-emit-composition/spec.md",
+      "marker_source": "external",
+      "classification": "trivial_fix",
+      "action": "The absent-field refusal names the owed count and EACH owed key as walk <token>: (<title>, <file>), exactly as the incomplete-record refusal; scenario updated; task 1.2 case for the probe-read-REVIEW reconciliation path.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc03c-verification-record/specs/orbit-emit-composition/spec.md",
+          "orbit/changes/rc03c-verification-record/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The diff baseline misses edits committed with the independent pass",
+      "file": "orbit/changes/rc03c-verification-record/specs/orbit-review/spec.md",
+      "marker_source": "external",
+      "classification": "decision_required",
+      "action": "Confirmed on 76c5978e (fresh pass file, walk 1 log and repaired artifacts in one commit). Method call settled under Sal's delegation, previewed at triage: the Residual kind names an edit co-committed with the pass file as outside the check's reach; scenario added; task 1.5 asserts the body names the limit. A recorded pre-walk baseline rejected as new mechanism a walk may not author (R-crc-6), for a check that only files SUGGESTIONs.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc03c-verification-record/specs/orbit-review/spec.md",
+          "orbit/changes/rc03c-verification-record/design.md",
+          "orbit/changes/rc03c-verification-record/tasks.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/changes/rc03c-verification-record/explore.md",
+            "reason": "the exploration's record: D-rc03c-6 keeps the propose-time residual wording; design D6 carries the dated widening"
+          }
+        ]
+      },
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "resolution": "Settled by the AI under Sal's method delegation and previewed at triage; Sal: \"walk all\"."
+    },
+    {
+      "severity": "WARNING",
+      "title": "A readable walk can owe a key no valid verdict can name",
+      "file": "orbit/changes/rc03c-verification-record/specs/orbit-emit-composition/spec.md",
+      "marker_source": "external",
+      "classification": "trivial_fix",
+      "action": "Confirmed at trail.ts readResolutionEntries (title/file default to ''). For the verification record a walk holding any entry that normalizes to an empty title or file is UNREADABLE — owes nothing, stays listed, renders the unreadable row; scenario and task 1.2 fixture added; render spec's unreadable-row sentence cites it.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc03c-verification-record/specs/orbit-emit-composition/spec.md",
+          "orbit/changes/rc03c-verification-record/specs/orbit-report-rendering/spec.md",
+          "orbit/changes/rc03c-verification-record/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Proposal walk 2 (the external pass, GPT-6 Codex): 4 of 4 resolved, 0 stale; two obvious fixes and two method calls settled under Sal's delegation, all previewed at triage ('walk all'). The CRITICAL was a collision between walk 1's latest-RESOLVED rule and D-rc03c-4's contradiction refusal — narrowed so a shared key accepts the link, a declared gap. The absent-field refusal now names the owed keys; the residual check's co-commit limit is declared; a walk with an unnameable entry is unreadable for the record. Validates --strict.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal rc03c-verification-record"
+}

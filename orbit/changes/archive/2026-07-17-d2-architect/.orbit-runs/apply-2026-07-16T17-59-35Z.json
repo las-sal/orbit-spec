@@ -1,0 +1,21 @@
+{
+  "command": "apply",
+  "timestamp": "2026-07-16T17:59:35Z",
+  "change": "d2-architect",
+  "final_assessment": "Applied all 20 tasks across 5 groups in one session. Group 1: src/core/architecture/{parser,state,validate}.ts + orbit architecture status/show/validate CLI (fence-aware near-miss grammar; computed stage state with completion composition; bucketed --json; 24 unit tests). Group 2: architecture:{doc,stage} metadata citation (Zod + round-trip tests) with two-level dangling resolution owned by orbit validate; explore minimal-metadata, propose staged-metadata-merge, and archive stage-line-garnish body edits. Group 3: the arc doc retrofitted in place as the FIRST parseable instance (six kebab stage headings, Depends-on/Complete slots — D1's ratified mark user-confirmed — all six hand-maintained state paragraphs deleted per R-d-4); archived D1 change backfilled with its citation; this change stamped with the first live citation; CLAUDE.md position pointer now names orbit architecture status. Group 4: the 16th workflow /orbit:architect (all six registries), review --as architecture (six passes, no gate, architecture trail), audit-drift staleness checks (a)-(d), onboard program-architecture layer + table rows, address-reviews four-location OUT row + architecture-scoped logs; 15-to-16 sweep; README install-surface audit proved NO-EDIT-NEEDED (install/update sections carry no counts, file lists, or per-workflow invocations); parity hashes re-pinned with architect joining the maps. Group 5: live-arc exit-criteria tests; 1707 tests green (baseline 1670 + 37 new); local surface regenerated to 16 skills + 16 commands with on-disk spot-checks; arc D2 section pointed at the change per R-d-7, status-log entry appended, stale hand-maintained-era header prose de-staled; R-d-9 handoff audit at this seam: residency clean, boot chain current, exit criteria 1/2/4 mechanically test-covered and 3 shipped as the generated body.",
+  "next_recommended": "/orbit:review --as system d2-architect",
+  "kind": "workflow",
+  "tasks_completed": 20,
+  "tasks_remaining": 0,
+  "user_validation_remaining": 0,
+  "chunk": null,
+  "chunk_name": null,
+  "chunk_complete": true,
+  "tasks_completed_this_session": 20,
+  "consent": "user-invoked",
+  "gate_overridden": {
+    "gate": "review-proposal",
+    "state": "unpassed",
+    "reason": "cadence class 'in-context' has no fresh pass"
+  }
+}

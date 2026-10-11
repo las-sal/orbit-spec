@@ -1,0 +1,9 @@
+{
+  "command": "propose",
+  "timestamp": "2026-10-11T19:56:36Z",
+  "change": "rc09b-tool-inventory",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Proposed rc09b-tool-inventory in consume mode from its exploration. One capability, orbit-cli-grammar: ADDED `Every command head on the generated surface is a recorded tool or a declared exemption` (read table over shell fences and flagged inline segments, a fenced `inventory` exemption block held exact both ways, recorded tools derived from the sweeps, the D-rc09b-1 residual verbatim as its named limit) and MODIFIED the `orbit` snippet requirement, whose stale tool-set table and its named limit become a pointer. Q-rc09b-1 and Q-rc09b-2 resolved at propose as D-rc09b-3/-4 (scope). The Mechanism entry was updated before generation with an exact-rule probe (Case 2: head/tail, digit flags, 17 refused inline spans). Size 1 / 2 / 6455 / 11, no breach. Fingerprint 1/1.",
+  "next_recommended": "/orbit:review rc09b-tool-inventory — proposal artifacts ready; review before apply"
+}

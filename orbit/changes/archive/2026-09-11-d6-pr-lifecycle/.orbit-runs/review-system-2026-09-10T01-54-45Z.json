@@ -1,0 +1,146 @@
+{
+  "command": "review",
+  "timestamp": "2026-09-10T01:54:45Z",
+  "change": "d6-pr-lifecycle",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": [
+    "--fresh"
+  ],
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 1,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 3,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "CRITICAL",
+      "dimension": "correctness",
+      "file": "src/commands/workflow/status.ts",
+      "line": 129,
+      "title": "The bodies read the PR regime from `orbit status --json` field `pr`, but the bare tier's no-active-changes rung emits `{changes: [], message}` with NO `pr` key — so in any repo with zero active changes and no architecture doc the PR layer silently resolves to `never` on the first propose.",
+      "recommendation": "Reproduced in a scratch project (`orbit/config.yaml` = `pr: per-proposal`, no changes, no docs): `orbit status --json` printed `{\"changes\": [], \"message\": \"No active changes.\"}` (exit 0) while `orbit status --full --json` printed `\"pr\": \"per-proposal\"`. The cause is the degradation ladder at status.ts:117-131: rung 1 (`printSprintView`, line 318) and rung 2 (`printFullView`, line 406) carry `orientation.pr`, but rung 3 (line 129) writes a literal object that predates D6. The shared reference (pr-choreography.ts:50-51, 296-300) and both body pointers (propose.ts:274, ff-change.ts:138-141) instruct: read field `pr`; `never`, ABSENT, or inert → RETURN IMMEDIATELY, probe nothing, emit no note. An absent key is therefore read as `never` by design — exactly on the path a fresh adopter's FIRST change (and every change proposed when nothing else is active and no arc doc exists) takes. The dogfood in this repo cannot catch it: this repo has parseable docs, so it lands on rung 2. The walk that ratified surfacing `pr` on the orientation surface (address-reviews-2026-09-01T15-08-26Z, option A) covered rungs 1 and 2 in test/commands/status-orientation.test.ts:312-319 and :402-405 but not rung 3.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Add `pr: orientation.pr` to the rung-3 JSON object at status.ts:129 so every bare-tier `--json` shape carries the field, and add a status-orientation test for the zero-changes/zero-docs case asserting `payload.pr`. Ripple: `orbit-orientation`'s JSON requirement text (`the existing no-changes message, unchanged`, status.ts:119 comment; spec line 349-350) needs a delta line acknowledging the added key — this finding then merges with the missing-`orbit-orientation`-delta finding below."
+        },
+        {
+          "label": "B",
+          "body": "Change the reference (pr-choreography.ts:50 and :297) and both body pointers (propose.ts:274, ff-change.ts:138) to read `orbit status --full --json`, whose `printFullView` path is unconditional and already carries `pr` on every rung (verified in the scratch project). No engine change; keeps rung 3 byte-identical. Still needs the one-line orientation delta documenting `pr` on the `--full` shape, and the reference should say WHY `--full` (the bare tier's ladder can omit the key)."
+        }
+      ]
+    },
+    {
+      "pass": "0",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "src/core/templates/workflows/pr-choreography.ts",
+      "line": 209,
+      "title": "The archive-tail reference tells the AI to validate a stored URL live but never says what to DO when validation fails; its nearest clause (\"cannot observe → skip the tail\") points the reader at the opposite of the spec's behavior.",
+      "recommendation": "PR_ARCHIVE_TAIL_SECTION step 2 (pr-choreography.ts:209-211) reads: \"Validate a stored `url` LIVE … Check it against the SAME four predicates the fallback uses — resolved repository, head branch, resolved base, open state.\" and stops. Nothing in the reference states the consequence the delta specifies at orbit-archive-modifications/spec.md:88-101 and its scenario at :273-276: a failed validation skips ONLY the description rewrite/stage-entry append and the flip, names the SPECIFIC reason (`closed` / `merged` / `retargeted to <base>` / `repository mismatch` / `not found`), lets commit and push still proceed, and never falls through to the query as a second chance. The only failure clause in the vicinity (:217-219, \"Cannot observe (no `gh`, failed query) → elide the emit's PR fields and skip the tail\") would lead a reading AI to skip the WHOLE tail — leaving the archive commit unpushed — while the emit-fields paragraph (:224-226) already treats positive invalidation as a distinct case. Task 4.2 is checked as implementing this (tasks.md, `VALIDATE a stored url LIVE … a failure skips ONLY the description rewrite and flip with the specific reason … never falls through to the query`), but the body text that would make it performable is absent. Add a short 'On positive invalidation' bullet under step 2 (and mirror the four `gh pr list` axes once in the tail section — `--repo`, `--head`, `--state open`, base-filtered — since the tail reference does not include PR_PROPOSE_SECTION where they are spelled out at :146-147), then re-pin the archive parity hash."
+    },
+    {
+      "pass": "0",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-pr-lifecycle/spec.md",
+      "line": 379,
+      "title": "The resolved-regime field on the orientation surface — the ONE engine surface the bodies are now told to read — has no owning requirement, is absent from the zero-engine-git surface enumeration, and contradicts the archived `orbit-orientation` JSON-shape requirement with no delta.",
+      "recommendation": "The 2026-09-01 walk (option A) added `pr: PrMode` to `Orientation` (src/core/orientation.ts:103, :626) and to both JSON tiers (status.ts:321, :406), and rewrote the reference to say `orbit status --json`, field `pr` is THE way to resolve the regime. But: (1) `orbit-pr-lifecycle`'s zero-engine-git requirement still says \"The engine's total surface for this capability is the `pr:` config reader, the optional structured `pr_attachment` … and the optional flat `pr_url`/`pr_state`\" (spec.md:379-382) — the enumeration is stated as normative and is now false; (2) design.md:128 (D-d6-7, \"Engine surface: the `pr:` config reader … + the structured `pr_attachment` …\") and proposal.md:61 carry the same stale enumeration; (3) the baseline `orbit/specs/orbit-orientation/spec.md:349-350` says bare `--json` emits `{sprint, last, next, also, waiting}` and `--full` emits `{program, workstreams, last, waiting}` — the change alters both shapes and there is no `orbit-orientation` delta under orbit/changes/d6-pr-lifecycle/specs/ (verified by `ls`), so after archive the baseline will describe a shape the engine no longer produces and the field the bodies depend on will be undocumented in any spec. Add an `orbit-orientation` MODIFIED delta for `JSON output for both tiers` naming `pr` (then `orbit fingerprint d6-pr-lifecycle` to stamp the new base), and amend the zero-engine-git enumeration + D-d6-7 to include the orientation read surface. Resolve together with the CRITICAL above, since option A there changes the same requirement."
+    },
+    {
+      "pass": "0",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "src/core/templates/workflows/ff-change.ts",
+      "line": 135,
+      "title": "Neither body anchors phase 1 at a step position; for `ff` this is material because Step 2 (`orbit new change`) writes `orbit/changes/<name>/.openspec.yaml` before any 'artifact' exists, so a reader who reaches the PR section after Steps 1-5 reproduces the refused switch the ordering exists to prevent.",
+      "recommendation": "Both PR sections sit at the END of their bodies (propose.ts:272-290, ff-change.ts:135-149) and say only \"select + switch BEFORE generation\". The body's own convention for ordering additions is a positional anchor (\"Mode detection (NEW Step 0 — runs before upstream Step 1)\", propose.ts:129). For propose the intended slot is derivable: Step 0d's move runs \"After all upstream steps complete\" (propose.ts:205) and the reference's generation-input precondition presupposes `orbit/explore/<name>/` is still in place (pr-choreography.ts:79-81), so phase 1 must run after Step 0 and before Step 0a/upstream Step 1 — but nothing says so. For ff the slot is genuinely ambiguous: the upstream steps (ff-change.ts:26-33) create the change directory at Step 2 — `orbit new change` writes `.openspec.yaml` via src/utils/change-metadata.ts:46 — and on the compatible-reuse path that file is tracked on the target branch, so a phase-1 switch after Step 2 is exactly the `git switch` refusal the harness demonstrates (test/integration/pr-lifecycle/phase1.test.ts:156-170). Add an explicit anchor in each body — e.g. \"NEW Step 0.5 — PR phase 1: runs after mode detection and BEFORE Step 0a / upstream Step 1 (propose); BEFORE Step 2 `orbit new change` (ff)\" — and state that Phase 3 runs after Step 0d's move (its commit scope names the moved material and the explore-dir deletions, pr-choreography.ts:132-134). Re-pin the two parity hashes."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/config.yaml",
+      "line": 43,
+      "title": "The shipped `pr:` config commentary tells the user that in EVERY active mode the archive flow flips the PR READY — false for `per-architecture`, where stage archives append only and the flip is the human's act at arc-done.",
+      "recommendation": "orbit/config.yaml:43-44: \"In every active mode a draft PR opens at propose and the archive flow commits, pushes, rewrites the description, and flips it READY.\" This is the text a user reads when choosing a mode, and it contradicts the delta's Shape A requirement (`orbit-pr-lifecycle` spec.md:209-212: \"Stage archives NEVER flip the program PR … The program PR's READY flip is a HUMAN ACT — orbit never performs it\"), the tail reference (pr-choreography.ts:267-269), onboard.ts:265 (\"or append this stage's entry, for a program PR\"), and the arc-done readout in architect.ts. Task 1.2 is checked. Reword to distinguish the paths, e.g. \"per-proposal: the archive tail commits, pushes, rewrites the description, and flips READY; per-architecture: the tail appends a stage entry and the program PR's READY flip is yours at arc-done. MERGING IS ALWAYS THE USER'S ACT.\""
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/d6-pr-lifecycle/design.md",
+      "line": 175,
+      "title": "Category 5 Touchpoints divergence: four `actual_unpredicted` paths (two engine source files, two tests) — the engine-computed permanent record of the walk's option-A resolution, unexplained anywhere a cold reader will look.",
+      "recommendation": "`orbit status --change d6-pr-lifecycle --boot --json` reports `touchpoints.actual_unpredicted: [\"src/commands/workflow/status.ts\", \"src/core/orientation.ts\", \"test/commands/config-profile.test.ts\", \"test/commands/status-orientation.test.ts\"]` and `predicted_unsatisfied: []`. Per the audit-drift skill's category-5 rule (SKILL.md §7.5), substantive source paths are WARNING and tests SUGGESTION; this entry folds all four. The two source files were touched by the 2026-09-01 walk's ratified option A (address-reviews-2026-09-01T15-08-26Z.json, ripple_cascade.applied), AFTER the map froze — the predicted list is parsed live from design.md (src/core/boot-render.ts:95-96) but the baseline rule at orbit/specs/orbit-propose-modifications/spec.md:37 freezes it once apply commits exist, so amending the section is not the fix. Record the provenance instead: one dated sentence in design.md outside the frozen section (e.g. under D-d6-7 or Risks) or in the at-archive notes stating that status.ts/orientation.ts entered scope via the system-walk resolution that surfaced `pr` on the orientation tier, so every future category-5 sweep reads a decision rather than drift."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "src/core/templates/workflows/archive-change.ts",
+      "line": 367,
+      "title": "Archive body step numbering is out of order: 'NEW Step 5.7 — The PR-attached tail' is placed before 'NEW Step 5.6 — Stage-line garnish', so the numbers imply the readout garnish precedes the tail while the text order (correctly) runs emit → tail → readout.",
+      "recommendation": "archive-change.ts:367 (`## NEW Step 5.7 — The PR-attached tail (AFTER the emit …)`) precedes :379 (`## NEW Step 5.6 — Stage-line garnish in the completion readout`) and :383 (Step 5.8 echo). The execution order the text implies is right (the tail must complete before the readout that names the READY PR and the 5.8 merge-seam echo), but a step-numbered body is read as a sequence; renumber (tail 5.6, garnish 5.7) or add \"runs before the completion readout (Step 5.6/5.8)\" to the tail heading. The content-fidelity test anchors on headings (`## NEW Step 5.7`), so update test/core/templates/orbit-content-fidelity.test.ts:373-381 and the archive parity hash together."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "src/core/templates/workflows/bulk-archive-change.ts",
+      "line": 287,
+      "title": "Bulk-archive's readout must name attached changes 'with their PR URLs' but the body names no source for the URL or the attachment, unlike the single archive's Step 5.45.",
+      "recommendation": "bulk-archive-change.ts:285-288 states the obligation (\"SHALL NAME the PR-attached changes it left DRAFT, with their PR URLs\") without saying where the AI reads them; the single-change body spells it out at archive-change.ts:346-347 (latest attachment-bearing propose OR ff emit on the change's trail). Add one clause: resolve each change's `pr_attachment` from its latest propose/ff emit exactly as Step 5.45 does, report `url` when present and 'attached, no PR recorded' when the record lacks `url` — read-only, no `gh` query (the bulk flow performs no remote work). Re-pin the bulk-archive parity hash."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "pass": "2",
+      "title": "The `pr:` reader's inert-value warnings are unreachable — no engine path calls them, and the reference misattributes them",
+      "evidence": "Resolved: `grep -rn resolvePrMode src/` now hits src/core/orientation.ts:2 (import) and :626 (`const pr = resolvePrMode(readProjectConfig(projectRoot));`); `Orientation.pr` at orientation.ts:103; surfaced at status.ts:321 (sprint JSON) and :406 (full JSON). The reference no longer misattributes: pr-choreography.ts:50-57 says read `orbit status --json` field `pr` and that the warning comes from the engine's reader. Empirically, in a scratch project with `pr: bogus`, `orbit status --json` printed exactly one stderr line `Unrecognized 'pr' value in config: 'bogus' … treating as 'never'`; the two-key map shape printed one `Invalid 'pr' field … got a map` line. (The rung-3 omission of the `pr` key is a NEW finding above, not a regression of this one — the reader is reachable; the field is missing from one output shape.)"
+    },
+    {
+      "pass": "6",
+      "title": "Touchpoints omits `pr-choreography.ts`, the change's one new source file, and freezes at the first apply commit",
+      "evidence": "Resolved: `orbit status --change d6-pr-lifecycle --boot --json` → `touchpoints.predicted` carries `src/core/templates/workflows/pr-choreography.ts` as its first entry (13 predicted entries) and `predicted_unsatisfied: []`; the file is not in `actual_unpredicted`."
+    },
+    {
+      "pass": "0",
+      "title": "Scaffolding residue in the new harness fixture: a no-op git call and a CommonJS require in an ESM module",
+      "evidence": "Resolved: test/integration/pr-lifecycle/phase1.ts:14 is `import { spawnSync } from 'node:child_process';` at top level; `grep -n \"void gh\\|require(\" test/integration/pr-lifecycle/phase1.ts` returns nothing; the remaining `rev-parse --git-dir` probe at :83-84 uses its result (`if (view.status !== 0) return …`), so it is not a discarded call."
+    }
+  ],
+  "commentary": "I read the change against its own thesis rather than its tests: every scenario in the seven deltas was traced to the body text a reading AI would actually execute, and the engine's promises were tried on a disposable project rather than assumed from the unit suite. The engine half holds — zero engine git is verifiably true (the only child-process use under src/ outside feedback/config-editor is the read-only diff inspection in apply-state.ts), the write gate's structural validation of `pr_attachment` matches the delta clause for clause, the fingerprints verify, and the generated references are byte-identical to the built templates. The pattern behind the findings is a seam between two halves that were each finished correctly: the walk that wired the reader into the orientation surface stopped one output shape short of the path a fresh adopter's first change takes, and left the specs describing an engine surface smaller than the one the bodies now depend on. The archive tail reference has the same texture — the spec's careful invalidation semantics were transcribed into the emit-fields paragraph but not into the instruction that governs the tail's writes, so the body's nearest failure clause points the reader the wrong way. Residual risk sits where the design says it does: the outward writes are prose-only by ratified decision, this repo's own dogfood cannot exercise the fresh-repo ladder rung or the no-CI note, and the arc doc's stage section still carries the superseded three-value sketch pending at-archive note 5.5 — expected, not drift.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "6"
+  ],
+  "passes_skipped": [
+    "4",
+    "5"
+  ],
+  "final_assessment": "1 critical, 5 warning, 2 suggestion.",
+  "iteration": 2,
+  "next_recommended": "/orbit:address-reviews d6-pr-lifecycle --from-file orbit/changes/d6-pr-lifecycle/.orbit-runs/review-system-2026-09-10T01-54-45Z.json"
+}

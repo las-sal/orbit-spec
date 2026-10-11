@@ -1,0 +1,70 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-08T03:12:51Z",
+  "change": null,
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "from-file",
+  "source_path": "orbit/.orbit-runs/audit-drift-2026-10-08T03-11-00Z.json",
+  "source_command": "audit-drift",
+  "source_token": "2026-10-08T03-11-00Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 1
+  },
+  "pushback_verification": "verified",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "SUGGESTION",
+      "title": "The verify-pass scenario's example names the v4 command while the shipped schema is v5",
+      "marker_source": "audit-drift",
+      "file": "orbit/specs/orbit-run-summary-emit/spec.md",
+      "line": 424,
+      "classification": "trivial_fix",
+      "action": "Restated the example under spec-driven v5: with nothing covering the first system slot (`invoked`), the default review preference presents the pair command, so the graph's lead is `/orbit:review --as system --reviewer blind-pair foo`, which systemReviewNext passes through. The scenario's rule, that the lead is the graph's command and never a literal, is unchanged, and so is its title (the scenario-map key). A prose repair in a baseline scenario's example, as the 2026-10-03 and 2026-10-05 project walks made.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "under `spec-driven` v4, whose first uncovered system slot is `blind-pair`"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/specs/orbit-run-summary-emit/spec.md",
+            "text": "\"/orbit:review --as system --reviewer blind-pair foo\"` under `spec-driven` v5"
+          }
+        ],
+        "searched": [
+          "spec-driven` v4",
+          "--as system --fresh foo"
+        ],
+        "scope": [
+          "orbit/specs",
+          "src/core/templates",
+          "CLAUDE.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "One of one resolved: the verify-pass scenario's example restated under spec-driven v5.",
+  "iteration": 15,
+  "next_recommended": "No markers remain in scope; the project trail records this walk.",
+  "ripple_misses": 0
+}

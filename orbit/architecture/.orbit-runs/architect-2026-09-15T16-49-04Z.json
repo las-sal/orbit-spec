@@ -1,0 +1,27 @@
+{
+  "command": "architect",
+  "timestamp": "2026-09-15T16:49:04Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "rc07 re-cut to the one-voice half and rc07b-reference-roundtrip declared. The notable thing is WHEN both rulings fired: R-crc-9's first application came after two proposal passes and 48 findings proved a change too wide; this one fired at EXPLORATION, before anything was written, on a charter that had carried both halves since drafting — nothing new made it visible except applying the test on purpose. R-crc-10 likewise DECIDED rc07's shape rather than auditing it: the engine can see a number in prose but not that it is a restatement or which source it restates, so rc07 is a RECORD (an author-written marker naming a source) plus a CHECK against declared links only, and exit criterion 1 is restated from `a restated figure` to `a MARKED figure`. The domain is the WHOLE PROJECT, ratified by Sal — three of four restated-figure defects this session were in CLAUDE.md, which no validator reads — and closes three ways, all SOURCED. The exclusions forced a principle beyond this stage: the lint reads LIVING documents, never RECORDS, because a figure in an archived change was true when written, and living-versus-record is decidable BY PATH so no judgment is asked of the engine. rc07b is the cleanest worked contrast R-crc-10 has: same charter sentence, every input engine-owned, and its origin exact — a field-set comparison cannot tell a divergence from a refusal; running it can. Stage count seventeen to eighteen.",
+  "stages_touched": [
+    "rc07-artifact-lint",
+    "rc07b-reference-roundtrip"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [],
+  "handoff": {
+    "boot_sequence": [
+      "orbit/architecture/clean-up-review-cycle.md — rc07 carries the record-plus-check shape and the living-versus-records principle; rc07b is newly declared.",
+      "orbit/explore/rc07-artifact-lint/explore.md — five decisions and one worked case counting this session's four restated-figure defects and how each was caught.",
+      "orbit/explore/rc07-artifact-lint/sketches/rc07b-reference-roundtrip-charter.md — the draft this declaration came from.",
+      "test/core/emit-schema-parity.test.ts — rc01's field-set instrument and the KNOWN_DIVERGENCE exemption rc07b retires."
+    ],
+    "next_command": "/orbit:explore rc07-artifact-lint",
+    "model_hint": "rc07's open question is the marker syntax — start at an HTML comment beside the figure (invisible when rendered, greppable, no tooling) and let the review argue upward. rc07b is smaller and fully buildable today if you would rather ship something.",
+    "seam": "No active changes. rc07 and rc07b are both declared with neither depending on the other; rc07 is mid-exploration with the marker syntax open, rc07b is premised and buildable. rc13a's prerequisite is settled and waiting for its next attempt; rc13b stays blocked."
+  },
+  "next_recommended": "/orbit:explore rc07-artifact-lint"
+}

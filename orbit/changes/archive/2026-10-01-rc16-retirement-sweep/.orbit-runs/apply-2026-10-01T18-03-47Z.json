@@ -1,0 +1,24 @@
+{
+  "command": "apply",
+  "timestamp": "2026-10-01T18:03:47Z",
+  "change": "rc16-retirement-sweep",
+  "kind": "workflow",
+  "model": "claude-fable-5-1",
+  "consent": "user-invoked",
+  "tasks_completed": 11,
+  "tasks_remaining": 0,
+  "user_validation_remaining": 0,
+  "chunk": null,
+  "chunk_name": null,
+  "chunk_complete": true,
+  "tasks_completed_this_session": 11,
+  "files_touched": [
+    "orbit/changes/rc16-retirement-sweep/tasks.md",
+    "src/core/templates/workflows/explore.ts",
+    "test/core/templates/orbit-generated-surface.test.ts",
+    "test/core/templates/skill-templates-parity.test.ts"
+  ],
+  "diff_base": "54e4eeb2d9265264146bc28dd0f60b7e632df74e",
+  "final_assessment": "11 of 11 tasks done. one session, no chunking; 11 of 11 executable tasks done, 3.3 converted to an AT-ARCHIVE NOTE (exit 3 runs in the archive flow). The six body sites moved WITH their owners (D-rc16-3): the KNOWN paragraph is byte-equal to the delta's \"Owned, since shipped\" paragraph after unescaping; the widened grep over explore.ts reads 0; the eleven quoted sentences read 0 over the three deltas and the body, 8 over the three baseline files (4+1+3) — the count the archive sync retires, exit (1)'s measurement there. Two pins moved once with a dated note (getExploreSkillTemplate, orbit-explore); no other pin. ONE INSTRUMENT CORRECTION outside the design's touchpoints: test/core/templates/orbit-generated-surface.test.ts's mirror assertion resolved all three orbit-conventions fences through the Mechanism-fence anchor and both orbit-explore-modifications tables through the re-entry-table anchor — this change's conventions delta is the first active delta to hold the Mechanism-grammar block without the status-header block, so the shared lookup returned a text the status fence is not in, failing on the committed PROPOSAL tree before any body edit (verified by stash); each mirror now resolves its owner by its OWN anchor through the unchanged helper, the form every other ownerText caller already used. No engine code, no new test. ONE NAMED LIMIT outside the enumerated set: the regenerated skill's exemplar fence still says \"rc13b\" four times inside the two bounded-closure-semantics entries quoted verbatim — quoted history, not living prose, left as is. Exit (2) MET as written: three directories, MODIFIED-only, validate --strict valid, fingerprints 6/6 verified. 2376 tests green (100 files).",
+  "next_recommended": "/orbit:review --as system --fresh rc16-retirement-sweep"
+}

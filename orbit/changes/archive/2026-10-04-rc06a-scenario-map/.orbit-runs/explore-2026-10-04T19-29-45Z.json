@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-10-04T19:29:45Z",
+  "change": "rc06-scenario-test-map",
+  "kind": "workflow",
+  "model": null,
+  "final_assessment": "Nine decisions, no open questions. The map links from the TEST side (a `@scenario` tag keyed by the capability/requirement/scenario title triple, measured unique over 1090 baseline scenarios), with a closed set of cover kinds (behaviour, text, observed, untestable) never summed; it is ENGINE-COMPUTED at `orbit status --change <name> --scenarios` and stored in no emit; every scenario in a change's ADDED/MODIFIED blocks owes a declaration, no baseline backfill. Four rules, each with a Mechanism entry (three DERIVED or SOURCED, zero open). Sal ratified a split: rc06a-scenario-map (grammar, surface, validate check) and rc06b-map-readers (verify, Pass 0) — to be declared in the program doc by an architect session. rc10's charter names a verify emit that will never exist; carried to rc10.",
+  "decisions_captured": 9,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 4,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose rc06-scenario-test-map — 4 live rules accounted; formalize when you are ready (or /orbit:explore rc06-scenario-test-map to keep refining)"
+}

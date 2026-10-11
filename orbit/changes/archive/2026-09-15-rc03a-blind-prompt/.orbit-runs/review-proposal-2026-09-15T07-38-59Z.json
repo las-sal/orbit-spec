@@ -1,0 +1,141 @@
+{
+  "command": "review",
+  "timestamp": "2026-09-15T07:38:59Z",
+  "change": "rc03a-blind-prompt",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "fresh": true,
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "mark": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 2,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 2,
+      "warning": 2,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 1,
+      "warning": 2,
+      "suggestion": 0
+    }
+  },
+  "findings": [
+    {
+      "dimension": "correctness",
+      "severity": "CRITICAL",
+      "title": "The external-handoff branch makes no `orbit status --change --json` call — the \"call it already makes\" premise is false",
+      "file": "orbit/changes/rc03a-blind-prompt/specs/orbit-review-external/spec.md",
+      "line": 5,
+      "recommendation": "The entire external-handoff reference (src/core/templates/workflows/review.ts:288-496) reads only `orbit list --json` (305), `git status --porcelain`/`git rev-list` (325-326), and file globs over `.orbit-runs/` (334, 344-346, 352). There is no `orbit status` invocation in that branch — the one at review.ts:766 is Step 4 of the MAIN body, which `--reviewer external` does not run. The normative delta text, design.md D1, explore.md:31 and tasks.md 1.1 all assert a call that does not exist. Rewrite the requirement to say the command SHALL run `orbit status --change <name> --json` as a NEW step ordered before the Cycle-context step, add a task for it, and correct proposal.md's \"both read a slot they already have access to\" plus design.md's cost argument, which leans on it."
+    },
+    {
+      "dimension": "correctness",
+      "severity": "CRITICAL",
+      "title": "`next_hint_keys.slot` is ABSENT in two common current-engine states, so fail-closed withholds from exactly the sequential iterations D4 protects",
+      "file": "orbit/changes/rc03a-blind-prompt/design.md",
+      "line": 48,
+      "recommendation": "D3 enumerates three undeterminable-slot causes. Two more exist on a CURRENT engine with a reviewed gate, both routine: (a) `canonicalNextForReviewed`'s unresolved-findings branch returns `{cmd: '/orbit:address-reviews …'}` with NO `slot` key (gates.ts:864-866) — the normal state between a review and its walk; (b) when every gate has passed, `next_hint_keys` is `{phase: g.before}` with no slot (instruction-loader.ts:463-471). In proposal mode (cadence `[independent, in-context]`) there is no `openPair` to outrank (a), so a sequential external iteration run while findings stand gets slot-absent, fails closed, and loses cycle context — contradicting proposal.md:40 (\"Not BREAKING\") and stage exit criterion (2). Either key on a POSITIVE `blind-pair` signal, or emit a slot on those paths, or narrow fail-closed to \"the gate's cadence CONTAINS blind-pair\" — and state which."
+    },
+    {
+      "dimension": "coherence",
+      "severity": "CRITICAL",
+      "title": "The ADDED requirement's fail-closed clause blinds every architecture-mode review, contradicting a live baseline requirement",
+      "file": "orbit/changes/rc03a-blind-prompt/specs/orbit-review/spec.md",
+      "line": 5,
+      "recommendation": "The requirement binds \"any review pass … in EVERY reviewer class\" and fails closed when \"the change declares no reviewed gate\". Architecture mode has no change and no gate: review.ts:761 routes it to `orbit architecture status --json`, and orbit/specs/orbit-review/spec.md:392 confirms it has no gate. Every architecture pass would therefore skip the Step-5 read (review.ts:783) — but orbit/specs/orbit-review/spec.md:272 REQUIRES architecture mode to hand-compute its iteration note from prior `review-architecture-*.json` emits, and review.ts:808-810 makes that read mandatory. The change mentions architecture mode nowhere. Add an explicit architecture-mode carve-out plus a scenario (no cadence, so no pair, so the rule does not apply), or ship the MODIFIED delta on `Iteration note when prior runs exist` that resolves the conflict."
+    },
+    {
+      "dimension": "completeness",
+      "severity": "CRITICAL",
+      "title": "Suppressing the Cycle context section does not close the leak — the prompt template separately directs the external reviewer to read `.orbit-runs/`",
+      "file": "orbit/changes/rc03a-blind-prompt/proposal.md",
+      "line": 54,
+      "recommendation": "The prompt template (review.ts:573-574, `REVIEW_EXTERNAL_PROMPT_TEMPLATE_REFERENCE` -> `references/prompt-template.md`) lists under \"Project context (read first)\": \"`orbit/changes/<change-name>/.orbit-runs/` — iteration history; see what's already been addressed in prior cycles\". A blind-pair member handed that bullet is instructed to open the directory holding its partner's emit, so exit criterion (1) could be grep-satisfied while the prompt still points at the findings. The Cycle-context section's own shape (review.ts:576-584, incl. \"Do not push back on stale findings\") also lives in that template, not in external-handoff.md. Name `prompt-template.md` in Impact and Touchpoints; add a task making the `.orbit-runs/` bullet slot-conditional; extend task 4.1 and task 3.5's grep to cover the generated prompt-template.md."
+    },
+    {
+      "dimension": "completeness",
+      "severity": "CRITICAL",
+      "title": "Tasks 3.1-3.4 specify tests of behavior no engine code implements",
+      "file": "orbit/changes/rc03a-blind-prompt/tasks.md",
+      "line": 29,
+      "recommendation": "The Cycle context section is composed at runtime by the reviewing AI from a markdown reference (review.ts Step 7, line 362). A grep of `src/` finds no engine-side prompt composition (only emit-composition.ts:953 derives a findings path from a prompt path). So nothing exists for a genre-table test (3.1), a status-call-throws test (3.2), a byte-identical-render test (3.3), or a no-prior-summary-read test (3.4) to execute against — only 3.5's surface grep is writable, and design.md:104's `test/core/` touchpoint has the same problem. Recast section 3 as assertions over the GENERATED surface text, or declare in design.md that the rule is body-enforced and name what the instruments actually measure."
+    },
+    {
+      "dimension": "correctness",
+      "severity": "WARNING",
+      "title": "The rule keys on the RECOMMENDED-NEXT slot, not on the class of the pass actually being run",
+      "file": "orbit/changes/rc03a-blind-prompt/specs/orbit-review/spec.md",
+      "line": 5,
+      "recommendation": "`next_hint_keys.slot` is the slot covered by the engine's canonical NEXT command (instruction-loader.ts:446-450 reading `g.nextSlot`, set at gates.ts:838-839), not a property of the invocation in hand. While a pair is open the slot stays `blind-pair` for every reader (gates.ts:857-862), so an `in-context` pass invoked in that window is blinded too — though an in-context pass can never satisfy a blind-pair slot (`passSatisfiesSlot`, gates.ts:93-96) and, per the rc03 charter, in-context IS the verification genre that most needs prior context. Either scope the rule to independent classes when the slot is `blind-pair`, or state that the slot is a property of STATE and that blinding an in-context pass in the pair window is intended, with the reason."
+    },
+    {
+      "dimension": "completeness",
+      "severity": "WARNING",
+      "title": "The stated duplicate-findings cost understates it: a blinded re-report feeds the gate's convergence predicate and burns budget",
+      "file": "orbit/changes/rc03a-blind-prompt/design.md",
+      "line": 65,
+      "recommendation": "The risk bullet says duplicates are \"suppressed as stale\" by the walk. But the gate reads the emit's IMMUTABLE severity counts, not the walk's suppressions: `evaluateReviewed`'s confirm step tests `latestIndep.critical > 0` for both `no-new-findings` (gates.ts:537) and `findings-resolved` (gates.ts:555), and `hasNewFindings` compares against prior passes (gates.ts:546). A blinded member that re-reports a CRITICAL closed by a ratified DECISION (no artifact edit, so pushback-against-current-state cannot catch it) fails the confirm predicate and buys a further independent pass against `budget: 3`. Name this consequence in the requirement's deliberate-cost paragraph and in design.md's risk bullet, and say whether it is accepted or mitigated."
+    },
+    {
+      "dimension": "coherence",
+      "severity": "WARNING",
+      "title": "R-crc-7 requires a decision procedure to be a DECISION TABLE, not prose plus a blanket default",
+      "file": "orbit/changes/rc03a-blind-prompt/specs/orbit-review-external/spec.md",
+      "line": 5,
+      "recommendation": "R-crc-7's authoring corollary (clean-up-review-cycle.md:173-182) is explicit: a decision procedure is specified as a decision table or normative pseudocode, \"where empty cases are explicit by construction\", and \"a blanket default does not substitute for stating them\". rc03a's deliverable IS such a procedure and is specified as one ~1100-character prose paragraph whose undeterminable cases are covered by one fail-closed default — which is precisely how the two real absent-slot states went unstated. The table already exists in explore.md Case 1; lift it into the requirement with an explicit row for slot-absent and its causes."
+    },
+    {
+      "dimension": "coherence",
+      "severity": "WARNING",
+      "title": "The stage charter's \"Touches:\" line still names one capability; the change touches two",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 448,
+      "recommendation": "The rc03a stage section reads \"Goal G1. Touches: orbit-review-external.\" — but D-rc03a-4 deliberately adds `orbit-review` as the second capability and the change ships deltas for both. R-crc-1's ceiling is counted in capabilities touched, so the charter line is the figure a sizing check would read. Update the Touches line and the exit criteria (all phrased around the external prompt only, while the symmetry decision is half the deliverable), and add a task for it alongside 5.2's status-log entry."
+    },
+    {
+      "dimension": "correctness",
+      "severity": "WARNING",
+      "title": "Case 1's slot values for two of its five rows are wrong, in the evidence D4 rests on",
+      "file": "orbit/changes/rc03a-blind-prompt/explore.md",
+      "line": 60,
+      "recommendation": "Row 3 (\"pair complete + walked, confirming pass\") is labelled slot `external`, but with the system cadence `[blind-pair, in-context]` the next uncovered slot after a walked pair is `in-context` — `canonicalNextForReviewed` returns `slot: ev.neededSlot` at gates.ts:880-881, and `external` arises only from the confirm-failure branch at gates.ts:883-885. Row 4 (\"budget spent\") likewise: exhaustion is reported beside the state (gates.ts:811, 822-827) and does not determine the slot. The verdicts happen to be unaffected, but design.md:53 cites \"Case 1 walked all five slot states the cadence can produce\" as D4's justification, and the table in fact omits the slot-absent states that break the rule. Correct the two rows and add the absent-slot states."
+    },
+    {
+      "dimension": "correctness",
+      "severity": "SUGGESTION",
+      "title": "Two gates.ts line citations are off-target",
+      "file": "orbit/changes/rc03a-blind-prompt/design.md",
+      "line": 13,
+      "recommendation": "`gates.ts:877` is the closing brace of the `hasFresh && !hasExternal` branch; the line that renders `--fresh` for an empty blind-pair slot is 878. Same off-by-one at explore.md:87. Separately, explore.md:12/199 and the architecture charter (line 438) cite `gates.ts:113` (`case 'blind-pair':` in `commandForClass`) as \"why --fresh is the default first half\" — but that case is unreachable for the blind-pair path, because `canonicalNextForReviewed` intercepts `neededSlot === 'blind-pair'` at gates.ts:868 before reaching the `commandForClass` call at gates.ts:881. Cite 878 in all four places."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "The pattern behind almost every finding is the same one this change was written to fix, turned back on itself — a claim about the machine reasoned from memory rather than read off it. The central move, \"read the slot the engine already computes\", is a good move; but the branch that most needs the slot never calls the engine, the slot silently disappears on two of the engine's most-travelled paths, and the leak the change closes has a second mouth in a template file the change never opens. I probed hardest on the three things the charter treats as settled: whether `next_hint_keys.slot` really renders `blind-pair` where claimed (it does — both branches are real and correctly cited), whether the external-handoff branch has the status call it is said to have (it does not — I read all 208 lines of the reference), and whether the fresh half's non-leak is genuine (it is: Step 5's glob matches `review-<mode>-*.json` only, and the external partner's findings live under a name it cannot match, so the symmetry argument rests on a true premise). I verified the MODIFIED block against the baseline via `orbit fingerprint --check` and read both scenarios — nothing was dropped, and `validate --strict` is clean. The residual risk I could not retire sits in the gap between what the spec can require and what the artifact can enforce: everything here is prose an agent is asked to obey, with no engine surface to fail loudly, so the difference between \"the rule shipped\" and \"the rule ran\" is currently a grep over a markdown file. That is also the honest reading of the deferred attestation decision — the deferral is defensible, but it means this stage's guarantee is a promise, and the test plan as written measures something that does not exist.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "final_assessment": "5 critical, 5 warning, 1 suggestion.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc03a-blind-prompt --from-file orbit/changes/rc03a-blind-prompt/.orbit-runs/review-proposal-2026-09-15T07-38-59Z.json"
+}

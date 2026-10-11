@@ -1,0 +1,135 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-05T01:53:24Z",
+  "change": "rc08a-sweep-evidence",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "pass": "0",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "src/core/emit-composition.ts",
+      "line": 600,
+      "title": "A sweep.kept path that resolves to nothing is silently accepted, where the spec refuses an unresolved sweep path",
+      "recommendation": "Refuse a `kept` path that resolves to no file or directory, naming the entry and the path, exactly as `sweep.scope` is refused (`orbit-emit-composition`'s `The walk write gate checks sweep evidence`: \"A `sweep` path that resolves to nothing is refused\"), and add the case to test/core/emit-walk-sweep.test.ts. Alternatively, if `kept` is meant to be lenient, say so in the requirement; today the letter covers it and the code does not.",
+      "reproduction": "Scratch script driving dist/core/emit-composition.js composeAndWriteEmit('address-reviews', {change:'foo'}, …) in a disposable project, one resolved entry with sweep {retired:[], introduced:[], searched:[], scope:[], kept:[{path:'does/not/exist.md', why:'w'}]}. Expected per the spec: refused naming the path. Observed: WRITTEN address-reviews-<token>.json, warnings: []. Code: emit-composition.ts:600 `if (abs !== null) kept.push(abs);` drops the unresolved path with no error and no warning."
+    },
+    {
+      "pass": "1",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc08a-sweep-evidence/specs/orbit-emit-composition/spec.md",
+      "line": 17,
+      "title": "`kept` exempts a whole file, so a live leftover in a file that also quotes history passes the retired check, and no named limit says so",
+      "recommendation": "The change directory's own design.md, tasks.md and explore.md routinely carry history quoting old wording AND live prose, so `kept` will most often be applied to exactly the files where live leftovers also sit. State it as a named limit beside the markup and --keep-resolved-markers limits (a kept file is unchecked for that entry in full; retire a string specific to the live site to keep coverage), or narrow the exemption. Narrowing is new mechanism and routes to explore under R-crc-6.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Name the limit in `The walk write gate checks sweep evidence` and in Step 3d.5's `kept` line: a kept path is excluded from that entry's retired check in full, so a live site in the same file is not checked."
+        },
+        {
+          "label": "B",
+          "body": "Route a line- or occurrence-scoped `kept` (e.g. `{path, why, line}`) to rc08b's exploration as new mechanism; ship A meanwhile."
+        }
+      ],
+      "reproduction": "Disposable project; orbit/changes/foo/design.md holds 'D3 history: we first wrote seventeen blocks.' and, on a separate line, 'Live: the gate reads seventeen blocks today.'. Resolved entry with sweep.retired ['seventeen blocks'], kept [{path:'orbit/changes/foo/design.md', why:'D3 history'}]. Observed: WRITTEN, warnings []: the live line survives under a log that records the wording as retired."
+    },
+    {
+      "pass": "0",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc08a-sweep-evidence/specs/orbit-review/spec.md",
+      "line": 5,
+      "title": "The orbit-review requirement's (d) and Residual method still name files 'outside the scope', contradicting its own new (c) sentence that the residual check keys on the edit record",
+      "recommendation": "In `Verification-genre passes grade the walk record`, (c) now defines the SWEEP SCOPE to include `sweep.scope` and says the residual check keys on each entry's EDIT RECORD (`file` plus `ripple_cascade.applied`). But (d) still says the body 'checks the scope against git diff … naming each listed file outside the scope as a SUGGESTION', and the Residual method says 'name each listed file outside the scope'. Read with (c)'s definition, a file in some entry's `sweep.scope` but no edit record is NOT named, the opposite of design D6b and of the generated body (review.ts (d): 'outside every entry's EDIT RECORD'). The owner and the body diverge, and the body is right. Replace 'outside the scope' at both sites with 'outside every entry's edit record'; the scenario 'A file touched outside the record is named' ('in no owed entry's sweep scope') should be widened the same way.",
+      "reproduction": "grep -o \"naming each listed file outside the scope[^;]*\" orbit/changes/rc08a-sweep-evidence/specs/orbit-review/spec.md and grep -o \"name each listed file outside the scope[^—]*\" on the same file both match, beside (c)'s 'never what the residual check exempts: that check keys on each entry's EDIT RECORD'. The generated body's (d) reads 'outside every entry's EDIT RECORD'."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "src/core/templates/workflows/address-reviews.ts",
+      "line": 926,
+      "title": "Step 2's legacy-entry rule reads a pre-sweep entry's scope as file + ripple_cascade.applied, omitting the change directory the check scope includes",
+      "recommendation": "On a change-scoped walk, the CHECK SCOPE (`orbit-emit-composition`) always includes every file under the change directory. A finding in, say, the change's proposal.md against a legacy entry would then be attributed `scope` when that site was inside the scope the gate defines. Say 'read its scope as the change directory (on a change-scoped walk), its `file` and `ripple_cascade.applied`', so the `kind` counts mean the same across generations."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "src/core/templates/workflows/address-reviews.ts",
+      "line": 995,
+      "title": "Step 3d.5 points at specs for the check scope and the path rule, which an installed skill cannot open",
+      "recommendation": "The walker composes `introduced.path`, `scope` and `kept.path` without being told how a path resolves (`orbit/changes/<name>/…`, repo-relative, then change-relative; a trailing ':<line>' stripped; anything after the suffix resolves to nothing) or that the retired check reads every file under the change directory. Only the refusal teaches it. One sentence carrying both facts would let an adopter's walker write a record that passes the first time. The same applies to review.ts (c)'s 'a path resolves by the rule … states'."
+    },
+    {
+      "pass": "0",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc08a-sweep-evidence/design.md",
+      "line": 156,
+      "title": "Proposal Impact and design Touchpoints still predict hash pins and a ledger the apply measured as nonexistent, and omit the normalizeDisposition export",
+      "recommendation": "Tasks 2.3 and 3.2 recorded that no address-reviews or review pin exists in skill-templates-parity.test.ts, and 4.x needed no scenario-ledger entry. Yet design.md:156-157 still lists both as touchpoints and proposal.md:65 still names 'the template hash pins'. Both proposal Impact and design D6 say trail.ts exports only `stripLineSuffix`, while the apply also exported `normalizeDisposition` (recorded only in the rc03b pin comment). Align the three statements with what shipped."
+    },
+    {
+      "pass": "0",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 2744,
+      "title": "rc08a exit (1) says an absent introduced text is refused 'naming path and line'; the mechanism names path and text, since an absent text has no line",
+      "recommendation": "The requirement's table names the path and the text for the introduced check, and the line only for the retired check. Grade exit (1) as written and record why the line clause applies to the retired half only (R-crc-12's instrument/revision cases), rather than leaving the criterion to be read as unmet."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Passes: 0 was run inline rather than by invoking /orbit:verify, to avoid a second emit. It covered the 14 tasks (13 checked, 5.3 the user-validation handoff), validate --strict clean, the scenario map at 40 declared and 0 uncovered/orphan/malformed, and the full npm test at 114 files and 2751 tests green. 4 and 5 were skipped because orbit/lenses/ is absent. 6 (audit-drift) was skipped because invoking it writes its own project emit, which is outside a fresh worker's remit, and no CLAUDE.md or architecture drift beyond F7 was seen in the diff.\n\nProbed by execution against dist, not by reading. The path resolver against every file and ripple_cascade.applied value across all non-rc08a walk logs: 3123 paths, one containing '..', which the prefix mapping handles. A kept path that does not exist, a kept file with a live site, and an explore-scoped walk: that one already fails before this change at post-write composition, so it is not this change's. The pointer check, normalization reuse and token ordering read clean.\n\nThe texture: the engine half is solid. The defects sit at the edges of `kept`, the stage's one exemption, and in one owner sentence the apply's own body fix outran. That sentence is the very leftover pattern the stage exists to catch.\n\nScope note: `orbit status --boot` printed emit summaries for this change's trail. I used none of them for any finding.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3"
+  ],
+  "passes_skipped": [
+    "4",
+    "5",
+    "6"
+  ],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The mechanism does what the stage charters. The gate refuses surviving retired wording and absent introduced text over a computed scope, the pointer check reuses the reader's normalization, and the tests exercise every scenario by execution. What remains is three bounded corrections, none a redesign: refuse an unresolved kept path, name the whole-file kept limit, and bring the orbit-review owner sentence into line with the body it already governs. Walk them and archive. The kept limit is the one worth carrying into rc08b, because it is where a leftover can hide behind a recorded exemption."
+  },
+  "final_assessment": "0 critical, 3 warning, 4 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc08a-sweep-evidence --from-file orbit/changes/rc08a-sweep-evidence/.orbit-runs/review-system-2026-10-05T01-53-24Z.json"
+}

@@ -1,0 +1,12 @@
+{
+  "command": "explore",
+  "timestamp": "2026-08-11T18:41:35Z",
+  "change": "d6-pr-lifecycle",
+  "kind": "workflow",
+  "model": "claude-fable-5",
+  "final_assessment": "Exploration converged over one session: eleven decisions captured (branch granularity via citation-as-selector with the pr config vocabulary; Shape A single program PR with the generalized READY rule; seams-only refresh; agent-written landmark descriptions; the PR-attached archive tail absorbing commit+push+rewrite+flip; READY-not-merge with merging staying human; provenance-invariant PR behavior superseding the D1 skip leaning; flip-on-override; zero engine git), five rejections tombstoned, and two open questions carried to propose with standing recommendations (CI bootstrap scope; per-architect stage-entry authoring). Ready for consume-mode promotion.",
+  "decisions_captured": 10,
+  "open_questions_count": 2,
+  "open_questions_with_recommendation": "2 of 2",
+  "next_recommended": "/orbit:explore d6-pr-lifecycle — 10 decisions captured but 2 open questions remain; resolve open questions before formalizing"
+}

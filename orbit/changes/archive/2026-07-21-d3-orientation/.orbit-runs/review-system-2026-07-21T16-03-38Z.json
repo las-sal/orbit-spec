@@ -1,0 +1,77 @@
+{
+  "command": "review",
+  "timestamp": "2026-07-21T16:03:38Z",
+  "change": "d3-orientation",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "iteration": 2,
+  "depth": "full",
+  "scorecard": {
+    "completeness": { "critical": 0, "warning": 1, "suggestion": 1 },
+    "correctness": { "critical": 0, "warning": 2, "suggestion": 1 },
+    "coherence": { "critical": 0, "warning": 0, "suggestion": 0 }
+  },
+  "findings": [
+    {
+      "pass": 4,
+      "severity": "WARNING",
+      "file": "src/core/orientation.ts",
+      "line": 356,
+      "title": "Degraded EXPLORE omits a trustworthy `next`",
+      "recommendation": "Fault-isolation clause (b) keeps 'any tuple fields that remain trustworthy' and omits `next` only 'when its source computation failed'. For an explore, the only throwing operation is the metadata read — `next`'s source (the newest valid emit's next_recommended, the record that already supplies the kept `last`, or the Early canonical constant) never fails. Reproduced: broken-metadata explore with a valid trail renders `last` but drops `next` in both tiers, text and JSON.",
+      "recommendation_options": [
+        { "label": "A", "body": "Align implementation: in the catch block, when ws.kind === 'explore', set next from the newest valid emit's next_recommended (or the Early canonical string when emit-less) — same trust basis as the kept last; render it in the degraded rows of both tiers." },
+        { "label": "B", "body": "Align spec before sync: amend the fault-isolation requirement so the degraded variant names the trail `last` as the sole surviving tuple field, deleting the 'when its source computation failed' conditional that currently promises next for explores." }
+      ]
+    },
+    {
+      "pass": 4,
+      "severity": "WARNING",
+      "file": "src/commands/workflow/status.ts",
+      "line": 225,
+      "title": "Degraded row is not a 'one-line error note'",
+      "recommendation": "Clause (b) specifies 'a DEGRADED row (name + a one-line error note)', but the row prints err.message verbatim — real YAML errors embed multi-line code frames, so the row spans 6 lines (reproduced in bare and --full). Collapse the TEXT render to the first line (error.split('\\n')[0].trim()); keep the full string in the JSON error field."
+    },
+    {
+      "pass": 6,
+      "severity": "WARNING",
+      "file": "orbit/changes/d3-orientation/specs/orbit-orientation/spec.md",
+      "line": 78,
+      "title": "⟲N-count spec text not updated for the adjudicated spine-valid content-based counting",
+      "recommendation": "The strip requirement still defines the count as '(review ⟲6 ✓ = six review-proposal-*.json emits)' — a FILENAME count — and the fault-isolation skip-effects list omits chip counts. The shipped behavior (deliberate, external system iter-1 resolution 3) counts spine-valid emits with command 'review' by mode; a spine-invalid review-proposal-*.json counts under the spec's letter but not in the implementation. This text syncs verbatim into the live baseline at archive. Before archive: amend the parenthetical to count spine-valid review emits of the mode, and add chip counts to the fault-isolation skip-effects list."
+    },
+    {
+      "pass": 4,
+      "severity": "SUGGESTION",
+      "file": "src/core/orientation.ts",
+      "line": 372,
+      "title": "Quiescent stages of MALFORMED docs never reach WAITING",
+      "recommendation": "deriveWaiting receives only program.parseable, but the bucket builder computes stage states for malformed docs' well-formed sibling stages and both surfaces RENDER them — a quiescent-awaiting-ratification sibling would show in the listing yet miss WAITING, while the spec's clause (a) predicate has no doc-class qualifier. Either pass parseable + malformed stages to clause (a), or qualify the spec text ('of a parseable doc') before sync."
+    },
+    {
+      "pass": 2,
+      "severity": "SUGGESTION",
+      "file": "src/core/orientation.ts",
+      "line": 521,
+      "title": "Workstream identity is name-only",
+      "recommendation": "A live change and a staging explore sharing a name collide wherever identity is compared by name alone (also-line exclusion, sprint-first sort). Key comparisons by kind + name, or document the invariant that propose's staging-move makes the collision unreachable."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "title": "All 7 external system iter-1 resolutions",
+      "evidence": "Each re-verified landed at HEAD: the metadata fault boundary (reproduced degrading live), apply ▶ 0/N, spine-valid ⟲N counting in code, the shared tie-break direction, the buckets.ts extraction (BYTE-IDENTICAL pre/post architecture status via a pre-D3 worktree binary; --full program deep-equals the architecture buckets), count-keyed pluralization (both literals rendered), engine-frontier also-phases."
+    },
+    {
+      "title": "Baseline + surface sweep",
+      "evidence": "--change text and JSON byte-identical pre/post; no-changes message unchanged; the only baseline texts naming bare orbit status are the two delta'd engine-gates requirements; 16-skill surface with no orbit-status skill; the explore SKILL carries begin emit + collision + no-retro-fire; issue #3 confirmed closed; 1749/1749 green; strict valid; fingerprints 7/7."
+    },
+    {
+      "title": "shared.ts's 'Missing required option --change' string; arc log's 1742 count; balanced WAITING on the live change; bare-JSON top-level nulls",
+      "evidence": "All verified intended or out of scope: validateChangeExists serves other commands (status never reaches it bare); the arc entry is an append-only historical record; the live trail's T0/returned counts are balanced; the omit-never-null rule binds the workstream ENTRY (whose absent fields are omitted — verified), not the bare envelope."
+    }
+  ],
+  "iteration_note": "Note: 0 of these findings appeared in prior runs. 5 new this run (system trend: 4 → 7-external → 5, now 0 CRITICAL). The independent pass the confirm predicate required after the external CRITICAL: it verified all 7 resolutions landed (including a byte-identity check on the refactored architecture surface via a pre-D3 worktree build) and found corner-case divergences only — two degraded-render behaviors, one pre-archive spec-text alignment (the ⟲N letter vs the adjudicated behavior), and two SUGGESTIONs (malformed-doc quiescent stages vs WAITING; name-only identity).",
+  "final_assessment": "No critical issues. 3 warnings to consider — degraded-explore next (fork: align implementation or spec), the multi-line degraded row, and the ⟲N spec text that would sync a filename-count letter contradicting the adjudicated spine-valid behavior — plus two suggestions. Every renderable literal verified faithful; the three preserved surfaces byte-identical.",
+  "next_recommended": "/orbit:address-reviews d3-orientation --from-file orbit/changes/d3-orientation/.orbit-runs/review-system-2026-07-21T16-03-38Z.json"
+}

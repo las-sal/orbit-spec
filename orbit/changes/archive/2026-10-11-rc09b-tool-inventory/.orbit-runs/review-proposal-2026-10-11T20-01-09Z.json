@@ -1,0 +1,116 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-11T20:01:09Z",
+  "change": "rc09b-tool-inventory",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-cli-grammar/spec.md",
+      "line": 54,
+      "title": "A declared head launders the tool it runs, and the named limit omits that member",
+      "recommendation": "The inventory reads only a segment's first token after assignments, and `command`, `sh` and `node` are declared utilities. So `command jq -r .x` reads the head `command` and passes, `sh -c 'jq -r .x'` reads `sh` and passes, and `node bin/orbit.js status --frobnicate` reads `node` and passes, while the orbit sweep never extracts it. The retired tool-set limit named that last member (`node bin/orbit.js`), and the new limit drops it. Either name the class in the inventory's Residual kind, or read past the wrapper.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Add to the Residual kind: a tool run as an argument of a declared head (`command <tool> …`, `sh -c '<…>'`, `node <script> …`, including `node bin/orbit.js`), with a matching Residual method line."
+        },
+        {
+          "label": "B",
+          "body": "Close the `command` case by rule: when the head is `command` and the next token is not `-v`/`-V`/`-p`, the head is that next token. Name `sh -c` and `node <script>` in the Residual kind."
+        }
+      ],
+      "reproduction": "tokenize('command jq -r .x') from test/helpers/surface-snippets.ts returns segments [[\"command\",\"jq\",\"-r\",\".x\"]]; by D5 the head is `command`, which the inventory block declares under `utility`, so the line passes and `jq` is never read. Measured with a throwaway vitest probe, since deleted."
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-cli-grammar/spec.md",
+      "line": 29,
+      "title": "The read table says a group's grouping is stripped, but the tokenizer strips only a subshell",
+      "recommendation": "The shared tokenizer strips `(` and `)` only. `{ jq -r .x; }` tokenizes to [[\"{\",\"jq\",\"-r\",\".x\"],[\"}\"]], so the heads read are `{` and `}`, not `jq`. Shell reserved words and prefixes do the same: `if git diff --quiet; then …; fi` reads `if`, `then` and `fi`; `! git …` reads `!`; `time jq …` reads `time`. None is on today's surface. As written, an implementer could either extend the tokenizer to match the row or leave the row false. And the `utility` kind (utilities, builtins, test words) has no place for a reserved word that a future fence needs declared. Narrow the row to `( … )` and add a row saying that a brace group, reserved word or `!`/`time` prefix is read as the head (and so fails until declared). Then either define where such a head is declared or name it in the residual, since declaring `if` launders whatever follows it, as with the finding on line 54."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "design.md",
+      "line": 11,
+      "title": "The stale-table count compares five POSIX rows against twelve heads that include node and sh",
+      "recommendation": "The baseline table names five POSIX utilities in one row and `node` and `sh` in another, so it names seven of the twelve `utility` heads. The missing five are `rm`, `tail`, `cd`, `[` and `command`. Say 'names seven of the twelve' (design.md:11 and proposal.md:26), or compare like with like."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "design.md",
+      "line": 64,
+      "title": "D5 says the inventory catches two members of the places table's residual; it catches one",
+      "recommendation": "Inside a shell fence the places residual names three members: a `$ ` prompt, an assignment prefix (`VAR=1 orbit …`) and a trailing `\\`. The inventory fails only the `$ ` prompt (head `$`). It skips the assignment by design, and then reads the recorded `orbit`, so `VAR=1 orbit --frobnicate` passes both checks. The path-prefixed head D5 also cites belonged to the retired tool-set limit, not to the places table. Restate the claim as one places member plus one retired tool-set member."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "specs/orbit-cli-grammar/spec.md",
+      "line": 118,
+      "title": "Two consecutive blank lines where the tool-set table was removed",
+      "recommendation": "Collapse lines 118-119 to one blank line so the MODIFIED block reads as the baseline did."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "I probed the mechanism rather than reading it. A throwaway vitest file reimplemented the ADDED read table over generatedSurfaces() and the shared tokenize(). It read exactly the twelve utility heads, the `<argv[0]>` placeholder and the four prose heads the block declares. No head was undeclared, every declared head was used, and no flagged inline span starting with a lowercase word was refused. So the day-one exactness claim holds, and Case 2 reproduces. The D2 reader's requirement-level holder test is stricter than its canonical-examples precedent, which checks the capability only. That is deliberate and correct, because another change could modify the sibling orbit-snippet requirement. Both warnings are about the edge of the BOUNDED rule, not its core. The head production is first-token-after-assignments, so any head that runs another command (`command`, `sh -c`, `node`, a reserved word) hides what it runs. The limit should say so, because the exemption list now contains three such heads.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The mechanism is measured and holds on today's surface: the exemption block is exact both ways, and the head walk reuses the extractor's own parse instead of a second grammar. What remains is accounting. The named limit omits a class that the declared exemptions themselves open (a wrapper head runs an unread tool), and one read-table row claims tokenizer behaviour that does not exist. Both are text repairs in the delta and should be walked before apply. Neither calls for new mechanism."
+  },
+  "final_assessment": "0 critical, 2 warning, 3 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc09b-tool-inventory"
+}

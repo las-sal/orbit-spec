@@ -1,0 +1,51 @@
+{
+  "command": "archive",
+  "timestamp": "2026-09-11T17:41:00Z",
+  "change": "d6-pr-lifecycle",
+  "kind": "lifecycle",
+  "model": "claude-fable-5-1",
+  "final_assessment": "Archived d6-pr-lifecycle to orbit/changes/archive/2026-09-11-d6-pr-lifecycle/. The PR lifecycle shipped as a designed lifecycle step: the three-mode pr: regime read from the orientation surface, draft PRs at propose/ff through three ordered phases with commit isolation and a success-gated attachment record, the attachment-gated archive tail, program PRs flipped by the human at arc-done, and zero engine git from one reference source. orbit-pr-lifecycle created as the 20th capability (9 requirements); 7 capabilities modified. Archived through a recorded review-system gate override (user-ratified at the inflection prompt) with task 6.3 — the exit-criterion-1 dogfood — deferred as the declared user-validation handoff. At-archive notes 5.5–5.9 executed in-flow. 2011 tests green.",
+  "archive_path": "orbit/changes/archive/2026-09-11-d6-pr-lifecycle/",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": {
+      "critical": 0,
+      "warning": 3,
+      "suggestion": 9
+    },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": [
+      "orbit-pr-lifecycle",
+      "orbit-archive-modifications",
+      "orbit-propose-modifications",
+      "orbit-conventions",
+      "orbit-run-summary-emit",
+      "orbit-emit-composition",
+      "orbit-onboard",
+      "orbit-orientation"
+    ],
+    "added": 14,
+    "modified": 5,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
+  "user_decision": "proceeded_with_no_critical",
+  "consent": "user-invoked",
+  "warnings": [
+    "Archived with 1 incomplete task: 6.3 (User-validation handoff — the exit-criterion-1 dogfood on a real change; deferred to the next standalone change once main carries this work, per the proposal Dogfood caveat). User confirmed at the Step 3 prompt.",
+    "Pre-archive audit (library mode, no audit emit persisted): 0 CRITICAL / 3 WARNING / 9 SUGGESTION — category 3(a): the arc-doc stage prose carried the superseded pr: sketch (retired in-flow by at-archive note 5.5); category 5 touchpoints: 2 source paths (status.ts, orientation.ts) WARNING + 9 test paths SUGGESTION, all covered by the dated provenance note under design D-d6-7.",
+    "Engine defect found and fixed in-flow: the archive emit payload table omitted the schema's conditional fields (gate_overridden, fingerprint_overridden, fingerprints_unverified, audit_skipped_via_flag), so the fail-loud gate would have rejected this override record; the four fields were added to src/core/emit-composition.ts with a regression test before this emit."
+  ],
+  "gate_overridden": {
+    "gate": "review-system",
+    "state": "unpassed",
+    "reason": "latest independent pass carried 1 CRITICAL; cadence repeats external until none"
+  },
+  "next_recommended": "Change archived. Run /orbit:new or /orbit:explore to start the next change, or /orbit:audit-drift for a project-wide drift check."
+}

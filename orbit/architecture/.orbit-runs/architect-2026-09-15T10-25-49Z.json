@@ -1,0 +1,28 @@
+{
+  "command": "architect",
+  "timestamp": "2026-09-15T10:25:49Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "rc03a's charter replaced after two fresh proposal passes and two redesigns. The stage's mechanism is now ORDERING plus two explicit residuals, and its Touches line changed from orbit-review-external to orbit-engine-gates + orbit-review — it no longer touches the capability it began as, because that capability's requirement turns out to be correct as written. The charter records the reasoning rather than only the outcome: the eleven-channel enumeration that two proposal passes claimed without doing, why ordering empties channels that prose cannot suppress, and the descope from 'blind to all prior history' (the stage's own invention, and the direct cause of the eleven-channel problem) back to R-crc-4's 'blind to each other'. All three exit criteria rewritten. Two workflow gaps assigned to owning stages: the explore RE-ENTRY case to rc13, walk DISCOVERY to rc08. The charter's gates.ts:113 mis-citation corrected to 878 with the reason it is unreachable. No ruling added or amended; no stage reached ratification.",
+  "stages_touched": [
+    "rc03a-blind-prompt",
+    "rc13-explore-mechanism",
+    "rc08-walk-completeness"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [],
+  "handoff": {
+    "boot_sequence": [
+      "orbit/architecture/clean-up-review-cycle.md — rc03a's charter carries the replaced mechanism and the reasoning; the status log's last entry has the three costs.",
+      "orbit/changes/rc03a-blind-prompt/explore.md — Cases 3 and 4 are the enumeration and the ordering analysis; eleven decisions, six marked superseded in place.",
+      "orbit/changes/rc03a-blind-prompt/.orbit-runs/ — two fresh passes and three walks; the third walk's pushback_verification records the case it falsified.",
+      "src/core/artifact-graph/gates.ts:868-878 — the empty-pair branch this change reorders."
+    ],
+    "next_command": "/orbit:review --as proposal --fresh rc03a-blind-prompt",
+    "model_hint": "The artifacts were rewritten wholesale to a new mechanism and have had no independent pass in that shape. Use the strongest available model; the prior two passes both found CRITICALs that reading alone would not surface.",
+    "seam": "rc03a's proposal gate cannot pass while a substantive finding stands deferred — the charter items that were deferred are now DONE, so the next walk can record that entry resolved. rc13 remains mid-exploration with three open questions. Two outward acts stay the user's: the drafted delta-scope issue and closing issue #8."
+  },
+  "next_recommended": "/orbit:review --as proposal --fresh rc03a-blind-prompt"
+}

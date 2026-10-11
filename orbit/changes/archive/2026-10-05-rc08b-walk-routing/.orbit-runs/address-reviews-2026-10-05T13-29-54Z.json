@@ -1,0 +1,387 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-05T13:29:54Z",
+  "change": "rc08b-walk-routing",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc08b-walk-routing/.orbit-runs/external-proposal-2026-10-05T13-16-16Z.md",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "tie_break_rationale": null,
+  "external_reviewer": "GPT-6 Codex (run as gpt-6-astra via codex exec)",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 1,
+    "warning": 7,
+    "suggestion": 2
+  },
+  "pushback_verification": "Each finding re-read against the current artifact; the CRITICAL re-derived against the write gate's sweep requirement, W1 against diagnosePair, S2 by re-running the scenario map.",
+  "resolution_summary": {
+    "resolved": 10,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "Verbatim carry-forward can prevent a resumed walk from being emitted",
+      "marker_source": "external",
+      "file": "orbit/changes/rc08b-walk-routing/specs/orbit-address-reviews/spec.md",
+      "classification": "trivial_fix",
+      "lane": "obvious-fix",
+      "remedy": "descope",
+      "action": "descoped the verbatim carry-forward: a rediscovered pass re-records each finding the earlier log closed as `stale` with evidence naming that log, so no copied `resolved` entry owes a fresh sweep; scenario rewritten; design D3 and task 3.1 carry it",
+      "evidence": "re-derived against src/core/emit-composition.ts:586-587: a resolved entry without `sweep` is refused ('sweep is required on a resolved entry'), so a verbatim copy of a pre-rc08a resolved entry fails the write gate",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc08b-walk-routing/design.md",
+          "orbit/changes/rc08b-walk-routing/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "carries the earlier `resolved` and `stale` entries forward verbatim",
+          "new log carries the four resolved entries forward verbatim"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc08b-walk-routing/specs/orbit-address-reviews/spec.md",
+            "text": "Nothing is copied forward"
+          }
+        ],
+        "searched": [
+          "verbatim",
+          "carry",
+          "forward"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "outcome": "resolved",
+      "reproduction_rerun": "reproduced"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The openPair cardinality rule disagrees with the predicate it must expose",
+      "marker_source": "external",
+      "file": "orbit/changes/rc08b-walk-routing/specs/orbit-engine-gates/spec.md",
+      "classification": "trivial_fix",
+      "lane": "obvious-fix",
+      "remedy": "repair",
+      "action": "openPair now defined by the gate's own pair diagnosis, however many members of the standing class; scenario for two fresh passes added",
+      "evidence": "read gates.ts:374-375: diagnosePair returns no-external whenever no external pass exists",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "and exactly one pairable member stands"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc08b-walk-routing/specs/orbit-engine-gates/spec.md",
+            "text": "however many members of the standing class there are"
+          }
+        ],
+        "searched": [
+          "exactly one pairable",
+          "openPair"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Per-source emission conflicts with invocation-wide batch semantics",
+      "marker_source": "external",
+      "file": "orbit/changes/rc08b-walk-routing/specs/orbit-address-reviews/spec.md",
+      "classification": "trivial_fix",
+      "lane": "obvious-fix",
+      "remedy": "repair",
+      "action": "walk mode writes per source; batch mode resolves every source, runs its one aggregated cascade, then writes every log in token order; the baseline batch requirement is unchanged; scenario added; design D3",
+      "evidence": "read the baseline `Walk-mode by default with --batch opt-in`: one aggregated cascade after all findings",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc08b-walk-routing/design.md",
+          "orbit/changes/rc08b-walk-routing/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc08b-walk-routing/specs/orbit-address-reviews/spec.md",
+            "text": "In batch mode the invocation resolves every source's findings"
+          }
+        ],
+        "searched": [
+          "batch",
+          "before the next source begins"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Converged findings are marked stale even when their earlier counterpart remains open",
+      "marker_source": "external",
+      "file": "orbit/changes/rc08b-walk-routing/specs/orbit-address-reviews/spec.md",
+      "classification": "trivial_fix",
+      "lane": "obvious-fix",
+      "remedy": "repair",
+      "action": "a converged finding takes the earlier entry's disposition (stale with evidence when closed; the same open disposition and routed_to when open); scenario for a converged essential redesign added; design D3",
+      "evidence": "the paragraph made the later entry stale unconditionally",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc08b-walk-routing/design.md",
+          "orbit/changes/rc08b-walk-routing/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "A converged finding is resolved in the log of the EARLIER pass"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc08b-walk-routing/specs/orbit-address-reviews/spec.md",
+            "text": "so a later pass is never closed by a finding that is still open"
+          }
+        ],
+        "searched": [
+          "converged",
+          "earlier log"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "A partial audit walk permanently removes its remaining findings from discovery",
+      "marker_source": "external",
+      "file": "orbit/changes/rc08b-walk-routing/specs/orbit-address-reviews/spec.md",
+      "classification": "trivial_fix",
+      "lane": "obvious-fix",
+      "remedy": "repair",
+      "action": "stated the named limit (a named audit-drift emit is not rediscovered) and made the empty-result line list named audit emits with their --from-file route; design Risks names it",
+      "evidence": "row 5 tests only whether a log names the audit's basename",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc08b-walk-routing/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc08b-walk-routing/specs/orbit-address-reviews/spec.md",
+            "text": "once named it is NOT rediscovered"
+          },
+          {
+            "path": "orbit/changes/rc08b-walk-routing/specs/orbit-address-reviews/spec.md",
+            "text": "walked before; reach by --from-file <path>"
+          }
+        ],
+        "searched": [
+          "audit-drift",
+          "basename"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Essential-redesign routing assumes an active change in a command supporting other scopes",
+      "marker_source": "external",
+      "file": "orbit/changes/rc08b-walk-routing/specs/orbit-address-reviews/spec.md",
+      "classification": "trivial_fix",
+      "lane": "obvious-fix",
+      "remedy": "repair",
+      "action": "the essential-redesign route is the change's explore.md on an ACTIVE change and a new staging exploration elsewhere; landing is the re-entry table's to decide, including its refusal; no resume promised",
+      "evidence": "read the explore re-entry table: a staging dir plus an active change is refused",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc08b-walk-routing/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "which resumes in place against the change's `explore.md` per"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc08b-walk-routing/specs/orbit-address-reviews/spec.md",
+            "text": "this requirement promises no resume"
+          }
+        ],
+        "searched": [
+          "resumes in place",
+          "routed_to"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The T0 handoff describes a walk where the engine can recommend verification",
+      "marker_source": "external",
+      "file": "orbit/changes/rc08b-walk-routing/specs/orbit-run-summary-emit/spec.md",
+      "classification": "trivial_fix",
+      "lane": "obvious-fix",
+      "remedy": "repair",
+      "action": "the T0 sentence now points at the gate's canonical next instead of enumerating it; a clean-return scenario added",
+      "evidence": "a clean completed pair with an owed in-context slot computes the review, not a walk",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "as read once the return is saved"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc08b-walk-routing/specs/orbit-run-summary-emit/spec.md",
+            "text": "whatever the gate's canonical next computes once the return is saved"
+          }
+        ],
+        "searched": [
+          "eligibility line",
+          "once the return is saved"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Suggestion entries have conflicting remedy obligations",
+      "marker_source": "external",
+      "file": "orbit/changes/rc08b-walk-routing/explore.md",
+      "classification": "trivial_fix",
+      "lane": "obvious-fix",
+      "remedy": "repair",
+      "action": "remedy is required on every resolved entry at every severity; the exploration's Mechanism row and D-rc08b-4 are amended to match",
+      "evidence": "explore.md's table said optional for SUGGESTION; the spec said every resolved entry",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc08b-walk-routing/explore.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "optional; the remedy matters where a finding gates"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc08b-walk-routing/specs/orbit-address-reviews/spec.md",
+            "text": "Every `resolved` entry at every severity"
+          },
+          {
+            "path": "orbit/changes/rc08b-walk-routing/explore.md",
+            "text": "AMENDED at proposal walk 2"
+          }
+        ],
+        "searched": [
+          "SUGGESTION",
+          "remedy"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The discovery table’s empty-result row is unreachable under first-match semantics",
+      "marker_source": "external",
+      "file": "orbit/changes/rc08b-walk-routing/specs/orbit-address-reviews/spec.md",
+      "classification": "trivial_fix",
+      "lane": "obvious-fix",
+      "remedy": "repair",
+      "action": "the empty result is a postcondition after the matched row, not a competing row",
+      "evidence": "rows 3, 5, 6, 7 exhaust the shapes before row 8",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "8 nothing discovered:"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc08b-walk-routing/specs/orbit-address-reviews/spec.md",
+            "text": "AFTER the matched row: when it discovered nothing"
+          }
+        ],
+        "searched": [
+          "Nothing to walk"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The recorded scenario totals are stale",
+      "marker_source": "external",
+      "file": "orbit/changes/rc08b-walk-routing/design.md",
+      "classification": "trivial_fix",
+      "lane": "obvious-fix",
+      "remedy": "repair",
+      "action": "re-measured after this walk's edits: 76 delta scenarios, 8 covered, 68 to declare; design D7 and Risks name the measuring act and that task 5.3's run is authoritative",
+      "evidence": "orbit status --change rc08b-walk-routing --scenarios after the walk's spec edits: delta scenarios 76, uncovered 68",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "66 delta scenarios"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc08b-walk-routing/design.md",
+            "text": "76 delta scenarios"
+          }
+        ],
+        "searched": [
+          "58",
+          "66",
+          "delta scenarios"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Ten of ten resolved: one descope (the verbatim carry-forward, replaced by stale-with-evidence) and nine repairs; no new mechanism. Five of the ten landed in text proposal walk 1 wrote (carry-forward, source order, T0 wording, the fence's empty row, the scenario figure) — R-crc-6's authoring signal, answered by narrowing rather than adding.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal rc08b-walk-routing",
+  "ripple_misses": 0
+}

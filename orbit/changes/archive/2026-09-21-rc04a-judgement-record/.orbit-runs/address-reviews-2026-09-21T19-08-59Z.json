@@ -1,0 +1,77 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-21T19:08:59Z",
+  "change": "rc04a-judgement-record",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc04a-judgement-record/.orbit-runs/review-proposal-2026-09-21T19-04-38Z.json",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "walk_mode_source": "flag",
+  "input_findings_summary": {
+    "critical": 1,
+    "warning": 1,
+    "suggestion": 1
+  },
+  "pushback_verification": "All 3 verified by COUNTING rather than reading, which is the method that found them: judgements occurred 0 times in the emit-composition delta and per-entry/each-entry 0 times, against 7 and 4 in the capability defining the shape; the three unkeyed archive sites were located by grep at lines 7, 60 and 173; the task count was 19. ZERO stale. One probe of my own produced a false negative during verification — a grep for the entry index used a pattern that could not match the phrasing actually written — which is worth recording because it is the same instrument-error class that has now appeared three times in this program.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "The array carrier never reached `orbit-emit-composition`, so the write gate cannot find the records it must check",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04a-judgement-record/specs/orbit-emit-composition/spec.md",
+      "line": 19,
+      "classification": "trivial_fix",
+      "action": "Carried the array shape into the capability it never reached. DETECTION now keys on the top-level judgements KEY rather than on formed_against, which after the array resolution sits one level down and could never have been found at the top — and the spec now says WHY the key is the right scope: the engine decides whether to descend before it reads anything inside, which keeps the check cheap and total. ITERATION is stated explicitly as PER ENTRY, with the reason the array exists (two entries on one emit may cite different passes). Refusals now name the ENTRY INDEX alongside the token, because an array-shaped error without an index cannot be acted on. Reworded all four ordering scenarios to name an entry rather than a bare record, and ADDED a fifth the array shape earns: two entries, one valid and one not, refuses the invalid one by index — a valid entry must not rescue an invalid one, and a merged comparison would have hidden exactly that.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Three sites still name the record without its key, after the walk gave it one",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04a-judgement-record/specs/orbit-archive-modifications/spec.md",
+      "line": 7,
+      "classification": "trivial_fix",
+      "action": "Restated all three sites as a judgements array entry with kind readiness. Site one also gained the fact the finding implies but does not state: the archive is the ONE emit admitting both kinds, so its array may hold a continuation entry from the same seam. The finding is right that an implementer reading only orbit-archive-modifications would have added a top-level readiness key that payloadFields refuses.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The change sits at 19 of under-20 tasks, so the next walk has no headroom",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc04a-judgement-record/tasks.md",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "Folded the emit-composition correction INTO task 2.1 rather than adding a twentieth task. The task count stays at 19 and R-crc-1 is respected without a consolidation that is really a number game — the per-entry iteration and the key-scoped detection belong in the task that builds the ordering check, not beside it. Recorded here rather than left implicit: this change now sits at 19 of under-20 with no headroom, so the next walk that wants a task has to consolidate rather than append.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": null,
+  "final_assessment": "Three findings from the trailing in-context pass, all walked, zero stale, all obvious-fix — the direction was forced in each case because the key had already been named. The CRITICAL was the walk-inside-a-walk failure: the previous walk answered the unnamed-key finding by naming judgements and making it an ARRAY, and that answer propagated to two of the three capabilities, stopping at the one that has to DETECT and ITERATE. Detection now keys on the top-level judgements KEY rather than on a formed_against that sits one level down, with the reason stated (the engine decides whether to descend before reading anything inside); iteration is explicitly PER ENTRY; refusals name the entry INDEX, because an array-shaped error without one cannot be acted on. Four ordering scenarios reworded and a fifth added that the array shape earns — two entries, one valid and one not, refusing the invalid one by index, since a valid entry must not rescue an invalid one and a merged comparison would have hidden exactly that. The WARNING was the same omission one capability over and is closed: zero sites now name the record without its carrier. The SUGGESTION about task headroom was resolved by FOLDING the emit-composition correction into task 2.1 rather than appending a twentieth task, which keeps R-crc-1 respected without a consolidation that is really a number game — and the headroom fact is now recorded so the next walk knows it must consolidate rather than append. Re-ran the check that caught the defect rather than re-reading for sense: judgements now appears 5, 7 and 7 times across the three deltas where it was 5, ZERO and 7 before. Delta fidelity re-verified CLEAN across all four MODIFIED blocks after this walk; fingerprints 4 of 4; validate --all --strict clean at 26; 19 tasks.",
+  "iteration": 2,
+  "next_recommended": "/orbit:apply rc04a-judgement-record — user-invoked"
+}

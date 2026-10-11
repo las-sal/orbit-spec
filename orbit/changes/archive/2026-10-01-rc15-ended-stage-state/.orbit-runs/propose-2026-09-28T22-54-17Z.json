@@ -1,0 +1,9 @@
+{
+  "command": "propose",
+  "timestamp": "2026-09-28T22:54:17Z",
+  "change": "rc15-ended-stage-state",
+  "kind": "workflow",
+  "model": null,
+  "final_assessment": "Consume mode over orbit/explore/rc15-ended-stage-state (six sections, zero open questions, five Mechanism entries all conforming with CLOSED tokens — five accounted, none open, no key defects, no BOUNDED residual). Generated proposal.md, design.md (Decisions D-rc15-1..6 as the live statement; the Mechanism → artifacts record; Touchpoints), three delta specs (orbit-architecture-engine ×2, orbit-architect ×2, orbit-audit-drift ×1 — five MODIFIED blocks, 24.6 KB, fingerprints stamped 5/5, validates --strict) and tasks.md (14 tasks in five groups; 5.3 is the exit-(1) user-validation handoff; at-archive note 5.4 hands two stale KNOWN-limit sentences to the retirement-class sweep). Size: three capabilities, inside R-crc-1. Staged architecture citation carried into the change metadata; staging directory and its two explore emits moved. PR regime never — no choreography ran.",
+  "next_recommended": "/orbit:review rc15-ended-stage-state — proposal artifacts ready; review before apply"
+}

@@ -1,0 +1,35 @@
+{
+  "command": "apply",
+  "timestamp": "2026-08-28T17:53:56Z",
+  "change": "d6-pr-lifecycle",
+  "kind": "workflow",
+  "model": "claude-opus-5",
+  "gate_overridden": {
+    "gate": "review-proposal",
+    "state": "unpassed",
+    "reason": "latest independent pass yielded new findings"
+  },
+  "consent": "user-invoked",
+  "tasks_completed": 18,
+  "tasks_remaining": 13,
+  "user_validation_remaining": 0,
+  "chunk": "2 of 3",
+  "chunk_name": "Workflow bodies (propose choreography, archive tail)",
+  "chunk_complete": true,
+  "tasks_completed_this_session": 15,
+  "files_touched": [
+    "orbit/changes/d6-pr-lifecycle/tasks.md",
+    "src/core/templates/workflows/archive-change.ts",
+    "src/core/templates/workflows/bulk-archive-change.ts",
+    "src/core/templates/workflows/ff-change.ts",
+    "src/core/templates/workflows/propose.ts",
+    "test/commands/config-profile.test.ts",
+    "test/core/profile-sync-drift.test.ts",
+    "test/core/templates/orbit-content-fidelity.test.ts",
+    "test/core/templates/orbit-generated-surface.test.ts",
+    "test/core/templates/skill-templates-parity.test.ts"
+  ],
+  "diff_base": "30ca03600f43eb54406d3adf8c5869c010b2c69b",
+  "final_assessment": "Completed chunk 2 of 3 (Workflow bodies (propose choreography, archive tail)); 18 of 31 tasks done. Chunk 2 (workflow bodies) complete. The choreography lives in ONE new source module, `src/core/templates/workflows/pr-choreography.ts`, emitted as a `references/` file into propose, ff, and archive — so `orbit-pr-lifecycle`'s 'never per-seam' resolution rule holds at the source level: there is only one copy to edit, and a byte-identity test asserts the shared section is literally the same in both references. Bodies gained short config-gated pointers rather than the prose itself (D5 economy). Propose/ff carry the three ordered phases with the generation-input precondition; archive gained Step 5.45 (read-only preflight, before the emit), Step 5.7 (the tail, after it), the outward-writes line in the AI-mediated consent preview, and pr_url/pr_state in its summary schema; bulk-archive states the no-tail rule and the leave-draft readout. 12 new surface-fidelity assertions incl. the repo-qualification grep over every copyable gh invocation. Five pre-existing tests needed baseline updates from propose/ff becoming reference-bearing — four parity hashes re-pinned after verifying ONLY the four intended templates changed (29 unchanged), and the editorial-metadata assertion re-based on an explicit list rather than a REFERENCE_SKILLS proxy that had been accumulating carve-outs. 1948 -> 1960 green.",
+  "next_recommended": "/orbit:apply d6-pr-lifecycle — next chunk: Surface teach-in + verification"
+}

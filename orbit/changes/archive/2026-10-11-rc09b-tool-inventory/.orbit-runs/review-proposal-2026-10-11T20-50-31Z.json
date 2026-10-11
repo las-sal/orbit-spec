@@ -1,0 +1,109 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-11T20:50:31Z",
+  "change": "rc09b-tool-inventory",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {},
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "title": "An absent inventory block has no line to name",
+      "file": "orbit/changes/rc09b-tool-inventory/design.md",
+      "line": 72,
+      "recommendation": "The external finding's point that an absent block has no offending location was not carried: D6 and the spec's malformed-block sentence and scenario say every malformation names 'the requirement and the line', but a missing fence has no line. Say that an absent block names the requirement (its heading line) and every other malformation names the offending line, in the spec sentence, its scenario and D6.",
+      "walk_entry": {
+        "title": "Failure assertions contradict the passing scenarios",
+        "file": "orbit/changes/rc09b-tool-inventory/design.md"
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "The CONFORM move line still points at a resolved open question",
+      "file": "orbit/changes/rc09b-tool-inventory/explore.md",
+      "line": 48,
+      "recommendation": "D-rc09b-1's CONFORM line reads 'R-crc-14 (the declared lists stated once — see the open question)'; Q-rc09b-1 was resolved at propose as D-rc09b-3. Point at D-rc09b-3."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Graded over each entry's file plus its cascade. The wrapper residual reads identically in the spec's named limit and the Mechanism entry (whitespace-collapsed match), and D-rc09b-1 still parses with no open rule. The brace-group row matches the tokenizer, which counts only a leading `(` as grouping. The residual check from the commit that added the external return lists only the five change files the walks edited, all inside the edit records. Two wrap lengths grew past the file's 120-column habit (the spec's `utility` sentence, design Context's stale-table sentence); cosmetic, not graded. Strict validation passes.",
+  "passes_run": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "passes_skipped": [],
+  "verification": [
+    {
+      "title": "A declared head launders the tool it runs, and the named limit omits that member",
+      "file": "specs/orbit-cli-grammar/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The read table says a group's grouping is stripped, but the tokenizer strips only a subshell",
+      "file": "specs/orbit-cli-grammar/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The stale-table count compares five POSIX rows against twelve heads that include node and sh",
+      "file": "design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "D5 says the inventory catches two members of the places table's residual; it catches one",
+      "file": "design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Two consecutive blank lines where the tool-set table was removed",
+      "file": "specs/orbit-cli-grammar/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Failure assertions contradict the passing scenarios",
+      "file": "orbit/changes/rc09b-tool-inventory/design.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "Refused inline spans are not reported by every existing sweep",
+      "file": "orbit/changes/rc09b-tool-inventory/design.md",
+      "verdict": "landed"
+    }
+  ],
+  "final_assessment": "0 critical, 0 warning, 2 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-10-11T20-08-41Z",
+    "2026-10-11T20-08-56Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc09b-tool-inventory"
+}

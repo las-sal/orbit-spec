@@ -1,0 +1,13 @@
+schema: spec-driven
+created: 2026-09-26
+schema_version: 4
+architecture:
+  doc: clean-up-review-cycle
+  stage: rc13c-propose-consumes-mechanism
+base_fingerprints:
+  orbit-propose-modifications:
+    Consume mode when staging directory exists: sha256:f4f30be3250a6bcba811f727efc91b98c89c43049f2b8e8845b99a7d117a1cbd
+    Section-to-artifact mapping: sha256:d0a1b99e7f4295787fe73f2c130aad15167694e95c3b1f52eb5aa6f08f90a936
+    Validate explore.md structure before consuming: sha256:23e4741cb455937d7b17ab790851fb81c544e12c10877631108211c9c07f1537
+    Open question handling: sha256:97692a1ad61a1116378c7939d83cfa31c5e32ad9b3f8c2b234c9db660fc21179
+    Naming inference fallback: sha256:538868b702e6dddcd5e81bac6c06b0164e1a589f3248d89eda15c7c1cb323326

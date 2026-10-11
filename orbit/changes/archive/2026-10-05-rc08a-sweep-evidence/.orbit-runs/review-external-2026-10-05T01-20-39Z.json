@@ -1,0 +1,13 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-10-05T01:20:39Z",
+  "change": "rc08a-sweep-evidence",
+  "kind": "editorial",
+  "model": null,
+  "mode": "proposal",
+  "prompt_path": "orbit/changes/rc08a-sweep-evidence/.orbit-runs/external-prompt-proposal-2026-10-05T01-20-32Z.md",
+  "target": null,
+  "final_assessment": "External review prompt packaged for rc08a-sweep-evidence (iter 1, mode proposal); awaiting findings.",
+  "awaiting_findings": true,
+  "next_recommended": "Paste orbit/changes/rc08a-sweep-evidence/.orbit-runs/external-prompt-proposal-2026-10-05T01-20-32Z.md into the target AI, save the response as orbit/changes/rc08a-sweep-evidence/.orbit-runs/external-proposal-<TS>.md, then /orbit:address-reviews rc08a-sweep-evidence --from-file <path>"
+}

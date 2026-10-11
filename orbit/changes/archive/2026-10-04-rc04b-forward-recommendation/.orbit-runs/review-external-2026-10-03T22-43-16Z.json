@@ -1,0 +1,13 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-10-03T22:43:16Z",
+  "change": "rc04b-forward-recommendation",
+  "kind": "editorial",
+  "model": null,
+  "mode": "proposal",
+  "prompt_path": "orbit/changes/rc04b-forward-recommendation/.orbit-runs/external-prompt-proposal-2026-10-03T22-42-56Z.md",
+  "target": null,
+  "final_assessment": "External review prompt packaged for rc04b-forward-recommendation (iter 1, mode proposal); awaiting findings. Cycle context: the fresh internal pass (review-proposal-2026-10-03T22-29-59Z, 0C/7W/5S) walked to zero at address-reviews-2026-10-03T22-40-17Z; no prior external pass. No spend record: the review-proposal gate is UNPASSED with its remaining slot in-context, so this handoff is neither a declared-slot cover nor a past-passed-gate spend — Q-crc-25's uncarried case, as rc04c's proposal handoff was. Packaged with the shipped output format (no Direction section — this change adds it).",
+  "awaiting_findings": true,
+  "next_recommended": "Paste orbit/changes/rc04b-forward-recommendation/.orbit-runs/external-prompt-proposal-2026-10-03T22-42-56Z.md into the target AI, save the response as orbit/changes/rc04b-forward-recommendation/.orbit-runs/external-proposal-<TS>.md, then /orbit:address-reviews rc04b-forward-recommendation --from-file <path>"
+}

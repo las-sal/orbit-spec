@@ -103,11 +103,33 @@ describe('profile sync drift detection', () => {
     expect(hasProjectConfigDrift(tempDir, CORE_WORKFLOWS, 'both')).toBe(true);
   });
 
-  it('detects reference drift: undesired references/ root on a reference-less skill', () => {
+  it('detects retired-artifact drift: a lingering orbit-review-external skill dir (D5)', () => {
     setupCoreSkills(tempDir);
     setupCoreCommands(tempDir);
     fs.mkdirSync(
-      path.join(tempDir, '.claude', 'skills', 'orbit-explore', 'references'),
+      path.join(tempDir, '.claude', 'skills', 'orbit-review-external'),
+      { recursive: true }
+    );
+
+    expect(hasProjectConfigDrift(tempDir, CORE_WORKFLOWS, 'both')).toBe(true);
+  });
+
+  it('detects retired-artifact drift: a lingering review-external launcher (D5)', () => {
+    setupCoreSkills(tempDir);
+    setupCoreCommands(tempDir);
+    fs.mkdirSync(path.join(tempDir, '.claude', 'commands', 'orbit'), { recursive: true });
+    fs.writeFileSync(path.join(tempDir, '.claude', 'commands', 'orbit', 'review-external.md'), '# retired\n');
+
+    expect(hasProjectConfigDrift(tempDir, CORE_WORKFLOWS, 'both')).toBe(true);
+  });
+
+  it('detects reference drift: undesired references/ root on a reference-less skill', () => {
+    setupCoreSkills(tempDir);
+    setupCoreCommands(tempDir);
+    // orbit-new-change declares no references (explore gained capture-formats.md in D5;
+    // propose and ff gained pr-choreography.md in D6, so neither is a valid example here).
+    fs.mkdirSync(
+      path.join(tempDir, '.claude', 'skills', 'orbit-new-change', 'references'),
       { recursive: true }
     );
 

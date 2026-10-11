@@ -1,0 +1,270 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-10T14:40:38Z",
+  "change": "rc05b-git-grammar",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc05b-git-grammar/.orbit-runs/review-system-2026-10-10T14-31-41Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-10T14-31-41Z",
+  "latest_apply_token": "2026-10-09T21-09-57Z",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 4
+  },
+  "pushback_verification": "verified",
+  "resolution_summary": {
+    "resolved": 6,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "remedy": "repair",
+      "outcome": "resolved",
+      "classification": "trivial_fix",
+      "marker_source": "internal-review",
+      "severity": "WARNING",
+      "title": "The capture probes only the first-written form of each flag name, so a second form on the surface is never probed",
+      "file": "scripts/capture-git-contract.capture.ts",
+      "line": 125,
+      "action": "Pushback: still applies; the per-key loop kept the first WrittenFlag per name. Two pure helpers in test/helpers/git-capture.ts: formsByName groups a key's written flags by name, keeping every form distinct by its probe form, and flagEntry records a name rejected when ANY written form is rejected, with that form's line. The capture probes each form and reduces through flagEntry. Two capture unit cases: `--only <p>` and `--only=<p>` both reach a probe (`commit --only -h`, `commit --only=x -h`), and an accepted first form cannot hide a rejected second one. Re-captured against git 2.50.1: 146 probes (was 145, one more written form, accepted); the contract moved only in captured_at. Design D3 now says every written form is probed.",
+      "ripple_cascade": {
+        "applied": [
+          "test/helpers/git-capture.ts",
+          "test/core/cli-grammar/git-capture.test.ts",
+          "test/integration/cli-contracts/git-contract.json",
+          "orbit/changes/rc05b-git-grammar/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "if (!written.has(flag.name)) written.set(flag.name, flag)"
+        ],
+        "introduced": [
+          {
+            "path": "test/helpers/git-capture.ts",
+            "text": "export function formsByName(argvs: string[][], key: string)"
+          },
+          {
+            "path": "scripts/capture-git-contract.capture.ts",
+            "text": "return flagEntry(name, takesValue, acceptances);"
+          },
+          {
+            "path": "orbit/changes/rc05b-git-grammar/design.md",
+            "text": "Every form written at capture is probed, and a name with any rejected form is recorded rejected."
+          }
+        ],
+        "searched": [
+          "written.has(flag.name)",
+          "flagsWritten(",
+          "probed in the form the surface writes it"
+        ],
+        "scope": [
+          "scripts/",
+          "test/helpers/"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "remedy": "repair",
+      "outcome": "resolved",
+      "classification": "trivial_fix",
+      "marker_source": "internal-review",
+      "severity": "WARNING",
+      "title": "Substitution inside double quotes is neither refused nor parsed, though the operator rows' closure says substitution is refused",
+      "file": "orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md",
+      "line": 184,
+      "action": "Pushback: still applies; the double-quote branch copied `$(` and backticks as text. Repaired by refusal, the closure's own rule, rather than narrowing it: the tokenizer refuses an unescaped `$(` or backtick inside double quotes (`quoted: true`, message `$( inside double quotes is refused: substitution is never parsed`), and an unquoted `<(` or `>(`; an escaped `\\$(` inside double quotes stays text. Measured first with a throwaway probe over every generated shell-fence line and tool-headed inline span: no such form appears on today's surface, so no live snippet changed. The spec's refusal row and closure sentence, design D1 and the proposal say so. Tokenizer cases added beside the single-quoted one, plus an extraction case.",
+      "ripple_cascade": {
+        "applied": [
+          "test/helpers/surface-snippets.ts",
+          "test/core/cli-grammar/surface-snippets.test.ts",
+          "orbit/changes/rc05b-git-grammar/design.md",
+          "orbit/changes/rc05b-git-grammar/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "stripped, and substitution is refused rather than parsed.",
+          "An unquoted `$(`, backtick or `;;` fails extraction"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md",
+            "text": "or a `$(` or backtick inside double quotes, where the shell still runs it"
+          },
+          {
+            "path": "test/helpers/surface-snippets.ts",
+            "text": "if (line[j] === '$' && line[j + 1] === '(') return { ok: false, refused: '$(', quoted: true };"
+          },
+          {
+            "path": "test/core/cli-grammar/surface-snippets.test.ts",
+            "text": "inside double quotes, where the shell runs it (system walk, fresh W2)"
+          }
+        ],
+        "searched": [
+          "substitution is refused",
+          "backtick or `;;`",
+          "refused:"
+        ],
+        "scope": [
+          "test/helpers/surface-snippets.ts",
+          "test/core/cli-grammar/"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "remedy": "repair",
+      "outcome": "resolved",
+      "classification": "trivial_fix",
+      "marker_source": "internal-review",
+      "severity": "SUGGESTION",
+      "title": "The forms limit names one direction only: a flag git accepts only as `--name=value`, written bare, also passes",
+      "file": "orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md",
+      "line": 70,
+      "action": "The validator paragraph's limit gains its converse in one clause: a bare form written after capture of a flag recorded from its `=` form (`git log --format %h`, which git refuses) is not caught either. Design D3 carries the same clause. No mechanism.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc05b-git-grammar/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md",
+            "text": "nor, conversely, a bare form written after capture of a flag recorded from its `=` form (`git log --format %h`, which git refuses)"
+          },
+          {
+            "path": "orbit/changes/rc05b-git-grammar/design.md",
+            "text": "nor, conversely, is a bare form added after capture of a flag recorded from its `=` form"
+          }
+        ],
+        "searched": [
+          "not which forms"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "remedy": "repair",
+      "outcome": "resolved",
+      "classification": "trivial_fix",
+      "marker_source": "internal-review",
+      "severity": "SUGGESTION",
+      "title": "A prose mention `git commit --only` is extracted and validated as a command real git refuses",
+      "file": "review/references/external-handoff.md",
+      "line": 162,
+      "action": "The finding's option B taken: accepted as prose, no edit. The sentence is also `orbit-review-external`'s baseline text (orbit/specs/orbit-review-external/spec.md:416), so a body edit would diverge from its owner or carry a third capability delta for a suggestion the finding itself grades not a grammar defect; positional counts beyond presence are the validator paragraph's stated non-goal, and the flag is right.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [],
+        "searched": [
+          "then `git commit --only` on it"
+        ],
+        "scope": [
+          "orbit/specs/orbit-review-external/spec.md",
+          "src/core/templates/workflows/review.ts"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "remedy": "repair",
+      "outcome": "resolved",
+      "classification": "trivial_fix",
+      "marker_source": "internal-review",
+      "severity": "SUGGESTION",
+      "title": "`The suite needs no git` is declared `behaviour` on a test that asserts neither of its THEN's last two clauses",
+      "file": "orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md",
+      "line": 110,
+      "action": "The THEN is narrowed to what its tests assert: every git case passes from the checked-in contract, and the contract's own tests assert that the file parses, records a git version and the orbit-side rule, and carries every command key the surface writes. The key-coverage test gains the scenario's tag beside the freshness test; the requirement prose keeps the never-spawns property as the stage's design statement.",
+      "ripple_cascade": {
+        "applied": [
+          "test/integration/cli-contracts/git-contract.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the freshness test asserts only that the file parses\n  and records a git version"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md",
+            "text": "carries every command key the surface writes"
+          }
+        ],
+        "searched": [
+          "asserts only that the file parses",
+          "The suite needs no git"
+        ],
+        "scope": [
+          "test/integration/cli-contracts/"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "remedy": "repair",
+      "outcome": "resolved",
+      "classification": "trivial_fix",
+      "marker_source": "internal-review",
+      "severity": "SUGGESTION",
+      "title": "CLAUDE.md still says rc05b consumes the extractor unchanged",
+      "file": "CLAUDE.md",
+      "line": 744,
+      "action": "Fixed now rather than at archive: the rc05 paragraph's parenthesis says rc05b taught the extractor shell operators and reads git and gh through it. The proposal's two gh counts now read four snippets and two bare names. The program doc's rc05b charter (`the six gh snippets`) is left as its dated declaration (its counts are dated 2026-10-08), and design D1 and task 1.2 keep their quotations of the corrected header claim as history.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc05b-git-grammar/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "`rc05b-git-grammar` consumes it unchanged",
+          "six `gh` snippets in SKILL.md bodies are never validated",
+          "the six `gh`\n  snippets in bodies are validated"
+        ],
+        "introduced": [
+          {
+            "path": "CLAUDE.md",
+            "text": "taught it shell operators and reads `git` and `gh` through it"
+          },
+          {
+            "path": "orbit/changes/rc05b-git-grammar/proposal.md",
+            "text": "four snippets, two bare names"
+          }
+        ],
+        "searched": [
+          "consumes it unchanged",
+          "six `gh`"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": 0,
+  "final_assessment": "System walk of the fresh half (6 findings): all six resolved by repair. The capture probes every written form of a flag and records a name rejected when any form is; the tokenizer refuses a substitution inside double quotes and process substitution; the forms limit names its converse; the no-git scenario's THEN states what its tests assert; CLAUDE.md and the proposal carry the measured gh counts. 3286 tests green.",
+  "iteration": 6,
+  "next_recommended": "/orbit:address-reviews rc05b-git-grammar",
+  "ripple_misses": 0
+}

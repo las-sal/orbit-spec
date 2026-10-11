@@ -1,0 +1,198 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-04T03:01:32Z",
+  "change": "rc03b-pass-genres",
+  "kind": "editorial",
+  "model": null,
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 5,
+      "suggestion": 2
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 4,
+      "suggestion": 0
+    }
+  },
+  "findings": [
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "tasks.md",
+      "line": 3,
+      "title": "The generated-surface grep test has no rule that partitions the real surface; 'expected seven' does not follow from the stated rule",
+      "description": "Task 1.1 (and the ADDED requirement's 'Generated surface grep-tested' scenario, specs/orbit-review/spec.md:25) says: grep SKILL.md + every references/*.md for three phrasings and for a `.orbit-runs/` READ pointer 'inside a review-genre brief'; WRITE paths are 'exempt by rule, not by allowlist of lines'; expected red count seven. EXECUTED on the current surface: `grep -rn -i 'still open\\|Resolved since\\|iteration history' .claude/skills/orbit-review/` returns EIGHT lines — the seven the task names plus `references/run-summary-schema.md:5` ('so iteration history travels with the change into archive'), which is neither a brief nor a write path; the exploration's Case 5 knows this and says the test is 'phrase-precise per file', a rule no artifact states. `grep -rn '\\.orbit-runs' .claude/skills/orbit-review/` returns 30 lines, among them body-side READs that are neither write paths nor briefs and that the exploration KEEPS: `external-handoff.md:47` (count `external-<as>-*.md` for the iteration), `:65` (read the `**Reviewer**:` field), `:153` ('No .orbit-runs/ → create it'), `SKILL.md:23` (the pushback epitome's 'comparing against prior .orbit-runs/review-<mode>-*.json'), `prompt-template.md:3` (header prose naming the write path in a sentence). The stated exemption (WRITE paths) does not cover any of these. Two implementers diverge: one greps the whole skill and is red forever on the body's own iteration count; the other must define 'brief' at file granularity or 'read pointer' at sentence granularity — both are the line-allowlist the task forbids, in other clothes.",
+      "recommendation": "State the test's DOMAIN and its EXEMPTION as decidable rules in the ADDED requirement and in task 1.1: (i) which files are briefs (e.g. `prompt-template.md` and `mode-sections.md` whole; in `SKILL.md` and `external-handoff.md`, the brief is what is handed to the reviewer, so a body-side instruction that the BODY reads the trail to count or to pick a session is not a hit) and (ii) the phrase rule for 'iteration history' (a hit only when it labels a `.orbit-runs/` path on the same line). Then recompute and record the red count from that rule rather than from the exploration's count."
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "design.md",
+      "line": 84,
+      "title": "The genre-table mirror has no fenced production to pin against, and the artifacts name three different shapes for it",
+      "description": "Design D5 says the body carries the table 'as a short paragraph the generated-surface parity test holds byte-equal to the conventions fence'; task 1.2 says 'byte-equal to the six-row table'; task 2.6 says 'a short Pass genre paragraph carrying the six-row table'. The conventions delta contains ZERO fences (`grep -c '^\\`\\`\\`' specs/orbit-conventions/spec.md` → 0): the table is a bare GFM table at lines 15-22 of a prose requirement. The pattern 1.2 is told to reuse (`test/helpers/owner-text.ts` `fencedProduction`, and `test/core/severity-ladder-parity.test.ts`) resolves a bare ``` fence by its FIRST LINE; it cannot address an unfenced table, and 'a paragraph' cannot be byte-equal to a table. The owner the mirror corollary names (`orbit-conventions`' Severity ladder, baseline line 30) states its mirrored text 'as a production' inside a fence for exactly this reason.",
+      "recommendation": "Pick one shape and write it in all three places: fence the six-row table (plus, if intended, the one-sentence lead) as a production inside the conventions requirement, make the body carry that fenced block verbatim under a 'Pass genre' heading that names the owner, and have task 1.2 anchor on the fence's first line (`| reviewer class | mode | trail position | genre |`) through `ownerText` + `fencedProduction`."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-review/spec.md",
+      "line": 14,
+      "title": "An in-context pass cannot learn its own genre without reading the trail the brief rule forbids it to name",
+      "description": "Scenario 'Prior-run inspection skipped for review genre' (and task 2.5) scopes Step 5 to 'an in-context pass with a readable walk of its mode before it'. Deciding that predicate requires listing `address-reviews-*.json` under `.orbit-runs/` and reading each record's `source_path` to resolve its mode — the very read the conventions brief rule (specs/orbit-conventions/spec.md:26: the in-context pass's own read list 'names ... NO path under .orbit-runs/') and this scenario's THEN ('does not read ... address-reviews-*.json for that pass') forbid, and a sentence the task-1.1 grep would hit. No engine observable is named: `orbit status --change <name> --json` exposes gate state/reason and no walk-of-this-mode fact (verified on this change's status JSON: `gates[].reason`, `next_hint_keys`), and the genre function is rc03c's and runs at emit time, after the pass. For the external branch the exploration resolved the analogous case explicitly (D-rc03-3 row 'iteration count and Reviewer read — KEPT: the body reads them, the reviewer never does'); no equivalent exemption is written for the in-context body, where body and reviewer are the same context.",
+      "recommendation": "Write the in-context genre decision as its own sentence in the ADDED requirement: name the single input the body may read to decide (the token-ordered listing of `address-reviews-*.json` and each record's `source_path`, read as a directory fact and never as findings), state that this listing is not a 'read pointer' for the grep test, and say what the body does when the listing is unreadable (treat as REVIEW, per the table's mode-less row)."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 18,
+      "title": "The VERIFICATION row's 'a readable walk of this mode precedes the pass' is unbounded in time and disagrees with rc03c's declared walk set",
+      "description": "Row 2 and its scenario make an in-context pass VERIFICATION whenever ANY readable walk of its mode precedes its token. rc03c's charter (orbit/architecture/clean-up-review-cycle.md, stage rc03c) defines the walks a verification verifies as those 'with a token after the latest independent pass of that mode and before this pass'. Constructed case from the archived rc04b trail shape (`.orbit-runs/`: external-system 23-41, review-system 23-44 fresh, walks 23-49 and 23-56, review-system 01-04 in-context): if a SECOND system pair is run after 23-56 and an in-context pass runs before any new walk, the table computes VERIFICATION (the 23-49/23-56 walks precede) while rc03c's set is EMPTY (no walk after the latest independent pass) — a verification owing a record over nothing, where R-crc-4's reading is 'a reaction with nothing yet to verify' (row 3). The table is the single statement rc03c implements, so the ambiguity lands in its function.",
+      "recommendation": "Bound the trail-position fact in the table and both scenarios: 'a readable walk of this mode whose token lies AFTER the latest independent pass of this mode and BEFORE this pass'. Row 3 then reads 'no such walk'. Keep rc03c's charter sentence as the pointer it already is."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "tasks.md",
+      "line": 15,
+      "title": "The body has no fresh-dispatch procedure for the 'fresh dispatch note' to amend",
+      "description": "Task 2.6 says 'the fresh dispatch note states the brief's contents'; the ADDED requirement's scenario opens 'WHEN the body dispatches a --reviewer fresh pass'. EXECUTED: `awk 'NR>=742' src/core/templates/workflows/review.ts | grep -n -i fresh` — the body's only fresh text is the `--reviewer`/`--fresh` flag rows (Step 3), the payload field notes (Steps 8-9) and the architecture-mode direction print; the word 'subagent' occurs only in the `--parallel` reference and the flags row. There is no step saying how a fresh pass is dispatched (what is spawned, what it is handed, that it persists through the emit surface and owes `direction`). An implementer must decide whether 2.6 adds a one-line content note under the flags table or a dispatch step; the brief rule's only in-body application has nowhere to live until that choice is made.",
+      "recommendation": "Make task 2.6 (and the Impact bullet) explicit: ADD a short 'Dispatching a fresh pass' step to the body — spawn a clean-context subagent with the review contract; hand it the artifacts, the baseline specs, the lens files and (system mode) the apply commit range; it persists via `orbit emit review` — and put the brief-contents sentence there, pointing at the owner."
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "tasks.md",
+      "line": 6,
+      "title": "A git-diff-based 'no engine code' pin is fragile; prefer the existing hash-pin pattern",
+      "description": "Task 1.4 offers 'a `git diff --name-only <base>..HEAD` assertion' as one option. A test keyed on a git base ref depends on history being present (shallow clones, the archive move, the next stage's commits) and on a `<base>` the test must discover; it fails or goes vacuous for reasons unrelated to the claim. The rc04c lesson in CLAUDE.md names the alternative already in use: a hash pin on the untouched modules.",
+      "recommendation": "Take the second option in the task's own disjunction: extend an existing untouched-modules/hash-pin test over `src/core/artifact-graph/`, `src/core/emit-composition.ts`, `src/core/report-render.ts` and `schemas/`, recorded at the proposal commit; drop the git-diff wording."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "specs/orbit-review-external/spec.md",
+      "line": 214,
+      "title": "'least-recently-used' AI has no stated ordering input",
+      "description": "The iteration-3+ line ends 'a fresh session of the least-recently-used', and the next bullet says prior-reviewer identity is read from `**Reviewer**:` in existing `external-<as>-*.md` files — identity, not recency. Recency needs the file TOKEN order (the newest file naming each reviewer); the spec does not say so, and a reader could equally order by first appearance.",
+      "recommendation": "Add to the identity bullet: 'ordered by the token of each reviewer's latest `external-<as>-*.md`; the least-recently-used is the reviewer whose latest token is oldest'."
+    },
+    {
+      "pass": "4",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 21,
+      "title": "Architecture mode as REVIEW genre makes the baseline's architecture-mode iteration note unproducible, and nothing in the change addresses it",
+      "description": "The table's row 5 makes every architecture-mode pass REVIEW genre; the ADDED orbit-review requirement (b) says the prior-run inspection step is NOT RUN for a REVIEW-genre pass, and the brief rule says the in-context read list names no `.orbit-runs/` path. The unmodified baseline `orbit-review` requirement `Iteration note when prior runs exist` (orbit/specs/orbit-review/spec.md:302, scenario 'Architecture-mode iteration anchored per doc' at :317) requires the architecture-mode note to count matching-`doc` `review-architecture-*.json` emits, and the body's Step 8 hand-computes it ('Note: N of these findings appeared in the last run on <date>. M new this run.' — SKILL.md:106-108) FROM Step 5's read of `orbit/architecture/.orbit-runs/`. Post-apply, either the body keeps reading the architecture trail for a REVIEW-genre pass (violating the delta) or the note disappears (violating the baseline requirement that is not in this change). Task 2.5 scopes Step 5 to change modes' VERIFICATION genre and says nothing about architecture mode.",
+      "recommendation": "Decide and state it once: either exempt the architecture trail's per-doc iteration count from the brief rule as a COUNT the body reads (the same exemption the external branch gets for its iteration number), adding one clause to row 5 / its scenario and to task 2.5; or MODIFY `Iteration note when prior runs exist` to retire the architecture-mode hand-computed note — which adds nothing to the capability count, since orbit-review is already touched."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 5,
+      "title": "The requirement forbids the very mirror the design and tasks prescribe ('none restates the table')",
+      "description": "Line 5: 'Every other surface (the review body, the external prompt, the renderer) names this requirement and points; none restates the table.' Design D5 and task 2.6 have the review body carry the six-row table as a CHECKED MIRROR held byte-equal by a parity test (1.2). The mirror corollary's own exemplar, the Severity ladder requirement (orbit/specs/orbit-conventions/spec.md:30, scenario 'The ladder paragraph is mirrored, never restated'), writes the mirror allowance INTO the owning requirement. As written, the parity test will enforce a copy the owner's text prohibits, and a future audit-drift pass reading the owner will file the body as a restatement.",
+      "recommendation": "Amend the sentence to the Severity ladder's shape: 'names this requirement and points; the ONE exception is the review body, which carries the table as a CHECKED MIRROR (it says so and names this owner; a parity test holds it byte-equal — R-crc-14's mirror corollary); nothing else restates it'."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 26,
+      "title": "The brief's positive content list is stated three times and already diverges on one qualifier",
+      "description": "The owner's brief rule (line 26) says a REVIEW-genre brief 'names the change's artifacts, the baseline specs, the lens files and the apply commit range' — unconditionally. `orbit-review`'s ADDED requirement (a) restates the list with '— in system mode — the apply commit range', and its scenario 'Fresh brief carries no finding' restates it again with '(system mode)'. A proposal-mode brief has no apply commit range, so the owner's text cannot be met literally there; and three statements of one list is the R-crc-14 pattern the program has paid for (rc04c: four copies of one sentence, all drifting).",
+      "recommendation": "Keep the positive list ONCE (in the owner, with the system-mode qualifier) and have the orbit-review requirement and scenario name the owner and state only their observable consequence ('the brief carries what the owner's list names and nothing from the trail')."
+    },
+    {
+      "pass": "7",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 423,
+      "title": "The external-handoff worked example still recommends option (a) — same-AI continuation — and no task touches it",
+      "description": "Task 2.2 deletes Step 6's iteration-3+ option (a) and the 'Same-vs-fresh trade-off' sentence. The reference's 'Worked example' (review.ts:418-440, shipped as `references/external-handoff.md`) reads: 'Recommended session: Iter 5 — either (a) carry context from your iter-3 codex chat (codex verifies whether its iter-3 findings actually landed ...), or (b) fresh Claude session ...'. That is the twelfth channel (D-rc03-10) restated as an example an adopter's body will copy; none of 1.1's three phrasings or the `.orbit-runs/` pointer rule catches it, so the exit-(2) grep stays green with it present.",
+      "recommendation": "Add the worked example to task 2.2 (rewrite its Recommended-session line to the new iteration-3+ wording) and, since this channel is phrase-invisible to the grep, add 'carry context' to the phrasings 1.1 greps or state that the recommended-session text is pinned by 1.3 wherever it appears."
+    },
+    {
+      "pass": "7",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 756,
+      "title": "The body's pushback epitome instructs every pass to compare against prior `.orbit-runs/review-<mode>-*.json`; not in the task list",
+      "description": "review.ts:756 (shipped SKILL.md:23): 'Pushback (review-time) — primary here: ... comparing against prior `.orbit-runs/review-<mode>-*.json` to surface only what's new or unresolved.' This is an in-body trail READ pointer that fires on every pass, including REVIEW-genre ones — contradicting ADDED (b) and the brief rule for the in-context read list — and it is exactly a line task 1.1's grep over SKILL.md will hit. Task 2.5 edits Step 5 only; the design's claim that pushback 'needs no text change' is true of the SPEC requirement (`Pushback discipline on stale findings` verifies against current state) but the body's epitome of it says something stronger.",
+      "recommendation": "Add the epitome bullet to task 2.5: rewrite it to the requirement's actual content ('verify every finding against current state before reporting; suppress stale findings with an evidence note') and point at Step 5 for the VERIFICATION-genre case only."
+    },
+    {
+      "pass": "3",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 1972,
+      "title": "The stage charter states the slot-arithmetic rule the delta corrected, and the charter is not in the change's touchpoints",
+      "description": "The rc03b stage section says every other in-context pass 'is a review the cadence does not count toward its `in-context` slot'. The delta's rows 3-4 and design D1 say the opposite — 'the cadence's slot arithmetic is unchanged by genre' — and the exploration records the correction as made 'at propose'. The charter is the document the exit criteria are graded against (R-crc-12: an exit criterion lives in the CHARTER), the architect readout and audit-drift's staleness checks read it, and neither proposal.md's Impact nor design.md's Touchpoints lists it (only CLAUDE.md). Same section, exit (2): 'the three finding-list phrasings (\"still open\", \"Resolved since\")' lists two of three.",
+      "recommendation": "Add the architecture doc to Touchpoints and a task to amend the rc03b charter paragraph (slot arithmetic unchanged; exit (2) names all three phrasings), dated, as the D-rc03-5 'gains one sentence' correction was."
+    },
+    {
+      "pass": "7",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 5,
+      "title": "'Genre' is already an engine and spec term for internal-vs-external; the change overloads it without saying so",
+      "description": "The delta introduces 'two PASS GENRES — REVIEW and VERIFICATION' and the word 'genre' unqualified throughout (table, scenarios, orbit-review delta). MEASURED: `grep -rn -i genre orbit/specs/*/spec.md` → `orbit-report-rendering` uses 'genre' ~20 times for INTERNAL emit vs EXTERNAL findings file ('PER GENRE', 'genre-conditional header', 'both genres', 'Non-renderable genre'); `orbit-review` baseline :311 says 'no prior same-mode review pass of EITHER genre (no internal emit and no external findings file)'; `src/core/report-render.ts:92` declares `genre: 'internal' | 'external'`. rc03c will store a `genre` on the emit beside a renderer whose `genre` field means something else, and this very change's Risks entry ('in-context confirm ... the word is a reader's') cannot be read unambiguously against the baseline.",
+      "recommendation": "Either qualify every new use as 'pass genre' and add one sentence to the conventions requirement acknowledging the pre-existing render-genre axis (internal/external) by pointer to `orbit-report-rendering`, or pick a different word (e.g. 'pass KIND' or 'ROLE') before the term is stored on emits in rc03c."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "The thesis is sound and the exploration earned it: making the instruction absent from every brief dissolves a problem three passes of deny-listing could not bound, and the twelfth channel was found by the method the Mechanism entry declares. What the proposal has not yet done is turn its two rules into instruments an implementer can build without inventing: the exit-(2) grep is specified by an expected count rather than by a decidable domain and exemption (executed, the stated rule does not reproduce the count); the in-context body is told to skip reading the trail on a predicate only the trail can answer; and the mirror the design prescribes is forbidden by the owner's own sentence and has no fenced production to pin. The remaining pattern is restatement — the brief's content list three times, the slot-arithmetic rule corrected in the delta but not in the charter, a worked example still carrying the deleted option — and one vocabulary collision the baseline already owns ('genre' means internal/external in the renderer and two specs). Probing was by execution where the artifacts made claims about the tree: the generated-surface greps, the fence count on the delta, the body's fresh-dispatch text, the owner-text helper's fence requirement, and the baseline's architecture-mode iteration note.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "Move to the walk and then apply; nothing here needs redesign or a return to exploration. The two rules are right and well-derived, and every finding is a repair to how they are stated or instrumented: define the grep test's domain and exemption as rules rather than a count, name the one trail fact the in-context body may read to learn its genre, fence the table so the mirror can be pinned and let the owner's sentence permit it, bound the VERIFICATION row to walks since the latest independent pass, and sweep the three restatement sites plus the worked example. Settle the 'genre' collision before rc03c stores the word on emits, because that is the point after which renaming costs a migration. The architecture-mode iteration note is the one place a decision is owed rather than a repair, and both options stay inside the three capabilities already declared."
+  },
+  "final_assessment": "0 critical, 11 warning, 3 suggestion.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc03b-pass-genres --from-file orbit/changes/rc03b-pass-genres/.orbit-runs/review-proposal-2026-10-04T03-01-32Z.json"
+}

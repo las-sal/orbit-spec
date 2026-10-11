@@ -1,0 +1,116 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-11T20:08:56Z",
+  "change": "rc09b-tool-inventory",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc09b-tool-inventory/.orbit-runs/external-proposal-2026-10-11T20-01-30Z.md",
+  "source_command": null,
+  "source_token": "2026-10-11T20-01-30Z",
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-6 Codex",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 2
+  },
+  "pushback_verification": "All three verified: D6 and task 3.2 named one failure shape for every scenario; D1 said every sweep reports a refused line while extractInline tokenizes only spans beginning with the sweep's tool; the wrapper residual converged with the fresh pass.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 1,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Failure assertions contradict the passing scenarios",
+      "marker_source": "external",
+      "file": "orbit/changes/rc09b-tool-inventory/design.md",
+      "line": 66,
+      "classification": "trivial_fix",
+      "action": "D6 now asserts each scenario's own outcome: the two passing scenarios assert a pass (and no head read from a flagless span); unknown heads assert surface, line and head; an unused exemption head and kind; a recorded-tool exemption the head; a malformed block requirement and line. Task 3.2 points at D6.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc09b-tool-inventory/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "asserts the failure text names surface, line and head",
+          "each asserting the failure names surface, line and head"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc09b-tool-inventory/design.md",
+            "text": "every scenario asserts its own outcome"
+          },
+          {
+            "path": "orbit/changes/rc09b-tool-inventory/tasks.md",
+            "text": "asserting its scenario's own outcome by design D6"
+          }
+        ],
+        "searched": [
+          "names surface, line and head",
+          "shown able to fail"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The named residual omits tools invoked through exempt wrappers",
+      "marker_source": "external",
+      "file": "orbit/changes/rc09b-tool-inventory/specs/orbit-cli-grammar/spec.md",
+      "line": 54,
+      "classification": "stale",
+      "action": "converged with the fresh half's finding at the same site, walked in its log",
+      "evidence": "resolved in address-reviews-2026-10-11T20-08-41Z (the earlier pass's log), entry 'A declared head launders the tool it runs, and the named limit omits that member'",
+      "outcome": "stale"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Refused inline spans are not reported by every existing sweep",
+      "marker_source": "external",
+      "file": "orbit/changes/rc09b-tool-inventory/design.md",
+      "line": 40,
+      "classification": "trivial_fix",
+      "action": "D1 now distinguishes a refused shell-fence line (failed by every sweep, whatever its first word) from a refused inline span (reported only by the sweep whose tool it begins with), pointing at the named limit",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "already reports it in every sweep"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc09b-tool-inventory/design.md",
+            "text": "a refused INLINE span is reported only by the sweep whose tool it begins with"
+          }
+        ],
+        "searched": [
+          "every sweep",
+          "refused"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Two resolved as repairs (per-scenario outcomes in D6 and task 3.2; D1's refusal reporting split by fence and inline), one stale as converged with the fresh half's wrapper finding, walked in its log.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal rc09b-tool-inventory",
+  "ripple_misses": 0
+}

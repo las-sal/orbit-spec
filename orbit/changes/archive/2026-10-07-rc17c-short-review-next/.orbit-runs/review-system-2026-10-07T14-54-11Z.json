@@ -1,0 +1,86 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-07T14:54:11Z",
+  "change": "rc17c-short-review-next",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "1",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "\"Same invocation as the gate's canonical next\" holds only when the gate names a walk",
+      "file": "orbit/changes/rc17c-short-review-next/specs/orbit-emit-composition/spec.md",
+      "line": 11,
+      "recommendation": "The delta (and the composer comment at src/core/emit-composition.ts:1891-1892) says the short pointer makes the emit name the same invocation as the gate's canonical next. canonicalNextForReviewed (src/core/artifact-graph/gates.ts) names the walk only when a pass is unresolved and no pair is open: on a half-landed pair it names the missing half, and on a passed gate with a SUGGESTION-only pass it names the phase command (the rc18 gap). The emit's pointer is still correct and strictly better than --from-file (the change-scoped walk applies the openPair warning, row 4). Qualify the clause to 'the same invocation the gate names when its canonical next is a walk', in the delta and the code comment, so no reader takes the emit's next for the canonical next."
+    },
+    {
+      "pass": "0",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "title": "Universal-spine and workflow-shape scenarios declared on a three-example test",
+      "file": "test/core/canonical-examples.test.ts",
+      "line": 180,
+      "recommendation": "The `behaviour` tags for 'Universal spine present on every emit' (THEN: any orbit command's JSON carries the 7 spine fields) and 'Workflow command emit shape' (THEN: per-command extensions present per orbit-run-summary-emit) sit on a test that executes three examples (apply, review, archive) and checks kind plus key-set equality with the example. The evidence covers three commands, not every command, and not the extension set orbit-run-summary-emit defines. Either move the universal-spine tag onto a test that exercises the write gate's spine check across all commands, or narrow the declaration with a second tag/ledger entry that states what the canonical test proves."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "title": "requirementSource selects an active delta by substring, not by a MODIFIED heading line",
+      "file": "test/core/canonical-examples.test.ts",
+      "line": 43,
+      "recommendation": "`fs.readFileSync(abs).includes(HEADING)` treats any active orbit-conventions delta containing the heading text as the holder: a future change that REMOVES or RENAMES the requirement (its FROM line carries the heading), or adds a requirement whose title extends this one, makes the guard fail with 'no **Canonical examples** line' or 'no heading' rather than with a message about the delta's kind. Match the exact heading line under a `## MODIFIED Requirements` section (fence-aware, like canonicalExamples' block scan), and fall back to the baseline otherwise; the spec's 'an active change's delta MODIFIES this requirement' already reads that way."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Probed hardest where a pointer change usually breaks things: every reader of next_recommended (orientation stores it verbatim; the clean change-scoped audit-drift emit defers to the newest prior emit's pointer, which now reads the short form and still lands on the right walk), every spec and generated body that restated the self pointer (only the four capabilities this change modifies did, plus architecture-mode lines that stay by design), and the renderer's closed set (a self pointer at another file still fails; the short form on a clean pass still fails). The one conceptual seam is that the emit's pointer is a findings-dependent fact while the gate's next is a trail-dependent judgement; they coincide only when the gate's next is a walk, which is exactly the space rc18 is declared to widen.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3"
+  ],
+  "passes_skipped": [
+    "4: no perspectives defined (orbit/lenses/ absent); skip Pass 4",
+    "5: no critical paths defined (orbit/lenses/ absent); skip Pass 5",
+    "6: full /orbit:audit-drift not invoked from the fresh worker; a targeted residue sweep of the retired self pointer across src/, the generated surface and orbit/specs ran under Pass 3 instead (only architecture-mode lines, the T0 prompt's explicit --from-file aim, and pre-sync baselines carry it)"
+  ],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The mechanism is one composer branch and one accepted-set check, both small, both computed from the emit itself, and both exercised: the prior-generation render is pinned byte-equal to the short form, the architecture branch is untouched, and the canonical-example guard executes all three examples through the real write gate and was shown able to fail. Pass 0 ran inline rather than through /orbit:verify: tasks 20/20, validate --strict clean, every delta scenario declared, and the five touched suites green (the full suite was not run here). What remains is wording precision about what the short pointer equals, a scenario declaration that claims more than its test proves, and a guard edge that only a future REMOVED or RENAMED delta would hit. None changes behaviour a user meets; walk them, then move to archive."
+  },
+  "final_assessment": "0 critical, 0 warning, 3 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc17c-short-review-next"
+}

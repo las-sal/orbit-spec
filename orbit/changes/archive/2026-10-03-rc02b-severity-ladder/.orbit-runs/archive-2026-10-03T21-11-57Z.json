@@ -1,0 +1,86 @@
+{
+  "command": "archive",
+  "timestamp": "2026-10-03T21:11:57Z",
+  "change": "rc02b-severity-ladder",
+  "kind": "lifecycle",
+  "model": "claude-fable-5-1",
+  "final_assessment": "Archived rc02b-severity-ladder to orbit/changes/archive/2026-10-03-rc02b-severity-ladder/ through a COMPUTED PASSED review-system gate — the seventh rc-stage through one, the sixth through the blind pair (external GPT-6 Codex 1C/2W/0S and fresh 0C/4W/5S on the pushed apply commit 245a8879, blind to each other, zero CRITICAL overlap, one defect converged at two severities; two walk logs; an in-context confirm 0C/0W/2S). The ladder is defined by consequence once in orbit-conventions; a CRITICAL carries its reproduction (refused at the write gate in every mode, requested of external reviewers by a checked mirror, marked [unreproduced] by the renderer, re-run first at the walk); a lifecycle BLOCK left the scorecard. Exit (1), (2) and (3) each executed in this cycle by an independent reviewer or a walk. Sync through the engine's applySpecs: 3 ADDED + 13 MODIFIED across six capabilities, 16 of 16 blocks byte-verified; fingerprints 13 verified / 0 diverged; pre-archive audit 0 CRITICAL / 0 WARNING / 1 SUGGESTION; 25 of 25 tasks (5.4 closed at archive by observation of the first external return under the new prompt); 2429 tests green. User-typed, zero consent prompts; unattached (pr: never), no tail.",
+  "archive_path": "orbit/changes/archive/2026-10-03-rc02b-severity-ladder",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": [
+      "orbit-address-reviews",
+      "orbit-conventions",
+      "orbit-emit-composition",
+      "orbit-report-rendering",
+      "orbit-review",
+      "orbit-review-external"
+    ],
+    "added": 3,
+    "modified": 13,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
+  "user_decision": "proceeded_with_no_critical",
+  "consent": "user-invoked",
+  "warnings": [
+    "Task 5.4 (the user-validation handoff) was CLOSED AT ARCHIVE BY OBSERVATION, not prompted past: the first real external return under the new prompt (external-system-2026-10-03T20-35-49Z.md, GPT-6 Codex) wrote a **Reproduction**: body on its one CRITICAL and the engine render of that pass carries no [unreproduced] mark (grep -c 0); the reviewer's own planted probes (a **File**: line inside the body; a heading-shaped line under ## Blocks) were read as content by both readers. The measurement is n=1 — one return, one reviewer, one CRITICAL — recorded under the task.",
+    "Pre-archive audit (in-line, pre-archive context): 0 CRITICAL / 0 WARNING / 1 SUGGESTION — category 5: predicted_unsatisfied = ['orbit/specs/*/spec.md'], the archive-time glob this sync satisfies (actual_unpredicted empty after walk 2). Category 1: the retired claims (sixteen; the README section) survive only in dated/corrected records and in archives. Category 3: the stage read in-change with no hand-written state line and a valid citation; the charter's dated MEASURED paragraph (sixteen; five) is a record, its correction carried by the status entry written in this flow. Category 6: no staging explorations. Markers: 10 grep hits in the change directory, all documentation appearances of the P8 block rule, 0 bare — no prompt fired.",
+    "AT-ARCHIVE NOTE (walk 2, fresh S1) EXECUTED in flow: the status-log entry appended to orbit/architecture/clean-up-review-cycle.md states the corrected figures (FOURTEEN per-pass sites, SIX capabilities) beside the charter's dated paragraph, which is left unchanged; CLAUDE.md's rc02b paragraph rewritten from APPLIED to ARCHIVED with the cycle's record.",
+    "The sync ran through the engine's applySpecs (the agent-driven path's merge + validator + divergence guard, invoked from dist) rather than a hand edit; every one of the 16 delta blocks was then re-read from the synced baseline and found byte-equal.",
+    "Nothing is committed: the archive commit (sync, move, both walk logs, the fresh emit, the confirm, this emit, the doc edits) is the user's act. The in-context confirm's two SUGGESTIONs are NOT walked; they ride the readiness record as accepted residuals rather than warnings because both arose from fixes formed against the independent passes."
+  ],
+  "judgements": [
+    {
+      "kind": "readiness",
+      "disposition": "ready",
+      "ratified_by": "ai",
+      "formed_against": [
+        "2026-10-03T14-53-10Z",
+        "2026-10-03T16-35-00Z",
+        "2026-10-03T20-35-49Z",
+        "2026-10-03T20-45-06Z"
+      ],
+      "reasoning": "Four independent readings — a fresh pass and an external (GPT-6 Codex) on the proposal, then the blind pair on the shipped apply commit — and every substantive finding across them was repaired at its owner and re-executed, not argued: the external CRITICAL reproduced by its own script before the fix and did not after it; the fresh half's trend-counter case flipped from (0 repeat, 1 new) to (1 repeat, 0 new); the five constructed Description-opening edge cases agree in both gate-facing readers; the sweep over all 63 real external files found the new latch touches only the external reviewer's planted probe. The mechanism the exit criteria name — refuse at write, mark at render, carry to the walk — behaved as specified under every input four reviewers and two walks constructed, and the one live measurement of the request's uptake (5.4) came back positive. What the pair found was in the margins the exploration's enumeration missed (a third reader, a second divergence between the two it did reconcile) and in prose restating what the ladder owns; both classes are closed in the owner and pinned by tests. The residuals below are the honest remainder, and none of them moves a gate input.",
+      "accepted": [
+        {
+          "claim": "The review-system gate PASSED means every substantive finding is resolved — NOT that an independent pass stood clean on the final tree. The last independent passes read the apply commit 245a8879; the two walks and the confirm edited after it, and no fresh or external pass has read the walked tree.",
+          "why": "rc07's distinction, carried on every rc-stage since; the in-context confirm executed the walks' additions against the engine (five edge cases, the full external-file sweep, the full suite) but it is same-session and same-model, and the pair's own cadence slot is spent."
+        },
+        {
+          "claim": "Two in-context SUGGESTIONs are unwalked and ship as written: (a) the trail reader's has-a-body test reads a `**Reproduction**:` line inside a code fence as the label while the renderer reads it as content — no input constructed makes the difference observable, because the fence's opening delimiter marks the body first; (b) the repaired `Review mode decision framework` requirement carries a dated measurement ('measured 2026-10-03') inside its normative sentence, now synced into baseline.",
+          "why": "Both arose from fixes formed against the independent passes (walk 1's Description-opening fix; walk 2's option-A repair of the fresh W4) and were graded SUGGESTION by the ladder: neither breaks a path nor splits an implementation. (a) is a one-line symmetry fix for whichever change next touches trail.ts; (b) is a one-clause trim the next conventions touch or audit-drift walk can take — a record where living prose should be."
+        },
+        {
+          "claim": "The external findings grammar is still stated in THREE readers — parseExternalMarkdown (trail.ts), normalizeExternalPass and lenientExternalCounts (report-render.ts) — each now following the field-line rule and the Description-opening rule, with the (title, file) key pinned through the two gate-facing readers by test and the third pinned through the trend line.",
+          "why": "The pair found the third copy and found the two reconciled copies diverging a second time; this change patched all three in place under R-crc-6's repair lane and declined the collapse as redesign. Q-crc-15 already owns the collapse (sized as its own small change); this record widens its count from two grammars to three, so the question's size estimate should be re-read before it is taken up."
+        },
+        {
+          "claim": "Two severity statement sites remain outside the ladder's reach by design: orbit-audit-drift assigns its own severities (preserved by system Pass 6) and upstream verify-change grades by its own rules (an incomplete task is its CRITICAL); a system review folding verify-change's findings grades them by the ladder as their author, and the external half found Pass 0 and Pass 1 lacked the ladder's consequence clause until walk 1 added it.",
+          "why": "D-rc02b-4 named both as known limits in the ladder's own text; touching audit-drift's rules would have been a seventh capability past a ceiling already breached at six. The next change to touch orbit-audit-drift inherits a one-sentence pointer."
+        },
+        {
+          "claim": "Nothing STOPS on a lifecycle block mechanically: the apply flow carries no validate or marker precondition, the only lifecycle marker reader is the archive flow's Step 1.5 warning, and a block is a report with a name — rendered above the findings, listed first at triage — whose stop is the human's.",
+          "why": "Stated as a known limit in the ladder requirement after the fresh proposal pass executed the grep and found the precondition the exploration had asserted did not exist; giving apply a precondition is rc10-apply-closure's territory and was declined at walk 1 as a seventh capability."
+        },
+        {
+          "claim": "The reproduction gate checks PRESENCE and SHAPE only — a non-empty string on a CRITICAL, a string wherever present, single-line blocks entries — never truth: 'see above' passes the gate and reaches the walk, where step (0) is the judgement.",
+          "why": "R-crc-10 — the engine mechanizes only what it can observe; whether a reproduction reproduces is a walk's re-run, which walk 1 performed on the only CRITICAL this cycle produced. The cost is a reviewer who writes a token body; the first live return did the opposite."
+        }
+      ]
+    }
+  ],
+  "next_recommended": "Change archived. Run /orbit:new or /orbit:explore to start the next change, or /orbit:audit-drift for a project-wide drift check."
+}

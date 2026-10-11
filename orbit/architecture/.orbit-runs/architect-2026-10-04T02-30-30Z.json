@@ -1,0 +1,29 @@
+{
+  "command": "architect",
+  "timestamp": "2026-10-04T02:30:30Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": null,
+  "final_assessment": "Architect session on clean-up-review-cycle: rc03-review-genres SPLIT into rc03b-pass-genres + rc03c-verification-record under R-crc-9 (fourth preventive application, caught at exploration by a size check). The parent heading is retained as record with a SPLIT note and its Complete: slot left [ ] for Sal's word; the two children are declared with charters, named inputs, touches at R-crc-1's ceiling, and exit criteria partitioned from the parent in the mechanism's own terms (no R-crc-12 case arises on a child's criteria authored at declaration). The exploration was renamed to orbit/explore/rc03b-pass-genres/ and repointed at the first child (rc04 precedent). Stage count 25 -> 27 at both marked sites; orbit architecture validate clean, orbit validate --sources clean (stages = 27, 3 markers). Q-crc-22 gained a 2026-10-04 note narrowing its producer side. No rulings captured, no completions ratified, no stages ended. Engine renders rc03 premised, rc03b exploring, rc03c premised.",
+  "stages_touched": [
+    "rc03-review-genres",
+    "rc03b-pass-genres",
+    "rc03c-verification-record"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      "orbit/architecture/clean-up-review-cycle.md — the 2026-10-04 SPLIT status-log entry (last), the SPLIT note under `### Stage rc03-review-genres`, and the two new headings `### Stage rc03b-pass-genres` / `### Stage rc03c-verification-record` before rc04's",
+      "orbit/explore/rc03b-pass-genres/explore.md — the exploration: D-rc03-2/3/4 with their Mechanism entries, D-rc03-5..9 scope and fact entries, four open questions with standing recommendations, seven Considered & out entries",
+      "CLAUDE.md — the ACTIVE program paragraph's stage-count marker (27) and the split clause in its parenthetical",
+      "orbit architecture status — rc03 premised (parent, retained), rc03b exploring, rc03c premised; rc05–rc10, rc07b, rc12 premised"
+    ],
+    "next_command": "/orbit:propose rc03b-pass-genres",
+    "model_hint": null,
+    "seam": "post-declaration"
+  },
+  "next_recommended": "/orbit:propose rc03b-pass-genres"
+}

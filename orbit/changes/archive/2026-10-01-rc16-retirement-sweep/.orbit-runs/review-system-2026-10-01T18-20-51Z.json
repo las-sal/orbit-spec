@@ -1,0 +1,105 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-01T18:20:51Z",
+  "change": "rc16-retirement-sweep",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    }
+  },
+  "findings": [
+    {
+      "pass": "1",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc16-retirement-sweep/specs/orbit-conventions/spec.md",
+      "line": 74,
+      "title": "A3's second clause attributes the row's concluded-rung render to orbit-run-summary-emit; orbit-orientation's sourcing requirement owns it",
+      "recommendation": "The 'Owned, since shipped' paragraph (and its byte-equal body copy at src/core/templates/workflows/explore.ts:610, rendered at .claude/skills/orbit-explore/SKILL.md:561) reads: 'the orientation row's next line renders the concluded rung from the trail's terminal emit (`orbit-run-summary-emit`'s `Named-mode explore recommendation by maturity`)'. Read at this pass: that requirement owns the Concluded rung's TEXT and, at orbit/specs/orbit-run-summary-emit/spec.md:205, only cross-references that '`orbit-orientation` renders the recorded string verbatim'. The rule the clause describes — when an explore workstream's newest spine-valid emit carries status.token concluded, the recorded next_recommended is the Concluded rung's prose and the next line renders it BARE, from the trail — is STATED at orbit/specs/orbit-orientation/spec.md:148-151 (`Next-recommendation sourcing is time-shifted, never live`), and the rc16 orientation delta itself points there ('per the sourcing requirement's concluded rule', specs/orbit-orientation/spec.md:73). This is the class the in-context proposal pass corrected twice (W1/W2: a pointer chosen from a title, not a read body); the limit being retired ('the orientation row's next line stays COUNT-DERIVED') was a limit of the ROW, so the owner of its retirement is the row's sourcing rule. Fix in both places under D-rc16-3: point the clause at `orbit-orientation`'s `Next-recommendation sourcing is time-shifted, never live` (keeping `orbit-run-summary-emit`'s maturity requirement beside it only if the sentence is split so the rung-text owner and the row-render owner are each named for their own claim); the two explore pins then move a second time with a dated note, as rc13b's did."
+    },
+    {
+      "pass": "0",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc16-retirement-sweep/design.md",
+      "line": 82,
+      "title": "Repair-table row A3'' says 'in the body's voice'; the tree carries the delta paragraph verbatim, so the skill says 'this requirement' to a reader who has none",
+      "recommendation": "design.md:69 calls the repair table 'the task list's source of truth', and row A3'' (line 82) specifies 'A3's one sentence, in the body's voice'. The fresh proposal pass's suggestion (task 1.3 'leaves the body paragraph's text to codegen') was resolved by making task 1.3 VERBATIM, and the apply did exactly that (explore.ts:610 is byte-equal to the delta's line 74 after unescaping — re-checked at this pass with node), but the design row was not updated, so the record's source of truth and the task disagree on the one row where the body's wording was deliberated. The consequence is in the generated surface: .claude/skills/orbit-explore/SKILL.md:561 ends 'None of the three is a limit of this requirement; each is named here so a reader of the conclude flow knows who owns the behaviour' — in a skill body 'this requirement' has no referent (an adopter's skill carries no requirement; the surrounding section is the conclude verb), the one sentence in the six repaired body sites that reads as spec prose pasted into a procedure. Either path is defensible; pick one and make the record match the tree.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Keep the body verbatim (byte-equality is a cheap check that the two surfaces say one thing, which is D-rc16-3's purpose). Edit design.md row A3'' to read 'the delta's paragraph VERBATIM, backtick-escaped (task 1.3)' so the source of truth matches the task and the tree; accept the 'this requirement' wording in the skill as the price of the check, and say so in the row."
+        },
+        {
+          "label": "B",
+          "body": "Honour the row as written: reword the body's closing sentence in the conclude section's own voice ('None of the three is a limit of concluding; each owner is named so a reader of this flow knows who owns the behaviour the conclusion depends on'), drop the byte-equality claim from task 1.3's DONE note in favour of a side-by-side read, and move the two pins once more with a dated note."
+        }
+      ]
+    },
+    {
+      "pass": "1",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc16-retirement-sweep/specs/orbit-conventions/spec.md",
+      "line": 113,
+      "title": "A4 restates the grammar requirement's reader's-judgement clause beside the pointer to it",
+      "recommendation": "The repaired `Kind:` bullet reads 'the stated residual: whether a rule was written down at all is a reader's judgement, per `Mechanism entry grammar and accounted closure` (R-crc-10) — never a check.' The owner it points at states, at delta line 36 / baseline line 984: 'whether a rule was written down at all are a reader's judgement — the deliverable is a RECORD, not a check (R-crc-10)'. The bullet therefore carries a near-verbatim restatement AND the pointer — the 'restatement beside a pointer' shape the skill-templates-parity note (test/core/templates/skill-templates-parity.test.ts:60-61) records trimming once already as the R-crc-14 pattern, here inside one capability. A pointer alone suffices: '— the stated residual, a reader's judgement per `Mechanism entry grammar and accounted closure` (R-crc-10).' The body copy at explore.ts:472 moves with it (D-rc16-3). Low stakes: both statements agree today and sit in one spec, which is why this is a suggestion and not more."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "pass": "1",
+      "title": "A2 names orbit-run-summary-emit by capability only while A1 names the requirement",
+      "evidence": "Delta specs/orbit-conventions/spec.md:46 read at this pass: the parenthetical now names `Named-mode explore recommendation by maturity` and `Mechanism section consumption` by requirement, the same two owners as line 32; resolved at address-reviews-2026-10-01T17-38-52Z."
+    },
+    {
+      "pass": "0",
+      "title": "Exit (2) narrowed from the charter's three directories to two without an R-crc-12 revision record",
+      "evidence": "Re-ran `ls orbit/changes/rc16-retirement-sweep/specs/` → exactly orbit-conventions, orbit-explore-modifications, orbit-orientation; task 3.1 measures three; proposal.md:70-74 states the charter grades as written. Resolved at the first walk; holds on the tree."
+    },
+    {
+      "pass": "6",
+      "title": "Named-out orientation.ts comment set disagrees across proposal, design and task 3.3",
+      "evidence": "proposal.md:91-93, design.md:32-34 and at-archive note 3.3 all name lines 22 and 50; both comments read at this pass (orientation.ts:19-24 and 46-51) and the module's own reads checked (fs calls at lines 158-245 and 511 touch .orbit-runs and an explore.md existsSync at 336 — presence, not content), so both are true of the module as the design says."
+    }
+  ],
+  "commentary": "The pattern behind what I raised is the one the change's own proposal cycle named: a pointer chosen from a requirement's title rather than its read body. The in-context pass corrected two such pointers (A4, A5); the one I found is in A3's middle clause, where the row's next-line render is attributed to the capability that owns the rung's text. I read every owner the deltas name: orbit-run-summary-emit's maturity requirement (lines 192-251 — the Accounted rung does name a BOUNDED residual beside it, so A1/A2 hold), orbit-propose-modifications' Mechanism section consumption (546-565, row 5 is the verbatim transfer — A1/A2/A1'' hold) and Consume mode (15-43, the refuse naming the Re-entry slot — A3's third clause holds), orbit-architecture-engine's state requirement (122-180, the header read via readStatus — A3's first clause, B1 and B3 hold), orbit-emit-composition's one-source grammar requirement (633-650 — its last sentence states the exemplar fixture parse, so A5 holds), and orbit-conventions' own grammar requirement (984 — A4 holds, but restates). Then I read orbit-orientation's sourcing requirement (140-168) because the delta's own scenario at line 73 points there, and found it states the concluded-rung render rule A3 attributes elsewhere.\n\nWhat I probed and how: every task measurement was re-run, not trusted — the widened grep over explore.ts (0), the eleven-sentence grep over three deltas + body (0/0/0/0) and three baselines (4+1+3 = 8, the count the sync retires), `validate rc16-retirement-sweep --strict` (valid), `fingerprint --check` (6 verified), `validate --sources` (stages 25, rulings 14, capabilities 21, schema-version 4 — none moved), `npm run build && update --force && npm test` (2376 passed, 100 files; the regenerated SKILL.md is byte-stable at 48948 bytes and git status stayed clean, so the installed surface was already current). Line 610 was compared to delta line 74 with node after unescaping backticks: identical. The design's byte-diff check was executed with a fence-aware block extractor plus `diff`: exactly eight changed lines across the six blocks (A1, A2, A3, A4, A5, B1, B2 as a two-line-to-one merge, B3), every one a repair-table row, nothing else moved. The whole-tree widened grep (git ls-files minus archives, trails and this change) returns 26 lines: 8 IN (the baseline sites the sync retires: conventions 923/980/994/1022, explore-modifications 227, orientation 44/94/128) and 18 OUT — the proposal's 16 plus two new lines the apply itself introduced, the dated note at skill-templates-parity.test.ts:64-65 quoting the retired phrases as a record (it matches none of the eleven exact sentences, checked). The partition holds. Of the OUT members, the only one I would call a limit rather than a record is clean-up-review-cycle.md:1482 ('this stage is ADVISORY until rc13b lands') — it sits in rc13a's charter section, which is declaration-time prose, and CLAUDE.md:303 already narrates that the readout landed; I did not raise it because the design partitioned it as history on a defensible reading and the charter is the kind of record R-crc-12 treats as fixed.\n\nOn the mirror-test fix (pass 2): I traced each of the five assertions through the per-anchor ownerText. Before the fix, all three conventions fences resolved through the Mechanism anchor to rc16's delta, which holds the Mechanism and Decision-entry fences but no status-header fence (read: delta lines 1-139), so the status assertion's indexOf failed — the apply's stash-verified claim is reproducible by reading alone. After the fix, the status fence resolves to baseline, the Decision and Mechanism fences to the delta (as before), and ONE comparand changed silently for the better: the nine-moves table now resolves to rc16's explore-modifications delta instead of the baseline it was reaching through the re-entry-table anchor (the two tables are identical, so the old test passed against the wrong owner). The other four ownerText callers (explore-grammar-parity.test.ts:27 per firstLine; orbit-content-fidelity.test.ts:209, 217/235, 300) each read only the block their anchor sits in. The dated comment is accurate.\n\nOn the adopter perspective (pass 4a): the regenerated conclude flow at SKILL.md:548-561 and composition section at 602-608 name owners by capability and requirement with no stage id; an adopter can act on 'REFUSED at propose and REOPENED here first' because the reopen procedure is in the same body, and the pointer to Step 0c.6 resolves (propose.ts:162/169/187/223 read). What an adopter cannot act on is a requirement title they do not have — but that was equally true of 'until <stage> lands', and the pointer at least names a stable thing. The exemplar fence's four 'rc13b' mentions (SKILL.md:497/502/507/534) are inside two entries the explore-modifications requirement declares as verbatim quotes of the archived bounded-closure-semantics change; D-rc16-2's domain is classes A and B and the quoted history is sound as out-of-set — a reader does see a stage id the body never defines, which I note and do not raise. For the future author (pass 4b): tasks 1.7 and 3.2 record re-runnable commands with their counts, and I re-ran both; the partition lives only in design.md's Mechanism record at the proposal's numbers (14 IN), with the post-apply 8 stated in task 3.2 rather than the record — a reader must add them up, which is a mild trust cost I chose not to raise.\n\nOn exit (3) (pass 5c): Category 3 as the audit-drift body defines it (audit-drift.ts:238-262) compares CLAUDE.md and project.md claims against orbit/specs and makes a governing-doc-vs-spec disagreement CRITICAL. project.md is absent here, so only CLAUDE.md feeds it. CLAUDE.md:413 ('answers position / last / next per workstream with no artifact reads') is the one left sentence that a strict reading of that rule could trip against the synced orientation clause, but it sits in the section headed historical and is not in Q-crc-28's set, so exit (3) as charted is not at risk from it; the exemplar fence and the orientation.ts comments are not Category 3 inputs at all. Passes 4 and 5 ran with the substitutes the prompt gave because orbit/lenses/ is absent; pass 6 ran its four categories by hand rather than through the skill, to avoid a second emit on the trail. Things I verified and chose not to raise: the orientation delta carries 'D-arc Stage D4' at line 50 (a pre-existing sentence in the carried block, not a repaired one); task 2.1's text says 'four body sites' while its DONE note says six (the note explains the drift and the parity comment names all six); the design's Touchpoints omit orbit-generated-surface.test.ts while files_touched carries it (recorded as the instrument correction in the emit, which is what the design asked for).",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6"
+  ],
+  "passes_skipped": [],
+  "final_assessment": "0 critical, 2 warning, 1 suggestion.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc16-retirement-sweep --from-file orbit/changes/rc16-retirement-sweep/.orbit-runs/review-system-2026-10-01T18-20-51Z.json"
+}

@@ -1,0 +1,12 @@
+{
+  "command": "explore",
+  "timestamp": "2026-09-21T23:55:30Z",
+  "change": "rc04d-override-vocabulary",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "Boundary emit — the exploration is complete and ready to promote. Two decisions, zero open questions. D-rc04d-1 resolved by MEASUREMENT rather than reasoning: no instrument in the repo couples spec wording to body wording (orbit-content-fidelity pins the BODIES and reads zero spec files; the only tests touching orbit/specs count capabilities rather than read prose), so this stage can de-name all five sites without touching src/ and exit (2) holds. The same measurement is recorded as a GIFT TO rc04c: those two content-fidelity pins go red the moment rc04c stops the bodies writing the field, which belongs in that stage's task list as a deliberate update rather than a surprise mid-apply. D-rc04d-2 (Sal): de-naming MOVES THE OWNERSHIP at site 2 and substitutes a phrase at the other four, because orbit-engine-gates currently restates a record shape orbit-run-summary-emit owns — the one-voice-for-facts defect rc07 was built around, sitting inside the stage meant to stop naming the field. The decision carries all five replacements VERBATIM as a table, so promotion transcribes rather than paraphrases. Every right-hand form is true of the engine as it stands, which is exactly what exit (2) makes falsifiable.",
+  "decisions_captured": 2,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "next_recommended": "/orbit:explore rc04d-override-vocabulary — continue thinking, or /orbit:propose rc04d-override-vocabulary if ready to formalize"
+}

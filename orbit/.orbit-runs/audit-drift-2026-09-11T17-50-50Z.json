@@ -1,0 +1,62 @@
+{
+  "command": "audit-drift",
+  "timestamp": "2026-09-11T17:50:50Z",
+  "change": null,
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "final_assessment": "No critical issues. 0 warnings to consider; 1 suggestion. Post-D6-archive project-wide sweep at 6a5e3b6: C1 pattern set empty (no archive has ever RENAMED or REMOVED a requirement); C2 lenses absent; C3 governing docs agree with baseline (20 capabilities, 15+15 surface) and every parseable stage's prose matches its computed state (d1 complete-ratified, d2–d6 quiescent awaiting ratification; no hand-written state lines; all six archived citations resolve) — one test-count line one short of the archive commit; C4 all ADDED requirements of the last five archives present in baseline, no REMOVED/RENAMED residue, every consent-scoped emit across d2–d6 carries `consent: user-invoked`; C5 no active changes; C6 no staging explorations.",
+  "categories_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6"
+  ],
+  "findings_by_category": {
+    "1": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "2": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "3": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "4": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "5": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "6": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    }
+  },
+  "findings_total": 1,
+  "findings": [
+    {
+      "category": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "CLAUDE.md",
+      "line": 285,
+      "title": "The D6 stage paragraph (and the arc doc's matching status-log entry) states 2011 tests, but the archive commit it describes carries 2012 — the in-flow engine fix added a regression test after both paragraphs were written",
+      "recommendation": "Two governing-doc lines record the archive moment one test short: CLAUDE.md:285 (`**2011 tests green.**`) and orbit/architecture/d-arc-arbitered-flow.md:716 (the D6 status-log entry). The archive commit 6a5e3b6 runs 2012 (the emit-composition regression test for the archive table's conditional fields was added between writing those paragraphs and emitting). Historical stage entries keep their own counts by design, so this is a one-word correction to each line (`2012`), optionally noting the in-flow fix — a hotfix commit, no change needed. The archive emit's own final_assessment also says 2011; it is audit trail and stays as written."
+    }
+  ],
+  "stale_suppressed": [],
+  "next_recommended": "/orbit:address-reviews --from-file orbit/.orbit-runs/audit-drift-2026-09-11T17-50-50Z.json — 1 drift(s) detected project-wide; resolve before next workflow step"
+}

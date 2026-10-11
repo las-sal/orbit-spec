@@ -1,0 +1,6 @@
+schema: spec-driven
+created: 2026-10-04
+schema_version: 4
+architecture:
+  doc: clean-up-review-cycle
+  stage: rc06a-scenario-map

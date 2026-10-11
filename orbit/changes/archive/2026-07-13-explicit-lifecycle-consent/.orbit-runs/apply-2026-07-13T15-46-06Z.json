@@ -1,0 +1,17 @@
+{
+  "command": "apply",
+  "timestamp": "2026-07-13T15:46:06Z",
+  "change": "explicit-lifecycle-consent",
+  "final_assessment": "All 16 tasks complete in one session (no-chunking apply). Group 1: consent gate vocabulary (closed set of one) parsed/validated/surfaced; spec-driven v2->v3 with consent on both reviewed gates; ChangeMetadataSchema gains schema_version (scaffold-written) + consent_era_from (straddler stamp); eligibility phrasing 'Ready when you are:' with the ' — user-invoked' marker on consent-marked phase entries. Group 2: consent steps at entry in apply/archive/bulk-archive bodies (provenance rule, migrate-on-touch stamp, sync inheritance); consent field in apply+archive emit docs incl. ARCHIVE_SUMMARY_SCHEMA_REFERENCE; review stock phrasings re-labeled; onboard enumerates FOUR disciplines; no-chaining echoed as the fourth discipline in all 15 bodies (sync-specs gained its first orbit-additions block); parity hashes re-pinned. Group 3: audit-drift Cat-4 missing-consent tripwire with the three-tier era rule (no timestamp fallback); tests incl. straddler regression and the real C1/C2 archives scanning exempt. Group 4: exit-criterion greps live as tests (engine, templates, on-disk surface); 1668 tests green (baseline 1608); validate --strict passes; fingerprints 8/8; local .claude/ surface regenerated and spot-checked; arc doc synced (D1 state + status log). This change is itself the straddler specimen: consent_era_from stamped at this apply's entry-equivalent (2026-07-13T15:46:06Z), so this very emit is tripwire-checked and carries consent.",
+  "next_recommended": "/orbit:review --as system explicit-lifecycle-consent",
+  "kind": "workflow",
+  "tasks_completed": 16,
+  "tasks_remaining": 0,
+  "user_validation_remaining": 0,
+  "chunk": null,
+  "chunk_name": null,
+  "chunk_complete": true,
+  "tasks_completed_this_session": 16,
+  "consent": "user-invoked",
+  "gate_overridden": { "gate": "review-proposal", "state": "unpassed", "reason": "cadence class 'in-context' has no fresh pass" }
+}

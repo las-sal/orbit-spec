@@ -1,0 +1,28 @@
+{
+  "command": "architect",
+  "timestamp": "2026-09-21T16:05:31Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "rc02c-confirmation-semantics RATIFIED complete (Sal, 2026-09-21), judged against its AMENDED exit criteria: (1') clause (c) removed and no engine surface computes convergence; (2') the removal verified against every archived trail with no verdict changing for a third reason — independently reproduced by the blind pair's fresh half, which rebuilt the pre-apply engine in a worktree and got the same 57 gates, 13 changed, 44 identical; (3) satisfied by dissolution. The amendment and the charter divergence behind it are recorded in three places — this doc's SUPERSEDED IMPACT note, the amended exit block, and the change's design D6 — so ratification endorses a reversal that was argued rather than slipped through. Appended the cycle's closing status-log entry. Its substance: the gate passed in vocabulary this change introduced; the closing move was a SCOPED external pass bought BY CHOICE over an already-passed gate, which is Q-crc-20's standing recommendation performed by human judgement rather than by prompt, and which found the walk-authored mechanism sound while surfacing three durability defects including a test suite that pinned new behaviour without excluding old; and the cycle's own diagnosis, reached separately by four independent reviewers — every residue had ONE shape, a fix landing on the INSTANCE a reviewer named and stopping at the edge of the CLASS it belonged to. That recurred through propose, two walks, the pair's walk and the archive itself, and it is offered as a premise for rc08-walk-completeness: the walk's failure mode is not missing findings, it is resolving them narrowly. rc03a was NOT re-prompted — declined twice already, and re-asking is the nagging the body prohibits.",
+  "stages_touched": [
+    "rc02c-confirmation-semantics"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [
+    "rc02c-confirmation-semantics"
+  ],
+  "handoff": {
+    "next_command": "/orbit:explore rc04-readiness-record",
+    "model_hint": "explore is conversational; no independent class applies",
+    "seam": "The program has NO active changes. rc02c is complete-ratified and rc04-readiness-record is already exploring — it is the stage that owns replacing rc02c's archive-emit residual-risk WARNINGS with an actual readiness RECORD, which is what would let a future archive state that the AI judged the work ready knowing what came back, rather than listing what the gate could not see.",
+    "boot_sequence": [
+      "orbit/architecture/clean-up-review-cycle.md — the three 2026-09-21 status-log entries are rc02c's full cycle; Q-crc-20 is the open question it produced; Q-crc-14's second instance is the other",
+      "orbit/explore/rc04-readiness-record/explore.md — the open exploration this seam points at",
+      "orbit/changes/archive/2026-09-21-rc02c-confirmation-semantics/.orbit-runs/archive-2026-09-21T15-38-59Z.json — six residual-risk warnings, which are the concrete shape of what rc04 must replace",
+      "orbit/specs/orbit-engine-gates/spec.md — the synced baseline: convergence is clauses (a) and (b) only, and `budget` is an inert declared expectation"
+    ]
+  },
+  "next_recommended": "/orbit:explore rc04-readiness-record"
+}

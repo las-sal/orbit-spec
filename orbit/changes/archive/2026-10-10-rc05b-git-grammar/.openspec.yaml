@@ -1,0 +1,11 @@
+schema: spec-driven
+created: 2026-10-09
+schema_version: 5
+base_fingerprints:
+  orbit-cli-grammar:
+    Every `orbit` snippet on the generated surface parses against that program: sha256:964a8476c2fb1479981064950e34c419acb868000b7648e825cb0678b6b5f2f9
+  orbit-pr-lifecycle:
+    Test instruments derive from a recorded real-CLI contract: sha256:92e07ec3d2a0e10696b1585e6a2246e2a8af72e0cc4c80d5424be7ae7bf8e12d
+architecture:
+  doc: clean-up-review-cycle
+  stage: rc05b-git-grammar

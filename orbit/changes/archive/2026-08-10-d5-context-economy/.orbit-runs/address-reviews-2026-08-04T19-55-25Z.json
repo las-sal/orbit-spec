@@ -1,0 +1,185 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-08-04T19:55:25Z",
+  "change": "d5-context-economy",
+  "final_assessment": "All 9 external findings walked and resolved (7 obvious-fix, 2 decision-lane chat-ratified: the synthetic-trail atomic write and the diff_base tree-snapshot boundary); 0 stale, 0 deferred, 0 escalated. Strict validation green; fingerprints 25/25 verified.",
+  "next_recommended": "/orbit:review --as proposal --fresh d5-context-economy",
+  "kind": "editorial",
+  "model": "claude-fable-5",
+  "source": "from-file",
+  "source_path": "orbit/changes/d5-context-economy/.orbit-runs/external-proposal-2026-08-04T16-47-38Z.md",
+  "external_reviewer": "GPT-5 Codex",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 4,
+    "warning": 4,
+    "suggestion": 1
+  },
+  "pushback_verification": "All 9 verified against current state — the external pass reviewed exactly the pushed commit (799e8fd), so nothing was stale; every finding held.",
+  "resolution_summary": {
+    "resolved": 9,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "Project-wide audit-drift has no legal emit invocation",
+      "marker_source": "external",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md",
+      "line": 5,
+      "classification": "trivial_fix",
+      "action": "Added the PROJECT-SCOPE target class: audit-drift is the one dual-scope command — bare invocation resolves orbit/.orbit-runs/ with change: null, --doc rejected, bare invocation of other change-scoped commands is a missing-target error; trail-location scenario extended + dedicated scenario; task 3.1 + design D1 synopsis carry the bare form.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d5-context-economy/tasks.md",
+          "orbit/changes/d5-context-economy/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "Post-write emits cannot pass the mandatory pre-write spine gate",
+      "marker_source": "external",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md",
+      "line": 135,
+      "classification": "decision_required",
+      "action": "Applied ratified option A (synthetic-trail composition, single atomic write): the class keeps its POST-WRITE name for semantics only — the engine computes status against the on-disk trail plus the in-memory candidate as-landed, stamps next_recommended, runs the FULL write gate, writes exactly once atomically. No provisional file ever exists; before-any-write holds with zero exceptions; a crash leaves NO file; byte-equality with the engine's post-landing next_command holds by construction. Orientation's spine-invalid surfacing reworked to other-corruption-sources defense-in-depth (its crashed-write scenario premise was now counterfactual); design D1, proposal, tasks 2.4, and the output-contract's finalize mention all synced.",
+      "ratified_via": "chat",
+      "resolution": "A — synthetic-trail composition + single atomic write; the contradiction dissolves rather than getting a normative exception",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d5-context-economy/specs/orbit-orientation/spec.md",
+          "orbit/changes/d5-context-economy/design.md",
+          "orbit/changes/d5-context-economy/proposal.md",
+          "orbit/changes/d5-context-economy/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "Timestamp-derived apply references repeat prior chunks",
+      "marker_source": "external",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md",
+      "line": 225,
+      "classification": "decision_required",
+      "action": "Applied ratified option A (engine-owned tree-snapshot boundary): every apply emit records diff_base — a git write-tree OID of the tracked working state at the boundary; the next emit diffs from that tree, making per-chunk lists exact under every commit ordering; rev-list --before removed from the design entirely; fallbacks = change's first commit (first emit, pre-capability predecessor, or gc-pruned tree), null outside git. New field row in the run-summary table, late-committed-chunk regression scenario, design D2 + task 1.3 synced.",
+      "ratified_via": "chat",
+      "resolution": "A — write-tree boundary snapshot recorded as diff_base; per-chunk exactness under every commit ordering",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d5-context-economy/specs/orbit-run-summary-emit/spec.md",
+          "orbit/changes/d5-context-economy/design.md",
+          "orbit/changes/d5-context-economy/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "Touchpoint set arithmetic has no compatible predicted-path grammar",
+      "marker_source": "external",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-audit-drift/spec.md",
+      "line": 5,
+      "classification": "trivial_fix",
+      "action": "Defined the closed Touchpoints ENTRY GRAMMAR in the propose-modifications delta (leading code-span targets, +-grouped alternatives, exact path / trailing-slash directory prefix / *-glob with fnmatch semantics; trailing prose is annotation; malformed entries = SUGGESTION naming the line, excluded from arithmetic) with a scenario validating the change's own canonical map; the audit-drift delta's matching semantics reference that grammar — one voice.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d5-context-economy/specs/orbit-propose-modifications/spec.md",
+          "orbit/changes/d5-context-economy/specs/orbit-audit-drift/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Boot --json has no specified output shape",
+      "marker_source": "external",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-orientation/spec.md",
+      "line": 20,
+      "classification": "trivial_fix",
+      "action": "Specified the typed boot object on the per-change status payload: ordered artifacts, per-family emits ({family, mode?, path, headline}), history flags, touchpoints {predicted, actual} with null variants, skipped_emits; degradation = null/omission, never error; one-typed-object scenario added.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d5-context-economy/specs/orbit-orientation/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Archive persistence scenarios disagree about pre- versus post-move location",
+      "marker_source": "external",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-conventions/spec.md",
+      "line": 185,
+      "classification": "trivial_fix",
+      "action": "Fixed the conventions delta's own MODIFIED persistence block (a ripple the iter-1 archive decision missed): archive removed from the active-change bullet and scenario, named as the deliberate post-move exception, and given its archived-trail scenario referencing orbit-emit-composition's rule — one persistence rule.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d5-context-economy/specs/orbit-conventions/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Unvalidated model hints can break the one-line recommendation protocol",
+      "marker_source": "external",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-engine-gates/spec.md",
+      "line": 29,
+      "classification": "trivial_fix",
+      "action": "Added the rendering-boundary check: a renderable hint is a non-empty single-line string, <= 80 chars, no control characters; failing values are INERT exactly like unknown keys (line renders without the suffix, byte-identical to absent, never an error); injection scenario added.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d5-context-economy/specs/orbit-engine-gates/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "--fresh conflicts with an explicit reviewer class without a resolution rule",
+      "marker_source": "external",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-review/spec.md",
+      "line": 5,
+      "classification": "trivial_fix",
+      "action": "Declared co-occurrence a clean usage error naming the shorthand equivalence (agreeing forms redundant, conflicting ambiguous; neither runs); scenario covers both --fresh --reviewer external and the agreeing form.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d5-context-economy/specs/orbit-review/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Emit output flags should have a machine-readable composition contract",
+      "marker_source": "external",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md",
+      "line": 264,
+      "classification": "trivial_fix",
+      "action": "--json now switches stdout to EXACTLY ONE {path, emit, render?} object with no plain-text framing; without --json the path (+ render) framing stays; scenario added; task 3.1 + design D1 stdout bullet synced.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d5-context-economy/tasks.md",
+          "orbit/changes/d5-context-economy/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": []
+}

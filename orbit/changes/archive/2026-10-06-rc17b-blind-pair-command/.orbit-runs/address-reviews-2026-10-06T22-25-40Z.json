@@ -1,0 +1,228 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-06T22:25:40Z",
+  "change": "rc17b-blind-pair-command",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc17b-blind-pair-command/.orbit-runs/external-system-2026-10-06T21-32-36Z.md",
+  "source_command": null,
+  "source_token": "2026-10-06T21-32-36Z",
+  "latest_apply_token": "2026-10-06T20-42-57Z",
+  "external_reviewer": "GPT-6 Codex",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 4,
+    "suggestion": 1
+  },
+  "pushback_verification": "All five verified against HEAD; none converged with the fresh half (W3 sits beside its CRITICAL, a different claim, ratified in the same decision).",
+  "resolution_summary": {
+    "resolved": 5,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Fresh re-run still uses live-state CLI reads",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 1214,
+      "classification": "trivial_fix",
+      "action": "the fresh re-run brief adds that the skill's orbit CLI readings describe the live checkout: artifacts come from the reviewed commit, the CLI serves the emit, and the pass says which readings came from the live checkout",
+      "evidence": "the appended brief line named the commit but the worker's Step 4 and Pass 0 still read live state unqualified",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/templates/blind-pair-command.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "src/core/templates/workflows/review.ts",
+            "text": "that output describes the live checkout, not the reviewed commit"
+          }
+        ],
+        "searched": [
+          "orbit status --change",
+          "instructions apply",
+          "live checkout"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Pasted system prompt still directs a HEAD diff",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 758,
+      "classification": "trivial_fix",
+      "action": "Step 3b's pasted-half rule ends the system read list's commit range at the reviewed commit and reads the change's files at it",
+      "evidence": "mode-sections' system read list reads git diff <change-start>..HEAD while the pair half's Repo line named the reviewed commit",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/templates/blind-pair-command.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "src/core/templates/workflows/review.ts",
+            "text": "read list's commit range ends at that commit, not"
+          }
+        ],
+        "searched": [
+          "<change-start>..HEAD",
+          "Repo"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Supersession notice is skipped when an apply makes the member stale",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 455,
+      "classification": "decision_required",
+      "action": "under the ratified A′: Step 3b checks the gate's stale-member reason BEFORE the single exit and prints the supersession notice (a further review of the stale class covers; the other class becomes the old pair's member and covers nothing); the spec gains the row and the scenario 'A stale member's pair is superseded'",
+      "evidence": "Step 3b's only apply test sat under openPair; with a stale member the gate sets no openPair and the run exited as a single silently",
+      "ratified_via": "prompt",
+      "resolution": "A′ (ratified on the fresh half's CRITICAL, same decision)",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc17b-blind-pair-command/specs/orbit-review-external/spec.md",
+          "orbit/changes/rc17b-blind-pair-command/design.md",
+          "test/integration/external-runner/pair.ts",
+          "test/integration/external-runner/pair.test.ts",
+          "test/core/templates/blind-pair-command.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "NOT a re-run"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/templates/workflows/review.ts",
+            "text": "but the gate's reason names a member of the latest launch as stale"
+          },
+          {
+            "path": "orbit/changes/rc17b-blind-pair-command/specs/orbit-review-external/spec.md",
+            "text": "A stale member's pair is superseded"
+          }
+        ],
+        "searched": [
+          "superseded",
+          "stale",
+          "no openPair"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "test/core/templates/blind-pair-command.test.ts",
+            "why": "template test asserting the retired wording is absent"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Session-end recovery assumes a fresh pass file exists",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 1027,
+      "classification": "trivial_fix",
+      "action": "both session-end lines commit the fresh pass file only IF one landed; with none the pair stays open missing its fresh half",
+      "evidence": "both lines instructed committing the fresh file unconditionally",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/templates/blind-pair-command.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "first commit the fresh pass file alone"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/templates/workflows/review.ts",
+            "text": "IF a fresh pass file landed"
+          }
+        ],
+        "searched": [
+          "commit the fresh pass file",
+          "Session end"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "test/core/templates/blind-pair-command.test.ts",
+            "why": "template test asserting the retired wording is absent"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Config guidance still describes the interim default",
+      "marker_source": "external",
+      "file": "orbit/config.yaml",
+      "line": 64,
+      "classification": "trivial_fix",
+      "action": "the review_preference comment says the default presents the one-command pair",
+      "evidence": "the comment read 'until a one-command pair ships, that presents the fresh review'",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "until a one-command pair ships"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/config.yaml",
+            "text": "which presents the one-command pair"
+          }
+        ],
+        "searched": [
+          "one-command pair ships",
+          "presents the fresh review"
+        ],
+        "scope": [
+          "src",
+          "docs"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Five of five resolved: the fresh re-run's CLI readings and the pasted read list now name the reviewed commit, the stale-member notice is checked before the single exit (under the ratified A′), the recovery line is conditional on a landed fresh file, and the config comment describes the pair default.",
+  "iteration": 5,
+  "next_recommended": "/orbit:review --as system rc17b-blind-pair-command",
+  "ripple_misses": 0
+}

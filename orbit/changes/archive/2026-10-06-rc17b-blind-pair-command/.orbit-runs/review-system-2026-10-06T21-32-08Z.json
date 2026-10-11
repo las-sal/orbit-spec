@@ -1,0 +1,110 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-06T21:32:08Z",
+  "change": "rc17b-blind-pair-command",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 1,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "CRITICAL",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc17b-blind-pair-command/specs/orbit-review-external/spec.md",
+      "line": 111,
+      "title": "The apply-later-than-L branch runs an 'ordinary single' that the engine counts as the open pair's member, so a non-blind pair covers the invoked slot",
+      "recommendation": "The branch rests on a premise the engine does not hold. computePairMembership (src/core/artifact-graph/gates.ts:322) makes the FIRST fresh and the FIRST external pass after the launch members, and an apply ends nothing. So when openPair stands (the landed member is usable, meaning it was emitted after the apply) and an apply is later than L, the 'ordinary single' the body runs is not a single. It is the pair's missing member. It reviews the current state, which holds its committed partner: the external single's worktree is at its own handoff commit, and the fresh single reads the live checkout. The gate's walk-order blindness rule still counts the pair as blind. This is the defect D-rc17b-4 closes for the re-run case, reopened one branch over. The same text sits in the external-handoff reference's Step 3b third bullet and in the trunk's fresh re-run paragraph (src/core/templates/workflows/review.ts:456 and :1214). Pick one fix and apply it to the spec, both bodies and the D10 design text.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Body: with openPair standing and an apply later than L, do not run a single. Say the pair is superseded and run a NEW pair (/orbit:review --as <mode> --reviewer blind-pair <change>). Its launch opens a later membership window, so the old landed member stays in the old pair and the new halves form a blind pair on the current state. Re-word the scenario 'A re-run after an apply is a single' and its test to match, and assert the gate after the run."
+        },
+        {
+          "label": "B",
+          "body": "Engine: an apply later than a launch ENDS that launch's pair, so later passes read as singles. This changes rc17a's membership requirement, a stated non-goal here, and would mean a scope call and probably a split."
+        },
+        {
+          "label": "C",
+          "body": "Keep the branch and state the outcome in the named limit of 'A pair's external half reads the pair's reviewed state': after an apply later than L, the next half completes the old pair non-blind and the gate counts it blind. Drop the word 'single' wherever it describes this run."
+        }
+      ],
+      "reproduction": "Executed with the change's own instrument, test/integration/external-runner/pair.ts's runPair and runExternalRerun, against the built CLI in a disposable repository with a bare remote. (1) runPair with no runner and a fresh worker that writes nothing: launch L=2026-10-06T21-28-00Z, gate reason 'neither member has landed', next '/orbit:review --as system --fresh'. (2) Commit an apply-<later>.json. (3) Run the presented fresh review, which is ordinary because no openPair stands: review-system-2026-10-06T21-28-03Z.json, committed. Gate: openPair {missing: external}, next '/orbit:review --as system --reviewer external'. (4) runExternalRerun with a stub runner: kind 'single' (an apply is later than L), worktreeBase = its own handoff commit, worktreeHadFresh: TRUE, saved external-system-2026-10-06T21-28-07Z.md under its own token. Gate after: reason \"cadence class 'in-context' has no fresh pass\", so the invoked slot is COVERED. Neither pass is a single (both are in memberFiles), so the cover came from the pair, whose external half reviewed a tree holding its partner. Every command in the path was the one the engine presented."
+    },
+    {
+      "pass": "0",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 581,
+      "title": "On a re-run, the launch route's session-end recovery line still saves with --launch <T0 token>, the re-run's own token",
+      "recommendation": "Step 3b says a re-run's 9d saves with --launch L, never with the re-run's own T0 token. But 9e item 5, the recovery command printed while a re-run's runner is in the background, still reads '--launch <T0 token>'. On a re-run that is the re-run's own T0. If the session ends mid-run, a user who follows the printed line takes exactly the path D10 rejected, measuring supersession from the wrong launch. Item 4 has the same problem: 'launched <name> at that commit' names the handoff commit, but the re-run's worktree is at BASE. Name L (and BASE) in items 4 and 5 on a re-run, the way the pair reference's Session end line already names <L>, and add a template assertion."
+    },
+    {
+      "pass": "0",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "test/integration/external-runner/pair.test.ts",
+      "line": 203,
+      "title": "The behaviour declaration for 'A re-run after an apply is a single' never sets up its WHEN and never checks what the gate computes",
+      "recommendation": "The scenario's WHEN needs openPair {missing: external} to stand while an apply is later than L. The test commits the apply right after a pasted pair whose fresh member was already emitted, so that member is stale or tied, and no openPair stands. The test then checks only the body's own reading (kind, save token) and never the gate. That is why the CRITICAL above passed the suite. Build the WHEN: launch, apply, then a fresh member emitted after the apply. Assert openPair before the run and the gate's coverage after it. Re-declare the scenario once the CRITICAL's option has been chosen."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc17b-blind-pair-command/specs/orbit-review/spec.md",
+      "line": 106,
+      "title": "Row 13 and the pair reference's Step 13 state the open pair's openPair value without the both-missing case",
+      "recommendation": "Row 13 says 'After row 5b the pair ends OPEN — the gate reports openPair: {missing: \"external\"}'. Step 13 (src/core/templates/workflows/review.ts:1021) adds the MISSING-external and MISSING-fresh variants. If both halves are missing (a pasted route whose fresh worker wrote nothing, or a failed runner plus a missing fresh half), the engine's presentation sets no openPair at all. It reports 'neither member has landed' and presents the fresh review. Condition the sentence on the fresh (or external) half having landed, or say that the readout comes from the status JSON, not from this text."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Where I probed: the three source edits (gates.ts presentation, the onboard pointers, review.ts's pair reference and the handoff edits) against the membership, presentation and coverage code in gates.ts. I re-ran the change's own git-step instrument with one extra ordering, launch then apply then member. The happy-path step order holds: BASE committed before both halves, the fresh file committed alone before the return enters the repository, one push. The re-run at BASE closes the leak it targets. All the risk is in the edge rule that sends a run to 'an ordinary single'. That rule is a body-side reading of the trail, and the engine's membership rule (first of each class after the launch, an apply ends nothing) contradicts it. The instrument never caught this because it asserts the body's own decision and not the gate. Verify-side: validate --strict passes, 49/49 delta scenarios declared, the targeted suites (172 tests) green, and 6.5 is the open user-validation handoff as designed. No lens files exist, so Passes 4 and 5 did not run. A Pass 6 residue sweep over the non-archived surfaces found the old reviewer-axis wording only in baselines this change's deltas replace at archive.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "6"
+  ],
+  "passes_skipped": [
+    "4: no perspectives defined (orbit/lenses/ absent)",
+    "5: no critical paths defined (orbit/lenses/ absent)"
+  ],
+  "direction": {
+    "disposition": "hold",
+    "reasoning": "The main path is sound and worth shipping, but one branch hands the gate a non-blind pair it counts as blind, which is the exact failure this stage exists to prevent. The fix is a choice between a new pair, an engine membership change, or a stated limit, so it is the user's call before the walk can close it. The recovery-line slip is the same kind of mistake on a smaller scale (a re-run step that kept a single run's token), so the walk should sweep every re-run sentence for it, not only the cited line."
+  },
+  "final_assessment": "1 critical, 2 warning, 1 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc17b-blind-pair-command --from-file orbit/changes/rc17b-blind-pair-command/.orbit-runs/review-system-2026-10-06T21-32-08Z.json"
+}

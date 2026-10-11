@@ -1,0 +1,137 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-05T13:33:14Z",
+  "change": "rc08b-walk-routing",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc08b-walk-routing/.orbit-runs/review-proposal-2026-10-05T13-31-59Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-05T13-31-59Z",
+  "latest_apply_token": null,
+  "tie_break_rationale": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 1
+  },
+  "pushback_verification": "Each finding re-read against the current delta; the batch claim checked against the baseline's interruption rules.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The batch-mode sentence asserts a baseline behaviour that does not exist and leaves a mid-walk shift to batch across sources unspecified",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-address-reviews/spec.md",
+      "line": 195,
+      "classification": "trivial_fix",
+      "lane": "obvious-fix",
+      "remedy": "repair",
+      "action": "deleted the unsupported 'as batch mode does today'; stated that an interrupted batch writes no log for unwritten sources and that a mid-walk switch to batch applies to unwritten sources, the written logs standing",
+      "evidence": "read the baseline orbit-address-reviews spec: its only interruption rule is walk-mode's (between findings); no batch-interruption behaviour is stated",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "as batch mode does today"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc08b-walk-routing/specs/orbit-address-reviews/spec.md",
+            "text": "applies to the sources whose logs are not yet written; the logs already written stand"
+          }
+        ],
+        "searched": [
+          "batch",
+          "interrupt"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The clean-return scenario says the T0 record names no next step, contradicting the requirement it sits under",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-run-summary-emit/spec.md",
+      "line": 39,
+      "classification": "trivial_fix",
+      "lane": "obvious-fix",
+      "remedy": "repair",
+      "action": "rewrote the clean-return scenario: the WHEN is a T0 emit for an external whose saved return completes a clean pair; the THEN says next_recommended names paste and save and no walk",
+      "evidence": "the requirement above it has next_recommended name the user action, so 'names no next step' contradicted it",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the T0 record names no next step"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc08b-walk-routing/specs/orbit-run-summary-emit/spec.md",
+            "text": "names the paste and save steps and no walk"
+          }
+        ],
+        "searched": [
+          "names no next step",
+          "clean return"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The essential-redesign row's resolution column still describes a change returning to exploration on scopes that have no change",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-address-reviews/spec.md",
+      "line": 237,
+      "classification": "trivial_fix",
+      "lane": "obvious-fix",
+      "remedy": "repair",
+      "action": "the essential-redesign row's resolution cell now distinguishes an active change (returns to exploration) from other scopes (a new exploration)",
+      "evidence": "the routed_to cell had been scoped by walk 2; the resolution cell beside it had not",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the mechanism cannot leave the change: the finding stays open and the change returns to exploration"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc08b-walk-routing/specs/orbit-address-reviews/spec.md",
+            "text": "on any other scope the mechanism goes to a new exploration"
+          }
+        ],
+        "searched": [
+          "essential",
+          "returns to exploration"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Three of three resolved as repairs to walk 2's own wording: the batch sentence's unsupported baseline claim replaced by stated interruption and mid-walk-shift behaviour, the clean-return scenario aligned with its requirement, and the redesign row's resolution cell scoped like its routed_to cell. No mechanism added.",
+  "iteration": 3,
+  "next_recommended": "/orbit:apply rc08b-walk-routing — user-invoked",
+  "ripple_misses": 0
+}

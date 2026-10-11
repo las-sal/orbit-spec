@@ -1,0 +1,13 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-09-29T17:21:30Z",
+  "change": "rc15-ended-stage-state",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "mode": "system",
+  "prompt_path": "orbit/changes/rc15-ended-stage-state/.orbit-runs/external-prompt-system-2026-09-29T17-21-28Z.md",
+  "target": null,
+  "final_assessment": "External review prompt packaged for rc15-ended-stage-state (iter 1, mode system) — the external half of the review-system blind pair, against the pushed apply commit d864ed1c; awaiting findings.",
+  "awaiting_findings": true,
+  "next_recommended": "Paste orbit/changes/rc15-ended-stage-state/.orbit-runs/external-prompt-system-2026-09-29T17-21-28Z.md into the target AI, save the response as orbit/changes/rc15-ended-stage-state/.orbit-runs/external-system-<TS>.md, then /orbit:address-reviews rc15-ended-stage-state --from-file <path>"
+}

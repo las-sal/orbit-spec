@@ -1,0 +1,183 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-28T23:14:08Z",
+  "change": "rc15-ended-stage-state",
+  "kind": "editorial",
+  "model": null,
+  "source": "from-file",
+  "source_path": "orbit/changes/rc15-ended-stage-state/.orbit-runs/external-proposal-2026-09-28T23-03-27Z.md",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-5 Codex",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 4,
+    "suggestion": 2
+  },
+  "pushback_verification": "All 6 findings verified against HEAD (each cited line read; compose()'s detail branch, show()'s JSON, the architect scaffold sentence and the regex confirmed); 0 stale.",
+  "resolution_summary": {
+    "resolved": 6,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The unchanged ratified-detail branch will call a concluded exploration live",
+      "marker_source": "external",
+      "file": "orbit/changes/rc15-ended-stage-state/tasks.md",
+      "line": 9,
+      "classification": "trivial_fix",
+      "action": "Task 2.2 rewritten: the [x] column's OUTCOMES stay byte-unchanged while its inconsistency detail gains a third branch for `concluded` (\"a concluded exploration is not evidence that the exit criteria were met\"); task 2.4 asserts that detail never contains \"live citing work\".",
+      "ratified_via": "chat",
+      "resolution": "outcomes unchanged, detail gains a concluded branch",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc15-ended-stage-state/design.md",
+          "orbit/changes/rc15-ended-stage-state/proposal.md",
+          "orbit/changes/rc15-ended-stage-state/specs/orbit-architecture-engine/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The test task does not execute all fifteen composition cells",
+      "marker_source": "external",
+      "file": "orbit/changes/rc15-ended-stage-state/tasks.md",
+      "line": 11,
+      "classification": "trivial_fix",
+      "action": "Task 2.4 now requires ONE table-driven test over all fifteen (observed, mark) → rendered cells (five observation fixtures × three slot lines), with the focused assertions retained for dates, attribution, citer names and details.",
+      "ratified_via": "chat",
+      "resolution": "table-driven test over all 15 cells",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc15-ended-stage-state/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The unprompted route both permits any stage and promises never to write an unsupported mark",
+      "marker_source": "external",
+      "file": "orbit/changes/rc15-ended-stage-state/specs/orbit-architect/spec.md",
+      "line": 16,
+      "classification": "decision_required",
+      "action": "Delta requirement narrowed: the unprompted write lands on premised, quiescent and concluded; on a LIVE stage (in-change, live exploring) the body DECLINES, naming the live citer and the act that would make the mark supportable (archive the change; conclude the exploration). New scenario 'Unprompted ended on a live stage is declined'. Design D-rc15-3 amended and the record row updated; proposal and task 3.1 aligned.",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Decline the unprompted write on in-change / live exploring, naming the live citer and the supportable act; write premised, quiescent, concluded; hand edit stays first-class."
+          },
+          {
+            "label": "B",
+            "body": "Write anyway, with the offer text stating the INCONSISTENT render and audit finding, treated as a deliberate user act."
+          }
+        ],
+        "chosen": "A"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc15-ended-stage-state/design.md",
+          "orbit/changes/rc15-ended-stage-state/proposal.md",
+          "orbit/changes/rc15-ended-stage-state/tasks.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/changes/rc15-ended-stage-state/explore.md",
+            "reason": "explore.md persists unchanged at promotion (history by rule); D-rc15-3's wider 'any stage' row stays as the exploration's record — the design is the live statement"
+          }
+        ]
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The architect scaffold will keep publishing the obsolete two-production grammar",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/architect.ts",
+      "line": 81,
+      "classification": "trivial_fix",
+      "action": "Task 3.1 gains the body's §2 scaffold-format sentence (its second copy of the slot grammar) as an edit target naming all three productions; task 3.3 pins the mirror with a fidelity marker. The body itself is edited at apply, not here.",
+      "ratified_via": "chat",
+      "resolution": "scaffold sentence added to the edit set and pinned",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc15-ended-stage-state/design.md",
+          "orbit/changes/rc15-ended-stage-state/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The design names the wrong JSON surface",
+      "marker_source": "external",
+      "file": "orbit/changes/rc15-ended-stage-state/design.md",
+      "line": 84,
+      "classification": "trivial_fix",
+      "action": "D-rc15-6: `show --json` → `status --json`, with the correction noted (show returns an index or a section slice and computes no state).",
+      "ratified_via": "chat",
+      "resolution": "status --json",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/changes/rc15-ended-stage-state/explore.md",
+            "reason": "explore.md persists unchanged at promotion (history by rule); its D-rc15-6 carries the same slip as the exploration's record"
+          }
+        ]
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The claimed closed production leaves attribution and calendar near-misses undecided",
+      "marker_source": "external",
+      "file": "orbit/changes/rc15-ended-stage-state/tasks.md",
+      "line": 3,
+      "classification": "decision_required",
+      "action": "The lexical limit is DECLARED and shared: the format requirement's SHALL states dates are shape-only and attribution opaque up to the final closing paren; new scenario 'The lexical limit is shared and declared' (2026-99-99 parses; (Sal)) yields Sal)); task 1.2 asserts both; design D-rc15-4 records the limit and the rejected hardening.",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Declare dates shape-only and attribution opaque as a limit shared with [x]; state it in the near-miss scenario; test both behaviours."
+          },
+          {
+            "label": "B",
+            "body": "Harden both dated productions (calendar-valid date; no paren inside <who>) with new [x] near-misses."
+          }
+        ],
+        "chosen": "A"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc15-ended-stage-state/specs/orbit-architecture-engine/spec.md",
+          "orbit/changes/rc15-ended-stage-state/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "6 of 6 external findings resolved (4 WARNING, 2 SUGGESTION; 0 stale). Two decision-lane findings ratified in chat (3A: the unprompted route declines on live stages; 6A: the lexical limit is declared and shared with the ratified production, not hardened); four obvious fixes landed in tasks, design, proposal and the engine delta. Pattern: every warning sat one layer out from the composition table — a domain enumerated in the exploration was not re-enumerated where it landed (the test set, the body's second grammar copy, the unprompted route against the live rows). Change validates --strict; fingerprints unchanged (5 kept).",
+  "iteration": 1,
+  "next_recommended": "/orbit:review --as proposal rc15-ended-stage-state"
+}

@@ -1,0 +1,55 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-05T00:43:22Z",
+  "change": "rc06b-map-readers",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc06b-map-readers/.orbit-runs/review-system-2026-10-05T00-42-17Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-05T00-42-17Z",
+  "latest_apply_token": "2026-10-05T00-22-45Z",
+  "tie_break_rationale": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "walk_mode_source": null,
+  "walk_mode_shifted_at_finding": null,
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 0
+  },
+  "pushback_verification": "Verified against current state: design.md:8, design.md D3 and proposal.md:3 each stated validate is never run; the dated explore.md record carries the same claims and stays as written.",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Walk 2 made verify run `orbit validate`, falsifying three premises that system mode never runs it",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc06b-map-readers/design.md",
+      "line": 8,
+      "classification": "trivial_fix",
+      "action": "design.md Context bullet and D3's no-block sentence, and proposal.md's Why, repaired to the post-walk-2 truth: system mode has no validate step of its own and reaches validate through verify's fail-mode classification; one verify run after apply surfaces an undeclared delta scenario as the map's WARNING and a mode-③ fail_mode; Pass 0 still composes no block",
+      "evidence": "grep for the old forms ('never runs `orbit validate`', 'does not run validate') over the change's living artifacts returns nothing after the edit; explore.md is the dated exploration record",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc06b-map-readers/design.md",
+          "orbit/changes/rc06b-map-readers/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": null,
+  "final_assessment": "One of one resolved: the three premises walk 2 falsified now say what is true — system mode has no validate step of its own and reaches `orbit validate` through verify's classification, so an undeclared delta scenario after apply surfaces as the map's WARNING and a mode-③ fail mode, never as a Pass 0 block.",
+  "iteration": 6,
+  "next_recommended": "/orbit:archive rc06b-map-readers — user-invoked"
+}

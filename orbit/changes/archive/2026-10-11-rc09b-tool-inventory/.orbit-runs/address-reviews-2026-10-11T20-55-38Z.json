@@ -1,0 +1,110 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-11T20:55:38Z",
+  "change": "rc09b-tool-inventory",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc09b-tool-inventory/.orbit-runs/review-proposal-2026-10-11T20-50-31Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-11T20-50-31Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 2
+  },
+  "pushback_verification": "Both verified: spec.md:51, its scenario and design.md D6 each said 'the requirement and the line' with no case for a missing fence; explore.md:48 still pointed at the resolved open question.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "SUGGESTION",
+      "title": "An absent inventory block has no line to name",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc09b-tool-inventory/design.md",
+      "line": 72,
+      "classification": "trivial_fix",
+      "action": "the spec's malformed-block sentence, its scenario and D6 now name the offending line, or the requirement's heading line for an absent block",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc09b-tool-inventory/specs/orbit-cli-grammar/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "naming the requirement and the line",
+          "asserts the requirement and the line"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc09b-tool-inventory/specs/orbit-cli-grammar/spec.md",
+            "text": "an absent block, which has no line, names the requirement's heading line"
+          },
+          {
+            "path": "orbit/changes/rc09b-tool-inventory/design.md",
+            "text": "or the requirement's heading line for an absent block"
+          }
+        ],
+        "searched": [
+          "requirement and the line",
+          "absent"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "ripple_miss_of": {
+        "walk": "2026-10-11T20-08-56Z",
+        "title": "Failure assertions contradict the passing scenarios",
+        "file": "orbit/changes/rc09b-tool-inventory/design.md",
+        "kind": "query"
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The CONFORM move line still points at a resolved open question",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc09b-tool-inventory/explore.md",
+      "line": 48,
+      "classification": "trivial_fix",
+      "action": "re-pointed at D-rc09b-3",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "see the open question"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc09b-tool-inventory/explore.md",
+            "text": "the declared lists stated once — D-rc09b-3"
+          }
+        ],
+        "searched": [
+          "open question"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Two of two resolved as repairs: an absent inventory block names the requirement's heading line (spec sentence, scenario, D6), and the CONFORM move line points at D-rc09b-3.",
+  "iteration": 3,
+  "next_recommended": "/orbit:apply rc09b-tool-inventory — user-invoked",
+  "ripple_misses": 1
+}

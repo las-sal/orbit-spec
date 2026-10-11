@@ -1,0 +1,39 @@
+{
+  "command": "architect",
+  "timestamp": "2026-09-11T21:15:36Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-fable-5-1",
+  "final_assessment": "Re-cut ratified in conversation. clean-up-review-cycle now declares TWELVE small stages in four phases under two captured rulings — R-crc-1 (size ceiling: ≤ 3 capabilities, ~12 requirements, ~40 KB, < 20 tasks, calibrated on the archived stages) and R-crc-2 (ordering: stop the bleeding → move checking into tests → reduce injection upstream → engine changes last). Phase 1: rc01 instrument-fidelity, rc02 gate-semantics (ladder by consequence, SUGGESTIONs never gate, stop rule, review budget with recorded residual risk), rc03 review-genres (review vs verification; external first; in-context as verification only), rc04 cost-visibility (cadence line on status; capture-recapture residual). Phase 2: rc05 executable-references, rc06 scenario-test-map, rc07 artifact-lint. Phase 3: rc08 walk-completeness, rc09 propose-hygiene (size check + spike precondition), rc10 apply-closure (scenario map in the apply emit; end-to-end run before archive). Phase 4: rc11 finding-scoped-freshness, rc12 engine-owned-choreography (needs an explicit ruling reversing D-d6-7). The scaffold's c3 grouping moved to Considered & out with recurrence as re-entry; 'more passes/classes' recorded as rejected on the data.",
+  "stages_touched": [
+    "rc01-instrument-fidelity",
+    "rc02-gate-semantics",
+    "rc03-review-genres",
+    "rc04-cost-visibility",
+    "rc05-executable-references",
+    "rc06-scenario-test-map",
+    "rc07-artifact-lint",
+    "rc08-walk-completeness",
+    "rc09-propose-hygiene",
+    "rc10-apply-closure",
+    "rc11-finding-scoped-freshness",
+    "rc12-engine-owned-choreography"
+  ],
+  "rulings_captured": [
+    "R-crc-1",
+    "R-crc-2"
+  ],
+  "completions_ratified": [],
+  "handoff": {
+    "boot_sequence": [
+      "orbit/architecture/clean-up-review-cycle.md — Rulings index (R-crc-1, R-crc-2) then Program stages: twelve stages, four phases, dependencies stated per stage",
+      "orbit/architecture/.orbit-runs/architect-2026-09-11T20-41-33Z.json — the sizing session that produced the ceiling",
+      "orbit/changes/archive/2026-09-11-d6-pr-lifecycle/.orbit-runs/ — the measured trail behind the premise"
+    ],
+    "next_command": "/orbit:explore rc01-instrument-fidelity",
+    "model_hint": null,
+    "seam": "architect session boundary — program shaped and ratified at the stage level; rc01 is the first stage to explore (tiny, no dependencies); rc02 is the largest lever"
+  },
+  "next_recommended": "/orbit:explore rc01-instrument-fidelity"
+}

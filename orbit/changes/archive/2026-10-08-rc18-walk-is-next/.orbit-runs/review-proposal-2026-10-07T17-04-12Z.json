@@ -1,0 +1,149 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-07T17:04:12Z",
+  "change": "rc18-walk-is-next",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "pass": "2",
+      "title": "Touchpoints still count five scenarios and one revised exit",
+      "file": "orbit/changes/rc18-walk-is-next/design.md",
+      "line": 141,
+      "walk_entry": {
+        "title": "The un-pass case is the ordinary path when the engine's own next is followed, not a bounded edge",
+        "file": "orbit/changes/rc18-walk-is-next/design.md"
+      },
+      "recommendation": "Walk 1 added three scenarios and widened exit (3), so the predicted map now disagrees with the delta and tasks. Line 141 reads 'the table's rows and the five scenarios' (the delta now has eight, as task 3.4 counts), and line 143 reads 'exit (2) revised' (task 4.2 revises (2) and widens (3)). Touchpoints is revisable until apply's first commit: update both lines now."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "pass": "5",
+      "title": "The invoked-slot table's column and a preference scenario still say 'canonical next'",
+      "file": "orbit/changes/rc18-walk-is-next/specs/orbit-engine-gates/spec.md",
+      "line": 399,
+      "walk_entry": {
+        "title": "The un-pass case is the ordinary path when the engine's own next is followed, not a bounded edge",
+        "file": "orbit/changes/rc18-walk-is-next/design.md"
+      },
+      "recommendation": "Walk 1 changed the requirement's sentence so the table decides 'the slot's command', which the order can precede. The table's third column is still headed 'canonical next' (line 399). 'The preference changes only the presented command' (line 434) still states 'the canonical next is the external review…' for any state where nothing covers the slot, and that includes a state holding an unwalked pass, where the order now names the walk. Rename the column to 'slot's command'. Then either qualify the scenario's WHEN with 'and no pass is unresolved or unwalked', or read its THEN as the slot's command."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "pass": "9",
+      "title": "explore.md's D-rc18-5 Mechanism row still says an unpassed gate's next is unchanged",
+      "file": "orbit/changes/rc18-walk-is-next/explore.md",
+      "line": 23,
+      "walk_entry": {
+        "title": "The un-pass case is the ordinary path when the engine's own next is followed, not a bounded edge",
+        "file": "orbit/changes/rc18-walk-is-next/design.md"
+      },
+      "recommendation": "The domain row 'reviewed gate `unpassed` or `stale`, not superseded | unchanged: its own canonical next (exit (3))' was made false by Sal's A. Walk 1 kept explore.md as the exploration record, the same call as the header finding. But the Mechanism entry is a parsed live rule whose domain the propose record says travelled into the spec's table, and that table now says otherwise. Either append a dated Decisions entry recording the walk's widening and mark D-rc18-5's row by pointer, or say in design's Mechanism → artifacts record that the spec table superseded the entry's unpassed row at the proposal walk."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "pass": "9",
+      "title": ".openspec.yaml changed by the walk is outside every entry's edit record",
+      "file": "orbit/changes/rc18-walk-is-next/.openspec.yaml",
+      "line": 1,
+      "recommendation": "The residual diff from the external return's commit lists .openspec.yaml. Its change is the third base fingerprint, stamped when walk 1 added the invoked-slot requirement to the delta, and no resolution's file or ripple_cascade.applied names it. It is a record gap, not a defect: the fingerprint is correct and add-missing-only. Name the stamp in the next walk's entry, or accept the gap as stated here."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Graded the walks' eight resolved entries over their sweep scopes at 237e5622. I re-read each edit site and checked the two code claims the walks leaned on. `review-system` declares `before: archive` (schemas/spec-driven/schema.yaml:205), so the system gate is always the frontier. `canonicalNextForReviewed` already tests `unresolvedPass` after `openPair` and before every slot command (gates.ts:1122), so step (2) of the new order extends an existing step rather than adding one. Seven entries landed cleanly. The one regression is the widest edit, Sal's A: it rewrote the order's owner correctly but left three places still describing the narrower rule. Those are a predicted-map count, a table heading and scenario in the requirement it qualified, and the exploration's Mechanism row. All three are wording that an implementer reading the delta whole would resolve the right way. The residual diff lists five files; four are inside the edit records, and the fifth is the fingerprint stamp.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "verification": [
+    {
+      "title": "The un-pass case is the ordinary path when the engine's own next is followed, not a bounded edge",
+      "file": "orbit/changes/rc18-walk-is-next/design.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "The loop change does not say how it tells the walk apart from a passed gate's phase command, and the fall-through path gives the wrong hint key",
+      "file": "orbit/changes/rc18-walk-is-next/tasks.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Proposal says `A reviewed gate lists its outstanding passes` gains a scenario; the delta adds none",
+      "file": "orbit/changes/rc18-walk-is-next/proposal.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "'takes the FIRST row of this table that yields a command' reads as table-row order",
+      "file": "orbit/changes/rc18-walk-is-next/specs/orbit-engine-gates/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The named walk also discovers a passed, non-frontier gate's unwalked passes",
+      "file": "orbit/changes/rc18-walk-is-next/design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Frontier completion is ambiguous for legal artifact targets",
+      "file": "orbit/changes/rc18-walk-is-next/design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Empty frontier row contradicts the required row-command equality",
+      "file": "orbit/changes/rc18-walk-is-next/specs/orbit-engine-gates/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The one-in-context-check guarantee assumes the shipped two-slot cadence",
+      "file": "orbit/changes/rc18-walk-is-next/specs/orbit-engine-gates/spec.md",
+      "verdict": "landed"
+    }
+  ],
+  "final_assessment": "0 critical, 0 warning, 4 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-10-07T17-01-55Z",
+    "2026-10-07T17-02-17Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc18-walk-is-next"
+}

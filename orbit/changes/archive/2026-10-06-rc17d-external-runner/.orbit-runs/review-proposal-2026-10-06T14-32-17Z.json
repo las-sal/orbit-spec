@@ -1,0 +1,242 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-06T14:32:17Z",
+  "change": "rc17d-external-runner",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 6,
+      "suggestion": 5
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 3,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 4
+    }
+  },
+  "findings": [
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "tasks.md",
+      "line": 3,
+      "title": "Registering externalRunner as a known key does not make `orbit config set externalRunner.preset codex` succeed",
+      "recommendation": "config-schema.ts validateConfigKeyPath (lines 63-65) refuses ANY nested key under a root other than featureFlags with '\"<root>\" does not support nested keys', so task 1.1 as written (add to KNOWN_TOP_LEVEL_KEYS) leaves the spec's own scenario `orbit config accepts the key` (orbit-external-runner spec.md:45-48) and task 5.5's invocation failing with exit 1. Second gap in the same path: setNestedValue merges into the existing object, so `config set externalRunner.preset codex` over a recorded `{argv:[...]}` writes `{argv, preset}` — a both-keys value the shape table refuses, silently turning a working runner into `none`. State both in the requirement and task 1.1: the key-path rule admits exactly `externalRunner.preset` (and what it does with `externalRunner.argv`), and what `set externalRunner.preset` does to an existing argv record. The exploration's D-rc17d-3 FALSIFY move claims registration closes the edit path; it read KNOWN_TOP_LEVEL_KEYS but not the nested-key branch below it.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "`config set externalRunner.preset <name>` REPLACES the whole record with `{preset: <name>}` (special-case in the set path), and the key-path rule admits `externalRunner.preset` only."
+        },
+        {
+          "label": "B",
+          "body": "Keep plain merge semantics, admit `externalRunner.preset` in the key-path rule, and document that switching from an argv record needs `orbit config unset externalRunner` first; add the both-keys result as a tested row."
+        }
+      ]
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-external-runner/spec.md",
+      "line": 8,
+      "title": "The `orbit external runner --json` output shape is unspecified, yet the review body and every launch test key on it",
+      "recommendation": "The requirement lists the content (form, preset name, argv with placeholders, reachable) but names no JSON keys, no representation of `none` (a string `\"none\"`? `{form: \"none\"}`? `null`?), and no channel for the malformed warning under `--json` (stderr, or a `warnings` field in the object). Two implementers would ship different objects and the body (task 4.1: 'with `none` or `reachable: false`') cannot be written against either. Add one fenced example per state — absent/malformed, preset, own argv — naming the keys, and state that warnings go to stderr (or into a named field) so stdout stays one JSON object."
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-external-runner/spec.md",
+      "line": 109,
+      "title": "Init's 'own argv' choice has no stated input method, and the obvious one (a typed command line) is shell splitting",
+      "recommendation": "The setup step offers 'an own argv' but never says how an interactive user enters an array: one prompt per element, a JSON array typed in, or a command line split by orbit. The third is exactly the shell-string parsing the shape requirement refuses ('never a shell string'); the first two diverge in UX and validation. State the input form, that the entered value is validated against the shape table before it is written (an argv without `{output}` re-prompts or is refused), and what the step does when the PRESENT record is malformed (show it and offer replace? keep by default?)."
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-external-runner/spec.md",
+      "line": 80,
+      "title": "'Nothing runs through a shell' cannot hold for a launch the body performs through background Bash, and the launch line's composition is unspecified",
+      "recommendation": "The record is an argv precisely so nothing is shell-parsed, but the launch (task 4.3: 'named tool idiom: background Bash') turns the argv into a shell command line. The artifacts never say how: per-element quoting, the `< prompt` stdin redirect, and the working directory — for an own argv that does not use `{worktree}`, D4's isolation holds only if the process's cwd is the worktree, which no requirement states (`launched in a worktree` reads as either). Either (a) state the composition rule the body follows (every element single-quoted with embedded quotes escaped, `cd <worktree> &&` prefix, stdin from the prompt file) and soften 'nothing runs through a shell' to 'the record is never shell-parsed', or (b) have `orbit external runner --json` also print the shell-quoted line for a given worktree/output so the body never quotes. A user path like `/Users/me/My Tools/reviewer` in argv[0] is the case to test.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "State the quoting/cwd/stdin composition rule in `A recorded runner launches the external review` and test it in 4.6 with an element containing a space and a quote."
+        },
+        {
+          "label": "B",
+          "body": "Add `--worktree <p> --output <p>` to `orbit external runner` so the engine prints the substituted, shell-quoted line (still executing nothing), and the body runs that line verbatim."
+        }
+      ]
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "specs/orbit-review-external/spec.md",
+      "line": 85,
+      "title": "`reachable: false` is placed in the fixed-item snippet scenario, but the launch requirement adds an item naming the unresolved command",
+      "recommendation": "The MODIFIED `Chat invocation snippet` scenario now covers 'none recorded, `reachable: false`, or the preflight blocks the launch' with its closed item list and 'No other items are emitted'. The ADDED requirement's row 'recorded, `argv[0]` does not resolve | the prompt is printed for paste, naming the unresolved command' (spec.md:16) and task 4.1 require naming the command — an item the list does not have. Either add a conditional item to the list (where, and its text), or fold the naming into an existing item (e.g. the recommended-session note) and say so; and confirm exit (2)'s byte-for-byte claim is scoped to 'nothing recorded' only."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-review-external/spec.md",
+      "line": 13,
+      "title": "The launch table has no row for a return that carries the heading but fails the readers' shape check",
+      "recommendation": "Rows cover 'no heading' (refused, treated as failed) and the named residual 'parses yet is not complete'. Between them sits a return with `# External Review:` but missing a severity section or a uniquely-parsed `**Reviewer**:`/`**Date**:` line — report-render.ts rejects it (line 705ff) and the trail reader returns null for it (trail.ts:388ff). `orbit external save` writes it (it checks only the heading), the body commits and pushes it as the return, and the gate then reports a REJECTED external: a committed junk pass, with exit (1) nominally met. Add the row: either `orbit external save` validates through the shared reader and refuses like the no-heading case, or the body renders `--report <TS>` before committing and treats a render failure as a failed run (nothing committed, raw path named, paste printed)."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-external-runner/spec.md",
+      "line": 137,
+      "title": "The save command's open domain misses inputs the observed runner and the prompt itself make likely",
+      "recommendation": "Design Risks invites reading `The engine saves an external return into the trail` as an open domain. Members it does not state: (a) TRAILING text — the prompt's chat-only fallback tells the reviewer to 'state that you could NOT commit/push', which may land AFTER the review; it is kept byte-for-byte and renders inside `## Notes` (Commentary) or the `## Direction` reasoning of a return 'committed without hand edits'; (b) a heading that appears first inside a fenced block in the preamble (a reviewer quoting the prompt's template, whose first line is `# External Review: <change-name> (iteration <N>)`) — the first-line rule picks the quoted one; (c) a leading UTF-8 BOM, which makes a line-1 heading not 'begin with' the marker and refuses a good return; (d) a heading naming a different change than `<change>`; (e) a missing or unreadable `--from`. State each as a row (removed / kept and reported / refused) or, for (a), name it as a residual alongside D-rc17d-1's."
+    },
+    {
+      "pass": "4",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/specs/orbit-review/spec.md",
+      "line": 226,
+      "title": "orbit-review's baseline still calls the external class 'the cross-vendor handoff a human carries'",
+      "recommendation": "The change corrects exactly this phrasing in orbit-conventions (class 3) because a recorded runner makes it false, but `orbit-review`'s `--fresh` requirement restates it ('`--reviewer external` is a DIFFERENT AI in a SEPARATE SESSION, the cross-vendor handoff a human carries') and is not in the delta set. Adding it would breach R-crc-1's ceiling, so name it in design Risks as a residual handed to rc17b (which already modifies orbit-review), or replace the restatement there with a pointer at the conventions class list when rc17b runs — but do not leave it unstated."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "tasks.md",
+      "line": 26,
+      "title": "No task rewrites the handoff reference's opening 'Does NOT run the review … solely to package the handoff' paragraph",
+      "recommendation": "Task 4.5 rewrites the chat-output items and the 'Out of scope' section; task 6.3 fixes the baseline Purpose. The reference's own opening paragraph (review.ts:400 — '**Does NOT run the review and does NOT ingest findings.** … This command's job is solely to package the handoff.') and the intro's 'The branch emits **two things**' stay, contradicting the launch branch the same reference will carry. Add them to 4.5 (and grep the generated surface for the old phrasing at 4.7)."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "design.md",
+      "line": 59,
+      "title": "On the no-remote route the prompt's `## Repo` line names the live checkout, undoing D4's fixed reviewed state",
+      "recommendation": "D5 says a repository with no remote launches the same way, and the handoff's graceful degradation fills `## Repo` with the local path — the main checkout the user keeps editing. A runner launched in the worktree but told the repo lives at that absolute path may read it there. D7 keeps the template unchanged; state what `## Repo` carries on a launched run (e.g. 'the current directory' / the relative root) or name the channel beside the dist/ one in D4."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "specs/orbit-review-external/spec.md",
+      "line": 99,
+      "title": "The launch output does not name the `{output}` path, so a run that outlives the session cannot be recovered",
+      "recommendation": "Only the failure branch names the raw return's path. If the session ends while the background runner is still writing, the return lands at `{output}` and nobody saves it; the user needs that path to run `orbit external save` by hand. Print the `{output}` path in the launch attestation and mention the manual `orbit external save --from <it>` recovery."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "specs/orbit-review-external/spec.md",
+      "line": 99,
+      "title": "Launched chat output promises 'the findings path the return will be saved to', which is not known until save runs",
+      "recommendation": "`orbit external save` computes the token at save time (bumped against the trail), possibly many minutes after launch. Print the path with a `<TS>` placeholder at launch, as the no-runner item 5 does, and the real path when the run ends."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "design.md",
+      "line": 79,
+      "title": "A write-capable own-argv runner will follow the unchanged prompt's 'write, commit and push' steps inside the detached worktree",
+      "recommendation": "D7 reasons from the read-only Codex preset. An own argv (e.g. a write-enabled agent) will write the findings file into the worktree and try to commit/push from a detached HEAD; the worktree then fails `git worktree remove` (dirty) on every run, and a push that names the branch could move it under the body's own later push. Name this as a limit of own-argv runners, or state that the worktree is removed with `--force` after the return is read."
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "tasks.md",
+      "line": 23,
+      "title": "`git commit --only` on the new prompt and T0 fails unless they are added first",
+      "recommendation": "`git commit --only <path>` on an untracked file errors 'pathspec … did not match any file(s) known to git' (checked in a scratch repo). Tasks 4.2 and 4.4 should say `git add <paths>` then `git commit --only <paths>`; the return commit needs `--only` in particular, because D4 expects the user to have kept working (and possibly staged work) during the run."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "specs/orbit-review-external/spec.md",
+      "line": 291,
+      "title": "A blocked launch leaves its prompt and T0 behind when the user re-runs as instructed",
+      "recommendation": "On a dirty tree the prompt and T0 are still written, the user commits them with their work, and the scenario says the review is re-run — which writes a second prompt and T0. State whether the re-run reuses the committed prompt/T0 or whether the blocked run writes nothing when a runner is recorded."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 3098,
+      "title": "The stage charter still says the engine surfaces the record in `orbit status --json`",
+      "recommendation": "D1 moved the read surface to `orbit external runner --json` and recorded the correction only in explore.md; the charter (and its pointer at `orbit/explore/rc17d-external-runner/`, now the change directory) reads otherwise. Note the correction in the program doc's status log at archive."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "tasks.md",
+      "line": 38,
+      "title": "No at-archive task moves CLAUDE.md's marked capability count",
+      "recommendation": "The ADDED capability takes orbit/specs/ from 23 to 24; CLAUDE.md's `src:capabilities` mark then fails `orbit validate --sources`. Add it to group 6 so the archive does not discover it."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "specs/orbit-review-external/spec.md",
+      "line": 99,
+      "title": "Missing blank line between the `Chat output when a runner launches` scenario and the next scenario heading",
+      "recommendation": "spec.md:99 is followed directly by `#### Scenario: Mode-specific sections` at :100, where every other scenario is separated by a blank line (and :94-95 carry a stray double blank). Validate passes; tidy before sync so the baseline block reads uniformly."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "The design's reasoning is sound and narrow: a per-user record, an engine that reads but never runs it, and a body that owns every git and process act. What I probed hardest was the seams the exploration marked EXECUTE: not applied — the config CLI's actual key-path code, the readers' shape gate, and git's behaviour on untracked paths — and that is where the gaps sit: each is a place where the artifacts assert an outcome (accepted key, committed return, commit alone) that the code underneath does not yet deliver as described. The save command's domain, declared open, is the other soft spot: the prompt the change keeps unchanged is itself a source of the inputs it does not enumerate. Nothing here threatens the stage's thesis or its three exits; it is specification precision at the launch line and the config edit path.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "Walk these before apply rather than redesign: every gap is a missing row or an unstated rule inside a mechanism whose shape is right, and each can be closed by a sentence or a table row in the existing requirements. The two worth settling first are the config edit path (the spec's own scenario fails against the real key-path validator) and the launch line's composition, because both decide code that tasks 1.1 and 4.3 would otherwise invent."
+  },
+  "final_assessment": "0 critical, 9 warning, 9 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc17d-external-runner --from-file orbit/changes/rc17d-external-runner/.orbit-runs/review-proposal-2026-10-06T14-32-17Z.json"
+}

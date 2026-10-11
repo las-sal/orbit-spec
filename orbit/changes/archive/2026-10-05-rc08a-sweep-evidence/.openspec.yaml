@@ -1,0 +1,12 @@
+schema: spec-driven
+created: 2026-10-05
+schema_version: 4
+architecture:
+  doc: clean-up-review-cycle
+  stage: rc08a-sweep-evidence
+base_fingerprints:
+  orbit-review:
+    Verification-genre passes grade the walk record: sha256:68562bb2f0e6afc9744c4d5ae37793531eae402d69b3545ec610597c89d1b1cd
+  orbit-address-reviews:
+    Discover → triage → walk → ripple flag → report lifecycle: sha256:44fe9606b4ae350d4711048da8d103fbe1d9895de94fe9ab9197d3e7bc494d44
+    Resolution-log JSON shape extensions for walk-mode / decision-forks / cascade: sha256:bfb55e04769e97560ebd881ef636544ac33e3166d7b961008e513fd57cc83aad

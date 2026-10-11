@@ -1,0 +1,125 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-07T13:22:11Z",
+  "change": "rc17c-short-review-next",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "The repaired orbit-review sentence says the requirement restates no pointer value, while its own scenario states one",
+      "file": "orbit/changes/rc17c-short-review-next/specs/orbit-review/spec.md",
+      "line": 5,
+      "recommendation": "Walk 1's fix reads `this requirement names it and restates neither its values nor its per-mode split`, but the same requirement's `Spine fields carry deterministic facts under persist-first` scenario names the change-mode value `/orbit:address-reviews <change>` (correctly: a scenario is a test case and names its expected output). Narrow the clause to `this paragraph names it and restates neither …`, or drop `restates neither its values nor its per-mode split` and keep the pointer alone.",
+      "walk_entry": {
+        "title": "orbit-review's MODIFIED requirement body still states the --from-file self pointer its own scenario retires",
+        "file": "orbit/changes/rc17c-short-review-next/specs/orbit-review/spec.md"
+      }
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "title": "D6 says the apply chunk keys are written as null when unused, but chunk_complete is a boolean",
+      "file": "orbit/changes/rc17c-short-review-next/design.md",
+      "line": 76,
+      "recommendation": "`ApplyComputed` (src/core/emit-composition.ts:1387-1398) types `chunk`, `chunk_name`, `files_touched` and `diff_base` as nullable and `chunk_complete` as `boolean`. The argument holds — every key is written on every apply emit — so reword to `on every apply emit (the nullable ones as null when unused)` or drop the parenthetical.",
+      "walk_entry": {
+        "title": "The chunked tasks.md seeding and its unchunked fallback cannot affect what the guard checks",
+        "file": "orbit/changes/rc17c-short-review-next/design.md"
+      }
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "title": "The restated self-pointer count is 152, not 155",
+      "file": "orbit/changes/rc17c-short-review-next/design.md",
+      "line": 18,
+      "recommendation": "Walk 1 copied the finding's 155, which counted emits mentioning `--from-file` anywhere. Measured with the renderer's own rule — `next_recommended` equal to `/orbit:address-reviews <change> --from-file orbit/changes/<change>/.orbit-runs/<basename>` — 152 of the 182 archived proposal/system review emits carry it. Restate 152 in design.md:18 and proposal.md:56.",
+      "walk_entry": {
+        "title": "Two stated counts disagree with measurement (182 self-pointer emits; 35 delta scenarios)",
+        "file": "orbit/changes/rc17c-short-review-next/design.md"
+      }
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "A verification of the two walk logs over their sweep scopes. The residual check from the external return's commit (c79807ca) lists six files, all inside the walks' edit records. Every regression is the same shape: a walk sentence asserting a fact one notch broader than what it checked — a copied count, a type stated for a set of fields, a scope word ('requirement') wider than the paragraph it governs. Two were caught only by executing the claim (the count with the renderer's own predicate, the field types from ApplyComputed); a read would have passed both. No design decision moved: every regression is a wording repair at the site the walk already edited.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "verification": [
+    {
+      "title": "orbit-review's MODIFIED requirement body still states the --from-file self pointer its own scenario retires",
+      "file": "orbit/changes/rc17c-short-review-next/specs/orbit-review/spec.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "The chunked tasks.md seeding and its unchunked fallback cannot affect what the guard checks",
+      "file": "orbit/changes/rc17c-short-review-next/design.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "Two stated counts disagree with measurement (182 self-pointer emits; 35 delta scenarios)",
+      "file": "orbit/changes/rc17c-short-review-next/design.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "The delta's 'discovers every pass' justification holds only while the change is active",
+      "file": "orbit/changes/rc17c-short-review-next/specs/orbit-emit-composition/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The schema task retains a second pointer rule",
+      "file": "orbit/changes/rc17c-short-review-next/tasks.md",
+      "verdict": "landed"
+    }
+  ],
+  "final_assessment": "0 critical, 0 warning, 3 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-10-07T13-19-44Z",
+    "2026-10-07T13-20-03Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc17c-short-review-next --from-file orbit/changes/rc17c-short-review-next/.orbit-runs/review-proposal-2026-10-07T13-22-11Z.json"
+}

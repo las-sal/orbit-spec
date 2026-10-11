@@ -1,0 +1,32 @@
+{
+  "command": "architect",
+  "timestamp": "2026-09-18T13:03:16Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "Continuation of the architect session. Q-crc-13 CLOSED — the orbit-architecture-engine opacity contract was repaired as prose inside rc07 (no code, base fingerprint re-verified, all six original baseline scenarios preserved byte-identically), and the closure records the deferral lesson rather than only the outcome: a finding in an UNARCHIVED delta is not residual risk, because the delta syncs into baseline at archive. Q-crc-17 OPENED, and it is the sharper item: rc07's fresh-half walk log matched ZERO of its six substantive findings because the entry titles were hand-retyped, so the record certified nothing while declaring ten resolved. The fixes were real and in the tree; only the record was wrong, and a corrected record now supersedes it. No check caught this and the gate's reason line could not have, since coverage is evaluated before resolution. The recommendation splits on R-crc-10: an entry matching no finding is a pure defect and should fail the write, while a finding named by no entry may be a deliberate subset and should be RECORDED as an engine-computed uncovered list — the gap becomes a field instead of a silence.",
+  "stages_touched": [],
+  "rulings_captured": [],
+  "completions_ratified": [],
+  "handoff": {
+    "boot_sequence": [
+      {
+        "path": "orbit/architecture/clean-up-review-cycle.md",
+        "why": "Q-crc-13 closed with its lesson; Q-crc-14, 15, 16, 17 open — 17 is engine work on the emit surface and the only one caught by a human rather than a check"
+      },
+      {
+        "path": "orbit/changes/rc07-artifact-lint/.orbit-runs/address-reviews-2026-09-18T12-57-44Z.json",
+        "why": "the corrected fresh-half walk record; the superseded one at 21-31-37Z is the evidence for Q-crc-17"
+      },
+      {
+        "path": "src/core/artifact-graph/gates.ts",
+        "why": "the coverage-before-resolution ordering that made the defect invisible lives here"
+      }
+    ],
+    "next_command": "orbit architecture status",
+    "model_hint": "any",
+    "seam": "architect session end; rc07 in-change, review-system unpassed on an empty in-context cadence slot with 2 of 3 independent passes spent"
+  },
+  "next_recommended": "orbit architecture status"
+}

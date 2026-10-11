@@ -1,0 +1,139 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-11T18:29:20Z",
+  "change": "rc09a-size-record",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc09a-size-record/specs/orbit-change-size/spec.md",
+      "line": 30,
+      "title": "The rc04c pin's commit gloss reads false on the change path: bc4c12fc is the parent of rc04c's archive commit, not of the commit that first added its proposal",
+      "recommendation": "Replace the parenthetical \"(the parent of the commit that added its proposal)\" with \"(the parent of rc04c's archive commit, de4af354)\" — or drop the gloss and keep the hash alone. The figure is unaffected: the three rc04c baselines are byte-identical at 49d919f5 and bc4c12fc.",
+      "reproduction": "git log --diff-filter=A --format='%h %p' -- orbit/changes/rc04c-retire-gate-overridden/proposal.md → 2431af05 49d919f5 (parent 49d919f5, not bc4c12fc); git log --diff-filter=A --format='%h %p' -- orbit/changes/archive/2026-09-24-rc04c-retire-gate-overridden/proposal.md → de4af354 bc4c12fc. git diff --stat 49d919f5 bc4c12fc over the three baselines is empty, so both readings pin the same 14,438.",
+      "walk_entry": {
+        "title": "The byte rule leaves the line and block boundaries open, and the rc04c regression in task 2.4 cannot pin them",
+        "file": "specs/orbit-change-size/spec.md"
+      }
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc09a-size-record/specs/orbit-change-size/spec.md",
+      "line": 192,
+      "title": "An existing but unreadable proposal.md has no row in the validate table, though the figures' unreadable-input rule is stated",
+      "recommendation": "Add one row (or extend the unreadable row): a proposal.md that exists but cannot be read is a WARNING naming the file, and no dimension reads as declared — so an implementer neither throws nor silently reads it as absent."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Every walked edit is present at its claimed sites, and the residual check over the range from the external return's commit lists five files, each inside some entry's edit record. Pass 1 ran validate --strict (valid; the 33 scenario-map INFO lines are the expected pre-apply state). Pass 8 found no marker residue; Pass 7's grep for the retired wording finds only the intended mentions (the 14.1K in the proposal is 14,438 bytes in KiB, consistent). The one regressed entry is a gloss, not the figure: the pin's hash is right, its parenthetical describes the archive path's history. The 14,438 figure itself was not re-measured in this pass — no implementation of the rule exists yet; task 2.4 is where it is first executed.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "verification": [
+    {
+      "title": "Three statements of what --strict fails on disagree; the DUPLICATE row also fails strict",
+      "file": "specs/orbit-change-size/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "A map with no valid entry is OFF here but ON-comparing-nothing in the explored rule, and the change does not record it",
+      "file": "specs/orbit-change-size/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "'Size never moves a gate' cannot be tested by moving the change's figures: the tasks figure is the apply gate's own input",
+      "file": "tasks.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The size brief's place relative to the PR choreography's commit is unspecified, so a Declare can land outside the draft PR",
+      "file": "specs/orbit-propose-modifications/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The byte rule leaves the line and block boundaries open, and the rc04c regression in task 2.4 cannot pin them",
+      "file": "specs/orbit-change-size/spec.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "Declaration edge cases split implementations: unconfigured dimensions, other bullet markers, reason-on-continuation, heading spelling",
+      "file": "specs/orbit-change-size/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "No failure path for the size computation on the status surface every body reads gate state from",
+      "file": "specs/orbit-change-size/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The Size: line's figure format and status-flag reach are unpinned",
+      "file": "specs/orbit-change-size/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The at-archive note omits the baseline capability count that moves 25 → 26",
+      "file": "tasks.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Changes generated by /orbit:ff or /orbit:continue get no size brief",
+      "file": "specs/orbit-propose-modifications/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Split does not override the existing completion instruction",
+      "file": "orbit/changes/rc09a-size-record/specs/orbit-propose-modifications/spec.md",
+      "verdict": "landed"
+    }
+  ],
+  "final_assessment": "0 critical, 0 warning, 2 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-10-11T16-48-04Z",
+    "2026-10-11T16-48-20Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc09a-size-record"
+}

@@ -1,0 +1,57 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-07-14T20:33:17Z",
+  "change": "d2-architect",
+  "final_assessment": "All 3 external iter-1 findings (GPT-5 Codex: 1 CRITICAL, 1 WARNING, 1 SUGGESTION) resolved; 0 stale/deferred/escalated. CRITICAL (user-ratified fork option A — backfill): task 3.1 gains the one-time migration step backfilling the archived D1 change's metadata with its architecture citation (nothing observable cited stage d1, so its ratified Complete mark would have contradicted a premised observation on the first retrofitted doc — exit criterion 1); the falsified-mark rule is tightened EVERYWHERE to flag ratified marks on ANY non-quiescent observation incl. premised (engine spec requirement + new scenario; audit-drift check (b); design D3/D7). WARNING: audit check (d) now scans citations INDEPENDENTLY of doc presence (a typo'd doc name cannot suppress its own detection; skip is doc-side-only, with both scenarios). SUGGESTION: merge precedence defined — on conflicting citations the STAGED metadata is authoritative (deterministic; the exploration's citation is the captured decision), scenario added + design D2 sentence. Validates --strict; fingerprints 13/13. Walk note: the first patch script aborted at edit 1 and the assert-guarded procedure caught its own partial application — remaining carriers patched in a second pass and residue-swept (design D3's stale parenthetical).",
+  "next_recommended": "/orbit:review --as proposal --fresh d2-architect — the external yielded new findings (now resolved); the no-new-findings confirm still requires an independent pass that yields none",
+  "kind": "editorial",
+  "source": "--from-file orbit/changes/d2-architect/.orbit-runs/external-proposal-2026-07-14T20-16-17Z.md",
+  "source_path": "orbit/changes/d2-architect/.orbit-runs/external-proposal-2026-07-14T20-16-17Z.md",
+  "source_format": "external",
+  "external_reviewer": "GPT-5 Codex",
+  "walk_mode": "per_finding",
+  "walk_mode_source": "flag",
+  "resolution_summary": { "resolved": 3, "stale": 0, "deferred": 0, "escalated": 0 },
+  "resolutions": [
+    {
+      "finding": "D1 cannot compute complete without a back-citation",
+      "severity": "CRITICAL",
+      "classification": "decision required",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          { "label": "A", "body": "backfill the archived D1 change's metadata with the architecture citation + tighten the falsified-mark rule to any non-quiescent observation" },
+          { "label": "B", "body": "define another observable source for pre-D2 archived stages" }
+        ],
+        "chosen": "A",
+        "discuss_invoked": false
+      },
+      "action": "Task 3.1 backfill step; engine-spec falsified-mark rule tightened + new inconsistency scenario (premised + ratified mark, with the backfill remedy named); audit-drift check (b) extended; design D7 records the ratified option, D3 parenthetical aligned."
+    },
+    {
+      "finding": "Audit skip can hide dangling architecture citations",
+      "severity": "WARNING",
+      "classification": "trivial fix",
+      "action": "Check (d) scans metadata independently of doc presence; skip narrowed to doc-side checks (a)-(c); two scenarios added (doc-side skip only; dangling citation detected with zero parseable docs)."
+    },
+    {
+      "finding": "Define conflicting architecture metadata merge precedence",
+      "severity": "SUGGESTION",
+      "classification": "trivial fix",
+      "action": "Staged-metadata-authoritative rule: new scenario in orbit-propose-modifications (staged citation wins, override noted in chat) + design D2 sentence."
+    }
+  ],
+  "ripple_cascade": {
+    "applied": [
+      "orbit/changes/d2-architect/specs/orbit-architecture-engine/spec.md",
+      "orbit/changes/d2-architect/specs/orbit-audit-drift/spec.md",
+      "orbit/changes/d2-architect/specs/orbit-propose-modifications/spec.md",
+      "orbit/changes/d2-architect/design.md",
+      "orbit/changes/d2-architect/tasks.md"
+    ],
+    "flagged_not_applied": [
+      { "path": "orbit/changes/archive/2026-07-13-explicit-lifecycle-consent/.openspec.yaml", "reason": "cross-change ripple; cascade scope is current change only — the backfill is task 3.1's apply-time migration act, not a resolution-time edit" }
+    ]
+  }
+}

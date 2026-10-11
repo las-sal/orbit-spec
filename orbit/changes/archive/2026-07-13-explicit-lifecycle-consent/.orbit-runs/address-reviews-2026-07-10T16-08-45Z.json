@@ -1,0 +1,23 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-07-10T16:08:45Z",
+  "change": "explicit-lifecycle-consent",
+  "final_assessment": "All 3 findings from fresh iter 3 resolved (1 CRITICAL, 1 WARNING, 1 SUGGESTION); 0 stale/deferred/escalated. CRITICAL: eighth capability delta added — specs/orbit-onboard/spec.md MODIFIED 'Identity statement section' via verified transformation (three→four execution disciplines, no-chaining joining the enumeration; 0 baseline lines lost; assert-guarded replace); fingerprint stamped (8/8 verified); tasks 2.4 extended (onboard identity count); proposal capability list gains orbit-onboard (now 1 new + 7 modified). WARNING: proposal's conventions bullet now names the MODIFIED Internal-run JSON summary format block. SUGGESTION: engine-gates bullet reworded to name the actually-modified requirements (singular single-voiced + the v3 gates requirement). Validates --strict. Fifth consecutive CRITICAL of the un-delta'd-baseline-contradiction class — the mechanizable contradiction-sweep observation is noted in the arc's ledger for D4/D5.",
+  "next_recommended": "/orbit:review --as proposal --fresh explicit-lifecycle-consent — the latest independent pass yielded new findings (now resolved); no-new-findings confirm still requires an independent pass that yields none",
+  "kind": "editorial",
+  "source": "--from-file orbit/changes/explicit-lifecycle-consent/.orbit-runs/review-proposal-2026-07-10T14-46-07Z.json",
+  "source_path": "orbit/changes/explicit-lifecycle-consent/.orbit-runs/review-proposal-2026-07-10T14-46-07Z.json",
+  "source_format": "internal-review",
+  "walk_mode": "per_finding",
+  "walk_mode_source": "flag",
+  "resolution_summary": { "resolved": 3, "stale": 0, "deferred": 0, "escalated": 0 },
+  "resolutions": [
+    { "finding": "Un-delta'd onboard baseline pins 'three execution disciplines'", "severity": "CRITICAL", "classification": "trivial fix", "action": "Eighth capability delta: orbit-onboard MODIFIED 'Identity statement section' (verified transformation, three→four disciplines with no-chaining named; containment 0 lost; assert-guarded). Fingerprint stamped — 8/8. Tasks 2.4 + proposal capability list/count rippled." },
+    { "finding": "Proposal's conventions bullet omits the MODIFIED summary-format block", "severity": "WARNING", "classification": "trivial fix", "action": "Bullet extended: MODIFIED Internal-run JSON summary format (consent in canonical lifecycle example + both per-kind extension lines)." },
+    { "finding": "Engine-gates bullet overstates 'position-readout / single-voiced requirements' (plural)", "severity": "SUGGESTION", "classification": "trivial fix", "action": "Reworded to the single-voiced requirement (singular) + the spec-driven v3 gates requirement, matching the actual delta blocks." }
+  ],
+  "ripple_cascade": {
+    "applied": ["specs/orbit-onboard/spec.md", "proposal.md", "tasks.md"],
+    "flagged_not_applied": []
+  }
+}

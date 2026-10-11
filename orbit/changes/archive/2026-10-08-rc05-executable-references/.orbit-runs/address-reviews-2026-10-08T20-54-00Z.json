@@ -1,0 +1,429 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-08T20:54:00Z",
+  "change": "rc05-executable-references",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc05-executable-references/.orbit-runs/review-proposal-2026-10-08T20-47-45Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-08T20-47-45Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 6,
+    "suggestion": 4
+  },
+  "pushback_verification": "verified",
+  "resolution_summary": {
+    "resolved": 10,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc05-executable-references/design.md",
+          "orbit/changes/rc05-executable-references/proposal.md",
+          "orbit/changes/rc05-executable-references/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "severity": "WARNING",
+      "title": "The hook row names three preAction hooks; the CLI registers five, and config's calls process.exit",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-cli-grammar/spec.md",
+      "line": 19,
+      "action": "The hook row names all five preAction hooks: the root's, change's and spec's, config's (which exits on a non-global --scope) and schema's (which writes to stderr). The builder's option is passed into the three register modules, which register three of the five. The modules join Impact, D1, task 1.2 and Touchpoints, and task 1.3 asserts config --scope local list and schema which run no hook.",
+      "sweep": {
+        "retired": [
+          "skips registering the three `preAction` hooks"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc05-executable-references/specs/orbit-cli-grammar/spec.md",
+            "text": "which register three of the CLI's five hooks themselves"
+          },
+          {
+            "path": "orbit/changes/rc05-executable-references/design.md",
+            "text": "skips registering all five `preAction`"
+          }
+        ],
+        "searched": [
+          "preAction",
+          "register*Command",
+          "hooks: false"
+        ],
+        "scope": [
+          "src/commands/config.ts",
+          "src/commands/schema.ts",
+          "src/commands/spec.ts"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc05-executable-references/design.md",
+          "orbit/changes/rc05-executable-references/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "severity": "WARNING",
+      "title": "Neutralisation as written makes the sweep accept invocations the CLI rejects",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-cli-grammar/spec.md",
+      "line": 18,
+      "action": "An action is replaced by a no-op only on a command that declares one, so a group command keeps none and commander still rejects it run without a subcommand, still offers implicit help, and still reports an unknown subcommand as unknown. An exit is accepted exactly when its code is commander.helpDisplayed or commander.version; commander.help is a rejection. A new scenario and task 1.3 hold `external` and `external frobnicate`.",
+      "sweep": {
+        "retired": [
+          "replaced by no-ops on every command of the check's build",
+          "a help or version exit counts as accepted"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc05-executable-references/specs/orbit-cli-grammar/spec.md",
+            "text": "a command without an action (a group) keeps none"
+          },
+          {
+            "path": "orbit/changes/rc05-executable-references/design.md",
+            "text": "`action(noop)` ONLY on a command that already declares an action"
+          }
+        ],
+        "searched": [
+          "action(noop)",
+          "every command",
+          "commander.help"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/rc05-executable-references/explore.md",
+            "why": "the exploration record, kept as the exploration wrote it; design.md says the spec tables are the rule"
+          }
+        ]
+      }
+    },
+    {
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc05-executable-references/design.md",
+          "orbit/changes/rc05-executable-references/proposal.md",
+          "orbit/changes/rc05-executable-references/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "severity": "WARNING",
+      "title": "The guard's matching rule is ambiguous, and its residual claim depends on an unstated line normalisation",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-cli-grammar/spec.md",
+      "line": 65,
+      "action": "The guard is stated precisely: it reads every line outside a shell fence after stripping leading whitespace, blockquote markers, list markers and a leading pipe, and fails a line whose first token is orbit and any later token begins with '-'. That makes the residual's 'reads every line whatever its container' true, catches `orbit validate --strict`, and a new scenario passes the prose line `orbit validate passes`. The proposal, D3 and tasks 2.2, 2.3 and 5.2 carry the same rule.",
+      "sweep": {
+        "retired": [
+          "starts with `orbit` followed by a flag",
+          "starts with `orbit` and a flag"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc05-executable-references/specs/orbit-cli-grammar/spec.md",
+            "text": "and any later token begins with `-`"
+          }
+        ],
+        "searched": [
+          "followed by a flag",
+          "and a flag",
+          "guard"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "The stage's one 'real defect' is invisible to the mechanism it specifies",
+      "marker_source": "internal-review",
+      "file": "proposal.md",
+      "line": 13,
+      "classification": "decision_required",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "source": "structured",
+        "options": [
+          "A",
+          "B"
+        ],
+        "chosen": "B"
+      },
+      "action": "Sal: B. A test-only check (design D8, task 3.2) fails any backslash immediately before a backtick in a generated surface's raw text, naming the surface and line. It fixes the architect scaffold and the same slip at review.ts:427 and :510, moving the architect pin and external-runner-branch's PASTE_ITEMS_BEFORE_RUNNERS, each recorded. The proposal and design now say the probe found the defect and the sweep cannot see it. Task 5.4 shows the check able to fail. The same slip in the baseline orbit-review-external spec text is a named limit in design Risks, not a generated body.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc05-executable-references/design.md",
+          "orbit/changes/rc05-executable-references/tasks.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/specs/orbit-review-external/spec.md",
+            "reason": "baseline spec; add a delta to your current change's specs/<capability>/spec.md to capture this ripple"
+          }
+        ]
+      },
+      "sweep": {
+        "retired": [
+          "The architect scaffold's backslash defect is fixed."
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc05-executable-references/design.md",
+            "text": "**D8 — a test-only check fails any backslash-escaped backtick"
+          },
+          {
+            "path": "orbit/changes/rc05-executable-references/proposal.md",
+            "text": "a separate test-only check guards that slip on every generated body"
+          }
+        ],
+        "searched": [
+          "\\\\`",
+          "escaped backtick",
+          "Generating external-review prompt as"
+        ],
+        "scope": [
+          "src/core/templates",
+          "orbit/specs/orbit-review-external/spec.md"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc05-executable-references/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "severity": "WARNING",
+      "title": "Task 1.3's byte-identity tests compare against an uncommitted baseline that section 4 changes on purpose",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 5,
+      "action": "The byte-identity comparison is now a one-time apply measurement (task 1.4), recorded in the apply emit, against task 1.1's scratch capture, which is named as not a fixture. The committed test (task 1.3) asserts what is observable: the entry point declares nothing and builds through buildProgram. The zsh completion output leaves the comparison; task 4.3 covers it.",
+      "sweep": {
+        "retired": [
+          "the pre-refactor baseline; not committed"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc05-executable-references/tasks.md",
+            "text": "Measure once, after 1.2"
+          }
+        ],
+        "searched": [
+          "byte-identical",
+          "scratch"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc05-executable-references/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "severity": "WARNING",
+      "title": "Exit (2) as worded cannot be met by the registry-parity injections",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 26,
+      "action": "Exit (2) is worded per injection kind: a snippet or guard injection names the snippet's surface and line, and a parity injection names the command or flag. Task 6.2 carries the same wording into the charter, and task 5.3 says each parity failure names the command or flag.",
+      "sweep": {
+        "retired": [
+          "Exit (2): each injection in tasks.md section 5 fails the suite naming the snippet's surface and line"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc05-executable-references/design.md",
+            "text": "a parity injection names the command or flag"
+          }
+        ],
+        "searched": [
+          "Exit (2)",
+          "surface and line"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc05-executable-references/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "severity": "SUGGESTION",
+      "title": "D3 and task 2.2 enumerate templates the generator does not emit",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 56,
+      "action": "D3 and task 2.2 enumerate through getSkillTemplates() (src/core/shared/skill-generation.ts), the generator's own registry, which includes architect and excludes the never-generated feedback template; task 2.3 asserts the helper's workflow set equals it.",
+      "sweep": {
+        "retired": [
+          "each `get*SkillTemplate()`'s"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc05-executable-references/design.md",
+            "text": "through `getSkillTemplates()`"
+          }
+        ],
+        "searched": [
+          "get*SkillTemplate",
+          "getSkillTemplates"
+        ],
+        "scope": [
+          "src/core/shared/skill-generation.ts"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc05-executable-references/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "severity": "SUGGESTION",
+      "title": "The first scenario's THEN cannot be observed by a test",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-cli-grammar/spec.md",
+      "line": 35,
+      "action": "The scenario is restated to what a test can observe: index.ts declares no command, option or hook and builds through the exported builder, and the test's build runs no action and no hook. Task 1.3 asserts it.",
+      "sweep": {
+        "retired": [
+          "Production and a check build the same program"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc05-executable-references/specs/orbit-cli-grammar/spec.md",
+            "text": "The entry point declares nothing of its own"
+          }
+        ],
+        "searched": [
+          "equals the tree"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc05-executable-references/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "severity": "SUGGESTION",
+      "title": "Snippet counts do not reconcile: 164 against 131 + 35 + 1",
+      "marker_source": "internal-review",
+      "file": "proposal.md",
+      "line": 5,
+      "action": "The proposal and design say the two figures are two measurements by two rules: D-rc05-8 counted first tokens resolving to an executable (164), and the propose-time probe counted spans and fence lines its own way (131 + 35 + 1). Exit (1) states the sweep's own figure at apply.",
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc05-executable-references/proposal.md",
+            "text": "the probe counts spans by its own rule"
+          },
+          {
+            "path": "orbit/changes/rc05-executable-references/design.md",
+            "text": "The probe's 167 snippets and D-rc05-8's 164"
+          }
+        ],
+        "searched": [
+          "164",
+          "131"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc05-executable-references/specs/orbit-cli-grammar/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "severity": "SUGGESTION",
+      "title": "Task 4.3 tests zsh while its scenario claims every shell",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 23,
+      "action": "Task 4.3 tests all four supported shells (zsh, bash, fish, powershell, per SupportedShell in src/utils/shell-detection.ts), and the scenario names them.",
+      "sweep": {
+        "retired": [
+          "Test: `orbit completion generate zsh` output offers"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc05-executable-references/tasks.md",
+            "text": "for each of `zsh`, `bash`, `fish` and `powershell`"
+          }
+        ],
+        "searched": [
+          "zsh",
+          "SupportedShell"
+        ],
+        "scope": [
+          "src/utils/shell-detection.ts"
+        ],
+        "kept": []
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Ten of ten resolved: the neutralisation repaired (five hooks threaded into the register modules; actions replaced only where one exists; two accepted codes), the guard rule stated precisely, the escaped-backtick slip guarded by a test-only check (Sal: B), and six smaller repairs to wording, tasks and scenarios.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc05-executable-references",
+  "ripple_misses": 0
+}

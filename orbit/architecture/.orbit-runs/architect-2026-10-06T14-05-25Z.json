@@ -1,0 +1,27 @@
+{
+  "command": "architect",
+  "timestamp": "2026-10-06T14:05:25Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "rc17d-external-runner SPLIT from rc17b at its exploration on Sal's word (D-rc17b-1), R-crc-9's ninth preventive application: six capabilities measured against R-crc-1's three. rc17d (Depends-on: none) takes the per-user runner record, init's setup step and auto-launch of every external half across an ADDED runner capability, orbit-review-external and orbit-conventions; rc17b keeps the one-command pair across orbit-review and orbit-engine-gates and now depends on rc17d. rc17b's exit (2) restated for the no-runner path (the pair ends open); its old exits (2)/(3) became rc17d's (1)/(2). Stage count 35 -> 36 at the three marked sites; validate --sources clean.",
+  "stages_touched": [
+    "rc17b-blind-pair-command",
+    "rc17d-external-runner"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      "orbit/architecture/clean-up-review-cycle.md — Stage rc17d-external-runner and Stage rc17b-blind-pair-command (charters; position is computed)",
+      "orbit/explore/rc17b-blind-pair-command/explore.md — D-rc17b-1 and the capability measurement",
+      "orbit/changes/archive/2026-10-06-rc17a-invoked-coverage/explore.md — D-bpc-1/-2/-5/-11/-14 Mechanism entries, rc17d's rules"
+    ],
+    "next_command": "/orbit:explore rc17d-external-runner",
+    "model_hint": null,
+    "seam": "rc17d exploration, before any propose"
+  },
+  "next_recommended": "/orbit:explore rc17d-external-runner"
+}

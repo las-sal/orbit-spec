@@ -1,0 +1,138 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-09T16:06:45Z",
+  "change": "rc05b-git-grammar",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 6,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    }
+  },
+  "findings": [
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md",
+      "line": 40,
+      "title": "The -h probe row cannot classify a value-taking flag: the flag consumes -h and the command runs",
+      "recommendation": "State in the ADDED requirement's probe table how a value-taking flag is probed under the parse-options strategy: decide value-taking FIRST (the flag alone as the last token), then probe a value-taking flag with a dummy value before -h (git <key> <flag> x -h), and give row 2 an explicit outcome for any response that is neither a usage page nor an unknown/invalid option. Correct design D4's \"so nothing runs\" (design.md:80), which is false for these flags.",
+      "reproduction": "Real git 2.50.1, LANG=C, a throwaway repository holding one commit, following D4/row 2 literally for flags the surface writes: `git commit --orbit-capture-bogus -h` reports `error: unknown option` (parse-options-first, so the -h strategy applies). Then `git commit -m -h` prints `nothing to commit, working tree clean` (exit 1): -m took \"-h\" as its message and commit RAN. `git commit -F -h` prints `fatal: could not read log file '-h'` (exit 128). `git switch -c -h` prints `fatal: '-h' is not a valid branch name` (exit 128). Each is neither a usage page nor an unknown/invalid option, so row 2 records nothing and two implementers will record these flags differently."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md",
+      "line": 41,
+      "title": "The run-strategy row records correct surface flags REJECTED on commands that print usage without a positional (rev-list --count, check-ref-format --branch)",
+      "recommendation": "Probe a run-strategy flag with the positional the surface writes (or a placeholder-free stand-in such as HEAD), or stop treating a usage page as rejection when the bogus flag and a no-flag invocation produce the same page; state the rule in the probe table. Task 2.4's \"any flag recorded REJECTED is a real defect: fix it in its template\" would otherwise direct editing two correct templates.",
+      "reproduction": "Same throwaway repository: `git rev-list --orbit-capture-bogus -h` and `git rev-list --orbit-capture-bogus` both print `usage: git rev-list ...` (exit 129), so rev-list takes the run strategy. Row 3 then runs `git rev-list --count`: it prints the same usage page (exit 129), which row 3 records REJECTED, though the surface's `git rev-list @{u}..HEAD --count` is correct (`git rev-list --count HEAD` prints 1, exit 0). check-ref-format behaves identically: both bogus probes print usage, `git check-ref-format --branch` prints usage (rejected), and `git check-ref-format --branch x` prints x, exit 0. Exit (1) cannot be met without editing correct templates."
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc05b-git-grammar/design.md",
+      "line": 68,
+      "title": "D3's `=value` rule cannot be implemented from D3's own contract shape, and the validator says nothing about `=value` on a no-value flag",
+      "recommendation": "Either add a field to the flag entry recording that the surface writes it with an attached `=value` (e.g. `attached_value: true`), and let the validator accept `=value` only on such entries or on value-taking ones; or drop D3's claim that an `=value` added after capture fails. Either way state the validator's `=value` behaviour in the ADDED requirement's validator paragraph (spec.md:50-56).",
+      "reproduction": "`git log --format` alone prints `fatal: unrecognized argument: --format` (not `requires a value`), so the value probe records `--format` as NOT value-taking, and the `--name=value` row records it by the name before `=`. The entry is then `{name: \"--format\", takes_value: false, accepted: true}` — byte-identical to a no-value flag never written with `=`. A validator meeting today's `git log --format=%h` and a post-capture `git switch --track=x` sees the same entry shape for both, so it must either pass both (D3's claim false) or fail both (exit (1) false on `--format=%h`)."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md",
+      "line": 39,
+      "title": "No rule decides whether a git segment's second word is a subcommand (worktree remove) or a positional (push <remote>)",
+      "recommendation": "State how the capture forms command keys: e.g. a key is two words exactly when `git <a> <b> -h` and `git <a> -h` differ, or when `git <a> <b>` with <b> a bogus word reports an unknown subcommand; or declare the two-level set (worktree) as a named orbit-side list in the capture. Without it the candidate set has no defined key for `git worktree add --detach <dir> <sha>` versus `git push <resolved-remote> <branch>`.",
+      "reproduction": "Constructed case: the surface carries `git worktree remove --force <run-dir>/worktree` and `git push <resolved-remote> <branch>`. The table says only \"a command key, one or two words\" and probes `git <key> -h`; both `git worktree remove -h` and `git push x -h` print a usage page, so nothing in the spec or design D4 tells the capture that the first is key `worktree remove` and the second key `push`."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md",
+      "line": 147,
+      "title": "The `(` refusal applies to every shell-fence line, and today's surface carries one: rc05's orbit sweep and exit (1) go red",
+      "recommendation": "Scope the substitution/grouping refusal to a line or span that contains a segment of the swept tool (or of any recorded tool), or add a places-table row for a grouped line, and re-measure: D-rc05b-2's \"none today\" was measured over the three tools' snippets only, not over every shell-fence line the tokenizer now reads. Task 1.3's \"rc05's sweep stays green with no edits\" depends on this.",
+      "reproduction": "review/references/external-handoff.md, inside a ```bash fence, line 151: `( cd '<run-dir>/worktree' && '<argv[0]>' '<argv[1]>' … < '<run-dir>/worktree/<prompt-path>' > '<run-dir>/runner.log' 2>&1 )`. The places table makes every line of a bash fence an extracted line, and the new row says an unquoted `(` fails extraction naming the surface, the line and the snippet; the existing unterminated-quote precedent fails a fence line whatever its first word. Built as written, every tool's sweep (orbit, git, gh) reports an extraction failure at that line, so `Today's surface parses` and `Today's surface validates for both recorded tools` both fail."
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc05b-git-grammar/tasks.md",
+      "line": 4,
+      "title": "Which inline spans the operator split reads is unstated: keeping the `starts with <tool> ` gate contradicts the FALSIFY claim; dropping it fails extraction on prose spans",
+      "recommendation": "State in the places table whether an inline span not beginning with the tool is a candidate. If yes, restrict the substitution/grouping refusal to spans that yield a tool segment, since today's surface has prose spans like `$(…)`, `(In Progress)` and `walk <token>: (<title>, <file>)`. If no, add `mid-line after an operator inside an inline span not beginning with the tool` to the places residual (spec.md:152-161), which today names only text outside every fence and span.",
+      "reproduction": "test/helpers/surface-snippets.ts extractInline skips a span unless `child.content.startsWith(`${walk.tool} `)`. Constructed span `cd x && git commit --frobnicate`: kept gate → never extracted, and the revised residual (\"outside every shell fence and single-backtick span\") no longer names it, so it is unaccounted. Dropped gate → review/references/external-handoff.md's inline span `$(…)` and review/SKILL.md's `(In Progress)` fail extraction under the new `$(`/`(` row."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc05b-git-grammar/proposal.md",
+      "line": 66,
+      "title": "\"No generated-surface text\" conflicts with task 2.4's template fixes",
+      "recommendation": "Qualify the non-goal (proposal.md:66, design.md:32): no generated-surface text except a template fix the capture finds rejected under task 2.4."
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md",
+      "line": 16,
+      "title": "The bare-name table speaks of spans, but after the split it is a per-segment question",
+      "recommendation": "Say the bare-name rule applies to each inline segment (so `git fetch <r> && git push` yields one validated snippet and one prose name), matching D1's per-segment emission."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Every substantive finding came out of running the capture's probe table against real git 2.50.1 in a throwaway repository rather than reading it. The table was written from the exploration's spike on unknown and missing-value probes, and it holds for those. It breaks on the two probe shapes the spike did not run: an accepted value-taking flag under the -h strategy, and an accepted flag under the run strategy on a command that needs a positional. The extractor findings have the same shape. The `(` refusal and the inline-span scope were measured over the three tools' snippets, but the new tokenizer reads every shell-fence line and possibly every inline span. The bare-name table, the gh move and the pr-lifecycle sentence read sound, and validate --strict passes.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "direction": {
+    "disposition": "hold",
+    "reasoning": "The capture is the stage's core instrument, and as specified it would record correct surface flags rejected and leave others unclassified. Task 2.4 would then steer the implementer into editing correct templates. The repairs are probe-table rows and one scoping sentence for the refusal, so they are cheap to fix in the artifacts now and expensive to discover at apply. Repair them, re-run the two probes that refute the current rows, then apply."
+  },
+  "final_assessment": "0 critical, 6 warning, 2 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc05b-git-grammar"
+}

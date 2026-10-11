@@ -1,0 +1,9 @@
+{
+  "command": "propose",
+  "timestamp": "2026-10-05T01:10:04Z",
+  "change": "rc08a-sweep-evidence",
+  "kind": "workflow",
+  "model": null,
+  "final_assessment": "Proposed rc08a-sweep-evidence in consume mode from the rc08 exploration (D-rc08-1..5; three accounted rules, carried by Mechanism-table row 4 as normative tables). Three capabilities at R-crc-1's ceiling: orbit-address-reviews (2 ADDED: the sweep record's shape; ripple-miss attribution), orbit-emit-composition (2 ADDED: the walk write gate's retired/introduced/scope checks with one path rule and whitespace-run matching; the ripple_miss_of pointer check and computed ripple_misses), orbit-review (1 MODIFIED: the verification sweep scope gains sweep.scope). One refinement by measurement at propose: walk-log paths are repo-relative, change-relative or orbit/changes/<name>/-prefixed, so one resolver handles all but one recorded free-text path; unresolved legacy fields are skipped with a warning, unresolved sweep paths refused (design D3). 13 tasks (5.3 the user-validation handoff); validates --strict; fingerprints 1/1; pr regime never.",
+  "next_recommended": "/orbit:review rc08a-sweep-evidence — proposal artifacts ready; review before apply"
+}

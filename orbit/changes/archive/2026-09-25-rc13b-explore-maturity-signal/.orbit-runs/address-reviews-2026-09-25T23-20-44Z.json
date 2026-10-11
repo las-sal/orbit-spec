@@ -1,0 +1,206 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-25T23:20:44Z",
+  "change": "rc13b-explore-maturity-signal",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc13b-explore-maturity-signal/.orbit-runs/review-system-2026-09-25T19-51-20Z.json",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 5,
+    "suggestion": 4
+  },
+  "pushback_verification": "All 9 findings verified against HEAD 6cd65894 by reading each cited line and re-executing the reproductions; 0 stale.",
+  "resolution_summary": {
+    "resolved": 9,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "A duplicated `## Decisions` or `## Mechanism` heading silently replaces the earlier section, dropping a live rule and reporting a false orphan",
+      "marker_source": "internal-review",
+      "file": "src/core/parsers/explore-counter.ts",
+      "line": 98,
+      "classification": "trivial_fix",
+      "action": "collectSections (explore-counter.ts) now MERGES a same-named `##` section into the earlier one in file order (lines and entries appended) and records every heading line in Section.headings; parseExploreRules surfaces one note per extra `## Decisions` / `## Mechanism` heading. First-key-wins therefore holds across the whole file: the external half's reproduction (second Mechanism section) now yields D-x-1 no-closure + D-x-9 orphan + D-x-1 duplicate, and the fresh half's (second Decisions section) keeps D-x-1. Fixtures for both in explore-rules.test.ts and the merge in explore-counter.test.ts.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/parsers/explore-counter.ts",
+          "src/core/parsers/explore-rules.ts",
+          "test/core/parsers/explore-rules.test.ts",
+          "test/core/parsers/explore-counter.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "`TABLE_CELL_ROW` rejects GFM-valid member rows, so trailing whitespace flips an accounted rule into the verb-changing Unaccounted cell",
+      "marker_source": "internal-review",
+      "file": "src/core/explore-grammar.ts",
+      "line": 102,
+      "classification": "trivial_fix",
+      "action": "TABLE_CELL_ROW and TABLE_HEADER regexes replaced by GFM row predicates in explore-grammar.ts: splitTableRow (trim; one optional leading and trailing pipe; split on unescaped `|`; cells trimmed), isMemberRow (exactly two non-empty cells), isTableHeader (cells `member`, `covered by`); a row is detected by TABLE_ROW_START (up to three spaces then a pipe, per GFM). `|a|b|`, padded cells, a trailing space and an escaped pipe all accept; three cells and an empty cell stay MALFORMED. The surface test imports the predicates.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/explore-grammar.ts",
+          "src/core/parsers/explore-rules.ts",
+          "test/core/templates/orbit-generated-surface.test.ts",
+          "test/core/parsers/explore-rules.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The bare tier's `also:` line still renders a concluded exploration as `(exploring)`",
+      "marker_source": "internal-review",
+      "file": "src/commands/workflow/status.ts",
+      "line": 371,
+      "classification": "trivial_fix",
+      "action": "status.ts also: line renders an explore entry by its engine position (`exploring` / `concluded`, falling back to `exploring` only when position is absent) instead of the literal; CLI test demotes a concluded explore below a newer workstream and asserts `(concluded)`.",
+      "ripple_cascade": {
+        "applied": [
+          "src/commands/workflow/status.ts",
+          "test/commands/status-orientation.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "`re_entry` is specified as present \"iff exactly one\" live carrier and, in the same sentence, as the first of two",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc13b-explore-maturity-signal/specs/orbit-emit-composition/spec.md",
+      "line": 52,
+      "classification": "trivial_fix",
+      "action": "The delta sentence now reads: `re_entry` present iff concluded AND at least one live entry carries the slot, carrying the FIRST such entry's text in file order; further carriers draw a stderr note each — the exactly-one-live-slot rule is orbit-conventions' AUTHORING obligation and this is the reader's recovery (reports, never withholds). design.md (the D-rc13b-4 field description) and explore.md (D-rc13b-4's `status` row) aligned with dated amendments. No code change: the parser already did this.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13b-explore-maturity-signal/specs/orbit-emit-composition/spec.md",
+          "orbit/changes/rc13b-explore-maturity-signal/design.md",
+          "orbit/changes/rc13b-explore-maturity-signal/explore.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The explore body still tells the AI the engine grades `next_recommended` as `Early / Mid / Mature / Stalled from the counts`",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/explore.ts",
+      "line": 673,
+      "classification": "decision_required",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Add the sentence to design.md's Risks beside the two declared \"until ... lands\" clauses, naming the same retirement-class sweep as its owner, so the system review and audit-drift do not rediscover it."
+          },
+          {
+            "label": "B",
+            "body": "Replace the parenthetical with a pointer — `the maturity-graded next_recommended (per orbit-run-summary-emit's maturity requirement)` — and re-pin `orbit-explore` in skill-templates-parity, recording that task 1.3's unchanged-pin check was satisfied BEFORE this prose edit (the interpolation and the prose repair are two acts)."
+          }
+        ],
+        "chosen": "B"
+      },
+      "action": "Option B applied: the persist-step parenthetical in the explore body now points at orbit-run-summary-emit's maturity requirement (header first, then the counts and the form parse's open-rule set; the rungs stated there once). The orbit-explore pins in skill-templates-parity.test.ts re-recorded with a comment stating the two acts: task 1.3's interpolation was MEASURED pin-unchanged and snapshot-identical first (recorded in the apply emit); this prose repair moved the pin afterwards. The regenerated SKILL.md diffs against the pre-change snapshot at exactly one line (624) — the sentence.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/templates/workflows/explore.ts",
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "D-rc13b-8 in design.md and explore.md still carries the pre-amendment model (orphan \"reported in `rules_open`\", duplicate ID as MALFORMED)",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc13b-explore-maturity-signal/design.md",
+      "line": 73,
+      "classification": "trivial_fix",
+      "action": "design.md D-rc13b-8 paragraph: the two stale clauses (`duplicate ID → MALFORMED naming the second`; `orphan … reported in rules_open`) deleted and replaced by the disjoint-model statement with a dated note; explore.md's D-rc13b-8 Decisions entry gained a dated AMENDED line pointing at its Mechanism entry's amended rows.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc13b-explore-maturity-signal/design.md",
+          "orbit/changes/rc13b-explore-maturity-signal/explore.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "`readStatus` is byte-anchored: a UTF-8 BOM or trailing whitespace on the header line silently reads `exploring`",
+      "marker_source": "internal-review",
+      "file": "src/core/parsers/explore-rules.ts",
+      "line": 270,
+      "classification": "trivial_fix",
+      "action": "readStatus strips a leading UTF-8 BOM and trimEnd()s the first non-blank line BEFORE the owned production matches (the production is unchanged). No near-miss note: the spec says a neither-token first line is never MALFORMED, and prose after the concluded token still reads exploring by the production. Fixtures for BOM, trailing whitespace and the trailing-prose case.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/parsers/explore-rules.ts",
+          "test/core/parsers/explore-rules.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "A `D-`-prefixed heading that fails the ID grammar is reported as an orphan keyed by its whole heading text",
+      "marker_source": "internal-review",
+      "file": "src/core/parsers/explore-rules.ts",
+      "line": 173,
+      "classification": "trivial_fix",
+      "action": "readMechanism keys a `D-` heading that fails the entry grammar by its ID-shaped prefix (DECISION_ID_PREFIX, exported from the grammar module) when one exists, so `### D-x-1: a rule` joins D-x-1 as malformed-entry naming the heading line — one report, a real ID; a heading with no ID-shaped prefix (e.g. uppercase) stays an orphan keyed by the raw token before the first ` — `. Fixture for both.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/parsers/explore-rules.ts",
+          "src/core/explore-grammar.ts",
+          "test/core/parsers/explore-rules.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The opener prefix requires `: ` with a trailing space, so a title wrapped immediately after the colon loses its ID and orphans its entry",
+      "marker_source": "internal-review",
+      "file": "src/core/explore-grammar.ts",
+      "line": 73,
+      "classification": "trivial_fix",
+      "action": "DECISION_OPENER_PREFIX terminator is now `:(?: |$)`; the owner sentence in this change's orbit-conventions delta gained the clarification (`followed by a space or the line end … the title itself may begin on the next line`). Fixture: a title wrapped immediately after the colon keeps its ID; a colon glued to the title (`D-x-1:title`) is still not the prefix.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/explore-grammar.ts",
+          "orbit/changes/rc13b-explore-maturity-signal/specs/orbit-conventions/spec.md",
+          "test/core/parsers/explore-rules.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "9 of 9 fresh findings (0C/5W/4S) resolved, 0 stale; one decision-lane finding (the retired Mature-rung prose in the explore body) ratified by Sal in chat as option B — repaired with a pointer and the orbit-explore pin re-recorded as a SECOND act after task 1.3's unchanged-pin measurement stood. The pattern both halves of the blind pair named — regexes stricter than the GFM the grammar adopts, and a section collector never built for form judgements — is closed at the source: GFM row predicates, merged same-named sections with a note per extra heading, BOM/whitespace normalisation before the owned production, ID-prefix keying of malformed headings, and the opener terminator accepting a line end. Three artifact reconciliations (re_entry first-wins vs the exactly-one authoring rule; the D-rc13b-8 stale clauses in design and exploration). orbit validate --strict passes; fingerprints 6 verified / 0 diverged; 2319 tests green (2312 before). The external half's overlapping findings are walked next as log 2.",
+  "iteration": 4,
+  "next_recommended": "/orbit:address-reviews rc13b-explore-maturity-signal --from-file orbit/changes/rc13b-explore-maturity-signal/.orbit-runs/external-system-2026-09-25T20-06-14Z.md"
+}

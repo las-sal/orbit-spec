@@ -1,0 +1,12 @@
+{
+  "command": "explore",
+  "timestamp": "2026-07-30T17:17:01Z",
+  "change": "d5-context-economy",
+  "final_assessment": "Single-session capture of all three charter threads into nine decisions. Thread 1: the four-kinds framing with the computable-facts rule (D-d5-1), grounded by the body-inventory pass over the six heaviest generated bodies (sketches/body-inventory.md — ~40.6k tokens tagged: ~27% engine-absorbable / 20% references / 9% duplication / 44% resident judgment, plus the ranked engine work-list); the review/review-external merge on a --reviewer axis with the record vocabulary frozen (D-d5-2); the generic `orbit emit` surface with the atomic write→recompute→stamp next_recommended loop and D4's validators as the write gate (D-d5-3, absorbing the maturity grid, chunk grammar, and T0 template as sub-requirements); disciplines blocks shrink IN PLACE per D-b2-2 (D-d5-4); review pass definitions mode-split into per-mode references (D-d5-5). Thread 3: boot is an engine render of ordered pointers, never a hand-maintained file (D-d5-6); touchpoints split predicted (design.md, frozen at apply) / actual (diff-computed) with divergence as a mechanical scope-drift check (D-d5-7); the three-layer leak hardening ratified with layer 3 engine-computed via the emit surface (D-d5-8). Thread 2: model provenance on the emit spine + models: config hints echoed at eligibility, never enforced (D-d5-9). Considered & out records the foreclosed shapes (shared disciplines reference per D-b2-2; per-command emit surfaces; scaffold-and-AI-writes; hand-maintained handoff files).",
+  "next_recommended": "/orbit:propose d5-context-economy — substantial thinking captured; ready to formalize the design (or /orbit:explore d5-context-economy to keep refining)",
+  "kind": "workflow",
+  "mode": "named",
+  "decisions_captured": 9,
+  "open_questions_count": 0,
+  "crystallized_to_name": null
+}

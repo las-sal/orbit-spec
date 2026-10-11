@@ -1,0 +1,62 @@
+{
+  "command": "review",
+  "timestamp": "2026-07-17T14:31:52Z",
+  "change": "d2-architect",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "iteration": 2,
+  "depth": "full",
+  "scorecard": {
+    "completeness": { "critical": 0, "warning": 0, "suggestion": 1 },
+    "correctness": { "critical": 0, "warning": 1, "suggestion": 0 },
+    "coherence": { "critical": 0, "warning": 0, "suggestion": 1 }
+  },
+  "findings": [
+    {
+      "pass": 2,
+      "severity": "WARNING",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 39,
+      "title": "references/run-summary-schema.md was never extended for architecture mode — it contradicts the mode it now serves",
+      "recommendation": "The reference literal (REVIEW_RUN_SUMMARY_SCHEMA_REFERENCE) still opens with 'Each /orbit:review invocation persists a JSON summary to orbit/changes/<change-name>/.orbit-runs/review-<mode>-<TS>.json', declares mode as \"proposal\" | \"system\", and defines spine change as a change-name string. Yet Step 10 instructs 'read that file when composing the summary' and the delta spec (specs/orbit-review/spec.md:74) explicitly cites the reference as documenting the architecture shape '(or null + doc for architecture mode)'. Same authoritative-text-contradicts-new-mode class as the external's CRITICAL 1, surviving in the reference file both prior passes skipped. Extend the reference with an architecture-mode section: mode enum gains \"architecture\", change: null + doc + handoff fields, the fourth persistence location, and the architecture emit's extensions — then regenerate the surface."
+    },
+    {
+      "pass": 2,
+      "severity": "SUGGESTION",
+      "file": "test/core/templates/orbit-generated-surface.test.ts",
+      "line": 43,
+      "title": "No assertion covers the three-mode advertisement on the launcher/description surfaces (external W2's recommended guard did not land)",
+      "recommendation": "The launcher fix landed on all three text surfaces, but the external's recommended generated-surface assertion was not added — fidelity markers check only SKILL body strings. Add assertions that '--as proposal|system|architecture' appears in the generated command file and the skill frontmatter description, so future mode additions cannot update only the long body."
+    },
+    {
+      "pass": 0,
+      "severity": "SUGGESTION",
+      "file": "orbit/architecture/.orbit-runs/review-architecture-2026-07-16T19-42-13Z.json",
+      "line": null,
+      "title": "First live architecture emit omits the spec'd findings-summary counts field (exemplar shape drift, materially nil at zero findings)",
+      "recommendation": "The delta requires the persisted JSON to contain a findings summary with counts by severity and by pass; the shipped emit carries a per-dimension scorecard and narrative passes map but no by-severity/by-pass counts field. Materially nil at zero findings, but this file is the exemplar future architecture emits pattern-match. Fold the canonical architecture-emit shape into the run-summary-schema reference when resolving the WARNING (single root cause); optionally patch this emit to match."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "title": "External reviewer's 24 full-suite test failures (unquoted workspace path)",
+      "evidence": "Confirmed environmental: this pass's full run is 76 files / 1707 tests, 0 failures."
+    },
+    {
+      "title": "CLAUDE.md still pins 15 skills + 15 commands",
+      "evidence": "On-disk CLAUDE.md:26 already reads '16 skills + 16 thin launcher commands as of D2; 15+15 as of B3'; remaining '15' hits are historical ledger prose or the decision ID 'D15'."
+    }
+  ],
+  "passes": {
+    "0": "20/20 tasks map to shipped code; all four exit criteria evidenced on disk (incl. the review-architecture emit + ledger correction) — one SUGGESTION on the exemplar emit's shape",
+    "1": "no baseline contradiction: eligibility phrasing intact, gate-less architecture assessment matches the delta, every touched baseline carries a delta (fingerprints 18/18)",
+    "2": "cohesion sound (validateChangeDeltaSpecs caller contracts unchanged; architect registered in every registry) — 1 WARNING (schema reference not extended) + 1 SUGGESTION (launcher-surface assertion gap)",
+    "3": "CLI surfaces coherent (architecture status/show/validate live-verified); generated surface complete at 16+16 with post-resolution content on disk",
+    "4": "skipped — no perspectives defined (orbit/lenses/ absent)",
+    "5": "skipped — no critical paths defined (orbit/lenses/ absent)",
+    "6": "clean: no stale 15-counts, no hand-maintained-state tense in live arc prose, no dangling citations, @review: hits documentation-context only"
+  },
+  "iteration_note": "Note: 0 of these findings appeared in the last run on 2026-07-16. 3 new this run. All 6 external resolutions independently verified landed (mode-first review body walked for both doc-given and doc-omitted invocations; criterion-3 emit + ledger correction verified; doc-scoped iteration, three-mode launcher, hardened live-arc test, four-location onboarding all present in src and the regenerated surface).",
+  "final_assessment": "No critical issues. 1 warning + 2 suggestions — a single root cause both prior passes missed: the review skill's run-summary-schema REFERENCE was never extended for architecture mode, though Step 10 and the change's own delta cite it as authoritative for the emit shape. Engine state matches reality; 1707/1707 green.",
+  "next_recommended": "/orbit:address-reviews d2-architect --from-file orbit/changes/d2-architect/.orbit-runs/review-system-2026-07-17T14-31-52Z.json"
+}

@@ -1,0 +1,132 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-01T17:44:36Z",
+  "change": "rc16-retirement-sweep",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    }
+  },
+  "findings": [
+    {
+      "pass": "4",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc16-retirement-sweep/specs/orbit-conventions/spec.md",
+      "line": 103,
+      "title": "A4 points the never-entered-rule limit at orbit-run-summary-emit's maturity requirement, which does not state it; the limit is stated in orbit-conventions' own grammar requirement",
+      "recommendation": "The repaired `Kind:` bullet reads 'a named limit of the explore readout, which renders only rules that were entered (`orbit-run-summary-emit`'s `Named-mode explore recommendation by maturity`)'. That requirement's text (read at this pass: the six rungs, the ` · open domains:` record) never states the limit; the sentence that does is in THIS capability's `Mechanism entry grammar and accounted closure`: 'whether a rule was written down at all [is] a reader's judgement — the deliverable is a RECORD, not a check (R-crc-10)' (baseline line 984). Point there — 'the stated residual: whether a rule was written down at all is a reader's judgement, per `Mechanism entry grammar and accounted closure` (R-crc-10)' — and carry the same form into task 1.5's body sentence and the design's A4/A4' rows. A pointer at a requirement that does not own the claim is the class D-rc16-2 retires; the walk introduced one."
+    },
+    {
+      "pass": "4",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc16-retirement-sweep/specs/orbit-explore-modifications/spec.md",
+      "line": 40,
+      "title": "A5 names the grammar-module requirement as owner of 'parses the same exemplars as fixtures'; it owns the grammar's single source, and no requirement states the fixture parse",
+      "recommendation": "`orbit-emit-composition`'s `The explore grammar has one source in code` (read at this pass) specifies ONE module exporting the productions and that the form parse, the generated-surface test and the body import it; it says nothing about the exemplars being parsed as fixtures — that is a fact about `test/core/parsers/explore-rules.test.ts` (lines 394-401, per the fresh pass's read), a test, not a requirement. Reword the scenario's THEN so the pointer names what the owner actually owns: '…the generated-surface test asserts it, and the engine's form parse accepts the same entries under the grammar `orbit-emit-composition`'s `The explore grammar has one source in code` carries' — dropping 'as fixtures', or naming the test file in a parenthetical as a fact rather than an owner. Carry the same form into task 1.6 and the design's A5/A5' rows."
+    },
+    {
+      "pass": "3",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc16-retirement-sweep/design.md",
+      "line": 94,
+      "title": "The Mechanism record attributes the widened grep to the walk ('executed at the walk on HEAD f3bfd0e2 … 20 + 1 hits'); the walk did not run it — the fresh pass did",
+      "recommendation": "The correction paragraph under `## Mechanism → artifacts` presents the widened grep as the walk's own act with the fresh pass's numbers (20 + 1). The walk edited the text and did not execute the grep; the measurement belongs to review-proposal-2026-10-01T17-31-53Z's commentary. A SOURCED closure's source must be an act someone performed. Either attribute it to that emit by token, or record THIS pass's own run — executed at HEAD f3bfd0e2 plus the working tree over fourteen patterns with `maturity-signal` unanchored: 30 hit lines; 14 in the set (spec: conventions 923/980/994/1022, explore-modifications 227, orientation 44/94/128; body: explore.ts 472/504/534/606/610/657) and 16 out (Q-crc-28 1186-1208 and the charter 2476-2478 as records; rc13a's own stage section 1482/1487 and the rc13b narrative line CLAUDE.md:309 as history naming a stage, not a limit; conventions 720 and engine-gates 922 unrelated 'until … lands'; orientation.ts 22/50 module-true). The same lesson the fresh pass taught in rc15: a record names the act that produced the number, or the number is a claim."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "pass": "6",
+      "title": "Enumeration misses three in-set sites: orbit-explore-modifications:227, orbit-conventions:923 and explore.ts lines 472/534",
+      "evidence": "resolved in address-reviews-2026-10-01T17-38-52Z; verified on the working tree at this pass (the cited line re-read)"
+    },
+    {
+      "pass": "3",
+      "title": "Exit (2) narrowed from the charter's three directories to two without an R-crc-12 revision record",
+      "evidence": "resolved in address-reviews-2026-10-01T17-38-52Z; verified on the working tree at this pass (the cited line re-read)"
+    },
+    {
+      "pass": "2",
+      "title": "Design repair table's A3 text differs from the delta's A3 sentence it claims to source",
+      "evidence": "resolved in address-reviews-2026-10-01T17-38-52Z; verified on the working tree at this pass (the cited line re-read)"
+    },
+    {
+      "pass": "2",
+      "title": "Design cites the pin and skill-read tasks as 3.1/3.2; tasks.md holds them at 2.1/2.2, and 'tasks under ten' is false",
+      "evidence": "resolved in address-reviews-2026-10-01T17-38-52Z; verified on the working tree at this pass (the cited line re-read)"
+    },
+    {
+      "pass": "4",
+      "title": "B3's 'PROGRAM band beside it' holds only under --full",
+      "evidence": "resolved in address-reviews-2026-10-01T17-38-52Z; verified on the working tree at this pass (the cited line re-read)"
+    },
+    {
+      "pass": "9",
+      "title": "Proposal cites CLAUDE.md:414 for the rc15 parenthetical; it sits at line 398",
+      "evidence": "resolved in address-reviews-2026-10-01T17-38-52Z; verified on the working tree at this pass (the cited line re-read)"
+    },
+    {
+      "pass": "9",
+      "title": "A2 names orbit-run-summary-emit by capability only while A1 names the requirement",
+      "evidence": "resolved in address-reviews-2026-10-01T17-38-52Z; verified on the working tree at this pass (the cited line re-read)"
+    },
+    {
+      "pass": "6",
+      "title": "The Mechanism record keeps D-rc16-2's closure as SOURCED on a source now known wrong by four members",
+      "evidence": "resolved in address-reviews-2026-10-01T17-38-52Z; verified on the working tree at this pass (the cited line re-read)"
+    },
+    {
+      "pass": "5",
+      "title": "Task 1.3's 'in the body's voice' leaves the body paragraph's text to codegen",
+      "evidence": "resolved in address-reviews-2026-10-01T17-38-52Z; verified on the working tree at this pass (the cited line re-read)"
+    },
+    {
+      "pass": "9",
+      "title": "Named-out orientation.ts comment set disagrees across proposal, design and task 3.3",
+      "evidence": "resolved in address-reviews-2026-10-01T17-38-52Z; verified on the working tree at this pass (the cited line re-read)"
+    }
+  ],
+  "commentary": "The confirm slot over the walk's additions. Probes executed: a fence-aware extraction of all six requirement blocks from baseline and delta and a line diff of each — 4/2/2/2/2/5 changed lines, every one a row of the design's repair table (A1+A2, A3, A4, A5, B1, B2+B3) and nothing else; line counts unchanged except the B2 merge (56→55); `orbit validate --strict` valid and `orbit fingerprint --check` 6 verified; a read of both NEW pointer targets' full text — `orbit-run-summary-emit`'s maturity requirement and `orbit-emit-composition`'s grammar-module requirement — against the claims the repaired sentences attach to them; a grep of every spec for the never-entered-rule limit, which found it in `orbit-conventions` line 984 and nowhere else; and the widened grep itself, run here rather than taken from the fresh pass's commentary, with its 30 hits partitioned. Pattern: the walk repaired the CRITICAL's three new sites with the right FORM — owner-by-capability, no stage id — and the wrong OWNERS in two of them, because the owner was chosen from the requirement's title rather than from a read of its text. That is a READ failure inside a sweep whose rule (D-rc16-2) exists to retire READ failures, and it was invisible to the walk because the pointer resolves to a real requirement under its exact title; only reading the target's body shows it does not say what the sentence credits it with. The third finding is the same record-truth class the fresh pass raised against the orbit-architect pin in rc15: a measurement attributed to an act that did not happen. Nothing in the repaired orientation sentences, the KNOWN replacement (A3) or the VISIBILITY clause (A1/A2) misattributes: those owners were read at propose. Risk texture: all three repairs are a sentence each and move no block boundary; the fingerprints and the six-block diff stay the check that nothing else moves.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "final_assessment": "0 critical, 3 warning, 0 suggestion.",
+  "iteration": 2,
+  "next_recommended": "/orbit:address-reviews rc16-retirement-sweep --from-file orbit/changes/rc16-retirement-sweep/.orbit-runs/review-proposal-2026-10-01T17-44-36Z.json"
+}

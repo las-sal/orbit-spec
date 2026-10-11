@@ -1,0 +1,136 @@
+{
+  "command": "review",
+  "timestamp": "2026-09-28T15:23:42Z",
+  "change": "rc13c-propose-consumes-mechanism",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 3
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc13c-propose-consumes-mechanism/specs/orbit-propose-modifications/spec.md",
+      "line": 11,
+      "title": "Row 1 reports key defects 'at the structure check', but the Mechanism read that finds them runs after Step 0b's last write",
+      "recommendation": "The partition's row 1 (mirrored at src/core/templates/workflows/propose.ts:222) says an orphan or duplicate is 'reported in chat at the structure check' (Step 0a). The requirement's own text and the body's Step 0b paragraph (propose.ts:180) place the Mechanism read AFTER Step 0b's last write to explore.md, and a Step 0b resolve-now can CREATE a duplicate-ID key defect that did not exist at Step 0a. The row names a moment that precedes the read that produces the finding — inherited from the exploration's D-rc13c-4 row, written when the read sat at Step 0a. Repair the OWNER's cell to 'reported in chat at the Mechanism read (after Step 0b's last write, before generation)'; the parity test moves the body mirror with it. One cell, no new mechanism."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "test/core/templates/orbit-content-fidelity.test.ts",
+      "line": 188,
+      "title": "The position test's section slicer is fence-blind: 'Consume-mode flow' ends at the fenced `## Touchpoints` example, so the negative assertion never reads Step 0c.6 or Step 0d",
+      "recommendation": "`sections()` (line 166) splits on `\\n(?=## )` with no fence tracking. The Step 0c.5 example fence in the body contains a line `## Touchpoints` (propose.ts:206), so the slice keyed 'Consume-mode flow' stops there — measured on the shipped body: the slice contains neither 'Step 0c.6 — Carry' nor '### Step 0d', which land in a phantom 'Touchpoints' section. `expect(sec['Consume-mode flow']).not.toContain('this exploration concluded on')` therefore examines Step 0a–0c.5 only while its comment claims the whole consume-mode flow. The property holds today (the phrase occurs exactly once body-wide), so there is no false pass on this tree, but the instrument reports coverage it does not have — Q-crc-15's local-fence-scanner class, and rc07's 'completeness is carried, never inferred'. Either slice through the engine's fence tracker (`createFenceTracker`, src/core/markdown-fence.ts:24) or replace the slice assertion with the property actually meant: the refuse phrase occurs exactly once in the whole body, inside the Mode detection slice already located.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Replace line 188 with a whole-body count: `expect(body.split('this exploration concluded on').length - 1).toBe(1)` — the Mode-detection positional assertions above it already prove where that one occurrence sits. No fence logic in the test."
+        },
+        {
+          "label": "B",
+          "body": "Make `sections()` fence-aware by running the body through `createFenceTracker` and splitting only on unfenced `## ` lines, keeping the negative assertion over the (now complete) consume-mode slice."
+        }
+      ]
+    },
+    {
+      "pass": "1",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc13c-propose-consumes-mechanism/specs/orbit-propose-modifications/spec.md",
+      "line": 173,
+      "title": "The 'Mechanism section absent' scenario restates the section COUNT ('the six-section format') one paragraph under a requirement that says it states neither the list nor its count",
+      "recommendation": "Line 164 says of the owner: 'that requirement OWNS the list and its count; this requirement states neither'. Line 173's WHEN clause then reads 'written before the six-section format'. Exit criterion (1) is worded 'by POINTER, not by a restated number', and the five→six drift this stage closes was produced by exactly such a restated count in exactly this requirement. Reword to point without a number — e.g. 'written before the Mechanism section joined the format' — and re-stamp nothing (the block is MODIFIED, its fingerprint is of the baseline)."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/specs/orbit-conventions/spec.md",
+      "line": 1022,
+      "title": "Four living surfaces still describe this stage as a pending follow-on — the conventions baseline now asserts a fact about propose that this change made false",
+      "recommendation": "Drift/residue (Pass 6, cross-doc consistency): `orbit-conventions` line 1022 states '`/orbit:propose <name>` does NOT read the header token — it keys on `explore.md`'s presence … refusing it … is the propose-consumption follow-on's to specify'; line 994 says 'the propose-consumption follow-on carries it into spec text'; the explore body says 'until then, REOPEN before promoting' (src/core/templates/workflows/explore.ts:610) and 'until a propose-consumption stage lands, that transfer is an instruction the proposing AI follows … not a checked mapping' (explore.ts:657). All four are now stale on the shipped tree. None is in this change's one capability, and none is on the proposal's declared out-of-scope list (which names the reopen path, the retained titles, the audit-drift pointer, the engine print and the stage-state reader). Same class as the 'until rc13b lands' clauses rc13a deferred to a retirement-class sweep.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Descope lane (R-crc-6): add a second AT-ARCHIVE NOTE beside 4.5 naming the four sites by file:line and handing them to the retirement-class sweep rc13a's design already opened; record the stale baseline sentence as an accepted residual in the readiness entry. No delta on orbit-conventions."
+        },
+        {
+          "label": "B",
+          "body": "Repair lane: a one-sentence MODIFIED delta on orbit-conventions' `Concluded exploration outcome` requirement replacing the propose clause of the KNOWN paragraph with 'propose refuses a concluded staging directory (per orbit-propose-modifications)', declared under R-crc-9 as the second capability; the explore-body clauses still go to the sweep."
+        }
+      ]
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc13c-propose-consumes-mechanism/specs/orbit-propose-modifications/spec.md",
+      "line": 164,
+      "title": "The pointer names the owner as `explore.md five-section format` (one code span); the requirement's title is `` `explore.md` five-section format ``",
+      "recommendation": "R-crc-14 says name it and point. The retained title in orbit-conventions (line 123) is '### Requirement: `explore.md` five-section format' — backticks around `explore.md` only. A grep for the delta's spelling finds nothing; spell the title as the owner does so the pointer resolves by search."
+    },
+    {
+      "pass": "0",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc13c-propose-consumes-mechanism/design.md",
+      "line": 135,
+      "title": "The record's D-rc13c-3 row points at the wrong task for its test",
+      "recommendation": "The `Mechanism → artifacts` row for D-rc13c-3 reads 'not carried (a scope choice; its test is task 3.2)'. Task 3.2 is the Step 0c table row; the parity test D-rc13c-3 names is task 2.4. This is the first execution of the record the stage exists to produce — correct the pointer to 2.4."
+    },
+    {
+      "pass": "1",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc13c-propose-consumes-mechanism/specs/orbit-propose-modifications/spec.md",
+      "line": 11,
+      "title": "Row 1's owner-state cell reads 'any' although an orphan, by definition, has no owner",
+      "recommendation": "Row 1 lists two members — an orphan (no owning Decisions entry) and a duplicate (an owner already claimed). 'any — tested FIRST' is true of the duplicate and vacuous for the orphan. 'any, or none — tested FIRST' makes the cell true of both members the same row names, and costs nothing (the parity test moves the body mirror). Fold into the same edit as the row-1 timing repair if that is taken."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Blind half of the pair; I did not open the packaging emit or its prompt file, and no external-system findings file exists yet. What I probed hardest: the partition. I ran a synthetic explore.md with every edge the table names — an orphan heading, a duplicate Mechanism heading, a duplicate Decisions ID whose second entry is a live rule, a `Kind: fact` owner with a memberless Domain table, a BOUNDED entry carrying its token but one slot, a DERIVED entry with no Moves block, a prefix-less live entry and a prefix-less fact — through the compiled `parseExploreRules`, and the five rows dispose of every result exactly as the requirement says: the token is only ever consulted on an accounted entry, the duplicate second Decisions entry is outside `rules_total`, the history owner reaches no clause. The table is a partition against the parser as shipped. Second, the refuse's reachability: the body's PR section and the choreography reference both place phase 1 after all of Step 0, the Regenerate branch loops back to sub-step 3, and the header read precedes the only branch cut — I found no path that switches before it refuses. Third, the mirrors: the interpolated entry production renders byte-equal to the conventions fence in the regenerated SKILL.md; the three parity regexes fail loudly on a reshaped owner sentence and pass only on containment of the owner's own text, so none normalizes a divergence away; the `ownerText` anchor for the ADDED requirement survives archive because the archive directory has no `specs/` subtree and the sync carries the sentence into the baseline. What the findings share is a single pattern: text written before a later revision moved something. The row-1 timing cell predates the read moving to after Step 0b; the 'six-section' phrase predates the requirement's own pointer sentence; four living surfaces predate this stage shipping. None of it is mechanism failing — it is prose the mechanism outgrew. The one instrument finding is the repository's recurring shape, a heading scanner that does not see fences, caught because a fenced example happens to carry an H2. Zero CRITICALs, so the READ/ENUMERATE/COHERE tally for this pass is 0/0/0; the exit criteria measured as met on the shipped tree, with (1) carrying the one restated number noted above. What I could not verify: that a proposing AI actually produces the record unprompted (4.4, the declared handoff), and that the archive-time spec sync preserves the ADDED requirement's table and bullet lines byte-for-byte — the parity anchor depends on it and I could only reason from prior byte-verified syncs. Passes 4 and 5 were skipped: `orbit/lenses/` is absent.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "6"
+  ],
+  "passes_skipped": [
+    "4",
+    "5"
+  ],
+  "final_assessment": "0 critical, 4 warning, 3 suggestion.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc13c-propose-consumes-mechanism --from-file orbit/changes/rc13c-propose-consumes-mechanism/.orbit-runs/review-system-2026-09-28T15-23-42Z.json"
+}

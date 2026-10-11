@@ -1,0 +1,319 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-03T16:15:25Z",
+  "change": "rc02b-severity-ladder",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc02b-severity-ladder/.orbit-runs/review-proposal-2026-10-03T14-53-10Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-03T14-53-10Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 1,
+    "warning": 6,
+    "suggestion": 10
+  },
+  "pushback_verification": "All 17 findings verified against the tree at HEAD (ab1105dd — the fresh emit's commit; no edit between the pass and this walk). The CRITICAL's three reproductions were re-read rather than re-run: the gate refusal of a `blocks` key follows from `validatePayload`'s closed table (emit-composition.ts:474–490, read), the `## Blocks` invisibility from report-render.ts's `other` routing and trail.ts's section reset (read), and the absent apply precondition from `grep -n -i \"orbit validate\\|@review\\|validat\" src/core/templates/workflows/apply-change.ts` (re-run: lines 185 and 203 only). 0 stale. Sal's single letter 'a' settled both decision-lane findings (1 → A, 4 → A); everything else was obvious-fix lane as previewed. Every resolution's title and file are copied from the source emit, never retyped.",
+  "resolution_summary": {
+    "resolved": 17,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "A BLOCK has no carrier on the internal trail, no render slot, and the stopper every delta names does not exist in the apply body",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02b-severity-ladder/specs/orbit-conventions/spec.md",
+      "line": 30,
+      "classification": "decision_required",
+      "action": "Option A ratified (Sal: a). The block gained a CARRIER and the stopper was re-pointed honestly: `blocks` added to the review payload (ADDED requirement in orbit-emit-composition: optional array of single-line strings, shape-checked, never rolled up); `orbit-review` gained the `Blocks ride the payload` scenario; the render parser now COLLECTS `## Blocks` items and the report renders `### Blocks` above `### Findings` for both genres (orbit-report-rendering MODIFIED + ADDED scenarios); the walk lists `blocks[]` first at triage (orbit-address-reviews). The conventions ladder, its block scenario, the orbit-review Pass 8 scenario, design D3, proposal and explore.md's D-rc02b-3 Mechanism entry (CONFORM, COHERE, CONSUME lines and the P1 row — dated corrections) all stop naming an apply precondition and state the KNOWN LIMIT: nothing stops on a block mechanically; archive Step 1.5's warning is the only lifecycle marker reader; the precondition is rc10-apply-closure's. Options A′ (seventh capability) and B (external-only descope) recorded in design's Alternatives. Tasks 1.7, 2.1–2.3, 3.2, 4.1 carry the carrier.",
+      "ratified_via": "chat",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02b-severity-ladder/explore.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/changes/rc02b-severity-ladder/.orbit-runs/review-proposal-2026-10-03T14-53-10Z.json",
+            "reason": "audit-trail file; cascade skipped by policy"
+          }
+        ]
+      },
+      "outcome": "resolved",
+      "resolution": "A — repair inside the stage with the blocks carrier; stopper re-pointed at archive Step 1.5, apply's non-stop stated as a known limit",
+      "recommendation_fork": {
+        "source": "structured",
+        "options": [
+          "A",
+          "B"
+        ],
+        "chosen": "A"
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "Design D8 says the renderer marks nothing on internal prior-generation emits; the report-rendering delta and task 2.3 say it does",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02b-severity-ladder/design.md",
+      "line": 96,
+      "classification": "trivial_fix",
+      "action": "Spec/tasks reading stands: design D8 now says the renderer marks internal prior-generation CRITICALs `[unreproduced]` BY ABSENCE, never by date (on internal passes absence is exactly the prior-generation set); proposal's no-migration bullet says the same.",
+      "ratified_via": "chat",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The re-pointed site count is stated as seventeen (and SIXTEEN at line 7) but measures fourteen",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02b-severity-ladder/proposal.md",
+      "line": 24,
+      "classification": "trivial_fix",
+      "action": "One measured figure everywhere: FOURTEEN per-pass sites (eight proposal, five system, the report example; P6 none, S6 out) plus the body's general bias line at review.ts:873, with the grep named as the act — proposal (lines 7 and 24), design (Context, D2), tasks 1.6/3.1, explore.md's D-rc02b-2 opener and ENUMERATE line (dated correction; the Domain table's extra rows named as non-members).",
+      "ratified_via": "chat",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02b-severity-ladder/explore.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The prompt's `## Severity` paragraph is a second, unchecked statement of the ladder — the pattern R-crc-14 exists to stop",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02b-severity-ladder/specs/orbit-review-external/spec.md",
+      "line": 104,
+      "classification": "decision_required",
+      "action": "Option A ratified (Sal: a). The ladder paragraph is now ONE fenced production in orbit-conventions' Severity ladder requirement; orbit-review-external's reference template `## Severity` paragraph was replaced with the byte-equal copy and its scenario reads 'a checked mirror, not a restatement; a parity test fails when the two diverge'; the Required-format THEN names it as a checked mirror; new task 1.8 is the parity test (resolving the fence through the single-active-owner lookup); task 3.3 holds the body's copy byte-equal; design gained D9.",
+      "ratified_via": "chat",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "resolution": "A — checked mirror held byte-equal by a parity test (R-crc-14's mirror corollary)",
+      "recommendation_fork": {
+        "source": "structured",
+        "options": [
+          "A",
+          "B"
+        ],
+        "chosen": "A"
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "System Pass 4 (Perspective reviews) still assigns SUGGESTION/WARNING with no pointer, while the exploration and task 3.1 re-point S4 in the body",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02b-severity-ladder/specs/orbit-review/spec.md",
+      "line": 69,
+      "classification": "trivial_fix",
+      "action": "The System Pass 4 scenario in the orbit-review delta now names the ladder: WARNING when awkward/inconsistent/surprising from a caller's POV (divergence risk), SUGGESTION below that; proposal's capability list names Pass 4 among the re-pointed scenarios.",
+      "ratified_via": "chat",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "`--strict` fails fast on the first CRITICAL; a validate failure is now a BLOCK — whether `--strict` stops on a block is unstated",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02b-severity-ladder/specs/orbit-review/spec.md",
+      "line": 30,
+      "classification": "trivial_fix",
+      "action": "New scenario `--strict and --mark on a block` in orbit-review's nine-passes requirement: `--strict` stops on the first BLOCK exactly as on the first CRITICAL; `--mark` writes no marker for a block. The flags-table lines (753/859) added to task 3.1 and the 1.6 grep.",
+      "ratified_via": "chat",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Architecture-mode review emits are exempt from the reproduction check with no stated reason, falsifying the ladder's \"checks presence where it writes the record\"",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02b-severity-ladder/specs/orbit-emit-composition/spec.md",
+      "line": 5,
+      "classification": "trivial_fix",
+      "action": "The mode scope is dropped: the ADDED gate requirement now reads 'a review payload in ANY mode (proposal, system, architecture — the check reads one field of one severity and never reads `mode`)' with a new scenario `Architecture mode is checked the same way`; task 1.1 and 2.1 and design D4 updated. The ladder's 'checks presence where it writes the record' is now true.",
+      "ratified_via": "chat",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "\"The first check the gate performs INSIDE a finding entry\" is false — `scorecardRollupCheck` already reads every finding's `dimension` and `severity`",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02b-severity-ladder/specs/orbit-emit-composition/spec.md",
+      "line": 5,
+      "classification": "trivial_fix",
+      "action": "Sentence narrowed in the requirement to 'the first gate check that REFUSES on a finding entry's narrative field (the scorecard rollup already reads every entry's dimension and severity, as a rollup)'; proposal's bullet and explore.md's D-rc02b-5 READ line corrected (dated).",
+      "ratified_via": "chat",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02b-severity-ladder/explore.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "D-rc02b-5's closure names a method that does not yield the set it claims",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02b-severity-ladder/explore.md",
+      "line": 97,
+      "classification": "trivial_fix",
+      "action": "D-rc02b-5's Closure line restated with the act actually performed (file-by-file reads of the five modules' finding-entry access, named) and a dated note that the earlier grep returns four files including audit-drift.ts and was not the act; audit-drift's reference named as a documentation mirror outside the stage (D-rc02b-4).",
+      "ratified_via": "chat",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02b-severity-ladder/explore.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "\"WARNING at most where the author can be refused (the internal write gate)\" reads as a gate-side downgrade; the gate refuses",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02b-severity-ladder/specs/orbit-conventions/spec.md",
+      "line": 20,
+      "classification": "trivial_fix",
+      "action": "Scenario reworded to the author's obligation: 'is REFUSED at the internal write gate until its author supplies the reproduction or grades it WARNING at most, and is counted as authored but marked unreproduced where no gate can refuse it'.",
+      "ratified_via": "chat",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The `unreproduced` tag and the step-(0) re-run result have no named carrier in the address-reviews emit",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02b-severity-ladder/specs/orbit-address-reviews/spec.md",
+      "line": 60,
+      "classification": "trivial_fix",
+      "action": "Carrier named: the resolution entry field `reproduction_rerun` with closed values reproduced / not-reproduced / cannot-run / unreproduced (absent below CRITICAL), in both the ingest scenario and the Step 3a step (0) text; added to tasks 1.5, 4.1, 4.2 and design D6; the walk's run-summary-schema.md documents it.",
+      "ratified_via": "chat",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Appending ` — unreproduced` to the title line puts a mark inside the (title, file) key surface the walk matches on",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02b-severity-ladder/specs/orbit-report-rendering/spec.md",
+      "line": 15,
+      "classification": "trivial_fix",
+      "action": "The mark is now the PREFIX `[unreproduced]` before the bold file reference, outside the title token (Q-crc-17 named in the requirement); the scenario's inverted wording replaced with 'byte-identical with and without a Reproduction body'; design D5 and tasks 1.3/2.3 updated.",
+      "ratified_via": "chat",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Pass 8 scenario sentence is broken at the splice: \"never graded. and let the user decide during `/orbit:address-reviews`\"",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02b-severity-ladder/specs/orbit-review/spec.md",
+      "line": 25,
+      "classification": "trivial_fix",
+      "action": "Sentence finished: 'When ambiguous, the marker is listed as a block, never graded, and the user decides during `/orbit:address-reviews`'.",
+      "ratified_via": "chat",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Run-on at the splice: \"optional `## Notes` section A CRITICAL entry additionally carries\"",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02b-severity-ladder/specs/orbit-conventions/spec.md",
+      "line": 44,
+      "classification": "trivial_fix",
+      "action": "Period inserted: '…optional `## Notes` section. A CRITICAL entry additionally carries…'.",
+      "ratified_via": "chat",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Broken grammar at the splice: \"are never walked as virtual markers and walks it through the same lifecycle\"",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02b-severity-ladder/specs/orbit-address-reviews/spec.md",
+      "line": 10,
+      "classification": "trivial_fix",
+      "action": "Clauses reordered so the baseline predicate keeps its subject: '…as a virtual marker with `source: \"external\"` and walks it through the same lifecycle as inline markers, except no source-file marker text exists to remove; entries under a `## Blocks` section are listed FIRST…'.",
+      "ratified_via": "chat",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The verbatim-block scenario and the chat-output scenario still name only the `**File**:`/`**Description**:` labels",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02b-severity-ladder/specs/orbit-review-external/spec.md",
+      "line": 191,
+      "classification": "trivial_fix",
+      "action": "All three enumerations in the review-external delta (verbatim-block scenario line 191, chat-output scenario line 206, the template's own step 1) now name `**Reproduction**:` and `## Blocks` beside File/Description; task 3.3 names the body's lines 375/551.",
+      "ratified_via": "chat",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The body's general severity guidance at review.ts:873 restates the ladder's bias clause and is outside the re-point list",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02b-severity-ladder/tasks.md",
+      "line": 19,
+      "classification": "trivial_fix",
+      "action": "review.ts:873 (the general bias line) added to task 3.1's re-point list and the 1.6 grep; proposal and design name it as the site beyond the fourteen per-pass rules.",
+      "ratified_via": "chat",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Walk 1 of the fresh proposal pass: 17 of 17 resolved, 0 stale. The CRITICAL (the block with no carrier, no render slot and a fictional apply precondition) took option A — a `blocks` payload field (new ADDED requirement in orbit-emit-composition), the render parser collecting `## Blocks`, a `### Blocks` report slot, blocks-first triage — and the stopper re-pointed at archive Step 1.5 with apply's non-stop stated as a KNOWN LIMIT in the ladder (rc10's territory named). The Severity paragraph became a checked mirror (fenced production in conventions, byte-equal template copy, parity test task 1.8). Site count corrected to fourteen plus the bias line everywhere including explore.md's Mechanism entries (dated corrections; the file still parses 3 accounted / 0 open). Architecture mode now checked by the gate; `--strict`/`--mark` on a block stated; `reproduction_rerun` named as the walk's carrier; `[unreproduced]` moved outside the title token; three splice breaks and three enumerations repaired. The change now reads 6 capabilities / 15 blocks (12 MODIFIED, 3 ADDED) / 24 tasks — both breached axes restated. Strict validation passes; 12 fingerprints verified.",
+  "iteration": 1,
+  "next_recommended": "/orbit:review --as proposal rc02b-severity-ladder"
+}

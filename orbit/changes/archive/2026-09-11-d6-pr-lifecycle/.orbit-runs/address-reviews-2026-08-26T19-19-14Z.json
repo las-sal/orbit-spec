@@ -1,0 +1,205 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-08-26T19:19:14Z",
+  "change": "d6-pr-lifecycle",
+  "kind": "editorial",
+  "model": "claude-opus-5",
+  "source": "from-file",
+  "source_path": "orbit/changes/d6-pr-lifecycle/.orbit-runs/review-proposal-2026-08-26T14-11-17Z.json",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 5,
+    "suggestion": 6
+  },
+  "pushback_verification": "All 11 verified against current artifact content before disposition; none suppressed as stale. Three were checked especially closely: task 3.1's ordering (confirmed unchanged from the pre-reordering text — a prior edit's write had aborted), the degradation record shape against the gate's conditional-`doc` rule (confirmed the old shape would be rejected on the program path), and `git switch` semantics against the phase-1 'nothing else' claim (confirmed the claim false — a switch rewrites tracked content).",
+  "resolution_summary": {
+    "resolved": 11,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Phase 1's switch rewrites the working tree, so consume-mode staging input can vanish before phase 2 generation",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-propose-modifications/spec.md",
+      "classification": "decision_required",
+      "action": "Ratified option A — check BEFORE switching. Corrected the false claim first: phase 1 was described as moving 'a local HEAD and nothing else', but `git switch` rewrites every TRACKED path differing between HEAD and the target, and phase 2 now runs after it. Added a GENERATION-INPUT PRECONDITION evaluated before the switch: when a consume-mode `orbit/explore/<name>/` is present in the worktree but absent on the target ref, the PR layer is SKIPPED ENTIRELY (no switch occurs) and artifacts generate on the current branch, unattached, with a note. Checking beforehand rather than recovering after preserves the property phase 1 is supposed to have — that it destroys nothing — and avoids the switch-back this change has refused elsewhere. Recorded why the dirty-tree precondition does not cover it: that guard detects UNCOMMITTED modifications while the hazard is COMMITTED content present on the current branch and not the base, reachable whenever propose runs from a non-default branch or a local default carrying unpushed commits.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "resolution": "A — verify generation inputs survive the target ref before switching; skip the PR layer rather than switch",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Check before switching; skip the PR layer if inputs would not survive."
+          },
+          {
+            "label": "B",
+            "body": "Switch, verify, and switch back on failure."
+          },
+          {
+            "label": "C",
+            "body": "Read staging content into memory before phase 1."
+          }
+        ],
+        "chosen": "A"
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "`pr: never` is promised silence by the config requirement but the propose choreography skips it \"with a one-line note\"",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-propose-modifications/spec.md",
+      "classification": "trivial_fix",
+      "action": "Split the sentence so the two paths no longer share an output contract: degraded-but-ACTIVE (no remote / no `gh`) skips with one note, while `pr: never`, an absent key, or an inert value/shape produces NO PR-layer output at all and probes nothing — per the config-first resolution order ratified last round, where `never`'s promise is silence and any note would break byte-identity with pre-capability behavior. Task 3.1's degradation line carried the same conflation and was corrected with it.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "\"PR discovery finds nothing\" scenario still routes a wholly absent attachment into the fallback query",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-archive-modifications/spec.md",
+      "classification": "trivial_fix",
+      "action": "Restated the scenario's WHEN as an attachment that EXISTS but carries no `url` whose constrained query returns zero survivors — the only state that can now reach the fallback — and noted inline that a change with NO attachment never gets there (absence is terminal) while a record carrying a `url` whose PR was closed is answered by live validation. The zero-survivors bullet carried the same residue: 'change created without propose' was removed, since such a change has no attachment and never reaches the query.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Degradation record shape `{branch, granularity}` omits `doc`, which the write gate requires for per-architecture",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-run-summary-emit/spec.md",
+      "classification": "trivial_fix",
+      "action": "Qualified all three statements of the PR-creation-failure record — the requirement prose, its `Branch without a PR still records the attachment` scenario, and `orbit-propose-modifications`' mid-flight failure clause — to `{branch, granularity, and doc when the granularity is per-architecture}`. The conditional key is gate-required whatever the PR outcome, so on the program path (branch created, `gh pr create` failed at first-configured-touch birth) a body following the old shape would have emitted a payload the fail-loud gate REJECTS, leaving no propose emit written at all.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/specs/orbit-propose-modifications/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Task 3.1 still orders the propose choreography after artifact generation, contradicting the three-phase requirement",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d6-pr-lifecycle/tasks.md",
+      "classification": "trivial_fix",
+      "action": "Rewrote tasks 3.1 and 3.1b around the three phases. This was not a missed sweep but a SILENTLY ABORTED WRITE: the edit was issued in a script whose third assertion failed, so the file was never written and the earlier substitutions were discarded with it; the failure was visible in the output and not acted on. Only the harness tasks had reflected the reordering, so the implementation tasks would have produced exactly the mechanically-impossible flow the requirement was rewritten to eliminate. Both writes verified against the file after applying.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Entry-points requirement still says an unattached new/continue change reaches the tail's discovery",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-pr-lifecycle/spec.md",
+      "classification": "trivial_fix",
+      "action": "Restated the requirement's archive-side consequence and its scenario to match the terminal-absence rule: the PR path TERMINATES before any remote or `gh` work, no discovery query runs at all, and nothing is committed, pushed, or flipped. Also cleaned a dangling clause the first splice left behind.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Third tail partial-state names only the per-change description rewrite; the program stage-entry append has no stated consequence",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-archive-modifications/spec.md",
+      "classification": "trivial_fix",
+      "action": "Made the third partial state path-neutral — 'description rewrite (per-change) OR stage-entry append (program) failed' — with the same `gh pr edit --body-file` recovery on both paths and both consequences stated (stale intent narrative vs. a program body lacking this stage's entry). Also noted on the fourth state that a flip failure cannot arise on the program path, since that path never flips at this seam.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Arc-done fall-through query is not bound to the four-axis constrained query, and its multi-candidate outcome is unstated",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-pr-lifecycle/spec.md",
+      "classification": "trivial_fix",
+      "action": "Bound the fall-through to the SAME four-axis constrained query the archive tail uses, citing that discovery rule by name so the base and state filters are explicit rather than implicit, and stated all three outcomes as REPORTED, never suppressed: one survivor surfaces it, zero surfaces the no-open-replacement statement, MORE THAN ONE surfaces the readout naming ALL candidates. Recorded why listing candidates is correct here though the tail skips on ambiguity — the tail's rule exists to avoid writing to the wrong PR, and a report-only seam has no write to misdirect.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Reordering rationale's illustrative sequence cannot produce the compatible existing branch it is offered to explain",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-propose-modifications/spec.md",
+      "classification": "trivial_fix",
+      "action": "Replaced the example with the reachable one. The cited sequence (propose, degrade for want of `gh`, fix, propose again) cannot produce a reusable branch, because availability resolution degrades the layer to `never` BEFORE any branch work — so the first propose creates nothing. The reachable route is the mid-flight failure this same requirement specifies: branch created and artifacts committed, then push or `gh pr create` fails. The rationale and the 6.2c harness fixture now describe the same history.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Task 5.2 says the program PR is located \"most recent wins\", dropping the URL-bearing qualifier the requirement makes load-bearing",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d6-pr-lifecycle/tasks.md",
+      "classification": "trivial_fix",
+      "action": "Restored the qualifier the requirement makes load-bearing: the most recent URL-BEARING record wins, never merely the most recent match, since a later `{branch, granularity, doc}` record with no `url` would permanently mask the still-valid program PR — the exact case harness task 6.2f tests. The task had stated the forbidden rule.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Emit PR fields are unspecified when the preflight positively invalidates the stored URL (closed / merged / retargeted)",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d6-pr-lifecycle/specs/orbit-archive-modifications/spec.md",
+      "classification": "trivial_fix",
+      "action": "Stated the case directly at both the owning site and the emit-composition mirror: on POSITIVE invalidation `pr_state` is ELIDED, because the draft/ready axis does not apply to a closed, merged, or retargeted PR and recording `\"draft\"` would be a false observation — while `pr_url` IS still recorded, since it is the identity that was validated and rejected and the trail should show which PR the tail declined to write to. The mirror now says a body elides the field both when it cannot observe the state and when it observes a condition off that axis.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d6-pr-lifecycle/specs/orbit-emit-composition/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "11 of 11 resolved; 0 unresolved markers in scope. One decision-lane finding ratified in chat: the phase-1 switch is now guarded by a generation-input precondition checked BEFORE it runs, so the reordering keeps the non-destructive property it claimed but had not earned. The remaining ten were sweep failures rather than design gaps — the owning requirement stating the new rule while surrounding sentences still stated the old one — with two exceptions worth naming: the degradation record omitted a gate-required conditional key and would have failed loudly at runtime on the program path, and task 3.1's reordering had never been written to disk because an earlier edit script aborted on a failed assertion. Capabilities 7; tasks 31; fingerprints 4/4 verified; strict validation passes; 1918 tests green.",
+  "iteration": 8,
+  "next_recommended": "/orbit:review --as proposal --fresh d6-pr-lifecycle"
+}

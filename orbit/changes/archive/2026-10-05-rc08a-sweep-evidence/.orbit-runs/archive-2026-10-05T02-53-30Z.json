@@ -1,0 +1,82 @@
+{
+  "command": "archive",
+  "timestamp": "2026-10-05T02:53:30Z",
+  "change": "rc08a-sweep-evidence",
+  "kind": "lifecycle",
+  "model": "claude-opus-5-5",
+  "final_assessment": "rc08a-sweep-evidence archived through a computed PASSED review-system gate: every resolved walk entry now carries a sweep record the write gate checks, and a later finding can name the walk entry that missed it.",
+  "archive_path": "orbit/changes/archive/2026-10-05-rc08a-sweep-evidence",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 4
+    },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": [
+      "orbit-address-reviews",
+      "orbit-emit-composition",
+      "orbit-review"
+    ],
+    "added": 4,
+    "modified": 3,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
+  "user_decision": "proceeded_with_no_critical",
+  "consent": "user-invoked",
+  "warnings": [
+    "Pre-archive audit-drift: 4 Category-5 SUGGESTIONs — orbit/architecture/clean-up-review-cycle.md (Q-crc-32 and rc08b's rider, both from the system walks) and test/helpers/schema-references.ts (the engine-owned ripple_misses) rode along unpredicted; test/core/templates/skill-templates-parity.test.ts and orbit/scenario-ledger.yaml were predicted and never needed (no pin covers the two bodies — tasks 2.3 and 3.2; task 4.2 tagged tests rather than ledger entries).",
+    "Task 5.3 (user-validation) closed at archive by observation: system walk 1 (address-reviews-2026-10-05T02-39-33Z) wrote sweep on 7 of 7 resolved entries and passed the gate first time, ripple_misses 1; walk 2 (address-reviews-2026-10-05T02-48-21Z) the same.",
+    "Sync through the engine's applySpecs: 4 ADDED + 3 MODIFIED blocks, 7/7 byte-verified against the baselines; fingerprints 3/3 verified at check.",
+    "Archive date is UTC (2026-10-05), matching the trail's tokens."
+  ],
+  "judgements": [
+    {
+      "kind": "readiness",
+      "formed_against": [
+        "2026-10-05T01-16-24Z",
+        "2026-10-05T01-26-16Z",
+        "2026-10-05T01-53-24Z",
+        "2026-10-05T01-56-05Z"
+      ],
+      "disposition": "ready",
+      "ratified_by": "ai",
+      "reasoning": "The blind pair on the apply commit found the stage's defects where they were: at the edges of its own new mechanism — the kept exemption, a check run before the record was frozen, explicitly named never-read paths, read failures taken as absence. Every one was walked, each engine repair is exercised by a test that executes it, and the in-context confirm graded thirteen of fourteen entries landed and the fourteenth regressed only for provenance prose. What the gate's PASSED does not say is stated below at its real strength.",
+      "accepted": [
+        {
+          "claim": "PASSED means every finding was resolved, not that an independent pass stood clean on the final tree.",
+          "why": "rc07's distinction: both blind halves reviewed the apply commit 56bfe1f3; the walks then changed engine code, and only the in-context confirm read it."
+        },
+        {
+          "claim": "Walk 2's engine repairs (frozen-record checks, the never-read predicate, the unreadable-member refusals, the file-only kept, the reader's key on the pointer) were read by no independent pass.",
+          "why": "They landed after both halves ran; the confirm read them line by line against their claims and each has a regression test, but no second model has probed them."
+        },
+        {
+          "claim": "The baseline orbit-emit-composition requirement now opens its CHECK SCOPE / PATH fence with walk provenance ('system walk 1, Sal: B — …').",
+          "why": "The confirm's SUGGESTION, regressed against walk 1's mirror entry, was not walked before archive; it is prose with no reader, and the next touch of that requirement drops the provenance and keeps the reason."
+        },
+        {
+          "claim": "The address-reviews next_recommended is still composed from the caller's live payload while the bytes come from the frozen record.",
+          "why": "Pre-existing and programmatic-only — a CLI payload is parsed JSON and carries no hooks; the confirm reproduced it by probe. Materializing the payload once at composeAndWriteEmit's entry closes every such seam; a rider for the next stage that touches orbit-emit-composition's surface."
+        },
+        {
+          "claim": "orbit-engine-gates' Reviewed-gate pass condition still says the emit surface validates none of the entry shapes, which this change made false for new walk logs.",
+          "why": "External W5, Sal: B — a fourth capability declined under R-crc-1; the repair rides rc08b's charter, which already names orbit-engine-gates."
+        },
+        {
+          "claim": "A kept file is exempt from the retired check in full (Q-crc-32), and the check certifies named text, never that each intended edit happened.",
+          "why": "Both are named limits in the owning requirement; the occurrence-scoped kept and the edit-level record are rc08b's exploration's."
+        }
+      ]
+    }
+  ],
+  "next_recommended": "Change archived. Run /orbit:new or /orbit:explore to start the next change, or /orbit:audit-drift for a project-wide drift check."
+}

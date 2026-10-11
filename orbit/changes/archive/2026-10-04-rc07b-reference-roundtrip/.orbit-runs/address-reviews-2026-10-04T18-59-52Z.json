@@ -1,0 +1,120 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-04T18:59:52Z",
+  "change": "rc07b-reference-roundtrip",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc07b-reference-roundtrip/.orbit-runs/review-system-2026-10-04T18-44-00Z.json",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 3
+  },
+  "pushback_verification": "All four verified against current state at d949639e; none stale.",
+  "resolution_summary": {
+    "resolved": 4,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "computeAuditDriftCounts keys a plain object, so a prototype-named category corrupts or drops its count",
+      "marker_source": "internal-review",
+      "file": "src/core/emit-composition.ts",
+      "line": 577,
+      "classification": "trivial_fix",
+      "action": "computeAuditDriftCounts builds findings_by_category on Object.create(null) and counts with an own-property check; new engine test submits __proto__ / constructor / toString through the write gate and asserts total, keys and sum agree on the written file (red before, green after); emit-composition.ts hash pin moved a second time with a dated note",
+      "evidence": "red: \"__proto__: expected [ '1' ] to deeply equal [ '1', '__proto__' ]\"; green after the fix",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/emit-composition.test.ts",
+          "test/core/rc03b-untouched-modules.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The address-reviews example is submitted to doc and project scopes carrying change-scoped values no body would write there",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/address-reviews.ts",
+      "line": 618,
+      "classification": "decision_required",
+      "action": "option A: the auto-discovered example is tagged `change archived`; two new examples — a bare whole-repo walk (`json example project`) and an architecture from-file walk (`json example doc`) — each tagged with the scopes its own values describe; the intro paragraph rewritten; all three accepted by the round trip",
+      "ratified_via": "chat",
+      "resolution": "A — truthful examples per scope: one per provenance, each tagged with the scopes its values describe; no spec change",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Truthful examples per scope: tag the auto-discovered one change archived, add a whole-repo project example and an architecture from-file doc example"
+          },
+          {
+            "label": "B",
+            "body": "Narrow the tag to change archived; doc and project lose execution"
+          },
+          {
+            "label": "C",
+            "body": "Narrow the requirement to key acceptance per scope (a fifth MODIFIED block)"
+          }
+        ],
+        "chosen": "A"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07b-reference-roundtrip/design.md",
+          "orbit/changes/rc07b-reference-roundtrip/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The audit-drift example's final_assessment is not one of Step 9's stock phrasings",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/audit-drift.ts",
+      "line": 64,
+      "classification": "trivial_fix",
+      "action": "the example final_assessment is now \"No critical issues. 1 warning(s) to consider.\" — the Step 9 standalone WARNING/SUGGESTION row",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The two suites define 'full-record schema block' with two different block grammars",
+      "marker_source": "internal-review",
+      "file": "test/core/emit-schema-parity.test.ts",
+      "line": 37,
+      "classification": "trivial_fix",
+      "action": "fences() and schemaBlockKeys() moved into test/helpers/schema-references.ts (the engine fence tracker; info string exactly json; command among the top-level keys); the parity test's regex block finder and the round trip's local reader are gone; a regression test pins a tilde fence and a trailing-space info string as schema blocks in the parity suite and a json example block as none",
+      "ripple_cascade": {
+        "applied": [
+          "test/helpers/schema-references.ts",
+          "test/core/reference-roundtrip.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Four of four resolved: the counts accumulator is null-prototype (prototype-named categories now count), the address-reviews example split per provenance (Sal: A), the audit-drift example uses the Step 9 stock phrasing, and both suites read schema blocks through one shared grammar. Full npm test 2583 green.",
+  "iteration": 4,
+  "next_recommended": "/orbit:address-reviews rc07b-reference-roundtrip --from-file orbit/changes/rc07b-reference-roundtrip/.orbit-runs/external-system-2026-10-04T18-44-13Z.md"
+}

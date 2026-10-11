@@ -1,0 +1,204 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-14T09:20:31Z",
+  "change": "rc02-gate-semantics",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc02-gate-semantics/.orbit-runs/review-proposal-2026-09-14T09-06-17Z.json",
+  "source_command": "review",
+  "source_token": "2026-09-14T09-06-17Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "walk_mode_source": null,
+  "input_findings_summary": {
+    "critical": 2,
+    "warning": 8,
+    "suggestion": 3
+  },
+  "pushback_verification": "Every claim verified before acting. The two CRITICALs were reproduced against the delta text and against gates.ts:217, which confirms the shipped predicate reports unpassed on the trail where the rewrite reports passed. The `orbit-conventions` site was read in FULL rather than accepted from the finding's paraphrase — the sentence does say the `external` cadence slot 'must be covered for convergence', so the finding stands. Every repair was then re-verified by grep, including two NEGATIVE probes for retired phrasings; one intermediate script aborted before its write and the missing edits were re-applied and re-verified rather than assumed, which is the method this walk inherited from the fifth pass's finding.",
+  "resolution_summary": {
+    "resolved": 13,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "Clause (c) succession states no outcome when the successor set is empty — the canonical cadence has no stated convergence",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 316,
+      "marker_source": "internal-review",
+      "classification": "decision required",
+      "action": "NOT repaired — REMOVED with the clause, under R-crc-8's sectional trigger. Clause (c) reverts to the SHIPPED predicate (the most recent independent pass satisfies `confirm`) with one edit retained: the new-finding match is substantive, so a new SUGGESTION no longer repeats the loop. The confirming-pass-set and succession rewrite, its five scenarios, and its implementation task group are gone; `rc02c-confirmation-semantics` owns them and will specify the procedure as a decision table under R-crc-7 with every empty case enumerated before any prose. This defect cannot be repaired in place without inventing the terminal rule a third time, which is what the ruling exists to stop.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02-gate-semantics/proposal.md",
+          "orbit/changes/rc02-gate-semantics/design.md",
+          "orbit/changes/rc02-gate-semantics/tasks.md",
+          "orbit/architecture/clean-up-review-cycle.md"
+        ]
+      },
+      "ratified_via": "chat",
+      "resolution": "Removed with clause (c) to rc02c-confirmation-semantics rather than repaired in place"
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "A clean confirming set is FINAL, so a later independent pass carrying a CRITICAL never enters the predicate — the gate converges on it",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 313,
+      "marker_source": "internal-review",
+      "classification": "decision required",
+      "action": "NOT repaired — REMOVED with the clause. Verified the reviewer's decisive point before acting: on the trail exhibited, the SHIPPED engine reports unpassed (gates.ts:217 reads the most recent independent pass) while the rewrite reports passed. The rewrite was a strength REGRESSION in the exact direction this stage exists to prevent, so reverting to the shipped predicate is strictly safer than either offered option. Both options are recorded in rc02c's charter as the design space it inherits, alongside the limit that motivated the rewrite in the first place — with a `blind-pair` slot the later-finishing member is the one read, so a CRITICAL in the earlier member is invisible. That limit is the status quo; this stage neither fixes nor worsens it.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02-gate-semantics/proposal.md",
+          "orbit/changes/rc02-gate-semantics/design.md",
+          "orbit/changes/rc02-gate-semantics/tasks.md",
+          "orbit/architecture/clean-up-review-cycle.md"
+        ]
+      },
+      "ratified_via": "chat",
+      "resolution": "Removed with clause (c); both offered options recorded as rc02c's inherited design space",
+      "recommendation_fork": {
+        "source": "structured",
+        "labels": [
+          "A",
+          "B"
+        ],
+        "ratified_label": null
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "Clause (a) restates freshness inside the slot rule, contradicting the convention and making the `stale` state unreachable",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 236,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "action": "The slot sentence now reads 'satisfied by pass(es) of the slot's class drawn from the list the quantification convention selects'. FRESH is gone from every rule; the filter lives only in the convention paragraph, so the full-list re-evaluation differs from the fresh-list one and `stale` is reachable again. Verified by grep: 'Each slot is satisfied by FRESH' returns 0.",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The proposal's What Changes still describes the superseded two-fail-safe-rule clause (b), including the rule the design says inverted the goal",
+      "file": "orbit/changes/rc02-gate-semantics/proposal.md",
+      "line": 42,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "action": "The bullet now states the shipped mechanism: existence first, then one readability question (non-empty array, every element carrying a recognised severity and a recognised disposition from `outcome` or legacy `status`), readable records read per entry in PREFERENCE to the severity-blind summary, everything else falling back whole to the bare counts. The clause-(c) bullet was rewritten in the same pass to say what now ships and to name rc02c.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02-gate-semantics/design.md"
+        ]
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "The run-summary-emit scenario's THEN contradicts the blind-pair canonical-next rule in this change's own engine-gates delta",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-run-summary-emit/spec.md",
+      "line": 22,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "action": "The THEN is scoped rather than restating a command: the slot stays unsatisfied and the canonical next is whatever the single-voiced requirement computes for it — the external return when the slot is `external` or `independent` or a pairable partner stands, the fresh invocation when the uncovered slot is a `blind-pair` with no pairable pass standing, with the note that a T0 packaging emit is not a pass.",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The status requirement omits `STALE BUDGET-SPENT` and `budgetExhausted` from the enumerations it owns",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 596,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "action": "Both added to the requirement that owns them: `budgetExhausted` joins the gate-row field list alongside `budget`, `independentSpend` and `independentSpendFresh`, and `STALE BUDGET-SPENT` joins the position-token enumeration with its condition. MODIFIED replaces this block wholesale at archive, so the owning requirement now carries the complete vocabulary.",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Rejected external returns: which of the two counts they enter, and how freshness applies to them, is undefined",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 24,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "action": "Stated for both counts: `independentSpend` includes every rejected artifact attributed to the gate's mode across the whole trail; `independentSpendFresh` includes those with no later apply token, using the artifact's own filename `<TS>` as its token, since a rejected artifact has no pass record to carry one.",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Assignment selection is made deterministic only for pair-bearing cadences, yet clause (c)'s base set depends on which assignment is chosen",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 252,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "action": "Generalized to every cadence: among assignments satisfying the whole cadence, the engine selects the one whose assigned token sequence is lexicographically smallest, ties by findings-artifact filename, with the pair rule stated as the instance rather than a separate rule. The finding's second half is now moot in a stronger way than the fix — clause (c) no longer depends on the assignment at all, since the shipped predicate reads the most recent independent pass directly from the pass list.",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The token-equality rejection is unscoped, so an unrelated walk sharing a member's token permanently rejects a knowably-blind pair",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 258,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "action": "Scoped to the records the blindness test already considers: a resolution record whose `source_path` REFERENCES either member and whose token equals a member's. An unrelated walk landing in the same second no longer rejects the pair, exactly as it does not break blindness.",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "v4 changes the post-apply canonical next command, and the residue sweep's grep set misses the engine literals and two unreachable baseline requirements",
+      "file": "orbit/changes/rc02-gate-semantics/tasks.md",
+      "line": 145,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "action": "Three dispositions, each recorded rather than swept. IN this change: task 7.2's grep set gains the post-apply next-command literal and names the five sites — three verify-emit branches in `src/core/emit-composition.ts` and two prose predictions in `apply-change.ts` — all of which would recommend a pass satisfying no v4 slot. OUT of it, ASSIGNED in the program doc: `orbit-conventions`' external-slot sentence to rc02b, which already touches that capability, and `orbit-run-summary-emit`'s two v3-scoped examples to rc02c. Copying an 8.4 KB requirement block to fix two scoped illustrations would cost more against an already-breached byte axis than the assignment does; the design records that reasoning.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02-gate-semantics/design.md",
+          "orbit/architecture/clean-up-review-cycle.md"
+        ]
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "`budgetExhausted` is 'absent' in one scenario and 'FALSE' in another for the same not-exhausted condition",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 63,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "action": "Standardized on `false`: the field is present whenever the gate declares a budget and omitted only when it declares none, so rc04's branch on it stays total. The converged-gate scenario now says `false`.",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "design.md says TWO R-crc-1 axes are exceeded while its own figures show one",
+      "file": "orbit/changes/rc02-gate-semantics/design.md",
+      "line": 423,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "action": "Corrected. R-crc-1 reads 'at most 3 capabilities', so three is compliant rather than breached: ONE axis is exceeded (delta bytes) and one sits AT the ceiling (capabilities). The reviewer independently reproduced every figure in the bullet, which is worth more than the correction itself.",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Typo in task 8.2: 'Then sSweep for residue'",
+      "file": "orbit/changes/rc02-gate-semantics/tasks.md",
+      "line": 145,
+      "marker_source": "internal-review",
+      "classification": "trivial fix",
+      "action": "Fixed in the same pass that renumbered the task groups after clause (c)'s removal.",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": "R-crc-3 (Sal, 2026-09-11): method decisions are settled by the authoring AI and recorded with rationale. R-crc-8 (2026-09-14) governs this walk's shape: the redesign-lane trigger is sectional.",
+  "final_assessment": "13 of 13 resolved, and this is the first walk in the change that SHRANK it. The two CRITICALs were not repaired: clause (c) LEFT the change under R-crc-8's sectional trigger, taking its five scenarios and its whole implementation task group with it. rc02 now ships the shipped confirm predicate with one edit — a substantive new-finding match — which on the trail that exposed the worst defect is strictly stronger than the rewrite it replaces. The other eleven were local repairs: freshness now has one home and `stale` is reachable again, the proposal describes the mechanism that actually ships, the status requirement carries its complete vocabulary, rejected returns are defined for both budget counts, assignment selection is deterministic for every cadence rather than only pair-bearing ones, and the token-tie rule is scoped to the records blindness already considers. Three residue dispositions were recorded rather than swept: five engine and body sites fixed here, and two out-of-delta baseline sites assigned to rc02b and rc02c, which already touch those capabilities. Measured after: three capabilities, nine requirement blocks, 56 scenarios, 52.2 KB, 18 tasks — one axis breached, one at the ceiling, and every figure down from the last measurement for the first time.",
+  "iteration": 6,
+  "next_recommended": "/orbit:review --as proposal --fresh rc02-gate-semantics"
+}

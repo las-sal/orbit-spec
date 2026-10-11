@@ -78,54 +78,27 @@ After completing the steps, summarize:
 
 # Orbit additions
 
-## Three execution disciplines (apply throughout this command)
+## Four execution disciplines (epitome)
 
-The three execution disciplines from \`orbit-conventions\` bracket the authoring lifecycle; they're embedded in every orbit command for self-contained reliability.
+The four disciplines from \`orbit-conventions\`, embedded per body; detail lives where each fires.
 
-- **Read-before-reference (authoring-time)**: before naming a specific construct (function, type, file path, capability, spec requirement, command flag), read its actual definition — never infer a plausible reference. If you can't verify, ask the user or leave a \`@review:\` marker instead of guessing.
-- **Change completeness (modification-time)**: apply substantive modifications fully across ALL affected artifacts before calling them done; after mechanical edits, sweep for residue the pattern missed AND new bugs the replacement introduced.
+- **Read-before-reference (authoring-time)**: read a construct's actual definition before naming it; unverifiable → ask or leave a \`@review:\` marker, never guess.
+- **Change completeness (modification-time)**: apply substantive modifications fully across ALL affected artifacts; after mechanical edits, sweep for residue AND new bugs the replacement introduced.
 - **Pushback (review-time)**: verify each flagged issue against current state before acting; suppress stale findings with evidence rather than re-fixing already-fixed state.
+- **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line — gate \`passed\` means *eligible*, not *commanded*.
 
-## Run-summary emit (one-shot at command completion)
+## Run-summary emit (one-shot at command completion — via the engine emit surface)
 
-(Per \`orbit-run-summary-emit\` capability)
+(Per \`orbit-run-summary-emit\`; composed and written via \`orbit emit new\` — \`orbit-emit-composition\`.)
 
-\`/orbit:new\` is a one-shot command per \`orbit-run-summary-emit\`'s \`Emit timing semantics\` requirement (emit ONCE on natural command completion). After the change is scaffolded, write:
+At command completion, compose the narrative payload (\`final_assessment\` + the required nullable \`model\`) into a temp file and invoke:
 
-\`\`\`
-orbit/changes/<name>/.orbit-runs/new-<TS>.json
-\`\`\`
-
-Where \`<TS>\` is ISO-8601 UTC with hyphens. Create \`.orbit-runs/\` if it doesn't exist. The filename prefix is \`new-\` (NOT \`propose-\`) to preserve entry-point provenance per the per-variant filename rule.
-
-### JSON shape
-
-Per the universal spine in \`orbit-conventions\`'s \`Internal-run JSON summary format\` + per-command extensions:
-
-\`\`\`json
-{
-  "command": "new",
-  "timestamp": "<ISO-8601 UTC>",
-  "change": "<name>",
-  "final_assessment": "<narrative, e.g., 'Scaffolded new change <name>; no artifacts generated yet.'>",
-  "next_recommended": "/orbit:continue <name> — proposal still pending (first \`status: \"ready\"\` artifact)",
-  "kind": "workflow",
-  "artifacts_created": [],
-  "delta_count": 0,
-  "from": "scratch"
-}
+\`\`\`bash
+orbit emit new --change <name> --payload <payload-file>
 \`\`\`
 
-(\`/orbit:new\` scaffolds only — upstream's guardrail above is explicit: do NOT create artifacts at new-time. Artifact generation happens via \`/orbit:continue\` or \`/orbit:ff\`, so \`artifacts_created\` is always \`[]\` in this emit.)
-
-### \`next_recommended\` — artifact-completeness-aware
-
-Per \`orbit-run-summary-emit\`'s \`Propose-shaped and artifact-completion-aware recommendation logic\` requirement, do NOT hardcode the next artifact — defer to upstream \`orbit status --change <name> --json\` (the example above shows the default spec-driven schema's outcome, not a fixed string):
-
-- **\`isComplete: false\`** (the typical case right after scaffolding): \`next_recommended: "/orbit:continue <name> — <next missing artifact> still pending"\` (where \`<next missing artifact>\` is the first entry in upstream's \`artifacts\` array with \`status: "ready"\` — the array is sorted by build order; \`proposal\` in the default schema, but other schemas may start elsewhere)
-- **\`isComplete: true\`** (atypical for new — a schema with no required artifacts): \`next_recommended: "/orbit:review <name> — all proposal artifacts now present"\`
-
-A downstream status reader parses the leading \`/orbit:<verb> <name>\` token into \`command\`/\`args\`.`,
+The ENGINE owns the spine, the trail path, timestamp + collision handling, and \`next_recommended\` composition (completion-aware: continue-vs-review from artifact state). Never hand-compose the JSON.
+`,
     license: 'MIT',
     compatibility: 'Requires orbit CLI.',
     metadata: { author: 'openspec', version: '1.0' },

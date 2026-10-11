@@ -1,0 +1,127 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-04T03:31:28Z",
+  "change": "rc03b-pass-genres",
+  "kind": "editorial",
+  "model": null,
+  "source": "from-file",
+  "source_path": "orbit/changes/rc03b-pass-genres/.orbit-runs/external-proposal-2026-10-04T03-23-12Z.md",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-6 Codex",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 3,
+    "suggestion": 2
+  },
+  "pushback_verification": "5 of 5 verified against the current tree before classification — the three required .orbit-runs/ output paths confirmed on the shipped prompt template (lines 3, 56, 125), the skip scenario vs clause (d) contradiction confirmed in the delta, \"readable walk\" confirmed at five live sites, nine other generated skills confirmed to mention .orbit-runs/; 0 stale; 0 CRITICAL so no reproduction re-runs",
+  "resolution_summary": {
+    "resolved": 5,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The REGION grep cannot become green while the prompt retains required output paths",
+      "marker_source": "external",
+      "file": "orbit/changes/rc03b-pass-genres/specs/orbit-review/spec.md",
+      "line": null,
+      "classification": "trivial_fix",
+      "action": "Redefined the REGION rule by SECTION in orbit-review's ADDED requirement (grep scenario): within the prompt template, `## Output format — write to:`, `## After completing the review` and the reference's own header line are OUTPUT DESTINATIONS and never hits; a planted read pointer anywhere else in the brief is red. Task 1.1 plants one pointer and asserts the three required output paths stay green; task 3.5's measure now reads 'no .orbit-runs/ path outside the output sections'; design gains a Risk entry.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc03b-pass-genres/specs/orbit-review/spec.md",
+          "orbit/changes/rc03b-pass-genres/tasks.md",
+          "orbit/changes/rc03b-pass-genres/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The walk listing omits the latest independent pass needed to determine genre",
+      "marker_source": "external",
+      "file": "orbit/changes/rc03b-pass-genres/specs/orbit-conventions/spec.md",
+      "line": null,
+      "classification": "decision_required",
+      "action": "WIDEN THE PROBE, not the engine (method call under R-crc-3, stated in the triage, Sal: 'walk all'): the one directory fact is now the token-ordered listing of the trail's PASS and WALK records — review-<mode>-*.json with reviewer_class, external-<mode>-*.md by filename, address-reviews-*.json with source_path — metadata that supplies the latest-independent-pass token the qualifying-walk bound needs; never findings. Stated in the owner (conventions), clause (d) and the listing scenario (orbit-review), proposal, design D1 (which names the engine surface as Q-crc-24's territory, the better home once rc03c ships the function) and task 2.5.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc03b-pass-genres/specs/orbit-conventions/spec.md",
+          "orbit/changes/rc03b-pass-genres/specs/orbit-review/spec.md",
+          "orbit/changes/rc03b-pass-genres/proposal.md",
+          "orbit/changes/rc03b-pass-genres/design.md",
+          "orbit/changes/rc03b-pass-genres/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "resolution": "The in-context genre probe lists pass AND walk records with their reviewer_class and source_path fields; no engine surface is added in this change."
+    },
+    {
+      "severity": "WARNING",
+      "title": "The no-prior-run scenario forbids the metadata read its genre decision requires",
+      "marker_source": "external",
+      "file": "orbit/changes/rc03b-pass-genres/specs/orbit-review/spec.md",
+      "line": null,
+      "classification": "trivial_fix",
+      "action": "Narrowed the prohibition in the skip scenario to FINDINGS, suppressed lists and resolution content; the bounded metadata probe (filenames, reviewer_class, source_path) is explicitly the one trail read a REVIEW-genre in-context pass makes, in clause (d), the scenario, and task 1.3's expectation; the owner's probe sentence says the brief rule forbids content, never filenames or class/source fields.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc03b-pass-genres/specs/orbit-review/spec.md",
+          "orbit/changes/rc03b-pass-genres/specs/orbit-conventions/spec.md",
+          "orbit/changes/rc03b-pass-genres/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Replace “readable walk” with the defined qualifying-walk term",
+      "marker_source": "external",
+      "file": "orbit/changes/rc03b-pass-genres/proposal.md",
+      "line": null,
+      "classification": "trivial_fix",
+      "action": "CASCADE: 'qualifying walk' replaces 'readable walk' in proposal.md (two sites), orbit-review's skip-scenario WHEN clause, the conventions mode-less row's wording, and the rc03b charter paragraph in the architecture doc (IN set; dated walk 2). design.md:40 keeps the phrase as a quotation of the exploration's old wording (history, labelled as such).",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc03b-pass-genres/proposal.md",
+          "orbit/changes/rc03b-pass-genres/specs/orbit-review/spec.md",
+          "orbit/changes/rc03b-pass-genres/specs/orbit-conventions/spec.md",
+          "orbit/architecture/clean-up-review-cycle.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Match the residual audit's stated scope to its instrument",
+      "marker_source": "external",
+      "file": "orbit/changes/rc03b-pass-genres/specs/orbit-conventions/spec.md",
+      "line": null,
+      "classification": "trivial_fix",
+      "action": "Matched the instrument to the residual's words: the PHRASE rule runs over EVERY generated skill under .claude/skills/ (the residual method's whole surface); the REGION rule applies to the review skill alone, the only skill composing a review-genre brief. Stated in orbit-review's grep scenario and tasks 1.1 and 3.3; the two residual lines stay verbatim in the owner.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc03b-pass-genres/specs/orbit-review/spec.md",
+          "orbit/changes/rc03b-pass-genres/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Walk 2 (the external proposal pass, GPT-6 Codex, 0C/3W/2S, zero repeats of the fresh pass, direction HOLD against the fresh pass's FORWARD): 5 of 5 resolved, 0 stale, every finding a repair to a rule written at walk 1 — the REGION rule now exempts the prompt template's output sections by section so a valid prompt is green and a planted read pointer is red; the in-context genre probe lists pass AND walk records with reviewer_class and source_path (the walk listing alone could not supply the bound's latest-independent-pass token — the external's constructed case); the skip scenario forbids content, not the metadata probe; \"qualifying walk\" replaces \"readable walk\" at five live sites incl. the charter (cascade IN, dated); the PHRASE rule runs over every generated skill while the REGION rule stays the review skill's. One method call recorded under R-crc-3 (widen the probe, not the engine; Q-crc-24 named as the better home once rc03c ships). After the walk: orbit validate --strict valid, architecture validate valid, fingerprints 5 verified, both BOUNDED residual lines still verbatim in the owner. Keys taken from the trail reader this time.",
+  "iteration": 3,
+  "next_recommended": "/orbit:review --as proposal rc03b-pass-genres"
+}

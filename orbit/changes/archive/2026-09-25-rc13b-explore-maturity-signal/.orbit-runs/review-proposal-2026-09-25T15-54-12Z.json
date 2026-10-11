@@ -1,0 +1,249 @@
+{
+  "command": "review",
+  "timestamp": "2026-09-25T15:54:12Z",
+  "change": "rc13b-explore-maturity-signal",
+  "kind": "editorial",
+  "model": "claude-fable-5-1",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": [
+    "--fresh"
+  ],
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 4,
+      "suggestion": 2
+    },
+    "correctness": {
+      "critical": 2,
+      "warning": 4,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 3,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "CRITICAL",
+      "dimension": "correctness",
+      "title": "Task 2.3's fixture counts are false under the change's own ID-less-by-wrapping rule",
+      "file": "tasks.md",
+      "line": 12,
+      "description": "Task 2.3 asserts the archived bounded-closure-semantics explore.md parses to 9 live rules, 9 accounted, 0 malformed, 1 residual. Executed against that file with the rule this change specifies (emit-composition delta:96 — a bold opener wrapped across two lines matches no ID production, so the entry is ID-less/open by line; explore.md:158 states the same), the file yields 9 live rules, 7 accounted, 2 open by line (380, 392 — D-bcs-8 and D-bcs-9 wrap), 2 MALFORMED orphans (Mechanism headings at 214 and 238 now match no Decisions ID), 1 residual, and the Unaccounted rung. D-bcs-11 (415) wraps too but is Kind: scope. explore.md:158's EXECUTE claim ('parses to 9 live rules, 9 accounted, 0 malformed') is the same untruth. Whichever opener rule is chosen, one of the two statements is wrong; an implementer who makes 2.3 pass silently loosens the regex and breaks the wrapped-opener scenario.",
+      "recommendation": "The archived fixture named by 2.3 contains three bold openers wrapped across two lines (D-bcs-8 at line 380, D-bcs-9 at 392, D-bcs-11 at 415). Under the rule this change states (emit-composition delta:96; explore.md:158), an executed parse yields 9 live / 7 accounted / 2 open by line (380, 392) / 2 MALFORMED orphans (Mechanism headings 214, 238) / 1 residual, and the Unaccounted rung — not the 9/9/0/1 the task asserts, and not what explore.md:158's EXECUTE move claims. The fixture expectation and the wrapped-opener rule cannot both hold on the same bytes; choose one and make every artifact say it. A: define the well-formed ID opener as the FIRST line of the list item matching the date + ID prefix (`- **<YYYY-MM-DD> — <ID>: `), closing `**` not required on that line — then 2.3's numbers stand, the wrapped-opener scenario (emit delta:96) and its fixture row in 2.2 are deleted, explore.md:158's EXECUTE line is corrected, and ordinary 100-column wrapping stops being a format violation. B: keep the strict same-line rule and correct 2.3 to the executed figures (9 live, 7 accounted, rules_open of four — two `open` by line, two `malformed` orphans — 1 residual, Unaccounted) and correct explore.md:158. Either way the chosen opener rule must be stated once (see the Pass 5 finding on the opener production). (move: COHERE)",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Define the ID opener as an ID-first prefix match on the entry's first line (closing `**` not required); keep 2.3's 9/9/0/1; delete the wrapped-opener scenario and fixture; correct explore.md:158."
+        },
+        {
+          "label": "B",
+          "body": "Keep the strict same-line opener; rewrite 2.3 to the executed figures (9 live, 7 accounted, 2 open by line 380/392, 2 malformed orphans D-bcs-8/D-bcs-9, 1 residual, Unaccounted); correct explore.md:158's EXECUTE claim."
+        }
+      ]
+    },
+    {
+      "pass": "2",
+      "severity": "CRITICAL",
+      "dimension": "correctness",
+      "title": "The Unaccounted string's 'K of R live rules' counts MALFORMED orphans that are not live rules",
+      "file": "specs/orbit-run-summary-emit/spec.md",
+      "line": 11,
+      "description": "The maturity delta defines K as `rules_open`'s length and R as `rules_total`. The emit-composition delta (lines 25-30) puts every MALFORMED Mechanism entry — orphans whose ID matches no Decisions entry, and duplicate-ID entries — into `rules_open` while `rules_total` counts only live rules. So the delta's own scenario (emit delta:91-92: rules_total 4, rules_open of three including the orphan D-foo-9) renders '3 of 4 live rules have open domains' when two live rules are open; a wrapped opener whose Mechanism entry is thereby orphaned renders '2 of 1 live rules'; a file of facts plus one orphan renders '1 of 0'. The rung's one job under exit criterion (1) is to name the gap truthfully.",
+      "recommendation": "`rules_open` (emit delta:25-30) carries one entry per open LIVE rule PLUS one per MALFORMED Mechanism entry (orphans, duplicates) that is not a live rule, but the Unaccounted string (this line) sets K = rules_open's length and R = rules_total, which counts live rules only. The two definitions produce a false sentence in every file with an orphan: the emit delta's own scenario (spec.md:91-92 — rules_total 4, three rules_open entries incl. orphan D-foo-9) renders '3 of 4 live rules have open domains' with two live rules open; a wrapped opener whose Mechanism entry becomes an orphan renders '2 of 1'. Define once, in the emit-composition delta: K counts entries whose state is absent / no-closure / bounded-incomplete / open (the live-rule states); MALFORMED entries are reported in their own clause (e.g. `; N malformed (<IDs or lines>)`) and still withhold the top rung because rules_open is non-empty. The maturity delta then points at that definition instead of restating K = length. Add the orphan case to the Unaccounted scenario so the string is asserted, not implied. (move: COHERE)"
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "'Byte-identical' Early/Mid/Stalled strings and the 'exactly' Concluded string contradict the appended open-domains record",
+      "file": "specs/orbit-run-summary-emit/spec.md",
+      "line": 14,
+      "description": "Line 14 appends ` · open domains: <IDs>` to every exploring rung with a non-empty list AND says Early/Mid/Stalled are byte-identical to their pre-capability forms; line 7 renders the open-rule list beside the Concluded rung while the scenario at 38-40 says next_recommended is 'exactly' the Concluded string 'whatever the ... open-rule counts'. Task 3.3's byte-equality test can only hold with an empty list.",
+      "recommendation": "Two exactness claims are contradicted by the record this same requirement appends. (a) Line 14: 'Early, Mid and Stalled strings are byte-identical to their pre-capability forms' is true only when rules_open is empty — the Mid scenario (line 46-48) itself shows the suffix. Say 'byte-identical PREFIX; the record suffix is appended after it', and cut task 3.3's byte-equality assertion to the empty-list case. (b) Scenario 'Concluded header collapses every count' (line 38-40) says 'whatever the ... open-rule counts' and then 'is exactly ...' while line 7 renders any open-rule list beside it — state the suffix in the THEN (`Concluded 2026-09-25. Reopens when: a third withdrawn stage. · open domains: …`) or restrict the WHEN to rules_open empty and add a sibling scenario for the non-empty case."
+    },
+    {
+      "pass": "3",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "title": "The concluded row's next line will render under 'Ready when you are:' — eligibility framing on a rung that points at nothing",
+      "file": "specs/orbit-orientation/spec.md",
+      "line": 43,
+      "description": "The strip scenario says the next line renders the Concluded prose verbatim. renderNextLine (src/commands/workflow/status.ts:303) frames every explore next as `Ready when you are: <next>`, and the unmodified 'Next-recommendation sourcing is time-shifted, never live' requirement (baseline spec.md:126-128) mandates that framing. The row will read 'Ready when you are: Concluded 2026-09-25. Reopens when: …' — the opposite of D-rc13b-1's intent, and D-rc13b-9's Domain table marks `next` as 'unchanged'.",
+      "recommendation": "The text render prefixes every explore `next` with `Ready when you are:` (src/commands/workflow/status.ts:303, renderNextLine), and the sourcing requirement this delta leaves unmodified (baseline orbit-orientation spec.md:126-128) mandates the eligibility framing. A concluded row will therefore read `Ready when you are: Concluded 2026-09-25. Reopens when: …` — an eligibility label on the one rung that points at nothing (D-rc13b-1), which D-rc13b-9's table did not see because it marked `next` 'unchanged'. A: MODIFY the sourcing requirement in the same capability (no fourth capability): when the newest emit's status.token is concluded the next line renders the recorded prose under its own label (e.g. `Concluded:` or bare), with a scenario; add it to task 5.1/5.2. B: accept the framing and say so in this scenario's THEN, so the render is asserted rather than implied.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Modify 'Next-recommendation sourcing' (same capability): a concluded workstream's next renders the recorded prose without the `Ready when you are:` label; scenario + tests in 5.1/5.2."
+        },
+        {
+          "label": "B",
+          "body": "Keep the framing; state the full rendered line in the concluded-strip scenario's THEN and in design D-rc13b-9 so it is a recorded choice."
+        }
+      ]
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "title": "The well-formed ID opener rule (closing ** on the first line) is stated in no production — only in a scenario and an explore.md move line",
+      "file": "specs/orbit-emit-composition/spec.md",
+      "line": 96,
+      "description": "The conventions fence (orbit-conventions spec.md:915) gives the opener as `- **<YYYY-MM-DD> — <ID>: <title>** <prose…>` with the ID before the title; nothing says the closing ** must sit on the same line. The delta's scenario asserts the wrapped case is ID-less, so the module's opener regex would carry a rule stated only in code (R-crc-14). Two implementers split: ID-first prefix match vs whole-bold match — the same fork the CRITICAL on task 2.3 exposes.",
+      "recommendation": "The only statements that a wrapped opener loses its ID are this scenario and explore.md:158; the owning production (orbit-conventions spec.md:915) shows the ID BEFORE the title and says nothing about where the closing `**` sits, so an implementer matching the ID prefix on the first line gets an ID and one matching the whole bold span does not. The parse's opener regex would then be a rule stated only in code. State the well-formed-opener rule once, in the emit-composition delta text (this capability owns the parse): 'a Decisions entry's ID is well-formed when the FIRST line of its list item matches <the module's opener expression, given in words>'; have the 2.2 fixture exercise both a wrapped-after-title and a wrapped-before-ID line; and record in design that orbit-conventions points at it on its next touch. Resolve together with the CRITICAL on task 2.3 — its option A or B decides which rule this sentence states."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "title": "Duplicate Decisions IDs: rules_total, the Mechanism join, and the preamble's 'per MALFORMED Mechanism entry' are unspecified for a Decisions-side defect",
+      "file": "specs/orbit-emit-composition/spec.md",
+      "line": 25,
+      "description": "The preamble says rules_open holds 'one entry per live rule whose domain is OPEN plus one per MALFORMED Mechanism entry', yet `malformed` also covers 'a duplicate Decisions ID' (line 27-28), which is not a Mechanism entry. Unstated: whether both duplicates count in rules_total, which of them a Mechanism entry keyed by the shared ID joins to, whether the first is then accounted, and whether the duplicate's Kind/Disposition slots are read at all.",
+      "recommendation": "The `malformed` state covers 'a duplicate Decisions ID' (line 27-28) but the array's preamble admits only open live rules and MALFORMED MECHANISM entries, so the Decisions-side duplicate has no stated membership, and three consequences are left to the implementer: whether both duplicates count in rules_total, which one a Mechanism entry keyed by the shared ID joins to, and whether the first is then accounted. State once: the first occurrence in file order owns the key and joins its Mechanism entry; the second appears in rules_open as `{id, state: 'malformed', line}` and is excluded from rules_total; task 2.2's duplicate-ID row asserts exactly those three facts."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "title": "status.re_entry when concluded with no live Re-entry slot, and with two live slots, is unspecified",
+      "file": "specs/orbit-emit-composition/spec.md",
+      "line": 34,
+      "description": "`date` and `re_entry` are 'present iff concluded', but the maturity delta (line 7) renders a `(no Re-entry: slot found)` fallback for a concluded header with no live slot — is `re_entry` then absent, null, or the fallback string? orbit-conventions (spec.md:918, 1010) says exactly one live entry carries the slot; two live slots (a reopen that forgot the superseded disposition) name no winner and no MALFORMED state.",
+      "recommendation": "Two reachable states have no stated field value. (1) Header concluded, no live entry with a `Re-entry:` slot: the maturity delta renders `Reopens when: (no Re-entry: slot found)` but this line says `re_entry` is present iff concluded — say whether the field is absent, null, or carries the fallback (absent is the honest choice: the fallback belongs to the rendered prose only). (2) Two LIVE entries carrying `Re-entry:` (a reopen that omitted `Disposition: superseded`): orbit-conventions:918 says exactly one carries it, so state the parse's rule — first in file order wins plus a stderr format note, or a `malformed` entry naming the second line. Add both to the 2.2 fixture set."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "title": "A newest emit whose `status` is present but not `{token: string}` has no stated reading in orientation",
+      "file": "specs/orbit-orientation/spec.md",
+      "line": 19,
+      "description": "The delta covers 'a newest emit lacking status' (reads exploring) and a spine-invalid emit (skipped). isSpineValid (src/core/orientation.ts:117-128) checks command/final_assessment/next_recommended only, so a hand-tampered or partially copied `status: \"concluded\"` (string) or `{token: 7}` passes the spine and is neither 'lacking' nor skipped. The fault-isolation requirement demands deterministic fallbacks; an implementer must invent one.",
+      "recommendation": "The spine check the row already uses (src/core/orientation.ts:117-128) passes an emit whose `status` is a string, null, or an object without a string `token`; such a record is neither 'lacking status' (this line) nor spine-invalid, so its reading is undefined and the fault-isolation requirement's 'deterministic, never a false concluded' promise has no text behind it. Add one sentence: a `status` that is not an object carrying a string `token` reads as `exploring` (the chip `▶`, the position `exploring`, no degraded row — the field is optional, not spine), and add the case to task 5.2's list."
+    },
+    {
+      "pass": "7",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "title": "Delta scenario titles still name the retired 'Mature' rung",
+      "file": "specs/orbit-run-summary-emit/spec.md",
+      "line": 34,
+      "description": "The Stalled scenario's title carries the baseline parenthetical '(Mature criteria for decisions met but open-question check fails)'; line 22's title reads 'Unaccounted, not Mature'. After sync no rung named Mature exists in the requirement; the delta itself carries the old vocabulary (Pass 7's CRITICAL rule, downgraded because both are titles and one is a deliberate historical contrast).",
+      "recommendation": "The requirement retires the Mature rung, yet two scenario titles in the same delta still name it: line 34 '(Mature criteria for decisions met but open-question check fails)' — a baseline parenthetical carried forward — and line 22 'Unaccounted, not Mature'. Retitle the Stalled scenario to the surviving vocabulary ('4+ decisions met but open-question check fails'); keep or drop 'not Mature' on line 22 deliberately, and if kept say it is the historical contrast so the next drift sweep does not flag it."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "Task 2.2's fixture list does not cover 'each out-of-domain disposition' as exit criterion (2) requires",
+      "file": "tasks.md",
+      "line": 11,
+      "description": "The stage's exit criterion (2) (clean-up-review-cycle.md:1452-1455) names 'each out-of-domain disposition'. Task 2.2 names `Kind: fact` / `Disposition: assigned` only; `Disposition: superseded <ID>` and `Kind: scope` have no fixture row, and the emit-composition scenario at line 91 covers scope but not superseded. R-crc-12's third case: a task may not narrow the bar the stage is graded against.",
+      "recommendation": "Exit criterion (2) in the stage section (clean-up-review-cycle.md:1452-1455) grades the instruments over 'each out-of-domain disposition'; 2.2 lists `Kind: fact` / `Disposition: assigned` and omits `Disposition: superseded <ID>` and `Kind: scope` (the emit delta's scenario at line 91 covers scope but not superseded). Add the two rows — each OUT of the obligation, each with a permitted history entry that must not become an orphan — so the criterion is measured by the test set rather than by half of it."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "Task 4.3 and D-rc13b-4 name artifacts that do not exist: no explore run-summary-schema reference, no explore field table",
+      "file": "tasks.md",
+      "line": 24,
+      "description": "Task 4.3 says to update 'the explore rows of the emit field documentation the schema-parity test derives from (test/core/emit-schema-parity.test.ts and the generated references/run-summary-schema.md it reads)'. The parity test's REFERENCES list (test/core/emit-schema-parity.test.ts:44-53) has no explore row, and getExploreSkillTemplate ships only capture-formats.md (src/core/templates/workflows/explore.ts:721-724). explore.md:106 (D-rc13b-4's table) likewise names 'the explore field table in orbit-run-summary-emit', which does not exist — decisions_captured appears there only inside scenarios (spec.md:31, 35, 190, 204-216).",
+      "recommendation": "No explore schema reference exists for the parity test to read (test/core/emit-schema-parity.test.ts:44-53 lists review, review-external, address-reviews, audit-drift, archive; src/core/templates/workflows/explore.ts:721-724 ships only capture-formats.md), and orbit-run-summary-emit has no explore field table to gain four rows (explore.md:106 — decisions_captured appears only in scenarios). Rewrite 4.3 to what exists — either delete it, recording in design that the four fields' shapes are stated once in the emit-composition requirement and that no schema reference documents explore payloads today, or make it the deliberate act of adding an explore reference plus its ENGINE_OWNED_PER_COMMAND row — and correct D-rc13b-4's table row so the exploration's ENUMERATE move names real members."
+    },
+    {
+      "pass": "3",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "title": "The deltas restate four rules owned elsewhere instead of naming and pointing (R-crc-14)",
+      "file": "specs/orbit-emit-composition/spec.md",
+      "line": 35,
+      "description": "The emit-composition delta restates the live-rule definition (23-24; owner orbit-conventions spec.md:924), the FORM-only / cannot-judge paragraph (35-40; owner spec.md:979), and the neither-token-reads-exploring rule (33-34; owner spec.md:131); the orientation strip delta re-enumerates the bare-status closed data-source list (orbit-orientation delta:14-17; owner baseline spec.md:44). Each is a second statement of a rule rc04c watched diverge four times. The design cites R-crc-14 as a constraint (design.md:22-23).",
+      "recommendation": "Four owned rules are restated rather than pointed at: the live-rule definition (this delta:23-24 vs orbit-conventions:924 'a RULE is IN the accounting obligation only while…'), the FORM-only/what-the-engine-cannot-judge paragraph (35-40 vs orbit-conventions:979), 'a first line matching NEITHER token reads as exploring' (33-34 vs orbit-conventions:131), and the closed data-source list (orbit-orientation delta:14-17 vs its own bare-status requirement, spec.md:44). Replace each with a name-and-point ('live per orbit-conventions' entry-identity requirement'; 'the FORM-only clause of orbit-conventions' Mechanism-grammar requirement'; 'per the bare-status requirement's closed data-source scenario') and keep only what is NEW here (the no-match-is-absent rule, the all-facts example). Exit criterion (3) is met by a requirement that names the rule, not one that restates it; if the charter is read as demanding the statement here, say so in design and retire it from orbit-conventions on that spec's next touch so one owner remains."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "Design Risks claim change-directory explore.md is never parsed by the explore emit — the code and task 6.3 say otherwise",
+      "file": "design.md",
+      "line": 113,
+      "description": "resolveTarget prefers the change directory (src/core/emit-composition.ts:399-408) and the explore case reads `<changeDir>/explore.md` when the scope is a change (1121-1125). Task 6.3 relies on exactly that path. So the migration surface is not 'ZERO staging directories': every active change with a consumed pre-rc13a explore.md renders UNACCOUNTED on its next in-change explore emit (Mode B in the change directory).",
+      "recommendation": "'change-directory explore.md records are never parsed by the explore emit' is untrue: the target resolver takes the change directory first (src/core/emit-composition.ts:399-408) and the explore case reads `<changeDir>/explore.md` for a change-scoped emit (1121-1125) — which is the path task 6.3 depends on. Correct the Risk: the migration surface includes every active change whose consumed explore.md predates rc13a, each rendering UNACCOUNTED on its next in-change explore emit; state that this is intended (the demanding default) so the system review does not rediscover it."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "Spec-dictated strings pluralize wrongly ('1 bounded residuals named', '1 of 4 live rules have')",
+      "file": "specs/orbit-run-summary-emit/spec.md",
+      "line": 28,
+      "description": "The Accounted and Unaccounted strings fix the grammar as written; the scenarios assert '1 bounded residuals named (D-x-4)' and '1 of 4 live rules have open domains'.",
+      "recommendation": "The two new strings are asserted verbatim with a count, so their plurals ship as written: '1 bounded residuals named', '1 of 4 live rules have'. Either pluralize by count (one line in the grid function, asserted in 3.3) or state that the strings are fixed regardless of count so a later pass does not reopen it."
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "title": "rules_open ordering is unstated, so the three-ID bound picks a nondeterministic first three",
+      "file": "specs/orbit-run-summary-emit/spec.md",
+      "line": 14,
+      "description": "The bounded render shows 'at most THREE identifiers then +N more'; nothing says which three. With orphans and ID-less entries in the same array, Decisions order vs Mechanism order changes the rendered IDs.",
+      "recommendation": "State the array's order once (emit-composition delta): Decisions entries in file order, then Mechanism-only MALFORMED entries in heading order — so the first three IDs in the bounded render are deterministic and the 3.3 '+2 more' case asserts specific IDs."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "Spec text carries a handoff to an unlanded stage ('named here first and adopted there')",
+      "file": "specs/orbit-orientation/spec.md",
+      "line": 74,
+      "description": "The JSON requirement says the word `concluded` 'is shared vocabulary with the architecture stage-state reader's ended-from-explore observation, named here first and adopted there' — a forward reference to rc15's future behaviour inside baseline spec text that survives archive. The rc15 charter (clean-up-review-cycle.md:2389-2401) and design.md:124-125 already carry the handoff.",
+      "recommendation": "Baseline spec text should not promise what another unlanded stage will adopt; rc15's charter and design.md:124-125 already carry the handoff. Cut the clause to 'the stage-state vocabulary literal `concluded`' and leave the adoption note where it lives."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "title": "Form-parse output when explore.md is absent is unstated",
+      "file": "specs/orbit-emit-composition/spec.md",
+      "line": 42,
+      "description": "countExploreFile's missing-file branch (src/core/parsers/explore-counter.ts:126-138) returns zero counts with both sections missing; the form parse's result for the same case (status token, rules_total, whether a third 'no Mechanism' note fires) is not stated.",
+      "recommendation": "One sentence: a missing file yields rules_total 0, rules_open [], residuals [], status {token: exploring}, and the existing missing-section notes (no additional Mechanism note) — mirroring countExploreFile's branch (src/core/parsers/explore-counter.ts:126-138)."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "title": "Three task counts for one change: design says ~16, tasks.md holds 19",
+      "file": "design.md",
+      "line": 134,
+      "description": "design.md:134 records '~16 tasks' as the R-crc-9 size measurement; tasks.md holds 19 (the engine's count), one under R-crc-1's 'under 20'. The propose emit's 18 is a known record error and is not this finding.",
+      "recommendation": "Replace '~16 tasks' with the measured 19 so the size record and the engine agree, and note that 19 sits one under the R-crc-1 task bound — any task the walk adds must be paid for by merging two."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Pattern: the change's mechanism is well settled where it was EXECUTED (the six-rung grid, the four fields, the trail-sourced row) and weakest at the JOIN — every substantive finding sits where the Decisions side meets the Mechanism side or where a new record meets an old exactness claim. The two CRITICALs are both COHERE failures: the fixture the stage names (task 2.3, explore.md:158) cannot parse to the numbers claimed under the ID-less-by-wrapping rule the same stage specifies, because the archived file's D-bcs-8/D-bcs-9/D-bcs-11 openers wrap — I executed a throwaway parse to check rather than trusting the EXECUTE line; and 'K of R live rules' counts MALFORMED orphans that rules_total excludes, so the delta's own scenario renders a false ratio. READ/ENUMERATE/COHERE CRITICAL count: 2 (both COHERE; 0 READ, 0 ENUMERATE). Probed hard: (a) parser-from-text — every rules_open state token is defined, but the opener rule, duplicate-ID join, two-live-Re-entry case and array order are left to invention; (b) coherence across the three deltas and against baseline — status shape, closed data sources and WAITING are honoured, but the unmodified sourcing requirement's `Ready when you are:` framing wraps the Concluded prose (verified at status.ts:303); (c) scenario preservation — diffed every MODIFIED block against baseline: emit-composition keeps all six baseline scenarios, both orientation blocks keep all seven, the maturity block re-cuts the 5/0 scenario as design declares, and no apply-side prose moved; (d) the grammar module — interpolating an identical string into the TS literal hashes identically, so the unchanged-pin claim is feasible; the requirement sits in emit-composition and legislates the explore body template, a ceiling choice worth recording rather than a defect; (e) R-crc-14 — four restatements found; (f) exit criteria — (1) and (3) are measured by 3.x and the emit delta, (2) is under-measured by task 2.2; (g) size, measured: 3 capabilities, 5 requirement blocks, ~16 KB changed bytes across the four MODIFIED diffs plus the ADDED block, 19 tasks — inside R-crc-1 on every axis, one under the task bound; (h) the propose emit's 18-vs-19 task figure is a known record error and drew no finding. Not examined: no prior review exists on this trail so pushback had no history to suppress against; orbit validate --strict passes and fingerprints verify 4/4; @review: residue grep is clean; the source lint reports stages 24 while CLAUDE.md line 115's marker also reads 24 (consistent, not this change's concern).",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "final_assessment": "2 critical, 11 warning, 5 suggestion.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc13b-explore-maturity-signal --from-file orbit/changes/rc13b-explore-maturity-signal/.orbit-runs/review-proposal-2026-09-25T15-54-12Z.json"
+}

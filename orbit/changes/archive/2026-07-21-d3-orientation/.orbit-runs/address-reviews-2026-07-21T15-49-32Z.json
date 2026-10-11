@@ -1,0 +1,87 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-07-21T15:49:32Z",
+  "change": "d3-orientation",
+  "source": "--from-file",
+  "source_path": "orbit/changes/d3-orientation/.orbit-runs/external-system-2026-07-21T15-04-46Z.md",
+  "source_format": "external-markdown",
+  "external_reviewer": "GPT-5 Codex",
+  "external_iteration": 1,
+  "source_mode": "system",
+  "walk_mode": "per_finding",
+  "kind": "editorial",
+  "resolutions": [
+    {
+      "finding": "Metadata failures are swallowed instead of producing degraded entries",
+      "severity": "CRITICAL",
+      "file": "src/core/orientation.ts",
+      "pushback": "still applies — readCitation's catch plus the engine's own resolveSchemaForChange fallback absorbed every metadata failure (my own degraded tests had used a broken-SCHEMA trigger precisely because invalid metadata would not throw); the missing projectRoot also dropped valid project-local-schema citations and created dates",
+      "classification": "trivial fix (single-path recommendation)",
+      "action": "readCitation deleted; composeWorkstreamEntry performs ONE validated readChangeMetadata(ws.dir, projectRoot) INSIDE the fault boundary — a metadata failure now throws into the degraded path for BOTH kinds (absent metadata stays null, not a failure); the citation derives from the validated object; the emit-less created fallback also passes projectRoot. New fixtures: invalid-YAML metadata degrades (change AND explore, asserting no fabricated strip/status), unknown-schema metadata degrades instead of silently defaulting.",
+      "ripple_cascade": { "applied": ["src/core/orientation.ts", "test/core/orientation.test.ts"], "flagged_not_applied": [] }
+    },
+    {
+      "finding": "A ready apply gate at zero tasks has no current glyph",
+      "severity": "WARNING",
+      "file": "src/core/orientation.ts",
+      "pushback": "still applies",
+      "classification": "trivial fix",
+      "action": "The apply chip is current (`▶`) when the tracked gate's engine state is `ready`, including 0 checked — `apply ▶ 0/N` is the entry form. New 0/1 entry-boundary fixture.",
+      "ripple_cascade": { "applied": ["src/core/orientation.ts", "test/core/orientation.test.ts"], "flagged_not_applied": [] }
+    },
+    {
+      "finding": "Spine-invalid review emits still increment the strip",
+      "severity": "WARNING",
+      "file": "src/core/orientation.ts",
+      "pushback": "still applies — counts came from the permissive readTrail",
+      "classification": "trivial fix",
+      "action": "Strip iteration counts now derive from the SAME spine-valid emit list recency uses (readValidEmits; command 'review' by mode); readTrail dropped from orientation entirely (its gate contract untouched). Fixture asserts a spine-invalid review file moves neither `last` nor the chip count.",
+      "ripple_cascade": { "applied": ["src/core/orientation.ts", "test/core/orientation.test.ts"], "flagged_not_applied": [] }
+    },
+    {
+      "finding": "Per-trail same-token selection reverses the shared filename tie-break",
+      "severity": "WARNING",
+      "file": "src/core/orientation.ts",
+      "pushback": "still applies — ascending-filename-last selection inverted compareRecency's direction",
+      "classification": "trivial fix",
+      "action": "readValidEmits' equal-token ordering flipped so `.at(-1)` selects the lexicographically-EARLIER filename — one tie-break direction for per-trail newest, sprint anchoring, and global LAST. Same-workstream/same-token fixture added (apply beats propose).",
+      "ripple_cascade": { "applied": ["src/core/orientation.ts", "test/core/orientation.test.ts"], "flagged_not_applied": [] }
+    },
+    {
+      "finding": "PROGRAM does not reuse the architecture-status malformed bucket or render",
+      "severity": "WARNING",
+      "file": "src/core/orientation.ts",
+      "pushback": "still applies — orientation built its own {doc, violations} shape with zero-based lines and a divergent text render",
+      "classification": "trivial fix (extract-and-reuse)",
+      "action": "NEW src/core/architecture/buckets.ts: buildArchitectureBuckets + renderStageLine/renderLegacyLine/renderMalformedLines extracted from ArchitectureCommand.status; BOTH surfaces now consume it — orientation's program IS the architecture-status buckets (malformed entries carry stages + one-based violations), and --full's text render uses the identical stage/legacy/malformed lines (validate hint, violation lines, well-formed sibling stages). CLI tests cover legacy + malformed (good stage inside a malformed doc) in text and JSON.",
+      "ripple_cascade": { "applied": ["src/core/architecture/buckets.ts", "src/commands/architecture.ts", "src/core/orientation.ts", "src/commands/workflow/status.ts", "test/commands/status-orientation.test.ts"], "flagged_not_applied": [] }
+    },
+    {
+      "finding": "Single-review WAITING output violates the normative singular literal",
+      "severity": "WARNING",
+      "file": "src/core/orientation.ts",
+      "pushback": "still applies — the live repo printed '1 external review(s) packaged'",
+      "classification": "trivial fix",
+      "action": "Pluralized by count: singular '1 external review packaged, 0 returned', plural 'N external review(s) packaged, M returned' (mode still outside the phrase). One-packaged/zero-returned fixture asserts the singular literal and the absence of 'review(s)'.",
+      "ripple_cascade": { "applied": ["src/core/orientation.ts", "test/core/orientation.test.ts"], "flagged_not_applied": [] }
+    },
+    {
+      "finding": "The also line reports a completed predecessor instead of the active review phase",
+      "severity": "WARNING",
+      "file": "src/commands/workflow/status.ts",
+      "pushback": "still applies — phaseOf fell back to the last ✓ chip",
+      "classification": "trivial fix",
+      "action": "phaseOf now derives from the ENGINE frontier: the first non-superseded, non-passed gate in graph order (review-proposal/review-system → 'review'); strip presentation is only the ungated fallback. CLI assertion: a complete-artifacts sibling renders '(review)', never '(propose done)'.",
+      "ripple_cascade": { "applied": ["src/commands/workflow/status.ts", "test/commands/status-orientation.test.ts"], "flagged_not_applied": [] }
+    }
+  ],
+  "resolution_summary": {
+    "resolved": 7,
+    "stale": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "post_state": "Build green; 1749 tests green (1742 + 7 new); strict validation + fingerprints 7/7; both live surfaces (orbit status, orbit architecture status) render coherently from the shared bucket builder",
+  "final_assessment": "All 7 external system iter-1 findings resolved. The CRITICAL closed the real fault-isolation gap: metadata is now read once, validated, with projectRoot, inside the degradation boundary — the normative invalid-metadata trigger degrades both workstream kinds instead of being swallowed by defensive fallbacks. The six WARNINGs aligned the implementation to the spec's grammar and sharing contracts (ready-gate glyph, uniform spine-valid counting, one tie-break direction, the extracted architecture-status bucket builder consumed by both surfaces, count-based pluralization, engine-frontier also-phases). The external carried a CRITICAL, so the confirm predicate requires an independent pass yielding none.",
+  "next_recommended": "/orbit:review --as system d3-orientation"
+}

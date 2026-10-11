@@ -1,5 +1,6 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
+import { createFenceTracker } from '../markdown-fence.js';
 
 /**
  * Trail reader (C1 engine gates). Reads a change's `.orbit-runs/` audit trail into
@@ -12,12 +13,31 @@ import * as path from 'node:path';
 export type ReviewerClass = 'in-context' | 'fresh' | 'external';
 export type ReviewMode = 'proposal' | 'system';
 
-/** A normalized finding, keyed for same-gate new-finding matching. */
+/** The closed severity ladder (orbit-conventions). `null` = the emit carried no recognised value. */
+export type Severity = 'CRITICAL' | 'WARNING' | 'SUGGESTION';
+const SEVERITIES: readonly string[] = ['CRITICAL', 'WARNING', 'SUGGESTION'];
+/** CRITICAL and WARNING gate; SUGGESTION never does (rc02). */
+export function isSubstantive(sev: Severity | null): boolean {
+  return sev === 'CRITICAL' || sev === 'WARNING';
+}
+
+/** The closed disposition set an address-reviews entry may carry. */
+export type Disposition = 'resolved' | 'stale' | 'deferred' | 'escalated';
+const DISPOSITIONS: readonly string[] = ['resolved', 'stale', 'deferred', 'escalated'];
+
+/** A normalized finding. Its KEY is the tuple (TRIMMED, CASE-SENSITIVE TITLE + REPO-RELATIVE FILE) — used by clause (b)
+ *  for resolution completeness and for deferred-suggestion dedup. (It was introduced for the
+ *  new-finding match, which rc02c retired with clause (c); the key outlived the rule.) */
 export interface TrailFinding {
   /** Trimmed, case-sensitive title. */
   title: string;
   /** Repo-relative file path with any `:line` suffix stripped. */
   file: string;
+  /** Authored severity; `null` when the emit carried no recognised value. NEVER re-graded. */
+  severity: Severity | null;
+  /** External parse bookkeeping: the ingestion contract requires the full field triple. */
+  hasFile?: boolean;
+  hasDescription?: boolean;
 }
 
 /** A completed review pass (internal `review-<mode>-*.json` or external `external-<as>-*.md`). */
@@ -35,6 +55,17 @@ export interface TrailPass {
   source: 'internal-review' | 'external';
 }
 
+/** One `resolutions[]` element, normalized. */
+export interface TrailResolutionEntry {
+  severity: Severity | null;
+  /** Read from `outcome`, or the legacy key `status` when `outcome` is absent. */
+  disposition: Disposition | null;
+  /** Trimmed title, for deduplicating the deferred-suggestion count. */
+  title: string;
+  /** Repo-relative file with any `:line` suffix stripped. */
+  file: string;
+}
+
 /** An address-reviews resolution record. */
 export interface TrailResolution {
   token: string;
@@ -43,6 +74,32 @@ export interface TrailResolution {
   /** `null` when the field was absent/non-numeric — treated as UNRESOLVED (not zero). */
   deferred: number | null;
   escalated: number | null;
+  /**
+   * rc02 READABILITY: true only when `resolutions` is a NON-EMPTY array whose EVERY element is an
+   * object carrying a recognised severity AND a recognised disposition. Anything else — absent,
+   * empty, a counter object, a non-object element, an unrecognised value — is UNREADABLE and the
+   * gate falls back WHOLE to the bare counts for that record.
+   */
+  readable: boolean;
+  /** The normalized entries; empty when the record is unreadable. */
+  entries: TrailResolutionEntry[];
+}
+
+/** An external findings artifact the shape validation REJECTED (rc02: spend is spend). */
+export interface RejectedExternal {
+  token: string;
+  file: string;
+  mode: ReviewMode;
+}
+
+/**
+ * rc17a: a blind pair's LAUNCH — a `review-external-<TS>.json` T0 whose JSON carries `pair: true` and a
+ * `mode` of `proposal` or `system`. Its members are COMPUTED by the gate model from the passes after it
+ * (`orbit-engine-gates`' `A pair's membership is computed from its launch`); nothing is stored.
+ */
+export interface TrailLaunch {
+  token: string;
+  mode: ReviewMode;
 }
 
 export interface Trail {
@@ -50,8 +107,23 @@ export interface Trail {
   runsDir: string;
   passes: TrailPass[];
   resolutions: TrailResolution[];
+  /** rc17a: pair launches, token order. A T0 without `pair: true` or a valid `mode` is no launch. */
+  launches: TrailLaunch[];
   /** `apply-*.json` filename tokens (artifact-changing events for freshness). */
   applyTokens: string[];
+  /**
+   * External findings artifacts whose shape validation failed (rc02). They satisfy NO cadence slot
+   * — their findings cannot be read — but they cost a model run, so `independentSpend` counts them
+   * and the gate's reason names them. Attributed to the mode in the filename.
+   */
+  rejectedExternals: RejectedExternal[];
+  /**
+   * The LATEST apply emit's declared `user_validation_tasks` identifier list (D5): the
+   * engine-verified record of which unchecked boxes are user-validation handoffs. Absent
+   * when no apply emit declares the field. Consumed by the tracked-gate user-validation
+   * subset rule (orbit-engine-gates).
+   */
+  latestApplyUserValidation?: string[];
 }
 
 const TS_TOKEN = /(\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}Z)/;
@@ -62,70 +134,126 @@ export function parseTsToken(filename: string): string | null {
   return m ? m[1] : null;
 }
 
-/** Strip a trailing `:line` (and `:line:col`) suffix from a file path. */
-function stripLineSuffix(file: string): string {
+/**
+ * Strip a trailing `:line` (and `:line:col`) suffix from a file path. Exported (rc08a) so the walk
+ * write gate's path rule and ripple-miss pointer key normalize by this one rule.
+ */
+export function stripLineSuffix(file: string): string {
   return file.replace(/:\d+(:\d+)?$/, '').trim();
 }
 
-function toRepoRelative(p: string): string {
+export function toRepoRelative(p: string): string {
   // Normalize to a forward-slash path; keep as-is if already relative. Absolute
-  // paths are compared after this normalization by callers.
+  // paths are compared after this normalization by callers. Exported (rc08a system walk 2,
+  // external W3) so the walk gate keys a path as this reader does: stripLineSuffix(toRepoRelative(x)).
   return p.replace(/\\/g, '/').trim();
+}
+
+/**
+ * A synthetic trail entry (D-arc Stage D5): an in-memory emit candidate treated as if it
+ * were already on the trail — the emit surface's post-write-semantics composition computes
+ * the change status against `disk + candidate` WITHOUT any provisional file existing.
+ */
+export interface TrailOverlay {
+  /** The candidate's would-be filename (routes it through the same parse branches). */
+  name: string;
+  json: unknown;
 }
 
 /**
  * Reads the change's `.orbit-runs/` trail. Files with unparseable tokens or
  * unreadable/invalid content are skipped (treated as absent) — never throws on
- * a single bad file.
+ * a single bad file. An optional `overlay` candidate is folded in as if on disk.
  */
-export function readTrail(changeDir: string): Trail {
+export function readTrail(changeDir: string, overlay?: TrailOverlay): Trail {
   const runsDir = path.join(changeDir, '.orbit-runs');
-  const trail: Trail = { changeDir, runsDir, passes: [], resolutions: [], applyTokens: [] };
+  const trail: Trail = {
+    changeDir,
+    runsDir,
+    passes: [],
+    resolutions: [],
+    launches: [],
+    applyTokens: [],
+    rejectedExternals: [],
+  };
+  // (token, declared user-validation ids) per apply emit; the latest token wins below.
+  const applyUserValidation: Array<[string, string[]]> = [];
 
-  if (!fs.existsSync(runsDir)) return trail;
-
-  let entries: string[];
-  try {
-    entries = fs.readdirSync(runsDir);
-  } catch {
-    return trail;
-  }
-
-  for (const name of entries) {
-    const token = parseTsToken(name);
-    const full = path.join(runsDir, name);
-
-    // External findings file: external-(proposal|system)-<TS>.md — NOT external-prompt-*.
-    const extMatch = name.match(/^external-(proposal|system)-\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}Z\.md$/);
-    if (extMatch && token) {
-      const pass = parseExternalMarkdown(full, token, extMatch[1] as ReviewMode);
-      if (pass) trail.passes.push(pass);
-      continue;
-    }
-
-    if (!name.endsWith('.json') || !token) continue;
-
-    let json: any;
-    try {
-      json = JSON.parse(fs.readFileSync(full, 'utf-8'));
-    } catch {
-      continue; // unreadable / invalid JSON → absent
-    }
-
+  const ingestJson = (name: string, token: string, full: string, json: any): void => {
     if (/^review-(proposal|system)-/.test(name)) {
       trail.passes.push(parseInternalReview(full, token, json));
     } else if (/^address-reviews-/.test(name)) {
       trail.resolutions.push(parseAddressReviews(token, json));
     } else if (/^apply-/.test(name)) {
       trail.applyTokens.push(token);
+      const uv = (json as any)?.user_validation_tasks;
+      if (Array.isArray(uv) && uv.every((t: unknown) => typeof t === 'string')) {
+        applyUserValidation.push([token, uv as string[]]);
+      }
     }
     // review-external-*.json (T0 packaging emit) is intentionally NOT a pass:
     // a packaged-but-unreturned external never counts as class coverage.
+    // rc17a: one carrying `pair: true` and a valid `mode` is a pair LAUNCH. Any other T0 is no launch,
+    // so a re-run of the missing external half, which re-packages without the flag, writes none.
+    else if (/^review-external-/.test(name)) {
+      if (json !== null && typeof json === 'object' && json.pair === true && (json.mode === 'proposal' || json.mode === 'system')) {
+        trail.launches.push({ token, mode: json.mode });
+      }
+    }
+  };
+
+  if (fs.existsSync(runsDir)) {
+    let entries: string[];
+    try {
+      entries = fs.readdirSync(runsDir);
+    } catch {
+      entries = [];
+    }
+
+    for (const name of entries) {
+      const token = parseTsToken(name);
+      const full = path.join(runsDir, name);
+
+      // External findings file: external-(proposal|system)-<TS>.md — NOT external-prompt-*.
+      const extMatch = name.match(/^external-(proposal|system)-\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}Z\.md$/);
+      if (extMatch && token) {
+        const mode = extMatch[1] as ReviewMode;
+        const pass = parseExternalMarkdown(full, token, mode);
+        if (pass) trail.passes.push(pass);
+        // rc02: a return that came back unreadable is still spend. Recorded separately so it can
+        // never satisfy a slot while remaining visible to `independentSpend` and the reason.
+        else trail.rejectedExternals.push({ token, file: full, mode });
+        continue;
+      }
+
+      if (!name.endsWith('.json') || !token) continue;
+
+      let json: any;
+      try {
+        json = JSON.parse(fs.readFileSync(full, 'utf-8'));
+      } catch {
+        continue; // unreadable / invalid JSON → absent
+      }
+      ingestJson(name, token, full, json);
+    }
+  }
+
+  if (overlay) {
+    const token = parseTsToken(overlay.name);
+    if (token && overlay.name.endsWith('.json')) {
+      ingestJson(overlay.name, token, path.join(runsDir, overlay.name), overlay.json);
+    }
   }
 
   trail.passes.sort((a, b) => (a.token < b.token ? -1 : a.token > b.token ? 1 : 0));
   trail.resolutions.sort((a, b) => (a.token < b.token ? -1 : a.token > b.token ? 1 : 0));
+  trail.launches.sort((a, b) => (a.token < b.token ? -1 : a.token > b.token ? 1 : 0));
   trail.applyTokens.sort();
+  trail.rejectedExternals.sort((a, b) => (a.token < b.token ? -1 : a.token > b.token ? 1 : 0));
+  if (applyUserValidation.length > 0) {
+    applyUserValidation.sort((a, b) => (a[0] < b[0] ? -1 : 1));
+    trail.latestApplyUserValidation = applyUserValidation[applyUserValidation.length - 1][1];
+  }
   return trail;
 }
 
@@ -145,6 +273,7 @@ function parseInternalReview(file: string, token: string, json: any): TrailPass 
   const findings: TrailFinding[] = findingsArr.map(f => ({
     title: String(f?.title ?? '').trim(),
     file: stripLineSuffix(toRepoRelative(String(f?.file ?? ''))),
+    severity: normalizeSeverity(f?.severity),
   }));
 
   const critical =
@@ -173,12 +302,62 @@ function parseInternalReview(file: string, token: string, json: any): TrailPass 
   };
 }
 
+/** A recognised severity, or null. Never throws; never re-grades. */
+function normalizeSeverity(v: unknown): Severity | null {
+  return typeof v === 'string' && SEVERITIES.includes(v) ? (v as Severity) : null;
+}
+
+/**
+ * A recognised disposition from `outcome`; the legacy key `status` is consulted ONLY when `outcome`
+ * is ABSENT. Presence is tested with `in`, not truthiness or string-ness: `{outcome: null}` is a
+ * PRESENT value the reader cannot interpret, and falling through to `status` there would revive a
+ * legacy key to override a value the emit actually carried. Exported (rc08a) so the ripple-miss
+ * pointer check reads an earlier walk's entry as the trail reader reads it.
+ */
+export function normalizeDisposition(entry: any): Disposition | null {
+  const has = (k: string): boolean =>
+    entry !== null && typeof entry === 'object' && Object.prototype.hasOwnProperty.call(entry, k);
+  const read = (k: string): Disposition | null => {
+    const v = entry?.[k];
+    return typeof v === 'string' && DISPOSITIONS.includes(v) ? (v as Disposition) : null;
+  };
+  if (has('outcome')) return read('outcome');
+  if (has('status')) return read('status');
+  return null;
+}
+
+/**
+ * rc02 readability: a NON-EMPTY array whose EVERY element is an object carrying BOTH a recognised
+ * severity AND a recognised disposition. The empty case is stated, not defaulted — an empty array
+ * is UNREADABLE, so it can never vacuously resolve a pass over its own summary.
+ */
+function readResolutionEntries(raw: unknown): { readable: boolean; entries: TrailResolutionEntry[] } {
+  if (!Array.isArray(raw) || raw.length === 0) return { readable: false, entries: [] };
+  const entries: TrailResolutionEntry[] = [];
+  for (const el of raw) {
+    if (el === null || typeof el !== 'object' || Array.isArray(el)) return { readable: false, entries: [] };
+    const severity = normalizeSeverity((el as any).severity);
+    const disposition = normalizeDisposition(el);
+    if (severity === null || disposition === null) return { readable: false, entries: [] };
+    entries.push({
+      severity,
+      disposition,
+      title: String((el as any).title ?? '').trim(),
+      file: stripLineSuffix(toRepoRelative(String((el as any).file ?? ''))),
+    });
+  }
+  return { readable: true, entries };
+}
+
 function parseAddressReviews(token: string, json: any): TrailResolution {
   const rs = json.resolution_summary ?? {};
   const rawPath = json.source_path ?? null;
+  const { readable, entries } = readResolutionEntries(json.resolutions);
   return {
     token,
     sourcePath: rawPath ? stripLineSuffix(toRepoRelative(String(rawPath))) : null,
+    readable,
+    entries,
     // Missing/non-numeric → null (unresolved), NOT 0: an address-reviews JSON without a
     // proper resolution_summary must not falsely resolve a pass (per the edge-case contract:
     // malformed/missing fields are treated as if no address-reviews ran).
@@ -214,18 +393,54 @@ function parseExternalMarkdown(file: string, token: string, mode: ReviewMode): T
   let hasHeader = false;
   const sawSections = new Set<string>();
 
+  // FENCE-AWARE via the SHARED CommonMark tracker (rc02 walk 9). An earlier lean copy here
+  // remembered only the fence CHARACTER, so a three-backtick line closed a four-backtick fence and
+  // the severity headings after it read as structure — admitting a document with no findings at all
+  // as a clean external pass. Two parsers implementing one contract is the defect; the tracker is
+  // imported, never restated.
+  const fence = createFenceTracker();
+  let hasReviewer = false;
+  // rc02b — the FIELD-LINE RULE (`orbit-conventions`' External-review findings markdown format):
+  // `**File**:` / `**Description**:` are recognised only until the current finding's Description
+  // body OPENS; after that, a field-shaped line is CONTENT. The render parser already read it this
+  // way; this reader took the LAST `**File**:` line, so a path quoted inside a Reproduction body
+  // re-filed the finding at the gate while the report showed the right file — two readers, one
+  // contract, two answers (the external proposal pass, rc02b). `descOpen` is per finding.
+  let descOpen = false;
+  // Inside an open Description body, the Reproduction label ends the DESCRIPTION for the
+  // has-a-body test (the renderer opens its reproduction body there and its recommendation is
+  // the lines before it); a fenced line is body content in both readers.
+  let reproOpen = false;
+  const markDescriptionBody = (line: string): void => {
+    if (!descOpen || reproOpen || findings.length === 0) return;
+    if (/^\*\*Reproduction\*\*:/i.test(line)) {
+      reproOpen = true;
+      return;
+    }
+    if (line.trim() !== '') findings[findings.length - 1].hasDescription = true;
+  };
   for (const line of lines) {
+    const wasInFence = fence.inFence;
+    if (fence.handle(line) || wasInFence) {
+      markDescriptionBody(line);
+      continue;
+    }
     if (/^#\s+External Review\b/i.test(line)) hasHeader = true;
+    if (/^\*\*Reviewer\*\*:/i.test(line)) hasReviewer = true;
     const sec = line.match(/^##\s+(CRITICAL|WARNING|SUGGESTION)\s*$/);
     if (sec) {
       section = sec[1] as 'CRITICAL' | 'WARNING' | 'SUGGESTION';
       sawSections.add(sec[1]);
       pendingTitle = null;
+      descOpen = false;
+      reproOpen = false;
       continue;
     }
     if (/^##\s+/.test(line)) {
-      section = null; // left the severity sections (e.g. ## Notes)
+      section = null; // left the severity sections (e.g. ## Blocks, ## Notes) — never counted
       pendingTitle = null;
+      descOpen = false;
+      reproOpen = false;
       continue;
     }
     if (!section) continue;
@@ -234,17 +449,44 @@ function parseExternalMarkdown(file: string, token: string, mode: ReviewMode): T
     if (title) {
       counts[section]++;
       pendingTitle = title[1].trim();
-      findings.push({ title: pendingTitle, file: '' });
+      descOpen = false;
+      reproOpen = false;
+      // External findings take their severity from SECTION MEMBERSHIP, which is structural.
+      findings.push({ title: pendingTitle, file: '', severity: section, hasFile: false, hasDescription: false });
+      continue;
+    }
+    if (descOpen) {
+      // Inside a Description (or Reproduction) body: content, not fields — and the content is
+      // what makes the Description PRESENT, exactly as the renderer's blank-body rejection reads it.
+      markDescriptionBody(line);
       continue;
     }
     const fileField = line.match(/^\*\*File\*\*:\s*(.*\S)\s*$/i);
     if (fileField && findings.length > 0) {
       findings[findings.length - 1].file = stripLineSuffix(toRepoRelative(fileField[1]));
+      findings[findings.length - 1].hasFile = true;
+    }
+    // The label OPENS the body whether or not text follows on the same line (rc02b system blind
+    // pair — both halves found this reader demanding same-line text while the renderer accepted a
+    // next-line body, so a renderable pass was a rejected return at the gate). `hasDescription`
+    // is set by a non-blank body line, same-line or later, never by the bare label.
+    const descField = line.match(/^\*\*Description\*\*:\s?(.*)$/i);
+    if (descField && findings.length > 0) {
+      descOpen = true;
+      reproOpen = false;
+      if (descField[1].trim() !== '') findings[findings.length - 1].hasDescription = true;
     }
   }
 
-  // Reject malformed/incomplete files: not a confidently-parsed external findings artifact.
-  if (!hasHeader || sawSections.size < 3) return null;
+  // Reject malformed/incomplete files: not a confidently-parsed external findings artifact. The
+  // `**Reviewer**:` field is required alongside the header and all three severity sections — the
+  // canonical shape the format requirement fixes — so a truncated or example-only document is
+  // recorded as a REJECTED return rather than counted as a clean pass.
+  if (!hasHeader || !hasReviewer || sawSections.size < 3) return null;
+  // SHAPE PARITY with the supported ingestion path (rc02 walk 9): every counted finding must carry
+  // the full `### Title` / `**File**:` / `**Description**:` triple. A truncated entry that the
+  // `--from-file` contract refuses must not make a pass the gate then recommends resolving.
+  if (findings.some(f => !(f as any).hasFile || !(f as any).hasDescription)) return null;
 
   return {
     token,

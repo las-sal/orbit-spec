@@ -1,0 +1,149 @@
+{
+  "command": "review",
+  "timestamp": "2026-08-05T16:45:20Z",
+  "change": "d5-context-economy",
+  "final_assessment": "0 critical, 3 warning, 3 suggestion.",
+  "next_recommended": "/orbit:address-reviews d5-context-economy --from-file orbit/changes/d5-context-economy/.orbit-runs/review-proposal-2026-08-05T16-45-20Z.json",
+  "kind": "editorial",
+  "model": "claude-fable-5",
+  "mode": "proposal",
+  "iteration": 7,
+  "depth": "full",
+  "reviewer_class": "fresh",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "passes_run": [
+    "1. Structure & Delta Integrity",
+    "2. Internal Coherence",
+    "3. Cross-Doc Coherence",
+    "4. Archive Consistency",
+    "5. Codegen Readiness",
+    "6. Gap Hunt",
+    "7. Drift Hunt",
+    "8. Inline Review Marker Residue",
+    "9. Pre-Handoff Sweep"
+  ],
+  "passes_skipped": [],
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 3
+    }
+  },
+  "findings": [
+    {
+      "pass": "6. Gap Hunt",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md",
+      "line": 64,
+      "title": "Architecture-scoped address-reviews emits have no legal path through the surface",
+      "recommendation": "The baseline orbit-address-reviews 'Architecture-scoped resolution logs' requirement mandates address-reviews-<TS>.json in orbit/architecture/.orbit-runs/ with change: null + doc, and the run-summary-emit delta routes ALL address-reviews emits through orbit emit. But the target-resolution contract classes commands into a single scope ('--doc to a change-scoped one ... is a clean usage error'; 'audit-drift is the one dual-scope command'), never naming address-reviews (or review) as change-or-doc capable per invocation, and the post-write class defines only 'the change status against a SYNTHETIC TRAIL' — undefined when there is no change. Name the architecture-capable command set explicitly (review, address-reviews, architect) with per-invocation flag-driven trail resolution, and define the doc-scoped address-reviews next_recommended composition (or explicitly carve that walk out of the surface)."
+    },
+    {
+      "pass": "2. Internal Coherence",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md",
+      "line": 105,
+      "title": "Clean architecture-mode review emit composes an invalid change-report pointer",
+      "recommendation": "The deterministic-facts rule (and orbit-review's persisted-summary delta, line 58) binds ALL review emits' clean-pass next_recommended to the 'orbit status --change <change> --report' render pointer and iteration to the report ordinal's counting rule — but for --as architecture, change is null, no report surface exists (the delta's own --render rule says so), and baseline iteration is anchored per doc, not per change trail. The iter-6 handoff-mirror fix covered architect emits only; state the architecture-mode review rule explicitly (e.g. mirror the payload's handoff.next_command like architect, and count iteration per doc), or scope the review clean-pointer rule to proposal/system."
+    },
+    {
+      "pass": "5. Codegen Readiness",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/d5-context-economy/tasks.md",
+      "line": 63,
+      "title": "No task implements the orientation surfaced-skip-note behavior",
+      "recommendation": "The modified fault-isolation requirement makes spine-invalid exclusion SURFACED across bare, --full, and boot renders ('⚠ invalid emit skipped: <filename>') with a skipped_emits array in both JSON tiers — grep confirms none of this exists in src/core/orientation.ts today — yet group 4 covers only the boot render (4.1's 'degradation per orientation fault-isolation' reads as boot degrading under the policy, not implementing the policy's new surfacing). Add the bare/--full note + skipped_emits work and its tests to a task (4.1 extension or a 4.3)."
+    },
+    {
+      "pass": "3. Cross-Doc Coherence",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-orientation/spec.md",
+      "line": 11,
+      "title": "Boot mode-split enumerates architecture, which a change trail never holds",
+      "recommendation": "--boot reads the change's trail, and review-architecture emits persist to orbit/architecture/.orbit-runs/ — the '(proposal / system / architecture)' enumeration could send an implementer scanning the architecture trail for a change-scoped render. Drop 'architecture' from the split or note the mode cannot occur on a change trail."
+    },
+    {
+      "pass": "3. Cross-Doc Coherence",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/d5-context-economy/design.md",
+      "line": 180,
+      "title": "Design D8's 'no validation of the hint value' lags the gates delta's boundary check",
+      "recommendation": "The engine-gates delta (from the external-review fix) adds the rendering-boundary well-formedness check (single line, ≤80 chars, no control characters, malformed = inert); design D8 still says 'no validation of the hint value' flatly. Add 'beyond the rendering-boundary well-formedness check' so the design summary matches the normative delta."
+    },
+    {
+      "pass": "7. Drift Hunt",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-architect/spec.md",
+      "line": 16,
+      "title": "Post-sync the architect sweep is stated normatively in two requirements",
+      "recommendation": "The untouched baseline 'Architect authoring stance and capture' requirement already carries the R-d-8 residency sweep with its own 'Residency sweep before emit' scenario; the delta adds parallel sweep language + scenario to the emit requirement. Same substance, two homes — against the change's own one-home rule. Have the emit requirement cite the stance requirement (or fold the stance requirement's sweep sentence into this delta) rather than restating."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "title": "Apply's verify-first recommendation contradicts the post-write contract (iter-6 CRITICAL)",
+      "evidence": "run-summary-emit delta rules 1/3 now stamp the engine's post-landing canonical next_command; 'the pre-gates verify-first vocabulary is retired from this surface' (line 73); scenario renamed to 'Apply-complete recommends the engine's canonical next'"
+    },
+    {
+      "title": "Enumerated payload rows omit fields other deltas require (iter-6)",
+      "evidence": "emit-composition review row now carries `flags`; address-reviews `iteration` marked ENGINE-computed and rejected when payload-supplied (lines 13-17), with the excerpt-not-definition clause"
+    },
+    {
+      "title": "Predicted Touchpoints omits the six registry files (iter-6)",
+      "evidence": "design.md Touchpoints now lists src/core/templates/index.ts + profiles.ts + init.ts + update.ts as the six-registry retirement sweep entry (lines 209-210)"
+    },
+    {
+      "title": "next_recommended authorship undefined for architect emits (iter-6)",
+      "evidence": "deterministic-facts now mirrors handoff.next_command verbatim for architect emits with the 'Architect recommendation mirrors the handoff' scenario (emit-composition lines 120-123, 148-151)"
+    },
+    {
+      "title": "Self-pointer vs collision bump ordering unpinned (iter-6)",
+      "evidence": "'Filename-token resolution — INCLUDING any collision bump — precedes deterministic-fact composition' (emit-composition lines 79-81); task 2.2 pins the post-bump self-pointer test"
+    },
+    {
+      "title": "'Defined in per-skill schema references' wording (iter-6)",
+      "evidence": "conventions delta line 28 now reads 'payload-field lists MIRRORING the engine's authoritative table per orbit-emit-composition, never defining it'"
+    },
+    {
+      "title": "At-archive note wrapped across two heading lines (iter-6)",
+      "evidence": "tasks.md line 143 carries the single '### At-archive notes' heading with a normal paragraph beneath"
+    },
+    {
+      "title": "Retired invocation survives in untouched baseline blocks (iter-1/2)",
+      "evidence": "grep across orbit/specs/: every /orbit:review-external occurrence sits inside a requirement the delta set MODIFIES or in the two Purpose paragraphs the at-archive note 9.4 explicitly sweeps"
+    },
+    {
+      "title": "Architecture-mode review emits cannot pass the write gate (iter-1/2 CRITICAL)",
+      "evidence": "mode-scoped write-gate requirement + 'Architecture-mode review emit passes the mode-scoped gate' scenario accept change: null + doc + handoff-shape checks"
+    },
+    {
+      "title": "gates.ts line citations",
+      "evidence": "src/core/artifact-graph/gates.ts:77 and :397 verified to contain exactly the retired /orbit:review-external invocations the delta and design D3 cite; normalizeInternalPass confirmed exported from report-render.ts:159"
+    }
+  ],
+  "commentary": "Strict validation and 25/25 fingerprints green; zero @review: residue; no baseline scenario dropped across all ten modified capabilities (the two renames are the deliberate verify-first retirement and the 6-to-7 spine bump). The change is notably self-compliant: its own tasks.md preamble parses under the grammar it specifies, its explore.md practices the standing-recommendation format it mandates, and the frozen record vocabulary is used consistently everywhere including the archive-consistency surfaces. What looseness remains clusters at one seam — architecture-scoped emits for commands other than architect. The iter-6 walk answered the authorship question for architect via the handoff mirror, but the identical question recurs one command over (review --as architecture's clean pointer, doc-scoped address-reviews), suggesting the fix was applied at the finding's literal anchor rather than across the seam's family. The other genuine hole is task-coverage: the orientation fail-loud surfacing is fully specified but invisible from tasks.md, the one artifact the apply phase actually executes from. Engine claims were spot-verified against source throughout and held every time."
+}

@@ -1,0 +1,132 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-06T20:24:12Z",
+  "change": "rc17b-blind-pair-command",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc17b-blind-pair-command/.orbit-runs/review-proposal-2026-10-06T20-23-07Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-06T20-23-07Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 1
+  },
+  "pushback_verification": "All three verified against current artifacts; none stale.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The generic failed-run scenario still names the handoff commit for every launched run, a pair half included",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc17b-blind-pair-command/specs/orbit-review-external/spec.md",
+      "line": 63,
+      "classification": "trivial_fix",
+      "action": "qualified the THEN of `A failed run falls back to paste`: the line names the handoff commit, or for a blind pair's external half the pair's REVIEWED COMMIT — matching the failure row",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "in place of the removed worktree, then"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc17b-blind-pair-command/specs/orbit-review-external/spec.md",
+            "text": "in place of the removed worktree (for a blind pair's external half, the pair's REVIEWED COMMIT), then"
+          }
+        ],
+        "searched": [
+          "handoff commit in place of",
+          "handoff commit instead"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "ripple_miss_of": {
+        "walk": "2026-10-06T20-10-41Z",
+        "title": "A failed RE-RUN's paste fallback sends the reviewer to the re-run's handoff commit, which holds the committed fresh partner",
+        "file": "specs/orbit-review-external/spec.md",
+        "kind": "query"
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The fresh re-run row narrows the state to read to the change's files, leaving a system-mode fresh re-run reading the code at HEAD",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc17b-blind-pair-command/specs/orbit-review-external/spec.md",
+      "line": 124,
+      "classification": "trivial_fix",
+      "action": "the fresh re-run row names the repository read at the reviewed commit — the change's files and, in system mode, the code and the commit range ending there; design D6 and task 4.1 carry the same words",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc17b-blind-pair-command/design.md",
+          "orbit/changes/rc17b-blind-pair-command/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the change's files read at that commit"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc17b-blind-pair-command/specs/orbit-review-external/spec.md",
+            "text": "the repository read at that commit: the change's files and, in system mode, the code and the commit range ending there"
+          }
+        ],
+        "searched": [
+          "change's files read",
+          "state to read"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The change's metadata changed after the base pass and no walk entry lists it",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc17b-blind-pair-command/.openspec.yaml",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "recorded, no edit: the .openspec.yaml change is the base-fingerprint stamp `orbit fingerprint` wrote for the `Single-voiced canonical-next computation` block the prior walk's hint-key resolution added; this entry is its record",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [],
+        "searched": [
+          "base_fingerprints",
+          "Single-voiced canonical-next computation"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Three of three resolved: two one-site repairs to the reviewed-state rules (one a ripple miss of the earlier walk), one record-only note.",
+  "iteration": 3,
+  "next_recommended": "/orbit:apply rc17b-blind-pair-command — user-invoked",
+  "ripple_misses": 1
+}

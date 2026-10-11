@@ -1,0 +1,131 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-09T00:20:32Z",
+  "change": "rc05-executable-references",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc05-executable-references/specs/orbit-cli-grammar/spec.md",
+      "line": 83,
+      "title": "A second apostrophe closes the first one's quote, so a non-orbit line can still hide an orbit line",
+      "walk_entry": {
+        "title": "An unclosed quote on a non-orbit shell line hides every later orbit line in the fence",
+        "file": "test/helpers/surface-snippets.ts"
+      },
+      "recommendation": "Walk 1's fix covers a quote still open at the fence's end, but not one that a LATER non-orbit line closes. The orbit line between them is joined into that quoted string, with no snippet and no failure, and the row's new clause \"so a line of another tool cannot hide the `orbit` lines after it\" is false for it. The shell agrees the line is data (sh -n accepts it), so this is the extractor matching shell semantics; the hole is that a documented command can sit inside another command's quote unseen. Either (A) fail a join that began on a non-tool line when any joined line's first token is the tool, naming that line, or (B) narrow the clause to a quote still open at the fence's end and name the closed-later case in the places limit.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "In extractFenceLines, when a join began on a line whose first token is not the tool, fail extraction for each joined line whose first token is the tool, naming its own line. Add the two-apostrophe injection."
+        },
+        {
+          "label": "B",
+          "body": "Narrow the quoted-argument row's last clause to a quote still open at the fence's end, and add to the places limit's residual kind: an orbit line inside a quote another line opens and a later line closes."
+        }
+      ]
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc05-executable-references/specs/orbit-cli-grammar/spec.md",
+      "line": 91,
+      "title": "A trailing backslash on a command that takes a positional passes silently, not as a false failure",
+      "walk_entry": {
+        "title": "The places limit omits three forms the extractor and guard both miss",
+        "file": "orbit/changes/rc05-executable-references/specs/orbit-cli-grammar/spec.md"
+      },
+      "recommendation": "Walk 1's new residual text says a continuation's `\\` reaches the parser as an argument, \"a false failure\". That holds for a command with no positional (`orbit list \\` fails as too many arguments), but `orbit validate \\` parses with `\\` as its item, and the continued `--frobnicate` on the next line is never checked: not extracted, and the guard skips shell-fence lines. Say both outcomes: a false failure, or a silent pass of the continued flags."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Graded the two walk logs over each entry's sweep scope, probing each repaired rule with constructed fences rather than reading. The repaired tokenizer, the exit-code rule, the requiredOption row, the NO_COLOR assertion, the generated-content surfaces and the touchpoints example all hold; the residual diff from the base file's commit lists only files inside the entries' edit records. Both regressions are the same shape: walk 1 repaired the case the finding constructed and then wrote a sentence wider than the repair. The open-quote fix fails a quote nobody closes, but the new clause claims no other tool's line can hide an orbit line, and a second apostrophe defeats it; the continuation text calls the residual loud where a positional-taking command makes it silent. Neither is on today's surface: the sweep still reads 130 parsed, 35 bare, 0 failures, 0 guard hits. Pass 0 (verify-change) and Pass 6 (audit-drift) are whole-change and whole-project and were not run in this verification pass; Passes 4 and 5 have no lens files.",
+  "passes_run": [
+    "1",
+    "2",
+    "3"
+  ],
+  "passes_skipped": [
+    "0",
+    "4",
+    "5",
+    "6"
+  ],
+  "verification": [
+    {
+      "title": "An unclosed quote on a non-orbit shell line hides every later orbit line in the fence",
+      "file": "test/helpers/surface-snippets.ts",
+      "verdict": "regressed"
+    },
+    {
+      "title": "The accepted-codes rule rejects `orbit help <command>`, which the real CLI accepts with exit 0",
+      "file": "orbit/changes/rc05-executable-references/specs/orbit-cli-grammar/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The places limit omits three forms the extractor and guard both miss",
+      "file": "orbit/changes/rc05-executable-references/specs/orbit-cli-grammar/spec.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "The no-hook assertion cannot see the root hook's effect",
+      "file": "test/core/cli-grammar/builder.test.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "The neutralisation closure leaves out requiredOption, which the CLI uses",
+      "file": "orbit/changes/rc05-executable-references/specs/orbit-cli-grammar/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "SKILL.md diagnostic locations omit the generated frontmatter",
+      "file": "test/helpers/surface-snippets.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "The generated touchpoints example still names the former grammar owner",
+      "file": "src/core/templates/workflows/propose.ts",
+      "verdict": "landed"
+    }
+  ],
+  "final_assessment": "0 critical, 1 warning, 1 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-10-08T23-53-57Z",
+    "2026-10-08T23-57-33Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc05-executable-references"
+}

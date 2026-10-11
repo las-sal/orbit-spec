@@ -1,0 +1,61 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-04T18:23:09Z",
+  "change": "rc07b-reference-roundtrip",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc07b-reference-roundtrip/.orbit-runs/review-proposal-2026-10-04T18-21-49Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-04T18-21-49Z",
+  "latest_apply_token": null,
+  "walk_mode": "per_finding",
+  "walk_mode_source": null,
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 0
+  },
+  "pushback_verification": "1 of 1 verified: the block rule run over the built templates counts review 2, external-handoff 1, address-reviews 3, audit-drift 1, archive 1 — eight; a heading map then placed every json block under its heading, which refuted option B before it was adopted. 0 stale.",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The 'full-record schema block' test counts address-reviews' worked examples, so the reference holds three blocks, not one",
+      "file": "orbit/changes/rc07b-reference-roundtrip/specs/orbit-emit-composition/spec.md",
+      "line": 5,
+      "marker_source": "internal-review",
+      "classification": "decision_required",
+      "action": "Settled under R-crc-3: option A. The requirement states that a worked example omits `command` and is not a schema block (a worked example carrying it fails loudly as a schema block with no example); task 3.3 removes `command` from address-reviews' worked-example blocks (a) and (b), making the 'six blocks' count true on the applied tree; design D1 records the measurement. Option B was REFUTED by measurement before adoption: review's architecture-mode block sits under '## Architecture-mode extensions' and the review-external block under '### JSON shape', so 'first JSON block under ## Schema' would miss two real schema blocks. An explicit info-string tag for schema blocks was declined as new mechanism (R-crc-6).",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc07b-reference-roundtrip/specs/orbit-emit-composition/spec.md",
+          "orbit/changes/rc07b-reference-roundtrip/design.md",
+          "orbit/changes/rc07b-reference-roundtrip/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "source": "structured",
+        "options": [
+          "A",
+          "B"
+        ],
+        "selected": "A"
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": "can you resolve any of these with looking at best practices for ai development? (walk 1's delegation, applied to this walk's method call)",
+  "final_assessment": "One of one resolved. The in-context pass's own leaning (B, a positional definition) was refuted by a heading map before adoption — two of the six real schema blocks sit under other headings — so the walk took A: worked examples omit `command` by convention, task 3.3 removes it from address-reviews' two worked examples, and the six-block count holds on the applied tree. No new mechanism; validates --strict.",
+  "iteration": 3,
+  "next_recommended": "/orbit:apply rc07b-reference-roundtrip — user-invoked"
+}

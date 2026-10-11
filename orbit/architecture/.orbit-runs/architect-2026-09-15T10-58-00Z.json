@@ -1,0 +1,27 @@
+{
+  "command": "architect",
+  "timestamp": "2026-09-15T10:58:00Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "rc03a-blind-prompt WITHDRAWN and descoped to nothing; its content folds into rc03-review-genres. The stage stays declared and unratified as the record of what three independent passes cost and bought — 15 CRITICALs, zero repeats, three mechanisms, budget spent 3/3, no shipped fix. The conflict it was split out to resolve is real and remains open, so rc03 now owns it and its Depends-on drops rc03a; the false inheritance sentence (rc03 INHERITS that resolution) is replaced with the six things rc03a actually established, chief among them that the state space of a blind pair has TWO entries and every mechanism attempted answered only the empty-pair one. Recorded as a standing recommendation rather than written as a ruling, because priority is Sal's: attestation was identified in the first exploration and deferred three times on R-crc-1 ceiling grounds, and each deferral bought a cheaper prevention mechanism that the next pass found wrong — so a stage whose correct mechanism exceeds the ceiling should SPLIT THE MECHANISM or DECLARE ITSELF BLOCKED, never substitute a cheaper one.",
+  "stages_touched": [
+    "rc03a-blind-prompt",
+    "rc03-review-genres"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [],
+  "handoff": {
+    "boot_sequence": [
+      "orbit/architecture/clean-up-review-cycle.md — rc03a's section is the withdrawal record with all three failed mechanisms; rc03's charter carries the absorbed evidence.",
+      "The status log's last entry — the R-crc-1 corollary awaiting ratification, and the walk-coverage discipline.",
+      "orbit/changes/rc03a-blind-prompt/ — ten trail records across three passes and three walks; archive WITHOUT syncing.",
+      "src/core/artifact-graph/gates.ts:857-863 — the open-pair branch, the leaking state no mechanism has addressed."
+    ],
+    "next_command": "/orbit:archive rc03a-blind-prompt",
+    "model_hint": "The archive is mechanical, with one real decision inside it: at the sync prompt choose Archive without syncing. The gate will fire its inflection prompt reporting budget spent 3/3.",
+    "seam": "rc03a is withdrawn and awaits archive. rc03 owns the conflict and is premised. rc13 remains mid-exploration. The R-crc-1 corollary in the status log awaits Sal's ratification. Two outward acts stay the user's: the drafted delta-scope issue and closing issue #8."
+  },
+  "next_recommended": "/orbit:archive rc03a-blind-prompt"
+}

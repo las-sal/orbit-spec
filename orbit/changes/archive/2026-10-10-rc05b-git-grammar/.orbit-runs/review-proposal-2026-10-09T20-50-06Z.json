@@ -1,0 +1,135 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-09T20:50:06Z",
+  "change": "rc05b-git-grammar",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 2
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    }
+  },
+  "findings": [
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md",
+      "line": 59,
+      "title": "The validator's answer for a command key recorded unknown, and for a leading word no key matches, is unstated",
+      "recommendation": "State both outcomes in the validator paragraph and design D5: a key the contract records with known: false fails with git's recorded line (`is not a git command` / `unknown subcommand`); a leading word that matches no recorded key — a subcommand a body gained after capture — fails as `unknown command \"<x>\" for \"git\"` with the re-capture hint, as an unrecorded flag does. Task 3.1 and D6's unknown-subcommand injection assert the message, so the two paths need one written answer each.",
+      "reproduction": "Constructed case: the surface carries `git frobnicate <path>` at capture time, so the contract holds `\"frobnicate\": {known: false, message: \"git: 'frobnicate' is not a git command...\"}`. The validator paragraph says only \"look up the longest command key leading the argument vector\"; the lookup succeeds on a key whose entry says unknown, and nothing says whether it fails with that message, with D5's `unknown command` string, or proceeds to check flags against an empty flag list. A second implementer meeting a post-capture `git rebase <x>` (no key at all) has D5's string but no re-capture hint, unlike the unrecorded-flag path."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md",
+      "line": 45,
+      "title": "A group's verb is not required to be a word, as the prototype required",
+      "recommendation": "Add to the command-key row: a group's verb is the segment's second token only when it matches `^[a-z][a-z0-9-]*$`; a group segment whose second token is a flag or a placeholder has no key and fails as an unknown command. The prototype applied exactly this test (explore.md Case 2); the spec row dropped it.",
+      "walk_entry": {
+        "title": "No rule decides whether a git segment's second word is a subcommand (worktree remove) or a positional (push <remote>)",
+        "file": "orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md"
+      }
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc05b-git-grammar/explore.md",
+      "line": 1,
+      "title": "explore.md changed after the pair and is in no walk entry's edit record",
+      "recommendation": "Record gap only: the re-exploration (D-rc05b-9 to D-rc05b-12, Cases 1–3) edited explore.md on the redesign route, which is the route the walk named; no defect found in it. Nothing to change unless a later walk wants the route's edits listed."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Graded each resolved entry over its sweep scope against the files as they stand. The redesigned probe table matches the prototype the re-exploration executed row for row, with one loss: the prototype only took a word as a group's verb, and the spec's key row does not say so. The descoped =value limit, the grouping row, the inline gate and the non-goal all landed where their entries say and nowhere contradicts them; the old probe wording survives only in explore.md and the trail. The one new gap sits in the validator, outside every walk: it was written before the capture recorded unknown keys, and the two kinds of unknown command now need their own answers.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "verification": [
+    {
+      "title": "The -h probe row cannot classify a value-taking flag: the flag consumes -h and the command runs",
+      "file": "orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The run-strategy row records correct surface flags REJECTED on commands that print usage without a positional (rev-list --count, check-ref-format --branch)",
+      "file": "orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "D3's `=value` rule cannot be implemented from D3's own contract shape, and the validator says nothing about `=value` on a no-value flag",
+      "file": "orbit/changes/rc05b-git-grammar/design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "No rule decides whether a git segment's second word is a subcommand (worktree remove) or a positional (push <remote>)",
+      "file": "orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "The `(` refusal applies to every shell-fence line, and today's surface carries one: rc05's orbit sweep and exit (1) go red",
+      "file": "orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Which inline spans the operator split reads is unstated: keeping the `starts with <tool> ` gate contradicts the FALSIFY claim; dropping it fails extraction on prose spans",
+      "file": "orbit/changes/rc05b-git-grammar/tasks.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "\"No generated-surface text\" conflicts with task 2.4's template fixes",
+      "file": "orbit/changes/rc05b-git-grammar/proposal.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The bare-name table speaks of spans, but after the split it is a per-segment question",
+      "file": "orbit/changes/rc05b-git-grammar/specs/orbit-cli-grammar/spec.md",
+      "verdict": "landed"
+    }
+  ],
+  "final_assessment": "0 critical, 1 warning, 2 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-10-09T16-28-05Z",
+    "2026-10-09T16-28-28Z",
+    "2026-10-09T20-47-41Z",
+    "2026-10-09T20-47-56Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc05b-git-grammar"
+}

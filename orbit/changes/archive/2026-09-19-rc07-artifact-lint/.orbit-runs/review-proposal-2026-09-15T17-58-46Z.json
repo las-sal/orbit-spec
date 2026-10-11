@@ -1,0 +1,126 @@
+{
+  "command": "review",
+  "timestamp": "2026-09-15T17:58:46Z",
+  "change": "rc07-artifact-lint",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+      "line": 5,
+      "title": "No requirement names the surface the lint is reached through",
+      "recommendation": "The four requirements specify the registry, the span grammar, the domain and the coverage record, but nothing normative says what INVOKES the lint. Design D1 decides it (`orbit validate --sources`, included in `--all`, per-item `orbit validate <change>` unchanged) and task 3.1 implements it, but the spec is silent — so an implementer reading the delta alone could just as defensibly wire the lint into every `orbit validate <change>` run, which would put a project-scoped check behind a per-change command and change what `--all` means. Add a sentence to requirement 1 (or a fifth short requirement) naming the surface, the `--all` inclusion, the unchanged per-item form, and where the coverage record renders. This is the one place in the delta where two competent implementers produce visibly different user-facing behavior."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc07-artifact-lint/tasks.md",
+      "line": 7,
+      "title": "Task 1.3 is short of the malformed-registry scenario it has to satisfy",
+      "recommendation": "The scenario added this iteration (spec.md:37-40) requires loud failure on unparseable YAML, a `sources:` value that is not a map, an entry that is a scalar, and a duplicate source name. Task 1.3 names only an unknown `engine:` value, a missing required parameter, and an unknown key. The two cases most likely to be silently swallowed — unparseable YAML and a non-map `sources:` — are exactly the ones the task does not mention, and 5.1's 'each error path' inherits the same short list. Extend 1.3 to name all four, and keep the requirement's framing that the absent-file silence is unreachable by any file that exists."
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+      "line": 9,
+      "title": "The spec never states that a source emits a STRING, and one of the four is a YAML number",
+      "recommendation": "The whole check is `span.includes(sourceValue)`, so the source's return type is load-bearing — but the normative table says a source emits 'the count of ...' and 'that registered schema's `version`', and `schemas/spec-driven/schema.yaml:2` carries `version: 4` as a YAML NUMBER. Design D2 and task 1.2 both say 'returns a STRING'; the spec does not. An implementer following the delta alone can return a number and get either a type error or a silent coercion at the comparison. State in requirement 1 that every engine source emits a STRING, and that numeric facts are rendered to their decimal string form at the source boundary rather than at the comparison."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+      "line": 65,
+      "title": "The pairing table mixes parse errors with a check failure, and says nothing about blast radius",
+      "recommendation": "Four rows produce a malformed-MARKER error naming a line; the fifth (empty span) is a CHECK FAILURE that must name the source value against the span's text, because there is no marker defect to report. The table's uniform 'outcome' column invites an implementer to emit all five through one error path, which would make an empty span report as a syntax error and lose the source value the author needs. The table is also silent on blast radius: does a malformed marker abort the file, abort the run, or skip that span and continue? Split the column into the error KIND (malformed marker vs. check failure) and say explicitly that a malformed marker fails its FILE's remaining spans loudly while other files still lint — an unspecified abort rule is how one bad marker silently turns the whole lint into a no-op."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc07-artifact-lint/design.md",
+      "line": 97,
+      "title": "The v1 source table now exists in two places, which is the defect this change argues against",
+      "recommendation": "Requirement 1 gained the source table this iteration, and design D3 already carried one. They agree today — I checked all four rows — but this change's own proposal rejects a capability split on the ground that 'two copies of nearly everything' is a defect, and the reviewed finding it just resolved was a spec/design disagreement about the registry's shape. Mark design D3's table explicitly as explanatory, with the spec's as normative, or reduce D3 to the rationale (why the prefix is declared, why stage-count counts well-formed stages) and let the spec carry the table alone."
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+      "line": 14,
+      "title": "`prefix` matching and `<n>` are unspecified",
+      "recommendation": "The grammar reads 'first bold span matches `<prefix>-<n>`' without saying whether the prefix is matched LITERALLY or compiled as a pattern (a prefix carrying a regex metacharacter would behave differently), nor what `<n>` admits — digits only, leading zeros, a trailing suffix like `R-crc-4a`. `R-crc` is safe on all counts today, so nothing is broken; but the registry is user-authored, and 'the prefix is a literal string, `<n>` is one or more decimal digits, nothing may follow' is one sentence that closes it."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+      "line": 15,
+      "title": "`specs.capability-count` does not say what it counts over",
+      "recommendation": "The spec says 'the count of baseline capability specs'; design D3 says `orbit/specs/*/spec.md`. The project directory is a resolved path rather than a constant in this codebase, so name the shape in the spec — directories under the project's `specs/` that contain a `spec.md` — and say whether a directory without one counts. The same sentence settles whether a capability added by an unarchived change is in scope (it is not; the count is over baseline)."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+      "line": 110,
+      "title": "The exclusion-table lead-in got stranded behind the within-file digression",
+      "recommendation": "This iteration inserted the within-file boundary paragraph between the living-versus-records paragraph and the exclusion table, and the lead-in sentence 'Every exclusion is stated with its reason, and each is decidable BY PATH...' rode along at the end of the new paragraph. It now introduces the table from behind a digression about `CLAUDE.md`, and reads as though the author's marker were one of the exclusions. Move that sentence back to the end of the living-versus-records paragraph, directly above the table."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "This is the check on the walk, and the walk holds: all fourteen prior findings verified resolved in the artifacts, none re-opened, and the two CRITICALs are closed at the root rather than patched. The ruling grammar no longer derives anything, and the inertness rule now covers the exact four markers that sat in this change's own prose. Nothing in this pass revisits settled ground.\n\nWhat this pass found is a different shape from the last one, and the shape is the point. The fresh pass found UNDER-DETERMINATION at the grammar's edges; this pass finds under-determination at the SEAMS — between the spec and the surface that invokes it, between a source's declared meaning and its return type, between a parse error and a check failure sharing one table column. Those are exactly the joints that eleven edits landing across three artifacts in one sitting would strain, and the strongest single finding is that the delta specifies the lint completely and never says what runs it. The spec can be read end to end without learning that `--sources` exists.\n\nThe second pattern is that the walk's own repairs introduced two smaller versions of defects the walk was repairing. A source table now exists in both the spec and the design — one iteration after resolving a spec/design disagreement about the registry's shape, in a change whose proposal rejects a capability split on the ground that two copies of one rule is a defect. And the exclusion-table lead-in got stranded behind a newly inserted paragraph. Neither is serious; both are the signature of fast additive editing, and both are cheap now and annoying later.\n\nWhat I could not determine from in-context: whether the inline-code-span scanner task 2.2 now carries is genuinely bounded. I can see that `src/core/markdown-fence.ts` tracks fences line by line and offers nothing for backtick spans, and I can see that the rule needs them — but CommonMark's inline-code rules (backtick-run matching, escaping, spans opened inside fenced regions) are a real grammar, and whether a correct-enough subset is fifty lines or three hundred is not something reading the artifacts can settle. It is the one place where apply could surprise this plan.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "final_assessment": "0 critical, 4 warning, 4 suggestion.",
+  "iteration": 2,
+  "next_recommended": "/orbit:address-reviews rc07-artifact-lint --from-file orbit/changes/rc07-artifact-lint/.orbit-runs/review-proposal-2026-09-15T17-58-46Z.json"
+}

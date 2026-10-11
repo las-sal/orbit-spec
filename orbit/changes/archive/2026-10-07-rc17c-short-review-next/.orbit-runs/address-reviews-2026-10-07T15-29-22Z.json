@@ -1,0 +1,146 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-07T15:29:22Z",
+  "change": "rc17c-short-review-next",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc17c-short-review-next/.orbit-runs/review-system-2026-10-07T14-54-11Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-07T14-54-11Z",
+  "latest_apply_token": "2026-10-07T14-50-05Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 3
+  },
+  "pushback_verification": "All three verified against the tree at 1a7fbc4b; none stale. F3 converges with the external half's WARNING on the same site and claim; walked here, in the earlier pass's log.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "SUGGESTION",
+      "title": "\"Same invocation as the gate's canonical next\" holds only when the gate names a walk",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc17c-short-review-next/specs/orbit-emit-composition/spec.md",
+      "line": 11,
+      "classification": "trivial_fix",
+      "action": "qualified the claim: the emit names the walk the gate's canonical next names whenever that next is a walk; on a half-landed pair the gate names the missing member. Applied to the delta, design D1, the proposal's Why and the composer comment; the rc03b pin moved for the comment (recorded in the pin). explore.md:34 already scopes its claim to the unresolved-pass next and stays.",
+      "evidence": "orbit-engine-gates' canonical-next scenarios name the missing member when openPair is reported (baseline 791-810); the delta claimed equality unconditionally",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc17c-short-review-next/design.md",
+          "orbit/changes/rc17c-short-review-next/proposal.md",
+          "src/core/emit-composition.ts",
+          "test/core/rc03b-untouched-modules.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "so the emit names the same invocation as the gate's",
+          "emit and the gate should name the same invocation",
+          "lists its outstanding passes`) name the same invocation"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc17c-short-review-next/specs/orbit-emit-composition/spec.md",
+            "text": "names the walk the gate's canonical next names whenever that next is a walk"
+          },
+          {
+            "path": "src/core/emit-composition.ts",
+            "text": "on a half-landed pair the gate names the missing member instead"
+          }
+        ],
+        "searched": [
+          "same invocation",
+          "gate's canonical next"
+        ],
+        "scope": [
+          "src/core/templates/workflows"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Universal-spine and workflow-shape scenarios declared on a three-example test",
+      "marker_source": "internal-review",
+      "file": "test/core/canonical-examples.test.ts",
+      "line": 180,
+      "classification": "trivial_fix",
+      "action": "added a test in test/core/emit-composition.test.ts that writes one emit per command the surface supports (the case list held to the engine's own command set), asserting the 7 spine fields on each, kind workflow on every workflow command, and apply's computed extensions; moved the two scenario tags there from the canonical-example test, which keeps the Editorial and Lifecycle tags it proves",
+      "evidence": "the canonical-example test executed three commands, and the Universal spine THEN names any command",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/emit-composition.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "test/core/emit-composition.test.ts",
+            "text": "every command the surface supports writes the 7 spine fields"
+          }
+        ],
+        "searched": [
+          "Universal spine present on every emit",
+          "Workflow command emit shape"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "requirementSource selects an active delta by substring, not by a MODIFIED heading line",
+      "marker_source": "internal-review",
+      "file": "test/core/canonical-examples.test.ts",
+      "line": 43,
+      "classification": "trivial_fix",
+      "action": "replaced the substring test with headingLine: a fence-aware scan in which the exact heading counts only under `## MODIFIED Requirements` (and, for locating the block, only outside a fence); the reader test gained a delta quoting the heading in a fence and a REMOVED delta, both refused as modifiers, and the new cases were shown red against the old substring code before restoring",
+      "evidence": "requirementSource read fs.readFileSync(abs).includes(HEADING), so a quoted or REMOVED heading counted as a modifier",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "fs.readFileSync(abs, 'utf-8').includes(HEADING)"
+        ],
+        "introduced": [
+          {
+            "path": "test/core/canonical-examples.test.ts",
+            "text": "function headingLine(text: string, section?: string): number"
+          }
+        ],
+        "searched": [
+          "includes(HEADING)",
+          "findIndex"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Three of three resolved as obvious fixes: the same-invocation claim qualified at four sites, the universal-spine and workflow-shape scenarios moved to a test that writes every command's emit, and the guard's source selection made structural (fence-aware, MODIFIED-only), which also closes the external half's converged WARNING.",
+  "iteration": 4,
+  "next_recommended": "/orbit:address-reviews rc17c-short-review-next",
+  "ripple_misses": 0
+}

@@ -1,0 +1,98 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-21T15:04:54Z",
+  "change": "rc02c-confirmation-semantics",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc02c-confirmation-semantics/.orbit-runs/review-system-2026-09-21T14-56-15Z.json",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "walk_mode_source": "flag",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 1
+  },
+  "pushback_verification": "All 3 verified by EXECUTION, not reading. Finding 1 was tested two ways — comparing each named scenario raw and whitespace-stripped, and checking whether each is the last scenario of its block — and both tests overturned its premise (identical when stripped; last-in-block in every case). Finding 2 confirmed by grepping the two new normative rules and listing every scenario under both requirements. Finding 3 is self-describing and its own text says it is not actionable here. ZERO stale; ONE finding answered with counter-evidence rather than a fix.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 0,
+    "deferred": 1,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The Scenario accounting now CLAIMS to be derived by diff, and a diff still does not reproduce it",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02c-confirmation-semantics/design.md",
+      "line": 247,
+      "classification": "decision_required",
+      "action": "Resolved OFF-MENU: NEITHER option (A) normalize nor (B) caveat. Pushback overturned the finding’s premise. All three scenarios it names are the LAST scenario of their requirement block, and all three are IDENTICAL once trailing whitespace is stripped — the difference is a block-boundary artifact of the splitter (a requirement followed by another ends with a blank line; one ending the file does not), never authored content. So the accounting’s claim was TRUE and the finding was produced by a naive instrument. What WAS real is the mirror image of what the finding reported: the section carried a \"differs only in trailing whitespace\" disclosure for \"Per-chunk touched files computed from the diff\", written by an earlier run of that same naive comparison, disclosing a difference that does not exist. That disclosure is REMOVED, and the section now documents how to re-derive the inventory correctly — split on requirement then scenario, compare with trailing whitespace stripped — naming the block-boundary trap and all three scenarios a naive comparison falsely reports.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02c-confirmation-semantics/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "resolution": "Settled under R-crc-3 as method rather than escalated as a fork: whether a completeness claim is made true by editing the delta or made precise by caveating it is a method question, and pushback showed neither was the right question. The finding was answered with COUNTER-EVIDENCE rather than a fix — the second time in this change a finding of mine came from my own bad probe, after the touchpoints probe read the wrong JSON key. Both times the discipline that caught it was executing the check rather than reading it.",
+      "recommendation_fork": {
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Normalize the three trailing-blank-line differences in the delta so every unnamed scenario is byte-identical in the literal sense, then the claim needs no caveat and the accounting needs no whitespace disclosures at all."
+          },
+          {
+            "label": "B",
+            "body": "Keep the whitespace differences and make the claim precise: correct the `spec-driven v1 gates and cadence` line, name all three whitespace-only diffs, and state that byte-identity is asserted modulo trailing whitespace."
+          }
+        ],
+        "chosen": "off-menu"
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "Two rules ADDED BY THIS WALK ship into baseline with no scenario",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02c-confirmation-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 518,
+      "classification": "trivial_fix",
+      "action": "Added both scenarios, transcribed from behaviour the tests already execute: \"An undeclared budget is absent as a KEY, not merely as a JSON value\" under \"Gate-aware status and instructions with position readout\", and \"A mode-underivable gate keeps its declaration and reports no spend\" under \"Review budget reported beside the gate state\". The Scenario accounting gained a SCENARIOS ADDED section naming both and the reason — a rule shipping into baseline asserted only by a unit test is invisible to rc06-scenario-test-map, whose premise is that scenarios are what tests map to. The accounting head moved from FOUR requirements to FIVE, re-derived rather than incremented.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02c-confirmation-semantics/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The Scenario accounting has grown into a maintained artifact that goes stale on every walk",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc02c-confirmation-semantics/design.md",
+      "line": 247,
+      "classification": "unresolvable",
+      "action": "Recorded as a future-stage recommendation in task 5.4, per the finding’s own text that it is not actionable inside this change: the Scenario accounting was rewritten three times in one cycle, each rewrite triggered by a reviewer or a sweep rather than by the edit that invalidated it, and the engine already diffs delta requirements against baselines for fingerprinting — so a scenario-level inventory is derivable from data it holds. Offered to rc09-propose-hygiene or rc10-apply-closure as a candidate for computation, not assigned.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02c-confirmation-semantics/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "deferred"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Three findings from the trailing in-context pass, all walked. The headline result is a PUSHBACK OVERTURN: the finding that the Scenario accounting still failed re-derivation was produced by my own naive instrument. All three scenarios it named are the LAST scenario of their requirement block, and all three are identical once trailing whitespace is stripped — a block-boundary artifact of the splitter, not content. The accounting claim was true. What was real is the mirror image: an earlier run of that same naive comparison had written a trailing-whitespace disclosure into the section for one of the three, disclosing a difference that does not exist. Removed, and the section now documents how to re-derive correctly, naming the trap and all three false positives so the next reader does not repeat it. That is the SECOND time in this change a finding of mine came from my own bad probe, after the touchpoints probe read the wrong JSON key — and both times the discipline that caught it was executing the check rather than reading it. The second finding was real and is the one worth having: two rules the blind-pair walk introduced were shipping into baseline asserted only by unit tests, invisible to rc06-scenario-test-map. Both now carry scenarios transcribed from the behaviour the tests execute, and the accounting was re-derived rather than incremented — four requirements became five. The third is recorded for a future stage: the accounting is a hand-maintained derived figure, rewritten three times in one cycle, and the engine already holds the data to compute it. Delta re-measured after the edits, recompute never hand-adjust: 64,751 B, 158 percent of R-crc-1 byte ceiling, 77 percent mandatory reproduction. Suite 2205 of 2205, validate --all --strict clean at 26 items, fingerprints 8 of 8, zero markers.",
+  "iteration": 5,
+  "next_recommended": "/orbit:archive rc02c-confirmation-semantics — user-invoked"
+}

@@ -1,0 +1,151 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-08-04T16:16:44Z",
+  "change": "d5-context-economy",
+  "final_assessment": "All 7 findings from the iter-4 fresh review walked and resolved (6 obvious-fix, 1 decision-lane chat-ratified); 0 stale, 0 deferred, 0 escalated. Strict validation green; fingerprints 25/25 verified.",
+  "next_recommended": "/orbit:review --as proposal --fresh d5-context-economy",
+  "kind": "editorial",
+  "model": "claude-fable-5",
+  "source": "from-file",
+  "source_path": "orbit/changes/d5-context-economy/.orbit-runs/review-proposal-2026-08-04T13-00-29Z.json",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 3,
+    "suggestion": 4
+  },
+  "pushback_verification": "All 7 verified against current state (source pass minutes old); 0 stale suppressions.",
+  "resolution_summary": {
+    "resolved": 7,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Live disposition scenario still enumerates review-external as currently generated and architect as the 16th workflow",
+      "marker_source": "internal-review",
+      "file": "orbit/specs/orbit-conventions/spec.md",
+      "line": 689,
+      "classification": "trivial_fix",
+      "action": "Added a MODIFIED 'Generated-file disposition' block to the conventions delta: the Orbit-authored scenario's enumeration re-anchored (review-external joined at B3 and RETIRED at D5 into review's --reviewer external branch; architect joined as the 16th at D2, surface 15 post-D5); byte-diffed, 2 changed lines; fingerprint stamped.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d5-context-economy/specs/orbit-conventions/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Baseline 'Architect workflow available' still states 'the generated surface grows to 16 workflows'",
+      "marker_source": "internal-review",
+      "file": "orbit/specs/orbit-architect/spec.md",
+      "line": 18,
+      "classification": "trivial_fix",
+      "action": "Added a MODIFIED 'Architect workflow available' block to the architect delta rephrasing the count historically ('grew the generated surface to 16 workflows at D2; 15 post-D5's review-external merge'); byte-diffed; fingerprint stamped.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d5-context-economy/specs/orbit-architect/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Membership criterion for open_questions_with_recommendation is undefined",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md",
+      "line": 196,
+      "classification": "decision_required",
+      "action": "Applied the ratified criterion: an entry counts toward n when its Standing recommendation line carries a value other than the literal 'none yet' — the attestation measures RECORDED LEANINGS; none-yet and slot-less entries fall outside n (slot-less stays audit-drift's format finding). Scenario disambiguated (the '1 of 2' example now names a none-yet entry); conventions delta's 'the slot is what the attestation counts' phrasing cascaded to 'the slot's RECORDED LEANING is what the attestation counts'.",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "Count real leanings only",
+            "body": "An entry counts toward n when its content carries a `Standing recommendation:` line whose value is NOT the literal `none yet` — the attestation measures recorded leanings (the leak-hardening intent); slot-less entries and `none yet` entries both fall outside n, and audit-drift separately flags slot-less entries as format violations."
+          },
+          {
+            "label": "Count slot presence",
+            "body": "An entry counts toward n when a `Standing recommendation:` line is present regardless of value — the attestation measures format compliance (matching the conventions delta's 'the slot is what the attestation counts' phrasing); adjust the audit-drift cross-check prose to match."
+          }
+        ],
+        "chosen": "Count real leanings only"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d5-context-economy/specs/orbit-conventions/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Task 3.1 and design D1's usage line omit the --doc flag the spec requires",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/tasks.md",
+      "line": 46,
+      "classification": "trivial_fix",
+      "action": "Task 3.1 gains --doc with the wrong-flag/both-flags mutual-exclusion usage errors; design D1's synopsis reads (--change <name> | --doc <doc>).",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/d5-context-economy/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Archived-trail resolution for orbit emit archive is unstated",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md",
+      "line": 139,
+      "classification": "trivial_fix",
+      "action": "The archive rule now states the resolution: scan orbit/changes/archive/ for *-<name>/ matches, take the lexically greatest (never composed from today's date); no match fails with the target-resolution contract's clean not-found error.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Payload-channel error paths (no payload; both channels) unspecified",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md",
+      "line": 7,
+      "classification": "trivial_fix",
+      "action": "The payload contract now states: when --payload is present stdin is not consulted (no both-channels ambiguity); absent payload (no flag, empty/terminal stdin) is a clean non-zero error naming both channels, no file written.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "'Review mode decision framework' still calls reviewer classes 'modes' post-merge",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/d5-context-economy/specs/orbit-conventions/spec.md",
+      "line": 264,
+      "classification": "trivial_fix",
+      "action": "The delta block's frame reworded: 'three reviewer classes (in-context, fresh, external — the --reviewer axis; \"mode\" belongs to --as)' and 'The three modes:' → 'The three classes:'; requirement title kept stable.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": []
+}

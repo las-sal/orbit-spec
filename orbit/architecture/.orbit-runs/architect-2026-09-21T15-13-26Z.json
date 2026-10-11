@@ -1,0 +1,24 @@
+{
+  "command": "architect",
+  "timestamp": "2026-09-21T15:13:26Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "Recorded Q-crc-20 while rc02c's scoped iteration-2 external pass runs: a gate can compute PASSED over mechanism no independent pass has read, because the freshness rule keys on APPLY tokens and a walk's commits are not an apply. Observed on rc02c's own cadence at the moment its review-system gate passed — the blind pair read the tree at fbcee57, and the walk that resolved their findings then landed 42 insertions and 24 deletions of ENGINE code, including a two-branch change to how gate status is assembled. The gate was not wrong: coverage and resolution were genuinely satisfied and nothing marked those passes stale, because nothing needed to. The gap is a CATEGORY the rule cannot see rather than a defect in it. R-crc-6 says the walk authors nothing, and where that holds the rule is exactly right; but this program has twice recorded walks that DID author mechanism — rc02's cycle, where nine of the first ten CRITICALs sat in mechanism that did not exist when the exploration closed, and rc02c's own decision lane, where two ratified options became engine behaviour mid-walk. The standing recommendation is deliberately NOT a new gate state or a blocking rule: the reasoning that retired budgetExhausted applies, and a gate re-opening itself on every commit would be unusable. Under R-crc-10 the deliverable is a RECORD, because the input is a judgement about whether a walk authored or merely repaired and no engine can observe that — surface at the archive seam how much of the tree changed since the last independent pass, and let the human decide. Recorded rather than assigned. The calibration note matters as much as the question: this cost nothing here, because rc02c bought a scoped external pass by choice over its passed gate to cover exactly that diff, from reading the evidence rather than from a prompt. That is the behaviour R-crc-11 wants, and it is also why the question exists — it should not have depended on the authoring AI happening to notice. No rulings captured, no stages touched, no completions ratified.",
+  "stages_touched": [],
+  "rulings_captured": [],
+  "completions_ratified": [],
+  "handoff": {
+    "next_command": "/orbit:address-reviews rc02c-confirmation-semantics --from-file orbit/changes/rc02c-confirmation-semantics/.orbit-runs/external-system-<TS>.md",
+    "model_hint": "the iteration-2 external pass is GPT-5 Codex, deliberately the SAME reviewer as iteration 1 — two of its three targets are repairs to that reviewer's own findings, so continuation maximises verification where a fresh model would maximise independence",
+    "seam": "rc02c's review-system gate is PASSED and archive is ready. A scoped iteration-2 external pass was packaged by choice over that passed gate, covering the one category of state the cadence structurally could not: the mechanism the walk authored. Its findings are the last input before archive; a clean return is a real result and is the evidence rc02c needs to archive honestly.",
+    "boot_sequence": [
+      "orbit/architecture/clean-up-review-cycle.md — Q-crc-20 is new as of this session and is the program-level reading of why that scoped pass was bought; the 2026-09-21 status-log entries carry rc02c's apply and its blind pair",
+      "orbit/changes/rc02c-confirmation-semantics/.orbit-runs/external-prompt-system-2026-09-21T15-10-14Z.md — the scoped prompt, which names the exact diff and the single question it asks",
+      "git diff fbcee57..HEAD -- src/ test/ orbit/changes/rc02c-confirmation-semantics/specs/ — the mechanism under review",
+      "orbit/changes/rc02c-confirmation-semantics/design.md — D7 records the forward-looking plan defect this session's earlier architect pass then amended"
+    ]
+  },
+  "next_recommended": "/orbit:address-reviews rc02c-confirmation-semantics --from-file orbit/changes/rc02c-confirmation-semantics/.orbit-runs/external-system-<TS>.md"
+}

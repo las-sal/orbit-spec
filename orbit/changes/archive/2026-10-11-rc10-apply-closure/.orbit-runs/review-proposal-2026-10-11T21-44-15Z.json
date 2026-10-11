@@ -1,0 +1,151 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-11T21:44:15Z",
+  "change": "rc10-apply-closure",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 3,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 3,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-archive-modifications/spec.md",
+      "line": 23,
+      "title": "The deferral refusal set accepts a deferral naming an unchecked task that carries no (User-validation marker",
+      "recommendation": "The write gate refuses a deferral naming 'a checked task or no task', but an UNCHECKED ORDINARY task (no marker) is neither, so under the text as written `deferred_validations: [{task: \"2.3\", ...}]` for unfinished code work is accepted. That is exactly the design's first Risk ('a FORWARD label can hide a task that was simply skipped') given an engine-checked doorway, and the domain (D-rc10-3's table, the ADDED requirement's opening) is marked tasks only. Add 'a deferral naming an unchecked task that does not carry the `(User-validation` marker' to the refusal list in the ADDED requirement, task 1.2 and task 1.3, plus one scenario."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-archive-modifications/spec.md",
+      "line": 22,
+      "title": "The write gate's behaviour on a missing tasks.md and on an empty deferred_validations array is unstated",
+      "recommendation": "Upstream Step 3 has an explicit 'If no tasks file exists: Proceed' path, and the precedent the requirement names (the apply emit's computeApply, emit-composition.ts:1417-1421) THROWS 'tasks.md not found'. An implementer copying the named reader's call site refuses every tasks-less archive emit (and every existing archive test whose fixture has no tasks.md); another treats absence as an empty marked set. State it: a missing tasks.md yields an empty marked set, and a deferral against it is refused as naming no task. Likewise say whether `deferred_validations: []` is accepted or refused (the schema-reference scenario says 'present only when … deferred')."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-archive-modifications/spec.md",
+      "line": 7,
+      "title": "Every deferral refusal lands AFTER the Step 5 move, and an id-less marked task is unfixable there without editing the archived tasks.md",
+      "recommendation": "`orbit emit archive` runs at Step 5.5 against the MOVED directory, so a refusal arrives with sync and move already done. A missing or mis-keyed deferral is recoverable by re-emitting, but a marked unchecked task with NO task id is refused whatever the payload says: the only recovery is hand-editing the archived tasks.md, which the requirement never sanctions. Have Step 3.2 (before the move) check each marked task for a parseable id — the gate's id grammar `\\d+(\\.\\d+)+` — and, for an id-less one, either dispose of it as OBSERVED or brief the user that it needs an id before the move; add that to task 2.2 and a scenario."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "tasks.md",
+      "line": 13,
+      "title": "The archive schema reference keeps stating the continuation entry is review-system-only with gate_state unpassed|stale; no task updates it",
+      "recommendation": "src/core/templates/workflows/archive-change.ts line 24 ('the SOLE record of a proceed-anyway past the `review-system` gate'), line 61 (the schema block's `\"gate\": \"review-system\", \"gate_state\": \"<unpassed|stale>\"`) and line 143 (the `judgements` field note: 'composed at Step 3.4 as the SOLE record of a proceed-anyway past the `review-system` gate') all become false once Step 3.4 lists `review-proposal` and a `blocked` `review-system`. Task 2.5 adds only `deferred_validations`. Widen 2.5 to repair those three sentences by pointing at the override contract's gate set (and `gate_state` to include `blocked`). The example's `warnings` line at :126 ('1 incomplete task (5.3, a user-validation handoff)') also describes the retired treatment of a validation task — replace it with the deferral it now is."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "design.md",
+      "line": 13,
+      "title": "Exit (1)'s 'reasoned deferral' is narrowed to 'a deferral' with no recorded revision",
+      "recommendation": "The charter's exit (1) reads 'records a REASONED deferral or halts'; the charter body adds 'naming when and where'. design.md:13 restates it as 'records a deferral, or the user aborts', and the record is `{task, when, where}` — no slot says WHY the task could not be observed before the archive. Exit (2)'s revision is recorded (D-rc10-5); this one is not, which is R-crc-12's third case (a task may not silently narrow the bar its stage is graded against). Either carry a reason or record the revision.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Add a required non-empty `why` (prose) to each deferral — `{task, when, where, why}` — refused when empty like `when`/`where`; update the ADDED requirement, the schema-reference block, tasks 1.1-1.3 and 2.5."
+        },
+        {
+          "label": "B",
+          "body": "Record a Decision in explore.md beside D-rc10-5 that `when`/`where` ARE the reasoning ('observable only after X, at Y'), restate design.md:13 citing it, and leave the record at three keys."
+        }
+      ]
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "tasks.md",
+      "line": 13,
+      "title": "The reference round trip cannot submit a deferral example: its seeded tasks.md has no marked task, and no task changes the seeding",
+      "recommendation": "test/core/reference-roundtrip.test.ts:106 seeds every change dir with `- [ ] 1.1 do a thing` (no marker), and its ONE seeding rule (design D3 of rc07b) seeds only the passes `formed_against` names. A `json example` carrying `deferred_validations` either names `1.1` (an ordinary task — accepted today only because of the first finding's gap, and wrong) or names a marked id the seed lacks (refused). Add a task: the round trip seeds a `(User-validation` task matching each deferral the example names (a second seeding rule, stated beside the first), and keep the existing no-deferral examples passing against a seed with no marked task."
+    },
+    {
+      "pass": "7",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "design.md",
+      "line": 74,
+      "title": "D-rc10-3's closure is still DERIVED on 'the same reader the tracked gate uses', which design D4 refutes",
+      "recommendation": "explore.md:80 derives closure from the write gate reading tasks.md through the tracked gate's reader; D4 deliberately picks `parseCheckboxes` over `uncheckedTaskLines`, and the Risks section accepts that the two diverge on fenced and pre-heading lines. The Mechanism -> artifacts row for D-rc10-1 says 'domain refined at propose (D3)'; give D-rc10-3's row the same note (reader replaced at propose, D4; the two-reader residual accepted in Risks) so the record does not carry a closure argument the artifacts contradict."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "design.md",
+      "line": 46,
+      "title": "The superseded exclusion's limit is argued in design but not named in the spec",
+      "recommendation": "The Risk answer ('apply has prompted and recorded at its seam since C1') holds only for changes applied through /orbit:apply; boxes checked by hand pass the apply gate with no apply-seam prompt, after which the unpassed review-proposal is superseded and silent at archive. explore.md's FALSIFY line called this a named limit; the engine-gates paragraph states the exclusion without it. One sentence naming the limit in the override contract would carry it where readers look."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "tasks.md",
+      "line": 11,
+      "title": "'not `superseded`' reads as a state value; the row carries it as a boolean field",
+      "recommendation": "`GateState` (gates.ts:25) has no 'superseded' member; the status row carries `superseded: true` (gates.ts:69, set at :935-943). Task 2.3 and the body it writes should say 'whose `superseded` field is not true', so the body reads the field rather than comparing `state` to a string that never occurs."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Probed hardest at the write gate, because it is the stage's only new engine rule and it runs after the move: read computeApply's tasks.md handling, the judgement validator and ordering check (a listed review-system with no system pass must cite trail-wide passes, which the existing body already instructs), the reference round trip's seeding, and the gate rows' superseded computation. The gate-set rule held under the three shapes I traced (never-applied, normal, passed-for-flow). The scenario count (30: 20 carried, 10 new) checks out, and the three MODIFIED blocks differ from baseline only where the rule changes them.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The diagnosis is right and the mechanism is small: the gate-set widening needs no engine change and its rule sits with its owner, and the deferral record keys the one set the engine can observe. What is missing is at the edges of the new write gate — which tasks a deferral may name, what happens with no tasks file, and what a refusal costs when it arrives after the move — plus the schema reference's existing review-system-only sentences and the round trip's seed. Each is a sentence or a task, not a redesign; repair them at the walk and apply. The one judgement for the user is whether exit (1)'s 'reasoned' needs a reason slot or a recorded revision."
+  },
+  "final_assessment": "0 critical, 6 warning, 3 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc10-apply-closure"
+}

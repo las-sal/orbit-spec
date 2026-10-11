@@ -1,0 +1,12 @@
+{
+  "command": "explore",
+  "timestamp": "2026-09-15T11:20:36Z",
+  "change": "rc13-explore-mechanism",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "rc13 re-aimed and the move set derived. Case 6 falsified this stage's own original cure: rc03a carried a Mechanism section with executed cases from its first exploration onward, would have rendered Mature under exit criterion 1 at every point, and failed three times — an executed case shows ONE PATH and none of rc03a's failures were on a path anyone walked. The unit moved up a level to a CLOSED ENUMERATION per rule (D-rc13-7), which also dissolved the trigger question that sat at `none yet` across two sessions: a Decision stating a conditional has a domain, and either every member is stated or it is not, so there is nothing to self-classify. Then Case 7 derived the move set from the structure of a mechanism rather than listing it — and the derivation earned its keep within the hour by falsifying the list it replaced. Classifying rc03a's fifteen CRITICALs found FOUR that landed nowhere in the five-move set ratified minutes earlier: COHERE, the mechanism's own parts assuming incompatible things, which was the most-recurring class on the record and which nobody had named. The set is SIX: READ (facts), ENUMERATE (domain), COHERE (parts), EXECUTE (computation), FALSIFY (purpose), CONFORM (context). Twice in one sitting, confidence about closure was wrong — which is the argument for the whole stage, produced by the stage on itself.",
+  "decisions_captured": 12,
+  "open_questions_count": 1,
+  "open_questions_with_recommendation": "1 of 1",
+  "next_recommended": "/orbit:propose rc13-explore-mechanism — substantial thinking captured; ready to formalize the design (or /orbit:explore rc13-explore-mechanism to keep refining)"
+}

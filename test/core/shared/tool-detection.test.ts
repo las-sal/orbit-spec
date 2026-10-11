@@ -41,8 +41,8 @@ describe('tool-detection', () => {
       expect(SKILL_NAMES).toContain('orbit-onboard');
       expect(SKILL_NAMES).toContain('orbit-propose');
       expect(SKILL_NAMES).toContain('orbit-review');
-      expect(SKILL_NAMES).toContain('orbit-review-external');
       expect(SKILL_NAMES).toContain('orbit-address-reviews');
+      expect(SKILL_NAMES).toContain('orbit-architect');
       expect(SKILL_NAMES).toContain('orbit-audit-drift');
     });
   });

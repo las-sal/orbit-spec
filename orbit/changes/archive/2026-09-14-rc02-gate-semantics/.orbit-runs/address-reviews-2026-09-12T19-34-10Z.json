@@ -1,0 +1,219 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-09-12T19:34:10Z",
+  "change": "rc02-gate-semantics",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m]",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc02-gate-semantics/.orbit-runs/external-proposal-2026-09-12T19-21-55Z.md",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-5 Codex",
+  "walk_mode": "per_finding",
+  "walk_mode_source": null,
+  "input_findings_summary": {
+    "critical": 3,
+    "warning": 7,
+    "suggestion": 1
+  },
+  "pushback_verification": "Every claim verified against real state in the evaluate turn before any edit; none was stale. Confirmed the singular `source_path` in parseAddressReviews and the exclusive `--from-file` rule; confirmed clause (a) constrained ordering only against the previous slot's pass token; confirmed parseExternalMarkdown returns null on shape failure and readTrail omits the artifact. Measured the disposition shapes across ALL archived address-reviews emits rather than the two the reviewer sampled: 526 entries, 260 with `outcome`, 49 with legacy `status`, 217 with neither, 526 with `severity` — which makes the finding stronger than reported and the shipped fallback dead code. Verified all five stale governing-document sites by line.",
+  "resolution_summary": {
+    "resolved": 11,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "The canonical merged walk has no trail representation",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 193,
+      "marker_source": "external",
+      "classification": "decision required",
+      "action": "Verified the mechanism before deciding: an address-reviews emit carries ONE source_path (trail.ts parseAddressReviews), passResolved matches by basename, and the skill makes --from-file exclusive to a single input. The change had specified a trail orbit cannot emit, and a test asserting it would have encoded a fiction. Settled under R-crc-3, off the offered menu: clause (b) resolves PER FINDINGS ARTIFACT and R-crc-4's 'one merged walk' is named for what it is — one resolution SITTING by the human, emitted as one record per source. Zero engine change, blindness unaffected (both records land after both passes), and the multi-source question (source_paths or per-resolution provenance) is handed to rc03 BY NAME rather than left as an implied need. Building multi-source ingest here would have re-added orbit-address-reviews and orbit-emit-composition to a change that had just shed them. New design decision D4a records it; the scenario that asserted one walk now asserts one record per member.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02-gate-semantics/design.md",
+          "orbit/changes/rc02-gate-semantics/tasks.md"
+        ]
+      },
+      "ratified_via": "chat",
+      "resolution": "Off-menu — clause (b) resolves per findings artifact; 'one merged walk' is one human sitting; multi-source ingest assigned to rc03 by name",
+      "recommendation_fork": {
+        "source": "structured",
+        "labels": [
+          "two post-pair walks",
+          "multi-source representation"
+        ],
+        "ratified_label": null
+      }
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "A CRITICAL pair has no defined convergent successor",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 207,
+      "marker_source": "external",
+      "classification": "trivial fix",
+      "action": "Traced and confirmed: the confirming set was defined as the cadence-selected pair and nothing replaced it, so a CRITICAL in a member failed the predicate forever while the budget exhausted and the recommendation kept asking for passes. Clause (c) now computes the set in TWO steps: a base set (the last independent-bearing slot's passes), then SUCCESSION — a later independent pass whose token is strictly later than every resolution record closing the base set's findings REPLACES the set, because that pass read the walked state; the latest qualifying successor wins. This is the only mechanism by which the pass a CRITICAL buys can clear it. New scenario asserts the full five-event convergence to `passed`; task 3.2 requires that test.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02-gate-semantics/design.md",
+          "orbit/changes/rc02-gate-semantics/tasks.md"
+        ]
+      }
+    },
+    {
+      "severity": "CRITICAL",
+      "title": "The trailing check can run before the walk it claims to verify",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 339,
+      "marker_source": "external",
+      "classification": "trivial fix",
+      "action": "Confirmed clause (a) constrained slot order only against the previous slot's PASS token, never against its resolution records, so external T1 / fresh T2 / in-context T3 / walks T4,T5 satisfied every clause and the gate passed although the trailing pass never read the walk's diff — defeating the stated rationale for keeping that slot at D5. Clause (a) now carries a second strict constraint: a slot's satisfying pass(es) must be later than every address-reviews record resolving a previous slot's pass findings. New scenario asserts the pre-walk ordering leaves the gate unpassed.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02-gate-semantics/design.md",
+          "orbit/changes/rc02-gate-semantics/tasks.md"
+        ]
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "The near-ceiling proposal blind pair is not computed by any stage",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 325,
+      "marker_source": "external",
+      "classification": "trivial fix",
+      "action": "Verified no engine surface computes size proximity. Ownership assigned rather than left implicit: rc09's charter (it owns the propose-time size check) now names the size computation R-crc-4's conditional depends on, with a dated note that until it ships the near-ceiling pair is run BY CHOICE, not by the cadence. The proposal budget's rationale no longer leans on a conditional nothing computes — it is sized for that choice being made: one independent pass, a second by choice, one repeat.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/architecture/clean-up-review-cycle.md"
+        ]
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "Same-second tokens make blindness and pair selection ambiguous",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 181,
+      "marker_source": "external",
+      "classification": "trivial fix",
+      "action": "Both halves fail safe now. Blindness: a resolution record whose token EQUALS either endpoint breaks the pair (the between-test is inclusive of endpoints), and a pair whose members share a token is REJECTED rather than certified, with the reason naming the tie. Selection: pairs are ordered TOTALLY by later token, then earlier token, then findings-artifact filename, so the choice is implementation-order-independent. New scenario covers both.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02-gate-semantics/design.md",
+          "orbit/changes/rc02-gate-semantics/tasks.md"
+        ]
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "Malformed external results vanish from both spend and diagnosis",
+      "file": "src/core/artifact-graph/trail.ts",
+      "line": 247,
+      "marker_source": "external",
+      "classification": "trivial fix",
+      "action": "Confirmed parseExternalMarkdown returns null on any shape failure and readTrail then omits the artifact entirely, so a returned-but-malformed external was free under the budget while the reason recommended buying another run. The budget requirement now states that rejected external artifacts are surfaced separately from cadence-eligible passes, COUNT as spend, and are named in the reason — while still satisfying no cadence slot. Task 1.1 adds the rejected list to the trail reader; 5.2 counts it; 5.3 tests it.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02-gate-semantics/design.md",
+          "orbit/changes/rc02-gate-semantics/tasks.md"
+        ]
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "The legacy fallback misses the actual v3 resolution shape",
+      "file": "orbit/changes/rc02-gate-semantics/design.md",
+      "line": 22,
+      "marker_source": "external",
+      "classification": "trivial fix",
+      "action": "Measured the whole archive rather than the two changes cited, and the finding understates it: of 526 archived resolution entries, 260 carry `outcome`, 49 carry legacy `status`, and 217 carry NEITHER — while all 526 carry `severity`, so the 'no per-entry severity' fallback was dead code by construction and 217 entries would have read as not-deferred. Clause (b) now reads the DISPOSITION from `outcome` or `status`, and adds a record-level rule: when ANY substantive entry carries neither key, the WHOLE record falls back to the bare counts. Two new scenarios fixture the real shapes; task 2.2 requires all three as fixtures. The design's data claim is replaced by the measurement.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02-gate-semantics/design.md",
+          "orbit/changes/rc02-gate-semantics/tasks.md"
+        ]
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "A compound slot can reuse a pass from the preceding slot",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 175,
+      "marker_source": "external",
+      "classification": "trivial fix",
+      "action": "Confirmed the rule required only the pair's LATER token to beat the previous slot, so `[external, blind-pair]` could satisfy slot 1 with external T1 and reuse T1 as the pair's external member — contradicting the general one-pass-one-slot rule stated in the same clause. Both members must now be strictly later than the previous slot's passes and its resolution records, and a consumed pass INDEX never satisfies a second slot. New scenarios cover the reuse and the straddle.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02-gate-semantics/design.md",
+          "orbit/changes/rc02-gate-semantics/tasks.md"
+        ]
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "The governing program still specifies the reversed sixth state",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 227,
+      "marker_source": "external",
+      "classification": "trivial fix",
+      "action": "All five stale sites verified and cascaded: Q-crc-4 gains a dated AMENDED clause (the reversal, its reasoning, and that rc04 branches on the BOOLEAN) with the original resolution kept beneath it; the rc02 charter's 'reports as the state budget-exhausted' becomes 'reports BESIDE the state' and its exit criterion follows; the rc04 charter now names `budgetExhausted`; 'Eleven small stages' becomes twelve with the split noted; CLAUDE.md's matching sentence follows. Grep confirms no surviving reference to a `budget-exhausted` gate state.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/architecture/clean-up-review-cycle.md",
+          "CLAUDE.md"
+        ]
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "Budget exhaustion on a stale gate is underspecified",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 12,
+      "marker_source": "external",
+      "classification": "trivial fix",
+      "action": "Settled toward the conservative reading rather than left to the implementer: a STALE gate CAN be budget-exhausted (staleness is a form of not-converged and stale passes already count as spend), the state stays `stale`, `budgetExhausted` is set, and the position token reads `STALE BUDGET-SPENT`. New scenario covers the previously-converged-then-staled trail at the budget boundary; task 5.3 requires it.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02-gate-semantics/design.md",
+          "orbit/changes/rc02-gate-semantics/tasks.md"
+        ]
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Define how deferred suggestions are aggregated",
+      "file": "orbit/changes/rc02-gate-semantics/specs/orbit-engine-gates/spec.md",
+      "line": 192,
+      "marker_source": "external",
+      "classification": "trivial fix",
+      "action": "The count is now defined as DISTINCT SUGGESTION-grade entries carrying a deferred or escalated disposition, deduplicated by (trimmed title, repo-relative file) across the most recent resolution record of every pass relevant to the gate — the same dedup key the new-finding match uses, so one suggestion deferred across two passes counts once. Task 2.3 requires the multi-pass test.",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc02-gate-semantics/tasks.md"
+        ]
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": "R-crc-3 (Sal, 2026-09-11): method decisions — including cadence design and stage sizing — are settled by the authoring AI and recorded with rationale, not briefed for ratification.",
+  "final_assessment": "11 of 11 resolved; 0 unresolved markers in scope. All three CRITICALs were in the blind-pair mechanism and all three were real: the change had specified a merged-walk trail the product cannot emit, a confirming set with no successor (so a CRITICAL in a pair could never be cleared and the gate could never reach passed), and a trailing slot with no ordering constraint against the walk it exists to verify. Clause (a) gains a resolution-record ordering constraint and both-members-later plus no-index-reuse; clause (b) resolves per findings artifact, reads `outcome` or legacy `status`, and falls whole records back to bare counts; clause (c) gains a SUCCESSION rule that makes convergence after a CRITICAL reachable at all. Ties fail safe, malformed external returns count as spend, stale gates can be budget-exhausted, and the near-ceiling proposal pair is assigned to rc09 with the size computation it needs. The reversal and the split were cascaded through five stale governing-document sites. Remeasured: one capability, seven requirement blocks, 50 scenarios, 38.8 KB, 19 tasks — inside R-crc-1, with the delta now near the ~40 KB guide because precision costs prose.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal rc02-gate-semantics"
+}

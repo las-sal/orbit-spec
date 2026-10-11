@@ -36,7 +36,6 @@ describe('skill-generation', () => {
       expect(dirNames).toContain('orbit-onboard');
       expect(dirNames).toContain('orbit-propose');
       expect(dirNames).toContain('orbit-review');
-      expect(dirNames).toContain('orbit-review-external');
       expect(dirNames).toContain('orbit-address-reviews');
       expect(dirNames).toContain('orbit-audit-drift');
     });
@@ -120,7 +119,6 @@ describe('skill-generation', () => {
       expect(ids).toContain('onboard');
       expect(ids).toContain('propose');
       expect(ids).toContain('review');
-      expect(ids).toContain('review-external');
       expect(ids).toContain('address-reviews');
       expect(ids).toContain('audit-drift');
     });

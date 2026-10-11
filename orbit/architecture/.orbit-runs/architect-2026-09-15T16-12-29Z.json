@@ -1,0 +1,28 @@
+{
+  "command": "architect",
+  "timestamp": "2026-09-15T16:12:29Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-opus-5[1m]",
+  "final_assessment": "rc13a's first attempt recorded as an attempt rather than a completion: the stage stays declared and unratified, a later change may cite it again, and the charter now carries the prerequisite that attempt must settle first — BOUNDED cannot be both a closure form and an open domain. The move set was declared BOUNDED deliberately, to be honest about its own openness; the honesty was real and the word was load-bearing in the opposite direction, and three internal passes missed what an external one caught. rc13b is explicitly BLOCKED on rc13a under R-crc-9's declare-the-stage-blocked branch. Six verified repairs are carried in the charter for the next attempt. Two SECOND OCCURRENCES were recorded as program questions rather than fixed in passing: Q-crc-11 (no WITHDRAWN state in the stage grammar — left as a question by Sal, since two instances cost only a confusing readout) and Q-crc-12 (the archive seam fires no prompt when the exhausted gate is not the one archive watches — ASSIGNED to rc10 and written into its charter as a third exit criterion). rc13a left unratified.",
+  "stages_touched": [
+    "rc13a-explore-mechanism-convention",
+    "rc13b-explore-maturity-signal",
+    "rc10-apply-closure"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [],
+  "handoff": {
+    "boot_sequence": [
+      "orbit/architecture/clean-up-review-cycle.md — rc13a's charter carries the first attempt, the BOUNDED prerequisite and six verified repairs; rc13b is blocked; rc10 gained the seam's gate prompt.",
+      "Q-crc-11 and Q-crc-12 in the open-questions section — the two second-occurrence gaps and why only one was assigned.",
+      "orbit/changes/archive/2026-09-15-rc13-explore-mechanism/ — eleven trail records across three passes, two walks, a descope and a split.",
+      "The external findings at .orbit-runs/external-proposal-2026-09-15T15-47-46Z.md — the pass that found the contradiction."
+    ],
+    "next_command": "/orbit:explore",
+    "model_hint": "The BOUNDED question is one sitting and is the hinge for two stages: can `closed` and `open with a stated residual` both satisfy one obligation, or does the obligation need two tiers? Settle it before the next citing change, not inside it.",
+    "seam": "No active changes. rc01 and rc02 complete-ratified; rc03a and rc13a quiescent-unratified by decision; thirteen stages premised. Nothing is blocked on the user."
+  },
+  "next_recommended": "/orbit:explore"
+}

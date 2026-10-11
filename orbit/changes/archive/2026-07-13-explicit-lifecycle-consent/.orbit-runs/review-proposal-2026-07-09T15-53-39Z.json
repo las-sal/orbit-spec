@@ -1,0 +1,83 @@
+{
+  "command": "review",
+  "timestamp": "2026-07-09T15:53:39Z",
+  "change": "explicit-lifecycle-consent",
+  "final_assessment": "1 critical issue(s) found. Fix before /orbit:apply.",
+  "next_recommended": "/orbit:address-reviews explicit-lifecycle-consent --from-file orbit/changes/explicit-lifecycle-consent/.orbit-runs/review-proposal-2026-07-09T15-53-39Z.json",
+  "kind": "editorial",
+  "mode": "proposal",
+  "iteration": 1,
+  "depth": "full",
+  "reviewer_class": "in-context",
+  "flags": { "parallel": false, "focus": null, "strict": false, "fresh": false, "mark": false, "skip_verify": false },
+  "passes_run": ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
+  "passes_skipped": [],
+  "findings_summary": {
+    "critical": 1,
+    "warning": 3,
+    "suggestion": 2,
+    "by_pass": {
+      "1": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "2": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "3": { "critical": 0, "warning": 0, "suggestion": 1 },
+      "4": { "critical": 1, "warning": 0, "suggestion": 0 },
+      "5": { "critical": 0, "warning": 1, "suggestion": 0 },
+      "6": { "critical": 0, "warning": 1, "suggestion": 1 },
+      "7": { "critical": 0, "warning": 1, "suggestion": 0 },
+      "8": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "9": { "critical": 0, "warning": 0, "suggestion": 0 }
+    }
+  },
+  "findings": [
+    {
+      "pass": "4",
+      "severity": "CRITICAL",
+      "file": "specs/orbit-engine-gates/spec.md",
+      "line": 78,
+      "title": "Eligibility-phrasing delta directly contradicts orbit-review's baseline stock phrasings — scope miss",
+      "recommendation": "The delta prohibits the imperative `Next:` label on every recommendation surface, but the un-delta'd baseline orbit/specs/orbit-review/spec.md MANDATES exact stock phrasings containing `Next: /orbit:...` in 8+ scenario THENs (proposal + system final-assessment tables, e.g. lines ~140-179 — the only baseline file with rendered `Next:` labels, verified by repo-wide grep). Post-archive the baseline would both mandate and prohibit the label. Add an orbit-review MODIFIED delta rewriting the stock phrasings to the eligibility label (`Ready when you are:` + ` — user-invoked` marker where the recommended command is a consent-marked phase entry, e.g. the gate-passed phrasing recommending /orbit:apply), add the corresponding tasks.md entry (review body's final-assessment tables are generated text), and add orbit-review to proposal.md's Modified Capabilities."
+    },
+    {
+      "pass": "7",
+      "severity": "WARNING",
+      "file": "specs/orbit-engine-gates/spec.md",
+      "line": 30,
+      "title": "Program mislabeled 'C-arc D1' (twice) — the program is the D-arc",
+      "recommendation": "Lines 30 and 78: '(C-arc D1, …)' → '(D-arc Stage D1, …)'. The C-arc is the completed fork program; baking the wrong program name into baseline text is exactly the vocabulary drift audit-drift exists to catch — fix before it syncs."
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "file": "specs/orbit-lifecycle-consent/spec.md",
+      "line": 5,
+      "title": "Provenance uncertainty default lives only in design.md, not the spec",
+      "recommendation": "design.md D1/Risks states 'when provenance is uncertain, treat as AI-mediated (prompt)' — the safe default an implementer must not have to invent. Add it normatively to the Invocation-provenance requirement (one sentence + it is what the bodies' task 2.1 already assumes)."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "file": "specs/orbit-audit-drift/spec.md",
+      "line": 10,
+      "title": "Era-boundary mechanism deferred to 'a design.md decision' — a dangling pointer once the change archives",
+      "recommendation": "The design (D6) settles the mechanism (consent-aware schema version, timestamp fallback), but the delta text says the mechanism 'is a design.md decision of the consent change'. Post-archive, baseline audit-drift would reference a document that left the baseline. Bake the mechanism into the requirement text; drop the deferral sentence."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "file": "specs/orbit-lifecycle-consent/spec.md",
+      "line": 96,
+      "title": "Inner-archive emit consent value under a user-typed bulk is derivable but unstated",
+      "recommendation": "The prompts requirement covers bulk provenance; the emit-field requirement's scenarios don't show the bulk case. Add one scenario: user-typed /orbit:bulk-archive with confirmed batch → each inner archive emit records consent: \"user-invoked\"."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "file": "tasks.md",
+      "line": 46,
+      "title": "CLAUDE.md's execution-disciplines section gains the fourth discipline at archive",
+      "recommendation": "CLAUDE.md lists the three disciplines; post-archive there are four (no-chaining). Standard archive-time CLAUDE.md update — extend task 4.4's sync note to include it so it isn't rediscovered."
+    }
+  ],
+  "stale_suppressed": [],
+  "iteration_note": "First proposal-mode run for this change. Passes 1/2/8/9 clean: --strict valid, deltaCount 12 parses (incl. the two-block MODIFIED section), requirement→task coverage complete, 0 markers. Pass 4's fingerprint stamp had already verified all 4 MODIFIED targets exist in baseline; the CRITICAL is a scope miss (a 6th capability needs a delta), not a content error in the existing five."
+}

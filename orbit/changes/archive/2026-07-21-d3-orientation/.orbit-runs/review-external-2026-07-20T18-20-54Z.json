@@ -1,0 +1,13 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-07-20T18:20:54Z",
+  "change": "d3-orientation",
+  "final_assessment": "External review prompt packaged for d3-orientation (iter 2, mode proposal); awaiting findings. Prompt briefs the reviewer on all 14 prior resolved findings (3 internal passes + external iter 1 by GPT-5 Codex incl. its --full-tuple CRITICAL), flags the mode-aware begin-emit reconciliation and the --full tuple as the texts to re-verify (incomplete resolution ripple has been this change's dominant finding class), and carries the three historical CRITICAL classes plus the known environmental test-failure class.",
+  "next_recommended": "Paste orbit/changes/d3-orientation/.orbit-runs/external-prompt-proposal-2026-07-20T18-20-53Z.md into the target AI, save the response as orbit/changes/d3-orientation/.orbit-runs/external-proposal-<TS>.md, then /orbit:address-reviews d3-orientation --from-file <path>",
+  "kind": "editorial",
+  "mode": "proposal",
+  "reviewer_class": "external",
+  "prompt_path": "orbit/changes/d3-orientation/.orbit-runs/external-prompt-proposal-2026-07-20T18-20-53Z.md",
+  "target": null,
+  "awaiting_findings": true
+}

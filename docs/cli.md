@@ -8,7 +8,7 @@ The OpenSpec CLI (`openspec`) provides terminal commands for project setup, vali
 |----------|----------|---------|
 | **Setup** | `init`, `update` | Initialize and update OpenSpec in your project |
 | **Browsing** | `list`, `view`, `show` | Explore changes and specs |
-| **Validation** | `validate` | Check changes and specs for issues |
+| **Validation** | `validate` | Check changes, specs, and marked source spans for issues |
 | **Lifecycle** | `archive` | Finalize completed changes |
 | **Workflow** | `status`, `instructions`, `templates`, `schemas` | Artifact-driven workflow support |
 | **Schemas** | `schema init`, `schema fork`, `schema validate`, `schema which` | Create and manage custom workflows |
@@ -41,7 +41,7 @@ These commands support `--json` output for programmatic use by AI agents and scr
 |---------|-----------|-----------|
 | `openspec list` | Browse changes/specs | `--json` for structured data |
 | `openspec show <item>` | Read content | `--json` for parsing |
-| `openspec validate` | Check for issues | `--all --json` for bulk validation |
+| `openspec validate` | Check for issues | `--all --json` for bulk validation (changes, specs, sources) |
 | `openspec status` | See artifact progress | `--json` for structured status |
 | `openspec instructions` | Get next steps | `--json` for agent instructions |
 | `openspec templates` | Find template paths | `--json` for path resolution |
@@ -271,7 +271,8 @@ openspec show add-dark-mode --json
 
 ### `openspec validate`
 
-Validate changes and specs for structural issues.
+Validate changes and specs for structural issues, and lint marked source spans against
+`orbit/sources.yaml`.
 
 ```
 openspec validate [item-name] [options]
@@ -287,9 +288,10 @@ openspec validate [item-name] [options]
 
 | Option | Description |
 |--------|-------------|
-| `--all` | Validate all changes and specs |
+| `--all` | Validate all changes and specs, and lint marked source spans |
 | `--changes` | Validate all changes |
 | `--specs` | Validate all specs |
+| `--sources` | Lint marked source spans against `orbit/sources.yaml` (project-scoped; with no registry it reports that and exits zero) |
 | `--type <type>` | Specify type when name is ambiguous: `change` or `spec` |
 | `--strict` | Enable strict validation mode |
 | `--json` | Output as JSON |
@@ -313,40 +315,130 @@ openspec validate --all --json
 
 # Strict validation with increased parallelism
 openspec validate --all --strict --concurrency 12
+
+# Lint only the marked source spans
+openspec validate --sources
 ```
 
 **Output (text):**
 
 ```
-Validating add-dark-mode...
-  ✓ proposal.md valid
-  ✓ specs/ui/spec.md valid
-  ⚠ design.md: missing "Technical Approach" section
+✓ change/add-dark-mode
+✓ spec/ui
+Sources:
+  stages = 2 (1 marker)
+Totals: 3 passed, 0 failed (3 items)
+```
 
-1 warning found
+A marked span that disagrees with its source is an error, and the run exits non-zero:
+
+```
+✗ README.md:1: source 'stages' emits "2", but the marked span reads "3"
+Sources:
+  stages = 2 (1 marker)
 ```
 
 **Output (JSON):**
 
 ```json
 {
-  "version": "1.0.0",
-  "results": {
-    "changes": [
-      {
-        "name": "add-dark-mode",
-        "valid": true,
-        "warnings": ["design.md: missing 'Technical Approach' section"]
-      }
-    ]
+  "items": [
+    {
+      "id": "add-dark-mode",
+      "type": "change",
+      "valid": true,
+      "issues": [],
+      "durationMs": 3
+    },
+    {
+      "id": "ui",
+      "type": "spec",
+      "valid": true,
+      "issues": [],
+      "durationMs": 1
+    }
+  ],
+  "source_findings": [],
+  "source_coverage": [
+    {
+      "source": "stages",
+      "value": "2",
+      "markers": 1
+    }
+  ],
+  "source_domain": {
+    "files_scanned": 5,
+    "reason": null,
+    "scan_complete": true
   },
   "summary": {
-    "total": 1,
-    "valid": 1,
-    "invalid": 0
-  }
+    "totals": {
+      "items": 3,
+      "passed": 3,
+      "failed": 0
+    },
+    "byType": {
+      "change": {
+        "items": 1,
+        "passed": 1,
+        "failed": 0
+      },
+      "spec": {
+        "items": 1,
+        "passed": 1,
+        "failed": 0
+      },
+      "sources": {
+        "items": 1,
+        "passed": 1,
+        "failed": 0
+      }
+    }
+  },
+  "version": "1.0"
 }
 ```
+
+`source_findings`, `source_coverage` and `source_domain` appear only when `orbit/sources.yaml` is
+present; with no registry the output is exactly what it was before the lint existed.
+
+`source_domain` answers "what did this run actually read". `files_scanned` counts files opened and
+parsed, never files merely listed. `reason` is non-null when the domain could not be resolved at
+all — a project that is not a git repository, for instance. `scan_complete` is the one that governs
+the summary: it is false whenever ANY domain file was not fully examined, which covers the
+unresolvable domain AND four partial cases — a file that could not be read, a path that could not
+be inspected, a path skipped by policy, and a file whose parse was abandoned after a marker error.
+
+Whenever `scan_complete` is false, declared sources that still resolved are reported `unverified`
+rather than `passed`, in both `summary.byType.sources` and `summary.totals` (the key appears only
+when non-zero):
+
+```
+Totals: 1 passed, 0 failed, 1 unverified (2 items)
+```
+
+The EXIT CODE depends on which case it is. An unresolvable domain produces no findings and exits
+**zero** — the lint genuinely cannot check anything without a file list, and `orbit validate` works
+fully in a non-git project for changes and specs. A partial failure produces a `domain` finding and
+exits **non-zero**. Either way the sources are reported unverified: what the command must never do
+is report a source as having passed a check that never ran.
+
+Each finding is discriminated by `kind` and carries only that kind's fields:
+
+| `kind` | fields |
+|--------|--------|
+| `registry` | `file`, `detail` — a fault in the registry itself |
+| `domain` | `file`, `detail` — a tracked file that could not be read (no line: no delimiter was reached) |
+| `marker` | `file`, `line`, `detail` — a malformed delimiter |
+| `unknown-source` | `file`, `line`, `source` — a well-formed span naming nothing declared |
+| `mismatch` | `file`, `line`, `source`, `span_text`, `source_value` |
+
+In `summary.byType.sources`, **one item is one declared source**; unattributable findings (a
+registry fault, a DOMAIN fault, a marker error, an unknown source) roll up into one failed
+pseudo-item; when the domain is incomplete, resolved sources are reported `unverified` rather
+than passed. Source
+items do not enter `items[]`, so `summary.totals.items` exceeds `items.length` whenever a
+registry is present.
 
 ---
 

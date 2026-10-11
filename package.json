@@ -53,6 +53,8 @@
     "prepublishOnly": "npm run build",
     "postinstall": "node scripts/postinstall.js",
     "check:pack-version": "node scripts/pack-version-check.mjs",
+    "capture:gh": "node scripts/capture-gh-contract.mjs",
+    "capture:git": "vitest run --config scripts/capture.vitest.config.ts",
     "release": "pnpm run release:ci",
     "release:ci": "pnpm run check:pack-version && pnpm exec changeset publish",
     "changeset": "changeset"
@@ -66,6 +68,7 @@
     "@types/node": "^24.2.0",
     "@vitest/ui": "^3.2.4",
     "eslint": "^9.39.2",
+    "markdown-it": "^15.0.2",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.50.1",
     "vitest": "^3.2.4"

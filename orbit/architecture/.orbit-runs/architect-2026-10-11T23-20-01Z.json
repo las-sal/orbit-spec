@@ -1,0 +1,33 @@
+{
+  "command": "architect",
+  "timestamp": "2026-10-11T23:20:01Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Ratified rc10-apply-closure through the session's offer (three exit criteria MET, (2) as revised); status log and CLAUDE.md updated. 31 stages complete; rc09-propose-hygiene (a split parent whose children are both ratified) and rc12-engine-owned-choreography remain premised.",
+  "stages_touched": [
+    "rc10-apply-closure"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [
+    "rc10-apply-closure"
+  ],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      {
+        "path": "orbit/architecture/clean-up-review-cycle.md",
+        "why": "the live program: rulings, stages, status log; read before any rc-stage work"
+      },
+      {
+        "path": "CLAUDE.md",
+        "why": "per-stage shipped record and the execution disciplines"
+      }
+    ],
+    "next_command": "/orbit:explore rc12-engine-owned-choreography",
+    "model_hint": null,
+    "seam": "program: rc10 ratified; the remaining premised stage with live work is rc12, and rc09's split parent awaits only the user's ended mark"
+  },
+  "next_recommended": "/orbit:explore rc12-engine-owned-choreography"
+}

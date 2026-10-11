@@ -1,0 +1,83 @@
+{
+  "command": "archive",
+  "timestamp": "2026-10-01T12:59:57Z",
+  "change": "rc15-ended-stage-state",
+  "kind": "lifecycle",
+  "model": "claude-fable-5-1",
+  "final_assessment": "Archived rc15-ended-stage-state to orbit/changes/archive/2026-10-01-rc15-ended-stage-state/ through a COMPUTED PASSED review-system gate — the fifth rc-stage through one, the fourth through the blind pair (fresh 0C/1W/3S and external GPT-5 Codex 0C/2W/1S on the pushed apply commit d864ed1c, blind to each other, zero CRITICAL overlap, one shared SUGGESTION; walked in two logs; an in-context confirm 0C/0W/1S applied in flow). Specs synced 5/5 byte-verified (five MODIFIED blocks across orbit-architect, orbit-architecture-engine, orbit-audit-drift; no ADDED); fingerprints 5/5 verified; pre-archive audit 0 CRITICAL / 1 WARNING / 1 SUGGESTION; no unresolved markers; 2376 tests green on the archived tree. Exit (2) and (3) measured MET; exit (1) PENDING on Sal's act (task 5.3, the user-validation handoff: rc03a's mark in the next architect session on clean-up-review-cycle, closing Q-crc-11). Q-crc-28 widened to three capabilities and Q-crc-29 opened from the at-archive notes.",
+  "archive_path": "orbit/changes/archive/2026-10-01-rc15-ended-stage-state",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": [
+      "orbit-architect",
+      "orbit-architecture-engine",
+      "orbit-audit-drift"
+    ],
+    "added": 0,
+    "modified": 5,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
+  "user_decision": "proceeded_with_no_critical",
+  "consent": "user-invoked",
+  "warnings": [
+    "Archived with 1 incomplete task: 5.3 (user-validation, exit (1) — Sal declares rc03a-blind-prompt ended in the next architect session on clean-up-review-cycle; the engine's apply gate reads passed with 5.3 annotated as pending). Sal confirmed Proceed at the archive prompt.",
+    "At-archive notes 5.4 and 5.5 executed in flow: Q-crc-28 (the retirement-class sweep) widened by four sentences — the two concluded-outcome KNOWN paragraphs (orbit-conventions line 1022; explore.ts line 610), now FALSE rather than pending, and the two orbit-orientation sentences (line 44's 'never artifact-content parsing'; lines 94-95's chip parenthetical) with their one-clause repairs, the sweep now spanning three capabilities; Q-crc-29 (arc-done over an ended stage) opened with the standing recommendation 'archived OR ended'.",
+    "The in-context system confirm's one SUGGESTION (task 3.3 recording the orbit-architect pin as moved once after the walk moved it a second time) was applied in flow before the sync — a seam correction, formed against no pass.",
+    "Pre-archive audit: 0 CRITICAL; 1 WARNING (cross-doc: the two orbit-orientation sentences the header read makes false in letter — handed to Q-crc-28 under Sal's B); 1 SUGGESTION (Touchpoints divergence: actual_unpredicted CLAUDE.md and orbit/architecture/d-arc-arbitered-flow.md — both walk edits pointing at the owning state requirement; predicted_unsatisfied the three baseline specs, satisfied by this sync). Categories 2 and 6 skipped (no lenses; no staging explorations); architecture staleness (a)-(d) clean on the live docs; the one `@review:` grep hit is prose in the proposal-stage external prompt's pass list, not a marker.",
+    "The in-context confirm skipped passes 4 and 5 by the degradation rule (orbit/lenses/ absent); the fresh pass ran the adopter perspective and the change's own flow in their place."
+  ],
+  "judgements": [
+    {
+      "kind": "readiness",
+      "disposition": "ready",
+      "ratified_by": "ai",
+      "formed_against": [
+        "2026-09-28T23-03-27Z",
+        "2026-09-28T23-32-39Z",
+        "2026-09-29T17-40-41Z",
+        "2026-09-29T17-45-34Z"
+      ],
+      "reasoning": "Two blind pairs' worth of independent reading — external and fresh on the proposal, fresh and external on the shipped tree — with zero CRITICAL overlap in either pair and every substantive finding walked to zero across five logs. The engine half of the change is small and was executed, not argued: the fresh half built a fourteen-stage temp project and matched the five-by-three table cell for cell through the real CLI, including BOM+CRLF headers, an explore.md that is a directory, fenced slot lines and the mixed concluded+live citer; the external half found the one ungoverned grammar copy, which is now a parser constant held to its owner. Every finding of the pair sat in prose describing the engine, none in the engine. Exit (2) and (3) measure MET on the archived tree; exit (1) is the user's act by design and stays pending. The gate computed PASSED on resolution; the residuals below say what that does and does not mean.",
+      "accepted": [
+        {
+          "claim": "PASSED means every finding was resolved, not that an independent pass stood clean on the final tree: both independent passes read apply commit d864ed1c, and the walks moved 17 files (+594/-19) after it — the mirror constant, the §5 payload-terms sentence, the EISDIR test, two doc pointers and the record corrections — read clean only by the in-context confirm.",
+          "why": "rc07's distinction, carried rather than spent on a further pass (R-crc-11(h)). The walk edits are prose and tests around an engine the pair executed unchanged; the confirm probed the regenerated mirror, the owner holder, the JSON field presence and the import direction rather than reasoning about them."
+        },
+        {
+          "claim": "Four living sentences describe a reader limit this change retired: orbit-conventions' concluded-outcome KNOWN paragraph and its explore-body copy (keys on location, renders exploring) are now FALSE, and orbit-orientation's 'never artifact-content parsing' THEN clause and 'never from the file' chip parenthetical are false in letter of the composed view — the baseline asserts facts the shipped tree contradicts until the retirement-class sweep runs.",
+          "why": "Outside this change's three capabilities; a fourth was declined under R-crc-1 and exit (3)'s recorded no-orientation-delta measure (Sal: B at the fresh system walk). All four are named by requirement and line in Q-crc-28 with their one-clause repairs; each is history-shaped rather than a rule a reader would execute, and the WAITING derivation and every test are unaffected."
+        },
+        {
+          "claim": "Exit (1) is unobserved: no live architect session has yet fired the three-answer offer, written an ended mark on the user's word, or seen Q-crc-11's firing count stop at four. The flow was exercised on a COPY of the program doc by the fresh pass (mark written by hand, render, WAITING, re-entry), not through the body in a session.",
+          "why": "The mark is the user's act by the arc's rules of engagement, so the stage cannot write it; task 5.3 carries it as the user-validation handoff, and the program doc's own entry records the close when the architect body captures it."
+        },
+        {
+          "claim": "The arc-done predicate (orbit-pr-lifecycle: every declared stage ARCHIVED and the closing review recorded) has no treatment for a stage rendering ended or ended-from-explore, which D-rc15-1 makes reachable with no archive at all; a program carrying such a stage cannot observe arc-done until that owner says an ended stage does not hold it open.",
+          "why": "A fourth capability, over R-crc-1 — declared a non-goal at the fresh proposal walk (Sal: 1B) and opened as Q-crc-29 with the standing recommendation 'archived OR ended'. Bounded: arc-done is surfaced for a human act, never taken by the engine, and no live doc carries an ended stage without an archive today."
+        },
+        {
+          "claim": "Two surfaces read the concluded token from two sources: orbit architecture status reads the FILE's header, orbit status reads the newest emit's status.token (D3: no file reads). Between the conclude verb's header flip and its final emit they can disagree — the fresh pass observed a probe project rendering ended-from-explore on the PROGRAM line beside an exploring workstream row with no emit.",
+          "why": "Stated in the design, not mechanised; the conclude verb closes the window in its next step, and on the real repo every concluded exploration carries its emit. The alternative — orientation reading the file — would reverse D3's trail-not-file rule for one chip."
+        },
+        {
+          "claim": "stages_ended, like completions_ratified beside it, is key-checked and not shape-checked by the emit payload table: the fresh pass landed a STRING value and the emit was accepted.",
+          "why": "Pre-existing parity with its sibling, not an rc15 defect; the field's consumers are human readers of the architecture trail, and the architect body names its shape. Recorded so a later stage that types the payload table knows both fields are in scope."
+        }
+      ]
+    }
+  ],
+  "next_recommended": "Change archived. Run /orbit:new or /orbit:explore to start the next change, or /orbit:audit-drift for a project-wide drift check."
+}

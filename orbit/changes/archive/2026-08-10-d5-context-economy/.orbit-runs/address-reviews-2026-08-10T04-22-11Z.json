@@ -1,0 +1,79 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-08-10T04:22:11Z",
+  "change": "d5-context-economy",
+  "kind": "editorial",
+  "model": "claude-fable-5",
+  "source": "from-file",
+  "source_path": "orbit/changes/d5-context-economy/.orbit-runs/review-system-2026-08-10T03-56-02Z.json",
+  "source_command": "review",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "walk_mode_source": null,
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 2
+  },
+  "pushback_verification": "All 3 verified live before acting: the writeGate-before-stringify ordering read at the write site (gate on the live object at :1041, hook-running stringify after); the doc-scope ordinal's unfiltered walk-log count read at the address-reviews branch beside the per-doc review-architecture ordinal it should mirror; the config comment's three-slot list read against the four-slot vocabulary, and the 'archive' phase key VERIFIED genuine (the all-gates-passed fall-through sets phase: g.before). 0 stale suppressions.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "marker": "src/core/emit-composition.ts:1041 — write gate validates the pre-serialization object; the final stringify re-reads caller state",
+      "severity": "WARNING",
+      "source": "internal-review",
+      "classification": "trivial fix",
+      "status": "resolved",
+      "action": "Materialize-first, the reviewer's exact pattern: ONE hook-running stringify + JSON.parse yields an inert frozen record; writeGate validates the FROZEN data; the written bytes serialize from the same frozen data (hook-free by construction); the canonical trail check re-runs; then the write — the gate-validated candidate and the written bytes are ONE read of caller state. The returned result.emit is now the frozen written record. Regression: a findings-entry toJSON forging an embedded newline into a gate-checked single-line slot is refused by the gate with no file written. Delta gains the frozen-content clause beside the checked-twice sentence.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/emit-composition.ts",
+          "test/core/emit-composition.test.ts",
+          "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md"
+        ],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "marker": "src/core/emit-composition.ts:878 — doc-scoped walk ordinal counts every doc's logs on the shared architecture trail",
+      "severity": "SUGGESTION",
+      "source": "internal-review",
+      "classification": "trivial fix",
+      "status": "resolved",
+      "action": "Doc-scoped walk logs now filter by matching doc field before counting — the same per-doc anchoring as the review-architecture ordinal directly above it; change/project/archived scopes unchanged. Test: with doc-a's log on the shared trail, doc-b's first walk is iteration 1 and doc-a's next is iteration 2. Delta's ordinal sentence gains the ANCHORED-PER-DOC rule.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/emit-composition.ts",
+          "test/core/emit-composition.test.ts",
+          "orbit/changes/d5-context-economy/specs/orbit-emit-composition/spec.md"
+        ],
+        "flagged_not_applied": []
+      }
+    },
+    {
+      "marker": "orbit/config.yaml:25 — models-hint comment omits fresh from the slot vocabulary; archive phase key unverified",
+      "severity": "SUGGESTION",
+      "source": "internal-review",
+      "classification": "trivial fix",
+      "status": "resolved",
+      "action": "The comment's slot list now reads (in-context, fresh, independent, external), matching the gates delta and model-hints.ts. The 'archive' phase key was VERIFIED genuine before keeping it: the all-gates-passed fall-through composes next_hint_keys from the passed gate's before phase, which is 'archive' for review-system — so the example list stands.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/config.yaml"
+        ],
+        "flagged_not_applied": []
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": null,
+  "final_assessment": "All 3 findings from the fresh system pass (0C/1W/2S) walked and resolved: the content half of the check/use seam closed by materialize-first (gate and bytes are one read of frozen caller state), the doc-scoped walk ordinal anchored per doc on the shared trail, and the config hint comment aligned to the four-slot vocabulary with the archive phase key verified genuine. 1918 tests green (1916 → 1918); strict validation; fingerprints 26/26.",
+  "iteration": 16,
+  "next_recommended": "/orbit:archive d5-context-economy — user-invoked"
+}

@@ -1,0 +1,13 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-07-13T16:40:21Z",
+  "change": "explicit-lifecycle-consent",
+  "final_assessment": "External review prompt packaged for explicit-lifecycle-consent (iter 1, mode system); awaiting findings. This is the cadence's external slot after a clean leading in-context pass (review-system-2026-07-13T16-36-02Z: 0 findings). The prompt carries three independent-take probes: the marker-in-next_command-value reading, the at-stamp straddler boundary this change itself exercised, and whether the three D1 exit criteria are falsifiably satisfied by what shipped.",
+  "next_recommended": "Paste orbit/changes/explicit-lifecycle-consent/.orbit-runs/external-prompt-system-2026-07-13T16-40-20Z.md into the target AI (pull https://github.com/las-sal/orbit-spec.git branch d-arc), save the response as orbit/changes/explicit-lifecycle-consent/.orbit-runs/external-system-<TS>.md, then /orbit:address-reviews explicit-lifecycle-consent --from-file <that path>",
+  "kind": "editorial",
+  "mode": "system",
+  "reviewer_class": "external",
+  "prompt_path": "orbit/changes/explicit-lifecycle-consent/.orbit-runs/external-prompt-system-2026-07-13T16-40-20Z.md",
+  "target": null,
+  "awaiting_findings": true
+}

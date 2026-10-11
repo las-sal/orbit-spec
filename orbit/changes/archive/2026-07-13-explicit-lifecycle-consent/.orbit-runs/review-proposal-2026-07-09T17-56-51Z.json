@@ -1,0 +1,59 @@
+{
+  "command": "review",
+  "timestamp": "2026-07-09T17:56:51Z",
+  "change": "explicit-lifecycle-consent",
+  "final_assessment": "1 critical issue(s) found. Fix before /orbit:apply.",
+  "next_recommended": "/orbit:address-reviews explicit-lifecycle-consent --from-file orbit/changes/explicit-lifecycle-consent/.orbit-runs/review-proposal-2026-07-09T17-56-51Z.json",
+  "kind": "editorial",
+  "mode": "proposal",
+  "iteration": 2,
+  "depth": "full",
+  "reviewer_class": "fresh",
+  "flags": { "parallel": false, "focus": null, "strict": false, "fresh": true, "mark": false, "skip_verify": false },
+  "passes_run": ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
+  "passes_skipped": [],
+  "findings_summary": {
+    "critical": 1,
+    "warning": 1,
+    "suggestion": 1,
+    "by_pass": {
+      "1": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "2": { "critical": 0, "warning": 0, "suggestion": 1 },
+      "3": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "4": { "critical": 1, "warning": 0, "suggestion": 0 },
+      "5": { "critical": 0, "warning": 1, "suggestion": 0 },
+      "6": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "7": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "8": { "critical": 0, "warning": 0, "suggestion": 0 },
+      "9": { "critical": 0, "warning": 0, "suggestion": 0 }
+    }
+  },
+  "findings": [
+    {
+      "pass": "4",
+      "severity": "CRITICAL",
+      "file": "specs/orbit-engine-gates/spec.md",
+      "line": 1,
+      "title": "Un-delta'd baseline requirement 'spec-driven v1 gates and cadence' pins '(version 2)' and enumerates both reviewed gates without consent — post-archive self-contradiction",
+      "recommendation": "orbit/specs/orbit-engine-gates/spec.md:188-194 ('spec-driven v1 gates and cadence') states normatively: 'The shipped spec-driven schema (version 2) SHALL declare: review-proposal (kind: reviewed, requires/inputs the four artifacts, cadence: [independent, in-context], confirm: no-new-findings, before: apply), ... and review-system (...)'. This change bumps the shipped schema to version 3 (design D2, task 1.2) and adds consent: user-invoked to BOTH gates — and the change's own delta'd 'Gate declaration in schema YAML' requirement says so ('spec-driven sets consent: user-invoked on review-proposal ... and review-system ...'). Post-archive, the same baseline capability would simultaneously mandate a version-2 schema whose gate declarations lack consent AND a consent-bearing spec-driven declaration — the identical scope-miss class as iter 1's CRITICAL. Add this requirement as a third block in the engine-gates MODIFIED delta: full baseline text with '(version 2)' -> '(version 3)' and 'consent: user-invoked' added to the review-proposal and review-system enumerations (containment-preserving; everything else verbatim); stamp its fingerprint (orbit fingerprint --stamp) so --check stays all-verified."
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "file": "specs/orbit-lifecycle-consent/spec.md",
+      "line": 3,
+      "title": "Iter-1 resolution #3 did not land: the normative uncertainty-default sentence is absent from the Invocation-provenance requirement",
+      "recommendation": "address-reviews-2026-07-09T15-58-31Z.json records finding #3 resolved with 'Invocation-provenance requirement now states normatively: uncertain provenance SHALL be treated as AI-mediated — one extra click, never a silent proceed', but no such sentence exists in the spec: grep 'uncertain' over specs/ returns nothing, and commit a5a0a56 (the iter-1 resolution commit) added no such line to this file. The default currently lives only in design.md (Risks) and tasks.md 2.1 — exactly the state the original WARNING flagged. The 'AI-mediated means everything else' catch-all is close but does not state the uncertainty default an implementer must apply at the margin. Land the promised sentence in the Invocation-provenance rule requirement (e.g. after the AI-mediated definition: 'When provenance is uncertain, it SHALL be treated as AI-mediated — one extra click, never a silent proceed.'). Do not edit the past address-reviews emit (audit trail is lifecycle-invariant); just make the artifact match it."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "file": "tasks.md",
+      "line": 34,
+      "title": "Task 2.4's generic '(+ any body quoting stock assessments)' — onboard.ts is the one concrete other carrier; name it",
+      "recommendation": "grep over src/core/templates/workflows/ shows exactly two bodies quoting imperative Next: labels from the stock assessments: review.ts (15 hits, named in 2.4) and onboard.ts:78 (Phase 3 description quotes 'Next: /orbit:apply <name>.' and 'Next: /orbit:review --as proposal --fresh <name>.'). apply-change.ts:122 also renders a literal 'Next: <next_command...>' completion line (covered by 2.5's verbatim-readout subtraction). Task 2.6's no-imperative-Next grep test would catch a miss, but naming onboard.ts in 2.4 saves the implementer the rediscovery."
+    }
+  ],
+  "stale_suppressed": [],
+  "iteration_note": "Iteration 2 (fresh/independent slot), vs iter 1 (in-context, 6 findings): 5 of 6 resolutions verified landed (orbit-review 6th delta present and containment-clean — only the intended Next:->Ready-when-you-are transforms and the 4 ' — user-invoked' marker sites differ from baseline; D-arc mislabel fixed at both sites; era mechanism baked into the audit-drift delta; bulk inner-emit scenario present; tasks 2.4/4.4 added). Resolution #3 (provenance-uncertainty default) is recorded resolved but absent from the spec — re-surfaced as this run's WARNING. 0 findings repeat verbatim; 3 new this run. Mechanical state: validate --strict passes; fingerprint --check 5/5 verified; 0 @review: markers; baseline count 13 matches proposal's '13 -> 14'; requirement->task coverage complete; consent-attribute placement coherent with the baseline apply-tracked-gate model (consent rides the reviewed gates whose before: is the seam, not the apply gate); 'Ready when you are:' phrasing consistent across engine-gates delta, orbit-review delta, and design D4; provenance is body-observable (harness-injected literal command invocation)."
+}

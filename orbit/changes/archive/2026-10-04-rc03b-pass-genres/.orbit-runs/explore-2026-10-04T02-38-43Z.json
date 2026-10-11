@@ -1,0 +1,25 @@
+{
+  "command": "explore",
+  "timestamp": "2026-10-04T02:38:43Z",
+  "change": "rc03b-pass-genres",
+  "kind": "workflow",
+  "model": null,
+  "final_assessment": "Boundary (resume, first under the rc03b-pass-genres name): the shared exploration was sharpened for rc03b's propose. D-rc03-4 (the verification record) is now Disposition: assigned rc03c-verification-record, so propose consumes two live rules — D-rc03-2 (genre computed, DERIVED) and D-rc03-3 (no-findings brief, BOUNDED). D-rc03-3's domain gained a TWELFTH member found by its own residual method: orbit-review-external's recommended-session note tells an iteration-3+ external to 'carry context from a same-AI prior session' to verify its earlier findings — a review-genre reviewer anchored through its own memory, in the SPEC, not the body (D-rc03-10). D-rc03-5 amended: the same-turn launch sentence is withdrawn — it would breach the no-chaining contract and the eligibility line already renders --fresh for an empty pair (Case 6); the stage charter's line was corrected. Q-rc03-4 resolved as D-rc03-11 (rule only, no record). New Q-rc03-5 for rc08: the T0 emit's next_recommended names a walk of ONE half. D-rc03-12 is rc03b's edit table — ten rows, capability x requirement x action — so propose transcribes. Case 5 recorded the generated-surface red count (seven phrase hits across two references; one false positive named). Three open questions remain, two owned by rc03c and one by rc08, each with a standing recommendation; nothing left for rc03b to decide. Uncommitted.",
+  "decisions_captured": 12,
+  "open_questions_count": 4,
+  "open_questions_with_recommendation": "4 of 4",
+  "rules_total": 2,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [
+    {
+      "id": "D-rc03-3",
+      "kind": "an instruction outside `review.ts` — another body's prose, the chat invocation snippet, the launching brief — that hands a review-genre reviewer prior findings",
+      "method": "the exit (3) grep over the WHOLE generated surface for the trail path and the three finding-list phrasings, plus reading each pair's committed prompt file at the walk (the prompt is on the trail; the brief is not)"
+    }
+  ],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:explore rc03b-pass-genres — 12 decisions captured but 4 open questions remain; resolve open questions before formalizing"
+}

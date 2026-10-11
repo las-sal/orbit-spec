@@ -1,0 +1,197 @@
+{
+  "command": "review",
+  "timestamp": "2026-09-17T20:53:54Z",
+  "change": "rc07-artifact-lint",
+  "kind": "editorial",
+  "model": "claude-opus-5[1m] (fresh clean-context subagent)",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 1,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 1,
+      "warning": 2,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 3
+    }
+  },
+  "findings": [
+    {
+      "pass": "0",
+      "severity": "CRITICAL",
+      "dimension": "completeness",
+      "file": "test/core/source-lint.test.ts",
+      "line": 111,
+      "title": "The inertness instrument reads the LIVE change directory, so `npm test` breaks deterministically at this change's own archive — and the at-archive note does not cover it",
+      "recommendation": "`listMarkdown(path.join('orbit', 'changes', 'rc07-artifact-lint'))` at line 111 resolves against the repo root at test time. Archiving moves that directory to `orbit/changes/archive/<date>-rc07-artifact-lint/`, `fs.readdirSync` throws ENOENT, and the test fails before its first assertion. I verified this empirically rather than by argument: renaming the directory to `orbit/changes/archive/2026-09-18-rc07-artifact-lint` and running `npx vitest run test/core/source-lint.test.ts` produced `FAIL ... Error: ENOENT: no such file or directory, scandir 'orbit/changes/rc07-artifact-lint'` (1 failed | 33 passed); the tree was restored afterward. This is not the same defect the third proposal pass caught — that one was the `specs.capability-count` MARK going stale, and task 5.4 owns it. Nothing owns this. Section 5's at-archive note is the exact convention for work that must happen in the archive commit, and it lists only the mark. The fix is small and there are two defensible shapes; pick one and add it to the at-archive note so it lands in the same commit as the move. Note that after archive the change's prose is an excluded RECORD, so the test's subject legitimately changes character — a reviewer should decide whether it is retargeted or retired, not discover it as a red suite.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "RETARGET at archive: add to the §5 at-archive note that `test/core/source-lint.test.ts`'s `changeDir` constant moves to the archived path in the same commit. Cheapest, but it pins an instrument to a dated directory name forever and every future reader has to understand why."
+        },
+        {
+          "label": "B",
+          "body": "MAKE IT LOCATION-INDEPENDENT now, before archive: derive the subject from the lint's own domain rather than a hardcoded directory — e.g. scan `resolveFileDomain(process.cwd()).files` and assert that every domain file parses to zero live markers except the dogfooded ones. That is strictly stronger than the current assertion (it covers the whole living project, not one directory), survives the archive untouched, and keeps the derive-don't-pin discipline the test's own comment invokes."
+        },
+        {
+          "label": "C",
+          "body": "RETIRE at archive with a recorded reason: drop the block in the archive commit and note that the change's prose became an excluded record. Honest, but it removes the only instrument asserting that syntax-describing prose stays inert — and the synced baseline `orbit/specs/orbit-source-lint/spec.md` will carry that prose into a LINTED path forever, so the assertion still has a live subject."
+        }
+      ]
+    },
+    {
+      "pass": "0",
+      "severity": "CRITICAL",
+      "dimension": "correctness",
+      "file": "src/core/source-lint.ts",
+      "line": 106,
+      "title": "A tracked markdown file whose path git quotes (any non-ASCII or special character) is silently dropped from the domain, and the catch that drops it mislabels the cause",
+      "recommendation": "`execFileSync('git', ['ls-files', '*.md'])` inherits git's default `core.quotePath=true`, so a path containing non-ASCII bytes comes back C-quoted — literally `\"d\\303\\251-caf\\303\\251.md\"`, quotes included. `resolveFileDomain` splits that on newlines and keeps it verbatim, `path.join(projectRoot, file)` then names a file that does not exist, and the `catch { continue; }` at line 277 swallows it under the comment `tracked but not present in the working tree` — a diagnosis that is false here. Reproduced in a scratch repo: a tracked `dé-café.md` carrying a marked span reading `99` against a source emitting `1` produced NO finding, NO warning, and was not even counted in coverage, while a sibling `spaced name.md` (ASCII, needs no quoting) failed correctly. This contradicts the requirement directly — `orbit/specs` delta, `The lint reads living documents across the whole project`: 'the file domain is `git ls-files '*.md'` minus a DECLARED exclusion list … Git's tracked-file list is the authority, so the domain closes by construction'. It does not close: a legitimately tracked file leaves the domain with no signal, which is the silent-miss the capability's own thesis is written against ('three of the four defects were in `CLAUDE.md`, which no validator reads'). This repo is all-ASCII so nothing is wrong today, but an adopter with `guía.md` or `文档.md` gets a quietly partial lint that reports itself clean. Fix in `resolveFileDomain`: pass `-z` and split on `\\0` (git emits raw, unquoted bytes under `-z`), or equivalently prefix `['-c', 'core.quotePath=false']`. Separately, tighten the line-277 catch so a read failure over a file git DID list is reported rather than swallowed — a tracked-but-deleted file is the only case that should pass silently, and it can be distinguished by checking existence before reading.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "`execFileSync('git', ['ls-files', '-z', '*.md'], …)` and split the output on `\\0` (dropping the trailing empty element). This is the canonical fix — `-z` disables quoting entirely and also makes newline-bearing filenames safe. One-line change plus a fixture with a non-ASCII filename."
+        },
+        {
+          "label": "B",
+          "body": "`execFileSync('git', ['-c', 'core.quotePath=false', 'ls-files', '*.md'], …)`. Smaller diff, keeps newline-splitting, and fixes the non-ASCII case — but a filename containing a literal newline still corrupts the domain. Acceptable only if a newline in a tracked path is declared out of scope in the spec."
+        }
+      ]
+    },
+    {
+      "pass": "0",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "src/core/markdown-fence.ts",
+      "line": 95,
+      "title": "The inline-code mask scans across blank lines, so two unrelated stray backticks in different paragraphs pair up and silently neutralize every marker between them",
+      "recommendation": "Pass 2 groups lines into maximal runs of NON-fenced lines (lines 95-104) and runs the code-span scanner over each whole run, so a backtick run at the top of one paragraph can pair with a backtick run several paragraphs later. CommonMark does not permit that: a code span is an inline construct and cannot cross a block boundary, so a blank line ends the search. Reproduced against the built module: a document reading `A sentence with a stray backtick ` … blank line … `The program has <!-- src:stages -->99<!-- /src --> stages.` … blank line … `Another paragraph with a stray backtick `` masks the marker (`mask[markerOffset] === true`) and `parseMarkedSpans` returns `{spans: [], error: null}` — the stale span vanishes with no finding and no marker error. I measured the current exposure before rating this: across all 53 files in the live domain, ZERO masked regions span a blank line, so nothing is wrong in the tree today. It is rated a warning rather than a suggestion because of the failure MODE, not its current frequency: the spec is emphatic everywhere else that the lint must never go quiet ('a corrupted registry can never disable the lint quietly'; 'one malformed marker SHALL NOT turn the lint into a no-op for the rest of the project'), and a marker error's blast radius is bounded to one file for exactly that reason — yet here a single stray backtick silently un-marks spans with no error at all, and coverage's `(N markers)` count is the only trace. Fix: in the Pass 2 grouping loop, break groups at blank lines as well as at fenced lines (a one-condition change to the `while (j < lineSpans.length && !lineSpans[j].fenced) j++;` walk). The spec's inline-code decision table should gain the row too — it currently defines the equal-run/unmatched-run/multiline cases but is silent on block boundaries, so spec and implementation are consistently wrong together rather than divergent."
+    },
+    {
+      "pass": "0",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "test/core/source-lint.test.ts",
+      "line": 33,
+      "title": "The headline instrument — 'the four real defects must FAIL' — asserts `String.prototype.includes` directly and never touches the lint, so it cannot detect a regression in the product",
+      "recommendation": "The `realDefects` table at lines 24-29 is the change's motivating evidence, and the assertion that consumes it is `expect(d.span.includes(d.sourceValue)).toBe(false)` (line 33). That is a statement about JavaScript, not about `source-lint.ts`: it passes identically if `runSourceLint` is rewritten to parse numbers, to skip mismatches entirely, or to be deleted. The same applies to the compound-string test at lines 37-40. This matters more than a usual tautology-test nit because the compound case (`4C/7W/0S` vs `4C/6W/0S`) is the ONLY fixture that discriminates containment from a numeric parse, and it is the one not wired to the product — the e2e mismatch test (lines 283-290) compares `17` against `2`, both of which a numeric implementation would also flag, and the agreeing-span test compares `2` against `2`, which a numeric implementation would also pass. So a regression to `parseInt` on both sides would leave the entire suite green. This is rc01's lesson in a second flavour: rc01 retired instruments built on REMEMBERED structure; this one is an instrument built on the standard library instead of the code under test. Fix: route the four defects through `runSourceLint` (or at minimum `parseMarkedSpans` plus the real comparison) in the existing temp-repo harness — write each defect's span into a tracked file against a registry source that emits the real value, and assert the resulting `mismatch` finding. The compound case needs a source that emits a compound string, which the CLOSED v1 table cannot produce; assert it against the real check function rather than against `includes` directly, or state in the test why the compound fixture is exercised at the comparison layer only."
+    },
+    {
+      "pass": "3",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "src/commands/validate.ts",
+      "line": 198,
+      "title": "The empty-domain reason reaches stderr only, so `--json` reports `failed: 0` over a run that read no files at all",
+      "recommendation": "Lines 196-200 emit the empty-domain reason with `console.error`, which the apply emit records as a gap found and closed during the sweep ('the empty-domain reason was reaching only human output, and is now a stderr warning in both modes'). For a human that is sufficient. For `--json` it is not: stderr is out-of-band for the consumer the flag exists to serve. Reproduced in a scratch directory that is NOT a git repository, with `orbit/sources.yaml` present and a `README.md` carrying a marked span reading `99` against a source emitting `1`: `orbit validate --sources --json 2>/dev/null` printed `\"source_findings\": []`, `\"source_coverage\": [{\"source\": \"caps\", \"value\": \"1\", \"markers\": 0}]`, `\"summary\": {\"totals\": {\"items\": 1, \"passed\": 1, \"failed\": 0}}` and exited 0. A CI job or agent parsing that stdout sees a passing source check over a run that opened zero files and missed a live stale span. The spec's own scenario is explicit that this path 'reports the reason, checks nothing, produces no findings, and exits zero — it never throws and never claims the project verified'; `passed: 1, failed: 0` is a claim of verification. `SourceLintResult` already carries `domainReason`, and D5b's JSON contract is the natural place for it. Add it to the payload — e.g. a top-level `source_domain: {\"files_scanned\": N, \"reason\": <string|null>}` alongside `source_findings`/`source_coverage` — gated on `sourcesActive` like the other two keys so D6's no-registry byte-identity promise is untouched. That also gives `filesScanned` its first consumer."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc07-artifact-lint/design.md",
+      "line": 62,
+      "title": "D1 rejected a new verb because existing paths 'pick the check up for free' — but no path in this repository runs `orbit validate --all` or `--sources`, least of all at the moments the defect class originates",
+      "recommendation": "D1's reasoning is: 'every path that already runs `orbit validate --all` — CI, the pre-archive sweep, a contributor's habit — picks the check up for free. A new verb would have to be adopted everywhere before it caught anything.' I checked each named path against the tree. CI: `.github/workflows/ci.yml` runs `pnpm run build` and `pnpm test` only; no validate step, and `package.json` has no script that calls the CLI. The pre-archive sweep: the archive body's sweep is `/orbit:audit-drift`; `git grep 'orbit validate'` across `src/core/templates/workflows/` returns four hits, all per-item `orbit validate \"<name>\"` — the form D1 explicitly leaves UNCHANGED — plus prose references. A contributor's habit: this is the one that partly holds — archived task lists do carry `validate --all --strict` as a hand-written close-out step (`orbit/changes/archive/2026-09-15-rc03a-blind-prompt/tasks.md:35`, `.../rc13-explore-mechanism/tasks.md:57`, and rc07's own 5.6). But that habit fires at APPLY time inside a change, and the four defects this stage was built from were edits to living governing prose — `CLAUDE.md` and the arc doc — made during walks and at archive, when no such task is running. So the check has no trigger at the moments the defect class actually occurs. The third proposal pass noticed the CI half of this in passing ('nothing in CI runs `orbit validate --all`, so it would sit red until a human ran it') but it appeared inside another finding's recommendation and was never raised, dispositioned, or resolved on its own terms — I am raising it as the finding it was not. Nothing here says the mechanism is wrong; the mechanism is correct and I could not break it. The gap is that D1 asserted an adoption surface as fact and no task wires one, so on the current tree the lint fires only when a human types it.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "WIRE THE LIFECYCLE SEAM: add an `orbit validate --sources` step to the archive body's pre-archive sweep (beside `/orbit:audit-drift`) and to the address-reviews walk close-out. This puts the check exactly where the four motivating defects were written — the archive commit that rewrites `CLAUDE.md`, and the walk that edits the arc doc. Smallest change with the highest hit rate against the recorded evidence, and it is a workflow-body edit, not engine work."
+        },
+        {
+          "label": "B",
+          "body": "WIRE CI: add a `validate` job (or a `check:sources` npm script invoked from `ci.yml`) running `node bin/orbit.js validate --all --strict`. Catches everything eventually and needs no per-change discipline, but it reports after the fact on a branch rather than at the edit, and the existing CI is inherited-upstream territory this fork has otherwise left alone."
+        },
+        {
+          "label": "C",
+          "body": "RECORD IT AS A DECLARED RESIDUAL: leave the surface as-is, correct D1's factual premise in design.md (name what actually runs `--all` today, which is a hand-written close-out task), and state the gap with kind and method per the D-bcs-2 convention the design already uses elsewhere. Honest and cheap; leaves the stage shipping a check whose trigger is a human habit."
+        }
+      ]
+    },
+    {
+      "pass": "0",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "src/core/sources-registry.ts",
+      "line": 218,
+      "title": "`specs.capability-count` emits a silent `'0'` when `orbit/specs/` is absent — the short-count failure mode the change argues against for the architecture sources",
+      "recommendation": "Line 218 returns `'0'` when the specs directory does not exist, and `checkInputs` for this source is `() => null`, so it declares no precondition at all. The change reasons at length that a source must never absorb a document the engine could not read — `requireParseableDoc` errors on ABSENT/LEGACY/MALFORMED docs precisely because 'an error is honest; a short count is the same failure mode twice', and `countRulingEntries` throws rather than emit zero. A missing `orbit/specs/` is the same shape: not 'zero capabilities' but 'no baseline to count'. The two cases are genuinely different in one respect — zero capability directories IS a truthful count where a zero ruling match is a broken grammar — so this is a suggestion, not a warning. Consider giving the source a `checkInputs` that fails when `orbit/specs/` itself is absent, while still allowing a present-but-empty directory to emit `'0'`. That distinction is cheap and keeps the source table's precondition doctrine uniform."
+    },
+    {
+      "pass": "0",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "src/core/sources-registry.ts",
+      "line": 319,
+      "title": "The duplicate-source-name guard is unreachable, and its test accepts either error message, so nothing pins which path actually runs",
+      "recommendation": "`parseYaml(raw, { uniqueKeys: true })` at line 277 throws on a duplicate mapping key before `readSourcesRegistry` ever reaches the `seen` set at lines 311/319-322. Confirmed live: a registry declaring `caps:` twice produced `orbit/sources.yaml is not valid YAML: Map keys must be unique at line 4, column 3`, i.e. the YAML-parse branch, not the dedicated one. The spec scenario is still satisfied (the error names the file and the specific fault), so this is cosmetic — but the test at `test/core/sources-registry.test.ts:293` matches `/not valid YAML|declared twice/`, an alternation that would pass whichever branch fired, so the suite does not record which contract is live. A future reader takes the `seen` block as the duplicate detector it is not. Either delete the unreachable block and tighten the test to `/not valid YAML/` (recording that duplicate detection is delegated to the YAML parser), or keep the block and make it reachable by parsing with `uniqueKeys: false`, so the engine owns the message it wants to emit."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "src/core/source-lint.ts",
+      "line": 59,
+      "title": "`filesScanned` is computed and returned on every path but reaches no output surface",
+      "recommendation": "`SourceLintResult.filesScanned` (declared line 59-60, populated line 318) has exactly one reader in the whole tree: the shape assertion in `test/core/source-lint.test.ts:270`. Neither `printSourceLint` nor the JSON payload surfaces it, so a run that scanned 53 files and one that scanned 2 (because the exclusions or a domain fault ate the rest) are indistinguishable to every consumer. It is the natural companion to the domain-reason gap in the `--json` finding above, and the two are best fixed together — a `source_domain` object carrying `files_scanned` and `reason` gives both fields a consumer and makes 'what did this run actually read' answerable. If it is not going to be surfaced, drop the field rather than leave a computed value with no reader."
+    },
+    {
+      "pass": "0",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc07-artifact-lint/specs/orbit-source-lint/spec.md",
+      "line": 5,
+      "title": "The requirement justifies the `sources:` wrapper by forward-compatibility, but the implementation rejects any unknown top-level key",
+      "recommendation": "The first requirement's rationale reads: 'The `sources:` wrapper is required rather than entries at the document root, so a later top-level key is an addition rather than a format break.' `readSourcesRegistry` lines 294-299 throw `carries unknown top-level key(s): … (only 'sources' is defined)` on anything but `sources`, and the test at `sources-registry.test.ts` pins that message. So the wrapper does buy room for a future key in the FORMAT, but any engine older than the version that introduces it will hard-fail on a registry that uses it — which is a format break, precisely what the sentence says the wrapper avoids. Fail-loud is defensible and probably right for a v1 whose whole thesis is that nothing should go quiet; the sentence is the thing that is now imprecise. Either narrow the rationale (the wrapper reserves namespace; adding a key is still a version-gated change), or state the forward-compatibility rule the implementation should follow (unknown top-level keys warn rather than fail) and make the code match. As written, spec rationale and implementation point in opposite directions, and the spec is a few weeks from becoming baseline."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "pass": "6",
+      "title": "The arc doc's rc07 charter carries two figures that are now demonstrably wrong — the file domain as '61 today' (the live domain is 53) and the coverage example `stages = 17` (the source emits 18)",
+      "evidence": "Not a new finding: recorded in design.md's 'Where this diverges from the charter' section ('The charter also carries two stale figures of its own … Both are named in the same architect task; neither is edited here') and owned by task 5.5, which RECOMMENDS the architect amendments rather than performing them — stage declarations and charters belong to /orbit:architect, and apply never edits them. Both figures are unmarked, hence invisible to the lint by design (the declared residual)."
+    },
+    {
+      "pass": "6",
+      "title": "`docs/cli.md` documents the command as `openspec validate` while the new `--sources` row and prose reference `orbit/sources.yaml` — mixed branding in one table",
+      "evidence": "Deferred deliberately and in writing: task 5.3 says 'Leave the known `openspec` branding alone — that deferral is not this change's to close.' The CLAUDE.md Tier-C deferral list names `OpenSpec` branding prose as out of scope. The change's own edits (command description, `--all` row, `--sources` row, regenerated JSON/text examples) are accurate against a real run — I diffed the documented `--all --json` shape against live output and it matches."
+    },
+    {
+      "pass": "0",
+      "title": "The dogfooded `specs.capability-count` mark in CLAUDE.md reads 20 and will be wrong the moment this change archives (sync adds `orbit-source-lint`)",
+      "evidence": "Already found by the third proposal pass ('The dogfooded `specs.capability-count` mark is guaranteed to go stale at this change's own archive, and no task owns it') and resolved in the 2026-09-17T18-28-27Z walk, which added §5's AT-ARCHIVE NOTE 5.4 requiring the mark to be re-read from the post-sync tree in the same archive commit with `orbit validate --all` clean on the archived tree. Verified present in tasks.md and correctly scoped to TWO synced capabilities."
+    }
+  ],
+  "commentary": "I spent most of this pass trying to make the lint go quiet, because silence is the only failure this design cannot survive: the whole capability is a promise that a marked figure is checked, and a check that reports clean over something it never read is worse than no check. Four attacks. Three held, one broke twice. The pairing table held under every degenerate input I could construct — second opener, orphan closer, opener-at-EOF, empty span, span crossing line endings, a marker error mid-file with valid spans before and after it: all five rows behaved exactly as the spec's table says, the empty span came back as a CHECK FAILURE carrying the source value rather than a syntax error, and the blast radius really is one file (a broken BROKEN.md and a stale OTHER.md both reported in the same run). The registry reader held under all fifteen fault shapes plus a few of my own; the closed engine table cannot be widened from YAML, `checkInputs` catches a missing doc or schema at read time, and the resolution-versus-registry split means an unresolvable source is reported once with a null coverage value rather than twice. The inertness rule held where it matters most: every markdown file in the change's own directory — spec, design, proposal, tasks, explore — parses to zero live markers, so the document describing the syntax genuinely does not fail the rule it describes, and that property survives the sync into baseline. The domain broke twice. Git's default path quoting drops any tracked file with a non-ASCII name straight out of the domain and into a catch that blames the working tree; I reproduced it with a `dé-café.md` whose stale span went completely unreported. And the inline-code mask, which needs lookahead and got it, does not respect block boundaries, so two stray backticks in different paragraphs can pair and swallow every marker between them — I measured the current exposure at zero across all 53 domain files before rating it, which is why it is a warning and not a critical. The other thing I went after was the instruments, since this program's first stage was about exactly that. They are mostly strong — the ruling-entry count is derived from a hand-scan rather than pinned, the in-backtick exemplars are enumerated from the files rather than counted, the XDG override test actually sets the environment variable, and the CLI tests drive the real binary. Two exceptions: the four-real-defects table, the change's own motivating evidence, is asserted against `String.prototype.includes` and never reaches the product, so the one fixture that distinguishes containment from a numeric parse proves nothing about the code; and the inertness test is bound by a literal path to a directory that this change's next lifecycle step deletes, which I confirmed by moving it and watching the suite go red. Two smaller things I could not shake loose but want on the record. The `--json` surface reports `passed: 1, failed: 0` when git is unavailable and it read nothing — the reason exists, on stderr, where the consumer that flag was built for will not see it. And D1's argument for joining `orbit validate` instead of minting `orbit lint` rests on an adoption surface I went looking for and could not find: no CI step, no workflow body, no npm script. The mechanism is right and I could not break the check itself; what I could not find was anything that runs it at the moments the four motivating defects were actually written.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "6"
+  ],
+  "passes_skipped": [
+    "4",
+    "5"
+  ],
+  "final_assessment": "2 critical, 4 warning, 4 suggestion.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc07-artifact-lint --from-file orbit/changes/rc07-artifact-lint/.orbit-runs/review-system-2026-09-17T20-53-54Z.json"
+}

@@ -24,9 +24,9 @@ export const SKILL_NAMES = [
   'orbit-onboard',
   'orbit-propose',
   'orbit-review',
-  'orbit-review-external',
   'orbit-address-reviews',
   'orbit-audit-drift',
+  'orbit-architect',
 ] as const;
 
 export type SkillName = (typeof SKILL_NAMES)[number];
@@ -47,9 +47,9 @@ export const COMMAND_IDS = [
   'onboard',
   'propose',
   'review',
-  'review-external',
   'address-reviews',
   'audit-drift',
+  'architect',
 ] as const;
 
 export type CommandId = (typeof COMMAND_IDS)[number];

@@ -1,0 +1,29 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-07-14T22:45:44Z",
+  "change": "d2-architect",
+  "final_assessment": "All 4 fresh iter-4 findings resolved (0 CRITICAL, 3 WARNING, 1 SUGGESTION); 0 stale/deferred/escalated. W1: task 1.2's completion-composition enumeration now carries the ratified + ANY-non-quiescent arm (live work OR premised); task 1.4 gains the ratified+premised fixture. W2: the arc charter's item (3) vocabulary reconciled NOW (archived -> quiescent with the D-d2-1 note; same treatment as the iter-3 vocabulary-line fix rather than deferring to the retrofit). W3: audit-drift parenthetical scoped honestly — change citations also fail orbit validate; explore citations are caught ONLY by the audit (no validating surface exists for explore metadata). S1: three degradation-matrix rulings added as scenarios — validate on legacy passes with a note (legacy is not an error); show on malformed errors toward validate (fixed, not browsed); citations resolve against a malformed doc's WELL-FORMED stages (one typo'd heading must not dangle sibling citations). Validates --strict; fingerprints 16/16 (edits in ADDED requirements/tasks/arc only).",
+  "next_recommended": "/orbit:review --as proposal --fresh d2-architect — the independent pass yielded new findings (now resolved); the no-new-findings confirm requires an independent pass that yields none",
+  "kind": "editorial",
+  "source": "--from-file orbit/changes/d2-architect/.orbit-runs/review-proposal-2026-07-14T22-42-59Z.json",
+  "source_path": "orbit/changes/d2-architect/.orbit-runs/review-proposal-2026-07-14T22-42-59Z.json",
+  "source_format": "internal-review",
+  "walk_mode": "per_finding",
+  "walk_mode_source": "flag",
+  "resolution_summary": { "resolved": 4, "stale": 0, "deferred": 0, "escalated": 0 },
+  "resolutions": [
+    { "finding": "Task 1.2 completion-composition omits the ratified+premised case", "severity": "WARNING", "classification": "trivial fix", "action": "1.2 enumeration extended to any non-quiescent observation; 1.4 gains the ratified+premised fixture." },
+    { "finding": "Arc charter still uses superseded state name archived", "severity": "WARNING", "classification": "trivial fix", "action": "Charter item (3) reconciled now (quiescent + D-d2-1 note), consistent with the iter-3 vocabulary-line treatment." },
+    { "finding": "'(they also fail validation)' overclaims for explore-metadata citations", "severity": "WARNING", "classification": "trivial fix", "action": "Parenthetical scoped: change citations also fail orbit validate; explore citations caught only by the audit." },
+    { "finding": "Degradation matrix has three unspecified cells", "severity": "SUGGESTION", "classification": "trivial fix", "action": "Three scenarios: validate-on-legacy exits 0 with note; show-on-malformed errors toward validate; citations resolve against well-formed stages of malformed docs." }
+  ],
+  "ripple_cascade": {
+    "applied": [
+      "orbit/changes/d2-architect/tasks.md",
+      "orbit/architecture/d-arc-arbitered-flow.md",
+      "orbit/changes/d2-architect/specs/orbit-audit-drift/spec.md",
+      "orbit/changes/d2-architect/specs/orbit-architecture-engine/spec.md"
+    ],
+    "flagged_not_applied": []
+  }
+}

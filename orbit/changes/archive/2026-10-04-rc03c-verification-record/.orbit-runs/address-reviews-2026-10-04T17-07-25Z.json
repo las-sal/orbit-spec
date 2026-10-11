@@ -1,0 +1,146 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-04T17:07:25Z",
+  "change": "rc03c-verification-record",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "from-file",
+  "source_path": "orbit/changes/rc03c-verification-record/.orbit-runs/review-system-2026-10-04T16-41-51Z.json",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 3,
+    "suggestion": 3
+  },
+  "pushback_verification": "All 6 findings verified against current state; 0 stale. The two halves of the pair shared no finding, so none is stale against walk 1. W1 by grep over the generated skill (0 hits for the definition); S3 by git diff --stat over the change range (empty for the hardening file).",
+  "resolution_summary": {
+    "resolved": 6,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The installed VERIFICATION branch grades landed/regressed by a definition the installed skill does not carry",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 827,
+      "classification": "trivial_fix",
+      "action": "The owner's verdict sentence became a fenced production in orbit-emit-composition's `A VERIFICATION-genre payload carries its verdicts and its findings link to the walk record` (the owner sentence now says the review body carries it as a CHECKED MIRROR); the body's Step 5 gained `#### Verdicts` carrying the fence byte-equal, and step (c) points at it. New test/core/verification-verdict-parity.test.ts holds the mirror to its owner through the single-active-owner lookup; test 1.5's 'must not carry' assertion flipped to 'carried only as its mirror'.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/templates/workflows/review.ts",
+          "orbit/changes/rc03c-verification-record/specs/orbit-emit-composition/spec.md",
+          "orbit/changes/rc03c-verification-record/specs/orbit-review/spec.md",
+          "orbit/changes/rc03c-verification-record/design.md",
+          "orbit/changes/rc03c-verification-record/tasks.md",
+          "test/core/verification-verdict-parity.test.ts",
+          "test/core/templates/review-verification-branch.test.ts",
+          "CLAUDE.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Probe/engine reconciliation is one-directional; a probe-VERIFICATION, engine-REVIEW pass has no recovery path",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 825,
+      "classification": "decision_required",
+      "action": "Option A: the write-gate refusal reconciles in BOTH directions. The REVIEW-genre refusals (verification present, or a walk_entry) now end with what the pass owes: drop 'verification' and every walk_entry, run as REVIEW genre over the whole artifact, emit again. Step (a) of the body and of orbit-review's delta state both directions, with a scenario for the reverse one. The unnamed second divergence case (a walk naming a pass file absent from this trail) is recorded as an ACCEPTED RESIDUAL in design's Risks for the readiness record — naming it in orbit-conventions' KNOWN LIMIT is a fourth capability, not taken.",
+      "ratified_via": "chat",
+      "resolution": "A — reconcile in both directions inside this change's three capabilities; the unnamed probe case rides the readiness record as an accepted residual. B (widen orbit-conventions' KNOWN LIMIT) and C (change the probe) not taken: each is a fourth capability past R-crc-1's ceiling.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/emit-composition.ts",
+          "test/core/emit-composition.test.ts",
+          "orbit/changes/rc03c-verification-record/specs/orbit-review/spec.md",
+          "orbit/changes/rc03c-verification-record/design.md",
+          "test/core/templates/review-verification-branch.test.ts",
+          "test/core/rc03b-untouched-modules.test.ts",
+          "CLAUDE.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/specs/orbit-conventions/spec.md",
+            "reason": "baseline spec; add a delta to your current change's specs/<capability>/spec.md to capture this ripple"
+          }
+        ]
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "'Run this mode's passes over the sweep scopes' is undefined for system-mode Pass 0 and Pass 6",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 828,
+      "classification": "trivial_fix",
+      "action": "Step (d) of the body and of orbit-review's delta now name the FILE-SET passes a verification runs over the sweep scopes — every proposal-mode pass; system-mode Passes 1–5 — and skip system-mode Pass 0 (verify-change) and Pass 6 (audit-drift), listed in passes_skipped with that reason; new scenario in the delta; pinned in 1.5.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/templates/workflows/review.ts",
+          "orbit/changes/rc03c-verification-record/specs/orbit-review/spec.md",
+          "test/core/templates/review-verification-branch.test.ts",
+          "CLAUDE.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "rc03b's probe decision table still compares against a hand model of the engine, not computePassGenre",
+      "marker_source": "internal-review",
+      "file": "test/core/pass-genre-probe.test.ts",
+      "line": 53,
+      "classification": "trivial_fix",
+      "action": "trailGenre now calls computePassGenre over the trail reader instead of a hand model. Every existing row held; a new row pins the SECOND difference the real function shows (a walk naming a pass file absent from this trail: probe VERIFICATION, engine REVIEW — the accepted residual of finding 2); the header says the table measures the engine and names both differences.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The residual check's co-committed limit swallows the whole walk whenever the fresh half is the later pass",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc03c-verification-record/specs/orbit-review/spec.md",
+      "line": 5,
+      "classification": "trivial_fix",
+      "action": "The residual kind (orbit-review delta) and the body's KNOWN LIMIT now say the co-committed edit is the ORDINARY case when the base file is committed with the walks' edits, and state the remedy: commit the pass file BEFORE the walks' edits. Applied in this cycle: the fresh pass file was committed alone (d25d6429) before any walk edit, so the confirm's residual check range includes both walks' edits.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/templates/workflows/review.ts",
+          "test/core/templates/review-verification-branch.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Task 1.3 and the design's Touchpoints name report-render-hardening.test.ts, which the apply never touched",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc03c-verification-record/tasks.md",
+      "line": 5,
+      "classification": "trivial_fix",
+      "action": "Recorded under task 1.3 that every 1.3 case, the read-side twin included, landed in report-render.test.ts; design.md's Touchpoints keep the hardening file as propose predicted it — the prediction is a record and the engine reports the divergence rather than an edited prediction hiding it.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Walk 2 of the system blind pair (the fresh half): 6 of 6 resolved, 0 stale. The one decision took option A by chat — the refusal reconciles in both directions, the unnamed probe case an accepted residual; the verdict definition is now a checked mirror in the body; the five obvious fixes landed as previewed. 2559 tests green.",
+  "iteration": 4,
+  "next_recommended": "/orbit:review --as system rc03c-verification-record"
+}

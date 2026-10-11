@@ -1,0 +1,16 @@
+schema: spec-driven
+created: 2026-10-01
+schema_version: 4
+architecture:
+  doc: clean-up-review-cycle
+  stage: rc16-retirement-sweep
+base_fingerprints:
+  orbit-conventions:
+    Mechanism entry grammar and accounted closure: sha256:21fc70e3fd6f3fcf930d7ddb5f64ae8ccc259ca2ec18be3b842e2912dd82e7a1
+    Concluded exploration outcome: sha256:08b705e6284099a28b1793c05f49a696bf47379b42d8e6d056f70108297b3e25
+    Decision entry identity and classification: sha256:8a605eec0c178d59db5ab63414a31bd7501f3a35330332d36a42f20f63b9eb56
+  orbit-orientation:
+    Bare `orbit status` renders the current sprint: sha256:7282b24b1a6c821b27033b4c91cba5d6b7bc2f2c729fcdc19ec253e35cc07e54
+    Sprint strip composition: sha256:f39e61d41b2f26035ec896ff671522170fa3dd5c8482079168f6c0b451eb8646
+  orbit-explore-modifications:
+    Nine moves applied per rule in the Mechanism section: sha256:cce4f61c73a7c78b3b64fdd27a2060698f337303d86fc7c43233ab49dfc075d4
