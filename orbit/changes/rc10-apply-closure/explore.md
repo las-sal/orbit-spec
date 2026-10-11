@@ -23,7 +23,7 @@ whether the pre-archive condition reads `orbit status --change <name> --scenario
 
 ## Mechanism
 ### D-rc10-1 — an unchecked user-validation task at the archive seam is OBSERVED or FORWARD, never silent
-Domain: every unchecked task carrying the `(User-validation` marker when archive reaches its task check
+Domain: every unchecked task carrying the `(User-validation` marker when archive reaches its task check (REFINED after this entry — see Case 4; design.md D3 and D5 are the live statement)
 | member | covered by |
 |---|---|
 | declared + marked, all remaining (apply gate `passed` with `userValidationPending`) | the seam reads the engine's `userValidationPending` list and takes a disposition per id |
@@ -71,7 +71,7 @@ Moves:
 - INVOKE: applied — fires at archive's existing Step 3.4 position, every archive
 
 ### D-rc10-3 — a FORWARD deferral is a record the archive write gate CHECKS for presence
-Domain: every unchecked `(User-validation` task in the archived `tasks.md` when `orbit emit archive` runs
+Domain: every unchecked `(User-validation` task in the archived `tasks.md` when `orbit emit archive` runs (REFINED after this entry — see Case 4; design.md D4 and D6 are the live statement)
 | member | covered by |
 |---|---|
 | the id has a deferral entry naming `task`, `when`, `where` | accepted; printed in the completion readout |
@@ -88,6 +88,9 @@ Moves:
 - FEASIBILITY: not applied — one list per archive, usually empty
 - CONSUME: applied — the completion readout prints each deferral; the architect readout's ratification offer grades the stage exit that carries it
 - INVOKE: applied — every archive emit; refusal makes it impossible to forget
+
+### Case 4 — what changed after these entries (propose and the proposal walk)
+The two entries above are the exploration's record; where they differ from the change, design.md is the live statement. D-rc10-1: its second row (marked-but-undeclared tasks to Step 3) was replaced at propose — the seam owns every marked task (design D3); FORWARD was replaced at the walk by DEFERRED with a `why`, so the dispositions partition by the checkbox (design D5, Sal: A). D-rc10-3: "the same reader the tracked gate uses" was replaced at propose by `parseCheckboxes`, the apply emit's reader (design D4); the walk added the ungrouped-line refusal, the pre-move check and the post-move recovery (design D4, D6), the `why` key, and bulk archive's per-change step (design D8).
 
 ### Case 3 — what propose must execute
 (1) A fixture whose apply gate is passed-for-flow: confirm Step 3 and the new seam step do not both ask. (2) rc03a's archived trail through the widened prompt: which rows fire. (3) `orbit emit archive` after the move: confirm the write gate can read the archived `tasks.md`.

@@ -4,34 +4,49 @@
 
 The archive workflow SHALL dispose of every unchecked task carrying the `(User-validation` marker in
 the change's `tasks.md` — the marker `orbit-engine-gates`' `Tracked-gate pass condition` reads —
-BEFORE the Step 5 move, each as exactly one of:
+at a Step 3.2 that runs BEFORE the Step 5 move, each as exactly one of two dispositions, which
+partition the marked tasks by whether the box ends checked:
 
 - **OBSERVED** — the validation has happened. The AI checks the box and appends to the task line
   a one-line note naming the evidence.
-- **FORWARD** — the validation can happen only after the change ships (a merge, a later stage, a
-  later session). The box stays unchecked, and the archive emit carries a `deferred_validations`
-  entry `{task, when, where}`: `task` the task id, `when` and `where` non-empty prose naming the
-  moment and the place the observation will happen.
+- **DEFERRED** — the validation was not observed at this seam: it can happen only after the change
+  ships (a merge, a later stage, a later session), or it could have happened and has not. The box
+  stays unchecked, and the archive emit carries a `deferred_validations` entry
+  `{task, why, when, where}`: `task` the task id; `why`, `when` and `where` non-empty prose naming
+  why it was not observed here, the moment it will be, and the place.
 
-Before the move, the seam SHALL BRIEF the user in chat with each task and its disposition. The
-brief is a report, not a prompt: halting stays the user's, by aborting (R-crc-13). Upstream Step
-3's incomplete-tasks count SHALL exclude every task this step owns — a named edit to an upstream
-portion, per `orbit-conventions`' `Generated-file disposition` — and every other unchecked task
-still prompts there unchanged.
+Before the move, the seam SHALL BRIEF the user in chat with each task, its disposition and, for a
+deferral, its `why`. The brief is a report, not a prompt: halting stays the user's, by aborting
+(R-crc-13). Upstream Step 3's incomplete-tasks count SHALL exclude every task this step owns — a
+named edit to an upstream portion, per `orbit-conventions`' `Generated-file disposition` — and
+every other unchecked task still prompts there unchanged.
 
 `orbit emit archive` SHALL read the archived `tasks.md` with the reader the apply emit's
-`user_validation_tasks` check uses, and REFUSE, naming the task: an emit that leaves an unchecked
-marked task with no deferral; a marked unchecked task with no task id, which no deferral can key;
-a deferral naming a checked task or no task; a second deferral for one task; a deferral whose
-`when` or `where` is missing, not a string, or empty; and a deferral key other than `task`, `when`
-and `where`. The engine checks the id set, never whether the prose is true (R-crc-10). The
-completion readout SHALL print one line per deferral.
+`user_validation_tasks` check uses, and REFUSE, naming the task or line: an emit that leaves an
+unchecked marked task with no deferral; a marked unchecked task with no task id, which no deferral
+can key; a marked unchecked line the reader places in no `## ` task group, which the reader cannot
+see; a deferral naming a checked task, an unchecked task without the marker, or no task; a second
+deferral for one task; a deferral whose `why`, `when` or `where` is missing, not a string, or
+empty; and a deferral key other than those four. A missing `tasks.md` is an empty marked set, so a
+deferral against it names no task. An empty `deferred_validations` array is accepted and written
+as absent. The engine checks the id set, never whether the prose is true (R-crc-10). The completion
+readout SHALL print one line per deferral.
 
-A task whose assertion is about the baseline after sync is FORWARD at this step: the task check
+Step 3.2 SHALL run the same checks against the composed deferrals BEFORE the move, so a predictable
+refusal surfaces while the change is still active: an id-less or ungrouped marked task is reported
+to the user, who gives it an id or a group before the archive proceeds, or aborts. When the emit
+still refuses after the move, the archive SHALL repair the payload and re-run `orbit emit archive`
+against the archived directory, never repeating the sync or the move.
+
+The bulk-archive workflow SHALL run Step 3.2 per change, before that change's sync and move, and
+brief each change's dispositions in its batch summary; each inner archive emit is checked by the
+same write gate.
+
+A task whose assertion is about the baseline after sync is DEFERRED at this step: the task check
 precedes the sync.
 
 **Named limit.** This capability provides no reader of a deferral after the archive. For a change
-citing an architecture stage, a forward validation is usually one of the stage's exit criteria,
+citing an architecture stage, a deferred validation is usually one of the stage's exit criteria,
 which the user grades at ratification; for an uncited change, the brief, the emit and the readout
 are its only surfaces.
 
@@ -42,11 +57,17 @@ are its only surfaces.
 - **THEN** the AI checks 5.3 with a one-line evidence note before the move, the brief names it
   OBSERVED, and the emit carries no deferral for it
 
-#### Scenario: A forward validation is deferred and printed
+#### Scenario: A validation possible only after shipping is deferred and printed
 
 - **WHEN** task 6.3 carries `(User-validation` and can be observed only after the change merges
-- **THEN** 6.3 stays unchecked, the emit carries `{task: "6.3", when, where}` with both prose
-  fields non-empty, and the completion readout prints one line for it
+- **THEN** 6.3 stays unchecked, the emit carries `{task: "6.3", why, when, where}` with all three
+  prose fields non-empty, and the completion readout prints one line for it
+
+#### Scenario: An available but unperformed validation is deferred with its reason
+
+- **WHEN** task 5.3 carries `(User-validation`, could have been run before archive, and was not
+- **THEN** 5.3 is DEFERRED with a `why` saying it was not run, and the brief shows that reason to
+  the user before the move
 
 #### Scenario: An undeferred validation is refused at the write gate
 
@@ -54,16 +75,31 @@ are its only surfaces.
   payload carries no deferral naming `4.4`
 - **THEN** `orbit emit archive` refuses, naming `4.4`, and writes nothing
 
-#### Scenario: A deferral must name an unchecked task
+#### Scenario: A deferral must name an unchecked marked task
 
-- **WHEN** a deferral names a task that is checked, or no task in the file
+- **WHEN** a deferral names a task that is checked, an unchecked task without the
+  `(User-validation` marker, or no task in the file
 - **THEN** `orbit emit archive` refuses, naming the deferral's task
+
+#### Scenario: A marked line outside every task group is refused before the move
+
+- **WHEN** `tasks.md` opens with `# Tasks` and an unchecked `- [ ] 4.4 (User-validation) …` line
+  before any `## ` group heading
+- **THEN** Step 3.2 reports the line before the move, and `orbit emit archive` refuses it, naming
+  the line
 
 #### Scenario: Step 3 no longer asks about validation tasks
 
 - **WHEN** the only unchecked tasks at archive carry the `(User-validation` marker
-- **THEN** upstream Step 3's incomplete-tasks prompt does not fire, and the user-validation step
-  briefs each task instead
+- **THEN** upstream Step 3's incomplete-tasks prompt does not fire, and Step 3.2 briefs each task
+  instead
+
+#### Scenario: Bulk archive disposes per change
+
+- **WHEN** `/orbit:bulk-archive` archives a batch in which one change carries an unchecked
+  `(User-validation` task
+- **THEN** that change's Step 3.2 runs before its sync and move, its dispositions appear in the
+  batch summary, and its archive emit carries its deferrals
 
 ## MODIFIED Requirements
 
@@ -233,7 +269,7 @@ residue that path renaming alone does not fix — satisfying the deferral record
   fingerprint outcome occurred, per this capability's `Archive run summary written` requirement),
   plus the `consent` field (`"user-invoked" | "prompted"`; present on every post-capability
   archive emit, per `orbit-lifecycle-consent`'s emit-field requirement), plus the conditional
-  `deferred_validations` array (`[{task, when, where}]`; present only when an unchecked
+  `deferred_validations` array (`[{task, why, when, where}]`; present only when an unchecked
   user-validation task was deferred, per this capability's `User-validation closure at the archive
   seam` requirement)
   — and covers the field list in this capability's own `Archive run summary written` requirement
@@ -271,6 +307,6 @@ residue that path renaming alone does not fix — satisfying the deferral record
 #### Scenario: The deferral record is documented in the shipped reference
 
 - **WHEN** the shipped archive schema reference is read after init
-- **THEN** it documents the conditional `deferred_validations` array and its three keys, with a
+- **THEN** it documents the conditional `deferred_validations` array and its four keys, with a
   `## Field notes` bullet and a `json example` block carrying the field, which the reference round
   trip submits unchanged through the archive write gate

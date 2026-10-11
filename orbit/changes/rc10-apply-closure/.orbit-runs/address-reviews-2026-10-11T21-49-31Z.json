@@ -1,0 +1,410 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-11T21:49:31Z",
+  "change": "rc10-apply-closure",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc10-apply-closure/.orbit-runs/review-proposal-2026-10-11T21-44-15Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-11T21-44-15Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 6,
+    "suggestion": 3
+  },
+  "pushback_verification": "All nine verified against current state: the ADDED requirement's refusal list named only checked or absent tasks; computeApply throws on a missing tasks.md; the emit runs after the move; archive-change.ts lines 24, 61, 107, 143 and 126 still read review-system-only; design.md:13 read 'records a deferral'; reference-roundtrip.test.ts:106 seeds an unmarked task; design row D-rc10-3 cited the tracked gate's reader; the superseded limit sat only in design; superseded is a boolean on the row (gates.ts:69).",
+  "resolution_summary": {
+    "resolved": 9,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The deferral refusal set accepts a deferral naming an unchecked task that carries no (User-validation marker",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-archive-modifications/spec.md",
+      "line": 23,
+      "classification": "trivial_fix",
+      "action": "the refusal list gains a deferral naming an unchecked task without the marker, in the ADDED requirement, task 1.2 and the proposal; the scenario 'A deferral must name an unchecked marked task' covers it",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc10-apply-closure/tasks.md",
+          "orbit/changes/rc10-apply-closure/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "a deferral naming a checked task or no task",
+          "refuses a deferral that names a checked task or no task"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc10-apply-closure/specs/orbit-archive-modifications/spec.md",
+            "text": "an unchecked task without the"
+          },
+          {
+            "path": "orbit/changes/rc10-apply-closure/tasks.md",
+            "text": "an unmarked task or no task"
+          }
+        ],
+        "searched": [
+          "checked task or no task",
+          "naming a checked task"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The write gate's behaviour on a missing tasks.md and on an empty deferred_validations array is unstated",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-archive-modifications/spec.md",
+      "line": 22,
+      "classification": "trivial_fix",
+      "action": "stated: a missing tasks.md is an empty marked set, so a deferral against it names no task; an empty deferred_validations array is accepted and written as absent, as the apply emit drops an empty user_validation_tasks; design D4 and tasks 1.1/1.2/1.3 follow",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc10-apply-closure/design.md",
+          "orbit/changes/rc10-apply-closure/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc10-apply-closure/specs/orbit-archive-modifications/spec.md",
+            "text": "A missing `tasks.md` is an empty marked set"
+          },
+          {
+            "path": "orbit/changes/rc10-apply-closure/tasks.md",
+            "text": "an empty array is written as absent"
+          },
+          {
+            "path": "orbit/changes/rc10-apply-closure/design.md",
+            "text": "A missing `tasks.md` is an empty marked set"
+          }
+        ],
+        "searched": [
+          "tasks.md not found",
+          "empty array"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Every deferral refusal lands AFTER the Step 5 move, and an id-less marked task is unfixable there without editing the archived tasks.md",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-archive-modifications/spec.md",
+      "line": 7,
+      "classification": "trivial_fix",
+      "action": "Step 3.2 runs the write gate's checks against the composed deferrals before the move, reporting an id-less or ungrouped marked task for the user to fix or abort; a refusal after the move is repaired by re-running orbit emit archive against the archived directory, never the sync or the move (ADDED requirement, design D6, task 2.2, proposal)",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc10-apply-closure/design.md",
+          "orbit/changes/rc10-apply-closure/tasks.md",
+          "orbit/changes/rc10-apply-closure/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc10-apply-closure/specs/orbit-archive-modifications/spec.md",
+            "text": "Step 3.2 SHALL run the same checks against the composed deferrals BEFORE the move"
+          },
+          {
+            "path": "orbit/changes/rc10-apply-closure/specs/orbit-archive-modifications/spec.md",
+            "text": "never repeating the sync or the move"
+          },
+          {
+            "path": "orbit/changes/rc10-apply-closure/design.md",
+            "text": "and it checks before the move"
+          },
+          {
+            "path": "orbit/changes/rc10-apply-closure/tasks.md",
+            "text": "State the post-move recovery"
+          }
+        ],
+        "searched": [
+          "after the move",
+          "Step 5 move",
+          "Step 5.5"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The archive schema reference keeps stating the continuation entry is review-system-only with gate_state unpassed|stale; no task updates it",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 13,
+      "classification": "trivial_fix",
+      "action": "task 2.5 widened to repair archive-change.ts lines 24, 61, 107 and 143 by pointing at the override contract's gate set (gate_state gains blocked) and to replace the warnings example at 126 with the deferral it now is",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc10-apply-closure/tasks.md",
+            "text": "repair the review-system-only sentences"
+          }
+        ],
+        "searched": [
+          "review-system",
+          "gate_state",
+          "incomplete task"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Exit (1)'s 'reasoned deferral' is narrowed to 'a deferral' with no recorded revision",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 13,
+      "classification": "decision_required",
+      "action": "applied the ratified direction A — two dispositions partitioned by the checkbox (OBSERVED / DEFERRED) and a required why on every deferral, {task, why, when, where}; exit (1)'s 'reasoned' is carried by why, not narrowed; the external pass's skipped-validation finding closes by the same edit (its own log)",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc10-apply-closure/specs/orbit-archive-modifications/spec.md",
+          "orbit/changes/rc10-apply-closure/proposal.md",
+          "orbit/changes/rc10-apply-closure/tasks.md",
+          "orbit/changes/rc10-apply-closure/explore.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "records a deferral, or the user aborts",
+          "OBSERVED and FORWARD are the AI's dispositions",
+          "Each unchecked user-validation task is OBSERVED or FORWARD at the archive seam",
+          "or FORWARD (compose a `deferred_validations` entry)"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc10-apply-closure/design.md",
+            "text": "Two dispositions, partitioned by the checkbox"
+          },
+          {
+            "path": "orbit/changes/rc10-apply-closure/specs/orbit-archive-modifications/spec.md",
+            "text": "`{task, why, when, where}`"
+          },
+          {
+            "path": "orbit/changes/rc10-apply-closure/proposal.md",
+            "text": "`{task, why, when, where}`"
+          },
+          {
+            "path": "orbit/changes/rc10-apply-closure/design.md",
+            "text": "records a REASONED deferral (its `why`)"
+          }
+        ],
+        "searched": [
+          "FORWARD",
+          "reasoned",
+          "when, where"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Add a required non-empty `why` (prose) to each deferral — `{task, when, where, why}` — refused when empty like `when`/`where`; update the ADDED requirement, the schema-reference block, tasks 1.1-1.3 and 2.5."
+          },
+          {
+            "label": "B",
+            "body": "Record a Decision in explore.md beside D-rc10-5 that `when`/`where` ARE the reasoning ('observable only after X, at Y'), restate design.md:13 citing it, and leave the record at three keys."
+          }
+        ],
+        "chosen": "A"
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "The reference round trip cannot submit a deferral example: its seeded tasks.md has no marked task, and no task changes the seeding",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 13,
+      "classification": "trivial_fix",
+      "action": "new task 2.7: a second seeding rule beside the first seeds a (User-validation task for each deferral an example names; examples with no deferral keep passing; touchpoint added",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc10-apply-closure/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc10-apply-closure/tasks.md",
+            "text": "a second seeding rule, stated beside the first"
+          },
+          {
+            "path": "orbit/changes/rc10-apply-closure/design.md",
+            "text": "a second seeding rule"
+          }
+        ],
+        "searched": [
+          "seedChangeDir",
+          "seeding rule"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "D-rc10-3's closure is still DERIVED on 'the same reader the tracked gate uses', which design D4 refutes",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 74,
+      "classification": "trivial_fix",
+      "action": "the Mechanism -> artifacts rows for D-rc10-1 and D-rc10-3 now say what changed at propose and at the walk; explore.md gains Case 4 and a pointer on each refined Domain line naming design.md as the live statement",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc10-apply-closure/explore.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc10-apply-closure/design.md",
+            "text": "was replaced at propose (D4)"
+          },
+          {
+            "path": "orbit/changes/rc10-apply-closure/explore.md",
+            "text": "### Case 4 — what changed after these entries"
+          }
+        ],
+        "searched": [
+          "the same reader the tracked gate uses",
+          "DERIVED"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The superseded exclusion's limit is argued in design but not named in the spec",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 46,
+      "classification": "trivial_fix",
+      "action": "the override contract's paragraph names the limit: a phase entered without its workflow (tasks checked by hand) leaves the earlier gate superseded with no recorded decision; the design risk now points at it",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc10-apply-closure/specs/orbit-engine-gates/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "Apply has prompted and recorded at its seam since C1, so the exclusion holds for every trail written since"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc10-apply-closure/specs/orbit-engine-gates/spec.md",
+            "text": "Named limit: a phase entered without its workflow"
+          },
+          {
+            "path": "orbit/changes/rc10-apply-closure/design.md",
+            "text": "that case is the named limit stated in the override contract's own text"
+          }
+        ],
+        "searched": [
+          "superseded",
+          "C1"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "'not `superseded`' reads as a state value; the row carries it as a boolean field",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 11,
+      "classification": "trivial_fix",
+      "action": "task 2.3 and the override-contract paragraph read the row's superseded field: 'whose `superseded` field is not true'",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc10-apply-closure/specs/orbit-engine-gates/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "not `superseded` in ONE prompt"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc10-apply-closure/tasks.md",
+            "text": "whose `superseded` field is not true"
+          },
+          {
+            "path": "orbit/changes/rc10-apply-closure/specs/orbit-engine-gates/spec.md",
+            "text": "whose `superseded` field is not true"
+          }
+        ],
+        "searched": [
+          "superseded"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": "walk all, take recs",
+  "final_assessment": "Nine of nine resolved as repairs: the decision (exit (1)'s reasoned deferral) took A — OBSERVED/DEFERRED partitioned by the checkbox with a required why; the write gate's edges stated (unmarked tasks refused, missing tasks.md, empty array); its checks run before the move with a post-move recovery; the schema reference's review-system-only sentences and the round trip's seeding gained tasks; the mechanism record and explore.md point at design as the live statement; the superseded limit and field wording moved into the spec.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc10-apply-closure",
+  "ripple_misses": 0
+}
