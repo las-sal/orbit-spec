@@ -23,7 +23,7 @@ therefore also reads inline segments that carry a flag (D-rc09b-1).
   `node`, `sh` and `command` declared rather than recorded, D-rc09b-4), the runner placeholder `<argv[0]>`, and four
   prose heads, message templates that carry a flag (`argument`, `reach`, `skipped`, `unknown`).
 - The `orbit` snippet requirement's tool-set table, which lists the utilities as "not covered", is stale today (it
-  names five of the twelve). It is replaced by a pointer to the new requirement. Its named limit, which described an
+  names seven of the twelve). It is replaced by a pointer to the new requirement. Its named limit, which described an
   enumeration method the inventory supersedes, is replaced by the inventory's own BOUNDED limit.
 
 ## Capabilities

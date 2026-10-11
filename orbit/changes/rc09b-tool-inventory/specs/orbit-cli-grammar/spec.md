@@ -26,7 +26,8 @@ The inventory reads a segment's HEAD: its first token after any assignment prefi
 | a shell-fence line or inline span the tokenizer refuses or leaves open | not read: an extraction failure of the shared extractor where it fails one |
 | a comment or blank fence line | not read |
 | a line in a `json`, untagged or other data-tagged fence, or prose outside every span | not read |
-| a subshell or group | its grouping is stripped by the tokenizer; each inner segment's head is read |
+| a subshell, `( … )` | its grouping is stripped by the tokenizer; each inner segment's head is read |
+| a brace group (`{ …; }`), a reserved word (`if`, `then`, `fi`, …) or a `!` or `time` prefix | read as the head as written (`{`, `if`, `!`), so it fails until declared under `utility`; the tokenizer strips no other grouping |
 
 The declared exemptions SHALL be this requirement's one fenced block whose info string is `inventory`, one line per
 kind, `<kind>: <head> <head> …`, the heads separated by single spaces:
@@ -37,7 +38,7 @@ placeholder: <argv[0]>
 prose: argument reach skipped unknown
 ```
 
-`utility` holds the POSIX utilities, shell builtins and test words the surface writes, and `node`, the runtime orbit
+`utility` holds the POSIX utilities, shell builtins, reserved words and test words the surface writes, and `node`, the runtime orbit
 requires: furniture of the shell, where a grammar contract buys little. `placeholder` holds a head that stands for a
 command recorded elsewhere (`<argv[0]>`, the external runner record). `prose` holds the first word of a message
 template that carries a flag token (`skipped per --fast`), read by the inline row and never a command. The kind set is
@@ -52,8 +53,10 @@ active change's delta that adds or modifies this requirement when exactly one do
 both), the baseline otherwise.
 
 Named limit (the inventory). Residual kind: a tool whose every inline invocation carries no flag token, is
-path-prefixed, or sits in a span the tokenizer refuses; or one invoked only in prose, in a double-backtick span, or in
-a `json` or untagged fence. Residual method: an independent review reading a new surface's inline spans; rc05's guard
+path-prefixed, or sits in a span the tokenizer refuses; a tool run as an argument of a declared head (`command <tool>
+…`, `sh -c '<…>'`, `node <script> …`, `node bin/orbit.js` among them) or after a declared reserved word; or one
+invoked only in prose, in a double-backtick span, or in a `json` or untagged fence. Residual method: an independent
+review reading a new surface's inline spans and the arguments of every declared head that runs a command; rc05's guard
 already fails a recorded tool's flagged line outside a fence.
 
 #### Scenario: Today's surface passes the inventory
@@ -115,7 +118,6 @@ and this requirement covers `orbit`. Its places table, guard, tokenizer and fenc
 every recorded tool `Every command head on the generated surface is a recorded tool or a declared exemption` derives
 is extracted and guarded by them, with the tool's own name where they say `orbit`. Which tools are recorded, and which
 command heads are exempt from a contract, is that requirement's to state.
-
 
 A command is EXTRACTED from the places this table names, and a GUARD covers the others, so a command written in the
 wrong place fails rather than escaping. The guard reads every line outside a shell-tagged fence after stripping its

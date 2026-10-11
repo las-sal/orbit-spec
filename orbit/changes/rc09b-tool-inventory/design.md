@@ -8,7 +8,8 @@ about `gh` before `gh` was run.
 
 `orbit-cli-grammar`'s `orbit` snippet requirement holds a tool-set TABLE listing the uncovered utilities and
 `node`/`sh` as "not covered", with a named limit describing how the table was enumerated (a PATH-filtered pass). The
-table is prose. It is already stale: it names five utilities and the surface writes twelve. This change turns it into
+table is prose. It is already stale: it names seven of the twelve utility heads the surface writes (`rm`, `tail`, `cd`, `[` and
+`command` are missing). This change turns it into
 a checked record and moves it to a requirement that owns it (R-crc-14).
 
 The exploration settled the domain (see explore.md): D-rc09b-1 reads shell fences plus FLAGGED inline segments.
@@ -38,7 +39,9 @@ and `command` are declared utilities.
 `surface-snippets.ts` that walks the same markdown-it tokens as `walkText`: shell fences (list-nested and
 markdown-nested included), the quote-joining loop of `extractFenceLines`, and single-backtick inline spans through
 `tokenize`. It returns `{surface, line, head, source}` per read segment. A refused or open line yields no head and no
-failure of its own, because the shared extractor already reports it in every sweep. Two walks over one parse could
+failure of its own: a refused SHELL-FENCE line is already reported by every sweep, because `extractFenceLines` fails it
+whatever its first word; a refused INLINE span is reported only by the sweep whose tool it begins with, so a refused
+span of an unrecorded tool is reported by none — the requirement's named limit. Two walks over one parse could
 drift, so `walkText` gains a visitor rather than being copied. *Alternative:* a separate markdown pass in the new
 test. Rejected: it would be a second grammar of the places table, which is the Q-crc-15 pattern.
 
@@ -60,12 +63,17 @@ from silently growing into a pass-everything set.
 **D5 — the head production.** The head is the first token after assignment-prefix tokens (`^[A-Za-z_][A-Za-z0-9_]*=`).
 An inline segment is read when its head matches `^[a-z][a-z0-9._-]*$` and a later token matches `^--?[A-Za-z0-9]`.
 The digit admits `head -1`, which a letter-only rule misses (Case 2). In a fence every segment head is read, whatever
-its shape: a path-prefixed head (`./bin/orbit.js`) or a `$ ` prompt there fails unless declared. That catches two
-members of the places table's own residual.
+its shape: a `$ ` prompt there (head `$`) fails unless declared, which catches one member of the places table's
+residual; a path-prefixed head (`./bin/orbit.js`) fails too, a member of the retired tool-set limit. The places
+residual's assignment-prefix member (`VAR=1 orbit --frobnicate`) is NOT caught: the prefix is skipped by design, and the
+head read is the recorded `orbit`.
 
-**D6 — every scenario shown able to fail.** Each scenario of the ADDED requirement gets a test that injects into a COPY
-of a real surface (the `injections.test.ts` pattern) or into a synthetic block, and asserts the failure text names
-surface, line and head. The day-one sweep also asserts a non-vacuity floor: at least the Case 2 heads are read.
+**D6 — every scenario asserts its own outcome.** Each scenario of the ADDED requirement gets a test that injects into a
+COPY of a real surface (the `injections.test.ts` pattern) or into a synthetic block, and asserts what that scenario's
+THEN says, by outcome: the two passing scenarios (today's surface; a flagless inline span) assert the sweep passes
+and, for the second, that no head is read from the span; an unknown head (a fence, a flagged inline span, an
+assignment prefix, a markdown-nested fence) asserts surface, line and head; an unused exemption asserts head and kind;
+an exemption naming a recorded tool asserts the head; a malformed block asserts the requirement and the line. The day-one sweep also asserts a non-vacuity floor: at least the Case 2 heads are read.
 
 ## Mechanism → artifacts
 

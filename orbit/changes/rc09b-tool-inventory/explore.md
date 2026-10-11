@@ -29,15 +29,16 @@ Domain: every word that can head a command segment the inventory reads on the ge
 | a declared placeholder (`<argv[0]>`, the runner record) | passes |
 | a declared prose head — a message template carrying a flag (`unknown`, `argument`, `skipped`, `reach` today) | passes |
 | an assignment prefix (`VAR=value cmd`) | skipped; the next word is the head |
-| a subshell or group | stripped by rc05b's tokenizer; each inner segment's head is read |
+| a subshell, `( … )` | stripped by rc05b's tokenizer; each inner segment's head is read |
+| a brace group, a reserved word, a `!` or `time` prefix | read as the head as written, so it fails until declared; a declared one hides the command after it — the residual |
 | a refused or unterminated fence line | rc05b's extraction failure already fails it |
 | an inline span the tokenizer refuses or leaves open (17 today) | not read — the residual; a recorded tool's span already fails in rc05's extractor |
 | a comment or blank fence line | not read |
 | a `json` or untagged fence | not read |
 | any other head | fails, naming surface and line |
 Closure: BOUNDED — the fence and inline-segment kinds are SOURCED by rc05b's extractor and markdown-it's token types; the PURPOSE (no tool reaches the surface unrecorded) is not, because the flag discriminator is a heuristic over prose
-Residual kind: a tool whose every inline invocation carries no flag token, is path-prefixed, or sits in a span the tokenizer refuses; or one invoked only in prose, in a double-backtick span, or in a `json` or untagged fence
-Residual method: an independent review reading a new surface's inline spans; rc05's guard already fails a recorded tool's flagged line outside a fence
+Residual kind: a tool whose every inline invocation carries no flag token, is path-prefixed, or sits in a span the tokenizer refuses; a tool run as an argument of a declared head (`command <tool> …`, `sh -c '<…>'`, `node <script> …`, `node bin/orbit.js` among them) or after a declared reserved word; or one invoked only in prose, in a double-backtick span, or in a `json` or untagged fence
+Residual method: an independent review reading a new surface's inline spans and the arguments of every declared head that runs a command; rc05's guard already fails a recorded tool's flagged line outside a fence
 Moves:
 - READ: applied — `tokenize`, `walkText`, `extractInline` and `generatedSurfaces` in `test/helpers/surface-snippets.ts`, read 2026-10-11; the markdown-fence recursion corrects D-rc09-12's "non-shell fence not read" row
 - ENUMERATE: applied — this table, from Case 1's measured heads plus the extractor's fence and inline kinds
