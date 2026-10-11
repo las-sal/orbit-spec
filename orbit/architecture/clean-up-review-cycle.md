@@ -2933,7 +2933,7 @@ the validator. Exit: (1) the size check fires on a fixture over the ceiling and 
 ### Stage rc09a-size-record — size is reported, and an undeclared breach fails strict validation
 
 Depends-on: (none)
-Complete: [ ]
+Complete: [x] 2026-10-11 (Sal)
 
 Declared 2026-10-10 (Sal) from the rc09 exploration's split (D-rc09-13). Charter: rc09's SIZE CHECK, as the split
 paragraph above settles it — the engine computes R-crc-1's four figures (capabilities, requirements touched, NEW-side
@@ -5464,3 +5464,11 @@ the generalized spike already delivered as a record by rc13a–c (Q-crc-33 opene
 into an inventory test with exit (2) revised. Stage count 38 →
 <!-- src:stages -->40<!-- /src:stages --> at the marked sites (this entry's mark is the third; the previous entry's is
 unmarked as history).
+
+**2026-10-11 — rc09a-size-record RATIFIED (Sal)**, through the architect session's offer. Its one exit criterion graded
+MET as written: the CLI tests run the real `orbit validate` over fixtures past the ceiling — an undeclared breach prints
+each breached dimension with its figure and maximum (`capabilities 4 > 3: undeclared`; with two dimensions over, both)
+and fails `--strict`, and a declared breach passes `--strict` with an INFO naming the same. The system blind pair
+converged on the `## Size` parser silently dropping an indented item; two walks, a verification that found one
+regression (sibling items at two spaces), and a third walk closed it. The readiness record accepts four residuals,
+headlined by rc07's distinction. `rc09b-tool-inventory`, its split sibling, remains to be explored.
