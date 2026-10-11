@@ -1,0 +1,109 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-11T19:13:32Z",
+  "change": "rc09a-size-record",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "src/core/change-size.ts",
+      "line": 268,
+      "title": "Sibling items indented two or three spaces read as nested, so the second item of an indented list is silently dropped",
+      "recommendation": "Nest a bullet only when its indent reaches the CONTENT column of the item above it (that item's indent plus its marker and the spaces after the marker, as CommonMark nests), not whenever any item stands above it. Track the last item's content column instead of the itemAbove boolean: `- a: b` (content column 2) still nests `  - c: d`; `  - a: b` (content column 4) makes a following `  - c: d` a sibling that declares. Restate the declaration table's ITEM OF THE SECTION row in the same terms, add the sibling case to the parser tests, and narrow design D8's \"read as CommonMark reads it\" to the constructs the parser actually reads — a setext underline (`A paragraph` then `---`) makes an H2 in CommonMark, which would end the section, and the parser reads the `---` as a thematic break instead.",
+      "reproduction": "A throwaway vitest probe over parseSizeDeclaration at ad248961: \"## Size\\n  - tasks: a\\n  - capabilities: b\\n\" returns declared [\"tasks\"] with nothing malformed — capabilities is dropped with no report, and the same with three-space siblings. CommonMark reads both lines as sibling items of one list (the second bullet's indent 2 is below the first item's content column 4). The declaration table's new row (\"two or three spaces with no item above it in the current list\") states the same wrong rule, so code and table agree with each other and not with D8's stated intent. Secondary: \"## Size\\n- tasks: a\\n\\nA paragraph\\n---\\n- capabilities: b\\n\" declares both; CommonMark would end the section at the setext H2.",
+      "walk_entry": {
+        "title": "The Size-section parser diverges from its CommonMark line table at three edges",
+        "file": "src/core/change-size.ts"
+      }
+    },
+    {
+      "pass": "1",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "test/core/templates/skill-templates-parity.test.ts",
+      "line": 138,
+      "title": "The walk moved both orbit-propose hash pins outside every entry's edit record",
+      "recommendation": "Record the pin move in the next walk entry that touches the propose body (its ripple_cascade.applied), so the residual check sees it as walked. A record gap, not a defect: the moves are commented in the file as a recorded act.",
+      "reproduction": "git diff --name-only dca06285 -- . ':!orbit/changes/rc09a-size-record/.orbit-runs' lists test/core/templates/skill-templates-parity.test.ts; neither walk log names it in any entry's file or ripple_cascade.applied."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Graded the five resolved entries over their sweep scopes. Four hold as written: the non-strict validation is named identically in the requirement, the body's Position line, Step 0d's opener and design D5; Split's \"rest of the flow runs unchanged\" reads the same on all three surfaces and agrees with the completion-prompt override; the bulk-printer limit matches runBulkValidation and change.ts line by line; the counter attribution matches emit-composition's parseCheckboxes call. The parser repair is the one that slipped, in the same direction the finding warned about: a single boolean for \"an item stands above\" cannot tell a nested bullet from a sibling at the same indent, so an indented list loses every item after its first. The new tests passed because each indented-item case had one item. The fix is a content-column comparison, which is small, but the table row has to move with it.",
+  "passes_run": [
+    "1",
+    "2",
+    "3"
+  ],
+  "passes_skipped": [
+    "0 — VERIFICATION genre: verify-change reads the whole change, not the walks' sweep scopes",
+    "4 — no perspectives defined (orbit/lenses/ absent)",
+    "5 — no critical paths defined (orbit/lenses/ absent)",
+    "6 — VERIFICATION genre: audit-drift reads the whole project"
+  ],
+  "verification": [
+    {
+      "title": "The Size-section parser diverges from its CommonMark line table at three edges",
+      "file": "src/core/change-size.ts",
+      "verdict": "regressed"
+    },
+    {
+      "title": "The Split route does not say whether Step 0d's move and the PR choreography's Phase 3 still run",
+      "file": "orbit/changes/rc09a-size-record/specs/orbit-propose-modifications/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Declare says to re-run orbit validate --strict, but the propose body never runs it first",
+      "file": "src/core/templates/workflows/propose.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "Only the single-change human printer shows size issues on a valid report",
+      "file": "src/commands/validate.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "The documented tracked-gate counter is a different counter",
+      "file": "orbit/changes/rc09a-size-record/specs/orbit-change-size/spec.md",
+      "verdict": "landed"
+    }
+  ],
+  "final_assessment": "0 critical, 1 warning, 1 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-10-11T19-04-25Z",
+    "2026-10-11T19-04-43Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc09a-size-record"
+}
