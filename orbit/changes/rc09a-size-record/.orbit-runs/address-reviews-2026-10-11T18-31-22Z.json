@@ -1,0 +1,102 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-11T18:31:22Z",
+  "change": "rc09a-size-record",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc09a-size-record/.orbit-runs/review-proposal-2026-10-11T18-29-20Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-11T18-29-20Z",
+  "latest_apply_token": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 2
+  },
+  "pushback_verification": "Both verified at HEAD: the gloss named the wrong commit (git log on both proposal paths), and the validate table had no row for an unreadable proposal.md.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "SUGGESTION",
+      "title": "The rc04c pin's commit gloss reads false on the change path: bc4c12fc is the parent of rc04c's archive commit, not of the commit that first added its proposal",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc09a-size-record/specs/orbit-change-size/spec.md",
+      "line": 30,
+      "classification": "trivial_fix",
+      "action": "the parenthetical now names bc4c12fc as the parent of rc04c's archive commit, de4af354; the hash and the 14,438 figure are unchanged",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the parent of the commit\nthat added its proposal"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc09a-size-record/specs/orbit-change-size/spec.md",
+            "text": "the parent of rc04c's\narchive commit, `de4af354`"
+          }
+        ],
+        "searched": [
+          "bc4c12fc",
+          "parent of the commit"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "An existing but unreadable proposal.md has no row in the validate table, though the figures' unreadable-input rule is stated",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc09a-size-record/specs/orbit-change-size/spec.md",
+      "line": 192,
+      "classification": "trivial_fix",
+      "action": "one validate-table row: a proposal.md that exists but cannot be read is a WARNING naming the file and declares nothing; the one strict sentence gains it in its list of WARNING rows",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "or a figure that could\nnot be computed."
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc09a-size-record/specs/orbit-change-size/spec.md",
+            "text": "`proposal.md` exists but cannot be read | WARNING naming the file"
+          },
+          {
+            "path": "orbit/changes/rc09a-size-record/specs/orbit-change-size/spec.md",
+            "text": "or an unreadable `proposal.md`"
+          }
+        ],
+        "searched": [
+          "cannot be read",
+          "WARNING rows",
+          "strict"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Both suggestions repaired in the orbit-change-size delta; validate --strict passes.",
+  "iteration": 3,
+  "next_recommended": "/orbit:apply rc09a-size-record — user-invoked",
+  "ripple_misses": 0
+}

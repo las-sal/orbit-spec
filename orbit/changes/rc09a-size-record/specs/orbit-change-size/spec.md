@@ -27,8 +27,8 @@ The engine SHALL compute four figures for an active change, from artifacts it al
 A block's LINES are its text as `parseDeltaSpec` (delta) or `extractRequirementsSection` (baseline) returns it,
 trailing whitespace trimmed, split on `\n`; the same rule reads both sides. A counted line contributes its UTF-8 bytes
 plus 1 for its newline, the block's last line included, and a blank line counts like any other (1 byte). Measured
-this way, rc04c's delta reads exactly 14,438 bytes against the baseline at commit `bc4c12fc` (the parent of the commit
-that added its proposal).
+this way, rc04c's delta reads exactly 14,438 bytes against the baseline at commit `bc4c12fc` (the parent of rc04c's
+archive commit, `de4af354`).
 
 A figure whose input file EXISTS but cannot be read is not computed: it is `null`, and the read failure is reported
 (`Status carries the size figures`; `Validate reports each breach as declared or undeclared`) — never treated as an
@@ -189,11 +189,12 @@ carrying the path `size` and naming the dimension, its figure and its maximum:
 | figure at or under its maximum, or a dimension with no configured maximum, declared | INFO: the declaration is stale |
 | a figure that could not be computed (an input file exists but cannot be read) | WARNING naming the file; that dimension is not compared |
 | a MALFORMED or DUPLICATE `## Size` line | WARNING naming the line |
+| `proposal.md` exists but cannot be read | WARNING naming the file; nothing is declared, so every breach is undeclared |
 | `proposal.md` absent, or no `## Size` section | nothing declared: every breach is undeclared |
 
 Non-strict validation therefore never fails on size, and `orbit validate <change> --strict` fails exactly when one of
-the table's WARNING rows stands: an undeclared breach, a MALFORMED or DUPLICATE `## Size` line, or a figure that could
-not be computed. This sentence is the one statement of that rule; other artifacts point here. Human-mode `orbit validate <change>` SHALL print every `size`
+the table's WARNING rows stands: an undeclared breach, a MALFORMED or DUPLICATE `## Size` line, a figure that could not
+be computed, or an unreadable `proposal.md`. This sentence is the one statement of that rule; other artifacts point here. Human-mode `orbit validate <change>` SHALL print every `size`
 issue beneath the `is valid` line when the report is valid, as it prints the scenario map's INFO lines; a report
 carrying no `size` issue prints exactly as before. With the check OFF the capability contributes no issue. The level
 REPORTS; no gate reads it (R-crc-13).
