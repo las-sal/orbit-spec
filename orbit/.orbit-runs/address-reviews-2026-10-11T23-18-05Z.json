@@ -1,0 +1,142 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-11T23:18:05Z",
+  "change": null,
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "file",
+  "source_path": "orbit/.orbit-runs/audit-drift-2026-10-11T23-16-45Z.json",
+  "source_command": "audit-drift",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 2
+  },
+  "pushback_verification": "All four verified at HEAD: clean-up-review-cycle.md:559 Q-crc-12 carried no RESOLVED mark and read 'The question stands open'; CLAUDE.md:438 read 'rc10's territory' while orbit-conventions' Severity ladder names no owner and rc10's Shipped-as names no block stop; orbit-run-summary-emit:19 and orbit-archive-modifications:337 read as cited.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 0,
+    "deferred": 2,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Q-crc-12 still reads open with its owner unchanged, but rc10 shipped its recommendation",
+      "marker_source": "audit-drift",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 559,
+      "classification": "trivial_fix",
+      "outcome": "resolved",
+      "remedy": "repair",
+      "action": "Q-crc-12's heading takes the RESOLVED form (rc10-apply-closure, 2026-10-11) and a closing paragraph names Step 3.4's every-reviewed-gate prompt, its owner (orbit-engine-gates' Inflection-prompt override contract), rc03a's shape now listing both gates, and the bulk-archive limit that remains; CLAUDE.md:212 drops Q-crc-12 from the live list",
+      "ripple_cascade": {
+        "applied": [
+          "CLAUDE.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "which also carries Q-crc-11, Q-crc-12, Q-crc-20"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "text": "**Q-crc-12 — RESOLVED (rc10-apply-closure, 2026-10-11).**"
+          },
+          {
+            "path": "CLAUDE.md",
+            "text": "(Q-crc-12 was resolved by rc10)"
+          }
+        ],
+        "searched": [
+          "Q-crc-12"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "CLAUDE.md names rc10 as the territory for a mechanical stop on a lifecycle BLOCK, which rc10 did not take",
+      "marker_source": "audit-drift",
+      "file": "CLAUDE.md",
+      "line": 438,
+      "classification": "trivial_fix",
+      "outcome": "resolved",
+      "remedy": "repair",
+      "action": "the rc02b paragraph's known-limit parenthetical now reads 'apply carries no precondition; no stage owns that stop yet', matching orbit-conventions' Severity ladder, which names no owner",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "rc10's territory"
+        ],
+        "introduced": [
+          {
+            "path": "CLAUDE.md",
+            "text": "no stage owns that stop yet"
+          }
+        ],
+        "searched": [
+          "territory",
+          "STOPS on a block"
+        ],
+        "scope": [
+          "orbit/architecture/clean-up-review-cycle.md"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The emit-scope list says bulk archive's inner /orbit:archive invocations emit; bulk now writes each change's emit through its own step",
+      "marker_source": "audit-drift",
+      "file": "orbit/specs/orbit-run-summary-emit/spec.md",
+      "line": 19,
+      "classification": "unresolvable",
+      "outcome": "deferred",
+      "action": "baseline spec: a walk edits no baseline outside a change; deferred to the next change that touches orbit-run-summary-emit, whose bullet should read that bulk archive writes one archive emit per change through its per-change step",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/specs/orbit-run-summary-emit/spec.md",
+            "reason": "baseline spec; add a delta to your current change's specs/<capability>/spec.md to capture this ripple"
+          }
+        ]
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Two requirements still call Step 3.4's prompt 'the review-system gate prompt'",
+      "marker_source": "audit-drift",
+      "file": "orbit/specs/orbit-archive-modifications/spec.md",
+      "line": 337,
+      "classification": "unresolvable",
+      "outcome": "deferred",
+      "action": "baseline spec: the naming lag rc10's design D7 accepted; deferred to the next change carrying 'Critical-drift prompt, not gate' or 'Fingerprint-divergence inflection prompt', which renames it 'the Step 3.4 gate prompt'",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/specs/orbit-archive-modifications/spec.md",
+            "reason": "baseline spec; add a delta to your current change's specs/<capability>/spec.md to capture this ripple"
+          }
+        ]
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": "walk all",
+  "final_assessment": "Two warnings resolved (Q-crc-12 marked resolved by rc10; CLAUDE.md no longer names rc10 as the block-stop owner); two baseline suggestions deferred to the next change touching each capability.",
+  "iteration": 16,
+  "next_recommended": "No markers remain in scope; the project trail records this walk.",
+  "ripple_misses": 0
+}

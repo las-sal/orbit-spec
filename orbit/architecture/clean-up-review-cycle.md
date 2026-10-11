@@ -556,8 +556,8 @@ One goal per phase, each falsifiable, each stage naming its goal (settled under 
   band dropped it, and the offer did not fire for it again. The firing count stopped at four. The
   second stage this question named (rc13a's first attempt) shipped on its second attempt and is
   ratified complete, so nothing else is owed here.
-- **Q-crc-12 — the archive seam is silent when the gate that is exhausted is not the gate archive
-  watches.** Observed 2026-09-15, twice in one day. Both rc03a and rc13a archived with
+- **Q-crc-12 — RESOLVED (rc10-apply-closure, 2026-10-11).** the archive seam is silent when the gate
+  that is exhausted is not the gate archive watches.** Observed 2026-09-15, twice in one day. Both rc03a and rc13a archived with
   `review-proposal` reading `budget spent: 3 of 3` and NO inflection prompt, because Step 3.4 is
   scoped to `review-system` — which read `blocked (blocked by incomplete requires: apply)`, and
   `blocked` is neither `unpassed` nor `stale`. `review-proposal`'s `before` is apply rather than
@@ -577,6 +577,13 @@ One goal per phase, each falsifiable, each stage naming its goal (settled under 
   was caught — an external reviewer reading the PLAN against the diff, not a check: nothing in the
   repo compares a stage's charter to the engine it will run on, which is the same missing moment
   Q-crc-14 describes one layer down.
+  **RESOLVED 2026-10-11 by rc10-apply-closure.** The archive's Step 3.4 now reads EVERY reviewed gate
+  and lists, in one prompt, each that is not passed and not superseded — `unpassed`, `stale` and
+  `blocked` alike, the last with the reason naming what blocks it — recording one `continuation`
+  entry per gate proceeded past; spend may be shown and is never branched on. The rule is
+  `orbit-engine-gates`' `Inflection-prompt override contract`. rc03a's shape (`review-proposal`
+  unpassed, `apply` ready, `review-system` blocked) now lists both reviewed gates. What remains is a
+  NAMED LIMIT of that contract: `/orbit:bulk-archive` fires no gate prompt.
 
 Raised by the 2026-09-11 cohesion review (the plan has two parents: the orbit-constrained
 seven-step re-cut and the best-practices suggestions; the seams fall where they meet).

@@ -209,7 +209,7 @@ resolved — found by a human question, not a check). The fourth, **Q-crc-16** (
 count stated twice, unmarked), was RESOLVED 2026-09-20 — both halves applied together, and this
 file now carries a live mark. Do NOT read this paragraph as the program's full live set: it lists
 only what rc07 produced. The authoritative list is the program doc's own Open questions section,
-which also carries Q-crc-11, Q-crc-12, Q-crc-20, Q-crc-21, Q-crc-22 and Q-crc-23.
+which also carries Q-crc-11, Q-crc-20, Q-crc-21, Q-crc-22 and Q-crc-23 (Q-crc-12 was resolved by rc10).
 
 **Twenty-eight more stages have shipped since, and the program is THIRTY stages complete** (rc15 and rc16 ratified 2026-10-01; rc02b ratified 2026-10-03; rc04b, rc03b, rc03c, rc07b and rc06a ratified 2026-10-04; rc06b, rc08a and rc08b ratified 2026-10-05 — rc08a's exit (3), pending by design, was measured on rc08b's cadence and read 4, not zero; the split parent rc08 took its ENDED mark the same day; rc03a carries the program's first ENDED mark, declared the same day, and the two split parents rc13 and rc04 — headings retained as record, every exit criterion owned by a child — carry the second and third, declared through the unprompted route the same evening; rc17a ratified 2026-10-06; rc17d ratified 2026-10-06; rc17b ratified 2026-10-06; rc17c ratified 2026-10-07; rc18 ratified 2026-10-08; rc05 ratified 2026-10-09; rc05b ratified 2026-10-10; rc09a ratified 2026-10-11; rc09b ratified 2026-10-11).
 
@@ -435,7 +435,7 @@ failure, an unresolved `@review:` marker) is NOT a severity: it rides an optiona
 payload / a `## Blocks` section on an external file, renders as `### Blocks` above the findings for both genres,
 lists first at triage, and P8's "when ambiguous, classify as CRITICAL" is gone — the false-positive bias runs one
 way. KNOWN LIMIT, stated in the ladder: nothing STOPS on a block mechanically (apply carries no precondition;
-rc10's territory). The evidence tax is ENFORCED where evidence is produced — `orbit emit review` refuses a
+no stage owns that stop yet). The evidence tax is ENFORCED where evidence is produced — `orbit emit review` refuses a
 CRITICAL without a non-empty `reproduction` in every mode, and a present non-string one at any severity, the
 first gate check on a finding's narrative field — and SURFACED where it cannot be: the external prompt carries
 the ladder as ONE paragraph under `## Severity`, a CHECKED MIRROR of the conventions fence held byte-equal by
