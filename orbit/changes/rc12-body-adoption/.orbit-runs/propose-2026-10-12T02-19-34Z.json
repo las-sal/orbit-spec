@@ -1,0 +1,15 @@
+{
+  "command": "propose",
+  "timestamp": "2026-10-12T02:19:34Z",
+  "change": "rc12-body-adoption",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Consume-mode propose of rc12-body-adoption (rc12's second change, cited to clean-up-review-cycle / rc12-engine-owned-choreography). Q-rba-4 resolved at Step 0b as D-rba-6 (exit (2) measured at apply, resolve-only first). Reading the tail at propose found the post-merge return already printed as human_acts, so D-rba-5 was superseded by D-rba-7: one capability, orbit-pr-lifecycle, 3 MODIFIED (preflight divergence as would-select vs frozen, the per-change title from the Why, the body's consumption table). Mechanism: D-rba-1 DERIVED and D-rba-4 DERIVED to normative tables, D-rba-2 SOURCED to a sentence; no BOUNDED entry. Size within ceiling (1 / 3 / 5,760 bytes / 14 tasks). Phase 1 and 3 ran through orbit pr select and publish; draft PR #17 opened.",
+  "pr_attachment": {
+    "branch": "rc12-body-adoption",
+    "granularity": "per-proposal",
+    "url": "https://github.com/las-sal/orbit-spec/pull/17",
+    "state": "draft"
+  },
+  "next_recommended": "/orbit:review rc12-body-adoption — proposal artifacts ready; review before apply"
+}
