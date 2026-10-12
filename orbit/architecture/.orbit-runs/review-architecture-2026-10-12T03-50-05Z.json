@@ -1,0 +1,112 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-12T03:50:05Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "architecture",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {},
+  "scorecard": {
+    "correctness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 0
+    },
+    "completeness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "Every stage is closed but no goal is graded, and G3's falsifier fired on the last three stages' trails",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 108,
+      "recommendation": "Before calling the program done, append a closing goal-grading entry: G0 through G4 each graded met or falsified, with its evidence. G0's completion test ('three consecutive stages converge under G1') has never been measured, and G3 is falsified as written: walk logs on rc05b, rc09b and both rc12 changes carry ripple_miss_of attributions, which are 'a ripple-miss finding traceable to a prior walk's sweep set'. Either record G3 as falsified and carried, or revise it under R-crc-12 the way G1 was revised on 2026-09-21. That is a scope call for Sal.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Grade all five goals at close and record G3 as falsified, with the ripple-miss evidence as what the program learned; the program closes with that on the record."
+        },
+        {
+          "label": "B",
+          "body": "Revise G3 under R-crc-12 (a ripple miss is now attributed and measured, not silent, so the attribution is the success signal), then grade all five goals at close."
+        }
+      ]
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "Q-crc-29 is now live: seven ended stages have no archive, so arc-done cannot be observed as written",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 1296,
+      "recommendation": "Q-crc-29's bounding sentence ('no live doc carries an ended stage without an archive today') is now false. rc03, rc04, rc06, rc08, rc09, rc13 and rc17 are all ended split parents with no archive of their own, so 'every declared stage archived', the predicate orbit-pr-lifecycle states and the architect readout reads, can never hold for this program. rc12 touched orbit-pr-lifecycle without taking the one-sentence rider Q-crc-29 recommends. Record in the status log how this program reads arc-done (an ended stage counts as closed), and carry the rider forward with Q-crc-29."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "title": "The program closes with fifteen open questions and no stage or successor to own them",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 506,
+      "recommendation": "Q-crc-14, 15, 17, 20 through 25, 27 and 29 through 33 remain open, and no stage remains to take them up. Give each a closing disposition: carried to a named successor program doc, moved to Considered & out with its re-entry trigger, or closed with evidence. Otherwise they are orphaned in a doc no live work will open again."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "Q-crc-11 and Q-crc-28 are closed in their bodies but not in their headings, and CLAUDE.md still lists Q-crc-11 as live",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 508,
+      "recommendation": "Mark both headings CLOSED the way their resolved siblings are marked, so a reader of the index sees the state; drop Q-crc-11 from CLAUDE.md's live-question sentence."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "The doc's read cost has outgrown CLAUDE.md's instruction to read it before any rc-stage work",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 3512,
+      "recommendation": "At 5,619 lines (the status log about 2,100 of them, the open-question section about 845), a cold session cannot read the doc whole. With the program closed, record in CLAUDE.md which sections a reader actually needs (the rulings index, the goals, the question dispositions), and leave the status log as the append-only record it already is."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "First architecture review for this doc. Read at program close: every stage renders complete or ended, the doc validates, and the engine reports no inconsistency or dangling citation. The structural passes are clean: every Depends-on target exists, every non-parent stage names a goal and carries exit criteria, and the two stages without exit text (rc13, rc03a) are a split parent and a withdrawn stage, which is what their ended marks say. What the closing pass finds is at the program level the stages never had to own: the goals were never graded against the trail, the arc-done predicate meets a shape (ended split parents with no archive) it was never written for, and the open-question ledger has no successor. Passes 1-6 ran in one context; --parallel, --fast and --focus were not given.",
+  "passes_run": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "passes_skipped": [],
+  "handoff": {
+    "boot_sequence": [
+      {
+        "path": "orbit/architecture/clean-up-review-cycle.md",
+        "why": "the reviewed doc; Goals (line 76), Open questions (506) and Q-crc-29 (1296) carry the findings"
+      },
+      {
+        "path": "orbit/architecture/.orbit-runs/",
+        "why": "this review emit, the walk's source"
+      }
+    ],
+    "next_command": "/orbit:address-reviews --from-file <this review emit>",
+    "model_hint": null,
+    "seam": "architecture"
+  },
+  "final_assessment": "0 critical, 3 warning, 2 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews --from-file orbit/architecture/.orbit-runs/review-architecture-2026-10-12T03-50-05Z.json"
+}
