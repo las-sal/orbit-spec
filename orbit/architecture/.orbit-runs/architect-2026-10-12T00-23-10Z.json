@@ -1,0 +1,29 @@
+{
+  "command": "architect",
+  "timestamp": "2026-10-12T00:23:10Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Resumed clean-up-review-cycle: logged report-archived-change's archive and merge (Q-crc-26 resolved, rc12's dogfood run complete); no stage awaited ratification; rc09-propose-hygiene's ended mark recorded as a standing recommendation for Sal.",
+  "stages_touched": [],
+  "rulings_captured": [],
+  "completions_ratified": [],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      {
+        "path": "orbit/architecture/clean-up-review-cycle.md",
+        "why": "the live program; its last status-log entry carries the rc09 standing recommendation"
+      },
+      {
+        "path": "orbit/explore/rc12-engine-owned-choreography/sketches/dogfood-log.md",
+        "why": "the three-seam evidence rc12 designs from"
+      }
+    ],
+    "next_command": "/orbit:explore rc12-engine-owned-choreography",
+    "model_hint": null,
+    "seam": "rc12 resumes at explore with the completed dogfood log"
+  },
+  "next_recommended": "/orbit:explore rc12-engine-owned-choreography"
+}

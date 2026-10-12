@@ -5548,3 +5548,16 @@ carried at the system walk (Sal: A), bulk archive's per-change emit step, and `b
 RESOLVED by it (the post-archive audit walk). The readiness record accepts four residuals, headlined by rc07's
 distinction. Noted at that walk and not acted on: Q-crc-11's entry carries no closure mark, though CLAUDE.md records
 it closed by rc15's exit (1); CLAUDE.md's live-question list still names it.
+
+**2026-10-12 — report-archived-change ARCHIVED and MERGED (PR #15, Sal); Q-crc-26 RESOLVED; rc12's dogfood run
+complete.** A standalone change, not a stage, so it carries no ratification here. `--report` resolves an archived
+change (active first, then the lexically greatest archive directory through one resolver shared with the emit surface),
+and an archived report's tail is one computed `Archived:` line; Q-crc-26's entry records the resolution. Its system
+blind pair (both halves forward) converged on nothing; the fresh half's one WARNING, a containment test copied rather
+than shared, was repaired on Sal's A1 into `src/core/containment.ts`, which both surfaces now call, and verified landed.
+The change was also the carrier of D-rc12-1's real run of D6's PR choreography under `pr: per-proposal`: draft at
+propose, the archive commit pushed and the description rewritten at archive, the READY flip, then Sal's merge. All three
+seams are logged in `orbit/explore/rc12-engine-owned-choreography/sketches/dogfood-log.md`; rc12 resumes at explore
+with that evidence. Standing recommendation, not acted on (the mark is Sal's word): `rc09-propose-hygiene` still
+renders `premised` although both its split children are ratified; every other split parent carries an ENDED mark, and
+this one can only get its mark by Sal's unprompted declaration in an architect session.
