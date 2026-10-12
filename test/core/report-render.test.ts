@@ -11,6 +11,7 @@ import {
   collectSameModePasses,
   renderReport,
 } from '../../src/core/report-render.js';
+import { runCLI } from '../helpers/run-cli.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const FIXTURES = path.resolve(__dirname, '..', 'fixtures', 'report-golden');
@@ -98,6 +99,8 @@ afterEach(() => {
 });
 
 describe('golden renders (byte-identical to the D2b-transcribed goldens)', () => {
+  // @scenario behaviour orbit-report-rendering :: Report grammar — the frame sandwiches the commentary :: Section order is invariant
+  // @scenario behaviour orbit-report-rendering :: Report grammar — the frame sandwiches the commentary :: Findings render verbatim
   it('proposal pass: trend over a tolerant legacy prior, scorecard, containment bodies, options, suppressed, commentary, engine tail', () => {
     const dir = makeChange('golden-change');
     writeTrail(dir, 'review-proposal-2026-07-25T10-00-00Z.json', fixture('proposal-prior-legacy.json'));
@@ -120,6 +123,7 @@ describe('golden renders (byte-identical to the D2b-transcribed goldens)', () =>
   });
 
   // @scenario behaviour orbit-report-rendering :: Strict input validation — fail loud, no partial render :: D4-generation emits without commentary render fine
+  // @scenario behaviour orbit-report-rendering :: Report grammar — the frame sandwiches the commentary :: Section order is invariant
   it('system pass: first-run literal, all-zero scorecard, Findings + Commentary omitted whole, system-phase gate tail', () => {
     const dir = makeChange('sys-change', { tasksDone: true });
     writeTrail(dir, 'review-system-2026-07-26T09-00-00Z.json', fixture('system-clean.json'));
@@ -185,6 +189,8 @@ describe('golden renders (byte-identical to the D2b-transcribed goldens)', () =>
 });
 
 describe('render-time computed context (as-of iteration/trend, current tail, total order)', () => {
+  // @scenario behaviour orbit-report-rendering :: Render-time computed context — never stored, never authored :: Historical pass renders with the current tail
+  // @scenario behaviour orbit-report-rendering :: Render-time computed context — never stored, never authored :: The trend is trail-computed, as-of the rendered pass
   it('historical pass renders as-of iteration + trend (later passes excluded) with TODAY\'s tail', () => {
     const dir = makeChange('hist-change');
     // t10: legacy prior (findings_summary 0C/2W/0S); t11: D4 pass with one
@@ -1165,6 +1171,7 @@ describe('rc03c: pass genre header and the Verification section (1.3)', () => {
   });
 
   // @scenario behaviour orbit-report-rendering :: Strict input validation — fail loud, no partial render :: A mis-shaped verification fails the render; an absent one never does
+  // @scenario behaviour orbit-report-rendering :: Render-time computed context — never stored, never authored :: The pass genre is recomputed at render time
   it('a prior-generation VERIFICATION-genre emit renders [no verification record] once and marks no finding; its genre is recomputed (no stored pass_genre)', () => {
     verifyingChange('v-old', [{ severity: 'WARNING', title: 'Old finding', file: 'x.md' }], {});
     const report = renderReport(root, 'v-old');
@@ -1204,5 +1211,194 @@ describe('rc03c: pass genre header and the Verification section (1.3)', () => {
     );
     const nl = { ...base, findings: [{ ...base.findings[0], walk_entry: { title: 'T\nU', file: 'F' } }] };
     expect(() => normalizeInternalPass('/f.json', nl)).toThrow(/findings\[0\]\.walk_entry\.title.*single-line/);
+  });
+});
+
+// -----------------------------------------------------------------------------
+// report-archived-change: `--report` resolves an ARCHIVED change (active first), and an
+// archived report's tail is the one computed `Archived:` line.
+// -----------------------------------------------------------------------------
+
+describe('archived-change reports', () => {
+  /** An archived change directory carrying one clean proposal pass. */
+  function makeArchived(date: string, name: string, token = '2026-07-25T10-00-00Z'): string {
+    const dir = path.join(root, 'orbit', 'changes', 'archive', `${date}-${name}`);
+    fs.mkdirSync(path.join(dir, '.orbit-runs'), { recursive: true });
+    fs.writeFileSync(path.join(dir, '.openspec.yaml'), 'schema: spec-driven\ncreated: "2026-07-01"\n');
+    writeTrail(dir, `review-proposal-${token}.json`, d4Emit(name, 'proposal'));
+    return dir;
+  }
+
+  /** Every file path and its bytes under the project — the read-only witness. */
+  function snapshot(): Map<string, string> {
+    const out = new Map<string, string>();
+    const walk = (d: string): void => {
+      for (const e of fs.readdirSync(d, { withFileTypes: true })) {
+        const p = path.join(d, e.name);
+        if (e.isDirectory()) walk(p);
+        else if (e.isFile()) out.set(p, fs.readFileSync(p, 'utf-8'));
+      }
+    };
+    walk(root);
+    return out;
+  }
+
+  function canSymlink(): boolean {
+    const probe = path.join(root, 'symlink-probe');
+    try {
+      fs.symlinkSync(root, probe, 'dir');
+      fs.unlinkSync(probe);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  // @scenario behaviour orbit-report-rendering :: Render-time computed context — never stored, never authored :: An archived change's report carries the archived tail
+  it('an archived change renders its sections exactly as while active, with the Archived: tail alone', () => {
+    const active = makeChange('arch-change');
+    writeTrail(active, 'review-proposal-2026-07-25T10-00-00Z.json', d4Emit('arch-change', 'proposal'));
+    const activeReport = renderReport(root, 'arch-change');
+    fs.rmSync(active, { recursive: true, force: true });
+
+    const archived = makeArchived('2026-02-01', 'arch-change');
+    const report = renderReport(root, 'arch-change', undefined, { changeDir: archived, archived: true });
+    const golden = fixture('archived-tail.golden.md');
+    expect(report.endsWith(golden)).toBe(true);
+    // Above the tail, byte-identical to the same pass rendered while active.
+    const activeAbove = activeReport.slice(0, activeReport.lastIndexOf('---\n'));
+    expect(report.slice(0, report.length - golden.length)).toBe(activeAbove);
+    expect(report).not.toContain('Gate ');
+    expect(report).not.toContain('Position:');
+    expect(report).not.toContain('Ready when you are:');
+  });
+
+  // @scenario behaviour orbit-report-rendering :: The render surface is the status gateway :: An archived change resolves through the fallback
+  it('status --report resolves the greater of two dated archive directories, newest pass and explicit <TS>', async () => {
+    makeArchived('2026-01-01', 'arch-change', '2026-07-20T10-00-00Z');
+    const dir = makeArchived('2026-02-01', 'arch-change', '2026-07-25T10-00-00Z');
+    writeTrail(dir, 'review-proposal-2026-07-26T10-00-00Z.json', d4Emit('arch-change', 'proposal'));
+
+    const newest = await runCLI(['status', '--change', 'arch-change', '--report'], { cwd: root });
+    expect(newest.exitCode).toBe(0);
+    expect(newest.stdout).toContain('Iteration: 2');
+    expect(newest.stdout.endsWith(fixture('archived-tail.golden.md'))).toBe(true);
+
+    const explicit = await runCLI(['status', '--change', 'arch-change', '--report', '2026-07-25T10-00-00Z'], { cwd: root });
+    expect(explicit.exitCode).toBe(0);
+    expect(explicit.stdout).toContain('Iteration: 1');
+    expect(explicit.stdout).toContain('Archived: orbit/changes/archive/2026-02-01-arch-change');
+
+    // A token that exists only in the OLDER archive directory does not resolve.
+    const older = await runCLI(['status', '--change', 'arch-change', '--report', '2026-07-20T10-00-00Z'], { cwd: root });
+    expect(older.exitCode).not.toBe(0);
+    expect(older.stderr).toMatch(/no trail artifact matches token/);
+  });
+
+  // @scenario behaviour orbit-report-rendering :: The render surface is the status gateway :: An active change wins over an archived one of the same name
+  it('an active change of the same name wins, with its live tail', async () => {
+    makeArchived('2026-02-01', 'arch-change');
+    const active = makeChange('arch-change');
+    writeTrail(active, 'review-proposal-2026-07-25T10-00-00Z.json', d4Emit('arch-change', 'proposal'));
+
+    const r = await runCLI(['status', '--change', 'arch-change', '--report'], { cwd: root });
+    expect(r.exitCode).toBe(0);
+    expect(r.stdout).toContain('Gate review-proposal:');
+    expect(r.stdout).toContain('Position:');
+    expect(r.stdout).not.toContain('Archived:');
+  });
+
+  // @scenario behaviour orbit-report-rendering :: The render surface is the status gateway :: A miss in both places names both locations
+  it('a miss names both locations checked, exits non-zero and writes nothing', async () => {
+    makeChange('other-change');
+    const before = snapshot();
+    const r = await runCLI(['status', '--change', 'ghost', '--report'], { cwd: root });
+    expect(r.exitCode).not.toBe(0);
+    expect(r.stderr).toContain(
+      "Change 'ghost' not found — checked orbit/changes/ghost and orbit/changes/archive/*-ghost. Available changes:"
+    );
+    expect(r.stderr).toContain('other-change');
+    expect(r.stdout).not.toContain('## Review');
+    expect(snapshot()).toEqual(before);
+
+    // With no active change at all, the message ends at the locations.
+    fs.rmSync(path.join(root, 'orbit', 'changes', 'other-change'), { recursive: true, force: true });
+    const none = await runCLI(['status', '--change', 'ghost', '--report'], { cwd: root });
+    expect(none.exitCode).not.toBe(0);
+    expect(none.stderr).toContain('checked orbit/changes/ghost and orbit/changes/archive/*-ghost');
+    expect(none.stderr).not.toContain('Available changes');
+  });
+
+  // @scenario behaviour orbit-report-rendering :: The render surface is the status gateway :: Read-only surface
+  it('an archived render creates and modifies no file', async () => {
+    makeArchived('2026-02-01', 'arch-change');
+    const before = snapshot();
+    const r = await runCLI(['status', '--change', 'arch-change', '--report'], { cwd: root });
+    expect(r.exitCode).toBe(0);
+    expect(snapshot()).toEqual(before);
+  });
+
+  // @scenario behaviour orbit-report-rendering :: The render surface is the status gateway :: A regular file never resolves as an archived change
+  it('a regular file beside an archived directory of the same name never resolves', async () => {
+    makeArchived('2026-01-01', 'arch-change');
+    fs.writeFileSync(path.join(root, 'orbit', 'changes', 'archive', '2026-02-01-arch-change'), 'not a dir');
+    const r = await runCLI(['status', '--change', 'arch-change', '--report'], { cwd: root });
+    expect(r.exitCode).toBe(0);
+    expect(r.stdout).toContain('Archived: orbit/changes/archive/2026-01-01-arch-change');
+  });
+
+  // @scenario behaviour orbit-report-rendering :: The render surface is the status gateway :: A symlinked archive entry pointing outside the archive is refused
+  it('an archived entry symlinked outside the archive root is refused with the containment error', async (ctx) => {
+    if (!canSymlink()) ctx.skip();
+    const outside = path.join(root, 'elsewhere', 'arch-change');
+    fs.mkdirSync(path.join(outside, '.orbit-runs'), { recursive: true });
+    fs.writeFileSync(path.join(outside, '.openspec.yaml'), 'schema: spec-driven\ncreated: "2026-07-01"\n');
+    writeTrail(outside, 'review-proposal-2026-07-25T10-00-00Z.json', d4Emit('arch-change', 'proposal'));
+    fs.mkdirSync(path.join(root, 'orbit', 'changes', 'archive'), { recursive: true });
+    fs.symlinkSync(outside, path.join(root, 'orbit', 'changes', 'archive', '2026-01-01-arch-change'), 'dir');
+
+    const r = await runCLI(['status', '--change', 'arch-change', '--report'], { cwd: root });
+    expect(r.exitCode).not.toBe(0);
+    expect(r.stderr).toContain("archived change 'arch-change' resolves outside orbit/changes/archive");
+    expect(r.stderr).not.toContain('not found');
+    expect(r.stdout).not.toContain('## Review');
+  });
+
+  // @scenario behaviour orbit-report-rendering :: Strict input validation — fail loud, no partial render :: Pre-D4 generations fail at the named boundary
+  it('an archived pre-D4 emit fails with the pre-capability error, as on an active change', async () => {
+    const dir = path.join(root, 'orbit', 'changes', 'archive', '2026-02-01-old-change');
+    fs.mkdirSync(path.join(dir, '.orbit-runs'), { recursive: true });
+    const b2 = fixtureJson('pre-boundary-b2-kind-findings-summary.json') as Record<string, unknown>;
+    writeTrail(dir, 'review-proposal-2026-07-25T10-00-00Z.json', JSON.stringify({ ...b2, change: 'old-change' }));
+
+    const r = await runCLI(['status', '--change', 'old-change', '--report'], { cwd: root });
+    expect(r.exitCode).not.toBe(0);
+    expect(r.stderr).toMatch(/pre-capability emit/);
+    expect(r.stdout).not.toContain('## Review');
+  });
+
+  it('orbit emit review --render renders an active change unchanged (the three-argument form)', async () => {
+    makeChange('emit-change');
+    const zero = { critical: 0, warning: 0, suggestion: 0 };
+    const payloadFile = path.join(root, 'payload.json');
+    fs.writeFileSync(
+      payloadFile,
+      JSON.stringify({
+        mode: 'proposal',
+        reviewer_class: 'in-context',
+        depth: 'full',
+        passes_run: ['1'],
+        passes_skipped: [],
+        scorecard: { completeness: { ...zero }, correctness: { ...zero }, coherence: { ...zero } },
+        findings: [],
+        model: null,
+      })
+    );
+    const r = await runCLI(['emit', 'review', '--change', 'emit-change', '--payload', payloadFile, '--render'], { cwd: root });
+    expect(r.exitCode).toBe(0);
+    const expected = renderReport(root, 'emit-change');
+    expect(r.stdout).toContain(expected);
+    expect(r.stdout).toContain('Gate review-proposal:');
+    expect(r.stdout).not.toContain('Archived:');
   });
 });

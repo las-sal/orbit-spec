@@ -2,6 +2,7 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { loadChangeContext, formatChangeStatus } from './artifact-graph/instruction-loader.js';
 import { collectSameModePasses } from './report-render.js';
+import { findArchivedDir } from './archived-change.js';
 import { normalizeInternalPass } from './report-render.js';
 import {
   readTrail,
@@ -835,25 +836,6 @@ function resolveTarget(projectRoot: string, command: string, target: EmitTarget)
   throw new EmitError(
     `workstream '${name}' not found — checked ${changeDir} and ${exploreDir}${command === 'address-reviews' ? ' and orbit/changes/archive/*-' + name : ''}.`
   );
-}
-
-/** Lexically greatest `orbit/changes/archive/<YYYY-MM-DD>-<name>/` match, or null. */
-function findArchivedDir(projectRoot: string, name: string): string | null {
-  const archiveRoot = path.join(projectRoot, 'orbit', 'changes', 'archive');
-  let candidates: string[] = [];
-  try {
-    candidates = fs
-      .readdirSync(archiveRoot)
-      .filter(e => new RegExp(`^\\d{4}-\\d{2}-\\d{2}-${escapeRegExp(name)}$`).test(e))
-      .sort();
-  } catch {
-    candidates = [];
-  }
-  return candidates.length > 0 ? path.join(archiveRoot, candidates[candidates.length - 1]) : null;
-}
-
-function escapeRegExp(s: string): string {
-  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 // ---------------------------------------------------------------------------

@@ -96,6 +96,12 @@ import { fileURLToPath } from "node:url";
  * MOVED AGAIN at rc10's system walk (2026-10-11): `emit-composition.ts` only — the deferral check refuses a
  * duplicated marked task id (case 8, external W3) and refuses an unreadable tasks.md rather than reading it as
  * empty (external W2). `gates.ts` did not move.
+ * MOVED at report-archived-change apply (2026-10-11): TWO files. `emit-composition.ts` — `findArchivedDir` and its
+ * `escapeRegExp` moved out to the new `src/core/archived-change.ts` and are imported (task 1.1, design D1); the
+ * resolver now admits only entries that resolve to a directory. `report-render.ts` — `renderReport` takes an
+ * optional resolved location and an archived change's tail is the one `Archived:` line, no live gate computation
+ * (tasks 2.2–2.3, design D2, D4). A pin the task plan did not name, recorded here as its own act. `gates.ts`,
+ * `trail.ts` and `instruction-loader.ts` did not move.
  */
 const PINNED: Record<string, string> = {
   "schemas/spec-driven/schema.yaml": "21e0ae86532a39be558a2b81d23738a6fbf92fbd32b0d01612a65e83d6a96739",
@@ -114,8 +120,8 @@ const PINNED: Record<string, string> = {
   "src/core/artifact-graph/state.ts": "f59f748b94cd94ca2fe022ec5aa66b3251dd1b2c00bddb9a17cbd9273a04d0f2",
   "src/core/artifact-graph/trail.ts": "39b5d110ef53b7e03f49ddf292e86db598a14f426a02e6d84142e16231e37d69",
   "src/core/artifact-graph/types.ts": "d83e0cc6d7fca7b80618ffbb7ce052ee68e35be79e7949a941e989b2e102392c",
-  "src/core/emit-composition.ts": "a41978d06c19aacd10679ce418e2e8f7f50bed7b826edaf9eb78926bf7d0b7d7",
-  "src/core/report-render.ts": "ceaf85f5b3254b5dde97b82c94b829de510d1f70669f16d65bd820a55b7ae393",
+  "src/core/emit-composition.ts": "7ae06b8c6abbe5df38bbe075a2c44c770e67355f8eb49afdaf29d2d533632158",
+  "src/core/report-render.ts": "d759878995ed8b5e5c70fb1165d88d134f0aeb91acfce99d155654d1506b9f36",
 };
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
