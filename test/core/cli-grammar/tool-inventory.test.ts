@@ -12,6 +12,7 @@
 import * as fs from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import MarkdownIt from 'markdown-it';
 import { afterAll, describe, expect, it } from 'vitest';
 import {
@@ -38,7 +39,7 @@ import {
   type Surface,
 } from '../../helpers/surface-snippets.js';
 
-const repo = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..', '..', '..');
+const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
 const CAPABILITY = GENERATED_INVENTORY.capability;
 const TITLE = GENERATED_INVENTORY.title;
 const HEADING = headingOf(GENERATED_INVENTORY);
@@ -422,10 +423,13 @@ describe('the tool inventory over the user docs', () => {
 
   // @scenario behaviour orbit-user-docs :: The user docs declare their own command heads :: A docs declaration does not reach the generated surface
   it('a docs declaration does not reach the generated surface', () => {
+    // A `docs-inventory` fence declaring `jq` placed INSIDE the generated requirement: a reader matching
+    // info strings loosely, or merging the two declared sets, would read it and excuse `jq`.
+    const src = editedSource((t) => t.replace(/(```inventory\n[\s\S]*?\n```\n)/, '$1\n```docs-inventory\nutility: jq\n```\n'));
+    expect(readInventory(src).exemptions.map((e) => e.head)).not.toContain('jq');
+    expect(src.text).toContain('```docs-inventory\nutility: jq\n```');
     const injected = withInlineSpan('jq -r .url <path>');
-    const docsDeclaring = docsFence('utility: jq');
-    expect(readOwnerInventory(docsDeclaring, DOCS_INVENTORY).exemptions.map((e) => e.head)).toEqual(['jq']);
-    const failures = sweep(withSurface(injected.surface));
+    const failures = sweep(withSurface(injected.surface), src);
     expect(failures).toHaveLength(1);
     expect(failures[0]).toContain(unknownHead(injected.surface, injected.line, 'jq'));
   });

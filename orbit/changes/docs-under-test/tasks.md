@@ -5,7 +5,7 @@
 
 ## 2. The residue check
 
-- [x] 2.1 Add the residue check over unlisted user docs: case-insensitive `openspec`, `opsx` and `fission`, admitted only in the README's `Built on OpenSpec` and `How orbit improves on OpenSpec` sections (sections read through `src/core/markdown-fence.ts`), anywhere in `docs/migration-guide.md`, and inside `.openspec.yaml` and the global configuration and data directories in every form the requirement lists; a section ends at the next ATX heading of its level or above (design D3)
+- [x] 2.1 Add the residue check over unlisted user docs: case-insensitive `openspec`, `opsx` and `fission`, admitted only in the README's `Built on OpenSpec` and `How orbit improves on OpenSpec` sections (sections read from top-level ATX headings of a markdown-it parse), anywhere in `docs/migration-guide.md`, and inside `.openspec.yaml` and the global configuration and data directories in every form the requirement lists; a section ends at the next ATX heading of its level or above (design D3)
 - [x] 2.2 Show it able to fail: injected cases for an upstream command, a `/opsx:` command, an occurrence under the heading after an admitted section, `openspec init` inside an admitted section passing, and the admitted identifiers passing
 
 ## 3. The sweeps over the docs

@@ -3,7 +3,8 @@
  * pending-rewrite list's exactness, and the docs sweeps' non-vacuity floors. This module
  * implements that capability's checks; it states none of its rules.
  */
-import { createFenceTracker } from '../../src/core/markdown-fence.js';
+import { fileURLToPath } from 'node:url';
+import MarkdownIt from 'markdown-it';
 import {
   DOCS_INVENTORY,
   inventorySource,
@@ -16,7 +17,7 @@ import { analyseOrbit, guardFailureLines, sweepFailures } from './orbit-sweep.js
 import { analyseRecorded, recordedTools, sweepRecorded } from './recorded-sweep.js';
 import { analyseHeads, describeSurface, type Surface } from './surface-snippets.js';
 
-const REPO = new URL('../../', import.meta.url).pathname;
+const REPO = fileURLToPath(new URL('../../', import.meta.url));
 
 // ─── the residue check (design D3) ────────────────────────────────
 
@@ -43,29 +44,29 @@ export const ADMITTED_IDENTIFIERS = [
 
 const RESIDUE = /openspec|opsx|fission/gi;
 
-/** An ATX heading's level and text (its closing sequence stripped), or null. */
-function atxHeading(line: string): { level: number; text: string } | null {
-  const m = /^ {0,3}(#{1,6})(?:[ \t]+(.*?))?[ \t]*$/.exec(line);
-  if (!m) return null;
-  const text = (m[2] ?? '').replace(/(?:^|[ \t]+)#+$/, '').trim();
-  return { level: m[1].length, text };
-}
+/** HTML enabled, as GitHub renders the README: a heading inside an HTML block is no heading. */
+const md = new MarkdownIt({ html: true });
 
-/** 0-based lines inside an admitted README section: from its ATX heading to the next ATX heading at its level or above, read outside fences. */
+/**
+ * 0-based lines inside an admitted README section: from a top-level ATX heading whose text is an
+ * admitted title to the next top-level ATX heading at its level or above. Headings come from a
+ * markdown-it parse (the extractor's parser, with HTML blocks enabled), so a `#` line inside a
+ * fence, an HTML block, a list item or a blockquote is no heading; a setext heading is not read
+ * (the named limit).
+ */
 export function admittedLines(text: string): Set<number> {
+  const tokens = md.parse(text, {});
+  const headings: Array<{ line: number; level: number; text: string }> = [];
+  tokens.forEach((token, i) => {
+    if (token.type !== 'heading_open' || token.level !== 0 || !token.map || !/^#+$/.test(token.markup)) return;
+    headings.push({ line: token.map[0], level: token.markup.length, text: (tokens[i + 1]?.content ?? '').trim() });
+  });
+  const lineCount = text.split('\n').length;
   const admitted = new Set<number>();
-  const tracker = createFenceTracker();
-  let open: number | null = null; // the admitted heading's level
-  text.split('\n').forEach((raw, i) => {
-    const line = raw.replace(/\r$/, '');
-    const wasIn = tracker.inFence;
-    const delimiter = tracker.handle(line);
-    const heading = wasIn || delimiter ? null : atxHeading(line);
-    if (heading) {
-      if (open !== null && heading.level <= open) open = null;
-      if (open === null && ADMITTED_SECTIONS.includes(heading.text)) open = heading.level;
-    }
-    if (open !== null) admitted.add(i);
+  headings.forEach((heading, k) => {
+    if (!ADMITTED_SECTIONS.includes(heading.text)) return;
+    const end = headings.slice(k + 1).find((h) => h.level <= heading.level)?.line ?? lineCount;
+    for (let l = heading.line; l < end; l++) admitted.add(l);
   });
   return admitted;
 }
@@ -135,19 +136,20 @@ export async function pendingListFailures(
 
 // ─── the docs floors (design D5) ──────────────────────────────────
 
-/** A docs sweep's floor and its measured count over the unlisted user docs; `floor` is null while unset. */
+/** A docs sweep's floor (a positive integer, or null while unset) and its measured count over the unlisted user docs. */
 export interface DocsFloor {
   sweep: string;
   floor: number | null;
   count: number;
 }
 
-/** Inactive while any file is listed; once the list is empty, an unset floor or a count below it fails naming the sweep. */
+/** Inactive while any file is listed; once the list is empty, an unset floor, a floor that is not a positive integer, or a count below it fails naming the sweep. */
 export function docsFloorFailures(pending: string[], floors: DocsFloor[]): string[] {
   if (pending.length > 0) return [];
   const failures: string[] = [];
   for (const { sweep, floor, count } of floors) {
     if (floor === null) failures.push(`the ${sweep} sweep's user-docs floor is unset; set it in the edit that empties the pending-rewrite list`);
+    else if (!Number.isInteger(floor) || floor < 1) failures.push(`the ${sweep} sweep's user-docs floor ${floor} is not a positive integer`);
     else if (count < floor) failures.push(`the ${sweep} sweep read ${count} snippets in the user docs, below its floor ${floor}`);
   }
   return failures;

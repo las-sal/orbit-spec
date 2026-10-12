@@ -1,0 +1,140 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-12T16:07:46Z",
+  "change": "docs-under-test",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/docs-under-test/.orbit-runs/external-system-2026-10-12T16-01-33Z.md",
+  "source_command": null,
+  "source_token": "2026-10-12T16-01-33Z",
+  "latest_apply_token": "2026-10-12T15-45-36Z",
+  "external_reviewer": "GPT-6 Codex",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 0
+  },
+  "pushback_verification": "Both verified against current state: the guard accepted a zero floor; both cited lines computed a filesystem root from URL.pathname.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "A zero floor permits the vacuous success the guard should prevent",
+      "file": "test/helpers/user-docs.ts",
+      "line": 150,
+      "marker_source": "external",
+      "classification": "trivial_fix",
+      "lane": "obvious-fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "action": "docsFloorFailures fails a non-null floor that is not a positive integer, naming the sweep and the value; the floor requirement says each floor is a positive integer at most the measured count (at most, so a sweep counting one snippet can still be floored); tests cover 0, -1, NaN, 1.5 and Infinity",
+      "evidence": "reproduced by reading the guard: with pending [] and {floor: 0, count: 0} it returned []",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/docs-under-test/specs/orbit-user-docs/spec.md",
+          "orbit/changes/docs-under-test/design.md",
+          "test/core/user-docs/floors.test.ts",
+          "test/core/cli-grammar/snippet-sweep.test.ts",
+          "test/core/cli-grammar/recorded-sweep.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "each below the count its sweep measures",
+          "set each floor below its sweep's",
+          "sets it below the",
+          "sets each below the"
+        ],
+        "introduced": [
+          {
+            "path": "test/helpers/user-docs.ts",
+            "text": "is not a positive integer"
+          },
+          {
+            "path": "orbit/changes/docs-under-test/specs/orbit-user-docs/spec.md",
+            "text": "because a floor of zero passes a sweep that read"
+          },
+          {
+            "path": "orbit/changes/docs-under-test/design.md",
+            "text": "and on a floor that is not a positive integer"
+          },
+          {
+            "path": "test/core/user-docs/floors.test.ts",
+            "text": "an active floor is a positive integer"
+          }
+        ],
+        "searched": [
+          "below the count",
+          "below its sweep",
+          "each below",
+          "floor"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "The new inventory lookup uses an encoded URL pathname as a filesystem path",
+      "file": "test/helpers/user-docs.ts",
+      "line": 19,
+      "marker_source": "external",
+      "classification": "trivial_fix",
+      "lane": "obvious-fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "action": "REPO in user-docs.ts and the repository root in tool-inventory.test.ts are computed with fileURLToPath; the same pre-existing pattern in canonical-examples.test.ts was fixed with them",
+      "evidence": "URL.pathname percent-encodes a space, so path operations on it name a different directory",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/cli-grammar/tool-inventory.test.ts",
+          "test/core/canonical-examples.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "new URL('../../', import.meta.url).pathname",
+          "new URL(import.meta.url).pathname"
+        ],
+        "introduced": [
+          {
+            "path": "test/helpers/user-docs.ts",
+            "text": "fileURLToPath(new URL('../../', import.meta.url))"
+          },
+          {
+            "path": "test/core/cli-grammar/tool-inventory.test.ts",
+            "text": "fileURLToPath(import.meta.url)"
+          },
+          {
+            "path": "test/core/canonical-examples.test.ts",
+            "text": "fileURLToPath(import.meta.url)"
+          }
+        ],
+        "searched": [
+          "import.meta.url).pathname",
+          ".pathname"
+        ],
+        "scope": [
+          "test",
+          "scripts"
+        ],
+        "kept": []
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Two of two resolved as obvious fixes: floors must be positive integers, and repository roots come from fileURLToPath.",
+  "iteration": 5,
+  "next_recommended": "/orbit:review --as system docs-under-test",
+  "ripple_misses": 0
+}

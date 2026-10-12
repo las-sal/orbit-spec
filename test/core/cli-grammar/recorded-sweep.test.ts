@@ -97,8 +97,8 @@ describe('the recorded-tool snippet sweep', () => {
 
 /**
  * The user docs' floors (docs-under-test design D5): `null` while any file is on the pending-rewrite
- * list, asserted only once the list is empty. The edit that empties the list sets each below the
- * count its sweep measures over the user docs at that edit.
+ * list, asserted only once the list is empty. The edit that empties the list sets each to a positive
+ * integer at most the count its sweep measures over the user docs at that edit.
  */
 const DOCS_FLOOR: Record<'git' | 'gh', number | null> = { git: null, gh: null };
 

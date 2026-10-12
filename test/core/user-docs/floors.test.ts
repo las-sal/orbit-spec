@@ -26,6 +26,12 @@ describe('the docs floor guard', () => {
     ]);
   });
 
+  it.each([[0], [-1], [Number.NaN], [1.5], [Number.POSITIVE_INFINITY]])('fails an empty list with a floor of %s: an active floor is a positive integer', (floor) => {
+    expect(docsFloorFailures([], [{ sweep: 'git', floor, count: 0 }])).toEqual([
+      `the git sweep's user-docs floor ${floor} is not a positive integer`,
+    ]);
+  });
+
   it('passes an empty list whose every floor is set and met', () => {
     expect(docsFloorFailures([], [{ sweep: 'orbit', floor: 10, count: 10 }, { sweep: 'git', floor: 1, count: 4 }])).toEqual([]);
   });

@@ -76,7 +76,7 @@ reaches an adopter's install. Each construct is classified as this table states:
 Closure of the fence table: CommonMark's block and inline constructs as the parser implements them; its one deliberate
 departure, parsing `markdown` fences again, is stated as its own row.
 
-A failure SHALL name the surface (the workflow and the file), the line, the snippet, and commander's own message.
+A failure SHALL name the surface (the workflow and the file for a generated skill, the repository-relative path for a user doc), the line, the snippet, and commander's own message.
 
 #### Scenario: Today's surface parses
 
@@ -221,7 +221,8 @@ as a value, exactly as a real value. Positional counts beyond that presence are 
 `=value` written after capture on a long flag that takes none (`git status --short=x`), nor, conversely, a bare form
 written after capture of a flag recorded from its `=` form (`git log --format %h`, which git refuses): the contract
 records which flags git accepts, not which forms. A failure SHALL name the
-surface (the workflow and the file), the line, the snippet, and the validator's message.
+surface (the workflow and the file for a generated skill, the repository-relative path for a user doc), the line, the
+snippet, and the validator's message.
 
 #### Scenario: Today's surface validates for both recorded tools
 
@@ -304,7 +305,7 @@ surface (the workflow and the file), the line, the snippet, and the validator's 
 ### Requirement: Every command head on the generated surface is a recorded tool or a declared exemption
 
 Every command head the inventory reads on the generated surface SHALL be a RECORDED tool or a DECLARED exemption, and
-any other head SHALL fail the suite, naming the surface (the workflow and the file), the line and the head — so a new
+any other head SHALL fail the suite, naming the surface (the workflow and the file for a generated skill, the repository-relative path for a user doc), the line and the head — so a new
 tool reaches the surface only with a recorded contract, or with an exemption written down here. The surface is every
 generated SKILL.md and `references/*.md` file of every workflow the generator emits, as the shared extractor of
 `Every \`orbit\` snippet on the generated surface parses against that program` reads it: the same markdown parse, the

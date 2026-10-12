@@ -36,8 +36,8 @@ describe('the orbit snippet sweep', () => {
 
 /**
  * The user docs' floor (docs-under-test design D5): `null` while any file is on the pending-rewrite
- * list, asserted only once the list is empty. The edit that empties the list sets it below the
- * count this sweep measures over the user docs at that edit.
+ * list, asserted only once the list is empty. The edit that empties the list sets it to a positive
+ * integer at most the count this sweep measures over the user docs at that edit.
  */
 const DOCS_FLOOR: number | null = null;
 

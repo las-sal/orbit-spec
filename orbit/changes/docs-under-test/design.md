@@ -45,11 +45,12 @@ inventory's unknown-head rule — and fails on a listed file that passes them al
 (`orbit-user-docs`' gating requirement). The whole-docs rules, an unused `docs-inventory` declaration and the floors,
 are never run per file: one page cannot decide them.
 
-**D3 — The residue check reads sections through the engine's fence tracker.** A README section starts at an ATX
-heading whose text is exactly `Built on OpenSpec` or `How orbit improves on OpenSpec` and ends at the next ATX heading whose
-level is at most its own. A setext heading is not read (a named limit). A `#` line inside a fence is not a heading, so the scan uses the shared CommonMark fence
-tracker (`src/core/markdown-fence.ts`) rather than a regex over lines: Q-crc-15's lesson, a second fence grammar is a
-second bug. Occurrences are matched case-insensitively over the whole text, fenced or not.
+**D3 — The residue check reads sections from a CommonMark parse.** A README section starts at a top-level ATX
+heading whose text is exactly `Built on OpenSpec` or `How orbit improves on OpenSpec` and ends at the next top-level ATX heading whose
+level is at most its own. A setext heading is not read (a named limit). A `#` line inside a fence, an HTML block, a list item
+or a blockquote is not a heading, so the scan takes its headings from markdown-it, the parser the shared extractor already
+uses, with HTML blocks enabled as GitHub renders the README, rather than from a regex over lines: Q-crc-15's lesson, a
+second block grammar is a second bug. Occurrences are matched case-insensitively over the whole text, fenced or not.
 
 **D4 — The docs fence is read the way the generated fence is.** The `docs-inventory` fence is read from
 `orbit-user-docs`' requirement as it stands, through the same single-active-owner lookup the inventory test uses for
@@ -61,8 +62,8 @@ lines, never one empty line. Its info string differs, so neither test can read t
 
 **D5 — Floors are unset until the list empties.** Each docs sweep carries its floor beside the generated surface's
 as a number or `null`, `null` while any file is listed. The guard runs only when the pending list is empty, and then
-fails on a `null` floor naming the sweep, so the edit that empties the list must set each floor below its sweep's
-measured count in the same commit (D-dut-7, revised at the proposal walk). The guard takes the list and the floors as
+fails on a `null` floor naming the sweep, and on a floor that is not a positive integer, so the edit that empties the
+list must set each floor to a positive integer at most its sweep's measured count in the same commit (D-dut-7, revised at the proposal walk). The guard takes the list and the floors as
 parameters, so a test injects both cases.
 
 **D6 — Requirement titles are kept.** The three `orbit-cli-grammar` titles say "on the generated surface", and the
@@ -73,7 +74,7 @@ stay as identity and the bodies widen (precedent: `orbit-conventions`' explore.m
 **D7 — Every check is shown able to fail.** Each extended check gets an injected case (a residue occurrence, an
 unknown flag, an unrecorded `git` flag, an undeclared head, a continuation, a listed file that passes, a stale entry)
 that fails the suite with the expected message. A check that cannot be made to fail does not count (rc17a's oracle
-lesson). The injected set also covers the floors (an empty list with a floor unset, and one below its floor), a
+lesson). The injected set also covers the floors (an empty list with a floor unset, one not a positive integer, and one below its floor), a
 command inside an admitted README section, an empty docs fence, a clean listed page beside a declared head it does not
 use, and the exact surface name a docs failure prints.
 

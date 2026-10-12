@@ -68,6 +68,18 @@ describe('the residue check', () => {
     expect(residueFailures([doc('README.md', text)])).toHaveLength(4);
   });
 
+  it('a heading inside an HTML block, a list item or a blockquote neither opens nor ends an admitted section', () => {
+    const hidden = '# orbit\n\n<!--\n## Built on OpenSpec\n-->\n\nInstall @fission-ai/openspec and run openspec init.\n';
+    expect(residueFailures([doc('README.md', hidden)])).toEqual([
+      residue('README.md', 4, 'OpenSpec'),
+      residue('README.md', 7, 'fission'),
+      residue('README.md', 7, 'openspec'),
+      residue('README.md', 7, 'openspec'),
+    ]);
+    const nested = '## Built on OpenSpec\n\n- item\n\n  ## Inner\n\n> ## Quoted\n\nOpenSpec still admitted.\n';
+    expect(residueFailures([doc('README.md', nested)])).toEqual([]);
+  });
+
   // @scenario behaviour orbit-user-docs :: The old name appears in the user docs only in four admitted places :: A command inside an admitted section is admitted by the residue check
   it('an upstream command inside an admitted section passes', () => {
     const text = `# orbit\n\n## How orbit improves on OpenSpec\n\n${FENCE}bash\nopenspec init\n${FENCE}\n`;

@@ -66,7 +66,8 @@ The rows are tested in order and the first match wins, so an admitted place prec
 init` in a fence inside an admitted README section is admitted by this check (the tool inventory still judges its
 head, separately). A README section is the text from an ATX heading whose text is exactly one of the two admitted
 titles, at any level, to the next ATX heading whose level is at most the admitted heading's (a `##` section ends at
-the next `#` or `##`); everything in it, fenced or not, is admitted. A heading line inside a fence is not a heading.
+the next `#` or `##`); everything in it, fenced or not, is admitted. A heading line inside a fence, an HTML block, a list item or a
+blockquote is not a heading: only a top-level ATX heading opens or ends a section.
 The admitted identifiers are matched as whole substrings, so `.openspec.yaml` admits that occurrence and nothing
 beside it.
 
@@ -109,7 +110,9 @@ is this requirement's one fenced block whose info string is `docs-inventory`, in
 ```docs-inventory
 ```
 
-A fence with no lines is a legal block and declares nothing. Every malformed-block rule of the generated fence
+A fence with no lines is a legal block and declares nothing. In this fence, `utility` also admits a package
+manager or installer a page tells the reader to run (`npm`, `pnpm`, `yarn`, `bun`, `nix`); every kind otherwise keeps
+the meaning `orbit-cli-grammar` gives it. Every malformed-block rule of the generated fence
 applies to this one unchanged: no `docs-inventory` fence, a second one, a malformed line, an unknown kind, a repeated
 kind or a repeated head fails the suite naming this requirement and the offending line.
 
@@ -147,9 +150,11 @@ it reads in the UNLISTED user docs, by this table:
 | the residue check | no floor: it fails on presence, and finding nothing is its success |
 
 While any user doc is listed the floors are inactive and have no value, so a floor never pins a file the list still
-exempts. The edit that EMPTIES the list SETS the floors in the same commit, each below the count its sweep measures
+exempts. The edit that EMPTIES the list SETS the floors in the same commit, each a positive integer at most the count its sweep measures
 over the user docs at that edit, so a floor becomes active and valued at once and no placeholder is ever asserted. An
-empty list with a floor still unset fails the suite, naming the sweep and that its floor is unset.
+empty list with a floor still unset fails the suite, naming the sweep and that its floor is unset, and one with a floor
+that is not a positive integer fails naming the sweep and the value, because a floor of zero passes a sweep that read
+nothing.
 
 #### Scenario: A floor is inactive while files are listed
 
