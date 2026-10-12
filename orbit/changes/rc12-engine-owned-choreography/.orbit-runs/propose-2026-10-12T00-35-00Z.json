@@ -1,0 +1,15 @@
+{
+  "command": "propose",
+  "timestamp": "2026-10-12T00:35:00Z",
+  "change": "rc12-engine-owned-choreography",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Consumed the rc12 exploration (7 decisions, 2 live rules, both BOUNDED and accounted, no open questions) into change 1 of rc12's two: an `orbit pr` command group (select, publish, preflight, tail, program) that runs only read-only git/gh queries plus one fetch, and prints every write as an argv array for the body to run (D-rc12-2). One capability, orbit-pr-lifecycle: 7 ADDED, 1 MODIFIED (zero-engine-git becomes observes/prints). Both residuals are carried verbatim as named limits. D6's phase-1 transcription is promoted into the engine, with every printed command executed in tests and a PATH-shim allowlist as exit (3)'s check. Size: 1 capability, 8 requirements, 15,357 bytes, 18 tasks, no breach. Draft PR #16 opened on the change branch.",
+  "pr_attachment": {
+    "branch": "rc12-engine-owned-choreography",
+    "granularity": "per-proposal",
+    "url": "https://github.com/las-sal/orbit-spec/pull/16",
+    "state": "draft"
+  },
+  "next_recommended": "/orbit:review rc12-engine-owned-choreography — proposal artifacts ready; review before apply"
+}
