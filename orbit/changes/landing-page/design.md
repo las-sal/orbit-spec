@@ -177,7 +177,8 @@ must keep).
   see `npm install -g github:las-sal/orbit-spec` and pass. Apply observes what the extractor does and records it.
 - [The release tree is read under one npm] → D8's named limit lives in `orbit-release`' `A release ships a built
   release tree`; this entry points at it and restates nothing.
-- [Built output in history] → each release commits about 600 KB of `dist/`, reachable only through its tag (D8).
+- [Built output in history] → each release commits about 950 KB of `dist/`, maps included (measured as a git pack of the
+  release commit's objects; the npm tarball, which drops maps, is 604 KB), reachable only through its tag (D8).
 - [The tagged tree predates the later stages] → its `docs/` are upstream's and its `LICENSE` lacks orbit's notice. The
   install needs only code, which those stages do not change (D-lp-3, R-ugd-5).
 - [Two numbers a reader may pair] → "orbit 2.0.0" beside a future "OpenSpec 2.0.0". `Built on OpenSpec` states

@@ -81,7 +81,7 @@ Moves:
 - EXECUTE: applied — the built-tree spike: exit 0, 2.0.0, `orbit init --tools claude` writes 51 files, and the installed set equals the tarball install's
 - FALSIFY: applied — a tree that installs but carries a `dist/` stale against its source would pass every row; the build runs on the parent's tree in the same script that commits it, and the test rebuilds and compares
 - CONFORM: applied — R-ugd-4's line kept letter for letter; R-ugd-7's "tag on `main`" amended (architect); the outward-actions rule: the tag push is already this stage's act and no Release is required
-- FEASIBILITY: applied — about 600 KB of built output enters history per release (the packed tarball is 604 KB)
+- FEASIBILITY: applied — about 950 KB of built output enters history per release, maps included (a git pack of the release commit's objects; the npm tarball, which drops maps, is 604 KB)
 - CONSUME: applied — npm's git path (measured), `orbit --version` (version unchanged), update detection compares `generatedBy` by `!==` and is unaffected
 - INVOKE: applied — fires at the post-merge release act (task 5.3's successor), on Sal's word, and in the pre-flip rehearsal, which installs the script's output from a local clone
 
