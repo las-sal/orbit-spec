@@ -83,6 +83,139 @@ Moves:
 - CONSUME: applied — exit (1)'s grading reads this table
 - INVOKE: applied — fires at propose, when the stage's exit (1) is written into tasks
 
+### D-rc12-8 — the record separates what the engine saw, what the body runs, and what the user does
+Domain: every kind of item an `orbit pr` record carries
+| member | covered by |
+|---|---|
+| the decision for the seam | `action`: `off` \| `skip` \| `proceed` |
+| why a skip or a degradation happened | `reason: {code, detail}` — a closed code set per subcommand (D-rc12-13) |
+| a PR half that degraded while the own writes stand | `degraded: "pr"` on a `proceed`; the segments omit the PR steps |
+| facts and reads a later step consumes (resolution, branch state, scope, the current program-PR body) | `observations` |
+| writes the body runs, between the points where it must author something | `segments: [{inputs, steps}]`; `inputs` names the authored files a segment's argv consumes (`<message-file>`, `<title>`, `<body-file>`, `<emit-path>`); a segment ends wherever a later step needs something the body authors from an earlier step's result |
+| acts that are the user's alone (READY flip at arc-done, merge, the post-merge return) | `human_acts: [{act, argv}]` — never run by the body, never run by a test |
+Closure: SOURCED — every row of the three references' steps and of the dogfood log maps to exactly one member; the external pass's flat-list finding was the test
+Moves:
+- READ: applied — the external pass found the flat `commands` list held writes, a read (the program body) and copy-text (`program`'s acts); the fresh pass found `after_merge` unspecified
+- ENUMERATE: applied — this table, one member per item kind the references and the dogfood log produce
+- COHERE: applied — `degraded` and `segments` are one mechanism: a degradation removes the PR segment's steps, never the land segment's
+- EXECUTE: not applied — no command exists; the publish segments were run by hand on PR #16 (create, then the emit, then the record commit)
+- FALSIFY: applied — a single flat list cannot express "write the emit from the create's URL, then commit it"; segments with inputs can
+- CONFORM: applied — D-rc12-2 (writes printed, never run); R-crc-13 (the record reports); the outward-actions rule (`human_acts` are never run)
+- FEASIBILITY: applied — at most three segments per subcommand
+- CONSUME: applied — change 2's bodies run segments in order, authoring each segment's inputs first; the tests fill inputs per segment and write a real emit between publish's two
+- INVOKE: applied — every subcommand emits one record per call
+
+### D-rc12-9 — the tail reads the archive emit, never observes again
+Domain: what `tail` needs from earlier in the archive, by source
+| member | covered by |
+|---|---|
+| the PR identity and state preflight observed | the written archive emit's `pr_url` / `pr_state` |
+| `pr_url` and `pr_state` both present | PR half runs; `pr_state: "ready"` means no flip |
+| `pr_url` present, `pr_state` absent (positive invalidation) | `proceed` with `degraded: "pr"` — commit and push only |
+| both absent with an attachment (observation unavailable) | `skip`, per the owner's availability rule |
+| no attachment | `off` |
+| the capabilities the sync changed | the same emit's `sync_specs.capabilities_updated`; each spec file staged whether new or modified (untracked included) |
+| edits inside a synced spec file that predate the sync | not distinguished — the owner's own limit, stated, not solved |
+Closure: DERIVED — `pr_url` × `pr_state` presence is four cells, three reachable with an attachment plus the no-attachment row; the scope is one emit field
+Moves:
+- READ: applied — the archive payload table carries `pr_url`, `pr_state` and `sync_specs` (`src/core/emit-composition.ts`; `archive-summary-schema.md`); the archive body runs the preflight at Step 5.45, after the sync, before the emit
+- ENUMERATE: applied — this table
+- COHERE: applied — the owner's "one observation feeds the emit and the tail" holds by construction: the tail's input IS the emit
+- EXECUTE: not applied — no command exists
+- FALSIFY: applied — the external pass's no-op-sync case: a dirty delta-named spec the sync did not change is out of scope here because `capabilities_updated` names only what changed
+- CONFORM: applied — R-crc-13 (an emit records; a later step reads the record); `orbit-archive-modifications`' `PR-attached archive tail`
+- FEASIBILITY: applied — one file read
+- CONSUME: applied — the archive body writes the emit before running `tail`, which it already does
+- INVOKE: applied — runs after the archive emit, once
+
+### D-rc12-10 — `select` needs no change directory
+Domain: the inputs `select <name>` resolves, by creation path
+| member | covered by |
+|---|---|
+| consume mode (propose from an exploration) | `orbit/explore/<name>/` exists; the staging dir feeds the generation-input guard |
+| the citation on that path | `orbit/explore/<name>/.openspec.yaml`'s `architecture:` block |
+| standalone propose or ff | no staging dir; uncited, so the per-proposal path |
+| an active change of that name (a re-run after generation) | its `.openspec.yaml` citation; not consume mode |
+| an invalid name | the one usage error (the change-name rule) |
+Closure: SOURCED — the creation paths are propose's two modes and ff, per `orbit-propose-modifications`
+Moves:
+- READ: applied — the external pass: `phase1.ts` takes `stagingDir` and the mode explicitly through `Phase1Input`; the proposed CLI took only a name and called an unknown change a usage error
+- ENUMERATE: applied — this table
+- COHERE: applied — the citation is read from wherever the metadata lives at that moment, so branch naming and the program path agree with what propose later merges
+- EXECUTE: not applied — no command exists
+- FALSIFY: applied — a staging-only cited exploration selects the program branch; a standalone change never does
+- CONFORM: applied — `orbit-propose-modifications`' Step 0 order: mode detection, then Phase 1, then generation
+- FEASIBILITY: applied — two path checks and one YAML read
+- CONSUME: applied — the propose and ff bodies call it at Step 0.5
+- INVOKE: applied — once per propose or ff, before generation
+
+### D-rc12-11 — the engine's fetch names its destinations and fetches no tags
+Domain: the ways a `git fetch` could move refs other than the two remote-tracking refs `select` needs
+| member | covered by |
+|---|---|
+| a configured `remote.<r>.fetch` refspec targeting `refs/heads/` | an explicit refspec on the command line overrides the configured ones |
+| tag auto-following | `--no-tags` |
+| a ref absent on the remote (fetch would fail) | `git ls-remote --heads <r> <default> <branch>` first; fetch only refs that exist |
+| the fetched form | `git fetch --no-tags <r> +refs/heads/<x>:refs/remotes/<r>/<x>`, one refspec per existing ref |
+Closure: BOUNDED — git's fetch side effects are git's to define; the named members are the ones a refspec and a flag control
+Residual kind: a fetch side effect configured outside the refspec and tag settings (e.g. `fetch.prune`, hooks, `remote.<r>.mirror`)
+Residual method: a test per configuration key, added when a run log names one; the shim records the exact argv so a changed form is visible
+Moves:
+- READ: applied — the external pass: fetch follows `remote.<name>.fetch`, and tags follow by default
+- ENUMERATE: applied — this table
+- COHERE: applied — `ls-remote` is a pure read, so existence is decided before anything moves
+- EXECUTE: not applied — to run as the test the instrument requirement names (a remote with a `refs/heads/` refspec)
+- FALSIFY: applied — a bare `git fetch <r>` passes the allowlist and still moves a local branch; the exact argv form closes that
+- CONFORM: applied — D-rc12-2 (the one ref-store update, bounded)
+- FEASIBILITY: applied — one ls-remote and at most two fetches
+- CONSUME: applied — the existence and remote-ahead checks read the two refs
+- INVOKE: applied — `select`, and `publish` on the program path
+
+### D-rc12-12 — the outcome sets are closed, and `program` never skips
+Domain: every outcome of a PR observation, per subcommand
+| member | covered by |
+|---|---|
+| a stored URL that passes the four predicates | `valid` |
+| a predicate fails | `closed`, `merged`, `retargeted`, `head-mismatch`, `repository-mismatch` |
+| the URL resolves to nothing | `not-found` — `gh pr view` exits non-zero with "Could not resolve to a PullRequest", recorded in the gh contract as a third error rule |
+| any other non-zero exit | `unobserved` |
+| no `gh` on PATH | `gh-absent` |
+| a URL-less attachment's query | `discovered`, `none`, `several` (with every candidate) |
+| `preflight` and `tail` on any non-`valid`, non-`discovered` outcome | the owner's skip or PR-half degradation, per D-rc12-8's table for that subcommand |
+| `program` on `unobserved` or `gh-absent` | `proceed` with the record's PR and state `unverified` — never `skip` |
+| `program` on a positively invalid record | falls through to the query, per the owner; `several` lists every candidate |
+| `program`'s record choice | the latest URL-BEARING per-architecture record, never merely the latest |
+Closure: SOURCED — the four predicates and the fall-through rules are `orbit-archive-modifications`' and `orbit-pr-lifecycle`'s `Program PR (Shape A) semantics`
+Moves:
+- READ: applied — the external pass: no head-mismatch value, and the URL-bearing record rule contradicted; the fresh pass: the never-suppressed readout and the not-found discriminator
+- ENUMERATE: applied — this table
+- COHERE: applied — `preflight` answers (no second chance) while `program` falls through; the owners differ by risk, and the table keeps both
+- EXECUTE: not applied — no command exists; the stub scripts every outcome (task 1.1)
+- FALSIFY: applied — keying not-found on exit status alone would class an auth failure as not-found and keep a dead URL in the emit
+- CONFORM: applied — the owners named above; R-crc-14 (point, never restate)
+- FEASIBILITY: applied — one `gh pr view`, and one `gh pr list` at most
+- CONSUME: applied — preflight's outcome becomes the archive emit's fields (D-rc12-9); the architect readout renders `program`'s
+- INVOKE: applied — preflight once per attached archive; program on every architect invocation that observes arc-done
+
+### D-rc12-13 — the engine decides precondition skips; the body writes every note
+Domain: the parts of R-crc-5's "degradation notes, when to skip", by who owns each
+| member | covered by |
+|---|---|
+| a skip an owner precondition decides (ref-format, default collision, dirty tree, divergence, collision, no remote, unparseable URL, no `gh`, unresolvable default) | the engine; `reason.code` names the precondition |
+| the one-line note the user reads | the body, written from `reason.code` and `reason.detail` |
+| a skip no owner rule decides | none exists in the three references today; if one appears, it stays the body's |
+Closure: SOURCED — the precondition list is `orbit-propose-modifications`' `Branch preconditions at propose`, `orbit-pr-lifecycle`'s resolution requirement and the archive tail's preconditions
+Moves:
+- READ: applied — R-crc-5's text and the fresh pass's finding that the change moved its letter without a record
+- ENUMERATE: applied — this table
+- COHERE: applied — `reason` (D-rc12-8) carries codes, never prose, so the engine writes no note
+- EXECUTE: not applied — no skip fired on the live run, which is why note wording stays judgment
+- FALSIFY: applied — an engine-written note would be untested prose in an engine string; a code is testable
+- CONFORM: applied — narrows R-crc-5's letter, ratified by Sal 2026-10-12 (this entry)
+- FEASIBILITY: applied — a closed code set per subcommand
+- CONSUME: applied — change 2's bodies render notes from codes
+- INVOKE: applied — every `skip` and every `degraded`
+
 ## Decisions
 
 - **2026-10-11 — D-rc12-1: dogfood the PR choreography once before designing any engine command**
@@ -105,6 +238,20 @@ Moves:
 - **2026-10-12 — D-rc12-6: the PR-title source bug is fixed now, outside rc12** The title rule reads `proposal.md`'s `#` line, which the schema template never writes. A small standalone repair (fix what we see now), not deferred to change 2.
   Kind: scope
 - **2026-10-12 — D-rc12-7: the cleanliness predicate conflicts are out of rc12** The blind-pair preflight vs the PR dirty-tree rule, and the archive suite's staging vs the tail's commit scope, each touch a capability outside rc12's (`orbit-review`, `orbit-archive-modifications`); they are their own small fix, so rc12 stays within R-crc-1.
+  Kind: scope
+- **2026-10-12 — D-rc12-8: the record separates observations, body-run segments and the user's acts** The blind pair on the first proposal (fresh `2026-10-12T00-40-25Z`, external `2026-10-12T00-40-46Z`) found the three-action flat record could express neither a PR-half degradation nor a step that needs an earlier step's result. Redesigned here (R-crc-6's redesign lane). See Mechanism.
+  Kind: rule
+- **2026-10-12 — D-rc12-9: the tail reads the archive emit, never observes again** Its PR state and its commit scope come from the written archive emit. See Mechanism.
+  Kind: rule
+- **2026-10-12 — D-rc12-10: `select` needs no change directory** See Mechanism.
+  Kind: rule
+- **2026-10-12 — D-rc12-11: the engine's fetch names its destinations and fetches no tags** Narrows D-rc12-2's "one ref-store update" to an exact argv form. See Mechanism.
+  Kind: rule
+- **2026-10-12 — D-rc12-12: the outcome sets are closed, and `program` never skips** See Mechanism.
+  Kind: rule
+- **2026-10-12 — D-rc12-13: the engine decides precondition skips; the body writes every note** (Sal: took the recommendation.) A narrowing of R-crc-5's letter: "when to skip" stays judgment only where no owner rule decides it; "degradation notes" stay the body's. See Mechanism.
+  Kind: rule
+- **2026-10-12 — D-rc12-14: the change is re-proposed from this mechanism** The walk routes the pair's record-shape findings here; the proposal, design, spec delta and tasks are regenerated from D-rc12-8..13, and the local repairs the pair named (the stale count, the commit-isolation case's home, the `ghurl` hook, the sweep's site list) land in the regenerated artifacts.
   Kind: scope
 
 ## Open questions
