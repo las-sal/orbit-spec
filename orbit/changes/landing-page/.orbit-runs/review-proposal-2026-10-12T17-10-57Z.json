@@ -1,0 +1,134 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-12T17:10:57Z",
+  "change": "landing-page",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 3
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "design.md",
+      "line": 56,
+      "title": "The Docs section's link to docs/opsx.md is residue, so exit (1) cannot pass as designed",
+      "recommendation": "D1 says the Docs section links the eleven pages under their current names, but one of them is docs/opsx.md, and the residue check matches `opsx` anywhere on a line outside the two admitted sections, link destinations included (orbit-user-docs' residue table: 'any other occurrence, in prose, a path or a link | residue'; residueFailures masks only the admitted identifiers). A README built to D1 fails the residue check, so task 4.4 and exit (1) fail. Choose how the README reaches that page before apply and state it in D1 and task 4.1.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Link ten pages and leave docs/opsx.md unlinked until reference-docs renames it (that stage repoints links anyway); say so in D1 and the Docs risk."
+        },
+        {
+          "label": "B",
+          "body": "Pull the docs/opsx.md rename forward into this stage (scope growth into reference-docs' charter; a third touched area)."
+        }
+      ],
+      "reproduction": "Constructed case: README.md unlisted, with `## Docs` followed by `- [Workflows](docs/opsx.md)` and no admitted heading above it in that section. residueFailures([README]) walks the line, admittedLines does not cover it, ADMITTED_IDENTIFIERS masks nothing, and /openspec|opsx|fission/gi matches `opsx` in the link destination: expected no failure per D1's plan, observed `README.md:<line>: residue 'opsx' (the residue check)`."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "specs/orbit-user-docs/spec.md",
+      "line": 51,
+      "title": "The ADDED requirement gates itself on pending membership, contradicting the exactness rule that runs it over a listed README",
+      "recommendation": "The ADDED requirement opens 'When README.md is not on the pending-rewrite list, the check SHALL read…' and its scenario 'A listed README is not read' says the check reads nothing and reports nothing for a listed README. The MODIFIED pending-list requirement (line 74) puts the claims check in the FILE-LOCAL set the exactness rule runs over a LISTED file alone, and design D2 (design.md:72-73) relies on that ('a listed README that would pass it is still reported finished'). The existing harness gates by membership at the suite level (docSurfaces / pendingListFailures), not inside each check. Built to the ADDED text, the check passes a listed README vacuously, so the exactness rule could report a README 'finished' that fails the claims check the moment it is unlisted. Restate the ADDED requirement's gate as the suite's (it reads every unlisted user doc and, in the exactness rule, a listed one alone, like every file-local check) and rewrite the scenario to say no claims failure is reported against a listed README by the unlisted-doc suite."
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-user-docs/spec.md",
+      "line": 15,
+      "title": "What counts as a backticked `orbit-*` token is stated only in design, and the two readings diverge",
+      "recommendation": "The requirement's table speaks of 'a backticked orbit-* token' without a grammar; design D2 narrows it to code_inline content matching ^orbit-[a-z0-9-]+$. Under D2 a span such as `orbit-explore/SKILL.md` or `orbit-review --as` is silently not a name (neither passes nor fails), while a reader of the requirement alone would fail it as a token that resolves to no capability; and `orbit-spec`, the package and repository name, matches the regex and fails as a non-capability if a claim mentions it. Two implementers can differ. State the token production in the requirement (the whole span matching the pattern), add a table row for a span that starts with orbit- but is not a whole name, and decide whether `orbit-spec` is admitted or simply must not be backticked in that section."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "tasks.md",
+      "line": 9,
+      "title": "Task 2.2 tags only the Orientation scenarios a test asserts; the carried others have no route to being declared",
+      "recommendation": "All three Orientation scenarios are carried by the MODIFIED block and today all three are undeclared (orbit validate lists them). Task 2.2 tags them 'where a test asserts them', and 4.4 then requires every delta scenario declared, which after the apply gate passes is an ERROR. Say what happens to a scenario no test asserts: write the asserting test (the Orientation text is a template string, so a text test is cheap) or add an orbit/scenario-ledger.yaml entry; and add the ledger to the Touchpoints if that is the route."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "design.md",
+      "line": 41,
+      "title": "D1 does not cite the baseline scenario the README must keep satisfying",
+      "recommendation": "orbit-conventions' Upstream version pinning has the scenario 'Pinned baseline declared in README': the README names the engine's upstream baseline (e.g. @fission-ai/openspec@1.3.1). D1's Built on OpenSpec bullet satisfies it, but nothing names the rule, so a rewrite that trims the attribution to 'OpenSpec 1.3.1' would silently break it. Name the scenario in D1 so the README author and the system review can check it."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "design.md",
+      "line": 60,
+      "title": "'upstream's notice kept' under License can be read as quoting the notice, which is residue there",
+      "recommendation": "LICENSE reads 'Copyright (c) 2024 OpenSpec Contributors'. If the README's License section quotes it, `OpenSpec` sits outside both admitted sections and fails the residue check. State that the README's License section says MIT and points at LICENSE, and that the notice stays in the LICENSE file only (or move the sentence about it under Built on OpenSpec)."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "tasks.md",
+      "line": 28,
+      "title": "Task 5.3 does not say whose act the tag push is",
+      "recommendation": "Pushing v2.0.0 to origin is what the README's install pins, the nearest thing this program has to a release, and the outward-actions rule keeps publishing releases the human's; the design names only npm publish and a GitHub Release page as Sal's. Say in D4 and 5.3 who cuts and pushes the tag after the merge (Sal, or the next session on his word), so the deferred task carries its actor into the archive record's `where`."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Probed hardest where this change meets the shipped docs checks: I read test/helpers/user-docs.ts and the pending-rewrite test to see where membership gating actually lives (the suite, not the checks), and ran each D1 outline item against the residue table line by line, which is how the docs/opsx.md link and the License notice surfaced. Also checked package.json (files, prepare, postinstall, engines), the release-prepare workflow (guarded to Fission-AI/OpenSpec, so the bump cannot trigger it), the onboard template and every test asserting 1.3.1, and the program charter's exits. The rehearsal design (git+file clone, local tag in that clone only) is sound; the remaining risk is the shell extractor's reading of the `#` in the install argument, which the design already hands to apply as an observation.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The change is well sized and well grounded: the version and tag reasoning is measured (56 upstream tags, origin carrying only upstream/v1.3.1, the update detector comparing by inequality), every capability the claims would name exists in orbit/specs, the docs-inventory fence is read from the active delta as the helper does, and validate passes strict.\nThe two things to settle before apply are both contradictions an implementer cannot resolve alone: the Docs section as designed links a page whose filename is residue, so the README cannot leave the pending list as planned, and the new check's own gate disagrees with the exactness rule that is supposed to run it. Both are small text repairs at the walk; the token grammar is a one-line production. None of them needs new mechanism, so moving forward after the walk is right."
+  },
+  "final_assessment": "0 critical, 3 warning, 4 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews landing-page"
+}
