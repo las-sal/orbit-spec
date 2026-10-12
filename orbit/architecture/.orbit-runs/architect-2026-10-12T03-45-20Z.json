@@ -1,0 +1,33 @@
+{
+  "command": "architect",
+  "timestamp": "2026-10-12T03:45:20Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "rc12-engine-owned-choreography RATIFIED (Sal): all three exits graded MET on the final tree (exit (2) at 36.5% / 49.2% / 32.5% of the D6 baseline); the Shipped-as paragraph's exit (2) figures corrected to the final tree; status log entry appended.",
+  "stages_touched": [
+    "rc12-engine-owned-choreography"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [
+    "rc12-engine-owned-choreography"
+  ],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      {
+        "path": "orbit/architecture/clean-up-review-cycle.md",
+        "why": "the live program; the rc12 stage section and status log carry this ratification"
+      },
+      {
+        "path": "CLAUDE.md",
+        "why": "orientation; the rc12 paragraph records the stage"
+      }
+    ],
+    "next_command": "orbit architecture status",
+    "model_hint": null,
+    "seam": "architecture"
+  },
+  "next_recommended": "orbit architecture status"
+}

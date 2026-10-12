@@ -3118,7 +3118,7 @@ the archive raises no Category 3 finding on the retired set, and Q-crc-28 closes
 ### Stage rc12-engine-owned-choreography — deterministic git steps become an engine command
 
 Depends-on: rc05-executable-references
-Complete: [ ]
+Complete: [x] 2026-10-12 (Sal)
 
 Charter: revisit D6's zero-engine-git absolute (D-d6-7) at the boundary the D-arc's own thesis
 draws — engine computes, body reads. The DETERMINISTIC sequences of the PR choreography
@@ -3140,8 +3140,9 @@ observe through read-only `git` and `gh` held to an allowlist, and print every w
 for the body to run. That met exit (1), with every printed segment executed against a real
 repository. Change 2 (`rc12-body-adoption`, PR #17) rewrote the propose/ff, archive and architect
 bodies to call those subcommands and act on the record. The hand-run runbook was deleted, not kept as
-a fallback. Exit (2) was measured at apply: 6,168 / 5,317 / 962 bytes against 18,458 / 12,900 / 4,613,
-so no reference needed D-rc12-3's fallback. The consumption table and the title clause ship in the
+a fallback. Exit (2) was measured at apply (6,168 / 5,317 / 962 bytes against 18,458 / 12,900 / 4,613), and
+again on the final tree after the system walks (6,743 / 6,346 / 1,497), so no reference needed
+D-rc12-3's fallback. The archive reference ends 104 bytes under its half-line. The consumption table and the title clause ship in the
 references as CHECKED MIRRORS, because an installed skill cannot open `orbit-pr-lifecycle`. Exit (3)
 holds by construction: no subcommand writes, and propose stays draft-only. The archive preflight moved
 before the move, and the archive close shows `tail`'s `human_acts` (the merge and the return to the
@@ -5601,3 +5602,12 @@ only because no change cites it between its two changes. Exit (1) is met and exi
 the references shrinking by more than half, is change 2's, measured at its apply (D-rc12-3). Change 2 (body adoption)
 cites this stage and carries forward the false citation divergence `orbit pr preflight` reported at change 1's
 archive. Its branch is cut from the resolved default, so PR #16 merges first (Sal's act).
+
+**2026-10-12 — rc12-engine-owned-choreography RATIFIED (Sal)**, through the architect session's offer, after both
+changes merged (PRs #16, #17). Its three exit criteria graded MET on the final tree: (1) the five `orbit pr` subcommands
+are engine-tested, every printed segment executed against a real repository and every engine call held to the
+allowlist; (2) the three references shrank to 36.5%, 49.2% and 32.5% of the D6 baseline (6,743 / 6,346 / 1,497 bytes),
+the archive reference within 104 bytes of the line; (3) no subcommand writes, propose stays draft-only, and the merge
+was Sal's. The defect the first offer was declined over (preflight's false citation divergence) was fixed in change 2
+and observed fixed at its own archive (`diverged: false`). The Shipped-as paragraph's exit (2) figures were corrected
+to the final tree at this session; the apply-time figures in the change 2 archive emit stand as what apply measured.
