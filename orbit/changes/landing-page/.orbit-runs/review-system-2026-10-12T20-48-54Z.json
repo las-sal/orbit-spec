@@ -1,0 +1,149 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-12T20:48:54Z",
+  "change": "landing-page",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 3
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "orbit/changes/landing-page/tasks.md",
+      "line": 41,
+      "title": "Task 6.2's record counts six mutations and lists five",
+      "recommendation": "Change \"six mutations of the script\" to \"five mutations of the script\" in task 6.2's record. The record lists five distinct mutations: `prepare` dropped, `dist` not added, the tag on the parent, the workspaces refusal removed, and the checkout's `dist/` copied. The sixth run was a re-run of the dropped-trigger mutation after the test was fixed, not a sixth mutation. The walk log's action text repeats \"six\"; it is a frozen record and stays as written, and this task line is the place to correct it.",
+      "walk_entry": {
+        "title": "The required clean-machine rehearsal remains unperformed",
+        "file": "orbit/changes/landing-page/tasks.md"
+      }
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "orbit/changes/landing-page/design.md",
+      "line": 180,
+      "title": "Risks understates the built output a release adds to history",
+      "recommendation": "Measured at this pass, packing the objects of the rehearsal's release commit (`git rev-list --objects <base>..v2.0.0 | git pack-objects --stdout | wc -c`) reads 947,200 bytes: the release commits all of `dist/`, source maps included (5.0 MB on disk). The \"about 600 KB\" figure is the packed npm tarball, which excludes maps. Choose one fix.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "State the measured figure in design.md's Risks: \"about 950 KB per release, maps included (the npm tarball, which drops maps, is 604 KB)\". Leave the script unchanged."
+        },
+        {
+          "label": "B",
+          "body": "Have the release script commit only what `files` packs, dropping `*.map`, `*.test.js` and `__tests__` from `dist/`, and keep the figure. Rejected here: it restates npm's packing rule in the script, a second statement of a rule the table says npm owns."
+        }
+      ],
+      "walk_entry": {
+        "title": "The required clean-machine rehearsal remains unperformed",
+        "file": "orbit/changes/landing-page/tasks.md"
+      }
+    },
+    {
+      "pass": "1",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/landing-page/explore.md",
+      "line": 1,
+      "title": "explore.md was edited inside the verified range outside every walk entry's edit record",
+      "recommendation": "Residual-check gap: no record correction is owed. The edit is commit 645406ca, the explore session the 18-01-09Z walk routed the install route to (D-lp-11 to D-lp-16, Mechanism D-lp-16), and that session's own emit (explore-2026-10-12T18-16-23Z) records it. It is not a walk edit, and a re-walk entry need not name it."
+    },
+    {
+      "pass": "1",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/architecture/update-gh-documentation.md",
+      "line": 1,
+      "title": "The program doc was edited inside the verified range outside every walk entry's edit record",
+      "recommendation": "Residual-check gap: no record correction is owed. The edit is commit 7a8e9d80, the architect session that captured R-ugd-8, and its own emit (architect-2026-10-12T18-17-34Z) records it."
+    },
+    {
+      "pass": "1",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/architecture/.orbit-runs/architect-2026-10-12T18-17-34Z.json",
+      "line": 1,
+      "title": "The architect emit was added inside the verified range outside every walk entry's edit record",
+      "recommendation": "Residual-check gap: no correction is owed. This is the architecture trail's own record of the R-ugd-8 session (commit 7a8e9d80), written by `orbit emit architect`, never by a walk."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "This verification read the three system walks after the external return. Its weight fell on the 20-42-11Z repair, the largest addition since apply and authored by the same session now grading it, so it was probed by execution rather than by reading. The release script was re-run in a scratch clone and its output packed to measure what it adds to history. The rehearsal record was compared against the scratch transcripts. Every claim in the new orbit-release requirement was traced to a test assertion. The mechanism holds: the requirement's table, the script and the test agree, and each scenario's test is shown able to fail. Both defects are in prose about the work: a mutation count, and a size figure carried over from the npm tarball to a commit that also holds source maps. The three residual-check names are the explore and architect sessions of the redesign route, each recorded by its own emit. An adjacent hazard, outside this change: package.json still carries upstream's `release` and `release:ci` scripts, which run a pnpm changeset publish to the npm registry, next to the new `release:tree`. That belongs to public-readiness, which owns upstream's release workflow.",
+  "passes_run": [
+    "1",
+    "2",
+    "3"
+  ],
+  "passes_skipped": [
+    "0: VERIFICATION pass genre: verify-change's subject is the whole change, not the walks' sweep scopes",
+    "4: no perspectives defined (orbit/lenses/ absent)",
+    "5: no critical paths defined (orbit/lenses/ absent)",
+    "6: VERIFICATION pass genre: audit-drift's subject is the whole project"
+  ],
+  "verification": [
+    {
+      "title": "The Quickstart's review steps run in-context passes that never cover the reviewed gates' first slot",
+      "file": "README.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The rewritten Install section enumerates none of the install surface `Install documentation describes actual install surface` requires",
+      "file": "README.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The claims check misreports a name's line when an earlier code span in the same block wraps a line",
+      "file": "test/helpers/user-docs.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "The records claim exceeds the declared emission scope",
+      "file": "README.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The required clean-machine rehearsal remains unperformed",
+      "file": "orbit/changes/landing-page/tasks.md",
+      "verdict": "regressed"
+    }
+  ],
+  "final_assessment": "0 critical, 0 warning, 5 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-10-12T17-57-07Z",
+    "2026-10-12T18-01-09Z",
+    "2026-10-12T20-42-11Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews landing-page"
+}
