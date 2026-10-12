@@ -1,0 +1,95 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-12T02:51:04Z",
+  "change": "rc12-body-adoption",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc12-body-adoption/.orbit-runs/review-proposal-2026-10-12T02-49-13Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-12T02-49-13Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 1
+  },
+  "pushback_verification": "Both verified against current state; none stale.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The step-failure path never says what the propose emit carries, so the attachment-mapping stale call overclaims",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc12-body-adoption/specs/orbit-pr-lifecycle/spec.md",
+      "line": 86,
+      "classification": "trivial_fix",
+      "action": "narrowed the failure row to \"no later PR step runs\" (the emit still written) and added the failed-step clause to the attachment row: the emit is written with observations.attachment alone, stays local, and the second segment's argv joins the recovery",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "nothing after the failed step runs"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc12-body-adoption/specs/orbit-pr-lifecycle/spec.md",
+            "text": "no later PR step runs, and the lifecycle's own steps (the emit among them) still do"
+          },
+          {
+            "path": "orbit/changes/rc12-body-adoption/specs/orbit-pr-lifecycle/spec.md",
+            "text": "after a failed step the emit is still written, its attachment `observations.attachment` alone, and stays local"
+          }
+        ],
+        "searched": [
+          "nothing after",
+          "step fails",
+          "stays local"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The fingerprint re-stamp sits outside every walk entry's edit record",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc12-body-adoption/.openspec.yaml",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "acknowledged: the stamp is correct and is a record gap only; this walk carries no new block, so no re-stamp needs naming",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [],
+        "searched": [
+          "base_fingerprints"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Both findings of the verification pass resolved: the failure path now keeps the propose emit and names its attachment; the record gap is acknowledged.",
+  "iteration": 3,
+  "next_recommended": "/orbit:apply rc12-body-adoption — user-invoked",
+  "ripple_misses": 0
+}

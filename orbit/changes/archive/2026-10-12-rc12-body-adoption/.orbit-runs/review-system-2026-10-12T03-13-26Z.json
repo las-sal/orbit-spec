@@ -1,0 +1,116 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-12T03:13:26Z",
+  "change": "rc12-body-adoption",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "1",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "src/core/templates/workflows/pr-choreography.ts",
+      "line": 154,
+      "title": "The archive reference dropped two baseline notes the tail record does not carry",
+      "recommendation": "Restore both notes in PR_ARCHIVE_TAIL_REFERENCE, keyed on record fields: (1) when observations.pr_state is \"ready\" on a per-change tail (so no `ready` step is printed), write one line that the PR was already READY and was not re-flipped; (2) on a head-mismatch skip whose reason.detail.recovery.case is \"absent\" (argv empty), state plainly that no switch recovers the branch and name the attachment record (observations.attachment / the attachment emit) as the evidence. Add a text assertion for each in test/core/templates/pr-references.test.ts.",
+      "reproduction": "orbit/specs/orbit-archive-modifications/spec.md, `PR-attached archive tail`: the scenario `Already-READY PR is reported, not re-flipped` requires the no-op flip be 'reported in one line', and the head-mismatch bullet for a branch absent locally and on the remote requires the note to 'say so PLAINLY and point at the attachment record'. src/core/pr/tail.ts omits the `ready` step when prState === 'ready' and emits no reason for it, and returns recovery {case: 'absent', argv: []}. The pre-change reference (cdb7ccc8:pr-choreography.ts lines 351, 391) carried both sentences; the rewritten archive reference says only 'shows reason.detail.recovery's argv' and nothing about an already-READY PR, so a body following it prints neither line."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc12-body-adoption/specs/orbit-pr-lifecycle/spec.md",
+      "line": 129,
+      "title": "The failed-step recovery shows segment 2's argv with an unfilled <message-file>",
+      "recommendation": "Say what fills the other input when segment 2 joins the recovery: either the body authors segment 2's <message-file> before writing the failure line (so the shown argv is runnable), or the recovery names that token as the one the user supplies. Mirror the edit in PR_CONSUMPTION_TABLE (the parity test will hold it).",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "The body authors segment 2's <message-file> before composing the failure line, and the row says both inputs are filled."
+        },
+        {
+          "label": "B",
+          "body": "The row says <emit-path> is filled and <message-file> is shown as the token the user writes before running it."
+        }
+      ],
+      "reproduction": "src/core/pr/publish.ts prints segment 2 with inputs ['<emit-path>', '<message-file>'] and the step `git commit --only -F <message-file> -- <emit-path>`. The consumption table's `publish`'s first segment ends row says after a failed step 'the second segment's argv (its `<emit-path>` filled) join[s] the failure line's recovery', and the `a step fails` row says each skipped argv is shown 'verbatim as the recovery the user runs'. A push failure in segment 1 therefore yields a recovery line whose commit-record step reads `git commit --only -F <message-file> -- orbit/changes/x/.orbit-runs/propose-….json` — not runnable as shown."
+    },
+    {
+      "pass": "0",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc12-body-adoption/proposal.md",
+      "line": 30,
+      "title": "Proposal lists one modified capability; the change carries two",
+      "recommendation": "Add `orbit-cli-grammar` under Modified Capabilities (the gh-in-a-body scenario now places its line; the inventory exemptions drop `command`, `argument` and `unknown`, which only the deleted runbook used), and name it in design's Touchpoints-adjacent prose or a one-line decision, since it entered at apply."
+    },
+    {
+      "pass": "1",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc12-body-adoption/specs/orbit-pr-lifecycle/spec.md",
+      "line": 184,
+      "title": "would_select under `never` names a per-change target nothing would select",
+      "recommendation": "Either qualify the 'can never disagree' sentence (select and publish return `off` under `never` before the predicate runs, so the predicate's per-proposal answer there is only the divergence reading) or have the archive note phrase a `never` regime as 'no PR would be selected now'. The table rows already map `never` to per-proposal, so this is wording, not the computation."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "src/core/templates/workflows/pr-choreography.ts",
+      "line": 75,
+      "title": "Phase 3 lists segment 1's inputs unconditionally",
+      "recommendation": "Write 'author the inputs segment 1 names (normally <message-file>, <title>, <body-file>)': publish omits <title> and <body-file> when it adopts a program PR and <message-file> when the scope is empty, and the table already says the body authors 'that segment's inputs'."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Read from the live checkout at the pair's launch commit (HEAD c62a0006, whose only addition over the apply commit is the T0 trail record): the change's artifacts, the commit range from cdb7ccc8 with the trail excluded, the src/core/pr modules, the five rewritten template sources, the archive-modifications and propose-modifications baselines, and the built references. Probed: the shared targeting predicate against all five divergence rows (select, publish and preflight now resolve through one function; the publish attachment keeps its key set), the preflight-before-move ordering against the archive baseline (the baseline only requires preflight before the emit, so moving it earlier is consistent), whether select and publish could read different citations (propose merges the staged citation before publish; ff never cites), and the tail record against every instruction in the new archive reference. Measured: generated references 6168 / 5317 / 962 bytes against targets 9229 / 6450 / 2307; orbit validate --strict valid; scenario map 35 delta scenarios, 0 uncovered; full npm test 3566 passed across 160 files. The pattern behind both warnings is one thing: the rewrite deleted every sentence the engine now computes, and two sentences went with them that the engine does NOT compute — notes a body writes from a record field (an absent ready step, an empty recovery argv) and the filling of an input in a segment that never ran.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3"
+  ],
+  "passes_skipped": [
+    "4: no orbit/lenses/perspectives.md; skip Pass 4",
+    "5: no orbit/lenses/critical-paths.md; skip Pass 5",
+    "6: audit-drift not invoked as a library; a scoped residue sweep for the deleted runbook's vocabulary (Step 5.45, pr-resolution algorithm, Recording the attachment, check-ref-format, title line) over src, test and orbit/specs was run instead"
+  ],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The engine half is small, correct and pinned by a test per divergence row, and the references now call and act as the stage intended, measured well inside exit (2). Both warnings are prose gaps in what the body writes from a record it already has — a walk can close each with a sentence and a text assertion, without touching the engine or reopening the design."
+  },
+  "final_assessment": "0 critical, 2 warning, 3 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc12-body-adoption"
+}

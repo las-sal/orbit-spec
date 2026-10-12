@@ -1,0 +1,151 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-12T02:40:42Z",
+  "change": "rc12-body-adoption",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 5,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "tasks.md",
+      "line": 3,
+      "title": "The shared targeting predicate leaves select's own copy in place",
+      "recommendation": "The predicate `regime === 'per-architecture' && citation !== null` is written twice today, at publish.ts:62 AND select.ts:42 (select is the call that actually switches to the target branch at phase 1). Task 1.1 and design D1 extract it for publish and preflight only, and the delta says 'ONE function computes it for both subcommands'. An implementation built to that wording leaves select's copy, so the target select switches to and the target preflight's note compares against are computed by two statements of one rule. Name select in task 1.1, D1 and the delta sentence ('for select, publish and preflight'). The function should take (regime, citation) so select can pass its staging-directory citation."
+    },
+    {
+      "pass": "4",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "specs/orbit-pr-lifecycle/spec.md",
+      "line": 128,
+      "title": "The baseline still promises a note on every citation edit; the new divergence rule writes one only when the target would change",
+      "recommendation": "orbit/specs/orbit-pr-lifecycle/spec.md:104-106 (`Config selects the regime; citation selects the target`, a requirement this delta does not modify) says 'A citation added or removed after propose is a documented NO-OP for the PR layer, surfaced as a one-line note at the next seam'. That is unconditional. Under the new table, a citation added under `pr: per-proposal` reads diverged:false and gets no note (row 4), and a regime flip with no citation edit gets one. That flip is a case the baseline sentence does not describe. Two implementers reading both requirements diverge on whether row 4 notes.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Carry `Config selects the regime; citation selects the target` as a fourth MODIFIED block in the same capability, rewording the sentence to 'surfaced as a one-line note at the next seam when it would change the target, per `orbit pr preflight`'s divergence table' (a pointer, per R-crc-14), and carry its three scenarios."
+        },
+        {
+          "label": "B",
+          "body": "Keep the baseline sentence, and make row 4 a note whenever the citation differs from the citation at propose. This needs the citation recorded at propose, which D-rba-1 ruled out (Considered & out), so A is the consistent option."
+        }
+      ]
+    },
+    {
+      "pass": "4",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "specs/orbit-pr-lifecycle/spec.md",
+      "line": 73,
+      "title": "The step-failure row drops the recovery commands orbit-propose-modifications still requires",
+      "recommendation": "orbit/specs/orbit-propose-modifications/spec.md:313-319 (`PR choreography at propose (config-gated)`, unmodified) says 'The failure note SHALL name the exact commands that complete the interrupted work — the push … and … the creation', plus the consequence of leaving it (the change proceeds unattached). The consumption table's 'a step fails' row writes ONE line naming the completed and skipped steps by their `step` names only. Design D3 deletes 'the mid-flight recovery commands' from the reference. An implementation built to the delta violates the propose requirement. D-rba-5 read `Branch preconditions at propose` and missed this sentence in the sibling requirement.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Widen the row so the line also shows each skipped step's argv verbatim, as the recovery the user runs (the record already carries them), plus the unattached consequence. This satisfies the baseline sentence with no second capability."
+        },
+        {
+          "label": "B",
+          "body": "MODIFY orbit-propose-modifications' requirement to point at the consumption table: a second capability, still within R-crc-1's ceiling of three."
+        }
+      ]
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-pr-lifecycle/spec.md",
+      "line": 76,
+      "title": "No row says where the propose emit's pr_attachment url and state come from",
+      "recommendation": "Publish's segment 2 runs after the body writes the propose or ff emit 'from segment 1's result'. The emit's `pr_attachment.url` is the `gh pr create` step's stdout on a create, or `observations.adopted_url`/`adopted_state` on an adoption. Branch, granularity and doc come from `observations.attachment`. The table's `observations` row covers only the last; no row names a step's OUTPUT as an input to the emit. Task 2.1's delete list ('resolution, preconditions, compatibility, commit-scope, query and recovery prose') and keep list (title, body, commit message, note wording) cover neither the current 'Recording the attachment' section of pr-choreography.ts:242-252 nor its replacement. Add a row ('the `open` step's stdout is the PR URL; on adoption read `adopted_url`/`adopted_state`; `pr_attachment` is `observations.attachment` plus that URL and state'), or name 'recording the attachment from the record' in D3's keep list and task 2.1."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "tasks.md",
+      "line": 11,
+      "title": "The archive rewrite never passes the at-archive-note edits to tail --include",
+      "recommendation": "`orbit pr tail`'s commit scope includes 'every path named by `--include` (the body's at-archive-note edits)'. Without it, an edit the archive flow made, such as an architecture-doc stage entry or a CLAUDE.md bump, falls outside the isolated commit. Neither task 2.2, D3's judgment list nor the consumption row ('`tail` after it') mentions `--include`, and today's reference has no `--include` to carry forward, because it predates `orbit pr`. Add to task 2.2: pass every path the archive flow edited at its at-archive-note steps as `--include <path>`."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "tasks.md",
+      "line": 20,
+      "title": "The carried 'Draft window' scenario has no tagging task",
+      "recommendation": "`orbit status --change rc12-body-adoption --scenarios` lists six undeclared delta scenarios. One of them is the carried `Agent-written landmark descriptions at seams only :: Draft window carries intent, archive carries achievement`. Task 1.3 covers the two preflight scenarios and task 3.3 'the consumption and title scenarios'. No task names the carried one, and it becomes a scenario-map ERROR once the apply gate passes. Widen task 3.3 to 'every undeclared delta scenario, the carried Draft-window one included', which matches design's 'The delta carries six'."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "design.md",
+      "line": 91,
+      "title": "Design claims a scenario covers shell-quoting and a worked title example; neither exists",
+      "recommendation": "Risks says 'The consumption table requires every element to be shell-quoted, and a scenario covers it', and that the reference's worked example uses a title containing a space and a quote. None of the delta's scenarios mentions quoting (`A body runs what the record prints` exercises a branch-switch argv with no free text), and no task writes the worked example or asserts it. Either add a scenario ('a title containing a space and a quote reaches `gh pr create` as one argv element') and a task line under 2.1 for the example, or drop both claims from Risks."
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "design.md",
+      "line": 86,
+      "title": "The architect fold-in reads exit (2) as met by moving bytes, and names one pin too few",
+      "recommendation": "If `program` is folded into the architect body and the reference deleted, the reference measures 0 bytes while the body grows. State the measure as reference plus body growth for architect (< 2,307) so that 'fully met' is a reading of the exit and not a relocation of the text. That path also moves test/commands/config-profile.test.ts:134 (`'orbit-architect': ['pr-resolution.md']`), which task 3.2's pin list does not name."
+    }
+  ],
+  "commentary": "Probed the delta against the code it describes (publish.ts, select.ts, preflight.ts, tail.ts, inputs.ts, emit-composition's attachment gate) and against every baseline requirement that names the PR seams (orbit-pr-lifecycle, orbit-propose-modifications, orbit-archive-modifications). The D5 claim about tail's human_acts and the 18,458/12,900/4,613 baseline were checked against tail.ts:184-193 and the generated surface; both hold. The pattern behind the findings: the change is sized by what the engine already computes, and every gap sits at the spots where the body still has to carry a fact across a step that the record does not compute.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The engine half is sound and small. The false-divergence diagnosis is right, and the would-select comparison is the correct shape. The title fix names an input the schema actually scaffolds.\nThe weakness is at the boundary between the record and the body. The consumption table is close to complete, but it omits the two places a body consumes something the record does not hand it directly: a step's stdout feeding the attachment, and the at-archive paths `tail` needs via --include. It also narrows two promises that unmodified baseline sentences still make, the recovery commands and the citation note.\nAll of these are repairs inside the existing artifacts or one carried block in the same capability; none reopens the exploration. Walk them, then apply."
+  },
+  "final_assessment": "0 critical, 7 warning, 1 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc12-body-adoption"
+}

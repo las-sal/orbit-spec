@@ -29,6 +29,24 @@ export function readCitation(dir: string): string | null {
   return typeof doc === 'string' && doc.length > 0 ? doc : null;
 }
 
+/** The PR target a regime and a citation select: granularity, and the doc on the program path. */
+export interface Target {
+  granularity: 'per-proposal' | 'per-architecture';
+  doc?: string;
+}
+
+/**
+ * The targeting predicate (`orbit-pr-lifecycle`'s `Config selects the regime; citation selects
+ * the target`): a program target of the cited doc when the regime is `per-architecture` and a
+ * citation is present, else a per-change target. ONE function for `select`, `publish` and
+ * `preflight`, so the target selected, the target published and the divergence note agree.
+ */
+export function selectTarget(regime: PrMode, citation: string | null): Target {
+  return regime === 'per-architecture' && citation !== null
+    ? { granularity: 'per-architecture', doc: citation }
+    : { granularity: 'per-proposal' };
+}
+
 export interface Attachment {
   branch: string;
   granularity: 'per-proposal' | 'per-architecture';

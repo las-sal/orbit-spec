@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-10-12T02:10:33Z",
+  "change": "rc12-body-adoption",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Mode B scaffold for rc12's second change (body adoption), named rc12-body-adoption rather than the stage id, which is change 1's name. Cited to clean-up-review-cycle / rc12-engine-owned-choreography. Premise records the exit (2) baseline (18,458 / 12,900 / 4,613 bytes) and the preflight false-divergence defect carried from change 1's archive.",
+  "decisions_captured": 0,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 0,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:explore rc12-body-adoption — continue capturing thinking — no decisions captured yet"
+}

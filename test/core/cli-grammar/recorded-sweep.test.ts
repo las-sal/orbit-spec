@@ -15,8 +15,12 @@ const FENCE = '```';
  * names set aside) and 19 `gh` snippets (15 in references, as rc01's extractor found, and 4 in
  * SKILL.md bodies; 15 bare names set aside). An extractor that silently found nothing would pass
  * every validation; the floor fails it, while a body edit adding or removing a snippet does not.
+ * MOVED by rc12-body-adoption (task 3.2), a recorded act: the PR references stopped carrying
+ * D6's hand-run runbook, so the surface measured 50 `git` snippets (9 bare names) and 2 `gh`
+ * snippets (the worked example in the propose and ff references; 1 bare name). The floors sit
+ * below those measurements and still fail an extractor that finds nothing.
  */
-const FLOOR = { git: 80, gh: 15 };
+const FLOOR = { git: 40, gh: 2 };
 
 function surfaceNamed(id: string): Surface {
   const found = generatedSurfaces().find((s) => describeSurface(s) === id);
@@ -34,15 +38,17 @@ describe('the recorded-tool snippet sweep', () => {
     expect(analysis.bareNames.length).toBeGreaterThan(0);
   });
 
+  // MOVED by rc12-body-adoption (task 3.2), a recorded act: no generated body carries a `gh`
+  // invocation since the architect readout calls `orbit pr program`, so the snippet is PLACED in
+  // the architect SKILL.md rather than found there; the body is still read by the sweep.
   // @scenario behaviour orbit-cli-grammar :: Every `git` and `gh` snippet on the generated surface validates against its tool's recorded contract :: A gh snippet in a SKILL.md body is validated
   // @scenario behaviour orbit-pr-lifecycle :: Test instruments derive from a recorded real-CLI contract :: The sweep and the stub cannot disagree
-  it('a gh snippet in a SKILL.md body is validated: the architect\'s isDraft check without its <url>', () => {
+  it('a gh snippet in a SKILL.md body is validated: an isDraft check without its <url>, placed in the architect body', () => {
     const { contract, validate } = recordedTool('gh');
     const base = surfaceNamed('architect/SKILL.md');
-    const original = 'gh pr view --repo <owner>/<repo> <url> --json isDraft';
     const broken = 'gh pr view --repo <owner>/<repo> --json isDraft';
-    expect(base.text).toContain(original);
-    const text = base.text.replace(original, broken);
+    expect(base.text).not.toContain('gh pr view');
+    const text = `${base.text}\nCheck the draft state: \`${broken}\`.\n`;
     const line = text.split('\n').findIndex((l) => l.includes(broken)) + 1;
     const failures = sweepRecorded(analyseRecorded([{ ...base, text }], 'gh', contract), validate, contract);
     expect(failures).toHaveLength(1);

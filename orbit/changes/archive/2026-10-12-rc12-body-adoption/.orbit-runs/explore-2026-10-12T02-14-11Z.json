@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-10-12T02:14:11Z",
+  "change": "rc12-body-adoption",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Sal took A on all three: D-rba-1 (preflight's citation note compares what the current regime and citation would select, via publish's own targeting predicate, against the frozen attachment), D-rba-2 (per-change PR title = change name + a one-line summary from proposal.md's Why), D-rba-3 (one post-merge line in the archive handoff). Added D-rba-4, the body's consumption of the orbit pr record (DERIVED over PrRecord), and D-rba-5, two capabilities (orbit-pr-lifecycle, orbit-archive-modifications). Three rule Mechanism entries written; Q-rba-4 (exit (2) under resolve-only) stays open, measured at apply per D-rc12-3.",
+  "decisions_captured": 5,
+  "open_questions_count": 1,
+  "open_questions_with_recommendation": "1 of 1",
+  "rules_total": 3,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose rc12-body-adoption — 3 live rules accounted; formalize when you are ready (or /orbit:explore rc12-body-adoption to keep refining)"
+}

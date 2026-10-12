@@ -137,22 +137,21 @@ means the delta references a nonexistent requirement (fix the delta; validation 
 \`ff\` is propose-in-one-breath, so it carries the IDENTICAL choreography — a change is never
 treated differently for how it was started.
 
-**Position (this section is placed last for reading, not for running).** Phase 1 (select +
-switch) runs BEFORE Step 2 (\`orbit new change\`): that step writes
-\`orbit/changes/<name>/.openspec.yaml\`, a path a compatible branch already TRACKS, so a
-switch attempted after it is exactly the \`git switch\` refusal the ordering exists to
+**Position (this section is placed last for reading, not for running).** Phase 1
+(\`orbit pr select\`, then running its switch) runs BEFORE Step 2 (\`orbit new change\`): that
+step writes \`orbit/changes/<name>/.openspec.yaml\`, a path a compatible branch already TRACKS,
+so a switch attempted after it is exactly the \`git switch\` refusal the ordering exists to
 prevent. Phase 2 (generation + validation, ON that branch) IS Steps 2–4; phase 3 (the no-CI
-note, then commit → push → draft PR, then the attachment record's own commit + push) runs
-after Step 5's final status, with the commit scope enumerating the change's generated
-artifacts.
+note, then \`orbit pr publish\`: its land-and-open segment, the emit, then its record segment)
+runs after Step 5's final status.
 
 Read the RESOLVED regime from the engine FIRST
 — \`orbit status --json\`, field \`pr\` (never parse \`orbit/config.yaml\` yourself: the value
 set is closed and every inert path already resolves to \`never\` with the reader's warning):
 \`never\`, absent, or an inert value/shape means RETURN IMMEDIATELY — probe nothing, emit no
-note. Only an ACTIVE mode loads \`references/pr-choreography.md\` and follows it, including
-the three ordered phases (select + switch BEFORE generation), every precondition, the
-program-PR adopt-or-open query, degradation, and the \`pr_attachment\` record.
+note. Only an ACTIVE mode loads \`references/pr-choreography.md\` and follows it: the
+\`orbit pr\` call at each phase, the table you act on its record by, and the judgment that stays
+yours. The engine computes every precondition, the commit scope and the program-PR query.
 
 (\`/orbit:new\` and \`/orbit:continue\` are explicitly NOT extended: they never attach, and a
 change built that way reaches archive unattached — the tail's PR path terminates there before
@@ -163,7 +162,7 @@ any remote or \`gh\` work.)
 (Per \`orbit-run-summary-emit\`; composed and written via \`orbit emit ff\` — \`orbit-emit-composition\`.)
 
 At command completion, compose the narrative payload (\`final_assessment\`, the required
-nullable \`model\`, and — when the PR choreography ran — the \`pr_attachment\` object per
+nullable \`model\`, and — when \`orbit pr publish\` ran — the \`pr_attachment\` object per
 \`references/pr-choreography.md\`) into a temp file and invoke:
 
 \`\`\`bash
@@ -172,11 +171,10 @@ orbit emit ff --change <name> --payload <payload-file>
 
 The ENGINE owns the spine, the trail path, timestamp + collision handling, and \`next_recommended\` composition (propose-shaped: the review-gate pointer). Never hand-compose the JSON.
 
-When the choreography OPENED or ADOPTED a PR (the emit's \`pr_attachment\` carries \`url\`), the
-emit is NOT the last act: commit and push the just-written emit file per the reference's
-"Recording the attachment" section — the attachment record the archive tail dereferences must
-reach the branch. After a mid-flight failure the emit stays LOCAL; landing it is part of the
-manual recovery the failure note names.
+When \`publish\` printed a second segment, the emit is NOT the last act: run that segment with
+the just-written emit's path as \`<emit-path>\`, so the attachment record the archive reads
+reaches the branch. After a failed step or a PR-half degradation the emit stays LOCAL; the
+failure line names the recovery.
 
 **Completion-prompt override (chat)**: where the upstream steps above prompt "Run \`/orbit:apply\` or ask me to implement", instead prompt: "Run \`/orbit:review <name>\` — review the artifacts before implementation."
 `,

@@ -1,0 +1,117 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-12T03:35:49Z",
+  "change": "rc12-body-adoption",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc12-body-adoption/.orbit-runs/review-system-2026-10-12T03-24-33Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-12T03-24-33Z",
+  "latest_apply_token": "2026-10-12T03-07-04Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 1
+  },
+  "pushback_verification": "Both verified at HEAD 26402170: delta row 127 still showed a failed select step's argv as a recovery that attaches nothing; the parity test still sat outside every edit record.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The step-failure row now offers a select step's argv as a recovery that cannot attach the change",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc12-body-adoption/specs/orbit-pr-lifecycle/spec.md",
+      "line": 127,
+      "classification": "trivial_fix",
+      "action": "the step-failure row now reads 'a `publish` or `tail` step fails', so its recovery and consequence apply only where a recovery can attach; the select row says a failed step is named in ONE line with no recovery shown; the checked mirror re-synced, a text assertion added, and the three moved function hashes re-recorded",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/templates/workflows/pr-choreography.ts",
+          "test/core/templates/pr-references.test.ts",
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "| a step fails |"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc12-body-adoption/specs/orbit-pr-lifecycle/spec.md",
+            "text": "a failed step is named in ONE line with no recovery shown"
+          },
+          {
+            "path": "src/core/templates/workflows/pr-choreography.ts",
+            "text": "a failed step is named in ONE line with no recovery shown"
+          },
+          {
+            "path": "test/core/templates/pr-references.test.ts",
+            "text": "a failed select step shows none"
+          }
+        ],
+        "searched": [
+          "a step fails",
+          "recovery the user runs"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/rc12-body-adoption/explore.md",
+            "why": "the exploration record; its sketch row is history, not the live contract"
+          },
+          {
+            "path": "test/core/templates/pr-references.test.ts",
+            "why": "the test asserts the retired row label is absent from the mirror"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_miss_of": {
+        "walk": "2026-10-12T03-22-55Z",
+        "title": "Recovery instructions omit the failed command",
+        "file": "src/core/templates/workflows/pr-choreography.ts:25",
+        "kind": "judgement"
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "skill-templates-parity.test.ts changed outside every walk entry's edit record",
+      "marker_source": "internal-review",
+      "file": "test/core/templates/skill-templates-parity.test.ts",
+      "line": 85,
+      "classification": "trivial_fix",
+      "action": "acknowledged: the hash re-record was its own recorded act with a note in the file, a record gap only; this walk names its own re-record in the V1 entry's edit record",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [],
+        "searched": [
+          "EXPECTED_FUNCTION_HASHES"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Both findings of the verification pass resolved: the step-failure recovery is scoped to publish and tail steps, and the record gap is acknowledged.",
+  "iteration": 6,
+  "next_recommended": "/orbit:archive rc12-body-adoption — user-invoked",
+  "ripple_misses": 1
+}

@@ -1,0 +1,138 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-12T02:49:13Z",
+  "change": "rc12-body-adoption",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    }
+  },
+  "findings": [
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc12-body-adoption/specs/orbit-pr-lifecycle/spec.md",
+      "line": 86,
+      "title": "The step-failure path never says what the propose emit carries, so the attachment-mapping stale call overclaims",
+      "recommendation": "The external pass asked for the attachment mapping 'including ... local emit handling after step failure'; the walk recorded it stale against the fresh walk, whose new row covers creation, adoption and a PR-half degradation only. After a failed `push` or `open` step, the delta does not say whether the body still writes the propose emit, what its `pr_attachment` carries (branch and granularity without url/state, per the propose spec), or that publish's second segment joins the recovery. And the `a step fails` row's 'nothing after the failed step runs' reads as forbidding the emit itself. Add to the attachment row: 'after a failed step, the emit is still written, its attachment `observations.attachment` alone, and stays local; the second segment's argv joins the failure line's recovery'; and narrow the failure row to 'no later PR step runs'.",
+      "walk_entry": {
+        "title": "Attachment emission lacks the replacement data-mapping procedure",
+        "file": "orbit/changes/rc12-body-adoption/specs/orbit-pr-lifecycle/spec.md:74"
+      }
+    },
+    {
+      "pass": "1",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/rc12-body-adoption/.openspec.yaml",
+      "line": 1,
+      "title": "The fingerprint re-stamp sits outside every walk entry's edit record",
+      "recommendation": "The residual check from 112cd71e lists .openspec.yaml, edited by the walk (orbit fingerprint stamped the carried `Config selects the regime; citation selects the target` block) but named in no entry's file or ripple_cascade.applied. A record gap, not a defect: the stamp is correct. A future walk that carries a block names .openspec.yaml in that entry's ripple."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Graded the two walk logs over their sweep scopes: the four artifacts and the carried block. The carried citation-note scenario was re-derived through the divergence table (an uncited change under per-architecture records per-proposal; gaining a citation makes would_select per-architecture, so the note fires), and the C1 reorder was checked against orbit-archive-modifications, which states no move-relative position for the preflight. The one open seam is the failure path between publish's two segments, the same boundary the fresh pass named as the change's weak point.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "verification": [
+    {
+      "title": "The shared targeting predicate leaves select's own copy in place",
+      "file": "tasks.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The baseline still promises a note on every citation edit; the new divergence rule writes one only when the target would change",
+      "file": "specs/orbit-pr-lifecycle/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The step-failure row drops the recovery commands orbit-propose-modifications still requires",
+      "file": "specs/orbit-pr-lifecycle/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "No row says where the propose emit's pr_attachment url and state come from",
+      "file": "specs/orbit-pr-lifecycle/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The archive rewrite never passes the at-archive-note edits to tail --include",
+      "file": "tasks.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The carried 'Draft window' scenario has no tagging task",
+      "file": "tasks.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Design claims a scenario covers shell-quoting and a worked title example; neither exists",
+      "file": "design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The architect fold-in reads exit (2) as met by moving bytes, and names one pin too few",
+      "file": "design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Archive preflight runs after its required active directory has moved",
+      "file": "orbit/changes/rc12-body-adoption/design.md:65",
+      "verdict": "landed"
+    },
+    {
+      "title": "Selection failure needs an explicit latch disabling publish",
+      "file": "orbit/changes/rc12-body-adoption/specs/orbit-pr-lifecycle/spec.md:70",
+      "verdict": "landed"
+    },
+    {
+      "title": "The no-record-shape-change claim excludes an actual observation addition",
+      "file": "orbit/changes/rc12-body-adoption/proposal.md:52",
+      "verdict": "landed"
+    }
+  ],
+  "final_assessment": "0 critical, 1 warning, 1 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-10-12T02-45-23Z",
+    "2026-10-12T02-45-43Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc12-body-adoption"
+}

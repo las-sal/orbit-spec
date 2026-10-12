@@ -3,7 +3,7 @@
  * (rc12-engine-owned-choreography; `orbit-pr-lifecycle`'s `\`orbit pr preflight\` computes the
  * archive's read-only preflight`, over `orbit-archive-modifications`' `PR-attached archive tail`).
  *
- * Reads the attachment from the trail, notes citation divergence, and decides ONE outcome from
+ * Reads the attachment from the trail, notes citation divergence (would-select vs frozen), and decides ONE outcome from
  * the closed set (D-rc12-12). A stored URL that resolves is ANSWERED — a failed validation never
  * triggers the fallback query. `observations.emit` carries the values the archive emit records,
  * and the body passes `observations.outcome` to `tail` verbatim.
@@ -11,7 +11,7 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { validateChangeName } from '../../utils/change-utils.js';
-import { latestAttachment, readCitation, type Attachment } from './inputs.js';
+import { latestAttachment, readCitation, readRegime, selectTarget, type Attachment } from './inputs.js';
 import { fourAxisQuery } from './publish.js';
 import {
   offRecord,
@@ -87,12 +87,16 @@ export function prPreflight(ctx: PrContext, change: string): PrRecord {
   if (found === null) return offRecord('preflight');
   const att = found.attachment;
 
+  // Divergence compares what the CURRENT regime and citation would select against the frozen
+  // attachment; the regime is read only for this, and the outcome below never consults it.
   const recorded = att.doc ?? null;
   const current = readCitation(changeDir);
+  const wouldSelect = selectTarget(readRegime(ctx.projectRoot), current);
+  const diverged = wouldSelect.granularity !== att.granularity || (wouldSelect.doc ?? null) !== recorded;
   const observations: Record<string, unknown> = {
     attachment: att,
     attachment_emit: found.emit,
-    citation: { recorded, current, diverged: recorded !== current },
+    citation: { recorded, current, would_select: wouldSelect, diverged },
   };
 
   const decide = (

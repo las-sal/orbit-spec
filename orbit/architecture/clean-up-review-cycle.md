@@ -3133,6 +3133,25 @@ the engine (change 1); propose/archive bodies (change 2). Exit: (1) the determin
 are engine-tested; (2) the three PR references shrink by more than half; (3) the consent
 properties (user-invoked, draft-only, merge never) hold unchanged.
 
+Shipped as (2026-10-12; the charter above stays as declared, and the departures are these): **the
+deterministic PR steps are an engine command, and the bodies call it.** Two changes, as the charter
+planned. Change 1 (`rc12-engine-owned-choreography`, PR #16) shipped `orbit pr`: five subcommands that
+observe through read-only `git` and `gh` held to an allowlist, and print every write as argv segments
+for the body to run. That met exit (1), with every printed segment executed against a real
+repository. Change 2 (`rc12-body-adoption`, PR #17) rewrote the propose/ff, archive and architect
+bodies to call those subcommands and act on the record. The hand-run runbook was deleted, not kept as
+a fallback. Exit (2) was measured at apply: 6,168 / 5,317 / 962 bytes against 18,458 / 12,900 / 4,613,
+so no reference needed D-rc12-3's fallback. The consumption table and the title clause ship in the
+references as CHECKED MIRRORS, because an installed skill cannot open `orbit-pr-lifecycle`. Exit (3)
+holds by construction: no subcommand writes, and propose stays draft-only. The archive preflight moved
+before the move, and the archive close shows `tail`'s `human_acts` (the merge and the return to the
+default branch) as the user's. Change 1's false citation divergence is fixed: one targeting function
+now serves `select`, `publish` and `preflight`, and this stage's own archive observed `diverged: false`.
+Change 2 gained a second capability at apply, `orbit-cli-grammar`, because deleting the runbook left
+three tool-inventory exemptions unused and one sweep scenario naming a deleted snippet. The system
+blind pair's findings were recovery and note gaps the deletion had taken with it; the tail gained
+`observations.unrelated_unstaged`.
+
 ### Stage rc15-ended-stage-state — a stage that ended without meeting its criteria says so
 
 Depends-on: (none)

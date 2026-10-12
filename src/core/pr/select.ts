@@ -10,7 +10,7 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { validateChangeName } from '../../utils/change-utils.js';
-import { readCitation, readRegime } from './inputs.js';
+import { readCitation, readRegime, selectTarget } from './inputs.js';
 import { offRecord, PrUsageError, skipRecord, type PrRecord, type PrStep } from './record.js';
 import { resolve } from './resolve.js';
 import { PrRunner, type PrContext } from './run.js';
@@ -39,9 +39,10 @@ export function prSelect(ctx: PrContext, name: string): PrRecord {
     citation = readCitation(path.join(ctx.projectRoot, changeRel));
     citationFrom = changeRel;
   }
-  const program = regime === 'per-architecture' && citation !== null;
-  const branch = program ? (citation as string) : name;
-  const granularity = program ? 'per-architecture' : 'per-proposal';
+  const target = selectTarget(regime, citation);
+  const program = target.granularity === 'per-architecture';
+  const branch = target.doc ?? name;
+  const granularity = target.granularity;
 
   const run = new PrRunner(ctx);
   const res = resolve(run);

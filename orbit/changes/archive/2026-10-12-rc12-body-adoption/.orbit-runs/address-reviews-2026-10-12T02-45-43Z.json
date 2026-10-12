@@ -1,0 +1,179 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-12T02:45:43Z",
+  "change": "rc12-body-adoption",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc12-body-adoption/.orbit-runs/external-proposal-2026-10-12T02-41-01Z.md",
+  "source_command": null,
+  "source_token": "2026-10-12T02-41-01Z",
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-6 Codex",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 1,
+    "warning": 3,
+    "suggestion": 1
+  },
+  "pushback_verification": "All five verified: the CRITICAL re-run reproduced; W2 and W3 converged with the fresh pass and closed by its walk.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 2,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "Archive preflight runs after its required active directory has moved",
+      "marker_source": "external",
+      "file": "orbit/changes/rc12-body-adoption/design.md:65",
+      "line": 65,
+      "classification": "decision_required",
+      "reproduction_rerun": "reproduced",
+      "evidence": "orbit pr preflight no-such-change --json exits 1 with \"no active change 'no-such-change' (expected orbit/changes/no-such-change/)\"; the archive body's Step 5.45 runs after upstream Step 5's move (\"After upstream Step 5 (move-to-archive) completes\" at Step 5.5, 5.45 before it).",
+      "action": "option A: the archive body calls orbit pr preflight before upstream Step 5's move and carries its record to the emit and tail --outcome; the preflight requirement states it runs before the move while the change is active; D4, tasks 2.2 and 2.4 carry the reorder",
+      "ratified_via": "chat",
+      "resolution": "A — move the call before the move (body only); preflight keeps resolving active changes only",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc12-body-adoption/specs/orbit-pr-lifecycle/spec.md",
+          "orbit/changes/rc12-body-adoption/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "`preflight` before the archive emit, `tail` after it"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc12-body-adoption/specs/orbit-pr-lifecycle/spec.md",
+            "text": "before the archive's move and its emit, while the change is still active"
+          },
+          {
+            "path": "orbit/changes/rc12-body-adoption/design.md",
+            "text": "The archive's preflight\nstep MOVES before upstream Step 5's move"
+          },
+          {
+            "path": "orbit/changes/rc12-body-adoption/tasks.md",
+            "text": "the archive's preflight step moving before upstream Step 5's move"
+          }
+        ],
+        "searched": [
+          "Step 5.45",
+          "before the archive emit",
+          "no active change"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Selection failure needs an explicit latch disabling publish",
+      "marker_source": "external",
+      "file": "orbit/changes/rc12-body-adoption/specs/orbit-pr-lifecycle/spec.md:70",
+      "line": 70,
+      "classification": "trivial_fix",
+      "action": "added a consumption row: select off, skip, usage error or failed step ends the PR layer and publish is never called; scenario A skipped selection ends the PR layer; task 2.1 clause",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc12-body-adoption/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc12-body-adoption/specs/orbit-pr-lifecycle/spec.md",
+            "text": "#### Scenario: A skipped selection ends the PR layer"
+          },
+          {
+            "path": "orbit/changes/rc12-body-adoption/tasks.md",
+            "text": "`publish` is never called"
+          }
+        ],
+        "searched": [
+          "select",
+          "publish is never called",
+          "dirty-tree"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Attachment emission lacks the replacement data-mapping procedure",
+      "marker_source": "external",
+      "file": "orbit/changes/rc12-body-adoption/specs/orbit-pr-lifecycle/spec.md:74",
+      "line": 74,
+      "classification": "stale",
+      "action": "converged with the fresh pass's attachment-mapping finding, resolved in walk 2026-10-12T02-45-23Z",
+      "evidence": "walked in address-reviews-2026-10-12T02-45-23Z.json (No row says where the propose emit's pr_attachment url and state come from): resolved; the spec now carries the pr_attachment composition row",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The unchanged citation-note requirement contradicts the new divergence rule",
+      "marker_source": "external",
+      "file": "orbit/changes/rc12-body-adoption/specs/orbit-pr-lifecycle/spec.md:125",
+      "line": 125,
+      "classification": "stale",
+      "action": "converged with the fresh pass's citation-note finding, resolved in walk 2026-10-12T02-45-23Z",
+      "evidence": "walked in address-reviews-2026-10-12T02-45-23Z.json (The baseline still promises a note on every citation edit...): resolved; Config selects the regime; citation selects the target is carried, its note and scenario scoped",
+      "outcome": "stale"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The no-record-shape-change claim excludes an actual observation addition",
+      "marker_source": "external",
+      "file": "orbit/changes/rc12-body-adoption/proposal.md:52",
+      "line": 52,
+      "classification": "trivial_fix",
+      "action": "proposal and design say the record's top-level fields and the pr_attachment shape are unchanged and preflight's observations.citation gains would_select",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc12-body-adoption/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "No change to the `orbit pr` record shape"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc12-body-adoption/proposal.md",
+            "text": "preflight's `observations.citation` gains `would_select`"
+          },
+          {
+            "path": "orbit/changes/rc12-body-adoption/design.md",
+            "text": "Preflight's `observations.citation` gains `would_select`."
+          }
+        ],
+        "searched": [
+          "record shape",
+          "would_select"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "The CRITICAL reproduced and resolved by moving the archive preflight before the move (Sal: A); the latch and the shape claim repaired; the two findings converged with the fresh pass are stale against its walk.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal rc12-body-adoption",
+  "ripple_misses": 0
+}

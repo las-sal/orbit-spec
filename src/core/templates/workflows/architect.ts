@@ -123,46 +123,15 @@ NOT gated on the ratification interaction above: the natural ordering is final-s
 → final-stage ratification → closing review, so arc-done becomes true at the LAST step, after
 that interaction has already passed. A ratification-gated readout would never fire.
 
-When arc-done AND the program has a PR, surface the human acts — recommend, NEVER invoke; this
-body makes no outward write:
-
-**Locating the PR.** Scan change trails (active AND archived) for \`pr_attachment\` objects
-with \`granularity: "per-architecture"\` and a \`doc\` matching this doc. Take the most recent
-URL-BEARING record — never merely the most recent match, since \`url\` is optional after a
-failed query or creation, and a later \`{branch, granularity, doc}\` record without one would
-permanently mask the still-valid program PR. When no URL-bearing record exists, fall back to
-the four-axis constrained query (per \`orbit-archive-modifications\`' discovery rule). Resolve
-the remote, the canonical \`<owner>/<repo>\`, and the default branch per
-\`references/pr-resolution.md\` — the SAME algorithm propose, ff, and the archive tail
-perform, carried here so this readout never improvises it.
-
-**Draft state is read LIVE** —
-\`gh pr view --repo <owner>/<repo> <url> --json isDraft\` — never the recorded
-\`pr_attachment.state\`, which is a point-in-time observation that goes stale after emit
-whatever its initial value was.
-
-**Three validation outcomes; the readout is NEVER SUPPRESSED by any of them** (arc-done is
-surfaced once per program, and a silent readout is indistinguishable from an unfinished
-program):
-
-- **Valid** → surface the PR, its live draft state, and the commands.
-- **Query FAILED** (auth, network, \`gh\` unavailable) → surface anyway with a one-line
-  \`state unverified\` note. Nothing is known, so nothing is claimed.
-- **Positively INVALID** (the query succeeded and reports the PR closed, merged, retargeted,
-  or in another repository) → FALL THROUGH to the constrained \`--head <program-branch>\`
-  query and surface what it finds; when it finds nothing, surface the readout stating the
-  recorded PR is closed or merged and NO open replacement exists. More than one survivor →
-  name ALL candidates. This fall-through is deliberately the OPPOSITE of the archive tail's
-  answered-not-retried rule: the seams differ in RISK, not vocabulary — the tail WRITES, so a
-  second chance there could rewrite and flip the wrong pull request, while this readout only
-  REPORTS and the worst a fall-through can do is name a better URL.
-
-**The acts** are the user's: \`gh pr ready --repo <owner>/<repo> <number>\` and, when
-satisfied, \`gh pr merge --repo <owner>/<repo> <number>\` — repository-qualified so text the
-user copies resolves the same repository the algorithm chose. Orbit flips nothing here and
-merges nothing anywhere. The readout repeats on every later invocation until the PR is no
-longer draft. A whole-program body rewrite is OPTIONAL polish available on request, never a
-required transition step.
+When arc-done, run \`orbit pr program <doc> --json\` and surface the program PR and its human
+acts per \`references/pr-resolution.md\` — recommend, NEVER invoke; this body makes no outward
+write. The engine locates the PR (the latest URL-bearing record, else the constrained query),
+validates it LIVE and falls through on a positive invalidation; the readout is NEVER SUPPRESSED
+by any outcome, since a silent readout is indistinguishable from an unfinished program. The
+acts (\`human_acts\`: ready, then merge) are the user's; orbit flips nothing here and merges
+nothing anywhere. The readout repeats on every later invocation until the PR is no longer
+draft. A whole-program body rewrite is OPTIONAL polish available on request, never a required
+transition step.
 
 ### 6. Out of scope (deliberately — D-d2-6 rungs 6–8)
 

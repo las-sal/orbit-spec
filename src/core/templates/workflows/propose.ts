@@ -354,26 +354,24 @@ change's artifacts are complete whichever route is taken.
 ## PR lifecycle (config-gated — D-arc Stage D6)
 
 **Position (NEW Step 0.5 — this section is placed last for reading, not for running).**
-Phase 1 (select + switch) runs AFTER Step 0's mode detection and BEFORE Step 0a / upstream
-Step 1: generation must land on the target branch, and the reference's generation-input
-precondition presupposes \`orbit/explore/<name>/\` is still in place. Phase 2 (generation +
+Phase 1 (\`orbit pr select\`, then running its switch) runs AFTER Step 0's mode detection and
+BEFORE Step 0a / upstream Step 1: generation must land on the target branch, and \`select\` reads
+\`orbit/explore/<name>/\` while it is still in place. Phase 2 (generation +
 validation, ON that branch) IS upstream Step 1 onward / the consume-mode flow, run exactly as
-without the PR layer. Phase 3 (the no-CI note, then commit → push → draft PR, then the
-attachment record's own commit + push) runs AFTER Step 0d's move — its enumerated commit
-scope names the moved material and the staging-directory deletions that move produces.
+without the PR layer. Phase 3 (the no-CI note, then \`orbit pr publish\`: its land-and-open
+segment, the emit, then its record segment) runs AFTER Step 0d's move, whose moved material and
+staging-directory deletions \`publish\` enumerates.
 
 Read the RESOLVED regime from the engine FIRST — \`orbit status --json\`, field \`pr\` (never parse \`orbit/config.yaml\` yourself: the value set is closed and every inert path already resolves to \`never\` with the reader's warning). When it is \`never\`, absent, or an inert
-value/shape, RETURN IMMEDIATELY from this section: probe nothing (no remote enumeration, no
+value/shape, RETURN IMMEDIATELY from this section: probe nothing (no \`orbit pr\` call, no
 \`gh\`) and emit NO note — \`never\`'s promise is silence, and behavior stays byte-identical to
 pre-capability. Only an ACTIVE mode (\`per-proposal\` / \`per-architecture\`) loads
 \`references/pr-choreography.md\` and follows it.
 
-That reference carries the whole choreography: the shared remote/default-branch resolution
-both PR seams use, the THREE ORDERED PHASES (select + switch BEFORE generation — the order is
-normative, since a compatible branch already tracks the paths generation would leave
-untracked and \`git switch\` refuses to overwrite them), every precondition, the program-PR
-adopt-or-open query, degradation, and the \`pr_attachment\` record. Do not improvise the
-choreography from this summary.
+That reference names the \`orbit pr\` call at each phase, the table you act on its record by,
+and the judgment that stays yours (the title, the intent body, the commit messages, the notes).
+The engine computes every precondition, the commit scope and the program-PR query; do not
+re-derive any of them from this summary.
 
 Two things that stay TRUE HERE regardless of config: propose fires NO consent prompt (it is
 not consent-scoped — the choreography rides the user's own invocation), and generation +
@@ -384,7 +382,7 @@ validation are never rolled back by a PR-layer failure.
 (Per \`orbit-run-summary-emit\`; composed and written via \`orbit emit propose\` — \`orbit-emit-composition\`.)
 
 At command completion, compose the narrative payload (\`final_assessment\`, the required
-nullable \`model\`, and — when the PR choreography ran — the \`pr_attachment\` object per
+nullable \`model\`, and — when \`orbit pr publish\` ran — the \`pr_attachment\` object per
 \`references/pr-choreography.md\`) into a temp file and invoke:
 
 \`\`\`bash
@@ -393,11 +391,10 @@ orbit emit propose --change <name> --payload <payload-file>
 
 The ENGINE owns the spine, the trail path, timestamp + collision handling, and \`next_recommended\` composition (propose-shaped: the review-gate pointer). Never hand-compose the JSON.
 
-When the choreography OPENED or ADOPTED a PR (the emit's \`pr_attachment\` carries \`url\`), the
-emit is NOT the last act: commit and push the just-written emit file per the reference's
-"Recording the attachment" section — the attachment record the archive tail dereferences must
-reach the branch. After a mid-flight failure the emit stays LOCAL; landing it is part of the
-manual recovery the failure note names.
+When \`publish\` printed a second segment, the emit is NOT the last act: run that segment with
+the just-written emit's path as \`<emit-path>\`, so the attachment record the archive reads
+reaches the branch. After a failed step or a PR-half degradation the emit stays LOCAL; the
+failure line names the recovery.
 
 **Completion-prompt override (chat)**: where the upstream steps above prompt "Run \`/orbit:apply\` or ask me to implement", instead prompt: "Run \`/orbit:review <name>\` — review the artifacts before implementation." The upstream text above is kept verbatim; this override is the operative instruction — except after the size brief's **Split** route, whose split recommendation is the closing chat line instead.
 `,

@@ -287,8 +287,8 @@ preview).
 
 The **Bulk Archive Complete** readout SHALL NAME the PR-attached changes it left DRAFT, with
 their PR URLs, so a batch never silently strands a pull request — reporting, never acting, per
-\`orbit-conventions\`' residual outward-actions rule. Resolve each change's attachment exactly
-as single-archive Step 5.45 does: read \`pr_attachment\` from the LATEST attachment-bearing
+\`orbit-conventions\`' residual outward-actions rule. Resolve each change's attachment from its
+own trail: read \`pr_attachment\` from the LATEST attachment-bearing
 PROPOSE or FF emit on that change's trail (read-only — no \`gh\` query, since the bulk flow
 performs no remote work); report its \`url\` when present, and \`attached, no PR recorded\`
 when the record lacks one; a change with no attachment at all is not named (it never had a

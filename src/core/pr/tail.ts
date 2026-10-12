@@ -141,6 +141,11 @@ export function prTail(
   observations.unrelated_staged = moved.unrelated
     .filter((u) => u.status[0] !== ' ' && u.status[0] !== '?' && !inScope(u.path))
     .map((u) => u.path);
+  // Unrelated TRACKED edits left unstaged stay out of the commit, and the owner's note names them
+  // beside the staged ones (`orbit-archive-modifications`' unrelated-paths guarantee).
+  observations.unrelated_unstaged = moved.unrelated
+    .filter((u) => u.status[0] !== '?' && u.status[1] !== ' ' && !inScope(u.path))
+    .map((u) => u.path);
 
   const degraded = row !== 'pr-runs';
   const program = att.granularity === 'per-architecture';

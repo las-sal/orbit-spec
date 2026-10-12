@@ -10,7 +10,7 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { validateChangeName } from '../../utils/change-utils.js';
-import { readCitation, readRegime } from './inputs.js';
+import { readCitation, readRegime, selectTarget } from './inputs.js';
 import { offRecord, PrUsageError, skipRecord, type PrRecord, type PrSegment, type PrStep } from './record.js';
 import { resolve } from './resolve.js';
 import { PrRunner, type PrContext } from './run.js';
@@ -59,9 +59,10 @@ export function prPublish(ctx: PrContext, change: string): PrRecord {
   if (regime === 'never') return offRecord('publish');
 
   const citation = readCitation(path.join(ctx.projectRoot, changeRel));
-  const program = regime === 'per-architecture' && citation !== null;
-  const branch = program ? (citation as string) : change;
-  const granularity = program ? 'per-architecture' : 'per-proposal';
+  const target = selectTarget(regime, citation);
+  const program = target.granularity === 'per-architecture';
+  const branch = target.doc ?? change;
+  const granularity = target.granularity;
 
   const run = new PrRunner(ctx);
   const res = resolve(run);
@@ -70,7 +71,7 @@ export function prPublish(ctx: PrContext, change: string): PrRecord {
     change,
     branch,
     granularity,
-    attachment: { branch, granularity, ...(program ? { doc: citation } : {}) },
+    attachment: { branch, ...target },
   };
   if (res.failure) return skipRecord('publish', res.failure.code, res.failure.detail, observations);
   const { remote, repo, defaultBranch } = res.resolved!;

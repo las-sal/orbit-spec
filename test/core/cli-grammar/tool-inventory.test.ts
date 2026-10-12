@@ -336,7 +336,11 @@ describe('the tool inventory', () => {
     const heads = analyseHeads(generatedSurfaces());
     expect(heads.filter((h) => h.head === 'orbit' && h.source === 'fence').length).toBeGreaterThanOrEqual(48);
     expect(heads.filter((h) => h.head === 'git' && h.source === 'fence').length).toBeGreaterThanOrEqual(14);
-    expect(heads.filter((h) => h.head === 'gh' && h.source === 'inline').length).toBeGreaterThanOrEqual(15);
+    // MOVED by rc12-body-adoption (task 3.2), a recorded act: `gh` left every inline span when the PR
+    // references stopped carrying D6's runbook (0 inline, 2 in fences), so the inline reader's
+    // floor moves to `git` (20 inline at that measurement) and `gh` keeps a fence floor.
+    expect(heads.filter((h) => h.head === 'git' && h.source === 'inline').length).toBeGreaterThanOrEqual(15);
+    expect(heads.filter((h) => h.head === 'gh' && h.source === 'fence').length).toBeGreaterThanOrEqual(2);
   });
 });
 

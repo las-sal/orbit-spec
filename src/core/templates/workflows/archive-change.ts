@@ -311,7 +311,7 @@ Determine invocation provenance — an observable transcript fact, never a judgm
 Before ANY archive write — before upstream Step 1, before sync (Step 4) and the move (Step 5)
 — resolve whether this change is PR-ATTACHED: read \`pr_attachment\` from the LATEST
 attachment-bearing PROPOSE or FF emit on the change's trail (the same read the consent
-preview in Step 0 uses on the AI-mediated path, and the same read Step 5.45 will use). This
+preview in Step 0 uses on the AI-mediated path; Step 4.9's \`orbit pr preflight\` reads the same record). This
 step mutates nothing and runs on EVERY provenance path, user-typed included. When attached,
 compare HEAD's branch (\`git branch --show-current\`) with \`pr_attachment.branch\`. On mismatch,
 SAY SO NOW — in the consent preview when one fires, otherwise as one line before Step 1 —
@@ -446,26 +446,26 @@ After upstream Step 3 (task-completion check) but before Step 4 (sync-specs):
 
 When \`/orbit:archive --skip-audit <name>\` is invoked, the entire Step 3.5 audit is skipped. The archive run summary records \`audit_skipped_via_flag: true\`. Use case: the user has just run \`/orbit:audit-drift\` manually and doesn't need to repeat it.
 
-## NEW Step 5.45 — PR preflight (READ-ONLY, before the emit — D-arc Stage D6)
+## NEW Step 4.9 — PR preflight (\`orbit pr preflight\`, READ-ONLY, BEFORE the move — D-arc Stage D6; moved before the move by rc12)
 
-Before composing the Step 5.5 emit, resolve whether this change is PR-ATTACHED and observe
-the PR's current state. This step MUTATES NOTHING.
+After the sync (upstream Step 4) and BEFORE upstream Step 5's move, while the change is still
+active (after the move the call is a usage error):
 
-Read \`pr_attachment\` from the LATEST attachment-bearing PROPOSE **or FF** emit on the
-change's trail. A WHOLLY ABSENT attachment TERMINATES the PR path here — no discovery query,
-no remote or \`gh\` work, and no tail at Step 5.6 — the archive ends exactly as
-pre-capability. (\`/orbit:new\` + \`/orbit:continue\` changes never attach.) Otherwise load
-\`references/pr-archive-tail.md\` and follow its preflight: validate a stored \`url\` live,
-fall back to the constrained query only when the record lacks \`url\`, and observe the current
-draft/ready state.
+\`\`\`bash
+orbit pr preflight <name> --json
+\`\`\`
 
-Feed that ONE observation to BOTH the Step 5.5 emit and the Step 5.6 tail so they cannot
-disagree. Cannot observe (no \`gh\`, failed query) → elide the emit's PR fields and skip the
-tail; never block the archive.
+It mutates nothing. \`off\` means the change is UNATTACHED: no tail runs at Step 5.6 and the
+archive ends exactly as pre-capability; when the \`pr\` regime read from \`orbit status --json\`
+is active, write ONE line noting the unattached state (\`/orbit:new\` + \`/orbit:continue\`
+changes never attach). Anything else loads \`references/pr-archive-tail.md\`, and its record
+is carried forward: \`observations.emit\` supplies the Step 5.5 emit's \`pr_url\`/\`pr_state\`,
+and \`observations.outcome\` is Step 5.6's \`--outcome\`, so the emit and the tail act on ONE
+observation. Nothing it observes is changed by the move. A non-zero exit is a usage error:
+report it verbatim, and the archive continues unattached.
 
-(The HEAD-vs-attachment observation already fired at Step 0.7, before any archive write; this
-step observes the PR's LIVE state only. The tail re-checks HEAD immediately before staging as
-its guard.)
+(The HEAD-vs-attachment observation already fired at Step 0.7, before any archive write; the
+tail re-checks HEAD immediately before staging as its guard.)
 
 ## NEW Step 5.5 — Archive run summary
 
@@ -487,15 +487,20 @@ The ENGINE resolves the post-move landing itself (the lexically-greatest \`orbit
 
 ## NEW Step 5.6 — The PR-attached tail (AFTER the emit, BEFORE the completion readout — D-arc Stage D6)
 
-Runs ONLY when Step 5.45 resolved an attachment. Follow \`references/pr-archive-tail.md\`:
-its preconditions (\`gh\` availability and the HEAD-branch check, both BEFORE any staging),
-then commit → push → description rewrite (per-change) or stage-entry append (program) →
-\`gh pr ready\` for per-change PRs only.
+Runs ONLY when Step 4.9's preflight was not \`off\`. Follow \`references/pr-archive-tail.md\`:
 
-The tail's outward writes ride the archive's OWN entry consent — no second prompt. Every
-step's failure is inside the degradation contract: skip the remainder with a note naming
-completed vs skipped steps AND the repository-qualified completing command for the step that
-failed. The archive itself (sync, move, emit) has already succeeded and never rolls back.
+\`\`\`bash
+orbit pr tail <name> --outcome <outcome> --include <path> --json
+\`\`\`
+
+with the preflight's \`observations.outcome\` verbatim and one \`--include\` per at-archive
+edit; then run its segment (commit → push → description rewrite or stage-entry append → the
+READY flip for a per-change PR), authoring the commit message and the body it asks for.
+
+The tail's outward writes ride the archive's OWN entry consent — no second prompt. A failed
+step stops the segment with ONE line naming the completed, the failed and the skipped steps, the
+failed step's argv and then each skipped step's shown as the recovery. The archive itself (sync, move, emit) has already
+succeeded and never rolls back.
 
 ## NEW Step 5.65 — The readiness line in the completion readout (rc04a)
 
@@ -509,14 +514,14 @@ When the archived change's metadata carries an \`architecture: {doc, stage}\` ci
 
 ## NEW Step 5.8 — Residual outward-actions echo (per \`orbit-conventions\`)
 
-When the flow hands control back at an OUTWARD seam, the completion readout echoes the
-residual rule in ONE line — outward acts orbit did not design into a lifecycle step stay the
-human's. After a tail that flipped a per-change PR READY: "merging is yours:
-\`gh pr merge --repo <owner>/<repo> <number>\` when satisfied." After a program-PR append:
-the program PR is named and the flip stays at arc-done. After a tail whose PR half was
-SKIPPED on positive invalidation (the commit and push landed; the rewrite/append and flip did
-not): name the specific reason and that any action on that pull request is the user's. No
-echo fires for an unattached change — there is no outward seam to hand back at.
+When the flow hands control back at an OUTWARD seam, the completion readout shows the acts that
+stay the human's. After a per-change tail, show each of \`orbit pr tail\`'s \`human_acts\`
+argv verbatim, labelled as the user's own: the merge, then the return to the default branch
+after it. Run none of them. After a program-PR append: the program PR is named and the flip
+stays at arc-done. After a tail whose PR half was SKIPPED on positive invalidation (the commit
+and push landed; the rewrite/append and flip did not): name the specific reason and that any
+action on that pull request is the user's. No echo fires for an unattached change — there is
+no outward seam to hand back at.
 
 ## \`.orbit-runs/\` moves with the change
 
