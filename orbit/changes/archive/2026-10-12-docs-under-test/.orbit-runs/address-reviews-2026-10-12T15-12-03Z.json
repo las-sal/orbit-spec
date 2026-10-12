@@ -1,0 +1,441 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-12T15:12:03Z",
+  "change": "docs-under-test",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/docs-under-test/.orbit-runs/review-proposal-2026-10-12T15-03-48Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-12T15-03-48Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 6,
+    "suggestion": 3
+  },
+  "pushback_verification": "All nine verified against current code: GLOBAL_DATA_DIR_NAME at src/core/global-config.ts:8, inventorySource local to tool-inventory.test.ts, describeSurface returns workflowId/file, the capture reads generatedSurfaces() only, the public-readiness charter names no floor; none stale.",
+  "resolution_summary": {
+    "resolved": 9,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The admitted on-disk identifiers omit the global data directory the tool still writes",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-user-docs/spec.md",
+      "line": 49,
+      "classification": "decision_required",
+      "action": "applied the ratified direction A — admitted every global directory the tool writes (config and data, with their XDG and Windows forms) as place (4); D-dut-1 amended in explore.md",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Add the data directory as a fifth admitted identifier (`~/.local/share/openspec`) and state the XDG/Windows forms as admitted or as a named limit; carry the same widening into D-dut-1's Mechanism table and its READ line."
+          },
+          {
+            "label": "B",
+            "body": "Keep four places and add the data directory and the platform forms to the requirement's named limit, saying the rewritten docs must not name them (a scope cut on what the docs document)."
+          }
+        ],
+        "chosen": "A"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/docs-under-test/proposal.md",
+          "orbit/changes/docs-under-test/tasks.md",
+          "orbit/changes/docs-under-test/explore.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the identifier `~/.config/openspec`, anywhere",
+          "`~/.config/openspec` (names the tool still writes on disk)",
+          "inside `.openspec.yaml` and `~/.config/openspec` (design D3)"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/docs-under-test/specs/orbit-user-docs/spec.md",
+            "text": "`~/.local/share/openspec`, `$XDG_CONFIG_HOME/openspec`, `$XDG_DATA_HOME/openspec`"
+          },
+          {
+            "path": "orbit/changes/docs-under-test/explore.md",
+            "text": "Widened 2026-10-12 at the proposal walk (Sal: F1 A)"
+          }
+        ],
+        "searched": [
+          "~/.config/openspec",
+          "GLOBAL_DATA_DIR_NAME",
+          "local/share/openspec"
+        ],
+        "scope": [
+          "src/core/global-config.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "D4 names owner-text.ts as the lookup the inventory test uses; the inventory test has its own",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 49,
+      "classification": "trivial_fix",
+      "action": "D4 and task 3.2 name inventorySource (tool-inventory.test.ts), extracted into a shared helper taking capability, title and info string",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/docs-under-test/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "test/helpers/owner-text.ts"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/docs-under-test/design.md",
+            "text": "extracted into a shared helper"
+          },
+          {
+            "path": "orbit/changes/docs-under-test/tasks.md",
+            "text": "extracted from `tool-inventory.test.ts` into a shared helper"
+          }
+        ],
+        "searched": [
+          "owner-text",
+          "inventorySource"
+        ],
+        "scope": [
+          "test/core/cli-grammar/tool-inventory.test.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The empty docs-inventory fence fails the line grammar it is said to share",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-user-docs/spec.md",
+      "line": 88,
+      "classification": "trivial_fix",
+      "action": "stated that a fence with no lines is legal and that the generated fence's malformed-block rules apply unchanged; added a scenario",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/docs-under-test/design.md",
+          "orbit/changes/docs-under-test/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/docs-under-test/specs/orbit-user-docs/spec.md",
+            "text": "A fence with no lines is a legal block and declares nothing."
+          },
+          {
+            "path": "orbit/changes/docs-under-test/design.md",
+            "text": "the shared parser reads zero lines, never one empty line"
+          }
+        ],
+        "searched": [
+          "docs-inventory",
+          "malformed"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "workflowId 'docs' makes every failure name a path that does not exist",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 33,
+      "classification": "trivial_fix",
+      "action": "D1: describeSurface returns file alone for a docs surface; task 1.1 and 3.3 carry it and assert the exact name",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/docs-under-test/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "so every failure message names the doc as it does a skill"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/docs-under-test/design.md",
+            "text": "`describeSurface` returns `file` alone for a docs"
+          }
+        ],
+        "searched": [
+          "describeSurface",
+          "workflowId"
+        ],
+        "scope": [
+          "test/helpers/surface-snippets.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The recorded contracts are captured from the generated surface only, so a doc-only git or gh command can never validate",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-cli-grammar/spec.md",
+      "line": 180,
+      "classification": "decision_required",
+      "action": "applied direction A — the git capture's candidate set widened to every user doc, listed or not; gh carried as a named limit (fixed command list, extended by a deliberate re-capture); design D8 and task 3.4 added",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Widen the git capture's candidate set to the user docs in this delta (and the capture script in tasks); state gh's equivalent."
+          },
+          {
+            "label": "B",
+            "body": "Keep the capture generated-only and add a named limit: the docs may write only git/gh commands and flags the generated surface already records."
+          }
+        ],
+        "chosen": "A"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/docs-under-test/design.md",
+          "orbit/changes/docs-under-test/tasks.md",
+          "orbit/changes/docs-under-test/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "every `git` segment the shared extractor finds on the generated surface, bare names included"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/docs-under-test/specs/orbit-cli-grammar/spec.md",
+            "text": "listed or not, so a rewrite stage captures a command its page writes"
+          },
+          {
+            "path": "orbit/changes/docs-under-test/specs/orbit-cli-grammar/spec.md",
+            "text": "Named limit (the `gh` contract in the user docs)"
+          },
+          {
+            "path": "orbit/changes/docs-under-test/design.md",
+            "text": "D8 — The `git` capture reads every user doc."
+          }
+        ],
+        "searched": [
+          "generatedSurfaces()",
+          "capture:gh",
+          "COMMANDS"
+        ],
+        "scope": [
+          "scripts/capture-git-contract.capture.ts",
+          "scripts/capture-gh-contract.mjs"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Floors go active when the list empties, but their values are set by a later stage that does not carry the obligation",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-user-docs/spec.md",
+      "line": 119,
+      "classification": "decision_required",
+      "action": "applied direction A — the edit that empties the list sets the floors in the same commit, and an empty list with an unset floor fails; D-dut-7 revised in explore.md, D5 rewritten, a scenario added",
+      "ratified_via": "chat",
+      "resolution": "A — the stage that empties the pending list sets the floors from its own measured counts (Sal: \"F6:A\")",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/docs-under-test/design.md",
+          "orbit/changes/docs-under-test/tasks.md",
+          "orbit/changes/docs-under-test/proposal.md",
+          "orbit/changes/docs-under-test/explore.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "Their values are set at the program's public-readiness stage",
+          "values are placeholders the inactive guard never reads",
+          "stay inactive until the list is empty and are set at public-readiness",
+          "its values are measured at public-readiness",
+          "public-readiness reads the rewritten docs' counts"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/docs-under-test/specs/orbit-user-docs/spec.md",
+            "text": "An empty list with a floor still unset fails the suite"
+          },
+          {
+            "path": "orbit/changes/docs-under-test/design.md",
+            "text": "Floors are unset until the list empties."
+          },
+          {
+            "path": "orbit/changes/docs-under-test/explore.md",
+            "text": "Revised 2026-10-12 at the proposal walk (Sal: F6 A)"
+          }
+        ],
+        "searched": [
+          "public-readiness",
+          "floor",
+          "placeholder"
+        ],
+        "scope": [
+          "orbit/architecture/update-gh-documentation.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The design says each widened body states the domain in its first sentence and keeps the title as identity; two of three do not",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 75,
+      "classification": "trivial_fix",
+      "action": "narrowed the Risks line to what the deltas do",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "Each body states the domain in its first sentence"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/docs-under-test/design.md",
+            "text": "each body names the user docs"
+          }
+        ],
+        "searched": [
+          "identity",
+          "first sentence"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The admitted-section rows say 'prose under' while the text admits everything, and the section end is loosely stated",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-user-docs/spec.md",
+      "line": 45,
+      "classification": "trivial_fix",
+      "action": "rows say \"anything under\"; rows tested in order, admitted places first (with a scenario for openspec init in an admitted section); a section ends at the next ATX heading whose level is at most its own; setext headings a named limit",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/docs-under-test/design.md",
+          "orbit/changes/docs-under-test/explore.md",
+          "orbit/changes/docs-under-test/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "| prose under the `README.md` heading",
+          "| prose under the README heading",
+          "the next heading of the same or a higher level"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/docs-under-test/specs/orbit-user-docs/spec.md",
+            "text": "The rows are tested in order and the first match wins"
+          },
+          {
+            "path": "orbit/changes/docs-under-test/specs/orbit-user-docs/spec.md",
+            "text": "A command inside an admitted section is admitted by the residue check"
+          },
+          {
+            "path": "orbit/changes/docs-under-test/design.md",
+            "text": "A setext heading is not read (a named limit)."
+          }
+        ],
+        "searched": [
+          "prose under",
+          "higher level",
+          "setext"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "No task shows a floor able to fail, and the list path is not injectable for it",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 13,
+      "classification": "trivial_fix",
+      "action": "the guard takes the list and the floors as parameters; task 3.3 injects an empty list with a floor unset and one below its floor",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/docs-under-test/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/docs-under-test/tasks.md",
+            "text": "an empty list with a floor unset and with a count below its floor"
+          },
+          {
+            "path": "orbit/changes/docs-under-test/design.md",
+            "text": "The guard takes the list and the floors as"
+          }
+        ],
+        "searched": [
+          "floor",
+          "injected"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Nine of nine resolved: three by ratified direction A (F1 data directory admitted, F5 git capture widened, F6 floors set by the emptying edit), six as obvious fixes.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews docs-under-test",
+  "ripple_misses": 0
+}

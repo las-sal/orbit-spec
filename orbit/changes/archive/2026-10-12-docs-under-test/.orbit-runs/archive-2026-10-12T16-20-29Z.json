@@ -1,0 +1,73 @@
+{
+  "command": "archive",
+  "timestamp": "2026-10-12T16:20:29Z",
+  "change": "docs-under-test",
+  "kind": "lifecycle",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Archived docs-under-test to orbit/changes/archive/2026-10-12-docs-under-test/.",
+  "archive_path": "orbit/changes/archive/2026-10-12-docs-under-test/",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 6
+    },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": [
+      "orbit-cli-grammar",
+      "orbit-user-docs"
+    ],
+    "added": 4,
+    "modified": 3,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
+  "user_decision": "proceeded",
+  "consent": "user-invoked",
+  "warnings": [
+    "Touchpoints: six unpredicted test-tooling files (the capture script, canonical-examples.test.ts, git-capture.ts and its test, inventory.ts, user-docs.ts)",
+    "Baseline Purpose for orbit-user-docs written in place at archive, and CLAUDE.md's capability marker moved 26 -> 27"
+  ],
+  "judgements": [
+    {
+      "kind": "readiness",
+      "formed_against": [
+        "2026-10-12T15-03-48Z",
+        "2026-10-12T15-04-09Z",
+        "2026-10-12T16-00-06Z",
+        "2026-10-12T16-01-33Z"
+      ],
+      "disposition": "ready",
+      "reasoning": "Both blind pairs were walked to zero, the verification graded every system-walk repair landed, and every new check was shown able to fail. Nothing a rewrite stage depends on is left open.",
+      "ratified_by": "ai",
+      "accepted": [
+        {
+          "claim": "PASSED means every finding was resolved, not that an independent pass stood clean on the final tree",
+          "why": "The walks' own additions (the markdown-it section reader, the positive-integer floor) were read only by the in-context verification, which probed them directly."
+        },
+        {
+          "claim": "The checked-in git contract still records six command keys and six flags rc12 removed from the surface",
+          "why": "Measured at task 3.4: the docs add nothing, and the drift predates this stage; re-capturing would break rc05b's injection tests, so it is left for Sal to decide as its own change."
+        },
+        {
+          "claim": "The residue check reads HTML blocks while the shared extractor does not",
+          "why": "Deliberate (design D3): the README renders on GitHub, which treats HTML blocks as HTML; the extractor's parse is unchanged."
+        },
+        {
+          "claim": "Every user doc is listed, so on today's tree the docs sweeps read zero files",
+          "why": "By design (D-dut-2, D-dut-3): the list is exact and each listed file fails at least one check; the rewrite stages empty it, and the floors activate then."
+        }
+      ]
+    }
+  ],
+  "pr_url": "https://github.com/las-sal/orbit-spec/pull/18",
+  "pr_state": "draft",
+  "next_recommended": "Change archived. Run /orbit:new or /orbit:explore to start the next change, or /orbit:audit-drift for a project-wide drift check."
+}

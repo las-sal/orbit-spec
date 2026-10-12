@@ -6,7 +6,16 @@
 import { describe, expect, it } from 'vitest';
 import { guardFailureLines } from '../../helpers/orbit-sweep.js';
 import { analyseRecorded, commandTreeFromKeys, recordedTool, recordedTools, sweepRecorded } from '../../helpers/recorded-sweep.js';
-import { describeSurface, generatedSurfaces, isBareCommandName, type Surface } from '../../helpers/surface-snippets.js';
+import {
+  DOCS_WORKFLOW,
+  describeSurface,
+  docSurfaces,
+  generatedSurfaces,
+  isBareCommandName,
+  readPendingRewrite,
+  type Surface,
+} from '../../helpers/surface-snippets.js';
+import { docsFloorFailures } from '../../helpers/user-docs.js';
 
 const FENCE = '```';
 
@@ -82,6 +91,31 @@ describe('the recorded-tool snippet sweep', () => {
     expect(analysis.bareNames.map((s) => s.text)).toEqual(['git push']);
     expect(sweepRecorded(analysis, validate, contract)).toEqual([
       'demo/SKILL.md:1: git frobnicate <path>\n    unknown command "frobnicate" for "git" — re-run npm run capture:git',
+    ]);
+  });
+});
+
+/**
+ * The user docs' floors (docs-under-test design D5): `null` while any file is on the pending-rewrite
+ * list, asserted only once the list is empty. The edit that empties the list sets each to a positive
+ * integer at most the count its sweep measures over the user docs at that edit.
+ */
+const DOCS_FLOOR: Record<'git' | 'gh', number | null> = { git: null, gh: null };
+
+describe('the recorded-tool snippet sweep over the user docs', () => {
+  it.each(recordedTools().map((t) => [t.tool, t] as const))('every %s snippet in an unlisted user doc validates, the guard fails no line, and its floor is held once the list is empty', (tool, { contract, validate }) => {
+    const analysis = analyseRecorded(docSurfaces(), tool, contract);
+    expect(sweepRecorded(analysis, validate, contract)).toEqual([]);
+    expect(guardFailureLines(analysis)).toEqual([]);
+    expect(docsFloorFailures(readPendingRewrite(), [{ sweep: tool, floor: DOCS_FLOOR[tool], count: analysis.snippets.length }])).toEqual([]);
+  });
+
+  // @scenario behaviour orbit-cli-grammar :: Every `git` and `gh` snippet on the generated surface validates against its tool's recorded contract :: An unlisted user doc's git snippet is validated
+  it('an unrecorded git flag in an unlisted user doc fails, naming the file, the line, the snippet and the contract\'s message', () => {
+    const { contract, validate } = recordedTool('git');
+    const surface: Surface = { workflowId: DOCS_WORKFLOW, file: 'README.md', text: `# orbit\n\n${FENCE}bash\ngit commit --only <paths> --frobnicate\n${FENCE}\n` };
+    expect(sweepRecorded(analyseRecorded([surface], 'git', contract), validate, contract)).toEqual([
+      'README.md:4: git commit --only <paths> --frobnicate\n    flag --frobnicate on git commit is not in the recorded contract — re-run npm run capture:git',
     ]);
   });
 });

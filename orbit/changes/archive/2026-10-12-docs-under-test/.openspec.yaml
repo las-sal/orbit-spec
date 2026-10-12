@@ -1,0 +1,11 @@
+schema: spec-driven
+created: 2026-10-12
+schema_version: 5
+base_fingerprints:
+  orbit-cli-grammar:
+    Every `orbit` snippet on the generated surface parses against that program: sha256:62f45d8ea65341757655edd9ed941022e7e286a02b135d2d85c9b98bc65aa58b
+    Every `git` and `gh` snippet on the generated surface validates against its tool's recorded contract: sha256:ffc06c76cd1fb8e250b488ec7642dac0d5312a341a706db4711d7094f7de79db
+    Every command head on the generated surface is a recorded tool or a declared exemption: sha256:938a3cfec6407e9b5123c906944e4a5de628ef08c35ae3f3813ebbb347995991
+architecture:
+  doc: update-gh-documentation
+  stage: docs-under-test

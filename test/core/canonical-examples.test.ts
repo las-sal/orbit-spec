@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import * as fs from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { composeAndWriteEmit, SPINE_FIELDS, ENGINE_OWNED_EXTRA } from '../../src/core/emit-composition.js';
 import { renderReport } from '../../src/core/report-render.js';
 import { createFenceTracker } from '../../src/core/markdown-fence.js';
@@ -24,7 +25,7 @@ import { fences, type Fence } from '../helpers/schema-references.js';
  * Named limit (stated in the requirement): apply and archive get top-level keys only.
  */
 
-const repo = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..', '..');
+const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 const CAPABILITY = 'orbit-conventions';
 const HEADING = '### Requirement: Internal-run JSON summary format';
 const MARKER = '**Canonical examples**';

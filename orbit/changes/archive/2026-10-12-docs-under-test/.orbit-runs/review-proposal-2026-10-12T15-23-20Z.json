@@ -1,0 +1,126 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-12T15:23:20Z",
+  "change": "docs-under-test",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {},
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "title": "The widened directory row omits the Windows home fallbacks the tool also writes",
+      "file": "specs/orbit-user-docs/spec.md",
+      "line": 59,
+      "walk_entry": {
+        "title": "The admitted on-disk identifiers omit the global data directory the tool still writes",
+        "file": "specs/orbit-user-docs/spec.md"
+      },
+      "recommendation": "F1's resolution (and the D-dut-1 amendment in explore.md) claims EVERY global directory the tool writes, in its XDG and Windows forms, but the row lists six forms. src/core/global-config.ts also writes `~/AppData/Roaming/openspec` (line 26, when APPDATA is unset) and `~/AppData/Local/openspec` (line 57, when LOCALAPPDATA is unset); a doc naming either fails the residue check, contrary to the row's stated reason. Add both forms to the row (with either separator), or keep six and state the two fallbacks as a named limit in the requirement; carry the same change into explore.md's D-dut-1 table row."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "Task 3.3's lead says every case is an injected unlisted doc, but several are not",
+      "file": "tasks.md",
+      "line": 15,
+      "walk_entry": {
+        "title": "No task shows a floor able to fail, and the list path is not injectable for it",
+        "file": "tasks.md"
+      },
+      "recommendation": "The walk added a clean LISTED page, an empty docs fence and two empty-list floor cases to task 3.3, whose lead still reads 'Show each extended check able to fail on an injected unlisted doc'. Reword the lead to 'on an injected case' so the task does not tell an implementer to build a listed page or a floor case as an unlisted doc."
+    }
+  ],
+  "commentary": "Verified both walk logs over their sweep scopes: the two spec deltas, design, tasks, proposal and explore.md, which are also exactly the residual diff since the external return's commit, so no file sits outside the edit record. The three ratified directions hold together: the floor rule now reads one way in the spec, D5, task 3.1, the proposal and the D-dut-7 amendment, and the program doc carries no floor sentence left to contradict it. D8's claim that today's docs write no git was checked by grep: the two hits are prose. The two defects are both in what a walk claimed versus what it wrote: a list claimed exhaustive that misses two fallback paths, and a task lead the walk's own additions outgrew.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "verification": [
+    {
+      "title": "The admitted on-disk identifiers omit the global data directory the tool still writes",
+      "file": "specs/orbit-user-docs/spec.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "D4 names owner-text.ts as the lookup the inventory test uses; the inventory test has its own",
+      "file": "design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The empty docs-inventory fence fails the line grammar it is said to share",
+      "file": "specs/orbit-user-docs/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "workflowId 'docs' makes every failure name a path that does not exist",
+      "file": "design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The recorded contracts are captured from the generated surface only, so a doc-only git or gh command can never validate",
+      "file": "specs/orbit-cli-grammar/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Floors go active when the list empties, but their values are set by a later stage that does not carry the obligation",
+      "file": "specs/orbit-user-docs/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The design says each widened body states the domain in its first sentence and keeps the title as identity; two of three do not",
+      "file": "design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The admitted-section rows say 'prose under' while the text admits everything, and the section end is loosely stated",
+      "file": "specs/orbit-user-docs/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "No task shows a floor able to fail, and the list path is not injectable for it",
+      "file": "tasks.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "Per-file pending-list checks incorrectly apply aggregate inventory exactness",
+      "file": "orbit/changes/docs-under-test/design.md",
+      "verdict": "landed"
+    }
+  ],
+  "final_assessment": "0 critical, 1 warning, 1 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-10-12T15-12-03Z",
+    "2026-10-12T15-12-18Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews docs-under-test"
+}

@@ -79,6 +79,25 @@ naming file and line; (2) the residue check fails on an `openspec`, `/opsx` or `
 R-ugd-1's exceptions, naming file and line; (3) the recorded list of today's failures is exact, and a test shows
 each check able to fail.
 
+Shipped as (2026-10-12; archived as `orbit/changes/archive/2026-10-12-docs-under-test/`; the charter stands, and exit (3)
+is revised in one term): the user docs are a checked surface. `test/core/user-docs/pending-rewrite.json` lists all twelve
+docs, exact in both directions: a listed file that passes every file-local check fails the suite, and so does a stale
+entry. Each of today's twelve fails at least one check, about 810 failures in all. The residue check reads `openspec`,
+`opsx` and `fission` in any case, admitting the README's two titled sections (read from top-level ATX headings of a
+markdown-it parse with HTML enabled, after the system pair found a heading hidden in an HTML comment), all of
+`docs/migration-guide.md`, `.openspec.yaml` and the global directories. The `orbit`, `git`/`gh` and inventory sweeps read
+the unlisted docs; the inventory judges them against their own `docs-inventory` fence, empty today, where `utility` also
+admits an installer such as `npm` (Sal: A at the system walk). The docs floors are unset until the list empties and must
+then be positive integers. The `git` capture reads every user doc; the docs add nothing to the contract, though a
+re-capture shows the checked-in contract still records six keys and six flags rc12 removed from the surface (kept, a
+named residual). New capability `orbit-user-docs` (27 baseline capabilities); `orbit-cli-grammar`'s three sweeps
+widened. Exit (1) MET: the `orbit` and `git`/`gh` sweeps fail an unparseable snippet in an unlisted doc naming file and
+line, and run over each listed doc in the exactness test. Exit (2) MET: `fission` covers `@fission-ai`, and `/opsx` is
+matched as `opsx`. Exit (3) MET AS REVISED (R-crc-12's first case): the "recorded list of today's failures" is a FILE list
+(D-dut-2), not a per-line one; it is exact, and every check was shown able to fail, including by deliberate mutation. The
+system blind pair on `5ef9821a` (fresh 0C/1W/3S forward, external GPT-6 Codex 0C/2W/0S hold) shared no finding; two walk
+logs, then an in-context VERIFICATION grading six `landed`; a computed PASSED gate. 3617 tests green.
+
 ### Stage landing-page — the README says what orbit is, why, and how to start
 
 Depends-on: docs-under-test

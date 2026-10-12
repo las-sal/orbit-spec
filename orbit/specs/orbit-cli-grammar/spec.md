@@ -56,7 +56,9 @@ help and version — each grepped in `src/cli/index.ts` and the three `register*
 
 Every snippet that invokes `orbit` SHALL parse when its argument vector is handed to commander's own parser over the
 builder's neutralised program (`The CLI's grammar is one program, built by an exported builder`), for every generated
-SKILL.md and `references/*.md` file of every workflow the generator emits. The check proves GRAMMAR only: nothing is
+SKILL.md and `references/*.md` file of every workflow the generator emits, and for every user doc that is not on the
+pending-rewrite list of `orbit-user-docs`' `The user docs are a checked surface, gated by an exact pending-rewrite list` (the title keeps "the generated surface" as the requirement's identity; the domain is
+both). The check proves GRAMMAR only: nothing is
 executed, and a snippet that parses but is wrong for its moment is not caught. One contract per tool decides grammar,
 and this requirement covers `orbit`. Its places table, guard, tokenizer and fence table are the SHARED extractor's:
 every recorded tool `Every command head on the generated surface is a recorded tool or a declared exemption` derives
@@ -126,7 +128,7 @@ reaches an adopter's install. Each construct is classified as this table states:
 Closure of the fence table: CommonMark's block and inline constructs as the parser implements them; its one deliberate
 departure, parsing `markdown` fences again, is stated as its own row.
 
-A failure SHALL name the surface (the workflow and the file), the line, the snippet, and commander's own message.
+A failure SHALL name the surface (the workflow and the file for a generated skill, the repository-relative path for a user doc), the line, the snippet, and commander's own message.
 
 #### Scenario: Today's surface parses
 
@@ -190,6 +192,11 @@ A failure SHALL name the surface (the workflow and the file), the line, the snip
 - **WHEN** a shell fence line reads `orbit status --change $(cat name.txt)`
 - **THEN** extraction fails naming the surface, the line and the snippet
 
+#### Scenario: An unlisted user doc's orbit snippet is swept
+
+- **WHEN** an unlisted user doc carries `orbit` with a flag the program does not define, in a shell fence
+- **THEN** the sweep fails, naming the file, the line, the snippet and commander's message, exactly as it does for a generated surface
+
 ### Requirement: The completion registry is a checked copy of the program
 
 `COMMAND_REGISTRY` SHALL stay hand-written and SHALL be held to the builder's program by a test in both directions,
@@ -236,8 +243,12 @@ named as not comparable, plus the three kinds of program entry the registry deli
 Every snippet that invokes `git` or `gh` SHALL validate against its tool's RECORDED contract, extracted and guarded by
 the shared extractor of `Every \`orbit\` snippet on the generated surface parses against that program` — its places
 table, guard, tokenizer and fence table, with the tool's own name — over every generated SKILL.md and
-`references/*.md` file of every workflow the generator emits. The check proves GRAMMAR only: the suite never spawns
-`git` or `gh`, and a snippet that validates but is wrong for its moment is not caught.
+`references/*.md` file of every workflow the generator emits, and over every user doc that is not on the
+pending-rewrite list of `orbit-user-docs`' `The user docs are a checked surface, gated by an exact pending-rewrite list`. The check proves GRAMMAR only: the suite never spawns
+`git` or `gh`, and a snippet that validates but is wrong for its moment is not caught. Named limit (the `gh` contract
+in the user docs): `gh` is captured from a fixed command list (`scripts/capture-gh-contract.mjs`), so a `gh` command a
+user doc writes that the list lacks fails as unknown until the list is extended and `npm run capture:gh` re-run, a
+deliberate act of the stage whose page writes it.
 
 | tool | contract | validator |
 |---|---|---|
@@ -263,8 +274,10 @@ the one code in the repository that runs a real `git`. Every probe runs in its O
 holding one commit on branch `main` — a probe can mutate its repository (`switch -c` switches the branch, `init <word>`
 creates a nested repository), so no probe may read another's effects — under `LANG=C`, with closed stdin, a failing
 editor, no remote, `GIT_CONFIG_GLOBAL=/dev/null`, `GIT_CONFIG_NOSYSTEM=1` and a 10-second timeout. Its candidate set is
-every `git` segment the shared extractor finds on the generated surface, bare names included, so a command written only
-as a name is recorded. It records the git version and, per command key, whether git knows the command, its probe class,
+every `git` segment the shared extractor finds on the generated surface and in every user doc of `orbit-user-docs`'
+`The user docs are a checked surface, gated by an exact pending-rewrite list`, listed or not, so a rewrite stage
+captures a command its page writes before it unlists the page; bare names included, so a command written only as a
+name is recorded. It records the git version and, per command key, whether git knows the command, its probe class,
 whether it requires a positional, and each flag the surface writes on it, probed in the form the surface writes it:
 whether git accepts it, git's line when it does not, and whether it takes a value. A REJECTION SHAPE is a first line
 beginning `error: unknown option`, `error: invalid option`, `error: unknown switch`, `fatal: unrecognized argument:` or
@@ -301,7 +314,8 @@ as a value, exactly as a real value. Positional counts beyond that presence are 
 `=value` written after capture on a long flag that takes none (`git status --short=x`), nor, conversely, a bare form
 written after capture of a flag recorded from its `=` form (`git log --format %h`, which git refuses): the contract
 records which flags git accepts, not which forms. A failure SHALL name the
-surface (the workflow and the file), the line, the snippet, and the validator's message.
+surface (the workflow and the file for a generated skill, the repository-relative path for a user doc), the line, the
+snippet, and the validator's message.
 
 #### Scenario: Today's surface validates for both recorded tools
 
@@ -371,14 +385,30 @@ surface (the workflow and the file), the line, the snippet, and the validator's 
 - **WHEN** the capture meets a command whose bogus-flag probe is not rejected and no orbit-side rule names it
 - **THEN** the capture fails naming the command, and writes no contract
 
+#### Scenario: An unlisted user doc's git snippet is validated
+
+- **WHEN** an unlisted user doc carries a `git` command with a flag the recorded contract does not hold, in a shell fence
+- **THEN** the sweep fails, naming the file, the line, the snippet and the contract's message
+
+#### Scenario: A docs-only git command is captured
+
+- **WHEN** a user doc, listed or not, writes a `git` command no generated surface writes, and `npm run capture:git` runs
+- **THEN** the contract records that command's key and the flags the doc writes on it
+
 ### Requirement: Every command head on the generated surface is a recorded tool or a declared exemption
 
 Every command head the inventory reads on the generated surface SHALL be a RECORDED tool or a DECLARED exemption, and
-any other head SHALL fail the suite, naming the surface (the workflow and the file), the line and the head — so a new
+any other head SHALL fail the suite, naming the surface (the workflow and the file for a generated skill, the repository-relative path for a user doc), the line and the head — so a new
 tool reaches the surface only with a recorded contract, or with an exemption written down here. The surface is every
 generated SKILL.md and `references/*.md` file of every workflow the generator emits, as the shared extractor of
 `Every \`orbit\` snippet on the generated surface parses against that program` reads it: the same markdown parse, the
 same fence table, the same tokenizer and segments.
+
+The inventory also reads every user doc that is not on the pending-rewrite list of `orbit-user-docs`' `The user docs are a checked surface, gated by an exact pending-rewrite list`, by the same parse and
+the same rows, and judges each SURFACE against its own declared set: the generated surface against this requirement's
+fence, the user docs against `orbit-user-docs`' `The user docs declare their own command heads`. A head declared for
+one surface does not excuse it on the other, and each fence is exact for its own surface. The rows apply to the user
+docs unchanged, so a command in a user doc is written on one line, as on the generated surface.
 
 A RECORDED tool is DERIVED, never listed: `orbit`, whose program `The CLI's grammar is one program, built by an
 exported builder` builds, and each tool the recorded-contract sweep of `Every \`git\` and \`gh\` snippet on the generated
@@ -479,4 +509,14 @@ already fails a recorded tool's flagged line outside a fence.
   unknown kind, a repeated kind or a repeated head
 - **THEN** the suite fails naming the requirement and the offending line (the requirement's heading line when no
   `inventory` fence exists), and never passes vacuously
+
+#### Scenario: A user doc is judged against its own declared set
+
+- **WHEN** an unlisted user doc uses a head that only this requirement's `inventory` fence declares
+- **THEN** the inventory fails, naming the file, the line and the head
+
+#### Scenario: A continued command in a user doc fails as on the generated surface
+
+- **WHEN** an unlisted user doc writes a command across lines with a trailing `\`, the continuation beginning with a flag
+- **THEN** the inventory fails on the continuation line, naming its flag as an unknown head
 

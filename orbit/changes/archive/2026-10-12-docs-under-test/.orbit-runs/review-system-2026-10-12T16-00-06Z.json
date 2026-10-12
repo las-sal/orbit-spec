@@ -1,0 +1,95 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-12T16:00:06Z",
+  "change": "docs-under-test",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "pass": "3",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/docs-under-test/specs/orbit-cli-grammar/spec.md",
+      "line": 79,
+      "title": "The three widened requirements still say a failure names the workflow and the file, but a user-doc failure names the file alone",
+      "recommendation": "Each of the three MODIFIED blocks widens its domain to the unlisted user docs, but its failure sentence still reads 'name the surface (the workflow and the file)' (lines 79, 224, 307 of this delta). Design D1 and describeSurface print a user doc as its repository-relative path alone, with no workflow, and the new scenarios assert exactly that ('docs/cli.md:4: ...'). Repair each failure sentence in place to say the surface is named as the workflow and the file for a generated skill, and as the repository-relative path for a user doc, or name D1's rule once and point to it. An implementer reading the requirement as written would print 'docs/README.md' or a workflow prefix and disagree with the tests."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "test/helpers/user-docs.ts",
+      "line": 55,
+      "title": "admittedLines reads an ATX heading inside an HTML block, so a hidden heading opens an admitted section",
+      "recommendation": "The requirement defines a section as running from an ATX heading. In CommonMark, a '## ...' line inside an HTML block (an HTML comment, say) is not a heading. admittedLines checks each line by regex outside fences, so it treats such a line as one. Probe, run in a throwaway vitest file: residueFailures on README.md text '# orbit\\n\\n<!--\\n## Built on OpenSpec\\n-->\\n\\nInstall @fission-ai/openspec and run openspec init.\\n' returns [], although nothing a reader sees opens the attribution section. Either take the headings from the markdown-it parse the shared extractor already runs (heading_open tokens with their map, which also covers the HTML-block and container cases), or add the HTML block to the residue check's named limit beside the setext one."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/docs-under-test/specs/orbit-user-docs/spec.md",
+      "line": 106,
+      "title": "The docs fence borrows the generated fence's kinds without saying what they admit in the user docs, and the head expected first (npm) fits none of their definitions",
+      "recommendation": "The docs-inventory requirement borrows orbit-cli-grammar's 'line grammar' and its three kinds. orbit-cli-grammar defines 'utility' as POSIX utilities, shell builtins, reserved words and node, the runtime orbit requires. explore.md expects R-ugd-4's npm install line to be the docs fence's first head, and the user docs today also write pnpm, yarn, bun and nix. None of these is a utility under that definition. The landing-page stage will have to declare npm under a kind whose stated meaning excludes it, or reopen the kind set. State here what each kind admits in the user docs (for example, that utility covers install tooling a page tells the reader to run), or name the kind npm takes."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "test/core/cli-grammar/tool-inventory.test.ts",
+      "line": 424,
+      "title": "The 'docs declaration does not reach the generated surface' test builds a declaring docs fence and never uses it",
+      "recommendation": "docsDeclaring is built and its exemptions are asserted, but sweep() reads only the generated owner's fence. The fence never enters the check, so the test passes whatever the docs fence holds and cannot fail on the regression its scenario names. Design D7 says a check that cannot be made to fail does not count. Either pass the union a regression would introduce through a seam and show the generated sweep ignores it, or downgrade the scenario's declaration and note that the separation holds by construction: each sweep is handed exactly one owner."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "I probed the stage's new mechanism directly rather than re-reading the artifacts. In throwaway tests I ran the residue section scanner against HTML-comment headings, list-nested headings and duplicate pending entries; I diffed each MODIFIED block line by line against its baseline (no baseline line was dropped beyond the domain sentences being widened); I checked the scenario map (every delta scenario declared, no orphan or malformed tag), validated with --strict, and ran the touched suites green. The full npm test result is noted in the hand-back. The engine side is clean. The four findings share one texture: the stage carried its generated-surface vocabulary (failure naming, the kinds, a line-regex heading grammar) onto a surface where those words mean something slightly different. The rewrite stages will write the first real docs content against that vocabulary. Passes 4 and 5 were skipped because orbit/lenses/ is absent. Pass 6 ran light, as a source-marker check (orbit validate --sources clean) and a read of the program stage's exit criteria against the shipped checks; the full audit-drift library pass was not invoked from this fresh context.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "6"
+  ],
+  "passes_skipped": [
+    "4",
+    "5"
+  ],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The mechanism does what the stage promised. It reads the user docs through the shared extractor, keeps a pending-rewrite list exact in both directions, separates the two declared sets, and puts floors behind an empty list. Every check I probed fails where it should. What remains is wording in the widened requirements and two small edge cases in the test helpers. None of it changes what today's tree checks, because every doc is listed. They are worth one walk before the rewrite stages start building against this text. Fix the failure-naming sentence first: it is the one a reader of the requirement would actually implement wrongly."
+  },
+  "final_assessment": "0 critical, 1 warning, 3 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews docs-under-test"
+}

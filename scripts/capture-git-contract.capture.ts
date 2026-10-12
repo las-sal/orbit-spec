@@ -5,8 +5,9 @@
  * toolchain. A plain `npm test` never collects it.
  *
  * This is the ONLY code in the repo that runs a real `git` for grammar. Its candidate set is
- * every `git` segment the shared extractor finds on the generated surface, bare names
- * included; each probe runs in its OWN fresh copy of a template repository. The probe table
+ * every `git` segment the shared extractor finds on the generated surface and in every user
+ * doc, listed or not (docs-under-test design D8), bare names included; each probe runs in its
+ * OWN fresh copy of a template repository. The probe table
  * is `orbit-cli-grammar`'s `Every \`git\` and \`gh\` snippet on the generated surface
  * validates against its tool's recorded contract`; the classifiers live in
  * `test/helpers/git-capture.ts`.
@@ -26,6 +27,7 @@ import {
   ORBIT_SIDE_RULES,
   acceptanceArgs,
   acceptanceFrom,
+  captureCandidates,
   classFrom,
   firstLineOf,
   flagEntry,
@@ -38,7 +40,6 @@ import {
   type Probe,
   type ProbeClass,
 } from '../test/helpers/git-capture.js';
-import { analyseSurfaces, generatedSurfaces } from '../test/helpers/surface-snippets.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const out = path.join(here, '..', 'test', 'integration', 'cli-contracts', 'git-contract.json');
@@ -97,8 +98,9 @@ function capture(): void {
       return { status: res.status, firstLine: firstLineOf(res.stderr, res.stdout) };
     };
 
-    // The candidate set: every `git` segment, bare names included (no command tree).
-    const segments = analyseSurfaces(generatedSurfaces(), 'git').snippets.map((s) => s.tokens.slice(1));
+    // The candidate set: every `git` segment on the generated surface and in every user doc,
+    // listed or not, bare names included (no command tree).
+    const segments = captureCandidates();
 
     // 1. Groups and keys.
     const firstWords = [...new Set(segments.map((argv) => argv[0]).filter((w): w is string => w !== undefined))].sort();

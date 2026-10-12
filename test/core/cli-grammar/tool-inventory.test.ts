@@ -12,172 +12,53 @@
 import * as fs from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import MarkdownIt from 'markdown-it';
 import { afterAll, describe, expect, it } from 'vitest';
-import { createFenceTracker } from '../../../src/core/markdown-fence.js';
+import {
+  DOCS_INVENTORY,
+  GENERATED_INVENTORY,
+  KINDS,
+  headingOf,
+  inventoryFailures,
+  inventorySource as ownerSource,
+  readInventory as readOwnerInventory,
+  recordedHeads,
+  type Inventory,
+  type Source,
+} from '../../helpers/inventory.js';
 import { recordedTools } from '../../helpers/recorded-sweep.js';
 import {
+  DOCS_WORKFLOW,
   MARKDOWN_INFO,
   SHELL_INFO,
   analyseHeads,
   describeSurface,
+  docSurfaces,
   generatedSurfaces,
-  type Head,
   type Surface,
 } from '../../helpers/surface-snippets.js';
 
-const repo = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..', '..', '..');
-const CAPABILITY = 'orbit-cli-grammar';
-const TITLE = 'Every command head on the generated surface is a recorded tool or a declared exemption';
-const HEADING = `### Requirement: ${TITLE}`;
-const KINDS = ['utility', 'placeholder', 'prose'] as const;
-type Kind = (typeof KINDS)[number];
+const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
+const CAPABILITY = GENERATED_INVENTORY.capability;
+const TITLE = GENERATED_INVENTORY.title;
+const HEADING = headingOf(GENERATED_INVENTORY);
 
 const md = new MarkdownIt();
 
-// ─── the exemption block (design D2) ──────────────────────────────
-
-interface Source {
-  file: string; // repo-relative
-  text: string;
-}
-
-/** The 0-based line of the requirement's heading outside a fence, under `section` when given, or -1. */
-function headingLine(text: string, sections?: string[]): number {
-  const tracker = createFenceTracker();
-  let current: string | null = null;
-  const lines = text.split('\n');
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i].replace(/\r$/, '');
-    const wasIn = tracker.inFence;
-    if (tracker.handle(line) || wasIn) continue;
-    if (/^## /.test(line)) current = line.trim();
-    else if (line === HEADING && (sections === undefined || (current !== null && sections.includes(current)))) return i;
-  }
-  return -1;
-}
-
-const HOLDING_SECTIONS = ['## ADDED Requirements', '## MODIFIED Requirements'];
+// ─── the exemption block (design D2; the reader is shared, docs-under-test design D4) ──
 
 /** The requirement as it stands: the one active delta adding or modifying it, else the baseline. */
 function inventorySource(root: string): Source {
-  const holders: string[] = [];
-  const changesDir = path.join(root, 'orbit', 'changes');
-  for (const d of fs.existsSync(changesDir) ? fs.readdirSync(changesDir).sort() : []) {
-    if (d === 'archive') continue;
-    const rel = path.join('orbit', 'changes', d, 'specs', CAPABILITY, 'spec.md');
-    const abs = path.join(root, rel);
-    if (fs.existsSync(abs) && headingLine(fs.readFileSync(abs, 'utf-8'), HOLDING_SECTIONS) >= 0) holders.push(rel);
-  }
-  if (holders.length > 1) {
-    throw new Error(`more than one active change adds or modifies '${TITLE}': ${holders.join(', ')}`);
-  }
-  const rel = holders[0] ?? path.join('orbit', 'specs', CAPABILITY, 'spec.md');
-  return { file: rel, text: fs.readFileSync(path.join(root, rel), 'utf-8') };
+  return ownerSource(root, GENERATED_INVENTORY);
 }
 
-interface Exemption {
-  head: string;
-  kind: Kind;
-  line: number; // 1-based line in the source
-}
-
-interface Inventory {
-  exemptions: Exemption[];
-  /** Malformed-block failures, each naming the requirement and the offending line. */
-  failures: string[];
-}
-
-/** The requirement's `inventory` fence, parsed by the production of design D2. */
+/** The requirement's `inventory` fence. */
 function readInventory(src: Source): Inventory {
-  const lines = src.text.split('\n');
-  const start = headingLine(src.text);
-  const at = (line: number, message: string) => `${src.file}:${line}: '${TITLE}': ${message}`;
-  if (start < 0) return { exemptions: [], failures: [`${src.file}: no '${HEADING}'`] };
-  // The block ends at the next requirement or section heading outside a fence.
-  const tracker = createFenceTracker();
-  let end = lines.length;
-  for (let i = start + 1; i < lines.length; i++) {
-    const wasIn = tracker.inFence;
-    const delim = tracker.handle(lines[i]);
-    if (!wasIn && !delim && /^#{2,3} /.test(lines[i])) {
-      end = i;
-      break;
-    }
-  }
-  const fences = md
-    .parse(lines.slice(start + 1, end).join('\n'), {})
-    .filter((t) => t.type === 'fence' && t.map && t.info.trim().split(/\s+/)[0] === 'inventory');
-  if (fences.length === 0) return { exemptions: [], failures: [at(start + 1, 'no `inventory` fence')] };
-  const failures: string[] = [];
-  for (const extra of fences.slice(1)) {
-    failures.push(at(start + 2 + extra.map![0], 'a second `inventory` fence; the block is exactly one'));
-  }
-  const fence = fences[0];
-  const contentStart = start + 2 + fence.map![0] + 1; // 1-based line of the fence's first content line
-  const exemptions: Exemption[] = [];
-  const kindsSeen = new Map<string, number>();
-  const headsSeen = new Map<string, number>();
-  fence.content
-    .replace(/\n$/, '')
-    .split('\n')
-    .forEach((text, k) => {
-      const line = contentStart + k;
-      const m = /^([^:\s]+): (\S+(?: \S+)*)$/.exec(text);
-      if (!m) {
-        failures.push(at(line, `'${text}' does not match '<kind>: <head> <head> …'`));
-        return;
-      }
-      const kind = m[1];
-      if (!(KINDS as readonly string[]).includes(kind)) {
-        failures.push(at(line, `unknown kind '${kind}'; the kinds are ${KINDS.join(', ')}`));
-        return;
-      }
-      if (kindsSeen.has(kind)) {
-        failures.push(at(line, `kind '${kind}' repeated (first at line ${kindsSeen.get(kind)})`));
-        return;
-      }
-      kindsSeen.set(kind, line);
-      for (const head of m[2].split(' ')) {
-        if (headsSeen.has(head)) {
-          failures.push(at(line, `head '${head}' repeated (first at line ${headsSeen.get(head)})`));
-          continue;
-        }
-        headsSeen.set(head, line);
-        exemptions.push({ head, kind: kind as Kind, line });
-      }
-    });
-  return { exemptions, failures };
+  return readOwnerInventory(src, GENERATED_INVENTORY);
 }
 
 // ─── the sweep (design D3/D4) ─────────────────────────────────────
-
-/** `orbit`, whose program the builder builds, plus every tool the recorded-contract sweep validates. */
-function recordedHeads(): string[] {
-  return ['orbit', ...recordedTools().map((t) => t.tool)];
-}
-
-/** Every failure kind, collected: unknown heads, unused exemptions, exemptions shadowing a recorded tool, a malformed block. */
-function inventoryFailures(heads: Head[], recorded: string[], inventory: Inventory): string[] {
-  const failures = [...inventory.failures];
-  const declared = new Map(inventory.exemptions.map((e) => [e.head, e]));
-  for (const h of heads) {
-    if (!recorded.includes(h.head) && !declared.has(h.head)) {
-      failures.push(
-        `${describeSurface(h.surface)}:${h.line}: head '${h.head}' is neither a recorded tool nor a declared exemption (${h.source})`,
-      );
-    }
-  }
-  const read = new Set(heads.map((h) => h.head));
-  for (const e of inventory.exemptions) {
-    if (recorded.includes(e.head)) {
-      failures.push(`declared ${e.kind} head '${e.head}' is a recorded tool; one head has one standing`);
-    } else if (!read.has(e.head)) {
-      failures.push(`declared ${e.kind} head '${e.head}' is read on no surface`);
-    }
-  }
-  return failures;
-}
 
 function sweep(surfaces: Surface[], src: Source = inventorySource(repo)): string[] {
   return inventoryFailures(analyseHeads(surfaces), recordedHeads(), readInventory(src));
@@ -498,5 +379,90 @@ describe('the exemption block reader', () => {
       [delta('removed')]: `## REMOVED Requirements\n\n${HEADING}\n`,
     });
     expect(inventorySource(dir).file).toBe(baseline);
+  });
+});
+
+// ─── the user docs, against their own declared set (docs-under-test design D4, D7) ──
+
+describe('the tool inventory over the user docs', () => {
+  const docsSource = ownerSource(repo, DOCS_INVENTORY);
+  const docsHeadingLine = docsSource.text.split('\n').indexOf(headingOf(DOCS_INVENTORY)) + 1;
+  const docsFenceLine = docsSource.text.split('\n').indexOf('```docs-inventory') + 1; // 1-based opening line
+
+  function docsSweep(surfaces: Surface[], src: Source = docsSource): string[] {
+    return inventoryFailures(analyseHeads(surfaces), recordedHeads(), readOwnerInventory(src, DOCS_INVENTORY));
+  }
+
+  /** The docs source with its `docs-inventory` fence's body replaced by `body` (no trailing newline; empty for none). */
+  function docsFence(body: string): Source {
+    const text = docsSource.text.replace(/```docs-inventory\n[\s\S]*?```/, `\`\`\`docs-inventory\n${body === '' ? '' : `${body}\n`}\`\`\``);
+    return { file: docsSource.file, text };
+  }
+
+  const doc = (file: string, text: string): Surface => ({ workflowId: DOCS_WORKFLOW, file, text });
+
+  it('the unlisted user docs pass against the docs fence, and the docs fence is read from orbit-user-docs', () => {
+    expect(docsSource.file).toMatch(/specs[\\/]orbit-user-docs[\\/]spec\.md$/);
+    expect(docsSweep(docSurfaces())).toEqual([]);
+  });
+
+  // @scenario behaviour orbit-user-docs :: The user docs declare their own command heads :: The empty docs fence is a legal block
+  it('an empty docs fence is a legal block: an empty declared set, no malformed line', () => {
+    expect(readOwnerInventory(docsFence(''), DOCS_INVENTORY)).toEqual({ exemptions: [], failures: [] });
+    expect(docsSweep([], docsFence(''))).toEqual([]);
+  });
+
+  // @scenario behaviour orbit-cli-grammar :: Every command head on the generated surface is a recorded tool or a declared exemption :: A user doc is judged against its own declared set
+  it('a head only the generated fence declares fails in a user doc, naming the file, the line and the head', () => {
+    expect(readInventory(inventorySource(repo)).exemptions.map((e) => e.head)).toContain('mkdir');
+    const surface = doc('docs/getting-started.md', `# Start\n\n${FENCE}bash\nmkdir -p orbit\n${FENCE}\n`);
+    expect(docsSweep([surface], docsFence(''))).toEqual([
+      "docs/getting-started.md:4: head 'mkdir' is neither a recorded tool nor a declared exemption (fence)",
+    ]);
+  });
+
+  // @scenario behaviour orbit-user-docs :: The user docs declare their own command heads :: A docs declaration does not reach the generated surface
+  it('a docs declaration does not reach the generated surface', () => {
+    // A `docs-inventory` fence declaring `jq` placed INSIDE the generated requirement: a reader matching
+    // info strings loosely, or merging the two declared sets, would read it and excuse `jq`.
+    const src = editedSource((t) => t.replace(/(```inventory\n[\s\S]*?\n```\n)/, '$1\n```docs-inventory\nutility: jq\n```\n'));
+    expect(readInventory(src).exemptions.map((e) => e.head)).not.toContain('jq');
+    expect(src.text).toContain('```docs-inventory\nutility: jq\n```');
+    const injected = withInlineSpan('jq -r .url <path>');
+    const failures = sweep(withSurface(injected.surface), src);
+    expect(failures).toHaveLength(1);
+    expect(failures[0]).toContain(unknownHead(injected.surface, injected.line, 'jq'));
+  });
+
+  // @scenario behaviour orbit-cli-grammar :: Every command head on the generated surface is a recorded tool or a declared exemption :: A continued command in a user doc fails as on the generated surface
+  it('a continued command in a user doc fails on its continuation line, naming the flag as an unknown head', () => {
+    const surface = doc('README.md', `# orbit\n\n${FENCE}bash\norbit status \\\n  --change demo --json\n${FENCE}\n`);
+    expect(docsSweep([surface], docsFence(''))).toEqual([
+      "README.md:5: head '--change' is neither a recorded tool nor a declared exemption (fence)",
+    ]);
+  });
+
+  // @scenario behaviour orbit-user-docs :: The user docs declare their own command heads :: An unused docs declaration fails
+  it('an unused docs-inventory declaration fails, naming the head and its kind', () => {
+    expect(docsSweep(docSurfaces(), docsFence('utility: jq'))).toEqual(["declared utility head 'jq' is read on no surface"]);
+  });
+
+  it('a declared docs head excuses it in a user doc', () => {
+    const surface = doc('docs/x.md', `${FENCE}bash\njq -r .url <path>\n${FENCE}\n`);
+    expect(docsSweep([surface], docsFence('utility: jq'))).toEqual([]);
+  });
+
+  it.each([
+    ['no docs-inventory fence', (t: string) => t.replace('```docs-inventory', '```text'), () => docsHeadingLine, 'no `docs-inventory` fence'],
+    ['a line not matching the production', (t: string) => t.replace(/```docs-inventory\n/, '```docs-inventory\nutility:  jq\n'), () => docsFenceLine + 1, "does not match '<kind>: <head> <head> …'"],
+    ['an unknown kind', (t: string) => t.replace(/```docs-inventory\n/, '```docs-inventory\nphrase: jq\n'), () => docsFenceLine + 1, "unknown kind 'phrase'"],
+    ['a second docs-inventory fence', (t: string) => t.replace(/(```docs-inventory\n```\n)/, '$1\n```docs-inventory\n```\n'), () => docsFenceLine + 3, 'a second `docs-inventory` fence'],
+  ])('%s fails naming the requirement and the line', (_name, edit, line, message) => {
+    const src = { file: docsSource.file, text: edit(docsSource.text) };
+    expect(src.text).not.toBe(docsSource.text);
+    const failures = readOwnerInventory(src, DOCS_INVENTORY).failures;
+    expect(failures.length).toBeGreaterThan(0);
+    expect(failures[0]).toContain(`:${line()}: '${DOCS_INVENTORY.title}': `);
+    expect(failures[0]).toContain(message);
   });
 });

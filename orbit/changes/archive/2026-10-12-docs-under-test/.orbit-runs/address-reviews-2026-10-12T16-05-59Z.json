@@ -1,0 +1,200 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-12T16:05:59Z",
+  "change": "docs-under-test",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/docs-under-test/.orbit-runs/review-system-2026-10-12T16-00-06Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-12T16-00-06Z",
+  "latest_apply_token": "2026-10-12T15-45-36Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 3
+  },
+  "pushback_verification": "All four verified against current state: the three sentences read as quoted; the hidden-comment case reproduced; the kind definitions read as quoted; docsDeclaring never reached sweep().",
+  "resolution_summary": {
+    "resolved": 4,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The three widened requirements still say a failure names the workflow and the file, but a user-doc failure names the file alone",
+      "file": "orbit/changes/docs-under-test/specs/orbit-cli-grammar/spec.md",
+      "line": 79,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "lane": "obvious-fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "action": "each of the three widened failure sentences now names the surface as the workflow and the file for a generated skill and as the repository-relative path for a user doc",
+      "evidence": "lines 79, 224 and 307 read \"(the workflow and the file)\" while describeSurface prints a user doc as its path alone",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "(the workflow and the file)"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/docs-under-test/specs/orbit-cli-grammar/spec.md",
+            "text": "the repository-relative path for a user doc"
+          }
+        ],
+        "searched": [
+          "the workflow and the file",
+          "workflow and file"
+        ],
+        "scope": [
+          "test/helpers",
+          "test/core/user-docs",
+          "test/core/cli-grammar"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "admittedLines reads an ATX heading inside an HTML block, so a hidden heading opens an admitted section",
+      "file": "test/helpers/user-docs.ts",
+      "line": 55,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "lane": "obvious-fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "action": "admittedLines takes its headings from a markdown-it parse with HTML blocks enabled, top-level ATX headings only, so a heading inside an HTML block, a list item or a blockquote neither opens nor ends a section; a test pins the reviewer's hidden-comment case and the nested cases; the requirement, design D3 and task 2.1 say so",
+      "evidence": "reproduced: the hidden-comment README returned no residue; with markdown-it's default (html off) the new test still fails, with html enabled it passes",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/docs-under-test/specs/orbit-user-docs/spec.md",
+          "orbit/changes/docs-under-test/design.md",
+          "orbit/changes/docs-under-test/tasks.md",
+          "test/core/user-docs/residue.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "A heading line inside a fence is not a heading.",
+          "the scan uses the shared CommonMark fence",
+          "reads sections through the engine's fence tracker",
+          "read through `src/core/markdown-fence.ts`"
+        ],
+        "introduced": [
+          {
+            "path": "test/helpers/user-docs.ts",
+            "text": "new MarkdownIt({ html: true })"
+          },
+          {
+            "path": "orbit/changes/docs-under-test/specs/orbit-user-docs/spec.md",
+            "text": "only a top-level ATX heading opens or ends a section"
+          },
+          {
+            "path": "orbit/changes/docs-under-test/design.md",
+            "text": "with HTML blocks enabled as GitHub renders the README"
+          },
+          {
+            "path": "orbit/changes/docs-under-test/tasks.md",
+            "text": "sections read from top-level ATX headings of a markdown-it parse"
+          },
+          {
+            "path": "test/core/user-docs/residue.test.ts",
+            "text": "a heading inside an HTML block, a list item or a blockquote neither opens nor ends an admitted section"
+          }
+        ],
+        "searched": [
+          "markdown-fence",
+          "fence tracker",
+          "inside a fence is not a heading",
+          "admittedLines"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The docs fence borrows the generated fence's kinds without saying what they admit in the user docs, and the head expected first (npm) fits none of their definitions",
+      "file": "orbit/changes/docs-under-test/specs/orbit-user-docs/spec.md",
+      "line": 106,
+      "marker_source": "internal-review",
+      "classification": "decision_required",
+      "lane": "decision",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "resolution": "A: one sentence in orbit-user-docs' docs-inventory requirement — in this fence `utility` also admits a package manager or installer a page tells the reader to run; every kind otherwise keeps orbit-cli-grammar's meaning",
+      "action": "added the sentence after the empty docs-inventory fence; the parser and the kind set are unchanged",
+      "evidence": "orbit-cli-grammar defines utility as POSIX utilities, shell builtins, reserved words and node; the docs write npm, pnpm, yarn, bun and nix",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/docs-under-test/specs/orbit-user-docs/spec.md",
+            "text": "also admits a package"
+          }
+        ],
+        "searched": [
+          "utility",
+          "kinds"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The 'docs declaration does not reach the generated surface' test builds a declaring docs fence and never uses it",
+      "file": "test/core/cli-grammar/tool-inventory.test.ts",
+      "line": 424,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "lane": "obvious-fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "action": "the test now places a docs-inventory fence declaring jq inside the generated requirement and shows the generated sweep still fails on jq; a loose info-string match makes it fail (mutation run)",
+      "evidence": "docsDeclaring was built and asserted but never handed to sweep()",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "docsDeclaring"
+        ],
+        "introduced": [
+          {
+            "path": "test/core/cli-grammar/tool-inventory.test.ts",
+            "text": "a reader matching"
+          }
+        ],
+        "searched": [
+          "docsDeclaring",
+          "docsFence("
+        ],
+        "scope": [],
+        "kept": []
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Four of four resolved: three obvious fixes and one decision (F3, Sal: A).",
+  "iteration": 4,
+  "next_recommended": "/orbit:address-reviews docs-under-test",
+  "ripple_misses": 0
+}
