@@ -1,0 +1,388 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-12T00:54:37Z",
+  "change": "rc12-engine-owned-choreography",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc12-engine-owned-choreography/.orbit-runs/external-proposal-2026-10-12T00-40-46Z.md",
+  "source_command": null,
+  "source_token": "2026-10-12T00-40-46Z",
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-6 Codex",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 9,
+    "suggestion": 2
+  },
+  "pushback_verification": "All eleven verified against the first proposal's artifacts: select required a change directory that does not exist at Phase 1; a bare fetch follows configured refspecs and tags; the delta-membership scope could sweep a pre-dirty spec; tail had no handoff; skip carried no commands; program took the latest record, not the latest URL-bearing one; publish wrote no emit between create and the record commit; commands mixed body steps and human acts; no head-mismatch outcome existed; the sweep missed spelling variants; after_merge contradicted itself. Four converge with the fresh half's findings and are stale here.",
+  "resolution_summary": {
+    "resolved": 7,
+    "stale_suppressed": 4,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Select cannot resolve a change before its artifacts exist",
+      "marker_source": "external",
+      "file": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md:43",
+      "line": null,
+      "classification": "trivial_fix",
+      "action": "repaired against the explored mechanism (D-rc12-10): select resolves <name> before any change directory exists, by a four-row inputs table (staging dir = consume mode with its citation, active change, standalone = uncited, invalid name = the one usage error); a scenario covers a staging-only cited exploration",
+      "evidence": "phase1.ts takes stagingDir and mode explicitly through Phase1Input; the first proposal's CLI took a change name only",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc12-engine-owned-choreography/design.md",
+          "orbit/changes/rc12-engine-owned-choreography/proposal.md",
+          "orbit/changes/rc12-engine-owned-choreography/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md",
+            "text": "BEFORE any change directory exists"
+          },
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md",
+            "text": "A staging-only cited exploration selects the program branch"
+          }
+        ],
+        "searched": [
+          "select",
+          "Phase1Input",
+          "stagingDir"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/explore.md",
+            "why": "the exploration record: its Decisions and Mechanism quote the first proposal's shapes and counts as explored"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Bare fetch does not guarantee that only remote-tracking refs move",
+      "marker_source": "external",
+      "file": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md:12",
+      "line": null,
+      "classification": "trivial_fix",
+      "action": "repaired against the explored mechanism (D-rc12-11): ls-remote decides which refs exist, then fetch --no-tags with one explicit refspec per existing ref; the allowlist names that exact form; a scenario covers a configured refs/heads refspec and remote tags; the residual is BOUNDED and stated",
+      "evidence": "git fetch follows remote.<name>.fetch and auto-follows tags unless the command line overrides them",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc12-engine-owned-choreography/design.md",
+          "orbit/changes/rc12-engine-owned-choreography/proposal.md",
+          "orbit/changes/rc12-engine-owned-choreography/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "moves remote-tracking refs and nothing else"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md",
+            "text": "so a configured `remote.<name>.fetch` refspec cannot redirect it and no tag is fetched"
+          },
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md",
+            "text": "A configured fetch refspec cannot move a local branch"
+          }
+        ],
+        "searched": [
+          "fetch",
+          "refspec",
+          "tags"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/explore.md",
+            "why": "the exploration record: its Decisions and Mechanism quote the first proposal's shapes and counts as explored"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Delta membership and Git dirtiness do not identify sync-owned edits",
+      "marker_source": "external",
+      "file": "orbit/changes/rc12-engine-owned-choreography/design.md:35",
+      "line": null,
+      "classification": "trivial_fix",
+      "action": "repaired against the explored mechanism (D-rc12-9): the scope is what the sync REPORTED (the archive emit's sync_specs.capabilities_updated), so a delta-named spec the sync did not change is out of it; edits inside a synced file that predate the sync are the owner's existing limit, stated in the requirement",
+      "evidence": "the archive emit records sync_specs.capabilities_updated from the sync's own report",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc12-engine-owned-choreography/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "changed in git exactly when the sync changed it"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md",
+            "text": "Edits inside a synced spec file that predate the sync are not distinguished"
+          },
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/design.md",
+            "text": "The engine keeps no state between the two invocations, and needs none"
+          }
+        ],
+        "searched": [
+          "delta-named",
+          "sync changed",
+          "dirty"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/explore.md",
+            "why": "the exploration record: its Decisions and Mechanism quote the first proposal's shapes and counts as explored"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Archive preflight has no defined handoff to tail",
+      "marker_source": "external",
+      "file": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md:110",
+      "line": null,
+      "classification": "stale",
+      "action": "converged with the fresh half's finding at the same site, walked in its log",
+      "evidence": "resolved in address-reviews-2026-10-12T00-54-05Z (the earlier pass's log), entry '`tail` never says where the PR identity it writes to comes from, or whether it observes again' — the same claim at the same site, repaired there",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The three-action contract cannot express partial PR degradation",
+      "marker_source": "external",
+      "file": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md:19",
+      "line": null,
+      "classification": "stale",
+      "action": "converged with the fresh half's finding at the same site, walked in its log",
+      "evidence": "resolved in address-reviews-2026-10-12T00-54-05Z (the earlier pass's log), entry 'The three-action table cannot express a degradation that skips only the PR half' — the same claim at the same site, repaired there",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Program discovery contradicts the latest URL-bearing record rule",
+      "marker_source": "external",
+      "file": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md:139",
+      "line": null,
+      "classification": "trivial_fix",
+      "action": "repaired against the explored mechanism (D-rc12-12): program reads the latest URL-BEARING record, falls through to the query after a positive invalidation or when no URL-bearing record exists; a scenario puts an older URL-bearing record behind a newer URL-less one",
+      "evidence": "Program PR (Shape A) semantics and the architect body's Step 5.5 take the most recent URL-bearing record",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc12-engine-owned-choreography/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "latest per-architecture record carries no"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md",
+            "text": "never merely the latest record"
+          },
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md",
+            "text": "A newer URL-less record does not mask an older URL"
+          }
+        ],
+        "searched": [
+          "URL-bearing",
+          "fall through",
+          "latest"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/explore.md",
+            "why": "the exploration record: its Decisions and Mechanism quote the first proposal's shapes and counts as explored"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Publish’s ordered commands cannot execute the attachment-record phase as specified",
+      "marker_source": "external",
+      "file": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md:74",
+      "line": null,
+      "classification": "trivial_fix",
+      "action": "repaired against the explored mechanism (D-rc12-8): publish prints two segments; the second takes <emit-path> as an input, after the body writes the emit from segment 1's result, and its commit is --only with -F <message-file>; task 4.2 writes a real emit between the segments",
+      "evidence": "the first proposal's list ran gh pr create then git add <emit-path> with nothing writing the emit between",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc12-engine-owned-choreography/tasks.md",
+          "orbit/changes/rc12-engine-owned-choreography/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "then the attachment record:"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md",
+            "text": "the attachment record, after the body writes the propose or ff emit from segment 1's result"
+          },
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md",
+            "text": "`git commit --only <emit-path> -F <message-file>`"
+          }
+        ],
+        "searched": [
+          "emit-path",
+          "attachment record"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/explore.md",
+            "why": "the exploration record: its Decisions and Mechanism quote the first proposal's shapes and counts as explored"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Human-only commands and program body reads conflict with the generic execution contract",
+      "marker_source": "external",
+      "file": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md:144",
+      "line": null,
+      "classification": "stale",
+      "action": "converged with the fresh half's finding at the same site, walked in its log",
+      "evidence": "resolved in address-reviews-2026-10-12T00-54-05Z (the earlier pass's log), entry '`commands` is defined as 'the writes' but also carries reads and copy-text' — the same claim at the same site, repaired there",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Validation’s closed outcome set omits a required predicate failure",
+      "marker_source": "external",
+      "file": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md:96",
+      "line": null,
+      "classification": "trivial_fix",
+      "action": "repaired against the explored mechanism (D-rc12-12): preflight's outcome is one closed seven-row table (valid; the five predicate failures incl. head-mismatch; not-found; discovered; none and several; unobserved; gh-absent), each row naming its action and emit values",
+      "evidence": "the four predicates are repository, head, base, open; the first proposal listed no head failure",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc12-engine-owned-choreography/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "`retargeted to <base>`"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md",
+            "text": "`closed`, `merged`, `retargeted`, `head-mismatch`, `repository-mismatch`"
+          }
+        ],
+        "searched": [
+          "head",
+          "validation",
+          "outcome"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/explore.md",
+            "why": "the exploration record: its Decisions and Mechanism quote the first proposal's shapes and counts as explored"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The retirement sweep misses explicit zero-engine-git statements",
+      "marker_source": "external",
+      "file": "orbit/changes/rc12-engine-owned-choreography/tasks.md:32",
+      "line": null,
+      "classification": "stale",
+      "action": "converged with the fresh half's finding at the same site, walked in its log",
+      "evidence": "resolved in address-reviews-2026-10-12T00-54-05Z (the earlier pass's log), entry 'The zero-engine-git sweep is both too wide and too narrow' — the same claim at the same site, repaired there",
+      "outcome": "stale"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The return-to-default wording contradicts itself",
+      "marker_source": "external",
+      "file": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md:121",
+      "line": null,
+      "classification": "trivial_fix",
+      "action": "repaired against the explored mechanism (D-rc12-8): the post-merge return and the PR merge are human_acts on tail, never run; the old self-contradicting sentence is gone",
+      "evidence": "the first proposal's tail requirement printed git merge --ff-only and then said the engine never prints a merge",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc12-engine-owned-choreography/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "facts.after_merge",
+          "The engine never prints a merge"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md",
+            "text": "`human_acts` carries the PR merge"
+          }
+        ],
+        "searched": [
+          "after_merge",
+          "never prints a merge"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/explore.md",
+            "why": "the exploration record: its Decisions and Mechanism quote the first proposal's shapes and counts as explored"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": "walk all",
+  "final_assessment": "Seven resolved as repairs against the record redesigned in the exploration (D-rc12-8 to -12: select's inputs table, the bounded fetch, the scope from the sync's report, the URL-bearing record rule, publish's two segments, the closed preflight outcome set, human_acts); four stale as converged with the fresh half's findings, resolved in its log.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal rc12-engine-owned-choreography",
+  "ripple_misses": 0
+}

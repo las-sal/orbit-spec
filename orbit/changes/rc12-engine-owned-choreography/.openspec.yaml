@@ -1,9 +1,10 @@
 schema: spec-driven
 created: 2026-10-12
 schema_version: 5
-base_fingerprints:
-  orbit-pr-lifecycle:
-    PR actions are workflow-body choreography (zero engine git): sha256:fda2aaa38260ae87556bea4960b734ed21b1d7e3d890875fb1bbe63b0322e3d2
 architecture:
   doc: clean-up-review-cycle
   stage: rc12-engine-owned-choreography
+base_fingerprints:
+  orbit-pr-lifecycle:
+    PR actions are workflow-body choreography (zero engine git): sha256:fda2aaa38260ae87556bea4960b734ed21b1d7e3d890875fb1bbe63b0322e3d2
+    Test instruments derive from a recorded real-CLI contract: sha256:3a610dea7adba2d1314d88d94b27f9f11bb9e016533f4e062c7002d4dd200e81

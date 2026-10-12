@@ -6,16 +6,24 @@ This is the first of rc12's two changes (Q-crc-9's pre-split): the engine comman
 
 ## What Changes
 
-- **A new command group, `orbit pr`, OBSERVES and PRINTS, and never writes** (D-rc12-2). Each subcommand runs the read-only `git` and `gh` queries its seam needs. It reports the facts and a decision (`proceed`, `skip` with a one-line note, or `off`), and prints the exact write commands the body runs, as argument vectors. The engine creates no branch, commit, push or PR, and switches nothing. Its one ref-store update is `git fetch` of the resolved remote, which moves remote-tracking refs and nothing else.
+- **A new command group, `orbit pr`, OBSERVES and PRINTS, and never writes** (D-rc12-2). Each subcommand runs the read-only `git` and `gh` queries its seam needs and prints one record (D-rc12-8):
+  - `action` (`off`, `skip` or `proceed`) and a closed `reason` code;
+  - `degraded: "pr"` when only the PR half falls and the seam's own commit and push still stand;
+  - `observations`;
+  - `segments`, the body-run writes as argv arrays, split wherever the body must author something first (a commit message, a title, the emit);
+  - `human_acts`, the user's alone.
+
+  The engine creates no branch, commit, push or PR, and switches nothing. Its one ref-store update is a bounded fetch: `ls-remote`, then explicit refspecs with `--no-tags` (D-rc12-11).
+- **The engine decides skips that an owner precondition decides, and the body writes every note** from the reason code (D-rc12-13). This narrows R-crc-5's "degradation notes, when to skip", ratified by Sal.
 - **Five subcommands, one per seam step:**
-  - `select <change>` covers propose and ff Phase 1. It reads the regime, resolves the remote and default branch, applies the branch preconditions, and prints the switch.
-  - `publish <change>` covers Phase 3. It computes the enumerated commit scope from disk, makes the no-CI observation, runs the program path's four-axis adopt-or-create query, and prints commit, push and draft-PR creation with the title and body left as placeholders.
-  - `preflight <change>` is the archive's read-only preflight. It reads the attachment, notes citation divergence, validates the stored URL live against the four predicates with a specific reason, runs the fallback query, and gives the values `pr_url` and `pr_state` take.
-  - `tail <change>` covers the archive tail. It checks the `gh` and HEAD preconditions, computes the commit scope from the delta's capabilities (body-named at-archive paths join through `--include`), and prints commit, push, the description write and the READY flip, plus the return-to-default lines after the merge.
-  - `program <doc>` is the architect readout's resolution, record validation and query.
-- **The dogfood's silences are fixed in the printed form.** Creation is `--no-track`, so the branch never tracks the default. The push is spelled out (`git push -u <remote> <branch>`). The PR-validation command exists. A return to the default branch is printed for after the merge.
-- **The test instrument is promoted.** `test/integration/pr-lifecycle/phase1.ts`, D6's executable transcription of Phase 1, is retired into the engine module. Its 33 cases move to the engine's tests, which run each printed command against a real repository with a bare remote and the contract-validated `gh` stub, so a command git will not perform fails the suite. A PATH shim records every `git` and `gh` invocation the engine makes and fails on any outside the read-only allowlist. That is exit (3)'s check.
-- **The zero-engine-git requirement is MODIFIED**, not removed: the engine observes, the body writes. Every outward act and every local write stays a body step, run under the user's own invocation.
+  - `select <name>` covers propose and ff Phase 1. It needs no change directory: an exploration's presence decides consume mode and supplies the citation (D-rc12-10).
+  - `publish <change>` covers Phase 3. It prints two segments: land and open, then the attachment record once the body has written the emit. It computes the commit scope and the no-CI observation, and runs the program path's adopt-or-create query; several survivors or an error degrade the PR half.
+  - `preflight <change>` is the archive's read-only preflight. Its outcome comes from a closed set (D-rc12-12), and `not-found` is keyed on `gh`'s recorded message.
+  - `tail <change>` covers the archive tail. It reads preflight's observation and the sync's changed capabilities from the written archive emit, and never observes again (D-rc12-9).
+  - `program <doc>` covers the architect readout. It never skips, and follows the latest URL-bearing record rule.
+- **The dogfood's silences are fixed in the printed form.** Creation is `--no-track`. The push is spelled `git push -u <remote> <branch>`. The validation command exists. The post-merge return is a human act.
+- **The test instrument is promoted.** `test/integration/pr-lifecycle/phase1.ts`, D6's executable transcription of Phase 1, is retired into the engine module, along with its `ghurl` test hook. Its 39 cases move to the engine's tests, which run each segment against a real repository with a bare remote and the contract-validated `gh` stub. A PATH shim fails the suite on any engine invocation outside the read-only allowlist; that is exit (3)'s check. Injected cases show the instrument can fail.
+- **The zero-engine-git requirement is MODIFIED**, not removed: the engine observes, the body writes. Its title is kept and names the write boundary.
 
 ## Capabilities
 
@@ -26,13 +34,14 @@ This is the first of rc12's two changes (Q-crc-9's pre-split): the engine comman
 ### Modified Capabilities
 
 - `orbit-pr-lifecycle`:
-  - ADDED `The \`orbit pr\` command observes and prints; it never writes`: the subcommand set, the read-only allowlist, the fetch exception, the output shape, regime and attachment gating, `gh` absence as its own fact.
+  - ADDED `The \`orbit pr\` command observes and prints; it never writes`: the allowlist, the bounded fetch, the record, the actions, the R-crc-5 narrowing.
   - ADDED one requirement per subcommand (five). Each POINTS at the rule it computes in its owner (`orbit-propose-modifications`' `Branch preconditions at propose` and `PR choreography at propose (config-gated)`, `orbit-archive-modifications`' `PR-attached archive tail`, this capability's `Program PR (Shape A) semantics` and `Remote and default-branch resolution`) and never restates it (R-crc-14).
   - ADDED `Printed commands are proven by execution`: the instrument.
   - MODIFIED `PR actions are workflow-body choreography (zero engine git)`: the engine observes, the body writes.
+  - MODIFIED `Test instruments derive from a recorded real-CLI contract`: a third recorded error rule, the not-found message.
 
 ## Impact
 
-- New `src/core/pr/` (resolution, the five plans, the shared runner with its allowlist) and `src/commands/pr.ts`. Registration goes in `src/cli/program.ts` and `src/core/completions/command-registry.ts`.
-- `test/integration/pr-lifecycle/phase1.ts` is retired; `phase1.test.ts` moves to the engine's tests. `harness.ts` gains scripted `gh pr view` responses and a git PATH shim.
-- No workflow body, template or reference changes; that is change 2. No schema version, config or emit-shape change.
+- New `src/core/pr/` (record, runner, resolution, the five plans) and `src/commands/pr.ts`. Registration goes in `src/cli/program.ts` and `src/core/completions/command-registry.ts`.
+- `test/integration/pr-lifecycle/phase1.ts` and `phase1.test.ts` are retired into the engine's tests. `harness.ts` gains GitHub-shaped remotes, scripted `gh pr view`/`pr list` responses and the git shim. `gh-contract.json` and its capture script gain the not-found rule.
+- No workflow body, template or reference changes; that is change 2. No schema version, config or emit-shape change. The tail reads the archive emit's existing `pr_url`, `pr_state` and `sync_specs` fields.

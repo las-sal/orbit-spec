@@ -1,0 +1,559 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-12T00:54:05Z",
+  "change": "rc12-engine-owned-choreography",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc12-engine-owned-choreography/.orbit-runs/review-proposal-2026-10-12T00-40-25Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-12T00-40-25Z",
+  "latest_apply_token": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 8,
+    "suggestion": 4
+  },
+  "pushback_verification": "All twelve verified against the first proposal's artifacts and the owners they point at: both PR owners keep the commit and push when only the PR half falls; tail named no source for its URL; the scope phrase was ambiguous for an untracked spec; not-found had no discriminator; program contradicted the never-suppressed readout; vitest lists 39 cases; R-crc-5's letter moved unrecorded; the sweep grep hit template text and missed the Purpose; phase1.ts reads ghurl; off carried no note owner; the meta-scenarios had no failing fixture; commands mixed writes, reads and copy-text.",
+  "resolution_summary": {
+    "resolved": 12,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The three-action table cannot express a degradation that skips only the PR half",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-pr-lifecycle/spec.md",
+      "line": 19,
+      "classification": "trivial_fix",
+      "action": "repaired against the explored mechanism (explore.md D-rc12-8..13 (the redesign lane, run before this walk; exploration emit explore-2026-10-12T00-46-47Z), D-rc12-8): a proceed may carry degraded \"pr\", whose segments omit the PR steps while the seam's own commit and push stand; publish's several and query-error outcomes and every positive invalidation at preflight and tail are degradations, not skips",
+      "evidence": "re-read both owners: orbit-archive-modifications' PR-attached archive tail keeps the commit and push on a positive invalidation; orbit-propose-modifications' PR choreography skips only the PR step on several or error",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc12-engine-owned-choreography/design.md",
+          "orbit/changes/rc12-engine-owned-choreography/proposal.md",
+          "orbit/changes/rc12-engine-owned-choreography/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "Several and query error are skips",
+          "a precondition or a degradation, per the rule's owner"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md",
+            "text": "whose PR half is removed while the subcommand's own writes stand"
+          },
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md",
+            "text": "A query error lands the work and creates nothing"
+          }
+        ],
+        "searched": [
+          "skip",
+          "Several and query error",
+          "COMMIT and PUSH still proceed"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/explore.md",
+            "why": "the exploration record: its Decisions and Mechanism quote the first proposal's shapes and counts as explored"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "`tail` never says where the PR identity it writes to comes from, or whether it observes again",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-pr-lifecycle/spec.md",
+      "line": 119,
+      "classification": "trivial_fix",
+      "action": "repaired against the explored mechanism (D-rc12-9): tail reads preflight's one observation from the written archive emit's pr_url / pr_state, by a four-row table, and never observes again",
+      "evidence": "the archive payload table carries pr_url and pr_state (src/core/emit-composition.ts); the archive body runs the preflight at Step 5.45, before the emit, and the tail after it",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc12-engine-owned-choreography/design.md",
+          "orbit/changes/rc12-engine-owned-choreography/proposal.md",
+          "orbit/changes/rc12-engine-owned-choreography/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md",
+            "text": "It never observes the PR again: preflight's one observation reaches it through the WRITTEN archive emit"
+          }
+        ],
+        "searched": [
+          "tail",
+          "<url>",
+          "already-ready"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/explore.md",
+            "why": "the exploration record: its Decisions and Mechanism quote the first proposal's shapes and counts as explored"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "`tail` scope's 'git reports as changed' is ambiguous for a capability the archive ADDS",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-pr-lifecycle/spec.md",
+      "line": 114,
+      "classification": "trivial_fix",
+      "action": "repaired against the explored mechanism (D-rc12-9): tail's scope is the spec file of each capability in the same emit's sync_specs.capabilities_updated, new, untracked or modified; a scenario covers an ADDED capability",
+      "evidence": "archive-summary-schema.md documents sync_specs.capabilities_updated; an ADDED capability's spec is untracked after the sync",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc12-engine-owned-choreography/design.md",
+          "orbit/changes/rc12-engine-owned-choreography/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "git reports as changed"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md",
+            "text": "for each capability in the same emit's `sync_specs.capabilities_updated`, whether new, untracked or modified"
+          }
+        ],
+        "searched": [
+          "git reports as changed",
+          "capabilities_updated",
+          "untracked"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/explore.md",
+            "why": "the exploration record: its Decisions and Mechanism quote the first proposal's shapes and counts as explored"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "`preflight` gives no rule separating `not found` from a failed query",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-pr-lifecycle/spec.md",
+      "line": 96,
+      "classification": "trivial_fix",
+      "action": "repaired against the explored mechanism (D-rc12-12): not-found is keyed on the message gh gives for a missing pull request, recorded by the capture as a third contract error rule (the MODIFIED Test instruments requirement); any other non-zero exit is unobserved; a scenario puts the two side by side",
+      "evidence": "gh-contract.json's rules block records two error strings; scripts/capture-gh-contract.mjs captures them from the real CLI",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc12-engine-owned-choreography/design.md",
+          "orbit/changes/rc12-engine-owned-choreography/proposal.md",
+          "orbit/changes/rc12-engine-owned-choreography/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "`validation` (`valid`, or the specific reason"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md",
+            "text": "exits non-zero with the recorded \"could not resolve\" message"
+          },
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md",
+            "text": "the message `gh pr view` gives for a pull request that does not exist"
+          }
+        ],
+        "searched": [
+          "not found",
+          "not-found",
+          "unobserved"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/explore.md",
+            "why": "the exploration record: its Decisions and Mechanism quote the first proposal's shapes and counts as explored"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "`program` under the action table contradicts the never-suppressed arc-done readout",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-pr-lifecycle/spec.md",
+      "line": 135,
+      "classification": "trivial_fix",
+      "action": "repaired against the explored mechanism (D-rc12-12): program SHALL never skip; unobserved or gh-absent is proceed with the record's URL and state unverified; several carries candidates; the absent-gh scenario now names the four gated subcommands that degrade",
+      "evidence": "Program PR (Shape A) semantics and the architect body's Step 5.5 both say the readout is never suppressed and surfaces an unverified state",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc12-engine-owned-choreography/design.md",
+          "orbit/changes/rc12-engine-owned-choreography/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "this one subcommand prints a merge"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md",
+            "text": "and SHALL NEVER skip, because that readout is never suppressed"
+          },
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md",
+            "text": "`select`, `publish`, `preflight` or `tail` runs past its gate with no `gh` on PATH"
+          }
+        ],
+        "searched": [
+          "program",
+          "never suppressed",
+          "state unverified"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/explore.md",
+            "why": "the exploration record: its Decisions and Mechanism quote the first proposal's shapes and counts as explored"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "'33 cases' is stale, and one of them is not a `select` case",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 7,
+      "classification": "trivial_fix",
+      "action": "repaired: the count is 39 (vitest list), stated in the spec, design and task 4.1; the commit-isolation case moves to publish's tests",
+      "evidence": "npx vitest list over phase1.test.ts lists 39 tests, per the finding; the commit-isolation describe tests git commit --only",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md",
+          "orbit/changes/rc12-engine-owned-choreography/proposal.md",
+          "orbit/changes/rc12-engine-owned-choreography/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "33 cases"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/design.md",
+            "text": "driven by 39 cases in `phase1.test.ts`"
+          },
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/tasks.md",
+            "text": "the commit-isolation case to `test/core/pr/publish.test.ts`"
+          }
+        ],
+        "searched": [
+          "33",
+          "commit isolation"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/explore.md",
+            "why": "the exploration record: its Decisions and Mechanism quote the first proposal's shapes and counts as explored"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Engine-decided skips and engine-written notes go past R-crc-5's judgment list without a record",
+      "marker_source": "internal-review",
+      "file": "proposal.md",
+      "line": 9,
+      "classification": "decision_required",
+      "action": "applied Sal's ratified direction (explore.md D-rc12-13): the engine emits a closed reason code and the body writes every note; a skip an owner precondition decides is the engine's, recorded in the spec as a narrowing of R-crc-5's letter",
+      "evidence": "R-crc-5 (clean-up-review-cycle.md) lists degradation notes and when to skip as body judgment; the first proposal moved both without a record",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc12-engine-owned-choreography/design.md",
+          "orbit/changes/rc12-engine-owned-choreography/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md",
+            "text": "That narrows R-crc-5's \"degradation notes, when to skip\""
+          }
+        ],
+        "searched": [
+          "R-crc-5",
+          "degradation notes",
+          "when to skip"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/explore.md",
+            "why": "the exploration record: its Decisions and Mechanism quote the first proposal's shapes and counts as explored"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "resolution": "Option B for notes (reason codes; the body writes the note) and a recorded narrowing for precondition skips — Sal: will take your rec, in the explore session of 2026-10-12"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The zero-engine-git sweep is both too wide and too narrow",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 32,
+      "classification": "trivial_fix",
+      "action": "repaired: design D10 enumerates every site with its disposition (edited here, edited at archive, kept with a reason, or change 2's), and task 5.1 applies D10 instead of an open grep",
+      "evidence": "grep over orbit/specs, src and CLAUDE.md: the pr-lifecycle Purpose, orbit-archive-modifications' move sentence, orbit-review's title citation, pr-choreography.ts, CLAUDE.md's D6 paragraph",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc12-engine-owned-choreography/tasks.md",
+          "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "any other site the grep for `zero-engine-git` finds"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/design.md",
+            "text": "Each site gets an explicit disposition"
+          },
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/tasks.md",
+            "text": "Apply design D10's sweep dispositions"
+          }
+        ],
+        "searched": [
+          "zero-engine-git",
+          "ZERO git",
+          "zero engine git",
+          "never shells to git"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/explore.md",
+            "why": "the exploration record: its Decisions and Mechanism quote the first proposal's shapes and counts as explored"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "phase1.ts carries a harness hook (`git config remote.<r>.ghurl`) that would be promoted into the engine",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 33,
+      "classification": "trivial_fix",
+      "action": "repaired: the harness's remotes carry GitHub-shaped URLs, so the ghurl hook is retired with phase1.ts and no test hook ships in src/; config left the allowlist",
+      "evidence": "phase1.ts:99 reads remote.<r>.ghurl before remote get-url",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc12-engine-owned-choreography/design.md",
+          "orbit/changes/rc12-engine-owned-choreography/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "`config --get`"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md",
+            "text": "in place of the transcription's `remote.<r>.ghurl` setting"
+          },
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/tasks.md",
+            "text": "retiring the `remote.<r>.ghurl` hook"
+          }
+        ],
+        "searched": [
+          "ghurl",
+          "config --get"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/explore.md",
+            "why": "the exploration record: its Decisions and Mechanism quote the first proposal's shapes and counts as explored"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "`off` on an unattached archive carries no note; say who writes the unattached line",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-pr-lifecycle/spec.md",
+      "line": 18,
+      "classification": "trivial_fix",
+      "action": "repaired: an unattached change is off with no reason, and the spec says the body writes the unattached line from off together with the pr regime",
+      "evidence": "PR entry points' scenario new/continue reaches archive unattached requires the line",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md",
+            "text": "it writes that line from `off` together with the `pr` regime it reads from `orbit status --json`"
+          }
+        ],
+        "searched": [
+          "unattached"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/explore.md",
+            "why": "the exploration record: its Decisions and Mechanism quote the first proposal's shapes and counts as explored"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Two meta-scenarios need a deliberately broken fixture before 4.6 can tag them",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 30,
+      "classification": "trivial_fix",
+      "action": "repaired: the instrument requirement and task 1.3 carry injected cases showing the step runner and the allowlist assertion can each fail",
+      "evidence": "the two meta-scenarios describe the suite failing; tagging them needs a case that fails on purpose",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc12-engine-owned-choreography/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md",
+            "text": "Injected cases prove the instrument can fail"
+          },
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/tasks.md",
+            "text": "add the two injected-failure cases that show each can fail"
+          }
+        ],
+        "searched": [
+          "injected",
+          "fails the suite"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/explore.md",
+            "why": "the exploration record: its Decisions and Mechanism quote the first proposal's shapes and counts as explored"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "`commands` is defined as 'the writes' but also carries reads and copy-text",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-pr-lifecycle/spec.md",
+      "line": 119,
+      "classification": "trivial_fix",
+      "action": "repaired against the explored mechanism (D-rc12-8): the flat commands field is replaced by observations (reads a later step consumes, incl. the program PR's current body), segments (body-run argv with authored inputs) and human_acts (the user's, never run)",
+      "evidence": "the first proposal's program requirement called its commands text the user copies, and tail put a read in commands",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc12-engine-owned-choreography/design.md",
+          "orbit/changes/rc12-engine-owned-choreography/proposal.md",
+          "orbit/changes/rc12-engine-owned-choreography/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the writes, in the order the body runs them",
+          "`commands` carries"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md",
+            "text": "the user performs. They are never run by the body, and never by a test"
+          }
+        ],
+        "searched": [
+          "commands",
+          "after_merge",
+          "human"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/explore.md",
+            "why": "the exploration record: its Decisions and Mechanism quote the first proposal's shapes and counts as explored"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": "walk all",
+  "final_assessment": "Twelve resolved. Six are repairs against the record redesigned in the exploration before this walk (D-rc12-8, -9, -12: degraded PR halves, segments with authored inputs, the tail reading the archive emit, the closed outcome sets, program never skipping); one applies Sal's ratified narrowing of R-crc-5 (D-rc12-13); five are local repairs (the 39-case count, the sweep's site list, the ghurl hook, the unattached-line owner, the injected-failure cases).",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc12-engine-owned-choreography",
+  "ripple_misses": 0
+}
