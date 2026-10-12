@@ -1,0 +1,161 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-12T15:03:48Z",
+  "change": "docs-under-test",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 5,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-user-docs/spec.md",
+      "line": 49,
+      "title": "The admitted on-disk identifiers omit the global data directory the tool still writes",
+      "recommendation": "D-dut-1 admits on-disk names because 'a doc that renamed them would be wrong' (R-ugd-1), but admits only `.openspec.yaml` and `~/.config/openspec`. src/core/global-config.ts:8 sets GLOBAL_DATA_DIR_NAME = 'openspec', and getGlobalDataDir() writes `~/.local/share/openspec/` (user schema overrides), which today's docs already document at docs/cli.md:844, docs/customization.md:272 and docs/opsx.md:579; the XDG and Windows forms of both directories (`$XDG_CONFIG_HOME/openspec`, `%APPDATA%/openspec`, `$XDG_DATA_HOME/openspec`, `%LOCALAPPDATA%/openspec`) are likewise unadmitted. A reference-docs rewrite that documents the schema-override path truthfully fails the residue check, so the check pushes the docs toward the wrong path. D-dut-1 is Sal-ratified, so widening it is a scope call.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Add the data directory as a fifth admitted identifier (`~/.local/share/openspec`) and state the XDG/Windows forms as admitted or as a named limit; carry the same widening into D-dut-1's Mechanism table and its READ line."
+        },
+        {
+          "label": "B",
+          "body": "Keep four places and add the data directory and the platform forms to the requirement's named limit, saying the rewritten docs must not name them (a scope cut on what the docs document)."
+        }
+      ]
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "design.md",
+      "line": 49,
+      "title": "D4 names owner-text.ts as the lookup the inventory test uses; the inventory test has its own",
+      "recommendation": "test/core/cli-grammar/tool-inventory.test.ts reads its fence through its own `inventorySource` (lines 63-79: active deltas holding the heading under ADDED/MODIFIED, `archive` skipped, two holders throw) and never imports test/helpers/owner-text.ts, whose `ownerText(capability, anchor)` matches a substring anywhere in the file and returns the whole file. The two lookups disagree (e.g. a delta that merely mentions the title in prose is a holder for ownerText and not for inventorySource), so an implementer following D4 and task 3.2 literally builds a different lookup from the one D4 says it mirrors. Name one: either extract inventorySource into a shared helper and use it for both fences, or say the docs fence uses ownerText and state its holder rule. Repair task 3.2's wording to match."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-user-docs/spec.md",
+      "line": 88,
+      "title": "The empty docs-inventory fence fails the line grammar it is said to share",
+      "recommendation": "The requirement says the fence is read 'in that requirement's line grammar' and 'starts EMPTY'. The shipped reader (tool-inventory.test.ts readInventory) splits fence.content after stripping one trailing newline; for an empty fence markdown-it gives content \"\", which splits to [\"\"], and \"\" does not match `^([^:\\s]+): (\\S+(?: \\S+)*)$`, so reusing the grammar as written reports a malformed line on day one. Also unstated for the docs fence: whether an absent fence, a second fence, a repeated kind or a repeated head fails and what it names (the generated fence's requirement states all of these). State that zero lines is a legal block, and either point at orbit-cli-grammar's malformed-block rules as applying to this fence or restate which apply."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "design.md",
+      "line": 33,
+      "title": "workflowId 'docs' makes every failure name a path that does not exist",
+      "recommendation": "Every sweep names a surface through describeSurface (test/helpers/surface-snippets.ts:92), which returns `${workflowId}/${file}`. With D1's workflowId 'docs' and file the repo-relative path, README.md is reported as `docs/README.md` (a path that does not exist; the README is at the root) and docs/cli.md as `docs/docs/cli.md`. The delta scenarios require failures 'naming the file'. State how a doc surface is described: e.g. describeSurface returns `file` alone when workflowId is 'docs' (or an empty workflowId), and add an assertion on the exact name in task 3.3's injected cases."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-cli-grammar/spec.md",
+      "line": 180,
+      "title": "The recorded contracts are captured from the generated surface only, so a doc-only git or gh command can never validate",
+      "recommendation": "The MODIFIED git/gh requirement widens the sweep to unlisted docs but keeps the capture's candidate set as 'every `git` segment the shared extractor finds on the generated surface' (scripts/capture-git-contract.capture.ts:101 reads generatedSurfaces()). A rewritten doc writing a git command or flag no skill writes (`git clone <url>`, `git log --oneline`) fails with the validator's re-capture hint, and re-capture cannot add it; the gh contract is likewise a fixed seven-command capture. Today's docs carry no git, so the trap is latent until a rewrite stage writes one. Widen the capture's candidate set in the same block to the generated surface plus every user doc (all of them, so a stage can capture before unlisting), and say what a doc-only gh command does (recapture via capture:gh's command list, or a named limit).",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Widen the git capture's candidate set to the user docs in this delta (and the capture script in tasks); state gh's equivalent."
+        },
+        {
+          "label": "B",
+          "body": "Keep the capture generated-only and add a named limit: the docs may write only git/gh commands and flags the generated surface already records."
+        }
+      ]
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "specs/orbit-user-docs/spec.md",
+      "line": 119,
+      "title": "Floors go active when the list empties, but their values are set by a later stage that does not carry the obligation",
+      "recommendation": "The floors are 'active once the pending-rewrite list is empty' and their values 'are set at the program's public-readiness stage'. public-readiness Depends-on all three rewrite stages, so whichever rewrite stage removes the last file activates the floors before public-readiness runs, with D5's placeholders, whose value the design leaves undefined (0 is vacuous; a high value turns the suite red at that stage). And the public-readiness charter and exits in orbit/architecture/update-gh-documentation.md say nothing about floors, so the obligation has no carrier. Either have the stage that empties the list set the floors from its measured counts (state it in the requirement and offer it to the program doc), or gate activation on the floors being set rather than on the list being empty and add setting them to public-readiness's charter."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "design.md",
+      "line": 75,
+      "title": "The design says each widened body states the domain in its first sentence and keeps the title as identity; two of three do not",
+      "recommendation": "Only the `orbit` snippet requirement carries the '(the title keeps \"the generated surface\" as the requirement's identity …)' parenthetical. The git/gh requirement adds the docs mid-sentence without it, and the inventory requirement's first paragraph still defines 'The surface is every generated SKILL.md …', with the docs added only in a new second paragraph. Either add the identity note and a first-sentence domain to the other two, or narrow the Risks line to what the deltas do."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "specs/orbit-user-docs/spec.md",
+      "line": 45,
+      "title": "The admitted-section rows say 'prose under' while the text admits everything, and the section end is loosely stated",
+      "recommendation": "Rows 1-2 say 'prose under the README.md heading', but the paragraph below says 'everything in it, fenced or not, is admitted'. Say 'anything under'. 'The next heading of the same or a higher level' reads either way ('higher level' as more #s or fewer); state it as 'the next heading whose level is at most the admitted heading's', and say whether a setext heading ends a section (the rule names ATX only)."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "tasks.md",
+      "line": 13,
+      "title": "No task shows a floor able to fail, and the list path is not injectable for it",
+      "recommendation": "Design Goals say each check is shown able to fail, and the scenario 'A vacuous sweep fails once the list is empty' needs a test, but D7's injected cases and task 3.3 omit the floors, and D1/D2 fix the list at test/core/user-docs/pending-rewrite.json. Have docSurfaces() and the floor guard take the list (and the floor) as parameters, and add an injected empty-list case below the floor to task 3.3."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "The deltas to orbit-cli-grammar are clean additions: all three MODIFIED blocks diff against the baseline as added sentences and added scenarios only, with no baseline scenario dropped. The exploration's decisions are sound and the Mechanism tables carry through to the specs. The findings cluster where the new surface meets machinery built for the generated surface alone: the surface naming function, the contract captures' candidate sets, the fence reader's handling of an empty block, and the lookup design D4 names. Each is a place where the design reasoned from the analysers taking Surface[] without reading the code around them. The one finding about meaning rather than mechanism is the admitted identifiers: the global data directory is a second on-disk name the tool still writes, and today's docs document it.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The design holds: a pending-rewrite file list exact both ways, per-surface fences, and floors deferred until the docs exist are the right shape for a check that has to ship ahead of the rewrite. Nothing here breaks a user path. The warnings are repairs to how the docs surface plugs into helpers written for skills, plus one scope call for Sal on whether the data directory is an admitted name. Settle those in the walk and the stage is ready to implement."
+  },
+  "final_assessment": "0 critical, 6 warning, 3 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews docs-under-test"
+}
