@@ -198,6 +198,7 @@ describe('publish — staged deletions and renames inside the change', () => {
 });
 
 describe('publish — the per-proposal path, end to end', () => {
+  // @scenario behaviour orbit-pr-lifecycle :: Config selects the regime; citation selects the target :: Uncited change gets its own branch
   it('segment 1 lands and opens a draft; the emit is written from the URL it printed; segment 2 lands the record', () => {
     const repo = orbitRepo('per-proposal', { gh: { createdUrl: 'https://github.com/acme/widget/pull/7' } });
     selectAndGenerate(repo, 'add-thing');
@@ -275,6 +276,7 @@ describe('publish — the program path\'s adopt-or-create query', () => {
     });
   });
 
+  // @scenario behaviour orbit-pr-lifecycle :: Config selects the regime; citation selects the target :: Cited change rides the program branch
   it('zero survivors: the program PR is created', () => {
     const repo = programRepo([pr(4, 'release')]);
     const { record } = publish(repo, 'stage-two');
@@ -282,6 +284,9 @@ describe('publish — the program path\'s adopt-or-create query', () => {
     const { emitRel, createdUrl } = runPublish(repo, 'stage-two', record);
     expect(createdUrl).toBe('https://github.com/acme/widget/pull/9');
     expect(onRemote(repo, 'my-program', emitRel!)).toBe(true);
+    // The cited change rides the program branch: no branch of its own, and the one PR is the program's.
+    expect(repo.git('rev-parse', '--verify', '-q', 'refs/heads/stage-two').status).not.toBe(0);
+    expect(repo.ghLog().filter((c) => c.args[1] === 'create').map((c) => c.args[c.args.indexOf('--head') + 1])).toEqual(['my-program']);
   });
 
   it('several survivors: proceed, degraded, every candidate in detail, the work lands and nothing is created; the emit stays local', () => {

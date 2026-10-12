@@ -10,3 +10,6 @@ base_fingerprints:
     PR actions are workflow-body choreography (zero engine git): sha256:c0784b88d79d3cc7026bb800b70d5b9ce61157aef7be21312108fe316e3170a6
     "`orbit pr preflight` computes the archive's read-only preflight": sha256:2fa4d3ea1d6654c28778c8c1db21b06cf610066a0b4e5fd5f0596e5771c4bfa0
     Config selects the regime; citation selects the target: sha256:a45d608b79d5c263bc422b3ce447f7397ba92291fe646996b4f5beb3825b337e
+  orbit-cli-grammar:
+    Every `git` and `gh` snippet on the generated surface validates against its tool's recorded contract: sha256:a6dd07b34aead0f1dde74b2ff83b0a00deb24bb854599ac18f82bb663bb49b5a
+    Every command head on the generated surface is a recorded tool or a declared exemption: sha256:92dd6c6d44b924f46d3d668307c6e6e575a75765f4c351639b42f0b355c9cb5c

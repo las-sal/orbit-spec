@@ -522,22 +522,27 @@ describe('D6 PR lifecycle surface', () => {
     expect(a).toBe(b);
   });
 
-  it('archive ships the tail reference', () => {
-    expect(reference(archive, 'pr-archive-tail.md')).toContain('The read-only PR preflight');
+  // MOVED by rc12-body-adoption (task 3.2), a recorded act: the shared resolution section left
+  // all three references (every `orbit pr` subcommand resolves internally), so the byte-identity
+  // pin is replaced by what each reference now owes: the call at each step, no runbook.
+  it('archive ships the tail reference: preflight before the move, tail after the emit', () => {
+    const tail = reference(archive, 'pr-archive-tail.md');
+    expect(tail).toContain('## Preflight, before the move');
+    expect(tail).toContain('orbit pr preflight <name> --json');
+    expect(tail).toContain('orbit pr tail <name> --outcome <outcome> --include <path> --json');
   });
 
-  it('both references carry the ONE shared resolution algorithm, byte-identical', () => {
+  it('the references call `orbit pr` and carry none of the runbook the engine computes', () => {
     const choreography = reference(propose, 'pr-choreography.md');
     const tail = reference(archive, 'pr-archive-tail.md');
-    const marker = '## Remote and default-branch resolution (SHARED — both seams)';
-    expect(choreography).toContain(marker);
-    expect(tail).toContain(marker);
-    // The shared section runs from its heading to the next heading in each reference: the
-    // config-order gate in the attaching seams' reference, the preflight in the tail's.
-    const seamSlice = (s: string) => s.slice(s.indexOf(marker), s.indexOf('## Config resolution order'));
-    const tailSlice = (s: string) => s.slice(s.indexOf(marker), s.indexOf('## The read-only PR preflight'));
-    expect(seamSlice(choreography)).toBe(tailSlice(tail));
-    expect(seamSlice(choreography).length).toBeGreaterThan(200);
+    expect(choreography).toContain('orbit pr select <name> --json');
+    expect(choreography).toContain('orbit pr publish <name> --json');
+    for (const r of [choreography, tail]) {
+      expect(r).not.toContain('## Remote and default-branch resolution');
+      for (const residue of ['check-ref-format', 'four-axis', 'symbolic-ref', 'git commit --only', 'merge-base']) {
+        expect(r, residue).not.toContain(residue);
+      }
+    }
     // The archive tail is attachment-gated: no live-config return gate (external iter 3).
     expect(tail).not.toContain('## Config resolution order');
     expect(tail).not.toContain('RETURN IMMEDIATELY');
@@ -611,21 +616,19 @@ describe('D6 PR lifecycle surface', () => {
     }
   });
 
-  it('the architect skill carries the shared resolution algorithm as references/pr-resolution.md, byte-identical to the seams', () => {
+  // MOVED by rc12-body-adoption (task 3.2), a recorded act: the architect reference calls
+  // `orbit pr program` instead of carrying the shared resolution algorithm.
+  it('the architect skill carries references/pr-resolution.md, which calls `orbit pr program` and resolves nothing itself', () => {
     const architect = getArchitectSkillTemplate();
     const ref = (architect.references ?? []).find((r) => r.name === 'pr-resolution.md');
     expect(ref, 'architect is missing references/pr-resolution.md').toBeDefined();
-    const marker = '## Remote and default-branch resolution (SHARED — both seams)';
-    // The seams follow the shared resolution with the config-order gate; the architect
-    // reference deliberately omits that gate (the readout is attachment-gated) and follows
-    // it with the four-axis query — so each is sliced at its own next heading.
-    const seamSlice = (s: string) => s.slice(s.indexOf(marker), s.indexOf('## Config resolution order'));
-    const architectSlice = (s: string) => s.slice(s.indexOf(marker), s.indexOf('## The four-axis constrained query'));
-    expect(architectSlice(ref!.content)).toBe(seamSlice(reference(propose, 'pr-choreography.md')));
-    expect(architectSlice(ref!.content).length).toBeGreaterThan(200);
+    expect(ref!.content).toContain('orbit pr program <doc> --json');
+    expect(ref!.content).toContain('human_acts');
+    expect(ref!.content).not.toContain('## Remote and default-branch resolution');
     expect(ref!.content).not.toContain('## Config resolution order');
     expect(ref!.content).not.toContain('RETURN');
     expect(architect.instructions).toContain('references/pr-resolution.md');
+    expect(architect.instructions).toContain('orbit pr program <doc> --json');
   });
 
   it('config-first resolution order is stated in the bodies, not only the reference', () => {
@@ -635,11 +638,14 @@ describe('D6 PR lifecycle surface', () => {
     }
   });
 
-  it('archive positions the preflight BEFORE the emit and the tail AFTER it', () => {
+  it('archive positions the preflight BEFORE the move and the emit, and the tail AFTER it', () => {
     const b = archive.instructions;
     // Anchor on the HEADINGS: the prose carries forward references to later steps.
     const entryObservation = b.indexOf('## NEW Step 0.7');
-    const preflight = b.indexOf('## NEW Step 5.45');
+    // MOVED by rc12-body-adoption (task 3.2), a recorded act: the preflight runs BEFORE upstream
+    // Step 5's move (`orbit pr preflight` resolves active changes only), renumbered 5.45 → 4.9.
+    const preflight = b.indexOf('## NEW Step 4.9');
+    expect(b.slice(preflight, b.indexOf('## NEW Step 5.5'))).toContain("BEFORE upstream Step 5's move");
     expect(entryObservation).toBeGreaterThan(-1);
     expect(entryObservation).toBeLessThan(b.indexOf('## NEW Step 1.5')); // before any archive write
     const emit = b.indexOf('## NEW Step 5.5 — Archive run summary');

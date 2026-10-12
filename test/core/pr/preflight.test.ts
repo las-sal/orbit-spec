@@ -27,10 +27,10 @@ const open = (over: Partial<GhPr> = {}): GhPr => ({
 export function attached(
   gh: GhScript | 'absent',
   attachment: Record<string, unknown> | null,
-  opts: { doc?: string; name?: string } = {}
+  opts: { doc?: string; name?: string; regime?: 'per-proposal' | 'per-architecture' | 'never' } = {}
 ): Repo {
   const name = opts.name ?? 'add-thing';
-  const repo = orbitRepo('per-proposal', { gh });
+  const repo = orbitRepo(opts.regime ?? 'per-proposal', { gh });
   repo.git('switch', '-q', '-c', String(attachment?.branch ?? name));
   change(repo, name, opts.doc);
   composeAndWriteEmit(
@@ -167,19 +167,82 @@ describe('preflight — a URL-less attachment: the four-axis fallback', () => {
   });
 });
 
-describe('preflight — citation divergence is observed, and the frozen record governs', () => {
-  it('a citation added after propose is reported diverged; the attachment still decides the branch', () => {
-    const repo = attached({ prs: { [URL7]: open() } }, perChange(), { doc: 'later-program' });
+describe('preflight — citation divergence is would-select vs frozen, and the frozen record governs', () => {
+  const program = (doc: string) => ({ branch: doc, granularity: 'per-architecture', doc, url: URL7, state: 'draft' });
+  const onProgram = (doc: string) => ({ prs: { [URL7]: open({ headRefName: doc }) } });
+
+  // Row 4 — change 1's false positive: a per-proposal change cited since creation.
+  // @scenario behaviour orbit-pr-lifecycle :: `orbit pr preflight` computes the archive's read-only preflight :: A per-proposal change cited since creation has not diverged
+  it('per-proposal attachment, per-proposal regime, cited: not diverged', () => {
+    const repo = attached({ prs: { [URL7]: open() } }, perChange(), { doc: 'clean-up-review-cycle' });
     const { record } = preflight(repo);
-    expect(record.observations.citation).toEqual({ recorded: null, current: 'later-program', diverged: true });
+    expect(record.observations.citation).toEqual({
+      recorded: null,
+      current: 'clean-up-review-cycle',
+      would_select: { granularity: 'per-proposal' },
+      diverged: false,
+    });
     expect(record.observations.outcome).toBe('valid');
   });
 
-  it('an unchanged program citation is not diverged', () => {
-    const program = { branch: 'my-program', granularity: 'per-architecture', doc: 'my-program', url: URL7, state: 'draft' };
-    const repo = attached({ prs: { [URL7]: open({ headRefName: 'my-program' }) } }, program, { doc: 'my-program' });
+  it('per-proposal attachment, never regime, cited: not diverged', () => {
+    const repo = attached({ prs: { [URL7]: open() } }, perChange(), { doc: 'later-program', regime: 'never' });
     const { record } = preflight(repo);
-    expect(record.observations.citation).toEqual({ recorded: 'my-program', current: 'my-program', diverged: false });
+    expect(record.observations.citation).toMatchObject({ would_select: { granularity: 'per-proposal' }, diverged: false });
+  });
+
+  it('per-proposal attachment, uncited: not diverged', () => {
+    const repo = attached({ prs: { [URL7]: open() } }, perChange());
+    const { record } = preflight(repo);
+    expect(record.observations.citation).toEqual({ recorded: null, current: null, would_select: { granularity: 'per-proposal' }, diverged: false });
+  });
+
+  // Row 5.
+  // @scenario behaviour orbit-pr-lifecycle :: `orbit pr preflight` computes the archive's read-only preflight :: A citation that would re-target has diverged
+  it('per-proposal attachment, per-architecture regime, a citation added after propose: diverged; the attachment still decides', () => {
+    const repo = attached({ prs: { [URL7]: open() } }, perChange(), { doc: 'later-program', regime: 'per-architecture' });
+    const { record } = preflight(repo);
+    expect(record.observations.citation).toEqual({
+      recorded: null,
+      current: 'later-program',
+      would_select: { granularity: 'per-architecture', doc: 'later-program' },
+      diverged: true,
+    });
+    expect(record.observations).toMatchObject({ outcome: 'valid', emit: { pr_url: URL7, pr_state: 'draft' } });
+  });
+
+  // Row 1.
+  it('program attachment X, per-architecture regime, still citing X: not diverged', () => {
+    const repo = attached(onProgram('my-program'), program('my-program'), { doc: 'my-program', regime: 'per-architecture' });
+    const { record } = preflight(repo);
+    expect(record.observations.citation).toEqual({
+      recorded: 'my-program',
+      current: 'my-program',
+      would_select: { granularity: 'per-architecture', doc: 'my-program' },
+      diverged: false,
+    });
+  });
+
+  // Row 2.
+  it('program attachment X, per-architecture regime, now citing Y: diverged', () => {
+    const repo = attached(onProgram('my-program'), program('my-program'), { doc: 'other-program', regime: 'per-architecture' });
+    const { record } = preflight(repo);
+    expect(record.observations.citation).toMatchObject({ would_select: { granularity: 'per-architecture', doc: 'other-program' }, diverged: true });
+    expect(record.observations.outcome).toBe('valid');
+  });
+
+  // Row 3, both ways in.
+  it('program attachment X, the citation removed: diverged', () => {
+    const repo = attached(onProgram('my-program'), program('my-program'), { regime: 'per-architecture' });
+    const { record } = preflight(repo);
+    expect(record.observations.citation).toEqual({ recorded: 'my-program', current: null, would_select: { granularity: 'per-proposal' }, diverged: true });
+  });
+
+  it('program attachment X, the regime no longer per-architecture: diverged', () => {
+    const repo = attached(onProgram('my-program'), program('my-program'), { doc: 'my-program', regime: 'per-proposal' });
+    const { record } = preflight(repo);
+    expect(record.observations.citation).toMatchObject({ would_select: { granularity: 'per-proposal' }, diverged: true });
+    expect(record.observations.outcome).toBe('valid');
   });
 
   it('the LATEST attachment-bearing propose or ff emit governs', () => {

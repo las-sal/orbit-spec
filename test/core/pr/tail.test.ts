@@ -22,6 +22,9 @@ interface Setup {
   attachment?: Record<string, unknown> | null;
   emit?: { pr_url?: string; pr_state?: string };
   branch?: string;
+  regime?: 'per-proposal' | 'per-architecture';
+  /** A citation in the change's metadata the attachment never recorded. */
+  doc?: string;
 }
 
 /**
@@ -31,13 +34,13 @@ interface Setup {
  */
 function archived(s: Setup = {}): Repo {
   const branch = s.branch ?? 'add-thing';
-  const repo = orbitRepo('per-proposal', { gh: s.gh ?? {} });
+  const repo = orbitRepo(s.regime ?? 'per-proposal', { gh: s.gh ?? {} });
   repo.write('orbit/specs/widget/spec.md', '# widget\n');
   repo.write('orbit/specs/other/spec.md', '# other\n');
   repo.commitAll('baseline specs');
   repo.git('push', '-q', 'origin', 'main');
   repo.git('switch', '-q', '-c', branch);
-  change(repo, 'add-thing');
+  change(repo, 'add-thing', s.doc);
   const attachment = s.attachment === undefined ? { branch, granularity: 'per-proposal', url: URL7, state: 'draft' } : s.attachment;
   composeAndWriteEmit(
     'propose',
@@ -114,6 +117,20 @@ describe('tail — the --outcome table', () => {
     expect(repo.ghLog().filter((c) => c.args[0] === 'pr').map((c) => c.args[1])).toEqual(['edit', 'ready']);
     assertHumanActsUnrun(repo, record, executed);
     expect(repo.head()).toBe('add-thing');
+  });
+
+  // @scenario behaviour orbit-pr-lifecycle :: Config selects the regime; citation selects the target :: Citation edited after propose is a no-op
+  it('a per-change attachment whose change now cites a doc under per-architecture: the tail acts on the per-change PR and seeks no program PR', () => {
+    const repo = archived({ regime: 'per-architecture', doc: 'later-program' });
+    const { record, calls } = tail(repo, 'valid');
+    expect(record).toMatchObject({ action: 'proceed', degraded: null });
+    expect(record.observations.attachment).toEqual({ branch: 'add-thing', granularity: 'per-proposal', url: URL7, state: 'draft' });
+    expect(record.segments[0].steps.map((s) => s.step)).toEqual(['stage', 'commit', 'push', 'rewrite', 'ready']);
+    expect(record.segments[0].steps[2].argv).toEqual(['git', 'push', 'origin', 'add-thing']);
+    expect(calls.gh.some((c) => c.args[1] === 'list')).toBe(false);
+    runSegments(repo, record, author(repo));
+    expect(repo.ghLog().filter((c) => c.args[0] === 'pr').map((c) => c.args[1])).toEqual(['edit', 'ready']);
+    expect(repo.git('rev-parse', '--verify', '-q', 'refs/heads/later-program').status).not.toBe(0);
   });
 
   it('valid with pr_state ready prints no flip', () => {
