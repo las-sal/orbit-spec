@@ -5561,3 +5561,18 @@ seams are logged in `orbit/explore/rc12-engine-owned-choreography/sketches/dogfo
 with that evidence. Standing recommendation, not acted on (the mark is Sal's word): `rc09-propose-hygiene` still
 renders `premised` although both its split children are ratified; every other split parent carries an ENDED mark, and
 this one can only get its mark by Sal's unprompted declaration in an architect session.
+
+**2026-10-12 — rc12 change 1 ARCHIVED (`rc12-engine-owned-choreography`, PR #16): `orbit pr` observes and prints.**
+The first of rc12's two changes. Five subcommands (`select`, `publish`, `preflight`, `tail`, `program`) run only
+read-only `git` and `gh` through a runner that refuses everything outside `orbit-pr-lifecycle`'s allowlist, and print
+every write as argv segments the body runs; D6's phase-1 transcription and its 39 cases moved into the engine, each
+printed segment executed against a real repository, and a `git` PATH shim with the `gh` stub holds every engine call
+to the allowlist (exit (3)). Exit (1) is graded on that suite; exit (2) is change 2's, measured at its apply
+(D-rc12-3), so the stage stays open. Two corrections the instrument forced, neither predicted: the bounded fetch needs
+an empty `--refmap=` (explicit refspecs alone still let git apply a configured `refs/heads/` mapping — found at apply by
+the configured-refspec case, the delta amended), and the commit scope must be read from porcelain, not the index (the
+system pair's CRITICAL: this repository's own archive practice stages the move, and the index-only read committed the
+change twice). Its system blind pair (both halves hold) was walked in two logs, verified (eight landed), and the
+verification's two findings — `ls-remote` admitting `--upload-pack`, `git status` refreshing the index — walked; a
+computed PASSED gate. The archive itself ran `orbit pr preflight` live, and it reported a FALSE citation divergence on
+a change cited since creation (a per-proposal attachment records no `doc`); handed to change 2, which renders that note.
