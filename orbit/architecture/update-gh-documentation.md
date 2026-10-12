@@ -80,6 +80,14 @@ be seen. Flipping visibility to public is Sal's act at arc-done, never an orbit 
   private until the flip, so no one can install the tag before then, and the rehearsals cut a local tag in a scratch
   clone. The version (`2.0.0`, R-ugd-7) and the release mechanism (R-ugd-8, `npm run release:tree`) are unchanged.
 
+- **R-ugd-10** (Sal, 2026-10-12; from the reference-docs exploration's D-rd-6; carves out of R-ugd-3) —
+  `orbit feedback` is retargeted to orbit's own repository in the reference-docs stage. The command hardcodes
+  `Fission-AI/OpenSpec` in its issue URL and its `gh issue create --repo` argv, so a documented `orbit feedback` on a
+  public repository would send orbit's bug reports to OpenSpec's maintainers. The page that documents the command and
+  the command's target move together. The carve-out covers only `src/commands/feedback.ts` (both targets and its help
+  line) and its test. R-ugd-3 stands for every other `OpenSpec` string in CLI help and messages. The fork has no
+  `feedback` label, which the command passes; the stage settles at propose whether it drops the label or Sal creates it.
+
 ## Open questions
 
 - **Q-ugd-1 — RESOLVED by R-ugd-4 (Sal, 2026-10-12).** the install path. `orbit-spec` is not on npm (`npm view
@@ -175,7 +183,8 @@ Complete: [ ]
 
 Charter: rewrite `docs/installation.md`, `docs/getting-started.md`, `docs/cli.md`, `docs/commands.md`,
 `docs/workflows.md` and `docs/opsx.md` for orbit (the last renamed to an orbit name, its links repointed). Every
-`orbit` CLI command and `/orbit:` workflow is documented. Goal G3.
+`orbit` CLI command and `/orbit:` workflow is documented. Under R-ugd-10, the stage also retargets `orbit feedback` to
+orbit's repository. Goal G3.
 
 Exit: (1) the six pages pass docs-under-test's checks with no recorded exception; (2) every command the completion
 registry holds (rc05 keeps it equal to the program) is named by at least one page, checked by a test; (3) no page
@@ -269,3 +278,10 @@ the flip. R-ugd-9 moves the tag from landing-page to public-readiness's last act
 and public-readiness gains the release act and exit (4). landing-page's archived task 5.3 (deferred to "after Sal
 merges PR #19") is superseded by this ruling; the archived record stays as written. landing-page completion offered:
 not yet (Sal), since exit (3)'s `/orbit:propose` half and post-flip re-run are still to be observed.
+
+**2026-10-12 — R-ugd-10 captured (Sal), in an architect session; landing-page not yet.** The reference-docs
+exploration (cited, `exploring`) found that `orbit feedback` files issues on upstream OpenSpec's tracker, and the stage
+must document every command in the program. Sal took retargeting over documenting the command without naming upstream
+or removing it (D-rd-6). R-ugd-10 carves that one command out of R-ugd-3, and the reference-docs charter names it. The
+exploration also settled that `docs/opsx.md` becomes `docs/workflow-engine.md` (D-rd-7, Sal). landing-page completion
+offered again: not yet (Sal), since exit (3)'s two observations are still to be recorded.

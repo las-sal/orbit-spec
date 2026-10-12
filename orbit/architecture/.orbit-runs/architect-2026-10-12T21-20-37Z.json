@@ -1,0 +1,34 @@
+{
+  "command": "architect",
+  "timestamp": "2026-10-12T21:20:37Z",
+  "change": null,
+  "doc": "update-gh-documentation",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "R-ugd-10 captured (Sal): orbit feedback is retargeted to orbit's repository in the reference-docs stage, a carve-out from R-ugd-3 covering only src/commands/feedback.ts and its test; the reference-docs charter names it and the status log records it. landing-page completion offered: not yet (Sal), exit (3)'s two observations still pending.",
+  "stages_touched": [
+    "reference-docs",
+    "landing-page"
+  ],
+  "rulings_captured": [
+    "R-ugd-10"
+  ],
+  "completions_ratified": [],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      {
+        "path": "orbit/explore/reference-docs/explore.md",
+        "why": "the exploration: seven decisions (D-rd-1..7), one rule with its Mechanism entry, no open questions"
+      },
+      {
+        "path": "orbit/architecture/update-gh-documentation.md",
+        "why": "the reference-docs charter and R-ugd-1, R-ugd-3, R-ugd-10"
+      }
+    ],
+    "next_command": "/orbit:propose reference-docs",
+    "model_hint": null,
+    "seam": "reference-docs exploration settled and the R-ugd-10 carve-out recorded; propose is next"
+  },
+  "next_recommended": "/orbit:propose reference-docs"
+}
