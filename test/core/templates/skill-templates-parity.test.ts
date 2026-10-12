@@ -99,6 +99,10 @@ import { generateSkillContent } from '../../../src/core/shared/skill-generation.
 // and the checked consumption-table mirror, and archive's Step 5.6 recovery sentence. Four
 // function hashes moved (propose, ff, archive, architect) and one generated-skill hash (archive,
 // the only SKILL.md body edited); the references are not in the generated-skill hash.
+// rc12-body-adoption verification walk (2026-10-12): the consumption table's step-failure row was
+// scoped to publish and tail steps (a failed select step shows no recovery); the checked mirror in
+// the propose/ff and archive references moved with it. Three function hashes moved (propose, ff,
+// archive); no SKILL.md body changed.
 const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   getExploreSkillTemplate: '2835cca2ae531f797e0417d14f9bc66e6fd9c1b54558781ea95f3cbaad097583',
   getNewChangeSkillTemplate: '8f68be94db91a147b93d492f6f32ab3c02725a20a001c87602ac8d9741587614',
@@ -107,7 +111,7 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // stopped naming "spec-driven v4" and `blind-pair` as the post-apply slot — under v5 which review comes
   // next depends on the cadence and the review preference, so the body says it is read, not predicted.
   getApplyChangeSkillTemplate: 'a6fee1123aa05f50fb422bea764f5ed3dee8a4a3d85481515b65a693d2c38758',
-  getFfChangeSkillTemplate: '1412cf53224b12c15350d145656e7c90a154b7ef8041ca2edcda1753ccae36fa',
+  getFfChangeSkillTemplate: 'f22904248247b1bb4d1abce6c019d9a7a7c7daa9a0eb5e4cfce81e315e6cc6a8',
   getSyncSpecsSkillTemplate: 'a9672b720eff36fb30f2229d835fd9a9e4cc88e81f1773bc74aff79247aa9809',
   // rc08b-walk-routing (2026-10-05, task 3.3): the command-table row's retired "auto-discovers … when invoked
   // with a change name and no markers found" became the discovery sentence. One re-record, both onboard hashes.
@@ -131,7 +135,7 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // Step 3.2 reports cases 2, 3 and 8 and widens its DEFERRED rule to post-move state (fresh S2); bulk
   // archive briefs before each move and gains its per-change archive emit step (fresh W2, S1). The same
   // four hashes moved; no other pin did.
-  getArchiveChangeSkillTemplate: 'f88ee726e01ef41fcd897c07dbc123ba8924ba5b1bc4e864d21fbe162a8ee46a',
+  getArchiveChangeSkillTemplate: 'f81dca868ac2ff8b0ee1ef9ed43f5df274e2a492d662fe877e88096a701ead72',
   getBulkArchiveChangeSkillTemplate: 'a428418830dc7de9f65cdd60f8b3ffbde6a020697f10f3eaa0ea122a27e34668',
   getOrbitSyncCommandTemplate: '1067039e869d8dedf7922da46230b53a88253cf3fe27c7a5d60c96bc9a43453f',
   // rc06b-map-readers (2026-10-05) — verify moved DELIBERATELY, the first named edit to an upstream
@@ -171,7 +175,7 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // Moved a second time at rc09a's system walk (2026-10-11): the brief's validation named as non-strict, the
   // Split route's "the rest of the flow runs unchanged", "run" for "re-run" under Declare, and the heading
   // line's "exactly" dropped (the parser reads CommonMark indentation) — one re-record for the walk's edits.
-  getOrbitProposeSkillTemplate: '779bd58adf68346bd1039a37e1edf1a94ece378b8715998aab678711ae2b1bb2',
+  getOrbitProposeSkillTemplate: '8ba59305744ada15774bedaaed830f880ff0ec6114f80d04f92f880842461802',
   getOrbitProposeCommandTemplate: 'b91222654d5050d7ae7f2f49b5d6c4b34e65638bd8c5ae3e622550eb1329c168',
   getFeedbackSkillTemplate: 'ded61ad85c5050f7bf241870b14bfcdd929f0be68a028c1130fd30a66efbda3b',
   // rc15 (ended-stage-state, 2026-09-29): the orbit-architect body moved ONCE, deliberately — §5 (the

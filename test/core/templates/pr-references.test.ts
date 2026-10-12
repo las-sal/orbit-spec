@@ -13,6 +13,7 @@ import { getArchiveChangeSkillTemplate } from '../../../src/core/templates/skill
 import {
   PR_ARCHIVE_TAIL_REFERENCE,
   PR_CHOREOGRAPHY_REFERENCE,
+  PR_CONSUMPTION_TABLE,
   PR_RESOLUTION_REFERENCE,
   PR_TITLE_RULE,
 } from '../../../src/core/templates/workflows/pr-choreography.js';
@@ -119,5 +120,17 @@ describe('the archive reference reads reason.detail the way validatePrUrl writes
     const pre = section(PR_ARCHIVE_TAIL_REFERENCE, '## Preflight, before the move');
     expect(pre).toContain('`retargeted to` its `observed` base');
     expect(pre).not.toContain('`retargeted to`\n  its `expected` base');
+  });
+});
+
+describe('the consumption table scopes a recovery to the steps that can attach', () => {
+  it('a failed publish or tail step shows its recovery; a failed select step shows none', () => {
+    const rows = PR_CONSUMPTION_TABLE.split('\n');
+    const failure = rows.find((r) => r.startsWith('| a `publish` or `tail` step fails |'));
+    expect(failure, 'the step-failure row').toBeDefined();
+    expect(failure).toContain("showing the failed step's argv and then each skipped step's");
+    expect(rows.some((r) => r.startsWith('| a step fails |'))).toBe(false);
+    const select = rows.find((r) => r.startsWith('| `select` returns'))!;
+    expect(select).toContain('a failed step is named in ONE line with no recovery shown');
   });
 });
