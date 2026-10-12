@@ -16,7 +16,8 @@ upstream's tracker, so R-ugd-10 retargets it in this stage (see explore.md).
     `audit-drift`.
   - `docs/workflows.md` covers the workflow patterns, including the review cadence around apply.
   - `docs/installation.md` and `docs/getting-started.md` extend the README rather than restate it (D-rd-2).
-  - `orbit config profile` is documented as it behaves, with no `core` versus expanded selection (D-rd-5).
+  - `orbit config profile` and `orbit init --profile` are documented as they behave, with no `core` versus expanded
+    selection (D-rd-5).
 - **`docs/opsx.md` becomes `docs/workflow-engine.md`** (D-rd-7): the engine view of how artifacts, the dependency
   graph, `orbit status` and `orbit instructions` drive the workflows, and where the gates sit. Its config, command-list
   and update-versus-fresh sections become links to the pages that own them. The README's docs list gains the link,
@@ -25,8 +26,8 @@ upstream's tracker, so R-ugd-10 retargets it in this stage (see explore.md).
   `docs/commands.md` names every workflow id. Both lists are read from the program and the workflow registry, never
   typed into the test.
 - **`orbit feedback` is retargeted to `las-sal/orbit-spec`** (D-rd-6, R-ugd-10). Its issue URL, its `gh issue create
-  --repo` argv and its help line stop naming upstream. It also stops passing a `feedback` label, which the fork does
-  not have.
+  --repo` argv and its help description (defined in `src/cli/program.ts` and the completion registry) stop naming
+  upstream. It also stops passing or printing a `feedback` label, which the fork does not have.
 
 ## Capabilities
 
@@ -46,4 +47,5 @@ upstream's tracker, so R-ugd-10 retargets it in this stage (see explore.md).
   `README.md` (one docs-list line).
 - `test/core/user-docs/pending-rewrite.json` (six entries out); `test/helpers/user-docs.ts` and a new test under
   `test/core/user-docs/` (the coverage check).
-- `src/commands/feedback.ts` and `test/commands/feedback.test.ts` (the retarget, R-ugd-10's carve-out only).
+- `src/commands/feedback.ts` and `test/commands/feedback.test.ts` (the retarget), and the `feedback` help description in
+  `src/cli/program.ts` and `src/core/completions/command-registry.ts` — R-ugd-10's carve-out only.

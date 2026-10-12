@@ -1,0 +1,340 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-12T22:53:55Z",
+  "change": "reference-docs",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/reference-docs/.orbit-runs/review-proposal-2026-10-12T21-28-58Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-12T21-28-58Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 4,
+    "suggestion": 3
+  },
+  "pushback_verification": "All seven verified against HEAD; none stale. Three converge with the external half (help line, pending test, fixed counts) and are walked here.",
+  "resolution_summary": {
+    "resolved": 7,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The feedback help line is not in src/commands/feedback.ts",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 115,
+      "classification": "decision_required",
+      "action": "applied the ratified direction A: design D5 names the help description at src/cli/program.ts and the completion registry, drops the fallback Labels line and its assertions; task 2.1, the proposal and Touchpoints follow; R-ugd-10 restates the location (status-log entry)",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Edit the help line at both real sites (program.ts:475, command-registry.ts:190) and drop the `Labels: feedback` display line. Record in design D5 that R-ugd-10's \"its help line\" lives outside feedback.ts and the carve-out covers it by intent."
+          },
+          {
+            "label": "B",
+            "body": "Keep the carve-out to the letter of feedback.ts: retarget the two repository sites and the label only, leave the help line under R-ugd-3, and remove the help-line claim from D5, task 2.1 and the proposal."
+          }
+        ],
+        "chosen": "A"
+      },
+      "evidence": "program.ts:475 and command-registry.ts:190 carry \"Submit feedback about OpenSpec\"; feedback.ts:115 prints Labels: feedback; feedback.test.ts:396 asserts it",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/reference-docs/tasks.md",
+          "orbit/changes/reference-docs/proposal.md",
+          "orbit/architecture/update-gh-documentation.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "both targets and its help",
+          "argv and its help line stop naming",
+          "the help line to \"Submit feedback about orbit\""
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/reference-docs/design.md",
+            "text": "The command's help line is not in that file."
+          },
+          {
+            "path": "orbit/architecture/update-gh-documentation.md",
+            "text": "the command's help description wherever it is defined"
+          },
+          {
+            "path": "orbit/changes/reference-docs/tasks.md",
+            "text": "at both its sites, `src/cli/program.ts` and `src/core/completions/command-registry.ts`"
+          }
+        ],
+        "searched": [
+          "help line",
+          "Submit feedback about OpenSpec",
+          "Labels: feedback",
+          "feedback.ts"
+        ],
+        "scope": [
+          "src/cli/program.ts",
+          "src/core/completions/command-registry.ts",
+          "src/commands/feedback.ts",
+          "test/commands/feedback.test.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The coverage check does not say what happens when docs/cli.md or docs/commands.md is absent",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-user-docs/spec.md",
+      "line": 5,
+      "classification": "trivial_fix",
+      "action": "added a sentence and a scenario: an owing page neither listed nor present fails naming it; task 1.1 and design D2 follow",
+      "evidence": "spec.md read: no clause covered an absent owing page",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/reference-docs/tasks.md",
+          "orbit/changes/reference-docs/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/reference-docs/specs/orbit-user-docs/spec.md",
+            "text": "#### Scenario: A missing owing page fails"
+          },
+          {
+            "path": "orbit/changes/reference-docs/design.md",
+            "text": "so removing a page never empties the check"
+          },
+          {
+            "path": "orbit/changes/reference-docs/tasks.md",
+            "text": "an owing page neither listed nor present fails naming it"
+          }
+        ],
+        "searched": [
+          "passes every other user doc",
+          "missing page"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "init's --profile flag is as inert as config profile, but only config profile is ruled",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 15,
+      "classification": "trivial_fix",
+      "action": "extended D-rd-5 to init --profile in design D4, task 3.3, the proposal and explore.md D-rd-5: documented as accepted and inert",
+      "evidence": "orbit init --help: --profile <profile> (core or custom); init.ts:516-518 -> getProfileWorkflows returns ALL_WORKFLOWS; update has no profile flag",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/reference-docs/design.md",
+          "orbit/changes/reference-docs/explore.md",
+          "orbit/changes/reference-docs/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "`config profile` as it behaves (D-rd-5, read from",
+          "`orbit config profile` is documented as it behaves, with no"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/reference-docs/design.md",
+            "text": "`init --profile` accepts `core` or `custom`"
+          },
+          {
+            "path": "orbit/changes/reference-docs/tasks.md",
+            "text": "`config profile` and `init --profile` as they behave"
+          }
+        ],
+        "searched": [
+          "profile",
+          "--profile",
+          "core or custom"
+        ],
+        "scope": [
+          "src/core/init.ts",
+          "src/core/profiles.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "getting-started's end-to-end walk leaves out the address-reviews walk",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 81,
+      "classification": "trivial_fix",
+      "action": "getting-started outline and task 3.2 add the address-reviews walk after each review",
+      "evidence": "design.md:81 listed explore, propose, review, apply, review, archive",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/reference-docs/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "explore, propose, review, apply, review, archive"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/reference-docs/design.md",
+            "text": "review, walk (`/orbit:address-reviews`)"
+          },
+          {
+            "path": "orbit/changes/reference-docs/tasks.md",
+            "text": "the address-reviews walk after each review"
+          }
+        ],
+        "searched": [
+          "getting-started",
+          "end to end"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The exact 55/15 count test pins the domain it derives",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 5,
+      "classification": "trivial_fix",
+      "action": "task 1.3 replaces the 55/15 equality with a non-vacuity test that types no total",
+      "evidence": "tasks.md:5 asserted the real domain reads 55 paths and 15 ids",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the real domain reads 55 paths and 15 ids today"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/reference-docs/tasks.md",
+            "text": "a non-vacuity test of the real domain that types no total"
+          }
+        ],
+        "searched": [
+          "55",
+          "15 ids"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The name match leaves case unstated and lets a prose noun satisfy a command",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-user-docs/spec.md",
+      "line": 22,
+      "classification": "trivial_fix",
+      "action": "spec and design D3 state the match is case-sensitive; a Risks entry names the prose-noun hole for orbit change and orbit spec",
+      "evidence": "spec.md:22 left case unstated",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/reference-docs/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/reference-docs/specs/orbit-user-docs/spec.md",
+            "text": "matched case-sensitively"
+          },
+          {
+            "path": "orbit/changes/reference-docs/design.md",
+            "text": "A prose noun satisfies the match"
+          }
+        ],
+        "searched": [
+          "carries that string",
+          "case"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Touchpoints miss a test the pending-list edit turns red",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 159,
+      "classification": "trivial_fix",
+      "action": "task 4.1 and Touchpoints add the pending-rewrite.test.ts edit: the test builds its own pending set",
+      "evidence": "pending-rewrite.test.ts:32 expects [...unlisted, docs/cli.md] after filtering the live list",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/reference-docs/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/reference-docs/design.md",
+            "text": "the unlisted-doc test stops reading `docs/cli.md` from the live list"
+          },
+          {
+            "path": "orbit/changes/reference-docs/tasks.md",
+            "text": "builds its own pending set over a page it names"
+          }
+        ],
+        "searched": [
+          "pending-rewrite.test.ts",
+          "docs/cli.md"
+        ],
+        "scope": [
+          "test/core/user-docs/pending-rewrite.test.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Seven of seven resolved: the help-line location by the ratified direction A (R-ugd-10 restated), six by local repairs.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews reference-docs",
+  "ripple_misses": 0
+}

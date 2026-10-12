@@ -50,12 +50,22 @@ Moves:
 - READ: applied — counts are from `buildProgram` (23 + 32, hidden excluded) and `ALL_WORKFLOWS` (15), and `.claude/commands/orbit/` holds the same 15 launchers
 - ENUMERATE: applied — this table; the domain is read from the two authorities, never typed as a list in the test
 - COHERE: applied — exit (2) names the registry and this rule reads the program, which are one set because rc05's parity test holds them equal both ways
-- EXECUTE: not applied — the coverage test does not exist yet; propose writes it and shows it can fail
+- EXECUTE: applied — a throwaway probe at the proposal walk (Case 1) ran the procedure over the real program and today's two pages, and over eight constructed boundary cases; every case read as the rule says
 - FALSIFY: applied — a page can name a command without teaching it (a bare mention in a table); exit (2) asks only for naming, and teaching quality is the review's call (D-rd-4)
 - CONFORM: applied — R-crc-11 (mechanize what the engine observes: the command tree and the workflow list are both engine data); R-crc-14 (the domain is derived, never restated)
 - FEASIBILITY: not applied — 70 lookups over six files
 - CONSUME: not applied — nothing consumes the test's result but the suite
 - INVOKE: applied — runs in `npm test`, so a command added to the program without a page fails the suite the day it lands
+
+### Case 1 — the procedure executed (2026-10-12, at the proposal walk)
+
+A throwaway vitest probe walked `fromProgram(buildProgram({hooks: false}))` recursively and matched with design D3's
+boundary rule. The domain read 55 paths at most two words deep, neither hidden command among them, and 15 ids. Today's
+`docs/cli.md` names 1 of the 55 (it teaches `openspec`), and `docs/commands.md` names none of the 15 (it teaches
+`/opsx:`), so the check fails both pages as written, as exit (2) expects. Constructed cases: `orbit pr select` names
+`orbit pr`; `orbit validated`, `orbit/changes`, `.orbit-runs`, `Orbit status` (case), `orbit status-x` and
+`xorbit status` name nothing; `orbit status.` names `orbit status`; `/orbit:bulk-archive` does not name `archive`.
+The prefix rule falls out of the boundary: a space after the last word is no word character.
 
 ## Decisions
 
@@ -89,7 +99,8 @@ Moves:
   gating inert: every install carries all 15 workflows, and only `delivery` is honoured. The page states what the
   command does today, read from `src/core/profiles.ts` and the config command at authoring time. It never presents a
   `core` versus expanded workflow selection. Settled as method (read-before-reference); splits the profile half off
-  Q-rd-2.
+  Q-rd-2. The same holds for every profile-bearing surface, `init --profile` included (found by the proposal's fresh
+  review).
   Kind: scope
 
 - **2026-10-12 — D-rd-6: `orbit feedback` is retargeted to orbit's repository in this stage** (Sal: B; resolves

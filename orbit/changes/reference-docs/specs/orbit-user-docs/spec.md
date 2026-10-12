@@ -19,11 +19,15 @@ domain is read from the code, never typed into the test, by this table:
 The command tree is the program the completion registry is held equal to (`orbit-cli-grammar`), and `ALL_WORKFLOWS`
 is the installed workflow surface, so the two sources between them are every command a user can type.
 
-A page NAMES a command path `orbit <words>` when its text carries that string, with no letter, digit, `_`, `/`, `.`
+A page NAMES a command path `orbit <words>` when its text carries that string, matched case-sensitively, with no letter, digit, `_`, `/`, `.`
 or `-` immediately before `orbit` and no letter, digit, `_` or `-` immediately after the last word; the words are
 separated by single spaces. It NAMES a workflow id when its text carries `/orbit:<id>` with no letter, digit, `_` or
 `-` immediately after. Text is the whole file, fences and inline code included. A path names each of its prefixes,
 so `orbit pr select` names `orbit pr`.
+
+The suite also fails when either owing page, `docs/cli.md` or `docs/commands.md`, is neither on the pending-rewrite
+list nor present among the user docs, naming the missing page, so deleting or renaming a page never satisfies the check.
+A file-local check never sees an absent file, so this one runs over the suite's document set.
 
 The check reads names; it never judges whether a page teaches the command it names. That stays review's.
 
@@ -51,6 +55,11 @@ The check reads names; it never judges whether a page teaches the command it nam
 
 - **WHEN** `docs/commands.md` is unlisted and nowhere carries `/orbit:audit-drift`
 - **THEN** the suite fails naming `docs/commands.md` and `/orbit:audit-drift`
+
+#### Scenario: A missing owing page fails
+
+- **WHEN** `docs/cli.md` is neither on the pending-rewrite list nor present among the user docs
+- **THEN** the suite fails naming `docs/cli.md` as missing
 
 #### Scenario: Every other user doc passes
 

@@ -45,7 +45,9 @@ is where a reader looks for it. Exit (2)'s wording, "named by at least one page"
 
 ### D2 — the check is file-local, modelled on the improvement-claims check
 
-The check reads `docs/cli.md` and `docs/commands.md` and passes every other user doc. That makes it a member of the
+The check reads `docs/cli.md` and `docs/commands.md` and passes every other user doc. An owing page that is neither
+listed nor present fails, naming it, so removing a page never empties the check; this is a suite-level test alongside
+the per-file one, because a file-local check never sees a file that is not there. That makes it a member of the
 file-local set, which the checked-surface requirement enumerates; that enumeration gains it (the MODIFIED block). The
 pending list's exactness rule then runs it over a listed page alone. The helper is `commandCoverageFailures(surfaces,
 paths, workflowIds)` in `test/helpers/user-docs.ts`. It is pure: the paths and ids are passed in, so the test can
@@ -58,7 +60,7 @@ The test types neither list.
 
 ### D3 — "names" is a bounded text match over the whole file
 
-A path `orbit <words>` is named when that string appears, with a boundary on each side: before `orbit`, no letter,
+A path `orbit <words>` is named when that string appears, case-sensitively, with a boundary on each side: before `orbit`, no letter,
 digit, `_`, `/`, `.` or `-` (so `orbit/changes` and `.orbit-runs` never count); after the last word, no letter, digit,
 `_` or `-`. A workflow id is named by `/orbit:<id>` with the same trailing boundary. Fences and inline code count.
 
@@ -73,12 +75,15 @@ separate mention. The `bulk-archive` id cannot satisfy `archive`, because `/orbi
   - R-ugd-4's install line, and why it installs a built release tree (R-ugd-8).
   - Verifying with `orbit --version`.
   - `orbit init`, including `--tools codex`.
-  - Updating with `orbit update`.
+  - Upgrading, as two steps: reinstalling a newer release tag with R-ugd-4's line upgrades the CLI; then `orbit update`
+    in each initialized project refreshes its generated skills and commands. `orbit update` downloads nothing.
   - Pointers to the README's from-source route.
 
   The pnpm, yarn, bun and Nix sections leave. None of those routes has been run against a release tree, and the
   flake still names upstream.
-- **`getting-started.md`** walks one change end to end: explore, propose, review, apply, review, archive. It shows
+- **`getting-started.md`** walks one change end to end: explore, propose, review, walk (`/orbit:address-reviews`),
+  apply, review, walk, archive. A review with findings leaves its gate naming the walk, so the page shows it after each
+  review. It shows
   what each step writes on disk (`orbit/changes/<name>/`, `.orbit-runs/`), the readout's `Ready when you are:` line,
   and `orbit status`. It links back to the README's Quickstart and does not repeat it.
 - **`cli.md`** is the reference for every visible command path, grouped as follows:
@@ -91,6 +96,10 @@ separate mention. The `bulk-archive` id cannot satisfy `archive`, because `/orbi
   - schemas;
   - config (with `config profile` per D-rd-5);
   - utility (`feedback`, `completion`).
+
+  Every profile-bearing surface is documented as it behaves (D-rd-5, extended at the proposal walk): `config profile`
+  and `init --profile`. `init --profile` accepts `core` or `custom`, refuses any other value, and installs all 15
+  workflows either way (`getProfileWorkflows` returns `ALL_WORKFLOWS`). `update` takes no profile flag.
 
   The page keeps upstream's split between human and agent commands, extended to the engine surfaces, which the
   workflow bodies call. The noun-first forms `change` and `spec` are documented as their help text describes them
@@ -110,17 +119,24 @@ separate mention. The `bulk-archive` id cannot satisfy `archive`, because `/orbi
 
   Config points to `customization.md`, the command list to `commands.md`, and update versus fresh to `workflows.md`.
 
-### D5 — `orbit feedback`: retarget both sites, drop the label
+### D5 — `orbit feedback`: retarget both sites, fix its help line, drop the label
 
 `src/commands/feedback.ts` changes in three places:
 
 - the URL constant becomes `las-sal/orbit-spec`;
 - the `gh issue create --repo` argv names the same repository;
-- the help line "Submit feedback about OpenSpec" becomes "Submit feedback about orbit".
+- the manual-submission fallback (`displayFormattedFeedback`) stops printing `Labels: feedback`.
+
+The command's help line is not in that file. It is commander's description at `src/cli/program.ts` (`.command('feedback
+<message>')`), with a copy in the completion registry, `src/core/completions/command-registry.ts`. Registry parity
+compares commands and flags, not descriptions, so both sites change together: "Submit feedback about OpenSpec" becomes
+"Submit feedback about orbit". R-ugd-10's carve-out covers the command's help description wherever it is defined (its
+wording restated at this proposal walk, Sal: A); every other `OpenSpec` string in those two files stays under R-ugd-3.
 
 The `feedback` label is dropped from both the URL and the argv. The fork has no such label (`gh label list`,
 2026-10-12), and `gh issue create --label` with a missing label fails. Creating the label would be an outward act on
-the repository, and the command works without one. `test/commands/feedback.test.ts` moves with the code. Any other
+the repository, and the command works without one. `test/commands/feedback.test.ts` moves with the code, including
+its `Labels: feedback` and `labels=feedback` assertions. Any other
 `OpenSpec` string the file prints stays, per R-ugd-3.
 
 ### D6 — the pages write only heads the surface already knows
@@ -167,14 +183,19 @@ D-rd-2 … D-rd-7 are `Kind: scope` and carry no Mechanism entry. They are not c
 - `docs/migration-guide.md` — one link repointed.
 - `README.md` — the docs list gains `workflow-engine.md`.
 - `test/core/user-docs/pending-rewrite.json` — six entries out.
+- `test/core/user-docs/pending-rewrite.test.ts` — the unlisted-doc test stops reading `docs/cli.md` from the live list.
 - `test/helpers/user-docs.ts` — `commandCoverageFailures`, wired into `fileLocalFailures`.
 - `test/core/user-docs/coverage.test.ts` — the check's tests and scenario tags.
 - `src/commands/feedback.ts` + `test/commands/feedback.test.ts` — the retarget.
+- `src/cli/program.ts` + `src/core/completions/command-registry.ts` — `feedback`'s help description.
 
 ## Risks / Trade-offs
 
 - **The check names, it does not teach** (D3). A table row naming `orbit emit` with no description passes. The
   reviews judge whether each command is taught.
+- **A prose noun satisfies the match** (D3). "each orbit change has…" names `orbit change`, and "the orbit spec
+  format" names `orbit spec`, the two noun-first forms D4 documents. The page documents both in their own entries, and
+  the reviews check that each is taught, not merely matched.
 - **Prose accuracy is read, not checked.** The pages describe behaviour the engine owns: gates, the pair, walks,
   `pr`. Each description is read against its capability at authoring time. A page that restates a rule a spec owns
   goes stale with it, so the pages point to the specs for detail rather than restating the rules (R-crc-14).
