@@ -40,7 +40,7 @@ Domain: every case-insensitive occurrence of `openspec`, `opsx` or `fission` in 
 | anything under the README heading `How orbit improves on OpenSpec` | admitted (1), the comparison |
 | any occurrence in `docs/migration-guide.md` | admitted (2), file-scoped |
 | the identifier `.openspec.yaml` anywhere | admitted (3) |
-| a global directory the tool writes anywhere: `~/.config/openspec`, `~/.local/share/openspec`, `$XDG_CONFIG_HOME/openspec`, `$XDG_DATA_HOME/openspec`, `%APPDATA%/openspec`, `%LOCALAPPDATA%/openspec` | admitted (4) |
+| a global directory the tool writes anywhere: `~/.config/openspec`, `~/.local/share/openspec`, `$XDG_CONFIG_HOME/openspec`, `$XDG_DATA_HOME/openspec`, `%APPDATA%/openspec`, `%LOCALAPPDATA%/openspec`, `~/AppData/Roaming/openspec`, `~/AppData/Local/openspec` | admitted (4) |
 | `openspec` as a command (any fence or span) | residue; the tool inventory also reports its head |
 | a `/opsx:` slash command | residue |
 | `@fission-ai/openspec`, a Fission-AI URL, upstream's Discord or badges | residue |
@@ -157,7 +157,7 @@ Moves:
   Resolves the open question on how R-ugd-1's admitted mentions become machine-checkable (options were a phrase
   allowlist, marked spans, or declared headings). Widened 2026-10-12 at the proposal walk (Sal: F1 A): place (4) is
   every global directory the tool writes — the configuration and the data directory (`~/.local/share/openspec`), each
-  in its XDG and Windows forms — since the same reason admits them all.
+  in its XDG and Windows forms, the Windows home fallbacks included — since the same reason admits them all.
   Kind: rule
 - **2026-10-12 — D-dut-2: the checks gate docs file by file, through a pending-rewrite list exact both ways** (Sal).
   The checks ship running in `npm test` while today's docs fail them (about 800 findings), so the stage carries a

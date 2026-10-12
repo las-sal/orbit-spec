@@ -56,7 +56,7 @@ and fail the suite naming the file, the line and the occurrence, unless it sits 
 | anything under the `README.md` heading `How orbit improves on OpenSpec` | admitted: the comparison |
 | any occurrence in `docs/migration-guide.md` | admitted: the file describes what an adopter arriving from OpenSpec has |
 | the identifier `.openspec.yaml`, anywhere | admitted: a name the tool still writes on disk |
-| a global directory the tool still writes, anywhere: `~/.config/openspec`, `~/.local/share/openspec`, `$XDG_CONFIG_HOME/openspec`, `$XDG_DATA_HOME/openspec`, `%APPDATA%/openspec` or `%LOCALAPPDATA%/openspec`, with `/` or `\` before `openspec` | admitted: the global configuration and data directories (`src/core/global-config.ts`) |
+| a global directory the tool still writes, anywhere: `~/.config/openspec`, `~/.local/share/openspec`, `$XDG_CONFIG_HOME/openspec`, `$XDG_DATA_HOME/openspec`, `%APPDATA%/openspec`, `%LOCALAPPDATA%/openspec`, `~/AppData/Roaming/openspec` or `~/AppData/Local/openspec`, with `/` or `\` before `openspec` | admitted: the global configuration and data directories (`src/core/global-config.ts`) |
 | `openspec` as a command, in any fence or span | residue |
 | a `/opsx:` slash command | residue |
 | `@fission-ai/openspec`, a Fission-AI URL, upstream's Discord or badges | residue |
