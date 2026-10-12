@@ -100,7 +100,7 @@ kept. The exact deletion set is recorded under task 1.2, not only its count. The
 `git fetch upstream` afterwards brings no tag. This is local configuration: nothing in the tracked tree changes.
 
 The annotated `v2.0.0` is cut on `main`'s merge commit once Sal merges this change's PR, then pushed by name
-(`git push origin v2.0.0`), never `--tags`, by the orbit session Sal opens after the merge, on his word (proposal walk): the
+(`git push origin v2.0.0`), never `--tags`, by the orbit session Sal opens after the merge, on Sal's word (proposal walk): the
 tag is this stage's act under R-ugd-7, while merging the PR and any GitHub Release page stay Sal's. Before the merge, "on `main`" cannot be true: a tag on the branch moves
 if a walk edits the branch, and points outside `main` if the PR is never merged. So the tag is a post-merge act,
 carried as a user-validation task and DEFERRED at archive (archive Step 3.2: state that exists only after the move is

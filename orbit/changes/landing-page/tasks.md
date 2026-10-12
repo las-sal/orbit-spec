@@ -25,5 +25,5 @@
 
 - [ ] 5.1 Commit and push the apply
 - [ ] 5.2 (User-validation) Rehearse exit (3) before the flip, per design D5: from a scratch `git+file://` clone carrying a local `v2.0.0`, run the README's install and every quickstart shell step plus one `/orbit:propose` in Claude Code on a machine or account with no orbit installed; record the commands and their output under this task
-- [ ] 5.3 (User-validation) After Sal merges the PR, in the orbit session he opens then and on his word: cut the annotated `v2.0.0` on `main`'s merge commit, push it by name (never `--tags`), and observe it with `git ls-remote --tags origin` (design D4)
+- [ ] 5.3 (User-validation) After Sal merges the PR, in the orbit session Sal opens after the merge, on Sal's word: cut the annotated `v2.0.0` on `main`'s merge commit, push it by name (never `--tags`), and observe it with `git ls-remote --tags origin` (design D4)
 - [ ] 5.4 (User-validation) After the repository is public: re-run the README's install and quickstart against `github:las-sal/orbit-spec#v2.0.0` on a clean machine and record it (exit (3)'s second half)
