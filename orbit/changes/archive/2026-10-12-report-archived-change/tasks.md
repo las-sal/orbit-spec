@@ -18,5 +18,5 @@
 
 ## 4. Observed on the real repository
 
-- [ ] 4.1 (User-validation) `orbit status --change rc10-apply-closure --report` renders rc10's newest review pass with the `Archived:` tail, run on the built CLI against this repository's real archive.
+- [x] 4.1 (User-validation) `orbit status --change rc10-apply-closure --report` renders rc10's newest review pass with the `Archived:` tail, run on the built CLI against this repository's real archive. OBSERVED at archive 2026-10-12: the built CLI rendered rc10's iteration-3 system verification pass ending `Archived: orbit/changes/archive/2026-10-11-rc10-apply-closure` (also seen by both halves of the system pair, fresh 2026-10-12T00-08-26Z and external 2026-10-12T00-08-53Z).
 AT-ARCHIVE NOTE 4.2 (executed in the archive flow, not at apply — converted from a checkbox at apply 2026-10-11 so the tracked gate counts only executable tasks, the repo's at-archive-note convention): At archive: mark Q-crc-26 RESOLVED in `orbit/architecture/clean-up-review-cycle.md`'s Open questions, naming this change.

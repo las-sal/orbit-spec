@@ -1,0 +1,72 @@
+{
+  "command": "archive",
+  "timestamp": "2026-10-12T00:17:01Z",
+  "change": "report-archived-change",
+  "kind": "lifecycle",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Archived report-archived-change to orbit/changes/archive/2026-10-12-report-archived-change/: --report resolves an archived change, and its tail is the one Archived: line; Q-crc-26 resolved.",
+  "archive_path": "orbit/changes/archive/2026-10-12-report-archived-change/",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 3
+    },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": [
+      "orbit-report-rendering"
+    ],
+    "added": 0,
+    "modified": 4,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
+  "user_decision": "proceeded_no_critical",
+  "consent": "user-invoked",
+  "warnings": [
+    "At-archive note 4.2 executed: Q-crc-26 marked RESOLVED in orbit/architecture/clean-up-review-cycle.md, naming this change.",
+    "Pre-archive audit-drift (touchpoints): src/core/containment.ts was not predicted (WARNING; created at the system walk on Sal's A1); three test files were not predicted (SUGGESTION)."
+  ],
+  "judgements": [
+    {
+      "kind": "readiness",
+      "formed_against": [
+        "2026-10-11T23-40-21Z",
+        "2026-10-11T23-40-44Z",
+        "2026-10-12T00-08-26Z",
+        "2026-10-12T00-08-53Z"
+      ],
+      "disposition": "ready",
+      "reasoning": "Both halves of the system pair recommended forward; the one finding between them, the duplicated containment test, was repaired on Sal's A1 and verified landed, and the real archive renders through the new path (task 4.1, observed at this seam).",
+      "ratified_by": "ai",
+      "accepted": [
+        {
+          "claim": "PASSED means every finding was resolved, not that an independent pass stood clean on the final tree: src/core/containment.ts was written at the system walk, after both independent passes, and was read only by the in-context verification.",
+          "why": "The change is a one-function extraction whose accept set equals the code it replaced; a further independent pass would review roughly twenty lines."
+        },
+        {
+          "claim": "The external half did not build or run tests: its runner worktree carries no node_modules.",
+          "why": "The fresh half ran the affected suites and the full suite ran green at apply, at the walk, and before this archive."
+        },
+        {
+          "claim": "The fresh pass's stored commentary counts 49 archived changes and 41 rendering; the true figures were 47 and 39.",
+          "why": "Corrected in the worker's hand-back; re-emitting would have recorded a second pass, and the counts carry no finding."
+        },
+        {
+          "claim": "The symlink cases of the resolver and report tests skip where the platform cannot create a symlink, as on an unprivileged Windows runner.",
+          "why": "This repository has no Windows runner; the skip is declared in the tests and the task text."
+        }
+      ]
+    }
+  ],
+  "pr_url": "https://github.com/las-sal/orbit-spec/pull/15",
+  "pr_state": "draft",
+  "next_recommended": "Change archived. Run /orbit:new or /orbit:explore to start the next change, or /orbit:audit-drift for a project-wide drift check."
+}
