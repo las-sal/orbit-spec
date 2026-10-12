@@ -1,0 +1,11 @@
+schema: spec-driven
+created: 2026-10-12
+schema_version: 5
+architecture:
+  doc: clean-up-review-cycle
+  stage: rc12-engine-owned-choreography
+base_fingerprints:
+  orbit-pr-lifecycle:
+    Agent-written landmark descriptions at seams only: sha256:fb64f9cd02c7944d106cc7c004457cf9d8380638ea73ab0ef2c02f5f1e2a73d1
+    PR actions are workflow-body choreography (zero engine git): sha256:c0784b88d79d3cc7026bb800b70d5b9ce61157aef7be21312108fe316e3170a6
+    "`orbit pr preflight` computes the archive's read-only preflight": sha256:2fa4d3ea1d6654c28778c8c1db21b06cf610066a0b4e5fd5f0596e5771c4bfa0
