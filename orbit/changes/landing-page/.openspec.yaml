@@ -1,0 +1,12 @@
+schema: spec-driven
+created: 2026-10-12
+schema_version: 5
+base_fingerprints:
+  orbit-onboard:
+    Orientation section: sha256:9e51a85819cd327635725b68174472a06b391af2486ce50efccaccf5764df122
+  orbit-user-docs:
+    The user docs are a checked surface, gated by an exact pending-rewrite list: sha256:846e45a58a6dc35b4e50d73257e261f6e054799d6c9aaea4194b78f221a1dccf
+    The user docs declare their own command heads: sha256:1f84ee3f9b22e2ffbc732fecd9affce45ad03f50a5a65dac6533269d2b3cd9a4
+architecture:
+  doc: update-gh-documentation
+  stage: landing-page
