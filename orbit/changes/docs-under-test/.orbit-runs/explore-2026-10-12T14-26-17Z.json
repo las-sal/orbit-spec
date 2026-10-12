@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-10-12T14:26:17Z",
+  "change": "docs-under-test",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Named exploration docs-under-test opened for stage docs-under-test of update-gh-documentation (citation recorded, Sal). Premise carries the 2026-10-12 probe: the orbit and git/gh sweeps pass vacuously on today's docs, the tool inventory already catches command-form residue, prose and link residue needs a new check. Four open questions, two with standing recommendations.",
+  "decisions_captured": 0,
+  "open_questions_count": 4,
+  "open_questions_with_recommendation": "4 of 4",
+  "rules_total": 0,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:explore docs-under-test — continue capturing thinking — no decisions captured yet"
+}
