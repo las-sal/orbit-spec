@@ -58,6 +58,33 @@ Moves:
 - CONSUME: applied — the suite consumes it; once `README.md` leaves `pending-rewrite.json` every check runs on it, and a pending README is skipped like every other check
 - INVOKE: applied — `npm test`, on every run
 
+### D-lp-16 — a release ships a built release tree
+Domain: every condition under which `npm install -g <git spec>#<tag>` installs a working orbit from the tagged tree
+| member | covered by |
+|---|---|
+| no pacote prepare trigger in the release `package.json` (`prepare`, `build`, `postinstall`, `install`, `preinstall`, `prepack`) | the release script removes all six (pacote 21.5.0 `lib/git.js` `#prepareDir`) |
+| no `workspaces` field (pacote's seventh trigger) | the package declares none; the release script refuses one |
+| `dist/` built from the release commit's own parent | the release script runs the build on the parent's tree, then force-adds `dist/` |
+| `bin/orbit.js` resolves into `dist/` | the built-tree spike: `orbit --version` prints 2.0.0 |
+| the installed file set | npm's git path packs by `files`, as `npm pack` does: the built-tree install and the tarball install hold the same eight entries |
+| runtime `dependencies` | installed by npm from the release `package.json` (the spike's `node_modules`) |
+| the version `orbit --version` prints | `package.json` `version`, unchanged by the release script |
+| the completion tip `postinstall` printed | dropped from the release tree with the trigger; `orbit completion install` is unaffected |
+| where the tag points | the release commit, child of `main`'s merge commit, pushed by name, never `--tags` |
+Closure: BOUNDED — the trigger set and the packing rule are read from one npm (11.12.1, pacote 21.5.0) and the failure measured under two (10.9.2, 11.12.1); other versions are not read
+Residual kind: an npm or pacote version whose prepare trigger set or git packing rule differs from pacote 21.5.0's, so a release tree that installs under one npm fails under another
+Residual method: install the release tree under each npm major the supported Node versions ship (10 and 11 today), in the rehearsal and in a test that runs the release script into a scratch clone and installs its tag
+Moves:
+- READ: applied — `@npmcli/config` `set-envs.js`, pacote `lib/git.js` `#prepareDir` and `#clone`, `lib/fetcher.js` `npmCliConfig`, all in npm 11.12.1's installed source (D-lp-13, D-lp-15)
+- ENUMERATE: applied — this table; the trigger names are copied from the source, not recalled
+- COHERE: applied — the release `package.json` differs from `main`'s by the removed scripts only, and the two never meet: the release commit is never merged back, so `npm install` on `main` still builds through `prepare`
+- EXECUTE: applied — the built-tree spike: exit 0, 2.0.0, `orbit init --tools claude` writes 51 files, and the installed set equals the tarball install's
+- FALSIFY: applied — a tree that installs but carries a `dist/` stale against its source would pass every row; the build runs on the parent's tree in the same script that commits it, and the test rebuilds and compares
+- CONFORM: applied — R-ugd-4's line kept letter for letter; R-ugd-7's "tag on `main`" amended (architect); the outward-actions rule: the tag push is already this stage's act and no Release is required
+- FEASIBILITY: applied — about 600 KB of built output enters history per release (the packed tarball is 604 KB)
+- CONSUME: applied — npm's git path (measured), `orbit --version` (version unchanged), update detection compares `generatedBy` by `!==` and is unaffected
+- INVOKE: applied — fires at the post-merge release act (task 5.3's successor), on Sal's word, and in the pre-flip rehearsal, which installs the script's output from a local clone
+
 ## Decisions
 
 
@@ -119,10 +146,57 @@ Moves:
   README's install and quickstart, observed on a clean machine, plus one `/orbit:propose` in Claude Code there,
   producing a change `orbit status` then shows — not the whole loop.
   Kind: scope
+- **2026-10-12 — D-lp-11: R-ugd-4's install line does not install orbit** (measured at the system walk's rehearsal and
+  re-entry spikes, 2026-10-12). `npm install -g <git url>#v2.0.0` exits 1 ("git dep preparation failed … Build
+  failed!") on npm 11.12.1 and on npm 10.9.2, with the prefix from the environment or from a user `.npmrc`: npm's nested
+  `npm install --include=dev` in its temporary clone inherits `npm_config_global=true`, installs nothing into the
+  clone, and `build.js` cannot resolve `typescript/bin/tsc`. The same tree builds under a plain local `npm install`.
+  Kind: fact
+- **2026-10-12 — D-lp-12: no change inside the package can repair it** (measured, the self-healing spike). A `build.js`
+  that installs its own toolchain with the global flag cleared builds, and the install still exits 1: under the leaked
+  flag npm's nested install has already installed the temporary clone GLOBALLY as a link into that clone, which npm then
+  deletes, so `postinstall` runs through a dangling link. The damage precedes `prepare`.
+  Kind: fact
+- **2026-10-12 — D-lp-13: the root cause is npm's, in pacote** (read in npm 11.12.1's installed source).
+  `@npmcli/config`'s `setEnvs` exports every non-default CLI setting to child processes, so `-g` becomes
+  `npm_config_global=true`; pacote's git fetcher (`lib/git.js` `#prepareDir`) fires when `package.json` carries any of
+  `prepare`, `build`, `postinstall`, `install`, `preinstall`, `prepack`, and spawns `npm install` with
+  `{ ...process.env }` and flags (`lib/fetcher.js`) that override the inherited `omit` setting but never `global`. The
+  upstream fix is one flag in pacote; filing it is Sal's outward act, and users on npm 10 and 11 stay affected.
+  Kind: fact
+- **2026-10-12 — D-lp-14: a release tree that is already built installs by R-ugd-4's literal line** (measured, the
+  built-tree spike). A tag on a commit carrying a built `dist/` and none of pacote's six trigger script names: `npm
+  install -g git+file://<clone>#<tag>` exits 0, `orbit --version` prints 2.0.0, the global install is a real copy, and
+  `orbit init --tools claude` writes the same 51 files.
+  Kind: fact
+- **2026-10-12 — D-lp-15: GitHub's source tarball is not a route of its own** (read in pacote's `lib/git.js` `#clone`,
+  and measured). For a `github:` spec npm already downloads the hosted tarball of the tag (`h.tarball()` through
+  `RemoteFetcher`) and then runs `#prepareDir` on it, so R-ugd-4's line IS the git tarball plus a build. Installing the
+  source archive URL directly skips the build: today's tree installs with exit 0, `orbit --version` crashes for want of
+  `dist/`, and the whole repository is installed (a raw tarball ignores `files`); the archive of a built release tree
+  installs and prints 2.0.0. The variable is whether the tagged tree is built, which is route D.
+  Kind: fact
+- **2026-10-12 — D-lp-16: a release ships a BUILT RELEASE TREE, and R-ugd-4's install line stays exact** (Sal: "ok to
+  go with your rec"; was Q-lp-10). Each release tag sits on a RELEASE COMMIT whose parent is `main`'s merge commit: a
+  release script builds, force-adds `dist/` past `.gitignore`, and removes pacote's prepare triggers from that commit's
+  `package.json`; the tag is cut on it and pushed by name. `npm install -g github:las-sal/orbit-spec#v2.0.0` installs
+  that tree unchanged. The from-source route (clone, `npm install`, `npm install -g .`, a symlink into the clone) is
+  stated in Development. R-ugd-7's "the tag on `main`" is amended to the release commit in an architect session; the
+  upstream npm report (D-lp-13) is Sal's to file.
+  Kind: rule
 
 ## Open questions
 
 ## Considered & out
+
+- **2026-10-12 — route C, an `npm pack` tarball attached to the GitHub Release** (D-lp-16 chose D): installs a trimmed
+  copy, but makes a Release upload by Sal part of every version and replaces R-ugd-4's `github:` line with an asset URL.
+- **2026-10-12 — route A as the landing-page install** (D-lp-16 chose D): works, but four or five commands and a global
+  symlink into a clone the user must keep; kept as the from-source route in Development.
+
+- **2026-10-12 — a `prepare` that survives the global install** (route B; refuted by D-lp-12 and explained by D-lp-13): the failure happens in
+  npm's nested install before `prepare` runs, so no build script can repair it. Moving the build toolchain into
+  `dependencies` fails for the same reason (the nested install installs nothing locally).
 
 ## References
 
@@ -133,4 +207,6 @@ Moves:
 - `src/core/shared/tool-detection.ts:197` — `generatedBy` compared with `!==`
 - `src/core/templates/workflows/onboard.ts:36` — the version sentence; `orbit/specs/orbit-onboard/spec.md:37`
 - `orbit/specs/orbit-conventions/spec.md:770` — upstream version declaration
+- `orbit/changes/landing-page/tasks.md` task 5.2 — the failed rehearsal's record; `address-reviews-2026-10-12T18-01-09Z`
+  — the escalation that routed the install route here
 - `.github/workflows/release-prepare.yml` — upstream's release workflow, for public-readiness
