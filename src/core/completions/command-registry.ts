@@ -187,7 +187,7 @@ export const COMMAND_REGISTRY: CommandDefinition[] = [
   },
   {
     name: 'feedback',
-    description: 'Submit feedback about OpenSpec',
+    description: 'Submit feedback about orbit',
     acceptsPositional: true,
     flags: [
       {

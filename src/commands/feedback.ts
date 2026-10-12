@@ -98,12 +98,11 @@ function formatBody(bodyText?: string): string {
  * Generate a pre-filled GitHub issue URL for manual submission
  */
 function generateManualSubmissionUrl(title: string, body: string): string {
-  const repo = 'Fission-AI/OpenSpec';
+  const repo = 'las-sal/orbit-spec';
   const encodedTitle = encodeURIComponent(title);
   const encodedBody = encodeURIComponent(body);
-  const encodedLabels = encodeURIComponent('feedback');
 
-  return `https://github.com/${repo}/issues/new?title=${encodedTitle}&body=${encodedBody}&labels=${encodedLabels}`;
+  return `https://github.com/${repo}/issues/new?title=${encodedTitle}&body=${encodedBody}`;
 }
 
 /**
@@ -112,7 +111,6 @@ function generateManualSubmissionUrl(title: string, body: string): string {
 function displayFormattedFeedback(title: string, body: string): void {
   console.log('\n--- FORMATTED FEEDBACK ---');
   console.log(`Title: ${title}`);
-  console.log(`Labels: feedback`);
   console.log('\nBody:');
   console.log(body);
   console.log('--- END FEEDBACK ---\n');
@@ -130,13 +128,11 @@ function submitViaGhCli(title: string, body: string): void {
         'issue',
         'create',
         '--repo',
-        'Fission-AI/OpenSpec',
+        'las-sal/orbit-spec',
         '--title',
         title,
         '--body',
         body,
-        '--label',
-        'feedback',
       ],
       { encoding: 'utf-8', stdio: 'pipe' }
     );

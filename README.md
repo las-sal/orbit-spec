@@ -130,6 +130,7 @@ These pages are being rewritten for orbit; until then, some still describe the t
 - [Workflows](docs/workflows.md)
 - [Commands](docs/commands.md)
 - [CLI](docs/cli.md)
+- [Workflow engine](docs/workflow-engine.md)
 - [Concepts](docs/concepts.md)
 - [Customization](docs/customization.md)
 - [Multi-language](docs/multi-language.md)

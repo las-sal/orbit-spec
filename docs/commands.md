@@ -1,704 +1,302 @@
 # Commands
 
-This is the reference for OpenSpec's slash commands. These commands are invoked in your AI coding assistant's chat interface (e.g., Claude Code, Cursor, Windsurf).
+orbit's workflows are commands you type to your AI assistant. In Claude Code each is `/orbit:<id>`. Every install
+carries all 15. The [CLI](cli.md) is the terminal side; the workflows call it.
 
-For workflow patterns and when to use each command, see [Workflows](workflows.md). For CLI commands, see [CLI](cli.md).
+Every workflow ends its turn with a `Ready when you are:` line naming what is eligible next. The AI recommends the
+next step and does not run it unasked: you invoke each workflow. When the AI arrives at `apply`, `archive` or
+`bulk-archive` by any route other than your typing it, it asks before writing anything.
 
-## Quick Reference
+## Quick reference
 
-### Default Quick Path (`core` profile)
+| Workflow | Purpose |
+|---|---|
+| [`/orbit:explore`](#orbitexplore) | Think an idea through before committing to a change |
+| [`/orbit:propose`](#orbitpropose) | Create a change and write all its artifacts in one step |
+| [`/orbit:new`](#orbitnew) | Create a change and stop, to write its artifacts one at a time |
+| [`/orbit:continue`](#orbitcontinue) | Write the change's next artifact |
+| [`/orbit:ff`](#orbitff) | Write every remaining artifact |
+| [`/orbit:review`](#orbitreview) | Review a change (or an architecture doc) and report findings |
+| [`/orbit:address-reviews`](#orbitaddress-reviews) | Walk review findings one at a time, with pushback |
+| [`/orbit:apply`](#orbitapply) | Implement the change's tasks |
+| [`/orbit:verify`](#orbitverify) | Check the implementation against the artifacts |
+| [`/orbit:sync`](#orbitsync) | Merge a change's delta specs into the baseline without archiving |
+| [`/orbit:archive`](#orbitarchive) | Merge the specs and archive the change |
+| [`/orbit:bulk-archive`](#orbitbulk-archive) | Archive several changes at once |
+| [`/orbit:audit-drift`](#orbitaudit-drift) | Find drift between the project's documents and the repository |
+| [`/orbit:architect`](#orbitarchitect) | Author an architecture doc: a program of changes as stages |
+| [`/orbit:onboard`](#orbitonboard) | A one-page orientation to orbit |
 
-| Command | Purpose |
-|---------|---------|
-| `/opsx:propose` | Create a change and generate planning artifacts in one step |
-| `/opsx:explore` | Think through ideas before committing to a change |
-| `/opsx:apply` | Implement tasks from the change |
-| `/opsx:archive` | Archive a completed change |
+## Other assistants
 
-### Expanded Workflow Commands (custom workflow selection)
-
-| Command | Purpose |
-|---------|---------|
-| `/opsx:new` | Start a new change scaffold |
-| `/opsx:continue` | Create the next artifact based on dependencies |
-| `/opsx:ff` | Fast-forward: create all planning artifacts at once |
-| `/opsx:verify` | Validate implementation matches artifacts |
-| `/opsx:sync` | Merge delta specs into main specs |
-| `/opsx:bulk-archive` | Archive multiple changes at once |
-| `/opsx:onboard` | Guided tutorial through the complete workflow |
-
-The default global profile is `core`. To enable expanded workflow commands, run `openspec config profile`, select workflows, then run `openspec update` in your project.
+Codex installs each workflow as a skill, and as a prompt named `orbit-<id>` in its global prompts directory.
+[Supported tools](supported-tools.md) describes how each assistant invokes them. The workflow names, arguments and
+behaviour below are the same for every assistant.
 
 ---
 
-## Command Reference
+## Starting a change
 
-### `/opsx:propose`
+### `/orbit:explore`
 
-Create a new change and generate planning artifacts in one step. This is the default start command in the `core` profile.
+A thinking partner. The AI reads the code, asks questions, compares options and draws diagrams; it changes no code.
+When the thinking is worth keeping, it writes `orbit/explore/<name>/explore.md`, which `/orbit:propose` picks up as
+the change's starting point.
 
-**Syntax:**
 ```text
-/opsx:propose [change-name-or-description]
+/orbit:explore
+/orbit:explore how should the settings page handle themes?
 ```
 
-**Arguments:**
-| Argument | Required | Description |
-|----------|----------|-------------|
-| `change-name-or-description` | No | Kebab-case name or plain-language change description |
+Use it when the problem or the approach is unclear. An exploration can also conclude without a change.
 
-**What it does:**
-- Creates `openspec/changes/<change-name>/`
-- Generates artifacts needed before implementation (for `spec-driven`: proposal, specs, design, tasks)
-- Stops when the change is ready for `/opsx:apply`
+### `/orbit:propose`
 
-**Example:**
+Create a change and write all its artifacts: `proposal.md`, `design.md`, delta specs under `specs/` and `tasks.md`,
+in `orbit/changes/<name>/`. Give it a kebab-case name or describe what you want.
+
 ```text
-You: /opsx:propose add-dark-mode
-
-AI:  Created openspec/changes/add-dark-mode/
-     ✓ proposal.md
-     ✓ specs/ui/spec.md
-     ✓ design.md
-     ✓ tasks.md
-     Ready for implementation. Run /opsx:apply.
+/orbit:propose add-dark-mode
+/orbit:propose add a dark mode to the settings page
 ```
 
-**Tips:**
-- Use this for the fastest end-to-end path
-- If you want step-by-step artifact control, enable expanded workflows and use `/opsx:new` + `/opsx:continue`
+It validates what it wrote, and stamps the fingerprints of the baseline requirements the change touches. In a
+project whose `orbit/config.yaml` sets `pr:`, it also opens a draft pull request for the change.
 
----
+### `/orbit:new`
 
-### `/opsx:explore`
+Create the change folder and stop, showing the first artifact to write. Pair it with `/orbit:continue` to write the
+artifacts one at a time.
 
-Think through ideas, investigate problems, and clarify requirements before committing to a change.
-
-**Syntax:**
-```
-/opsx:explore [topic]
-```
-
-**Arguments:**
-| Argument | Required | Description |
-|----------|----------|-------------|
-| `topic` | No | What you want to explore or investigate |
-
-**What it does:**
-- Opens an exploratory conversation with no structure required
-- Investigates the codebase to answer questions
-- Compares options and approaches
-- Creates visual diagrams to clarify thinking
-- Can transition to `/opsx:propose` (default) or `/opsx:new` (expanded workflow) when insights crystallize
-
-**Example:**
 ```text
-You: /opsx:explore
-
-AI:  What would you like to explore?
-
-You: How should we handle authentication for the mobile app?
-
-AI:  Let me investigate your current auth setup...
-     [Analyzes codebase]
-
-     I see you're using session-based auth for the web app.
-     For mobile, we have three main options:
-
-     1. JWT tokens (stateless, works offline)
-     2. OAuth2 (if you need third-party login)
-     3. Extend current sessions (simpler, but requires connectivity)
-
-     Your API already has CORS configured. Which direction interests you?
-
-You: Let's go with JWT. Can we start a change for that?
-
-AI:  Ready when you are. Run /opsx:propose add-jwt-auth to begin.
+/orbit:new add-dark-mode
 ```
 
-**Tips:**
-- Use when requirements are unclear or you need to investigate
-- No artifacts are created during exploration
-- Good for comparing multiple approaches before deciding
-- Can read files and search the codebase
+### `/orbit:continue`
 
----
+Write the change's next ready artifact: the one whose dependencies are done. It reads those dependencies first, then
+shows what the new artifact unlocks.
 
-### `/opsx:new`
-
-Start a new change scaffold. Creates the change folder and waits for you to generate artifacts with `/opsx:continue` or `/opsx:ff`.
-
-This command is part of the expanded workflow set (not included in the default `core` profile).
-
-**Syntax:**
-```
-/opsx:new [change-name] [--schema <schema-name>]
-```
-
-**Arguments:**
-| Argument | Required | Description |
-|----------|----------|-------------|
-| `change-name` | No | Name for the change folder (prompted if not provided) |
-| `--schema` | No | Workflow schema to use (default: from config or `spec-driven`) |
-
-**What it does:**
-- Creates `openspec/changes/<change-name>/` directory
-- Creates `.openspec.yaml` metadata file in the change folder
-- Shows the first artifact template ready for creation
-- Prompts for change name and schema if not provided
-
-**What it creates:**
-```
-openspec/changes/<change-name>/
-└── .openspec.yaml    # Change metadata (schema, created date)
-```
-
-**Example:**
-```
-You: /opsx:new add-dark-mode
-
-AI:  Created openspec/changes/add-dark-mode/
-     Schema: spec-driven
-
-     Ready to create: proposal
-     Use /opsx:continue to create it, or /opsx:ff to create all artifacts.
-```
-
-**Tips:**
-- Use descriptive names: `add-feature`, `fix-bug`, `refactor-module`
-- Avoid generic names like `update`, `changes`, `wip`
-- Schema can also be set in project config (`openspec/config.yaml`)
-
----
-
-### `/opsx:continue`
-
-Create the next artifact in the dependency chain. Creates one artifact at a time for incremental progress.
-
-**Syntax:**
-```
-/opsx:continue [change-name]
-```
-
-**Arguments:**
-| Argument | Required | Description |
-|----------|----------|-------------|
-| `change-name` | No | Which change to continue (inferred from context if not provided) |
-
-**What it does:**
-- Queries the artifact dependency graph
-- Shows which artifacts are ready vs blocked
-- Creates the first ready artifact
-- Reads dependency files for context
-- Shows what becomes available after creation
-
-**Example:**
-```
-You: /opsx:continue
-
-AI:  Change: add-dark-mode
-
-     Artifact status:
-     ✓ proposal    (done)
-     ◆ specs       (ready)
-     ◆ design      (ready)
-     ○ tasks       (blocked - needs: specs)
-
-     Creating specs...
-
-     [Reads proposal.md, creates specs based on requirements]
-
-     ✓ Created openspec/changes/add-dark-mode/specs/ui/spec.md
-
-     Now available: tasks
-     Run /opsx:continue to create the next artifact.
-```
-
-**Tips:**
-- Use when you want to review each artifact before proceeding
-- Good for complex changes where you want control
-- Multiple artifacts may become ready simultaneously
-- You can edit created artifacts before continuing
-
----
-
-### `/opsx:ff`
-
-Fast-forward through artifact creation. Creates all planning artifacts at once.
-
-**Syntax:**
-```
-/opsx:ff [change-name]
-```
-
-**Arguments:**
-| Argument | Required | Description |
-|----------|----------|-------------|
-| `change-name` | No | Which change to fast-forward (inferred from context if not provided) |
-
-**What it does:**
-- Creates all artifacts in dependency order
-- Tracks progress via todo list
-- Stops when all `apply-required` artifacts are complete
-- Reads each dependency before creating the next artifact
-
-**Example:**
-```
-You: /opsx:ff add-dark-mode
-
-AI:  Fast-forwarding add-dark-mode...
-
-     ✓ Creating proposal.md
-     ✓ Creating specs/ui/spec.md
-     ✓ Creating design.md
-     ✓ Creating tasks.md
-
-     All planning artifacts complete!
-     Ready for implementation. Run /opsx:apply to begin.
-```
-
-**Tips:**
-- Use when you have a clear picture of what you're building
-- Faster than `/opsx:continue` for straightforward changes
-- You can still edit artifacts afterward
-- Good for small to medium features
-
----
-
-### `/opsx:apply`
-
-Implement tasks from the change. Works through the task list, writing code and checking off items.
-
-**Syntax:**
-```
-/opsx:apply [change-name]
-```
-
-**Arguments:**
-| Argument | Required | Description |
-|----------|----------|-------------|
-| `change-name` | No | Which change to implement (inferred from context if not provided) |
-
-**What it does:**
-- Reads `tasks.md` and identifies incomplete tasks
-- Works through tasks one by one
-- Writes code, creates files, runs tests as needed
-- Marks tasks complete with checkboxes `[x]`
-
-**Example:**
-```
-You: /opsx:apply
-
-AI:  Implementing add-dark-mode...
-
-     Reading tasks.md:
-     - [ ] 1.1 Create ThemeContext
-     - [ ] 1.2 Add CSS custom properties
-     - [ ] 1.3 Implement localStorage persistence
-
-     Working on 1.1: Create ThemeContext...
-     [Creates src/context/ThemeContext.tsx]
-
-     ✓ 1.1 Complete
-
-     Working on 1.2: Add CSS custom properties...
-     [Updates src/styles/globals.css]
-
-     ✓ 1.2 Complete
-     ...
-```
-
-**Tips:**
-- Can resume where you left off if interrupted
-- Use for parallel changes by specifying the change name
-- Completion state is tracked in `tasks.md` checkboxes
-
----
-
-### `/opsx:verify`
-
-Validate that implementation matches your change artifacts. Checks completeness, correctness, and coherence.
-
-**Syntax:**
-```
-/opsx:verify [change-name]
-```
-
-**Arguments:**
-| Argument | Required | Description |
-|----------|----------|-------------|
-| `change-name` | No | Which change to verify (inferred from context if not provided) |
-
-**What it does:**
-- Checks three dimensions of implementation quality
-- Searches codebase for implementation evidence
-- Reports issues categorized as CRITICAL, WARNING, or SUGGESTION
-- Does not block archive, but surfaces issues
-
-**Verification dimensions:**
-
-| Dimension | What it validates |
-|-----------|-------------------|
-| **Completeness** | All tasks done, all requirements implemented, scenarios covered |
-| **Correctness** | Implementation matches spec intent, edge cases handled |
-| **Coherence** | Design decisions reflected in code, patterns consistent |
-
-**Example:**
-```
-You: /opsx:verify
-
-AI:  Verifying add-dark-mode...
-
-     COMPLETENESS
-     ✓ All 8 tasks in tasks.md are checked
-     ✓ All requirements in specs have corresponding code
-     ⚠ Scenario "System preference detection" has no test coverage
-
-     CORRECTNESS
-     ✓ Implementation matches spec intent
-     ✓ Edge cases from scenarios are handled
-     ✓ Error states match spec definitions
-
-     COHERENCE
-     ✓ Design decisions reflected in code structure
-     ✓ Naming conventions consistent with design.md
-     ⚠ Design mentions "CSS variables" but implementation uses Tailwind classes
-
-     SUMMARY
-     ─────────────────────────────
-     Critical issues: 0
-     Warnings: 2
-     Ready to archive: Yes (with warnings)
-
-     Recommendations:
-     1. Add test for system preference detection
-     2. Update design.md to reflect Tailwind usage, or refactor to use CSS variables
-```
-
-**Tips:**
-- Run before archiving to catch mismatches early
-- Warnings don't block archive but indicate potential issues
-- Good for reviewing AI's work before committing
-- Can reveal drift between artifacts and implementation
-
----
-
-### `/opsx:sync`
-
-**Optional command.** Merge delta specs from a change into main specs. Archive will prompt to sync if needed, so you typically don't need to run this manually.
-
-**Syntax:**
-```
-/opsx:sync [change-name]
-```
-
-**Arguments:**
-| Argument | Required | Description |
-|----------|----------|-------------|
-| `change-name` | No | Which change to sync (inferred from context if not provided) |
-
-**What it does:**
-- Reads delta specs from change folder
-- Parses ADDED/MODIFIED/REMOVED/RENAMED sections
-- Merges changes into main `openspec/specs/` directory
-- Preserves existing content not mentioned in delta
-- Does not archive the change (remains active)
-
-**Example:**
 ```text
-You: /opsx:sync
-
-AI:  Syncing add-dark-mode delta specs...
-
-     Reading: openspec/changes/add-dark-mode/specs/ui/spec.md
-     Target:  openspec/specs/ui/spec.md
-
-     Changes to apply:
-     ✓ ADDED: Theme Selection requirement (2 scenarios)
-     ✓ ADDED: Accessibility requirement (1 scenario)
-
-     Merging...
-     ✓ openspec/specs/ui/spec.md updated
-
-     Change remains active. Run /opsx:archive when ready to complete.
+/orbit:continue
+/orbit:continue add-dark-mode
 ```
 
-**When to use manually:**
+### `/orbit:ff`
 
-| Scenario | Use sync? |
-|----------|-----------|
-| Long-running change, want specs in main before archiving | Yes |
-| Multiple parallel changes need the updated base specs | Yes |
-| Want to preview/review the merge separately | Yes |
-| Quick change, going straight to archive | No (archive handles it) |
+Fast-forward: write every remaining artifact in dependency order. Like `/orbit:propose`, but it also completes a
+change that `/orbit:new` or `/orbit:continue` started.
 
-**Tips:**
-- Sync is intelligent, not copy-paste
-- Can add scenarios to existing requirements without duplicating
-- Change stays active after sync (not archived)
-- Most users will never need to call this directly—archive prompts if needed
-
----
-
-### `/opsx:archive`
-
-Archive a completed change. Finalizes the change and moves it to the archive folder.
-
-**Syntax:**
-```
-/opsx:archive [change-name]
-```
-
-**Arguments:**
-| Argument | Required | Description |
-|----------|----------|-------------|
-| `change-name` | No | Which change to archive (inferred from context if not provided) |
-
-**What it does:**
-- Checks artifact completion status
-- Checks task completion (warns if incomplete)
-- Offers to sync delta specs if not already synced
-- Moves change folder to `openspec/changes/archive/YYYY-MM-DD-<name>/`
-- Preserves all artifacts for audit trail
-
-**Example:**
 ```text
-You: /opsx:archive
-
-AI:  Archiving add-dark-mode...
-
-     Artifact status:
-     ✓ proposal.md exists
-     ✓ specs/ exists
-     ✓ design.md exists
-     ✓ tasks.md exists (8/8 tasks complete)
-
-     Delta specs: Not yet synced
-     → Sync now? (recommended)
-
-You: Yes
-
-AI:  ✓ Synced specs to openspec/specs/ui/spec.md
-     ✓ Moved to openspec/changes/archive/2025-01-24-add-dark-mode/
-
-     Change archived successfully.
+/orbit:ff add-dark-mode
 ```
-
-**Tips:**
-- Archive won't block on incomplete tasks, but will warn
-- Delta specs can be synced during archive or beforehand
-- Archived changes are preserved for history
-- Use `/opsx:verify` first to catch issues
 
 ---
 
-### `/opsx:bulk-archive`
+## Reviewing
 
-Archive multiple completed changes at once. Handles spec conflicts between changes.
+### `/orbit:review`
 
-**Syntax:**
-```
-/opsx:bulk-archive [change-names...]
-```
+Review a change, or an architecture doc, and report findings by severity: CRITICAL, WARNING or SUGGESTION. A review
+generates findings and never fixes them; `/orbit:address-reviews` walks them. Each review is recorded in the change's
+trail, and `orbit status --change <name> --report` renders it.
 
-**Arguments:**
-| Argument | Required | Description |
-|----------|----------|-------------|
-| `change-names` | No | Specific changes to archive (prompts to select if not provided) |
-
-**What it does:**
-- Lists all completed changes
-- Validates each change before archiving
-- Detects spec conflicts across changes
-- Resolves conflicts by checking what's actually implemented
-- Archives in chronological order
-
-**Example:**
-```
-You: /opsx:bulk-archive
-
-AI:  Found 3 completed changes:
-     - add-dark-mode (8/8 tasks complete)
-     - fix-login-bug (3/3 tasks complete)
-     - update-footer (2/2 tasks complete)
-
-     Checking for spec conflicts...
-     ⚠ add-dark-mode and update-footer both touch specs/ui/
-
-     Inspecting codebase to resolve...
-     Both changes are implemented. Will merge in chronological order:
-     1. add-dark-mode (created Jan 20)
-     2. update-footer (created Jan 22)
-
-     Archive all 3 changes?
-
-You: Yes
-
-AI:  ✓ Archived add-dark-mode
-     ✓ Archived fix-login-bug
-     ✓ Archived update-footer
-     Specs merged: add-dark-mode → update-footer
+```text
+/orbit:review --as proposal --fresh add-dark-mode
+/orbit:review --as system --blind-pair add-dark-mode
+/orbit:review --as architecture my-program
 ```
 
-**Tips:**
-- Good for parallel work streams
-- Conflict resolution is agentic (checks codebase)
-- Changes are archived in order of creation
-- Prompts before overwriting spec content
+**Modes** (`--as`):
+
+| Mode | When | What it reads | Gate |
+|---|---|---|---|
+| `proposal` | Before apply | The change's artifacts, in nine passes | `review-proposal` |
+| `system` | After apply | The implementation: `/orbit:verify` first, then six passes over the whole change, the last a drift audit | `review-system` |
+| `architecture` | Any time | An architecture doc under `orbit/architecture/`, in six passes | None |
+
+With no `--as`, the mode is inferred from `tasks.md`: none checked means proposal, all checked means system, and
+anything else asks. Architecture mode is never inferred.
+
+**Reviewers** (`--reviewer <value>`, or its shorthand). Give at most one.
+
+| Reviewer | Shorthand | Who reviews |
+|---|---|---|
+| `in-context` (the default) | `--in-context` | This session, with the conversation it has |
+| `fresh` | `--fresh` | The same model in a clean context, which reads only the artifacts |
+| `external` | `--external` | A different AI, in a separate session. With a runner recorded (`orbit external runner`), orbit launches it; otherwise it prints the prompt to paste |
+| `blind-pair` | `--blind-pair` | A fresh and an external review in one command, blind to each other |
+
+`external` and `blind-pair` need `--as proposal` or `--as system`.
+
+**Other options:**
+
+| Option | Effect |
+|---|---|
+| `--fast`, `--full`, `--thorough` | Depth; `--full` by default |
+| `--parallel` | Run the heavier passes in subagents |
+| `--focus <lens>` | Emphasize some passes, without skipping the others |
+| `--strict` | Stop at the first CRITICAL finding or block |
+| `--mark` | Proposal mode: also write each finding as an `@review:` marker at its line |
+| `--skip-verify` | System mode: skip the `/orbit:verify` pass, when you ran it separately |
+
+[Workflows](workflows.md#the-review-cadence) describes which reviews a gate needs before it passes.
+
+### `/orbit:address-reviews`
+
+Walk review findings one at a time. Each finding is first checked against the current files: one that no longer
+holds is suppressed with evidence, never re-fixed. Obvious fixes are previewed at the start and applied; a finding
+that needs a decision is briefed to you in prose and settled in the conversation. Edits ripple to the other files the
+fix affects. The walk is recorded in the change's trail, finding by finding.
+
+```text
+/orbit:address-reviews add-dark-mode
+/orbit:address-reviews --from-file review.md
+/orbit:address-reviews
+```
+
+Aimed at a change, it walks everything outstanding: every review the change's gates have not yet seen resolved,
+internal and external alike, its unwalked drift audits, and any `@review:` markers in the change. With no argument
+and one active change, it aims at that change; otherwise it scans the repository for `@review:` markers.
+
+| Option | Effect |
+|---|---|
+| `--from-file <path>` | Walk one file only: an external review, a review record or a drift audit |
+| `--batch` | Triage and resolve all findings together rather than one at a time |
+| `--no-cascade` | Do not apply ripple edits to other files |
+
+### `/orbit:verify`
+
+Check the implementation against the change's artifacts: completeness (tasks and requirements), correctness
+(each requirement's implementation and each scenario's handling, with test coverage read from the scenario map when
+`orbit/config.yaml` turns it on), and coherence (the design's decisions in the code). It reports issues and does not
+fix them.
+
+```text
+/orbit:verify add-dark-mode
+```
+
+A system review runs verify as its first pass, so there is no separate verify step in the lifecycle. Run it on its
+own to check progress during apply.
 
 ---
 
-### `/opsx:onboard`
+## Implementing
 
-Guided onboarding through the complete OpenSpec workflow. An interactive tutorial using your actual codebase.
+### `/orbit:apply`
 
-**Syntax:**
-```
-/opsx:onboard
-```
+Implement the change's tasks, checking each one off in `tasks.md` as it lands. It reads the proposal, design, specs
+and tasks first, and picks up from the unchecked tasks if you stop part way.
 
-**What it does:**
-- Walks through a complete workflow cycle with narration
-- Scans your codebase for real improvement opportunities
-- Creates an actual change with real artifacts
-- Implements actual work (small, safe changes)
-- Archives the completed change
-- Explains each step as it happens
-
-**Phases:**
-1. Welcome and codebase analysis
-2. Finding an improvement opportunity
-3. Creating a change (`/opsx:new`)
-4. Writing the proposal
-5. Creating specs
-6. Writing the design
-7. Creating tasks
-8. Implementing tasks (`/opsx:apply`)
-9. Verifying implementation
-10. Archiving the change
-11. Summary and next steps
-
-**Example:**
-```
-You: /opsx:onboard
-
-AI:  Welcome to OpenSpec!
-
-     I'll walk you through the complete workflow using your actual codebase.
-     We'll find something small to improve, create a proper change for it,
-     implement it, and archive it.
-
-     Let me scan your codebase for opportunities...
-
-     [Analyzes codebase]
-
-     I found a few things we could work on:
-     1. Add input validation to the contact form
-     2. Improve error messages in the auth flow
-     3. Add loading states to async buttons
-
-     Which interests you? (or suggest something else)
+```text
+/orbit:apply add-dark-mode
 ```
 
-**Tips:**
-- Best for new users learning the workflow
-- Uses real code, not toy examples
-- Creates a real change you can keep or discard
-- Takes 15-30 minutes to complete
+If the proposal review's gate has not passed, apply says so and asks whether to address the gate, proceed anyway
+(the decision is recorded), or stop. It never blocks you outright.
 
 ---
 
-## Command Syntax by AI Tool
+## Finishing
 
-Different AI tools use slightly different command syntax. Use the format that matches your tool:
+### `/orbit:sync`
 
-| Tool | Syntax Example |
-|------|----------------|
-| Claude Code | `/opsx:propose`, `/opsx:apply` |
-| Cursor | `/opsx-propose`, `/opsx-apply` |
-| Windsurf | `/opsx-propose`, `/opsx-apply` |
-| Copilot (IDE) | `/opsx-propose`, `/opsx-apply` |
-| Trae | Skill-based invocations such as `/openspec-propose`, `/openspec-apply-change` (no generated `opsx-*` command files) |
+Merge a change's delta specs into the baseline in `orbit/specs/` without archiving the change. Archive does this
+itself; use sync when a long-running change needs its specs in the baseline early.
 
-The intent is the same across tools, but how commands are surfaced can differ by integration.
+```text
+/orbit:sync add-dark-mode
+```
 
-> **Note:** GitHub Copilot commands (`.github/prompts/*.prompt.md`) are only available in IDE extensions (VS Code, JetBrains, Visual Studio). GitHub Copilot CLI does not currently support custom prompt files — see [Supported Tools](supported-tools.md) for details and workarounds.
+### `/orbit:archive`
+
+Finish a change: merge its delta specs into `orbit/specs/` and move it to
+`orbit/changes/archive/<YYYY-MM-DD>-<name>/`. Before the move, it:
+
+- reports each reviewed gate that has not passed, and asks whether to proceed;
+- settles any task left for you to validate, as observed or deferred;
+- checks the fingerprints, so it never silently overwrites a requirement another change edited since this one was
+  proposed;
+- runs `/orbit:audit-drift` on the change (`--skip-audit` skips it, when you have just run one).
+
+```text
+/orbit:archive add-dark-mode
+```
+
+In a project whose `orbit/config.yaml` sets `pr:`, it then commits, pushes, and marks the change's pull request
+ready. Merging it stays yours.
+
+### `/orbit:bulk-archive`
+
+Archive several finished changes in one go. It asks which, then runs archive's checks for each change in turn. When
+two changes touch the same spec, it applies them in the order they were created.
+
+```text
+/orbit:bulk-archive
+```
 
 ---
 
-## Legacy Commands
+## Across the project
 
-These commands use the older "all-at-once" workflow. They still work but OPSX commands are recommended.
+### `/orbit:audit-drift`
 
-| Command | What it does |
-|---------|--------------|
-| `/openspec:proposal` | Create all artifacts at once (proposal, specs, design, tasks) |
-| `/openspec:apply` | Implement the change |
-| `/openspec:archive` | Archive the change |
+Scan for drift between what the project's documents record and what is actually in the repository, in four
+categories: vocabulary residue, stale review lenses, disagreements between documents, and archived changes whose
+specs never reached the baseline. It reports findings; `/orbit:address-reviews` walks them.
 
-**When to use legacy commands:**
-- Existing projects using the old workflow
-- Simple changes where you don't need incremental artifact creation
-- Preference for the all-or-nothing approach
+```text
+/orbit:audit-drift
+/orbit:audit-drift add-dark-mode
+```
 
-**Migrating to OPSX:**
-Legacy changes can be continued with OPSX commands. The artifact structure is compatible.
+With no argument it audits the whole project; with a change name, that change. System reviews run it as their last
+pass, and archive runs it before the move.
+
+| Option | Effect |
+|---|---|
+| `--fast`, `--full`, `--thorough` | Depth; `--full` by default |
+| `--parallel` | Run the heavier categories in subagents |
+| `--focus <area>` | One category only: `vocabulary`, `lenses`, `docs` or `archive` |
+| `--since <ref>` | How far back the archive category looks: a git ref, or a number of archived changes (5 by default) |
+| `--strict` | Stop at the first CRITICAL finding |
+
+### `/orbit:architect`
+
+Author or resume an architecture doc: a program of changes declared as stages under `orbit/architecture/`, with the
+rulings that bind them. orbit computes each stage's state from disk (exploring, in a change, archived and waiting
+for you to ratify it, complete, or ended without meeting its criteria), and the architect asks you to ratify a
+stage once its change is archived.
+
+```text
+/orbit:architect
+/orbit:architect my-program
+```
+
+With no name, it lists the docs and offers to create one. It is never a required step: a single change needs no
+architecture doc.
+
+### `/orbit:onboard`
+
+A one-page orientation to orbit: the workflow, the commands, and where things live. It creates nothing.
+
+```text
+/orbit:onboard
+```
 
 ---
 
 ## Troubleshooting
 
-### "Change not found"
+**"Change not found".** Name the change exactly, or run `orbit list` to see the active ones.
 
-The command couldn't identify which change to work on.
+**The commands do not appear.** Restart your assistant after `orbit init` or `orbit update`. Check that
+`.claude/commands/orbit/` and `.claude/skills/` exist in the project; if not, run `orbit init` again.
 
-**Solutions:**
-- Specify the change name explicitly: `/opsx:apply add-dark-mode`
-- Check that the change folder exists: `openspec list`
-- Verify you're in the right project directory
+**The workflows behave like an older orbit.** After upgrading the CLI, run `orbit update` in the project
+([Installation](installation.md#upgrade)).
 
-### "No artifacts ready"
+## Next
 
-All artifacts are either complete or blocked by missing dependencies.
-
-**Solutions:**
-- Run `openspec status --change <name>` to see what's blocking
-- Check if required artifacts exist
-- Create missing dependency artifacts first
-
-### "Schema not found"
-
-The specified schema doesn't exist.
-
-**Solutions:**
-- List available schemas: `openspec schemas`
-- Check spelling of schema name
-- Create the schema if it's custom: `openspec schema init <name>`
-
-### Commands not recognized
-
-The AI tool doesn't recognize OpenSpec commands.
-
-**Solutions:**
-- Ensure OpenSpec is initialized: `openspec init`
-- Regenerate skills: `openspec update`
-- Check that `.claude/skills/` directory exists (for Claude Code)
-- Restart your AI tool to pick up new skills
-
-### Artifacts not generating properly
-
-The AI creates incomplete or incorrect artifacts.
-
-**Solutions:**
-- Add project context in `openspec/config.yaml`
-- Add per-artifact rules for specific guidance
-- Provide more detail in your change description
-- Use `/opsx:continue` instead of `/opsx:ff` for more control
-
----
-
-## Next Steps
-
-- [Workflows](workflows.md) - Common patterns and when to use each command
-- [CLI](cli.md) - Terminal commands for management and validation
-- [Customization](customization.md) - Create custom schemas and workflows
+- [Workflows](workflows.md): the patterns, and the review cadence
+- [CLI](cli.md): the terminal commands
