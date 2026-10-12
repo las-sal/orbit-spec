@@ -5,9 +5,10 @@
  *
  * This is the ONLY code in the repo that runs a real `gh`. It records, per command the
  * generated PR references invoke: the verbatim USAGE line and its positional shape, every
- * flag from FLAGS / INHERITED FLAGS as `{ long, short, takes_value }`, plus the two error
- * rules a help page cannot express (observed from the real CLI's stderr — both probes fail
- * before any network request), the availability probe's banner, and the gh version.
+ * flag from FLAGS / INHERITED FLAGS as `{ long, short, takes_value }`, plus the three error
+ * rules a help page cannot express (observed from the real CLI's stderr — two fail before any
+ * network request; the not-found probe needs an authenticated gh), the availability probe's
+ * banner, and the gh version.
  *
  * Re-capture is a DELIBERATE act: `npm run capture:gh`, then review the diff like a
  * fingerprint refresh. The test suite reads the checked-in file and never shells to gh.
@@ -100,6 +101,15 @@ function main() {
   if (repoViewRepoFlag.status === 0 || prViewNoSelector.status === 0) {
     throw new Error('a probe unexpectedly succeeded; the installed gh no longer matches the recorded rules');
   }
+  // The third rule (rc12): the message `gh pr view` gives for a pull request that does not
+  // exist, which `orbit pr` keys its `not-found` outcome on. Unlike the two above, this probe
+  // reaches the network, so it needs an authenticated gh; a probe that fails for any other
+  // reason (auth, network) FAILS the capture rather than recording a guess.
+  const prViewNotFound = gh(['pr', 'view', '--repo', 'cli/cli', 'https://github.com/cli/cli/pull/999999999', '--json', 'state']);
+  const notFoundLine = prViewNotFound.stderr.trim().split('\n')[0];
+  if (prViewNotFound.status === 0 || !/could not resolve to a pullrequest/i.test(notFoundLine)) {
+    throw new Error(`the not-found probe did not observe gh's missing-pull-request message (exit ${prViewNotFound.status}): ${notFoundLine}`);
+  }
   const contract = {
     gh_version: banner,
     captured_at: new Date().toISOString().slice(0, 10),
@@ -108,6 +118,7 @@ function main() {
     rules: {
       repo_view_rejects_repo_flag: repoViewRepoFlag.stderr.trim().split('\n')[0],
       pr_selector_required_with_repo: prViewNoSelector.stderr.trim().split('\n')[0],
+      pr_view_not_found: notFoundLine,
       // Orbit-side qualification (the shared resolution's contract) — the real CLI does NOT
       // enforce these (it would guess a repository); the stub and the sweep do.
       pr_verbs_require_repo: true,

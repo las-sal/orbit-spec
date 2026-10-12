@@ -13,7 +13,7 @@ This is the first of rc12's two changes (Q-crc-9's pre-split): the engine comman
   - `segments`, the body-run writes as argv arrays, split wherever the body must author something first (a commit message, a title, the emit);
   - `human_acts`, the user's alone.
 
-  The engine creates no branch, commit, push or PR, and switches nothing. Its one ref-store update is a bounded fetch: `ls-remote`, then explicit refspecs with `--no-tags` (D-rc12-11).
+  The engine creates no branch, commit, push or PR, and switches nothing. Its one ref-store update is a bounded fetch: `ls-remote`, then explicit refspecs with `--no-tags` and an empty `--refmap=` (D-rc12-11).
 - **The engine decides skips that an owner precondition decides, and the body writes every note** from the reason code (D-rc12-13). This narrows R-crc-5's "degradation notes, when to skip", ratified by Sal.
 - **Five subcommands, one per seam step:**
   - `select <name>` covers propose and ff Phase 1. It needs no change directory: an exploration's presence decides consume mode and supplies the citation (D-rc12-10).

@@ -76,8 +76,10 @@ const COMMANDS: Record<string, CommandSpec> = {
   explore: { kind: 'workflow', scopes: { change: true }, payloadFields: ['final_assessment'] },
   // D6: propose and ff RESOLVE a PR attachment and record its identity as one correlated
   // unit (`pr_attachment`); archive resolves nothing and reports observed state as two flat
-  // fields. The asymmetry is deliberate — see `orbit-pr-lifecycle`'s zero-engine-git
-  // requirement. `new`/`continue` are explicitly NOT extended: they never attach.
+  // fields. The asymmetry is deliberate — see `orbit-pr-lifecycle`'s `PR actions are
+  // workflow-body choreography (zero engine git)`: the engine OBSERVES (`orbit pr` runs read-only
+  // git and gh and prints the writes) and the body writes, so these fields record what the body
+  // observed and did. `new`/`continue` are explicitly NOT extended: they never attach.
   propose: {
     kind: 'workflow',
     scopes: { change: true },

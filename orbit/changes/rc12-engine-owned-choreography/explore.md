@@ -158,10 +158,10 @@ Moves:
 Domain: the ways a `git fetch` could move refs other than the two remote-tracking refs `select` needs
 | member | covered by |
 |---|---|
-| a configured `remote.<r>.fetch` refspec targeting `refs/heads/` | an explicit refspec on the command line overrides the configured ones |
+| a configured `remote.<r>.fetch` refspec targeting `refs/heads/` | an empty `--refmap=` (corrected at apply 2026-10-12: an explicit refspec alone does NOT override the configured ones — git's opportunistic remote-tracking update still applied them, measured by the engine case) |
 | tag auto-following | `--no-tags` |
 | a ref absent on the remote (fetch would fail) | `git ls-remote --heads <r> <default> <branch>` first; fetch only refs that exist |
-| the fetched form | `git fetch --no-tags <r> +refs/heads/<x>:refs/remotes/<r>/<x>`, one refspec per existing ref |
+| the fetched form | `git fetch --no-tags --refmap= <r> +refs/heads/<x>:refs/remotes/<r>/<x>`, one refspec per existing ref |
 Closure: BOUNDED — git's fetch side effects are git's to define; the named members are the ones a refspec and a flag control
 Residual kind: a fetch side effect configured outside the refspec and tag settings (e.g. `fetch.prune`, hooks, `remote.<r>.mirror`)
 Residual method: a test per configuration key, added when a run log names one; the shim records the exact argv so a changed form is visible

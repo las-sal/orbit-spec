@@ -1,6 +1,6 @@
 {
   "gh_version": "gh version 2.91.0 (2026-04-22)",
-  "captured_at": "2026-09-12",
+  "captured_at": "2026-10-12",
   "availability_probe": {
     "argv": [
       "--version"
@@ -579,6 +579,7 @@
   "rules": {
     "repo_view_rejects_repo_flag": "unknown flag: --repo",
     "pr_selector_required_with_repo": "argument required when using the --repo flag",
+    "pr_view_not_found": "GraphQL: Could not resolve to a PullRequest with the number of 999999999. (repository.pullRequest)",
     "pr_verbs_require_repo": true,
     "repo_view_requires_positional": true
   }
