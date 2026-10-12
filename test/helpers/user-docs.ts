@@ -115,10 +115,24 @@ const CAPABILITY_NAME = /^orbit-[a-z0-9]+(-[a-z0-9]+)*$/;
 export const capabilityExists = (name: string): boolean => fs.existsSync(path.join(REPO, 'orbit', 'specs', name, 'spec.md'));
 
 /**
+ * The index of the next backtick run of exactly `run`'s length at or after `from` in a block's raw source, skipping
+ * one preceded by a backslash when it would OPEN a span; -1 when none. A code span's name is located by its opening
+ * run, so a span that wraps a line still counts that line ending (markdown-it emits no break token inside a span).
+ */
+function backtickRun(source: string, run: string, from: number, opening = true): number {
+  for (let i = source.indexOf(run, from); i >= 0; i = source.indexOf(run, i + 1)) {
+    if (source[i - 1] === '`' || source[i + run.length] === '`') continue;
+    if (opening && source[i - 1] === '\\') continue;
+    return i;
+  }
+  return -1;
+}
+
+/**
  * The improvement-claims check over `README.md` (every other surface passes): each top-level list
  * item of the claims section, its nested items' names counted toward it, names at least one
  * capability, and every name resolves. Names are read from `code_inline` tokens, so a fence is never
- * read; a name's line is its inline block's first line plus the line breaks before it.
+ * read; a name's line is its inline block's first line plus the line endings in the block's source before the span.
  */
 export function claimsFailures(surfaces: Surface[], exists: (name: string) => boolean = capabilityExists): string[] {
   const failures: string[] = [];
@@ -139,12 +153,16 @@ export function claimsFailures(surfaces: Surface[], exists: (name: string) => bo
       for (; j < tokens.length && !(tokens[j].type === 'list_item_close' && tokens[j].level === open.level); j++) {
         const inline = tokens[j];
         if (inline.type !== 'inline' || !inline.map) continue;
-        let line = inline.map[0];
+        let offset = 0;
         for (const child of inline.children ?? []) {
-          if (child.type === 'softbreak' || child.type === 'hardbreak') line++;
-          if (child.type !== 'code_inline' || !CAPABILITY_NAME.test(child.content)) continue;
+          if (child.type !== 'code_inline') continue;
+          const open = backtickRun(inline.content, child.markup, offset);
+          const close = open < 0 ? -1 : backtickRun(inline.content, child.markup, open + child.markup.length, false);
+          if (close >= 0) offset = close + child.markup.length;
+          if (!CAPABILITY_NAME.test(child.content)) continue;
           names++;
           if (!exists(child.content)) {
+            const line = inline.map[0] + (open < 0 ? 0 : inline.content.slice(0, open).split('\n').length - 1);
             failures.push(`${where}:${line + 1}: '${child.content}' names no capability in orbit/specs (the improvement-claims check)`);
           }
         }

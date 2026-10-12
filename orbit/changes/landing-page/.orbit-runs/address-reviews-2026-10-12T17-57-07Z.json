@@ -1,0 +1,218 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-12T17:57:07Z",
+  "change": "landing-page",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/landing-page/.orbit-runs/review-system-2026-10-12T17-33-10Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-12T17-33-10Z",
+  "latest_apply_token": "2026-10-12T17-28-44Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 1
+  },
+  "pushback_verification": "All three verified against current state, none stale: README.md:71 named bare --as proposal/system reviews (in-context by the selector table); README.md carried no install-surface section while a sandbox init with stdin closed wrote orbit/specs, orbit/changes/archive and 51 files under .claude (15 commands, 15 SKILL.md, 21 references across 8 skills); the line counter added only softbreak/hardbreak children.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The Quickstart's review steps run in-context passes that never cover the reviewed gates' first slot",
+      "marker_source": "internal-review",
+      "file": "README.md",
+      "line": 71,
+      "classification": "decision_required",
+      "action": "Steps 3 and 5 now read /orbit:review --as proposal|system --fresh <change>; a paragraph says a review starts its gate and does not pass it, that each command's Ready when you are: line names in turn the walk and a confirming review until the gate passes, and names --blind-pair once as the stronger option with a second AI.",
+      "ratified_via": "chat",
+      "resolution": "B + C together (Sal: \"1: your rec\").",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Write steps 3 and 5 as `/orbit:review --as proposal --blind-pair <change>` / `--as system --blind-pair`, the engine's default presented command, with one line that the external half needs a recorded runner (`orbit config`) or a paste into another AI."
+          },
+          {
+            "label": "B",
+            "body": "Write them with `--fresh`, the single-pass form that covers the slot with Claude Code alone, and say the blind pair is the recommended upgrade."
+          },
+          {
+            "label": "C",
+            "body": "Keep the bare commands but add one sentence that the review to run is the one `orbit status` names next, and that an in-context pass alone does not pass a gate."
+          }
+        ],
+        "chosen": "off-menu"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/landing-page/design.md",
+          "orbit/changes/landing-page/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "`/orbit:review --as proposal <change>` to review the proposal before any code is written",
+          "`/orbit:review --as system <change>` to review the implementation."
+        ],
+        "introduced": [
+          {
+            "path": "README.md",
+            "text": "A review starts its gate; it does not pass it on its own."
+          },
+          {
+            "path": "orbit/changes/landing-page/design.md",
+            "text": "The two review steps carry `--fresh`"
+          },
+          {
+            "path": "orbit/changes/landing-page/proposal.md",
+            "text": "with the readout naming each gate's walk and confirming review"
+          }
+        ],
+        "searched": [
+          "--as proposal",
+          "--as system",
+          "/orbit:review",
+          "in-context"
+        ],
+        "scope": [
+          "docs/getting-started.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The rewritten Install section enumerates none of the install surface `Install documentation describes actual install surface` requires",
+      "marker_source": "internal-review",
+      "file": "README.md",
+      "line": 46,
+      "classification": "decision_required",
+      "action": "Added the Quickstart subsection What you should see after install: orbit/specs/ and orbit/changes/ (with archive/), and a 15-row table naming each workflow's command file and skill directory, with the eight skills carrying references/ named; the 21 reference files are not listed one by one (an accepted residual).",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Add a short `What you should see after install` paragraph: `orbit/` with `specs/` and `changes/`, and 15 skills and 15 commands under `.claude/` (the count `orbit init` itself prints); task 5.2's rehearsal then checks it."
+          },
+          {
+            "label": "B",
+            "body": "Carry a MODIFIED `orbit-conventions` delta that retires the predecessor-overlay-era count scenario, declaring the third capability."
+          },
+          {
+            "label": "C",
+            "body": "Leave it and record the divergence as a named residual for reference-docs / public-readiness."
+          }
+        ],
+        "chosen": "A"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/landing-page/design.md",
+          "orbit/changes/landing-page/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "This creates an `orbit/` directory for your specs and changes"
+        ],
+        "introduced": [
+          {
+            "path": "README.md",
+            "text": "### What you should see after install"
+          },
+          {
+            "path": "README.md",
+            "text": "| `/orbit:architect` | `.claude/commands/orbit/architect.md` | `.claude/skills/orbit-architect/` |"
+          },
+          {
+            "path": "orbit/changes/landing-page/design.md",
+            "text": "an accepted residual against the scenario's \"every generated file\""
+          },
+          {
+            "path": "orbit/changes/landing-page/proposal.md",
+            "text": "the install surface it writes"
+          }
+        ],
+        "searched": [
+          "What you should see after install",
+          "Install documentation describes actual install surface",
+          "15 skills"
+        ],
+        "scope": [
+          "orbit/specs/orbit-conventions/spec.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The claims check misreports a name's line when an earlier code span in the same block wraps a line",
+      "marker_source": "internal-review",
+      "file": "test/helpers/user-docs.ts",
+      "line": 144,
+      "classification": "trivial_fix",
+      "action": "A name's line is now its inline block's first line plus the line endings in the block's raw source before the span's opening backtick run (backtickRun: exact run length, an opening run preceded by a backslash skipped); a new test covers a wrapped span, a hard break and an escaped backtick, failing on the replaced counter and on the rule without its escape check.",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/user-docs/claims.test.ts",
+          "orbit/changes/landing-page/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "plus the line breaks before it",
+          "if (child.type === 'softbreak' || child.type === 'hardbreak') line++;"
+        ],
+        "introduced": [
+          {
+            "path": "test/helpers/user-docs.ts",
+            "text": "function backtickRun(source: string, run: string, from: number, opening = true): number {"
+          },
+          {
+            "path": "test/core/user-docs/claims.test.ts",
+            "text": "names the line a name is on after a code span that wraps a line"
+          },
+          {
+            "path": "orbit/changes/landing-page/tasks.md",
+            "text": "The system walk replaced the break-token line counter"
+          }
+        ],
+        "searched": [
+          "softbreak",
+          "hardbreak",
+          "line++"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Three of three resolved: the Quickstart's review steps carry --fresh and a paragraph hands the cadence to the readout (Sal: B+C), the Quickstart states the install surface (Sal: A), and the claims check locates a name by its span's backtick run in the block's source.",
+  "iteration": 4,
+  "next_recommended": "/orbit:address-reviews landing-page",
+  "ripple_misses": 0
+}

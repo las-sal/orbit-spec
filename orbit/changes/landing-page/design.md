@@ -54,8 +54,18 @@ exactly as `orbit-user-docs` names them, because a setext heading neither opens 
   merge at authoring (six to nine, D-lp-6); every name above exists in `orbit/specs/` today.
 - **Install**: Node.js 20.19.0 or higher and Git (the GitHub install fetches the repository with it); `npm install -g github:las-sal/orbit-spec#v2.0.0`; `orbit --version`. The
   git install builds on the user's machine through `package.json`'s `prepare` script. No npm-registry promise (R-ugd-4).
+  The Quickstart's `What you should see after install` subsection states the surface `orbit init --tools claude`
+  writes, as `orbit-conventions`' `Install documentation describes actual install surface` requires (system walk, Sal:
+  A): `orbit/specs/` and `orbit/changes/` (with `archive/`), and one row per workflow naming its command file and
+  skill directory, 15 of each, with the eight skills that carry a `references/` directory named but their reference
+  files not listed one by one (an accepted residual against the scenario's "every generated file"). Task 5.2's
+  rehearsal checks it against a fresh sandbox.
 - **Quickstart**: Claude Code's (proposal walk, Sal: A). `cd` into a project, `orbit init --tools claude`, then the loop as
-  `/orbit:*` slash commands in prose and inline code, with `orbit status` as the orientation command. One line says
+  `/orbit:*` slash commands in prose and inline code, with `orbit status` as the orientation command. The two review
+  steps carry `--fresh`, a pass that covers the reviewed gate's first slot with Claude Code alone (system walk, Sal:
+  B+C); one paragraph says a review starts its gate and does not pass it, and that each command's `Ready when you
+  are:` line names the walk and the confirming review until the gate passes, so the page never enumerates the
+  cadence, and it names `--blind-pair` once as the stronger option. One line says
   Codex is set up with `orbit init --tools codex`, which installs its skills and prompts, and links to
   `docs/supported-tools.md` for how Codex invokes them; no Codex invocation syntax is written on the page, because
   nothing in this stage runs it.

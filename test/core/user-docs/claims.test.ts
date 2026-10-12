@@ -38,6 +38,13 @@ describe('the improvement-claims check', () => {
     expect(claimsFailures([readme(body)])).toEqual([unresolved(6, 'orbit-explore'), unresolved(7, 'orbit-spec')]);
   });
 
+  it('names the line a name is on after a code span that wraps a line, a hard break or an escaped backtick', () => {
+    const wrapped = ['- **A** `orbit-review` and `x', '  y` then', '  `orbit-nope`.'].join('\n');
+    expect(claimsFailures([readme(wrapped)])).toEqual([unresolved(7, 'orbit-nope')]);
+    const hard = ['- Gates (`orbit-review`),\\', '  and \\` then', '  `orbit-nope`.'].join('\n');
+    expect(claimsFailures([readme(hard)])).toEqual([unresolved(7, 'orbit-nope')]);
+  });
+
   // @scenario behaviour orbit-user-docs :: Every improvement the README claims over OpenSpec names capabilities that exist :: A nested item rides its parent
   it('passes a nested item that names nothing under a parent that names a capability', () => {
     const body = ['- Gates (`orbit-engine-gates`).', '  - computed from the trail.', '    - deeper still.'].join('\n');

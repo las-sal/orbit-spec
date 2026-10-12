@@ -30,8 +30,8 @@ Each claim names the capabilities whose specs, under [`orbit/specs/`](orbit/spec
   before anything is fixed, and stale findings are suppressed with evidence (`orbit-address-reviews`).
 - **Orientation.** `orbit status` answers where you are, what happened last and what is ready next, with no
   artifact reads (`orbit-orientation`).
-- **Engine-composed records.** Every run writes a summary the engine composes and validates, and every review
-  renders through one engine-owned report (`orbit-emit-composition`, `orbit-run-summary-emit`,
+- **Engine-composed records.** Each lifecycle and review workflow records its run in a summary the engine
+  composes and validates, and every review renders through one engine-owned report (`orbit-emit-composition`, `orbit-run-summary-emit`,
   `orbit-report-rendering`).
 - **The architect tier.** A program of changes is declared as stages in an architecture document, and each stage's
   state is computed from disk (`orbit-architect`, `orbit-architecture-engine`).
@@ -63,15 +63,52 @@ cd your-project
 orbit init --tools claude
 ```
 
-This creates an `orbit/` directory for your specs and changes, and installs the `/orbit:*` commands and their
-skills. Then, in Claude Code:
+### What you should see after install
+
+`orbit init --tools claude` creates:
+
+- `orbit/specs/`, for your project's living specs, and `orbit/changes/` (with `orbit/changes/archive/`), for
+  changes in flight and archived;
+- 15 commands under `.claude/commands/orbit/` and 15 skills under `.claude/skills/`, one of each per workflow:
+
+| Command | Command file | Skill directory |
+|---|---|---|
+| `/orbit:explore` | `.claude/commands/orbit/explore.md` | `.claude/skills/orbit-explore/` |
+| `/orbit:new` | `.claude/commands/orbit/new.md` | `.claude/skills/orbit-new-change/` |
+| `/orbit:continue` | `.claude/commands/orbit/continue.md` | `.claude/skills/orbit-continue-change/` |
+| `/orbit:ff` | `.claude/commands/orbit/ff.md` | `.claude/skills/orbit-ff-change/` |
+| `/orbit:propose` | `.claude/commands/orbit/propose.md` | `.claude/skills/orbit-propose/` |
+| `/orbit:review` | `.claude/commands/orbit/review.md` | `.claude/skills/orbit-review/` |
+| `/orbit:address-reviews` | `.claude/commands/orbit/address-reviews.md` | `.claude/skills/orbit-address-reviews/` |
+| `/orbit:apply` | `.claude/commands/orbit/apply.md` | `.claude/skills/orbit-apply-change/` |
+| `/orbit:verify` | `.claude/commands/orbit/verify.md` | `.claude/skills/orbit-verify-change/` |
+| `/orbit:sync` | `.claude/commands/orbit/sync.md` | `.claude/skills/orbit-sync-specs/` |
+| `/orbit:archive` | `.claude/commands/orbit/archive.md` | `.claude/skills/orbit-archive-change/` |
+| `/orbit:bulk-archive` | `.claude/commands/orbit/bulk-archive.md` | `.claude/skills/orbit-bulk-archive-change/` |
+| `/orbit:audit-drift` | `.claude/commands/orbit/audit-drift.md` | `.claude/skills/orbit-audit-drift/` |
+| `/orbit:architect` | `.claude/commands/orbit/architect.md` | `.claude/skills/orbit-architect/` |
+| `/orbit:onboard` | `.claude/commands/orbit/onboard.md` | `.claude/skills/orbit-onboard/` |
+
+Each skill directory holds a `SKILL.md`. The skills of eight commands (`address-reviews`, `architect`, `archive`,
+`audit-drift`, `explore`, `ff`, `propose` and `review`) also hold a `references/` directory the skill reads.
+
+### Your first change
+
+In Claude Code:
 
 1. `/orbit:explore` to think a change through with the AI.
 2. `/orbit:propose <change>` to write the proposal, design, delta specs and tasks.
-3. `/orbit:review --as proposal <change>` to review the proposal before any code is written.
+3. `/orbit:review --as proposal --fresh <change>` to review the proposal in a clean context before any code is
+   written.
 4. `/orbit:apply <change>` to implement the tasks.
-5. `/orbit:review --as system <change>` to review the implementation.
+5. `/orbit:review --as system --fresh <change>` to review the implementation the same way.
 6. `/orbit:archive <change>` to merge the change's specs into your baseline.
+
+A review starts its gate; it does not pass it on its own. Each of these commands ends with a `Ready when you are:`
+line, computed from your change's state: after a review it names, in turn, the walk of its findings
+(`/orbit:address-reviews <change>`) and a confirming review, and it names the next step of the list above only
+once the gate has passed. With a second AI set up, `--blind-pair` in place of `--fresh` runs a fresh review and an
+external one, blind to each other.
 
 At any point, ask orbit where you are:
 

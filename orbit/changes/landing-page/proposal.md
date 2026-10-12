@@ -11,8 +11,9 @@ how to install it at its first version, and how to start, and docs-under-test's 
 - **`README.md` is rewritten** as orbit's landing page, in the outline of D-lp-4: what orbit is and for whom;
   `Built on OpenSpec` (attribution, the `upstream/v1.3.1` baseline, "forked from 1.3.1, frozen there", telemetry
   removed); `How orbit improves on OpenSpec` (the claims of D-lp-6, each naming its capabilities); `Install` (the
-  pinned GitHub install of R-ugd-4 at `v2.0.0`); `Quickstart` (init, then explore → propose → review → apply → review →
-  archive, and `orbit status`); `Docs`; `Development`; `Contributing` (D-lp-8); `License`. The page names Claude Code
+  pinned GitHub install of R-ugd-4 at `v2.0.0`); `Quickstart` (init, the install surface it writes, then explore → propose →
+  review → apply → review → archive with the readout naming each gate's walk and confirming review, and `orbit
+  status`); `Docs`; `Development`; `Contributing` (D-lp-8); `License`. The page names Claude Code
   and Codex (D-lp-7). Upstream's logo, badges, Discord, philosophy block, dashboard image, tool comparison, usage
   notes, telemetry and maintainers sections leave.
 - **`README.md` leaves the pending-rewrite list**, so every docs check now reads it, and the heads it writes (`npm`,
