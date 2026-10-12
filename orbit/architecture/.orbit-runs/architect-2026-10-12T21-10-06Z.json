@@ -1,0 +1,34 @@
+{
+  "command": "architect",
+  "timestamp": "2026-10-12T21:10:06Z",
+  "change": null,
+  "doc": "update-gh-documentation",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "R-ugd-9 captured (Sal): v2.0.0 is cut by public-readiness as its last act before the flip, not by landing-page, so the installed package carries the finished LICENSE, package.json and README; the landing-page charter drops the tag, public-readiness gains the release act and exit (4). landing-page completion offered: not yet (Sal).",
+  "stages_touched": [
+    "landing-page",
+    "public-readiness"
+  ],
+  "rulings_captured": [
+    "R-ugd-9"
+  ],
+  "completions_ratified": [],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      {
+        "path": "orbit/architecture/update-gh-documentation.md",
+        "why": "the program: R-ugd-7..9 on version, release tree and who cuts the tag; the reference-docs charter is next"
+      },
+      {
+        "path": "orbit/changes/archive/2026-10-12-landing-page/tasks.md",
+        "why": "tasks 5.2 and 5.4, landing-page's deferred exit (3) observations"
+      }
+    ],
+    "next_command": "/orbit:explore reference-docs",
+    "model_hint": null,
+    "seam": "landing-page archived and merged; reference-docs is premised and next"
+  },
+  "next_recommended": "/orbit:explore reference-docs"
+}

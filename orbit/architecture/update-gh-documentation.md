@@ -63,7 +63,7 @@ be seen. Flipping visibility to public is Sal's act at arc-done, never an orbit 
   fetched into the local clone. Upstream's future numbers do not matter: the engine is frozen at the `1.3.1` baseline
   and moves only by deliberate cherry-pick, npm keeps the packages apart by name, and the stage stops the clone fetching
   upstream's tags (the exploration's D-lp-2).
-  *Where its tag sits is superseded by R-ugd-8; the version and the rest of it stand.*
+  *Where its tag sits is superseded by R-ugd-8, and which stage cuts it by R-ugd-9; the version and the rest of it stand.*
 - **R-ugd-8** (Sal, 2026-10-12; from the landing-page exploration's D-lp-16; supersedes R-ugd-7's "on `main`") — a
   release ships a BUILT RELEASE TREE. The release tag sits on a release commit whose parent is `main`'s merge commit:
   a release script builds, force-adds `dist/`, and removes from that commit's `package.json` the scripts that make npm
@@ -72,6 +72,13 @@ be seen. Flipping visibility to public is Sal's act at arc-done, never an orbit 
   its global flag into the nested install it runs to prepare a git dependency, so the build never finds its toolchain
   (npm 10 and 11; the root fix is npm's, and filing it is Sal's outward act). The release commit is never merged
   back; `main` keeps building through `prepare`.
+- **R-ugd-9** (Sal, 2026-10-12; supersedes R-ugd-7's "the landing-page stage … cuts the `v2.0.0` tag") — `v2.0.0` is
+  cut by public-readiness, as its last act before the visibility flip, not by landing-page. The installed package
+  carries `LICENSE`, `package.json` and `README.md`, and public-readiness still edits them (orbit's notice in `LICENSE`;
+  upstream's npm-publish scripts and the fork description in `package.json`), so a tag cut at landing-page would ship
+  unfinished copies, and only moving a pushed tag would correct it. Nothing is lost by waiting: the repository is
+  private until the flip, so no one can install the tag before then, and the rehearsals cut a local tag in a scratch
+  clone. The version (`2.0.0`, R-ugd-7) and the release mechanism (R-ugd-8, `npm run release:tree`) are unchanged.
 
 ## Open questions
 
@@ -128,8 +135,8 @@ Complete: [ ]
 
 Charter: rewrite `README.md` as orbit's landing page: what orbit is (a hard fork of OpenSpec 1.3.1, attributed),
 how it improves on OpenSpec (each claim naming the baseline capability that carries it), install (the pinned
-GitHub install of R-ugd-4, at version `2.0.0` per R-ugd-7, with `package.json` bumped and the `v2.0.0` tag cut on the
-release commit R-ugd-8 builds from `main`'s merge commit),
+GitHub install of R-ugd-4, at version `2.0.0` per R-ugd-7, with `package.json` bumped; the `v2.0.0` tag itself, on
+the release commit R-ugd-8 builds, is public-readiness's per R-ugd-9),
 a quickstart through the core loop, and links into `docs/`. Upstream's logo, badges and Discord leave the page.
 Goals G1, G2.
 
@@ -197,11 +204,14 @@ Charter: sweep what should not be public as it stands: root files (`README_OLD.m
 `openspec-parallel-merge-plan.md`, and anything else at the root a newcomer would trip on), upstream assets and
 links outside the docs, `LICENSE` attribution (the upstream notice kept, orbit's added beside it), and a scan for
 secrets, tokens and local absolute paths in tracked files. Each root file is kept, moved or deleted by an explicit
-decision. The visibility flip, the repository description and its topics are Sal's acts at arc-done.
+decision. Its last act before the flip is the release (R-ugd-9): once its own PR merges, `npm run release:tree` on
+`main` cuts the annotated `v2.0.0` on a built release commit (R-ugd-8), pushed by name, never `--tags`, on Sal's word.
+The visibility flip, the repository description and its topics are Sal's acts at arc-done.
 
 Exit: (1) every root-level file has a recorded keep / move / delete decision; (2) the secrets-and-paths scan runs
 over every tracked file and its findings are resolved or accepted with a reason; (3) `LICENSE` carries the upstream
-notice and orbit's.
+notice and orbit's; (4) `v2.0.0` is on `origin`, on a release commit whose parent is `main` at or after this stage's
+merge, and a release-tree install of it prints `2.0.0`.
 
 ## Considered & out
 
@@ -251,3 +261,11 @@ letter for letter.
 Exits (1) and (2) are MET, and exit (3) is pending: its shell half was observed, and its `/orbit:propose` half and
 post-flip re-run are deferred, as is the `v2.0.0` release tag (`npm run release:tree` after the merge). Ratification
 waits for those observations or for Sal's word.
+
+**2026-10-12 — R-ugd-9 captured (Sal), in an architect session.** After landing-page's archive and merge, Sal asked
+whether `v2.0.0` should wait for the last stage. It should: the installed package carries `LICENSE`, `package.json`
+and `README.md`, which public-readiness still edits, and the private repository has no one to install the tag before
+the flip. R-ugd-9 moves the tag from landing-page to public-readiness's last act; the landing-page charter drops it,
+and public-readiness gains the release act and exit (4). landing-page's archived task 5.3 (deferred to "after Sal
+merges PR #19") is superseded by this ruling; the archived record stays as written. landing-page completion offered:
+not yet (Sal), since exit (3)'s `/orbit:propose` half and post-flip re-run are still to be observed.
