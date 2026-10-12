@@ -102,6 +102,10 @@ import { fileURLToPath } from "node:url";
  * optional resolved location and an archived change's tail is the one `Archived:` line, no live gate computation
  * (tasks 2.2–2.3, design D2, D4). A pin the task plan did not name, recorded here as its own act. `gates.ts`,
  * `trail.ts` and `instruction-loader.ts` did not move.
+ * MOVED AGAIN at report-archived-change's system walk (2026-10-12): `emit-composition.ts` only — `assertContained`
+ * calls the one shared containment test, `resolvesWithin` in the new `src/core/containment.ts`, which the report's
+ * archived fallback also calls (fresh W1, Sal: A1 — the archive root itself counts as contained on both surfaces).
+ * `report-render.ts` did not move.
  */
 const PINNED: Record<string, string> = {
   "schemas/spec-driven/schema.yaml": "21e0ae86532a39be558a2b81d23738a6fbf92fbd32b0d01612a65e83d6a96739",
@@ -120,7 +124,7 @@ const PINNED: Record<string, string> = {
   "src/core/artifact-graph/state.ts": "f59f748b94cd94ca2fe022ec5aa66b3251dd1b2c00bddb9a17cbd9273a04d0f2",
   "src/core/artifact-graph/trail.ts": "39b5d110ef53b7e03f49ddf292e86db598a14f426a02e6d84142e16231e37d69",
   "src/core/artifact-graph/types.ts": "d83e0cc6d7fca7b80618ffbb7ce052ee68e35be79e7949a941e989b2e102392c",
-  "src/core/emit-composition.ts": "7ae06b8c6abbe5df38bbe075a2c44c770e67355f8eb49afdaf29d2d533632158",
+  "src/core/emit-composition.ts": "d0ba1baeda9c900282f7c21c28e9eb4b68823bf01bf174a6f6234b9e25bdfbe4",
   "src/core/report-render.ts": "d759878995ed8b5e5c70fb1165d88d134f0aeb91acfce99d155654d1506b9f36",
 };
 

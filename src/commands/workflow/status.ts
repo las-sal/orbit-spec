@@ -26,7 +26,8 @@ import {
 } from '../../core/architecture/buckets.js';
 import type { StageState } from '../../core/architecture/state.js';
 import { renderReport, type ReportLocation } from '../../core/report-render.js';
-import { findArchivedDir, isInsideArchive } from '../../core/archived-change.js';
+import { findArchivedDir } from '../../core/archived-change.js';
+import { resolvesWithin } from '../../core/containment.js';
 import { validateChangeName } from '../../utils/change-utils.js';
 import * as fs from 'fs';
 import { modelHintFor, withModelHint } from '../../core/model-hints.js';
@@ -579,7 +580,7 @@ async function resolveReportLocation(name: string, projectRoot: string): Promise
   }
   const archivedDir = findArchivedDir(projectRoot, name);
   if (archivedDir !== null) {
-    if (!isInsideArchive(projectRoot, archivedDir)) {
+    if (!resolvesWithin(archivedDir, path.join(projectRoot, 'orbit', 'changes', 'archive'))) {
       throw new Error(
         `archived change '${name}' resolves outside orbit/changes/archive — a symlinked archive entry is not a renderable trail`
       );

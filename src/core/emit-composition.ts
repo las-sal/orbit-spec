@@ -3,6 +3,7 @@ import * as path from 'node:path';
 import { loadChangeContext, formatChangeStatus } from './artifact-graph/instruction-loader.js';
 import { collectSameModePasses } from './report-render.js';
 import { findArchivedDir } from './archived-change.js';
+import { resolvesWithin } from './containment.js';
 import { normalizeInternalPass } from './report-render.js';
 import {
   readTrail,
@@ -688,15 +689,8 @@ function isValidTargetName(name: string): boolean {
  * a writable emit trail (the B2 generator's physical-containment precedent).
  */
 function assertContained(dir: string, root: string, what: string): void {
-  let real: string;
-  let realRoot: string;
-  try {
-    real = fs.realpathSync(dir);
-    realRoot = fs.realpathSync(root);
-  } catch {
-    return; // existence is the caller's check; unresolvable paths fail there
-  }
-  if (real !== realRoot && !real.startsWith(realRoot + path.sep)) {
+  // Unresolvable paths pass: existence is the caller's check, and they fail there.
+  if (!resolvesWithin(dir, root)) {
     throw new EmitError(`${what} resolves outside ${root} — symlinked targets are not writable emit trails.`);
   }
 }

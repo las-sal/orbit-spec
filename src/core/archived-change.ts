@@ -34,20 +34,3 @@ function isDirectory(p: string): boolean {
 function escapeRegExp(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
-
-/**
- * True when `dir` physically resolves inside `orbit/changes/archive/` — the real-path test the
- * emit surface's containment check runs after every archived resolution. An unresolvable path
- * returns true: existence is the caller's check.
- */
-export function isInsideArchive(projectRoot: string, dir: string): boolean {
-  let real: string;
-  let realRoot: string;
-  try {
-    real = fs.realpathSync(dir);
-    realRoot = fs.realpathSync(path.join(projectRoot, 'orbit', 'changes', 'archive'));
-  } catch {
-    return true;
-  }
-  return real !== realRoot && real.startsWith(realRoot + path.sep);
-}

@@ -3,6 +3,7 @@ import * as fs from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
 import { findArchivedDir } from '../../src/core/archived-change.js';
+import { resolvesWithin } from '../../src/core/containment.js';
 
 /**
  * report-archived-change task 1.2: the ONE archived-directory resolver, shared by the emit
@@ -79,5 +80,22 @@ describe('findArchivedDir', () => {
     fs.mkdirSync(archive, { recursive: true });
     fs.symlinkSync(outside, path.join(archive, '2026-01-01-foo'), 'dir');
     expect(findArchivedDir(root, 'foo')).toBe(path.join(archive, '2026-01-01-foo'));
+  });
+});
+
+describe('resolvesWithin (the one containment test)', () => {
+  it('admits the root itself and a path under it; refuses a sibling; passes an unresolvable path', (ctx) => {
+    fs.mkdirSync(path.join(archive, '2026-01-01-foo'), { recursive: true });
+    fs.mkdirSync(path.join(root, 'elsewhere'), { recursive: true });
+    expect(resolvesWithin(archive, archive)).toBe(true);
+    expect(resolvesWithin(path.join(archive, '2026-01-01-foo'), archive)).toBe(true);
+    expect(resolvesWithin(path.join(root, 'elsewhere'), archive)).toBe(false);
+    // A prefix that is not a path boundary is not containment.
+    fs.mkdirSync(path.join(root, 'orbit', 'changes', 'archive-x'), { recursive: true });
+    expect(resolvesWithin(path.join(root, 'orbit', 'changes', 'archive-x'), archive)).toBe(false);
+    expect(resolvesWithin(path.join(archive, 'missing'), archive)).toBe(true);
+    if (!canSymlink()) ctx.skip();
+    fs.symlinkSync('.', path.join(archive, '2026-02-01-foo'), 'dir');
+    expect(resolvesWithin(path.join(archive, '2026-02-01-foo'), archive)).toBe(true);
   });
 });

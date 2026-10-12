@@ -1364,6 +1364,26 @@ describe('archived-change reports', () => {
     expect(r.stdout).not.toContain('## Review');
   });
 
+  it('an archive entry resolving to the archive root itself is contained on BOTH surfaces (one shared test)', async (ctx) => {
+    if (!canSymlink()) ctx.skip();
+    const archiveRoot = path.join(root, 'orbit', 'changes', 'archive');
+    fs.mkdirSync(archiveRoot, { recursive: true });
+    fs.symlinkSync('.', path.join(archiveRoot, '2026-01-01-arch-change'), 'dir');
+
+    // The report admits it: the failure is the empty trail, never the containment error.
+    const r = await runCLI(['status', '--change', 'arch-change', '--report'], { cwd: root });
+    expect(r.exitCode).not.toBe(0);
+    expect(r.stderr).toMatch(/no renderable review pass/);
+    expect(r.stderr).not.toContain('resolves outside');
+
+    // The emit surface admits the same entry.
+    const payloadFile = path.join(root, 'archive-payload.json');
+    fs.writeFileSync(payloadFile, JSON.stringify({ final_assessment: 'x', model: null }));
+    const e = await runCLI(['emit', 'archive', '--change', 'arch-change', '--payload', payloadFile], { cwd: root });
+    expect(e.exitCode).toBe(0);
+    expect(e.stderr).not.toContain('resolves outside');
+  });
+
   // @scenario behaviour orbit-report-rendering :: Strict input validation — fail loud, no partial render :: Pre-D4 generations fail at the named boundary
   it('an archived pre-D4 emit fails with the pre-capability error, as on an active change', async () => {
     const dir = path.join(root, 'orbit', 'changes', 'archive', '2026-02-01-old-change');
