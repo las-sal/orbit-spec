@@ -1,0 +1,121 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-12T17:16:39Z",
+  "change": "landing-page",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {},
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "The tag-actor repair refers to Sal as he/his, whose pronouns are not stated",
+      "file": "orbit/changes/landing-page/tasks.md",
+      "line": 28,
+      "recommendation": "Rewrite task 5.3's 'in the orbit session he opens then and on his word' and design D4's 'on his word' (design.md:103) with they/them or no pronoun, e.g. 'in the orbit session Sal opens after the merge, on Sal's word'.",
+      "walk_entry": {
+        "title": "Task 5.3 does not say whose act the tag push is",
+        "file": "tasks.md"
+      }
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Graded the eleven resolutions over their sweep scopes: the rewritten claims requirement (gate wording, the <name> production, the nested-item rows and the two new scenarios) reads as one behaviour and agrees with design D2, task 3.1 and the MODIFIED file-local set; the Docs, Quickstart, Install and License bullets of D1 carry the two ratified directions and the three prerequisite and attribution repairs; D4 and task 1.2 carry the narrowed upstream-tag set. Probed whether an inline `orbit init --tools codex` span on the README would trip the orbit-line guard: inline spans beginning `orbit ` are extracted and parsed, not guarded, so the Codex line is checkable. The residual diff since the external return's commit lists only design.md, tasks.md and the delta spec, all inside the walks' edit records. The one regression is wording, not mechanism.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "verification": [
+    {
+      "title": "The Docs section's link to docs/opsx.md is residue, so exit (1) cannot pass as designed",
+      "file": "design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The ADDED requirement gates itself on pending membership, contradicting the exactness rule that runs it over a listed README",
+      "file": "specs/orbit-user-docs/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "What counts as a backticked `orbit-*` token is stated only in design, and the two readings diverge",
+      "file": "specs/orbit-user-docs/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Task 2.2 tags only the Orientation scenarios a test asserts; the carried others have no route to being declared",
+      "file": "tasks.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "D1 does not cite the baseline scenario the README must keep satisfying",
+      "file": "design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "'upstream's notice kept' under License can be read as quoting the notice, which is residue there",
+      "file": "design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Task 5.3 does not say whose act the tag push is",
+      "file": "tasks.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "Nested capability names have contradictory semantics",
+      "file": "orbit/changes/landing-page/specs/orbit-user-docs/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The Codex quickstart lacks its actual invocation path",
+      "file": "orbit/changes/landing-page/design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Tag cleanup can delete unrelated local tags",
+      "file": "orbit/changes/landing-page/design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The installation prerequisites omit Git",
+      "file": "orbit/changes/landing-page/design.md",
+      "verdict": "landed"
+    }
+  ],
+  "final_assessment": "0 critical, 0 warning, 1 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-10-12T17-15-06Z",
+    "2026-10-12T17-15-23Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews landing-page"
+}
