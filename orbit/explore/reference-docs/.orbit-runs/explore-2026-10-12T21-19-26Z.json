@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-10-12T21:19:26Z",
+  "change": "reference-docs",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "All six open questions walked; seven decisions captured, none open. Method settled and recorded: exit (2) counts the 55 visible command paths plus the 15 workflow ids, derived from the program (D-rd-1, the one rule, Mechanism SOURCED, EXECUTE left to propose); install/getting-started extend the README (D-rd-2); one change sized at propose (D-rd-3); exit (3) is the residue check plus a reviewed record (D-rd-4); config profile documented as it behaves (D-rd-5). Sal's scope calls: orbit feedback retargeted to las-sal/orbit-spec in this stage (D-rd-6, B; a carve-out from R-ugd-3 to be recorded as an architect ruling before propose; the fork has no feedback label, settled at propose); docs/opsx.md becomes docs/workflow-engine.md (D-rd-7).",
+  "decisions_captured": 7,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 1,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose reference-docs — 1 live rule accounted; formalize when you are ready (or /orbit:explore reference-docs to keep refining)"
+}
