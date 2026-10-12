@@ -14,15 +14,18 @@ docs under machine checks BEFORE the rewrite stages run, so the rewrite is grade
   - **a residue check** (D-dut-1): every case-insensitive `openspec`, `opsx` or `fission` is residue unless it sits
     in one of four admitted places: the README sections headed `Built on OpenSpec` and `How orbit improves on
     OpenSpec`, anywhere in `docs/migration-guide.md`, or inside the identifiers `.openspec.yaml` and
-    `~/.config/openspec` (names the tool still writes on disk);
+    the tool's global configuration and data directories (`~/.config/openspec`, `~/.local/share/openspec` and their
+    XDG and Windows forms), names the tool still writes on disk;
   - **a pending-rewrite list** (D-dut-2): a listed file is skipped, an unlisted file must pass every check, and the
     list is exact both ways, so a listed file that already passes fails the suite; each rewrite stage removes the
     files it ships;
   - **the docs' own declared-heads fence** (D-dut-4), exact for the docs alone, starting empty;
-  - **non-vacuity floors** (D-dut-7) for the docs sweeps, over unlisted files, active once the list is empty.
+  - **non-vacuity floors** (D-dut-7) for the docs sweeps, over unlisted files, active once the list is empty and
+    set by the edit that empties it.
 - `orbit-cli-grammar`'s `orbit` sweep, `git`/`gh` sweep and tool inventory widen their domain from the generated
   surface to it plus the unlisted user docs (D-dut-5). The inventory judges each surface against its own fence
-  (D-dut-4), and its existing continuation rule (write a command on one line) now applies to the docs too (D-dut-6).
+  (D-dut-4), and its existing continuation rule (write a command on one line) now applies to the docs too (D-dut-6). The
+  `git` capture reads every user doc, so a rewrite stage can record a command its page writes.
 - All twelve docs files start listed: on today's tree every one fails at least one check (measured; see explore.md),
   so the suite stays green while the docs are still upstream's (D-dut-3: the program is run atomically and validated
   by use at its end, so interim states need no protection).
@@ -42,7 +45,7 @@ docs under machine checks BEFORE the rewrite stages run, so the rewrite is grade
 
 ## Impact
 
-- Tests only, no engine code: a docs-surface helper beside `generatedSurfaces()` in `test/helpers/surface-snippets.ts`,
+- Tests and the `git` capture script only, no engine code: a docs-surface helper beside `generatedSurfaces()` in `test/helpers/surface-snippets.ts`,
   new tests for the residue check and the pending-rewrite list, and the three existing sweep suites extended to the
   docs.
 - The docs themselves are not edited: today's failures are carried by the pending-rewrite list, and the program's

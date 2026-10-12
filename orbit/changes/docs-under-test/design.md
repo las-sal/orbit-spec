@@ -23,36 +23,47 @@ changing an analyser.
 **Non-Goals:**
 - Editing any doc. The rewrite stages (`landing-page`, `reference-docs`, `concept-docs`) do that and empty the list.
 - Engine code or a CLI surface for the docs checks. The sweeps are test-only today, and so are these.
-- Setting the floor values (D-dut-7): they stay inactive until the list is empty and are set at public-readiness.
+- Setting the floor values now (D-dut-7): they have no value while any file is listed; the edit that empties the
+  list sets them (D5).
 - Protecting a listed file between stages (D-dut-3).
 
 ## Decisions
 
 **D1 — One docs-surface helper, unlisted files only.** `docSurfaces()` beside `generatedSurfaces()` reads `README.md`
 and `docs/*.md` (non-recursive), drops the files on the pending-rewrite list, and returns `Surface` records with
-`workflowId: 'docs'` and `file` the repository-relative path, so every failure message names the doc as it does a
-skill. A second helper returns ALL user docs, for the list's own exactness check. The analysers are untouched.
+`workflowId: 'docs'` and `file` the repository-relative path. `describeSurface` returns `file` alone for a docs
+surface (a skill keeps `<workflow>/<file>`), so a failure names `README.md` or `docs/cli.md` as they stand, never
+`docs/README.md`. The helper takes the pending list as a parameter (default: the list file), so a test can inject
+one. A second helper returns ALL user docs, for the list's own exactness check and the `git` capture (D8). The
+analysers are untouched.
 
 **D2 — The list lives in the test tree.** `test/core/user-docs/pending-rewrite.json`, a JSON array of
 repository-relative paths, starting with all twelve. It is test data, so it stays out of the directories a visitor to
-the public repository reads, and each rewrite stage's edit to it is a one-line diff. Its exactness test runs every
-check (the residue check and the three sweeps over that one file) on each listed file and fails on a listed file
-that passes everything, or on a stale path (`orbit-user-docs`' gating requirement table).
+the public repository reads, and each rewrite stage's edit to it is a one-line diff. Its exactness test runs the
+FILE-LOCAL checks on each listed file alone — the residue check, the `orbit` and `git`/`gh` sweeps, and the
+inventory's unknown-head rule — and fails on a listed file that passes them all, or on a stale path
+(`orbit-user-docs`' gating requirement). The whole-docs rules, an unused `docs-inventory` declaration and the floors,
+are never run per file: one page cannot decide them.
 
 **D3 — The residue check reads sections through the engine's fence tracker.** A README section starts at an ATX
-heading whose text is exactly `Built on OpenSpec` or `How orbit improves on OpenSpec` and ends at the next heading of
-the same or a higher level. A `#` line inside a fence is not a heading, so the scan uses the shared CommonMark fence
+heading whose text is exactly `Built on OpenSpec` or `How orbit improves on OpenSpec` and ends at the next ATX heading whose
+level is at most its own. A setext heading is not read (a named limit). A `#` line inside a fence is not a heading, so the scan uses the shared CommonMark fence
 tracker (`src/core/markdown-fence.ts`) rather than a regex over lines: Q-crc-15's lesson, a second fence grammar is a
 second bug. Occurrences are matched case-insensitively over the whole text, fenced or not.
 
 **D4 — The docs fence is read the way the generated fence is.** The `docs-inventory` fence is read from
 `orbit-user-docs`' requirement as it stands, through the same single-active-owner lookup the inventory test uses for
-its own fence (`test/helpers/owner-text.ts`), and parsed by the same line grammar. Its info string differs, so
-neither test can read the other's block. It starts empty.
+its own fence — `inventorySource` in `test/core/cli-grammar/tool-inventory.test.ts` (the one active delta holding the
+requirement heading under ADDED or MODIFIED, else the baseline; two holders throw), extracted into a shared helper
+that takes the capability, the requirement title and the fence's info string — and parsed by the same line grammar,
+its malformed-block rules included. It starts empty, and a fence with no lines is legal: the shared parser reads zero
+lines, never one empty line. Its info string differs, so neither test can read the other's block.
 
-**D5 — Floors are inactive constants.** Each docs sweep carries its floor beside the generated surface's, asserted
-only when the pending list is empty (D-dut-7). Until public-readiness sets them, their values are placeholders the
-inactive guard never reads.
+**D5 — Floors are unset until the list empties.** Each docs sweep carries its floor beside the generated surface's
+as a number or `null`, `null` while any file is listed. The guard runs only when the pending list is empty, and then
+fails on a `null` floor naming the sweep, so the edit that empties the list must set each floor below its sweep's
+measured count in the same commit (D-dut-7, revised at the proposal walk). The guard takes the list and the floors as
+parameters, so a test injects both cases.
 
 **D6 — Requirement titles are kept.** The three `orbit-cli-grammar` titles say "on the generated surface", and the
 other requirements and the tests quote them verbatim, so a rename would ripple through every pointer. The titles
@@ -62,7 +73,15 @@ stay as identity and the bodies widen (precedent: `orbit-conventions`' explore.m
 **D7 — Every check is shown able to fail.** Each extended check gets an injected case (a residue occurrence, an
 unknown flag, an unrecorded `git` flag, an undeclared head, a continuation, a listed file that passes, a stale entry)
 that fails the suite with the expected message. A check that cannot be made to fail does not count (rc17a's oracle
-lesson).
+lesson). The injected set also covers the floors (an empty list with a floor unset, and one below its floor), a
+command inside an admitted README section, an empty docs fence, a clean listed page beside a declared head it does not
+use, and the exact surface name a docs failure prints.
+
+**D8 — The `git` capture reads every user doc.** `scripts/capture-git-contract.capture.ts` takes its candidate set
+from the generated surface plus ALL user docs, listed or not, so a rewrite stage records a command its page writes
+before it unlists the page. Today's docs write no `git`, so the contract does not change. `gh` keeps its fixed command
+list (`scripts/capture-gh-contract.mjs`); a docs-only `gh` command is a named limit in `orbit-cli-grammar`, met by
+extending the list and re-capturing.
 
 ## Risks / Trade-offs
 
@@ -71,8 +90,8 @@ lesson).
 - [A listed file has no protection] → Accepted by D-dut-3; every listed file is scheduled for a full rewrite.
 - [The stage's exit (3) says "the recorded list of today's failures"] → D-dut-2 records them as a file list; the
   archive records the term as revised (R-crc-12's first case), because the criterion's measure still applies.
-- [A title saying "generated surface" over a widened domain] → Each body states the domain in its first sentence and
-  says the title is kept as identity (D6).
+- [A title saying "generated surface" over a widened domain] → D6 keeps the titles; each body names the user docs
+  where it states its domain, and the `orbit` requirement says the title is kept as identity.
 
 ## Alternatives considered
 

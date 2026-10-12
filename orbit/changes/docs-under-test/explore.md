@@ -36,11 +36,11 @@ What the probe shows:
 Domain: every case-insensitive occurrence of `openspec`, `opsx` or `fission` in `README.md` and `docs/*.md`
 | member | covered by |
 |---|---|
-| prose under the README heading `Built on OpenSpec` | admitted (1), the attribution |
-| prose under the README heading `How orbit improves on OpenSpec` | admitted (1), the comparison |
+| anything under the README heading `Built on OpenSpec` | admitted (1), the attribution |
+| anything under the README heading `How orbit improves on OpenSpec` | admitted (1), the comparison |
 | any occurrence in `docs/migration-guide.md` | admitted (2), file-scoped |
 | the identifier `.openspec.yaml` anywhere | admitted (3) |
-| the identifier `~/.config/openspec` anywhere | admitted (4) |
+| a global directory the tool writes anywhere: `~/.config/openspec`, `~/.local/share/openspec`, `$XDG_CONFIG_HOME/openspec`, `$XDG_DATA_HOME/openspec`, `%APPDATA%/openspec`, `%LOCALAPPDATA%/openspec` | admitted (4) |
 | `openspec` as a command (any fence or span) | residue; the tool inventory also reports its head |
 | a `/opsx:` slash command | residue |
 | `@fission-ai/openspec`, a Fission-AI URL, upstream's Discord or badges | residue |
@@ -49,7 +49,7 @@ Closure: BOUNDED — the three patterns cover upstream's names as measured; an u
 Residual kind: an upstream name or link form that contains none of `openspec`, `opsx` or `fission` (a renamed product, a shortened URL, a logo asset path)
 Residual method: a case-insensitive grep of upstream's v1.3.1 README and docs (the `upstream/v1.3.1` tag) for its product, org and link names, compared against the three patterns, plus the public-readiness stage's sweep of upstream assets and links
 Moves:
-- READ: applied — `GLOBAL_CONFIG_DIR_NAME = 'openspec'` (`src/core/global-config.ts:6`); every change carries `.openspec.yaml`; the legacy paths orbit detects are `src/core/legacy-cleanup.ts:34-40`
+- READ: applied — `GLOBAL_CONFIG_DIR_NAME` and `GLOBAL_DATA_DIR_NAME`, both `'openspec'` (`src/core/global-config.ts:6,8`), with their XDG and Windows forms in the same file; every change carries `.openspec.yaml`; the legacy paths orbit detects are `src/core/legacy-cleanup.ts:34-40`
 - ENUMERATE: applied — this table; every occurrence lands in exactly one row
 - COHERE: applied — the migration guide's legacy commands would fail the tool inventory as unknown heads; they belong in an untagged or `text` fence, which the inventory does not read (its read table's data-fence row), so the two checks agree
 - EXECUTE: applied — run by hand over today's docs, 2026-10-12: 685 residue, 121 admitted in the migration guide, 5 admitted as on-disk identifiers; all 68 README occurrences are residue, as they must be while neither admitted heading exists
@@ -137,11 +137,11 @@ Moves:
 - READ: applied — the probe's 0 snippets for both parse sweeps on today's docs; rc09b's floor note in `tool-inventory.test.ts` (a floor never pins what an exactness rule lets leave)
 - ENUMERATE: applied — this table
 - COHERE: applied — a floor counted over listed files would pin files D-dut-2 exempts; counting unlisted files only, and only once the list is empty, keeps the two from contradicting
-- EXECUTE: not applied — no file is unlisted yet, so every floor is inactive on day one by construction; its values are measured at public-readiness
+- EXECUTE: not applied — no file is unlisted yet, so every floor is inactive on day one by construction; its values are measured by the edit that empties the list
 - FALSIFY: applied — while any file is listed a sweep can still pass vacuously; accepted by D-dut-3, since the program is validated at its end
 - CONFORM: applied — rc05 and rc05b's floors (non-vacuity, never pins), rc09b's lesson, D-dut-3
 - FEASIBILITY: not applied — one count per sweep
-- CONSUME: applied — public-readiness reads the rewritten docs' counts and sets each floor below them
+- CONSUME: applied — the edit that empties the list reads the rewritten docs' counts and sets each floor below them; an empty list with an unset floor fails
 - INVOKE: applied — the floors run in `npm test`; they bite only once the list is empty
 
 ## Decisions
@@ -155,7 +155,9 @@ Moves:
   doc that renamed them would be wrong. Section-scoped for the README, file-scoped for the guide: an author never has
   to think about scope outside the README, and "OpenSpec" written anywhere else is a mistake the check catches.
   Resolves the open question on how R-ugd-1's admitted mentions become machine-checkable (options were a phrase
-  allowlist, marked spans, or declared headings).
+  allowlist, marked spans, or declared headings). Widened 2026-10-12 at the proposal walk (Sal: F1 A): place (4) is
+  every global directory the tool writes — the configuration and the data directory (`~/.local/share/openspec`), each
+  in its XDG and Windows forms — since the same reason admits them all.
   Kind: rule
 - **2026-10-12 — D-dut-2: the checks gate docs file by file, through a pending-rewrite list exact both ways** (Sal).
   The checks ship running in `npm test` while today's docs fail them (about 800 findings), so the stage carries a
@@ -198,7 +200,9 @@ Moves:
   empty** (Sal: ratified as the standing recommendation stood). The `orbit` and `git`/`gh` sweeps found 0 snippets on
   today's docs and would pass vacuously; each asserts a minimum snippet count over UNLISTED files only, active once
   D-dut-2's list is empty, its value set at public-readiness from the rewritten docs' measured counts. A floor never
-  pins a file the list still exempts (rc09b's lesson).
+  pins a file the list still exempts (rc09b's lesson). Revised 2026-10-12 at the proposal walk (Sal: F6 A): the edit
+  that EMPTIES the list sets the floors from its measured counts, in the same commit, and an empty list with an unset
+  floor fails, since public-readiness runs after the list empties and would leave the floors active with no value.
   Kind: rule
 
 ## Open questions

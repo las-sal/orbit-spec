@@ -1,0 +1,112 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-12T15:12:18Z",
+  "change": "docs-under-test",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/docs-under-test/.orbit-runs/external-proposal-2026-10-12T15-04-09Z.md",
+  "source_command": null,
+  "source_token": "2026-10-12T15-04-09Z",
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-6 Codex",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 2
+  },
+  "pushback_verification": "All four verified against current state; three converge with fresh-half findings walked in the earlier log, one (the per-file inventory exactness) is this pass's alone.",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale_suppressed": 3,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Per-file pending-list checks incorrectly apply aggregate inventory exactness",
+      "file": "orbit/changes/docs-under-test/design.md",
+      "line": 38,
+      "marker_source": "external",
+      "classification": "trivial_fix",
+      "action": "a listed file's \"every check\" is now the FILE-LOCAL set run over that file alone; the unused-declaration rule and the floors run over the unlisted docs together, never per file; scenario added for a clean listed page beside a declared head it does not use",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/docs-under-test/specs/orbit-user-docs/spec.md",
+          "orbit/changes/docs-under-test/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "runs every check (the residue check and the three sweeps over that one file)",
+          "a listed file that passes every check fails naming it"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/docs-under-test/specs/orbit-user-docs/spec.md",
+            "text": "is the FILE-LOCAL set, each run over that file alone"
+          },
+          {
+            "path": "orbit/changes/docs-under-test/specs/orbit-user-docs/spec.md",
+            "text": "A clean listed page is finished whatever the docs fence declares"
+          },
+          {
+            "path": "orbit/changes/docs-under-test/design.md",
+            "text": "FILE-LOCAL checks on each listed file alone"
+          }
+        ],
+        "searched": [
+          "every check",
+          "unused",
+          "exactness"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Floors activate before the stage that supplies their values",
+      "file": "orbit/changes/docs-under-test/specs/orbit-user-docs/spec.md",
+      "line": 119,
+      "marker_source": "external",
+      "classification": "stale",
+      "action": "converged with the fresh half's finding, walked in its log",
+      "evidence": "resolved in address-reviews-2026-10-12T15-12-03Z (the earlier pass's log), as \"Floors go active when the list empties, but their values are set by a later stage that does not carry the obligation\"",
+      "outcome": "stale"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Residue table and section exemption disagree about commands",
+      "file": "orbit/changes/docs-under-test/specs/orbit-user-docs/spec.md",
+      "line": 45,
+      "marker_source": "external",
+      "classification": "stale",
+      "action": "converged with the fresh half's finding, walked in its log",
+      "evidence": "resolved in address-reviews-2026-10-12T15-12-03Z (the earlier pass's log), as \"The admitted-section rows say 'prose under' while the text admits everything, and the section end is loosely stated\" — its scenario for openspec init inside an admitted section was added there",
+      "outcome": "stale"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The cited owner lookup is not the inventory’s existing lookup",
+      "file": "orbit/changes/docs-under-test/design.md",
+      "line": 48,
+      "marker_source": "external",
+      "classification": "stale",
+      "action": "converged with the fresh half's finding, walked in its log",
+      "evidence": "resolved in address-reviews-2026-10-12T15-12-03Z (the earlier pass's log), as \"D4 names owner-text.ts as the lookup the inventory test uses; the inventory test has its own\" and, for the empty fence, \"The empty docs-inventory fence fails the line grammar it is said to share\"",
+      "outcome": "stale"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "One resolved (per-file checks narrowed to the file-local set), three stale as converged with the fresh half's log.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal docs-under-test",
+  "ripple_misses": 0
+}

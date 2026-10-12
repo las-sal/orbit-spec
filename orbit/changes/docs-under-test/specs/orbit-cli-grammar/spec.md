@@ -152,7 +152,10 @@ the shared extractor of `Every \`orbit\` snippet on the generated surface parses
 table, guard, tokenizer and fence table, with the tool's own name — over every generated SKILL.md and
 `references/*.md` file of every workflow the generator emits, and over every user doc that is not on the
 pending-rewrite list of `orbit-user-docs`' `The user docs are a checked surface, gated by an exact pending-rewrite list`. The check proves GRAMMAR only: the suite never spawns
-`git` or `gh`, and a snippet that validates but is wrong for its moment is not caught.
+`git` or `gh`, and a snippet that validates but is wrong for its moment is not caught. Named limit (the `gh` contract
+in the user docs): `gh` is captured from a fixed command list (`scripts/capture-gh-contract.mjs`), so a `gh` command a
+user doc writes that the list lacks fails as unknown until the list is extended and `npm run capture:gh` re-run, a
+deliberate act of the stage whose page writes it.
 
 | tool | contract | validator |
 |---|---|---|
@@ -178,8 +181,10 @@ the one code in the repository that runs a real `git`. Every probe runs in its O
 holding one commit on branch `main` — a probe can mutate its repository (`switch -c` switches the branch, `init <word>`
 creates a nested repository), so no probe may read another's effects — under `LANG=C`, with closed stdin, a failing
 editor, no remote, `GIT_CONFIG_GLOBAL=/dev/null`, `GIT_CONFIG_NOSYSTEM=1` and a 10-second timeout. Its candidate set is
-every `git` segment the shared extractor finds on the generated surface, bare names included, so a command written only
-as a name is recorded. It records the git version and, per command key, whether git knows the command, its probe class,
+every `git` segment the shared extractor finds on the generated surface and in every user doc of `orbit-user-docs`'
+`The user docs are a checked surface, gated by an exact pending-rewrite list`, listed or not, so a rewrite stage
+captures a command its page writes before it unlists the page; bare names included, so a command written only as a
+name is recorded. It records the git version and, per command key, whether git knows the command, its probe class,
 whether it requires a positional, and each flag the surface writes on it, probed in the form the surface writes it:
 whether git accepts it, git's line when it does not, and whether it takes a value. A REJECTION SHAPE is a first line
 beginning `error: unknown option`, `error: invalid option`, `error: unknown switch`, `fatal: unrecognized argument:` or
@@ -290,6 +295,11 @@ surface (the workflow and the file), the line, the snippet, and the validator's 
 
 - **WHEN** an unlisted user doc carries a `git` command with a flag the recorded contract does not hold, in a shell fence
 - **THEN** the sweep fails, naming the file, the line, the snippet and the contract's message
+
+#### Scenario: A docs-only git command is captured
+
+- **WHEN** a user doc, listed or not, writes a `git` command no generated surface writes, and `npm run capture:git` runs
+- **THEN** the contract records that command's key and the flags the doc writes on it
 
 ### Requirement: Every command head on the generated surface is a recorded tool or a declared exemption
 
