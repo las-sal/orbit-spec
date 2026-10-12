@@ -46,13 +46,20 @@ be seen. Flipping visibility to public is Sal's act at arc-done, never an orbit 
   upstream reference.
 - **R-ugd-3** (Sal, 2026-10-12) — the Tier-C code scrub (`OpenSpec` in CLI help text and messages) is OUT of this
   program: it is code, and the landing page does not depend on it.
+- **R-ugd-4** (Sal, 2026-10-12; resolves Q-ugd-1) — the install path at launch is a GitHub install PINNED to a
+  release tag, `npm install -g github:las-sal/orbit-spec#<tag>`. The page makes no promise about npm: npm appears
+  in the docs only if and when it is published, which stays Sal's separate outward act.
 
 ## Open questions
 
-- **Q-ugd-1 — the install path.** `orbit-spec` is not on npm (`npm view orbit-spec` returns 404, 2026-10-12). The
-  README either documents a GitHub install, `npm install -g github:las-sal/orbit-spec` (it works the day the repo is
-  public, because `package.json`'s `prepare` script runs the build), or waits on an npm publish, which is Sal's
-  outward act. Standing recommendation: document the GitHub install, and note npm as later if it is ever published.
+- **Q-ugd-1 — RESOLVED by R-ugd-4 (Sal, 2026-10-12).** the install path. `orbit-spec` is not on npm (`npm view
+  orbit-spec` returns 404, 2026-10-12). Four options were weighed: a GitHub install, an npm publish, a GitHub
+  install at launch with npm later, and a release tarball. Sal took the third, with npm left unpromised on the page.
+  A git install builds on the user's machine because `package.json`'s `prepare` script runs the build.
+- **Q-ugd-2 — orbit's first version number.** The R-ugd-4 pin needs a tag, and `package.json` still reads `1.3.1`,
+  upstream's version, which on a public page reads as upstream's 1.3.1. Standing recommendation: `0.1.0`, a young
+  fork in its own right; the bump and the tag on `main` ride the landing-page stage (a tag is a git act a stage can
+  carry; a GitHub Release page, if wanted, is Sal's).
 
 ## Program stages
 
@@ -78,13 +85,15 @@ Depends-on: docs-under-test
 Complete: [ ]
 
 Charter: rewrite `README.md` as orbit's landing page: what orbit is (a hard fork of OpenSpec 1.3.1, attributed),
-how it improves on OpenSpec (each claim naming the baseline capability that carries it), install (per Q-ugd-1),
+how it improves on OpenSpec (each claim naming the baseline capability that carries it), install (the pinned
+GitHub install of R-ugd-4, at the version Q-ugd-2 settles, with `package.json` bumped and the tag cut on `main`),
 a quickstart through the core loop, and links into `docs/`. Upstream's logo, badges and Discord leave the page.
 Goals G1, G2.
 
 Exit: (1) the README passes docs-under-test's checks with no recorded exception; (2) every improvement claimed over
 OpenSpec names its capability, and each named capability exists in `orbit/specs/`; (3) a clean-machine run of the
-README's install and quickstart is recorded (observed, not inferred).
+README's install and quickstart is recorded (observed, not inferred), rehearsed from a local `git+file://` clone before the repository is public and
+re-run against the public URL after the flip.
 
 ### Stage reference-docs — the command and workflow pages teach orbit
 
@@ -141,3 +150,9 @@ this program, and the GitHub landing page must give proper orbit instructions in
 how orbit improves on OpenSpec and basic documentation on how to use it. Rulings R-ugd-1 (nomenclature), R-ugd-2 (all
 eleven pages) and R-ugd-3 (the code scrub out) captured; Q-ugd-1 (the install path) left open with its standing
 recommendation. Five stages declared, docs-under-test first so the rewrite is graded by a machine.
+
+**2026-10-12 — Q-ugd-1 resolved (Sal): R-ugd-4.** The install path at launch is a GitHub install pinned to a release
+tag, with no npm promise on the page. The options weighed are recorded under Q-ugd-1. The version the tag carries
+opened as Q-ugd-2 (standing recommendation `0.1.0`). The landing-page stage's charter and exit (3) now point at both,
+and its install run is rehearsed from a local clone before the flip and re-run against the public URL after it.
+
