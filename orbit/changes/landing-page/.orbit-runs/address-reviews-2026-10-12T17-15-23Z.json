@@ -1,0 +1,191 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-12T17:15:23Z",
+  "change": "landing-page",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/landing-page/.orbit-runs/external-proposal-2026-10-12T17-11-13Z.md",
+  "source_command": null,
+  "source_token": "2026-10-12T17-11-13Z",
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-6 Codex",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 3,
+    "suggestion": 1
+  },
+  "pushback_verification": "All four verified against current state; none stale. No finding converges in site and claim with the fresh pass (E1 and F3 share a site, different claims).",
+  "resolution_summary": {
+    "resolved": 4,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Nested capability names have contradictory semantics",
+      "marker_source": "external",
+      "file": "orbit/changes/landing-page/specs/orbit-user-docs/spec.md",
+      "line": 16,
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/landing-page/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved",
+      "classification": "trivial_fix",
+      "action": "One behaviour, stated in the requirement: a nested item's names count toward its top-level item, it is not judged as an item of its own, and an unknown name in it fails naming its own line; a nested-only scenario added; design D2 aligned.",
+      "sweep": {
+        "retired": [
+          "it neither needs nor supplies a name of its own"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/landing-page/specs/orbit-user-docs/spec.md",
+            "text": "A name only in a nested item counts for its parent"
+          },
+          {
+            "path": "orbit/changes/landing-page/design.md",
+            "text": "a nested item is never judged as an item of its own"
+          }
+        ],
+        "searched": [
+          "nested"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/landing-page/explore.md",
+            "why": "the exploration record quotes D-lp-5's domain table as it stood at propose; history, consumed and never rewritten"
+          }
+        ]
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "The Codex quickstart lacks its actual invocation path",
+      "marker_source": "external",
+      "file": "orbit/changes/landing-page/design.md",
+      "line": 54,
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/landing-page/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved",
+      "classification": "decision_required",
+      "ratified_via": "chat",
+      "resolution": "A: the quickstart is Claude Code's; one line says Codex is set up with orbit init --tools codex and links docs/supported-tools.md for its invocation; no unverified Codex syntax on the page.",
+      "action": "D1 Quickstart scoped to Claude Code with one Codex setup line; task 4.1 carries it.",
+      "sweep": {
+        "retired": [
+          "`orbit init --tools claude` (or `codex`)"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/landing-page/design.md",
+            "text": "no Codex invocation syntax is written on the page"
+          },
+          {
+            "path": "orbit/changes/landing-page/tasks.md",
+            "text": "the Claude Code quickstart with its one Codex line"
+          }
+        ],
+        "searched": [
+          "codex",
+          "Codex"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "Tag cleanup can delete unrelated local tags",
+      "marker_source": "external",
+      "file": "orbit/changes/landing-page/design.md",
+      "line": 85,
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/landing-page/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved",
+      "classification": "trivial_fix",
+      "action": "D4 and task 1.2 delete exactly local tags ∩ git ls-remote --tags upstream, minus upstream/v1.3.1, keep local-only tags, and record the exact deletion set.",
+      "sweep": {
+        "retired": [
+          "that `origin` does not carry",
+          "delete every local tag `origin` does not carry"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/landing-page/design.md",
+            "text": "the intersection of the local tags with"
+          },
+          {
+            "path": "orbit/changes/landing-page/tasks.md",
+            "text": "record the exact deletion set under this task"
+          }
+        ],
+        "searched": [
+          "origin",
+          "deletion"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The installation prerequisites omit Git",
+      "marker_source": "external",
+      "file": "orbit/changes/landing-page/design.md",
+      "line": 52,
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/landing-page/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved",
+      "classification": "trivial_fix",
+      "action": "D1 Install names Git beside Node; task 4.1 carries both prerequisites.",
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/landing-page/design.md",
+            "text": "Node.js 20.19.0 or higher and Git"
+          },
+          {
+            "path": "orbit/changes/landing-page/tasks.md",
+            "text": "with Node and Git as prerequisites"
+          }
+        ],
+        "searched": [
+          "Node.js",
+          "prerequisite"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Four of four resolved: E2 by Sal's A (a Claude Code quickstart with one Codex setup line), three as obvious repairs.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal landing-page",
+  "ripple_misses": 0
+}

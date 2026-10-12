@@ -23,7 +23,7 @@ sentence (`src/core/templates/workflows/onboard.ts:36`) is the one generated sen
 
 **Non-Goals:**
 
-- The eleven `docs/` pages (reference-docs and concept-docs). The README links to them as they stand (R-ugd-5).
+- The eleven `docs/` pages (reference-docs and concept-docs). The README links to ten of them as they stand (R-ugd-5; `docs/opsx.md` is left unlinked, D1).
 - Upstream assets under `assets/`, `MAINTAINERS.md`, `LICENSE`, and `.github/workflows/release-prepare.yml`
   (upstream's release workflow, which runs on every push to `main`): public-readiness's.
 - An npm publish or a GitHub Release page: Sal's (R-ugd-4, R-ugd-6).
@@ -40,7 +40,10 @@ exactly as `orbit-user-docs` names them, because a setext heading neither opens 
 
 - **Built on OpenSpec**: a hard fork of `@fission-ai/openspec@1.3.1`, linked; the vendored baseline is the
   `upstream/v1.3.1` tag; the engine is frozen there and moves only by deliberate cherry-pick; telemetry removed (a fact
-  about the fork, never a claimed improvement, because no capability carries it: D-lp-6).
+  about the fork, never a claimed improvement, because no capability carries it: D-lp-6). The section names
+  `@fission-ai/openspec@1.3.1` in full: `orbit-conventions`' `Upstream version pinning` scenario "Pinned baseline
+  declared in README" requires the README to name the engine's upstream baseline, and a trim to "OpenSpec 1.3.1" would
+  break it.
 - **How orbit improves on OpenSpec**: one top-level bullet per claim, each naming its capabilities in backticks
   (D-lp-6): reviewed gates with a computed cadence (`orbit-engine-gates`, `orbit-review`); the blind pair and the
   external runner (`orbit-review-external`, `orbit-external-runner`); walks with pushback (`orbit-address-reviews`);
@@ -49,15 +52,22 @@ exactly as `orbit-user-docs` names them, because a setext heading neither opens 
   `orbit-architecture-engine`); safe parallel archive (`orbit-base-fingerprints`); user-invoked lifecycle
   (`orbit-lifecycle-consent`); the PR lifecycle (`orbit-pr-lifecycle`); drift audit (`orbit-audit-drift`). Bullets may
   merge at authoring (six to nine, D-lp-6); every name above exists in `orbit/specs/` today.
-- **Install**: Node.js 20.19.0 or higher; `npm install -g github:las-sal/orbit-spec#v2.0.0`; `orbit --version`. The
+- **Install**: Node.js 20.19.0 or higher and Git (the GitHub install fetches the repository with it); `npm install -g github:las-sal/orbit-spec#v2.0.0`; `orbit --version`. The
   git install builds on the user's machine through `package.json`'s `prepare` script. No npm-registry promise (R-ugd-4).
-- **Quickstart**: `cd` into a project, `orbit init --tools claude` (or `codex`), then the loop as slash commands in
-  prose and inline code, with `orbit status` as the orientation command.
-- **Docs**: links to the eleven pages under their current names. Their content is upstream's until the docs stages
-  land; R-ugd-5 accepts that interim state.
+- **Quickstart**: Claude Code's (proposal walk, Sal: A). `cd` into a project, `orbit init --tools claude`, then the loop as
+  `/orbit:*` slash commands in prose and inline code, with `orbit status` as the orientation command. One line says
+  Codex is set up with `orbit init --tools codex`, which installs its skills and prompts, and links to
+  `docs/supported-tools.md` for how Codex invokes them; no Codex invocation syntax is written on the page, because
+  nothing in this stage runs it.
+- **Docs**: links to ten of the eleven pages under their current names; `docs/opsx.md` is NOT linked, because its
+  filename is residue outside the admitted sections (proposal walk, Sal: A), and reference-docs, which renames it and
+  repoints its links, adds the link then. The linked pages' content is upstream's until the docs stages land; R-ugd-5
+  accepts that interim state.
 - **Development**: clone the repository (said in prose), then `npm install`, `npm run build`, `npm test`. No `git`
   command is written: `clone` is not a key of the recorded `git` contract, and recording one is not this stage's.
-- **Contributing**: two lines (D-lp-8). **License**: MIT, upstream's notice kept (public-readiness adds orbit's).
+- **Contributing**: two lines (D-lp-8). **License**: says MIT and points at `LICENSE`; the copyright notice stays in
+  the `LICENSE` file only, never quoted on the page (its holder's name would be residue there; public-readiness adds
+  orbit's notice to the file).
 - The other adapters the generator inherits are mentioned once, as inherited and untested, linking to
   `docs/supported-tools.md` (D-lp-7).
 
@@ -67,10 +77,12 @@ exactly as `orbit-user-docs` names them, because a setext heading neither opens 
 beside `admittedLines`, reading the same markdown-it parse: the section runs from the ATX heading titled exactly `How
 orbit improves on OpenSpec` to the next ATX heading of level at most its own. A top-level list item is a
 `list_item_open` whose enclosing list sits at nesting level zero within the section; its names are the `code_inline`
-tokens anywhere inside the item (nested items included) whose content matches `^orbit-[a-z0-9-]+$`; fences are
-`fence` tokens and are never read. A name resolves when `orbit/specs/<name>/spec.md` exists. The check joins the
-file-local set the pending-rewrite exactness test runs, as a `README.md`-only check that passes every other file, so a
-listed README that would pass it is still reported finished.
+tokens anywhere inside the item, nested items included, whose WHOLE content matches the requirement's `<name>`
+production (anchored at both ends); a nested item is never judged as an item of its own, and an unresolved name in
+it is reported on its own line. Fences are `fence` tokens and are never read. A name resolves when
+`orbit/specs/<name>/spec.md` exists. The check gates on nothing itself: it joins `fileLocalFailures`, as a
+`README.md`-only check that passes every other file, so the suite runs it over the unlisted docs and the exactness rule
+runs it over a listed README alone, and a listed README that would pass it is still reported finished.
 
 Alternative considered: a RECORD only (review grades exit (2)). Rejected: both inputs, the items and the names, are
 observable, and R-crc-11 mechanizes what the engine can observe. Truth stays review's.
@@ -82,12 +94,14 @@ the tag is D4's.
 
 ### D4 — The tag namespace is cleaned now; `v2.0.0` is cut on `main` after the merge
 
-During apply, delete every local tag except `upstream/v1.3.1` that `origin` does not carry
-(`git ls-remote --tags origin` is the reference), and run `git config remote.upstream.tagOpt --no-tags`. A
+During apply, delete exactly the local tags that are UPSTREAM's: the intersection of the local tags with
+`git ls-remote --tags upstream`, minus `upstream/v1.3.1` (proposal walk) — a local-only tag with no upstream provenance is
+kept. The exact deletion set is recorded under task 1.2, not only its count. Then run `git config remote.upstream.tagOpt --no-tags`. A
 `git fetch upstream` afterwards brings no tag. This is local configuration: nothing in the tracked tree changes.
 
 The annotated `v2.0.0` is cut on `main`'s merge commit once Sal merges this change's PR, then pushed by name
-(`git push origin v2.0.0`), never `--tags`. Before the merge, "on `main`" cannot be true: a tag on the branch moves
+(`git push origin v2.0.0`), never `--tags`, by the orbit session Sal opens after the merge, on his word (proposal walk): the
+tag is this stage's act under R-ugd-7, while merging the PR and any GitHub Release page stay Sal's. Before the merge, "on `main`" cannot be true: a tag on the branch moves
 if a walk edits the branch, and points outside `main` if the PR is never merged. So the tag is a post-merge act,
 carried as a user-validation task and DEFERRED at archive (archive Step 3.2: state that exists only after the move is
 DEFERRED by rule).
@@ -127,8 +141,8 @@ checked by the grammar sweep. The fence is exact both ways, so a head the final 
   install needs only code, which those stages do not change (D-lp-3, R-ugd-5).
 - [Two numbers a reader may pair] → "orbit 2.0.0" beside a future "OpenSpec 2.0.0". `Built on OpenSpec` states
   "forked from 1.3.1, frozen there"; npm keeps the packages apart by name (D-lp-1).
-- [Docs links point at pages still upstream's] → accepted interim state (R-ugd-5); the docs stages rewrite them, and
-  reference-docs renames `docs/opsx.md` and repoints its links.
+- [Docs links point at pages still upstream's] → accepted interim state (R-ugd-5); the docs stages rewrite them.
+  `docs/opsx.md` is the one page left unlinked (D1) until reference-docs renames it and adds the link.
 
 ## Alternatives considered
 

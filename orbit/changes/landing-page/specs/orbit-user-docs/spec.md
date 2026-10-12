@@ -4,17 +4,27 @@
 
 ### Requirement: Every improvement the README claims over OpenSpec names capabilities that exist
 
-When `README.md` is not on the pending-rewrite list, the IMPROVEMENT-CLAIMS CHECK SHALL read the README section headed
-`How orbit improves on OpenSpec` (the section as `The old name appears in the user docs only in four admitted places`
-bounds it) and dispose of its content by this table, failing the suite naming `README.md`, the line and the reason:
+The IMPROVEMENT-CLAIMS CHECK SHALL read the `README.md` section headed `How orbit improves on OpenSpec` (the section
+as `The old name appears in the user docs only in four admitted places` bounds it) and dispose of its content by this
+table, failing the suite naming `README.md`, the line and the reason. It is a file-local check that reads `README.md`
+alone and passes every other user doc, so the suite runs it as it runs every file-local check: over the unlisted user
+docs, and, in the pending-rewrite list's exactness rule, over a listed `README.md` alone.
+
+A NAME is an inline code span whose whole content matches this production; any other span, including one that merely
+begins `orbit-`, is not a name:
+
+```
+<name> ::= orbit-[a-z0-9]+(-[a-z0-9]+)*        the whole content of one inline code span
+```
 
 | member | covered by |
 |---|---|
-| a top-level list item naming at least one `orbit-*` capability in backticks, every one resolving to `orbit/specs/<name>/spec.md` | passes |
-| a top-level list item naming no capability | fails, naming the item's line |
-| a top-level list item naming a backticked `orbit-*` token that resolves to no capability (a skill name such as `orbit-explore`, a typo, a retired name) | fails, naming the line and the token |
-| a nested list item | read as part of its top-level item; it neither needs nor supplies a name of its own |
-| a capability name inside a fenced block in the section | not read: fences are never structure |
+| a top-level list item whose names (its own and its nested items') number at least one, every one resolving to `orbit/specs/<name>/spec.md` | passes |
+| a top-level list item with no name in it or in its nested items | fails, naming the item's line |
+| a name, in a top-level item or one of its nested items, that resolves to no capability (a skill name such as `orbit-explore`, the package name `orbit-spec`, a typo, a retired name) | fails, naming the line the name is on and the name |
+| a nested list item | its names count toward its top-level item; it is not judged as an item of its own |
+| an inline code span beginning `orbit-` that is not a whole name (`orbit-explore/SKILL.md`, `orbit-review --as`) | not a name: not read |
+| a name inside a fenced block in the section | not read: fences are never structure |
 | the section absent, or holding no top-level list item | fails: an empty comparison passes nothing |
 | a non-list block in the section (an intro paragraph, a table, a sub-heading's prose) | not read |
 
@@ -30,7 +40,7 @@ Named limit (the improvement-claims check). Residual kind: an improvement claim 
 
 #### Scenario: A claim naming no capability fails
 
-- **WHEN** a top-level list item under `How orbit improves on OpenSpec` names no `orbit-*` token in backticks
+- **WHEN** a top-level list item under `How orbit improves on OpenSpec` has no name in it or in its nested items
 - **THEN** the suite fails, naming `README.md` and the item's line
 
 #### Scenario: A name that is not a capability fails
@@ -43,15 +53,25 @@ Named limit (the improvement-claims check). Residual kind: an improvement claim 
 - **WHEN** a top-level list item names a capability and a list item nested under it names none
 - **THEN** the improvement-claims check passes both
 
+#### Scenario: A name only in a nested item counts for its parent
+
+- **WHEN** a top-level list item carries no name of its own and a list item nested under it names `orbit-review`
+- **THEN** the improvement-claims check passes the top-level item; and when the nested item instead names `orbit-explore`, the suite fails naming the nested item's line and `orbit-explore`
+
+#### Scenario: A span that is not a whole name is not read
+
+- **WHEN** a top-level list item names `orbit-review` and also carries the span `orbit-explore/SKILL.md`
+- **THEN** the improvement-claims check passes the item, reading only `orbit-review` as a name
+
 #### Scenario: An empty comparison fails
 
 - **WHEN** `README.md` has no `How orbit improves on OpenSpec` section, or the section holds no top-level list item
 - **THEN** the suite fails, naming `README.md` and that no claim was found
 
-#### Scenario: A listed README is not read
+#### Scenario: A listed README is held by the exactness rule, not the suite
 
 - **WHEN** `README.md` is on the pending-rewrite list
-- **THEN** the improvement-claims check reads nothing and reports nothing
+- **THEN** the unlisted-doc suite reports no improvement-claims failure against it, and the exactness rule still runs the check over it alone, so a listed README that passes every file-local check is reported finished
 
 ## MODIFIED Requirements
 
