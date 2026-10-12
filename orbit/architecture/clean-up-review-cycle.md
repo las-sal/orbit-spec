@@ -2911,7 +2911,7 @@ edits. Recorded as measured, not graded: the grade is rc08a's.
 ### Stage rc09-propose-hygiene — spike before spec, size before review
 
 Depends-on: (none)
-Complete: [ ]
+Complete: [~] 2026-10-12 (Sal)
 
 **SPLIT 2026-10-10 (Sal) into rc09a + rc09b, under R-crc-9: its eleventh preventive application, caught at
 exploration by measuring the stage's own capabilities before anything was proposed.** The heading is kept as the
@@ -5611,3 +5611,9 @@ the archive reference within 104 bytes of the line; (3) no subcommand writes, pr
 was Sal's. The defect the first offer was declined over (preflight's false citation divergence) was fixed in change 2
 and observed fixed at its own archive (`diverged: false`). The Shipped-as paragraph's exit (2) figures were corrected
 to the final tree at this session; the apply-time figures in the change 2 archive emit stand as what apply measured.
+
+**2026-10-12 — rc09-propose-hygiene ENDED (Sal)**, through the unprompted route ("mark rc09 ended"), the stage
+observed `premised` with an undated slot and no citers. It is a split parent: its heading stays as record, and its
+charter is owned by the two children that shipped — the size record by rc09a and the tool inventory by rc09b — both
+ratified. The mark says the parent itself will not be graded, as for rc17, rc08, rc13, rc04, rc03 and rc06. This
+closes the standing recommendation the 2026-10-12 report-archived-change entry carried.
