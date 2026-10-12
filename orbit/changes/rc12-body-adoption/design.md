@@ -96,6 +96,13 @@ bin/orbit.js update --force`, then `wc -c` each generated reference. The targets
 performs `switch -c` and `commit --only` for that seam. That would be a scope change, briefed before
 any code moves.
 
+**D7 — `orbit-cli-grammar` follows the deletion (entered at apply).** The tool inventory holds its
+exemptions exact both ways, so an exemption leaves with the last line that used it: `command`,
+`argument` and `unknown` were used only by the deleted runbook. The sweep requirement's scenario
+`A gh snippet in a SKILL.md body is validated` named the architect's `gh pr view` line, which no
+body carries now; it places that line in the architect body instead. Both requirements are carried
+as MODIFIED blocks.
+
 ## Risks / Trade-offs
 
 - [The architect target is tight: < 2,307 bytes, from a reference whose header and query section

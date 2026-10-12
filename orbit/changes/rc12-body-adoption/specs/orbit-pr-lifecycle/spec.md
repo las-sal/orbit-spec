@@ -124,9 +124,9 @@ forward to the archive emit and to `tail --outcome`), `tail` after the move and 
 | `action: proceed`, `degraded: null` | runs `segments` in order; before each segment it authors that segment's `inputs`; it runs each step's `argv` exactly, substituting only an element equal to an input token, every element shell-quoted |
 | `action: proceed`, `degraded: "pr"` | the same, plus ONE line for the PR-half degradation from `reason` |
 | `select` returns `off` or `skip`, exits non-zero, or one of its steps fails | ends the PR layer for this invocation: `publish` is never called, and generation proceeds on the current branch, unattached |
-| a step fails | stops at that step and writes ONE line naming the completed and the skipped steps by their `step` names, showing each skipped step's argv verbatim as the recovery the user runs, and stating the consequence: the change proceeds unattached until that recovery lands; no later PR step runs, and the lifecycle's own steps (the emit among them) still do |
+| a step fails | stops at that step and writes ONE line naming the completed, the failed and the skipped steps by their `step` names, showing the failed step's argv and then each skipped step's, verbatim with every input filled, as the recovery the user runs in that order, and stating the consequence for its seam: at propose and ff the change proceeds unattached until that recovery lands; at the archive tail the archive itself has landed and never rolls back, and the PR stays as the completed steps left it; no later PR step runs, and the lifecycle's own steps (the emit among them) still do |
 | a segment whose `inputs` name `<emit-path>` | writes the emit between the segments and passes its path |
-| `publish`'s first segment ends | composes the emit's `pr_attachment` as `observations.attachment` plus, when the `open` step created a PR, `url` from that step's standard output and `state: "draft"`, or, on adoption, `url` and `state` from `observations.adopted_url` and `observations.adopted_state`; after a PR-half degradation the attachment carries neither, and the second segment does not run; after a failed step the emit is still written, its attachment `observations.attachment` alone, and stays local, the second segment's argv (its `<emit-path>` filled) joining the failure line's recovery |
+| `publish`'s first segment ends | composes the emit's `pr_attachment` as `observations.attachment` plus, when the `open` step created a PR, `url` from that step's standard output and `state: "draft"`, or, on adoption, `url` and `state` from `observations.adopted_url` and `observations.adopted_state`; after a PR-half degradation the attachment carries neither, and the second segment does not run; after a failed step the emit is still written, its attachment `observations.attachment` alone, and stays local, the second segment's argv joining the failure line's recovery with both its inputs filled: `<emit-path>` the emit just written, and `<message-file>` a record commit message the body authors before writing the line |
 | `tail` is called | passes every path the archive flow edited at its at-archive steps as `--include <path>`, so those edits land in the tail's commit |
 | `human_acts` non-empty | shows each act's argv verbatim, labelled as the user's own act; never runs one |
 | `observations` | reads only what the emit or a note needs; never re-decides a step from it |
@@ -182,7 +182,9 @@ a `per-proposal` attachment), `current` the change's citation now, `would_select
 `orbit pr publish` resolves with: a program target of the cited doc when the resolved `pr:`
 regime is `per-architecture` and a citation is present, else a per-change target. ONE function
 computes it for `select`, `publish` and `preflight`, so the target selected, the target
-published and the note can never disagree:
+published and the note can never disagree. Under `never` (or an inert value) `select` and
+`publish` are `off` before the predicate runs; there its per-change answer is only the divergence
+reading, and the note says no PR would be selected now:
 
 | frozen attachment | `would_select` | `diverged` |
 |---|---|---|
@@ -196,7 +198,7 @@ The regime is read ONLY to decide `diverged`: the frozen attachment governs ever
 per `Config selects the regime; citation selects the target`, and the body writes the one-line note
 from `diverged: true`. An unattached change is `off` before any citation is read.
 
-The live validation is one call: `gh pr view --repo <owner>/<repo> <url> --json state,isDraft,headRefName,baseRefName,url`. A failed validation never triggers the fallback query; a stored URL that resolves is ANSWERED, per the owner. On a positive invalidation `reason.detail` carries the failed predicate's `observed` value and, where one exists, the `expected` one (the base a `retargeted to <base>` note names), so the body never invents a fact or observes again. `observations.emit` carries the values the archive emit records. `preflight` prints no segments. An unattached change is `off`, with no reason. The one line noting the unattached state, which `PR entry points`' scenario `new/continue reaches archive unattached` requires, is the body's: it writes that line from `off` together with the `pr` regime it reads from `orbit status --json`.
+The live validation is one call: `gh pr view --repo <owner>/<repo> <url> --json state,isDraft,headRefName,baseRefName,url`. A failed validation never triggers the fallback query; a stored URL that resolves is ANSWERED, per the owner. On a positive invalidation `reason.detail` carries the failed predicate's `observed` value (the base a `retargeted to <base>` note names) and, where one exists, the `expected` one (the default branch it should target), so the body never invents a fact or observes again. `observations.emit` carries the values the archive emit records. `preflight` prints no segments. An unattached change is `off`, with no reason. The one line noting the unattached state, which `PR entry points`' scenario `new/continue reaches archive unattached` requires, is the body's: it writes that line from `off` together with the `pr` regime it reads from `orbit status --json`.
 
 #### Scenario: A closed PR is answered, not missing
 

@@ -13,6 +13,7 @@ import { getArchiveChangeSkillTemplate } from '../../../src/core/templates/skill
 import {
   PR_ARCHIVE_TAIL_REFERENCE,
   PR_CHOREOGRAPHY_REFERENCE,
+  PR_RESOLUTION_REFERENCE,
   PR_TITLE_RULE,
 } from '../../../src/core/templates/workflows/pr-choreography.js';
 
@@ -86,6 +87,13 @@ describe('the draft window and the archive close', () => {
     expect(tail).toContain('the ACHIEVEMENT body, replacing the intent');
   });
 
+  it('the tail reference keeps the two notes the record cannot print: an already-READY PR and a branch absent everywhere', () => {
+    const tail = section(PR_ARCHIVE_TAIL_REFERENCE, '## Tail, after the move and the emit');
+    expect(tail).toContain('`observations.pr_state` is `ready` prints no `ready` step');
+    expect(tail).toContain('already READY and was not re-flipped');
+    expect(tail).toContain('when its `case` is `absent` (no argv), say plainly that no\nswitch recovers the branch');
+  });
+
   // @scenario text orbit-pr-lifecycle :: PR actions are workflow-body choreography (zero engine git) :: A human act is shown, never run
   it("the archive close shows the tail's human acts verbatim as the user's, and runs none", () => {
     const close = section(PR_ARCHIVE_TAIL_REFERENCE, '## At the close');
@@ -95,5 +103,21 @@ describe('the draft window and the archive close', () => {
     const echo = section(getArchiveChangeSkillTemplate().instructions, '## NEW Step 5.8');
     expect(echo).toContain('`human_acts`');
     expect(echo).toContain('Run none of them.');
+  });
+});
+
+describe('the architect reference', () => {
+  it('speaks from observations.outcome when no PR is surfaced, telling an unavailable observation from a confirmed absence', () => {
+    for (const s of ['When `observations.pr` is null the readout still speaks', '`unobserved` or `gh-absent`: the program PR could not be observed', '`observations.resolution_failure` or `observations.query_error`', '`none`: the query ran and found no open program PR']) {
+      expect(PR_RESOLUTION_REFERENCE).toContain(s);
+    }
+  });
+});
+
+describe('the archive reference reads reason.detail the way validatePrUrl writes it', () => {
+  it('a retargeted PR is named by its observed base, never its expected one', () => {
+    const pre = section(PR_ARCHIVE_TAIL_REFERENCE, '## Preflight, before the move');
+    expect(pre).toContain('`retargeted to` its `observed` base');
+    expect(pre).not.toContain('`retargeted to`\n  its `expected` base');
   });
 });

@@ -93,6 +93,12 @@ import { generateSkillContent } from '../../../src/core/shared/skill-generation.
 // bulk-archive moved with ONE sentence: it pointed at "single-archive Step 5.45" for the attachment read,
 // a step that no longer exists; it now reads the attachment from the change's own trail. Five function
 // hashes and the same five generated-skill hashes moved; no other pin did.
+// rc12-body-adoption system walk (2026-10-12), a recorded act the walk's plan did not name: the
+// pair's findings re-worded the three references (the tail's two record-field notes, the unstaged
+// paths, the retarget note's observed base, the arc-done readout with no PR, segment 1's inputs)
+// and the checked consumption-table mirror, and archive's Step 5.6 recovery sentence. Four
+// function hashes moved (propose, ff, archive, architect) and one generated-skill hash (archive,
+// the only SKILL.md body edited); the references are not in the generated-skill hash.
 const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   getExploreSkillTemplate: '2835cca2ae531f797e0417d14f9bc66e6fd9c1b54558781ea95f3cbaad097583',
   getNewChangeSkillTemplate: '8f68be94db91a147b93d492f6f32ab3c02725a20a001c87602ac8d9741587614',
@@ -101,7 +107,7 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // stopped naming "spec-driven v4" and `blind-pair` as the post-apply slot — under v5 which review comes
   // next depends on the cadence and the review preference, so the body says it is read, not predicted.
   getApplyChangeSkillTemplate: 'a6fee1123aa05f50fb422bea764f5ed3dee8a4a3d85481515b65a693d2c38758',
-  getFfChangeSkillTemplate: '1951aa710945f39d1bc790ec08e97e602e16b90009973827827d6f66317ff864',
+  getFfChangeSkillTemplate: '1412cf53224b12c15350d145656e7c90a154b7ef8041ca2edcda1753ccae36fa',
   getSyncSpecsSkillTemplate: 'a9672b720eff36fb30f2229d835fd9a9e4cc88e81f1773bc74aff79247aa9809',
   // rc08b-walk-routing (2026-10-05, task 3.3): the command-table row's retired "auto-discovers … when invoked
   // with a change name and no markers found" became the discovery sentence. One re-record, both onboard hashes.
@@ -125,7 +131,7 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // Step 3.2 reports cases 2, 3 and 8 and widens its DEFERRED rule to post-move state (fresh S2); bulk
   // archive briefs before each move and gains its per-change archive emit step (fresh W2, S1). The same
   // four hashes moved; no other pin did.
-  getArchiveChangeSkillTemplate: 'cca73d4839fac2bbf4ce5a49ae86a3f33ead6a4a90a20b01fee0fc3bf0a50679',
+  getArchiveChangeSkillTemplate: 'f88ee726e01ef41fcd897c07dbc123ba8924ba5b1bc4e864d21fbe162a8ee46a',
   getBulkArchiveChangeSkillTemplate: 'a428418830dc7de9f65cdd60f8b3ffbde6a020697f10f3eaa0ea122a27e34668',
   getOrbitSyncCommandTemplate: '1067039e869d8dedf7922da46230b53a88253cf3fe27c7a5d60c96bc9a43453f',
   // rc06b-map-readers (2026-10-05) — verify moved DELIBERATELY, the first named edit to an upstream
@@ -165,7 +171,7 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // Moved a second time at rc09a's system walk (2026-10-11): the brief's validation named as non-strict, the
   // Split route's "the rest of the flow runs unchanged", "run" for "re-run" under Declare, and the heading
   // line's "exactly" dropped (the parser reads CommonMark indentation) — one re-record for the walk's edits.
-  getOrbitProposeSkillTemplate: '6b18f66376b6b64334ab228fb92cfbe3836a912e5c133e72cbbe572510951700',
+  getOrbitProposeSkillTemplate: '779bd58adf68346bd1039a37e1edf1a94ece378b8715998aab678711ae2b1bb2',
   getOrbitProposeCommandTemplate: 'b91222654d5050d7ae7f2f49b5d6c4b34e65638bd8c5ae3e622550eb1329c168',
   getFeedbackSkillTemplate: 'ded61ad85c5050f7bf241870b14bfcdd929f0be68a028c1130fd30a66efbda3b',
   // rc15 (ended-stage-state, 2026-09-29): the orbit-architect body moved ONCE, deliberately — §5 (the
@@ -186,7 +192,7 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // escaped each backtick around `orbit architecture status` twice inside the template literal, so the
   // generated doc scaffold carried a literal backslash before each one; it now carries plain backticks.
   // That one line, nothing else; held from here by test/core/cli-grammar/escaped-backticks.test.ts.
-  getArchitectSkillTemplate: '2030964915e00d31a33ed9fccdd7df9d8312e6cbe6afdf14c3eea4d647cc2cf1',
+  getArchitectSkillTemplate: 'afff0ad665d1ab8c9d571c0c3bf75fd1ef454d94e209122541036632b533d28b',
   getOrbitArchitectCommandTemplate: 'b65b8cca6431bb45aa8587d3bfc1e9458981e2e1bc925ae45cd57414143cb3db',
 };
 
@@ -204,7 +210,7 @@ const EXPECTED_GENERATED_SKILL_CONTENT_HASHES: Record<string, string> = {
   'orbit-apply-change': '491bbad729e422441417760e937dfd15facaa5b1af64da61336732c7b66336b7', // rc17a apply: the v4 clause (see the function-hash note above)
   'orbit-ff-change': 'e5d78989125f69b3a758b74d25f09975affe9da200ae031f2e76227b4fae722d',
   'orbit-sync-specs': '23adf56ababc77dac8dcc06048b4d74d27ded9bc4f49a57858e17c4ea7866a75',
-  'orbit-archive-change': '41ff94604ec21e7118b4bf0e7d06058c95082a2681a6c6f074e16274df572d6a', // rc10-apply-closure task 2.8, then its system walk (see the function-hash note above)
+  'orbit-archive-change': 'cfb8a7a67368606f6b57d1954e82717bd639c3ab38a7952acba543fe0df8ddcf', // rc10-apply-closure task 2.8, then its system walk (see the function-hash note above)
   'orbit-bulk-archive-change': '68512b443d468b98ade14ae343c40d1210500d97858599d31a5417829be05b3b', // rc10-apply-closure task 2.8, then its system walk (see the function-hash note above)
   'orbit-verify-change': '06080070b8f2dfd4e3053c9143845095d0b80c6efcce286cc46e9de37dfe8ea8', // rc06b-map-readers (2026-10-05): moved with the body's step 6 edit, then again at system walk 2's additions edit (see the function-hash note above)
   'orbit-onboard': 'a2d4f3bc2b5fc3562fe264fcb291e0e280f988fe0a10be081a4770c32fe00e2f', // rc17b task 5.1 (see the function-hash note above)

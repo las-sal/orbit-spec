@@ -221,6 +221,16 @@ describe('tail — the commit scope', () => {
     expect(repo.git('status', '--porcelain', '--', 'orbit/changes').stdout.trim()).toBe('');
   });
 
+  it('an unrelated tracked edit left unstaged is named in unrelated_unstaged, stays out of the commit and stays unstaged', () => {
+    const repo = archived();
+    const { record } = tail(repo, 'valid');
+    expect(record.observations.unrelated_unstaged).toEqual(['orbit/specs/other/spec.md']);
+    expect(record.observations.unrelated_staged).toEqual([]);
+    runSegments(repo, record, author(repo));
+    expect(repo.git('show', '--name-only', '--format=', 'HEAD').stdout).not.toMatch(/other/);
+    expect(repo.git('status', '--porcelain', '--', 'orbit/specs/other/spec.md').stdout).toMatch(/^ M /);
+  });
+
   it('a move already STAGED (git add -A orbit/changes, this repo\'s archive practice): the pre-move deletions still reach the commit, and the pushed tree carries the change once', () => {
     const repo = archived();
     repo.git('add', '-A', 'orbit/changes');

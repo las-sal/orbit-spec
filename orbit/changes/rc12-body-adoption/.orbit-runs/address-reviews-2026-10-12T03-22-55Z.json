@@ -1,0 +1,221 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-12T03:22:55Z",
+  "change": "rc12-body-adoption",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc12-body-adoption/.orbit-runs/external-system-2026-10-12T03-13-46Z.md",
+  "source_command": null,
+  "source_token": "2026-10-12T03-13-46Z",
+  "latest_apply_token": "2026-10-12T03-07-04Z",
+  "external_reviewer": "GPT-6",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 4,
+    "suggestion": 1
+  },
+  "pushback_verification": "All five verified at HEAD b485c7c2: the step-failure row named only skipped steps and one consequence; prProgram returns observations.pr null with outcome/resolution_failure/query_error on a URL-less record; tail.ts filtered unrelated paths to staged entries only; validatePrUrl writes the PR's base to observed and the default to expected while the reference and the delta parenthetical used expected; the proposal-scope suggestion converged with the fresh pass's.",
+  "resolution_summary": {
+    "resolved": 4,
+    "stale_suppressed": 1,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Recovery instructions omit the failed command",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/pr-choreography.ts:25",
+      "line": 25,
+      "classification": "trivial_fix",
+      "action": "the delta's step-failure row now names the completed, failed and skipped steps and shows the failed step's argv then each skipped step's, every input filled, in that order; the consequence is stated per seam (propose/ff: unattached until recovery; archive tail: the archive has landed and the PR stays as the completed steps left it); the checked mirror re-synced and archive Step 5.6's recovery sentence matched",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc12-body-adoption/specs/orbit-pr-lifecycle/spec.md",
+          "src/core/templates/workflows/archive-change.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "showing each skipped step's argv verbatim as the recovery the user runs",
+          "naming the completed and the skipped steps"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc12-body-adoption/specs/orbit-pr-lifecycle/spec.md",
+            "text": "showing the failed step's argv and then each skipped step's"
+          },
+          {
+            "path": "src/core/templates/workflows/pr-choreography.ts",
+            "text": "showing the failed step's argv and then each skipped step's"
+          },
+          {
+            "path": "src/core/templates/workflows/archive-change.ts",
+            "text": "naming the completed, the failed and the skipped steps"
+          }
+        ],
+        "searched": [
+          "skipped step",
+          "completed and the skipped",
+          "proceeds unattached"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_miss_of": {
+        "walk": "2026-10-12T02-45-23Z",
+        "title": "The step-failure row drops the recovery commands orbit-propose-modifications still requires",
+        "file": "specs/orbit-pr-lifecycle/spec.md",
+        "kind": "judgement"
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "Arc-done readout does not cover observations without a PR URL",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/pr-choreography.ts:185",
+      "line": 185,
+      "classification": "trivial_fix",
+      "action": "the architect reference now reports from observations.outcome when observations.pr is null: unobserved/gh-absent as could-not-observe naming resolution_failure or query_error, none as a confirmed absence, an invalidation reason or not-found as the recorded state with no replacement, several with its candidates; a text assertion added",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/templates/pr-references.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "src/core/templates/workflows/pr-choreography.ts",
+            "text": "When \\`observations.pr\\` is null the readout still speaks"
+          },
+          {
+            "path": "test/core/templates/pr-references.test.ts",
+            "text": "the program PR could not be observed"
+          }
+        ],
+        "searched": [
+          "observations.pr",
+          "resolution_failure",
+          "query_error"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Archive no longer names unrelated unstaged edits",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/pr-choreography.ts:155",
+      "line": 155,
+      "classification": "trivial_fix",
+      "action": "tail.ts exposes observations.unrelated_unstaged (tracked paths with a worktree edit, outside the scope) beside unrelated_staged, and the archive reference names both; a tail test shows an unrelated unstaged spec edit named, kept out of the commit and left unstaged, and fails when the filter is reverted",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/pr/tail.ts",
+          "test/core/pr/tail.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "in one line when it is\nnon-empty: those entries stay staged and outside the commit"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/pr/tail.ts",
+            "text": "observations.unrelated_unstaged = moved.unrelated"
+          },
+          {
+            "path": "src/core/templates/workflows/pr-choreography.ts",
+            "text": "observations.unrelated_unstaged"
+          },
+          {
+            "path": "test/core/pr/tail.test.ts",
+            "text": "an unrelated tracked edit left unstaged is named in unrelated_unstaged"
+          }
+        ],
+        "searched": [
+          "unrelated_staged",
+          "unrelated dirty",
+          "unstaged"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Retargeting example reports the expected base as the observed base",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/pr-choreography.ts:133",
+      "line": 133,
+      "classification": "trivial_fix",
+      "action": "the archive reference names a retargeted PR by its observed base, away from the expected default; the delta's preflight requirement had the same inversion in its parenthetical and now attaches the retargeted-to base to observed; a text assertion added",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc12-body-adoption/specs/orbit-pr-lifecycle/spec.md",
+          "test/core/templates/pr-references.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the `expected` one (the base a `retargeted to <base>` note names)"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/templates/workflows/pr-choreography.ts",
+            "text": "its \\`observed\\` base"
+          },
+          {
+            "path": "orbit/changes/rc12-body-adoption/specs/orbit-pr-lifecycle/spec.md",
+            "text": "`observed` value (the base a `retargeted to <base>` note names)"
+          },
+          {
+            "path": "test/core/templates/pr-references.test.ts",
+            "text": "a retargeted PR is named by its observed base"
+          }
+        ],
+        "searched": [
+          "retargeted to",
+          "expected",
+          "observed"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Proposal does not declare the added CLI-grammar scope",
+      "marker_source": "external",
+      "file": "orbit/changes/rc12-body-adoption/proposal.md:36",
+      "line": 36,
+      "classification": "stale",
+      "action": "converged with the fresh pass's proposal-scope finding, resolved in walk 2026-10-12T03-18-22Z",
+      "evidence": "walked in address-reviews-2026-10-12T03-18-22Z.json (Proposal lists one modified capability; the change carries two): resolved; proposal.md lists orbit-cli-grammar under Modified Capabilities and design.md carries D7",
+      "outcome": "stale"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "All four warnings of the external system pass resolved by repair, one with a small engine field (tail observations.unrelated_unstaged); the proposal-scope suggestion is stale, walked in the fresh log.",
+  "iteration": 5,
+  "next_recommended": "/orbit:review --as system rc12-body-adoption",
+  "ripple_misses": 1
+}

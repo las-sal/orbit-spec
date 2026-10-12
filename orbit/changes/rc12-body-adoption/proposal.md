@@ -39,6 +39,10 @@ None.
   runs before the archive's move; the freeze requirement's citation note points at it; the
   per-change title rule names an input that exists; the choreography requirement states how a body
   consumes an `orbit pr` record (which carries D-rba-3's post-merge line through `human_acts`).
+- `orbit-cli-grammar` (entered at apply): deleting the runbook left three declared inventory
+  exemptions (`command`, `argument`, `unknown`) with no line using them, which the inventory's
+  exactness rule fails, and one sweep scenario named the architect's `gh pr view` snippet, which
+  the rewrite deletes; the exemptions are retired and the scenario places its line instead.
 
 ## Impact
 

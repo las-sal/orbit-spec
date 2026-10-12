@@ -1,0 +1,227 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-12T03:18:22Z",
+  "change": "rc12-body-adoption",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc12-body-adoption/.orbit-runs/review-system-2026-10-12T03-13-26Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-12T03-13-26Z",
+  "latest_apply_token": "2026-10-12T03-07-04Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 3
+  },
+  "pushback_verification": "All five verified at HEAD b485c7c2: tail.ts omits the ready step on pr_state ready and returns recovery {case: absent, argv: []}; publish.ts segment 2 names <message-file>; proposal.md lists one capability; select/publish return off under never before the predicate; publish omits <title>/<body-file> on adoption and <message-file> on an empty scope. None stale.",
+  "resolution_summary": {
+    "resolved": 5,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The archive reference dropped two baseline notes the tail record does not carry",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/pr-choreography.ts",
+      "line": 154,
+      "classification": "trivial_fix",
+      "action": "restored both notes in the archive reference, keyed on record fields: a per-change tail whose observations.pr_state is ready reports in one line that the PR was already READY and was not re-flipped; a head-mismatch whose recovery case is absent says plainly that no switch recovers the branch, naming observations.attachment; text assertions added",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/templates/pr-references.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "src/core/templates/workflows/pr-choreography.ts",
+            "text": "already READY and was not re-flipped"
+          },
+          {
+            "path": "src/core/templates/workflows/pr-choreography.ts",
+            "text": "say plainly that no"
+          },
+          {
+            "path": "test/core/templates/pr-references.test.ts",
+            "text": "already READY and was not re-flipped"
+          }
+        ],
+        "searched": [
+          "re-flipped",
+          "absent everywhere",
+          "recovery.case",
+          "pr_state"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The failed-step recovery shows segment 2's argv with an unfilled <message-file>",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc12-body-adoption/specs/orbit-pr-lifecycle/spec.md",
+      "line": 129,
+      "classification": "trivial_fix",
+      "action": "option A: the publish row now says the second segment joins the recovery with both inputs filled, <emit-path> the emit just written and <message-file> a record commit message the body authors before writing the line; the checked mirror re-synced from the delta",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/templates/workflows/pr-choreography.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "filled) joining the failure line's recovery"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc12-body-adoption/specs/orbit-pr-lifecycle/spec.md",
+            "text": "a record commit message the body authors before writing the line"
+          },
+          {
+            "path": "src/core/templates/workflows/pr-choreography.ts",
+            "text": "a record commit message the body authors before writing the line"
+          }
+        ],
+        "searched": [
+          "<emit-path>",
+          "<message-file>",
+          "joining the failure line"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_miss_of": {
+        "walk": "2026-10-12T02-45-23Z",
+        "title": "The step-failure row drops the recovery commands orbit-propose-modifications still requires",
+        "file": "specs/orbit-pr-lifecycle/spec.md",
+        "kind": "judgement"
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Proposal lists one modified capability; the change carries two",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc12-body-adoption/proposal.md",
+      "line": 30,
+      "classification": "trivial_fix",
+      "action": "added orbit-cli-grammar under Modified Capabilities (entered at apply: three unused inventory exemptions retired, one scenario placing its line) and a D7 in design naming it",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc12-body-adoption/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc12-body-adoption/proposal.md",
+            "text": "(entered at apply): deleting the runbook left three declared inventory"
+          },
+          {
+            "path": "orbit/changes/rc12-body-adoption/design.md",
+            "text": "D7 — `orbit-cli-grammar` follows the deletion"
+          }
+        ],
+        "searched": [
+          "Modified Capabilities",
+          "orbit-cli-grammar"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "would_select under `never` names a per-change target nothing would select",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc12-body-adoption/specs/orbit-pr-lifecycle/spec.md",
+      "line": 184,
+      "classification": "trivial_fix",
+      "action": "qualified the sentence: under never (or an inert value) select and publish are off before the predicate runs, so its per-change answer is only the divergence reading and the note says no PR would be selected now; the archive reference's divergence bullet says the same",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/templates/workflows/pr-choreography.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "published and the note can never disagree:"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc12-body-adoption/specs/orbit-pr-lifecycle/spec.md",
+            "text": "its per-change answer is only the divergence reading"
+          },
+          {
+            "path": "src/core/templates/workflows/pr-choreography.ts",
+            "text": "that no PR would be selected now"
+          }
+        ],
+        "searched": [
+          "can never disagree",
+          "would_select"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Phase 3 lists segment 1's inputs unconditionally",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/pr-choreography.ts",
+      "line": 75,
+      "classification": "trivial_fix",
+      "action": "Phase 3 now says to author the inputs segment 1 names: normally the three, an adopted program PR naming no title or body and an empty scope no message file",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "Before segment 1, author its inputs:"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/templates/workflows/pr-choreography.ts",
+            "text": "author the inputs it names"
+          }
+        ],
+        "searched": [
+          "author its inputs",
+          "segment 1"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "All five findings of the fresh system pass resolved by repair; the proposal-scope suggestion converged with the external pass and is walked here.",
+  "iteration": 4,
+  "next_recommended": "/orbit:address-reviews rc12-body-adoption",
+  "ripple_misses": 1
+}

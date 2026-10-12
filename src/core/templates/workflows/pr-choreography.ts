@@ -22,9 +22,9 @@ export const PR_CONSUMPTION_TABLE = `| the call returns | the body |
 | \`action: proceed\`, \`degraded: null\` | runs \`segments\` in order; before each segment it authors that segment's \`inputs\`; it runs each step's \`argv\` exactly, substituting only an element equal to an input token, every element shell-quoted |
 | \`action: proceed\`, \`degraded: "pr"\` | the same, plus ONE line for the PR-half degradation from \`reason\` |
 | \`select\` returns \`off\` or \`skip\`, exits non-zero, or one of its steps fails | ends the PR layer for this invocation: \`publish\` is never called, and generation proceeds on the current branch, unattached |
-| a step fails | stops at that step and writes ONE line naming the completed and the skipped steps by their \`step\` names, showing each skipped step's argv verbatim as the recovery the user runs, and stating the consequence: the change proceeds unattached until that recovery lands; no later PR step runs, and the lifecycle's own steps (the emit among them) still do |
+| a step fails | stops at that step and writes ONE line naming the completed, the failed and the skipped steps by their \`step\` names, showing the failed step's argv and then each skipped step's, verbatim with every input filled, as the recovery the user runs in that order, and stating the consequence for its seam: at propose and ff the change proceeds unattached until that recovery lands; at the archive tail the archive itself has landed and never rolls back, and the PR stays as the completed steps left it; no later PR step runs, and the lifecycle's own steps (the emit among them) still do |
 | a segment whose \`inputs\` name \`<emit-path>\` | writes the emit between the segments and passes its path |
-| \`publish\`'s first segment ends | composes the emit's \`pr_attachment\` as \`observations.attachment\` plus, when the \`open\` step created a PR, \`url\` from that step's standard output and \`state: "draft"\`, or, on adoption, \`url\` and \`state\` from \`observations.adopted_url\` and \`observations.adopted_state\`; after a PR-half degradation the attachment carries neither, and the second segment does not run; after a failed step the emit is still written, its attachment \`observations.attachment\` alone, and stays local, the second segment's argv (its \`<emit-path>\` filled) joining the failure line's recovery |
+| \`publish\`'s first segment ends | composes the emit's \`pr_attachment\` as \`observations.attachment\` plus, when the \`open\` step created a PR, \`url\` from that step's standard output and \`state: "draft"\`, or, on adoption, \`url\` and \`state\` from \`observations.adopted_url\` and \`observations.adopted_state\`; after a PR-half degradation the attachment carries neither, and the second segment does not run; after a failed step the emit is still written, its attachment \`observations.attachment\` alone, and stays local, the second segment's argv joining the failure line's recovery with both its inputs filled: \`<emit-path>\` the emit just written, and \`<message-file>\` a record commit message the body authors before writing the line |
 | \`tail\` is called | passes every path the archive flow edited at its at-archive steps as \`--include <path>\`, so those edits land in the tail's commit |
 | \`human_acts\` non-empty | shows each act's argv verbatim, labelled as the user's own act; never runs one |
 | \`observations\` | reads only what the emit or a note needs; never re-decides a step from it |`;
@@ -72,8 +72,9 @@ branch phase 1 switched to, and \`git switch <default-branch>\` as the recovery.
 orbit pr publish <name> --json
 \`\`\`
 
-Before segment 1, author its inputs: \`<message-file>\` (the commit message), \`<title>\`, and
-\`<body-file>\`, the INTENT body adapted from proposal.md's Why and What (a program PR: program
+Before segment 1, author the inputs it names: normally \`<message-file>\` (the commit message),
+\`<title>\`, and \`<body-file>\` (an adopted program PR names no title or body, and an empty
+scope no message file), the INTENT body adapted from proposal.md's Why and What (a program PR: program
 intent from the doc's opening prose plus its stage list). The title, quoted from
 \`orbit-pr-lifecycle\`'s \`Agent-written landmark descriptions at seams only\`: ${PR_TITLE_RULE}.
 When \`observations.ci\` is \`absent\`, note in one line that no CI is configured.
@@ -129,9 +130,11 @@ observation is carried forward to both the emit and the tail, so they cannot dis
   absent key stays absent.
 - \`observations.outcome\` is the tail's \`--outcome\`, passed verbatim.
 - \`observations.citation.diverged\` true: one note that the frozen attachment governs, naming
-  what \`observations.citation.would_select\` selects now.
-- \`degraded: "pr"\`: one note naming the outcome and \`reason.detail\` (for example \`retargeted to\`
-  its \`expected\` base). The tail's commit and push still run; its PR steps do not.
+  what \`observations.citation.would_select\` selects now (when the \`pr\` regime reads \`never\`,
+  that no PR would be selected now).
+- \`degraded: "pr"\`: one note naming the outcome and \`reason.detail\`: \`observed\` is what the PR
+  now shows and \`expected\` what it should (for example \`retargeted to\` its \`observed\` base,
+  away from the \`expected\` default). The tail's commit and push still run; its PR steps do not.
 - \`skip\`: one note from \`reason\`; the emit carries no PR field.
 
 ## Tail, after the move and the emit
@@ -152,8 +155,12 @@ segment, author \`<message-file>\` and, when a \`rewrite\` or \`append\` step is
   from the emit's \`final_assessment\` plus the change name and date; name the source in one line.
 
 A \`skip\` with \`reason.code\` \`head-mismatch\` names both branches and shows
-\`reason.detail.recovery\`'s argv. Name \`observations.unrelated_staged\` in one line when it is
-non-empty: those entries stay staged and outside the commit.
+\`reason.detail.recovery\`'s argv; when its \`case\` is \`absent\` (no argv), say plainly that no
+switch recovers the branch, naming \`observations.attachment\` as the record of what was expected.
+A per-change tail whose \`observations.pr_state\` is \`ready\` prints no \`ready\` step: report in
+one line that the PR was already READY and was not re-flipped. Name \`observations.unrelated_staged\`
+and \`observations.unrelated_unstaged\` in one line when either is non-empty: those paths stay as
+they were, staged or unstaged, and outside the commit.
 
 ## At the close
 
@@ -188,6 +195,16 @@ report it verbatim. \`off\` means no program-PR attachment names this doc: say n
   \`observations.pr\` is the open replacement the query found, or null when none exists.
 - \`observations.candidates\`: when there are several, name every one.
 - \`human_acts\`: show each argv verbatim as the user's act (ready, then merge). Run none of them.
+
+When \`observations.pr\` is null the readout still speaks, from \`observations.outcome\`, and
+never confuses not knowing with knowing there is none:
+
+- \`unobserved\` or \`gh-absent\`: the program PR could not be observed; name the cause from
+  \`observations.resolution_failure\` or \`observations.query_error\` when present.
+- \`none\`: the query ran and found no open program PR.
+- a positive-invalidation reason or \`not-found\`: the recorded PR is in that state and no open
+  replacement exists.
+- \`several\`: the candidates above, with no acts.
 
 The readout repeats on every arc-done invocation until the PR is no longer draft.
 `;

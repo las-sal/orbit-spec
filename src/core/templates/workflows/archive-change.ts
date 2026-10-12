@@ -498,8 +498,8 @@ edit; then run its segment (commit → push → description rewrite or stage-ent
 READY flip for a per-change PR), authoring the commit message and the body it asks for.
 
 The tail's outward writes ride the archive's OWN entry consent — no second prompt. A failed
-step stops the segment with ONE line naming the completed and the skipped steps, each skipped
-step's argv shown as the recovery. The archive itself (sync, move, emit) has already
+step stops the segment with ONE line naming the completed, the failed and the skipped steps, the
+failed step's argv and then each skipped step's shown as the recovery. The archive itself (sync, move, emit) has already
 succeeded and never rolls back.
 
 ## NEW Step 5.65 — The readiness line in the completion readout (rc04a)
