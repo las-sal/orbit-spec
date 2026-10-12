@@ -310,7 +310,8 @@ surface (the workflow and the file), the line, the snippet, and the validator's 
 
 #### Scenario: A gh snippet in a SKILL.md body is validated
 
-- **WHEN** the architect SKILL.md's `gh pr view --repo <owner>/<repo> <url> --json isDraft` loses its `<url>`
+- **WHEN** a line `gh pr view --repo <owner>/<repo> --json isDraft`, which lacks its `<url>`, is placed in the
+  architect SKILL.md
 - **THEN** the sweep fails naming `architect/SKILL.md`, the line, the snippet and the contract's recorded
   `argument required when using the --repo flag`
 
@@ -404,9 +405,9 @@ The declared exemptions SHALL be this requirement's one fenced block whose info 
 kind, `<kind>: <head> <head> …`, the heads separated by single spaces:
 
 ```inventory
-utility: mv mkdir grep rm rmdir head tail cd [ command sh node
+utility: mv mkdir grep rm rmdir head tail cd [ sh node
 placeholder: <argv[0]>
-prose: argument reach skipped unknown
+prose: reach skipped
 ```
 
 `utility` holds the POSIX utilities, shell builtins, reserved words and test words the surface writes, and `node`, the runtime orbit
@@ -425,8 +426,8 @@ active change's delta that adds or modifies this requirement when exactly one do
 both), the baseline otherwise.
 
 Named limit (the inventory). Residual kind: a tool whose every inline invocation carries no flag token, is
-path-prefixed, or sits in a span the tokenizer refuses; a tool run as an argument of a declared head (`command <tool>
-…`, `sh -c '<…>'`, `node <script> …`, `node bin/orbit.js` among them) or after a declared reserved word; or one
+path-prefixed, or sits in a span the tokenizer refuses; a tool run as an argument of a declared head (`sh -c
+'<…>'`, `node <script> …`, `node bin/orbit.js` among them) or after a declared reserved word; or one
 invoked only in prose, in a double-backtick span, or in a `json` or untagged fence. Residual method: an independent
 review reading a new surface's inline spans and the arguments of every declared head that runs a command; rc05's guard
 already fails a recorded tool's flagged line outside a fence.

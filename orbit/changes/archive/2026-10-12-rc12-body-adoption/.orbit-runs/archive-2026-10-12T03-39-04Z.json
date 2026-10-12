@@ -1,0 +1,77 @@
+{
+  "command": "archive",
+  "timestamp": "2026-10-12T03:39:04Z",
+  "change": "rc12-body-adoption",
+  "kind": "lifecycle",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Archived rc12-body-adoption to orbit/changes/archive/2026-10-12-rc12-body-adoption/: the PR bodies call orbit pr and act on its record, exit (2) met (6,168 / 5,317 / 962 bytes), and preflight observed diverged: false on a cited per-proposal change.",
+  "archive_path": "orbit/changes/archive/2026-10-12-rc12-body-adoption/",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": {
+      "critical": 0,
+      "warning": 3,
+      "suggestion": 3
+    },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": [
+      "orbit-cli-grammar",
+      "orbit-pr-lifecycle"
+    ],
+    "added": 0,
+    "modified": 6,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
+  "user_decision": null,
+  "consent": "user-invoked",
+  "warnings": [
+    "audit category 5: six paths outside the predicted Touchpoints, each traced: src/core/pr/select.ts (task 1.1's shared predicate), src/core/pr/tail.ts (the system walk's unrelated_unstaged), src/core/templates/workflows/bulk-archive-change.ts (a dangling Step 5.45 pointer), and three tests",
+    "orbit-cli-grammar entered at apply (two MODIFIED blocks), not at propose"
+  ],
+  "judgements": [
+    {
+      "kind": "readiness",
+      "formed_against": [
+        "2026-10-12T02-40-42Z",
+        "2026-10-12T02-41-01Z",
+        "2026-10-12T03-13-26Z",
+        "2026-10-12T03-13-46Z"
+      ],
+      "disposition": "ready",
+      "reasoning": "Both blind pairs were walked to zero and the engine half (the shared targeting function, the five-row divergence table) was checked row by row by the fresh system half and holds a test per row. What the pairs found was prose the runbook deletion took with it, all repaired; the one regression the verification caught was walked.",
+      "ratified_by": "ai",
+      "accepted": [
+        {
+          "claim": "PASSED means every finding was resolved, not that an independent pass stood clean on the final tree",
+          "why": "The system walks and the verification walk were checked only in-context; no independent pass read the tree after 91222cdc."
+        },
+        {
+          "claim": "Five body-side scenarios are declared as text, not behaviour",
+          "why": "A body following the references is not executed by any test; the text assertions hold the references' wording, and the worked title example is the one body step actually run."
+        },
+        {
+          "claim": "The tail's observations.unrelated_unstaged entered at the system walk and was reviewed only in-context",
+          "why": "A test shows the path named, out of the commit and still unstaged, and fails when the filter is reverted; no independent pass has read it."
+        },
+        {
+          "claim": "The external system half validated nothing by execution",
+          "why": "Its read-only sandbox had no node_modules or dist, so strict validation, the scenario map and the suite were not run there; the fresh half ran all three."
+        },
+        {
+          "claim": "The checked mirrors are a departure from the design's pointer-only plan",
+          "why": "An installed skill cannot open orbit-pr-lifecycle, so a bare pointer would leave an adopter's AI without the table; the parity test holds the copy byte-equal to its owner."
+        }
+      ]
+    }
+  ],
+  "pr_url": "https://github.com/las-sal/orbit-spec/pull/17",
+  "pr_state": "draft",
+  "next_recommended": "Change archived. Run /orbit:new or /orbit:explore to start the next change, or /orbit:audit-drift for a project-wide drift check."
+}

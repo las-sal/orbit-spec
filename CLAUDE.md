@@ -211,7 +211,7 @@ file now carries a live mark. Do NOT read this paragraph as the program's full l
 only what rc07 produced. The authoritative list is the program doc's own Open questions section,
 which also carries Q-crc-11, Q-crc-20, Q-crc-21, Q-crc-22 and Q-crc-23 (Q-crc-12 was resolved by rc10).
 
-**Twenty-eight more stages have shipped since, and the program is THIRTY-ONE stages complete** (rc15 and rc16 ratified 2026-10-01; rc02b ratified 2026-10-03; rc04b, rc03b, rc03c, rc07b and rc06a ratified 2026-10-04; rc06b, rc08a and rc08b ratified 2026-10-05 — rc08a's exit (3), pending by design, was measured on rc08b's cadence and read 4, not zero; the split parent rc08 took its ENDED mark the same day; rc03a carries the program's first ENDED mark, declared the same day, and the two split parents rc13 and rc04 — headings retained as record, every exit criterion owned by a child — carry the second and third, declared through the unprompted route the same evening; rc17a ratified 2026-10-06; rc17d ratified 2026-10-06; rc17b ratified 2026-10-06; rc17c ratified 2026-10-07; rc18 ratified 2026-10-08; rc05 ratified 2026-10-09; rc05b ratified 2026-10-10; rc09a ratified 2026-10-11; rc09b ratified 2026-10-11; rc10 ratified 2026-10-11).
+**Twenty-nine more stages have shipped since, and the program is THIRTY-ONE stages complete** (rc15 and rc16 ratified 2026-10-01; rc02b ratified 2026-10-03; rc04b, rc03b, rc03c, rc07b and rc06a ratified 2026-10-04; rc06b, rc08a and rc08b ratified 2026-10-05 — rc08a's exit (3), pending by design, was measured on rc08b's cadence and read 4, not zero; the split parent rc08 took its ENDED mark the same day; rc03a carries the program's first ENDED mark, declared the same day, and the two split parents rc13 and rc04 — headings retained as record, every exit criterion owned by a child — carry the second and third, declared through the unprompted route the same evening; rc17a ratified 2026-10-06; rc17d ratified 2026-10-06; rc17b ratified 2026-10-06; rc17c ratified 2026-10-07; rc18 ratified 2026-10-08; rc05 ratified 2026-10-09; rc05b ratified 2026-10-10; rc09a ratified 2026-10-11; rc09b ratified 2026-10-11; rc10 ratified 2026-10-11).
 
 `rc02c-confirmation-semantics` is ARCHIVED (2026-09-21): **the budget stopped being a target.**
 R-crc-11(h) — effort is RECORDED, never TARGETED — retired `budgetExhausted`, the
@@ -818,6 +818,20 @@ hold) shared no finding; the external half reproduced three holes in the new che
 empty, duplicate ids). Two walk logs, then an in-context VERIFICATION grading six `landed` and two `regressed` (the
 fence repair misread list-nested fences; the carried requirement was unstamped), walked to zero; a COMPUTED PASSED
 gate. **3442 tests green** (3400 → 3442).
+
+`rc12-engine-owned-choreography` is ARCHIVED (2026-10-12; awaiting ratification; two changes, PRs #16 and #17): **the
+deterministic PR steps are an engine command, and the bodies call it.** `orbit pr select|publish|preflight|tail|program`
+observes through read-only `git` and `gh` held to an allowlist and prints every write as argv segments; the propose/ff,
+archive and architect references call it and act on the record by `orbit-pr-lifecycle`'s consumption table (carried in
+the references as a CHECKED MIRROR), the hand-run runbook deleted. Exit (2) measured at apply: 6,168 / 5,317 / 962 bytes
+against 18,458 / 12,900 / 4,613. One targeting function (`selectTarget`) serves `select`, `publish` and `preflight`, so
+preflight's citation divergence compares what the current inputs would select against the frozen attachment (change 1's
+false positive fixed). The archive preflight runs before the move; the close shows `tail`'s `human_acts` (merge, then the
+return to the default branch) as the user's. `orbit-cli-grammar` was carried at apply (three unused inventory exemptions
+retired). The system blind pair on `c62a0006` (fresh 0C/2W/3S forward, external GPT-6 0C/4W/1S hold) found recovery and
+note gaps the deletion took with it; two walk logs, an in-context VERIFICATION grading eight `landed` and one `regressed`
+(a failed `select` step was offered a recovery that attaches nothing), walked to zero; a COMPUTED PASSED gate. **3571
+tests green.**
 
 Read that doc before any rc-stage work; the D-arc section below is the historical
 record of how the engine got here.
