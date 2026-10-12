@@ -168,6 +168,11 @@ export interface ReportContext {
    * the latest walk carrying it `resolved`; and the walks that owe nothing because they are unreadable.
    */
   verification?: { latestWalk: Map<string, string>; unreadable: string[] };
+  /**
+   * report-archived-change: an ARCHIVED change's tail — the repo-relative archived directory,
+   * `/`-joined. When present, no gate/position/eligibility line is computed or rendered.
+   */
+  archivedDir?: string;
   /** Engine tail — each line renders only when computed. */
   gateLine?: string;
   position?: string;
@@ -951,6 +956,7 @@ export function renderReviewReport(pass: NormalizedReviewPass, ctx: ReportContex
   // The engine tail — ALWAYS last; each line only when the engine computed its
   // value. An ungated schema's tail is the `---` rule alone.
   const tail: string[] = ['---'];
+  if (ctx.archivedDir !== undefined) tail.push(`Archived: ${ctx.archivedDir}`);
   if (ctx.gateLine !== undefined) tail.push(ctx.gateLine);
   if (ctx.position !== undefined) tail.push(`Position: ${ctx.position}`);
   if (ctx.nextCommand !== undefined) tail.push(`Ready when you are: ${ctx.nextCommand}`);
@@ -1211,7 +1217,8 @@ export function buildReportContext(
   projectRoot: string,
   change: string,
   changeDir: string,
-  pass: NormalizedReviewPass
+  pass: NormalizedReviewPass,
+  archived = false
 ): ReportContext {
   const sameMode = collectSameModePasses(changeDir, pass.mode);
   const idx = sameMode.findIndex(p => p.file === pass.filePath);
@@ -1253,26 +1260,33 @@ export function buildReportContext(
   }
 
   // The engine tail — the phase gate the mode maps to; each line only when the
-  // status computation yields it. The reviewer cannot author any of these.
+  // status computation yields it. The reviewer cannot author any of these. An ARCHIVED
+  // change runs NO live gate computation: today's schema would grade a trail written under
+  // an earlier version's rules, so its tail is the one computed `Archived:` line.
   let gateLine: string | undefined;
   let position: string | undefined;
   let nextCommand: string | undefined;
-  try {
-    const context = loadChangeContext(projectRoot, change);
-    const status = formatChangeStatus(context);
-    const gateId = pass.mode === 'proposal' ? 'review-proposal' : 'review-system';
-    const row = status.gates.find(g => g.id === gateId);
-    if (row) gateLine = `Gate ${row.id}: ${row.state}${row.reason ? ` — ${row.reason}` : ''}`;
-    position = status.position;
-    nextCommand =
-      status.next_command !== undefined
-        ? withModelHint(status.next_command, modelHintFor(projectRoot, status.next_hint_keys))
-        : undefined;
-  } catch (err) {
-    // NOT the ungated case (that path returns absent values without throwing):
-    // a throw here is a broken schema/metadata — a clean report failure (W1).
-    const cause = err instanceof Error ? err.message : String(err);
-    throw new Error(`report tail computation failed for '${change}': ${cause}`);
+  const archivedDir = archived
+    ? path.relative(projectRoot, changeDir).split(path.sep).join('/')
+    : undefined;
+  if (!archived) {
+    try {
+      const context = loadChangeContext(projectRoot, change);
+      const status = formatChangeStatus(context);
+      const gateId = pass.mode === 'proposal' ? 'review-proposal' : 'review-system';
+      const row = status.gates.find(g => g.id === gateId);
+      if (row) gateLine = `Gate ${row.id}: ${row.state}${row.reason ? ` — ${row.reason}` : ''}`;
+      position = status.position;
+      nextCommand =
+        status.next_command !== undefined
+          ? withModelHint(status.next_command, modelHintFor(projectRoot, status.next_hint_keys))
+          : undefined;
+    } catch (err) {
+      // NOT the ungated case (that path returns absent values without throwing):
+      // a throw here is a broken schema/metadata — a clean report failure (W1).
+      const cause = err instanceof Error ? err.message : String(err);
+      throw new Error(`report tail computation failed for '${change}': ${cause}`);
+    }
   }
 
   return {
@@ -1282,6 +1296,7 @@ export function buildReportContext(
     ...(repeatCount !== undefined ? { repeatCount, newCount } : {}),
     ...(passGenre !== undefined ? { passGenre } : {}),
     ...(verification !== undefined ? { verification } : {}),
+    ...(archivedDir !== undefined ? { archivedDir } : {}),
     ...(gateLine !== undefined ? { gateLine } : {}),
     ...(position !== undefined ? { position } : {}),
     ...(nextCommand !== undefined ? { nextCommand } : {}),
@@ -1316,8 +1331,21 @@ function artifactGenre(artifact: TrailArtifact): string {
  * set. READ-ONLY: creates and modifies no files. Throws clean errors (the CLI
  * exits non-zero); prints nothing itself.
  */
-export function renderReport(projectRoot: string, change: string, ts?: string): string {
-  const changeDir = path.join(projectRoot, 'orbit', 'changes', change);
+export interface ReportLocation {
+  /** The resolved change directory (active or archived). */
+  changeDir: string;
+  /** True when `changeDir` is an archived directory — the tail is the `Archived:` line. */
+  archived: boolean;
+}
+
+export function renderReport(
+  projectRoot: string,
+  change: string,
+  ts?: string,
+  location?: ReportLocation
+): string {
+  const changeDir = location?.changeDir ?? path.join(projectRoot, 'orbit', 'changes', change);
+  const archived = location?.archived ?? false;
   const artifacts = listTrailArtifacts(changeDir);
 
   let target: TrailArtifact;
@@ -1361,6 +1389,6 @@ export function renderReport(projectRoot: string, change: string, ts?: string): 
     pass = normalizeExternalPass(target.file, content!);
   }
 
-  const ctx = buildReportContext(projectRoot, change, changeDir, pass);
+  const ctx = buildReportContext(projectRoot, change, changeDir, pass, archived);
   return renderReviewReport(pass, ctx);
 }

@@ -100,6 +100,7 @@ describe('status --report surface', () => {
     });
   }
 
+  // @scenario behaviour orbit-report-rendering :: The render surface is the status gateway :: No-argument report renders the newest pass
   it('no-argument --report renders the newest review pass; repeated invocations render identically', async () => {
     const dir = await makeChange('newest-change');
     const runs = path.join(dir, '.orbit-runs');
@@ -160,6 +161,7 @@ describe('status --report surface', () => {
     expect(result.stdout).not.toContain('| Dimension'); // no scorecard for external passes
   });
 
+  // @scenario behaviour orbit-report-rendering :: The render surface is the status gateway :: Non-renderable genre fails naming the renderable set
   it('a <TS> resolving to a non-renderable genre fails naming the genre and the renderable set, exit non-zero', async () => {
     const dir = await makeChange('genre-change');
     const runs = path.join(dir, '.orbit-runs');
@@ -181,6 +183,7 @@ describe('status --report surface', () => {
     expect(out).toContain('external findings');
   });
 
+  // @scenario behaviour orbit-report-rendering :: The render surface is the status gateway :: Zero renderable passes fails loud
   it('zero renderable passes fails naming the empty renderable set, exit non-zero', async () => {
     const dir = await makeChange('empty-change');
     // A non-review emit only: the renderable set is still empty.
@@ -279,6 +282,7 @@ describe('status --report surface', () => {
     }
   });
 
+  // @scenario behaviour orbit-report-rendering :: The render surface is the status gateway :: Read-only surface
   it('READ-ONLY: a --report invocation creates and modifies no files (two-sided snapshot)', async () => {
     const dir = await makeChange('readonly-change');
     await fs.writeFile(

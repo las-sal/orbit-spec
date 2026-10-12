@@ -1,0 +1,43 @@
+{
+  "command": "apply",
+  "timestamp": "2026-10-12T00:03:24Z",
+  "change": "report-archived-change",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "user_validation_tasks": [
+    "4.1"
+  ],
+  "consent": "user-invoked",
+  "tasks_completed": 9,
+  "tasks_remaining": 1,
+  "user_validation_remaining": 1,
+  "chunk": null,
+  "chunk_name": null,
+  "chunk_complete": true,
+  "tasks_completed_this_session": 9,
+  "files_touched": [
+    "orbit/changes/report-archived-change/.openspec.yaml",
+    "orbit/changes/report-archived-change/.orbit-runs/address-reviews-2026-10-11T23-44-37Z.json",
+    "orbit/changes/report-archived-change/.orbit-runs/address-reviews-2026-10-11T23-44-52Z.json",
+    "orbit/changes/report-archived-change/.orbit-runs/address-reviews-2026-10-11T23-47-38Z.json",
+    "orbit/changes/report-archived-change/.orbit-runs/external-prompt-proposal-2026-10-11T23-36-03Z.md",
+    "orbit/changes/report-archived-change/.orbit-runs/external-proposal-2026-10-11T23-40-44Z.md",
+    "orbit/changes/report-archived-change/.orbit-runs/propose-2026-10-11T23-34-30Z.json",
+    "orbit/changes/report-archived-change/.orbit-runs/review-external-2026-10-11T23-36-24Z.json",
+    "orbit/changes/report-archived-change/.orbit-runs/review-proposal-2026-10-11T23-40-21Z.json",
+    "orbit/changes/report-archived-change/.orbit-runs/review-proposal-2026-10-11T23-46-31Z.json",
+    "orbit/changes/report-archived-change/design.md",
+    "orbit/changes/report-archived-change/proposal.md",
+    "orbit/changes/report-archived-change/specs/orbit-report-rendering/spec.md",
+    "orbit/changes/report-archived-change/tasks.md",
+    "src/commands/workflow/status.ts",
+    "src/core/emit-composition.ts",
+    "src/core/report-render.ts",
+    "test/commands/status-report.test.ts",
+    "test/core/rc03b-untouched-modules.test.ts",
+    "test/core/report-render.test.ts"
+  ],
+  "diff_base": "9c78bc854ea4885f50a0eb1848bd5651d2fd4516",
+  "final_assessment": "9 of 10 tasks done. 4.1 is the user-validation handoff (the real rc10 render, already observed once at apply); 4.2 converted to an at-archive note; two rc03b hash pins moved as a recorded act the task plan did not name",
+  "next_recommended": "/orbit:review --as system --reviewer blind-pair report-archived-change"
+}

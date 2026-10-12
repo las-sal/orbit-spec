@@ -1,0 +1,312 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-11T23:44:37Z",
+  "change": "report-archived-change",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/report-archived-change/.orbit-runs/review-proposal-2026-10-11T23-40-21Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-11T23-40-21Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 4,
+    "suggestion": 3
+  },
+  "pushback_verification": "All seven verified against current state: emit.ts:97 calls renderReport('.', changeName) and ~60 test sites use the three-argument form; baseline orbit-report-rendering line 238 still reads 'the tail's eligibility line is the gate's canonical next'; ci.yml:97 runs windows-latest and emit-composition.ts:407 already joins with '/'; Q-crc-26 at clean-up-review-cycle.md:1202 states the defect as live; validateChangeExists has a no-changes suffix; every emit-surface archived resolution runs assertContained; git grep D-rc12 on this branch matched only the proposal.",
+  "resolution_summary": {
+    "resolved": 7,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The production caller src/commands/emit.ts is missing from the renderReport signature change",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 9,
+      "classification": "trivial_fix",
+      "action": "option B: renderReport gains an OPTIONAL fourth argument { changeDir, archived }, defaulting to the active directory; design D4 states the default and why emit.ts's --render call (always an active change) keeps the three-argument form; task 2.2 and the proposal's Impact follow",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/report-archived-change/design.md",
+          "orbit/changes/report-archived-change/tasks.md",
+          "orbit/changes/report-archived-change/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "Callers in tests and `canonical-examples.test.ts` updated",
+          "takes the resolved change directory and whether it is archived"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/report-archived-change/design.md",
+            "text": "gains an OPTIONAL fourth argument"
+          },
+          {
+            "path": "orbit/changes/report-archived-change/tasks.md",
+            "text": "stay on the three-argument form"
+          }
+        ],
+        "searched": [
+          "renderReport(",
+          "emit.ts",
+          "Callers in tests"
+        ],
+        "scope": [
+          "src/commands/emit.ts",
+          "test/core"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "An uncarried baseline scenario still says the tail carries an eligibility line on every render",
+      "marker_source": "internal-review",
+      "file": "orbit/specs/orbit-report-rendering/spec.md",
+      "line": 238,
+      "classification": "trivial_fix",
+      "action": "carried `Strict input validation — fail loud, no partial render` as a fourth MODIFIED block, its self-pointer scenario's THEN qualified to 'on an active change'; titles unchanged so existing tags keep matching; fingerprint stamped; design Risks and task 3.3 count eighteen carried scenarios; the proposal's capability line names it",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/report-archived-change/design.md",
+          "orbit/changes/report-archived-change/tasks.md",
+          "orbit/changes/report-archived-change/proposal.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/specs/orbit-report-rendering/spec.md",
+            "reason": "baseline spec; add a delta to your current change's specs/<capability>/spec.md to capture this ripple"
+          }
+        ]
+      },
+      "sweep": {
+        "retired": [
+          "nine carried scenarios",
+          "Carrying three MODIFIED blocks"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/report-archived-change/specs/orbit-report-rendering/spec.md",
+            "text": "on an active change its eligibility line is the gate's canonical next"
+          },
+          {
+            "path": "orbit/changes/report-archived-change/design.md",
+            "text": "Carrying four MODIFIED blocks carries their eighteen existing scenarios"
+          }
+        ],
+        "searched": [
+          "eligibility line",
+          "Strict input validation"
+        ],
+        "scope": [
+          "orbit/specs/orbit-report-rendering/spec.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The Archived: line's path separator is unstated, and CI runs on Windows",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-report-rendering/spec.md",
+      "line": 75,
+      "classification": "trivial_fix",
+      "action": "the requirement states the Archived: path is written with forward-slash separators on every platform; task 2.2 composes it by joining the relative path with /",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/report-archived-change/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "no trailing slash>`, and no gate line"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/report-archived-change/specs/orbit-report-rendering/spec.md",
+            "text": "forward-slash separators on every platform"
+          },
+          {
+            "path": "orbit/changes/report-archived-change/tasks.md",
+            "text": "joined with `/` on every platform"
+          }
+        ],
+        "searched": [
+          "repo-relative",
+          "separator"
+        ],
+        "scope": [
+          ".github/workflows/ci.yml"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The miss error does not say what happens when there are no active changes",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 33,
+      "classification": "trivial_fix",
+      "action": "design D5 states the suffix: '. Available changes:' and the names when any active change exists, nothing more when none does; task 2.1 follows",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/report-archived-change/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "followed by the available active changes as today"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/report-archived-change/design.md",
+            "text": "and by nothing more when none do"
+          },
+          {
+            "path": "orbit/changes/report-archived-change/tasks.md",
+            "text": "by nothing more when none does"
+          }
+        ],
+        "searched": [
+          "available active changes"
+        ],
+        "scope": [
+          "src/commands/workflow/shared.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The shared resolver does not bring the emit surface's containment check with it",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 23,
+      "classification": "trivial_fix",
+      "action": "the containment check travels with the resolver: the report refuses an archived directory whose real path lies outside orbit/changes/archive/ (the emit surface's assertContained test); stated in design D1, the gateway requirement, the proposal and task 2.1, with a symlink case in task 3.1",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/report-archived-change/specs/orbit-report-rendering/spec.md",
+          "orbit/changes/report-archived-change/tasks.md",
+          "orbit/changes/report-archived-change/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/report-archived-change/design.md",
+            "text": "the same real-path test the emit surface's `assertContained` runs"
+          },
+          {
+            "path": "orbit/changes/report-archived-change/specs/orbit-report-rendering/spec.md",
+            "text": "is refused with a clean error"
+          },
+          {
+            "path": "orbit/changes/report-archived-change/tasks.md",
+            "text": "symlinked outside the archive root is refused"
+          }
+        ],
+        "searched": [
+          "assertContained",
+          "containment"
+        ],
+        "scope": [
+          "src/core/emit-composition.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Nothing in the change closes Q-crc-26, which still says --report cannot target an archived change",
+      "marker_source": "internal-review",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 1202,
+      "classification": "trivial_fix",
+      "action": "task 4.2 added: at archive, mark Q-crc-26 RESOLVED in the program doc's Open questions, naming this change",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/report-archived-change/tasks.md",
+            "text": "mark Q-crc-26 RESOLVED"
+          }
+        ],
+        "searched": [
+          "Q-crc-26"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The Why cites D-rc12-1, which no tracked file defines",
+      "marker_source": "internal-review",
+      "file": "proposal.md",
+      "line": 3,
+      "classification": "trivial_fix",
+      "action": "the Why cites orbit/explore/rc12-engine-owned-choreography/explore.md (committed on main, a65e240a) in place of the bare id, and notes that archived changes whose newest pass predates the D4 boundary still fail by design",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the dogfood D-rc12-1 records"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/report-archived-change/proposal.md",
+            "text": "orbit/explore/rc12-engine-owned-choreography/explore.md"
+          },
+          {
+            "path": "orbit/changes/report-archived-change/proposal.md",
+            "text": "will still fail by design"
+          }
+        ],
+        "searched": [
+          "D-rc12"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "final_assessment": "Seven findings resolved as repairs; the two option forks (the emit.ts caller, the uncarried scenario) took the previewed picks — an optional location argument with a stated default, and Strict input validation carried as a fourth MODIFIED block.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews report-archived-change",
+  "ripple_misses": 0
+}

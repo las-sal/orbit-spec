@@ -1199,7 +1199,7 @@ never deleted.
   trigger to "a further independent pass beyond what the cadence requires, whatever the gate
   state" is a one-sentence spec change plus a body change, but assigning it is a scope call.
 
-- **Q-crc-26 — `orbit status --change <name> --report` cannot target an ARCHIVED change.**
+- **Q-crc-26 — RESOLVED (report-archived-change, 2026-10-12).** `orbit status --change <name> --report` cannot target an ARCHIVED change.**
   Found 2026-09-22 by rc04c's external proposal pass, which ran the command the exit criterion
   named and got `Change '<name>' not found`. `--report` resolves through `validateChangeExists`,
   which enumerates active `orbit/changes/` only — so no rendered review report can be produced for
@@ -1210,6 +1210,17 @@ never deleted.
   emit surface already performs for `address-reviews` (triple scope) is the pattern — resolve
   active first, then `orbit/changes/archive/<date>-<name>`. Owner: whichever stage next touches
   `orbit-orientation` or `orbit-report-rendering`.
+  **RESOLVED 2026-10-12 by report-archived-change**, a standalone change under `pr: per-proposal`
+  (PR #15) rather than a stage. `--report` alone resolves active first, then the lexically greatest
+  `orbit/changes/archive/<YYYY-MM-DD>-<name>/` DIRECTORY through the one resolver the emit surface
+  also uses (`src/core/archived-change.ts`), refuses an archived entry whose real path lies outside
+  the archive through the one containment test both surfaces call (`src/core/containment.ts`), and
+  names both locations on a miss. An archived report's tail is one computed `Archived:` line in place
+  of the gate, position and eligibility lines: no live gate computation runs over a trail written
+  under an earlier schema version. The rule is `orbit-report-rendering`'s `The render surface is the
+  status gateway` and `Render-time computed context — never stored, never authored`. Every other
+  status form still resolves active changes only, a stated non-goal. A pass predating the D4 report
+  boundary still fails with the `pre-capability emit` error, as it does on an active change.
 
 - **Q-crc-27 — no READ-ONLY surface prints the engine's parse of an exploration's Mechanism form,
   so a body that consumes it reads the file by eye.** Opened 2026-09-28 at rc13c's archive (its

@@ -2,6 +2,8 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { loadChangeContext, formatChangeStatus } from './artifact-graph/instruction-loader.js';
 import { collectSameModePasses } from './report-render.js';
+import { findArchivedDir } from './archived-change.js';
+import { resolvesWithin } from './containment.js';
 import { normalizeInternalPass } from './report-render.js';
 import {
   readTrail,
@@ -687,15 +689,8 @@ function isValidTargetName(name: string): boolean {
  * a writable emit trail (the B2 generator's physical-containment precedent).
  */
 function assertContained(dir: string, root: string, what: string): void {
-  let real: string;
-  let realRoot: string;
-  try {
-    real = fs.realpathSync(dir);
-    realRoot = fs.realpathSync(root);
-  } catch {
-    return; // existence is the caller's check; unresolvable paths fail there
-  }
-  if (real !== realRoot && !real.startsWith(realRoot + path.sep)) {
+  // Unresolvable paths pass: existence is the caller's check, and they fail there.
+  if (!resolvesWithin(dir, root)) {
     throw new EmitError(`${what} resolves outside ${root} — symlinked targets are not writable emit trails.`);
   }
 }
@@ -835,25 +830,6 @@ function resolveTarget(projectRoot: string, command: string, target: EmitTarget)
   throw new EmitError(
     `workstream '${name}' not found — checked ${changeDir} and ${exploreDir}${command === 'address-reviews' ? ' and orbit/changes/archive/*-' + name : ''}.`
   );
-}
-
-/** Lexically greatest `orbit/changes/archive/<YYYY-MM-DD>-<name>/` match, or null. */
-function findArchivedDir(projectRoot: string, name: string): string | null {
-  const archiveRoot = path.join(projectRoot, 'orbit', 'changes', 'archive');
-  let candidates: string[] = [];
-  try {
-    candidates = fs
-      .readdirSync(archiveRoot)
-      .filter(e => new RegExp(`^\\d{4}-\\d{2}-\\d{2}-${escapeRegExp(name)}$`).test(e))
-      .sort();
-  } catch {
-    candidates = [];
-  }
-  return candidates.length > 0 ? path.join(archiveRoot, candidates[candidates.length - 1]) : null;
-}
-
-function escapeRegExp(s: string): string {
-  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 // ---------------------------------------------------------------------------

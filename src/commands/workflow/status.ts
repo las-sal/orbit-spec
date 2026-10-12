@@ -25,13 +25,18 @@ import {
   renderMalformedHeaderLines,
 } from '../../core/architecture/buckets.js';
 import type { StageState } from '../../core/architecture/state.js';
-import { renderReport } from '../../core/report-render.js';
+import { renderReport, type ReportLocation } from '../../core/report-render.js';
+import { findArchivedDir } from '../../core/archived-change.js';
+import { resolvesWithin } from '../../core/containment.js';
+import { validateChangeName } from '../../utils/change-utils.js';
+import * as fs from 'fs';
 import { modelHintFor, withModelHint } from '../../core/model-hints.js';
 import { composeStatusSize, renderSizeLine, type StatusSize } from '../../core/change-size.js';
 import { resolveSizeCeiling } from '../../core/project-config.js';
 import {
   validateChangeExists,
   validateSchemaExists,
+  getAvailableChanges,
   getStatusIndicator,
   getStatusColor,
 } from './shared.js';
@@ -104,11 +109,12 @@ export async function statusCommand(options: StatusOptions): Promise<void> {
           '--report requires --change <name>: the report rides the per-change form (bare status stays the sprint view)'
         );
       }
-      const reportChange = await validateChangeExists(options.change, projectRoot);
+      const location = await resolveReportLocation(options.change, projectRoot);
       const rendered = renderReport(
         projectRoot,
-        reportChange,
-        typeof options.report === 'string' ? options.report : undefined
+        options.change,
+        typeof options.report === 'string' ? options.report : undefined,
+        location
       );
       spinner?.stop();
       // Verbatim: the render already ends with its single trailing newline.
@@ -555,4 +561,37 @@ function printWorkstreamEntry(entry: WorkstreamEntry, indent: string): void {
   console.log(`${indent}  last: ${entry.last ? renderLastLine(entry.last) : 'no emits yet'}`);
   for (const f of entry.skipped_emits ?? []) console.log(`${indent}  \u26a0 invalid emit skipped: ${f}`);
   if (entry.next) console.log(`${indent}  ${renderNextLine(entry)}`);
+}
+
+/**
+ * report-archived-change: `--report`'s resolution, its alone (every other status form keeps
+ * `validateChangeExists`). ACTIVE FIRST, as `orbit/changes/<name>/`; on a miss, the shared
+ * archived-directory resolver, refused when its real path lies outside the archive root; a miss
+ * in both names both locations checked.
+ */
+async function resolveReportLocation(name: string, projectRoot: string): Promise<ReportLocation> {
+  const nameValidation = validateChangeName(name);
+  if (!nameValidation.valid) {
+    throw new Error(`Invalid change name '${name}': ${nameValidation.error}`);
+  }
+  const activeDir = path.join(projectRoot, 'orbit', 'changes', name);
+  if (fs.existsSync(activeDir) && fs.statSync(activeDir).isDirectory()) {
+    return { changeDir: activeDir, archived: false };
+  }
+  const archivedDir = findArchivedDir(projectRoot, name);
+  if (archivedDir !== null) {
+    if (!resolvesWithin(archivedDir, path.join(projectRoot, 'orbit', 'changes', 'archive'))) {
+      throw new Error(
+        `archived change '${name}' resolves outside orbit/changes/archive — a symlinked archive entry is not a renderable trail`
+      );
+    }
+    return { changeDir: archivedDir, archived: true };
+  }
+  const available = await getAvailableChanges(projectRoot);
+  const checked = `checked orbit/changes/${name} and orbit/changes/archive/*-${name}`;
+  throw new Error(
+    available.length > 0
+      ? `Change '${name}' not found — ${checked}. Available changes:\n  ${available.join('\n  ')}`
+      : `Change '${name}' not found — ${checked}`
+  );
 }

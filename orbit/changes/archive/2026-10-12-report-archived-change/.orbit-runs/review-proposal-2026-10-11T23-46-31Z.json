@@ -1,0 +1,109 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-11T23:46:31Z",
+  "change": "report-archived-change",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {},
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    }
+  },
+  "findings": [
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "The directory-only rule leaves a symlinked archive entry undefined, so the containment refusal may be unreachable",
+      "file": "specs/orbit-report-rendering/spec.md",
+      "line": 109,
+      "walk_entry": {
+        "title": "The shared resolver selects matching files as archived directories",
+        "file": "orbit/changes/report-archived-change/tasks.md"
+      },
+      "recommendation": "The walk's directory rule says the resolver chooses 'among entries that are directories', and task 1.1 says 'only DIRECTORIES match'. The containment repair in the same walk then promises that an archived directory whose real path lies outside orbit/changes/archive/ is refused, and task 3.1 tests 'an archived directory symlinked outside the archive root is refused'. Whether a symlink to a directory IS a directory is unstated: a resolver built on readdirSync's Dirent.isDirectory() reports a symlink as not a directory, skips it, and the report prints the not-found miss error, so the refusal never fires and task 3.1's case fails; a resolver built on fs.statSync (which follows links) admits it, and the containment check refuses it. The choice also changes the emit surface, which today returns the symlinked entry and refuses it through assertContained: the Dirent form silently turns that refusal into 'no archived directory', contradicting task 1.1's 'unchanged except that only DIRECTORIES match' for regular files. State the rule: an entry matches when it resolves to a directory, following symbolic links (fs.statSync), so a symlinked entry is admitted and then refused by the containment check, on both surfaces; carry it into the gateway requirement, design D1 and task 1.1, and add the symlink-to-directory case to task 1.2."
+    }
+  ],
+  "commentary": "Graded the walks' nine resolved entries over each entry's file and cascade. Eight landed: the optional location and its stated default, the carried block (its one THEN qualified, titles unchanged, fingerprint stamped), the separator sentence, the miss-error suffix, the containment sentence, the Q-crc-26 task, the citation, and the narrowed goal. The one regression is where two repairs from different passes meet: the external half's directory rule and the fresh half's containment rule were each correct alone, and neither walk read the other's edit against it. Residual check: every file changed since the external return's commit is in a walk entry's edit record.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "verification": [
+    {
+      "title": "The production caller src/commands/emit.ts is missing from the renderReport signature change",
+      "file": "tasks.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "An uncarried baseline scenario still says the tail carries an eligibility line on every render",
+      "file": "orbit/specs/orbit-report-rendering/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The Archived: line's path separator is unstated, and CI runs on Windows",
+      "file": "specs/orbit-report-rendering/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The miss error does not say what happens when there are no active changes",
+      "file": "design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The shared resolver does not bring the emit surface's containment check with it",
+      "file": "design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Nothing in the change closes Q-crc-26, which still says --report cannot target an archived change",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The Why cites D-rc12-1, which no tracked file defines",
+      "file": "proposal.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The shared resolver selects matching files as archived directories",
+      "file": "orbit/changes/report-archived-change/tasks.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "Qualify the promise to render any archived review pass",
+      "file": "orbit/changes/report-archived-change/design.md",
+      "verdict": "landed"
+    }
+  ],
+  "final_assessment": "0 critical, 1 warning, 0 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-10-11T23-44-37Z",
+    "2026-10-11T23-44-52Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews report-archived-change"
+}

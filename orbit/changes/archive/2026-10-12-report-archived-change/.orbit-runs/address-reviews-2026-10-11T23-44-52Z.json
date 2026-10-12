@@ -1,0 +1,128 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-11T23:44:52Z",
+  "change": "report-archived-change",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/report-archived-change/.orbit-runs/external-proposal-2026-10-11T23-40-44Z.md",
+  "source_command": null,
+  "source_token": "2026-10-11T23-40-44Z",
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-6 Codex",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 1
+  },
+  "pushback_verification": "All three verified against current state: emit.ts:97 calls renderReport('.', changeName); findArchivedDir filters readdirSync names with no directory check, so a regular file of a matching name is selectable; design.md's goal promised 'any review pass' while the strict-input requirement rejects pre-D4 emits.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 1,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The renderer signature change omits a production caller",
+      "marker_source": "external",
+      "file": "orbit/changes/report-archived-change/tasks.md",
+      "line": 9,
+      "classification": "stale",
+      "outcome": "stale",
+      "evidence": "resolved in address-reviews-2026-10-11T23-44-37Z (the earlier pass's log), entry 'The production caller src/commands/emit.ts is missing from the renderReport signature change' (tasks.md): an optional location argument defaulting to the active directory, stated in design D4, so emit.ts's --render call is specified and unchanged"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The shared resolver selects matching files as archived directories",
+      "marker_source": "external",
+      "file": "orbit/changes/report-archived-change/tasks.md",
+      "line": 3,
+      "classification": "trivial_fix",
+      "action": "the shared resolver matches DIRECTORIES only, skipping a regular file before the lexical selection; task 1.1 states the correction (inherited by the emit surface), task 1.2 adds the mixed file/directory cases, the gateway requirement says 'directory' and gains the scenario 'A regular file never resolves as an archived change', design D1 and the proposal record it",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/report-archived-change/specs/orbit-report-rendering/spec.md",
+          "orbit/changes/report-archived-change/design.md",
+          "orbit/changes/report-archived-change/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "its behaviour byte-unchanged"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/report-archived-change/tasks.md",
+            "text": "only DIRECTORIES match"
+          },
+          {
+            "path": "orbit/changes/report-archived-change/specs/orbit-report-rendering/spec.md",
+            "text": "a regular file of that name never matches"
+          },
+          {
+            "path": "orbit/changes/report-archived-change/design.md",
+            "text": "the resolver matches DIRECTORIES only"
+          }
+        ],
+        "searched": [
+          "byte-unchanged",
+          "readdirSync",
+          "directory"
+        ],
+        "scope": [
+          "src/core/emit-composition.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Qualify the promise to render any archived review pass",
+      "marker_source": "external",
+      "file": "orbit/changes/report-archived-change/design.md",
+      "line": 12,
+      "classification": "trivial_fix",
+      "action": "the goal reads 'any boundary-conformant review pass' and states that a pre-D4 pass still fails with the pre-capability emit error, as it does on an active change; task 3.1 adds an archived pre-D4 fixture case",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/report-archived-change/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "Render any review pass of an archived change"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/report-archived-change/design.md",
+            "text": "Render any boundary-conformant review pass"
+          },
+          {
+            "path": "orbit/changes/report-archived-change/tasks.md",
+            "text": "an archived pre-D4 emit fails with the `pre-capability emit` error"
+          }
+        ],
+        "searched": [
+          "any review pass",
+          "pre-D4",
+          "boundary"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "final_assessment": "Two findings resolved as repairs (the resolver's directory check, the qualified goal); the emit.ts caller is stale, resolved in the fresh pass's log.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal report-archived-change",
+  "ripple_misses": 0
+}

@@ -45,7 +45,8 @@ forward recommendation, per `Direction renders as its own section and its absenc
 independent passes`: present for every independent pass (carrying the mark when the record has
 none), omitted for an in-context pass without one — (8) the ONE delimited
 `### Commentary` section, (9) the ENGINE tail — gate line, position readout, and the
-`Ready when you are:` eligibility line — ALWAYS last: the report's final word is the computed
+`Ready when you are:` eligibility line, or for an ARCHIVED change the one `Archived:` line
+`Render-time computed context — never stored, never authored` defines in their place — ALWAYS last: the report's final word is the computed
 truth, never the reviewer's framing of it. Grammar elements inapplicable to a genre are
 OMITTED WHOLE — the conditionality lives IN the grammar: for an EXTERNAL pass the header's
 fields are change = the `--change` argument, mode = the `<as>` token from the filename,
@@ -102,7 +103,14 @@ read from bespoke fields inside the record. The TAIL alone is always CURRENT: a 
 historical pass shows that pass's findings and as-of-then iteration/trend with TODAY's
 gate/position/eligibility — a status view of a past pass, honestly labeled. The reviewer
 CANNOT author a gate verdict, a position, or a next-command into the report; those exist only
-in engine-computed sections.
+in engine-computed sections. For an ARCHIVED change — one the archived fallback of `The render
+surface is the status gateway` resolved — NO live gate computation runs: the tail is the `---`
+rule followed by exactly ONE line, `Archived: <the archived directory, repo-relative, no trailing
+slash>`, its path written with forward-slash separators on every platform, and no gate line, position readout or eligibility line. An archived change has no live
+position, and grading its frozen trail under today's schema would misreport a trail written under
+an earlier schema version's rules. The archived line is a COMPUTED value (the resolved directory),
+never an invented one; the header, iteration, trend, pass genre and every section above the tail
+render from the archived trail exactly as they render from an active one.
 
 #### Scenario: Historical pass renders with the current tail
 
@@ -118,6 +126,11 @@ in engine-computed sections.
 
 - **WHEN** `--report <TS>` renders an in-context emit written before `pass_genre` existed, and a walk of its mode precedes it after the latest accepted independent pass
 - **THEN** the header carries `VERIFICATION`, computed from the trail, and no stored field is consulted for it
+
+#### Scenario: An archived change's report carries the archived tail
+
+- **WHEN** `orbit status --change <name> --report` renders a pass of a change that exists only as `orbit/changes/archive/<YYYY-MM-DD>-<name>/`
+- **THEN** the report's sections above the tail are those the same pass renders while active, and the tail is the `---` rule followed by `Archived: orbit/changes/archive/<YYYY-MM-DD>-<name>` alone — no `Gate`, `Position:` or `Ready when you are:` line
 
 ### Requirement: Commentary is a first-class quarantined slot
 
@@ -235,7 +248,7 @@ readable as the raw JSON, which is the record).
 #### Scenario: A prior-generation self pointer renders
 
 - **WHEN** `--report <TS>` resolves to an emit with findings written before the short form, whose `next_recommended` is `/orbit:address-reviews foo --from-file orbit/changes/foo/.orbit-runs/review-proposal-<TS>.json` naming that same file
-- **THEN** the render succeeds and its bytes equal a render of the same emit carrying `/orbit:address-reviews foo` — the report prints neither value; the tail's eligibility line is the gate's canonical next, computed at render time
+- **THEN** the render succeeds and its bytes equal a render of the same emit carrying `/orbit:address-reviews foo` — the report prints neither value; the tail is computed at render time, and on an active change its eligibility line is the gate's canonical next
 
 #### Scenario: A self pointer at another file is drift
 
@@ -317,7 +330,15 @@ determinism applies from ingest onward. An external file the parser rejects (mal
 
 The renderer SHALL surface exclusively as `orbit status --change <name> --report [<TS>]` — the
 trail gateway's deepest zoom (bare → `--full` → `--change` → `--report`), never a standalone
-verb. With no `<TS>`, the NEWEST review pass renders — internal emits and external findings
+verb. The `--change <name>` argument resolves ACTIVE FIRST, as `orbit/changes/<name>/`; on a miss
+it falls back to an ARCHIVED change DIRECTORY, `orbit/changes/archive/<YYYY-MM-DD>-<name>/`, chosen
+by the archive emit's lexically-greatest rule (`orbit-emit-composition`'s `Atomic next_recommended —
+pre-computable and post-write classes` owns it) among entries that RESOLVE to a directory, symbolic
+links followed — a regular file of that name never matches, and a symlinked entry is admitted. An
+admitted archived directory whose real path lies outside `orbit/changes/archive/` is refused with a
+clean error, never skipped as a miss. An invalid name is rejected before either
+lookup, and a miss in both fails with a clean error naming both locations checked, exit non-zero. The
+fallback is `--report`'s alone: every other `orbit status` form resolves active changes only. With no `<TS>`, the NEWEST review pass renders — internal emits and external findings
 files competing on the same recency axis, equal tokens breaking by `orbit-orientation`'s
 shared tie-break rule (lexicographically-earlier full filename is more recent); an explicit
 `<TS>` token selects a specific pass, the same rule resolving a token matching multiple pass
@@ -349,6 +370,31 @@ the same way (the error names the empty renderable set), exit non-zero.
 
 - **WHEN** any `--report` invocation completes
 - **THEN** no file was created or modified
+
+#### Scenario: An archived change resolves through the fallback
+
+- **WHEN** `orbit status --change <name> --report` runs and `orbit/changes/<name>/` is absent while `orbit/changes/archive/2026-01-01-<name>/` and `orbit/changes/archive/2026-02-01-<name>/` exist
+- **THEN** the newest renderable pass of `orbit/changes/archive/2026-02-01-<name>/` renders, and an explicit `<TS>` resolves against that directory's trail
+
+#### Scenario: An active change wins over an archived one of the same name
+
+- **WHEN** both `orbit/changes/<name>/` and `orbit/changes/archive/<YYYY-MM-DD>-<name>/` exist
+- **THEN** the report renders from the active change, with its live tail
+
+#### Scenario: A miss in both places names both locations
+
+- **WHEN** `orbit status --change <name> --report` runs and neither `orbit/changes/<name>/` nor any `orbit/changes/archive/*-<name>/` exists
+- **THEN** the command fails naming both locations it checked; exit non-zero; no partial output
+
+#### Scenario: A regular file never resolves as an archived change
+
+- **WHEN** `orbit/changes/<name>/` is absent, `orbit/changes/archive/2026-01-01-<name>/` is a directory and `orbit/changes/archive/2026-02-01-<name>` is a regular file
+- **THEN** the report renders from `orbit/changes/archive/2026-01-01-<name>/`
+
+#### Scenario: A symlinked archive entry pointing outside the archive is refused
+
+- **WHEN** `orbit/changes/<name>/` is absent and `orbit/changes/archive/2026-01-01-<name>` is a symbolic link to a directory outside `orbit/changes/archive/`
+- **THEN** the command fails with the containment error, not the not-found error; exit non-zero; no partial output
 
 ### Requirement: Reproduction renders beside the recommendation and its absence is marked
 

@@ -1,0 +1,15 @@
+{
+  "command": "propose",
+  "timestamp": "2026-10-11T23:34:30Z",
+  "change": "report-archived-change",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Proposed report-archived-change (Q-crc-26): --report resolves active-then-archived through one resolver shared with the emit surface, and an archived change's report ends in a computed `Archived: <dir>` tail instead of the live gate lines. One capability (orbit-report-rendering, 3 MODIFIED), 10 tasks, no size breach. First real run of the D6 PR lifecycle (pr: per-proposal): branch cut from origin/main, artifacts committed with --only, pushed, draft PR #15 opened on las-sal/orbit-spec.",
+  "pr_attachment": {
+    "branch": "report-archived-change",
+    "granularity": "per-proposal",
+    "url": "https://github.com/las-sal/orbit-spec/pull/15",
+    "state": "draft"
+  },
+  "next_recommended": "/orbit:review report-archived-change — proposal artifacts ready; review before apply"
+}

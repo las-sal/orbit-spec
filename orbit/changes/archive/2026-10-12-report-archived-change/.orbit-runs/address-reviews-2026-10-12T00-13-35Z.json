@@ -1,0 +1,102 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-12T00:13:35Z",
+  "change": "report-archived-change",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/report-archived-change/.orbit-runs/review-system-2026-10-12T00-08-26Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-12T00-08-26Z",
+  "latest_apply_token": "2026-10-12T00-03-24Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 0
+  },
+  "pushback_verification": "Re-ran the reproduction on a scratch project: the report refused an archive entry symlinked to the archive root with 'resolves outside orbit/changes/archive', and orbit emit archive accepted the same entry, writing into the archive root's .orbit-runs/ — both halves of the claim held.",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The report's containment check is a second copy of assertContained and already disagrees with it",
+      "marker_source": "internal-review",
+      "file": "src/core/archived-change.ts",
+      "line": 52,
+      "classification": "decision_required",
+      "action": "moved the real-path test into one exported function, resolvesWithin in src/core/containment.ts; assertContained and the report's archived fallback both call it; the archive root itself counts as contained, the emit surface's existing answer, so no emit behaviour changed",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "One shared containment predicate used by both assertContained and the report; settle the root-equality case once (refusing it is the safer reading for an archived scope)."
+          },
+          {
+            "label": "B",
+            "body": "Keep two functions but make them agree, add a test pinning the root-equality case on both surfaces, and reword design D1 so it no longer claims the same test."
+          }
+        ],
+        "chosen": "A"
+      },
+      "resolution": "A1 — one shared check, the archive root counted as contained (the emit surface's existing, spec-backed answer), not refused as option A's parenthetical suggested",
+      "evidence": "after the fix the same scratch case: the report fails with 'no renderable review pass' (the empty trail), the emit writes as before; a strict-root mutation of resolvesWithin turns both new tests red",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/containment.ts",
+          "src/core/emit-composition.ts",
+          "src/commands/workflow/status.ts",
+          "orbit/changes/report-archived-change/design.md",
+          "test/core/archived-change.test.ts",
+          "test/core/report-render.test.ts",
+          "test/core/rc03b-untouched-modules.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "isInsideArchive",
+          "the same real-path test the emit surface"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/containment.ts",
+            "text": "export function resolvesWithin(dir: string, root: string): boolean"
+          },
+          {
+            "path": "orbit/changes/report-archived-change/design.md",
+            "text": "through ONE function, `resolvesWithin` in `src/core/containment.ts`"
+          }
+        ],
+        "searched": [
+          "isInsideArchive",
+          "assertContained",
+          "same real-path test",
+          "realpathSync"
+        ],
+        "scope": [
+          "src",
+          "test"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "One of one resolved: the report and the emit surface now share one containment test, the archive root counting as contained on both (Sal: A1).",
+  "iteration": 4,
+  "next_recommended": "/orbit:review --as system report-archived-change",
+  "ripple_misses": 0
+}
