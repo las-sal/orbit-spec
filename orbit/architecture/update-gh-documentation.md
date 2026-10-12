@@ -49,6 +49,12 @@ be seen. Flipping visibility to public is Sal's act at arc-done, never an orbit 
 - **R-ugd-4** (Sal, 2026-10-12; resolves Q-ugd-1) — the install path at launch is a GitHub install PINNED to a
   release tag, `npm install -g github:las-sal/orbit-spec#<tag>`. The page makes no promise about npm: npm appears
   in the docs only if and when it is published, which stays Sal's separate outward act.
+- **R-ugd-5** (Sal, 2026-10-12; from docs-under-test's D-dut-3) — interim states between this program's stages need no
+  protection: the program runs as one sequence and is validated by installing and using the result at its end. A
+  check may leave a file it has not yet graded unprotected while that file awaits its rewrite stage.
+- **R-ugd-6** (Sal, 2026-10-12; resolves Q-ugd-2) — orbit's first version is `1.0.0`. The landing-page stage bumps
+  `package.json` from upstream's `1.3.1` and cuts the `v1.0.0` tag on `main` that R-ugd-4's install pins; a GitHub
+  Release page, if wanted, stays Sal's.
 
 ## Open questions
 
@@ -56,9 +62,9 @@ be seen. Flipping visibility to public is Sal's act at arc-done, never an orbit 
   orbit-spec` returns 404, 2026-10-12). Four options were weighed: a GitHub install, an npm publish, a GitHub
   install at launch with npm later, and a release tarball. Sal took the third, with npm left unpromised on the page.
   A git install builds on the user's machine because `package.json`'s `prepare` script runs the build.
-- **Q-ugd-2 — orbit's first version number.** The R-ugd-4 pin needs a tag, and `package.json` still reads `1.3.1`,
-  upstream's version, which on a public page reads as upstream's 1.3.1. Standing recommendation: `0.1.0`, a young
-  fork in its own right; the bump and the tag on `main` ride the landing-page stage (a tag is a git act a stage can
+- **Q-ugd-2 — RESOLVED by R-ugd-6 (Sal, 2026-10-12).** orbit's first version number. The R-ugd-4 pin needs a tag, and `package.json` still reads `1.3.1`,
+  upstream's version, which on a public page reads as upstream's 1.3.1. The recommendation was `0.1.0`, a young
+  fork in its own right; Sal took `1.0.0`; the bump and the tag on `main` ride the landing-page stage (a tag is a git act a stage can
   carry; a GitHub Release page, if wanted, is Sal's).
 
 ## Program stages
@@ -66,7 +72,7 @@ be seen. Flipping visibility to public is Sal's act at arc-done, never an orbit 
 ### Stage docs-under-test — the docs are graded by a machine before they are rewritten
 
 Depends-on: (none)
-Complete: [ ]
+Complete: [x] 2026-10-12 (Sal)
 
 Charter: extend the sweeps that already check the generated surface (rc05's `orbit` grammar sweep, rc05b's
 recorded-contract sweep for `git` and `gh`, rc09b's tool inventory) to `README.md` and `docs/*.md`, and add an
@@ -105,7 +111,7 @@ Complete: [ ]
 
 Charter: rewrite `README.md` as orbit's landing page: what orbit is (a hard fork of OpenSpec 1.3.1, attributed),
 how it improves on OpenSpec (each claim naming the baseline capability that carries it), install (the pinned
-GitHub install of R-ugd-4, at the version Q-ugd-2 settles, with `package.json` bumped and the tag cut on `main`),
+GitHub install of R-ugd-4, at version `1.0.0` per R-ugd-6, with `package.json` bumped and the `v1.0.0` tag cut on `main`),
 a quickstart through the core loop, and links into `docs/`. Upstream's logo, badges and Discord leave the page.
 Goals G1, G2.
 
@@ -175,3 +181,10 @@ tag, with no npm promise on the page. The options weighed are recorded under Q-u
 opened as Q-ugd-2 (standing recommendation `0.1.0`). The landing-page stage's charter and exit (3) now point at both,
 and its install run is rehearsed from a local clone before the flip and re-run against the public URL after it.
 
+**2026-10-12 — docs-under-test ratified (Sal), in an architect session; R-ugd-5 and R-ugd-6 captured.** The stage
+archived the same day (`orbit/changes/archive/2026-10-12-docs-under-test/`, PR #18 merged), its exits graded MET, exit
+(3) as revised: the recorded list of today's failures is a FILE list (D-dut-2). D-dut-3 became R-ugd-5 (interim
+states need no protection). Q-ugd-2 resolved as R-ugd-6: the first version is `1.0.0`, against the standing
+recommendation of `0.1.0`; the landing-page charter now names it. Carried from the stage: the checked-in `git`
+contract still records six keys and six flags rc12 removed from the generated surface, an accepted residual left for
+its own change.

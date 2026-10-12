@@ -1,0 +1,41 @@
+{
+  "command": "architect",
+  "timestamp": "2026-10-12T16:25:33Z",
+  "change": null,
+  "doc": "update-gh-documentation",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "docs-under-test ratified (Sal); D-dut-3 captured as R-ugd-5; Q-ugd-2 resolved as R-ugd-6 (first version 1.0.0), the landing-page charter updated to name it.",
+  "stages_touched": [
+    "docs-under-test",
+    "landing-page"
+  ],
+  "rulings_captured": [
+    "R-ugd-5",
+    "R-ugd-6"
+  ],
+  "completions_ratified": [
+    "docs-under-test"
+  ],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      {
+        "path": "orbit/architecture/update-gh-documentation.md",
+        "why": "the program: rulings R-ugd-1..6 and the landing-page charter"
+      },
+      {
+        "path": "orbit/specs/orbit-user-docs/spec.md",
+        "why": "the checks the rewrite is graded by; landing-page removes README.md from the pending list"
+      },
+      {
+        "path": "test/core/user-docs/pending-rewrite.json",
+        "why": "the files still owed their rewrite"
+      }
+    ],
+    "next_command": "/orbit:explore landing-page",
+    "model_hint": null,
+    "seam": "program stage boundary: docs-under-test complete; landing-page, reference-docs and concept-docs are each startable"
+  },
+  "next_recommended": "/orbit:explore landing-page"
+}
