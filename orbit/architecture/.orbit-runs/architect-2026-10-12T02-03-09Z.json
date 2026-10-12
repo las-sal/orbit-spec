@@ -1,0 +1,35 @@
+{
+  "command": "architect",
+  "timestamp": "2026-10-12T02:03:09Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Resumed clean-up-review-cycle after rc12 change 1's archive. Offered rc12-engine-owned-choreography for ratification with its exits graded (1 met, 3 holds, 2 unmeasured until change 2); Sal chose not yet. Status log records the decision and change 2's carried defect.",
+  "stages_touched": [
+    "rc12-engine-owned-choreography"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      {
+        "path": "orbit/architecture/clean-up-review-cycle.md",
+        "why": "the rc12 stage section and its two latest status-log entries"
+      },
+      {
+        "path": "orbit/changes/archive/2026-10-12-rc12-engine-owned-choreography/explore.md",
+        "why": "D-rc12-3: change 2 measures exit (2) and holds the option-B fallback"
+      },
+      {
+        "path": "orbit/changes/archive/2026-10-12-rc12-engine-owned-choreography/.orbit-runs/archive-2026-10-12T01-58-46Z.json",
+        "why": "the citation-divergence defect change 2 inherits"
+      }
+    ],
+    "next_command": "/orbit:propose rc12-body-adoption",
+    "model_hint": null,
+    "seam": "after Sal merges PR #16; change 2 cuts its branch from the resolved default"
+  },
+  "next_recommended": "/orbit:propose rc12-body-adoption"
+}

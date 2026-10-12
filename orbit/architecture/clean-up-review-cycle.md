@@ -5576,3 +5576,9 @@ change twice). Its system blind pair (both halves hold) was walked in two logs, 
 verification's two findings — `ls-remote` admitting `--upload-pack`, `git status` refreshing the index — walked; a
 computed PASSED gate. The archive itself ran `orbit pr preflight` live, and it reported a FALSE citation divergence on
 a change cited since creation (a per-proposal attachment records no `doc`); handed to change 2, which renders that note.
+
+**2026-10-12 — architect session: rc12 NOT YET ratified (Sal).** The stage renders quiescent-awaiting-ratification
+only because no change cites it between its two changes. Exit (1) is met and exit (3) holds for change 1; exit (2),
+the references shrinking by more than half, is change 2's, measured at its apply (D-rc12-3). Change 2 (body adoption)
+cites this stage and carries forward the false citation divergence `orbit pr preflight` reported at change 1's
+archive. Its branch is cut from the resolved default, so PR #16 merges first (Sal's act).
