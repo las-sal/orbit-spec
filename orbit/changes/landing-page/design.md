@@ -18,7 +18,8 @@ sentence (`src/core/templates/workflows/onboard.ts:36`) is the one generated sen
 
 - A README a newcomer can follow to install orbit at `v2.0.0` and run its core loop (G1), whose every claimed
   improvement names the capabilities that carry it (G2), passing every docs check with no recorded exception.
-- `package.json` at `2.0.0` and an annotated `v2.0.0` tag on `main`, with the clone no longer fetching upstream's tags.
+- `package.json` at `2.0.0` and an annotated `v2.0.0` tag on a built release commit off `main`'s merge commit (D8),
+  with the clone no longer fetching upstream's tags.
 - A recorded clean-machine run of the install and quickstart.
 
 **Non-Goals:**
@@ -53,7 +54,7 @@ exactly as `orbit-user-docs` names them, because a setext heading neither opens 
   (`orbit-lifecycle-consent`); the PR lifecycle (`orbit-pr-lifecycle`); drift audit (`orbit-audit-drift`). Bullets may
   merge at authoring (six to nine, D-lp-6); every name above exists in `orbit/specs/` today.
 - **Install**: Node.js 20.19.0 or higher and Git (the GitHub install fetches the repository with it); `npm install -g github:las-sal/orbit-spec#v2.0.0`; `orbit --version`. The
-  git install builds on the user's machine through `package.json`'s `prepare` script. No npm-registry promise (R-ugd-4).
+  tag is a built release tree (D8), so nothing builds on the user's machine. No npm-registry promise (R-ugd-4).
   The Quickstart's `What you should see after install` subsection states the surface `orbit init --tools claude`
   writes, as `orbit-conventions`' `Install documentation describes actual install surface` requires (system walk, Sal:
   A): `orbit/specs/` and `orbit/changes/` (with `archive/`), and one row per workflow naming its command file and
@@ -75,6 +76,8 @@ exactly as `orbit-user-docs` names them, because a setext heading neither opens 
   accepts that interim state.
 - **Development**: clone the repository (said in prose), then `npm install`, `npm run build`, `npm test`. No `git`
   command is written: `clone` is not a key of the recorded `git` contract, and recording one is not this stage's.
+  Then the from-source route, `npm install -g .`, stated as a link into the clone (D-lp-16), and one sentence naming
+  `npm run release:tree` as how a release is cut (D8).
 - **Contributing**: two lines (D-lp-8). **License**: says MIT and points at `LICENSE`; the copyright notice stays in
   the `LICENSE` file only, never quoted on the page (its holder's name would be residue there; public-readiness adds
   orbit's notice to the file).
@@ -102,24 +105,26 @@ observable, and R-crc-11 mechanizes what the engine can observe. Truth stays rev
 `npm version 2.0.0 --no-git-tag-version` updates `package.json` and `package-lock.json` together and creates no tag;
 the tag is D4's.
 
-### D4 — The tag namespace is cleaned now; `v2.0.0` is cut on `main` after the merge
+### D4 — The tag namespace is cleaned now; `v2.0.0` is cut after the merge, on the release commit
 
 During apply, delete exactly the local tags that are UPSTREAM's: the intersection of the local tags with
 `git ls-remote --tags upstream`, minus `upstream/v1.3.1` (proposal walk) — a local-only tag with no upstream provenance is
 kept. The exact deletion set is recorded under task 1.2, not only its count. Then run `git config remote.upstream.tagOpt --no-tags`. A
 `git fetch upstream` afterwards brings no tag. This is local configuration: nothing in the tracked tree changes.
 
-The annotated `v2.0.0` is cut on `main`'s merge commit once Sal merges this change's PR, then pushed by name
+The annotated `v2.0.0` is cut by the release script (D8) on a release commit whose parent is `main`'s merge commit,
+once Sal merges this change's PR, then pushed by name
 (`git push origin v2.0.0`), never `--tags`, by the orbit session Sal opens after the merge, on Sal's word (proposal walk): the
-tag is this stage's act under R-ugd-7, while merging the PR and any GitHub Release page stay Sal's. Before the merge, "on `main`" cannot be true: a tag on the branch moves
-if a walk edits the branch, and points outside `main` if the PR is never merged. So the tag is a post-merge act,
+tag is this stage's act under R-ugd-7 and R-ugd-8, while merging the PR and any GitHub Release page stay Sal's. Before the merge, "off
+`main`'s merge commit" cannot be true: a tag cut from the branch moves if a walk edits the branch, and descends from
+outside `main` if the PR is never merged. So the tag is a post-merge act,
 carried as a user-validation task and DEFERRED at archive (archive Step 3.2: state that exists only after the move is
 DEFERRED by rule).
 
 ### D5 — Exit (3)'s rehearsal runs the README verbatim, swapping only the URL
 
 Before the flip the GitHub URL is private, so the rehearsal clones the branch to a scratch directory, cuts a local
-`v2.0.0` there (that clone only), and runs the README's install with `github:las-sal/orbit-spec#v2.0.0` replaced by
+`v2.0.0` there with the release script (that clone only, D8), and runs the README's install with `github:las-sal/orbit-spec#v2.0.0` replaced by
 `git+file://<clone>#v2.0.0`, then every quickstart shell step, plus one `/orbit:propose` in Claude Code, on a machine
 or account with no orbit installed (D-lp-10). Observed, not inferred: the record carries the commands and their
 output. The post-flip re-run against the public URL is the second half of exit (3), DEFERRED at archive.
@@ -138,6 +143,31 @@ The README writes `npm` and `cd` in shell fences, so the `docs-inventory` fence 
 admits an installer, per `orbit-user-docs`). `orbit` needs no declaration: it is recorded, and every `orbit` snippet is
 checked by the grammar sweep. The fence is exact both ways, so a head the final README does not use is removed.
 
+### D8 — A release ships a built release tree (the system walk's repair, D-lp-16)
+
+npm cannot install a tree that must build at install time globally from git: its nested prepare install inherits
+`-g` and installs nothing locally (D-lp-11 … D-lp-13). `orbit-release`' new requirement owns the rule and its
+member table; `scripts/release-tree.mjs` implements it. From the commit checked out, it reads `package.json` at that
+commit and refuses a `workspaces` field or an existing `v<version>` tag before writing anything; adds a detached
+worktree at the commit, links the checkout's `node_modules` into it, and runs `build.js` there, so the build reads the
+commit's own tree and never the checkout's working files or its ignored `dist/`; writes `package.json` with the six
+prepare triggers removed (`JSON.stringify` at two spaces, the file's own format); force-adds `dist` and
+`package.json`; commits `Release v<version> (built tree)`; cuts the annotated tag on that commit; removes the
+worktree; and prints `git push origin v<version>`. The whole `dist/` is committed, maps included: `files` decides what
+npm installs, and the release commit is never merged back, so `main`'s history never carries it (it reaches `origin`
+only through the pushed tag).
+
+`test/integration/release-tree.test.ts` runs the real script in a scratch clone of HEAD whose remote is an empty bare
+repository, with a stale file planted in the checkout's `dist/`, and installs the tag with the npm that runs the suite
+into an empty prefix (about 20 seconds in all). The trigger list is stated in the test, never read from the script, so
+a trigger the script stops removing fails it. Other npm majors are the requirement's named limit, read by the
+rehearsal (D5).
+
+Alternatives (D-lp-16; explore.md's Considered & out): a `prepare` that survives the global install (refuted: the
+damage precedes `prepare`); a packed tarball attached to a GitHub Release (a Release upload by Sal on every version,
+and a different install line); the from-source route as the landing install (several commands and a link the user
+must keep).
+
 ## Risks / Trade-offs
 
 - [D-lp-5 is BOUNDED] → the named limit lives in `orbit-user-docs`' `Every improvement the README claims over OpenSpec
@@ -145,8 +175,9 @@ checked by the grammar sweep. The fence is exact both ways, so a head the final 
 - [`#` inside the install argument] → POSIX shell starts a comment only at the start of a word, so
   `github:las-sal/orbit-spec#v2.0.0` is one word; if the shared extractor read it as a comment, the sweeps would still
   see `npm install -g github:las-sal/orbit-spec` and pass. Apply observes what the extractor does and records it.
-- [The git install builds on the user's machine] → `prepare` runs `npm run build`, which needs devDependencies; npm
-  installs them for a git dependency. The rehearsal observes it, and a failure there is exit (3)'s to report.
+- [The release tree is read under one npm] → D8's named limit lives in `orbit-release`' `A release ships a built
+  release tree`; this entry points at it and restates nothing.
+- [Built output in history] → each release commits about 600 KB of `dist/`, reachable only through its tag (D8).
 - [The tagged tree predates the later stages] → its `docs/` are upstream's and its `LICENSE` lacks orbit's notice. The
   install needs only code, which those stages do not change (D-lp-3, R-ugd-5).
 - [Two numbers a reader may pair] → "orbit 2.0.0" beside a future "OpenSpec 2.0.0". `Built on OpenSpec` states
@@ -183,6 +214,7 @@ the proposing AI's reading of the file; no engine record
 | rule | closure / state | owner's state | destination |
 |---|---|---|---|
 | D-lp-5 | BOUNDED | live rule | `orbit-user-docs`' `Every improvement the README claims over OpenSpec names capabilities that exist` (normative TABLE; residual slots verbatim as its named limit) |
+| D-lp-16 | BOUNDED | live rule | `orbit-release`' `A release ships a built release tree` (member TABLE; residual slots verbatim as its named limit), added at the system walk |
 | D-lp-1 | — | `Kind: scope` | not carried |
 | D-lp-2 | — | `Kind: scope` | not carried |
 | D-lp-3 | — | `Kind: scope` | not carried |

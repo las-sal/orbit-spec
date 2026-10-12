@@ -45,7 +45,8 @@ Each claim names the capabilities whose specs, under [`orbit/specs/`](orbit/spec
 
 ## Install
 
-You need Node.js 20.19.0 or higher, and Git: npm fetches orbit from GitHub with it and builds it on your machine.
+You need Node.js 20.19.0 or higher, and Git: npm fetches orbit from GitHub with it. The tag is a release built
+ahead of time, so nothing is compiled on your machine.
 
 ```bash
 npm install -g github:las-sal/orbit-spec#v2.0.0
@@ -144,6 +145,16 @@ npm install
 npm run build
 npm test
 ```
+
+To run your clone as `orbit`, install it globally from the clone:
+
+```bash
+npm install -g .
+```
+
+The global `orbit` is then a link into the clone, so keep the clone in place and rebuild after changing the source.
+A release is cut with `npm run release:tree`, which tags the build of the current commit on a release commit of its
+own; the release commit is never merged back.
 
 ## Contributing
 

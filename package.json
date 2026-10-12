@@ -53,6 +53,7 @@
     "prepublishOnly": "npm run build",
     "postinstall": "node scripts/postinstall.js",
     "check:pack-version": "node scripts/pack-version-check.mjs",
+    "release:tree": "node scripts/release-tree.mjs",
     "capture:gh": "node scripts/capture-gh-contract.mjs",
     "capture:git": "vitest run --config scripts/capture.vitest.config.ts",
     "release": "pnpm run release:ci",

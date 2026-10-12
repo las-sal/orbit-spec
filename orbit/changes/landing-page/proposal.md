@@ -22,7 +22,13 @@ how to install it at its first version, and how to start, and docs-under-test's 
   least one `orbit-*` capability in backticks, and every such name resolves to `orbit/specs/<name>/spec.md`. Whether a
   claim is TRUE stays review's.
 - **orbit's first version is `2.0.0`** (R-ugd-7, superseding R-ugd-6's `1.0.0`): `package.json` and
-  `package-lock.json` go from upstream's `1.3.1` to `2.0.0`, and the annotated `v2.0.0` tag is cut on `main`.
+  `package-lock.json` go from upstream's `1.3.1` to `2.0.0`, and the annotated `v2.0.0` tag is cut on the release commit
+  R-ugd-8 builds from `main`'s merge commit.
+- **A release ships a built release tree** (D-lp-16, R-ugd-8; the system walk's repair of the escalated install
+  route): npm cannot build a git dependency installed with `-g` (D-lp-11 … D-lp-13), so `scripts/release-tree.mjs`
+  (`npm run release:tree`) builds the commit to release in a detached worktree, commits its `dist/` on a release commit
+  whose `package.json` names none of npm's prepare triggers, and tags that commit. R-ugd-4's install line installs it
+  unchanged; the from-source route (`npm install -g .`, a link into the clone) is stated in Development.
 - **The clone stops fetching upstream's tags** (D-lp-2): the 56 fetched upstream tags are deleted locally (keeping
   `upstream/v1.3.1`), and the `upstream` remote is set to `--no-tags`. Local repository configuration only; nothing in
   the tracked tree changes.
@@ -35,7 +41,8 @@ how to install it at its first version, and how to start, and docs-under-test's 
 
 ### New Capabilities
 
-(none)
+- `orbit-release`: a release ships a built release tree, cut by the release script; the trigger table and the
+  npm-version named limit (D-lp-16).
 
 ### Modified Capabilities
 
@@ -51,5 +58,6 @@ how to install it at its first version, and how to start, and docs-under-test's 
 - `package.json`, `package-lock.json` (version `2.0.0`).
 - `src/core/templates/workflows/onboard.ts` (one sentence) and the onboard hash pins in
   `test/core/templates/skill-templates-parity.test.ts`.
+- `scripts/release-tree.mjs`, the `release:tree` script in `package.json`, and `test/integration/release-tree.test.ts`.
 - Local git: tags and the `upstream` remote's tag option. Outward: the `v2.0.0` tag pushed to `origin` by name.
-- No engine code changes. Baseline capabilities stay at 27.
+- No engine code changes. Baseline capabilities 27 → 28 (`orbit-release`).
