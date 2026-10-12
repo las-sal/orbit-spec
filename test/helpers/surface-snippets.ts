@@ -13,7 +13,7 @@
  * did not consume it unchanged. Fences are LOCATED by markdown-it (a devDependency), and
  * the same parse serves the extractor and the guard.
  */
-import { readFileSync } from 'fs';
+import { readdirSync, readFileSync } from 'fs';
 import MarkdownIt, { type Token } from 'markdown-it';
 import { generateSkillContent, getSkillTemplates } from '../../src/core/shared/skill-generation.js';
 
@@ -89,8 +89,39 @@ export function generatedSurfaces(): Surface[] {
   return surfaces;
 }
 
+/** The `workflowId` of a user-doc surface (`orbit-user-docs`). */
+export const DOCS_WORKFLOW = 'docs';
+
+const REPO_ROOT = new URL('../../', import.meta.url);
+
+/** The pending-rewrite list of `orbit-user-docs`' `The user docs are a checked surface, gated by an exact pending-rewrite list`. */
+export const PENDING_REWRITE_FILE = 'test/core/user-docs/pending-rewrite.json';
+
+export function readPendingRewrite(): string[] {
+  return JSON.parse(readFileSync(new URL(PENDING_REWRITE_FILE, REPO_ROOT), 'utf-8')) as string[];
+}
+
+/** Every user doc, listed or not: `README.md` and each `*.md` directly under `docs/` (design D1). */
+export function allDocSurfaces(): Surface[] {
+  const docs = readdirSync(new URL('docs/', REPO_ROOT))
+    .filter((name) => name.endsWith('.md'))
+    .sort()
+    .map((name) => `docs/${name}`);
+  return ['README.md', ...docs].map((file) => ({
+    workflowId: DOCS_WORKFLOW,
+    file,
+    text: readFileSync(new URL(file, REPO_ROOT), 'utf-8'),
+  }));
+}
+
+/** The user docs every check reads: those NOT on the pending-rewrite list (`pending`, by default the list file). */
+export function docSurfaces(pending: string[] = readPendingRewrite()): Surface[] {
+  return allDocSurfaces().filter((s) => !pending.includes(s.file));
+}
+
+/** A skill names `<workflow>/<file>`; a user doc names its repository-relative path alone. */
 export function describeSurface(surface: Surface): string {
-  return `${surface.workflowId}/${surface.file}`;
+  return surface.workflowId === DOCS_WORKFLOW ? surface.file : `${surface.workflowId}/${surface.file}`;
 }
 
 function infoWord(token: Token): string {

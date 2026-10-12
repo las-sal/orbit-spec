@@ -4,11 +4,14 @@
  * a fresh copy of a one-commit repository). No test spawns git.
  */
 import { describe, expect, it } from 'vitest';
+import { DOCS_WORKFLOW, allDocSurfaces, readPendingRewrite } from '../../helpers/surface-snippets.js';
 import {
   BOGUS_VERB,
   CaptureError,
   acceptanceArgs,
   acceptanceFrom,
+  captureCandidates,
+  captureSurfaces,
   classFrom,
   firstLineOf,
   flagEntry,
@@ -246,5 +249,24 @@ describe('the positional', () => {
   it('any other line does not', () => {
     expect(positionalRequiredFrom(p(128, 'fatal: No configured push destination.'))).toBe(false);
     expect(positionalRequiredFrom(p(0, ''))).toBe(false);
+  });
+});
+
+describe('the capture\'s candidate set (docs-under-test design D8)', () => {
+  it('reads every user doc, listed or not', () => {
+    const files = captureSurfaces().filter((s) => s.workflowId === DOCS_WORKFLOW).map((s) => s.file);
+    expect(files).toEqual(allDocSurfaces().map((s) => s.file));
+    expect(readPendingRewrite().every((f) => files.includes(f))).toBe(true);
+  });
+
+  // @scenario behaviour orbit-cli-grammar :: Every `git` and `gh` snippet on the generated surface validates against its tool's recorded contract :: A docs-only git command is captured
+  it('a git command only a user doc writes reaches the candidate set, with its key and the flags the doc writes', () => {
+    const doc = { workflowId: DOCS_WORKFLOW, file: 'docs/cli.md', text: '# CLI\n\n```bash\ngit rebase --onto <base> <branch>\n```\n' };
+    const surface = captureSurfaces().filter((s) => s.workflowId !== DOCS_WORKFLOW);
+    expect(captureCandidates(surface).some((argv) => argv[0] === 'rebase')).toBe(false);
+    const candidates = captureCandidates([...surface, doc]).filter((argv) => argv[0] === 'rebase');
+    expect(candidates).toEqual([['rebase', '--onto', '<base>', '<branch>']]);
+    expect(keyOf(candidates[0], new Set(['worktree']))).toBe('rebase');
+    expect([...formsByName(candidates, 'rebase').keys()]).toEqual(['--onto']);
   });
 });

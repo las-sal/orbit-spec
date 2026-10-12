@@ -9,6 +9,17 @@
  * branch with recorded lines and never spawn git (importing the capture file would register
  * its capture test in the importer).
  */
+import { allDocSurfaces, analyseSurfaces, generatedSurfaces, type Surface } from './surface-snippets.js';
+
+/** The surfaces the capture reads (docs-under-test design D8): the generated surface and every user doc, listed or not. */
+export function captureSurfaces(): Surface[] {
+  return [...generatedSurfaces(), ...allDocSurfaces()];
+}
+
+/** The candidate set: every `git` segment's argument vector after the tool, bare names included (no command tree). */
+export function captureCandidates(surfaces: Surface[] = captureSurfaces()): string[][] {
+  return analyseSurfaces(surfaces, 'git').snippets.map((s) => s.tokens.slice(1));
+}
 
 /** One probe's outcome: the exit status and the first non-empty output line (stderr first). */
 export interface Probe {
