@@ -204,6 +204,23 @@ describe('tail — the commit scope', () => {
     expect(repo.git('status', '--porcelain', '--', 'orbit/changes').stdout.trim()).toBe('');
   });
 
+  it('a move already STAGED (git add -A orbit/changes, this repo\'s archive practice): the pre-move deletions still reach the commit, and the pushed tree carries the change once', () => {
+    const repo = archived();
+    repo.git('add', '-A', 'orbit/changes');
+    expect(repo.git('ls-files', '--', 'orbit/changes/add-thing/').stdout).toBe(''); // the index alone sees nothing
+    const { record } = tail(repo, 'valid');
+    const scope = record.observations.scope as string[];
+    expect(scope).toContain('orbit/changes/add-thing/proposal.md');
+    const stage = record.segments[0].steps.find((s) => s.step === 'stage')!;
+    expect(stage.argv).not.toContain('orbit/changes/add-thing/proposal.md'); // git add would refuse it
+    expect(record.observations.unrelated_staged).toEqual([]);
+
+    runSegments(repo, record, author(repo));
+    expect(repo.git('ls-tree', '-r', '--name-only', 'origin/add-thing', '--', 'orbit/changes/add-thing/').stdout.trim()).toBe('');
+    expect(repo.git('ls-tree', '-r', '--name-only', 'origin/add-thing', '--', ARCHIVED).stdout).toContain(`${ARCHIVED}/proposal.md`);
+    expect(repo.git('status', '--porcelain', '--', 'orbit/changes').stdout.trim()).toBe('');
+  });
+
   it('--include adds the at-archive-note edits', () => {
     const repo = archived();
     repo.write('orbit/architecture/notes.md', 'at-archive note\n');

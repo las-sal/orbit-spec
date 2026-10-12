@@ -33,6 +33,8 @@ describe('the instrument can fail', () => {
     [['git', 'commit', '--allow-empty', '-q', '-m', 'x']],
     [['git', 'push', '-q', 'origin', 'main']],
     [['git', 'switch', '-q', '-c', 'sneaky']],
+    [['git', 'symbolic-ref', '--delete', 'refs/remotes/origin/HEAD']],
+    [['git', 'diff', '--name-only', '--output=leak.txt', 'HEAD']],
     [['gh', 'pr', 'create', '--repo', 'acme/widget', '--draft', '--base', 'main', '--head', 'x', '--title', 't', '--body', 'b']],
   ])('a subcommand made to invoke %j fails the allowlist assertion, naming it', (argv) => {
     const repo = orbitRepo('per-proposal');
@@ -62,9 +64,14 @@ describe('the instrument can fail', () => {
     expect(() => run.git('commit', '-m', 'x')).toThrow(PrRefusedError);
     expect(() => run.git('fetch', 'origin')).toThrow(PrRefusedError); // the unbounded form
     expect(() => run.git('symbolic-ref', 'refs/remotes/origin/HEAD', 'refs/remotes/origin/main')).toThrow(PrRefusedError);
+    expect(() => run.git('symbolic-ref', '--delete', 'refs/remotes/origin/HEAD')).toThrow(PrRefusedError);
+    expect(() => run.git('symbolic-ref', '-d', 'refs/remotes/origin/HEAD')).toThrow(PrRefusedError);
+    expect(() => run.git('diff', '--name-only', '--output=leak.txt', 'HEAD')).toThrow(PrRefusedError);
+    expect(run.git('symbolic-ref', '-q', '--short', 'HEAD').status).toBe(0); // the read form still runs
     expect(() => run.gh('pr', 'create')).toThrow(PrRefusedError);
     expect(() => run.gh('--version')).toThrow(PrRefusedError);
-    expect(repo.since(mark)).toEqual({ git: [], gh: [] });
+    expect(repo.since(mark).git.map((c) => c.args)).toEqual([['symbolic-ref', '-q', '--short', 'HEAD']]);
+    expect(repo.since(mark).gh).toEqual([]);
   });
 
   it('a positive control: a real select records reads only, and every one passes the allowlist', () => {

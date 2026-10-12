@@ -152,6 +152,51 @@ describe('publish — the enumerated scope', () => {
   });
 });
 
+describe('publish — staged deletions and renames inside the change', () => {
+  it('a staged git rm and a staged rename inside the change: both sources reach the commit, neither reaches the add', () => {
+    const repo = orbitRepo('per-proposal');
+    selectAndGenerate(repo, 'add-thing');
+    repo.write('orbit/changes/add-thing/old.md', 'old\n');
+    repo.write('orbit/changes/add-thing/before.md', 'renamed\n');
+    repo.git('add', '-A', 'orbit/changes/add-thing');
+    repo.git('commit', '-q', '-m', 'first artifacts');
+    repo.git('rm', '-q', 'orbit/changes/add-thing/old.md');
+    repo.git('mv', 'orbit/changes/add-thing/before.md', 'orbit/changes/add-thing/after.md');
+    repo.write('orbit/changes/add-thing/design.md', '# design\n');
+
+    const { record } = publish(repo, 'add-thing');
+    const scope = record.observations.scope as string[];
+    for (const p of ['orbit/changes/add-thing/old.md', 'orbit/changes/add-thing/before.md', 'orbit/changes/add-thing/after.md', 'orbit/changes/add-thing/design.md']) {
+      expect(scope).toContain(p);
+    }
+    const add = record.segments[0].steps.find((s) => s.step === 'stage')!.argv;
+    expect(add).not.toContain('orbit/changes/add-thing/old.md');
+    expect(add).not.toContain('orbit/changes/add-thing/before.md');
+    expect(record.observations.unrelated).toEqual([]);
+
+    const { emitRel } = runPublish(repo, 'add-thing', record);
+    const tree = repo.git('ls-tree', '-r', '--name-only', 'origin/add-thing', '--', 'orbit/changes/add-thing/').stdout;
+    expect(tree).not.toContain('old.md');
+    expect(tree).not.toContain('before.md');
+    expect(tree).toContain('after.md');
+    expect(onRemote(repo, 'add-thing', emitRel!)).toBe(true);
+    expect(repo.git('status', '--porcelain').stdout.trim()).toBe('');
+  });
+
+  it('an empty scope (the commit landed, the push did not) prints no stage or commit, only the push', () => {
+    const repo = orbitRepo('per-proposal');
+    selectAndGenerate(repo, 'add-thing');
+    repo.git('add', '-A', 'orbit/changes/add-thing');
+    repo.git('commit', '-q', '-m', 'landed, never pushed');
+    const { record } = publish(repo, 'add-thing');
+    expect(record.observations.scope).toEqual([]);
+    expect(record.segments[0].steps.map((s) => s.step)).toEqual(['push', 'open']);
+    expect(record.segments[0].inputs).toEqual(['<title>', '<body-file>']);
+    runSegments(repo, { ...record, segments: [record.segments[0]] }, () => ({ '<title>': 't', '<body-file>': authorFile(repo, 'b.md', 'x\n') }));
+    expect(repo.git('rev-parse', 'origin/add-thing').stdout).toBe(repo.git('rev-parse', 'add-thing').stdout);
+  });
+});
+
 describe('publish — the per-proposal path, end to end', () => {
   it('segment 1 lands and opens a draft; the emit is written from the URL it printed; segment 2 lands the record', () => {
     const repo = orbitRepo('per-proposal', { gh: { createdUrl: 'https://github.com/acme/widget/pull/7' } });

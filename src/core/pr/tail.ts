@@ -26,6 +26,7 @@ import {
 } from './record.js';
 import { resolve } from './resolve.js';
 import { PrRunner, type PrContext } from './run.js';
+import { enumerateScope } from './scope.js';
 import { parsePorcelainZ } from './select.js';
 
 type Row = 'pr-runs' | 'answered' | 'missed' | 'unobserved';
@@ -126,24 +127,27 @@ export function prTail(
     : [];
   const specs = caps.map((c) => `orbit/specs/${c}/spec.md`);
   const preMove = `orbit/changes/${change}/`;
-  const deletions = run.git('ls-files', '-z', '--', preMove).stdout.split('\0').filter(Boolean);
   const archivedRel = path.relative(ctx.projectRoot, archivedDir).split(path.sep).join('/');
   const include = opts.include ?? [];
-  const scope = [...specs, ...deletions, archivedRel, ...include];
+  // The pre-move deletions come from PORCELAIN, never the index alone: a move already staged
+  // (`git add -A orbit/changes`, this repository's own archive practice) has left no index entry
+  // under the pre-move path, and only its rename or deletion entry still names it.
   const entries = parsePorcelainZ(run.git('status', '--porcelain', '-z', '--untracked-files=all').stdout);
+  const moved = enumerateScope(entries, [{ prefix: preMove, deletionsOnly: true }]);
+  const scope = [...specs, ...moved.scope, archivedRel, ...include];
   const inScope = (p: string) =>
     scope.includes(p) || p.startsWith(`${archivedRel}/`) || include.some((i) => p.startsWith(i.endsWith('/') ? i : `${i}/`));
   observations.scope = scope;
-  observations.unrelated_staged = entries
-    .filter((e) => e.xy[0] !== ' ' && e.xy[0] !== '?' && !inScope(e.path))
-    .map((e) => e.path);
+  observations.unrelated_staged = moved.unrelated
+    .filter((u) => u.status[0] !== ' ' && u.status[0] !== '?' && !inScope(u.path))
+    .map((u) => u.path);
 
   const degraded = row !== 'pr-runs';
   const program = att.granularity === 'per-architecture';
   const seg: PrSegment = {
     inputs: ['<message-file>'],
     steps: [
-      { step: 'stage', argv: ['git', 'add', '--', ...scope] },
+      { step: 'stage', argv: ['git', 'add', '--', ...scope.filter((p) => !moved.alreadyStaged.has(p))] },
       { step: 'commit', argv: ['git', 'commit', '--only', '-F', '<message-file>', '--', ...scope] },
       { step: 'push', argv: ['git', 'push', remote, branch] },
     ],

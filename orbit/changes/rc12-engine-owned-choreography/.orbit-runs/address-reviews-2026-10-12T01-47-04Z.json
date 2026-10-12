@@ -1,0 +1,296 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-12T01:47:04Z",
+  "change": "rc12-engine-owned-choreography",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc12-engine-owned-choreography/.orbit-runs/review-system-2026-10-12T01-36-40Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-12T01-36-40Z",
+  "latest_apply_token": "2026-10-12T01-30-33Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 1,
+    "warning": 1,
+    "suggestion": 4
+  },
+  "pushback_verification": "All six verified against current state; the CRITICAL reproduction re-run reproduced; none stale. F1 and F2 converge with the external pass (E2, E3), walked here as the earlier pass.",
+  "resolution_summary": {
+    "resolved": 6,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "tail drops the pre-move deletion when the archive move is already staged, committing the change twice",
+      "marker_source": "internal-review",
+      "file": "src/core/pr/tail.ts",
+      "line": 129,
+      "classification": "trivial_fix",
+      "reproduction_rerun": "reproduced",
+      "evidence": "Scratch repo: commit orbit/changes/x/p.md; mv to orbit/changes/archive/2026-10-11-x; git add -A orbit/changes; git ls-files -- orbit/changes/x/ printed nothing; git add + git commit --only over the archived dir exited 0; HEAD's tree carried both orbit/changes/x/p.md and the archived copy, and 'D  orbit/changes/x/p.md' stayed staged.",
+      "action": "tail reads the pre-move deletions from porcelain through a new shared enumerateScope (src/core/pr/scope.ts): deletions and rename sources under the pre-move path, staged ones printed in the commit and kept out of the add. New case stages the move with git add -A and asserts the pushed tree carries the change once; it fails on the pre-walk code.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/pr/scope.ts",
+          "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md",
+          "test/core/pr/tail.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "run.git('ls-files', '-z', '--', preMove)",
+          "plus the deletion at the pre-move"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/pr/tail.ts",
+            "text": "enumerateScope(entries, [{ prefix: preMove, deletionsOnly: true }])"
+          },
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md",
+            "text": "read from `git status --porcelain` rather than the index alone"
+          }
+        ],
+        "searched": [
+          "ls-files",
+          "pre-move",
+          "deletion at the"
+        ],
+        "scope": [
+          "src/core/pr"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Both allowlists admit `git symbolic-ref --delete <ref>`, a ref write, so exit (3)'s shim cannot catch it",
+      "marker_source": "internal-review",
+      "file": "src/core/pr/run.ts",
+      "line": 57,
+      "classification": "trivial_fix",
+      "evidence": "gitAllowed(['symbolic-ref','--delete','refs/remotes/origin/HEAD'], null) returned true before the walk; the same predicate sat in instrument.ts:30.",
+      "action": "Both allowlists admit symbolic-ref only with one ref and the read flags -q/--quiet/--short, and refuse diff --output. Two injected-write cases (symbolic-ref --delete, diff --output=) and runner refusals added; all three fail on the pre-walk allowlists. The delta's allowlist row names both closures.",
+      "ripple_cascade": {
+        "applied": [
+          "test/integration/pr-lifecycle/instrument.ts",
+          "test/core/pr/instrument.test.ts",
+          "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "return rest.filter((a) => !a.startsWith('-')).length === 1;",
+          "return rest.includes('--name-only') || rest.includes('--quiet');"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/pr/run.ts",
+            "text": "a === '--short'"
+          },
+          {
+            "path": "test/integration/pr-lifecycle/instrument.ts",
+            "text": "a === '--short'"
+          },
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md",
+            "text": "so never `--delete`"
+          }
+        ],
+        "searched": [
+          "symbolic-ref",
+          "--output",
+          "gitAllowed",
+          "allowedGit"
+        ],
+        "scope": [
+          "src/core/pr/run.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "preflight's `unobserved` row says 'any other non-zero gh exit', but resolution failures land there too",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md",
+      "line": 131,
+      "classification": "trivial_fix",
+      "evidence": "preflight.ts maps a resolution failure to decide('unobserved', {code: <resolution code>}); the delta row named only a non-zero gh exit.",
+      "action": "The delta's unobserved row names the resolution failures and that the reason code is then the resolution's.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "| any other non-zero `gh` exit | `skip`"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md",
+            "text": "or a failed resolution (no remote, several remotes"
+          }
+        ],
+        "searched": [
+          "unobserved"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "tail's human_acts sentence reads as unconditional, but the code (rightly) gives a program PR none and a degraded tail none",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md",
+      "line": 170,
+      "classification": "trivial_fix",
+      "evidence": "tail.ts pushes human_acts only on a per-change, non-degraded path; program.ts can report not-found after a fall-through with no survivor; the delta stated neither.",
+      "action": "The tail's human_acts sentence is scoped to a per-change, non-degraded tail (a program PR's acts are program's, at arc-done); program's outcome list gains not-found and its human_acts sentence names the ready-state and several cases. Design D5 scoped to a per-change tail.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc12-engine-owned-choreography/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "an observation. `human_acts` carries",
+          "a positive-invalidation reason from `preflight`'s set, `discovered`",
+          "The post-merge return becomes `human_acts` on `tail`,"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md",
+            "text": "A degraded tail carries none, and neither does a program tail"
+          },
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md",
+            "text": "`preflight`'s set or `not-found`"
+          }
+        ],
+        "searched": [
+          "human_acts",
+          "not-found"
+        ],
+        "scope": [
+          "src/core/pr/program.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "publish prints a commit git refuses when the scope is empty",
+      "marker_source": "internal-review",
+      "file": "src/core/pr/publish.ts",
+      "line": 128,
+      "classification": "trivial_fix",
+      "evidence": "publish.ts printed git commit --only -F <message-file> -- with no paths on an empty scope; git refuses it.",
+      "action": "An empty scope prints neither the add nor the commit, only the push (and the create); an add list emptied by staged deletions prints no add. New case: commit landed, push did not; it fails on the pre-walk code. The delta's publish scope paragraph states it.",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/pr/publish.test.ts",
+          "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "{ step: 'stage', argv: ['git', 'add', '--', ...scope.filter((p) => !alreadyStaged.has(p))] }"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/pr/publish.ts",
+            "text": "An empty scope (a re-run after the commit landed and the push did not)"
+          },
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md",
+            "text": "An empty scope prints neither the add nor the commit, only the push."
+          }
+        ],
+        "searched": [
+          "empty scope",
+          "--only"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The generated surface still says the engine never shells to git or gh, false once this change ships",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/pr-choreography.ts",
+      "line": 425,
+      "classification": "decision_required",
+      "ratified_via": "chat",
+      "resolution": "A: narrow the sentence now to 'performs no git or gh write' in the three references and the module comment; design D10's row and the proposal's non-goal record the one-sentence exception.",
+      "evidence": "pr-choreography.ts carried 'the orbit engine never shells to git or gh' three times plus the module comment; orbit pr now runs read-only git and gh.",
+      "action": "Narrowed the four sentences; rebuilt and refreshed the generated surface; skill-templates-parity's four function hashes (ff, archive, propose, architect) re-recorded as a named act.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc12-engine-owned-choreography/design.md",
+          "orbit/changes/rc12-engine-owned-choreography/proposal.md",
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the orbit engine never shells to git or",
+          "the engine NEVER shells to git or"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/templates/workflows/pr-choreography.ts",
+            "text": "the orbit engine performs no git or"
+          }
+        ],
+        "searched": [
+          "never shells",
+          "zero-engine-git"
+        ],
+        "scope": [
+          "src/core/templates/workflows"
+        ],
+        "kept": [
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/design.md",
+            "why": "D10's row quotes the retired sentence as the record of what was narrowed"
+          },
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/proposal.md",
+            "why": "the non-goal quotes the retired sentence it excepts"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Six of six resolved: the CRITICAL reproduced and repaired with a staged-move case, the allowlist closed in both copies, three spec and printing repairs, and the generated sentence narrowed on the ratified A.",
+  "iteration": 4,
+  "next_recommended": "/orbit:address-reviews rc12-engine-owned-choreography",
+  "ripple_misses": 0
+}

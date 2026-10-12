@@ -6,7 +6,7 @@ The engine SHALL provide one command group, `orbit pr`, whose subcommands comput
 
 | tool | invocations a subcommand MAY run |
 |---|---|
-| `git` | `remote`, `remote get-url`, `config --get remote.<r>.url`, `rev-parse`, `symbolic-ref`, `check-ref-format`, `status --porcelain`, `ls-remote --heads <resolved-remote> <ref>…`, `fetch --no-tags --refmap= <resolved-remote> +refs/heads/<x>:refs/remotes/<resolved-remote>/<x>…`, `merge-base`, `rev-list`, `diff --name-only` / `diff --quiet`, `ls-files`, `ls-tree`, `branch --show-current` |
+| `git` | `remote`, `remote get-url`, `config --get remote.<r>.url`, `rev-parse`, `symbolic-ref <ref>` (one ref; no flag but `-q` / `--short`, so never `--delete`), `check-ref-format`, `status --porcelain`, `ls-remote --heads <resolved-remote> <ref>…`, `fetch --no-tags --refmap= <resolved-remote> +refs/heads/<x>:refs/remotes/<resolved-remote>/<x>…`, `merge-base`, `rev-list`, `diff --name-only` / `diff --quiet` (never `--output`), `ls-files`, `ls-tree`, `branch --show-current` |
 | `gh` | `repo view <owner>/<repo>`, `pr view`, `pr list` |
 
 The canonical `<owner>/<repo>` derives from the remote's CONFIGURED URL, read by `config --get remote.<r>.url`, never from `remote get-url`, which expands `url.<base>.insteadOf` rewrites and would return the rewritten target. `gh` AVAILABILITY is a PATH lookup, never an invocation. The fetch is the ONE ref-store update a subcommand performs, in exactly the form above. `ls-remote` first decides which of the two refs exist, and only those are fetched, each with an explicit refspec and an empty `--refmap=`, so a configured `remote.<name>.fetch` refspec cannot redirect it and no tag is fetched. The empty refmap is load-bearing: without it git ALSO applies the configured refspec to the fetched refs (its opportunistic remote-tracking update), so a `refs/heads/` mapping would write local branches. Named limit: fetch side effects are BOUNDED. Residual kind: a fetch side effect configured outside the refspec and tag settings (e.g. `fetch.prune`, hooks, `remote.<r>.mirror`). Residual method: a test per configuration key, added when a run log names one; the shim records the exact argv so a changed form is visible.
@@ -94,7 +94,7 @@ The branch name is the name itself, or the cited doc's filename stem when the ci
 
 `orbit pr publish <change-name>` SHALL compute Phase 3 of `orbit-propose-modifications`' `PR choreography at propose (config-gated)`, after generation and validation on the selected branch. It computes three things:
 
-- The ENUMERATED commit scope, from `git status --porcelain`: every path under `orbit/changes/<change-name>/` that is new, untracked or modified, and every deletion under `orbit/explore/<change-name>/`. These are listed path by path; there is never a directory prefix. Any other modified, staged or untracked path goes into `observations.unrelated` and never into the scope.
+- The ENUMERATED commit scope, from `git status --porcelain`: every path under `orbit/changes/<change-name>/` that is new, untracked, modified or deleted (a staged rename's source included), and every deletion under `orbit/explore/<change-name>/`. These are listed path by path; there is never a directory prefix. A deletion already STAGED (a `git rm`, a staged rename's source) is gone from the index and the worktree, so `git add` would refuse it: it is printed in the commit and kept out of the add. An empty scope prints neither the add nor the commit, only the push. Any other modified, staged or untracked path goes into `observations.unrelated` and never into the scope.
 - The no-CI observation, against `<resolved-remote>/<default>` by `git ls-tree`.
 - On the program path, the four-axis adopt-or-create query of this capability's `Program PR (Shape A) semantics`.
 
@@ -128,10 +128,10 @@ The program query's outcomes are as follows. One survivor is adopted: `observati
 | `not-found` | `gh pr view` exits non-zero with the recorded "could not resolve" message | `proceed`, `degraded: "pr"` | `pr_url` only |
 | `discovered` | no stored URL; the fallback query has exactly one survivor | `proceed` | `pr_url`, `pr_state` |
 | `none`, `several` | no stored URL; the query has zero or several survivors | `proceed`, `degraded: "pr"` | none |
-| `unobserved` | any other non-zero `gh` exit | `skip` | none |
+| `unobserved` | any other non-zero `gh` exit, or a failed resolution (no remote, several remotes, an unparseable URL, no default branch — the reason code then being the resolution's) | `skip` | none |
 | `gh-absent` | no `gh` on PATH | `skip` | none |
 
-The live validation is one call: `gh pr view --repo <owner>/<repo> <url> --json state,isDraft,headRefName,baseRefName,url`. A failed validation never triggers the fallback query; a stored URL that resolves is ANSWERED, per the owner. `observations.emit` carries the values the archive emit records. `preflight` prints no segments. An unattached change is `off`, with no reason. The one line noting the unattached state, which `PR entry points`' scenario `new/continue reaches archive unattached` requires, is the body's: it writes that line from `off` together with the `pr` regime it reads from `orbit status --json`.
+The live validation is one call: `gh pr view --repo <owner>/<repo> <url> --json state,isDraft,headRefName,baseRefName,url`. A failed validation never triggers the fallback query; a stored URL that resolves is ANSWERED, per the owner. On a positive invalidation `reason.detail` carries the failed predicate's `observed` value and, where one exists, the `expected` one (the base a `retargeted to <base>` note names), so the body never invents a fact or observes again. `observations.emit` carries the values the archive emit records. `preflight` prints no segments. An unattached change is `off`, with no reason. The one line noting the unattached state, which `PR entry points`' scenario `new/continue reaches archive unattached` requires, is the body's: it writes that line from `off` together with the `pr` regime it reads from `orbit status --json`.
 
 #### Scenario: A closed PR is answered, not missing
 
@@ -158,7 +158,7 @@ With no attachment on the trail, `tail` is `off` whatever `--outcome` says. A co
 
 It then checks the owner's preconditions: `gh` is available, and HEAD is the attachment's branch, with the owner's case-specific recovery in `reason.detail` on a mismatch.
 
-The commit scope is `orbit/specs/<capability>/spec.md` for each capability in the same emit's `sync_specs.capabilities_updated`, whether new, untracked or modified, plus the deletion at the pre-move `orbit/changes/<change-name>/` path, the archived directory (the one path staged whole), and every path named by `--include` (the body's at-archive-note edits). Edits inside a synced spec file that predate the sync are not distinguished: the owner's commit-scope rule carries that limit, and this one inherits it.
+The commit scope is `orbit/specs/<capability>/spec.md` for each capability in the same emit's `sync_specs.capabilities_updated`, whether new, untracked or modified, plus every deletion at the pre-move `orbit/changes/<change-name>/` path, read from `git status --porcelain` rather than the index alone, so a move already staged (`git add -A orbit/changes`) still reaches the commit — its staged deletions printed in the commit and kept out of the add — the archived directory (the one path staged whole), and every path named by `--include` (the body's at-archive-note edits). Edits inside a synced spec file that predate the sync are not distinguished: the owner's commit-scope rule carries that limit, and this one inherits it.
 
 There is one segment, with inputs `<message-file>` and `<body-file>`:
 
@@ -167,7 +167,7 @@ There is one segment, with inputs `<message-file>` and `<body-file>`:
 - per-change, unless degraded: `gh pr edit --repo <owner>/<repo> <url> --body-file <body-file>`, then `gh pr ready --repo <owner>/<repo> <url>` unless ready;
 - program, unless degraded: `gh pr edit` with `<body-file>`, which the body composes from `observations.current_body` plus this stage's entry, and no flip.
 
-The current body is read by `gh pr view --json body`, an observation. `human_acts` carries the PR merge (`gh pr merge --repo <owner>/<repo> <url>`) and the return the merge leaves the user: `git fetch <resolved-remote>`, `git switch <default>`, `git merge --ff-only <resolved-remote>/<default>`. The body runs none of them.
+The current body is read by `gh pr view --json body`, an observation. On a per-change tail that is not degraded, `human_acts` carries the PR merge (`gh pr merge --repo <owner>/<repo> <url>`) and the return the merge leaves the user: `git fetch <resolved-remote>`, `git switch <default>`, `git merge --ff-only <resolved-remote>/<default>`. A degraded tail carries none, and neither does a program tail: a program PR is merged at arc-done, and its acts are `program`'s. The body runs none of them.
 
 #### Scenario: A positive invalidation still lands the archive
 
@@ -193,7 +193,7 @@ The current body is read by `gh pr view --json body`, an observation. `human_act
 
 `orbit pr program <doc>` SHALL compute the observations of this capability's `Program PR (Shape A) semantics` that the architect's arc-done readout makes, and SHALL NEVER skip, because that readout is never suppressed. It reads the latest URL-BEARING per-architecture record naming the doc on any trail, never merely the latest record. It validates that record live against the four predicates. When the record is positively invalid, or when no URL-bearing record exists, it falls through to the four-axis query.
 
-`observations` carries `pr` (`{url, state}`, `state` being `draft`, `ready` or `unverified`), `outcome` (one of `valid`, a positive-invalidation reason from `preflight`'s set, `discovered`, `none`, `several`, `unobserved` or `gh-absent`), and `candidates` on `several`. An `unobserved` or `gh-absent` outcome is `proceed` with the record's URL and state `unverified`. With no attachment at all it is `off`. `segments` is always empty: the readout makes no write. `human_acts` carries the READY flip and the merge, each repository-qualified.
+`observations` carries `pr` (`{url, state}`, `state` being `draft`, `ready` or `unverified`), `outcome` (one of `valid`, a positive-invalidation reason from `preflight`'s set or `not-found` — the recorded PR's reason when the fall-through finds no open replacement — `discovered`, `none`, `several`, `unobserved` or `gh-absent`), and `candidates` on `several`. An `unobserved` or `gh-absent` outcome is `proceed` with the record's URL and state `unverified`. With no attachment at all it is `off`. `segments` is always empty: the readout makes no write. `human_acts` carries the READY flip (unless the PR is observed ready) and the merge, each repository-qualified, whenever a PR is surfaced; `several` surfaces candidates and carries none.
 
 #### Scenario: A newer URL-less record does not mask an older URL
 

@@ -28,11 +28,17 @@ export function allowedGit(args: string[]): boolean {
     case 'ls-tree':
       return true;
     case 'symbolic-ref':
-      return rest.filter((a) => !a.startsWith('-')).length === 1;
+      // Exactly one ref, and only the read flags: two refs WRITE, and `--delete` / `-d` writes
+      // with one.
+      return (
+        rest.filter((a) => !a.startsWith('-')).length === 1 &&
+        rest.every((a) => !a.startsWith('-') || a === '-q' || a === '--quiet' || a === '--short')
+      );
     case 'status':
       return rest[0] === '--porcelain';
     case 'diff':
-      return rest.includes('--name-only') || rest.includes('--quiet');
+      // `--output=<file>` writes a file; nothing else on a name-only or quiet diff does.
+      return (rest.includes('--name-only') || rest.includes('--quiet')) && !rest.some((a) => a.startsWith('--output'));
     case 'branch':
       return rest.length === 1 && rest[0] === '--show-current';
     case 'ls-remote':

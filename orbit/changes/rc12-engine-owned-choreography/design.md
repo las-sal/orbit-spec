@@ -32,7 +32,7 @@ One asset already exists: `test/integration/pr-lifecycle/phase1.ts`, D6's execut
 
 **D4 — argv arrays and a closed input set.** The inputs are `<message-file>`, `<title>`, `<body-file>` and `<emit-path>`, matching the external runner's no-shell-string rule (rc17d). Commit messages are passed with `-F`.
 
-**D5 — `--no-track` at creation and `-u` at the first push.** These fix the dogfood's two tracking silences. The post-merge return becomes `human_acts` on `tail`, fixing the third.
+**D5 — `--no-track` at creation and `-u` at the first push.** These fix the dogfood's two tracking silences. The post-merge return becomes `human_acts` on a per-change `tail`, fixing the third (a program PR's merge is `program`'s, at arc-done).
 
 **D6 — `phase1.ts` is promoted, not rewritten.** Its resolution and precondition logic moves to `src/core/pr/select.ts`, with the switch removed (the engine prints it) and the `remote.<r>.ghurl` test hook removed (the harness reaches its bare remotes through a `url.<path>.insteadOf` rewrite of a GitHub-shaped URL instead, and the engine reads the configured URL with `config --get remote.<r>.url`, since `remote get-url` expands the rewrite). Its 39 cases move to the engine's tests: the commit-isolation case to `publish`, the rest to `select`. Each case executes the printed segments. That keeps the iteration-3 lesson the harness exists for: prose can be coherent and still impossible, and only execution distinguishes the two.
 
@@ -50,7 +50,7 @@ One asset already exists: `test/integration/pr-lifecycle/phase1.ts`, D6's execut
 | `orbit-pr-lifecycle`'s baseline Purpose ("ZERO git or GitHub operations") | edited in place at archive (no delta carries a Purpose) |
 | `orbit-archive-modifications`' "the engine performs no git operation" | kept: it describes the archive MOVE, which still runs no git |
 | `orbit-review`'s "(zero engine git)" | kept: it cites the requirement by its kept title |
-| `pr-choreography.ts`'s "the orbit engine never shells to git or `gh`" | change 2's to edit, as part of body adoption |
+| `pr-choreography.ts`'s "the orbit engine never shells to git or `gh`" | narrowed here at the system walk (Sal: A, fresh S4) to "performs no git or `gh` write", one sentence in three references and the module comment, so no adopter's installed skill states a falsehood between the two changes; change 2 still rewrites the references around it |
 | `CLAUDE.md`'s D6 paragraph ("ZERO ENGINE GIT") | kept: a historical record, true of D6 when written |
 | comments in `harness.ts` and `emit-composition.ts` | edited here (task 5.1); `phase1.ts` is deleted by task 4.1 |
 

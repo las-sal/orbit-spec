@@ -35,6 +35,11 @@ export interface ValidatedPr {
   outcome: PreflightOutcome;
   state?: 'draft' | 'ready';
   stderr?: string;
+  /**
+   * On a positive invalidation, the failed predicate's OBSERVED value and the EXPECTED one — the
+   * facts the body's note names (`retargeted to <base>`), so it never invents them or observes again.
+   */
+  detail?: { observed: string | null; expected?: string };
 }
 
 /** Validate a stored URL live against the four predicates: repository, open state, base, head. */
@@ -58,11 +63,17 @@ export function validatePrUrl(
     return { outcome: 'unobserved', stderr: 'unparseable gh pr view output' };
   }
   const prRepo = repoOfPrUrl(pr.url ?? url);
-  if (prRepo === null || prRepo.toLowerCase() !== repo.toLowerCase()) return { outcome: 'repository-mismatch' };
-  if (pr.state === 'MERGED') return { outcome: 'merged' };
-  if (pr.state !== 'OPEN') return { outcome: 'closed' };
-  if (pr.baseRefName !== defaultBranch) return { outcome: 'retargeted' };
-  if (pr.headRefName !== branch) return { outcome: 'head-mismatch' };
+  if (prRepo === null || prRepo.toLowerCase() !== repo.toLowerCase()) {
+    return { outcome: 'repository-mismatch', detail: { observed: prRepo, expected: repo } };
+  }
+  if (pr.state === 'MERGED') return { outcome: 'merged', detail: { observed: 'MERGED' } };
+  if (pr.state !== 'OPEN') return { outcome: 'closed', detail: { observed: pr.state ?? null } };
+  if (pr.baseRefName !== defaultBranch) {
+    return { outcome: 'retargeted', detail: { observed: pr.baseRefName ?? null, expected: defaultBranch } };
+  }
+  if (pr.headRefName !== branch) {
+    return { outcome: 'head-mismatch', detail: { observed: pr.headRefName ?? null, expected: branch } };
+  }
   return { outcome: 'valid', state: pr.isDraft ? 'draft' : 'ready' };
 }
 
@@ -123,7 +134,7 @@ export function prPreflight(ctx: PrContext, change: string): PrRecord {
     const v = validatePrUrl(run, repo, att.url, att.branch, defaultBranch);
     if (v.outcome === 'valid') return decide('valid', { pr_url: att.url, pr_state: v.state });
     if (v.outcome === 'unobserved') return decide('unobserved', { detail: { stderr: v.stderr } });
-    return decide(v.outcome, { pr_url: att.url });
+    return decide(v.outcome, { pr_url: att.url, detail: v.detail ?? {} });
   }
   return discover(run, repo, att, defaultBranch, decide);
 }

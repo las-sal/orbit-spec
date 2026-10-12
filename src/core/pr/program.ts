@@ -45,6 +45,7 @@ export function prProgram(ctx: PrContext, doc: string): PrRecord {
     branch,
     record: located ? { url: recordedUrl, emit: located.emit } : null,
     invalidated: null,
+    invalidated_detail: null,
     pr: null,
     outcome: null,
     candidates: [],
@@ -81,6 +82,7 @@ export function prProgram(ctx: PrContext, doc: string): PrRecord {
       return unverified('unobserved', repo);
     }
     observations.invalidated = v.outcome;
+    observations.invalidated_detail = v.detail ?? null;
   }
 
   // Fall-through (or no URL-bearing record): the four-axis query, every outcome reported.

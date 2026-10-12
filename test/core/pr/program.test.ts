@@ -96,7 +96,7 @@ describe('program — fall-through on a positive invalidation (never suppressed)
     const repo = programRepo({ prs: closed, prList: [pr(URL4)] }, [['stage-one', '2026-10-01T10-00-00Z', URL3]]);
     const { record } = program(repo);
     expect(record.action).toBe('proceed');
-    expect(record.observations).toMatchObject({ invalidated: 'closed', outcome: 'discovered', pr: { url: URL4 } });
+    expect(record.observations).toMatchObject({ invalidated: 'closed', invalidated_detail: { observed: 'CLOSED' }, outcome: 'discovered', pr: { url: URL4 } });
   });
 
   it('nothing open: still proceeds, the outcome is the recorded PR\'s reason, and no PR is handed over', () => {

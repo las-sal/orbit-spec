@@ -10,8 +10,8 @@
  * only one copy to edit.
  *
  * These consts are body prose (instructions to the AI), not engine logic. Per
- * `orbit-pr-lifecycle`'s zero-engine-git requirement the engine NEVER shells to git or `gh`;
- * every command below is a workflow-body step the AI performs.
+ * `orbit-pr-lifecycle`'s zero-engine-git requirement the engine performs no git or `gh` WRITE
+ * (`orbit pr` only observes and prints); every command below is a workflow-body step the AI performs.
  */
 
 /** Shared by every seam: remote + default-branch resolution, and `gh` repo qualification. */
@@ -422,7 +422,7 @@ also what an absent key and every inert value or shape resolve to — do not loa
 do not probe anything; see the config resolution order below.
 
 Per \`orbit-pr-lifecycle\`'s zero-engine-git requirement, every git and \`gh\` command here is a
-workflow-BODY step you perform; the orbit engine never shells to git or \`gh\`.
+workflow-BODY step you perform; the orbit engine performs no git or \`gh\` write.
 
 ${PR_RESOLUTION_SECTION}
 
@@ -448,7 +448,7 @@ attachments and never hides a program PR that exists — so the seams' config-or
 deliberately NOT part of this reference.
 
 Per \`orbit-pr-lifecycle\`'s zero-engine-git requirement, every git and \`gh\` command here is a
-workflow-BODY step you perform; the orbit engine never shells to git or \`gh\`.
+workflow-BODY step you perform; the orbit engine performs no git or \`gh\` write.
 
 ${PR_RESOLUTION_SECTION}
 
@@ -470,7 +470,7 @@ ATTACHMENT is the only gate at this seam: the live \`pr:\` value is NOT consulte
 config-order gate is deliberately absent from this reference.
 
 Per \`orbit-pr-lifecycle\`'s zero-engine-git requirement, every git and \`gh\` command here is a
-workflow-BODY step you perform; the orbit engine never shells to git or \`gh\`.
+workflow-BODY step you perform; the orbit engine performs no git or \`gh\` write.
 
 ${PR_RESOLUTION_SECTION}
 

@@ -82,15 +82,16 @@ describe('preflight — a stored URL, validated live', () => {
 
   // @scenario behaviour orbit-pr-lifecycle :: `orbit pr preflight` computes the archive's read-only preflight :: A closed PR is answered, not missing
   it.each([
-    ['closed', open({ state: 'CLOSED' })],
-    ['merged', open({ state: 'MERGED' })],
-    ['retargeted', open({ baseRefName: 'release' })],
-    ['head-mismatch', open({ headRefName: 'someone-else' })],
-    ['repository-mismatch', open({ url: 'https://github.com/other/widget/pull/7' })],
-  ])('%s: answered — proceed, degraded, pr_url kept, no pr_state, and NO fallback query', (outcome, pr) => {
+    ['closed', open({ state: 'CLOSED' }), { observed: 'CLOSED' }],
+    ['merged', open({ state: 'MERGED' }), { observed: 'MERGED' }],
+    ['retargeted', open({ baseRefName: 'release' }), { observed: 'release', expected: 'main' }],
+    ['head-mismatch', open({ headRefName: 'someone-else' }), { observed: 'someone-else', expected: 'add-thing' }],
+    ['repository-mismatch', open({ url: 'https://github.com/other/widget/pull/7' }), { observed: 'other/widget', expected: 'acme/widget' }],
+  ])('%s: answered — proceed, degraded, the note\'s facts in detail, pr_url kept, no pr_state, and NO fallback query', (outcome, pr, detail) => {
     const repo = attached({ prs: { [URL7]: pr }, prList: [open()] }, perChange());
     const { record, calls } = preflight(repo);
     expect(record).toMatchObject({ action: 'proceed', degraded: 'pr', reason: { code: outcome } });
+    expect(record.reason!.detail).toEqual(detail);
     expect(record.observations).toMatchObject({ outcome, emit: { pr_url: URL7 } });
     expect((record.observations.emit as Record<string, unknown>).pr_state).toBeUndefined();
     expect(calls.gh.some((c) => c.args[1] === 'list')).toBe(false);

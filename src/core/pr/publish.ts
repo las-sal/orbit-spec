@@ -14,6 +14,7 @@ import { readCitation, readRegime } from './inputs.js';
 import { offRecord, PrUsageError, skipRecord, type PrRecord, type PrSegment, type PrStep } from './record.js';
 import { resolve } from './resolve.js';
 import { PrRunner, type PrContext } from './run.js';
+import { enumerateScope } from './scope.js';
 import { parsePorcelainZ } from './select.js';
 
 export interface PrListEntry {
@@ -77,28 +78,12 @@ export function prPublish(ctx: PrContext, change: string): PrRecord {
 
   // The ENUMERATED scope, path by path, from the porcelain status.
   const entries = parsePorcelainZ(run.git('status', '--porcelain', '-z', '--untracked-files=all').stdout);
-  const ownPrefix = `${changeRel}/`;
-  const stagingPrefix = `orbit/explore/${change}/`;
-  const scope: string[] = [];
-  // A deletion already STAGED (a `git rm`, a staged rename's source) is gone from the index and
-  // the worktree, so `git add` would refuse it; the `--only` commit still carries it.
-  const alreadyStaged = new Set<string>();
-  const unrelated: Array<{ path: string; status: string }> = [];
-  for (const e of entries) {
-    const deleted = e.xy.includes('D');
-    if (e.path.startsWith(ownPrefix)) scope.push(e.path);
-    else if (deleted && e.path.startsWith(stagingPrefix)) {
-      scope.push(e.path);
-      if (e.xy[0] === 'D') alreadyStaged.add(e.path);
-    } else unrelated.push({ path: e.path, status: e.xy });
-    // A staged rename out of the staging directory deletes its source there.
-    if (e.from !== undefined) {
-      if (e.from.startsWith(stagingPrefix)) {
-        scope.push(e.from);
-        alreadyStaged.add(e.from);
-      } else if (!e.path.startsWith(ownPrefix)) unrelated.push({ path: e.from, status: e.xy });
-    }
-  }
+  // Every path under the change directory (deletions and a rename's source included), and every
+  // deletion under the staging directory the move emptied.
+  const { scope, alreadyStaged, unrelated } = enumerateScope(entries, [
+    { prefix: `${changeRel}/`, deletionsOnly: false },
+    { prefix: `orbit/explore/${change}/`, deletionsOnly: true },
+  ]);
   observations.scope = scope;
   observations.unrelated = unrelated;
 
@@ -125,14 +110,17 @@ export function prPublish(ctx: PrContext, change: string): PrRecord {
     }
   }
 
+  // An empty scope (a re-run after the commit landed and the push did not) prints no stage or
+  // commit: `git commit --only` with no paths is refused by git. The push still carries the work.
+  const toAdd = scope.filter((p) => !alreadyStaged.has(p));
   const land: PrStep[] = [
-    { step: 'stage', argv: ['git', 'add', '--', ...scope.filter((p) => !alreadyStaged.has(p))] },
-    { step: 'commit', argv: ['git', 'commit', '--only', '-F', '<message-file>', '--', ...scope] },
+    ...(toAdd.length > 0 ? [{ step: 'stage', argv: ['git', 'add', '--', ...toAdd] }] : []),
+    ...(scope.length > 0 ? [{ step: 'commit', argv: ['git', 'commit', '--only', '-F', '<message-file>', '--', ...scope] }] : []),
     { step: 'push', argv: ['git', 'push', '-u', remote, branch] },
   ];
-  const seg1: PrSegment = { inputs: ['<message-file>'], steps: land };
+  const seg1: PrSegment = { inputs: scope.length > 0 ? ['<message-file>'] : [], steps: land };
   if (degradedCode === null && createPr) {
-    seg1.inputs = ['<message-file>', '<title>', '<body-file>'];
+    seg1.inputs = [...seg1.inputs, '<title>', '<body-file>'];
     seg1.steps.push({
       step: 'open',
       argv: ['gh', 'pr', 'create', '--repo', repo, '--draft', '--base', defaultBranch, '--head', branch, '--title', '<title>', '--body-file', '<body-file>'],
