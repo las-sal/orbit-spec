@@ -118,7 +118,10 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // rc17b-blind-pair-command (2026-10-06, task 5.1), a PLANNED move: the Identity, Phase 4 cross-AI and
   // command-table sentences stopped enumerating the reviewer values and point at the review skill instead
   // (design D8). One re-record, both onboard hashes.
-  getOnboardSkillTemplate: '8021ad74d6f34caaaba48603644e17679ac07218ce998d428aafb1e691100e24',
+  // landing-page (2026-10-12, task 2.2), a PLANNED move: the Orientation CLI bullet names `orbit --version` as
+  // printing orbit's own version and states the upstream engine baseline 1.3.1 apart from it (design D6), because
+  // `--version` prints 2.0.0 from this stage on. One re-record, both onboard hashes.
+  getOnboardSkillTemplate: '9aaff4cd3cdb90b643e3c0b26a1bb38de55fc3f8402196987a7fb27bad8b9791',
   getOrbitExploreCommandTemplate: '52892dbd4b5eb72264dc6eb54f8126a09fc903adc1c1654c58e0650df609bfb6',
   getOrbitNewCommandTemplate: '47d97305a2d3abca6eafa8f7ed5fe13fb83ea8ca0b71f007975b217135f5f5aa',
   getOrbitContinueCommandTemplate: 'e1ecd4fffee224e284453be717226824c7567041d7c1676b6b6bca4727e3a9dd',
@@ -217,7 +220,7 @@ const EXPECTED_GENERATED_SKILL_CONTENT_HASHES: Record<string, string> = {
   'orbit-archive-change': 'cfb8a7a67368606f6b57d1954e82717bd639c3ab38a7952acba543fe0df8ddcf', // rc10-apply-closure task 2.8, then its system walk (see the function-hash note above)
   'orbit-bulk-archive-change': '68512b443d468b98ade14ae343c40d1210500d97858599d31a5417829be05b3b', // rc10-apply-closure task 2.8, then its system walk (see the function-hash note above)
   'orbit-verify-change': '06080070b8f2dfd4e3053c9143845095d0b80c6efcce286cc46e9de37dfe8ea8', // rc06b-map-readers (2026-10-05): moved with the body's step 6 edit, then again at system walk 2's additions edit (see the function-hash note above)
-  'orbit-onboard': 'a2d4f3bc2b5fc3562fe264fcb291e0e280f988fe0a10be081a4770c32fe00e2f', // rc17b task 5.1 (see the function-hash note above)
+  'orbit-onboard': '1014debc138967f6073b955a21eba3b8638d67a94e819b9f4d83ae2a92f1fb75', // landing-page task 2.2 (see the function-hash note above)
   'orbit-propose': 'b7d57981a3b67c9356807404bea4679da0d9ff68c51e9815a1442375e23cfb17', // rc13c, then rc03b, then rc05's system walk, then rc09a's size brief (task 5.3) and its system walk: moved with the body (see the function-hash notes above)
   'orbit-architect': '74b7814712b3b9c5ca590a19b17ae7e9a1105ed548082b47a0630b0a30f8119a', // rc15: moved twice with the body — apply, then the system walk; a third time at the post-archive audit walk; a fourth at rc05's apply, the scaffold's escaped backticks (see the function-hash note above)
 };

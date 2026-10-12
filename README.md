@@ -1,199 +1,118 @@
-<p align="center">
-  <a href="https://github.com/Fission-AI/OpenSpec">
-    <picture>
-      <source srcset="assets/openspec_bg.png">
-      <img src="assets/openspec_bg.png" alt="OpenSpec logo">
-    </picture>
-  </a>
-</p>
+# orbit
 
-<p align="center">
-  <a href="https://github.com/Fission-AI/OpenSpec/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/Fission-AI/OpenSpec/actions/workflows/ci.yml/badge.svg" /></a>
-  <a href="https://www.npmjs.com/package/@fission-ai/openspec"><img alt="npm version" src="https://img.shields.io/npm/v/@fission-ai/openspec?style=flat-square" /></a>
-  <a href="./LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square" /></a>
-  <a href="https://discord.gg/YctCnvvshC"><img alt="Discord" src="https://img.shields.io/discord/1411657095639601154?style=flat-square&logo=discord&logoColor=white&label=Discord&suffix=%20online" /></a>
-</p>
+orbit is a spec-driven workflow for AI coding assistants. You and the AI agree on a change in writing first:
+why it is needed, what changes, the requirements it adds or modifies, and the tasks. Then the AI implements it,
+reviewers check it, and its specs are merged into your project's living baseline. orbit is built for Claude Code
+first, with Codex as its second supported assistant. It is for people who want an AI to do the development while
+they stay informed and keep the decisions.
 
-<details>
-<summary><strong>The most loved spec framework.</strong></summary>
+## Built on OpenSpec
 
-[![Stars](https://img.shields.io/github/stars/Fission-AI/OpenSpec?style=flat-square&label=Stars)](https://github.com/Fission-AI/OpenSpec/stargazers)
-[![Downloads](https://img.shields.io/npm/dm/@fission-ai/openspec?style=flat-square&label=Downloads/mo)](https://www.npmjs.com/package/@fission-ai/openspec)
-[![Contributors](https://img.shields.io/github/contributors/Fission-AI/OpenSpec?style=flat-square&label=Contributors)](https://github.com/Fission-AI/OpenSpec/graphs/contributors)
+orbit is a hard fork of
+[`@fission-ai/openspec@1.3.1`](https://github.com/Fission-AI/OpenSpec). The vendored upstream source is this
+repository's root commit, tagged `upstream/v1.3.1`; the engine is forked from OpenSpec 1.3.1 and frozen there, and
+moves only by a deliberate, recorded cherry-pick. orbit's version numbers are its own: orbit 2.0.0 is orbit's first
+release, not OpenSpec 2.0.0. Upstream's telemetry has been removed: orbit collects nothing.
 
-</details>
-<p></p>
-Our philosophy:
+OpenSpec supplies the engine: the change folder, the artifact graph, delta specs and their archive merge, and the
+skill generator. orbit adds the editorial layer on top of it, in the same CLI.
 
-```text
-→ fluid not rigid
-→ iterative not waterfall
-→ easy not complex
-→ built for brownfield not just greenfield
-→ scalable from personal projects to enterprises
-```
+## How orbit improves on OpenSpec
 
-> [!TIP]
-> **New workflow now available!** We've rebuilt OpenSpec with a new artifact-guided workflow.
->
-> Run `/opsx:propose "your idea"` to get started. → [Learn more here](docs/opsx.md)
+Each claim names the capabilities whose specs, under [`orbit/specs/`](orbit/specs/), carry it.
 
-<p align="center">
-  Follow <a href="https://x.com/0xTab">@0xTab on X</a> for updates · Join the <a href="https://discord.gg/YctCnvvshC">OpenSpec Discord</a> for help and questions.
-</p>
+- **Reviewed gates with a computed cadence.** A change cannot reach apply or archive silently: each gate's state
+  is computed from the review trail on disk, never asserted (`orbit-engine-gates`, `orbit-review`).
+- **The blind pair and the external runner.** One command runs a fresh review and an external review from another
+  model, blind to each other; a recorded runner launches the external half with no copy and paste
+  (`orbit-review-external`, `orbit-external-runner`).
+- **Walks with pushback.** Review findings are walked one at a time: each is checked against the current state
+  before anything is fixed, and stale findings are suppressed with evidence (`orbit-address-reviews`).
+- **Orientation.** `orbit status` answers where you are, what happened last and what is ready next, with no
+  artifact reads (`orbit-orientation`).
+- **Engine-composed records.** Every run writes a summary the engine composes and validates, and every review
+  renders through one engine-owned report (`orbit-emit-composition`, `orbit-run-summary-emit`,
+  `orbit-report-rendering`).
+- **The architect tier.** A program of changes is declared as stages in an architecture document, and each stage's
+  state is computed from disk (`orbit-architect`, `orbit-architecture-engine`).
+- **Safe parallel archive.** Each change fingerprints the baseline requirements it touches, so archiving one change
+  never silently overwrites another's edits (`orbit-base-fingerprints`).
+- **You invoke every lifecycle step.** The AI recommends the next step and never runs it unasked; an AI-initiated
+  apply or archive asks first (`orbit-lifecycle-consent`).
+- **A PR lifecycle and a drift audit.** A change can open a draft pull request at proposal and mark it ready at
+  archive, and a project-wide audit finds drift between what the project's documents record and what is actually
+  in the repository (`orbit-pr-lifecycle`, `orbit-audit-drift`).
 
-<!-- TODO: Add GIF demo of /opsx:propose → /opsx:archive workflow -->
+## Install
 
-## See it in action
-
-```text
-You: /opsx:propose add-dark-mode
-AI:  Created openspec/changes/add-dark-mode/
-     ✓ proposal.md — why we're doing this, what's changing
-     ✓ specs/       — requirements and scenarios
-     ✓ design.md    — technical approach
-     ✓ tasks.md     — implementation checklist
-     Ready for implementation!
-
-You: /opsx:apply
-AI:  Implementing tasks...
-     ✓ 1.1 Add theme context provider
-     ✓ 1.2 Create toggle component
-     ✓ 2.1 Add CSS variables
-     ✓ 2.2 Wire up localStorage
-     All tasks complete!
-
-You: /opsx:archive
-AI:  Archived to openspec/changes/archive/2025-01-23-add-dark-mode/
-     Specs updated. Ready for the next feature.
-```
-
-<details>
-<summary><strong>OpenSpec Dashboard</strong></summary>
-
-<p align="center">
-  <img src="assets/openspec_dashboard.png" alt="OpenSpec dashboard preview" width="90%">
-</p>
-
-</details>
-
-## Quick Start
-
-**Requires Node.js 20.19.0 or higher.**
-
-Install OpenSpec globally:
+You need Node.js 20.19.0 or higher, and Git: npm fetches orbit from GitHub with it and builds it on your machine.
 
 ```bash
-npm install -g @fission-ai/openspec@latest
+npm install -g github:las-sal/orbit-spec#v2.0.0
+orbit --version
 ```
 
-Then navigate to your project directory and initialize:
+`orbit --version` prints `2.0.0`.
+
+## Quickstart
+
+In your project, set orbit up for Claude Code:
 
 ```bash
 cd your-project
-openspec init
+orbit init --tools claude
 ```
 
-Now tell your AI: `/opsx:propose <what-you-want-to-build>`
+This creates an `orbit/` directory for your specs and changes, and installs the `/orbit:*` commands and their
+skills. Then, in Claude Code:
 
-If you want the expanded workflow (`/opsx:new`, `/opsx:continue`, `/opsx:ff`, `/opsx:verify`, `/opsx:sync`, `/opsx:bulk-archive`, `/opsx:onboard`), select it with `openspec config profile` and apply with `openspec update`.
+1. `/orbit:explore` to think a change through with the AI.
+2. `/orbit:propose <change>` to write the proposal, design, delta specs and tasks.
+3. `/orbit:review --as proposal <change>` to review the proposal before any code is written.
+4. `/orbit:apply <change>` to implement the tasks.
+5. `/orbit:review --as system <change>` to review the implementation.
+6. `/orbit:archive <change>` to merge the change's specs into your baseline.
 
-> [!NOTE]
-> Not sure if your tool is supported? [View the full list](docs/supported-tools.md) – we support 25+ tools and growing.
->
-> Also works with pnpm, yarn, bun, and nix. [See installation options](docs/installation.md).
+At any point, ask orbit where you are:
+
+```bash
+orbit status
+```
+
+For Codex, run `orbit init --tools codex` instead; it installs orbit's skills and prompts for Codex, and
+[Supported tools](docs/supported-tools.md) describes how Codex invokes them. The generator also carries adapters
+for other assistants, inherited and untested.
 
 ## Docs
 
-→ **[Getting Started](docs/getting-started.md)**: first steps<br>
-→ **[Workflows](docs/workflows.md)**: combos and patterns<br>
-→ **[Commands](docs/commands.md)**: slash commands & skills<br>
-→ **[CLI](docs/cli.md)**: terminal reference<br>
-→ **[Supported Tools](docs/supported-tools.md)**: tool integrations & install paths<br>
-→ **[Concepts](docs/concepts.md)**: how it all fits<br>
-→ **[Multi-Language](docs/multi-language.md)**: multi-language support<br>
-→ **[Customization](docs/customization.md)**: make it yours
+These pages are being rewritten for orbit; until then, some still describe the tool orbit was forked from.
 
+- [Getting started](docs/getting-started.md)
+- [Installation](docs/installation.md)
+- [Workflows](docs/workflows.md)
+- [Commands](docs/commands.md)
+- [CLI](docs/cli.md)
+- [Concepts](docs/concepts.md)
+- [Customization](docs/customization.md)
+- [Multi-language](docs/multi-language.md)
+- [Supported tools](docs/supported-tools.md)
+- [Migration guide](docs/migration-guide.md)
 
-## Why OpenSpec?
+## Development
 
-AI coding assistants are powerful but unpredictable when requirements live only in chat history. OpenSpec adds a lightweight spec layer so you agree on what to build before any code is written.
-
-- **Agree before you build** — human and AI align on specs before code gets written
-- **Stay organized** — each change gets its own folder with proposal, specs, design, and tasks
-- **Work fluidly** — update any artifact anytime, no rigid phase gates
-- **Use your tools** — works with 20+ AI assistants via slash commands
-
-### How we compare
-
-**vs. [Spec Kit](https://github.com/github/spec-kit)** (GitHub) — Thorough but heavyweight. Rigid phase gates, lots of Markdown, Python setup. OpenSpec is lighter and lets you iterate freely.
-
-**vs. [Kiro](https://kiro.dev)** (AWS) — Powerful but you're locked into their IDE and limited to Claude models. OpenSpec works with the tools you already use.
-
-**vs. nothing** — AI coding without specs means vague prompts and unpredictable results. OpenSpec brings predictability without the ceremony.
-
-## Updating OpenSpec
-
-**Upgrade the package**
+Clone the repository, then:
 
 ```bash
-npm install -g @fission-ai/openspec@latest
+npm install
+npm run build
+npm test
 ```
-
-**Refresh agent instructions**
-
-Run this inside each project to regenerate AI guidance and ensure the latest slash commands are active:
-
-```bash
-openspec update
-```
-
-## Usage Notes
-
-**Model selection**: OpenSpec works best with high-reasoning models. We recommend Opus 4.5 and GPT 5.2 for both planning and implementation.
-
-**Context hygiene**: OpenSpec benefits from a clean context window. Clear your context before starting implementation and maintain good context hygiene throughout your session.
 
 ## Contributing
 
-**Small fixes** — Bug fixes, typo corrections, and minor improvements can be submitted directly as PRs.
-
-**Larger changes** — For new features, significant refactors, or architectural changes, please submit an OpenSpec change proposal first so we can align on intent and goals before implementation begins.
-
-When writing proposals, keep the OpenSpec philosophy in mind: we serve a wide variety of users across different coding agents, models, and use cases. Changes should work well for everyone.
-
-**AI-generated code is welcome** — as long as it's been tested and verified. PRs containing AI-generated code should mention the coding agent and model used (e.g., "Generated with Claude Code using claude-opus-4-5-20251101").
-
-### Development
-
-- Install dependencies: `pnpm install`
-- Build: `pnpm run build`
-- Test: `pnpm test`
-- Develop CLI locally: `pnpm run dev` or `pnpm run dev:cli`
-- Conventional commits (one-line): `type(scope): subject`
-
-## Other
-
-<details>
-<summary><strong>Telemetry</strong></summary>
-
-OpenSpec collects anonymous usage stats.
-
-We collect only command names and version to understand usage patterns. No arguments, paths, content, or PII. Automatically disabled in CI.
-
-**Opt-out:** `export OPENSPEC_TELEMETRY=0` or `export DO_NOT_TRACK=1`
-
-</details>
-
-<details>
-<summary><strong>Maintainers & Advisors</strong></summary>
-
-See [MAINTAINERS.md](MAINTAINERS.md) for the list of core maintainers and advisors who help guide the project.
-
-</details>
-
-
+Issues are welcome on [las-sal/orbit-spec](https://github.com/las-sal/orbit-spec/issues). Larger changes start as
+an orbit change proposal.
 
 ## License
 
-MIT
+MIT. See [LICENSE](LICENSE).
