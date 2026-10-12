@@ -1,0 +1,98 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-12T18:01:09Z",
+  "change": "landing-page",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/landing-page/.orbit-runs/external-system-2026-10-12T17-33-32Z.md",
+  "source_command": null,
+  "source_token": "2026-10-12T17-33-32Z",
+  "latest_apply_token": "2026-10-12T17-28-44Z",
+  "external_reviewer": "GPT-6 Codex",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 1
+  },
+  "pushback_verification": "All three verified against current state. The Quickstart finding is the fresh pass's README.md:71 finding (same site, same claim, plus the missing walk step) and was already resolved in that pass's log. The rehearsal finding held and then some: the rehearsal run at the walk failed at the install line. The records claim was false as written: orbit-run-summary-emit's Emit scope exempts /orbit:onboard, /orbit:bulk-archive and /orbit:sync.",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale_suppressed": 1,
+    "deferred": 0,
+    "escalated": 1
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Quickstart skips the review cadence and resolution steps",
+      "marker_source": "external",
+      "file": "README.md",
+      "line": 71,
+      "classification": "stale",
+      "action": "Converged with the fresh pass's finding at the same site; walked there (Sal: B+C). Steps 3 and 5 now carry --fresh, and a paragraph names the walk (/orbit:address-reviews <change>) and the confirming review through the Ready when you are: line.",
+      "evidence": "Resolved in address-reviews-2026-10-12T17-57-07Z (the fresh pass's log), committed in 970ac70f: README.md's review steps read `/orbit:review --as proposal --fresh <change>` and `/orbit:review --as system --fresh <change>`, followed by 'A review starts its gate; it does not pass it on its own.'",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The required clean-machine rehearsal remains unperformed",
+      "marker_source": "external",
+      "file": "orbit/changes/landing-page/tasks.md",
+      "line": 30,
+      "classification": "decision_required",
+      "action": "Ran the shell half of the rehearsal (Sal: A): `npm install -g git+file://<clone>#v2.0.0` exited 1 ('git dep preparation failed … Build failed!'; Cannot find module 'typescript/bin/tsc' in npm's temporary git clone, because the nested install under -g inherits npm_config_global=true and installs nothing locally), and `orbit --version` was not found; recorded under task 5.2. Every fix changes the install route R-ugd-4 ruled, so the finding is a REDESIGN routed to this change's explore.md.",
+      "ratified_via": "chat",
+      "resolution": "Escalate as recommended (Sal): route the install route back to explore; candidates there are a clone-and-build install, a prepare that survives the global case, and a prebuilt tarball on a Release.",
+      "remedy": "redesign",
+      "routed_to": "orbit/changes/landing-page/explore.md",
+      "outcome": "escalated"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The records claim exceeds the declared emission scope",
+      "marker_source": "external",
+      "file": "README.md",
+      "line": 33,
+      "classification": "trivial_fix",
+      "action": "Narrowed the claim to 'Each lifecycle and review workflow records its run in a summary the engine composes and validates'.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "Every run writes a summary the engine composes and validates"
+        ],
+        "introduced": [
+          {
+            "path": "README.md",
+            "text": "Each lifecycle and review workflow records its run in a summary the engine"
+          }
+        ],
+        "searched": [
+          "Every run writes",
+          "every run"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [
+    {
+      "file": "orbit/changes/landing-page/tasks.md",
+      "line": 30,
+      "title": "The required clean-machine rehearsal remains unperformed",
+      "reason": "The README's install line fails on npm 11.12.1 (git dep preparation under -g); the install route is a REDESIGN routed to orbit/changes/landing-page/explore.md."
+    }
+  ],
+  "final_assessment": "One resolved, one stale, one escalated: the records claim narrowed to the workflows the emission scope covers; the Quickstart finding converged with the fresh pass's and was walked in its log (2026-10-12T17-57-07Z); the clean-machine rehearsal, attempted at the walk, failed at the README's own install line, and the install route is escalated as a REDESIGN to this change's explore.md.",
+  "iteration": 5,
+  "next_recommended": "/orbit:address-reviews landing-page",
+  "ripple_misses": 0
+}
