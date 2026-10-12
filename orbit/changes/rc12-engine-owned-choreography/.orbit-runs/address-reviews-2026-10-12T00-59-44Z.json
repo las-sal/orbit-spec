@@ -1,0 +1,234 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-12T00:59:44Z",
+  "change": "rc12-engine-owned-choreography",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc12-engine-owned-choreography/.orbit-runs/review-proposal-2026-10-12T00-57-03Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-12T00-57-03Z",
+  "latest_apply_token": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 3
+  },
+  "pushback_verification": "All five verified at HEAD: preflight's and tail's tables disagree on none/several; the allowlist lacks config --get while get-url expands insteadOf (measured); D10's row names a file task 4.1 deletes; .openspec.yaml and explore.md sit outside every entry's edit record.",
+  "resolution_summary": {
+    "resolved": 5,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "A URL-less attachment's zero or several fallback reaches tail as `skip`, while preflight calls it a PR-half degradation",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md",
+      "line": 150,
+      "classification": "decision_required",
+      "action": "applied Sal's ratified option A: tail takes preflight's outcome as `--outcome <code>`, passed verbatim by the body, keys its table on the code (none/several degrade the PR half, unobserved/gh-absent skip), and refuses a code the archive emit's fields contradict; preflight reports `observations.outcome`; D-rc12-9's Mechanism amended in explore.md with Case 2 recording the refuted two-field reading",
+      "evidence": "preflight's table writes neither PR field on none, several, unobserved and gh-absent; tail's table sent all four to skip",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc12-engine-owned-choreography/design.md",
+          "orbit/changes/rc12-engine-owned-choreography/tasks.md",
+          "orbit/changes/rc12-engine-owned-choreography/proposal.md",
+          "orbit/changes/rc12-engine-owned-choreography/explore.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "neither, with an attachment on the trail",
+          "emit-reading table",
+          "presence is four cells"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md",
+            "text": "`--outcome`, preflight's `observations.outcome` passed VERBATIM by the body"
+          },
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md",
+            "text": "A URL-less attachment's fallback miss still lands the archive"
+          },
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/explore.md",
+            "text": "### Case 2 — the two-field reading, refuted 2026-10-12"
+          }
+        ],
+        "searched": [
+          "tail",
+          "pr_url",
+          "pr_state",
+          "neither",
+          "emit-reading"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "resolution": "A — tail --outcome <code>, preflight's outcome passed verbatim; no emit-shape change"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Retiring `config --get` leaves no allowlisted read of a GitHub-shaped remote URL in the harness the walk prescribes",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md",
+      "line": 9,
+      "classification": "trivial_fix",
+      "action": "repaired: `config --get remote.<r>.url` restored to the allowlist; the canonical id derives from the configured URL, never `remote get-url`, which expands insteadOf rewrites; the harness reaches its bare remotes through a `url.<path>.insteadOf` rewrite (spec, design D6, task 1.1)",
+      "evidence": "measured in a throwaway repository: with an insteadOf rewrite, push and ls-remote work, git remote get-url and git ls-remote --get-url return the rewritten path, git config --get remote.origin.url returns the GitHub URL",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc12-engine-owned-choreography/design.md",
+          "orbit/changes/rc12-engine-owned-choreography/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "a bare remote whose URL is GitHub-shaped",
+          "the harness's remotes get GitHub-shaped URLs instead",
+          "the harness's remotes carry GitHub-shaped URLs in place of",
+          "remotes with GitHub-shaped URLs (retiring"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md",
+            "text": "`config --get remote.<r>.url`"
+          },
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md",
+            "text": "never from `remote get-url`, which expands `url.<base>.insteadOf` rewrites"
+          },
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/tasks.md",
+            "text": "reached through a `url.<path>.insteadOf` rewrite of a GitHub-shaped URL"
+          }
+        ],
+        "searched": [
+          "GitHub-shaped",
+          "ghurl",
+          "get-url",
+          "config --get"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/explore.md",
+            "why": "the exploration record: its Decisions and Mechanism quote the first proposal's shapes and counts as explored"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "D10 lists phase1.ts's comment as edited here, but the change retires phase1.ts",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc12-engine-owned-choreography/design.md",
+      "line": 55,
+      "classification": "trivial_fix",
+      "action": "repaired: D10's comments row names harness.ts and emit-composition.ts and says phase1.ts is deleted by task 4.1",
+      "evidence": "task 5.1 names harness.ts and emit-composition.ts; task 4.1 retires phase1.ts",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "comments in `harness.ts`, `phase1.ts`, `emit-composition.ts`"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/design.md",
+            "text": "`phase1.ts` is deleted by task 4.1"
+          }
+        ],
+        "searched": [
+          "phase1.ts"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/explore.md",
+            "why": "the exploration record: its Decisions and Mechanism quote the first proposal's shapes and counts as explored"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "`.openspec.yaml` changed in the walk commit and sits outside every entry's edit record",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc12-engine-owned-choreography/.openspec.yaml",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "recorded, no edit: the change is correct and required; the gap is in the edit record, as the finding says",
+      "evidence": "the re-stamp added the fingerprint for the carried `Test instruments derive from a recorded real-CLI contract` block (orbit fingerprint, add-missing-only), which archive's divergence guard needs; the file is in the walk commit 0ff73729",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/explore.md",
+            "why": "the exploration record: its Decisions and Mechanism quote the first proposal's shapes and counts as explored"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "explore.md changed after the base file and sits outside every entry's edit record",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/rc12-engine-owned-choreography/explore.md",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "recorded, no edit: the change is correct and required; the gap is in the edit record, as the finding says",
+      "evidence": "explore.md's D-rc12-8..14 capture is commit d9116cb5, the exploration session that ran before the walk; the walk entries list it under kept as the exploration record",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/explore.md",
+            "why": "the exploration record: its Decisions and Mechanism quote the first proposal's shapes and counts as explored"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": null,
+  "final_assessment": "Five resolved: the tail/preflight handoff by Sal's option A (tail --outcome, D-rc12-9 amended with Case 2), the configured-URL read restored to the allowlist on a measured insteadOf case, D10's stale row, and two record gaps acknowledged with no edit.",
+  "iteration": 3,
+  "next_recommended": "/orbit:apply rc12-engine-owned-choreography — user-invoked",
+  "ripple_misses": 0
+}

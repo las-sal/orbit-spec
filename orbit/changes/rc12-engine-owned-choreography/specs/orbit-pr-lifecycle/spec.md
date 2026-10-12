@@ -6,10 +6,10 @@ The engine SHALL provide one command group, `orbit pr`, whose subcommands comput
 
 | tool | invocations a subcommand MAY run |
 |---|---|
-| `git` | `remote`, `remote get-url`, `rev-parse`, `symbolic-ref`, `check-ref-format`, `status --porcelain`, `ls-remote --heads <resolved-remote> <ref>…`, `fetch --no-tags <resolved-remote> +refs/heads/<x>:refs/remotes/<resolved-remote>/<x>…`, `merge-base`, `rev-list`, `diff --name-only` / `diff --quiet`, `ls-files`, `ls-tree`, `branch --show-current` |
+| `git` | `remote`, `remote get-url`, `config --get remote.<r>.url`, `rev-parse`, `symbolic-ref`, `check-ref-format`, `status --porcelain`, `ls-remote --heads <resolved-remote> <ref>…`, `fetch --no-tags <resolved-remote> +refs/heads/<x>:refs/remotes/<resolved-remote>/<x>…`, `merge-base`, `rev-list`, `diff --name-only` / `diff --quiet`, `ls-files`, `ls-tree`, `branch --show-current` |
 | `gh` | `repo view <owner>/<repo>`, `pr view`, `pr list` |
 
-`gh` AVAILABILITY is a PATH lookup, never an invocation. The fetch is the ONE ref-store update a subcommand performs, in exactly the form above. `ls-remote` first decides which of the two refs exist, and only those are fetched, each with an explicit refspec, so a configured `remote.<name>.fetch` refspec cannot redirect it and no tag is fetched. Named limit: fetch side effects are BOUNDED. Residual kind: a fetch side effect configured outside the refspec and tag settings (e.g. `fetch.prune`, hooks, `remote.<r>.mirror`). Residual method: a test per configuration key, added when a run log names one; the shim records the exact argv so a changed form is visible.
+The canonical `<owner>/<repo>` derives from the remote's CONFIGURED URL, read by `config --get remote.<r>.url`, never from `remote get-url`, which expands `url.<base>.insteadOf` rewrites and would return the rewritten target. `gh` AVAILABILITY is a PATH lookup, never an invocation. The fetch is the ONE ref-store update a subcommand performs, in exactly the form above. `ls-remote` first decides which of the two refs exist, and only those are fetched, each with an explicit refspec, so a configured `remote.<name>.fetch` refspec cannot redirect it and no tag is fetched. Named limit: fetch side effects are BOUNDED. Residual kind: a fetch side effect configured outside the refspec and tag settings (e.g. `fetch.prune`, hooks, `remote.<r>.mirror`). Residual method: a test per configuration key, added when a run log names one; the shim records the exact argv so a changed form is visible.
 
 The record has the same fields as JSON with `--json` and as text otherwise:
 
@@ -119,7 +119,7 @@ The program query's outcomes are as follows. One survivor is adopted: `observati
 
 ### Requirement: `orbit pr preflight` computes the archive's read-only preflight
 
-`orbit pr preflight <change-name>` SHALL compute the read-only preflight of `orbit-archive-modifications`' `PR-attached archive tail`, before the archive emit. It reads the attachment (the latest attachment-bearing propose or ff emit on the change's trail), notes citation divergence in `observations`, and decides one OUTCOME from this closed set:
+`orbit pr preflight <change-name>` SHALL compute the read-only preflight of `orbit-archive-modifications`' `PR-attached archive tail`, before the archive emit. It reads the attachment (the latest attachment-bearing propose or ff emit on the change's trail), notes citation divergence in `observations`, and decides one OUTCOME from this closed set, reported as `observations.outcome`:
 
 | outcome | when | `action` | emit values |
 |---|---|---|---|
@@ -145,14 +145,16 @@ The live validation is one call: `gh pr view --repo <owner>/<repo> <url> --json 
 
 ### Requirement: `orbit pr tail` computes the archive tail
 
-`orbit pr tail <change-name> [--include <path>]…` SHALL compute the tail of `orbit-archive-modifications`' `PR-attached archive tail`, after the archive's move and emit. It resolves the change among archived changes. It never observes the PR again: preflight's one observation reaches it through the WRITTEN archive emit, the latest `archive-*.json` on the archived change's trail:
+`orbit pr tail <change-name> --outcome <code> [--include <path>]…` SHALL compute the tail of `orbit-archive-modifications`' `PR-attached archive tail`, after the archive's move and emit. It resolves the change among archived changes. It never observes the PR again: preflight's one observation reaches it as `--outcome`, preflight's `observations.outcome` passed VERBATIM by the body, together with the WRITTEN archive emit (the latest `archive-*.json` on the archived change's trail), which supplies `pr_url`, `pr_state` and the sync's report:
 
-| the archive emit carries | `tail` decides |
-|---|---|
-| `pr_url` and `pr_state` | `proceed`; the PR steps run, and `pr_state: "ready"` prints no flip |
-| `pr_url` without `pr_state` | `proceed` with `degraded: "pr"` and reason code `pr-invalid`: commit and push only |
-| neither, with an attachment on the trail | `skip`, reason code `unobserved` |
-| no attachment on the trail | `off` |
+| `--outcome` | `tail` decides | the archive emit must carry |
+|---|---|---|
+| `valid`, `discovered` | `proceed`; the PR steps run against `pr_url`, and `pr_state: "ready"` prints no flip | `pr_url` and `pr_state` |
+| `closed`, `merged`, `retargeted`, `head-mismatch`, `repository-mismatch`, `not-found` | `proceed` with `degraded: "pr"` and the outcome as reason code: commit and push only | `pr_url`, no `pr_state` |
+| `none`, `several` | `proceed` with `degraded: "pr"` and the outcome as reason code: commit and push only | neither |
+| `unobserved`, `gh-absent` | `skip`, the outcome as reason code | neither |
+
+With no attachment on the trail, `tail` is `off` whatever `--outcome` says. A code outside preflight's closed set, or an emit whose fields disagree with the code's row, is a usage error naming both, because it means the body did not pass preflight's outcome verbatim.
 
 It then checks the owner's preconditions: `gh` is available, and HEAD is the attachment's branch, with the owner's case-specific recovery in `reason.detail` on a mismatch.
 
@@ -169,8 +171,13 @@ The current body is read by `gh pr view --json body`, an observation. `human_act
 
 #### Scenario: A positive invalidation still lands the archive
 
-- **WHEN** the archive emit carries `pr_url` and no `pr_state`
+- **WHEN** `tail` runs with `--outcome closed` and the archive emit carries `pr_url` and no `pr_state`
 - **THEN** `tail` prints `proceed` with `degraded: "pr"`, the commit and push, and no `gh pr edit` or `gh pr ready`
+
+#### Scenario: A URL-less attachment's fallback miss still lands the archive
+
+- **WHEN** `tail` runs with `--outcome none` and the archive emit carries neither PR field
+- **THEN** `tail` prints `proceed` with `degraded: "pr"`, reason code `none`, the commit and push, and no PR step, while the same emit with `--outcome unobserved` prints `skip`
 
 #### Scenario: The scope is what the sync reported, including a new capability
 
@@ -200,7 +207,7 @@ The current body is read by `gh pr view --json body`, an observation. `human_act
 
 ### Requirement: Printed commands are proven by execution
 
-The `orbit pr` subcommands SHALL be tested against REAL `git` repositories, each with a bare remote whose URL is GitHub-shaped, and the `gh` stub of `Test instruments derive from a recorded real-CLI contract` on PATH. In every `proceed` case the test runs each segment in order. It authors the segment's inputs first: the emit between `publish`'s two segments is a real one, written through the emit surface from segment 1's result. It then asserts the repository and remote state the steps promise. A step git will not perform, or a `gh` argv the recorded contract rejects, fails the suite. `human_acts` are never run, and a case asserts that none of them was. A PATH shim records every `git` and `gh` invocation a subcommand makes, and the suite fails on any invocation outside the allowlist of `The \`orbit pr\` command observes and prints; it never writes`. That is the consent check: no write runs inside the engine, in any case. Injected cases prove the instrument can fail: a printed step git refuses, and a subcommand made to invoke a write. D6's executable transcription of Phase 1 (`test/integration/pr-lifecycle/phase1.ts`) is retired into the engine module, and its 39 cases move to the engine's tests: its commit-isolation case to `publish`, the rest to `select`. No test hook ships in `src/`: the harness's remotes carry GitHub-shaped URLs in place of the transcription's `remote.<r>.ghurl` setting.
+The `orbit pr` subcommands SHALL be tested against REAL `git` repositories, each with a bare remote reached through a `url.<path>.insteadOf` rewrite of a GitHub-shaped URL, and the `gh` stub of `Test instruments derive from a recorded real-CLI contract` on PATH. In every `proceed` case the test runs each segment in order. It authors the segment's inputs first: the emit between `publish`'s two segments is a real one, written through the emit surface from segment 1's result. It then asserts the repository and remote state the steps promise. A step git will not perform, or a `gh` argv the recorded contract rejects, fails the suite. `human_acts` are never run, and a case asserts that none of them was. A PATH shim records every `git` and `gh` invocation a subcommand makes, and the suite fails on any invocation outside the allowlist of `The \`orbit pr\` command observes and prints; it never writes`. That is the consent check: no write runs inside the engine, in any case. Injected cases prove the instrument can fail: a printed step git refuses, and a subcommand made to invoke a write. D6's executable transcription of Phase 1 (`test/integration/pr-lifecycle/phase1.ts`) is retired into the engine module, and its 39 cases move to the engine's tests: its commit-isolation case to `publish`, the rest to `select`. No test hook ships in `src/`: the harness's `insteadOf` rewrite replaces the transcription's `remote.<r>.ghurl` setting, and the engine reads the configured URL a real checkout carrying such a rewrite also has.
 
 Named limit: coverage of the deterministic steps is BOUNDED. Residual kind: deterministic behaviour of a real remote host neither the live run nor a local temporary repository reaches (e.g. branch protection, `gh` auth expiry, a renamed default branch). Residual method: a second live run under `per-architecture`, logged with the dogfood log's classes.
 

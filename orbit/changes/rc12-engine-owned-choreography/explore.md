@@ -105,28 +105,33 @@ Moves:
 - CONSUME: applied — change 2's bodies run segments in order, authoring each segment's inputs first; the tests fill inputs per segment and write a real emit between publish's two
 - INVOKE: applied — every subcommand emits one record per call
 
-### D-rc12-9 — the tail reads the archive emit, never observes again
+### D-rc12-9 — the tail takes preflight's outcome and reads the archive emit, never observes again
 Domain: what `tail` needs from earlier in the archive, by source
 | member | covered by |
 |---|---|
-| the PR identity and state preflight observed | the written archive emit's `pr_url` / `pr_state` |
-| `pr_url` and `pr_state` both present | PR half runs; `pr_state: "ready"` means no flip |
-| `pr_url` present, `pr_state` absent (positive invalidation) | `proceed` with `degraded: "pr"` — commit and push only |
-| both absent with an attachment (observation unavailable) | `skip`, per the owner's availability rule |
-| no attachment | `off` |
-| the capabilities the sync changed | the same emit's `sync_specs.capabilities_updated`; each spec file staged whether new or modified (untracked included) |
+| preflight's outcome (one of its closed set) | `--outcome`, passed verbatim by the body from preflight's `observations.outcome` |
+| `valid`, `discovered` | PR half runs against the emit's `pr_url`; `pr_state: "ready"` means no flip |
+| a positive invalidation or `not-found` | `proceed` with `degraded: "pr"` — commit and push only |
+| `none`, `several` (a URL-less attachment's fallback missed) | `proceed` with `degraded: "pr"` — commit and push only |
+| `unobserved`, `gh-absent` | `skip`, per the owner's availability rule |
+| a code outside the set, or one the emit's fields contradict | a usage error naming both |
+| no attachment | `off`, whatever the code |
+| the capabilities the sync changed | the emit's `sync_specs.capabilities_updated`; each spec file staged whether new or modified (untracked included) |
 | edits inside a synced spec file that predate the sync | not distinguished — the owner's own limit, stated, not solved |
-Closure: DERIVED — `pr_url` × `pr_state` presence is four cells, three reachable with an attachment plus the no-attachment row; the scope is one emit field
+Closure: SOURCED — the outcome rows are preflight's closed set (D-rc12-12), every code in exactly one row; the scope is one emit field
 Moves:
 - READ: applied — the archive payload table carries `pr_url`, `pr_state` and `sync_specs` (`src/core/emit-composition.ts`; `archive-summary-schema.md`); the archive body runs the preflight at Step 5.45, after the sync, before the emit
-- ENUMERATE: applied — this table
-- COHERE: applied — the owner's "one observation feeds the emit and the tail" holds by construction: the tail's input IS the emit
+- ENUMERATE: applied — this table; the first version keyed on the two emit fields alone and missed that `none`/`several` and `unobserved`/`gh-absent` both write neither (the proposal verification pass, Case 2)
+- COHERE: applied — the owner's "one observation feeds the emit and the tail" holds: the outcome and the emit both come from preflight's one call, and a disagreement between them is refused
 - EXECUTE: not applied — no command exists
 - FALSIFY: applied — the external pass's no-op-sync case: a dirty delta-named spec the sync did not change is out of scope here because `capabilities_updated` names only what changed
 - CONFORM: applied — R-crc-13 (an emit records; a later step reads the record); `orbit-archive-modifications`' `PR-attached archive tail`
-- FEASIBILITY: applied — one file read
-- CONSUME: applied — the archive body writes the emit before running `tail`, which it already does
+- FEASIBILITY: applied — one file read and one argument
+- CONSUME: applied — the archive body runs preflight, writes the emit, then runs `tail` with the outcome; change 2 carries the value between the two calls
 - INVOKE: applied — runs after the archive emit, once
+
+### Case 2 — the two-field reading, refuted 2026-10-12
+Preflight's `none`, `several`, `unobserved` and `gh-absent` all leave the archive emit without `pr_url` and `pr_state`; the first two degrade the PR half, the last two skip the tail. Two presence bits cannot carry four outcomes onto two behaviours. Sal: A — `tail --outcome`, over a new emit field (a second capability) or reading the owner's fallback "SKIP" as a whole-tail skip.
 
 ### D-rc12-10 — `select` needs no change directory
 Domain: the inputs `select <name>` resolves, by creation path
@@ -241,7 +246,7 @@ Moves:
   Kind: scope
 - **2026-10-12 — D-rc12-8: the record separates observations, body-run segments and the user's acts** The blind pair on the first proposal (fresh `2026-10-12T00-40-25Z`, external `2026-10-12T00-40-46Z`) found the three-action flat record could express neither a PR-half degradation nor a step that needs an earlier step's result. Redesigned here (R-crc-6's redesign lane). See Mechanism.
   Kind: rule
-- **2026-10-12 — D-rc12-9: the tail reads the archive emit, never observes again** Its PR state and its commit scope come from the written archive emit. See Mechanism.
+- **2026-10-12 — D-rc12-9: the tail takes preflight's outcome and reads the archive emit, never observes again** Preflight's outcome arrives as `--outcome`; `pr_url`, `pr_state` and the commit scope come from the written archive emit (amended at the proposal walk 2026-10-12, Sal: A; see Case 2). See Mechanism.
   Kind: rule
 - **2026-10-12 — D-rc12-10: `select` needs no change directory** See Mechanism.
   Kind: rule

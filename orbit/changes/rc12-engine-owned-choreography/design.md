@@ -34,9 +34,9 @@ One asset already exists: `test/integration/pr-lifecycle/phase1.ts`, D6's execut
 
 **D5 — `--no-track` at creation and `-u` at the first push.** These fix the dogfood's two tracking silences. The post-merge return becomes `human_acts` on `tail`, fixing the third.
 
-**D6 — `phase1.ts` is promoted, not rewritten.** Its resolution and precondition logic moves to `src/core/pr/select.ts`, with the switch removed (the engine prints it) and the `remote.<r>.ghurl` test hook removed (the harness's remotes get GitHub-shaped URLs instead). Its 39 cases move to the engine's tests: the commit-isolation case to `publish`, the rest to `select`. Each case executes the printed segments. That keeps the iteration-3 lesson the harness exists for: prose can be coherent and still impossible, and only execution distinguishes the two.
+**D6 — `phase1.ts` is promoted, not rewritten.** Its resolution and precondition logic moves to `src/core/pr/select.ts`, with the switch removed (the engine prints it) and the `remote.<r>.ghurl` test hook removed (the harness reaches its bare remotes through a `url.<path>.insteadOf` rewrite of a GitHub-shaped URL instead, and the engine reads the configured URL with `config --get remote.<r>.url`, since `remote get-url` expands the rewrite). Its 39 cases move to the engine's tests: the commit-isolation case to `publish`, the rest to `select`. Each case executes the printed segments. That keeps the iteration-3 lesson the harness exists for: prose can be coherent and still impossible, and only execution distinguishes the two.
 
-**D7 — the tail reads the archive emit (D-rc12-9).** The emit's `pr_url`/`pr_state` presence decides the tail's action, and its `sync_specs.capabilities_updated` decides the scope. The engine keeps no state between the two invocations, and needs none: the emit is the record of the one observation the owner requires.
+**D7 — the tail takes preflight's outcome and reads the archive emit (D-rc12-9).** The body passes preflight's `observations.outcome` to `tail` as `--outcome`, verbatim; the emit supplies `pr_url`, `pr_state` and `sync_specs.capabilities_updated`. The engine keeps no state between the two invocations, and needs none. The emit's two PR fields alone could not carry the outcome: `none`/`several` (degrade the PR half) and `unobserved`/`gh-absent` (skip the tail) both write neither (the proposal verification's finding; Sal: A over a new emit field or a whole-tail skip). A code that disagrees with the emit is a usage error.
 
 **D8 — the outcome sets are closed (D-rc12-12).** `not-found` is keyed on `gh`'s message for a missing pull request, recorded in the gh contract by the capture script as a third error rule. Any other non-zero exit is `unobserved`. `program` never skips.
 
@@ -52,7 +52,7 @@ One asset already exists: `test/integration/pr-lifecycle/phase1.ts`, D6's execut
 | `orbit-review`'s "(zero engine git)" | kept: it cites the requirement by its kept title |
 | `pr-choreography.ts`'s "the orbit engine never shells to git or `gh`" | change 2's to edit, as part of body adoption |
 | `CLAUDE.md`'s D6 paragraph ("ZERO ENGINE GIT") | kept: a historical record, true of D6 when written |
-| comments in `harness.ts`, `phase1.ts`, `emit-composition.ts` | edited here (task 5.1) |
+| comments in `harness.ts` and `emit-composition.ts` | edited here (task 5.1); `phase1.ts` is deleted by task 4.1 |
 
 ## Alternatives considered
 
@@ -81,7 +81,7 @@ the proposing AI's reading of the file; no engine record
 | D-rc12-2 | BOUNDED | live rule | `The \`orbit pr\` command observes and prints; it never writes` (named limit, both residual lines verbatim) |
 | D-rc12-4 | BOUNDED | live rule | `Printed commands are proven by execution` (named limit, both residual lines verbatim) |
 | D-rc12-8 | SOURCED | live rule | `The \`orbit pr\` command observes and prints; it never writes` (the record table: a normative TABLE) |
-| D-rc12-9 | DERIVED | live rule | `\`orbit pr tail\` computes the archive tail` (the emit-reading table: a normative TABLE) |
+| D-rc12-9 | SOURCED | live rule | `\`orbit pr tail\` computes the archive tail` (the `--outcome` table: a normative TABLE) |
 | D-rc12-10 | SOURCED | live rule | `\`orbit pr select\` computes propose's branch selection` (the inputs table: a normative TABLE) |
 | D-rc12-11 | BOUNDED | live rule | `The \`orbit pr\` command observes and prints; it never writes` (named limit, both residual lines verbatim) |
 | D-rc12-12 | SOURCED | live rule | `\`orbit pr preflight\` computes the archive's read-only preflight` (the outcome table) and `\`orbit pr program\` computes the architect readout's PR facts` (a SENTENCE naming the owner) |
