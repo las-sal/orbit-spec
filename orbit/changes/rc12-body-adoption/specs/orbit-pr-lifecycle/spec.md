@@ -1,5 +1,57 @@
 ## MODIFIED Requirements
 
+### Requirement: Config selects the regime; citation selects the target
+
+The `pr:` value SHALL select the REGIME for the repository, and within `per-architecture`
+the change's own metadata SHALL select its TARGET. A change whose `.openspec.yaml` carries an
+`architecture: {doc, stage}` citation rides that doc's PROGRAM BRANCH — its commits land
+directly on the program branch, it gets no branch of its own, and its PR presence is the
+doc's single program PR; a change with no citation takes the `per-proposal` path. Under
+`pr: per-proposal` the citation is irrelevant to the PR layer — every change gets its own
+branch and PR regardless of what it cites. Branch naming: `<change-name>` for per-proposal
+branches; the architecture doc's filename stem for program branches. NEITHER SOURCE
+GUARANTEES A VALID GIT REF: change names and architecture doc stems are constrained to be
+contained and citable, not to satisfy Git's ref grammar, so a name valid on disk can still be
+rejected by Git (a stem ending in `.lock`, a name containing `..`, a trailing dot). The
+mechanical name SHALL therefore be validated with `git check-ref-format --branch <name>`
+before use, in addition to the default-branch collision check; a name Git rejects is a
+DEGRADATION SKIP with a one-line note naming the name and the reason, never a silent
+transformation — orbit does not invent a different branch name than the one its own rule
+derives.
+
+Granularity is resolved ONCE, at the artifact-creating invocation (propose or ff), and FROZEN
+for the change's life: that emit records the resolved ATTACHMENT as the structured
+`pr_attachment` object — `{branch, granularity, url?, state?, doc?}`, whose owning definition
+is `orbit-run-summary-emit`'s attachment-record requirement — and that record, not a re-read
+of the citation, governs every later seam. The object exists precisely so the freeze is
+REPRESENTABLE: a later seam that needed the branch or the granularity but could only read a
+URL would have to re-derive them from the mutable citation, which is the flip hazard this
+rule forbids. A citation added or
+removed after propose is a documented NO-OP for the PR layer, surfaced as a one-line note at
+the next seam when it would change the target, per `orbit pr preflight`'s divergence table; re-pointing an already-attached change is a manual act. (The same
+freeze-at-commitment discipline the predicted Touchpoints map carries, and for the same
+reason: a mid-flight granularity flip would leave the tail hunting a program PR that never
+existed while the real per-change PR sat forever draft.)
+
+#### Scenario: Cited change rides the program branch
+
+- **WHEN** a change citing `{doc: my-program, stage: s2}` is proposed under
+  `pr: per-architecture`
+- **THEN** no per-change branch is created; work lands on the `my-program` branch (created
+  off the default branch if absent) and no per-change PR is opened — the program PR is the
+  change's outward window
+
+#### Scenario: Citation edited after propose is a no-op
+
+- **WHEN** an uncited change (own branch, per-change PR) gains an `architecture:` citation after propose under `pr: per-architecture`
+- **THEN** the frozen attachment from the propose (or ff) emit still governs — the archive tail acts on the existing per-change PR and notes the ignored citation in one line; no program PR is sought or opened
+
+#### Scenario: Uncited change gets its own branch
+
+- **WHEN** a change with no `architecture:` citation is proposed under `pr: per-proposal`
+- **THEN** propose creates `<change-name>` off the default branch, commits the artifacts,
+  pushes, and opens a draft PR `<change-name> → <default-branch>`
+
 ### Requirement: Agent-written landmark descriptions at seams only
 
 The PR description SHALL be agent-written narrative — a LANDMARK recording what the effort
@@ -59,8 +111,9 @@ engine's write gate is fail-loud on unknown payload keys, this enumeration is no
 
 A body SHALL CONSUME an `orbit pr` record by its fields alone, and SHALL NOT re-derive a step
 the record decided: it calls `select` at propose and ff phase 1, `publish` at phase 3,
-`preflight` before the archive emit, `tail` after it, and `program` at the architect arc-done
-readout, and acts by this table, whose rows cover every shape the record type
+`preflight` before the archive's move (the change is still active; its record is carried
+forward to the archive emit and to `tail --outcome`), `tail` after the move and the emit, and
+`program` at the architect arc-done readout, and acts by this table, whose rows cover every shape the record type
 (`The \`orbit pr\` command observes and prints; it never writes`) can return:
 
 | the call returns | the body |
@@ -70,8 +123,11 @@ readout, and acts by this table, whose rows cover every shape the record type
 | `action: skip` | writes ONE line from `reason.code` and `reason.detail`, runs nothing, and continues unattached |
 | `action: proceed`, `degraded: null` | runs `segments` in order; before each segment it authors that segment's `inputs`; it runs each step's `argv` exactly, substituting only an element equal to an input token, every element shell-quoted |
 | `action: proceed`, `degraded: "pr"` | the same, plus ONE line for the PR-half degradation from `reason` |
-| a step fails | stops at that step and writes ONE line naming the completed and the skipped steps by their `step` names; nothing after it runs |
+| `select` returns `off` or `skip`, exits non-zero, or one of its steps fails | ends the PR layer for this invocation: `publish` is never called, and generation proceeds on the current branch, unattached |
+| a step fails | stops at that step and writes ONE line naming the completed and the skipped steps by their `step` names, showing each skipped step's argv verbatim as the recovery the user runs, and stating the consequence: the change proceeds unattached until that recovery lands; nothing after the failed step runs |
 | a segment whose `inputs` name `<emit-path>` | writes the emit between the segments and passes its path |
+| `publish`'s first segment ends | composes the emit's `pr_attachment` as `observations.attachment` plus, when the `open` step created a PR, `url` from that step's standard output and `state: "draft"`, or, on adoption, `url` and `state` from `observations.adopted_url` and `observations.adopted_state`; after a PR-half degradation the attachment carries neither, and the second segment does not run |
+| `tail` is called | passes every path the archive flow edited at its at-archive steps as `--include <path>`, so those edits land in the tail's commit |
 | `human_acts` non-empty | shows each act's argv verbatim, labelled as the user's own act; never runs one |
 | `observations` | reads only what the emit or a note needs; never re-decides a step from it |
 
@@ -82,6 +138,16 @@ fallback: a body carrying both would run both.
 
 - **WHEN** `orbit pr select` returns `proceed` with one segment carrying `git switch -c <branch> --no-track <remote>/<default>`
 - **THEN** the body runs exactly that argv, and runs no branch-existence, collision or tip check of its own
+
+#### Scenario: A free-text input stays one argument
+
+- **WHEN** the body authors a `<title>` containing a space and a double quote and runs `publish`'s `open` step
+- **THEN** `gh pr create` receives the whole title as the one argument after `--title`, unaltered
+
+#### Scenario: A skipped selection ends the PR layer
+
+- **WHEN** `orbit pr select` returns `skip` (for example, reason code `dirty-tree`) at propose
+- **THEN** generation proceeds on the current branch, `orbit pr publish` is never called, and the propose emit carries no `pr_attachment`
 
 #### Scenario: A human act is shown, never run
 
@@ -96,7 +162,7 @@ fallback: a body carrying both would run both.
 
 ### Requirement: `orbit pr preflight` computes the archive's read-only preflight
 
-`orbit pr preflight <change-name>` SHALL compute the read-only preflight of `orbit-archive-modifications`' `PR-attached archive tail`, before the archive emit. It reads the attachment (the latest attachment-bearing propose or ff emit on the change's trail), notes citation divergence in `observations.citation` (defined below), and decides one OUTCOME from this closed set, reported as `observations.outcome`:
+`orbit pr preflight <change-name>` SHALL compute the read-only preflight of `orbit-archive-modifications`' `PR-attached archive tail`, before the archive's move and its emit, while the change is still active: it resolves active changes only, so a call after the move is a usage error. It reads the attachment (the latest attachment-bearing propose or ff emit on the change's trail), notes citation divergence in `observations.citation` (defined below), and decides one OUTCOME from this closed set, reported as `observations.outcome`:
 
 | outcome | when | `action` | emit values |
 |---|---|---|---|
@@ -115,7 +181,8 @@ a `per-proposal` attachment), `current` the change's citation now, `would_select
 `would_select` differs from the frozen attachment. The CURRENT inputs select by the predicate
 `orbit pr publish` resolves with: a program target of the cited doc when the resolved `pr:`
 regime is `per-architecture` and a citation is present, else a per-change target. ONE function
-computes it for both subcommands, so the note and the target can never disagree:
+computes it for `select`, `publish` and `preflight`, so the target selected, the target
+published and the note can never disagree:
 
 | frozen attachment | `would_select` | `diverged` |
 |---|---|---|

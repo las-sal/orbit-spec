@@ -35,20 +35,22 @@ None.
 
 ### Modified Capabilities
 
-- `orbit-pr-lifecycle`: preflight's citation divergence is defined (would-select vs frozen); the
+- `orbit-pr-lifecycle`: preflight's citation divergence is defined (would-select vs frozen) and
+  runs before the archive's move; the freeze requirement's citation note points at it; the
   per-change title rule names an input that exists; the choreography requirement states how a body
   consumes an `orbit pr` record (which carries D-rba-3's post-merge line through `human_acts`).
 
 ## Impact
 
-- `src/core/pr/preflight.ts`, `src/core/pr/publish.ts`: the targeting predicate is extracted and
-  shared, so preflight cannot disagree with publish.
+- `src/core/pr/select.ts`, `src/core/pr/publish.ts`, `src/core/pr/preflight.ts`: the targeting
+  predicate is extracted and shared, so the three cannot disagree.
 - `src/core/templates/workflows/pr-choreography.ts`: the one source of the three references,
   rewritten around `orbit pr` calls.
 - `src/core/templates/workflows/{propose,ff-change,archive-change,architect}.ts`: the PR sections
   that summarise the reference.
 - Tests: preflight divergence cases; the reference-content, parity and generated-surface pins the
   rewrite moves; the recorded-contract and tool-inventory sweeps over the new snippets.
-- No change to the `orbit pr` record shape, the `pr_attachment` shape, or any consent property:
+- No change to the `orbit pr` record's top-level fields, the `pr_attachment` shape, or any consent
+  property (preflight's `observations.citation` gains `would_select`):
   propose and ff stay draft-only, merge stays the user's, and every write still runs under the
   user's own invocation.

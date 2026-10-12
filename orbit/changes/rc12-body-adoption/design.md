@@ -27,8 +27,8 @@ Two defects came in with the work (see explore.md):
 - The archive close shows `tail`'s `human_acts`, including the post-merge return (D-rba-3, D-rba-7).
 
 **Non-Goals:**
-- No change to the `orbit pr` record shape, the `pr_attachment` shape, the allowlist, or any
-  consent property (exit (3)).
+- No change to the `orbit pr` record's top-level fields, the `pr_attachment` shape, the allowlist,
+  or any consent property (exit (3)). Preflight's `observations.citation` gains `would_select`.
 - Moving no write into the engine unless exit (2) misses (D-rc12-3's fallback, D-rba-6).
 - Leaving the cleanliness-predicate conflicts out (D-rc12-7: the blind-pair preflight against the PR
   dirty-tree rule, and the archive suite's staging against the tail's commit scope).
@@ -38,11 +38,15 @@ Two defects came in with the work (see explore.md):
 **D1 — One targeting predicate, shared (D-rba-1).** `publish.ts:62` computes
 `program = regime === 'per-architecture' && citation !== null`. Extract it as one exported function
 in `src/core/pr/inputs.ts`, beside `readRegime` and `readCitation`, returning
-`{granularity, doc?}`. `publish` resolves its target through it, and `preflight` computes
+`{granularity, doc?}` from `(regime, citation)`. The predicate is written twice today, at
+`publish.ts:62` and `select.ts:42`; `select` (passing its staging-directory citation) and
+`publish` resolve their target through the one function, and `preflight` computes
 `would_select` through it. `diverged` compares `would_select` with the attachment's
 `(granularity, doc)`. The regime is read only to decide `diverged`, and the outcome logic never
 consults it. The five-row table is in the delta. Change 1's false positive is row 4, and it becomes
-the first preflight test.
+the first preflight test. The baseline freeze requirement's no-op sentence promised a note on
+EVERY citation edit; it is carried (`Config selects the regime; citation selects the target`) and
+now points at the divergence table, its scenario scoped to `pr: per-architecture`.
 *Alternative:* record the citation in `pr_attachment` at propose. It is out (see Alternatives).
 
 **D2 — The title is judgment from the Why (D-rba-2).** The spec owns the rule. The rewritten
@@ -54,19 +58,30 @@ only`" and points there instead of restating it (R-crc-14). `orbit pr publish` a
 load it (the engine-resolved regime), which subcommand to call at which step, the consumption table
 (named in the spec, and pointed at, not restated), and the judgment the body still owns. That
 judgment is the title, the intent or achievement body, the stage-entry text, the commit messages,
-and the wording of each one-line note from `reason`. Everything a subcommand computes is deleted:
-the resolution algorithm, the preconditions, the compatibility tests, the commit-scope enumeration,
-the four-axis query, the mid-flight recovery commands, and the success-gated record push (now
-`publish`'s second segment). The shared resolution section disappears from all three references,
+and the wording of each one-line note from `reason`. The reference also keeps the two places a
+body carries a fact the record does not hand it directly, both rows of the consumption table:
+the propose emit's `pr_attachment` (`observations.attachment` plus the `open` step's URL, or
+`adopted_url`/`adopted_state`) and the archive's `--include` paths for `tail`. Everything a
+subcommand computes is deleted: the resolution algorithm, the preconditions, the compatibility
+tests, the commit-scope enumeration, the four-axis query, the hand-written mid-flight recovery
+commands (a failure line now shows the skipped steps' printed argv), and the success-gated record
+push (now `publish`'s second segment). The shared resolution section disappears from all three references,
 because every subcommand resolves internally. The architect reference reduces to calling
 `orbit pr program <doc>` and showing its `human_acts`.
 
 **D4 — Body PR sections follow the references.** The `## PR lifecycle` sections in `propose.ts`,
-`ff-change.ts`, `archive-change.ts` (Steps 5.45 and the tail) and `architect.ts` currently summarise
+`ff-change.ts`, `archive-change.ts` (Step 5.45 and the tail) and `architect.ts` currently summarise
 the runbook ("That reference carries the whole choreography: the shared remote/default-branch
 resolution…"). They are rewritten to name the subcommand at each step. The regime read from
 `orbit status --json`'s `pr` field stays, because the bodies still decide whether to load the
-reference at all, and `select`/`publish` return `off` on `never` anyway.
+reference at all, and `select`/`publish` return `off` on `never` anyway. The archive's preflight
+step MOVES before upstream Step 5's move: `orbit pr preflight` resolves active changes only, so the
+body's current Step 5.45 position (after the move) would make every call a usage error and end the
+PR layer (the external proposal pass's CRITICAL). Preflight observes the PR, not the directory, so
+nothing it reads changes across the move; its record is carried forward to the Step 5.5 emit and to
+`tail --outcome`. Teaching `preflight` to read archived changes was considered and not taken: it
+widens the subcommand's input domain for one caller and needs a collision rule `tail` already
+carries.
 
 **D5 — The post-merge return is already printed (D-rba-3, D-rba-7).** `tail.ts:189-193` pushes
 `merge`, `return-fetch`, `return-switch` and `return-fast-forward` onto `human_acts` on a per-change
@@ -85,18 +100,20 @@ any code moves.
 
 - [The architect target is tight: < 2,307 bytes, from a reference whose header and query section
   alone are 1,720] → Measure first. If the reference cannot meet the target as a file, fold the
-  `program` call into the architect body and delete the reference. Exit (2) then reads as fully met,
-  stated as such at apply.
+  `program` call into the architect body and delete the reference; the measure is then the
+  reference plus the body's growth against < 2,307, so the exit is read, not relocated.
 - [A body substitutes argv into a shell without quoting] → The consumption table requires every
-  element to be shell-quoted, and a scenario covers it. The title is the one free-text input, so the
-  reference's worked example uses a title containing a space and a quote.
+  element to be shell-quoted, and the scenario `A free-text input stays one argument` covers it.
+  The title is the one free-text input, so the reference's worked example (task 2.1) uses a title
+  containing a space and a double quote.
 - [The rewritten reference drifts from what the subcommands print] → The reference names the
   subcommands and the record fields only. The recorded-contract sweep and the tool-inventory test
   read the new snippets; the content-fidelity and parity pins move as recorded acts.
 - [Reading the live regime for a note] → The read only decides `diverged`. A regime edited after
   propose produces a truthful note ("would select X now"), and the frozen attachment still governs.
-- [Undeclared delta scenarios] → The delta carries six; each is tagged at apply against the test
-  that exercises it, or ledgered where only a body read can show it.
+- [Undeclared delta scenarios] → Every delta scenario the scenario map reports undeclared, the
+  carried ones included, is tagged at apply against the test that exercises it, or ledgered where
+  only a body read can show it (task 3.3).
 
 ## Alternatives considered
 

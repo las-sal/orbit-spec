@@ -1,0 +1,366 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-12T02:45:23Z",
+  "change": "rc12-body-adoption",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc12-body-adoption/.orbit-runs/review-proposal-2026-10-12T02-40-42Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-12T02-40-42Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 7,
+    "suggestion": 1
+  },
+  "pushback_verification": "All eight verified against current state (select.ts:42 copy, propose-modifications 313-319, tail --include at the spec, the scenario map); none stale.",
+  "resolution_summary": {
+    "resolved": 8,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The shared targeting predicate leaves select's own copy in place",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 3,
+      "classification": "trivial_fix",
+      "action": "named select beside publish and preflight: task 1.1 extracts the predicate from publish.ts:62 and select.ts:42 into one (regime, citation) function; D1 and the delta sentence say select, publish and preflight",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc12-body-adoption/design.md",
+          "orbit/changes/rc12-body-adoption/specs/orbit-pr-lifecycle/spec.md",
+          "orbit/changes/rc12-body-adoption/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "computes it for both subcommands"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc12-body-adoption/tasks.md",
+            "text": "`select.ts:42`"
+          },
+          {
+            "path": "orbit/changes/rc12-body-adoption/specs/orbit-pr-lifecycle/spec.md",
+            "text": "computes it for `select`, `publish` and `preflight`"
+          }
+        ],
+        "searched": [
+          "for both subcommands",
+          "select.ts:42",
+          "targeting predicate"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The baseline still promises a note on every citation edit; the new divergence rule writes one only when the target would change",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-pr-lifecycle/spec.md",
+      "line": 128,
+      "classification": "decision_required",
+      "action": "carried Config selects the regime; citation selects the target as a fourth MODIFIED block: the no-op note fires when the citation would change the target, per the preflight divergence table, and its scenario is scoped to pr: per-architecture (option A; converged with the external pass)",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc12-body-adoption/design.md",
+          "orbit/changes/rc12-body-adoption/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc12-body-adoption/specs/orbit-pr-lifecycle/spec.md",
+            "text": "the next seam when it would change the target, per `orbit pr preflight`"
+          }
+        ],
+        "searched": [
+          "documented NO-OP",
+          "one-line note",
+          "Citation edited after propose"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Carry `Config selects the regime; citation selects the target` as a fourth MODIFIED block in the same capability, rewording the sentence to 'surfaced as a one-line note at the next seam when it would change the target, per `orbit pr preflight`'s divergence table' (a pointer, per R-crc-14), and carry its three scenarios."
+          },
+          {
+            "label": "B",
+            "body": "Keep the baseline sentence, and make row 4 a note whenever the citation differs from the citation at propose. This needs the citation recorded at propose, which D-rba-1 ruled out (Considered & out), so A is the consistent option."
+          }
+        ],
+        "chosen": "A"
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "The step-failure row drops the recovery commands orbit-propose-modifications still requires",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-pr-lifecycle/spec.md",
+      "line": 73,
+      "classification": "decision_required",
+      "action": "widened the step-failure row: the one line also shows each skipped step's argv verbatim as the recovery and states the unattached consequence, satisfying orbit-propose-modifications without modifying it (option A)",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc12-body-adoption/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "by their `step` names; nothing after it runs"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc12-body-adoption/specs/orbit-pr-lifecycle/spec.md",
+            "text": "showing each skipped step's argv verbatim as the recovery the user runs"
+          }
+        ],
+        "searched": [
+          "recovery commands",
+          "a step fails",
+          "exact commands that complete"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Widen the row so the line also shows each skipped step's argv verbatim, as the recovery the user runs (the record already carries them), plus the unattached consequence. This satisfies the baseline sentence with no second capability."
+          },
+          {
+            "label": "B",
+            "body": "MODIFY orbit-propose-modifications' requirement to point at the consumption table: a second capability, still within R-crc-1's ceiling of three."
+          }
+        ],
+        "chosen": "A"
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "No row says where the propose emit's pr_attachment url and state come from",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-pr-lifecycle/spec.md",
+      "line": 76,
+      "classification": "trivial_fix",
+      "action": "added a consumption row composing pr_attachment from observations.attachment plus the open step's URL and draft state, or adopted_url/adopted_state, with neither after a PR-half degradation; task 2.1 and D3 keep it (converged with the external pass)",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc12-body-adoption/tasks.md",
+          "orbit/changes/rc12-body-adoption/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc12-body-adoption/specs/orbit-pr-lifecycle/spec.md",
+            "text": "composes the emit's `pr_attachment` as `observations.attachment`"
+          },
+          {
+            "path": "orbit/changes/rc12-body-adoption/tasks.md",
+            "text": "the attachment composed from the record"
+          }
+        ],
+        "searched": [
+          "Recording the attachment",
+          "pr_attachment",
+          "adopted_url"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The archive rewrite never passes the at-archive-note edits to tail --include",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 11,
+      "classification": "trivial_fix",
+      "action": "added a tail row and task 2.2 clause passing every at-archive edit as --include <path>",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc12-body-adoption/specs/orbit-pr-lifecycle/spec.md",
+          "orbit/changes/rc12-body-adoption/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc12-body-adoption/tasks.md",
+            "text": "with every at-archive edit passed as `--include <path>`"
+          },
+          {
+            "path": "orbit/changes/rc12-body-adoption/specs/orbit-pr-lifecycle/spec.md",
+            "text": "passes every path the archive flow edited at its at-archive steps as `--include <path>`"
+          }
+        ],
+        "searched": [
+          "--include",
+          "at-archive"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The carried 'Draft window' scenario has no tagging task",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 20,
+      "classification": "trivial_fix",
+      "action": "widened task 3.3 to every undeclared delta scenario, the carried ones included; the design Risks line no longer counts six",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc12-body-adoption/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "Tag the consumption and title scenarios",
+          "The delta carries six"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc12-body-adoption/tasks.md",
+            "text": "Tag every undeclared delta scenario, the carried ones included"
+          }
+        ],
+        "searched": [
+          "undeclared",
+          "scenario",
+          "carries six"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Design claims a scenario covers shell-quoting and a worked title example; neither exists",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 91,
+      "classification": "trivial_fix",
+      "action": "made the claims real: added the scenario A free-text input stays one argument and a task 2.1 clause for the worked example with a space and a double quote",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc12-body-adoption/specs/orbit-pr-lifecycle/spec.md",
+          "orbit/changes/rc12-body-adoption/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "and a scenario covers it."
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc12-body-adoption/design.md",
+            "text": "`A free-text input stays one argument` covers it"
+          },
+          {
+            "path": "orbit/changes/rc12-body-adoption/specs/orbit-pr-lifecycle/spec.md",
+            "text": "#### Scenario: A free-text input stays one argument"
+          }
+        ],
+        "searched": [
+          "shell-quoted",
+          "worked example",
+          "quote"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The architect fold-in reads exit (2) as met by moving bytes, and names one pin too few",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 86,
+      "classification": "trivial_fix",
+      "action": "stated the architect fold-in measure as reference plus body growth against < 2,307, and named the config-profile pin in task 3.2",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/rc12-body-adoption/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "Exit (2) then reads as fully met"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/rc12-body-adoption/design.md",
+            "text": "the reference plus the body's growth against < 2,307"
+          },
+          {
+            "path": "orbit/changes/rc12-body-adoption/tasks.md",
+            "text": "config-profile.test.ts:134"
+          }
+        ],
+        "searched": [
+          "fully met",
+          "pr-resolution.md",
+          "fold"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "All eight findings of the fresh pass resolved by repair; two (the citation-note contradiction and the attachment mapping) converged with the external pass and are walked here.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc12-body-adoption",
+  "ripple_misses": 0
+}
