@@ -1,0 +1,35 @@
+{
+  "command": "explore",
+  "timestamp": "2026-10-12T00:46:47Z",
+  "change": "rc12-engine-owned-choreography",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Resumed in place on the active change to take the proposal blind pair's record-shape findings through R-crc-6's redesign lane. Captured six rules with Mechanism entries: D-rc12-8 (observations / body-run segments with authored inputs / the user's acts, plus `degraded` for a PR-half degradation), D-rc12-9 (the tail reads the archive emit's pr_url/pr_state and sync_specs instead of observing again), D-rc12-10 (select needs no change directory), D-rc12-11 (fetch by ls-remote then explicit refspecs, --no-tags; BOUNDED), D-rc12-12 (closed outcome sets; not-found keyed on gh's recorded message; program never skips), D-rc12-13 (engine decides precondition skips, body writes notes from reason codes — a narrowing of R-crc-5's letter, Sal's call: took the recommendation). D-rc12-14: the walk regenerates the artifacts from this mechanism.",
+  "decisions_captured": 14,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 8,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [
+    {
+      "id": "D-rc12-2",
+      "kind": "a step the runbook is silent on, so no row names it (tracking at creation, the post-merge return were two)",
+      "method": "the dogfood log's rows classed \"wrong (silent)\", and every later live run's log classified the same way"
+    },
+    {
+      "id": "D-rc12-4",
+      "kind": "deterministic behaviour of a real remote host neither the live run nor a local temporary repository reaches (e.g. branch protection, `gh` auth expiry, a renamed default branch)",
+      "method": "a second live run under `per-architecture`, logged with the dogfood log's classes"
+    },
+    {
+      "id": "D-rc12-11",
+      "kind": "a fetch side effect configured outside the refspec and tag settings (e.g. `fetch.prune`, hooks, `remote.<r>.mirror`)",
+      "method": "a test per configuration key, added when a run log names one; the shim records the exact argv so a changed form is visible"
+    }
+  ],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose rc12-engine-owned-choreography — 8 live rules accounted, 3 bounded residuals named (D-rc12-2, D-rc12-4, D-rc12-11); formalize when you are ready (or /orbit:explore rc12-engine-owned-choreography to keep refining)"
+}

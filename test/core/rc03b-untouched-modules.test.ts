@@ -106,6 +106,10 @@ import { fileURLToPath } from "node:url";
  * calls the one shared containment test, `resolvesWithin` in the new `src/core/containment.ts`, which the report's
  * archived fallback also calls (fresh W1, Sal: A1 — the archive root itself counts as contained on both surfaces).
  * `report-render.ts` did not move.
+ * MOVED at rc12-engine-owned-choreography apply (2026-10-12) — a PLANNED act (its task 5.1, design D10):
+ * `emit-composition.ts` only, comment-only — the payload-table comment stops citing a "zero-engine-git"
+ * requirement and names the kept title with its write-boundary reading (the engine observes, the body
+ * writes). A pin the task plan did not name, recorded here as its own act. No code line moved.
  */
 const PINNED: Record<string, string> = {
   "schemas/spec-driven/schema.yaml": "21e0ae86532a39be558a2b81d23738a6fbf92fbd32b0d01612a65e83d6a96739",
@@ -124,7 +128,7 @@ const PINNED: Record<string, string> = {
   "src/core/artifact-graph/state.ts": "f59f748b94cd94ca2fe022ec5aa66b3251dd1b2c00bddb9a17cbd9273a04d0f2",
   "src/core/artifact-graph/trail.ts": "39b5d110ef53b7e03f49ddf292e86db598a14f426a02e6d84142e16231e37d69",
   "src/core/artifact-graph/types.ts": "d83e0cc6d7fca7b80618ffbb7ce052ee68e35be79e7949a941e989b2e102392c",
-  "src/core/emit-composition.ts": "d0ba1baeda9c900282f7c21c28e9eb4b68823bf01bf174a6f6234b9e25bdfbe4",
+  "src/core/emit-composition.ts": "a916584bf60867d4a7d5fda40b4c4c8c6ecea3e75aaf1f21d18e97984d6aadb5",
   "src/core/report-render.ts": "d759878995ed8b5e5c70fb1165d88d134f0aeb91acfce99d155654d1506b9f36",
 };
 

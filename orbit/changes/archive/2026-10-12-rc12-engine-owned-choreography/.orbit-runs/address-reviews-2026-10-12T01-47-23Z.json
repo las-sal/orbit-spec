@@ -1,0 +1,148 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-12T01:47:23Z",
+  "change": "rc12-engine-owned-choreography",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc12-engine-owned-choreography/.orbit-runs/external-system-2026-10-12T01-36-59Z.md",
+  "source_command": null,
+  "source_token": "2026-10-12T01-36-59Z",
+  "latest_apply_token": "2026-10-12T01-30-33Z",
+  "external_reviewer": "GPT-6",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 4,
+    "suggestion": 0
+  },
+  "pushback_verification": "All four verified against current state; two converge with the fresh pass and are recorded stale naming its log; no disagreement (the tail finding differs only in severity).",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 2,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Publish mishandles staged deletions and renames within the change",
+      "marker_source": "external",
+      "file": "src/core/pr/publish.ts",
+      "line": 89,
+      "classification": "trivial_fix",
+      "evidence": "publish.ts kept already-staged deletions out of git add only under orbit/explore/<change>/; a staged rename inside the change added only its destination to the scope.",
+      "action": "publish enumerates its scope through the shared enumerateScope: every path under the change directory (deletions and a staged rename's source included) and every deletion under the staging directory; every already-staged deletion is printed in the commit and kept out of the add. New case: a staged git rm and a staged rename inside the change; the pushed tree drops both sources; it fails on the pre-walk code. The delta's publish scope paragraph states it.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/pr/scope.ts",
+          "test/core/pr/publish.test.ts",
+          "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "if (e.path.startsWith(ownPrefix)) scope.push(e.path);",
+          "that is new, untracked or modified, and every deletion"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/pr/publish.ts",
+            "text": "{ prefix: `${changeRel}/`, deletionsOnly: false }"
+          },
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md",
+            "text": "new, untracked, modified or deleted (a staged rename's source included)"
+          }
+        ],
+        "searched": [
+          "alreadyStaged",
+          "rename",
+          "ownPrefix"
+        ],
+        "scope": [
+          "src/core/pr"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Tail loses pre-move deletions already staged in the index",
+      "marker_source": "external",
+      "file": "src/core/pr/tail.ts",
+      "line": 129,
+      "classification": "stale",
+      "action": "converged with the fresh half's CRITICAL (same site, same claim), walked in its log",
+      "evidence": "resolved in address-reviews-2026-10-12T01-47-04Z (the earlier pass's log)",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The read-only allowlist and its instrument both admit ref deletion",
+      "marker_source": "external",
+      "file": "src/core/pr/run.ts",
+      "line": 59,
+      "classification": "stale",
+      "action": "converged with the fresh half's WARNING (same site, same claim), walked in its log",
+      "evidence": "resolved in address-reviews-2026-10-12T01-47-04Z (the earlier pass's log)",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Preflight discards facts needed for the required degradation note",
+      "marker_source": "external",
+      "file": "src/core/pr/preflight.ts",
+      "line": 64,
+      "classification": "trivial_fix",
+      "evidence": "validatePrUrl returned only the outcome code; preflight's reason.detail was {} on retargeted, head-mismatch and repository-mismatch.",
+      "action": "validatePrUrl carries {observed, expected} for the failed predicate; preflight puts it in reason.detail and program in observations.invalidated_detail. Each positive-invalidation case asserts its detail. The delta's preflight paragraph names the fields.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/pr/program.ts",
+          "test/core/pr/preflight.test.ts",
+          "test/core/pr/program.test.ts",
+          "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "return { outcome: 'retargeted' };",
+          "return { outcome: 'head-mismatch' };",
+          "return { outcome: 'repository-mismatch' };"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/pr/preflight.ts",
+            "text": "expected: defaultBranch"
+          },
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md",
+            "text": "carries the failed predicate's `observed` value"
+          }
+        ],
+        "searched": [
+          "validatePrUrl",
+          "reason.detail",
+          "retargeted to"
+        ],
+        "scope": [
+          "src/core/pr"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Two resolved (publish staged deletions and renames; the facts preflight's note needs), two stale as converged with the fresh half and walked in its log.",
+  "iteration": 5,
+  "next_recommended": "/orbit:review --as system rc12-engine-owned-choreography",
+  "ripple_misses": 0
+}

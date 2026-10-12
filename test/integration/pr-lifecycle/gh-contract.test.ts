@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
+import { GH_PR_NOT_FOUND } from '../../../src/core/pr/preflight.js';
 
 const require = createRequire(import.meta.url);
 const contractPath = path.join(__dirname, 'gh-contract.json');
@@ -39,6 +40,13 @@ describe('gh contract — freshness (the checked-in file, never the host gh)', (
     expect(contract.rules.pr_selector_required_with_repo).toBe('argument required when using the --repo flag');
     expect(contract.rules.pr_verbs_require_repo).toBe(true);
     expect(contract.rules.repo_view_requires_positional).toBe(true);
+  });
+
+  it('records the third rule — gh pr view on a missing pull request — and the engine keys not-found on it', () => {
+    expect(contract.rules.pr_view_not_found).toMatch(/^GraphQL: Could not resolve to a PullRequest/);
+    // `orbit pr` cannot read this test file, so its discriminator is a constant in src; this
+    // holds the two together, so a re-capture that changed the message fails here first.
+    expect(contract.rules.pr_view_not_found).toContain(GH_PR_NOT_FOUND);
   });
 
   it('captured arity and aliases for the two snippets that need them', () => {

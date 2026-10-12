@@ -361,6 +361,37 @@ export function buildProgram(options: ProgramOptions = {}): Command {
       if (exitCode !== 0) process.exit(exitCode);
     });
 
+  // PR lifecycle (rc12): observe and print — the read-only queries a seam needs, every write as argv
+  const pr = program
+    .command('pr')
+    .description('PR lifecycle: observe and print the writes for a seam (never performs a write)');
+  const prSub = (
+    name: 'select' | 'publish' | 'preflight' | 'tail' | 'program',
+    arg: string,
+    description: string
+  ) => pr.command(`${name} ${arg}`).description(description).option('--json', 'Output as JSON');
+  const runPr = async (
+    name: 'select' | 'publish' | 'preflight' | 'tail' | 'program',
+    target: string,
+    options: { json?: boolean; outcome?: string; include?: string[] }
+  ) => {
+    const { PrCommand } = await import('../commands/pr.js');
+    const exitCode = new PrCommand().execute(name, target, options);
+    if (exitCode !== 0) process.exit(exitCode);
+  };
+  prSub('select', '<name>', 'Propose and ff Phase 1: resolve the branch and print the switch')
+    .action((name: string, options?: { json?: boolean }) => runPr('select', name, options ?? {}));
+  prSub('publish', '<change-name>', 'Propose and ff Phase 3: the commit scope and the land-and-open segments')
+    .action((name: string, options?: { json?: boolean }) => runPr('publish', name, options ?? {}));
+  prSub('preflight', '<change-name>', 'Archive preflight: validate the attachment and decide one outcome')
+    .action((name: string, options?: { json?: boolean }) => runPr('preflight', name, options ?? {}));
+  prSub('tail', '<change-name>', 'Archive tail: the commit scope and PR steps, from the outcome and the archive emit')
+    .option('--outcome <code>', 'The preflight outcome (observations.outcome), passed verbatim')
+    .option('--include <path>', 'An at-archive-note edit to add to the commit scope (repeatable)', (v: string, prev: string[] = []) => [...prev, v])
+    .action((name: string, options?: { json?: boolean; outcome?: string; include?: string[] }) => runPr('tail', name, options ?? {}));
+  prSub('program', '<doc>', 'Architect arc-done readout: the program PR, its live state, and the human acts')
+    .action((doc: string, options?: { json?: boolean }) => runPr('program', doc, options ?? {}));
+
   // Architecture tier (D-arc D2): computed program position over orbit/architecture/ docs
   const architecture = program
     .command('architecture')

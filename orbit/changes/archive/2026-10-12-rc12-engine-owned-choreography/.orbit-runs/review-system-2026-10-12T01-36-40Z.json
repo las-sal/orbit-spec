@@ -1,0 +1,114 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-12T01:36:40Z",
+  "change": "rc12-engine-owned-choreography",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 1,
+      "warning": 1,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "CRITICAL",
+      "dimension": "correctness",
+      "file": "src/core/pr/tail.ts",
+      "line": 129,
+      "title": "tail drops the pre-move deletion when the archive move is already staged, committing the change twice",
+      "recommendation": "Enumerate the pre-move deletion from the index AND the staged state, the way publish already does: take every porcelain entry whose path (or rename source) is under orbit/changes/<change>/ and is deleted, keep staged ones out of the `git add` argv (git refuses a pathspec matching nothing) but in the `git commit --only` argv (which carries a staged deletion). Add a tail case with the move staged by `git add -A orbit/changes` and assert the pushed tree no longer carries orbit/changes/<change>/.",
+      "reproduction": "tail.ts:129 computes the deletions as `git ls-files -z -- orbit/changes/<change>/`, which lists INDEX entries only. Once the move is staged (this repo's own archive practice stages it with `git add -A orbit/changes ...` before `npm test`, because the source lint's domain is the git index — Q-crc-14), the index entries are gone and the list is empty. Executed in a scratch repo: commit orbit/changes/x/p.md; `mv orbit/changes/x orbit/changes/archive/2026-10-11-x`; `git add -A orbit/changes` (status: `R  orbit/changes/x/p.md -> orbit/changes/archive/2026-10-11-x/p.md`); `git ls-files -- orbit/changes/x/` prints nothing; then the segment tail would print for that scope — `git add -- orbit/changes/archive/2026-10-11-x` (exit 0) and `git commit --only -F msg -- orbit/changes/archive/2026-10-11-x` (exit 0). Result: HEAD's tree carries BOTH orbit/changes/x/p.md and orbit/changes/archive/2026-10-11-x/p.md, and `D  orbit/changes/x/p.md` is left staged. The push publishes the duplicated tree, which is exactly what pr-archive-tail.md (lines 144-149) says the deletion step exists to prevent. No tail test stages the move (tail.test.ts's fixture moves with fs.renameSync and never stages), and observations.unrelated_staged inspects only each entry's new path, so the left-behind deletion is never named."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "src/core/pr/run.ts",
+      "line": 57,
+      "title": "Both allowlists admit `git symbolic-ref --delete <ref>`, a ref write, so exit (3)'s shim cannot catch it",
+      "recommendation": "Refuse every dash-prefixed argument on symbolic-ref except the read flags the engine needs (e.g. -q / --short), in BOTH gitAllowed (run.ts) and the transcribed allowedGit (test/integration/pr-lifecycle/instrument.ts:30), and add `git symbolic-ref --delete refs/remotes/origin/HEAD` to the injected-write cases in instrument.test.ts. Consider the same closure for `diff` (`--output=<file>` writes a file and passes the `--name-only` test)."
+    },
+    {
+      "pass": "1",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md",
+      "line": 131,
+      "title": "preflight's `unobserved` row says 'any other non-zero gh exit', but resolution failures land there too",
+      "recommendation": "Widen the row's `when` to name the resolution failures preflight.ts maps to `unobserved` (no remote, several remotes, unparseable URL, no default branch, reason code carrying the resolution code), matching the owner's 'an unresolvable remote or base is a degradation skip'."
+    },
+    {
+      "pass": "1",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md",
+      "line": 170,
+      "title": "tail's human_acts sentence reads as unconditional, but the code (rightly) gives a program PR none and a degraded tail none",
+      "recommendation": "State in the requirement that the merge and the return are carried on a per-change, non-degraded tail only, the program PR's merge being `program`'s human act at arc-done; and add `not-found` to `program`'s outcome list, which program.ts can report after a fall-through with no survivor."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "src/core/pr/publish.ts",
+      "line": 128,
+      "title": "publish prints a commit git refuses when the scope is empty",
+      "recommendation": "On an empty scope (a re-run after segment 1 committed but the push failed), omit the stage and commit steps rather than printing `git commit --only -F <message-file> --` with no paths, which git refuses with `fatal: No paths with --include/--only does not make sense.` (executed in a scratch repo)."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "src/core/templates/workflows/pr-choreography.ts",
+      "line": 425,
+      "title": "The generated surface still says the engine never shells to git or gh, false once this change ships",
+      "recommendation": "Design D10 assigns this to change 2. If change 1 archives before change 2 lands, the three generated references (lines 13, 425, 451, 473) state a falsified fact to adopters; either narrow the sentence to 'never WRITES through git or gh' here, or record the interval as a named residual at archive."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Pass 0 ran as a structural check rather than the full verify skill: tasks 19/19 checked, `orbit validate --strict` valid, the scenario map reads 25 delta scenarios all behaviour-declared with none uncovered, and the pr and pr-lifecycle suites (206 tests) plus the completion and cli-grammar suites (547) pass on the live checkout. Pass 6 ran as a targeted residue sweep (the zero-engine-git sites of design D10 and `orbit validate --sources`), not the full audit-drift skill. Probed hardest: the allowlist (both copies, by executing gitAllowed), every tail row against the archive emit, and the commit-scope argv of publish and tail executed in scratch repositories. The pattern behind the critical: tail's scope is a promoted reading of the reference's prose ('the deletion the move produced'), and the prose assumed an unstaged filesystem move; the engine inherited the assumption without the case that would falsify it, while publish, written later, already handles staged deletions.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "6"
+  ],
+  "passes_skipped": [
+    "4: no perspectives defined (orbit/lenses/perspectives.md absent)",
+    "5: no critical paths defined (orbit/lenses/critical-paths.md absent)"
+  ],
+  "direction": {
+    "disposition": "hold",
+    "reasoning": "The engine is close: the observe-and-print boundary holds in the code, the bounded fetch is real and tested against a configured refspec, and the promoted phase-1 cases execute every printed segment. But the archive tail's commit scope is computed from the index alone, so the one state this repository's own archive practice produces (the move staged before the suite runs) yields a printed commit that publishes the change twice and leaves the deletion behind. That is the exact defect the owner's deletion rule exists to prevent, and it sits on the seam change 2 will route every attached archive through. Repair the deletion enumeration (publish already shows the pattern) with a staged-move case, and close the symbolic-ref hole in both allowlists so exit (3)'s instrument means what it claims; then move forward."
+  },
+  "final_assessment": "1 critical, 1 warning, 4 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc12-engine-owned-choreography"
+}

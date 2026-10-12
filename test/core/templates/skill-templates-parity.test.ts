@@ -82,6 +82,11 @@ import { generateSkillContent } from '../../../src/core/shared/skill-generation.
 // `archive-summary-schema.md` reference gained a `json example archived` block, its spine list became a
 // pointer to `orbit-conventions`, and the `audit.findings_summary` note was repointed (design D6). The
 // skill BODY did not change; the generated-content hashes below did not move.
+// rc12-engine-owned-choreography's system walk (2026-10-12, fresh S4, Sal: A) moved FOUR function hashes —
+// ff, archive, propose and architect, the four skills whose `references/` carry the PR choreography — and
+// no generated SKILL.md body: one sentence in `pr-choreography.ts`, "the orbit engine never shells to git
+// or gh", narrowed to "performs no git or gh write", because `orbit pr` now reads. A pin the walk's plan
+// did not name, re-recorded here as its own act; change 2 rewrites the references around the sentence.
 const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   getExploreSkillTemplate: '2835cca2ae531f797e0417d14f9bc66e6fd9c1b54558781ea95f3cbaad097583',
   getNewChangeSkillTemplate: '8f68be94db91a147b93d492f6f32ab3c02725a20a001c87602ac8d9741587614',
@@ -90,7 +95,7 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // stopped naming "spec-driven v4" and `blind-pair` as the post-apply slot — under v5 which review comes
   // next depends on the cadence and the review preference, so the body says it is read, not predicted.
   getApplyChangeSkillTemplate: 'a6fee1123aa05f50fb422bea764f5ed3dee8a4a3d85481515b65a693d2c38758',
-  getFfChangeSkillTemplate: 'b4411dbfa4c2fe0c02b5b5137006edf50f993d9187153b21e43de680b3f9b148',
+  getFfChangeSkillTemplate: '87834e4852e637d60f9567a9405945115c25a92c239e9d2e52d032706b24a003',
   getSyncSpecsSkillTemplate: 'a9672b720eff36fb30f2229d835fd9a9e4cc88e81f1773bc74aff79247aa9809',
   // rc08b-walk-routing (2026-10-05, task 3.3): the command-table row's retired "auto-discovers … when invoked
   // with a change name and no markers found" became the discovery sentence. One re-record, both onboard hashes.
@@ -114,7 +119,7 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // Step 3.2 reports cases 2, 3 and 8 and widens its DEFERRED rule to post-move state (fresh S2); bulk
   // archive briefs before each move and gains its per-change archive emit step (fresh W2, S1). The same
   // four hashes moved; no other pin did.
-  getArchiveChangeSkillTemplate: '325dd7115deb6af3f2a9f913f641cc4303a4f538e62b3b6b3e881d25f87054ad',
+  getArchiveChangeSkillTemplate: '645143ea04c7f71069846dff01f0e4753a2635fa21bed63e56f24fc67b57686f',
   getBulkArchiveChangeSkillTemplate: '5ba90cd976aa0dca445a1c06e5408a697dfd2712501003847ce0cae26fd4859e',
   getOrbitSyncCommandTemplate: '1067039e869d8dedf7922da46230b53a88253cf3fe27c7a5d60c96bc9a43453f',
   // rc06b-map-readers (2026-10-05) — verify moved DELIBERATELY, the first named edit to an upstream
@@ -154,7 +159,7 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // Moved a second time at rc09a's system walk (2026-10-11): the brief's validation named as non-strict, the
   // Split route's "the rest of the flow runs unchanged", "run" for "re-run" under Declare, and the heading
   // line's "exactly" dropped (the parser reads CommonMark indentation) — one re-record for the walk's edits.
-  getOrbitProposeSkillTemplate: 'd47ac6f0ff804d3172069e65a4d914d36ccac4afbd3c7ca9adb68fe7df99e9a4',
+  getOrbitProposeSkillTemplate: '332e82fdc53d631383bb7f8016411c1d7a3833fc67d0635f35daa0c5f86bb5aa',
   getOrbitProposeCommandTemplate: 'b91222654d5050d7ae7f2f49b5d6c4b34e65638bd8c5ae3e622550eb1329c168',
   getFeedbackSkillTemplate: 'ded61ad85c5050f7bf241870b14bfcdd929f0be68a028c1130fd30a66efbda3b',
   // rc15 (ended-stage-state, 2026-09-29): the orbit-architect body moved ONCE, deliberately — §5 (the
@@ -175,7 +180,7 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // escaped each backtick around `orbit architecture status` twice inside the template literal, so the
   // generated doc scaffold carried a literal backslash before each one; it now carries plain backticks.
   // That one line, nothing else; held from here by test/core/cli-grammar/escaped-backticks.test.ts.
-  getArchitectSkillTemplate: 'd0cd052e33c0684b14f3b248ee96119015c61a4cf6023b9947849df143c0fce1',
+  getArchitectSkillTemplate: 'c91af8dffe6d4c478c917213e48196e21d528b553c8753554007c70ff4db2407',
   getOrbitArchitectCommandTemplate: 'b65b8cca6431bb45aa8587d3bfc1e9458981e2e1bc925ae45cd57414143cb3db',
 };
 

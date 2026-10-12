@@ -1,0 +1,215 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-12T00:57:03Z",
+  "change": "rc12-engine-owned-choreography",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {},
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "dimension": "correctness",
+      "severity": "WARNING",
+      "title": "A URL-less attachment's zero or several fallback reaches tail as `skip`, while preflight calls it a PR-half degradation",
+      "file": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md",
+      "line": 150,
+      "recommendation": "The tail's emit-reading table keys on two bits (`pr_url`, `pr_state`), but preflight's `none` and `several` outcomes and its `unobserved` and `gh-absent` outcomes all write neither field, so tail cannot tell them apart. Preflight's own table says `none`/`several` are `proceed` with `degraded: \"pr\"` (commit and push stand); tail's row 'neither, with an attachment' says `skip`. The delta contradicts itself, and D-rc12-9's DERIVED closure missed a member. The emit cannot carry the distinction without a new field.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Tail takes preflight's outcome on the command line (`--outcome <code>`, from preflight's record), the body passing it through; the emit stays the record of pr_url/pr_state, and tail's table keys on the outcome. No emit-shape change; the handoff is explicit."
+        },
+        {
+          "label": "B",
+          "body": "Add an optional `pr_outcome` field to the archive emit (orbit-emit-composition, a second capability), and key tail's table on it."
+        },
+        {
+          "label": "C",
+          "body": "Read the owner's zero/several rule as a whole-tail SKIP (its text says 'SKIP with a note' there, unlike the validation paragraph's explicit commit-and-push), change preflight's none/several rows to `skip`, and tail's table stays as written."
+        }
+      ],
+      "walk_entry": {
+        "title": "`tail` never says where the PR identity it writes to comes from, or whether it observes again",
+        "file": "specs/orbit-pr-lifecycle/spec.md"
+      }
+    },
+    {
+      "dimension": "correctness",
+      "severity": "WARNING",
+      "title": "Retiring `config --get` leaves no allowlisted read of a GitHub-shaped remote URL in the harness the walk prescribes",
+      "file": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md",
+      "line": 9,
+      "recommendation": "Measured: a bare remote reached through `url.<path>.insteadOf https://github.com/acme/widget.git` pushes and fetches, but `git remote get-url origin` (allowlisted) and `git ls-remote --get-url` both return the rewritten local path; only `git config --get remote.origin.url` returns the GitHub URL. A GitHub URL without the rewrite cannot be fetched at all. So the canonical-id derivation fails in every harness case unless the engine reads the raw URL. Restore `config --get remote.<r>.url` (exactly that key) to the allowlist, state that the canonical id derives from the configured URL, and name the insteadOf rewrite as the harness mechanism. That also matches users whose real checkouts carry insteadOf rewrites.",
+      "walk_entry": {
+        "title": "phase1.ts carries a harness hook (`git config remote.<r>.ghurl`) that would be promoted into the engine",
+        "file": "design.md"
+      }
+    },
+    {
+      "dimension": "coherence",
+      "severity": "SUGGESTION",
+      "title": "D10 lists phase1.ts's comment as edited here, but the change retires phase1.ts",
+      "file": "orbit/changes/rc12-engine-owned-choreography/design.md",
+      "line": 55,
+      "recommendation": "The sweep table's last row names `harness.ts`, `phase1.ts` and `emit-composition.ts` as edited by task 5.1; task 5.1 names only the first and last, and phase1.ts is deleted by task 4.1. Drop phase1.ts from the row.",
+      "walk_entry": {
+        "title": "The zero-engine-git sweep is both too wide and too narrow",
+        "file": "tasks.md"
+      }
+    },
+    {
+      "dimension": "completeness",
+      "severity": "SUGGESTION",
+      "title": "`.openspec.yaml` changed in the walk commit and sits outside every entry's edit record",
+      "file": "orbit/changes/rc12-engine-owned-choreography/.openspec.yaml",
+      "line": 1,
+      "recommendation": "The fingerprint re-stamp for the newly carried `Test instruments derive from a recorded real-CLI contract` block is correct and required; no entry's ripple names the file. A record gap, not a defect."
+    },
+    {
+      "dimension": "completeness",
+      "severity": "SUGGESTION",
+      "title": "explore.md changed after the base file and sits outside every entry's edit record",
+      "file": "orbit/changes/rc12-engine-owned-choreography/explore.md",
+      "line": 1,
+      "recommendation": "The D-rc12-8..14 capture was the exploration session's edit (commit d9116cb5), before the walk, and every entry lists explore.md under `kept` only. A record gap by construction of the redesign route, not a defect."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Sixteen of nineteen entries landed: the record split, the select inputs table, the bounded fetch, the URL-bearing record rule, publish's two segments and the closed preflight set all read as the walks claimed. The two regressions share a cause: each resolution changed an input domain without re-running every member of it. The tail table was derived from two emit fields and never checked against preflight's seven outcomes, and the ghurl retirement was written without trying to fetch from a GitHub-shaped remote. The second was settled by running it; the first by reading the two tables side by side.",
+  "passes_run": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "passes_skipped": [],
+  "verification": [
+    {
+      "title": "The three-action table cannot express a degradation that skips only the PR half",
+      "file": "specs/orbit-pr-lifecycle/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "`tail` never says where the PR identity it writes to comes from, or whether it observes again",
+      "file": "specs/orbit-pr-lifecycle/spec.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "`tail` scope's 'git reports as changed' is ambiguous for a capability the archive ADDS",
+      "file": "specs/orbit-pr-lifecycle/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "`preflight` gives no rule separating `not found` from a failed query",
+      "file": "specs/orbit-pr-lifecycle/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "`program` under the action table contradicts the never-suppressed arc-done readout",
+      "file": "specs/orbit-pr-lifecycle/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "'33 cases' is stale, and one of them is not a `select` case",
+      "file": "design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Engine-decided skips and engine-written notes go past R-crc-5's judgment list without a record",
+      "file": "proposal.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The zero-engine-git sweep is both too wide and too narrow",
+      "file": "tasks.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "phase1.ts carries a harness hook (`git config remote.<r>.ghurl`) that would be promoted into the engine",
+      "file": "design.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "`off` on an unattached archive carries no note; say who writes the unattached line",
+      "file": "specs/orbit-pr-lifecycle/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Two meta-scenarios need a deliberately broken fixture before 4.6 can tag them",
+      "file": "tasks.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "`commands` is defined as 'the writes' but also carries reads and copy-text",
+      "file": "specs/orbit-pr-lifecycle/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Select cannot resolve a change before its artifacts exist",
+      "file": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md:43",
+      "verdict": "landed"
+    },
+    {
+      "title": "Bare fetch does not guarantee that only remote-tracking refs move",
+      "file": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md:12",
+      "verdict": "landed"
+    },
+    {
+      "title": "Delta membership and Git dirtiness do not identify sync-owned edits",
+      "file": "orbit/changes/rc12-engine-owned-choreography/design.md:35",
+      "verdict": "landed"
+    },
+    {
+      "title": "Program discovery contradicts the latest URL-bearing record rule",
+      "file": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md:139",
+      "verdict": "landed"
+    },
+    {
+      "title": "Publish’s ordered commands cannot execute the attachment-record phase as specified",
+      "file": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md:74",
+      "verdict": "landed"
+    },
+    {
+      "title": "Validation’s closed outcome set omits a required predicate failure",
+      "file": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md:96",
+      "verdict": "landed"
+    },
+    {
+      "title": "The return-to-default wording contradicts itself",
+      "file": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md:121",
+      "verdict": "landed"
+    }
+  ],
+  "final_assessment": "0 critical, 2 warning, 3 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-10-12T00-54-05Z",
+    "2026-10-12T00-54-37Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews rc12-engine-owned-choreography"
+}
