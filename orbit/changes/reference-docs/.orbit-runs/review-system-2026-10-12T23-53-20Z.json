@@ -1,0 +1,96 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-12T23:53:20Z",
+  "change": "reference-docs",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "docs/customization.md",
+      "line": 342,
+      "title": "customization.md links to an anchor the cli.md rewrite removed",
+      "recommendation": "The rewrite replaced the old '## Schema Commands' heading (base 94e1a608, docs/cli.md:686) with '## Schemas' / '### orbit schema', so `cli.md#schema-commands` now lands at the top of the page. A heading-anchor scan over README.md and docs/*.md finds this as the only dead anchor after the change. Either repoint it to `cli.md#schemas` now, as the change already repointed migration-guide.md's opsx.md link, or record it for concept-docs, which rewrites customization.md.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Repoint docs/customization.md:342 to `cli.md#schemas` in this change (a one-line edit on a pending page, the same carve-out as the migration-guide link)."
+        },
+        {
+          "label": "B",
+          "body": "Leave customization.md untouched and record the dead anchor for concept-docs, which owns the page's rewrite."
+        }
+      ]
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "docs/cli.md",
+      "line": 519,
+      "title": "cli.md says externalRunner.preset is the only nested path config set accepts",
+      "recommendation": "validateConfigKeyPath (src/core/config-schema.ts:59-64) also accepts `featureFlags.<name>`, so `orbit config set featureFlags.foo true` is a second accepted nested path. Narrow the sentence to the runner: \"`externalRunner.preset` is the one nested path under `externalRunner` that `orbit config set` accepts.\""
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "docs/workflow-engine.md",
+      "line": 28,
+      "title": "workflow-engine.md's no-stale-state sentence reads against workflows.md's staleness caveat",
+      "recommendation": "workflow-engine.md:28 says editing an artifact \"never leaves stale state behind\", while workflows.md:169-171 says, correctly, that an edit does not mark a review stale, so a passed review gate stays passed over an edited change until an apply. Both are true, of different things (computed state vs. review currency), but a reader of the engine page alone could infer that a gate re-checks edits. Reword it to say the state is recomputed, never cached, and point to workflows.md's caveat for what an edit does not invalidate."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "The implementation is small and careful: the coverage helper is pure, its domain is read from buildProgram and ALL_WORKFLOWS (the implicit help command is not in program.commands, so `orbit help` is correctly not owed), the missing-page rule runs outside the file-local helper as designed, and the feedback retarget touches exactly the four sites D5 names. The scenario map shows all 11 delta scenarios declared, validate --strict passes, and the user-docs and feedback suites are green.\n\nMost of the effort went into the prose, because the stage's real risk is a page that teaches behaviour the engine does not have. I checked the pages' claims against the code and the generated bodies: every documented flag against `--help`; the position strings and the `blocked by incomplete requires` reason against gates.ts; the config profile, config set, config path and data-dir claims against config.ts, config-schema.ts and global-config.ts; the Codex prompt path against its adapter; review_preference against project-config.ts; the address-reviews discovery, audit-drift flags, archive's --skip-audit and gate listing, and apply's inflection prompt against their bodies; and `validate --sources` with no registry, run in a scratch project. Everything held except the one config sentence. What is left is cross-page link hygiene and one framing sentence.\n\nPass 0 (verify) and Pass 6 (drift) ran inline as scoped checks: task completion, scenario coverage and design adherence; then residue, cross-document consistency and a heading-anchor scan over README.md and docs/*.md. Neither the verify nor the audit-drift workflow was invoked, so no verify or audit-drift record was written. Passes 4 and 5 were skipped because orbit/lenses/ does not exist.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "6"
+  ],
+  "passes_skipped": [
+    "4",
+    "5"
+  ],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The pages teach orbit as the code behaves. The coverage check holds the two reference pages to the program and the registry, and it reads its domain rather than typing it. The feedback retarget is complete and leaves R-ugd-3's other strings alone. What remains is polish: one dead anchor this rewrite created on a page another stage owns, one sentence that overstates by a single config path, and one framing sentence. None changes what a reader would do, so the change can move toward archive once the walk settles them."
+  },
+  "final_assessment": "0 critical, 0 warning, 3 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews reference-docs"
+}
