@@ -138,6 +138,29 @@ OpenSpec names its capability, and each named capability exists in `orbit/specs/
 README's install and quickstart is recorded (observed, not inferred), rehearsed from a local `git+file://` clone before the repository is public and
 re-run against the public URL after the flip.
 
+Shipped as (2026-10-12; archived as `orbit/changes/archive/2026-10-12-landing-page/`; the charter stands as amended by
+R-ugd-8): `README.md` is orbit's landing page and has left the pending-rewrite list. `Built on OpenSpec` names
+`@fission-ai/openspec@1.3.1` and the `upstream/v1.3.1` baseline. `How orbit improves on OpenSpec` makes nine claims,
+naming sixteen capabilities. Install is R-ugd-4's line at `v2.0.0`, and the Quickstart runs Claude Code's loop with
+`--fresh` reviews, the install surface table, and one Codex line. `package.json` is at `2.0.0`, the 56 fetched upstream
+tags are gone, and `upstream` is `--no-tags`. The onboard body states orbit's version apart from the 1.3.1 baseline.
+`orbit-user-docs` gained the improvement-claims check. The system review's rehearsal found that R-ugd-4's line could not
+install a tree that builds at install (npm's git preparation under `-g`; D-lp-11 to D-lp-13). The route went through
+explore and an architect ruling (R-ugd-8) and came back as the new capability `orbit-release`:
+`scripts/release-tree.mjs` (`npm run release:tree`) tags a built release tree on a commit of its own, and a test installs
+its tag globally from git. Baseline capabilities 27 to 28.
+
+Exit (1) MET: the README is unlisted and passes every file-local check. Exit (2) MET: the claims check passes the README,
+and each named capability resolves. Exit (3) PENDING, two thirds by design:
+- The shell half of the rehearsal is observed from a `git+file://` clone carrying a release-tree `v2.0.0`. Under npm
+  11.12.1 and 10.9.9 the install exits 0, `orbit --version` prints `2.0.0`, init writes 51 files, and `orbit status` runs.
+- The `/orbit:propose` half in a clean Claude Code (task 5.2) and the post-flip re-run (5.4) are deferred on the archive
+  emit, with the tag itself (5.3, after the merge).
+
+The system blind pair (fresh 0C/2W/1S, external GPT-6 Codex 0C/2W/1S) was walked in three logs, one routing the install
+to explore and one landing the repair. An in-context VERIFICATION graded four `landed` and one `regressed` (two prose
+slips, walked to zero), and the gate computed PASSED. 3642 tests green.
+
 ### Stage reference-docs — the command and workflow pages teach orbit
 
 Depends-on: docs-under-test
@@ -223,3 +246,8 @@ cannot find TypeScript (measured on npm 10 and 11, the cause read in npm's sourc
 walk to the change's exploration, which measured four routes and settled on a built release tree (D-lp-16). R-ugd-8
 supersedes R-ugd-7's tag placement only; the landing-page charter now names the release commit. R-ugd-4 stands
 letter for letter.
+
+**2026-10-12 — landing-page archived** (`orbit/changes/archive/2026-10-12-landing-page/`; PR #19 ready for Sal's merge).
+Exits (1) and (2) are MET, and exit (3) is pending: its shell half was observed, and its `/orbit:propose` half and
+post-flip re-run are deferred, as is the `v2.0.0` release tag (`npm run release:tree` after the merge). Ratification
+waits for those observations or for Sal's word.
