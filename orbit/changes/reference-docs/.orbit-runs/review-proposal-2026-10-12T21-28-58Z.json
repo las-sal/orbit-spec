@@ -1,0 +1,133 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-12T21:28:58Z",
+  "change": "reference-docs",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 3,
+      "suggestion": 2
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "design.md",
+      "line": 115,
+      "title": "The feedback help line is not in src/commands/feedback.ts",
+      "recommendation": "D5 says feedback.ts changes in three places, the third being the help line \"Submit feedback about OpenSpec\". That string is not in feedback.ts: it is the commander description at src/cli/program.ts:475 and the completion registry's description at src/core/completions/command-registry.ts:190 (registry parity does not compare descriptions, so the two can drift silently). The manual-submission fallback also still prints `Labels: feedback` (feedback.ts:115) after the label is dropped from the URL and argv. R-ugd-10's carve-out names feedback.ts for the help line, so the ruling carries the same location slip. Name the real sites in design D5, task 2.1, the proposal's Impact and Touchpoints, and say how the carve-out covers them.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Edit the help line at both real sites (program.ts:475, command-registry.ts:190) and drop the `Labels: feedback` display line. Record in design D5 that R-ugd-10's \"its help line\" lives outside feedback.ts and the carve-out covers it by intent."
+        },
+        {
+          "label": "B",
+          "body": "Keep the carve-out to the letter of feedback.ts: retarget the two repository sites and the label only, leave the help line under R-ugd-3, and remove the help-line claim from D5, task 2.1 and the proposal."
+        }
+      ]
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-user-docs/spec.md",
+      "line": 5,
+      "title": "The coverage check does not say what happens when docs/cli.md or docs/commands.md is absent",
+      "recommendation": "The check \"reads those two pages and passes every other user doc\". Once the pending list is empty, deleting or renaming docs/cli.md removes it from the surface set, and an implementation that iterates the passed surfaces passes vacuously. Another implementation could fail on the missing page. R-ugd-2 forbids removing a page, but nothing in the suite enforces it. Add a row or sentence: when neither listed nor present, the check fails naming the missing page. Add a scenario for it."
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "tasks.md",
+      "line": 15,
+      "title": "init's --profile flag is as inert as config profile, but only config profile is ruled",
+      "recommendation": "D-rd-5 and task 3.3 rule only `orbit config profile`. `orbit init --help` documents `--profile <profile>` as \"Override global config profile (core or custom)\", and init.ts:516-518 sends the profile to getProfileWorkflows, which returns ALL_WORKFLOWS (profiles.ts:54). Task 3.3 says to read every flag from `--help`, so a page built to it would teach a core-versus-custom choice that does nothing, which is exit (3)'s case. Extend D-rd-5 and task 3.3 to every profile-bearing flag (`init --profile`, and any on `update`), documenting them as inert."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "design.md",
+      "line": 81,
+      "title": "getting-started's end-to-end walk leaves out the address-reviews walk",
+      "recommendation": "The outline runs explore, propose, review, apply, review, archive. A review with substantive findings leaves its gate unpassed until `/orbit:address-reviews` walks them, and a SUGGESTION-only pass still has the walk as the gate's next (rc18). A reader following the page would reach apply or archive with the gate naming a step the page never showed. D4 already gives the walk to workflows.md. Add it to getting-started's sequence after each review."
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "tasks.md",
+      "line": 5,
+      "title": "The exact 55/15 count test pins the domain it derives",
+      "recommendation": "\"the real domain reads 55 paths and 15 ids today\" as an equality goes red whenever a command is added. That is a second record of the program's shape, alongside the coverage check that already fails a new command without a page. Make it a non-vacuity floor (at least one path at depth two, at least one hidden command excluded, 15 ids), or state that the pin is a deliberate tripwire and say who updates it."
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "specs/orbit-user-docs/spec.md",
+      "line": 22,
+      "title": "The name match leaves case unstated and lets a prose noun satisfy a command",
+      "recommendation": "\"carries that string\" reads as case-sensitive, but the spec does not say so. One implementation could fold case and accept `Orbit status` at a sentence start. Separately, the bounded match is met by prose nouns: \"each orbit change has…\" names `orbit change`, and \"the orbit spec format\" names `orbit spec`. Those are exactly the two deprecated noun-first forms D4 wants documented. State case-sensitivity, and accept the prose-noun hole in the Risks entry by name."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "design.md",
+      "line": 159,
+      "title": "Touchpoints miss a test the pending-list edit turns red",
+      "recommendation": "test/core/user-docs/pending-rewrite.test.ts:32 builds its expectation as `[...unlisted, 'docs/cli.md']` after filtering docs/cli.md out of the real pending list. Once task 4.1 removes docs/cli.md, `unlisted` already holds it and the expectation duplicates it, so the test fails. Task 4.3's full run will catch it, but neither the Touchpoints nor task 4.1 names the edit. Add it to 4.1, re-anchoring on a fixture path or a still-listed page."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Verified by execution: a probe built the program with fromProgram and reads exactly 55 visible paths (23 top-level, 32 subcommands, max depth two) and 15 ALL_WORKFLOWS ids. The boundary rule holds on the real tree: `orbit schemas` does not name `orbit schema`, and `/orbit:bulk-archive` does not name `/orbit:archive`. The MODIFIED block differs from baseline only by the coverage-check clause, the base fingerprint verifies, validate --strict passes, and no @review: marker sits in the artifacts. The weakest seam is the feedback retarget: the ruling and the design both place the help line in a file that does not hold it. The rest are gaps in what the outline and the check say at their edges, not in the mechanism.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The mechanism is small, derived and verified against the real program. Every gap found is a repair inside the artifacts: name the real feedback sites, close the absent-page edge, extend the inert-profile ruling to init's flag, and put the walk in the end-to-end page. None needs a redesign or a return to explore, so walk them and proceed to apply."
+  },
+  "final_assessment": "0 critical, 4 warning, 3 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews reference-docs"
+}
