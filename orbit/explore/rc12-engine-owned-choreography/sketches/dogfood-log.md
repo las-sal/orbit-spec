@@ -61,3 +61,12 @@ The several-remotes rule held exactly where `gh`'s own heuristic is known to pic
 Seam-2 reading: 10 steps deterministic, 2 judgment (the validation command, the rewritten body), 2
 wrong (the staging clash with the suite's git-index lint; the unspelled push, repeated from seam
 1). Still to observe: the merge, Sal's act.
+
+## Seam 3 — merge (2026-10-12, Sal's act)
+
+| step | observed | class |
+|---|---|---|
+| merge | Sal ran `gh pr merge --repo las-sal/orbit-spec 15 --merge` from the prompt after the readout named it as theirs; the AI declined to run it (CLAUDE.md's outward-actions rule) → MERGED at `134976af` | det |
+| post-merge | nothing in the runbook speaks after the merge: the local checkout stays on the merged branch, which is neither deleted nor switched away from; returned to `main` by hand (`git switch main`, fast-forward) | wrong (silent) |
+
+Run complete: propose → review → apply → review → archive → merge, all on one per-change PR.
