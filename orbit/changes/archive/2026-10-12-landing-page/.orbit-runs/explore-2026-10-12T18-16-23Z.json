@@ -1,0 +1,30 @@
+{
+  "command": "explore",
+  "timestamp": "2026-10-12T18:16:23Z",
+  "change": "landing-page",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Resumed in place on the escalated install route. Root cause read in npm's source: -g leaks into pacote's nested git-dependency install (D-lp-13); no change inside the package repairs it (D-lp-12). Sal took route D: a release ships a built release tree on a release commit off main's merge commit, so R-ugd-4's install line installs unchanged (D-lp-14, D-lp-16, Mechanism entry BOUNDED on npm versions); routes A and C are recorded out. R-ugd-7's 'tag on main' needs amending in an architect session.",
+  "decisions_captured": 16,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 2,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [
+    {
+      "id": "D-lp-5",
+      "kind": "an improvement claim written outside a top-level list item of the section — in its prose, a table, or anywhere else on the page",
+      "method": "review reads the page for claims of improvement; the same review owns whether each named capability actually carries its claim (truth is a record, R-crc-11)"
+    },
+    {
+      "id": "D-lp-16",
+      "kind": "an npm or pacote version whose prepare trigger set or git packing rule differs from pacote 21.5.0's, so a release tree that installs under one npm fails under another",
+      "method": "install the release tree under each npm major the supported Node versions ship (10 and 11 today), in the rehearsal and in a test that runs the release script into a scratch clone and installs its tag"
+    }
+  ],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose landing-page — 2 live rules accounted, 2 bounded residuals named (D-lp-5, D-lp-16); formalize when you are ready (or /orbit:explore landing-page to keep refining)"
+}

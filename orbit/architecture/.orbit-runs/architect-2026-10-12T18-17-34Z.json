@@ -1,0 +1,37 @@
+{
+  "command": "architect",
+  "timestamp": "2026-10-12T18:17:34Z",
+  "change": null,
+  "doc": "update-gh-documentation",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "R-ugd-8 captured (Sal): a release ships a built release tree on a release commit off main's merge commit, superseding R-ugd-7's tag placement only, so R-ugd-4's install line installs unchanged; the landing-page charter re-pointed, the source and Release-tarball routes recorded out, and the status log appended. No stage awaits ratification.",
+  "stages_touched": [
+    "landing-page"
+  ],
+  "rulings_captured": [
+    "R-ugd-8"
+  ],
+  "completions_ratified": [],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      {
+        "path": "orbit/architecture/update-gh-documentation.md",
+        "why": "R-ugd-4, R-ugd-7 and R-ugd-8 govern the install route and the tag"
+      },
+      {
+        "path": "orbit/changes/landing-page/explore.md",
+        "why": "D-lp-11 to D-lp-16 and the D-lp-16 Mechanism entry: what the release script must do"
+      },
+      {
+        "path": "orbit/changes/landing-page/.orbit-runs/address-reviews-2026-10-12T18-01-09Z.json",
+        "why": "the escalated entry the re-walk resolves"
+      }
+    ],
+    "next_command": "/orbit:address-reviews landing-page",
+    "model_hint": null,
+    "seam": "the redesign round trip: the re-walk lands the release-tree repair and resolves the escalated external finding"
+  },
+  "next_recommended": "/orbit:address-reviews landing-page"
+}

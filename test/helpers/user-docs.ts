@@ -1,8 +1,10 @@
 /**
  * The user docs as a checked surface (docs-under-test): `orbit-user-docs`' residue check, the
- * pending-rewrite list's exactness, and the docs sweeps' non-vacuity floors. This module
- * implements that capability's checks; it states none of its rules.
+ * improvement-claims check (landing-page), the pending-rewrite list's exactness, and the docs sweeps'
+ * non-vacuity floors. This module implements that capability's checks; it states none of its rules.
  */
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import MarkdownIt from 'markdown-it';
 import {
@@ -47,27 +49,39 @@ const RESIDUE = /openspec|opsx|fission/gi;
 /** HTML enabled, as GitHub renders the README: a heading inside an HTML block is no heading. */
 const md = new MarkdownIt({ html: true });
 
+/** A top-level ATX section: its title, and its 0-based line range [start, end). */
+interface Section {
+  title: string;
+  start: number;
+  end: number;
+}
+
 /**
- * 0-based lines inside an admitted README section: from a top-level ATX heading whose text is an
- * admitted title to the next top-level ATX heading at its level or above. Headings come from a
- * markdown-it parse (the extractor's parser, with HTML blocks enabled), so a `#` line inside a
- * fence, an HTML block, a list item or a blockquote is no heading; a setext heading is not read
- * (the named limit).
+ * Every top-level ATX section of a parse: from a top-level ATX heading to the next top-level ATX
+ * heading at its level or above. Headings come from a markdown-it parse (the extractor's parser, with
+ * HTML blocks enabled), so a `#` line inside a fence, an HTML block, a list item or a blockquote is no
+ * heading; a setext heading is not read (the named limit).
  */
-export function admittedLines(text: string): Set<number> {
-  const tokens = md.parse(text, {});
+function atxSections(tokens: ReturnType<typeof md.parse>, lineCount: number): Section[] {
   const headings: Array<{ line: number; level: number; text: string }> = [];
   tokens.forEach((token, i) => {
     if (token.type !== 'heading_open' || token.level !== 0 || !token.map || !/^#+$/.test(token.markup)) return;
     headings.push({ line: token.map[0], level: token.markup.length, text: (tokens[i + 1]?.content ?? '').trim() });
   });
-  const lineCount = text.split('\n').length;
+  return headings.map((heading, k) => ({
+    title: heading.text,
+    start: heading.line,
+    end: headings.slice(k + 1).find((h) => h.level <= heading.level)?.line ?? lineCount,
+  }));
+}
+
+/** 0-based lines inside an admitted README section (see `atxSections` for what bounds one). */
+export function admittedLines(text: string): Set<number> {
   const admitted = new Set<number>();
-  headings.forEach((heading, k) => {
-    if (!ADMITTED_SECTIONS.includes(heading.text)) return;
-    const end = headings.slice(k + 1).find((h) => h.level <= heading.level)?.line ?? lineCount;
-    for (let l = heading.line; l < end; l++) admitted.add(l);
-  });
+  for (const section of atxSections(md.parse(text, {}), text.split('\n').length)) {
+    if (!ADMITTED_SECTIONS.includes(section.title)) continue;
+    for (let l = section.start; l < section.end; l++) admitted.add(l);
+  }
   return admitted;
 }
 
@@ -89,6 +103,78 @@ export function residueFailures(surfaces: Surface[]): string[] {
   return failures;
 }
 
+// ─── the improvement-claims check (landing-page design D2) ───────
+
+/** The README section whose top-level list items are the improvement claims. */
+export const CLAIMS_SECTION = 'How orbit improves on OpenSpec';
+
+/** A NAME: the whole content of one inline code span. */
+const CAPABILITY_NAME = /^orbit-[a-z0-9]+(-[a-z0-9]+)*$/;
+
+/** Whether a name resolves: `orbit/specs/<name>/spec.md` exists in this repository. */
+export const capabilityExists = (name: string): boolean => fs.existsSync(path.join(REPO, 'orbit', 'specs', name, 'spec.md'));
+
+/**
+ * The index of the next backtick run of exactly `run`'s length at or after `from` in a block's raw source, skipping
+ * one preceded by a backslash when it would OPEN a span; -1 when none. A code span's name is located by its opening
+ * run, so a span that wraps a line still counts that line ending (markdown-it emits no break token inside a span).
+ */
+function backtickRun(source: string, run: string, from: number, opening = true): number {
+  for (let i = source.indexOf(run, from); i >= 0; i = source.indexOf(run, i + 1)) {
+    if (source[i - 1] === '`' || source[i + run.length] === '`') continue;
+    if (opening && source[i - 1] === '\\') continue;
+    return i;
+  }
+  return -1;
+}
+
+/**
+ * The improvement-claims check over `README.md` (every other surface passes): each top-level list
+ * item of the claims section, its nested items' names counted toward it, names at least one
+ * capability, and every name resolves. Names are read from `code_inline` tokens, so a fence is never
+ * read; a name's line is its inline block's first line plus the line endings in the block's source before the span.
+ */
+export function claimsFailures(surfaces: Surface[], exists: (name: string) => boolean = capabilityExists): string[] {
+  const failures: string[] = [];
+  for (const surface of surfaces) {
+    if (surface.file !== 'README.md') continue;
+    const where = describeSurface(surface);
+    const tokens = md.parse(surface.text, {});
+    const sections = atxSections(tokens, surface.text.split('\n').length).filter((s) => s.title === CLAIMS_SECTION);
+    let items = 0;
+    for (let i = 0; i < tokens.length; i++) {
+      const open = tokens[i];
+      if (open.type !== 'list_item_open' || open.level !== 1 || !open.map) continue;
+      const itemLine = open.map[0];
+      if (!sections.some((s) => itemLine >= s.start && itemLine < s.end)) continue;
+      items++;
+      let names = 0;
+      let j = i + 1;
+      for (; j < tokens.length && !(tokens[j].type === 'list_item_close' && tokens[j].level === open.level); j++) {
+        const inline = tokens[j];
+        if (inline.type !== 'inline' || !inline.map) continue;
+        let offset = 0;
+        for (const child of inline.children ?? []) {
+          if (child.type !== 'code_inline') continue;
+          const open = backtickRun(inline.content, child.markup, offset);
+          const close = open < 0 ? -1 : backtickRun(inline.content, child.markup, open + child.markup.length, false);
+          if (close >= 0) offset = close + child.markup.length;
+          if (!CAPABILITY_NAME.test(child.content)) continue;
+          names++;
+          if (!exists(child.content)) {
+            const line = inline.map[0] + (open < 0 ? 0 : inline.content.slice(0, open).split('\n').length - 1);
+            failures.push(`${where}:${line + 1}: '${child.content}' names no capability in orbit/specs (the improvement-claims check)`);
+          }
+        }
+      }
+      if (names === 0) failures.push(`${where}:${itemLine + 1}: improvement claim names no capability (the improvement-claims check)`);
+      i = j;
+    }
+    if (items === 0) failures.push(`${where}: no improvement claim found under '${CLAIMS_SECTION}' (the improvement-claims check)`);
+  }
+  return failures;
+}
+
 // ─── the file-local checks and the pending list (design D2) ───────
 
 /** The docs' declared set, read from `orbit-user-docs`' requirement as it stands. */
@@ -98,8 +184,9 @@ export function docsInventory(): Inventory {
 
 /**
  * Every FILE-LOCAL check over the given surfaces, each failure prefixed with its check: residue, the
- * `orbit` sweep and guard, the `git`/`gh` sweeps and guards, and the inventory's unknown heads
- * against the docs' declared set (`inventory`, by default the real one).
+ * `orbit` sweep and guard, the `git`/`gh` sweeps and guards, the inventory's unknown heads against
+ * the docs' declared set (`inventory`, by default the real one), and the improvement-claims check
+ * (`README.md` only).
  */
 export async function fileLocalFailures(surfaces: Surface[], inventory: Inventory = docsInventory()): Promise<string[]> {
   const tag = (check: string, list: string[]) => list.map((f) => `[${check}] ${f}`);
@@ -113,6 +200,7 @@ export async function fileLocalFailures(surfaces: Surface[], inventory: Inventor
     failures.push(...tag(tool, [...sweepRecorded(analysis, validate, contract), ...guardFailureLines(analysis)]));
   }
   failures.push(...tag('inventory', unknownHeadFailures(analyseHeads(surfaces), recordedHeads(), inventory)));
+  failures.push(...tag('claims', claimsFailures(surfaces)));
   return failures;
 }
 

@@ -1,0 +1,301 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-12T17:15:06Z",
+  "change": "landing-page",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/landing-page/.orbit-runs/review-proposal-2026-10-12T17-10-57Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-12T17-10-57Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 3,
+    "suggestion": 4
+  },
+  "pushback_verification": "All seven verified against current state; none stale.",
+  "resolution_summary": {
+    "resolved": 7,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The Docs section's link to docs/opsx.md is residue, so exit (1) cannot pass as designed",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 56,
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/landing-page/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved",
+      "classification": "decision_required",
+      "action": "D1 Docs links ten pages and leaves docs/opsx.md unlinked until reference-docs renames it; the Risks entry, the Non-Goals line and task 4.1 say so.",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Link ten pages and leave docs/opsx.md unlinked until reference-docs renames it (that stage repoints links anyway); say so in D1 and the Docs risk."
+          },
+          {
+            "label": "B",
+            "body": "Pull the docs/opsx.md rename forward into this stage (scope growth into reference-docs' charter; a third touched area)."
+          }
+        ],
+        "chosen": "A"
+      },
+      "sweep": {
+        "retired": [
+          "links to the eleven pages under their current names"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/landing-page/design.md",
+            "text": "`docs/opsx.md` is NOT linked"
+          },
+          {
+            "path": "orbit/changes/landing-page/tasks.md",
+            "text": "Docs (ten pages; `docs/opsx.md` unlinked)"
+          }
+        ],
+        "searched": [
+          "eleven",
+          "opsx"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "The ADDED requirement gates itself on pending membership, contradicting the exactness rule that runs it over a listed README",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-user-docs/spec.md",
+      "line": 51,
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/landing-page/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved",
+      "classification": "trivial_fix",
+      "action": "The ADDED requirement gates on nothing itself: the suite runs it over unlisted docs and the exactness rule over a listed README alone; the listed-README scenario restated; design D2 aligned.",
+      "sweep": {
+        "retired": [
+          "When `README.md` is not on the pending-rewrite list, the IMPROVEMENT-CLAIMS CHECK",
+          "reads nothing and reports nothing"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/landing-page/specs/orbit-user-docs/spec.md",
+            "text": "A listed README is held by the exactness rule, not the suite"
+          },
+          {
+            "path": "orbit/changes/landing-page/design.md",
+            "text": "The check gates on nothing itself"
+          }
+        ],
+        "searched": [
+          "not on the pending-rewrite list",
+          "listed README"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "What counts as a backticked `orbit-*` token is stated only in design, and the two readings diverge",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-user-docs/spec.md",
+      "line": 15,
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/landing-page/design.md",
+          "orbit/changes/landing-page/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved",
+      "classification": "trivial_fix",
+      "action": "The requirement states the <name> production (whole inline code span), a row for a span beginning orbit- that is not a whole name, orbit-spec named as failing, and a scenario; design D2 points at the production.",
+      "sweep": {
+        "retired": [
+          "^orbit-[a-z0-9-]+$"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/landing-page/specs/orbit-user-docs/spec.md",
+            "text": "<name> ::= orbit-[a-z0-9]+(-[a-z0-9]+)*"
+          },
+          {
+            "path": "orbit/changes/landing-page/specs/orbit-user-docs/spec.md",
+            "text": "A span that is not a whole name is not read"
+          }
+        ],
+        "searched": [
+          "orbit-[a-z0-9",
+          "backticked"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Task 2.2 tags only the Orientation scenarios a test asserts; the carried others have no route to being declared",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 9,
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved",
+      "classification": "trivial_fix",
+      "action": "Task 2.2 writes a text test over the onboard template asserting all three Orientation scenarios, tagged @scenario.",
+      "sweep": {
+        "retired": [
+          "where a test asserts them"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/landing-page/tasks.md",
+            "text": "write a text test over the onboard template asserting each of the three Orientation scenarios"
+          }
+        ],
+        "searched": [
+          "Orientation scenarios"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "D1 does not cite the baseline scenario the README must keep satisfying",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 41,
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/landing-page/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved",
+      "classification": "trivial_fix",
+      "action": "D1's Built on OpenSpec bullet names orbit-conventions' Upstream version pinning scenario and requires @fission-ai/openspec@1.3.1 in full; task 4.1 carries it.",
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/landing-page/design.md",
+            "text": "\"Pinned baseline declared in README\""
+          },
+          {
+            "path": "orbit/changes/landing-page/tasks.md",
+            "text": "(`@fission-ai/openspec@1.3.1` named in full)"
+          }
+        ],
+        "searched": [
+          "Pinned baseline"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "'upstream's notice kept' under License can be read as quoting the notice, which is residue there",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 60,
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/landing-page/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved",
+      "classification": "trivial_fix",
+      "action": "License says MIT and points at LICENSE; the notice stays in the file only.",
+      "sweep": {
+        "retired": [
+          "upstream's notice kept"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/landing-page/design.md",
+            "text": "the copyright notice stays in the `LICENSE` file only"
+          }
+        ],
+        "searched": [
+          "notice",
+          "License"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Task 5.3 does not say whose act the tag push is",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 28,
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/landing-page/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved",
+      "classification": "trivial_fix",
+      "action": "D4 and task 5.3 name the actor: the orbit session Sal opens after the merge, on his word; merging and any Release page stay Sal's.",
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/landing-page/design.md",
+            "text": "by the orbit session Sal opens after the merge"
+          },
+          {
+            "path": "orbit/changes/landing-page/tasks.md",
+            "text": "in the orbit session he opens then and on his word"
+          }
+        ],
+        "searched": [
+          "push it by name"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Seven of seven resolved: F1 by Sal's A (docs/opsx.md unlinked until reference-docs), six as obvious repairs to the claims requirement, design and tasks.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews landing-page",
+  "ripple_misses": 0
+}

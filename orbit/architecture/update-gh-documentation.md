@@ -63,6 +63,15 @@ be seen. Flipping visibility to public is Sal's act at arc-done, never an orbit 
   fetched into the local clone. Upstream's future numbers do not matter: the engine is frozen at the `1.3.1` baseline
   and moves only by deliberate cherry-pick, npm keeps the packages apart by name, and the stage stops the clone fetching
   upstream's tags (the exploration's D-lp-2).
+  *Where its tag sits is superseded by R-ugd-8; the version and the rest of it stand.*
+- **R-ugd-8** (Sal, 2026-10-12; from the landing-page exploration's D-lp-16; supersedes R-ugd-7's "on `main`") — a
+  release ships a BUILT RELEASE TREE. The release tag sits on a release commit whose parent is `main`'s merge commit:
+  a release script builds, force-adds `dist/`, and removes from that commit's `package.json` the scripts that make npm
+  prepare a git dependency (`prepare`, `build`, `postinstall`, `install`, `preinstall`, `prepack`). R-ugd-4's line,
+  `npm install -g github:las-sal/orbit-spec#<tag>`, installs that tree unchanged. Measured cause: under `-g`, npm leaks
+  its global flag into the nested install it runs to prepare a git dependency, so the build never finds its toolchain
+  (npm 10 and 11; the root fix is npm's, and filing it is Sal's outward act). The release commit is never merged
+  back; `main` keeps building through `prepare`.
 
 ## Open questions
 
@@ -119,7 +128,8 @@ Complete: [ ]
 
 Charter: rewrite `README.md` as orbit's landing page: what orbit is (a hard fork of OpenSpec 1.3.1, attributed),
 how it improves on OpenSpec (each claim naming the baseline capability that carries it), install (the pinned
-GitHub install of R-ugd-4, at version `2.0.0` per R-ugd-7, with `package.json` bumped and the `v2.0.0` tag cut on `main`),
+GitHub install of R-ugd-4, at version `2.0.0` per R-ugd-7, with `package.json` bumped and the `v2.0.0` tag cut on the
+release commit R-ugd-8 builds from `main`'s merge commit),
 a quickstart through the core loop, and links into `docs/`. Upstream's logo, badges and Discord leave the page.
 Goals G1, G2.
 
@@ -127,6 +137,29 @@ Exit: (1) the README passes docs-under-test's checks with no recorded exception;
 OpenSpec names its capability, and each named capability exists in `orbit/specs/`; (3) a clean-machine run of the
 README's install and quickstart is recorded (observed, not inferred), rehearsed from a local `git+file://` clone before the repository is public and
 re-run against the public URL after the flip.
+
+Shipped as (2026-10-12; archived as `orbit/changes/archive/2026-10-12-landing-page/`; the charter stands as amended by
+R-ugd-8): `README.md` is orbit's landing page and has left the pending-rewrite list. `Built on OpenSpec` names
+`@fission-ai/openspec@1.3.1` and the `upstream/v1.3.1` baseline. `How orbit improves on OpenSpec` makes nine claims,
+naming sixteen capabilities. Install is R-ugd-4's line at `v2.0.0`, and the Quickstart runs Claude Code's loop with
+`--fresh` reviews, the install surface table, and one Codex line. `package.json` is at `2.0.0`, the 56 fetched upstream
+tags are gone, and `upstream` is `--no-tags`. The onboard body states orbit's version apart from the 1.3.1 baseline.
+`orbit-user-docs` gained the improvement-claims check. The system review's rehearsal found that R-ugd-4's line could not
+install a tree that builds at install (npm's git preparation under `-g`; D-lp-11 to D-lp-13). The route went through
+explore and an architect ruling (R-ugd-8) and came back as the new capability `orbit-release`:
+`scripts/release-tree.mjs` (`npm run release:tree`) tags a built release tree on a commit of its own, and a test installs
+its tag globally from git. Baseline capabilities 27 to 28.
+
+Exit (1) MET: the README is unlisted and passes every file-local check. Exit (2) MET: the claims check passes the README,
+and each named capability resolves. Exit (3) PENDING, two thirds by design:
+- The shell half of the rehearsal is observed from a `git+file://` clone carrying a release-tree `v2.0.0`. Under npm
+  11.12.1 and 10.9.9 the install exits 0, `orbit --version` prints `2.0.0`, init writes 51 files, and `orbit status` runs.
+- The `/orbit:propose` half in a clean Claude Code (task 5.2) and the post-flip re-run (5.4) are deferred on the archive
+  emit, with the tag itself (5.3, after the merge).
+
+The system blind pair (fresh 0C/2W/1S, external GPT-6 Codex 0C/2W/1S) was walked in three logs, one routing the install
+to explore and one landing the repair. An in-context VERIFICATION graded four `landed` and one `regressed` (two prose
+slips, walked to zero), and the gate computed PASSED. 3642 tests green.
 
 ### Stage reference-docs — the command and workflow pages teach orbit
 
@@ -175,6 +208,10 @@ notice and orbit's.
 - **2026-10-12 — the Tier-C code scrub.** Folding the `OpenSpec` strings in CLI help and messages into this program
   (issue #1 suggested it). Out by R-ugd-3: it is code, and the landing page does not depend on it.
 - **2026-10-12 — removing or labelling the pages not rewritten.** Out by R-ugd-2: all eleven are rewritten.
+- **2026-10-12 — installing from source, or from a Release tarball.** Weighed when R-ugd-4's line failed (the
+  landing-page exploration's routes A and C): a clone-and-build install leaves a global symlink into a clone the user
+  must keep, and an `npm pack` tarball on a Release makes a Release upload by Sal part of every version. Out by R-ugd-8;
+  the from-source route stays in the README's Development section.
 
 ## Status log
 
@@ -202,3 +239,15 @@ moved orbit's first version from `1.0.0` to `2.0.0` (its D-lp-1): upstream's own
 clone, and `2.0.0` makes a clean break. R-ugd-7 supersedes R-ugd-6's number only; the landing-page charter now names
 `2.0.0` and `v2.0.0`. Q-ugd-2's resolution and the earlier status-log entries keep `1.0.0` as the record of what was
 decided then.
+
+**2026-10-12 — R-ugd-8 captured (Sal), in an architect session.** The landing-page system review's clean-machine
+rehearsal found that R-ugd-4's install line does not install orbit: npm's preparation of a git dependency under `-g`
+cannot find TypeScript (measured on npm 10 and 11, the cause read in npm's source). The finding was escalated from the
+walk to the change's exploration, which measured four routes and settled on a built release tree (D-lp-16). R-ugd-8
+supersedes R-ugd-7's tag placement only; the landing-page charter now names the release commit. R-ugd-4 stands
+letter for letter.
+
+**2026-10-12 — landing-page archived** (`orbit/changes/archive/2026-10-12-landing-page/`; PR #19 ready for Sal's merge).
+Exits (1) and (2) are MET, and exit (3) is pending: its shell half was observed, and its `/orbit:propose` half and
+post-flip re-run are deferred, as is the `v2.0.0` release tag (`npm run release:tree` after the merge). Ratification
+waits for those observations or for Sal's word.

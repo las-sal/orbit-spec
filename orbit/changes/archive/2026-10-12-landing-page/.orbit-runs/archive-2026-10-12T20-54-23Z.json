@@ -1,0 +1,95 @@
+{
+  "command": "archive",
+  "timestamp": "2026-10-12T20:54:23Z",
+  "change": "landing-page",
+  "kind": "lifecycle",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Archived landing-page to orbit/changes/archive/2026-10-12-landing-page/.",
+  "archive_path": "orbit/changes/archive/2026-10-12-landing-page/",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": [
+      "orbit-onboard",
+      "orbit-release",
+      "orbit-user-docs"
+    ],
+    "added": 2,
+    "modified": 3,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
+  "user_decision": "proceeded",
+  "consent": "user-invoked",
+  "warnings": [
+    "Pre-archive drift sweep (in flow), one SUGGESTION: package.json still carries upstream's release and release:ci scripts (a pnpm changeset publish to the npm registry) beside the new release:tree; retiring them is public-readiness's, which owns upstream's release workflow.",
+    "Touchpoints: five unpredicted files — the architect session's program doc and emit (R-ugd-8), scripts/release-tree.mjs and its test (the system walk's repair), and tool-inventory.test.ts (apply, the docs-inventory fence); the orbit-user-docs delta reads predicted-unsatisfied because change-own files are not counted as actual.",
+    "Baseline Purpose for orbit-release written in place at archive (the sync wrote TBD), and CLAUDE.md's capability marker moved 27 -> 28."
+  ],
+  "judgements": [
+    {
+      "kind": "readiness",
+      "disposition": "ready",
+      "ratified_by": "ai",
+      "formed_against": [
+        "2026-10-12T17-10-57Z",
+        "2026-10-12T17-11-13Z",
+        "2026-10-12T17-33-10Z",
+        "2026-10-12T17-33-32Z"
+      ],
+      "reasoning": "Both reviewed gates passed by computation. Every finding of the proposal pair and the system pair was walked. The one redesign, the install route, went through explore and architect and came back repaired against D-lp-16. The repair was verified by execution: the release script ran in scratch clones, its tag installed under npm 11 and npm 10, and its test caught five mutations. The in-context verification's two prose defects were walked to zero.",
+      "accepted": [
+        {
+          "claim": "PASSED means every finding was resolved, not that an independent pass stood clean on the final tree.",
+          "why": "The release-tree repair was graded only by an in-context verification after the external pass's walk. No fresh or external pass has read scripts/release-tree.mjs or the orbit-release requirement."
+        },
+        {
+          "claim": "The release tree is read under npm 10 and 11 only.",
+          "why": "This is orbit-release's named limit. The trigger set and packing rule come from pacote 21.5.0, and the test installs under whichever npm runs the suite."
+        },
+        {
+          "claim": "Exit (3) is half observed: the shell half passed from a local git+file:// clone, and the /orbit:propose half and the post-flip re-run are deferred.",
+          "why": "Tasks 5.2 and 5.4 are deferred with their when and where. The public-URL path (GitHub's hosted tarball through pacote) is read in source (D-lp-15), not yet run."
+        },
+        {
+          "claim": "The release-tree test reaches the network when npm's cache is cold.",
+          "why": "It installs with --prefer-offline into an empty prefix, so the suite is not hermetic. An offline run with a cold cache would fail that test."
+        }
+      ]
+    }
+  ],
+  "pr_url": "https://github.com/las-sal/orbit-spec/pull/19",
+  "pr_state": "draft",
+  "deferred_validations": [
+    {
+      "task": "5.2",
+      "why": "Could have happened and has not: the shell half of the rehearsal is observed and recorded under the task (npm 11.12.1 and 10.9.9, exit 0, 2.0.0, 51 files), but the one /orbit:propose in Claude Code on a machine or account with no orbit installed has not been run.",
+      "when": "Before the repository flips public (the public-readiness stage).",
+      "where": "A clean machine or account, run by Sal; recorded under task 5.2 in orbit/changes/archive/2026-10-12-landing-page/tasks.md."
+    },
+    {
+      "task": "5.3",
+      "why": "Needs state that exists only after the change ships: v2.0.0 is cut by npm run release:tree on main's merge commit, which exists only after Sal merges PR #19.",
+      "when": "After Sal merges PR #19.",
+      "where": "The orbit session Sal opens after the merge, on Sal's word: npm run release:tree, then git push origin v2.0.0 and git ls-remote --tags origin."
+    },
+    {
+      "task": "5.4",
+      "why": "Needs state that exists only after the repository is public: the install line resolves github:las-sal/orbit-spec#v2.0.0 anonymously.",
+      "when": "After the repository flips public.",
+      "where": "A clean machine, against the public URL; exit (3)'s second half."
+    }
+  ],
+  "next_recommended": "Change archived. Run /orbit:new or /orbit:explore to start the next change, or /orbit:audit-drift for a project-wide drift check."
+}

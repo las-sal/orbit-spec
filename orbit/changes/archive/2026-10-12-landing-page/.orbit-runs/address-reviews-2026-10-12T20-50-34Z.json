@@ -1,0 +1,192 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-12T20:50:34Z",
+  "change": "landing-page",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/landing-page/.orbit-runs/review-system-2026-10-12T20-48-54Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-12T20-48-54Z",
+  "latest_apply_token": "2026-10-12T17-28-44Z",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 5
+  },
+  "pushback_verification": "All five checked against current state. tasks.md:41 read \"six mutations\" against five listed. design.md:180 read \"about 600 KB\" against the 947,200-byte pack the verification measured; explore.md's FEASIBILITY line carried the same figure. The three residual-check files are the explore and architect sessions' edits (645406ca, 7a8e9d80), each recorded by its own emit.",
+  "resolution_summary": {
+    "resolved": 5,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "SUGGESTION",
+      "title": "Task 6.2's record counts six mutations and lists five",
+      "file": "orbit/changes/landing-page/tasks.md",
+      "line": 41,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "Task 6.2's record now reads \"five mutations of the script\", matching the five it lists. The sixth run was the dropped-trigger mutation re-run after the test was fixed. The 20-42-11Z walk log's action text keeps \"six\" as a frozen record.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/changes/landing-page/.orbit-runs/address-reviews-2026-10-12T20-42-11Z.json",
+            "reason": "audit-trail file; cascade skipped by policy"
+          }
+        ]
+      },
+      "sweep": {
+        "retired": [
+          "six mutations of the script"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/landing-page/tasks.md",
+            "text": "five mutations of the script, each run against the file and reverted"
+          }
+        ],
+        "searched": [
+          "six mutations",
+          "mutations"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Risks understates the built output a release adds to history",
+      "file": "orbit/changes/landing-page/design.md",
+      "line": 180,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "Option A, the one the finding recommends; B would restate npm's packing rule in the script. design.md's Risks now states about 950 KB per release, maps included, measured as a git pack of the release commit's objects, beside the 604 KB npm tarball. explore.md's D-lp-16 FEASIBILITY line, the source of the 600 KB figure, says the same; explore.md still parses clean (rules_total 2, rules_open [], no key defects).",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/landing-page/explore.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "about 600 KB"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/landing-page/design.md",
+            "text": "each release commits about 950 KB of `dist/`, maps included"
+          },
+          {
+            "path": "orbit/changes/landing-page/explore.md",
+            "text": "about 950 KB of built output enters history per release, maps included"
+          }
+        ],
+        "searched": [
+          "600 KB",
+          "604 KB",
+          "KB"
+        ],
+        "scope": [
+          "README.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "explore.md was edited inside the verified range outside every walk entry's edit record",
+      "file": "orbit/changes/landing-page/explore.md",
+      "line": 1,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "Recorded: this entry names orbit/changes/landing-page/explore.md. Its change in the verified range belongs to the redesign route's explore session (commit 645406ca, emit explore-2026-10-12T18-16-23Z), not to a walk. The file is now inside a walk entry's edit record. No edit was needed.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/landing-page/explore.md",
+            "text": "D-lp-16 — a release ships a built release tree"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The program doc was edited inside the verified range outside every walk entry's edit record",
+      "file": "orbit/architecture/update-gh-documentation.md",
+      "line": 1,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "Recorded: this entry names orbit/architecture/update-gh-documentation.md. Its change in the verified range belongs to the redesign route's architect session (commit 7a8e9d80, emit architect-2026-10-12T18-17-34Z), not to a walk. The file is now inside a walk entry's edit record. No edit was needed.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/architecture/update-gh-documentation.md",
+            "text": "R-ugd-8"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The architect emit was added inside the verified range outside every walk entry's edit record",
+      "file": "orbit/architecture/.orbit-runs/architect-2026-10-12T18-17-34Z.json",
+      "line": 1,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "Recorded: this entry names orbit/architecture/.orbit-runs/architect-2026-10-12T18-17-34Z.json. Its change in the verified range belongs to the redesign route's architect session (commit 7a8e9d80, emit architect-2026-10-12T18-17-34Z), not to a walk. The file is now inside a walk entry's edit record. No edit was needed.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/architecture/.orbit-runs/architect-2026-10-12T18-17-34Z.json",
+            "text": "\"command\": \"architect\""
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Five resolved: the mutation count corrected to five; the history figure restated as measured (about 950 KB with maps) in design.md and explore.md's FEASIBILITY line; the three redesign-route files recorded inside a walk entry's edit record.",
+  "iteration": 7,
+  "next_recommended": "/orbit:archive landing-page — user-invoked",
+  "ripple_misses": 0
+}

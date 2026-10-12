@@ -388,6 +388,8 @@ describe('the tool inventory over the user docs', () => {
   const docsSource = ownerSource(repo, DOCS_INVENTORY);
   const docsHeadingLine = docsSource.text.split('\n').indexOf(headingOf(DOCS_INVENTORY)) + 1;
   const docsFenceLine = docsSource.text.split('\n').indexOf('```docs-inventory') + 1; // 1-based opening line
+  /** The real docs fence's body, as declared (no trailing newline). */
+  const docsBody = /```docs-inventory\n([\s\S]*?)\n?```/.exec(docsSource.text)![1];
 
   function docsSweep(surfaces: Surface[], src: Source = docsSource): string[] {
     return inventoryFailures(analyseHeads(surfaces), recordedHeads(), readOwnerInventory(src, DOCS_INVENTORY));
@@ -444,7 +446,9 @@ describe('the tool inventory over the user docs', () => {
 
   // @scenario behaviour orbit-user-docs :: The user docs declare their own command heads :: An unused docs declaration fails
   it('an unused docs-inventory declaration fails, naming the head and its kind', () => {
-    expect(docsSweep(docSurfaces(), docsFence('utility: jq'))).toEqual(["declared utility head 'jq' is read on no surface"]);
+    const body = docsBody.replace(/^utility: (.*)$/m, 'utility: $1 jq');
+    expect(body).not.toBe(docsBody);
+    expect(docsSweep(docSurfaces(), docsFence(body))).toEqual(["declared utility head 'jq' is read on no surface"]);
   });
 
   it('a declared docs head excuses it in a user doc', () => {
@@ -456,7 +460,7 @@ describe('the tool inventory over the user docs', () => {
     ['no docs-inventory fence', (t: string) => t.replace('```docs-inventory', '```text'), () => docsHeadingLine, 'no `docs-inventory` fence'],
     ['a line not matching the production', (t: string) => t.replace(/```docs-inventory\n/, '```docs-inventory\nutility:  jq\n'), () => docsFenceLine + 1, "does not match '<kind>: <head> <head> …'"],
     ['an unknown kind', (t: string) => t.replace(/```docs-inventory\n/, '```docs-inventory\nphrase: jq\n'), () => docsFenceLine + 1, "unknown kind 'phrase'"],
-    ['a second docs-inventory fence', (t: string) => t.replace(/(```docs-inventory\n```\n)/, '$1\n```docs-inventory\n```\n'), () => docsFenceLine + 3, 'a second `docs-inventory` fence'],
+    ['a second docs-inventory fence', (t: string) => t.replace(/(```docs-inventory\n[\s\S]*?```\n)/, '$1\n```docs-inventory\n```\n'), () => docsFenceLine + (docsBody === '' ? 0 : docsBody.split('\n').length) + 3, 'a second `docs-inventory` fence'],
   ])('%s fails naming the requirement and the line', (_name, edit, line, message) => {
     const src = { file: docsSource.file, text: edit(docsSource.text) };
     expect(src.text).not.toBe(docsSource.text);

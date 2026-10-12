@@ -1,0 +1,74 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-12T17:17:35Z",
+  "change": "landing-page",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/landing-page/.orbit-runs/review-proposal-2026-10-12T17-16-39Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-12T17-16-39Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 1
+  },
+  "pushback_verification": "Verified against current state: both sites carried the pronoun.",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "SUGGESTION",
+      "title": "The tag-actor repair refers to Sal as he/his, whose pronouns are not stated",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/landing-page/tasks.md",
+      "line": 28,
+      "classification": "trivial_fix",
+      "action": "Task 5.3 and design D4 say 'on Sal's word'; no pronoun.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/landing-page/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "in the orbit session he opens then and on his word",
+          "after the merge, on his word"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/landing-page/tasks.md",
+            "text": "in the orbit session Sal opens after the merge, on Sal's word"
+          },
+          {
+            "path": "orbit/changes/landing-page/design.md",
+            "text": "on Sal's word (proposal walk)"
+          }
+        ],
+        "searched": [
+          "\\bhe\\b",
+          "\\bhis\\b",
+          "\\bhim\\b"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "One of one resolved: the pronoun in the tag-actor repair replaced by the name.",
+  "iteration": 3,
+  "next_recommended": "/orbit:apply landing-page — user-invoked",
+  "ripple_misses": 0
+}
