@@ -1,0 +1,14 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-10-12T23:48:59Z",
+  "change": "reference-docs",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "prompt_path": "orbit/changes/reference-docs/.orbit-runs/external-prompt-system-2026-10-12T23-48-41Z.md",
+  "target": "codex",
+  "final_assessment": "External review prompt packaged for reference-docs (iter 1, mode system) as the external half of a launched blind pair; awaiting findings from codex.",
+  "pair": true,
+  "awaiting_findings": true,
+  "next_recommended": "Paste orbit/changes/reference-docs/.orbit-runs/external-prompt-system-2026-10-12T23-48-41Z.md into the target AI, and save the response as orbit/changes/reference-docs/.orbit-runs/external-system-<TS>.md"
+}
