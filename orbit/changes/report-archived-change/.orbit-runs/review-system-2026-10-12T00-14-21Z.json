@@ -1,0 +1,55 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-12T00:14:21Z",
+  "change": "report-archived-change",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {},
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    }
+  },
+  "findings": [],
+  "commentary": "Graded the walk's one entry over its sweep scope. The repair is present and complete: resolvesWithin in src/core/containment.ts is the only real-path containment test left, the report's archived fallback and assertContained both call it, and isInsideArchive is gone from src and test. It is clean in the strictest sense that matters here: its accept set (root equal, or under root followed by a separator) and its unresolvable-path pass are exactly what assertContained computed before, so the emit surface's behaviour for active changes, explorations and archived changes did not move; only the report changed, and only on the archive-root entry. Design D1 now names the one function and states the root answer. The residual check from the commit that added the external return listed eight files, every one inside the entry's edit record. The mutation the walk ran (a strict root rule turning both new tests red) is the evidence the tests can fail; I read the code and the diff and did not re-run it.",
+  "passes_run": [
+    "1",
+    "2",
+    "3"
+  ],
+  "passes_skipped": [
+    "0 — whole-change subject; a verification pass grades the walk record",
+    "4 — orbit/lenses/ absent",
+    "5 — orbit/lenses/ absent",
+    "6 — whole-project subject; a verification pass grades the walk record"
+  ],
+  "verification": [
+    {
+      "title": "The report's containment check is a second copy of assertContained and already disagrees with it",
+      "file": "src/core/archived-change.ts",
+      "verdict": "landed"
+    }
+  ],
+  "final_assessment": "No findings.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-10-12T00-13-35Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "orbit status --change report-archived-change --report"
+}
