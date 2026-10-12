@@ -69,7 +69,14 @@ export function gitAllowed(args: string[], remote: string | null): boolean {
     case 'branch':
       return rest.length === 1 && rest[0] === '--show-current';
     case 'ls-remote':
-      return rest[0] === '--heads' && remote !== null && rest[1] === remote && rest.length >= 3;
+      // Refs only after the remote: a trailing flag such as `--upload-pack=<cmd>` runs a command.
+      return (
+        rest[0] === '--heads' &&
+        remote !== null &&
+        rest[1] === remote &&
+        rest.length >= 3 &&
+        rest.slice(2).every((a) => !a.startsWith('-'))
+      );
     case 'fetch': {
       if (rest[0] !== '--no-tags' || rest[1] !== '--refmap=' || remote === null || rest[2] !== remote) return false;
       const specs = rest.slice(3);
@@ -162,7 +169,8 @@ export class PrRunner {
       cwd: this.ctx.projectRoot,
       encoding: 'utf-8',
       // Never prompt: a read that needs credentials fails, and the failure is an observation.
-      env: { ...this.ctx.env, GIT_TERMINAL_PROMPT: '0', GH_PROMPT_DISABLED: '1' },
+      // GIT_OPTIONAL_LOCKS=0: `git status` would otherwise refresh `.git/index`'s stat cache, a write.
+      env: { ...this.ctx.env, GIT_TERMINAL_PROMPT: '0', GH_PROMPT_DISABLED: '1', GIT_OPTIONAL_LOCKS: '0' },
       maxBuffer: 64 * 1024 * 1024,
     });
     if (res.error) {

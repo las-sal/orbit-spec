@@ -42,7 +42,7 @@ export function allowedGit(args: string[]): boolean {
     case 'branch':
       return rest.length === 1 && rest[0] === '--show-current';
     case 'ls-remote':
-      return rest[0] === '--heads' && rest.length >= 3;
+      return rest[0] === '--heads' && rest.length >= 3 && rest.slice(1).every((a) => !a.startsWith('-'));
     case 'fetch': {
       if (rest[0] !== '--no-tags' || rest[1] !== '--refmap=' || rest.length < 4) return false;
       const remote = rest[2];

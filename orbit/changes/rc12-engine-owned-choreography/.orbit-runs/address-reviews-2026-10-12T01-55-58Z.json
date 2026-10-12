@@ -1,0 +1,128 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-12T01:55:58Z",
+  "change": "rc12-engine-owned-choreography",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/rc12-engine-owned-choreography/.orbit-runs/review-system-2026-10-12T01-51-17Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-12T01-51-17Z",
+  "latest_apply_token": "2026-10-12T01-30-33Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 1
+  },
+  "pushback_verification": "Both verified against current state by their reproductions; neither stale. The WARNING sat inside the first walk F2 entry's check scope, matched by none of its strings (a query miss).",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Both allowlists admit any flag after `ls-remote --heads <remote>`, including `--upload-pack=<cmd>`",
+      "marker_source": "internal-review",
+      "file": "src/core/pr/run.ts",
+      "line": 71,
+      "classification": "trivial_fix",
+      "evidence": "gitAllowed(['ls-remote','--heads','origin','--upload-pack=touch /tmp/x'],'origin') returned true; allowedGit tested only rest[0] and the length.",
+      "action": "Both allowlists admit only refs after the remote on ls-remote; an injected --upload-pack case and a runner refusal added (both fail on the pre-walk allowlists). The delta's row says refs only, no flag after the remote.",
+      "ripple_cascade": {
+        "applied": [
+          "test/integration/pr-lifecycle/instrument.ts",
+          "test/core/pr/instrument.test.ts",
+          "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "return rest[0] === '--heads' && remote !== null && rest[1] === remote && rest.length >= 3;",
+          "return rest[0] === '--heads' && rest.length >= 3;"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/pr/run.ts",
+            "text": "rest.slice(2).every((a) => !a.startsWith('-'))"
+          },
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md",
+            "text": "(refs only, no flag after the remote)"
+          }
+        ],
+        "searched": [
+          "ls-remote",
+          "--upload-pack",
+          "rest.length >= 3"
+        ],
+        "scope": [
+          "src/core/pr"
+        ],
+        "kept": []
+      },
+      "ripple_miss_of": {
+        "walk": "2026-10-12T01-47-04Z",
+        "title": "Both allowlists admit `git symbolic-ref --delete <ref>`, a ref write, so exit (3)'s shim cannot catch it",
+        "file": "src/core/pr/run.ts",
+        "kind": "query"
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "`git status --porcelain` refreshes `.git/index` as a side effect, an unnamed write inside an observe-only command",
+      "marker_source": "internal-review",
+      "file": "src/core/pr/run.ts",
+      "line": 165,
+      "classification": "trivial_fix",
+      "evidence": "Scratch repo: .git/index mtime moved across a git status --porcelain after touching a tracked file; the runner's env did not set GIT_OPTIONAL_LOCKS.",
+      "action": "The runner spawns every git and gh invocation with GIT_OPTIONAL_LOCKS=0; a case runs a whole select over a stale stat cache and asserts .git/index's bytes and mtime unchanged (fails on the pre-walk runner). The delta names the setting beside the PATH-lookup sentence.",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/pr/instrument.test.ts",
+          "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "env: { ...this.ctx.env, GIT_TERMINAL_PROMPT: '0', GH_PROMPT_DISABLED: '1' },"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/pr/run.ts",
+            "text": "GIT_OPTIONAL_LOCKS: '0'"
+          },
+          {
+            "path": "orbit/changes/rc12-engine-owned-choreography/specs/orbit-pr-lifecycle/spec.md",
+            "text": "Every invocation runs with `GIT_OPTIONAL_LOCKS=0`, so `status` refreshes no index."
+          }
+        ],
+        "searched": [
+          "GIT_OPTIONAL_LOCKS",
+          "GIT_TERMINAL_PROMPT",
+          "spawnSync"
+        ],
+        "scope": [
+          "src/core/pr"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Two of two resolved: ls-remote admits refs only in both allowlists, and every engine invocation runs with GIT_OPTIONAL_LOCKS=0 so status writes no index.",
+  "iteration": 6,
+  "next_recommended": "/orbit:archive rc12-engine-owned-choreography — user-invoked",
+  "ripple_misses": 1
+}

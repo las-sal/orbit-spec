@@ -4,6 +4,8 @@
  * assertion. Without these, a green suite would say nothing about either property.
  */
 import { spawnSync } from 'node:child_process';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import type { PrRecord } from '../../../src/core/pr/record.js';
 import { PrRefusedError, PrRunner } from '../../../src/core/pr/run.js';
@@ -35,6 +37,7 @@ describe('the instrument can fail', () => {
     [['git', 'switch', '-q', '-c', 'sneaky']],
     [['git', 'symbolic-ref', '--delete', 'refs/remotes/origin/HEAD']],
     [['git', 'diff', '--name-only', '--output=leak.txt', 'HEAD']],
+    [['git', 'ls-remote', '--heads', 'origin', '--upload-pack=touch upload-pack-ran']],
     [['gh', 'pr', 'create', '--repo', 'acme/widget', '--draft', '--base', 'main', '--head', 'x', '--title', 't', '--body', 'b']],
   ])('a subcommand made to invoke %j fails the allowlist assertion, naming it', (argv) => {
     const repo = orbitRepo('per-proposal');
@@ -67,6 +70,9 @@ describe('the instrument can fail', () => {
     expect(() => run.git('symbolic-ref', '--delete', 'refs/remotes/origin/HEAD')).toThrow(PrRefusedError);
     expect(() => run.git('symbolic-ref', '-d', 'refs/remotes/origin/HEAD')).toThrow(PrRefusedError);
     expect(() => run.git('diff', '--name-only', '--output=leak.txt', 'HEAD')).toThrow(PrRefusedError);
+    run.remote = 'origin';
+    expect(() => run.git('ls-remote', '--heads', 'origin', '--upload-pack=touch upload-pack-ran')).toThrow(PrRefusedError);
+    run.remote = null;
     expect(run.git('symbolic-ref', '-q', '--short', 'HEAD').status).toBe(0); // the read form still runs
     expect(() => run.gh('pr', 'create')).toThrow(PrRefusedError);
     expect(() => run.gh('--version')).toThrow(PrRefusedError);
@@ -80,6 +86,17 @@ describe('the instrument can fail', () => {
     expect(record.action).toBe('proceed');
     expect(calls.git.map((c) => c.args[0])).toContain('fetch');
     expect(calls.gh.map((c) => c.args.slice(0, 2).join(' '))).toEqual(['repo view']);
+  });
+
+  it('no engine call refreshes .git/index: a whole select leaves its bytes and mtime unchanged', () => {
+    const repo = orbitRepo('per-proposal');
+    repo.write('README.md', '# base\n'); // same content, newer mtime: a stale stat cache git status would refresh
+    const index = path.join(repo.dir, '.git', 'index');
+    const before = { bytes: fs.readFileSync(index), mtime: fs.statSync(index).mtimeMs };
+    const { record } = engine(repo, (ctx) => prSelect(ctx, 'add-thing'));
+    expect(record.action).toBe('proceed');
+    expect(fs.statSync(index).mtimeMs).toBe(before.mtime);
+    expect(fs.readFileSync(index).equals(before.bytes)).toBe(true);
   });
 
   it('the allowlist accepts every read form it names', () => {
