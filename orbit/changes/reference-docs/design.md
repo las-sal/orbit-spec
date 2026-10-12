@@ -45,11 +45,11 @@ is where a reader looks for it. Exit (2)'s wording, "named by at least one page"
 
 ### D2 — the check is file-local, modelled on the improvement-claims check
 
-The check reads `docs/cli.md` and `docs/commands.md` and passes every other user doc. An owing page that is neither
-listed nor present fails, naming it, so removing a page never empties the check; this is a suite-level test alongside
-the per-file one, because a file-local check never sees a file that is not there. That makes it a member of the
+The check reads `docs/cli.md` and `docs/commands.md` and passes every other user doc. That makes it a member of the
 file-local set, which the checked-surface requirement enumerates; that enumeration gains it (the MODIFIED block). The
-pending list's exactness rule then runs it over a listed page alone. The helper is `commandCoverageFailures(surfaces,
+pending list's exactness rule then runs it over a listed page alone.
+
+The helper is `commandCoverageFailures(surfaces,
 paths, workflowIds)` in `test/helpers/user-docs.ts`. It is pure: the paths and ids are passed in, so the test can
 show it failing on a fixture. `fileLocalFailures` feeds it the real domain:
 
@@ -57,6 +57,10 @@ show it failing on a fixture. `fileLocalFailures` feeds it the real domain:
 - The workflow ids come from `ALL_WORKFLOWS`.
 
 The test types neither list.
+
+A file-local check never sees a file that is not there, so the missing-page rule is a separate SUITE-LEVEL assertion,
+not part of the helper: it reads the pending-rewrite list and the user-doc set, and fails naming an owing page found in
+neither, so removing a page never empties the check.
 
 ### D3 — "names" is a bounded text match over the whole file
 
