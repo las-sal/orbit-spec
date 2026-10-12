@@ -1,0 +1,30 @@
+{
+  "command": "explore",
+  "timestamp": "2026-10-12T00:28:05Z",
+  "change": "rc12-engine-owned-choreography",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Read the completed dogfood log (27 deterministic, 4 judgment, 7 wrong; no deterministic step produced a wrong answer — the 7 are silences and two-rule conflicts) and decided the mechanism on Sal's word (took the recommendations): D-rc12-2 (rule) — `orbit pr` resolves and prints, every write stays in the body; D-rc12-3 — local writes move into the engine only if resolve-only misses exit (2), measured (read-only share 52–55%, borderline); D-rc12-4 (rule) — R-crc-5's condition is met by the live run plus engine tests over temporary repositories; D-rc12-6 — the PR-title source bug is fixed now as a standalone change; D-rc12-7 — the two cleanliness-rule conflicts are out of rc12. Options B and C as primary moved to Considered & out. Both rules carry BOUNDED Mechanism entries. Ready to promote, after the charter's pre-split into an engine change and a body-adoption change is declared.",
+  "decisions_captured": 7,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 2,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [
+    {
+      "id": "D-rc12-2",
+      "kind": "a step the runbook is silent on, so no row names it (tracking at creation, the post-merge return were two)",
+      "method": "the dogfood log's rows classed \"wrong (silent)\", and every later live run's log classified the same way"
+    },
+    {
+      "id": "D-rc12-4",
+      "kind": "deterministic behaviour of a real remote host neither the live run nor a local temporary repository reaches (e.g. branch protection, `gh` auth expiry, a renamed default branch)",
+      "method": "a second live run under `per-architecture`, logged with the dogfood log's classes"
+    }
+  ],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose rc12-engine-owned-choreography — 2 live rules accounted, 2 bounded residuals named (D-rc12-2, D-rc12-4); formalize when you are ready (or /orbit:explore rc12-engine-owned-choreography to keep refining)"
+}
