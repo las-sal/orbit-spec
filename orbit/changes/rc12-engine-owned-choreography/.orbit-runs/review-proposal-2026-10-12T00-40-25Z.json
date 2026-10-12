@@ -1,0 +1,198 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-12T00:40:25Z",
+  "change": "rc12-engine-owned-choreography",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 3,
+      "suggestion": 3
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 3,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "4",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "specs/orbit-pr-lifecycle/spec.md",
+      "line": 19,
+      "title": "The three-action table cannot express a degradation that skips only the PR half",
+      "recommendation": "The owners keep the commit and push when only the PR step degrades: orbit-archive-modifications' PR-attached archive tail says a failed validation, or a fallback with zero or several survivors, skips the PR-writing steps while 'the COMMIT and PUSH still proceed', and orbit-propose-modifications' PR choreography says a program-path query with several survivors or an error skips 'the PR step', not the landing. The `skip` row prints no commands at all, and `publish` states outright 'Several and query error are skips'. An engine built to the table drops the archive's own commit and push, or leaves a cited change's artifacts unlanded on the program branch. State, for each subcommand, which outcomes are whole-seam skips and which are PR-half degradations, and give the PR-half case a shape that still prints the commit and push.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Keep three actions: a PR-half degradation is `proceed` with one note naming the reason, and `commands` carries the commit and push with no PR steps. List the PR-half outcomes in each subcommand's requirement."
+        },
+        {
+          "label": "B",
+          "body": "Add a fourth action (e.g. `partial`) whose commands are the commit and push only, with exactly one note. Add a row to the action table and a scenario for the tail's closed-PR case."
+        }
+      ]
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-pr-lifecycle/spec.md",
+      "line": 119,
+      "title": "`tail` never says where the PR identity it writes to comes from, or whether it observes again",
+      "recommendation": "`tail` prints `gh pr edit ... <url>` and `gh pr ready ... <url>`, and has an 'already-ready' branch, but its requirement names no source for `<url>` or for the readiness. That leaves three cases open: the attachment has no url, so preflight ran the fallback; preflight found the stored url closed; or it found the PR ready. The engine keeps no state between the two invocations. If `tail` re-validates, that is a second observation, and the owner says 'One observation therefore feeds BOTH the emit and the post-emit tail, so the two can never disagree'. If it does not, nothing tells it what preflight saw. Say which.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "`tail` reads preflight's outcome from the written archive emit (`pr_url` present with `pr_state` = valid; `pr_url` without `pr_state` = positively invalid, so skip the PR half; both absent = unobserved). Specify that reading, its cases and a scenario."
+        },
+        {
+          "label": "B",
+          "body": "`tail` re-runs the validation and fallback itself, and the requirement names the departure from the one-observation rule as a stated limit, with the disagreement case's behaviour specified."
+        }
+      ]
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-pr-lifecycle/spec.md",
+      "line": 114,
+      "title": "`tail` scope's 'git reports as changed' is ambiguous for a capability the archive ADDS",
+      "recommendation": "When the archived change ADDs a capability, the sync writes a new, untracked `orbit/specs/<capability>/spec.md`. Whether 'git reports as changed' includes untracked files decides whether that spec reaches the commit: `git diff --name-only` omits it, while `git status --porcelain` lists it as `??`. `publish` already says 'new or modified', and `tail` should say the same, with a scenario for an ADDED capability. Design D6's equivalence ('changed in git exactly when the sync changed it') holds only if untracked counts."
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-pr-lifecycle/spec.md",
+      "line": 96,
+      "title": "`preflight` gives no rule separating `not found` from a failed query",
+      "recommendation": "`not found` is a positive invalidation: it keeps `pr_url` and drops the PR half. A failed query is unavailable: both fields are elided and the action is `skip`. With the real `gh`, both are a non-zero exit from `gh pr view`. Name the discriminator, for instance the GraphQL 'Could not resolve to a PullRequest' message or an exit-code class, and script both in the harness's `gh pr view` responses (task 1.1). Otherwise two implementers will classify an auth failure differently."
+    },
+    {
+      "pass": "4",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "specs/orbit-pr-lifecycle/spec.md",
+      "line": 135,
+      "title": "`program` under the action table contradicts the never-suppressed arc-done readout",
+      "recommendation": "Under `Program PR (Shape A) semantics`, a query that FAILED ('auth, network, `gh` unavailable') still surfaces the PR and the commands, with a 'state unverified' note, and a several-survivor fall-through names ALL candidates. The new table makes `gh` absent a `skip` (the 'An absent gh is its own fact' scenario covers 'any subcommand'), and a skip prints no commands. `facts` for `program` also has no field for the candidate list or for 'unverified'. Exempt `program` explicitly: a failed observation is `proceed` with `pr` taken from the record and an unverified note, and add a `candidates` fact for `several`. Narrow the absent-gh scenario to the gated subcommands that degrade."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "design.md",
+      "line": 7,
+      "title": "'33 cases' is stale, and one of them is not a `select` case",
+      "recommendation": "`npx vitest list test/integration/pr-lifecycle/phase1.test.ts` lists 39 tests. D6's figure of 33 has grown. The describe 'D6 commit isolation (external iter 3)' tests `git commit --only`, which is `publish`'s scope, yet task 4.1 moves every case to `test/core/pr/select.test.ts`. Correct the count in proposal.md, design.md and task 4.1, or drop it, and route the commit-isolation case to 4.2."
+    },
+    {
+      "pass": "3",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "proposal.md",
+      "line": 9,
+      "title": "Engine-decided skips and engine-written notes go past R-crc-5's judgment list without a record",
+      "recommendation": "R-crc-5 (clean-up-review-cycle.md:186) says 'every JUDGMENT step (titles, landmark prose, degradation notes, when to skip) stays in the body', and the rc12 charter repeats 'degradation notes'. This change has the engine decide `skip` and author its one-line note. The dogfood log does classify those steps as `det`, which may justify moving them, but neither explore.md's CONFORM line nor design.md records that the change departs from the ruling's wording. That is a reversal of a ratified ruling's letter. Record it, or keep the note text in the body.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Record in design.md, with a Decision in explore.md, that the dogfood reclassified skip decisions and notes as deterministic. Cite the log rows and flag it to Sal as a narrowing of R-crc-5's judgment list."
+        },
+        {
+          "label": "B",
+          "body": "The engine reports a closed reason code plus the facts; the body writes the note text. Change the `notes` field to `reasons` accordingly."
+        }
+      ]
+    },
+    {
+      "pass": "7",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "tasks.md",
+      "line": 32,
+      "title": "The zero-engine-git sweep is both too wide and too narrow",
+      "recommendation": "Task 5.1 updates 'any other site the grep for `zero-engine-git` finds'. That grep hits `src/core/templates/workflows/pr-choreography.ts:424/450/472`, which is generated body text ('the orbit engine never shells to git or `gh`'), and the proposal's Impact rules out template changes. Meanwhile the statements that become false sit outside the task: the `orbit-pr-lifecycle` Purpose ('the engine performs ZERO git or GitHub operations'), `orbit-archive-modifications` spec line 608 ('the engine performs no git operation — see ... zero-engine-git requirement'), `orbit-review` spec line 575 ('(zero engine git)'), and the MODIFIED requirement's own retained title. Enumerate the sites. Say which are edited here (the Purpose, in place at archive), which are left with a stated reason (the template text until change 2, another capability's prose), and whether to rename the title."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "design.md",
+      "line": 33,
+      "title": "phase1.ts carries a harness hook (`git config remote.<r>.ghurl`) that would be promoted into the engine",
+      "recommendation": "phase1.ts:99 reads `remote.<r>.ghurl` before `remote get-url`, which is a test seam for fake URLs. As written, `config` without `--get` also falls outside the allowlist row `config --get`. D5 says the code is 'promoted, not rewritten'. Name what replaces the seam in the engine, for instance a real GitHub-shaped remote URL in the harness, so no test hook ships in `src/`."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "specs/orbit-pr-lifecycle/spec.md",
+      "line": 18,
+      "title": "`off` on an unattached archive carries no note; say who writes the unattached line",
+      "recommendation": "`PR entry points` requires 'one line notes the unattached state' when a new/continue change archives under an active config. `preflight` is attachment-gated and reads no regime, so its `off` (no notes) cannot tell that case from `pr: never`. State that the body writes the note from `off` together with the `pr` regime it reads from `orbit status --json`."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "tasks.md",
+      "line": 30,
+      "title": "Two meta-scenarios need a deliberately broken fixture before 4.6 can tag them",
+      "recommendation": "'A printed command git refuses fails the suite' and 'A write inside the engine fails the suite' describe the suite failing. Tagging either needs a test that injects a bad printed argv or a write call and asserts the helper throws, naming the step or call. Add that to task 1.2 or 4.5. Otherwise 4.6's zero-undeclared bar is met only by a ledger entry."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "specs/orbit-pr-lifecycle/spec.md",
+      "line": 119,
+      "title": "`commands` is defined as 'the writes' but also carries reads and copy-text",
+      "recommendation": "The `proceed` row says `commands` is 'the writes, in the order the body runs them'. On the program path, `tail` puts 'the read of the current body' in it, and `program` calls its commands 'text the user copies', which is not an argv. `after_merge` says each line runs 'after a `git fetch`' without saying whether the fetch is printed. Settle the field's definition as body-run steps of any kind, all argv, and print the fetch explicitly."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "The engine half is sound where it was transcribed from executed code: `select` maps phase1.ts closely, and its allowlist covers every git verb phase1.ts uses except the `ghurl` seam. The weak points are where the new action vocabulary meets owners that already distinguish a whole-seam skip from a PR-half degradation. Both PR owners (propose's program query, archive's validation and fallback) keep the commit and push when only the PR step fails, and the three-action table has no slot for that. The same table runs into the arc-done readout's never-suppress rule. Probed: every PR owner requirement the ADDED blocks point at was read in full, phase1.ts's git verbs were checked against the allowlist, gh-contract.json's command set was checked against every printed `gh` argv (all seven present), and the test count was run.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "direction": {
+    "disposition": "hold",
+    "reasoning": "The mechanism is the right one: observe-and-print keeps every write in the body, so the consent property holds by construction. But the spec's central abstraction, the three-action record, cannot represent the archive and program-path cases where the owner skips only the PR half and keeps the commit and push. `tail` also has no defined source for the PR it writes to. Both are spec edits, not redesign. Settle them, and record the R-crc-5 judgment-list narrowing, before apply builds five subcommands on the table."
+  },
+  "final_assessment": "0 critical, 8 warning, 4 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews rc12-engine-owned-choreography"
+}
