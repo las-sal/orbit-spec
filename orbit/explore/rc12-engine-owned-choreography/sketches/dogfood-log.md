@@ -39,3 +39,25 @@ The several-remotes rule held exactly where `gh`'s own heuristic is known to pic
 | step | observed | class |
 |---|---|---|
 | blind-pair preflight | `git status --porcelain` showed `?? orbit/explore/` (this exploration, untracked) → the pair REFUSED. The PR runbook's dirty-tree rule tolerates unrelated untracked paths ("named in the note, never skip"); the pair's preflight refuses ANY output. Two seams, one condition, opposite rules — and an in-flight exploration blocks the review of the change it observes. Cleared by committing the exploration on `main` (Sal: A) | wrong (two rules) |
+
+## Seam 2 — archive (2026-10-12)
+
+| step | observed | class |
+|---|---|---|
+| entry observation (Step 0.7) | attachment read from the propose emit; `git branch --show-current` → `report-archived-change` = `pr_attachment.branch` → nothing to say | det |
+| consent preview | user-typed `/orbit:archive` → no preview, so the outward-writes line had no surface to appear on | det |
+| attachment | latest propose emit carries `{branch, granularity: per-proposal, url, state: draft}`; no `architecture:` citation in `.openspec.yaml`, so no divergence note | det |
+| remote / id / `gh` / default branch | same resolution as seam 1: `origin` → `las-sal/orbit-spec`, `gh` present, `main` | det |
+| live url validation | runbook names the four predicates but no command; used `gh pr view --repo las-sal/orbit-spec <url> --json state,isDraft,headRefName,baseRefName,url` → OPEN, head = branch, base = `main` = default, repo = resolved | judg (command composed) |
+| draft observation | same call → `isDraft: true` → emit `pr_state: "draft"`, `pr_url` recorded | det |
+| tail preconditions | `gh` present; HEAD = attachment branch | det |
+| staging before the suite | the test suite's source lint reads the git index (Q-crc-14), so the move had to be staged before `npm test` — done with `git add -A orbit/changes …`, which the tail's commit-scope rule forbids ("never `git add -A`"). Harmless here (no other change dirty), but the archive body's test step and the tail's scope rule disagree on how to stage | wrong (two rules) |
+| commit | `git commit --only` the enumerated paths: the synced `orbit-report-rendering` spec, the old change path (deletion), the archived directory, the program doc's at-archive-note edit; 0 unrelated entries left staged | det |
+| push | happy path again says only "push"; the command appears only in failure recovery (`git push <resolved-remote> <branch>`). Used `git push origin report-archived-change` | wrong (silent) |
+| description rewrite | body replaced outright, per the runbook; WHAT it says (shipped summary, numbers, review cycle) has no content rule — written by hand | judg |
+| READY flip | `gh pr ready --repo las-sal/orbit-spec 15` → ready; flip after the push, per the ordering invariant | det |
+| merge echo | readout names `gh pr merge --repo las-sal/orbit-spec 15` as Sal's | det |
+
+Seam-2 reading: 10 steps deterministic, 2 judgment (the validation command, the rewritten body), 2
+wrong (the staging clash with the suite's git-index lint; the unspelled push, repeated from seam
+1). Still to observe: the merge, Sal's act.
