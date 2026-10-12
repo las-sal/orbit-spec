@@ -104,7 +104,7 @@ B2 exploration; issue #4 closed) — per-command divergence is the desired traje
 stay inline per body.
 The full plan and design decisions live in the docs below — **read them before B-arc work.**
 
-## The ACTIVE program: clean-up-review-cycle (the D-arc is quiescent)
+## The latest program: clean-up-review-cycle (all stages closed 2026-10-12)
 
 **Current state, engine-checked:** the program's rulings index holds <!-- src:rulings -->14<!-- /src:rulings --> rulings, and `orbit/specs/` holds <!-- src:capabilities -->26<!-- /src:capabilities --> baseline capabilities. Every marked figure in this file is checked against `orbit/sources.yaml` by `orbit validate --sources`; an UNMARKED figure is invisible to that check.
 
@@ -208,8 +208,9 @@ with hand-retyped finding titles matched ZERO findings by the gate's key while d
 resolved — found by a human question, not a check). The fourth, **Q-crc-16** (this doc's own stage
 count stated twice, unmarked), was RESOLVED 2026-09-20 — both halves applied together, and this
 file now carries a live mark. Do NOT read this paragraph as the program's full live set: it lists
-only what rc07 produced. The authoritative list is the program doc's own Open questions section,
-which also carries Q-crc-11, Q-crc-20, Q-crc-21, Q-crc-22 and Q-crc-23 (Q-crc-12 was resolved by rc10).
+only what rc07 produced. The authoritative list is the "Carried at close" table at the top of the program doc's
+Open questions section: fourteen questions, carried to whatever program opens next (Q-crc-11, Q-crc-12, Q-crc-22
+and Q-crc-28 are closed).
 
 **Twenty-nine more stages have shipped since, and the program is THIRTY-TWO stages complete** (rc15 and rc16 ratified 2026-10-01; rc02b ratified 2026-10-03; rc04b, rc03b, rc03c, rc07b and rc06a ratified 2026-10-04; rc06b, rc08a and rc08b ratified 2026-10-05 — rc08a's exit (3), pending by design, was measured on rc08b's cadence and read 4, not zero; the split parent rc08 took its ENDED mark the same day; rc03a carries the program's first ENDED mark, declared the same day, and the two split parents rc13 and rc04 — headings retained as record, every exit criterion owned by a child — carry the second and third, declared through the unprompted route the same evening; rc17a ratified 2026-10-06; rc17d ratified 2026-10-06; rc17b ratified 2026-10-06; rc17c ratified 2026-10-07; rc18 ratified 2026-10-08; rc05 ratified 2026-10-09; rc05b ratified 2026-10-10; rc09a ratified 2026-10-11; rc09b ratified 2026-10-11; rc10 ratified 2026-10-11; rc12 ratified 2026-10-12).
 
@@ -833,8 +834,10 @@ note gaps the deletion took with it; two walk logs, an in-context VERIFICATION g
 (a failed `select` step was offered a recovery that attaches nothing), walked to zero; a COMPUTED PASSED gate. **3571
 tests green.**
 
-Read that doc before any rc-stage work; the D-arc section below is the historical
-record of how the engine got here.
+The program's stages are all closed (2026-10-12): its goals are graded and its arc-done reading recorded in the
+doc's status log. At over 5,600 lines it is no longer read whole: read its Premise, Goals, Rulings index and the
+"Carried at close" table, and slice a stage with `orbit architecture show clean-up-review-cycle <stage>`. The D-arc
+section below is the historical record of how the engine got here.
 
 ## The D-arc (COMPLETE — historical)
 
@@ -1073,7 +1076,7 @@ paths are kept out of bodies.
 
 ## When in doubt
 
-- The fork plan's decisions remain citable — `orbit/architecture/fork-and-orbify.md` (program complete); the D-arc that followed it is `orbit/architecture/d-arc-arbitered-flow.md` (also complete — historical record). The **LIVE program is `orbit/architecture/clean-up-review-cycle.md`**; read it before any rc-stage work.
+- The fork plan's decisions remain citable — `orbit/architecture/fork-and-orbify.md` (program complete); the D-arc that followed it is `orbit/architecture/d-arc-arbitered-flow.md` (also complete — historical record). The most recent program is `orbit/architecture/clean-up-review-cycle.md`, its stages all closed; read its Premise, Goals, Rulings index and "Carried at close" table, never the whole doc.
 - Engine behavior is defined in the vendored TypeScript under `src/` (the architecture doc maps it).
 - Keep tests green: run `npm test` before and after substantive changes; the green baseline is the
   contract.

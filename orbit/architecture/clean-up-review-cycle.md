@@ -505,7 +505,29 @@ One goal per phase, each falsifiable, each stage naming its goal (settled under 
 
 ## Open questions (program-level)
 
-- **Q-crc-11 — the stage grammar has no WITHDRAWN state, and two stages now need one.**
+**Carried at close (2026-10-12, the closing review's W3; Sal: A).** Every stage of this program is complete or
+ended, so these fourteen questions have no stage left to own them. They PASS to whatever program is opened next;
+each full entry below stays as the record, with its standing recommendation. None is declared or explored here.
+
+| question | what is open | its standing recommendation points at |
+|---|---|---|
+| Q-crc-14 | the source lint runs at no seam | deciding whether the answer is more lint seams or a wider rule |
+| Q-crc-15 | two CommonMark fence grammars, one wrong; three external-format readers | one parser stage, re-measured before sizing |
+| Q-crc-17 | a walk entry whose key matches no finding is not refused | `orbit emit address-reviews` comparing keys against its source |
+| Q-crc-20 | PASSED can stand over mechanism no independent pass read | a record, never a new gate state |
+| Q-crc-21 | the Touchpoints parser reads lines where its spec says list items | folding into Q-crc-15's stage |
+| Q-crc-23 | the word "override" at four seams | an untaken scope call on the vocabulary reframe |
+| Q-crc-24 | the citable-pass set is enumerated by hand in four bodies | an engine surface printing accepted passes (Sal: B, canonized) |
+| Q-crc-25 | the spend record keys on gate passage | its entry |
+| Q-crc-27 | no read-only print of an exploration's parsed Mechanism form | its entry |
+| Q-crc-29 | arc-done has no treatment for an ended stage; live on this doc | one sentence in `orbit-pr-lifecycle`'s predicate |
+| Q-crc-30 | `files_touched` is tracked-only | its entry |
+| Q-crc-31 | a second `## Notes` is silently last-wins | one sentence in the external format, parser and test together |
+| Q-crc-32 | `kept` exempts a whole file | an occurrence- or line-scoped `kept`, new mechanism |
+| Q-crc-33 | whether "no code exists yet" discharges R-crc-7's EXECUTE | its entry |
+
+
+- **Q-crc-11 — CLOSED (rc15-ended-stage-state, 2026-10-01).** the stage grammar has no WITHDRAWN state, and two stages now need one.**
   Observed 2026-09-15, twice. rc03a was withdrawn after three passes; rc13a's first attempt archived
   without shipping. Both render `quiescent — completion awaiting your ratification` and will render
   that FOREVER, because their exit criteria were not met and ticking `Complete: [x]` would assert
@@ -1053,7 +1075,7 @@ never deleted.
   barely more than either alone while making the CLASS the unit of work rather than the instance.
   Whether that stage exists, and whether these two belong in it, is a scope call.
 
-- **Q-crc-22 — the blind pair has a PRODUCER and no CONSUMER: no invocation walks two passes
+- **Q-crc-22 — RESOLVED (rc08b-walk-routing, 2026-10-05).** the blind pair has a PRODUCER and no CONSUMER: no invocation walks two passes
   together, and the one that looks like it does silently walks one.**
   Raised 2026-09-22 after the gap was hit for the SECOND time in a single session (rc04a's system
   pair, then rc04d's), resolved by conversation both times because no command does it.
@@ -1084,6 +1106,12 @@ never deleted.
   `gates.ts:798-805` already outranks the walk recommendation while a pair is open, so the engine never
   recommends the foreclosing walk; what remained was same-turn overlap, now one sentence in rc03b's
   review body. The CONSUMER side — one walk over both halves — is unchanged and stays rc08's.
+  RESOLVED 2026-10-12 at the closing review's walk (W3), verified against the shipped tree: rc08b-walk-routing
+  built the CONSUMER this entry asked for. Discovery walks every outstanding pass of a change's reviewed gates
+  and writes one log per source (`orbit-address-reviews`' `One invocation writes one log per discovered source`),
+  and a half-landed pair stops the walk naming its missing member, so the silent single-half walk no longer
+  exists. This entry's own standing recommendation, "`rc08-walk-completeness` should own this … the walk SAYS SO",
+  sits misplaced at the end of Q-crc-23's entry; it was delivered as written.
 
 - **Q-crc-23 — the word "override" encodes the hard-gate authority the program does not claim,
   and one requirement is visibly arguing with itself about it.**
@@ -1240,7 +1268,7 @@ never deleted.
   names (Q-crc-26's fallback pattern); the propose body then reads the state word instead of naming
   the clause. Owner: whichever stage next touches `orbit-emit-composition` or `orbit-orientation`.
 
-- **Q-crc-28 — the retirement-class sweep has a list and no owner.** Opened 2026-09-28 at rc13c's
+- **Q-crc-28 — CLOSED (rc16-retirement-sweep, 2026-10-01).** the retirement-class sweep has a list and no owner.** Opened 2026-09-28 at rc13c's
   archive (its at-archive note 4.6). Three stages have each deferred living text that a later stage
   made false, to "a retirement-class sweep" nobody has declared: rc13a deferred the retained
   "five-section" TITLES and their pointer sites (`orbit-conventions`' format requirement title;
@@ -1301,8 +1329,11 @@ never deleted.
   D-rc15-1 honours the ended mark on `premised` — a stage declared and withdrawn before any work — so
   `ended` is now reachable with NO archive at all, and a program carrying such a stage cannot observe
   arc-done until that owner says an ended stage does not hold the program open. The consequence is
-  bounded: arc-done is surfaced for a human act, never taken by the engine, and no live doc carries an
-  ended stage without an archive today (rc03a's archive exists; its mark is exit (1)'s pending act).
+  bounded: arc-done is surfaced for a human act, never taken by the engine. (As opened, it added that no live
+  doc carried an ended stage without an archive. That stopped being true here: by 2026-10-12 this doc carried seven,
+  the split parents rc03, rc04, rc06, rc08, rc09, rc13 and rc17, so the question is LIVE on this doc. This program's
+  reading is recorded in the status log at 2026-10-12; rc12 touched `orbit-pr-lifecycle` without taking the rider
+  below.)
   Standing recommendation: ONE sentence in `orbit-pr-lifecycle`'s predicate — "archived OR ended" for
   the per-stage clause, with `ended-from-explore` counted the same way, since a concluded exploration
   is the same decision to build no more — plus the architect readout's one line; a rider on the next
@@ -5617,3 +5648,52 @@ observed `premised` with an undated slot and no citers. It is a split parent: it
 charter is owned by the two children that shipped — the size record by rc09a and the tool inventory by rc09b — both
 ratified. The mark says the parent itself will not be graded, as for rc17, rc08, rc13, rc04, rc03 and rc06. This
 closes the standing recommendation the 2026-10-12 report-archived-change entry carried.
+
+**2026-10-12 — the program's goals GRADED at close (Sal: A — grade as written, no criterion revised).** Every stage
+renders complete or ended; the closing architecture review (`review-architecture-2026-10-12T03-50-05Z.json`, W1)
+found the goals never graded against the trail. Graded here, each on its own falsifier:
+
+- **G0 — MET.** "Three consecutive stages converge under G1": rc17a, rc17d, rc17b, rc17c, rc18, rc05, rc05b, rc09a and
+  rc09b each archived through a COMPUTED PASSED system gate with a `readiness` record formed against cited independent
+  passes, nine in a row before rc10.
+- **G1 — MET on two falsifiers, FIRED once on the third.** No archive's readiness was asserted before the passes it
+  cites (the write gate refuses that ordering since rc04a), and no independent pass since rc04b lacks its
+  `direction`. The third falsifier, "a review that GREW the proposal instead of routing the expansion to
+  architecture", fired at rc10's system walk, which carried a third capability on Sal's A rather than routing it.
+  The user's ruling decided that case; the falsifier still fired, and it is recorded as fired.
+- **G2 — FALSIFIED as written.** After Phase 2 closed (rc05b, 2026-10-10), independent passes still carried
+  a restated-count finding (rc12 change 1, fresh proposal pass: "'33 cases' is stale") and an uncovered-scenario finding
+  (rc12 change 2, fresh proposal pass: "The carried 'Draft window' scenario has no tagging task"). Both were caught at
+  proposal, before anything shipped. The lint checks only MARKED figures, and the scenario map grades a change only
+  once its apply gate passes, so a count in unmarked prose and a scenario not yet planned for both still reach
+  a reviewer. No grammar-defect finding appears after Phase 2: the command sweeps held.
+- **G3 — FALSIFIED as written.** "A ripple-miss finding traceable to a prior walk's sweep set": sixteen
+  `ripple_miss_of` attributions stand across eight stages since rc08a shipped them (rc08a, rc17a, rc17b, rc17d, rc05b,
+  rc18, rc09b and both rc12 changes). Ten are of kind `query` (the site lay inside the sweep's scope and none of
+  its retired or searched strings matched it), five `judgement` (matched, and judged unaffected), one `scope` (rc17a:
+  the site lay outside the check scope). The sweep evidence did what rc08a built it to do (each miss is attributed
+  and walked to zero at the next pass); what it did not do is stop the miss.
+- **G4 — MET.** rc12's three exits, graded at its ratification today.
+
+What the program learned, as its own trail states it: the cadence now ENDS IN AGREEMENT and records it (G0, G1),
+the mechanical checks hold where they reach (no grammar defect after Phase 2), and the two goals that asked for
+prevention are falsified. In both, the remaining failures sit at the point of writing, not at what the checks can
+reach: a count retyped in unmarked prose, and a walk whose search strings miss a site it was already looking at
+(`query`, ten of sixteen) or that judges a matched site unaffected (`judgement`, five). That residue is what any
+successor program would inherit. (The kinds were measured from every archived walk log at this entry; a first draft
+of it said every miss was `judgement`, which was refuted before it was committed.)
+
+**2026-10-12 — how this program reads ARC-DONE (Sal: A, the closing review's W2).** `orbit-pr-lifecycle`'s predicate,
+"every declared stage archived AND the closing architecture review recorded", cannot hold here as written: seven
+stages are ENDED split parents with no archive of their own. This program counts an ended stage as CLOSED, the reading
+Q-crc-29's standing recommendation proposes, so it reaches arc-done when the closing review's walk completes. The
+predicate itself is unchanged: Q-crc-29 stays open with its one-sentence rider, a spec change no walk makes. Nothing
+observable turns on it in this repository: arc-done gates only the program-PR readout, this repository runs
+`pr: per-proposal`, and `orbit pr program clean-up-review-cycle` returns `off`.
+
+**2026-10-12 — the closing review walked (`review-architecture-2026-10-12T03-50-05Z.json`, Sal: A on each
+decision).** W1: the goals graded above. W2: the arc-done reading recorded above. W3: Q-crc-22 RESOLVED against the
+shipped tree (rc08b), Q-crc-17, Q-crc-23 and Q-crc-32 verified still open, and the fourteen open questions listed under
+"Carried at close" at the top of the Open-questions section. The two suggestions: the closed headings of Q-crc-11 and
+Q-crc-28 marked, and CLAUDE.md's reading instruction narrowed to the sections a reader needs.
+

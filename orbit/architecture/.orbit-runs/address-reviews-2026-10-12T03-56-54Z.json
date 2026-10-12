@@ -1,0 +1,231 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-12T03:56:54Z",
+  "change": null,
+  "doc": "clean-up-review-cycle",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "from-file",
+  "source_path": "orbit/architecture/.orbit-runs/review-architecture-2026-10-12T03-50-05Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-12T03-50-05Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 3,
+    "suggestion": 2
+  },
+  "pushback_verification": "All five verified at HEAD bcd27f98, the review commit: the doc had no goal grading, Q-crc-29 still carried its bounding sentence with seven unarchived ended stages, fifteen questions were open, Q-crc-11/Q-crc-28 headings were unmarked, and CLAUDE.md told every session to read the whole doc.",
+  "resolution_summary": {
+    "resolved": 5,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Every stage is closed but no goal is graded, and G3's falsifier fired on the last three stages' trails",
+      "marker_source": "internal-review",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 108,
+      "classification": "decision_required",
+      "action": "option A (grade as written): a closing status-log entry grades G0 met, G1 met on two falsifiers and fired once on the third (rc10), G2 and G3 falsified as written with their trail evidence, G4 met; the ripple-miss kinds were measured from every archived walk log (10 query, 5 judgement, 1 scope), refuting a first draft before commit",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "text": "the program's goals GRADED at close"
+          }
+        ],
+        "searched": [
+          "ripple_miss_of",
+          "readiness",
+          "three consecutive"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "source": "structured",
+        "options": [
+          {
+            "label": "A",
+            "body": "Grade all five goals at close and record G3 as falsified, with the ripple-miss evidence as what the program learned; the program closes with that on the record."
+          },
+          {
+            "label": "B",
+            "body": "Revise G3 under R-crc-12 (a ripple miss is now attributed and measured, not silent, so the attribution is the success signal), then grade all five goals at close."
+          }
+        ],
+        "selected": "A"
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "Q-crc-29 is now live: seven ended stages have no archive, so arc-done cannot be observed as written",
+      "marker_source": "internal-review",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 1296,
+      "classification": "decision_required",
+      "action": "option A: the status log records this program's arc-done reading (an ended stage counts as closed); Q-crc-29's bounding sentence now says it is live on this doc; the predicate and the rider stay with Q-crc-29",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "no live doc carries an ended stage without an archive today"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "text": "how this program reads ARC-DONE"
+          }
+        ],
+        "searched": [
+          "arc-done",
+          "ended stage without an archive"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "resolution": "A: record the reading in the status log and leave the predicate change to a change"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The program closes with fifteen open questions and no stage or successor to own them",
+      "marker_source": "internal-review",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 506,
+      "classification": "decision_required",
+      "action": "option A: Q-crc-22 resolved against the shipped tree (rc08b); Q-crc-17, Q-crc-23 and Q-crc-32 verified still open; a Carried-at-close table of the fourteen open questions heads the Open-questions section; CLAUDE.md points at it",
+      "ripple_cascade": {
+        "applied": [
+          "CLAUDE.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "which also carries Q-crc-11, Q-crc-20, Q-crc-21, Q-crc-22 and Q-crc-23"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "text": "Carried at close (2026-10-12"
+          },
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "text": "Q-crc-22 — RESOLVED (rc08b-walk-routing, 2026-10-05)."
+          },
+          {
+            "path": "CLAUDE.md",
+            "text": "\"Carried at close\" table at the top of the program doc"
+          }
+        ],
+        "searched": [
+          "Q-crc-",
+          "Standing recommendation"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "resolution": "A: verify the possibly-answered questions, close what is answered, carry the rest in one table"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Q-crc-11 and Q-crc-28 are closed in their bodies but not in their headings, and CLAUDE.md still lists Q-crc-11 as live",
+      "marker_source": "internal-review",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 508,
+      "classification": "trivial_fix",
+      "action": "marked the headings of Q-crc-11 and Q-crc-28 CLOSED as their resolved siblings are marked; CLAUDE.md no longer lists Q-crc-11 as live (rides W3's CLAUDE.md edit)",
+      "ripple_cascade": {
+        "applied": [
+          "CLAUDE.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "text": "Q-crc-11 — CLOSED (rc15-ended-stage-state, 2026-10-01)."
+          },
+          {
+            "path": "orbit/architecture/clean-up-review-cycle.md",
+            "text": "Q-crc-28 — CLOSED (rc16-retirement-sweep, 2026-10-01)."
+          }
+        ],
+        "searched": [
+          "Q-crc-11",
+          "Q-crc-28"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The doc's read cost has outgrown CLAUDE.md's instruction to read it before any rc-stage work",
+      "marker_source": "internal-review",
+      "file": "orbit/architecture/clean-up-review-cycle.md",
+      "line": 3512,
+      "classification": "trivial_fix",
+      "action": "CLAUDE.md names the sections a reader needs (Premise, Goals, Rulings index, Carried at close) and the stage-slicing command, retitles the program heading as the latest program with all stages closed, and drops both read-it-whole instructions",
+      "ripple_cascade": {
+        "applied": [
+          "CLAUDE.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "Read that doc before any rc-stage work",
+          "read it before any rc-stage work",
+          "## The ACTIVE program: clean-up-review-cycle"
+        ],
+        "introduced": [
+          {
+            "path": "CLAUDE.md",
+            "text": "it is no longer read whole"
+          }
+        ],
+        "searched": [
+          "before any rc-stage work",
+          "ACTIVE program"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "All five findings of the closing architecture review resolved: the goals graded as written, the arc-done reading recorded, the open questions carried in one table (Q-crc-22 resolved), the closed headings marked and CLAUDE.md narrowed to what a reader needs.",
+  "iteration": 1,
+  "next_recommended": "/orbit:review --as architecture clean-up-review-cycle — confirm the resolutions",
+  "ripple_misses": 0
+}
