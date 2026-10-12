@@ -1,0 +1,114 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-12T17:33:10Z",
+  "change": "landing-page",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    }
+  },
+  "findings": [
+    {
+      "pass": "1",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "README.md",
+      "line": 71,
+      "title": "The Quickstart's review steps run in-context passes that never cover the reviewed gates' first slot",
+      "recommendation": "Make steps 3 and 5 name a review that covers the `invoked` slot, or point the reader at the review `orbit status` names. As written, `/orbit:review --as proposal <change>` and `/orbit:review --as system <change>` resolve to `--reviewer in-context` (the default), and spec-driven v5's cadence `[invoked, in-context]` needs a fresh or external pass (or a complete pair) first. A newcomer following the loop exactly reaches apply and archive with both gates unpassed and meets the inflection prompt each time, while the README's own first claim says gates are computed from the trail. It also reads as the guidance `orbit-conventions`' `Review mode decision framework` scenario `A user doc stating the framework is held to this requirement` names as drift: in-context presented as the first pass.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Write steps 3 and 5 as `/orbit:review --as proposal --blind-pair <change>` / `--as system --blind-pair`, the engine's default presented command, with one line that the external half needs a recorded runner (`orbit config`) or a paste into another AI."
+        },
+        {
+          "label": "B",
+          "body": "Write them with `--fresh`, the single-pass form that covers the slot with Claude Code alone, and say the blind pair is the recommended upgrade."
+        },
+        {
+          "label": "C",
+          "body": "Keep the bare commands but add one sentence that the review to run is the one `orbit status` names next, and that an in-context pass alone does not pass a gate."
+        }
+      ]
+    },
+    {
+      "pass": "1",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "README.md",
+      "line": 46,
+      "title": "The rewritten Install section enumerates none of the install surface `Install documentation describes actual install surface` requires",
+      "recommendation": "The baseline requirement (`orbit/specs/orbit-conventions/spec.md` line 845ff) says the README's installation section describes what `orbit init` produces, and its scenario `README skill and command counts match install output` expects a `What you should see after install` section whose files and counts match a fresh sandbox exactly. The new Install/Quickstart sections name only `orbit/` and \"the `/orbit:*` commands and their skills\"; neither design.md nor explore.md weighs this requirement (grep finds no mention). A fresh sandbox init (`orbit init --tools claude`, stdin closed) produces 15 skills and 15 commands under `.claude/` plus `orbit/specs` and `orbit/changes`. Either the README states that surface, or the requirement is narrowed by a delta, which would make this change's third capability (at R-crc-1's ceiling of 3).",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Add a short `What you should see after install` paragraph: `orbit/` with `specs/` and `changes/`, and 15 skills and 15 commands under `.claude/` (the count `orbit init` itself prints); task 5.2's rehearsal then checks it."
+        },
+        {
+          "label": "B",
+          "body": "Carry a MODIFIED `orbit-conventions` delta that retires the predecessor-overlay-era count scenario, declaring the third capability."
+        },
+        {
+          "label": "C",
+          "body": "Leave it and record the divergence as a named residual for reference-docs / public-readiness."
+        }
+      ]
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "test/helpers/user-docs.ts",
+      "line": 144,
+      "title": "The claims check misreports a name's line when an earlier code span in the same block wraps a line",
+      "recommendation": "Line counting adds one per `softbreak`/`hardbreak` child, but a code span that crosses a line ending carries the newline inside its own content (CommonMark turns it into a space; markdown-it emits no break token), so every name after it is reported one line early. Probed: an item `- **A** `orbit-review` and `x` / `y` then` followed by a continuation line holding `orbit-nope` reports line 6; the name is on line 7. Count the newlines in each `code_inline` token's markup source, or derive the line from the source text, and add a case."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Probed in a scratch sandbox: `orbit init --tools claude` with stdin closed exits 0 and writes `orbit/` plus 15 skills and 15 commands, so the Quickstart's shell steps are non-interactively executable; `orbit --version` prints 2.0.0; a stub change's status names `/orbit:review --as proposal --reviewer blind-pair demo` as the next review, which is where the Quickstart's in-context step diverges. The claims check was read token by token and probed with a wrapped code span; the section bound, nesting and fence rules hold. The tag cleanup leaves only `upstream/v1.3.1` with `tagOpt --no-tags`, and nothing in src, test or scripts names a deleted tag. The release-prepare workflow left in `.github/` is guarded by `github.repository == 'Fission-AI/OpenSpec'`, so a merge to main publishes nothing. Readings came from the live checkout at the pair's handoff commit; HEAD differs from the apply commit only in the trail.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3"
+  ],
+  "passes_skipped": [
+    "4: no perspectives defined (orbit/lenses/ absent)",
+    "5: no critical paths defined (orbit/lenses/ absent)",
+    "6: audit-drift not invoked by this fresh worker; a targeted sweep of version and install statements across src/core/templates, orbit/specs and scripts ran under Pass 3 instead"
+  ],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The mechanism the stage adds is sound and tested, the version and onboard edits are clean, and the tag cleanup is local and verified. The two open items are about what the README tells a newcomer, not about anything that breaks: the review steps of its loop should name a review that actually covers the gate, and the install section should either state the surface or the old requirement should be retired. Both are a few lines of README or one scoped delta, and the clean-machine rehearsal still ahead is the right place to confirm them."
+  },
+  "final_assessment": "0 critical, 2 warning, 1 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews landing-page"
+}
