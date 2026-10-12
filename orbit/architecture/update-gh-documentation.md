@@ -55,6 +55,14 @@ be seen. Flipping visibility to public is Sal's act at arc-done, never an orbit 
 - **R-ugd-6** (Sal, 2026-10-12; resolves Q-ugd-2) — orbit's first version is `1.0.0`. The landing-page stage bumps
   `package.json` from upstream's `1.3.1` and cuts the `v1.0.0` tag on `main` that R-ugd-4's install pins; a GitHub
   Release page, if wanted, stays Sal's.
+  *Its number is superseded by R-ugd-7; the rest of it stands.*
+- **R-ugd-7** (Sal, 2026-10-12; from the landing-page exploration's D-lp-1; supersedes R-ugd-6's number) — orbit's
+  first version is `2.0.0`, "a clean break from upstream". The landing-page stage bumps `package.json` from `1.3.1` and
+  cuts the `v2.0.0` tag on `main` that R-ugd-4's install pins. `2.0.0` sits above every release upstream has shipped
+  (`1.14.1`, measured 2026-10-12), where `1.0.0` sat inside upstream's range and collided with upstream's `v1.0.0` tag
+  fetched into the local clone. Upstream's future numbers do not matter: the engine is frozen at the `1.3.1` baseline
+  and moves only by deliberate cherry-pick, npm keeps the packages apart by name, and the stage stops the clone fetching
+  upstream's tags (the exploration's D-lp-2).
 
 ## Open questions
 
@@ -111,7 +119,7 @@ Complete: [ ]
 
 Charter: rewrite `README.md` as orbit's landing page: what orbit is (a hard fork of OpenSpec 1.3.1, attributed),
 how it improves on OpenSpec (each claim naming the baseline capability that carries it), install (the pinned
-GitHub install of R-ugd-4, at version `1.0.0` per R-ugd-6, with `package.json` bumped and the `v1.0.0` tag cut on `main`),
+GitHub install of R-ugd-4, at version `2.0.0` per R-ugd-7, with `package.json` bumped and the `v2.0.0` tag cut on `main`),
 a quickstart through the core loop, and links into `docs/`. Upstream's logo, badges and Discord leave the page.
 Goals G1, G2.
 
@@ -188,3 +196,9 @@ states need no protection). Q-ugd-2 resolved as R-ugd-6: the first version is `1
 recommendation of `0.1.0`; the landing-page charter now names it. Carried from the stage: the checked-in `git`
 contract still records six keys and six flags rc12 removed from the generated surface, an accepted residual left for
 its own change.
+
+**2026-10-12 — R-ugd-7 captured (Sal), in an architect session.** The landing-page exploration (cited, `exploring`)
+moved orbit's first version from `1.0.0` to `2.0.0` (its D-lp-1): upstream's own `v1.0.0` tag was already in the local
+clone, and `2.0.0` makes a clean break. R-ugd-7 supersedes R-ugd-6's number only; the landing-page charter now names
+`2.0.0` and `v2.0.0`. Q-ugd-2's resolution and the earlier status-log entries keep `1.0.0` as the record of what was
+decided then.
