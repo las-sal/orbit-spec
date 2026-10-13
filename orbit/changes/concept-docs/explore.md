@@ -120,8 +120,8 @@ Domain: the hazards Case 2 lists, each disposed of by one checklist line or one 
 | tools added after 1.3.1, and newer tool directories (item 10) | the table, pointing at `docs/supported-tools.md` |
 | commands, flags and `--json` fields orbit lacks (item 11) | the table |
 Closure: BOUNDED — Case 2 is one changelog read and one run against 1.14.1, and upstream keeps releasing
-Residual kind: a post-1.3.1 on-disk form Case 2 missed (its four unverified items: brace or extglob `generates`, symlinked schema directories, `.openspec-workspace/`, Copilot cloud-agent files) or one upstream ships after 1.14.1
-Residual method: exit (3)'s recorded run on a 1.14.1 project (D-cd-6) for the first; for the second, the guide names the upstream version it was measured against, and a later stage re-reads upstream's changelog from there
+Residual kind: a post-1.3.1 on-disk form the measurement missed (four were never verified: brace or extglob `generates`, symlinked schema directories, `.openspec-workspace/`, Copilot cloud-agent files) or one upstream ships after 1.14.1
+Residual method: for the first, the recorded run of the guide's steps on an upstream 1.14.1 project; for the second, the guide names the upstream version it was measured against, and a later change re-reads upstream's changelog from that version
 Moves:
 - READ: applied — the two re-checked claims (Case 2); the rest are the subagent's runs, which exit (3)'s run re-executes
 - ENUMERATE: applied — this table, one row per Case 2 item, each with a check or a table row
@@ -144,7 +144,7 @@ Domain: what a sentence on the five pages can describe, by whose behaviour it is
 | statements about OpenSpec itself (what an adopter has, what upstream added after 1.3.1) | not orbit's behaviour; R-ugd-1's migration exception |
 | instructions (run this, write that) | not a claim about behaviour; the `orbit`, `git`/`gh` and inventory sweeps grade them |
 Closure: BOUNDED — which inherited behaviours orbit changed is not a closed list; three uncarried ones are named here, found by grepping the specs for the fork plan's decisions
-Residual kind: an orbit change to inherited behaviour that no capability states and that is not D12, D13 or D15, so a page could present it as inherited or as a capability claim
+Residual kind: an orbit change to inherited behaviour that no capability states and that is not fork-and-orbify D12, D13 or D15, so a page could present it as inherited or as a capability claim
 Residual method: diff the page's claim against the upstream `1.3.1` tag (`git diff upstream/v1.3.1 -- <path>`) when the system review reads the page for orbit behaviour
 Moves:
 - READ: applied — all 28 baseline capabilities are `orbit-*` (`ls orbit/specs`); no spec states telemetry removal, and D15 appears only as one clause in `orbit-architect`
