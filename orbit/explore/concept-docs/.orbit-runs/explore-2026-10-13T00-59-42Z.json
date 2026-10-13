@@ -1,0 +1,30 @@
+{
+  "command": "explore",
+  "timestamp": "2026-10-13T00:59:42Z",
+  "change": "concept-docs",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Measured the migration on real upstream projects (Case 1: orbit init silently builds an empty orbit/ beside openspec/; the manual move works for 1.3.1) and classified upstream 1.4-1.14.1 against orbit's engine (Case 2: eleven hazards, five silent). Eight decisions: D-cd-1 an orbit init warning (Sal: b; needs an R-ugd-3 carve-out ruled in an architect session), D-cd-2 its trigger, D-cd-3 exit (2) ranges over what orbit adds or changes, D-cd-4 a 1.14 project is not a drop-in (fact), D-cd-5 the before-you-move checklist, D-cd-6 exit (3) on a fresh 1.14.1 project with one fixture per hazard, D-cd-7 a checked Carried by: line per H2 section, D-cd-8 supported-tools in two tiers held to AI_TOOLS. One open question, Q-cd-8, is the program's: whether orbit cherry-picks upstream fixes before going public.",
+  "decisions_captured": 8,
+  "open_questions_count": 1,
+  "open_questions_with_recommendation": "1 of 1",
+  "rules_total": 5,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [
+    {
+      "id": "D-cd-3",
+      "kind": "an orbit change to inherited behaviour that no capability states and that is not D12, D13 or D15, so a page could present it as inherited or as a capability claim",
+      "method": "diff the page's claim against the upstream `1.3.1` tag (`git diff upstream/v1.3.1 -- <path>`) when the system review reads the page for orbit behaviour"
+    },
+    {
+      "id": "D-cd-5",
+      "kind": "a post-1.3.1 on-disk form Case 2 missed (its four unverified items: brace or extglob `generates`, symlinked schema directories, `.openspec-workspace/`, Copilot cloud-agent files) or one upstream ships after 1.14.1",
+      "method": "exit (3)'s recorded run on a 1.14.1 project (D-cd-6) for the first; for the second, the guide names the upstream version it was measured against, and a later stage re-reads upstream's changelog from there"
+    }
+  ],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose concept-docs — 5 live rules accounted, 2 bounded residuals named (D-cd-3, D-cd-5); formalize when you are ready (or /orbit:explore concept-docs to keep refining)"
+}

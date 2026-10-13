@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-10-13T00:31:15Z",
+  "change": "concept-docs",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Opened the concept-docs exploration (Mode B, new): six-section scaffold and minimal metadata written, with the architecture citation update-gh-documentation › concept-docs recorded on Sal's word. Nothing discussed yet.",
+  "decisions_captured": 0,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 0,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:explore concept-docs — continue capturing thinking — no decisions captured yet"
+}
