@@ -1,0 +1,14 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-10-13T01:08:18Z",
+  "change": "concept-docs",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "prompt_path": "orbit/changes/concept-docs/.orbit-runs/external-prompt-proposal-2026-10-13T01-08-12Z.md",
+  "target": "codex",
+  "final_assessment": "External review prompt packaged for concept-docs (iter 1, mode proposal) as the external half of a launched blind pair; awaiting findings from codex.",
+  "pair": true,
+  "awaiting_findings": true,
+  "next_recommended": "Paste orbit/changes/concept-docs/.orbit-runs/external-prompt-proposal-2026-10-13T01-08-12Z.md into the target AI, and save the response as orbit/changes/concept-docs/.orbit-runs/external-proposal-<TS>.md"
+}
