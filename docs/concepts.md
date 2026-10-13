@@ -224,10 +224,9 @@ Work too large for one change is declared as a program: an architecture document
 goals, rulings, and stages each of which becomes a change. `/orbit:architect` authors and resumes one.
 
 A stage's state is computed from disk: `in-change` while a change citing it is active, `exploring` while an
-exploration cites it, `quiescent` once its change is archived, `concluded` when its only citing exploration ended
-without a change, and `premised` before anything starts. A stage is
-`complete` only when it is quiescent and you have ratified it, and you can declare a stage ended without meeting its
-criteria. `orbit architecture status` shows where a program stands, and `orbit architecture show <doc> <stage>`
+exploration cites it, `quiescent` once its change is archived, `concluded` when the explorations citing it concluded
+without a change, and `premised` before anything starts. A stage is `complete` only when it is quiescent and you
+have ratified it, and you can declare a stage ended without meeting its criteria. `orbit architecture status` shows where a program stands, and `orbit architecture show <doc> <stage>`
 prints one stage.
 
 Carried by: `orbit-architect`, `orbit-architecture-engine`

@@ -119,14 +119,13 @@ rm -rf .claude/skills/openspec-* .claude/commands/opsx
 ```
 
 For Codex, whose commands are global (in `$CODEX_HOME/prompts/` when `CODEX_HOME` is set, otherwise
-`~/.codex/prompts/`):
+`~/.codex/prompts/`). Those `opsx-*` prompts are shared by every project on the machine: if another project still
+uses OpenSpec with Codex, leave them in place until that project moves too, and run only the first line:
 
 ```bash
-rm -rf .codex/skills/openspec-* .agents/skills/openspec-* ~/.codex/prompts/opsx-*
+rm -rf .codex/skills/openspec-* .agents/skills/openspec-*
+rm -rf ~/.codex/prompts/opsx-*
 ```
-
-The `opsx-*` prompts are shared by every project on the machine: if another project still uses OpenSpec with Codex,
-leave them in place until that project moves too.
 
 For any other tool, delete the `openspec-*` skill directories and `opsx` command files under its directory
 ([Supported tools](supported-tools.md) lists them). In zsh, a pattern that matches nothing stops the whole command;
