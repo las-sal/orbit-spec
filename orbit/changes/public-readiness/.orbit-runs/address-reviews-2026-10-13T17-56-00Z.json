@@ -1,0 +1,69 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-13T17:56:00Z",
+  "change": "public-readiness",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/public-readiness/.orbit-runs/review-system-2026-10-13T17-54-42Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-13T17-54-42Z",
+  "latest_apply_token": "2026-10-13T15-09-50Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 0
+  },
+  "pushback_verification": "Verified: the record's committed versions 3f10556a, 5257847f, b981a334 and 6a31601d each match the scan's path pattern six times, the version at 20f7054f none, and no row named the record. Not stale.",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The blob-scan paragraph claims every path-bearing name is covered by a row, but the record's own earlier versions are not",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/public-readiness/readiness-record.md",
+      "line": 62,
+      "classification": "trivial_fix",
+      "action": "Added the history-only rows the blob scan's names owed: the record's own versions 3f10556a to 6a31601d, and the change's explore.md and boot-render.ts before apply's resolution, each under 'any other living file' (removed at HEAD; history never rewritten). Checked: all 11 history-only names now appear in the record, and the scan's path pattern matches nothing in it.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/public-readiness/readiness-record.md",
+            "text": "this record's own versions from `3f10556a` to `6a31601d`, which quoted the paths it resolved"
+          }
+        ],
+        "searched": [
+          "each of the blob scan's 11 history-only names, against the record's text"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "ripple_miss_of": {
+        "walk": "2026-10-13T17-46-02Z",
+        "title": "The history scan omits content introduced by merge commits",
+        "file": "orbit/changes/public-readiness/readiness-record.md",
+        "kind": "judgement"
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "One of one resolved: the history-only table now names every path-bearing name the blob scan found, the record's own earlier versions among them.",
+  "iteration": 6,
+  "next_recommended": "/orbit:archive public-readiness — user-invoked",
+  "ripple_misses": 1
+}

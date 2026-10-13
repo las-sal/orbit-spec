@@ -102,6 +102,8 @@ carried one only in history, each under the row its path had then:
 | `openspec/explore/fork-and-orbify/explore.md` (`d2d4293a`; a scratch clone's path) and `orbit/explore/fork-and-orbify/explore.md` (the same record at its middle location; found by the blob scan) | a record under `orbit/architecture/` (the file is now `orbit/architecture/fork-and-orbify.md`) | ACCEPTED: records are true when written |
 | `orbit/changes/concept-docs/migration-run.md` (`91b04867`; the npm cache path) | `orbit/changes/archive/**` (archived since) | ACCEPTED: records are true when written |
 | `orbit/explore/public-readiness/explore.md` (`7febd8ce`; the probe's quoted paths) | any other living file | RESOLVED: removed at HEAD (above); history never rewritten |
+| `orbit/changes/public-readiness/explore.md` and `src/core/boot-render.ts` (their versions before apply's resolution; found by the blob scan) | any other living file | RESOLVED: removed at HEAD (above, "the two resolved at apply"); history never rewritten |
+| `orbit/changes/public-readiness/readiness-record.md` (this record's own versions from `3f10556a` to `6a31601d`, which quoted the paths it resolved; found by the blob scan) | any other living file | RESOLVED: removed at HEAD by the system walk; history never rewritten |
 
 The scan requirement's table has no row of its own for a path found ONLY in history. Each row above is the one the
 path's file had when the path was written. Where that was "any other living file", the path is removed at HEAD and
