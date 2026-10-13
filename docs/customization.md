@@ -1,33 +1,17 @@
 # Customization
 
-OpenSpec provides three levels of customization:
+You can shape orbit at three levels: the project's `orbit/config.yaml`, a custom schema in the project, and
+user-level schemas shared by every project on the machine. The config's `schema`, `context` and `rules`, and schemas
+with their templates, are inherited unchanged from orbit's 1.3.1 baseline (see [Built on](../README.md)); orbit adds
+config keys for its own layer and a `gates:` list to schemas.
 
-| Level | What it does | Best for |
-|-------|--------------|----------|
-| **Project Config** | Set defaults, inject context/rules | Most teams |
-| **Custom Schemas** | Define your own workflow artifacts | Teams with unique processes |
-| **Global Overrides** | Share schemas across all projects | Power users |
+## Project configuration
 
----
-
-## Project Configuration
-
-The `openspec/config.yaml` file is the easiest way to customize OpenSpec for your team. It lets you:
-
-- **Set a default schema** - Skip `--schema` on every command
-- **Inject project context** - AI sees your tech stack, conventions, etc.
-- **Add per-artifact rules** - Custom rules for specific artifacts
-
-### Quick Setup
-
-```bash
-openspec init
-```
-
-This walks you through creating a config interactively. Or create one manually:
+`orbit/config.yaml` sets a default schema, gives the AI your project's context, and adds rules for particular
+artifacts. Run interactively (or with `--force`), `orbit init` writes a starter file holding `schema: spec-driven`; a
+non-interactive init without `--force` writes none, and you can create it by hand:
 
 ```yaml
-# openspec/config.yaml
 schema: spec-driven
 
 context: |
@@ -38,120 +22,102 @@ context: |
 
 rules:
   proposal:
-    - Include rollback plan
+    - Include a rollback plan
     - Identify affected teams
   specs:
-    - Use Given/When/Then format
     - Reference existing patterns before inventing new ones
 ```
 
-### How It Works
+- **`schema`** is the schema a new change uses when you do not name one.
+- **`context`** is injected into the instructions for every artifact.
+- **`rules`** are injected only into the instructions for the artifact they are keyed by (`proposal`, `specs`,
+  `design`, `tasks`, or a custom schema's artifact ids).
 
-**Default schema:**
+When the AI asks for an artifact's instructions, it receives your context, the rules for that artifact, and the
+schema's template, in that order. You can see exactly what it receives:
 
 ```bash
-# Without config
-openspec new change my-feature --schema spec-driven
-
-# With config - schema is automatic
-openspec new change my-feature
+orbit instructions proposal --change my-change
 ```
 
-**Context and rules injection:**
+A schema is chosen in this order: the `--schema` option on the command, then the change's own metadata
+(`.openspec.yaml` in the change folder), then `schema` in `orbit/config.yaml`, then `spec-driven`.
 
-When generating any artifact, your context and rules are injected into the AI prompt:
+Carried by: the 1.3.1 baseline
 
-```xml
-<context>
-Tech stack: TypeScript, React, Node.js, PostgreSQL
-...
-</context>
+## orbit's config keys
 
-<rules>
-- Include rollback plan
-- Identify affected teams
-</rules>
+orbit reads five more optional keys from `orbit/config.yaml`. Each is off, or at its default, when absent.
 
-<template>
-[Schema's built-in template]
-</template>
+| Key | What it does |
+|---|---|
+| `review_preference` | Per reviewed gate, which review the readout presents when nothing covers the gate's first slot: `blind-pair` (the default), `fresh` or `external`. It changes only what is suggested: any independent review you invoke covers the slot. |
+| `models` | Hints appended to the `Ready when you are:` line, keyed by a phase or a review class, for example `fresh: "any frontier model, clean context"`. Each value is one line of at most 80 characters. |
+| `pr` | The pull-request regime: `never` (the default), `per-proposal` (each change gets a branch and a draft PR at propose, marked ready at archive), or `per-architecture` (the changes of one architecture doc share one program PR). Merging is always yours. |
+| `scenario_map` | Turns on the scenario map: `tests` lists globs of test files whose `// @scenario` tags declare which delta scenario each test covers, and `orbit validate <change>` reports undeclared scenarios. |
+| `size_ceiling` | Maxima for a change's size: `capabilities`, `requirements`, `changed_bytes` and `tasks`. `orbit validate <change>` warns when a change exceeds one without declaring it in a `## Size` section of its proposal. |
+
+A complete example:
+
+```yaml
+review_preference:
+  review-proposal: fresh
+  review-system: blind-pair
+models:
+  external: "a different AI from the session's"
+pr: per-proposal
+scenario_map:
+  tests: ['test/**/*.test.ts']
+size_ceiling:
+  capabilities: 3
+  requirements: 12
+  changed_bytes: 40960
+  tasks: 19
 ```
 
-- **Context** appears in ALL artifacts
-- **Rules** ONLY appear for the matching artifact
+Carried by: `orbit-engine-gates`, `orbit-pr-lifecycle`, `orbit-scenario-map`, `orbit-change-size`
 
-### Schema Resolution Order
+## Custom schemas
 
-When OpenSpec needs a schema, it checks in this order:
-
-1. CLI flag: `--schema <name>`
-2. Change metadata (`.openspec.yaml` in the change folder)
-3. Project config (`openspec/config.yaml`)
-4. Default (`spec-driven`)
-
----
-
-## Custom Schemas
-
-When project config isn't enough, create your own schema with a completely custom workflow. Custom schemas live in your project's `openspec/schemas/` directory and are version-controlled with your code.
+A schema defines a change's artifacts, the order they are written in, and the gates between them. When the project
+config is not enough, write your own. Project schemas live in `orbit/schemas/<name>/` and are versioned with your
+code:
 
 ```text
 your-project/
-├── openspec/
-│   ├── config.yaml        # Project config
-│   ├── schemas/           # Custom schemas live here
+├── orbit/
+│   ├── config.yaml
+│   ├── schemas/
 │   │   └── my-workflow/
 │   │       ├── schema.yaml
 │   │       └── templates/
-│   └── changes/           # Your changes
+│   ├── specs/
+│   └── changes/
 └── src/
 ```
 
-### Fork an Existing Schema
+### Fork the built-in schema
 
-The fastest way to customize is to fork a built-in schema:
-
-```bash
-openspec schema fork spec-driven my-workflow
-```
-
-This copies the entire `spec-driven` schema to `openspec/schemas/my-workflow/` where you can edit it freely.
-
-**What you get:**
-
-```text
-openspec/schemas/my-workflow/
-├── schema.yaml           # Workflow definition
-└── templates/
-    ├── proposal.md       # Template for proposal artifact
-    ├── spec.md           # Template for specs
-    ├── design.md         # Template for design
-    └── tasks.md          # Template for tasks
-```
-
-Now edit `schema.yaml` to change the workflow, or edit templates to change what AI generates.
-
-### Create a Schema from Scratch
-
-For a completely fresh workflow:
+The quickest start is a copy of `spec-driven`, which brings its gates with it:
 
 ```bash
-# Interactive
-openspec schema init research-first
-
-# Non-interactive
-openspec schema init rapid \
-  --description "Rapid iteration workflow" \
-  --artifacts "proposal,tasks" \
-  --default
+orbit schema fork spec-driven my-workflow
 ```
 
-### Schema Structure
+This copies `schema.yaml` and its templates (`proposal.md`, `spec.md`, `design.md`, `tasks.md`) to
+`orbit/schemas/my-workflow/`, where you edit them.
 
-A schema defines the artifacts in your workflow and how they depend on each other:
+### Create one from scratch
+
+```bash
+orbit schema init rapid --description "Rapid iteration workflow" --artifacts "proposal,tasks" --default
+```
+
+Run without options, `orbit schema init <name>` asks for them.
+
+### The artifacts
 
 ```yaml
-# openspec/schemas/my-workflow/schema.yaml
 name: my-workflow
 version: 1
 description: My team's custom workflow
@@ -163,7 +129,6 @@ artifacts:
     template: proposal.md
     instruction: |
       Create a proposal that explains WHY this change is needed.
-      Focus on the problem, not the solution.
     requires: []
 
   - id: design
@@ -173,7 +138,7 @@ artifacts:
     instruction: |
       Create a design document explaining HOW to implement.
     requires:
-      - proposal    # Can't create design until proposal exists
+      - proposal
 
   - id: tasks
     generates: tasks.md
@@ -187,156 +152,113 @@ apply:
   tracks: tasks.md
 ```
 
-**Key fields:**
-
 | Field | Purpose |
-|-------|---------|
-| `id` | Unique identifier, used in commands and rules |
-| `generates` | Output filename (supports globs like `specs/**/*.md`) |
-| `template` | Template file in `templates/` directory |
-| `instruction` | AI instructions for creating this artifact |
-| `requires` | Dependencies - which artifacts must exist first |
+|---|---|
+| `id` | The artifact's identifier, used in commands and in `rules` |
+| `generates` | The file it writes; a glob such as `specs/**/*.md` for several |
+| `template` | Its template file, under `templates/` |
+| `instruction` | What the AI is told when writing it |
+| `requires` | The artifacts that must exist before it can be written |
+
+The `apply` block names what implementation needs and the checklist it tracks. orbit reads it as a tracked gate with
+the id `apply` (below).
 
 ### Templates
 
-Templates are markdown files that guide the AI. They're injected into the prompt when creating that artifact.
+A template is a markdown file the AI fills in for its artifact. It is injected into the instructions after your
+context and rules:
 
 ```markdown
-<!-- templates/proposal.md -->
 ## Why
 
-<!-- Explain the motivation for this change. What problem does this solve? -->
+<!-- The motivation. What problem does this solve? -->
 
 ## What Changes
 
-<!-- Describe what will change. Be specific about new capabilities or modifications. -->
+<!-- What changes. Name new capabilities and modifications. -->
 
 ## Impact
 
 <!-- Affected code, APIs, dependencies, systems -->
 ```
 
-Templates can include:
-- Section headers the AI should fill in
-- HTML comments with guidance for the AI
-- Example formats showing expected structure
+A template can hold the section headings the AI fills in, HTML comments that guide it, and examples of the shape you
+expect.
 
-### Validate Your Schema
-
-Before using a custom schema, validate it:
+### Check, use and locate a schema
 
 ```bash
-openspec schema validate my-workflow
+orbit schema validate my-workflow
+orbit new change my-feature --schema my-workflow
+orbit schema which my-workflow
+orbit schema which --all
 ```
 
-This checks:
-- `schema.yaml` syntax is correct
-- All referenced templates exist
-- No circular dependencies
-- Artifact IDs are valid
+`orbit schema validate` checks the YAML, that every template exists, that no dependency is circular and that every
+id is valid. To make a schema the project default, set `schema: my-workflow` in `orbit/config.yaml`. `orbit schema
+which` reports where a schema resolves from: the project, the user directory or the package.
 
-### Use Your Custom Schema
+User-level schemas live in `~/.local/share/openspec/schemas/` (or under `$XDG_DATA_HOME`) and are shared by every
+project on the machine. Project schemas are usually the better choice, because they are versioned with your code.
 
-Once created, use your schema with:
+Carried by: the 1.3.1 baseline
 
-```bash
-# Specify on command
-openspec new change feature --schema my-workflow
+## Gates in a schema
 
-# Or set as default in config.yaml
-schema: my-workflow
-```
+A schema can declare a `gates:` list: the checks between its artifacts and the lifecycle phases. A gate is one of two
+kinds:
 
-### Debug Schema Resolution
+- **`tracked`** passes when every checkbox in the file it `tracks` is checked. An `apply:` block is read as a
+  tracked gate with the id `apply`; declare one or the other, not both.
+- **`reviewed`** passes when the reviews its `cadence` names have run and every CRITICAL and WARNING finding is
+  resolved by a walk. Its state is computed from the review trail in the change's `.orbit-runs/` directory.
 
-Not sure which schema is being used? Check with:
-
-```bash
-# See where a specific schema resolves from
-openspec schema which my-workflow
-
-# List all available schemas
-openspec schema which --all
-```
-
-Output shows whether it's from your project, user directory, or the package:
-
-```text
-Schema: my-workflow
-Source: project
-Path: /path/to/project/openspec/schemas/my-workflow
-```
-
----
-
-> **Note:** OpenSpec also supports user-level schemas at `~/.local/share/openspec/schemas/` for sharing across projects, but project-level schemas in `openspec/schemas/` are recommended since they're version-controlled with your code.
-
----
-
-## Examples
-
-### Rapid Iteration Workflow
-
-A minimal workflow for quick iterations:
+This is the gates list of the built-in `spec-driven` schema:
 
 ```yaml
-# openspec/schemas/rapid/schema.yaml
-name: rapid
-version: 1
-description: Fast iteration with minimal overhead
+gates:
+  - id: review-proposal
+    kind: reviewed
+    requires: [proposal, specs, design, tasks]
+    inputs: [proposal, specs, design, tasks]
+    cadence: [invoked, in-context]
+    budget: 3
+    before: apply
+    consent: user-invoked
 
-artifacts:
-  - id: proposal
-    generates: proposal.md
-    description: Quick proposal
-    template: proposal.md
-    instruction: |
-      Create a brief proposal for this change.
-      Focus on what and why, skip detailed specs.
-    requires: []
+  - id: apply
+    kind: tracked
+    requires: [tasks]
+    tracks: tasks.md
 
-  - id: tasks
-    generates: tasks.md
-    description: Implementation checklist
-    template: tasks.md
-    requires: [proposal]
-
-apply:
-  requires: [tasks]
-  tracks: tasks.md
+  - id: review-system
+    kind: reviewed
+    requires: [apply]
+    cadence: [invoked, in-context]
+    budget: 3
+    before: archive
+    consent: user-invoked
 ```
 
-### Adding a Review Artifact
+| Field | Purpose |
+|---|---|
+| `id` | The gate's identifier, unique among gates and artifacts |
+| `kind` | `tracked` or `reviewed`; nothing else is accepted |
+| `requires` | The artifacts and gates that must be complete before the gate can be run |
+| `tracks` | A tracked gate's checklist file |
+| `inputs` | A reviewed gate's freshness scope: the artifacts whose change makes a passed review stale; defaults to `requires` |
+| `cadence` | A reviewed gate's ordered review slots, each `in-context`, `fresh`, `external`, `independent` (a fresh or an external review), `blind-pair` (one of each, blind to each other) or `invoked` (what you invoked: one independent review or a complete pair) |
+| `budget` | The number of independent reviews you expect to spend; reported beside the gate, never enforced |
+| `before` | What the gate holds: an artifact or gate id, or the phase `apply` or `archive` |
+| `consent` | `user-invoked`: entering the `before` phase needs your explicit invocation; an AI that arrives there on its own asks first |
 
-Fork the default and add a review step:
+A gate never blocks you outright. When you run a phase whose gate has not passed, the workflow says so and asks
+whether to proceed, and a decision to proceed is recorded. `orbit status --change <name>` shows each gate's state.
 
-```bash
-openspec schema fork spec-driven with-review
-```
+Carried by: `orbit-engine-gates`, `orbit-lifecycle-consent`
 
-Then edit `schema.yaml` to add:
+## Related
 
-```yaml
-  - id: review
-    generates: review.md
-    description: Pre-implementation review checklist
-    template: review.md
-    instruction: |
-      Create a review checklist based on the design.
-      Include security, performance, and testing considerations.
-    requires:
-      - design
-
-  - id: tasks
-    # ... existing tasks config ...
-    requires:
-      - specs
-      - design
-      - review    # Now tasks require review too
-```
-
----
-
-## See Also
-
-- [CLI Reference: Schemas](cli.md#schemas) - Full command documentation
+- [Workflow engine](workflow-engine.md)
+- [Workflows](workflows.md)
+- [CLI](cli.md)

@@ -53,7 +53,8 @@ and an unchecked declaration drifts the day a capability is renamed.
 
 `toolCoverageFailures(surfaces, tools)` imports `AI_TOOLS` from `src/core/config.ts` (the test already reads the
 program the same way, through `buildProgram`). A tier is the text under an H2 whose heading text begins `Tier 1` or
-`Tier 2`. A tool is named by its id as an inline code span in a table row. As with the command-coverage check, a page
+`Tier 2`. A tool is named by its id as an inline code span in a table row; only a span shaped like an id
+(lowercase letters, digits and hyphens) is read as one, so a row's directory spans (`.claude/skills/`) are not ids. As with the command-coverage check, a page
 that is neither listed nor present fails. Tier membership is fixed in the check (claude and codex in tier 1, every
 other available entry in tier 2) because it encodes fork-and-orbify D11, not a fact the code carries.
 

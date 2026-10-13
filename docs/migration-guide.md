@@ -1,595 +1,215 @@
-# Migrating to OPSX
+# Migrating from OpenSpec
 
-This guide helps you transition from the legacy OpenSpec workflow to OPSX. The migration is designed to be smooth—your existing work is preserved, and the new system offers more flexibility.
+This guide moves a project made with OpenSpec 1.x to orbit. orbit is a fork of OpenSpec 1.3.1 (see
+[Built on OpenSpec](../README.md#built-on-openspec)), so a project's specs, changes and `config.yaml` carry over
+unchanged in form. orbit keeps them in `orbit/` rather than `openspec/`, and its engine stayed at 1.3.1 while OpenSpec
+kept releasing, so a project that uses something added after 1.3.1 needs fixing before it moves.
 
-## What's Changing?
+This guide was measured against **OpenSpec 1.14.1**: its checklist finds the forms a 1.14.1 project can hold that
+orbit's engine reads differently. A form added to OpenSpec after 1.14.1 is not covered.
 
-OPSX replaces the old phase-locked workflow with a fluid, action-based approach. Here's the key shift:
+Run every command from the project's root, in a shell where `orbit` is installed
+([Installation](installation.md)), with the project committed to git so each step can be undone.
 
-| Aspect | Legacy | OPSX |
-|--------|--------|------|
-| **Commands** | `/openspec:proposal`, `/openspec:apply`, `/openspec:archive` | Default: `/opsx:propose`, `/opsx:apply`, `/opsx:archive` (expanded workflow commands optional) |
-| **Workflow** | Create all artifacts at once | Create incrementally or all at once—your choice |
-| **Going back** | Awkward phase gates | Natural—update any artifact anytime |
-| **Customization** | Fixed structure | Schema-driven, fully hackable |
-| **Configuration** | `CLAUDE.md` with markers + `project.md` | Clean config in `openspec/config.yaml` |
+## Before you move
 
-**The philosophy change:** Work isn't linear. OPSX stops pretending it is.
+Run each check against `openspec/`. A check that prints nothing found nothing. Each finds a form on disk, never a
+meaning: a clean checklist shows that no known hazard is present, and nothing more.
 
----
+### 1. Task lines orbit reads differently
 
-## Before You Begin
-
-### Your Existing Work Is Safe
-
-The migration process is designed with preservation in mind:
-
-- **Active changes in `openspec/changes/`** — Completely preserved. You can continue them with OPSX commands.
-- **Archived changes** — Untouched. Your history remains intact.
-- **Main specs in `openspec/specs/`** — Untouched. These are your source of truth.
-- **Your content in CLAUDE.md, AGENTS.md, etc.** — Preserved. Only the OpenSpec marker blocks are removed; everything you wrote stays.
-
-### What Gets Removed
-
-Only OpenSpec-managed files that are being replaced:
-
-| What | Why |
-|------|-----|
-| Legacy slash command directories/files | Replaced by the new skills system |
-| `openspec/AGENTS.md` | Obsolete workflow trigger |
-| OpenSpec markers in `CLAUDE.md`, `AGENTS.md`, etc. | No longer needed |
-
-**Legacy command locations by tool** (examples—your tool may vary):
-
-- Claude Code: `.claude/commands/openspec/`
-- Cursor: `.cursor/commands/openspec-*.md`
-- Windsurf: `.windsurf/workflows/openspec-*.md`
-- Cline: `.clinerules/workflows/openspec-*.md`
-- Roo: `.roo/commands/openspec-*.md`
-- GitHub Copilot: `.github/prompts/openspec-*.prompt.md` (IDE extensions only; not supported in Copilot CLI)
-- And others (Augment, Continue, Amazon Q, etc.)
-
-The migration detects whichever tools you have configured and cleans up their legacy files.
-
-The removal list may seem long, but these are all files that OpenSpec originally created. Your own content is never deleted.
-
-### What Needs Your Attention
-
-One file requires manual migration:
-
-**`openspec/project.md`** — This file isn't deleted automatically because it may contain project context you've written. You'll need to:
-
-1. Review its contents
-2. Move useful context to `openspec/config.yaml` (see guidance below)
-3. Delete the file when ready
-
-**Why we made this change:**
-
-The old `project.md` was passive—agents might read it, might not, might forget what they read. We found reliability was inconsistent.
-
-The new `config.yaml` context is **actively injected into every OpenSpec planning request**. This means your project conventions, tech stack, and rules are always present when the AI is creating artifacts. Higher reliability.
-
-**The tradeoff:**
-
-Because context is injected into every request, you'll want to be concise. Focus on what really matters:
-- Tech stack and key conventions
-- Non-obvious constraints the AI needs to know
-- Rules that frequently got ignored before
-
-Don't worry about getting it perfect. We're still learning what works best here, and we'll be improving how context injection works as we experiment.
-
----
-
-## Running the Migration
-
-Both `openspec init` and `openspec update` detect legacy files and guide you through the same cleanup process. Use whichever fits your situation:
-
-- New installs default to profile `core` (`propose`, `explore`, `apply`, `archive`).
-- Migrated installs preserve your previously installed workflows by writing a `custom` profile when needed.
-
-### Using `openspec init`
-
-Run this if you want to add new tools or reconfigure which tools are set up:
+orbit's apply gate counts `- [ ]` and `- [x]` lines, and `orbit list` counts unindented `-` and `*` boxes. Any other
+form is read as done, or not read at all, so a gate can pass with work left.
 
 ```bash
-openspec init
+grep -rnE --include=tasks.md --exclude-dir=archive '^([[:space:]]+[-*+]|[*+]|[0-9]+[.)])[[:space:]]+\[|^- \[([^] xX]|[^]]{2,})\]' openspec/changes
 ```
 
-The init command detects legacy files and guides you through cleanup:
+Fix: rewrite each line it prints as an unindented `- [ ]` or `- [x]`. A sub-task becomes a task of its own.
 
-```
-Upgrading to the new OpenSpec
+### 2. Change metadata orbit drops
 
-OpenSpec now uses agent skills, the emerging standard across coding
-agents. This simplifies your setup while keeping everything working
-as before.
-
-Files to remove
-No user content to preserve:
-  • .claude/commands/openspec/
-  • openspec/AGENTS.md
-
-Files to update
-OpenSpec markers will be removed, your content preserved:
-  • CLAUDE.md
-  • AGENTS.md
-
-Needs your attention
-  • openspec/project.md
-    We won't delete this file. It may contain useful project context.
-
-    The new openspec/config.yaml has a "context:" section for planning
-    context. This is included in every OpenSpec request and works more
-    reliably than the old project.md approach.
-
-    Review project.md, move any useful content to config.yaml's context
-    section, then delete the file when ready.
-
-? Upgrade and clean up legacy files? (Y/n)
-```
-
-**What happens when you say yes:**
-
-1. Legacy slash command directories are removed
-2. OpenSpec markers are stripped from `CLAUDE.md`, `AGENTS.md`, etc. (your content stays)
-3. `openspec/AGENTS.md` is deleted
-4. New skills are installed in `.claude/skills/`
-5. `openspec/config.yaml` is created with a default schema
-
-### Using `openspec update`
-
-Run this if you just want to migrate and refresh your existing tools to the latest version:
+orbit drops these keys from a change's `.openspec.yaml` without a warning: `skip_specs`, `retire_capabilities`,
+`goal`, `affected_areas` and `initiative`. A change with `skip_specs` then fails validation for having no delta, and
+one with `retire_capabilities` cannot archive.
 
 ```bash
-openspec update
+grep -rnE --include=.openspec.yaml --exclude-dir=archive '^(skip_specs|retire_capabilities|goal|affected_areas|initiative):' openspec/changes
 ```
 
-The update command also detects and cleans up legacy artifacts, then refreshes generated skills/commands to match your current profile and delivery settings.
+Fix: finish and archive those changes with OpenSpec before you move.
 
-### Non-Interactive / CI Environments
+### 3. Nested capability paths
 
-For scripted migrations:
+orbit reads a capability as `specs/<capability>/spec.md`, one level deep. A nested baseline
+(`openspec/specs/<area>/<capability>/spec.md`) is skipped by validation, and a nested delta
+(`openspec/changes/<change>/specs/<area>/<capability>/spec.md`) reads as no deltas at all.
 
 ```bash
-openspec init --force --tools claude
+find openspec -path '*/specs/*/*/spec.md' -not -path 'openspec/changes/archive/*'
 ```
 
-The `--force` flag skips prompts and auto-accepts cleanup.
+Fix: flatten each to `specs/<capability>/spec.md`, in the baseline and in every change's delta alike. Where two
+capabilities would flatten to the same name, rename one, for example `billing-invoices`.
 
----
+### 4. A Purpose section in a delta spec
 
-## Migrating project.md to config.yaml
-
-The old `openspec/project.md` was a freeform markdown file for project context. The new `openspec/config.yaml` is structured and—critically—**injected into every planning request** so your conventions are always present when the AI works.
-
-### Before (project.md)
-
-```markdown
-# Project Context
-
-This is a TypeScript monorepo using React and Node.js.
-We use Jest for testing and follow strict ESLint rules.
-Our API is RESTful and documented in docs/api.md.
-
-## Conventions
-
-- All public APIs must maintain backwards compatibility
-- New features should include tests
-- Use Given/When/Then format for specifications
-```
-
-### After (config.yaml)
-
-```yaml
-schema: spec-driven
-
-context: |
-  Tech stack: TypeScript, React, Node.js
-  Testing: Jest with React Testing Library
-  API: RESTful, documented in docs/api.md
-  We maintain backwards compatibility for all public APIs
-
-rules:
-  proposal:
-    - Include rollback plan for risky changes
-  specs:
-    - Use Given/When/Then format for scenarios
-    - Reference existing patterns before inventing new ones
-  design:
-    - Include sequence diagrams for complex flows
-```
-
-### Key Differences
-
-| project.md | config.yaml |
-|------------|-------------|
-| Freeform markdown | Structured YAML |
-| One blob of text | Separate context and per-artifact rules |
-| Unclear when it's used | Context appears in ALL artifacts; rules appear in matching artifacts only |
-| No schema selection | Explicit `schema:` field sets default workflow |
-
-### What to Keep, What to Drop
-
-When migrating, be selective. Ask yourself: "Does the AI need this for *every* planning request?"
-
-**Good candidates for `context:`**
-- Tech stack (languages, frameworks, databases)
-- Key architectural patterns (monorepo, microservices, etc.)
-- Non-obvious constraints ("we can't use library X because...")
-- Critical conventions that often get ignored
-
-**Move to `rules:` instead**
-- Artifact-specific formatting ("use Given/When/Then in specs")
-- Review criteria ("proposals must include rollback plans")
-- These only appear for the matching artifact, keeping other requests lighter
-
-**Leave out entirely**
-- General best practices the AI already knows
-- Verbose explanations that could be summarized
-- Historical context that doesn't affect current work
-
-### Migration Steps
-
-1. **Create config.yaml** (if not already created by init):
-   ```yaml
-   schema: spec-driven
-   ```
-
-2. **Add your context** (be concise—this goes into every request):
-   ```yaml
-   context: |
-     Your project background goes here.
-     Focus on what the AI genuinely needs to know.
-   ```
-
-3. **Add per-artifact rules** (optional):
-   ```yaml
-   rules:
-     proposal:
-       - Your proposal-specific guidance
-     specs:
-       - Your spec-writing rules
-   ```
-
-4. **Delete project.md** once you've moved everything useful.
-
-**Don't overthink it.** Start with the essentials and iterate. If you notice the AI missing something important, add it. If context feels bloated, trim it. This is a living document.
-
-### Need Help? Use This Prompt
-
-If you're unsure how to distill your project.md, ask your AI assistant:
-
-```
-I'm migrating from OpenSpec's old project.md to the new config.yaml format.
-
-Here's my current project.md:
-[paste your project.md content]
-
-Please help me create a config.yaml with:
-1. A concise `context:` section (this gets injected into every planning request, so keep it tight—focus on tech stack, key constraints, and conventions that often get ignored)
-2. `rules:` for specific artifacts if any content is artifact-specific (e.g., "use Given/When/Then" belongs in specs rules, not global context)
-
-Leave out anything generic that AI models already know. Be ruthless about brevity.
-```
-
-The AI will help you identify what's essential vs. what can be trimmed.
-
----
-
-## The New Commands
-
-Command availability is profile-dependent:
-
-**Default (`core` profile):**
-
-| Command | Purpose |
-|---------|---------|
-| `/opsx:propose` | Create a change and generate planning artifacts in one step |
-| `/opsx:explore` | Think through ideas with no structure |
-| `/opsx:apply` | Implement tasks from tasks.md |
-| `/opsx:archive` | Finalize and archive the change |
-
-**Expanded workflow (custom selection):**
-
-| Command | Purpose |
-|---------|---------|
-| `/opsx:new` | Start a new change scaffold |
-| `/opsx:continue` | Create the next artifact (one at a time) |
-| `/opsx:ff` | Fast-forward—create planning artifacts at once |
-| `/opsx:verify` | Validate implementation matches specs |
-| `/opsx:sync` | Preview/spec-merge without archiving |
-| `/opsx:bulk-archive` | Archive multiple changes at once |
-| `/opsx:onboard` | Guided end-to-end onboarding workflow |
-
-Enable expanded commands with `openspec config profile`, then run `openspec update`.
-
-### Command Mapping from Legacy
-
-| Legacy | OPSX Equivalent |
-|--------|-----------------|
-| `/openspec:proposal` | `/opsx:propose` (default) or `/opsx:new` then `/opsx:ff` (expanded) |
-| `/openspec:apply` | `/opsx:apply` |
-| `/openspec:archive` | `/opsx:archive` |
-
-### New Capabilities
-
-These capabilities are part of the expanded workflow command set.
-
-**Granular artifact creation:**
-```
-/opsx:continue
-```
-Creates one artifact at a time based on dependencies. Use this when you want to review each step.
-
-**Exploration mode:**
-```
-/opsx:explore
-```
-Think through ideas with a partner before committing to a change.
-
----
-
-## Understanding the New Architecture
-
-### From Phase-Locked to Fluid
-
-The legacy workflow forced linear progression:
-
-```
-┌──────────────┐      ┌──────────────┐      ┌──────────────┐
-│   PLANNING   │ ───► │ IMPLEMENTING │ ───► │   ARCHIVING  │
-│    PHASE     │      │    PHASE     │      │    PHASE     │
-└──────────────┘      └──────────────┘      └──────────────┘
-
-If you're in implementation and realize the design is wrong?
-Too bad. Phase gates don't let you go back easily.
-```
-
-OPSX uses actions, not phases:
-
-```
-         ┌───────────────────────────────────────────────┐
-         │           ACTIONS (not phases)                │
-         │                                               │
-         │     new ◄──► continue ◄──► apply ◄──► archive │
-         │      │          │           │             │   │
-         │      └──────────┴───────────┴─────────────┘   │
-         │                    any order                  │
-         └───────────────────────────────────────────────┘
-```
-
-### Dependency Graph
-
-Artifacts form a directed graph. Dependencies are enablers, not gates:
-
-```
-                        proposal
-                       (root node)
-                            │
-              ┌─────────────┴─────────────┐
-              │                           │
-              ▼                           ▼
-           specs                       design
-        (requires:                  (requires:
-         proposal)                   proposal)
-              │                           │
-              └─────────────┬─────────────┘
-                            │
-                            ▼
-                         tasks
-                     (requires:
-                     specs, design)
-```
-
-When you run `/opsx:continue`, it checks what's ready and offers the next artifact. You can also create multiple ready artifacts in any order.
-
-### Skills vs Commands
-
-The legacy system used tool-specific command files:
-
-```
-.claude/commands/openspec/
-├── proposal.md
-├── apply.md
-└── archive.md
-```
-
-OPSX uses the emerging **skills** standard:
-
-```
-.claude/skills/
-├── openspec-explore/SKILL.md
-├── openspec-new-change/SKILL.md
-├── openspec-continue-change/SKILL.md
-├── openspec-apply-change/SKILL.md
-└── ...
-```
-
-Skills are recognized across multiple AI coding tools and provide richer metadata.
-
----
-
-## Continuing Existing Changes
-
-Your in-progress changes work seamlessly with OPSX commands.
-
-**Have an active change from the legacy workflow?**
-
-```
-/opsx:apply add-my-feature
-```
-
-OPSX reads the existing artifacts and continues from where you left off.
-
-**Want to add more artifacts to an existing change?**
-
-```
-/opsx:continue add-my-feature
-```
-
-Shows what's ready to create based on what already exists.
-
-**Need to see status?**
+orbit validates a delta spec carrying `## Purpose`, but archiving it writes a placeholder Purpose into a new baseline
+spec instead of the delta's text.
 
 ```bash
-openspec status --change add-my-feature
+grep -rlE --include=spec.md --exclude-dir=archive '^## Purpose' openspec/changes
 ```
 
----
+Fix: keep a copy of each Purpose it finds, and after archiving that change with orbit, replace the placeholder in
+`orbit/specs/<capability>/spec.md` with it.
 
-## The New Config System
+### 5. Specs kept in a store
 
-### config.yaml Structure
-
-```yaml
-# Required: Default schema for new changes
-schema: spec-driven
-
-# Optional: Project context (max 50KB)
-# Injected into ALL artifact instructions
-context: |
-  Your project background, tech stack,
-  conventions, and constraints.
-
-# Optional: Per-artifact rules
-# Only injected into matching artifacts
-rules:
-  proposal:
-    - Include rollback plan
-  specs:
-    - Use Given/When/Then format
-  design:
-    - Document fallback strategies
-  tasks:
-    - Break into 2-hour maximum chunks
-```
-
-### Schema Resolution
-
-When determining which schema to use, OPSX checks in order:
-
-1. **CLI flag**: `--schema <name>` (highest priority)
-2. **Change metadata**: `.openspec.yaml` in the change directory
-3. **Project config**: `openspec/config.yaml`
-4. **Default**: `spec-driven`
-
-### Available Schemas
-
-| Schema | Artifacts | Best For |
-|--------|-----------|----------|
-| `spec-driven` | proposal → specs → design → tasks | Most projects |
-
-List all available schemas:
+orbit has no stores: it reads specs only from the repository.
 
 ```bash
-openspec schemas
+grep -snE '^store:|defaultStore' openspec/config.yaml ~/.config/openspec/config.json
 ```
 
-### Custom Schemas
+Fix: a project whose specs live in a store cannot move until they are in the repository.
 
-Create your own workflow:
+### 6. Change names orbit refuses
+
+orbit refuses a change name that begins with a digit, and archives an already dated name with a second date in front.
 
 ```bash
-openspec schema init my-workflow
+find openspec/changes -mindepth 1 -maxdepth 1 -type d -name '[0-9]*'
 ```
 
-Or fork an existing one:
+Fix: rename each change folder to a kebab-case name beginning with a letter, for example `add-login`.
+
+### 7. Newer spec syntax
+
+orbit's archive stops on a requirement heading that ends in `#` characters, and its validation fails a `*` or `+`
+bullet under `## REMOVED Requirements` or `## RENAMED Requirements`.
 
 ```bash
-openspec schema fork spec-driven my-workflow
+grep -rnE --include=spec.md --exclude-dir=archive '^#+ Requirement:.*#[[:space:]]*$|^[[:space:]]*[*+] ' openspec
 ```
 
-See [Customization](customization.md) for details.
+Fix: remove the closing `#` characters, and write bullets with `-`.
 
----
+### 8. Configuration orbit ignores
 
-## Troubleshooting
-
-### "Legacy files detected in non-interactive mode"
-
-You're running in a CI or non-interactive environment. Use:
+orbit ignores the `operations` and `githubCopilot` keys of `config.yaml`, and any metadata key it does not know,
+without a warning.
 
 ```bash
-openspec init --force
+grep -nE '^(operations|githubCopilot):' openspec/config.yaml
+grep -rnvE --include=.openspec.yaml --exclude-dir=archive '^(schema|created|skip_specs|retire_capabilities|goal|affected_areas|initiative):|^[[:space:]]|^$' openspec/changes
 ```
 
-### Commands not appearing after migration
+Fix: nothing is lost by moving, but nothing reads these settings either. The table below says what orbit has instead.
 
-Restart your IDE. Skills are detected at startup.
+## Move the project
 
-### "Unknown artifact ID in rules"
+### 1. Remove OpenSpec's skills and commands
 
-Check that your `rules:` keys match your schema's artifact IDs:
-
-- **spec-driven**: `proposal`, `specs`, `design`, `tasks`
-
-Run this to see valid artifact IDs:
+OpenSpec's skills and commands stay installed beside orbit's and keep calling `openspec`, so delete them. For Claude
+Code:
 
 ```bash
-openspec schemas --json
+rm -rf .claude/skills/openspec-* .claude/commands/opsx
 ```
 
-### Config not being applied
+For Codex, whose commands are global:
 
-1. Ensure the file is at `openspec/config.yaml` (not `.yml`)
-2. Validate YAML syntax
-3. Config changes take effect immediately—no restart needed
-
-### project.md not migrated
-
-The system intentionally preserves `project.md` because it may contain your custom content. Review it manually, move useful parts to `config.yaml`, then delete it.
-
-### Want to see what would be cleaned up?
-
-Run init and decline the cleanup prompt—you'll see the full detection summary without any changes being made.
-
----
-
-## Quick Reference
-
-### Files After Migration
-
-```
-project/
-├── openspec/
-│   ├── specs/                    # Unchanged
-│   ├── changes/                  # Unchanged
-│   │   └── archive/              # Unchanged
-│   └── config.yaml               # NEW: Project configuration
-├── .claude/
-│   └── skills/                   # NEW: OPSX skills
-│       ├── openspec-propose/     # default core profile
-│       ├── openspec-explore/
-│       ├── openspec-apply-change/
-│       └── ...                   # expanded profile adds new/continue/ff/etc.
-├── CLAUDE.md                     # OpenSpec markers removed, your content preserved
-└── AGENTS.md                     # OpenSpec markers removed, your content preserved
+```bash
+rm -rf .codex/skills/openspec-* .agents/skills/openspec-* ~/.codex/prompts/opsx-*
 ```
 
-### What's Gone
+For any other tool, delete the `openspec-*` skill directories and `opsx` command files under its directory
+([Supported tools](supported-tools.md) lists them). In zsh, a pattern that matches nothing stops the whole command;
+leave out the paths you do not have.
 
-- `.claude/commands/openspec/` — replaced by `.claude/skills/`
-- `openspec/AGENTS.md` — obsolete
-- `openspec/project.md` — migrate to `config.yaml`, then delete
-- OpenSpec marker blocks in `CLAUDE.md`, `AGENTS.md`, etc.
+### 2. Move `openspec/` to `orbit/`
 
-### Command Cheatsheet
+What to run depends on whether `orbit/` exists yet:
 
-```text
-/opsx:propose      Start quickly (default core profile)
-/opsx:apply        Implement tasks
-/opsx:archive      Finish and archive
-
-# Expanded workflow (if enabled):
-/opsx:new          Scaffold a change
-/opsx:continue     Create next artifact
-/opsx:ff           Create planning artifacts
+```bash
+ls -d orbit
+find orbit/specs orbit/changes -type f
 ```
 
----
+| State of `orbit/` | What to run |
+|---|---|
+| No `orbit/` (the first command prints an error) | `git mv openspec orbit`, then `orbit init --tools claude` |
+| `orbit/` exists, and the second command prints nothing: an `orbit init` created it empty | `rm -rf orbit`, then `git mv openspec orbit`, then `orbit init --tools claude` |
+| `orbit/` exists, and the second command prints files: it holds orbit work | No move command: merge by hand, below |
 
-## Getting Help
+For the first two rows:
 
-- **Discord**: [discord.gg/YctCnvvshC](https://discord.gg/YctCnvvshC)
-- **GitHub Issues**: [github.com/Fission-AI/OpenSpec/issues](https://github.com/Fission-AI/OpenSpec/issues)
-- **Documentation**: [docs/workflow-engine.md](workflow-engine.md) for the workflow engine
+```bash
+git mv openspec orbit
+orbit init --tools claude
+```
+
+with `rm -rf orbit` first in the second row. Deleting the empty `orbit/` loses only an `orbit/config.yaml` that
+`orbit init` may have written; your `openspec/config.yaml` moves across as `orbit/config.yaml`. Name your own tools
+in place of `claude`, for example `--tools claude,codex`.
+
+**When `orbit/` already holds work, do not run `git mv openspec orbit`.** Moving a directory into one that exists puts
+it inside: the project would land at `orbit/openspec/`, where orbit reads nothing. Merge by hand instead: move each
+capability folder from `openspec/specs/` into `orbit/specs/` and each change folder from `openspec/changes/` into
+`orbit/changes/`, resolving any name that exists on both sides, and compare the two `config.yaml` files. Then delete
+`openspec/` and run `orbit init` for your tools.
+
+### 3. Check the result
+
+```bash
+orbit list
+orbit validate --all
+orbit status --change add-login
+```
+
+`orbit list` shows your active changes, `orbit validate --all` checks every spec and change, and `orbit status
+--change <name>` shows a change's artifacts and gates. Nothing should be left under `orbit/openspec/`.
+
+### 4. Stamp your active changes
+
+orbit records, for each baseline requirement a change modifies, removes or renames, a fingerprint of the text the
+change was written against, and archive refuses to overwrite a requirement that has changed since. A change made with
+OpenSpec has no fingerprints, so its archive can only warn that it cannot check. Stamp each active change once:
+
+```bash
+orbit fingerprint add-login
+```
+
+A change with only added requirements needs none, and stamping it does no harm.
+
+## What orbit does not have
+
+| What you may use | In orbit |
+|---|---|
+| Tools added after OpenSpec 1.3.1 | Not init targets. [Supported tools](supported-tools.md) lists what `orbit init` accepts |
+| Tool directories OpenSpec moved after 1.3.1 (Codex skills in `.agents/skills/`) | orbit writes the 1.3.1 directories: Codex skills go to `.codex/skills/` |
+| `skip_specs` and `retire_capabilities` change metadata | Dropped (check 2); finish those changes with OpenSpec first |
+| Stores (`store:`, `defaultStore`) | None; specs live in the repository |
+| `operations` guidance and `githubCopilot` settings in `config.yaml` | Ignored |
+| A warning on unknown metadata keys | None; the keys are dropped silently |
+| `--language` at init | Write the language into `context` ([Multi-language](multi-language.md)) |
+| `/opsx:update`; the `version` and `doctor` commands; `instructions archive`; the `--all` option of status, `--archived` of list and `--diff` of show | Not in orbit's CLI; [CLI](cli.md) lists what is |
+| `--json` fields added after 1.3.1 | Not emitted; a script reading them needs updating |
+
+## What changes for you
+
+- **Commands are `/orbit:`**, not `/opsx:`: `/orbit:propose`, `/orbit:apply`, `/orbit:archive`, and so on.
+  [Commands](commands.md) lists all 15, and every install carries all of them.
+- **The CLI is `orbit`** and the project directory is `orbit/`. A change's metadata file keeps its name,
+  `.openspec.yaml`, and orbit shares the global config directory `~/.config/openspec/` with OpenSpec.
+- **Reviews sit between the steps.** The `spec-driven` schema adds reviewed gates: a review of the proposal before
+  apply, and a review of the implementation before archive. A change you were midway through gains these gates when
+  it moves; `orbit status --change <name>` shows where it stands. [Workflows](workflows.md) describes the cadence.
+- **You invoke each step.** orbit recommends the next command and does not run it for you.
+
+## Related
+
+- [Getting started](getting-started.md)
+- [Concepts](concepts.md)
+- [Supported tools](supported-tools.md)

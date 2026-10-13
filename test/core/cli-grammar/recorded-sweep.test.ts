@@ -75,11 +75,11 @@ describe('the recorded-tool snippet sweep', () => {
   });
 
   // @scenario behaviour orbit-cli-grammar :: Every `git` and `gh` snippet on the generated surface validates against its tool's recorded contract :: A missing value fails the sweep
-  it('an inline `git switch -c` fails: the contract records -c as value-taking', () => {
+  it('an inline `git commit -m` fails: the contract records -m as value-taking', () => {
     const { contract, validate } = recordedTool('git');
-    const surface: Surface = { workflowId: 'demo', file: 'SKILL.md', text: 'Then\nrun `git switch -c` to branch.\n' };
+    const surface: Surface = { workflowId: 'demo', file: 'SKILL.md', text: 'Then\nrun `git commit -m` to record.\n' };
     expect(sweepRecorded(analyseRecorded([surface], 'git', contract), validate, contract)).toEqual([
-      'demo/SKILL.md:2: git switch -c\n    flag -c on git switch requires a value',
+      'demo/SKILL.md:2: git commit -m\n    flag -m on git commit requires a value',
     ]);
   });
 
@@ -98,9 +98,11 @@ describe('the recorded-tool snippet sweep', () => {
 /**
  * The user docs' floors (docs-under-test design D5): `null` while any file is on the pending-rewrite
  * list, asserted only once the list is empty. The edit that empties the list sets each to a positive
- * integer at most the count its sweep measures over the user docs at that edit.
+ * integer at most the count its sweep measures over the user docs at that edit. concept-docs emptied the list: the
+ * sweeps then read 4 `git` snippets (the migration guide's `git mv`) and 1 `gh` snippet (the merge in the concepts
+ * page, added so the `gh` floor could be set: Sal, at apply), and the floors sit at or below those counts.
  */
-const DOCS_FLOOR: Record<'git' | 'gh', number | null> = { git: null, gh: null };
+const DOCS_FLOOR: Record<'git' | 'gh', number | null> = { git: 2, gh: 1 };
 
 describe('the recorded-tool snippet sweep over the user docs', () => {
   it.each(recordedTools().map((t) => [t.tool, t] as const))('every %s snippet in an unlisted user doc validates, the guard fails no line, and its floor is held once the list is empty', (tool, { contract, validate }) => {
@@ -148,9 +150,9 @@ describe('the bare-name tree is the contract\'s command keys', () => {
   });
 
   it('a segment of an inline span takes the rule on its own: one validated snippet, one prose name', () => {
-    const surface: Surface = { workflowId: 'demo', file: 'SKILL.md', text: 'Run `git fetch <r> && git push` now.\n' };
+    const surface: Surface = { workflowId: 'demo', file: 'SKILL.md', text: 'Run `git mv <a> <b> && git push` now.\n' };
     const analysis = analyseRecorded([surface], 'git', git.contract);
-    expect(analysis.snippets.map((s) => s.tokens)).toEqual([['git', 'fetch', '<r>']]);
+    expect(analysis.snippets.map((s) => s.tokens)).toEqual([['git', 'mv', '<a>', '<b>']]);
     expect(analysis.bareNames.map((s) => s.tokens)).toEqual([['git', 'push']]);
     expect(sweepRecorded(analysis, git.validate, git.contract)).toEqual([]);
   });
