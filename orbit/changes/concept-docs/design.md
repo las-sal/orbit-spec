@@ -59,9 +59,11 @@ other available entry in tier 2) because it encodes fork-and-orbify D11, not a f
 
 ### D3 — the warning is a pure detector plus one call in `InitCommand.execute`
 
-`detectOpenspecProject(projectPath)` returns whether `openspec/` holds `specs/` or `changes/`. A pure function makes the
-spec's table directly testable. `execute` calls it after the legacy cleanup and the welcome screen, and before tool
-selection, so an interactive user reads it before choosing tools and both modes print it before `orbit/` is created. It
+`detectOpenspecProject(projectPath)` returns whether a DIRECTORY named by the literal `'openspec'` (never
+`OPENSPEC_DIR_NAME`, which is `'orbit'` in this fork) holds a `specs/` or `changes/` directory. A pure function makes the
+spec's table directly testable. `execute` calls it right after `validate` and before the legacy cleanup, so it
+prints before the cleanup's prompt, whose decline exits, and before the welcome screen, which redraws only its own
+frame. Both modes print it before `orbit/` is created. It
 prints in yellow through `console.log`, like the legacy cleanup's summary, and points at
 `https://github.com/las-sal/orbit-spec/blob/main/docs/migration-guide.md`. That URL 404s until the repository is
 public, which is accepted: no adopter can install orbit before then either (R-ugd-9).
@@ -79,17 +81,23 @@ migrate command, which is more code than the carve-out covers. Sal took the warn
   `orbit-report-rendering`), orientation (`orbit-orientation`), the architect tier (`orbit-architect`,
   `orbit-architecture-engine`), `orbit pr` (`orbit-pr-lifecycle`), and consent (`orbit-lifecycle-consent`). One prose
   attribution opens the page (D-cd-3).
-- **`docs/customization.md`.** `config.yaml`'s `schema`, `context` and `rules` (the 1.3.1 baseline), plus orbit's keys:
+- **`docs/customization.md`.** `config.yaml`'s `schema`, `context` and `rules`, and writing schemas and their templates
+  in full (the 1.3.1 baseline; `docs/workflow-engine.md` promises this page covers them), plus orbit's keys:
   `pr` (`orbit-pr-lifecycle`), `scenario_map` (`orbit-scenario-map`), `review_preference` (`orbit-engine-gates`),
   `size_ceiling` (`orbit-change-size`) and `models` (`orbit-engine-gates`, the eligibility-line hint). Each owner
   is re-read from its spec before the page names it. Custom schemas gain the `gates:` list (`orbit-engine-gates`).
 - **`docs/multi-language.md`.** `context:`-driven language guidance; the 1.3.1 baseline.
-- **`docs/supported-tools.md`.** D2's two tiers; tier 1's sections are carried by `orbit-skill-generation`, tier 2's by
-  `the 1.3.1 baseline`.
+- **`docs/supported-tools.md`.** D2's two tiers, and for each tier-1 tool the directories orbit writes and how the tool
+  invokes the workflows (Codex's commands in `$CODEX_HOME/prompts/`, by default `~/.codex/prompts/`; `README.md` and
+  `docs/commands.md` promise this page says how). Tier 1's sections are carried by `orbit-skill-generation`, tier 2's
+  by `the 1.3.1 baseline`.
 - **`docs/migration-guide.md`.** The checklist, the move steps, the "what orbit does not have" table, and a short
   "what changes for you" section (`/opsx:` becomes `/orbit:`; reviewed gates now sit between propose, apply and
   archive). It names 1.14.1 as the version it was measured against. Its `openspec` paths are admitted by the residue
-  check; its `grep`, `find` and `ls` heads are declared in the `docs-inventory` fence.
+  check; its `grep`, `find`, `ls` and `rm` heads are declared in the `docs-inventory` fence, and its `git mv` is
+  admitted by re-capturing the git contract once the guide is written (`npm run capture:git`, which reads the commands
+  the surface and the user docs write). The recapture also drops the six keys and six flags rc12 removed from the
+  surface, which docs-under-test recorded as a residual.
 
 ### D5 — the floors are set by the commit that empties the list
 
@@ -103,7 +111,10 @@ zero, the docs must teach at least one `gh` line, or the gap is briefed to Sal b
 
 A fresh upstream 1.14.1 project is built in a scratch directory (`npx @fission-ai/openspec@1.14.1 init --tools
 claude`), with one fixture per checklist hazard. Then the guide is executed as written: the checklist, the fixes, the
-move steps, and orbit's `list`, `status` and `validate --all`. The transcript, every command and its output, is
+move steps, and orbit's `list`, `status` and `validate --all`. The move is run twice from the same fixture set: once
+before any `orbit init` (no `orbit/`), and once after an `orbit init` has created `orbit/` empty, the state the
+warning is printed in, so both rows of the move-steps table that issue commands are observed. It then archives a copy of each fixture change and
+inspects the resulting baseline: the requirement headings and the Purpose text. The transcript, every command and its output, is
 recorded at `orbit/changes/concept-docs/migration-run.md`. The scenario "The guide's steps move a 1.14.1 project" is
 declared `observed` in `orbit/scenario-ledger.yaml`, citing that file. Every other delta scenario is tagged in a test.
 
@@ -138,6 +149,7 @@ From explore.md's Considered & out and resolved questions:
 - `test/core/user-docs/tool-coverage.test.ts` — new.
 - `test/core/user-docs/migration-guide.test.ts` — new: the measured version is named.
 - `test/core/cli-grammar/snippet-sweep.test.ts` + `test/core/cli-grammar/recorded-sweep.test.ts` — the docs floors.
+- `test/integration/cli-contracts/git-contract.json` — re-captured, so it records `git mv`.
 - `src/core/init.ts` — the detector and its call.
 - `test/core/init-openspec-warning.test.ts` — new.
 - `orbit/scenario-ledger.yaml` — the observed run.

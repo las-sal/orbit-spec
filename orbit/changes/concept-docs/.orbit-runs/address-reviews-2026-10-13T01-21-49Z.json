@@ -1,0 +1,437 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-13T01:21:49Z",
+  "change": "concept-docs",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/concept-docs/.orbit-runs/review-proposal-2026-10-13T01-12-38Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-13T01-12-38Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 6,
+    "suggestion": 4
+  },
+  "pushback_verification": "All ten verified against current state before fixing: D13's heading read in fork-and-orbify.md, git-contract.json's keys listed (no mv), init.ts 229-231's decline exit read, the three inbound sentences read in README.md, docs/commands.md and docs/workflow-engine.md; none stale.",
+  "resolution_summary": {
+    "resolved": 10,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "fork-and-orbify D13 is not the user-facing-names decision",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-user-docs/spec.md",
+      "line": 125,
+      "classification": "decision_required",
+      "action": "applied ratified A: dropped D13 from the owner paragraph and named limit; the names are carried by orbit-conventions' Distribution model requirement; D-cd-3's residual line and CLAUDE.md's rename sentence corrected",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Drop D13 from the requirement's owner paragraph and its named limit. Sections about the generated names carry `orbit-skill-generation`, which states the `orbit-*` skill paths. Grep the remaining name claims (bin, `orbit/` dir) for a stating capability before the page names one."
+          },
+          {
+            "label": "B",
+            "body": "Widen the item production to admit the archived rename change (orbit/changes/archive/2026-06-08-rename-user-facing-to-orbit) as an owner, and resolve that item against the archive directory."
+          }
+        ],
+        "chosen": "A"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/concept-docs/explore.md",
+          "CLAUDE.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "(D12, D13, D15)",
+          "D12, D13 or D15",
+          "the user-facing names (D13)",
+          "rename is complete (D13)"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/concept-docs/specs/orbit-user-docs/spec.md",
+            "text": "stated by `orbit-conventions`' `Distribution model — self-contained fork`"
+          }
+        ],
+        "searched": [
+          "D13",
+          "user-facing names",
+          "Distribution model"
+        ],
+        "scope": [
+          "orbit/architecture/fork-and-orbify.md",
+          "orbit/specs/orbit-conventions/spec.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The move steps' commands are admitted by neither the docs-inventory fence nor the git contract",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 92,
+      "classification": "decision_required",
+      "action": "applied ratified A: rm added to the docs-inventory fence; task 3.6 re-captures the git contract so it records git mv; git-contract.json a touchpoint",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Add `rm` (and `mv` if a plain move is shown) to the delta's docs-inventory fence. Add a task that re-runs `npm run capture:git` after the guide is written, with git-contract.json as a touchpoint."
+          },
+          {
+            "label": "B",
+            "body": "Write the move steps as prose with no command lines, and revise D-cd-6's 'run as written' to name what the recorded run executes."
+          }
+        ],
+        "chosen": "A"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/concept-docs/specs/orbit-user-docs/spec.md",
+          "orbit/changes/concept-docs/tasks.md",
+          "orbit/changes/concept-docs/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "`grep`, `find` and `ls` join",
+          "its `grep`, `find` and `ls` heads are declared"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/concept-docs/specs/orbit-user-docs/spec.md",
+            "text": "utility: npm cd find grep ls rm"
+          },
+          {
+            "path": "orbit/changes/concept-docs/tasks.md",
+            "text": "npm run capture:git"
+          }
+        ],
+        "searched": [
+          "docs-inventory",
+          "git-contract",
+          "capture:git"
+        ],
+        "scope": [
+          "test/integration/cli-contracts/git-contract.json"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The mandated warning text 'orbit reads nothing in openspec/' is false when the legacy row fires",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-init-openspec-warning/spec.md",
+      "line": 21,
+      "classification": "trivial_fix",
+      "action": "narrowed the sentence to orbit reading nothing in openspec/specs/ or openspec/changes/",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "reads nothing in `openspec/`;"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/concept-docs/specs/orbit-init-openspec-warning/spec.md",
+            "text": "`openspec/specs/` or `openspec/changes/`;"
+          }
+        ],
+        "searched": [
+          "reads nothing"
+        ],
+        "scope": [
+          "src/core/legacy-cleanup.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Calling the detector after the legacy cleanup skips the warning on an interactive decline",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 63,
+      "classification": "trivial_fix",
+      "action": "moved the detector call to right after validate, before the legacy cleanup; added the pre-1.0 scenario; tasks 2.1/2.2 follow",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/concept-docs/specs/orbit-init-openspec-warning/spec.md",
+          "orbit/changes/concept-docs/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "calls it after the legacy cleanup and the welcome screen",
+          "after the welcome screen and before tool selection",
+          "tags the four scenarios of"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/concept-docs/design.md",
+            "text": "right after `validate` and before the legacy cleanup"
+          },
+          {
+            "path": "orbit/changes/concept-docs/specs/orbit-init-openspec-warning/spec.md",
+            "text": "A pre-1.0 project warns before the legacy cleanup"
+          }
+        ],
+        "searched": [
+          "legacy cleanup",
+          "welcome screen"
+        ],
+        "scope": [
+          "src/core/init.ts",
+          "src/ui/welcome-screen.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Already-rewritten pages promise content the D4 page shapes omit",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 87,
+      "classification": "trivial_fix",
+      "action": "D4 and tasks 3.2/3.4 now cover schema templates in full and how each tier-1 tool invokes the workflows",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/concept-docs/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "D2's two tiers; tier 1's sections",
+          "stating Codex's actual"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/concept-docs/design.md",
+            "text": "`docs/commands.md` promise this page says how"
+          },
+          {
+            "path": "orbit/changes/concept-docs/tasks.md",
+            "text": "writing schemas and their templates in full"
+          }
+        ],
+        "searched": [
+          "supported-tools",
+          "templates"
+        ],
+        "scope": [
+          "README.md",
+          "docs/commands.md",
+          "docs/workflow-engine.md",
+          "src/core/command-generation/adapters/codex.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "A carried-by line is defined as a matching line, so near-misses and wrapped lines have no defined outcome",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-user-docs/spec.md",
+      "line": 96,
+      "classification": "trivial_fix",
+      "action": "defined a carried-by line by its opener, soft breaks joined; added the wrapped-line scenario",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "whose text is one line of this production"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/concept-docs/specs/orbit-user-docs/spec.md",
+            "text": "whose text begins `Carried by:`"
+          }
+        ],
+        "searched": [
+          "carried-by line"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The tool-coverage codex row states a page duty the check cannot read, and stray ids are uncovered",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-user-docs/spec.md",
+      "line": 175,
+      "classification": "trivial_fix",
+      "action": "moved the Codex page duty to prose the review reads; added a row and scenario failing an id outside AI_TOOLS",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/concept-docs/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the page states the directories orbit writes for it, not upstream's later"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/concept-docs/specs/orbit-user-docs/spec.md",
+            "text": "an inline-code id in a tier's table row that is no `AI_TOOLS` entry"
+          },
+          {
+            "path": "orbit/changes/concept-docs/tasks.md",
+            "text": "tags the five scenarios of `The supported-tools page"
+          }
+        ],
+        "searched": [
+          "AI_TOOLS",
+          "codex"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The carried-by check has no missing-page rule",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-user-docs/spec.md",
+      "line": 93,
+      "classification": "trivial_fix",
+      "action": "added a neither-listed-nor-present row and scenario to the carried-by check",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/concept-docs/specs/orbit-user-docs/spec.md",
+            "text": "a concept page that is neither listed nor present"
+          }
+        ],
+        "searched": [
+          "neither listed nor present"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "OPENSPEC_DIR_NAME is 'orbit' in this fork; the detector must use the literal",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-init-openspec-warning/spec.md",
+      "line": 7,
+      "classification": "trivial_fix",
+      "action": "the spec and D3 name the literal 'openspec' and say only directories count",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/concept-docs/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "(its `OPENSPEC_DIR_NAME` in 1.3.1"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/concept-docs/specs/orbit-init-openspec-warning/spec.md",
+            "text": "so the detector names the literal `'openspec'`"
+          }
+        ],
+        "searched": [
+          "OPENSPEC_DIR_NAME"
+        ],
+        "scope": [
+          "src/core/config.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The proposal's concepts list omits consent, which design D4 includes",
+      "marker_source": "internal-review",
+      "file": "proposal.md",
+      "line": 16,
+      "classification": "trivial_fix",
+      "action": "added lifecycle consent to the proposal's concepts list",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the architect tier and `orbit pr`."
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/concept-docs/proposal.md",
+            "text": "`orbit pr` and lifecycle consent"
+          }
+        ],
+        "searched": [
+          "consent"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Ten of ten resolved: seven obvious-lane repairs and three ratified decisions (D13 dropped for orbit-conventions' Distribution model; rm declared and the git contract re-captured for git mv).",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews concept-docs",
+  "ripple_misses": 0
+}

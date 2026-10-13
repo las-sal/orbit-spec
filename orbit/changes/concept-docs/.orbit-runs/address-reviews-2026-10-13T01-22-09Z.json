@@ -1,0 +1,192 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-13T01:22:09Z",
+  "change": "concept-docs",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/concept-docs/.orbit-runs/external-proposal-2026-10-13T01-13-01Z.md",
+  "source_command": null,
+  "source_token": "2026-10-13T01-13-01Z",
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-6",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 1,
+    "warning": 2,
+    "suggestion": 1
+  },
+  "pushback_verification": "The CRITICAL's reproduction re-run in a scratch project and reproduced; the three others verified against the current spec and design text; none stale, none converged with the fresh pass.",
+  "resolution_summary": {
+    "resolved": 4,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "The warning’s migration steps fail after init creates the destination",
+      "marker_source": "external",
+      "file": "orbit/changes/concept-docs/specs/orbit-init-openspec-warning/spec.md",
+      "line": 21,
+      "classification": "decision_required",
+      "action": "applied ratified A: the move steps branch on the state of orbit/ in one table in the migration requirement (absent: git mv; created empty by init, by find orbit/specs orbit/changes -type f printing nothing: delete orbit/ first; holding work: no move command, merge by hand); the warning's requirement points at it; the rehearsal moves twice, before and after init",
+      "reproduction_rerun": "reproduced",
+      "evidence": "scratch project with openspec/specs/auth/spec.md and openspec/changes/add-login/: orbit init --tools claude created orbit/specs and orbit/changes; git mv openspec orbit left orbit/openspec/specs/auth/spec.md and orbit/openspec/changes/add-login/proposal.md; orbit list printed 'No active changes found.'",
+      "ratified_via": "chat",
+      "resolution": "A — keep warn-then-proceed; a three-state move step, the dangerous delete behind a visible find check; exit (3) rehearses both paths",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/concept-docs/specs/orbit-user-docs/spec.md",
+          "orbit/changes/concept-docs/design.md",
+          "orbit/changes/concept-docs/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "move `openspec/` to `orbit/`, run `orbit init` again"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/concept-docs/specs/orbit-init-openspec-warning/spec.md",
+            "text": "nests the project at `orbit/openspec/`"
+          },
+          {
+            "path": "orbit/changes/concept-docs/specs/orbit-user-docs/spec.md",
+            "text": "A move into an existing orbit directory is never offered"
+          },
+          {
+            "path": "orbit/changes/concept-docs/tasks.md",
+            "text": "the move twice"
+          }
+        ],
+        "searched": [
+          "git mv openspec orbit",
+          "move steps"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/concept-docs/explore.md",
+            "why": "the exploration's D-cd-2 and Case 1 record the one-line move steps as decided and run then; history, not live prose"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The nested-capability checklist omits active delta specs",
+      "marker_source": "external",
+      "file": "orbit/changes/concept-docs/specs/orbit-user-docs/spec.md",
+      "line": 217,
+      "classification": "trivial_fix",
+      "action": "the nested-path row covers baseline and change-delta paths, with a rename rule for two capabilities that would flatten to one name; task 4.1's fixtures carry both forms",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/concept-docs/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "`openspec/specs/<area>/<capability>/spec.md` | a checklist line; flatten it first"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/concept-docs/specs/orbit-user-docs/spec.md",
+            "text": "renaming the capability where two would flatten to one name"
+          },
+          {
+            "path": "orbit/changes/concept-docs/tasks.md",
+            "text": "both nested-path forms among them"
+          }
+        ],
+        "searched": [
+          "nested capability"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The navigation exemption permits behavioral claims without attribution",
+      "marker_source": "external",
+      "file": "orbit/changes/concept-docs/specs/orbit-user-docs/spec.md",
+      "line": 116,
+      "classification": "trivial_fix",
+      "action": "the exemption requires each item to be exactly one link; a link with other text owes a carried-by line; negative scenario added",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "every item begins with a link"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/concept-docs/specs/orbit-user-docs/spec.md",
+            "text": "A link followed by a claim is not navigation"
+          }
+        ],
+        "searched": [
+          "navigation",
+          "begins with a link"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The migration rehearsal does not exercise the archive hazards it claims to cover",
+      "marker_source": "external",
+      "file": "orbit/changes/concept-docs/design.md",
+      "line": 106,
+      "classification": "trivial_fix",
+      "action": "D6 and task 4.1 archive a copy of each fixture change and inspect the resulting baseline's requirement headings and Purpose text",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/concept-docs/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/concept-docs/design.md",
+            "text": "inspects the resulting baseline: the requirement headings and the Purpose text"
+          },
+          {
+            "path": "orbit/changes/concept-docs/tasks.md",
+            "text": "archive a copy"
+          }
+        ],
+        "searched": [
+          "rehearsal",
+          "archive"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Four of four resolved: the CRITICAL by ratified direction A (a three-state move step owned once by the migration requirement), three by obvious-lane repairs.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal concept-docs",
+  "ripple_misses": 0
+}

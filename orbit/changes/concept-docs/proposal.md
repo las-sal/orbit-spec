@@ -14,7 +14,7 @@ them silent.
   `test/core/user-docs/pending-rewrite.json`. That empties the list, so this change also sets the docs sweeps' floors
   (`orbit-user-docs`' existing floors requirement, which says the emptying edit sets them).
 - **`docs/concepts.md`** covers what orbit adds over OpenSpec: reviewed gates and the review cadence, the blind pair and
-  walks, emits and trails, orientation, the architect tier and `orbit pr`. Inherited 1.3.1 behaviour orbit leaves
+  walks, emits and trails, orientation, the architect tier, `orbit pr` and lifecycle consent. Inherited 1.3.1 behaviour orbit leaves
   alone (the spec and delta format, schemas, `config.yaml`, the archive merge) is credited to the 1.3.1 baseline
   (D-cd-3).
 - **A new check: every H2 section of four concept pages declares its owner** on a `Carried by:` line. Each item is an
@@ -26,7 +26,8 @@ them silent.
 - **`docs/migration-guide.md` is rewritten for an adopter arriving from OpenSpec.** It opens with a "before you move"
   checklist (one `grep`, `find` or `ls` per hazard Case 2 found, run against `openspec/`). The move steps follow, then a
   table of what orbit does not have. The guide names the upstream version it was measured against, 1.14.1 (D-cd-5).
-  `grep`, `find` and `ls` join the docs' declared command heads.
+  `grep`, `find`, `ls` and `rm` join the docs' declared command heads, and the git contract is re-captured so it
+  records `git mv`.
 - **`orbit init` warns when an OpenSpec project directory sits beside it** (R-ugd-11; D-cd-1, D-cd-2). The trigger is
   `openspec/` holding `specs/` or `changes/`, whether or not `orbit/` exists. The warning names the manual steps and
   points at the migration guide, then init proceeds: never a prompt, never a stop.
@@ -42,7 +43,7 @@ them silent.
 ### Modified Capabilities
 - `orbit-user-docs`:
   - The pending-rewrite requirement lists two new file-local checks: the carried-by check and the tool-coverage check.
-  - The `docs-inventory` fence gains `grep`, `find` and `ls`.
+  - The `docs-inventory` fence gains `grep`, `find`, `ls` and `rm`.
   - Three requirements are ADDED: the carried-by check, the supported-tools coverage, and the migration guide's
     checklist.
 

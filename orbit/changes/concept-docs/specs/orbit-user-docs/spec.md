@@ -57,7 +57,7 @@ is this requirement's one fenced block whose info string is `docs-inventory`, in
 (`<kind>: <head> <head> …`, the kinds `utility`, `placeholder` and `prose`):
 
 ```docs-inventory
-utility: npm cd find grep ls
+utility: npm cd find grep ls rm
 ```
 
 A fence with no lines is a legal block and declares nothing. In this fence, `utility` also admits a package
@@ -94,7 +94,8 @@ The CARRIED-BY CHECK SHALL read `docs/concepts.md`, `docs/customization.md`, `do
 `docs/multi-language.md`, each parsed as the improvement-claims check parses `README.md` (markdown-it, a fence never
 structure), and pass every other user doc. A SECTION is the text from an H2 heading to the next H1 or H2 heading or the
 end of the file. A CARRIED-BY LINE is a paragraph at the section's top level (not inside a list, a blockquote or a fence)
-whose text is one line of this production:
+whose text begins `Carried by:`. Its soft line breaks are joined with a space, and the joined text is then
+parsed by this production:
 
 ```
 Carried by: <item>(, <item>)*
@@ -113,7 +114,9 @@ what it meets by this table, failing the suite naming the file, the line and the
 | the item `the 1.3.1 baseline` | resolves always: behaviour inherited from the OpenSpec 1.3.1 baseline and left unchanged |
 | any other item, or a carried-by line with no item | fails, naming the line and the item |
 | a section with no carried-by line, or with more than one | fails, naming the heading's line |
-| a section whose every block is a list whose every item begins with a link (Related, See also, Next steps) | exempt: navigation makes no claim |
+| a section whose every block is a list whose every item's text is exactly one link, with nothing beside it but whitespace or one trailing punctuation mark (Related, See also, Next steps) | exempt: navigation makes no claim |
+| a list item holding a link and any other text | not navigation: its section owes a carried-by line |
+| a concept page that is neither listed nor present | fails, naming the page: a file-local check never sees an absent file |
 | content before the first H2 | not read |
 | H3 and deeper headings | not sections: they belong to their H2 |
 | a carried-by line inside a fence, a list or a blockquote | not read |
@@ -121,11 +124,13 @@ what it meets by this table, failing the suite naming the file, the line and the
 
 An item names the owner of the section's claims about orbit's behaviour, by whose behaviour the claim describes: what
 orbit ADDED names the capability that carries it; what orbit CHANGED names the capability that states the change, or,
-where none does (telemetry removed, the user-facing names, every workflow installed regardless of profile), the
-fork-and-orbify decision (D12, D13, D15); what orbit left UNCHANGED is `the 1.3.1 baseline`. The check reads the
+where none does (telemetry removed, every workflow installed regardless of profile), the fork-and-orbify decision
+(D12, D15); the user-facing names (the `orbit` CLI, the `orbit/` workspace, the generated skills and commands) are
+stated by `orbit-conventions`' `Distribution model — self-contained fork`, so a section about them names that
+capability; what orbit left UNCHANGED is `the 1.3.1 baseline`. The check reads the
 declaration and never its truth: whether a named owner carries the section is the system review's reading.
 
-Named limit (the carried-by check). Residual kind: an orbit change to inherited behaviour that no capability states and that is not fork-and-orbify D12, D13 or D15, so a page could present it as inherited or as a capability claim. Residual method: diff the page's claim against the upstream `1.3.1` tag (`git diff upstream/v1.3.1 -- <path>`) when the system review reads the page for orbit behaviour.
+Named limit (the carried-by check). Residual kind: an orbit change to inherited behaviour that no capability states and that is not fork-and-orbify D12 or D15, so a page could present it as inherited or as a capability claim. Residual method: diff the page's claim against the upstream `1.3.1` tag (`git diff upstream/v1.3.1 -- <path>`) when the system review reads the page for orbit behaviour.
 
 #### Scenario: A section naming existing owners passes
 
@@ -149,8 +154,23 @@ Named limit (the carried-by check). Residual kind: an orbit change to inherited 
 
 #### Scenario: A navigation section is exempt
 
-- **WHEN** an H2 section holds only a list whose every item begins with a link
+- **WHEN** an H2 section holds only a list whose every item is exactly one link
 - **THEN** the carried-by check passes it with no carried-by line
+
+#### Scenario: A link followed by a claim is not navigation
+
+- **WHEN** an H2 section's only list item is a link followed by text that makes a claim, and the section has no carried-by line
+- **THEN** the suite fails, naming the file and the heading's line
+
+#### Scenario: A wrapped carried-by line is read whole
+
+- **WHEN** a carried-by line's items soft-wrap onto a second source line
+- **THEN** the check reads one carried-by line and resolves every item on both lines
+
+#### Scenario: A missing concept page fails
+
+- **WHEN** one of the four concept pages is neither on the pending-rewrite list nor present
+- **THEN** the suite fails, naming the page
 
 #### Scenario: A line inside a fence or a list is not read
 
@@ -172,15 +192,19 @@ suite naming the page and the tool id:
 | member | covered by |
 |---|---|
 | `claude` | named in the page's tier 1: designed for (fork-and-orbify D11 and its Claude-primacy refinement) and run by a real init in the generated-surface test |
-| `codex` | named in tier 1, the same test; the page states the directories orbit writes for it, not upstream's later `.agents/skills/` |
+| `codex` | named in tier 1, the same test |
 | every other entry whose `available` is not `false` | named in tier 2: generated from the same templates into the OpenSpec 1.3.1 directories, and not tested by orbit |
 | an entry whose `available` is `false` | named nowhere on the page: it is not an init target |
 | a tier-1 tool named in tier 2, or the reverse | fails, naming the tool and the tier it sits in |
+| an inline-code id in a tier's table row that is no `AI_TOOLS` entry | fails, naming the page and the id |
 | a page that is neither listed nor present | fails, naming the page |
 
 A TIER is the text under the page's H2 heading `Tier 1` or `Tier 2` (the heading's text begins with that word and
 number), to the next H2. Tier 2 says "untested", never "supported": a tool can be generated into a directory its tool
-later moved, so generation does not show it works.
+later moved, so generation does not show it works. The page also states, for each tier-1 tool, the directories orbit writes and how the
+tool invokes the workflows (Codex's commands are written to the global `$CODEX_HOME/prompts/`, by default
+`~/.codex/prompts/`, not upstream's later `.agents/skills/`). The check does not read that prose; the system review
+does.
 
 #### Scenario: Every available tool has a row in its tier
 
@@ -202,6 +226,11 @@ later moved, so generation does not show it works.
 - **WHEN** the page names `codex` under tier 2
 - **THEN** the suite fails, naming the tool and the tier it sits in
 
+#### Scenario: An id that is no init target fails
+
+- **WHEN** a tier's table names an id that `AI_TOOLS` does not hold
+- **THEN** the suite fails, naming the page and the id
+
 ### Requirement: The migration guide opens with a before-you-move checklist for an OpenSpec 1.x project
 
 `docs/migration-guide.md` SHALL be written for an adopter moving an OpenSpec 1.x project to orbit, and SHALL carry, in
@@ -214,7 +243,7 @@ this table:
 |---|---|
 | task lines written `+ [ ]`, `* [ ]`, `- [~]`, `- [ x]`, `1. [ ]`, or as indented sub-tasks (read as done, or invisible to the apply gate) | a checklist line over `openspec/changes/*/tasks.md`; rewrite them as `- [ ]` or `- [x]` |
 | `skip_specs`, `retire_capabilities`, `goal`, `affected_areas` or `initiative` in a change's `.openspec.yaml` (dropped without a warning) | a checklist line over the changes' `.openspec.yaml`; finish or archive those changes under upstream first |
-| a nested capability path, `openspec/specs/<area>/<capability>/spec.md` | a checklist line; flatten it first |
+| a nested capability path, in a baseline (`openspec/specs/<area>/<capability>/spec.md`) or in a change's delta (`openspec/changes/<change>/specs/<area>/<capability>/spec.md`) | a checklist line over both; flatten each to `specs/<capability>/spec.md` first, renaming the capability where two would flatten to one name |
 | a `## Purpose` in a change's delta spec (archive writes the TBD placeholder instead) | a checklist line; after the archive, replace the placeholder by hand |
 | `store:` in `openspec/config.yaml`, or a `defaultStore` | a checklist line; a project whose specs live in a store cannot move until they are in the repository |
 | a change name beginning with a digit, or already carrying a date prefix | a checklist line; rename the change first |
@@ -224,14 +253,29 @@ this table:
 | a tool added after 1.3.1, or a tool directory upstream later moved | the table, pointing at `docs/supported-tools.md` |
 | a command, flag or `--json` field upstream added after 1.3.1 | the table |
 
+The MOVE STEPS delete upstream's `openspec-*` skills and `opsx` commands, then move `openspec/` by the state of
+`orbit/`, because `git mv openspec orbit` into an existing `orbit/` moves the project inside it, to `orbit/openspec/`,
+where orbit reads nothing:
+
+| member | covered by |
+|---|---|
+| no `orbit/` (the guide read before `orbit init`) | `git mv openspec orbit`, then `orbit init` |
+| `orbit/` present, and `find orbit/specs orbit/changes -type f` prints nothing (an `orbit init` created it empty) | delete `orbit/`, then `git mv openspec orbit`, then `orbit init`; an `orbit/config.yaml` that init wrote is lost, and `openspec/config.yaml` moves across |
+| `orbit/` present, holding a file under `orbit/specs/` or `orbit/changes/` | no move command: the guide says how to merge by hand, and that a move here nests the project |
+
 A checklist line finds a FORM, never a meaning: a clean checklist shows that no known hazard is present, nothing more.
 
 Named limit (the migration checklist). Residual kind: a post-1.3.1 on-disk form the measurement missed (four were never verified: brace or extglob `generates`, symlinked schema directories, `.openspec-workspace/`, Copilot cloud-agent files) or one upstream ships after 1.14.1. Residual method: for the first, the recorded run of the guide's steps on an upstream 1.14.1 project; for the second, the guide names the upstream version it was measured against, and a later change re-reads upstream's changelog from that version.
 
 #### Scenario: The guide's steps move a 1.14.1 project
 
-- **WHEN** the guide's checklist, its fixes and its move steps are run on a fresh upstream 1.14.1 project carrying one fixture per checklist hazard
-- **THEN** each checklist line reports its fixture, and after the fixes and the move `orbit list`, `orbit status` and `orbit validate --all` read the project
+- **WHEN** the guide's checklist, its fixes and its move steps are run on a fresh upstream 1.14.1 project carrying one fixture per checklist hazard, once before any `orbit init` and once after an `orbit init` has created `orbit/`
+- **THEN** each checklist line reports its fixture, and after the fixes and the move `orbit list`, `orbit status` and `orbit validate --all` read the project, with nothing under `orbit/openspec/`
+
+#### Scenario: A move into an existing orbit directory is never offered
+
+- **WHEN** `orbit/` holds a file under `orbit/specs/` or `orbit/changes/`
+- **THEN** the guide's move steps give no move command for that state and say why
 
 #### Scenario: The guide names its measured version
 
