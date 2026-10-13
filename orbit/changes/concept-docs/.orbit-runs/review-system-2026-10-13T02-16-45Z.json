@@ -1,0 +1,139 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-13T02:16:45Z",
+  "change": "concept-docs",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    }
+  },
+  "findings": [
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "docs/concepts.md",
+      "line": 227,
+      "title": "The concluded state is described by a single citing exploration, narrower than its rule",
+      "recommendation": "orbit-architecture-engine reaches `concluded` when no live work cites the stage and ANY concluded exploration does, so two concluded explorations still give `concluded`. 'when its only citing exploration ended without a change' reads as one exploration. Say 'when the explorations citing it concluded without a change'.",
+      "walk_entry": {
+        "title": "The stage-state list leaves out `concluded`",
+        "file": "docs/concepts.md"
+      }
+    },
+    {
+      "pass": "4",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "docs/migration-guide.md",
+      "line": 124,
+      "title": "The shared-prompts caveat follows the command that deletes them",
+      "recommendation": "The fence still removes `~/.codex/prompts/opsx-*`, and the warning to leave them for other OpenSpec projects comes after it, so a reader who copies the command loses them first. Put the caveat before the fence, or move the prompts into a second command line the caveat introduces.",
+      "walk_entry": {
+        "title": "The Codex removal line deletes prompts that other OpenSpec projects on the machine still use, and ignores CODEX_HOME",
+        "file": "docs/migration-guide.md"
+      }
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/concept-docs/.openspec.yaml",
+      "line": 1,
+      "title": "The walk's fingerprint stamp is outside every walk entry's edit record",
+      "recommendation": "The residual check lists `.openspec.yaml`, changed by the `orbit fingerprint` stamp that carried the residue requirement (the CoStrict entry), but no entry's file or ripple_cascade.applied names it. A record gap, not a defect: name it in the next walk entry that touches the delta."
+    }
+  ],
+  "commentary": "The X1 rule was read across all four of its sites side by side: the guide's command and table, the delta's move-steps rows and scenario, the init warning and its test, and the rerun transcript, whose 4B prints nothing for `find orbit -type f` and whose 4C prints the exploration. They agree. The CoStrict carry was read as a block: the new identifier row, the whole-substring sentence and the scenario all name `.cospec/openspec/`, the helper and the residue test carry it, and no other spec restates the identifier list. The two regressions are both wording that came in with a fix: one sentence narrower than the rule it paraphrases, one caveat placed after the command it qualifies.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5"
+  ],
+  "passes_skipped": [
+    "0: verify-change is a whole-change pass, not run on a VERIFICATION-genre pass",
+    "6: audit-drift is a whole-project pass, not run on a VERIFICATION-genre pass"
+  ],
+  "verification": [
+    {
+      "title": "Pull requests section says archive marks the PR ready, which is false under per-architecture",
+      "file": "docs/concepts.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The gates list shown as spec-driven's own omits keys the shipped file carries",
+      "file": "docs/customization.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The stage-state list leaves out `concluded`",
+      "file": "docs/concepts.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "The CoStrict row does not give the command directory a reader could find",
+      "file": "docs/supported-tools.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The Codex removal line deletes prompts that other OpenSpec projects on the machine still use, and ignores CODEX_HOME",
+      "file": "docs/migration-guide.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "The stamp step does not say it protects only from the moment of stamping",
+      "file": "docs/migration-guide.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Migration’s empty-directory test overlooks other orbit work",
+      "file": "docs/migration-guide.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Custom-schema documentation promises freshness tracking the engine does not implement",
+      "file": "docs/customization.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Budget documentation confuses the declaration with recorded spend",
+      "file": "docs/customization.md",
+      "verdict": "landed"
+    }
+  ],
+  "final_assessment": "0 critical, 0 warning, 3 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-10-13T02-11-20Z",
+    "2026-10-13T02-11-40Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews concept-docs"
+}
