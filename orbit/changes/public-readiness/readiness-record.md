@@ -1,7 +1,8 @@
 # Readiness record — public-readiness
 
 Written at apply (2026-10-13) on branch `public-readiness`, over the tree as staged after tasks 1.1–4.2 (parent
-`c2ea2c1f`), and over `main`'s full history at `7febd8ce` (898 commits). This is a RECORD (design D7): it states what was
+`c2ea2c1f`), and over `main`'s full history at `7febd8ce` (898 commits). The history scan was re-run blob by blob at the
+system walk, over `main` and this branch (below). This is a RECORD (design D7): it states what was
 run and found, and nothing re-runs it. The scan's rule, its classes and its named limit are `orbit-public-repository`'s
 `A secrets-and-paths scan is recorded before the first public release`; this file names them and does not restate them.
 
@@ -40,8 +41,33 @@ because its pickaxe reads a basic regular expression, which the token patterns a
 |---|---|
 | tracked files (index) | 0 |
 | `main`'s history (every added line) | 0 |
+| every blob reachable from `main` and this branch, merge commits and renames included (system walk) | 0 |
 
 No token candidate, so no CONFIRMED credential and no FALSE POSITIVE row is used.
+
+### The history scan, re-run blob by blob (system walk, 2026-10-13)
+
+The external system pass found the line-diff pipeline above incomplete. `git log -p` prints no patch for a merge
+commit (`main` has 10), so content introduced while resolving a merge was never read. It also prints a rename as a
+similarity line with no added text, so a moved file's content was read only where it was first added. The re-run reads
+every distinct blob once, whatever commit or name introduced it:
+
+```bash
+git rev-list --objects main HEAD       # every object reachable from main and this branch, with one path name each
+git cat-file --batch-check='%(objectname) %(objecttype)'   # keep the blobs
+git cat-file --batch                   # read each blob; apply $TOK and $P to its bytes (a Python loop)
+```
+
+5,612 blobs read; 0 token candidates. The patterns were checked to fire on a planted `ghp_` and `AKIA` sample first.
+88 path names carry a path-bearing blob. Every one of them is covered by a row below (69 records, 7 test or template
+files, 1 record under `orbit/architecture/`, 11 history-only files), and one history-only file was new to the record:
+`orbit/explore/fork-and-orbify/explore.md`, the fork program's record at its middle location before it moved to
+`orbit/architecture/`. The line-diff pipeline missed it because that move was a rename.
+
+**Published refs outside `main`.** `git ls-remote origin` lists 26 refs. Every branch and every pull-request head is an
+ancestor of `origin/main`, except this change's own branch and its pull request (#22, head and GitHub's synthetic
+merge ref). Those carry exactly this branch's commits, which the blob scan above reads, so every ref the flip
+publishes has been scanned.
 
 ### Absolute local paths at HEAD
 
@@ -50,15 +76,15 @@ No token candidate, so no CONFIRMED credential and no FALSE POSITIVE row is used
 | row | files | action / reason |
 |---|---|---|
 | a path in `orbit/changes/archive/**` or `**/.orbit-runs/**` | 66: 65 trail files (64 across 30 change directories, archived and this change's own, plus `orbit/architecture/.orbit-runs/architect-2026-09-11T20-36-35Z.json`) and `orbit/changes/archive/2026-10-13-concept-docs/migration-run.md` | ACCEPTED: records are true when written and never rewritten |
-| a path in a record under `orbit/architecture/` | 1: `orbit/architecture/fork-and-orbify.md` (`/tmp/openspec-src`, lines 179 and 439) | ACCEPTED: records are true when written and never rewritten |
+| a path in a record under `orbit/architecture/` | 1: `orbit/architecture/fork-and-orbify.md` (a scratch clone's path, lines 179 and 439) | ACCEPTED: records are true when written and never rewritten |
 | a path in `test/**` or `src/core/templates/**` | 6: `src/core/templates/workflows/feedback.ts`, `src/core/templates/workflows/pr-choreography.ts`, `test/commands/completion.test.ts`, `test/core/pr/select.test.ts`, `test/utils/file-system.test.ts`, `test/utils/shell-detection.test.ts` | ACCEPTED: an example, not a machine's path |
 | a path in any other living file | 2, both RESOLVED below | RESOLVED: removed |
 
 The two resolved at apply:
 - `orbit/changes/public-readiness/explore.md` (Premise, the exploration's scan probe): it quoted a directory under the
   author's home and two placeholder home directories. Reworded to name them without the paths.
-- `src/core/boot-render.ts:106` (a comment): `macOS /var vs /private/var` became `macOS's /var symlink against its
-  realpath`.
+- `src/core/boot-render.ts:106` (a comment): its example of a macOS system directory and the path it resolves to became
+  `macOS's /var symlink against its realpath`.
 
 The real machine paths among the ACCEPTED records include the author's home directory in the architect trail emit
 named above and the npm cache path in `concept-docs`' `migration-run.md`. Both are records, kept as written.
@@ -70,10 +96,10 @@ carried one only in history, each under the row its path had then:
 
 | file (at the commit that added it) | row | action / reason |
 |---|---|---|
-| `.devcontainer/devcontainer.json` (`d665f12d`, the vendor commit; `/home/node/.ssh` mount target) | any other living file | RESOLVED: removed (the file is deleted, task 1.1); history never rewritten |
-| `openspec/changes/archive/2025-12-20-add-global-config-dir/specs/global-config/spec.md`, `openspec/specs/global-config/spec.md` (`d665f12d`; `C:\Users\User\AppData\…`) | upstream's records and specs, as vendored | RESOLVED: removed when orbit stripped upstream's `openspec/` directory (A1); the vendor commit is the tagged baseline and is never rewritten |
-| `openspec/changes/archive/2025-12-21-add-config-command/proposal.md`, `openspec/explorations/workspace-user-journeys.md` (`d665f12d`; `/Users/me/…` examples) | as above | as above |
-| `openspec/explore/fork-and-orbify/explore.md` (`d2d4293a`; `/tmp/openspec-src`) | a record under `orbit/architecture/` (the file is now `orbit/architecture/fork-and-orbify.md`) | ACCEPTED: records are true when written |
+| `.devcontainer/devcontainer.json` (`d665f12d`, the vendor commit; a container mount target) | any other living file | RESOLVED: removed (the file is deleted, task 1.1); history never rewritten |
+| `openspec/changes/archive/2025-12-20-add-global-config-dir/specs/global-config/spec.md`, `openspec/specs/global-config/spec.md` (`d665f12d`; a Windows profile path in an example) | upstream's records and specs, as vendored | RESOLVED: removed when orbit stripped upstream's `openspec/` directory (A1); the vendor commit is the tagged baseline and is never rewritten |
+| `openspec/changes/archive/2025-12-21-add-config-command/proposal.md`, `openspec/explorations/workspace-user-journeys.md` (`d665f12d`; home-directory examples) | as above | as above |
+| `openspec/explore/fork-and-orbify/explore.md` (`d2d4293a`; a scratch clone's path) and `orbit/explore/fork-and-orbify/explore.md` (the same record at its middle location; found by the blob scan) | a record under `orbit/architecture/` (the file is now `orbit/architecture/fork-and-orbify.md`) | ACCEPTED: records are true when written |
 | `orbit/changes/concept-docs/migration-run.md` (`91b04867`; the npm cache path) | `orbit/changes/archive/**` (archived since) | ACCEPTED: records are true when written |
 | `orbit/explore/public-readiness/explore.md` (`7febd8ce`; the probe's quoted paths) | any other living file | RESOLVED: removed at HEAD (above); history never rewritten |
 
@@ -86,7 +112,7 @@ history keeps it. That is the requirement's own rule for history (never rewritte
 | address | where | count | row |
 |---|---|---|---|
 | `public@sallas.org` | author and committer | 888 | ACCEPTED: the author's chosen public address |
-| `sal@sallas.org` | author | 10 | ACCEPTED: the author's chosen public address (flagged to Sal at apply: the record cannot know whether this second address was chosen as public) |
+| `sal@sallas.org` | author | 10 | ACCEPTED: the author's chosen public address (Sal, 2026-10-13, at the system review: "A, the address is fine public") |
 | `noreply@github.com` | committer of the 10 commits GitHub made (merges) | 10 | ACCEPTED: GitHub's no-reply address |
 | `noreply@anthropic.com` | `Co-Authored-By` trailers | 774 | ACCEPTED: a no-reply address |
 
@@ -103,13 +129,23 @@ Found: no credential, password, private URL or token. `package-lock.json`'s 4,16
 exists. `gh-contract.json` records `gh --version` output only; no account, host login or token. `.gitignore` already
 excludes `.env` and `.env.*`.
 
-**Read by keyword sweep (1,184 record and fixture files):** 1,120 trail emits under `.orbit-runs/`, 54 other files under
-`orbit/changes/archive/`, and 10 under `test/fixtures/`, searched for credential-shaped keys with a value
-(`password`, `passwd`, `secret`, `api_key`, `access_key`, `auth_token`, `bearer`, `private_key`, `client_secret`)
-and for URLs carrying `user:password@`. Found: 10 matches, all FALSE: nine are the word "pass:" in review prose
-("this pass: …"), and one is the `@inquirer/password` dependency name in `package-lock.json`. The sweep is weaker
-than a read by eye. These files are records written by the engine's emit surface from review and walk prose, and no
-tool here writes credentials into them. That is the residual's residual, stated rather than assumed away.
+**Read by machine (1,184 record and fixture files):** 1,120 trail emits under `.orbit-runs/`, 54 other files under
+`orbit/changes/archive/`, and 10 under `test/fixtures/`. This is the method `orbit-public-repository`'s named limit
+gives for records and fixtures, narrowed at the system walk on Sal's word (A). The read has two parts:
+- **A keyword sweep (apply)** for credential-shaped keys with a value (`password`, `passwd`, `secret`, `api_key`,
+  `access_key`, `auth_token`, `bearer`, `private_key`, `client_secret`) and for URLs carrying `user:password@`, run
+  over all 1,197 config-shaped files. Found: 10 matches, all FALSE: nine are the word "pass:" in review prose ("this
+  pass: …"), and one is the `@inquirer/password` dependency name in `package-lock.json`.
+- **A high-entropy scan (system walk)** over every config-shaped tracked file then present (1,201, as the trail had
+  grown). It took each run of 24 or more characters from `[A-Za-z0-9+/_=-]` that mixes lower case, upper case and
+  digits and has a Shannon entropy of at least 4.0 bits per character. It set aside runs holding an ISO date, pure hex
+  digests, and runs with two or more hyphens or underscores, or any slash (identifiers and paths). Found: 72 strings, every one an npm `sha512-` integrity hash in
+  `package-lock.json`; none in a record or fixture.
+
+What the machine read misses, as the requirement states it: a secret with neither shape, such as a password written in
+plain words inside a record. These records are written by the engine's emit surface from review and walk prose, so
+such a secret would have had to be typed into a session's prose. Had one been, history keeps it, and the remedy is
+rotation, not removal.
 
 No published secret scanner is installed here (`gitleaks`, `trufflehog`: not found, 2026-10-13), as the requirement's
 named limit records.

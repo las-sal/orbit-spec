@@ -43,7 +43,8 @@
 
 ## 5. The readiness record (design D7)
 
-- [x] 5.1 Run the scan over every tracked file and over `main`'s full history, read every config-shaped tracked file,
+- [x] 5.1 Run the scan over every tracked file and over every blob reachable from `main` (and from every published ref
+  `main` does not contain), read every config-shaped tracked file,
   and write `readiness-record.md`: each finding under its row of the scan requirement's table, the config-file read,
   the root listing against design D1, and the eleven branches for Sal
 - [x] 5.2 Push and record the pull request's CI run: every job's outcome, both matrix legs among them; a failing

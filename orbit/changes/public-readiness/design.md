@@ -177,7 +177,8 @@ carries no marker: a completed program doc, the history file and the moved recor
 The record is `orbit/changes/public-readiness/readiness-record.md`, written at apply and moved with the change at
 archive. It holds:
 - the scan, per D-prd-9's table: the commands run, every finding with its row, and the config-file read that stands
-  in for the residual;
+  in for the residual. History is scanned blob by blob, so merge commits and renames are read, and every published ref
+  outside the default branch is scanned with it;
 - the root listing after apply, against D1;
 - the pull request's CI run, with every job's outcome, both matrix legs among them;
 - the eleven branches for Sal (D-prd-11).
@@ -226,7 +227,10 @@ The other eleven Decisions entries are `Kind: scope` and have no Mechanism entry
   have nothing to do with this change. → Investigated per D2. A leg is dropped only on Sal's scope call. The record
   carries the run.
 - **[A secret no pattern names]** → D-prd-9's named limit, stated once in `orbit-public-repository`'s scan requirement.
-  The config-file read is its method.
+  The config-file read is its method: by eye for the living files, and by machine for the records and fixtures. The
+  external system pass found the record had keyword-swept the 1,184 records where the requirement promised a read;
+  Sal took A at the system walk, so the requirement now names the machine read (a keyword sweep plus a high-entropy
+  scan) and what it misses.
 - **[Three more opaque entries in the program band]** The history file and the two moved records are listed by
   `orbit architecture status` as `legacy/opaque`. → Accepted (D-prd-12): opaque is the honest reading of a record.
 - **[The archive habit changes]** Archives no longer append a stage paragraph to `CLAUDE.md`. Each stage's

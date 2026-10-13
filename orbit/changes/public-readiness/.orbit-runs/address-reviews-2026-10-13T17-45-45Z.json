@@ -1,0 +1,179 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-13T17:45:45Z",
+  "change": "public-readiness",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/public-readiness/.orbit-runs/review-system-2026-10-13T15-52-50Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-13T15-52-50Z",
+  "latest_apply_token": "2026-10-13T15-09-50Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 3
+  },
+  "pushback_verification": "All four verified against current state: readiness-record.md:89 carried the 'cannot know' parenthetical; run-cli.ts:62 spawned pnpm; the spec's scan domain named only the default branch's history (git ls-remote: 26 refs, all but the change's own branch and PR #22 ancestors of origin/main); the record quoted resolved paths at lines 53, 60 and 73-76. None stale.",
+  "resolution_summary": {
+    "resolved": 4,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "A second author address is ACCEPTED under a reason the record says it cannot know",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/public-readiness/readiness-record.md",
+      "line": 89,
+      "classification": "decision_required",
+      "lane": "decision",
+      "ratified_via": "chat",
+      "resolution": "A — Sal: \"A, the address is fine public\" (2026-10-13). The authorship row now carries his word in place of the parenthetical.",
+      "action": "Replaced the row's 'cannot know' parenthetical with Sal's answer and its date.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the record cannot know whether this second address was chosen as public"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/public-readiness/readiness-record.md",
+            "text": "\"A, the address is fine public\""
+          }
+        ],
+        "searched": [
+          "sal@sallas.org",
+          "cannot know"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The test harness still builds with pnpm when dist/ is missing",
+      "marker_source": "internal-review",
+      "file": "test/helpers/run-cli.ts",
+      "line": 62,
+      "classification": "trivial_fix",
+      "action": "ensureCliBuilt now runs npm run build. Shown by moving dist/ aside and running test/commands/show.test.ts: the build ran through npm and the five tests passed.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "runCommand('pnpm', ['run', 'build'])"
+        ],
+        "introduced": [
+          {
+            "path": "test/helpers/run-cli.ts",
+            "text": "runCommand('npm', ['run', 'build'])"
+          }
+        ],
+        "searched": [
+          "pnpm"
+        ],
+        "scope": [
+          "test/helpers"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The scan's domain names only the default branch, but other public refs carry history too",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/public-readiness/specs/orbit-public-repository/spec.md",
+      "line": 44,
+      "classification": "trivial_fix",
+      "action": "The scan requirement now says a ref the repository publishes that the default branch does not contain is scanned with it. The record checks all 26 refs on origin: every one but the change's own branch and PR #22 is an ancestor of origin/main, and those two carry the branch's commits, which the blob scan reads.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/public-readiness/readiness-record.md",
+          "orbit/changes/public-readiness/proposal.md",
+          "orbit/changes/public-readiness/design.md",
+          "orbit/changes/public-readiness/tasks.md",
+          "orbit/scenario-ledger.yaml"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "over the default branch's full history"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/public-readiness/specs/orbit-public-repository/spec.md",
+            "text": "ref the repository publishes that the default branch does not contain"
+          },
+          {
+            "path": "orbit/changes/public-readiness/readiness-record.md",
+            "text": "**Published refs outside `main`.**"
+          }
+        ],
+        "searched": [
+          "default branch's",
+          "full history",
+          "git ls-remote"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The record quotes the paths it resolved, while it sits in a living path",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/public-readiness/readiness-record.md",
+      "line": 48,
+      "classification": "trivial_fix",
+      "action": "Each resolved or accepted path is now named by its file, line and kind, not quoted; the scan's own path pattern no longer matches the record.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "/tmp/openspec-src`, lines 179 and 439",
+          "/home/node/.ssh` mount target",
+          "`/Users/me/…` examples"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/public-readiness/readiness-record.md",
+            "text": "a scratch clone's path, lines 179 and 439"
+          }
+        ],
+        "searched": [
+          "the scan's path pattern run over readiness-record.md"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": "a",
+  "final_assessment": "Four of four resolved: Sal's word on the second address is recorded, the harness builds with npm, every published ref is checked and the requirement says so, and the record quotes no path.",
+  "iteration": 4,
+  "next_recommended": "/orbit:address-reviews public-readiness",
+  "ripple_misses": 0
+}

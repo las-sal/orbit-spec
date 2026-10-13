@@ -41,8 +41,10 @@ Windows leg that can fail is a change of its own (issue #23).
 
 ### Requirement: A secrets-and-paths scan is recorded before the first public release
 
-Before the repository is made public, a scan SHALL run over every tracked file at HEAD and over the default branch's
-full history, because history becomes public with the tree. Every finding SHALL be resolved or ACCEPTED, with the
+Before the repository is made public, a scan SHALL run over every tracked file at HEAD and over every blob reachable
+from the default branch's commits, merge commits and renames included, because history becomes public with the tree. A
+ref the repository publishes that the default branch does not contain (a branch, a pull request's head) SHALL be
+scanned with it. Every finding SHALL be resolved or ACCEPTED, with the
 action or reason its class carries in this table. A secret found in history is rotated or revoked, never rewritten out
 of history. The scan is a RECORD kept in the change that ran it, not a check: nothing re-runs it.
 
@@ -64,7 +66,7 @@ value.
 | an absolute local path in any other living file | RESOLVED: removed |
 | an email address in the default branch's authorship | ACCEPTED: the author's chosen public address |
 
-Named limit (the scan's patterns). Residual kind: a secret in a shape no pattern names: a bespoke API key, a password or private URL in prose, a credential in a config file. Residual method: a read of every tracked config-shaped file (`*.json`, `*.yml`, `*.yaml`, dotfiles) at HEAD, recorded beside the pattern scan; no published secret scanner is installed here (`gitleaks`, `trufflehog`: not found, 2026-10-13).
+Named limit (the scan's patterns). Residual kind: a secret in a shape no pattern names: a bespoke API key, a password or private URL in prose, a credential in a config file. Residual method: a read of every tracked config-shaped file (`*.json`, `*.yml`, `*.yaml`, dotfiles) at HEAD, recorded beside the pattern scan: by eye for a living file, and by machine for a record or a test fixture, through a sweep for credential-shaped keys with a value and URL userinfo plus a scan for high-entropy mixed-case strings. The machine read misses a secret with neither shape, such as a password written in plain words inside a record. No published secret scanner is installed here (`gitleaks`, `trufflehog`: not found, 2026-10-13).
 
 #### Scenario: Every finding is resolved or accepted with its class's reason
 
@@ -75,5 +77,5 @@ Named limit (the scan's patterns). Residual kind: a secret in a shape no pattern
 #### Scenario: The pattern scan's residual is read, not assumed
 
 - **WHEN** the scan is recorded
-- **THEN** the record also lists the config-shaped tracked files that were read for unpatterned secrets, and what that
-  read found
+- **THEN** the record also lists the config-shaped tracked files that were read for unpatterned secrets, which were
+  read by eye and which by machine, and what each read found

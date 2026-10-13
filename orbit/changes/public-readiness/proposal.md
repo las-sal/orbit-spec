@@ -31,7 +31,8 @@ exploration recorded twelve decisions on Sal's word (see explore.md).
 - **`CLAUDE.md` is trimmed to guidance** (D-prd-4, D-prd-12). Its per-stage narrative moves word for word to
   `orbit/architecture/program-history.md`, with its `src:` markers stripped. The trimmed file keeps what the specs ask
   of it: the upstream baseline, the `orbit status` pointer, and the outward-actions note.
-- **A secrets-and-paths scan is recorded** (D-prd-9; exit (2)). It covers every tracked file and `main`'s full history.
+- **A secrets-and-paths scan is recorded** (D-prd-9; exit (2)). It covers every tracked file, every blob reachable from `main`'s history,
+  and every published ref `main` does not contain.
   Every finding is resolved or accepted with its class's reason, in a readiness record in the change.
 - **`orbit-source-lint` retires its historical exclusion row** (D-prd-10). That row names `README_OLD.md` and
   `adopter-report-*.md`. Its paragraph that named `CLAUDE.md` as the living file narrating history names an
