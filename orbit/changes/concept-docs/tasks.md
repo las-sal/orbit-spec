@@ -7,7 +7,7 @@
   `test/core/user-docs/tool-coverage.test.ts` tags the five scenarios of `The supported-tools page lists every init
   target in two tiers`, including a page neither listed nor present
 - [ ] 1.3 Confirm the tool inventory reads the `docs-inventory` fence from the active delta (`utility: npm cd find grep
-  ls`), and that the unused-declaration rule passes only once `docs/migration-guide.md` is unlisted
+  ls rm`), and that the unused-declaration rule passes only once `docs/migration-guide.md` is unlisted
 
 ## 2. The `orbit init` warning (R-ugd-11)
 
@@ -28,7 +28,9 @@
   directories orbit writes and how it invokes the workflows
 - [ ] 3.5 Rewrite `docs/migration-guide.md`: the checklist (one command and fix per hazard row), the move steps, the
   "what orbit does not have" table, "what changes for you", and the measured version 1.14.1;
-  `test/core/user-docs/migration-guide.test.ts` tags "The guide names its measured version"
+  `test/core/user-docs/migration-guide.test.ts` tags "The guide names its measured version" and "A move into an
+  existing orbit directory is never offered" (the guide's text for an `orbit/` holding work carries no `git mv` line
+  and names the nesting)
 - [ ] 3.6 Run `npm run capture:git` once `docs/migration-guide.md` carries its move steps, and confirm
   `test/integration/cli-contracts/git-contract.json` now records `mv`; record in the commit message the keys and flags
   the recapture dropped

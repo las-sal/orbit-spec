@@ -1,0 +1,140 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-13T01:25:02Z",
+  "change": "concept-docs",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/concept-docs/.orbit-runs/review-proposal-2026-10-13T01-23-55Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-13T01-23-55Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 3,
+    "suggestion": 0
+  },
+  "pushback_verification": "All three verified against current state: task 1.3's fence quote read, the Codex sentence read beside init.ts:542 and adapters/codex.ts, task 3.5's tags read; none stale.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Task 1.3 still names the docs-inventory fence without rm",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/concept-docs/tasks.md",
+      "line": 9,
+      "classification": "trivial_fix",
+      "action": "task 1.3 quotes the fence as the delta carries it, `utility: npm cd find grep ls rm`",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/concept-docs/tasks.md",
+            "text": "ls rm`)"
+          }
+        ],
+        "searched": [
+          "utility: npm cd"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "ripple_miss_of": {
+        "walk": "2026-10-13T01-21-49Z",
+        "title": "The move steps' commands are admitted by neither the docs-inventory fence nor the git contract",
+        "file": "design.md",
+        "kind": "query"
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The tier-1 prose conflates Codex's commands with upstream's moved skills directory",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/concept-docs/specs/orbit-user-docs/spec.md",
+      "line": 180,
+      "classification": "trivial_fix",
+      "action": "restated the Codex sentence as two facts: skills under .codex/skills/ (upstream later moved them to .agents/skills/), commands in $CODEX_HOME/prompts/ (upstream later retired them)",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "not upstream's later `.agents/skills/`"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/concept-docs/specs/orbit-user-docs/spec.md",
+            "text": "orbit writes its skills under `.codex/skills/`"
+          }
+        ],
+        "searched": [
+          ".agents/skills",
+          "CODEX_HOME"
+        ],
+        "scope": [
+          "src/core/init.ts",
+          "src/core/command-generation/adapters/codex.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The new never-offered scenario has no task that declares it",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/concept-docs/tasks.md",
+      "line": 31,
+      "classification": "trivial_fix",
+      "action": "task 3.5's migration-guide test also tags 'A move into an existing orbit directory is never offered', asserting no git mv line for an orbit/ holding work and that the nesting is named",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/concept-docs/tasks.md",
+            "text": "existing orbit directory is never offered"
+          }
+        ],
+        "searched": [
+          "never offered",
+          "scenario-ledger"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "ripple_miss_of": {
+        "walk": "2026-10-13T01-22-09Z",
+        "title": "The warning’s migration steps fail after init creates the destination",
+        "file": "orbit/changes/concept-docs/specs/orbit-init-openspec-warning/spec.md",
+        "kind": "judgement"
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Three of three resolved by obvious-lane repairs; two are attributed ripple misses of the earlier walks (one query, one judgement), and one corrects the earlier repair's own sentence.",
+  "iteration": 3,
+  "next_recommended": "/orbit:apply concept-docs — user-invoked",
+  "ripple_misses": 2
+}

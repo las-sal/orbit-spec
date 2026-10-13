@@ -202,8 +202,9 @@ suite naming the page and the tool id:
 A TIER is the text under the page's H2 heading `Tier 1` or `Tier 2` (the heading's text begins with that word and
 number), to the next H2. Tier 2 says "untested", never "supported": a tool can be generated into a directory its tool
 later moved, so generation does not show it works. The page also states, for each tier-1 tool, the directories orbit writes and how the
-tool invokes the workflows (Codex's commands are written to the global `$CODEX_HOME/prompts/`, by default
-`~/.codex/prompts/`, not upstream's later `.agents/skills/`). The check does not read that prose; the system review
+tool invokes the workflows. For Codex these are two facts: orbit writes its skills under `.codex/skills/` (upstream
+later moved them to `.agents/skills/`), and its commands to the global `$CODEX_HOME/prompts/`, by default
+`~/.codex/prompts/` (upstream later retired them). The check does not read that prose; the system review
 does.
 
 #### Scenario: Every available tool has a row in its tier
