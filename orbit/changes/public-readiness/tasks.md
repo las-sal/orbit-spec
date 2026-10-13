@@ -46,7 +46,7 @@
 - [x] 5.1 Run the scan over every tracked file and over `main`'s full history, read every config-shaped tracked file,
   and write `readiness-record.md`: each finding under its row of the scan requirement's table, the config-file read,
   the root listing against design D1, and the eleven branches for Sal
-- [ ] 5.2 Push and record the pull request's CI run: every job's outcome, both matrix legs among them; a failing
+- [x] 5.2 Push and record the pull request's CI run: every job's outcome, both matrix legs among them; a failing
   leg is handled per design D2 (a test repaired, or a dropped leg briefed to Sal as a scope call)
 - [x] 5.3 Declare `CI passes on the change that moves it` and the two scan scenarios `observed` in
   `orbit/scenario-ledger.yaml`, citing `readiness-record.md` at the change's active path; the archive's at-archive
@@ -54,7 +54,7 @@
 
 ## 6. Close
 
-- [ ] 6.1 `npm test` (full suite), `orbit validate public-readiness --strict`, `orbit validate --sources`, and `orbit
+- [x] 6.1 `npm test` (full suite), `orbit validate public-readiness --strict`, `orbit validate --sources`, and `orbit
   status --change public-readiness --scenarios` showing every delta scenario declared
 - [ ] 6.2 (User-validation) After this change archives and its PR merges, on Sal's word: `npm run release:tree` on
   `main` cuts the annotated `v2.0.0`, `git push origin v2.0.0` pushes it by name, and a release-tree install prints

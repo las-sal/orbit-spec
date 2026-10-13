@@ -234,3 +234,17 @@ someone else wants to take up when i opensource". The matrix is now `linux-bash`
 `orbit-public-repository`'s CI requirement names Linux and macOS, and states that Windows is not checked, and why.
 Issue [#23](https://github.com/las-sal/orbit-spec/issues/23) records the five causes, the false green, and what a
 Windows leg would need. No test was skipped.
+
+### Run 4 — `38418242716`, on `b981a334` (the Windows leg dropped), event `pull_request`: the run of record
+
+| job | outcome | duration |
+|---|---|---|
+| Lint & Type Check | success | 45 s |
+| Test (linux-bash) | success: 3,688 of 3,688 tests, in 173 files, no errors | 8 min 45 s |
+| Test (macos-bash) | success: 3,688 of 3,688 tests, in 173 files, no errors | 3 min 29 s |
+| All checks passed (`required-checks-pr`) | success | 3 s |
+| All checks passed (`required-checks-main`) | skipped (push-only) | — |
+
+Every job that runs on the pull request completed successfully, both test legs among them. The test summaries were
+read from each leg's log. This is the observation `orbit-public-repository`'s `CI passes on the change that moves it`
+cites (`orbit/scenario-ledger.yaml`). A later push to this branch runs CI again, and this record does not follow it.
