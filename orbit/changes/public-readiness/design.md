@@ -67,9 +67,9 @@ path. That covers `CLAUDE.md`'s source-of-truth list and `orbit/architecture/ope
 repo's own" pointer. Text that names a file as history is left alone: a record never changes, and the charter names
 what the stage sweeps.
 
-### D2 — CI on npm, with the three-OS matrix on pull requests (D-prd-7)
+### D2 — CI on npm, with the test matrix on pull requests (D-prd-7)
 
-`ci.yml` keeps its lint and type-check job and its three-OS test matrix (linux-bash, macos-bash, windows-pwsh). Every
+`ci.yml` keeps its lint and type-check job and its test matrix, less its Windows leg (linux-bash, macos-bash). Every
 `pnpm` step becomes its npm equivalent: `actions/setup-node` with `cache: 'npm'`, `npm ci`, `npm run build` and
 `npm test`. Four structural edits, and nothing else:
 
@@ -98,6 +98,12 @@ The suite has never run in CI, so the first run is a measurement rather than a f
 - **A leg that fails** on a test that never ran there is investigated. Where the cause is the test, it is repaired.
   Where the cause is a platform orbit does not support, dropping the leg is a scope call for Sal, briefed with the
   failure. Dropping a leg would narrow a support claim. A test is never skipped to turn a leg green.
+- **Applied at apply (2026-10-13): the Windows leg is dropped, on Sal's word** ("i've no intention of using this on
+  windows so fine to drop"). Its first run failed 198 tests from five causes, none in this change: CRLF checkout, the
+  POSIX shell stubs, path separators, `chmod`, and oracle timeouts. Its third run reported success over the same
+  failures, because under `pwsh` `npm test`'s exit did not reach the step. The leg could not fail. The matrix is
+  linux-bash and macos-bash, the requirement names Linux and macOS and states that Windows is not checked, and issue
+  #23 carries the findings for whoever takes Windows up. The record has all three runs.
 
 Alternative considered: delete CI and rely on local `npm test`. Rejected because a public repository with no check
 gives a visitor or contributor no signal, and the failure it hides here was invisible until measured.
@@ -173,7 +179,7 @@ archive. It holds:
 - the scan, per D-prd-9's table: the commands run, every finding with its row, and the config-file read that stands
   in for the residual;
 - the root listing after apply, against D1;
-- the pull request's CI run, with every job's outcome, all three matrix legs among them;
+- the pull request's CI run, with every job's outcome, both matrix legs among them;
 - the eleven branches for Sal (D-prd-11).
 
 `orbit/scenario-ledger.yaml` declares the scenarios the record observes, citing it at the change's active path. The

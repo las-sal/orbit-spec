@@ -40,7 +40,7 @@ function licenseErrors(text: string): string[] {
   return errors;
 }
 
-const OSES = ['ubuntu', 'macos', 'windows'];
+const OSES = ['ubuntu', 'macos'];
 const EVENTS = ['pull_request', 'merge_group', 'push'];
 const COMMANDS = ['npm ci', 'npm run build', 'npm test'];
 
@@ -129,7 +129,7 @@ describe('orbit-public-repository: the license', () => {
 
 describe('orbit-public-repository: CI', () => {
   // @scenario behaviour orbit-public-repository :: CI checks every commit with orbit's toolchain :: The CI workflow installs, builds and tests with npm
-  it('installs, builds and tests with npm on three operating systems for every checked event', () => {
+  it('installs, builds and tests with npm on Linux and macOS for every checked event', () => {
     const files = workflows();
     expect(files.length).toBeGreaterThan(0);
     expect(ciErrors(files)).toEqual([]);
@@ -139,7 +139,7 @@ describe('orbit-public-repository: CI', () => {
     const mutate = (from: string, to: string) => ciErrors([...others, { ...ci, text: ci.text.replace(from, to) }]);
     expect(mutate('npm ci', 'pnpm install --frozen-lockfile')).not.toEqual([]);
     expect(mutate('run: npm test', 'run: echo skipped')).not.toEqual([]);
-    expect(mutate('os: windows-latest', 'os: ubuntu-22.04')).not.toEqual([]);
+    expect(mutate('os: macos-latest', 'os: ubuntu-22.04')).not.toEqual([]);
     expect(mutate('  merge_group:\n    branches: [main]\n', '')).not.toEqual([]);
     expect(mutate('needs: [test_matrix, lint]', 'needs: [test_pr, lint]')).not.toEqual([]);
     expect(ciErrors([...files, { name: 'extra.yaml', text: 'jobs:\n  x:\n    steps:\n      - run: nix build\n' }])).not.toEqual([]);

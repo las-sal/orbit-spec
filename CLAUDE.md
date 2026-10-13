@@ -18,7 +18,8 @@ surgical cherry-picks only — there is no auto-ingest. A version bump is its ow
   (`openspec-change`), the global config/data dir, and legacy-openspec detection.
 - **Telemetry is removed.** orbit collects nothing.
 - **Toolchain is npm, not pnpm.** `npm install` works end-to-end. Build = `npm run build` (`node build.js` → `tsc`);
-  tests = `npm test` (vitest). CI runs `npm ci`, `npm run build` and `npm test` on Linux, macOS and Windows.
+  tests = `npm test` (vitest). CI runs `npm ci`, `npm run build` and `npm test` on Linux and macOS
+  (Windows is not checked: issue #23).
 - **The `.claude/` surface is generated and gitignored.** This repo's own skills and launcher commands are generated
   by its own engine — `node bin/orbit.js init --tools claude`, once per machine. After changing workflow templates,
   refresh with `npm run build && node bin/orbit.js update --force` (template edits don't bump the version, so plain

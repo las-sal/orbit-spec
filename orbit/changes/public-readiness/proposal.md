@@ -20,8 +20,9 @@ exploration recorded twelve decisions on Sal's word (see explore.md).
   - `.github/CODEOWNERS` and `assets/openspec_*` (D-prd-8).
   - `.devcontainer/` (D-prd-3).
   - Nix: `flake.*` and `scripts/update-flake.sh` (D-prd-2).
-- **CI moves to npm** (D-prd-7). `ci.yml` runs `npm ci`, `npm run build` and `npm test` on Linux, macOS and Windows
-  for every pull request, merge-queue group and push to `main`, and drops its nix and changesets jobs.
+- **CI moves to npm** (D-prd-7). `ci.yml` runs `npm ci`, `npm run build` and `npm test` on Linux and macOS for every
+  pull request, merge-queue group and push to `main`, and drops its nix and changesets jobs. Its Windows leg is dropped
+  (Sal, at apply): it failed 198 tests and could not fail under `pwsh`; issue #23 carries it.
   `.github/workflows/README.md`, which documents the deleted `act` setup, is deleted. **Upstream's npm publish setup is deleted:** `release-prepare.yml`, `.changeset/`, the `changeset`,
   `release`, `release:ci` and `check:pack-version` scripts, `scripts/pack-version-check.mjs`, and the two
   `@changesets/*` devDependencies. `npm run release:tree` becomes the only release path.

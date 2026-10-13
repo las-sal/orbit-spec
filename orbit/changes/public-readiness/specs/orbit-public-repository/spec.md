@@ -17,24 +17,27 @@ added since the fork. The installed package carries `LICENSE`, so the release (`
 ### Requirement: CI checks every commit with orbit's toolchain
 
 The repository's CI workflow SHALL install dependencies with `npm ci` against `package-lock.json`, then run
-`npm run build` and `npm test`, on Linux, macOS and Windows, on every event the workflow's required checks run on: a
+`npm run build` and `npm test`, on Linux and macOS, on every event the workflow's required checks run on: a
 pull request, a merge-queue group, and a push to `main`. No
 workflow SHALL invoke `pnpm` or `nix`, because npm is orbit's toolchain and `package-lock.json` is its only lockfile.
 The workflow files are `.github/workflows/*.yml` and `.github/workflows/*.yaml`. Upstream's workflow installed with pnpm
 against a lockfile frozen at the vendor commit, so it failed at install on every run once orbit's dependencies
-diverged, and it ran its macOS and Windows legs only on a push to `main`, after a change had merged.
+diverged, and it ran its macOS and Windows legs only on a push to `main`, after a change had merged. Windows is not
+checked: orbit is developed and used on Linux and macOS, its test harness assumes a POSIX shell and LF line endings,
+and a `pwsh` leg reported success over failing tests because `npm test`'s exit did not reach the step. Restoring a
+Windows leg that can fail is a change of its own (issue #23).
 
 #### Scenario: The CI workflow installs, builds and tests with npm
 
 - **WHEN** the workflow files (`.github/workflows/*.yml` and `*.yaml`) are read
-- **THEN** the CI workflow runs `npm ci`, `npm run build` and `npm test` in a job whose matrix names Linux, macOS and
-  Windows and which runs on `pull_request`, `merge_group` and `push`; every `needs` entry names a job the file defines; and no
+- **THEN** the CI workflow runs `npm ci`, `npm run build` and `npm test` in a job whose matrix names Linux and macOS and
+  which runs on `pull_request`, `merge_group` and `push`; every `needs` entry names a job the file defines; and no
   workflow file names `pnpm` or `nix`
 
 #### Scenario: CI passes on the change that moves it
 
 - **WHEN** the change that moves CI to npm is pushed and its pull request's checks complete
-- **THEN** every job that runs on the pull request completes successfully, all three test legs among them
+- **THEN** every job that runs on the pull request completes successfully, both test legs among them
 
 ### Requirement: A secrets-and-paths scan is recorded before the first public release
 

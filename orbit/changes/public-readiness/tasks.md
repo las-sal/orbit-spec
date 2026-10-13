@@ -15,7 +15,7 @@
 
 ## 2. CI, the upstream links, and their test (design D2, D10)
 
-- [x] 2.1 Rewrite `.github/workflows/ci.yml` on npm per design D2: the three-OS matrix runs on `pull_request`,
+- [x] 2.1 Rewrite `.github/workflows/ci.yml` on npm per design D2: the test matrix runs on `pull_request`,
   `merge_group` and `push` and absorbs `test_pr`; both aggregate jobs drop `nix-flake-validate` from `needs` and their scripts, and
   `required-checks-pr` needs `test_matrix`; the `changes`, nix and `validate-changesets` jobs go; every remaining
   `needs` entry names a defined job; each test job's time limit is set from the measured local duration of `npm test`,
@@ -46,7 +46,7 @@
 - [x] 5.1 Run the scan over every tracked file and over `main`'s full history, read every config-shaped tracked file,
   and write `readiness-record.md`: each finding under its row of the scan requirement's table, the config-file read,
   the root listing against design D1, and the eleven branches for Sal
-- [ ] 5.2 Push and record the pull request's CI run: every job's outcome, all three matrix legs among them; a failing
+- [ ] 5.2 Push and record the pull request's CI run: every job's outcome, both matrix legs among them; a failing
   leg is handled per design D2 (a test repaired, or a dropped leg briefed to Sal as a scope call)
 - [x] 5.3 Declare `CI passes on the change that moves it` and the two scan scenarios `observed` in
   `orbit/scenario-ledger.yaml`, citing `readiness-record.md` at the change's active path; the archive's at-archive

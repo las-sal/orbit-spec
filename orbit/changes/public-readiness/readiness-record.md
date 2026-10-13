@@ -180,7 +180,8 @@ The first run in orbit's history to get past install: `npm ci` succeeded on all 
   the file.
 - Two exhaustive-oracle shards exceed their 300 s per-test timeout.
 
-The disposition of the Windows leg is a scope call for Sal (design D2), briefed at apply.
+The disposition of the Windows leg was a scope call for Sal (design D2), briefed at apply. It was taken after run 3,
+below.
 
 ### Run 2 — `38409930678`, on `7a32000f` (the two repairs), event `pull_request`
 
@@ -201,6 +202,22 @@ Both repairs held. Two causes remained, both in the test harness rather than the
   `.git/objects` during teardown, most likely git's detached auto-gc or maintenance. The test's git environment now
   sets `gc.auto=0` and `maintenance.auto=false`, and the teardown retries the removal.
 
+### Run 3 — `38411554553`, on `5257847f` (the harness repairs), event `pull_request`
+
+| job | outcome | duration |
+|---|---|---|
+| Lint & Type Check | success | 30 s |
+| Test (linux-bash) | success: 3,688 of 3,688 tests, no errors | 10 min 38 s |
+| Test (macos-bash) | success: 3,688 of 3,688 tests, no errors | 3 min 6 s |
+| Test (windows-pwsh) | **success reported, FALSE**: the step's own log reads `198 failed \| 3427 passed \| 9 skipped (3634)` | 18 min 2 s |
+| All checks passed (`required-checks-pr`) | success, over the false Windows green | 4 s |
+
+**The Windows leg cannot fail on a test failure.** Under `shell: pwsh`, `npm test`'s non-zero exit does not reach the
+step. Run 1's Windows leg failed only because vitest also reported 7 unhandled errors. Run 3's had none, so the leg
+reported success over 198 failing tests. Every run of upstream's Windows leg was exposed to the same fault, and none
+had ever got past install. Linux and macOS run under `bash`, and their summaries above were read from the logs, not
+from the job status.
+
 ## 4. The past-stage branches on origin, for Sal (D-prd-11)
 
 `git ls-remote --heads origin` at apply lists 13 heads. `main` and `public-readiness` (this change's own) stay. These
@@ -209,3 +226,11 @@ eleven are past stages' branches, every one an ancestor of `origin/main` (checke
 
 `b1-relocate-workflows`, `c1-engine-gates`, `c2-parallel-merge-guardrail`, `concept-docs`, `d-arc`, `docs-under-test`,
 `landing-page`, `rc12-body-adoption`, `rc12-engine-owned-choreography`, `reference-docs`, `report-archived-change`.
+
+### The Windows leg is dropped (Sal, 2026-10-13)
+
+Briefed with runs 1–3. Sal's word: "i've no intention of using this on windows so fine to drop. ok to make a gh issue if
+someone else wants to take up when i opensource". The matrix is now `linux-bash` and `macos-bash`.
+`orbit-public-repository`'s CI requirement names Linux and macOS, and states that Windows is not checked, and why.
+Issue [#23](https://github.com/las-sal/orbit-spec/issues/23) records the five causes, the false green, and what a
+Windows leg would need. No test was skipped.

@@ -60,7 +60,7 @@ scenarios:
   # citations to the archived path (the scenario-map reader checks only that a record is non-empty).
   - key: "orbit-public-repository :: CI checks every commit with orbit's toolchain :: CI passes on the change that moves it"
     kind: observed
-    record: "orbit/changes/public-readiness/readiness-record.md §3 — the pull request's CI run, every job's outcome with all three test legs"
+    record: "orbit/changes/public-readiness/readiness-record.md §3 — the pull request's CI run, every job's outcome with both test legs"
   - key: "orbit-public-repository :: A secrets-and-paths scan is recorded before the first public release :: Every finding is resolved or accepted with its class's reason"
     kind: observed
     record: "orbit/changes/public-readiness/readiness-record.md §1 — zero token candidates in the tree and main's history; every absolute-path finding and authorship address under its row, two resolved at apply"
