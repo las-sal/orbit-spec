@@ -1,0 +1,168 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-13T22:26:52Z",
+  "change": null,
+  "doc": "update-gh-documentation",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "--from-file",
+  "source_path": "orbit/architecture/.orbit-runs/review-architecture-2026-10-13T22-25-09Z.json",
+  "source_command": "review",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 5
+  },
+  "pushback_verification": "All five verified against the doc as it stood: no goal reading anywhere; four Shipped-as paragraphs, none for reference-docs; Windows only in public-readiness's Shipped-as; the Tier-C entry silent on #24; the last status-log entry still listing the branch deletion. None stale.",
+  "resolution_summary": {
+    "resolved": 5,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "SUGGESTION",
+      "title": "The program's goals G1–G4 have no graded reading",
+      "marker_source": "internal-review",
+      "file": "orbit/architecture/update-gh-documentation.md",
+      "line": 23,
+      "classification": "trivial_fix",
+      "action": "Recorded a goal reading in the new status-log entry: G2, G3 and G4 MET on their checks, G1 PENDING on landing-page's post-flip run.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/architecture/update-gh-documentation.md",
+            "text": "Goal reading: G2 MET"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "reference-docs carries no Shipped-as paragraph",
+      "marker_source": "internal-review",
+      "file": "orbit/architecture/update-gh-documentation.md",
+      "line": 206,
+      "classification": "trivial_fix",
+      "action": "Added reference-docs' Shipped-as paragraph after its exits, from its status-log entry, grading its three exits MET.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/architecture/update-gh-documentation.md",
+            "text": "archived as `orbit/changes/archive/2026-10-13-reference-docs/`; the charter stands): the six"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Considered & out does not record the dropped Windows support",
+      "marker_source": "internal-review",
+      "file": "orbit/architecture/update-gh-documentation.md",
+      "line": 276,
+      "classification": "trivial_fix",
+      "action": "Added a dated Considered & out entry for checking Windows in CI, with its reason and issue #23.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/architecture/update-gh-documentation.md",
+            "text": "**2026-10-13 — checking Windows in CI.**"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The Tier-C scrub entry does not say where the deferred work now lives",
+      "marker_source": "internal-review",
+      "file": "orbit/architecture/update-gh-documentation.md",
+      "line": 278,
+      "classification": "trivial_fix",
+      "action": "Appended to the Tier-C entry that Sal ended the program and the remaining user-visible strings are tracked in issue #24; R-ugd-3 stands as ruled.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/architecture/update-gh-documentation.md",
+            "text": "tracked in issue #24, \"Refine Documentation\", for after the program."
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The status log's remaining-work list is now partly done",
+      "marker_source": "internal-review",
+      "file": "orbit/architecture/update-gh-documentation.md",
+      "line": 393,
+      "classification": "trivial_fix",
+      "action": "Appended a status-log entry: branches deleted, issue #24 opened, the closing review run and walked, the goal reading, and what remains.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/architecture/update-gh-documentation.md",
+            "text": "**2026-10-13 — branches deleted, issue #24 opened, the closing architecture review run and walked.**"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Five of five resolved: the goals carry a reading, every stage carries its Shipped-as, Windows and the CLI scrub's continuation are recorded as considered, and the status log says what remains.",
+  "iteration": 1,
+  "next_recommended": "/orbit:review --as architecture update-gh-documentation — confirm the resolutions",
+  "ripple_misses": 0
+}

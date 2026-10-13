@@ -203,6 +203,14 @@ Exit: (1) the six pages pass docs-under-test's checks with no recorded exception
 registry holds (rc05 keeps it equal to the program) is named by at least one page, checked by a test; (3) no page
 teaches an upstream command.
 
+Shipped as (2026-10-13; archived as `orbit/changes/archive/2026-10-13-reference-docs/`; the charter stands): the six
+pages are rewritten for orbit and have left the pending-rewrite list, and `docs/opsx.md` is now
+`docs/workflow-engine.md`. A command-coverage check holds `docs/cli.md` to the program's 55 visible command paths and
+`docs/commands.md` to the 15 workflow ids, both read from the code. `orbit feedback` files on `las-sal/orbit-spec`
+(R-ugd-10). Exit (1) MET: the full suite holds the six pages to every file-local check. Exit (2) MET: the check is per
+page, which is narrower than "at least one page" and so meets it. Exit (3) MET: the residue check finds no upstream
+command, and both system reviewers read every page for upstream behaviour taught under orbit's name.
+
 ### Stage concept-docs — the concept pages explain what orbit adds
 
 Depends-on: docs-under-test
@@ -276,7 +284,9 @@ capabilities 29 → 30 (`orbit-public-repository` ADDED).
 ## Considered & out
 
 - **2026-10-12 — the Tier-C code scrub.** Folding the `OpenSpec` strings in CLI help and messages into this program
-  (issue #1 suggested it). Out by R-ugd-3: it is code, and the landing page does not depend on it.
+  (issue #1 suggested it). Out by R-ugd-3: it is code, and the landing page does not depend on it. On 2026-10-13 Sal
+  chose to end the program rather than reopen it, and the remaining user-visible strings (about 27, `orbit init`'s
+  among them) are tracked in issue #24, "Refine Documentation", for after the program.
 - **2026-10-12 — removing or labelling the pages not rewritten.** Out by R-ugd-2: all eleven are rewritten.
 - **2026-10-12 — installing from source, or from a Release tarball.** Weighed when R-ugd-4's line failed (the
   landing-page exploration's routes A and C): a clone-and-build install leaves a global symlink into a clone the user
@@ -288,6 +298,11 @@ capabilities 29 → 30 (`orbit-public-repository` ADDED).
   ignored config keys, unknown metadata keys not warned). Taking selected upstream fixes into the engine before the
   flip was weighed. Out (Sal: docs only): orbit launches on the 1.3.1 engine, and the migration guide's "before you
   move" checklist (D-cd-5) is the whole answer. A version bump or cherry-pick stays its own deliberate decision.
+- **2026-10-13 — checking Windows in CI.** Upstream's workflow ran a Windows leg, and public-readiness carried it to
+  npm. Its first run failed 198 tests from five causes outside the program (CRLF checkout, POSIX test stubs, path
+  separators, `chmod`, oracle timeouts), and a later run reported success over the same failures because the `pwsh`
+  leg could not fail. Out (Sal, at public-readiness's apply: no intention of using orbit on Windows): CI checks Linux
+  and macOS, and issue #23 records what a Windows leg would need.
 
 ## Status log
 
@@ -393,3 +408,14 @@ yet (Sal), on the same ground; exit (3)'s `/orbit:propose` half and its post-fli
 Every stage is now archived. What remains is Sal's: the visibility flip, the description and topics, deleting the
 eleven past-stage branches, then landing-page's post-flip run and its ratification, and the program's closing
 `--as architecture` review.
+
+**2026-10-13 — branches deleted, issue #24 opened, the closing architecture review run and walked.** The eleven
+past-stage branches and `public-readiness` were deleted on origin and locally, each first checked as an ancestor of
+`origin/main`, which is now the only branch. Sal found that `orbit init` still says "OpenSpec" and chose to end the
+program, filing the remaining user-visible strings and the architect-first Quickstart as issue #24, "Refine
+Documentation" (R-ugd-3 stands as ruled). The closing `--as architecture` review found five suggestions, all walked.
+Goal reading: G2 MET, the claims check (`test/core/user-docs/claims.test.ts`) holds every README claim to a baseline
+capability; G3 MET, all eleven `docs/` pages are rewritten and the pending-rewrite list is empty; G4 MET, the `orbit`,
+`git`/`gh` and inventory sweeps and the residue check read `README.md` and every `docs/` page; G1 PENDING, graded by
+landing-page's post-flip run. What remains is Sal's: the visibility flip and the description and topics, then
+landing-page's post-flip run and its ratification.
