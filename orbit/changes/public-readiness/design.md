@@ -73,9 +73,11 @@ what the stage sweeps.
 `pnpm` step becomes its npm equivalent: `actions/setup-node` with `cache: 'npm'`, `npm ci`, `npm run build` and
 `npm test`. Four structural edits, and nothing else:
 
-- **The matrix runs on pull requests as well as on pushes to `main`.** Upstream ran it only on push, so a pull
-  request saw Linux alone and the first macOS and Windows run would be the merge commit, after the archive and just
-  before the release. The Linux-only `test_pr` job folds into the matrix and is deleted.
+- **The matrix runs on every event the workflow's checks run on: `pull_request`, `merge_group` and a push to
+  `main`.** Upstream ran it only on push, so a pull request saw Linux alone and the first macOS and Windows run would be
+  the merge commit, after the archive and just before the release. The Linux-only `test_pr` job, which ran on
+  `pull_request` and `merge_group`, folds into the matrix and is deleted; the matrix takes both of its events, so
+  `required-checks-pr`, which also runs on both, never waits on a skipped job.
 - **The two aggregate jobs follow.** `required-checks-pr` needs `test_matrix` in place of `test_pr`. Both
   `required-checks-pr` and `required-checks-main` drop `nix-flake-validate` from `needs` and drop the script branches
   that test its result. After the edit, every `needs` entry names a job the file still defines.

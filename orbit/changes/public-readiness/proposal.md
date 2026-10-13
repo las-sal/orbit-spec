@@ -21,7 +21,7 @@ exploration recorded twelve decisions on Sal's word (see explore.md).
   - `.devcontainer/` (D-prd-3).
   - Nix: `flake.*` and `scripts/update-flake.sh` (D-prd-2).
 - **CI moves to npm** (D-prd-7). `ci.yml` runs `npm ci`, `npm run build` and `npm test` on Linux, macOS and Windows
-  for every pull request as well as every push to `main`, and drops its nix and changesets jobs.
+  for every pull request, merge-queue group and push to `main`, and drops its nix and changesets jobs.
   `.github/workflows/README.md`, which documents the deleted `act` setup, is deleted. **Upstream's npm publish setup is deleted:** `release-prepare.yml`, `.changeset/`, the `changeset`,
   `release`, `release:ci` and `check:pack-version` scripts, `scripts/pack-version-check.mjs`, and the two
   `@changesets/*` devDependencies. `npm run release:tree` becomes the only release path.
@@ -33,8 +33,9 @@ exploration recorded twelve decisions on Sal's word (see explore.md).
 - **A secrets-and-paths scan is recorded** (D-prd-9; exit (2)). It covers every tracked file and `main`'s full history.
   Every finding is resolved or accepted with its class's reason, in a readiness record in the change.
 - **`orbit-source-lint` retires its historical exclusion row** (D-prd-10). That row names `README_OLD.md` and
-  `adopter-report-*.md`. Its paragraph naming `CLAUDE.md` as the standing example of narrated history now points at the
-  history file.
+  `adopter-report-*.md`. Its paragraph that named `CLAUDE.md` as the living file narrating history names an
+  architecture doc's status log instead, and says that a record kept in the domain is read but inert while it carries
+  no marker.
 - **The upstream links `orbit init` and `orbit update` print are retargeted** to `las-sal/orbit-spec` (R-ugd-12, the
   third carve-out from R-ugd-3, ratified at the proposal walk). Today a new user's first command sends orbit's bug
   reports to OpenSpec's tracker.

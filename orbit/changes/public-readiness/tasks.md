@@ -15,8 +15,8 @@
 
 ## 2. CI, the upstream links, and their test (design D2, D10)
 
-- [ ] 2.1 Rewrite `.github/workflows/ci.yml` on npm per design D2: the three-OS matrix runs on `pull_request` and
-  `push` and absorbs `test_pr`; both aggregate jobs drop `nix-flake-validate` from `needs` and their scripts, and
+- [ ] 2.1 Rewrite `.github/workflows/ci.yml` on npm per design D2: the three-OS matrix runs on `pull_request`,
+  `merge_group` and `push` and absorbs `test_pr`; both aggregate jobs drop `nix-flake-validate` from `needs` and their scripts, and
   `required-checks-pr` needs `test_matrix`; the `changes`, nix and `validate-changesets` jobs go; every remaining
   `needs` entry names a defined job; each test job's time limit is set from the measured local duration of `npm test`,
   with headroom

@@ -17,7 +17,8 @@ added since the fork. The installed package carries `LICENSE`, so the release (`
 ### Requirement: CI checks every commit with orbit's toolchain
 
 The repository's CI workflow SHALL install dependencies with `npm ci` against `package-lock.json`, then run
-`npm run build` and `npm test`, on Linux, macOS and Windows, for every pull request and every push to `main`. No
+`npm run build` and `npm test`, on Linux, macOS and Windows, on every event the workflow's required checks run on: a
+pull request, a merge-queue group, and a push to `main`. No
 workflow SHALL invoke `pnpm` or `nix`, because npm is orbit's toolchain and `package-lock.json` is its only lockfile.
 The workflow files are `.github/workflows/*.yml` and `.github/workflows/*.yaml`. Upstream's workflow installed with pnpm
 against a lockfile frozen at the vendor commit, so it failed at install on every run once orbit's dependencies
@@ -27,7 +28,7 @@ diverged, and it ran its macOS and Windows legs only on a push to `main`, after 
 
 - **WHEN** the workflow files (`.github/workflows/*.yml` and `*.yaml`) are read
 - **THEN** the CI workflow runs `npm ci`, `npm run build` and `npm test` in a job whose matrix names Linux, macOS and
-  Windows and which runs on `pull_request` as well as `push`; every `needs` entry names a job the file defines; and no
+  Windows and which runs on `pull_request`, `merge_group` and `push`; every `needs` entry names a job the file defines; and no
   workflow file names `pnpm` or `nix`
 
 #### Scenario: CI passes on the change that moves it

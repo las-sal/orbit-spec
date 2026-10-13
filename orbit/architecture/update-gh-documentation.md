@@ -361,3 +361,9 @@ Considered & out (Sal: docs only). landing-page completion offered a fourth time
 were graded MET on its archived record (the Shipped-as paragraph above), and Sal ratified it after PR #21 merged.
 landing-page completion was offered a fifth time: not yet (Sal), on the same ground; exit (3)'s remaining halves need
 the public repository. public-readiness, the last stage, is now the program's next.
+
+**2026-10-13 — R-ugd-12 captured (Sal), at the public-readiness proposal walk.** The blind pair's fresh half found that
+`orbit init` and `orbit update` print `Learn more` and `Feedback` links to OpenSpec's repository and issue tracker, so a
+new user's first command on the public repository would send orbit's bug reports upstream. Sal took A: retarget the
+three links to orbit's repository. R-ugd-12 carves them out of R-ugd-3, the third carve-out after R-ugd-10 and R-ugd-11;
+the public-readiness change carries the edit and its test.
