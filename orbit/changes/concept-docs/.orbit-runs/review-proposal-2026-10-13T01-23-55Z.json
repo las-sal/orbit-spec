@@ -1,0 +1,170 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-13T01:23:55Z",
+  "change": "concept-docs",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/concept-docs/tasks.md",
+      "line": 9,
+      "title": "Task 1.3 still names the docs-inventory fence without rm",
+      "recommendation": "F2's repair added rm to the delta's fence (`utility: npm cd find grep ls rm`), but task 1.3 still tells the implementer to confirm the fence reads `utility: npm cd find grep ls`. The task wraps across two lines, so the walk's retired strings did not match it. Restate the task's fence as the delta carries it.",
+      "walk_entry": {
+        "title": "The move steps' commands are admitted by neither the docs-inventory fence nor the git contract",
+        "file": "design.md"
+      }
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/concept-docs/specs/orbit-user-docs/spec.md",
+      "line": 180,
+      "title": "The tier-1 prose conflates Codex's commands with upstream's moved skills directory",
+      "recommendation": "F7's new prose says Codex's commands go to the global `$CODEX_HOME/prompts/`, 'not upstream's later `.agents/skills/`'. Those are two different things. orbit writes Codex's SKILLS under `.codex/skills/` (`src/core/init.ts:542`, `skillsDir` `.codex`), which upstream later moved to `.agents/skills/` (1.7.0), and its COMMANDS to the global `$CODEX_HOME/prompts/orbit-<id>.md` (`adapters/codex.ts`), which upstream later retired (1.8.0, explore.md Case 2 item 10). A page written to this sentence would tell a Codex user the wrong comparison. Restate it as the two facts.",
+      "walk_entry": {
+        "title": "The tool-coverage codex row states a page duty the check cannot read, and stray ids are uncovered",
+        "file": "specs/orbit-user-docs/spec.md"
+      }
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/concept-docs/tasks.md",
+      "line": 31,
+      "title": "The new never-offered scenario has no task that declares it",
+      "recommendation": "X1's repair added the scenario 'A move into an existing orbit directory is never offered' to the migration requirement. Design D6 says every delta scenario but the observed run is tagged in a test, and task 5.1 requires every delta scenario declared, yet task 3.5's test tags only 'The guide names its measured version' and task 4.2 declares only the move scenario observed. As written, apply ends with an undeclared scenario, which the scenario map reports as an ERROR once the apply gate passes. Have task 3.5's migration-guide test also tag it, asserting that the guide's text for an orbit/ holding work carries no `git mv` line and names the nesting.",
+      "walk_entry": {
+        "title": "The warning’s migration steps fail after init creates the destination",
+        "file": "orbit/changes/concept-docs/specs/orbit-init-openspec-warning/spec.md"
+      }
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Graded the two walks of the pair over each entry's sweep scope: the change's artifacts, CLAUDE.md, and the read-only paths each entry named. Eleven repairs hold as written. The three that do not share one cause: each repair edited its owning sentence and stopped there, and missed one dependent line. Task 1.3 wraps across two lines, so the retired strings missed it. The tier-1 prose compressed two upstream moves into one clause. The new scenario reached the spec and the rehearsal but no test task. The residual check found no edited file outside the walks' edit records.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "verification": [
+    {
+      "title": "fork-and-orbify D13 is not the user-facing-names decision",
+      "file": "specs/orbit-user-docs/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The move steps' commands are admitted by neither the docs-inventory fence nor the git contract",
+      "file": "design.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "The mandated warning text 'orbit reads nothing in openspec/' is false when the legacy row fires",
+      "file": "specs/orbit-init-openspec-warning/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Calling the detector after the legacy cleanup skips the warning on an interactive decline",
+      "file": "design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Already-rewritten pages promise content the D4 page shapes omit",
+      "file": "design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "A carried-by line is defined as a matching line, so near-misses and wrapped lines have no defined outcome",
+      "file": "specs/orbit-user-docs/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The tool-coverage codex row states a page duty the check cannot read, and stray ids are uncovered",
+      "file": "specs/orbit-user-docs/spec.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "The carried-by check has no missing-page rule",
+      "file": "specs/orbit-user-docs/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "OPENSPEC_DIR_NAME is 'orbit' in this fork; the detector must use the literal",
+      "file": "specs/orbit-init-openspec-warning/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The proposal's concepts list omits consent, which design D4 includes",
+      "file": "proposal.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The warning’s migration steps fail after init creates the destination",
+      "file": "orbit/changes/concept-docs/specs/orbit-init-openspec-warning/spec.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "The nested-capability checklist omits active delta specs",
+      "file": "orbit/changes/concept-docs/specs/orbit-user-docs/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The navigation exemption permits behavioral claims without attribution",
+      "file": "orbit/changes/concept-docs/specs/orbit-user-docs/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The migration rehearsal does not exercise the archive hazards it claims to cover",
+      "file": "orbit/changes/concept-docs/design.md",
+      "verdict": "landed"
+    }
+  ],
+  "final_assessment": "0 critical, 3 warning, 0 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-10-13T01-21-49Z",
+    "2026-10-13T01-22-09Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews concept-docs"
+}
