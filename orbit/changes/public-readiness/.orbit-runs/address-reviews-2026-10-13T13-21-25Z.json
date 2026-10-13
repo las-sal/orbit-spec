@@ -1,0 +1,187 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-13T13:21:25Z",
+  "change": "public-readiness",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/public-readiness/.orbit-runs/external-proposal-2026-10-13T13-05-51Z.md",
+  "source_command": null,
+  "source_token": "2026-10-13T13-05-51Z",
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-6 Codex",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 4,
+    "suggestion": 2
+  },
+  "pushback_verification": "All six verified against current state; three converged with the fresh pass (walked in its log), none stale at HEAD before the walk.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 3,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Deleting the Nix job leaves retained CI jobs referencing it",
+      "marker_source": "external",
+      "file": "orbit/changes/public-readiness/design.md",
+      "line": 74,
+      "classification": "stale",
+      "action": "Converged with the fresh pass's \"D2 says nothing else in the workflow changes, but both aggregator jobs depend on the deleted nix job\"; resolved in walk log 2026-10-13T13-21-01Z.",
+      "evidence": "address-reviews-2026-10-13T13-21-01Z.json resolved the same site and claim",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The readiness record never observes the three-platform test matrix",
+      "marker_source": "external",
+      "file": "orbit/changes/public-readiness/tasks.md",
+      "line": 43,
+      "classification": "stale",
+      "action": "Converged with the fresh pass's \"The macOS and Windows legs never run on the pull request, so D2's leg handling cannot fire inside the change\"; resolved in walk log 2026-10-13T13-21-01Z.",
+      "evidence": "address-reviews-2026-10-13T13-21-01Z.json resolved the same site and claim",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Token matches have no false-positive disposition or precise detection rule",
+      "marker_source": "external",
+      "file": "orbit/changes/public-readiness/specs/orbit-public-repository/spec.md",
+      "line": 43,
+      "classification": "trivial_fix",
+      "action": "The scan requirement states exact token patterns with lengths, defines a TOKEN CANDIDATE as CONFIRMED or FALSE POSITIVE, and adds an ACCEPTED row for false positives.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "a token shape (`ghp_`"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/public-readiness/specs/orbit-public-repository/spec.md",
+            "text": "A TOKEN CANDIDATE is a match of"
+          },
+          {
+            "path": "orbit/changes/public-readiness/specs/orbit-public-repository/spec.md",
+            "text": "| a false-positive token candidate | ACCEPTED: not a credential, with what it is |"
+          }
+        ],
+        "searched": [
+          "token shape",
+          "ghp_",
+          "false positive"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/public-readiness/explore.md",
+            "why": "The exploration record keeps D-prd-9's first table verbatim; the spec owns the table now."
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Scan resolution contradicts the required treatment of secrets found only in history",
+      "marker_source": "external",
+      "file": "orbit/changes/public-readiness/specs/orbit-public-repository/spec.md",
+      "line": 55,
+      "classification": "trivial_fix",
+      "action": "Rows now state each row's action: a confirmed credential at HEAD removed and rotated; one only in history rotated or revoked, history never rewritten; the record names kind and location, never the value; the scenario asks for the action its row names.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "RESOLVED: rotated, history never rewritten"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/public-readiness/specs/orbit-public-repository/spec.md",
+            "text": "RESOLVED: rotated or revoked; history never rewritten"
+          },
+          {
+            "path": "orbit/changes/public-readiness/specs/orbit-public-repository/spec.md",
+            "text": "The record names a confirmed credential's kind and location, never its value."
+          }
+        ],
+        "searched": [
+          "rotated",
+          "removal",
+          "history never rewritten"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/public-readiness/explore.md",
+            "why": "The exploration record keeps D-prd-9’s first table verbatim; the spec owns the table now."
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The root inventory contains twenty-two files, not twenty-one",
+      "marker_source": "external",
+      "file": "orbit/changes/public-readiness/design.md",
+      "line": 48,
+      "classification": "stale",
+      "action": "Converged with the fresh pass's \"The root holds 22 tracked files, not 21\"; resolved in walk log 2026-10-13T13-21-01Z.",
+      "evidence": "address-reviews-2026-10-13T13-21-01Z.json resolved the same site and claim",
+      "outcome": "stale"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Readiness-record citations need to survive archive",
+      "marker_source": "external",
+      "file": "orbit/changes/public-readiness/tasks.md",
+      "line": 45,
+      "classification": "trivial_fix",
+      "action": "Design D7 and task 5.3 say the ledger cites the record at the active path and the archive's at-archive edits re-point those citations to the archived path.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/public-readiness/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/public-readiness/tasks.md",
+            "text": "edits re-point those citations to the archived path"
+          },
+          {
+            "path": "orbit/changes/public-readiness/design.md",
+            "text": "re-point those ledger citations to the archived path"
+          }
+        ],
+        "searched": [
+          "scenario-ledger",
+          "citing"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Six of six closed: three resolved, three stale as converged with the fresh pass and resolved in walk log 2026-10-13T13-21-01Z.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal public-readiness",
+  "ripple_misses": 0
+}

@@ -94,6 +94,12 @@ be seen. Flipping visibility to public is Sal's act at arc-done, never an orbit 
   over a real OpenSpec 1.3.1 or 1.14.1 project, `orbit init` leaves `openspec/` untouched, creates an empty `orbit/`
   beside it and installs orbit's skills beside upstream's, and `orbit list` reports no changes, with nothing said. The
   carve-out covers the warning, its call site in `src/core/init.ts`, and its test. R-ugd-3 stands for everything else.
+- **R-ugd-12** (Sal, 2026-10-13; from the public-readiness proposal walk; carves out of R-ugd-3) — the upstream links
+  `orbit init` and `orbit update` print are retargeted to orbit's own repository in the public-readiness stage.
+  `src/core/init.ts` prints `Learn more` and `Feedback` links to `https://github.com/Fission-AI/OpenSpec` and its
+  `/issues` after every init, and `src/core/update.ts` prints the `Learn more` link, so on a public repository a new
+  user's first command would send orbit's bug reports to OpenSpec's tracker: the harm R-ugd-10 carved `orbit feedback`
+  out for. The carve-out covers those three lines and a test that holds them. R-ugd-3 stands for everything else.
 
 ## Open questions
 

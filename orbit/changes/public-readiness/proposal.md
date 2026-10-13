@@ -20,8 +20,9 @@ exploration recorded twelve decisions on Sal's word (see explore.md).
   - `.github/CODEOWNERS` and `assets/openspec_*` (D-prd-8).
   - `.devcontainer/` (D-prd-3).
   - Nix: `flake.*` and `scripts/update-flake.sh` (D-prd-2).
-- **CI moves to npm** (D-prd-7). `ci.yml` runs `npm ci`, `npm run build` and `npm test`, and drops its nix and
-  changesets jobs. **Upstream's npm publish setup is deleted:** `release-prepare.yml`, `.changeset/`, the `changeset`,
+- **CI moves to npm** (D-prd-7). `ci.yml` runs `npm ci`, `npm run build` and `npm test` on Linux, macOS and Windows
+  for every pull request as well as every push to `main`, and drops its nix and changesets jobs.
+  `.github/workflows/README.md`, which documents the deleted `act` setup, is deleted. **Upstream's npm publish setup is deleted:** `release-prepare.yml`, `.changeset/`, the `changeset`,
   `release`, `release:ci` and `check:pack-version` scripts, `scripts/pack-version-check.mjs`, and the two
   `@changesets/*` devDependencies. `npm run release:tree` becomes the only release path.
 - **`LICENSE` carries both notices** (D-prd-5; exit (3)). Upstream's `Copyright (c) 2024 OpenSpec Contributors` stays,
@@ -34,6 +35,9 @@ exploration recorded twelve decisions on Sal's word (see explore.md).
 - **`orbit-source-lint` retires its historical exclusion row** (D-prd-10). That row names `README_OLD.md` and
   `adopter-report-*.md`. Its paragraph naming `CLAUDE.md` as the standing example of narrated history now points at the
   history file.
+- **The upstream links `orbit init` and `orbit update` print are retargeted** to `las-sal/orbit-spec` (R-ugd-12, the
+  third carve-out from R-ugd-3, ratified at the proposal walk). Today a new user's first command sends orbit's bug
+  reports to OpenSpec's tracker.
 - **The past-stage branches on origin are listed for Sal** (D-prd-11). Deleting them is Sal's act at arc-done.
 - **The release** (exit (4); R-ugd-9): after this change's PR merges, `npm run release:tree` on `main` cuts the
   annotated `v2.0.0`, and it is pushed by name, on Sal's word. The visibility flip, the repository description and its
@@ -48,20 +52,22 @@ exploration recorded twelve decisions on Sal's word (see explore.md).
 
 ### Modified Capabilities
 - `orbit-source-lint`: `The lint reads living documents across the whole project`. The `README_OLD.md` /
-  `adopter-report-*.md` exclusion row retires, and the paragraph naming `CLAUDE.md` as the file that narrates history
-  names `orbit/architecture/program-history.md` instead.
+  `adopter-report-*.md` exclusion row retires. The paragraph that named `CLAUDE.md` as the living file narrating history
+  names an architecture doc's status log instead, and says that a record kept in the domain is read but inert while it
+  carries no marker.
 - `orbit-release`: one ADDED requirement. The release tree is orbit's only release path, so the repository carries no
   npm publish script or workflow.
 
 ## Impact
 
 - **Root:** eight files deleted, two moved, `CHANGELOG.md` replaced, and `LICENSE` and `CLAUDE.md` edited.
-- **`.github/`:** `ci.yml` rewritten; `release-prepare.yml` and `CODEOWNERS` deleted.
+- **`.github/`:** `ci.yml` rewritten; `release-prepare.yml`, `CODEOWNERS` and `workflows/README.md` deleted.
 - **Other deletions:** `.changeset/`, `.devcontainer/`, `assets/`, `scripts/update-flake.sh` and
-  `scripts/pack-version-check.mjs`. `scripts/README.md` loses their sections.
+  `scripts/pack-version-check.mjs`. `scripts/README.md` is rewritten for the scripts that remain.
+- **`src/core/init.ts` and `src/core/update.ts`:** three upstream links retargeted (R-ugd-12).
 - **`package.json` and `package-lock.json`:** four scripts and two devDependencies removed.
 - **`src/core/source-lint.ts` and `test/core/source-lint.test.ts`:** the historical exclusion retired.
-- **New:** `orbit/architecture/program-history.md`, and a test for the public-repository and release-path claims.
+- **New:** `orbit/architecture/program-history.md`, and a test for the public-repository, release-path and link claims.
 - **Records in the change:** a readiness record (the scan, the root dispositions, the CI run, the branch list), with
   `orbit/scenario-ledger.yaml` declaring the scenarios it observes.
 - **Baseline capabilities:** 29 → 30.

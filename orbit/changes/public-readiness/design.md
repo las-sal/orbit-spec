@@ -5,7 +5,7 @@ The repository becomes public at arc-done, and the stage's last act is the `v2.0
 exploration measured the repository at `371981b2` and recorded twelve decisions on Sal's word (see explore.md). The
 measurements this design rests on:
 
-- **The root.** 21 tracked files. Most of upstream's are unchanged since the vendor commit, and two orbit-written
+- **The root.** 22 tracked files. Most of upstream's are unchanged since the vendor commit, and two orbit-written
   records sit beside them.
 - **CI has never passed on orbit.** `ci.yml` runs `pnpm install --frozen-lockfile` against the vendor-era
   `pnpm-lock.yaml` and fails with `ERR_PNPM_OUTDATED_LOCKFILE`. Of its last 100 runs, 93 failed and 7 were cancelled.
@@ -37,7 +37,7 @@ Constraints the trimmed `CLAUDE.md` must keep, because baseline requirements nam
 - The visibility flip, the repository description and topics, and deleting the old branches on origin. These are Sal's
   acts at arc-done (D-prd-11).
 - Publishing to npm (R-ugd-4).
-- The Tier-C scrub of `OpenSpec` strings in code (R-ugd-3).
+- The Tier-C scrub of `OpenSpec` strings in code (R-ugd-3), except the three upstream links D10 retargets.
 - Rewriting any record. Archive and trail paths are accepted, never edited (D-prd-9).
 - Nix and dev-container support (D-prd-2, D-prd-3). Either returns as its own change if someone asks for it.
 
@@ -45,7 +45,8 @@ Constraints the trimmed `CLAUDE.md` must keep, because baseline requirements nam
 
 ### D1 — The root-level dispositions (D-prd-6; exit (1))
 
-The table is copied from explore.md D-prd-6. Each of the 21 tracked root files is in exactly one row.
+The table is copied from explore.md D-prd-6. Each of the 22 tracked root files is in exactly one row (the exploration's inventory first counted 21, dropping
+`flake.nix`; corrected at the proposal walk).
 
 | file | disposition |
 |---|---|
@@ -66,12 +67,28 @@ path. That covers `CLAUDE.md`'s source-of-truth list and `orbit/architecture/ope
 repo's own" pointer. Text that names a file as history is left alone: a record never changes, and the charter names
 what the stage sweeps.
 
-### D2 — CI on npm, keeping the job shape (D-prd-7)
+### D2 — CI on npm, with the three-OS matrix on pull requests (D-prd-7)
 
-`ci.yml` keeps its structure: a Linux test job on pull requests, the three-OS matrix on pushes to `main`, and the lint
-and type-check job. Every `pnpm` step becomes its npm equivalent: `actions/setup-node` with `cache: 'npm'`, `npm ci`,
-`npm run build` and `npm test`. The `changes` job existed only to trigger the nix job, so it goes with that job and with
-`validate-changesets`. Nothing else in the workflow changes.
+`ci.yml` keeps its lint and type-check job and its three-OS test matrix (linux-bash, macos-bash, windows-pwsh). Every
+`pnpm` step becomes its npm equivalent: `actions/setup-node` with `cache: 'npm'`, `npm ci`, `npm run build` and
+`npm test`. Four structural edits, and nothing else:
+
+- **The matrix runs on pull requests as well as on pushes to `main`.** Upstream ran it only on push, so a pull
+  request saw Linux alone and the first macOS and Windows run would be the merge commit, after the archive and just
+  before the release. The Linux-only `test_pr` job folds into the matrix and is deleted.
+- **The two aggregate jobs follow.** `required-checks-pr` needs `test_matrix` in place of `test_pr`. Both
+  `required-checks-pr` and `required-checks-main` drop `nix-flake-validate` from `needs` and drop the script branches
+  that test its result. After the edit, every `needs` entry names a job the file still defines.
+- **`nix-flake-validate` and the `changes` job go.** The `changes` job existed only to trigger the nix job.
+- **`validate-changesets` goes** (D3).
+
+`.github/workflows/README.md` is deleted. It documents running the workflows locally with `act`, configured by the
+deleted `.actrc`, and names the deleted nix job. The workflow files are `.github/workflows/*.yml` and `*.yaml`, and the
+specs' workflow scenarios read exactly those.
+
+Alternative considered: keep the matrix push-only and add a deferred task watching `main`'s first push run before the
+release. Rejected because the leg handling below would then run after the archive, outside any reviewed change, with the
+release one step away.
 
 The suite has never run in CI, so the first run is a measurement rather than a formality.
 - **A job's time limit** is set from the measured local duration of `npm test`, with headroom. Today's limits are 10
@@ -88,7 +105,9 @@ gives a visitor or contributor no signal, and the failure it hides here was invi
 The following are deleted:
 - `release-prepare.yml` and `.changeset/`.
 - The `changeset`, `release`, `release:ci` and `check:pack-version` scripts, with `scripts/pack-version-check.mjs`
-  and its section in `scripts/README.md`.
+  and its section in `scripts/README.md`. The file is rewritten under an orbit title with one line per remaining
+  script (`postinstall.js`, `test-postinstall.sh`, `release-tree.mjs`, and the two contract captures with their
+  vitest config), since a visitor will open it.
 - `@changesets/changelog-github` and `@changesets/cli` from `devDependencies`, with `package-lock.json` regenerated by
   `npm install`.
 
@@ -109,8 +128,13 @@ test holds both lines, adjacent and in order.
 - the D-arc section.
 
 The only edit made to the moved text is stripping its `src:` markers, so a marked figure is left as its bare value.
-A short header states what the file is and that its figures are true when written. It opens with a `# ` title so that
-`orbit architecture status` lists it as `legacy/opaque`, like `fork-and-orbify`.
+A short header states what the file is and that its figures are true when written. `orbit architecture status` lists
+it as `legacy/opaque`, like `fork-and-orbify`, because it declares no `### Stage` headings: the parser calls a doc
+legacy when no stage-prefixed heading sits outside a fence, and `CLAUDE.md`'s stage narratives are bold paragraphs,
+not headings.
+
+The three decision bullets (D14, D15 and the D11 refinement) sit inside the moved "Current state" section. They are
+COPIED: the history file keeps them where they stand, so the move stays word for word, and `CLAUDE.md` keeps them too.
 
 **What stays.** The trimmed `CLAUDE.md` keeps:
 - what orbit-spec is: a hard fork of `@fission-ai/openspec@1.3.1`, and the read-only `upstream` remote;
@@ -135,8 +159,10 @@ The `README_OLD.md` / `adopter-report-*.md` exclusion leaves the spec table, `is
 `src/core/source-lint.ts`, and the two paths in the exclusion test. The moved adopter report needs no new row,
 because it carries no `src:` marker and the lint reads only marked spans (measured 2026-10-13). The same holds for the
 moved merge plan and for the history file after its markers are stripped. The requirement's paragraph that named
-`CLAUDE.md` as its example of narrated history now names the history file. A test asserts that `README_OLD.md` is no
-longer excluded.
+`CLAUDE.md` as its example of a living file narrating history now names an architecture doc's status log, which really
+does sit beside present-tense content. It also says that a record kept inside the domain is read but inert while it
+carries no marker: a completed program doc, the history file and the moved records. A test asserts that
+`README_OLD.md` is no longer excluded.
 
 ### D7 — The readiness record
 
@@ -145,10 +171,12 @@ archive. It holds:
 - the scan, per D-prd-9's table: the commands run, every finding with its row, and the config-file read that stands
   in for the residual;
 - the root listing after apply, against D1;
-- the pull request's CI run, with its job outcomes;
+- the pull request's CI run, with every job's outcome, all three matrix legs among them;
 - the eleven branches for Sal (D-prd-11).
 
-`orbit/scenario-ledger.yaml` declares the scenarios the record observes, citing it.
+`orbit/scenario-ledger.yaml` declares the scenarios the record observes, citing it at the change's active path. The
+archive moves the record, so its at-archive edits re-point those ledger citations to the archived path: the
+scenario-map reader checks only that a citation is non-empty, so a stale path would go unnoticed.
 
 ### D8 — The release (exit (4))
 
@@ -163,6 +191,16 @@ the archive seam (`orbit-archive-modifications`' Step 3.2). The architect sessio
 bounded residual must live in a requirement's own text, and no existing capability owns repository hygiene.
 `orbit-release` gains the only-path requirement because it owns how orbit is released (R-crc-14). `orbit-source-lint`
 is modified. Three capabilities is R-crc-1's ceiling, not over it.
+
+### D10 — The upstream links in `orbit init` and `orbit update` are retargeted (R-ugd-12)
+
+`src/core/init.ts` prints `Learn more` and `Feedback` links to `https://github.com/Fission-AI/OpenSpec` and its
+`/issues` at the end of every init, and `src/core/update.ts` prints the `Learn more` link. Once the repository is
+public, a new user's first command would send orbit's bug reports to OpenSpec's tracker, the harm R-ugd-10 carved
+`orbit feedback` out of R-ugd-3 for. All three retarget to `https://github.com/las-sal/orbit-spec` and its `/issues`.
+Sal ratified this at the proposal walk ("A"), recorded in the architecture doc as R-ugd-12, the third carve-out from
+R-ugd-3. It covers those three lines and a test that holds them; R-ugd-3 stands for every other `OpenSpec` string. No
+spec requirement states the links, so no capability changes.
 
 ## Mechanism → artifacts
 
@@ -203,14 +241,15 @@ The other eleven Decisions entries are `Kind: scope` and have no Mechanism entry
 - `.actrc` — deleted.
 - `pnpm-lock.yaml` — deleted.
 - `flake.nix` + `flake.lock` — deleted.
-- `.github/` — `ci.yml` rewritten; `release-prepare.yml` and `CODEOWNERS` deleted.
+- `.github/` — `ci.yml` rewritten; `release-prepare.yml`, `CODEOWNERS` and `workflows/README.md` deleted.
 - `.changeset/` — deleted.
 - `.devcontainer/` — deleted.
 - `assets/` — deleted.
-- `scripts/` — `update-flake.sh` and `pack-version-check.mjs` deleted; `README.md` loses their sections.
+- `scripts/` — `update-flake.sh` and `pack-version-check.mjs` deleted; `README.md` rewritten for the scripts that remain.
+- `src/core/init.ts` + `src/core/update.ts` — the three upstream links retargeted (D10).
 - `package.json` + `package-lock.json` — scripts and devDependencies removed.
 - `src/core/source-lint.ts` — the historical exclusion retired.
 - `test/core/source-lint.test.ts` — the exclusion test updated; the carried scenarios tagged.
-- `test/core/public-repository.test.ts` — new; the LICENSE, CI and release-path claims.
+- `test/core/public-repository.test.ts` — new; the LICENSE, CI, release-path and link claims.
 - `orbit/scenario-ledger.yaml` — the observed scenarios.
 - `orbit/changes/public-readiness/readiness-record.md` — new; the record.

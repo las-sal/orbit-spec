@@ -16,6 +16,6 @@ never built.
 
 #### Scenario: No workflow publishes
 
-- **WHEN** the workflow files under `.github/workflows/` are read
+- **WHEN** the workflow files (`.github/workflows/*.yml` and `*.yaml`) are read
 - **THEN** none names `npm publish`, `changeset` or `changesets/action`, and none requests the `id-token: write`
   permission that npm's trusted publishing uses

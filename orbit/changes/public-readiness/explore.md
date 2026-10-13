@@ -11,7 +11,7 @@ secrets, tokens and local absolute paths.
 
 What the repository holds, measured 2026-10-13 at `371981b2`:
 
-- **Root (21 tracked files).** Orbit's own: `CLAUDE.md` (1091 lines of internal program narrative), `README.md`,
+- **Root (22 tracked files; the first count said 21, dropping `flake.nix`, corrected at the proposal walk).** Orbit's own: `CLAUDE.md` (1091 lines of internal program narrative), `README.md`,
   `package.json`, `package-lock.json`. Build tooling: `build.js`, `tsconfig.json`, `eslint.config.js`,
   `vitest.config.ts`, `vitest.setup.ts`, `.gitignore`. Upstream files unchanged since the vendor commit:
   `README_OLD.md`, `CHANGELOG.md` (upstream's history up to 1.3.1), `MAINTAINERS.md` (names upstream's maintainers),
@@ -111,7 +111,7 @@ Moves:
   | `LICENSE` | KEEP, both notices (D-prd-5) |
   | `package.json` | KEEP, edited (D-prd-7) |
   | `README.md`, `package-lock.json`, `.gitignore`, `build.js`, `tsconfig.json`, `eslint.config.js`, `vitest.config.ts`, `vitest.setup.ts` | KEEP |
-  Twenty-one tracked root files, each in exactly one row (measured 2026-10-13 with `git ls-files`). Sal, 2026-10-13:
+  Twenty-two tracked root files (first counted as 21, corrected at the proposal walk), each in exactly one row (measured 2026-10-13 with `git ls-files`). Sal, 2026-10-13:
   "accept the leanings as written".
 - **2026-10-13 — D-prd-7: CI moves to npm and upstream's publish machinery is deleted** (resolves Q-prd-2)
   Kind: scope
