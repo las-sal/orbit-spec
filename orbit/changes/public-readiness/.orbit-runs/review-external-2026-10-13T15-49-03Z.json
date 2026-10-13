@@ -1,0 +1,14 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-10-13T15:49:03Z",
+  "change": "public-readiness",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "prompt_path": "orbit/changes/public-readiness/.orbit-runs/external-prompt-system-2026-10-13T15-48-39Z.md",
+  "target": "codex",
+  "final_assessment": "External review prompt packaged for public-readiness (iter 1, mode system) as the external half of a launched blind pair; awaiting findings from codex.",
+  "pair": true,
+  "awaiting_findings": true,
+  "next_recommended": "Paste orbit/changes/public-readiness/.orbit-runs/external-prompt-system-2026-10-13T15-48-39Z.md into the target AI, and save the response as orbit/changes/public-readiness/.orbit-runs/external-system-<TS>.md"
+}
