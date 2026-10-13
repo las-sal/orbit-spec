@@ -1,0 +1,6 @@
+/**
+ * Static template strings for Zsh completion scripts.
+ * These are Zsh-specific helper functions that never change.
+ */
+export declare const ZSH_DYNAMIC_HELPERS = "# Dynamic completion helpers\n\n# Use orbit __complete to get available changes\n_orbit_complete_changes() {\n  local -a changes\n  while IFS=$'\\t' read -r id desc; do\n    changes+=(\"$id:$desc\")\n  done < <(orbit __complete changes 2>/dev/null)\n  _describe \"change\" changes\n}\n\n# Use orbit __complete to get available specs\n_orbit_complete_specs() {\n  local -a specs\n  while IFS=$'\\t' read -r id desc; do\n    specs+=(\"$id:$desc\")\n  done < <(orbit __complete specs 2>/dev/null)\n  _describe \"spec\" specs\n}\n\n# Get both changes and specs\n_orbit_complete_items() {\n  local -a items\n  while IFS=$'\\t' read -r id desc; do\n    items+=(\"$id:$desc\")\n  done < <(orbit __complete changes 2>/dev/null)\n  while IFS=$'\\t' read -r id desc; do\n    items+=(\"$id:$desc\")\n  done < <(orbit __complete specs 2>/dev/null)\n  _describe \"item\" items\n}";
+//# sourceMappingURL=zsh-templates.d.ts.map
