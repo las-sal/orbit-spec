@@ -1,0 +1,25 @@
+{
+  "command": "explore",
+  "timestamp": "2026-10-13T12:52:48Z",
+  "change": "public-readiness",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Twelve decisions captured, every open question resolved on Sal's word. Root files each have a disposition (D-prd-6, exit 1); Nix and the dev container are deleted; CLAUDE.md is trimmed to guidance with its narrative moved to orbit/architecture/program-history.md; LICENSE gains 'Copyright (c) 2026 Michael Sallas' beneath upstream's notice (exit 3); CI moves to npm and upstream's changesets/npm-publish machinery is deleted (CI has failed 93 of its last 100 runs on the stale pnpm lockfile); CODEOWNERS and upstream assets go; the scan rule (D-prd-9, BOUNDED) covers the tree and main's history (exit 2); orbit-source-lint's two historical exclusion rows retire, the only capability touched; the eleven stale origin branches are listed for Sal to delete at the flip. The v2.0.0 release (exit 4) stays as R-ugd-8/R-ugd-9 rule it. Ready for /orbit:propose public-readiness.",
+  "decisions_captured": 12,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 1,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [
+    {
+      "id": "D-prd-9",
+      "kind": "a secret in a shape no pattern names: a bespoke API key, a password or private URL in prose, a credential in a config file",
+      "method": "a read of every tracked config-shaped file (`*.json`, `*.yml`, `*.yaml`, dotfiles) at HEAD, recorded beside the pattern scan; no published secret scanner is installed here (`gitleaks`, `trufflehog`: not found, 2026-10-13)"
+    }
+  ],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose public-readiness — 1 live rule accounted, 1 bounded residual named (D-prd-9); formalize when you are ready (or /orbit:explore public-readiness to keep refining)"
+}
