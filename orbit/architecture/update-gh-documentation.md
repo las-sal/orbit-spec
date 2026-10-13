@@ -244,7 +244,7 @@ wordings, walked to zero), and the gate computed PASSED. 3679 tests green.
 ### Stage public-readiness — the repository is fit to be seen
 
 Depends-on: landing-page, reference-docs, concept-docs
-Complete: [ ]
+Complete: [x] 2026-10-13 (Sal)
 
 Charter: sweep what should not be public as it stands: root files (`README_OLD.md`, the adopter report,
 `openspec-parallel-merge-plan.md`, and anything else at the root a newcomer would trip on), upstream assets and
@@ -381,3 +381,15 @@ the public repository. public-readiness, the last stage, is now the program's ne
 new user's first command on the public repository would send orbit's bug reports upstream. Sal took A: retarget the
 three links to orbit's repository. R-ugd-12 carves them out of R-ugd-3, the third carve-out after R-ugd-10 and R-ugd-11;
 the public-readiness change carries the edit and its test.
+
+**2026-10-13 — public-readiness archived, merged, released and ratified (Sal), in an architect session; landing-page not
+yet.** The change archived as `orbit/changes/archive/2026-10-13-public-readiness/` (the Shipped-as paragraph above), PR
+#22 merged as `9f2de9c4`, and CI passed on `main` (run 38443548204, both legs 3,688 of 3,688). On Sal's word,
+`npm run release:tree` cut the annotated `v2.0.0` on release commit `8a498600`, whose only parent is `9f2de9c4`; it was
+pushed by name, and `npm install -g github:las-sal/orbit-spec#v2.0.0` into an empty prefix installed a copy that prints
+`2.0.0`. All four exits were graded MET, exit (4) on that observation (the archive emit's deferred 6.2 is discharged
+here, never by editing the archive), and Sal ratified the stage. landing-page completion was offered a sixth time: not
+yet (Sal), on the same ground; exit (3)'s `/orbit:propose` half and its post-flip re-run need the public repository.
+Every stage is now archived. What remains is Sal's: the visibility flip, the description and topics, deleting the
+eleven past-stage branches, then landing-page's post-flip run and its ratification, and the program's closing
+`--as architecture` review.

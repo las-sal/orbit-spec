@@ -1,0 +1,28 @@
+{
+  "command": "architect",
+  "timestamp": "2026-10-13T18:24:29Z",
+  "change": null,
+  "doc": "update-gh-documentation",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "public-readiness ratified (Sal) on all four exits graded MET, exit (4) on the v2.0.0 release observed this session; landing-page not yet a sixth time, its exit (3) waiting on the public repository. Every stage is archived; the program waits on Sal's arc-done acts and the closing architecture review.",
+  "stages_touched": [
+    "public-readiness",
+    "landing-page"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [
+    "public-readiness"
+  ],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      "CLAUDE.md — orientation and the live-program pointer",
+      "orbit/architecture/update-gh-documentation.md — the program; read its Status log's last entry for what remains"
+    ],
+    "next_command": "/orbit:review --as architecture update-gh-documentation",
+    "model_hint": null,
+    "seam": "post-session"
+  },
+  "next_recommended": "/orbit:review --as architecture update-gh-documentation"
+}
