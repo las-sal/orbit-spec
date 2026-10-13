@@ -35,10 +35,17 @@ const git = (cwd: string, ...args: string[]) => run(cwd, 'git', args);
 const release = (cwd: string) => spawnSync(process.execPath, [SCRIPT], { cwd, env: ENV, encoding: 'utf-8' });
 /** pacote 21.5.0's prepare triggers, as `orbit-release`' table names them: stated here, never read from the script. */
 const TRIGGERS = ['prepare', 'build', 'postinstall', 'install', 'preinstall', 'prepack'];
-const packed = (cwd: string): string[] =>
-  (JSON.parse(run(cwd, 'npm', ['pack', '--dry-run', '--json', '--ignore-scripts']))[0].files as Array<{ path: string }>)
-    .map((f) => f.path)
-    .sort();
+/**
+ * npm 10 (Node 20's) runs `prepare` on `pack` despite `--ignore-scripts` and writes the build's output to stdout ahead of
+ * the JSON (public-readiness: CI's first run, reproduced with npm 10.9.9); npm 11 does not. The JSON is the array that
+ * opens on a line of its own, so everything before that line is dropped.
+ */
+const packed = (cwd: string): string[] => {
+  const out = run(cwd, 'npm', ['pack', '--dry-run', '--json', '--ignore-scripts']);
+  const start = out.search(/^\[$/m);
+  if (start === -1) throw new Error(`npm pack printed no JSON array:\n${out}`);
+  return (JSON.parse(out.slice(start))[0].files as Array<{ path: string }>).map((f) => f.path).sort();
+};
 
 describe('the release package.json', () => {
   it('removes exactly the six prepare triggers and keeps every other key', () => {
