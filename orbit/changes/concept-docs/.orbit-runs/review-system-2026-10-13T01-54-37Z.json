@@ -1,0 +1,116 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-13T01:54:37Z",
+  "change": "concept-docs",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 3
+    }
+  },
+  "findings": [
+    {
+      "pass": "3",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "docs/concepts.md",
+      "line": 237,
+      "title": "Pull requests section says archive marks the PR ready, which is false under per-architecture",
+      "recommendation": "Scope the ready flip to per-proposal (and to an uncited change's own PR under per-architecture), and say that a program PR is flipped and merged by you at arc-done, when the architect readout surfaces it. orbit-pr-lifecycle states that no orbit surface flips a program PR. customization.md's `pr` row already scopes it correctly."
+    },
+    {
+      "pass": "4",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "docs/customization.md",
+      "line": 216,
+      "title": "The gates list shown as spec-driven's own omits keys the shipped file carries",
+      "recommendation": "schemas/spec-driven/schema.yaml also carries `confirm:` on both reviewed gates and an `instruction:` on the apply gate, and neither key is in the field table. A reader who runs `orbit schema fork` sees keys the page never mentions. Either show the list verbatim and add both keys to the table (workflow-engine.md:147 already says `confirm` is read by no gate), or say the list is abridged."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "docs/concepts.md",
+      "line": 226,
+      "title": "The stage-state list leaves out `concluded`",
+      "recommendation": "The list reads as complete, but orbit-architecture-engine's state requirement has five observed states, including `concluded` (a citing exploration concluded without a change). Add it, or say the list is partial. The sentence about declaring a stage ended is already there."
+    },
+    {
+      "pass": "4",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "docs/supported-tools.md",
+      "line": 71,
+      "title": "The CoStrict row does not give the command directory a reader could find",
+      "recommendation": "The adapter writes `.cospec/openspec/commands/orbit-<id>.md`. The row's wording, 'in a `commands/` directory under `.cospec/`', avoids the literal path, so a reader cannot locate or delete the files. Give the path. The residue check admits a quoted 1.3.1 path, as the migration guide's `openspec` paths are admitted, or the path can be stated as the adapter's name for it."
+    },
+    {
+      "pass": "4",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "docs/migration-guide.md",
+      "line": 121,
+      "title": "The Codex removal line deletes prompts that other OpenSpec projects on the machine still use, and ignores CODEX_HOME",
+      "recommendation": "`rm -rf ... ~/.codex/prompts/opsx-*` removes OpenSpec's global prompts for every project, including ones not yet moved. Say so, so a user with other OpenSpec projects keeps them. Also name `$CODEX_HOME/prompts/` as the place when CODEX_HOME is set, as supported-tools.md does."
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "docs/migration-guide.md",
+      "line": 178,
+      "title": "The stamp step does not say it protects only from the moment of stamping",
+      "recommendation": "`orbit fingerprint` records the baseline as it stands now. A baseline edit that landed between the change's authoring under OpenSpec and the stamp is blessed, not caught, and the 'cannot check' warning that would have flagged the gap goes away. Add one sentence: the stamp guards against edits made after it, so check a long-running change against the current baseline before stamping."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Every listed hazard was checked against the engine: the apply gate's regex (`^\\s*- \\[x\\]`, gates.ts:177), `orbit list`'s unindented TASK_PATTERN, the adapters' paths, the global config and data dirs, the init call order, the schema's gates block, and the pr-lifecycle and architecture-engine specs. The two new checks were read against their spec tables: the navigation exemption, the tier scoping, the missing-page rule asserted on the real tree, and the fence and list exclusions all hold. The init warning prints before the legacy cleanup and before orbit/ exists, and the recorded run shows it verbatim in state 4B. The one real divergence is in prose: the PR paragraph generalises a per-proposal fact to every regime. The rest are reader-facing gaps: a path stated coyly, a list presented as verbatim that is not, a global side effect not named. I checked each page's 'the 1.3.1 baseline' sections for orbit behaviour (D-cd-3's residual method) and found none presented as inherited; the orbit facts in those sections (the trail, the fingerprint guard) carry their own capability items. Verify was not delegated as a skill. Its structural content was run directly: tasks 15/15, `orbit validate concept-docs --strict` valid, the scenario map 30 of 30 declared (29 behaviour, 1 observed), and the user-docs, init and cli-grammar suites green (348 tests).",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5"
+  ],
+  "passes_skipped": [
+    {
+      "pass": "6",
+      "reason": "audit-drift's project-wide sweep was not run by this fresh worker; the archive's pre-archive sweep runs it"
+    }
+  ],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The mechanism is sound and measured. Both checks do what their tables say, the warning fires in the right place, and the guide was executed end to end on real fixtures, which caught two of its own lines. What remains is page wording, and none of it breaks an adopter's path. Fix the per-architecture PR sentence in the walk, since that one misleads a reader about who flips the program PR, and the rest can be taken or declined on the merits."
+  },
+  "final_assessment": "0 critical, 1 warning, 5 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews concept-docs"
+}
