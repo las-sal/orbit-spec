@@ -228,8 +228,13 @@ ready. Merging it stays yours.
 
 ### `/orbit:bulk-archive`
 
-Archive several finished changes in one go. It asks which, then runs archive's checks for each change in turn. When
-two changes touch the same spec, it applies them in the order they were created.
+Archive several finished changes in one go. It asks which, then, for each change in turn, settles the tasks left for
+you to validate and checks the fingerprints before it merges the specs and moves the change. When two changes touch
+the same spec, it applies them in the order they were created.
+
+It does less than `/orbit:archive` run once per change: it does not report unpassed reviewed gates, does not run
+`/orbit:audit-drift`, and makes no commit, push or pull-request change, whatever `pr:` says. Archive a change on its
+own when you want those.
 
 ```text
 /orbit:bulk-archive

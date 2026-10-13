@@ -1,0 +1,159 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-13T00:16:18Z",
+  "change": "reference-docs",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/reference-docs/.orbit-runs/external-system-2026-10-12T23-53-44Z.md",
+  "source_command": null,
+  "source_token": "2026-10-12T23-53-44Z",
+  "latest_apply_token": "2026-10-12T23-45-06Z",
+  "external_reviewer": "GPT-6",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 2
+  },
+  "pushback_verification": "All four verified at HEAD before the walk: workflow-engine.md:28 read 'never leaves stale state behind' (converged with the fresh pass, walked in its log); the bulk-archive body (SKILL.md:281) makes no commit, push or READY flip and carries no gate prompt or audit-drift step; orbit-run-summary-emit's Emit scope excludes onboard, sync and bulk-archive; workflow-engine.md:3 called the skills thin.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 1,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Artifact edits do not refresh review evidence",
+      "marker_source": "external",
+      "file": "docs/workflow-engine.md",
+      "line": 28,
+      "classification": "stale",
+      "action": "converged with the fresh pass's finding at the same site; resolved in that pass's walk log",
+      "evidence": "walk log address-reviews-2026-10-13T00-16-00Z resolved 'workflow-engine.md's no-stale-state sentence reads against workflows.md's staleness caveat' (fresh pass 2026-10-12T23-53-20Z): workflow-engine.md now says an edit does not mark a review stale (only an apply does) and to request another review after a substantive edit",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Bulk archive is presented as inheriting all archive checks",
+      "marker_source": "external",
+      "file": "docs/commands.md",
+      "line": 231,
+      "classification": "trivial_fix",
+      "action": "rewrote the bulk-archive entry: per change it settles user-validation tasks and checks fingerprints before the merge and move; a second paragraph says it does not report unpassed reviewed gates, does not run /orbit:audit-drift, and makes no commit, push or pull-request change whatever pr: says, and to archive a change on its own for those",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "then runs archive's checks for each change in turn"
+        ],
+        "introduced": [
+          {
+            "path": "docs/commands.md",
+            "text": "It does less than `/orbit:archive` run once per change"
+          }
+        ],
+        "searched": [
+          "bulk-archive",
+          "archive's checks",
+          "same check"
+        ],
+        "scope": [
+          "docs",
+          "README.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Trail description incorrectly covers every workflow and scope",
+      "marker_source": "external",
+      "file": "docs/workflow-engine.md",
+      "line": 158,
+      "classification": "trivial_fix",
+      "action": "scoped the trail paragraph to the runs on a change, named the exceptions (named exploration, architect, project-wide audit, onboard, sync, unnamed exploration, bulk-archive per change) and pointed to orbit-run-summary-emit; getting-started.md's tree line said the same and was rippled",
+      "ripple_cascade": {
+        "applied": [
+          "docs/getting-started.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "Every workflow run leaves a record in the change's",
+          "one JSON record per command run"
+        ],
+        "introduced": [
+          {
+            "path": "docs/workflow-engine.md",
+            "text": "The `orbit-run-summary-emit` capability owns the full list."
+          },
+          {
+            "path": "docs/getting-started.md",
+            "text": "the records of the workflow runs on it"
+          }
+        ],
+        "searched": [
+          ".orbit-runs",
+          "every workflow",
+          "record per"
+        ],
+        "scope": [
+          "docs",
+          "README.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Thin launchers are confused with workflow skills",
+      "marker_source": "external",
+      "file": "docs/workflow-engine.md",
+      "line": 3,
+      "classification": "trivial_fix",
+      "action": "rewrote the opening: each /orbit: command is a thin launcher for its skill; the skill carries the instructions and judgment and asks the CLI for the state it depends on",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "and the skills are thin"
+        ],
+        "introduced": [
+          {
+            "path": "docs/workflow-engine.md",
+            "text": "is a thin launcher for its skill"
+          }
+        ],
+        "searched": [
+          "thin",
+          "launcher"
+        ],
+        "scope": [
+          "docs",
+          "README.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Three of four resolved and one stale: bulk-archive's paragraph now says what it does per change and what it does not (no gate report, no drift audit, no commit, push or PR change); the trail paragraph is scoped with its exceptions and points to orbit-run-summary-emit; the opening distinguishes thin launchers from the skills. The freshness warning converged with the fresh pass and was resolved in its log.",
+  "iteration": 5,
+  "next_recommended": "/orbit:review --as system reference-docs",
+  "ripple_misses": 0
+}

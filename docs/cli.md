@@ -516,8 +516,8 @@ orbit config set externalRunner.preset codex
 orbit config unset externalRunner
 ```
 
-`externalRunner.preset` is the one nested path `orbit config set` accepts. To record your own runner as an argv array,
-use `orbit config edit`.
+`externalRunner.preset` is the one nested path under `externalRunner` that `orbit config set` accepts. To record your
+own runner as an argv array, use `orbit config edit`.
 
 #### `orbit config profile`
 

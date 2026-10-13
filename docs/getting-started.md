@@ -38,7 +38,7 @@ orbit/changes/add-dark-mode/
 ├── specs/
 │   └── ui/spec.md        the requirements the change adds, modifies or removes
 ├── tasks.md              the implementation checklist
-└── .orbit-runs/          the change's trail: one JSON record per command run
+└── .orbit-runs/          the change's trail: the records of the workflow runs on it
 ```
 
 The specs under `specs/` are **delta specs**: they say what changes relative to your project's living specs in

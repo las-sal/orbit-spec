@@ -1,7 +1,8 @@
 # Workflow engine
 
-orbit's workflows are skills your assistant follows, and the skills are thin: they ask the `orbit` CLI what state a
-change is in and what to do next, then write what it asks for. This page describes the engine underneath, which
+orbit's workflows are skills your assistant follows. Each `/orbit:` command is a thin launcher for its skill; the
+skill carries the workflow's instructions and its judgment, and asks the `orbit` CLI for the state it depends on (what
+a change holds, what is ready, what comes next) rather than tracking that state itself. This page describes the engine underneath, which
 computes that state from files on disk: the artifact graph, the gates, and the two commands the workflows read them
 through.
 
@@ -25,8 +26,10 @@ What orders the actions is not a phase but two things the engine computes:
 - the **artifact graph**: an artifact can be written once the artifacts it needs exist;
 - the **gates**: apply waits on the proposal review, and archive on the system review.
 
-Both are recomputed from the change's files every time they are asked, so editing an artifact never leaves stale
-state behind.
+Both are recomputed from the change's files every time they are asked; nothing caches them. A review is different:
+it is evidence about the files it read, and editing an artifact afterwards does not mark it stale (only an apply
+does). After a substantive edit, request another review; [Workflows](workflows.md#when-to-update-vs-start-fresh)
+says when an edit is substantive.
 
 ## The artifact graph
 
@@ -150,14 +153,19 @@ propose ✓ → review(proposal) ✓ → apply ready → review(system) blocked-
 ```
 
 A gate's state is a pure function of the files: the artifacts, `tasks.md`, and the trail of run records. Nothing
-stores it, so nothing can drift from it. The engine reports a gate; it never refuses you. A workflow that reaches an
+stores it, so it never disagrees with the files, though a review that passed it can predate a later edit (see
+[Actions, not phases](#actions-not-phases)). The engine reports a gate; it never refuses you. A workflow that reaches an
 unpassed gate tells you and asks, and records the answer.
 
 ## The trail
 
-Every workflow run leaves a record in the change's `.orbit-runs/` directory: `propose-<TS>.json`,
+The workflow runs on a change leave records in its `.orbit-runs/` directory: `propose-<TS>.json`,
 `review-proposal-<TS>.json`, `address-reviews-<TS>.json`, `apply-<TS>.json` and so on, where `<TS>` is a UTC
-timestamp. The AI writes only the narrative part of each record; `orbit emit` composes the rest and refuses a record
+timestamp. Not every run writes one there: a named exploration records under `orbit/explore/<name>/` until a proposal
+takes it in, an architect session under `orbit/architecture/.orbit-runs/`, and a project-wide drift audit under
+`orbit/.orbit-runs/`; `/orbit:onboard`, `/orbit:sync` and an unnamed exploration write nothing, and
+`/orbit:bulk-archive` writes one archive record per change. The `orbit-run-summary-emit` capability owns the full
+list. The AI writes only the narrative part of each record; `orbit emit` composes the rest and refuses a record
 that fails its checks. The trail is what the gates read, and it moves with the change when it is archived.
 
 ## Custom schemas
