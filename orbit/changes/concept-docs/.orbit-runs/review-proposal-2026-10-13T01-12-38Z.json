@@ -1,0 +1,170 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-13T01:12:38Z",
+  "change": "concept-docs",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 3
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 3,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "4",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "specs/orbit-user-docs/spec.md",
+      "line": 125,
+      "title": "fork-and-orbify D13 is not the user-facing-names decision",
+      "recommendation": "The requirement names D13 as the decision that carries the user-facing names (the `orbit` bin, `orbit/`, `orbit-*`, `/orbit:`), and its named limit repeats it (line 128). In orbit/architecture/fork-and-orbify.md, D13 is 'B-arc mimics upstream's inline-TS structure; D6/D8 architecture changes deferred'. It says nothing about names. The only naming text in that doc is the parked 'bin name' sub-decision at lines 197 and 261. The carried-by check resolves `fork-and-orbify D13` by heading existence, so a names section citing it passes the check while naming the wrong owner, which exit (2) exists to prevent. The error comes from D-cd-3 (explore.md:237) and should be repaired there too.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Drop D13 from the requirement's owner paragraph and its named limit. Sections about the generated names carry `orbit-skill-generation`, which states the `orbit-*` skill paths. Grep the remaining name claims (bin, `orbit/` dir) for a stating capability before the page names one."
+        },
+        {
+          "label": "B",
+          "body": "Widen the item production to admit the archived rename change (orbit/changes/archive/2026-06-08-rename-user-facing-to-orbit) as an owner, and resolve that item against the archive directory."
+        }
+      ]
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "design.md",
+      "line": 92,
+      "title": "The move steps' commands are admitted by neither the docs-inventory fence nor the git contract",
+      "recommendation": "The move steps measured in Case 1 (explore.md:187-188) are `rm -rf .claude/skills/openspec-* .claude/commands/opsx` and `git mv openspec orbit`. D-cd-6 requires the guide to be run as written, so the guide will carry those lines. The delta's fence adds only `grep find ls` (spec line 60), so `rm` fails the tool inventory's unknown-head rule. test/integration/cli-contracts/git-contract.json has 20 keys and no `mv`, so `git mv` fails the recorded sweep with 'unknown command \"mv\" for \"git\"' until `npm run capture:git` is re-run (the capture derives keys from the surface and the user docs). No task or touchpoint covers either one, so apply will hit a red suite and have to decide then.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Add `rm` (and `mv` if a plain move is shown) to the delta's docs-inventory fence. Add a task that re-runs `npm run capture:git` after the guide is written, with git-contract.json as a touchpoint."
+        },
+        {
+          "label": "B",
+          "body": "Write the move steps as prose with no command lines, and revise D-cd-6's 'run as written' to name what the recorded run executes."
+        }
+      ]
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "specs/orbit-init-openspec-warning/spec.md",
+      "line": 21,
+      "title": "The mandated warning text 'orbit reads nothing in openspec/' is false when the legacy row fires",
+      "recommendation": "The requirement makes the warning say that `orbit` reads nothing in `openspec/`. Its own pre-1.0 row (line 17) keeps the legacy cleanup running, and src/core/legacy-cleanup.ts reads `openspec/AGENTS.md` and `openspec/project.md` (lines 278-283) and deletes `openspec/AGENTS.md` (lines 413-419). Under D3 that runs before the warning prints. Narrow the sentence to what holds, for example 'orbit reads none of openspec/specs or openspec/changes', or name the legacy cleanup as the exception."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "design.md",
+      "line": 63,
+      "title": "Calling the detector after the legacy cleanup skips the warning on an interactive decline",
+      "recommendation": "D3 places the call after the legacy cleanup. In src/core/init.ts:221-231, an interactive pre-1.0 project prompts 'Upgrade and clean up legacy files?'. Declining calls `process.exit(0)` before the welcome screen, so the warning never prints. That breaks the spec's 'printed in interactive and non-interactive runs alike' and its pre-1.0 row's WARN. Call the detector before `handleLegacyCleanup` (after `validate`), or restate the row. None of the four scenarios exercises the pre-1.0 row, so task 2.2 would not catch this. Add a scenario for it."
+    },
+    {
+      "pass": "3",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "design.md",
+      "line": 87,
+      "title": "Already-rewritten pages promise content the D4 page shapes omit",
+      "recommendation": "README.md:121 says Supported tools 'describes how Codex invokes them'. docs/commands.md:33 says it 'describes how each assistant invokes them'. docs/workflow-engine.md:214 says Customization 'covers writing schemas and templates in full'. D4 gives supported-tools only its tiers and directories, and gives customization `schema`/`context`/`rules`, the config keys and `gates:`, with no templates. The rewrite could land without what these inbound links promise. Add invocation (at least for tier 1) and schema templates to D4 and tasks 3.2/3.4, or reword the inbound sentences in this change. Note that Codex's prompts go to the global `~/.codex/prompts/` (src/core/command-generation/adapters/codex.ts), which the page must say."
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-user-docs/spec.md",
+      "line": 96,
+      "title": "A carried-by line is defined as a matching line, so near-misses and wrapped lines have no defined outcome",
+      "recommendation": "A CARRIED-BY LINE is a top-level paragraph 'whose text is one line of this production'. Taken literally, a paragraph `Carried by: free text` is not a carried-by line, so its section fails as having none. But the table row 'any other item … fails, naming the line and the item' and the 'An unresolved item fails' scenario (free text) treat it as a carried-by line with a bad item. This repo wraps prose at ~120 columns, so a multi-owner line that soft-wraps is also 'not one line' and would read as missing. Two implementers will diverge. Define the line by its opener: a top-level paragraph whose text begins `Carried by:`, with soft breaks joined, whose items are then parsed by the production. A near-miss then fails naming the item, following the near-miss rule's spirit."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "specs/orbit-user-docs/spec.md",
+      "line": 175,
+      "title": "The tool-coverage codex row states a page duty the check cannot read, and stray ids are uncovered",
+      "recommendation": "The codex row's 'the page states the directories orbit writes for it' sits in the CHECK's disposition table, but the check reads only inline-code ids in table rows. Move the clause to prose that says review owns it, or say the check does not read it. Separately, a table-row id that is not in AI_TOOLS (a typo or a removed tool) has no row, so the page can keep a stale tool. Consider a row that fails it."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "specs/orbit-user-docs/spec.md",
+      "line": 93,
+      "title": "The carried-by check has no missing-page rule",
+      "recommendation": "Deleting or renaming one of the four concept pages passes the carried-by check vacuously. The command-coverage requirement guards against this explicitly ('a file-local check never sees an absent file', baseline line 279-281), and the new tool-coverage table has a 'neither listed nor present' row. Add the same row for the four concept pages, run over the suite's document set."
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "specs/orbit-init-openspec-warning/spec.md",
+      "line": 7,
+      "title": "OPENSPEC_DIR_NAME is 'orbit' in this fork; the detector must use the literal",
+      "recommendation": "The requirement identifies upstream's directory through 'its `OPENSPEC_DIR_NAME`'. In this repo, src/core/config.ts:1 sets `OPENSPEC_DIR_NAME = 'orbit'`, and init.ts imports it, so an implementer reaching for the constant would detect `orbit/`. State in D3 that the detector uses the literal `'openspec'`. Also say what happens when `openspec`, `specs` or `changes` is a regular file rather than a directory."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "proposal.md",
+      "line": 16,
+      "title": "The proposal's concepts list omits consent, which design D4 includes",
+      "recommendation": "Design D4 adds a consent section carried by `orbit-lifecycle-consent`. The proposal's list of what concepts.md covers stops at `orbit pr`. Add consent to the proposal so the two lists agree."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "The design is well grounded in measurement, and the two new checks are specified as decision tables that mostly execute cleanly against the code: AI_TOOLS has exactly 28 available entries plus one unavailable, the floors' names and the fork-and-orbify heading form are as the design states, and orbit validate passes. The defects cluster in two places. One is facts inherited from the exploration that were never re-read against their owner (D13's subject, OPENSPEC_DIR_NAME's value in this fork). The other is the interaction between the new init warning and the inherited legacy-cleanup path it sits beside (the false 'reads nothing' sentence, and the decline exit). The move-step commands are the one planning gap that will surface as a red suite at apply. Probed: AI_TOOLS, init.ts execute order, legacy-cleanup's openspec/ reads and deletes, the git contract's keys, the inventory's delta-aware source, inbound links from rewritten pages, and the ledger's citation form.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "None of these findings is structural. Each is a one-sentence or one-row repair to the spec or design, plus a task for the git recapture. The thesis, the check shapes and the scope hold. Walk them before apply, chiefly the D13 owner and the warning's placement relative to the legacy cleanup, because both would otherwise ship a claim the code contradicts."
+  },
+  "final_assessment": "0 critical, 6 warning, 4 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews concept-docs"
+}
