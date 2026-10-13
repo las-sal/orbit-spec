@@ -1,0 +1,446 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-13T13:21:01Z",
+  "change": "public-readiness",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/public-readiness/.orbit-runs/review-proposal-2026-10-13T13-05-28Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-13T13-05-28Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 7,
+    "suggestion": 3
+  },
+  "pushback_verification": "All ten verified against current state (git ls-files root count 22; ci.yml needs lines; workflows README; init.ts:793-794 and update.ts:301; fork-and-orbify /tmp paths); none stale.",
+  "resolution_summary": {
+    "resolved": 10,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The macOS and Windows legs never run on the pull request, so D2's leg handling cannot fire inside the change",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/public-readiness/design.md",
+      "line": 69,
+      "classification": "decision_required",
+      "action": "Applied A (Sal: \"A, go\" ratified the preview): design D2 now runs the three-OS matrix on pull_request and push, folding test_pr into it; the CI requirement and its scenarios name the three legs and the jobs that run on the PR; tasks 2.1 and 5.2 follow.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/public-readiness/specs/orbit-public-repository/spec.md",
+          "orbit/changes/public-readiness/tasks.md",
+          "orbit/changes/public-readiness/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "a Linux test job on pull requests, the three-OS matrix on pushes to"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/public-readiness/design.md",
+            "text": "The matrix runs on pull requests as well as on pushes to `main`."
+          },
+          {
+            "path": "orbit/changes/public-readiness/specs/orbit-public-repository/spec.md",
+            "text": "every job that runs on the pull request completes successfully, all three test legs among them"
+          }
+        ],
+        "searched": [
+          "test_matrix",
+          "pull request",
+          "three-OS",
+          "every CI job"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Have task 2.1 or 5.2 run the matrix on the branch before archive (for example, also run test_matrix on pull_request, or add a workflow_dispatch path the matrix's `if` admits), and record all three legs in the readiness record."
+          },
+          {
+            "label": "B",
+            "body": "Narrow D2 and the goal to the PR's Linux jobs, and add a DEFERRED (User-validation) task that observes main's first push run, all three legs, before the release act in 6.2."
+          }
+        ],
+        "chosen": "A"
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "D2 says nothing else in the workflow changes, but both aggregator jobs depend on the deleted nix job",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/public-readiness/design.md",
+      "line": 74,
+      "classification": "trivial_fix",
+      "action": "Design D2 names both aggregate jobs: drop nix-flake-validate from needs and their scripts, required-checks-pr needs test_matrix, every remaining needs entry names a defined job; task 2.1 and the CI scenario carry the needs check.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/public-readiness/tasks.md",
+          "orbit/changes/public-readiness/specs/orbit-public-repository/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "Nothing else in the workflow changes."
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/public-readiness/design.md",
+            "text": "After the edit, every `needs` entry names a job the file still defines."
+          }
+        ],
+        "searched": [
+          "needs",
+          "nix-flake-validate",
+          "required-checks"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "`.github/workflows/README.md` has no disposition, and it trips the CI scenario's 'no workflow file names nix'",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/public-readiness/design.md",
+      "line": 206,
+      "classification": "trivial_fix",
+      "action": ".github/workflows/README.md is deleted (design D2, task 1.1, proposal, Touchpoints); the workflow scenarios read exactly .github/workflows/*.yml and *.yaml.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/public-readiness/tasks.md",
+          "orbit/changes/public-readiness/proposal.md",
+          "orbit/changes/public-readiness/specs/orbit-public-repository/spec.md",
+          "orbit/changes/public-readiness/specs/orbit-release/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the workflow files under `.github/workflows/` are read"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/public-readiness/design.md",
+            "text": "`.github/workflows/README.md` is deleted."
+          },
+          {
+            "path": "orbit/changes/public-readiness/specs/orbit-release/spec.md",
+            "text": "the workflow files (`.github/workflows/*.yml` and `*.yaml`) are read"
+          }
+        ],
+        "searched": [
+          "workflows/README",
+          "workflow files"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The delta's standing example of a living file that narrates history is a record with no present-tense claim",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/public-readiness/specs/orbit-source-lint/spec.md",
+      "line": 11,
+      "classification": "decision_required",
+      "action": "Applied A (Sal: \"A, go\"): the paragraph's example is an architecture doc's status log, and a sentence says a whole-file record kept in the domain is read but inert while unmarked; the exclusion row still retires (D-prd-10). Design D6 and the proposal follow.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/public-readiness/design.md",
+          "orbit/changes/public-readiness/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "program-history.md` is the standing example",
+          "names `orbit/architecture/program-history.md` instead"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/public-readiness/specs/orbit-source-lint/spec.md",
+            "text": "is read but INERT while it carries no marker"
+          }
+        ],
+        "searched": [
+          "standing example",
+          "program-history"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Keep the files in the domain. Rewrite the paragraph so its example is a living file that really mixes the two (the trimmed CLAUDE.md, or the shape described with no file named), and add a sentence that a record outside the excluded paths is read but inert while it carries no marker."
+          },
+          {
+            "label": "B",
+            "body": "Add a path-decidable exclusion row for the moved records and program-history.md (HISTORICAL — records kept beside living docs), keeping 'never RECORDS' literally true."
+          }
+        ],
+        "chosen": "A"
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "The charter's 'upstream links outside the docs' has no disposition: `orbit init` sends feedback to OpenSpec's issue tracker",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/public-readiness/design.md",
+      "line": 40,
+      "classification": "decision_required",
+      "action": "Applied A (Sal: \"A, go\"): design D10 retargets the three links to las-sal/orbit-spec, recorded as R-ugd-12 in the architecture doc (third carve-out from R-ugd-3); task 2.2 does the edit, task 2.3 holds it; proposal, Non-Goals and Touchpoints follow. No capability added.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/architecture/update-gh-documentation.md",
+          "orbit/changes/public-readiness/tasks.md",
+          "orbit/changes/public-readiness/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "The Tier-C scrub of `OpenSpec` strings in code (R-ugd-3)."
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/public-readiness/design.md",
+            "text": "### D10 — The upstream links in `orbit init` and `orbit update` are retargeted (R-ugd-12)"
+          },
+          {
+            "path": "orbit/architecture/update-gh-documentation.md",
+            "text": "**R-ugd-12** (Sal, 2026-10-13; from the public-readiness proposal walk; carves out of R-ugd-3)"
+          }
+        ],
+        "searched": [
+          "Fission-AI/OpenSpec",
+          "Learn more",
+          "R-ugd-3"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Carry it: retarget the two init links and the update link to las-sal/orbit-spec. This is a small code edit inside an existing capability's touch, or a scope call for Sal if it needs a fourth capability."
+          },
+          {
+            "label": "B",
+            "body": "Record it as a named R-ugd-3 residual in the design's Non-Goals and in the readiness record, so the omission is a decision rather than a gap."
+          }
+        ],
+        "chosen": "A"
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "The scan table sends absolute paths in completed program docs to 'removed', contradicting the no-rewritten-records non-goal",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/public-readiness/specs/orbit-public-repository/spec.md",
+      "line": 47,
+      "classification": "trivial_fix",
+      "action": "The scan table gains an ACCEPTED row for records under orbit/architecture/; ABSOLUTE LOCAL PATH is defined by its prefixes; the template domain is src/core/templates/**; the scenario asks for each row's action.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "a template's worked example",
+          "with a removal for each RESOLVED finding"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/public-readiness/specs/orbit-public-repository/spec.md",
+            "text": "an absolute local path in a record under `orbit/architecture/`"
+          }
+        ],
+        "searched": [
+          "worked example",
+          "local path",
+          "removal"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/public-readiness/explore.md",
+            "why": "The exploration record keeps D-prd-9's first table verbatim; the spec owns the table now."
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The root holds 22 tracked files, not 21",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/public-readiness/design.md",
+      "line": 48,
+      "classification": "trivial_fix",
+      "action": "21 corrected to 22 in design Context and D1, and in explore.md's inventory and D-prd-6, each noting the correction.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/public-readiness/explore.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "Each of the 21 tracked root files"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/public-readiness/design.md",
+            "text": "Each of the 22 tracked root files is in exactly one row"
+          }
+        ],
+        "searched": [
+          "21 tracked",
+          "Twenty-one"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The `# ` title is not what makes the history file legacy/opaque",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/public-readiness/design.md",
+      "line": 112,
+      "classification": "trivial_fix",
+      "action": "Design D5 now says the file lists as legacy/opaque because it declares no ### Stage headings.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "It opens with a `# ` title so that"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/public-readiness/design.md",
+            "text": "because it declares no `### Stage` headings"
+          }
+        ],
+        "searched": [
+          "legacy/opaque"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The move list and the keep list overlap on D14, D15 and the D11 refinement",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/public-readiness/design.md",
+      "line": 107,
+      "classification": "trivial_fix",
+      "action": "Design D5 says the three decision bullets are COPIED: the history file keeps them in place and CLAUDE.md keeps them too.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/public-readiness/design.md",
+            "text": "They are COPIED: the history file keeps them where they stand"
+          }
+        ],
+        "searched": [
+          "D14, D15"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "scripts/README.md, once trimmed, documents only postinstall, under an 'OpenSpec Scripts' title",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/public-readiness/proposal.md",
+      "line": 61,
+      "classification": "trivial_fix",
+      "action": "scripts/README.md is rewritten under an orbit title with one line per remaining script (design D3, task 1.4, proposal Impact).",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/public-readiness/design.md",
+          "orbit/changes/public-readiness/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "two retired sections of `scripts/README.md`",
+          "`scripts/README.md` loses their sections"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/public-readiness/proposal.md",
+            "text": "`scripts/README.md` is rewritten for the scripts that remain."
+          }
+        ],
+        "searched": [
+          "scripts/README"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Ten of ten resolved, three converged with the external pass (walked here). F5 took Sal's A: the three upstream links retarget, recorded as R-ugd-12. F1 and F4 took A on the ratified preview.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews public-readiness",
+  "ripple_misses": 0
+}

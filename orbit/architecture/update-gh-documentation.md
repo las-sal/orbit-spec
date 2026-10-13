@@ -94,6 +94,12 @@ be seen. Flipping visibility to public is Sal's act at arc-done, never an orbit 
   over a real OpenSpec 1.3.1 or 1.14.1 project, `orbit init` leaves `openspec/` untouched, creates an empty `orbit/`
   beside it and installs orbit's skills beside upstream's, and `orbit list` reports no changes, with nothing said. The
   carve-out covers the warning, its call site in `src/core/init.ts`, and its test. R-ugd-3 stands for everything else.
+- **R-ugd-12** (Sal, 2026-10-13; from the public-readiness proposal walk; carves out of R-ugd-3) — the upstream links
+  `orbit init` and `orbit update` print are retargeted to orbit's own repository in the public-readiness stage.
+  `src/core/init.ts` prints `Learn more` and `Feedback` links to `https://github.com/Fission-AI/OpenSpec` and its
+  `/issues` after every init, and `src/core/update.ts` prints the `Learn more` link, so on a public repository a new
+  user's first command would send orbit's bug reports to OpenSpec's tracker: the harm R-ugd-10 carved `orbit feedback`
+  out for. The carve-out covers those three lines and a test that holds them. R-ugd-3 stands for everything else.
 
 ## Open questions
 
@@ -253,6 +259,20 @@ over every tracked file and its findings are resolved or accepted with a reason;
 notice and orbit's; (4) `v2.0.0` is on `origin`, on a release commit whose parent is `main` at or after this stage's
 merge, and a release-tree install of it prints `2.0.0`.
 
+Shipped as (2026-10-13; archived as `orbit/changes/archive/2026-10-13-public-readiness/`; the charter stands, and exit (4)
+waits for the merge): the root holds 12 files, each with a recorded decision. Upstream's leftover files, repository
+config, Nix files, dev container, assets and npm publish setup are deleted. The merge plan and the adopter report moved
+to `orbit/architecture/`. `CHANGELOG.md` is orbit's, from `2.0.0`, and `LICENSE` carries both notices. CI runs on npm
+and passed for the first time in orbit's history (run 38418242716), on Linux and macOS only. Its Windows leg was
+DROPPED on Sal's word after it failed 198 tests and proved unable to fail under `pwsh` (issue #23). Four test-harness
+faults that only CI exposed were repaired, and no test was skipped. The scan reads every blob reachable from `main` and
+this branch, merge commits and renames included, and checks every ref the repository publishes. Living config files
+were read by eye; records and fixtures were read by machine, the method narrowed on Sal's A at the system walk.
+Nothing confirmed was found; the second author address is public on Sal's word. `CLAUDE.md` is trimmed to guidance,
+and its per-stage narrative moved word for word to `orbit/architecture/program-history.md`, so archives no longer
+append a stage paragraph there. `orbit init` and `orbit update` link to orbit's repository (R-ugd-12). Baseline
+capabilities 29 → 30 (`orbit-public-repository` ADDED).
+
 ## Considered & out
 
 - **2026-10-12 — the Tier-C code scrub.** Folding the `OpenSpec` strings in CLI help and messages into this program
@@ -355,3 +375,9 @@ Considered & out (Sal: docs only). landing-page completion offered a fourth time
 were graded MET on its archived record (the Shipped-as paragraph above), and Sal ratified it after PR #21 merged.
 landing-page completion was offered a fifth time: not yet (Sal), on the same ground; exit (3)'s remaining halves need
 the public repository. public-readiness, the last stage, is now the program's next.
+
+**2026-10-13 — R-ugd-12 captured (Sal), at the public-readiness proposal walk.** The blind pair's fresh half found that
+`orbit init` and `orbit update` print `Learn more` and `Feedback` links to OpenSpec's repository and issue tracker, so a
+new user's first command on the public repository would send orbit's bug reports upstream. Sal took A: retarget the
+three links to orbit's repository. R-ugd-12 carves them out of R-ugd-3, the third carve-out after R-ugd-10 and R-ugd-11;
+the public-readiness change carries the edit and its test.

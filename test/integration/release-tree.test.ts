@@ -19,11 +19,17 @@ const SCRIPT = path.join(REPO, 'scripts', 'release-tree.mjs');
 /** The suite's own `npm_*` settings (npm exports them to `npm test`) never reach the commands run here. */
 const ENV: NodeJS.ProcessEnv = {
   ...Object.fromEntries(Object.entries(process.env).filter(([k]) => !/^npm_/i.test(k))),
-  GIT_CONFIG_COUNT: '2',
+  // gc and maintenance off: a git command may spawn either DETACHED, and one still writing the clone's objects made
+  // the teardown fail with ENOTEMPTY on CI's Linux leg (public-readiness).
+  GIT_CONFIG_COUNT: '4',
   GIT_CONFIG_KEY_0: 'commit.gpgsign',
   GIT_CONFIG_VALUE_0: 'false',
   GIT_CONFIG_KEY_1: 'tag.gpgsign',
   GIT_CONFIG_VALUE_1: 'false',
+  GIT_CONFIG_KEY_2: 'gc.auto',
+  GIT_CONFIG_VALUE_2: '0',
+  GIT_CONFIG_KEY_3: 'maintenance.auto',
+  GIT_CONFIG_VALUE_3: 'false',
   GIT_AUTHOR_NAME: 'release-tree test',
   GIT_AUTHOR_EMAIL: 'release-tree@example.invalid',
   GIT_COMMITTER_NAME: 'release-tree test',
@@ -35,10 +41,17 @@ const git = (cwd: string, ...args: string[]) => run(cwd, 'git', args);
 const release = (cwd: string) => spawnSync(process.execPath, [SCRIPT], { cwd, env: ENV, encoding: 'utf-8' });
 /** pacote 21.5.0's prepare triggers, as `orbit-release`' table names them: stated here, never read from the script. */
 const TRIGGERS = ['prepare', 'build', 'postinstall', 'install', 'preinstall', 'prepack'];
-const packed = (cwd: string): string[] =>
-  (JSON.parse(run(cwd, 'npm', ['pack', '--dry-run', '--json', '--ignore-scripts']))[0].files as Array<{ path: string }>)
-    .map((f) => f.path)
-    .sort();
+/**
+ * npm 10 (Node 20's) runs `prepare` on `pack` despite `--ignore-scripts` and writes the build's output to stdout ahead of
+ * the JSON (public-readiness: CI's first run, reproduced with npm 10.9.9); npm 11 does not. The JSON is the array that
+ * opens on a line of its own, so everything before that line is dropped.
+ */
+const packed = (cwd: string): string[] => {
+  const out = run(cwd, 'npm', ['pack', '--dry-run', '--json', '--ignore-scripts']);
+  const start = out.search(/^\[$/m);
+  if (start === -1) throw new Error(`npm pack printed no JSON array:\n${out}`);
+  return (JSON.parse(out.slice(start))[0].files as Array<{ path: string }>).map((f) => f.path).sort();
+};
 
 describe('the release package.json', () => {
   it('removes exactly the six prepare triggers and keeps every other key', () => {
@@ -83,7 +96,7 @@ describe('the release script over a scratch clone', () => {
   }, 120_000);
 
   afterAll(() => {
-    if (scratch) rmSync(scratch, { recursive: true, force: true });
+    if (scratch) rmSync(scratch, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
   });
 
   // @scenario behaviour orbit-release :: A release ships a built release tree :: The release commit is a child of the commit released, and the tag is on it

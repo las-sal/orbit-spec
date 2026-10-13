@@ -298,7 +298,7 @@ export class UpdateCommand {
       console.log('  /orbit:continue  Create the next artifact');
       console.log('  /orbit:apply     Implement tasks');
       console.log();
-      console.log(`Learn more: ${chalk.cyan('https://github.com/Fission-AI/OpenSpec')}`);
+      console.log(`Learn more: ${chalk.cyan('https://github.com/las-sal/orbit-spec')}`);
     }
 
     const configuredAndNewTools = [...new Set([...configuredTools, ...newlyConfiguredTools])];

@@ -103,7 +103,7 @@ export function collectBoot(projectRoot: string, changeName: string): { status: 
   // first commit; the non-empty non-bookkeeping portion IS the lifecycle discriminator.
   if (isGitRepo(projectRoot)) {
     // Repo-relative by construction (canonicalized absolute paths can cross symlink
-    // boundaries — e.g. macOS /var vs /private/var — breaking path.relative).
+    // boundaries — e.g. macOS's /var symlink against its realpath — breaking path.relative).
     const rel = path.join('orbit', 'changes', changeName);
     const first = firstCommitTouching(projectRoot, rel);
     // Committed-only <change-start>..HEAD — the durable-truth view, deliberately

@@ -1,0 +1,126 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-13T17:46:02Z",
+  "change": "public-readiness",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/public-readiness/.orbit-runs/external-system-2026-10-13T16-16-56Z.md",
+  "source_command": null,
+  "source_token": "2026-10-13T16-16-56Z",
+  "latest_apply_token": "2026-10-13T15-09-50Z",
+  "external_reviewer": "GPT-6",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 0
+  },
+  "pushback_verification": "Both verified. main has 10 merge commits and git log -p prints none of their patches, and renames carry no added lines; the re-run blob scan found one history-only file the line-diff pipeline had missed as a rename. The record's 1,184 records and fixtures had been keyword-swept where the requirement promised a read. Neither stale.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The history scan omits content introduced by merge commits",
+      "marker_source": "external",
+      "file": "orbit/changes/public-readiness/readiness-record.md",
+      "line": 21,
+      "classification": "trivial_fix",
+      "action": "Re-ran the history scan blob by blob: every distinct blob reachable from main and the branch (5,612), read through git cat-file --batch, the patterns checked on a planted sample first. 0 token candidates; the path findings add one history-only file, orbit/explore/fork-and-orbify/explore.md, ACCEPTED as a moved record. The requirement now names merge commits and renames in the scan's domain.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/public-readiness/specs/orbit-public-repository/spec.md",
+          "orbit/changes/public-readiness/proposal.md",
+          "orbit/changes/public-readiness/design.md",
+          "orbit/changes/public-readiness/tasks.md",
+          "orbit/scenario-ledger.yaml"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/public-readiness/readiness-record.md",
+            "text": "### The history scan, re-run blob by blob (system walk, 2026-10-13)"
+          },
+          {
+            "path": "orbit/changes/public-readiness/specs/orbit-public-repository/spec.md",
+            "text": "merge commits and renames included"
+          }
+        ],
+        "searched": [
+          "git log main -p",
+          "full history",
+          "merge"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The residual review replaces the required read with another pattern scan",
+      "marker_source": "external",
+      "file": "orbit/changes/public-readiness/readiness-record.md",
+      "line": 106,
+      "classification": "decision_required",
+      "lane": "decision",
+      "ratified_via": "chat",
+      "resolution": "A — narrow the requirement to the method run, made stronger: living config files read by eye; records and fixtures read by machine (the keyword sweep plus a high-entropy scan, which found only package-lock integrity hashes); the requirement states what the machine read misses.",
+      "action": "The scan requirement's residual method now names the eye read for living files and the machine read for records and fixtures, with its gap; the scenario asks which files were read which way; the record carries the high-entropy scan and its result; design and the ledger line follow.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/public-readiness/specs/orbit-public-repository/spec.md",
+          "orbit/changes/public-readiness/design.md",
+          "orbit/scenario-ledger.yaml"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "recorded beside the pattern scan; no published secret scanner",
+          "Read by keyword sweep (1,184"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/public-readiness/specs/orbit-public-repository/spec.md",
+            "text": "The machine read misses a secret with neither shape"
+          },
+          {
+            "path": "orbit/changes/public-readiness/readiness-record.md",
+            "text": "**A high-entropy scan (system walk)**"
+          }
+        ],
+        "searched": [
+          "config-shaped",
+          "keyword sweep",
+          "residual"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/public-readiness/explore.md",
+            "why": "the exploration's record of D-prd-9's method as decided; the walk narrowed it in the requirement, and an exploration is not rewritten"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": "a",
+  "final_assessment": "Two of two resolved: the history scan reads every blob, merge commits and renames included, and the residual method says what it reads by machine and what that misses.",
+  "iteration": 5,
+  "next_recommended": "/orbit:review --as system public-readiness",
+  "ripple_misses": 0
+}

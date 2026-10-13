@@ -335,7 +335,7 @@ describe('the marker NAME grammar is what makes prose inert', () => {
 // ---- The domain and its exclusions (task 2.1) ------------------------------
 
 describe('the file domain', () => {
-  it('excludes RECORDS, fixtures, templates, generated surface and historical files', () => {
+  it('excludes RECORDS, fixtures, templates and generated surface', () => {
     for (const p of [
       'orbit/changes/archive/2026-01-01-x/proposal.md',
       'orbit/changes/rc07-artifact-lint/.orbit-runs/review-x.md',
@@ -344,8 +344,6 @@ describe('the file domain', () => {
       'schemas/spec-driven/templates/proposal.md',
       'orbit/schemas/spec-driven/templates/proposal.md',
       '.claude/skills/orbit-review/SKILL.md',
-      'README_OLD.md',
-      'adopter-report-openspec-to-orbit-dir.md',
     ]) {
       expect(isExcludedPath(p), p).toBe(true);
     }
@@ -359,6 +357,19 @@ describe('the file domain', () => {
       'orbit/architecture/clean-up-review-cycle.md',
       'orbit/specs/orbit-conventions/spec.md',
       'schemas/spec-driven/README.md',
+    ]) {
+      expect(isExcludedPath(p), p).toBe(false);
+    }
+  });
+
+  it('no longer excludes the retired historical row: README_OLD.md and the adopter report are read like any file', () => {
+    // public-readiness (design D6): the HISTORICAL row retired with the files it named. A record kept in the
+    // domain is read but inert while it carries no marker, so neither path needs an exclusion.
+    for (const p of [
+      'README_OLD.md',
+      'docs/README_OLD.md',
+      'adopter-report-openspec-to-orbit-dir.md',
+      'orbit/architecture/adopter-report-openspec-to-orbit-dir.md',
     ]) {
       expect(isExcludedPath(p), p).toBe(false);
     }
@@ -432,6 +443,28 @@ describe('runSourceLint end to end', () => {
     expect(r.coverage).toEqual([{ source: 'stages', value: '2', markers: 1 }]);
   });
 
+  // @scenario behaviour orbit-source-lint :: The lint reads living documents across the whole project :: A stale figure in a governing document outside `orbit/` fails
+  it('a stale span in CLAUDE.md, at the project root, fails', () => {
+    fs.writeFileSync(path.join(root, 'CLAUDE.md'), `The program has ${OPEN('stages')}17${CLOSE('stages')} stages.\n`);
+    track();
+    expect(runSourceLint(root).findings).toEqual([
+      { kind: 'mismatch', file: 'CLAUDE.md', line: 1, source: 'stages', span_text: '17', source_value: '2' },
+    ]);
+  });
+
+  // @scenario behaviour orbit-source-lint :: The lint reads living documents across the whole project :: A historical figure in a living file is not linted
+  it('an unmarked historical figure beside a marked present-tense one is not linted', () => {
+    fs.writeFileSync(
+      path.join(root, 'GOV.md'),
+      `Stages went 1 → 17 in the status log.\nThe program has ${OPEN('stages')}2${CLOSE('stages')} stages.\n`
+    );
+    fs.writeFileSync(path.join(root, 'orbit', 'architecture', 'program-history.md'), 'There were 17 stages then.\n');
+    track();
+    const r = runSourceLint(root);
+    expect(r.findings).toEqual([]);
+    expect(r.coverage).toEqual([{ source: 'stages', value: '2', markers: 1 }]);
+  });
+
   it('a disagreeing span FAILS naming file, line, source, span text and source value', () => {
     fs.writeFileSync(path.join(root, 'GOV.md'), `line one\nThe program has ${OPEN('stages')}17${CLOSE('stages')} stages.\n`);
     track();
@@ -458,6 +491,7 @@ describe('runSourceLint end to end', () => {
     expect(kinds).toEqual(['marker:BROKEN.md', 'mismatch:OTHER.md']);
   });
 
+  // @scenario behaviour orbit-source-lint :: The lint reads living documents across the whole project :: A marker inside a record is not linted
   it('a marked span inside a RECORD is ignored', () => {
     const archive = path.join(root, 'orbit', 'changes', 'archive', '2026-01-01-old');
     fs.mkdirSync(archive, { recursive: true });
@@ -466,6 +500,7 @@ describe('runSourceLint end to end', () => {
     expect(runSourceLint(root).findings).toEqual([]);
   });
 
+  // @scenario behaviour orbit-source-lint :: The lint reads living documents across the whole project :: An untracked file is outside the domain
   it('an UNTRACKED file is outside the domain until it is added', () => {
     track();
     fs.writeFileSync(path.join(root, 'NEW.md'), `${OPEN('stages')}999${CLOSE('stages')}\n`);
@@ -506,6 +541,7 @@ describe('runSourceLint end to end', () => {
     expect(r.filesScanned).toBe(listed - 1);
   });
 
+  // @scenario behaviour orbit-source-lint :: The lint reads living documents across the whole project :: A tracked file that cannot be read is reported, never swallowed
   it('an UNREADABLE tracked file is reported, never swallowed, and is not counted as scanned', () => {
     const unreadable = path.join(root, 'locked.md');
     fs.writeFileSync(unreadable, `has ${OPEN('stages')}99${CLOSE('stages')}\n`);

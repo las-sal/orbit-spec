@@ -1,0 +1,180 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-13T13:05:28Z",
+  "change": "public-readiness",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 4,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/public-readiness/design.md",
+      "line": 69,
+      "title": "The macOS and Windows legs never run on the pull request, so D2's leg handling cannot fire inside the change",
+      "recommendation": "In ci.yml, test_matrix (the three-OS matrix) carries `if: github.event_name == 'push'` and the trigger is `push: branches: [main]`. The pull request runs only test_pr (Linux) and lint. Task 5.2 records the PR's run, and the scenario `CI passes on the change that moves it` reads the PR's checks, so neither sees macOS or Windows. The first matrix run is the merge commit on main, after the archive and just before `release:tree`. The goal 'CI passes with npm before the repository is public' and D2's 'a leg that fails ... is investigated / dropping it is Sal's scope call' therefore have no step that can observe them. Either make the matrix observable inside the change, or narrow the claim and defer the observation.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Have task 2.1 or 5.2 run the matrix on the branch before archive (for example, also run test_matrix on pull_request, or add a workflow_dispatch path the matrix's `if` admits), and record all three legs in the readiness record."
+        },
+        {
+          "label": "B",
+          "body": "Narrow D2 and the goal to the PR's Linux jobs, and add a DEFERRED (User-validation) task that observes main's first push run, all three legs, before the release act in 6.2."
+        }
+      ]
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/public-readiness/design.md",
+      "line": 74,
+      "title": "D2 says nothing else in the workflow changes, but both aggregator jobs depend on the deleted nix job",
+      "recommendation": "`required-checks-pr` and `required-checks-main` list `nix-flake-validate` in `needs` and test its result in their scripts. Deleting that job while 'nothing else changes' leaves a `needs` naming a job that does not exist, and GitHub rejects the whole workflow. That would turn CI red again on its first run. Name both aggregator jobs in D2 (and task 2.1): drop `nix-flake-validate` from their `needs` and remove the nix branches from their scripts."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/public-readiness/design.md",
+      "line": 206,
+      "title": "`.github/workflows/README.md` has no disposition, and it trips the CI scenario's 'no workflow file names nix'",
+      "recommendation": "The tracked file `.github/workflows/README.md` documents local runs with `act`, says the deleted `.actrc` configures it, and shows `act pull_request -j nix-flake-validate` for the deleted job. D-prd-1 sweeps '.github/ (CODEOWNERS, both workflows)', but this file appears in neither the dispositions nor the Touchpoints, so after apply it describes three things that are gone. It also sits under `.github/workflows/`, so a test that reads 'the workflow files under .github/workflows/' could take it in and fail on `nix`. Give it a disposition (delete it, or rewrite it for npm), and have the scenario say which files count as workflow files (`*.yml` / `*.yaml`)."
+    },
+    {
+      "pass": "4",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/public-readiness/specs/orbit-source-lint/spec.md",
+      "line": 11,
+      "title": "The delta's standing example of a living file that narrates history is a record with no present-tense claim",
+      "recommendation": "The paragraph's point is that a LIVING file can mix present-tense marked claims with narrated history, so within a file the marker is the boundary. Its new example, `orbit/architecture/program-history.md`, is a RECORD by D-prd-12 and design D5: a header that says its figures are true when written, every marker stripped, and listed as legacy/opaque as 'the honest reading of a record'. So it has no marked claims to separate from anything ('nearly all of its figures' is now 'all'). The same requirement still says 'the lint reads LIVING documents, never RECORDS' and that every exclusion is decidable by path. Yet three records (the history file, the merge plan and the adopter report) now sit unexcluded in orbit/architecture/, read only because they hold no markers. Either keep the principle and the files' status in agreement, or say plainly that markerless records inside the domain are inert.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Keep the files in the domain. Rewrite the paragraph so its example is a living file that really mixes the two (the trimmed CLAUDE.md, or the shape described with no file named), and add a sentence that a record outside the excluded paths is read but inert while it carries no marker."
+        },
+        {
+          "label": "B",
+          "body": "Add a path-decidable exclusion row for the moved records and program-history.md (HISTORICAL — records kept beside living docs), keeping 'never RECORDS' literally true."
+        }
+      ]
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/public-readiness/design.md",
+      "line": 40,
+      "title": "The charter's 'upstream links outside the docs' has no disposition: `orbit init` sends feedback to OpenSpec's issue tracker",
+      "recommendation": "The stage charter names 'upstream assets and links outside the docs'. `src/core/init.ts:793-794` prints `Learn more: https://github.com/Fission-AI/OpenSpec` and `Feedback: https://github.com/Fission-AI/OpenSpec/issues` at the end of every `orbit init`, and `src/core/update.ts:301` prints the Learn-more link. On a public repository, a new adopter's first command points them at upstream's tracker for orbit's bugs. That is the same harm R-ugd-10 carved `orbit feedback` out of R-ugd-3 for. Neither the explore nor the design names these lines, and the non-goal 'the Tier-C scrub of OpenSpec strings in code' does not obviously cover a URL that misroutes reports. Make the call explicitly.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Carry it: retarget the two init links and the update link to las-sal/orbit-spec. This is a small code edit inside an existing capability's touch, or a scope call for Sal if it needs a fourth capability."
+        },
+        {
+          "label": "B",
+          "body": "Record it as a named R-ugd-3 residual in the design's Non-Goals and in the readiness record, so the omission is a decision rather than a gap."
+        }
+      ]
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/public-readiness/specs/orbit-public-repository/spec.md",
+      "line": 47,
+      "title": "The scan table sends absolute paths in completed program docs to 'removed', contradicting the no-rewritten-records non-goal",
+      "recommendation": "The table accepts paths only under `orbit/changes/archive/**`, `**/.orbit-runs/**`, `test/**` and 'a template's worked example'. Every other living file is RESOLVED by removal. `orbit/architecture/fork-and-orbify.md:179,439` names `/tmp/openspec-src`, and that doc is the completed fork program's historical record, as is program-history.md once written. By the table, an implementer must edit those records, while design.md:41 says no record is rewritten. Two implementers would split on this, and on whether `/tmp/...` counts as 'local'. 'A template's worked example' is also undefined: the explore pins it to `src/core/templates/workflows/feedback.ts`, and `pr-choreography.ts` uses `/tmp/pr-body.md`. Add a row (or widen the record row) for completed architecture docs and the moved records, define 'local path' (home directories only, or any absolute path), and name the template domain (for example `src/core/templates/**`)."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/public-readiness/design.md",
+      "line": 48,
+      "title": "The root holds 22 tracked files, not 21",
+      "recommendation": "`git ls-files | grep -vc /` returns 22, and D1's table has 22 rows (6+2+2+1+1+1+1+8). The explore's inventory drops `flake.nix` from its count (it is named only in a parenthetical). Correct '21' at design.md:8 and :48 (and in explore.md's measurement) so the readiness record's re-listing does not grade against a wrong figure."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/public-readiness/design.md",
+      "line": 112,
+      "title": "The `# ` title is not what makes the history file legacy/opaque",
+      "recommendation": "`src/core/architecture/parser.ts` classifies a doc as legacy when it has zero `### Stage `-prefixed headings outside fences. A title has nothing to do with it. Reword: the file is listed as legacy/opaque because it declares no `### Stage` headings (CLAUDE.md's stage narratives use bold, not headings, so the move keeps it that way)."
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/public-readiness/design.md",
+      "line": 107,
+      "title": "The move list and the keep list overlap on D14, D15 and the D11 refinement",
+      "recommendation": "The three decision bullets sit inside the 'Current state (as of B3 — parity)' section, between C1 and C2 narrative paragraphs. D5 moves 'the paragraphs from Current state onward that narrate B1–C2' and keeps 'D14, D15 and the D11 refinement'. Say whether the bullets are copied, so they appear in both files and the history stays word for word, or only kept."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/public-readiness/proposal.md",
+      "line": 61,
+      "title": "scripts/README.md, once trimmed, documents only postinstall, under an 'OpenSpec Scripts' title",
+      "recommendation": "After its two sections go, `scripts/README.md` keeps the `# OpenSpec Scripts` heading and a single `postinstall.js` section. It says nothing of `release-tree.mjs` (the only release path this change declares) or the capture scripts. Consider deleting it or giving it a one-line entry per remaining script, since a visitor will open it."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Probed hardest at the CI rewrite, since the suite has never run in CI and the stage's goal is a green check before the flip. I read ci.yml job by job: the trigger/if conditions decide which legs a PR can observe, and the aggregator jobs' needs decide whether a literal reading of D2 yields a valid workflow. I ran `npm run lint` and `tsc --noEmit` locally (0 errors, 1 warning), so the lint job's npm translation should pass. I checked the source-lint delta byte-wise against its baseline: exactly the two intended edits. The capability ceiling (3), the 15 delta scenarios against tasks 2.2/3.1/5.3 (4+8+3), and the release spec against the package.json scripts all reconcile. The zero-marker sources after the CLAUDE.md trim (rulings, schema-version) were considered and left alone, because D-prd-12 already accepts coverage as a record.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The change does what the stage's charter asks, and its decisions are measured: the CI failure, the publish path, the license, the root inventory, and the narrative move all rest on reads of the real repository, which I re-checked. Nothing here breaks a user path or loses data. The weak spots are where the repository's real CI shape and the artifact's wording meet. The OS matrix the design plans to measure never runs on a pull request, and the aggregator jobs depend on the nix job being deleted. The other gaps are scope edges a visitor would meet: the workflows README, the init-time upstream links, and the scan table's handling of historical program docs. All are repairs or explicit calls inside the change's current shape, with no need to rethink it, so walk them and move to apply."
+  },
+  "final_assessment": "0 critical, 7 warning, 3 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews public-readiness"
+}

@@ -1,0 +1,15 @@
+{
+  "command": "propose",
+  "timestamp": "2026-10-13T12:59:15Z",
+  "change": "public-readiness",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Proposed public-readiness in consume mode from twelve decisions, none open. Three capabilities at the ceiling (orbit-public-repository ADDED with 3 requirements; orbit-release 1 ADDED; orbit-source-lint 1 MODIFIED, fingerprinted), 5 requirements, 15 tasks, no size breach. D-prd-9 (BOUNDED) carried into the scan requirement with both residual lines verbatim; design carries the root disposition table (exit 1), CI-on-npm plan (CI never green: 93 of 100 runs failed at pnpm install), the CLAUDE.md trim and history move, and the readiness record. The v2.0.0 release is task 6.2, a user-validation act after merge. Draft PR #22.",
+  "pr_attachment": {
+    "branch": "public-readiness",
+    "granularity": "per-proposal",
+    "url": "https://github.com/las-sal/orbit-spec/pull/22",
+    "state": "draft"
+  },
+  "next_recommended": "/orbit:review public-readiness — proposal artifacts ready; review before apply"
+}

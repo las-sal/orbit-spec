@@ -1,0 +1,151 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-13T13:24:42Z",
+  "change": "public-readiness",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/public-readiness/.orbit-runs/review-proposal-2026-10-13T13-23-09Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-13T13-23-09Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 1
+  },
+  "pushback_verification": "All three verified against current state (ci.yml merge_group at lines 6, 47, 247, 280; proposal.md:35-37; no R-ugd-12 status-log entry); none stale.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The matrix that replaces test_pr is scoped to pull requests and pushes, but required-checks-pr also runs on merge_group",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/public-readiness/design.md",
+      "line": 76,
+      "classification": "trivial_fix",
+      "action": "Kept the merge_group trigger: the matrix runs on pull_request, merge_group and push (design D2, task 2.1, the CI requirement and its scenario, the proposal), so required-checks-pr never waits on a skipped job.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/public-readiness/tasks.md",
+          "orbit/changes/public-readiness/specs/orbit-public-repository/spec.md",
+          "orbit/changes/public-readiness/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "runs on `pull_request` as well as `push`",
+          "for every pull request as well as every push"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/public-readiness/design.md",
+            "text": "`pull_request`, `merge_group` and a push to"
+          },
+          {
+            "path": "orbit/changes/public-readiness/specs/orbit-public-repository/spec.md",
+            "text": "a merge-queue group, and a push to `main`"
+          }
+        ],
+        "searched": [
+          "merge_group",
+          "pull request",
+          "pull_request"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "ripple_miss_of": {
+        "walk": "2026-10-13T13-21-01Z",
+        "title": "The macOS and Windows legs never run on the pull request, so D2's leg handling cannot fire inside the change",
+        "file": "orbit/changes/public-readiness/design.md",
+        "kind": "judgement"
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The proposal's What Changes still says the source-lint paragraph now points at the history file",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/public-readiness/proposal.md",
+      "line": 36,
+      "classification": "trivial_fix",
+      "action": "Re-worded the What Changes bullet to the delta's text: the example is an architecture doc's status log, and a record kept in the domain is read but inert while unmarked.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "now points at the history file",
+          "now points at the\n  history file"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/public-readiness/proposal.md",
+            "text": "names an architecture doc's status log instead, and says that a record kept in the domain is read but inert while it carries no marker"
+          }
+        ],
+        "searched": [
+          "history file",
+          "standing example",
+          "points at"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "ripple_miss_of": {
+        "walk": "2026-10-13T13-21-01Z",
+        "title": "The delta's standing example of a living file that narrates history is a record with no present-tense claim",
+        "file": "orbit/changes/public-readiness/specs/orbit-source-lint/spec.md",
+        "kind": "query"
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "R-ugd-12 entered the rulings index with no status-log entry",
+      "marker_source": "internal-review",
+      "file": "orbit/architecture/update-gh-documentation.md",
+      "line": 97,
+      "classification": "trivial_fix",
+      "action": "Appended a dated status-log entry recording R-ugd-12's capture at the proposal walk on Sal's A.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/architecture/update-gh-documentation.md",
+            "text": "R-ugd-12 captured (Sal), at the public-readiness proposal walk."
+          }
+        ],
+        "searched": [
+          "R-ugd-11 captured"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Three of three resolved: the matrix now covers merge_group, the proposal bullet matches the source-lint delta, and R-ugd-12 has its status-log entry.",
+  "iteration": 3,
+  "next_recommended": "/orbit:apply public-readiness — user-invoked",
+  "ripple_misses": 2
+}

@@ -1,0 +1,161 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-13T13:23:09Z",
+  "change": "public-readiness",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/public-readiness/design.md",
+      "line": 76,
+      "title": "The matrix that replaces test_pr is scoped to pull requests and pushes, but required-checks-pr also runs on merge_group",
+      "recommendation": "ci.yml triggers on merge_group, and test_pr, validate-changesets and required-checks-pr all run when the event is pull_request or merge_group. Walk entry F1 folds test_pr into the matrix and has required-checks-pr need test_matrix, but D2, the CI requirement (\"for every pull request and every push to main\") and task 2.1 name only pull_request and push. An implementation built to that text gives test_matrix an `if` of push or pull_request; on a merge_group run test_matrix is then skipped and required-checks-pr, which fails any result other than success, goes red. Name merge_group beside pull_request in D2, task 2.1 and the CI requirement (the matrix runs on every event required-checks-pr runs on), or drop the merge_group trigger and say so.",
+      "walk_entry": {
+        "title": "The macOS and Windows legs never run on the pull request, so D2's leg handling cannot fire inside the change",
+        "file": "orbit/changes/public-readiness/design.md"
+      }
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/public-readiness/proposal.md",
+      "line": 36,
+      "title": "The proposal's What Changes still says the source-lint paragraph now points at the history file",
+      "recommendation": "Walk entry F4 re-pointed the source-lint paragraph's example to an architecture doc's status log and re-wrote the Modified Capabilities bullet, but proposal.md:35-37's What Changes bullet still reads 'Its paragraph naming `CLAUDE.md` as the standing example of narrated history now points at the history file.' The sweep retired a different phrasing, so this one survived. An implementer reading the proposal first would write the rejected example into the spec. Re-word the bullet to the delta's text: the example becomes an architecture doc's status log, and a record kept in the domain is read but inert while unmarked.",
+      "walk_entry": {
+        "title": "The delta's standing example of a living file that narrates history is a record with no present-tense claim",
+        "file": "orbit/changes/public-readiness/specs/orbit-source-lint/spec.md"
+      }
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/architecture/update-gh-documentation.md",
+      "line": 97,
+      "title": "R-ugd-12 entered the rulings index with no status-log entry",
+      "recommendation": "R-ugd-11 has a dated status-log entry recording its capture ('R-ugd-11 captured (Sal), in an architect session'); R-ugd-12, written into the index at the proposal walk, has none, so the doc's append-only narrative does not say when or where the third carve-out from R-ugd-3 was taken. Append a one-paragraph status-log entry naming the walk and Sal's 'A'."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Graded the two walks' thirteen resolved entries over each entry's file, cascade and sweep scope, then ran a residual diff from the commit that added the external return: every file the walks touched sits in some entry's edit record. Both regressions are completeness misses in a walk's own cascade, not defects in the reviewed mechanism: one fix replaced a job without carrying every event the replaced job ran on, and one sweep retired one phrasing of a claim while a second phrasing of the same claim stood in the proposal. The scan requirement's rewrite reads cleanly against both reviewers' findings, and the three converged stale calls are correct.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "verification": [
+    {
+      "title": "The macOS and Windows legs never run on the pull request, so D2's leg handling cannot fire inside the change",
+      "file": "orbit/changes/public-readiness/design.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "D2 says nothing else in the workflow changes, but both aggregator jobs depend on the deleted nix job",
+      "file": "orbit/changes/public-readiness/design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "`.github/workflows/README.md` has no disposition, and it trips the CI scenario's 'no workflow file names nix'",
+      "file": "orbit/changes/public-readiness/design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The delta's standing example of a living file that narrates history is a record with no present-tense claim",
+      "file": "orbit/changes/public-readiness/specs/orbit-source-lint/spec.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "The charter's 'upstream links outside the docs' has no disposition: `orbit init` sends feedback to OpenSpec's issue tracker",
+      "file": "orbit/changes/public-readiness/design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The scan table sends absolute paths in completed program docs to 'removed', contradicting the no-rewritten-records non-goal",
+      "file": "orbit/changes/public-readiness/specs/orbit-public-repository/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The root holds 22 tracked files, not 21",
+      "file": "orbit/changes/public-readiness/design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The `# ` title is not what makes the history file legacy/opaque",
+      "file": "orbit/changes/public-readiness/design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The move list and the keep list overlap on D14, D15 and the D11 refinement",
+      "file": "orbit/changes/public-readiness/design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "scripts/README.md, once trimmed, documents only postinstall, under an 'OpenSpec Scripts' title",
+      "file": "orbit/changes/public-readiness/proposal.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Token matches have no false-positive disposition or precise detection rule",
+      "file": "orbit/changes/public-readiness/specs/orbit-public-repository/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Scan resolution contradicts the required treatment of secrets found only in history",
+      "file": "orbit/changes/public-readiness/specs/orbit-public-repository/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Readiness-record citations need to survive archive",
+      "file": "orbit/changes/public-readiness/tasks.md",
+      "verdict": "landed"
+    }
+  ],
+  "final_assessment": "0 critical, 2 warning, 1 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-10-13T13-21-01Z",
+    "2026-10-13T13-21-25Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews public-readiness"
+}

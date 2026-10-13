@@ -366,7 +366,7 @@ Each generated skill embeds `generatedBy: <version>`. `update`:
 4. **Move** the change dir to `changes/archive/<YYYY-MM-DD>-<name>/` (date prefix added here — this is
    why orbit's `.orbit-runs/` audit trail picks up its date on archive).
 
-> ⚠️ **Known correctness bug, documented in the repo's own `openspec-parallel-merge-plan.md`:** the
+> ⚠️ **Known correctness bug, documented in the repo's own `orbit/architecture/openspec-parallel-merge-plan.md`:** the
 > merge is **replace-only requirement-block substitution** with no base-version fingerprint and no
 > scenario-level granularity. Two parallel changes that touch the same requirement → the second
 > archive silently overwrites the first's scenarios. No warning, no conflict markers. The plan doc

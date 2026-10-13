@@ -55,4 +55,15 @@ scenarios:
   # concept-docs (task 4.2, design D6) — exit (3): the migration guide run once, as written, on a 1.14.1 project.
   - key: "orbit-user-docs :: The migration guide opens with a before-you-move checklist for an OpenSpec 1.x project :: The guide's steps move a 1.14.1 project"
     kind: observed
-    record: "orbit/changes/concept-docs/migration-run.md — the checklist read from the guide's fences reported each of eight fixtures; after the fixes and the move, run before any orbit init (4A) and after one (4B), orbit list, orbit status and orbit validate --all read the project, with nothing under orbit/openspec/; and an orbit/ holding an exploration (4C) is given no move command"
+    record: "orbit/changes/archive/2026-10-13-concept-docs/migration-run.md — the checklist read from the guide's fences reported each of eight fixtures; after the fixes and the move, run before any orbit init (4A) and after one (4B), orbit list, orbit status and orbit validate --all read the project, with nothing under orbit/openspec/; and an orbit/ holding an exploration (4C) is given no move command"
+  # public-readiness (task 5.3, design D7) — observed in the change's readiness record. The archive re-points these
+  # citations to the archived path (the scenario-map reader checks only that a record is non-empty).
+  - key: "orbit-public-repository :: CI checks every commit with orbit's toolchain :: CI passes on the change that moves it"
+    kind: observed
+    record: "orbit/changes/archive/2026-10-13-public-readiness/readiness-record.md §3 — the pull request's CI run, every job's outcome with both test legs"
+  - key: "orbit-public-repository :: A secrets-and-paths scan is recorded before the first public release :: Every finding is resolved or accepted with its class's reason"
+    kind: observed
+    record: "orbit/changes/archive/2026-10-13-public-readiness/readiness-record.md §1 — zero token candidates in the tree and in every blob reachable from main and the change's branch (merge commits and renames included); every published ref checked; every absolute-path finding and authorship address under its row, two resolved at apply"
+  - key: "orbit-public-repository :: A secrets-and-paths scan is recorded before the first public release :: The pattern scan's residual is read, not assumed"
+    kind: observed
+    record: "orbit/changes/archive/2026-10-13-public-readiness/readiness-record.md §1 — the 13 living config-shaped files read by eye, and 1,184 records and fixtures read by machine (a keyword sweep and a high-entropy scan), with what each read found"

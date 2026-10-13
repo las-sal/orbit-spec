@@ -322,13 +322,22 @@ export const ORACLE_TRAIL_COUNT = 81426;
 /**
  * One shard of the oracle: every cadence whose FIRST token is `first` (1 + 6 + 36 = 43 cadences) × every
  * trail. Six shards, one per token, run as six test files so the 21,007,908 cases spread across workers.
+ *
+ * The loop yields to the event loop about once a second. A shard runs for a minute or more on a CI runner, and a
+ * worker whose event loop never turns cannot read vitest's RPC replies, so its calls to the main process time out
+ * and vitest fails the run with unhandled errors although every test passed (public-readiness: CI's macOS leg).
  */
-export function runOracleShard(first: CadenceEntry): { cases: number; withOpenPair: number; failures: string[] } {
+export async function runOracleShard(first: CadenceEntry): Promise<{ cases: number; withOpenPair: number; failures: string[] }> {
   const cads = cadences().filter(c => c[0] === first);
   let cases = 0;
   let withOpenPair = 0;
   const failures: string[] = [];
+  let lastYield = Date.now();
   for (const evs of trails()) {
+    if (Date.now() - lastYield > 1000) {
+      await new Promise(resolve => setImmediate(resolve));
+      lastYield = Date.now();
+    }
     const trail = buildTrail(evs);
     const w = world(trail);
     let wAll: RefWorld | undefined;

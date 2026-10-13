@@ -1,0 +1,9 @@
+schema: spec-driven
+created: 2026-10-13
+schema_version: 5
+base_fingerprints:
+  orbit-source-lint:
+    The lint reads living documents across the whole project: sha256:17c6e4f7a3c37bfa4aec297bffc6307e48c0bb057ebe60f98b13bef245acecd0
+architecture:
+  doc: update-gh-documentation
+  stage: public-readiness

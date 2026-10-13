@@ -1,0 +1,105 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-13T15:52:50Z",
+  "change": "public-readiness",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "pass": "0",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/public-readiness/readiness-record.md",
+      "line": 89,
+      "title": "A second author address is ACCEPTED under a reason the record says it cannot know",
+      "recommendation": "Before the visibility flip, record Sal's answer on sal@sallas.org beside the row. The scan requirement makes every ACCEPTED finding carry its row's reason, and this row's reason (the author's chosen public address) is exactly what the record says it does not know; history is never rewritten, so the answer changes the record, not the repository, but an unanswered flag reads as accepted on the AI's say-so. If Sal says it is not public, state that it stays in history by the requirement's own rule and that the flip exposes it knowingly.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Sal confirms the address is public; replace the parenthetical with his word and date."
+        },
+        {
+          "label": "B",
+          "body": "Sal says it is not chosen as public; keep the row ACCEPTED under the never-rewrite rule, state that the flip exposes it, and say so in the readiness record of the archive emit."
+        }
+      ]
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "test/helpers/run-cli.ts",
+      "line": 62,
+      "title": "The test harness still builds with pnpm when dist/ is missing",
+      "recommendation": "ensureCliBuilt (called from vitest.setup.ts and every runCLI) spawns `pnpm run build` when dist/cli/index.js is absent. CI and a normal `npm install` never reach it, because `npm run build` and `prepare` produce dist/ first, but a contributor on the npm toolchain CLAUDE.md declares who runs `npm test` after deleting dist/ (or after `npm ci --ignore-scripts`) gets spawn ENOENT on a machine without pnpm. Change it to `npm run build`; the CI requirement's pnpm ban reads only workflow files, so nothing checks this."
+    },
+    {
+      "pass": "1",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/public-readiness/specs/orbit-public-repository/spec.md",
+      "line": 44,
+      "title": "The scan's domain names only the default branch, but other public refs carry history too",
+      "recommendation": "The flip also publishes every branch on origin and GitHub's undeletable refs/pull/*/head refs. Measured here: all eleven past-stage branches and all ten PR heads (6, 7, 14-21) are ancestors of origin/main, and the 15 commits on public-readiness add no token candidate and no absolute path outside the accepted rows, so nothing escaped this time. Either state in the requirement that a ref not contained in the default branch is scanned too, or record in readiness-record.md section 1 that every public ref was checked as an ancestor of main (the branch list in section 4 already does it for branches, not PR refs)."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/public-readiness/readiness-record.md",
+      "line": 48,
+      "title": "The record quotes the paths it resolved, while it sits in a living path",
+      "recommendation": "readiness-record.md itself matches the scan's path pattern (lines 53, 60, 73-76: /tmp/openspec-src, /private/var, /home/node, C:\\Users, /Users/me). It was written after the scan, so it is classified under no row; at its active path it falls in 'any other living file' (RESOLVED: removed), and it reaches the accepted 'orbit/changes/archive/**' row only when the archive moves it. Add one sentence saying the record's own quotations are covered by the archive row once moved, or quote the prefixes without the following path."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Probed empirically rather than by reading claims: re-ran the record's own token and path regexes over HEAD (only fork-and-orbify.md and the record itself match outside the accepted rows), over every line the branch adds beyond origin/main, and checked every origin head and PR ref for ancestry. Checked the CI rewrite against the scenario (every needs entry defined, matrix on all three events, no job-level if), the source-lint delta against its baseline block line by line (only the paragraph and the row changed, every scenario carried), the trimmed CLAUDE.md against the four baseline constraints (upstream pin, orbit status bare and --full, outward-actions note, a live src: marker), the moved records' living pointers, and every remaining Fission-AI link in src, bin, scripts, docs and package.json (one, the README's attribution). The release tree carries LICENSE because it is built from the base commit. The scenario map shows 15 of 15 delta scenarios declared, validate --strict and validate --sources pass, and the four touched suites pass locally. Pass 0 and Pass 6 were run inline as targeted checks (task state, scenario coverage, design adherence; residue of every deleted name across living files) rather than through the verify and audit-drift skills. The one thing that needs a person is the second author address.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "6"
+  ],
+  "passes_skipped": [
+    "4: no perspectives defined (orbit/lenses/ absent); skip Pass 4",
+    "5: no critical paths defined (orbit/lenses/ absent); skip Pass 5"
+  ],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The change does what its exits ask, and I measured them on the tree instead of trusting the record: the root is twelve rows with no orphan, the LICENSE test fails on each mutation, CI is npm-only on both legs with no dangling needs, and the scan holds when I re-run it over HEAD and over the branch's own additions. Nothing found blocks the archive. Before the visibility flip, which is Sal's act, he should answer the author-address question the record left open. History cannot be rewritten afterwards, so that is the one decision here that cannot be undone."
+  },
+  "final_assessment": "0 critical, 1 warning, 3 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews public-readiness"
+}

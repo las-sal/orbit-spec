@@ -163,6 +163,33 @@ export interface GhScript {
 let counter = 0;
 
 /**
+ * A directory linking every entry of /usr/bin and /bin except `gh`, first match winning as PATH
+ * order would: the system dirs a gh-absent PATH needs, with a host-installed gh genuinely absent.
+ */
+export function systemBinWithoutGh(sysbin: string, systemDirs: string[] = ['/usr/bin', '/bin']): string {
+  fs.mkdirSync(sysbin, { recursive: true });
+  for (const sys of systemDirs) {
+    let entries: string[];
+    try {
+      entries = fs.readdirSync(sys);
+    } catch {
+      continue;
+    }
+    for (const name of entries) {
+      if (name === 'gh') continue;
+      const link = path.join(sysbin, name);
+      if (fs.existsSync(link)) continue;
+      try {
+        fs.symlinkSync(path.join(sys, name), link);
+      } catch {
+        // a name already linked through an earlier dir, or one the host forbids: PATH order keeps the first
+      }
+    }
+  }
+  return sysbin;
+}
+
+/**
  * Create a disposable repository with a real bare remote, the `git` shim and the `gh` stub.
  *
  * The stub and the shim RECORD every invocation, so a case can assert both "this command was
@@ -189,10 +216,13 @@ export function makeRepo(
   installGitShim(binDir);
   if (opts.gh !== 'absent') installGhStub(binDir, opts.gh ?? {}, defaultBranch);
 
-  // `absent` must mean absent: a PATH of only the bin dir (shim, no stub) plus the system dirs,
-  // where git lives but no host-installed gh does.
+  // `absent` must mean absent: a PATH of only the bin dir (shim, no stub) plus the system dirs with
+  // any `gh` left out. A host may install gh beside git in /usr/bin (GitHub's Ubuntu runners do), so
+  // the system dirs are mirrored as links, never put on PATH whole.
   const repo =
-    opts.gh === 'absent' ? new Repo(dir, binDir, `${binDir}:/usr/bin:/bin`) : new Repo(dir, binDir);
+    opts.gh === 'absent'
+      ? new Repo(dir, binDir, `${binDir}:${systemBinWithoutGh(path.join(base, 'sysbin'))}`)
+      : new Repo(dir, binDir);
   repo.defaultBranch = defaultBranch;
   repo.git('init', '-q', '-b', defaultBranch);
   repo.git('config', 'user.email', 'harness@orbit.test');
