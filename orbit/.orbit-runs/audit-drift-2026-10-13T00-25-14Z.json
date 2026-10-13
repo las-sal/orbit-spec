@@ -1,0 +1,53 @@
+{
+  "command": "audit-drift",
+  "timestamp": "2026-10-13T00:25:14Z",
+  "change": null,
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "final_assessment": "No critical issues. 1 warning(s) to consider.",
+  "categories_run": [
+    "1",
+    "3",
+    "4"
+  ],
+  "findings": [
+    {
+      "category": "3",
+      "severity": "WARNING",
+      "file": "CLAUDE.md",
+      "line": 107,
+      "title": "CLAUDE.md names clean-up-review-cycle as the latest program while update-gh-documentation is live",
+      "recommendation": "The section heading at line 107 ('The latest program: clean-up-review-cycle') and the When in doubt bullet at line 1079 ('The most recent program is orbit/architecture/clean-up-review-cycle.md') both predate orbit/architecture/update-gh-documentation.md, whose stages docs-under-test, landing-page and reference-docs are archived and concept-docs and public-readiness premised (orbit architecture status). A session oriented by CLAUDE.md alone never learns the live program exists. Add a short section naming update-gh-documentation as the live program (pointing at orbit architecture status for position, never stating it), retitle the clean-up-review-cycle section as the previous program, and repoint the When in doubt bullet."
+    },
+    {
+      "category": "3",
+      "severity": "SUGGESTION",
+      "file": "CLAUDE.md",
+      "line": 100,
+      "title": "CLAUDE.md lists the user-docs rewrite as a deferred follow-up while a program is executing it",
+      "recommendation": "'Deferred follow-ups: broader user-docs rewrite (issue #1)' is now the update-gh-documentation program's subject, three of its five stages archived. Reword it to name the program as the owner, in the same edit as the WARNING above."
+    },
+    {
+      "category": "3",
+      "severity": "SUGGESTION",
+      "file": "orbit/specs/orbit-run-summary-emit/spec.md",
+      "line": 19,
+      "title": "The emit-scope list says bulk archive's inner /orbit:archive invocations emit; bulk now writes each change's emit through its own step",
+      "recommendation": "Carried from the 2026-10-11 project audit, whose walk deferred it; still present. Reword in the next change that touches orbit-run-summary-emit: bulk-archive writes one archive emit per change through its own per-change emit step (rc10)."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "category": "3",
+      "title": "Two requirements still call Step 3.4's prompt 'the review-system gate prompt'",
+      "evidence": "deferred by the 2026-10-11 walk; grep finds no 'review-system gate prompt' in orbit/specs/orbit-archive-modifications/spec.md now"
+    }
+  ],
+  "findings_total": 3,
+  "findings_by_category": {
+    "1": 0,
+    "3": 3,
+    "4": 0
+  },
+  "next_recommended": "/orbit:address-reviews --from-file orbit/.orbit-runs/audit-drift-2026-10-13T00-25-14Z.json — 3 drift(s) detected project-wide; resolve before next workflow step"
+}

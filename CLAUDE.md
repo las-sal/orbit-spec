@@ -97,19 +97,28 @@ Change validates `--strict`; **1567 tests green** (incl. the C1 gate-model unit 
 marker fidelity, launcher assertions, and an e2e generated-surface test that runs a real default init
 for claude+codex).
 Per D13, B-arc keeps prose as **inline TS template literals** (markdown-as-source/D6 deferred).
-**Deferred follow-ups:** broader user-docs
-rewrite (issue #1). (B1's archive-reference deferral is DELIVERED by B2: the generator now emits
+**Deferred follow-ups:** the broader user-docs
+rewrite (issue #1) is now the live program, `update-gh-documentation` (below). (B1's archive-reference deferral is DELIVERED by B2: the generator now emits
 multi-file skills — `references/` — with metadata pass-through and convergent reconciliation.) The disciplines-reference consolidation was REVERSED (D-b2-2 in the
 B2 exploration; issue #4 closed) — per-command divergence is the desired trajectory; disciplines
 stay inline per body.
 The full plan and design decisions live in the docs below — **read them before B-arc work.**
 
-## The latest program: clean-up-review-cycle (all stages closed 2026-10-12)
+## The live program: update-gh-documentation
+
+The live program is **`orbit/architecture/update-gh-documentation.md`** (opened 2026-10-12 from issue #1). This
+repository goes public when it ends, so it rewrites `README.md` and the `docs/` pages for orbit and puts them under
+machine checks (goals G1–G4, the R-ugd rulings), in the stages `docs-under-test`, `landing-page`, `reference-docs`,
+`concept-docs` and `public-readiness`. Position is COMPUTED: run `orbit architecture status`, and never trust a
+position stated here. The checks are `orbit-user-docs`' requirements; `test/core/user-docs/pending-rewrite.json`
+lists the pages still owed. Flipping the repository public is Sal's act at arc-done, never an orbit step.
+
+## The previous program: clean-up-review-cycle (all stages closed 2026-10-12)
 
 **Current state, engine-checked:** the program's rulings index holds <!-- src:rulings -->14<!-- /src:rulings --> rulings, and `orbit/specs/` holds <!-- src:capabilities -->28<!-- /src:capabilities --> baseline capabilities. Every marked figure in this file is checked against `orbit/sources.yaml` by `orbit validate --sources`; an UNMARKED figure is invisible to that check.
 
 As of 2026-09-11 the D-arc's six stages are all archived (d1 complete-ratified; d2–d6
-quiescent, awaiting ratification) and the live program is
+quiescent, awaiting ratification) and the live program became
 **`orbit/architecture/clean-up-review-cycle.md`** — goals G0–G4, the R-crc rulings (the size
 ceiling, the ordering principle, method delegated to the authoring AI, the canonical review
 cadence, the conditional reversal of D-d6-7, the canonical cadence's blind pair, the walk-authors-nothing lanes, explore-produces-mechanism, finding-quality-never-licenses-another-pass, the ceiling corollary — split the mechanism or declare the stage blocked, never substitute a cheaper one — MECHANIZE ONLY WHAT THE ENGINE CAN OBSERVE — name the inputs, and where any is prose or judgment the deliverable is a RECORD rather than a CHECK, THE PROGRAM OPTIMISES FOR ALIGNMENT NOT CYCLE COST — the user FRAMES and GUARDRAILS, the AI SOLVES, A CRITERION WRITTEN BEFORE THE TEST CANNOT GRADE THE TEST — when a stage's shipped mechanism invalidates its own exit criterion's terms the stage revises the criterion and records why, though a criterion the mechanism can still measure and does not meet is a MISS — and an INSTRUMENT CORRECTION is neither, because a criterion whose measuring command was simply wrong still grades, and A GATE REPORTS, IT NEVER RULES — passage is a joint judgement taken on the facts by the AI and the user together, and an emit RECORDS that judgement rather than grading how the past went, and A RULE IS STATED ONCE, IN THE SPEC THAT OWNS IT — every other surface names it and points, because two statements of one rule are two extensions and rc04c watched them diverge four times), <!-- src:stages -->40<!-- /src:stages --> small stages in four phases (rc03a withdrawn 2026-09-15 after three passes; rc13 split into rc13a/rc13b the same day under R-crc-9's first application; rc07b split from rc07 under R-crc-9 applied PREVENTIVELY; rc04d split from rc04c 2026-09-21, the third preventive application — a size check at exploration measured the stage at twice the ceiling before anything was proposed; rc13c and rc15 declared 2026-09-25 — rc13a's proposed follow-on, and Q-crc-11 taken up as a stage; rc16-retirement-sweep declared 2026-10-01 from Q-crc-28's ratified direction, pointer-only, three capabilities; rc03 split into rc03b-pass-genres + rc03c-verification-record 2026-10-04, the fourth preventive application, caught at exploration — its charter had been eaten from three sides by rc02/rc02c/rc04b; rc06 split into rc06a-scenario-map + rc06b-map-readers the same day, the fifth, caught at exploration; rc08 split into rc08a-sweep-evidence + rc08b-walk-routing 2026-10-05, the sixth, caught at exploration; rc17-blind-pair-command declared the same day from rc08b's system walk — Sal's one-command blind pair, carrying the walk's routed pair-diagnosis redesign — and split at its exploration the same day into rc17a-invoked-coverage + rc17b-blind-pair-command, the seventh preventive application, with R-crc-4 amended: the blind pair is the recommended first review, no longer the required one; rc17c-short-review-next split from rc17a at its propose the same day, the eighth, caught by a capability count before any artifact was written; rc17d-external-runner split from rc17b at its exploration 2026-10-06, the ninth — the per-user runner record and auto-launch move to rc17d, rc17b keeps the one-command pair and depends on it; rc18-walk-is-next declared 2026-10-07 from rc17c's proposal cycle — a passed gate with an unwalked pass names the walk as its single next; rc05b-git-grammar split from rc05 at its exploration 2026-10-08, the tenth — `git`'s recorded contract and the `gh` sweep's move onto the shared extractor go to rc05b, rc05 keeps `orbit`; rc09 split into rc09a-size-record + rc09b-tool-inventory at its exploration 2026-10-10, the eleventh — size as a report, the external-tool spike as an inventory test). Its first
@@ -1076,7 +1085,7 @@ paths are kept out of bodies.
 
 ## When in doubt
 
-- The fork plan's decisions remain citable — `orbit/architecture/fork-and-orbify.md` (program complete); the D-arc that followed it is `orbit/architecture/d-arc-arbitered-flow.md` (also complete — historical record). The most recent program is `orbit/architecture/clean-up-review-cycle.md`, its stages all closed; read its Premise, Goals, Rulings index and "Carried at close" table, never the whole doc.
+- The fork plan's decisions remain citable — `orbit/architecture/fork-and-orbify.md` (program complete); the D-arc that followed it is `orbit/architecture/d-arc-arbitered-flow.md` (also complete — historical record). The previous program is `orbit/architecture/clean-up-review-cycle.md`, its stages all closed; read its Premise, Goals, Rulings index and "Carried at close" table, never the whole doc. The live program is `orbit/architecture/update-gh-documentation.md`; `orbit architecture status` gives its position.
 - Engine behavior is defined in the vendored TypeScript under `src/` (the architecture doc maps it).
 - Keep tests green: run `npm test` before and after substantive changes; the green baseline is the
   contract.

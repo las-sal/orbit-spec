@@ -1,0 +1,118 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-13T00:26:38Z",
+  "change": null,
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "from-file",
+  "source_path": "orbit/.orbit-runs/audit-drift-2026-10-13T00-25-14Z.json",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 2
+  },
+  "pushback_verification": "All three verified at HEAD: CLAUDE.md:107 headed 'The latest program: clean-up-review-cycle' and CLAUDE.md:1079 called it the most recent program while orbit architecture status lists update-gh-documentation with three stages archived; CLAUDE.md:100-101 listed the user-docs rewrite as deferred; orbit-run-summary-emit/spec.md:19 still says each inner /orbit:archive invocation emits.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 0,
+    "deferred": 1,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "CLAUDE.md names clean-up-review-cycle as the latest program while update-gh-documentation is live",
+      "marker_source": "audit-drift",
+      "file": "CLAUDE.md",
+      "line": 107,
+      "classification": "trivial_fix",
+      "action": "added a 'The live program: update-gh-documentation' section (doc path, origin, purpose, stage names, position computed by orbit architecture status, the user-docs checks and pending list, the public flip as Sal's act); retitled the old section 'The previous program: clean-up-review-cycle'; its dated 'the live program is' sentence now reads 'became'; the When-in-doubt bullet calls clean-up-review-cycle the previous program and names the live one",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "## The latest program: clean-up-review-cycle",
+          "The most recent program is `orbit/architecture/clean-up-review-cycle.md`",
+          "awaiting ratification) and the live program is"
+        ],
+        "introduced": [
+          {
+            "path": "CLAUDE.md",
+            "text": "## The live program: update-gh-documentation"
+          },
+          {
+            "path": "CLAUDE.md",
+            "text": "## The previous program: clean-up-review-cycle"
+          },
+          {
+            "path": "CLAUDE.md",
+            "text": "The live program is `orbit/architecture/update-gh-documentation.md`; `orbit architecture status` gives its position."
+          }
+        ],
+        "searched": [
+          "latest program",
+          "most recent program",
+          "live program",
+          "clean-up-review-cycle"
+        ],
+        "scope": [
+          "README.md",
+          "AGENTS.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "CLAUDE.md lists the user-docs rewrite as a deferred follow-up while a program is executing it",
+      "marker_source": "audit-drift",
+      "file": "CLAUDE.md",
+      "line": 100,
+      "classification": "trivial_fix",
+      "action": "the Deferred follow-ups clause now says the broader user-docs rewrite (issue #1) is the live program, update-gh-documentation",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "CLAUDE.md",
+            "text": "rewrite (issue #1) is now the live program, `update-gh-documentation` (below)."
+          }
+        ],
+        "searched": [
+          "issue #1",
+          "user-docs"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The emit-scope list says bulk archive's inner /orbit:archive invocations emit; bulk now writes each change's emit through its own step",
+      "marker_source": "audit-drift",
+      "file": "orbit/specs/orbit-run-summary-emit/spec.md",
+      "line": 19,
+      "classification": "unresolvable",
+      "action": "baseline spec: a walk edits no baseline outside a change; deferred again, as the 2026-10-11 walk left it, to the next change that touches orbit-run-summary-emit, whose bullet should read that bulk archive writes one archive emit per change through its per-change step",
+      "outcome": "deferred"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Two of three resolved, one deferred: CLAUDE.md now names update-gh-documentation as the live program (its stages named, its position left to orbit architecture status), retitles clean-up-review-cycle as the previous program and repoints the When-in-doubt bullet, and the user-docs follow-up names the program executing it; the orbit-run-summary-emit emit-scope bullet stays deferred to the next change touching that capability, as the 2026-10-11 walk left it.",
+  "iteration": 17,
+  "next_recommended": "No markers remain in scope; the project trail records this walk.",
+  "ripple_misses": 0
+}
