@@ -1,0 +1,38 @@
+{
+  "command": "architect",
+  "timestamp": "2026-10-13T00:29:11Z",
+  "change": null,
+  "doc": "update-gh-documentation",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Ratified reference-docs (all three exits MET on its archived record); landing-page offered a third time and left unratified at Sal's word, exit (3)'s two observations still unrecorded. Status log appended.",
+  "stages_touched": [
+    "reference-docs",
+    "landing-page"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [
+    "reference-docs"
+  ],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      {
+        "path": "orbit/architecture/update-gh-documentation.md",
+        "why": "the program: the concept-docs stage charter and exits, and the R-ugd rulings it must honour"
+      },
+      {
+        "path": "orbit/changes/archive/2026-10-13-reference-docs/.orbit-runs/archive-2026-10-13T00-21-12Z.json",
+        "why": "carried forward to concept-docs: docs/supported-tools.md still describes upstream, and init/update print upstream URLs"
+      },
+      {
+        "path": "test/core/user-docs/pending-rewrite.json",
+        "why": "the five pages concept-docs owes"
+      }
+    ],
+    "next_command": "/orbit:explore concept-docs",
+    "model_hint": null,
+    "seam": "architect session closed; concept-docs is premised and next"
+  },
+  "next_recommended": "/orbit:explore concept-docs"
+}

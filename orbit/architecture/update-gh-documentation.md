@@ -180,7 +180,7 @@ slips, walked to zero), and the gate computed PASSED. 3642 tests green.
 ### Stage reference-docs — the command and workflow pages teach orbit
 
 Depends-on: docs-under-test
-Complete: [ ]
+Complete: [x] 2026-10-12 (Sal)
 
 Charter: rewrite `docs/installation.md`, `docs/getting-started.md`, `docs/cli.md`, `docs/commands.md`,
 `docs/workflows.md` and `docs/opsx.md` for orbit (the last renamed to an orbit name, its links repointed). Every
@@ -302,3 +302,8 @@ is now `docs/workflow-engine.md`, and `orbit feedback` files on `las-sal/orbit-s
 repointed one anchor in `docs/customization.md`, a page owed to concept-docs. Carried forward: `orbit init` and
 `orbit update` still print upstream's URLs (R-ugd-3; no page teaches them), and `docs/supported-tools.md`, which the
 commands page links for Codex, still describes upstream until concept-docs.
+
+**2026-10-12 — reference-docs ratified (Sal), in an architect session; landing-page not yet.** reference-docs' three
+exits were graded MET as written on its archived record, and Sal ratified it. landing-page completion was offered
+again: not yet (Sal), for the third time on the same ground, since exit (3)'s `/orbit:propose` half and post-flip
+re-run are still unobserved.
