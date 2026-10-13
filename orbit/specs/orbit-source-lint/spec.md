@@ -14,7 +14,6 @@ unmarked figures are INVISIBLE to the lint and are never reported as clean, and 
 COVERAGE is reported so a fact nothing points at stays visible. The lint counts and compares; it
 infers nothing about which token in prose an author meant, and where an input is prose or judgment
 the deliverable is a RECORD rather than a CHECK.
-
 ## Requirements
 ### Requirement: Source registry declares computable facts
 
@@ -169,7 +168,7 @@ Two consequences of that authority are STATED rather than discovered. `git ls-fi
 
 **The lint reads LIVING documents, never RECORDS.** A figure inside a record was TRUE WHEN WRITTEN, and linting it would demand rewriting history to match the present, which inverts what a record is for. Every exclusion below is stated with its reason, and each is decidable BY PATH so that no judgment is asked of the engine.
 
-That boundary is decidable BY PATH only BETWEEN files. WITHIN a file it is not: a living document may narrate history, and `CLAUDE.md` is the standing example — nearly all of its figures are transitions inside archived stage narratives (`capabilities 13 → 14`, "`spec-driven` went to version 3 here") that were true when written and must never be dragged forward. Inside a file, therefore, the AUTHOR'S MARKER is the boundary: a marked span is a present-tense claim, everything unmarked is outside the lint's reach whether it is narrative or not, and a fact whose file has no present-tense claim to mark needs one WRITTEN before it can be checked.
+That boundary is decidable BY PATH only BETWEEN files. WITHIN a file it is not: a living document may narrate history, and an architecture doc's status log is the standing example — its figures are transitions (`capabilities 13 → 14`, "`spec-driven` went to version 3 here") that were true when written and must never be dragged forward, beside present-tense content in the same file. A whole-file record kept inside the domain — a completed program doc, `orbit/architecture/program-history.md`, a record moved there — is read but INERT while it carries no marker: the lint judges only marked spans. Inside a file, therefore, the AUTHOR'S MARKER is the boundary: a marked span is a present-tense claim, everything unmarked is outside the lint's reach whether it is narrative or not, and a fact whose file has no present-tense claim to mark needs one WRITTEN before it can be checked.
 
 The path-decidable exclusions:
 
@@ -179,7 +178,6 @@ The path-decidable exclusions:
 | `test/**` | FIXTURES and GOLDENS — their numbers are test data |
 | `schemas/*/templates/**`, `orbit/schemas/*/templates/**` | TEMPLATES — placeholders, not claims. BOTH tiers: the package's own schemas and a project-local schema directory, which the engine resolves first and which is version-controlled when present |
 | `.claude/**` | GENERATED — the source is what must be true |
-| `README_OLD.md`, `adopter-report-*.md` | HISTORICAL — superseded by their own names; the only glob-shaped entries, still decidable by path |
 
 #### Scenario: A stale figure in a governing document outside `orbit/` fails
 
@@ -259,3 +257,4 @@ As the stated mitigation, and as a RECORD rather than a check, the lint SHALL re
 
 - **WHEN** the lint runs and a declared source has zero marked spans referencing it
 - **THEN** the coverage report lists that source with a count of zero, so the gap is visible without the engine judging whether a marker is owed
+

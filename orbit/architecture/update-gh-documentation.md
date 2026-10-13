@@ -259,6 +259,20 @@ over every tracked file and its findings are resolved or accepted with a reason;
 notice and orbit's; (4) `v2.0.0` is on `origin`, on a release commit whose parent is `main` at or after this stage's
 merge, and a release-tree install of it prints `2.0.0`.
 
+Shipped as (2026-10-13; archived as `orbit/changes/archive/2026-10-13-public-readiness/`; the charter stands, and exit (4)
+waits for the merge): the root holds 12 files, each with a recorded decision. Upstream's leftover files, repository
+config, Nix files, dev container, assets and npm publish setup are deleted. The merge plan and the adopter report moved
+to `orbit/architecture/`. `CHANGELOG.md` is orbit's, from `2.0.0`, and `LICENSE` carries both notices. CI runs on npm
+and passed for the first time in orbit's history (run 38418242716), on Linux and macOS only. Its Windows leg was
+DROPPED on Sal's word after it failed 198 tests and proved unable to fail under `pwsh` (issue #23). Four test-harness
+faults that only CI exposed were repaired, and no test was skipped. The scan reads every blob reachable from `main` and
+this branch, merge commits and renames included, and checks every ref the repository publishes. Living config files
+were read by eye; records and fixtures were read by machine, the method narrowed on Sal's A at the system walk.
+Nothing confirmed was found; the second author address is public on Sal's word. `CLAUDE.md` is trimmed to guidance,
+and its per-stage narrative moved word for word to `orbit/architecture/program-history.md`, so archives no longer
+append a stage paragraph there. `orbit init` and `orbit update` link to orbit's repository (R-ugd-12). Baseline
+capabilities 29 → 30 (`orbit-public-repository` ADDED).
+
 ## Considered & out
 
 - **2026-10-12 — the Tier-C code scrub.** Folding the `OpenSpec` strings in CLI help and messages into this program
