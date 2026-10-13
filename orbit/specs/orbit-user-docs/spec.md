@@ -23,8 +23,9 @@ array of repository-relative paths. The list is exact in both directions, by thi
 | a user doc added later, unlisted | held to every check from its first commit |
 
 A listed file's "every check" is the FILE-LOCAL set, each run over that file alone: the residue check, the `orbit`
-snippet sweep, the `git`/`gh` sweep, the tool inventory's unknown-head rule, and the improvement-claims check (which
-reads `README.md` alone and passes every other file). The rules that hold over the user
+snippet sweep, the `git`/`gh` sweep, the tool inventory's unknown-head rule, the improvement-claims check (which
+reads `README.md` alone and passes every other file), and the command-coverage check (which reads `docs/cli.md` and
+`docs/commands.md` and passes every other file). The rules that hold over the user
 docs as a WHOLE — an unused `docs-inventory` declaration and the non-vacuity floors — are never run on one listed
 file, because no single file can decide them; they run over the unlisted user docs together.
 
@@ -249,4 +250,70 @@ Named limit (the improvement-claims check). Residual kind: an improvement claim 
 
 - **WHEN** `README.md` is on the pending-rewrite list
 - **THEN** the unlisted-doc suite reports no improvement-claims failure against it, and the exactness rule still runs the check over it alone, so a listed README that passes every file-local check is reported finished
+
+### Requirement: The reference pages name every command and every workflow
+
+The COMMAND-COVERAGE CHECK SHALL fail the suite when `docs/cli.md` does not name a visible command path of the program
+or `docs/commands.md` does not name a workflow id, naming the page and each missing path or id. It is a file-local
+check that reads those two pages and passes every other user doc, so the suite runs it as it runs every file-local
+check: over the unlisted user docs, and, in the pending-rewrite list's exactness rule, over a listed page alone. Its
+domain is read from the code, never typed into the test, by this table:
+
+| member | covered by |
+|---|---|
+| a visible top-level command of the program `buildProgram` returns (`src/cli/program.ts`) | owed by `docs/cli.md`, as the path `orbit <command>` |
+| a visible subcommand, at any depth | owed by `docs/cli.md`, as the full path `orbit <command> <subcommand>…` |
+| a hidden command (commander's `_hidden`, as `fromProgram` in `test/helpers/registry-parity.ts` reads it) and everything under it | not owed |
+| a workflow id in `ALL_WORKFLOWS` (`src/core/profiles.ts`) | owed by `docs/commands.md`, as `/orbit:<id>` |
+| a flag | not owed: the `orbit` snippet sweep parses every documented flag |
+
+The command tree is the program the completion registry is held equal to (`orbit-cli-grammar`), and `ALL_WORKFLOWS`
+is the installed workflow surface, so the two sources between them are every command a user can type.
+
+A page NAMES a command path `orbit <words>` when its text carries that string, matched case-sensitively, with no letter, digit, `_`, `/`, `.`
+or `-` immediately before `orbit` and no letter, digit, `_` or `-` immediately after the last word; the words are
+separated by single spaces. It NAMES a workflow id when its text carries `/orbit:<id>` with no letter, digit, `_` or
+`-` immediately after. Text is the whole file, fences and inline code included. A path names each of its prefixes,
+so `orbit pr select` names `orbit pr`.
+
+The suite also fails when either owing page, `docs/cli.md` or `docs/commands.md`, is neither on the pending-rewrite
+list nor present among the user docs, naming the missing page, so deleting or renaming a page never satisfies the check.
+A file-local check never sees an absent file, so this one runs over the suite's document set.
+
+The check reads names; it never judges whether a page teaches the command it names. That stays review's.
+
+#### Scenario: A command the CLI page does not name fails
+
+- **WHEN** `docs/cli.md` is unlisted and nowhere carries `orbit fingerprint`
+- **THEN** the suite fails naming `docs/cli.md` and `orbit fingerprint`
+
+#### Scenario: A subcommand names its parent
+
+- **WHEN** `docs/cli.md` carries `orbit pr select` and never `orbit pr` on its own
+- **THEN** the path `orbit pr` is named
+
+#### Scenario: A longer word is not a name
+
+- **WHEN** `docs/cli.md` carries `orbit validated` and never `orbit validate`
+- **THEN** the path `orbit validate` is not named
+
+#### Scenario: A hidden command is not owed
+
+- **WHEN** `docs/cli.md` never names `orbit experimental` or `orbit __complete`
+- **THEN** the check reports neither
+
+#### Scenario: A workflow the commands page does not name fails
+
+- **WHEN** `docs/commands.md` is unlisted and nowhere carries `/orbit:audit-drift`
+- **THEN** the suite fails naming `docs/commands.md` and `/orbit:audit-drift`
+
+#### Scenario: A missing owing page fails
+
+- **WHEN** `docs/cli.md` is neither on the pending-rewrite list nor present among the user docs
+- **THEN** the suite fails naming `docs/cli.md` as missing
+
+#### Scenario: Every other user doc passes
+
+- **WHEN** a user doc other than `docs/cli.md` and `docs/commands.md` names no command at all
+- **THEN** the command-coverage check passes it
 
