@@ -1,0 +1,95 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-13T22:25:09Z",
+  "change": null,
+  "doc": "update-gh-documentation",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "architecture",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {},
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 3
+    }
+  },
+  "findings": [
+    {
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "title": "The program's goals G1–G4 have no graded reading",
+      "file": "orbit/architecture/update-gh-documentation.md",
+      "line": 23,
+      "recommendation": "Each stage's exits are graded, but nothing grades the four goals the stages trace to. Record a goal reading at arc-done, as clean-up-review-cycle's status log did: G2, G3 and G4 can be graded on the archived records now (the claims check, the pending-rewrite list emptied, the sweeps over README and docs/), while G1 ('a newcomer following the README installs orbit and runs its core loop') is graded only by landing-page's post-flip run."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "title": "reference-docs carries no Shipped-as paragraph",
+      "file": "orbit/architecture/update-gh-documentation.md",
+      "line": 206,
+      "recommendation": "The other four stages each close with a 'Shipped as' paragraph under their exits; reference-docs' outcome lives only in the status log (lines 351-360). Add its paragraph after its exits, from that entry, so every stage section reads the same way and a stage slice (orbit architecture show) carries what shipped."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "Considered & out does not record the dropped Windows support",
+      "file": "orbit/architecture/update-gh-documentation.md",
+      "line": 276,
+      "recommendation": "Dropping CI's Windows leg (Sal, at public-readiness's apply) is a direction the program weighed and rejected, but it is recorded only inside public-readiness's Shipped-as paragraph. Add a dated Considered & out entry naming the reason (198 failures from causes outside the program, a pwsh leg that could not fail) and issue #23 as where it now lives."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "The Tier-C scrub entry does not say where the deferred work now lives",
+      "file": "orbit/architecture/update-gh-documentation.md",
+      "line": 278,
+      "recommendation": "Sal chose on 2026-10-13 to end the program and track the remaining user-visible OpenSpec strings in issue #24 ('Refine Documentation'), with the architect-first Quickstart. The Considered & out entry and R-ugd-3 still read as an open-ended deferral. Append to the entry that the work is tracked in #24 for after the program, so the rejected direction points at its continuation."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "The status log's remaining-work list is now partly done",
+      "file": "orbit/architecture/update-gh-documentation.md",
+      "line": 393,
+      "recommendation": "The last entry lists deleting the eleven past-stage branches as remaining; they were deleted on 2026-10-13 (origin now holds main only), and issue #24 opened. The log is append-only, so append an entry recording the branch deletion, issue #24, and this closing review, leaving the visibility flip, the description and topics, and landing-page's post-flip run and ratification as what remains."
+    }
+  ],
+  "commentary": "Read whole (395 lines) against orbit architecture status. The doc holds together: every stage charter traces to a goal, every stage has falsifiable exits, Depends-on matches the sequencing prose with no cycle, and the four carve-outs from R-ugd-3 each name their exact reach. The supersession chain R-ugd-6 → 7 → 8 → 9 is annotated in place, so no ruling reads as live where it is not. What is thin is the arc-close layer: goals never graded, one stage without its Shipped-as, and two rejected directions (Windows, the CLI scrub's continuation) recorded only in passing. None changes a stage's state. landing-page's exit (3) is the one open item, and it waits on Sal's flip by design. First architecture review for this doc.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6"
+  ],
+  "passes_skipped": [],
+  "handoff": {
+    "boot_sequence": [
+      "CLAUDE.md — orientation and the live-program pointer",
+      "orbit/architecture/update-gh-documentation.md — the program; its Status log's last entry says what remains"
+    ],
+    "next_command": "/orbit:address-reviews --from-file orbit/architecture/.orbit-runs/review-architecture-2026-10-13T22-25-09Z.json",
+    "model_hint": null,
+    "seam": "post-review"
+  },
+  "final_assessment": "0 critical, 0 warning, 5 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews --from-file orbit/architecture/.orbit-runs/review-architecture-2026-10-13T22-25-09Z.json"
+}
