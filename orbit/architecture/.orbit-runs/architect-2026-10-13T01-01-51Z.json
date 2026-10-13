@@ -1,0 +1,34 @@
+{
+  "command": "architect",
+  "timestamp": "2026-10-13T01:01:51Z",
+  "change": null,
+  "doc": "update-gh-documentation",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Captured R-ugd-11 (Sal): orbit init warns when an OpenSpec project directory sits beside it, carved out of R-ugd-3 from the concept-docs exploration's D-cd-1/D-cd-2; the concept-docs charter names it. Cherry-picking upstream fixes before launch went to Considered & out (Sal: docs only), closing the exploration's Q-cd-8 as D-cd-9. landing-page offered a fourth time: not yet (Sal), exit (3)'s two observations still owed.",
+  "stages_touched": [
+    "concept-docs",
+    "landing-page"
+  ],
+  "rulings_captured": [
+    "R-ugd-11"
+  ],
+  "completions_ratified": [],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      {
+        "path": "orbit/explore/concept-docs/explore.md",
+        "why": "the concept-docs exploration: Cases 1-2 and D-cd-1..9, all questions closed"
+      },
+      {
+        "path": "orbit/architecture/update-gh-documentation.md",
+        "why": "the program: the concept-docs charter and R-ugd-11"
+      }
+    ],
+    "next_command": "/orbit:propose concept-docs",
+    "model_hint": null,
+    "seam": "concept-docs exploration ready to promote; expect a size brief at propose (five pages, the init warning, two checks, the docs-inventory fence)"
+  },
+  "next_recommended": "/orbit:propose concept-docs"
+}

@@ -88,6 +88,12 @@ be seen. Flipping visibility to public is Sal's act at arc-done, never an orbit 
   command's help description wherever it is defined (`src/cli/program.ts` and the completion registry,
   `src/core/completions/command-registry.ts`), and its test. R-ugd-3 stands for every other `OpenSpec` string in CLI help and messages. The fork has no
   `feedback` label, which the command passes; the stage settles at propose whether it drops the label or Sal creates it.
+- **R-ugd-11** (Sal, 2026-10-12; from the concept-docs exploration's D-cd-1 and D-cd-2; carves out of R-ugd-3) —
+  `orbit init` warns when `openspec/` holds `specs/` or `changes/`, whether or not `orbit/` exists, names the manual
+  migration steps and points at `docs/migration-guide.md`, then proceeds (never a prompt or a stop). Measured cause: run
+  over a real OpenSpec 1.3.1 or 1.14.1 project, `orbit init` leaves `openspec/` untouched, creates an empty `orbit/`
+  beside it and installs orbit's skills beside upstream's, and `orbit list` reports no changes, with nothing said. The
+  carve-out covers the warning, its call site in `src/core/init.ts`, and its test. R-ugd-3 stands for everything else.
 
 ## Open questions
 
@@ -199,7 +205,8 @@ Complete: [ ]
 Charter: rewrite `docs/concepts.md`, `docs/customization.md`, `docs/supported-tools.md`, `docs/multi-language.md` and
 `docs/migration-guide.md` for orbit. Concepts covers what orbit adds over OpenSpec (reviewed gates and the cadence,
 the blind pair and walks, emits and trails, the architect tier, `orbit pr`); the migration guide is rewritten for an
-adopter arriving FROM OpenSpec. Goals G2, G3.
+adopter arriving FROM OpenSpec. Under R-ugd-11, the stage also adds `orbit init`'s warning for an OpenSpec project.
+Goals G2, G3.
 
 Exit: (1) the five pages pass docs-under-test's checks with no recorded exception; (2) every concept page claim
 about orbit's behaviour names the capability that carries it; (3) the migration guide's steps are run once on a
@@ -232,6 +239,12 @@ merge, and a release-tree install of it prints `2.0.0`.
   landing-page exploration's routes A and C): a clone-and-build install leaves a global symlink into a clone the user
   must keep, and an `npm pack` tarball on a Release makes a Release upload by Sal part of every version. Out by R-ugd-8;
   the from-source route stays in the README's Development section.
+- **2026-10-12 — cherry-picking upstream fixes before launch.** The concept-docs exploration (its D-cd-4, Q-cd-8)
+  measured that an OpenSpec 1.14.1 project degrades in orbit's 1.3.1 engine, five ways silently (task markers outside
+  `- [ ]`/`- [x]`, `skip_specs` and `retire_capabilities` dropped, a delta's Purpose replaced by the TBD placeholder,
+  ignored config keys, unknown metadata keys not warned). Taking selected upstream fixes into the engine before the
+  flip was weighed. Out (Sal: docs only): orbit launches on the 1.3.1 engine, and the migration guide's "before you
+  move" checklist (D-cd-5) is the whole answer. A version bump or cherry-pick stays its own deliberate decision.
 
 ## Status log
 
@@ -307,3 +320,10 @@ commands page links for Codex, still describes upstream until concept-docs.
 exits were graded MET as written on its archived record, and Sal ratified it. landing-page completion was offered
 again: not yet (Sal), for the third time on the same ground, since exit (3)'s `/orbit:propose` half and post-flip
 re-run are still unobserved.
+
+**2026-10-12 — R-ugd-11 captured (Sal), in an architect session; cherry-picks out; landing-page not yet.** The
+concept-docs exploration (cited, `exploring`) ran `orbit init` over real OpenSpec 1.3.1 and 1.14.1 projects and found
+it builds an empty `orbit/` beside `openspec/` without a word. Sal took a warning (D-cd-1) over documentation alone or a
+migrate command. R-ugd-11 carves the warning out of R-ugd-3, and the concept-docs charter names it. The same
+exploration measured that a 1.14.1 project degrades in the 1.3.1 engine; taking upstream fixes before launch went to
+Considered & out (Sal: docs only). landing-page completion offered a fourth time: not yet (Sal), on the same ground.

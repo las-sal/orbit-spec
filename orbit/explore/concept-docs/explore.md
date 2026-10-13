@@ -223,7 +223,8 @@ schema directories, `.openspec-workspace/`, Copilot cloud-agent files.
 - **2026-10-12 — D-cd-1: the stage adds an `orbit init` warning for OpenSpec projects** (Sal: b, resolving Q-cd-3).
   Case 1 shows `orbit init` silently builds an empty `orbit/` beside an OpenSpec project. The stage documents the manual
   migration AND adds a warning, rather than documentation alone or a migrate command. It is code, so it needs a carve-out
-  from R-ugd-3 recorded as a program ruling in an architect session, as R-ugd-10 was for `orbit feedback`.
+  from R-ugd-3 recorded as a program ruling in an architect session, as R-ugd-10 was for `orbit feedback`. Ruled as
+  R-ugd-11 (Sal, 2026-10-12).
   Kind: scope
 - **2026-10-12 — D-cd-2: `orbit init` warns when an OpenSpec project directory sits beside it, and proceeds.** The trigger
   is `openspec/` holding `specs/` or `changes/`, whether or not `orbit/` exists. The message names the manual steps
@@ -260,14 +261,12 @@ schema directories, `.openspec-workspace/`, Copilot cloud-agent files.
   Claude and Codex, designed for and tested. Tier 2: the other 26 available tools, generated into OpenSpec 1.3.1's
   directories and untested by orbit. A test fails when an available tool has no row or the unavailable one has one.
   Kind: rule
+- **2026-10-12 — D-cd-9: orbit takes no upstream fixes before launch; the checklist is the whole answer** (Sal: docs
+  only, in the architect session, resolving Q-cd-8). Recorded in the program's Considered & out.
+  Kind: scope
 
 ## Open questions
 
-- **Q-cd-8 — does orbit take selected upstream fixes before the repository goes public?** D-cd-4 shows a 1.14.1 project
-  degrades silently in orbit's 1.3.1 engine (task markers, two metadata keys, the Purpose placeholder). A docs page can
-  only warn. Cherry-picking upstream fixes is engine work and a program-level scope call, not this stage's.
-  Standing recommendation: raise it in an architect session as a program question for update-gh-documentation, before
-  public-readiness; this stage ships the checklist (D-cd-5) either way.
 
 ## Considered & out
 
