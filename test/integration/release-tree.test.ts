@@ -19,11 +19,17 @@ const SCRIPT = path.join(REPO, 'scripts', 'release-tree.mjs');
 /** The suite's own `npm_*` settings (npm exports them to `npm test`) never reach the commands run here. */
 const ENV: NodeJS.ProcessEnv = {
   ...Object.fromEntries(Object.entries(process.env).filter(([k]) => !/^npm_/i.test(k))),
-  GIT_CONFIG_COUNT: '2',
+  // gc and maintenance off: a git command may spawn either DETACHED, and one still writing the clone's objects made
+  // the teardown fail with ENOTEMPTY on CI's Linux leg (public-readiness).
+  GIT_CONFIG_COUNT: '4',
   GIT_CONFIG_KEY_0: 'commit.gpgsign',
   GIT_CONFIG_VALUE_0: 'false',
   GIT_CONFIG_KEY_1: 'tag.gpgsign',
   GIT_CONFIG_VALUE_1: 'false',
+  GIT_CONFIG_KEY_2: 'gc.auto',
+  GIT_CONFIG_VALUE_2: '0',
+  GIT_CONFIG_KEY_3: 'maintenance.auto',
+  GIT_CONFIG_VALUE_3: 'false',
   GIT_AUTHOR_NAME: 'release-tree test',
   GIT_AUTHOR_EMAIL: 'release-tree@example.invalid',
   GIT_COMMITTER_NAME: 'release-tree test',
@@ -90,7 +96,7 @@ describe('the release script over a scratch clone', () => {
   }, 120_000);
 
   afterAll(() => {
-    if (scratch) rmSync(scratch, { recursive: true, force: true });
+    if (scratch) rmSync(scratch, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
   });
 
   // @scenario behaviour orbit-release :: A release ships a built release tree :: The release commit is a child of the commit released, and the tag is on it

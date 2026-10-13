@@ -145,7 +145,61 @@ The CI workflow's time limit for each test leg is 30 minutes. It was set from `n
 cores, and Windows file I/O is slower, so a leg's tests could take two to four times the summed time divided by its
 cores, plus `npm ci` and the build. Upstream's limits were 10 and 15 minutes.
 
-PENDING: recorded after the push.
+### Run 1 — `38406649116`, on `3f10556a` (the apply commit), event `pull_request`
+
+The first run in orbit's history to get past install: `npm ci` succeeded on all three legs.
+
+| job | outcome | duration |
+|---|---|---|
+| Lint & Type Check | success | 43 s |
+| Test (linux-bash) | failure: 6 of 3,687 tests, in 6 files | 10 min 5 s |
+| Test (macos-bash) | failure: 1 of 3,687 tests | 3 min 19 s |
+| Test (windows-pwsh) | failure: 36 files, 198 of 3,633 tests (9 skipped) | 21 min 51 s |
+| All checks passed (`required-checks-pr`) | failure (a needed job failed) | 5 s |
+| All checks passed (`required-checks-main`) | skipped (push-only) | — |
+
+**Linux and macOS: the test was the cause, and the test was repaired (commit `7a32000f`).**
+- `test/integration/release-tree.test.ts` (both legs): the runners' Node 20 ships npm 10, which runs `prepare` on
+  `npm pack` despite `--ignore-scripts` and writes the build's output to stdout ahead of the JSON. Reproduced locally
+  with npm 10.9.9; npm 11, used locally, does not. The test now parses the JSON array from the line that opens it.
+- Five `gh absent` cases in `test/core/pr/` (Linux only): the fixture's absent-gh PATH kept `/usr/bin` whole, and
+  GitHub's Ubuntu runners install `gh` there beside `git`. The fixture now mirrors the system dirs as links with `gh`
+  left out. A new test, `test/core/pr/gh-absent-path.test.ts`, builds a host with `gh` beside `git` and shows the
+  links leave it out.
+
+**Windows: five causes, none in the change.** Grouped by the first error of each failing file:
+- CRLF checkout: the runner's `core.autocrlf` rewrites line endings. Fenced-mirror parity tests find no owner fence,
+  hash pins and goldens differ, the generated-surface and migration-guide reads miss their text, and
+  `release-tree.mjs` fails to load. About 20 files.
+- POSIX stubs: the `gh` stub, the `git` shim and the external runner fixtures are `#!/bin/sh` scripts, which Windows
+  cannot execute from PATH. Every `orbit pr` suite and both external-runner integration suites. About 110 tests.
+- Path separators: absolute paths reported with `\` where a test expects `/` (`emit-composition`, `tool-inventory`,
+  `boot-render`). Whether any of these is an engine defect on Windows, rather than a test assumption, is not
+  established.
+- `chmod 000` has no effect on Windows, so the unreadable-file cases in `source-lint` and `validate --sources` read
+  the file.
+- Two exhaustive-oracle shards exceed their 300 s per-test timeout.
+
+The disposition of the Windows leg is a scope call for Sal (design D2), briefed at apply.
+
+### Run 2 — `38409930678`, on `7a32000f` (the two repairs), event `pull_request`
+
+| job | outcome |
+|---|---|
+| Lint & Type Check | success |
+| Test (linux-bash) | failure: 3,688 of 3,688 tests passed; one suite-level teardown error and 6 unhandled errors (10 min 20 s) |
+| Test (macos-bash) | failure: 3,688 of 3,688 tests passed; 4 unhandled errors |
+| Test (windows-pwsh) | cancelled by the next push (run 1 holds its evidence) |
+
+Both repairs held. Two causes remained, both in the test harness rather than the code under test, and both repaired:
+- **`[vitest-worker]: Timeout calling "onTaskUpdate"`** (both legs). The exhaustive-oracle shards each run one
+  synchronous loop of 45–96 s on these runners. A worker whose event loop never turns cannot read vitest's RPC
+  replies, so its calls to the main process time out, and vitest fails the run although every test passed. On both
+  legs only the oracle shards ran longer than 60 s. `runOracleShard` (`test/helpers/invoked-oracle.ts`) now yields to
+  the event loop about once a second; its cases and verdicts are unchanged.
+- **`ENOTEMPTY` removing the release-tree test's scratch clone** (Linux). Something was still writing the clone's
+  `.git/objects` during teardown, most likely git's detached auto-gc or maintenance. The test's git environment now
+  sets `gc.auto=0` and `maintenance.auto=false`, and the teardown retries the removal.
 
 ## 4. The past-stage branches on origin, for Sal (D-prd-11)
 

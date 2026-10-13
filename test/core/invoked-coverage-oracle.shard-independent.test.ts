@@ -3,8 +3,8 @@ import { runOracleShard, ORACLE_TRAIL_COUNT } from '../helpers/invoked-oracle.js
 
 /** rc17a exit (1): the `independent` shard of the exhaustive oracle (see `invoked-coverage-oracle.test.ts`). */
 describe('rc17a exit (1) — oracle shard independent', () => {
-  it('engine coverage and openPair equal the reference on every cadence opening with independent, and openPair is repairable', () => {
-    const r = runOracleShard('independent');
+  it('engine coverage and openPair equal the reference on every cadence opening with independent, and openPair is repairable', async () => {
+    const r = await runOracleShard('independent');
     expect(r.failures).toEqual([]);
     expect(r.cases).toBe(43 * ORACLE_TRAIL_COUNT);
   }, 300_000);

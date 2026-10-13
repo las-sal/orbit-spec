@@ -34,8 +34,8 @@ describe('rc17a exit (1) — the exhaustive invoked-coverage oracle', () => {
   });
 
   // @scenario behaviour orbit-engine-gates :: The first review slot covers what the user invoked :: An invoked pair with one half landed does not cover
-  it('shard in-context: engine coverage and openPair equal the reference, and openPair is repairable', () => {
-    const r = runOracleShard('in-context');
+  it('shard in-context: engine coverage and openPair equal the reference, and openPair is repairable', async () => {
+    const r = await runOracleShard('in-context');
     expect(r.failures).toEqual([]);
     expect(r.cases).toBe(43 * ORACLE_TRAIL_COUNT);
   }, 300_000);
