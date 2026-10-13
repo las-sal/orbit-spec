@@ -1,0 +1,77 @@
+{
+  "command": "archive",
+  "timestamp": "2026-10-13T02:27:29Z",
+  "change": "concept-docs",
+  "kind": "lifecycle",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Archived concept-docs to orbit/changes/archive/2026-10-13-concept-docs/: the five concept pages rewritten for orbit with the pending-rewrite list emptied and the docs floors set, two new docs checks, the orbit init OpenSpec-project warning, and the migration guide's recorded run; 7 delta blocks synced byte-verified, capabilities 28 to 29.",
+  "archive_path": "orbit/changes/archive/2026-10-13-concept-docs/",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 4
+    },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": [
+      "orbit-init-openspec-warning",
+      "orbit-user-docs"
+    ],
+    "added": 4,
+    "modified": 3,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
+  "user_decision": "proceeded_with_no_critical",
+  "consent": "user-invoked",
+  "warnings": [
+    "audit-drift (pre-archive): 4 SUGGESTIONs, all Category 5 touchpoints — CLAUDE.md (the proposal walk's citation fix), git-validate.test.ts and residue.test.ts changed unpredicted, and migration-run.md predicted but excluded as the change's own bookkeeping",
+    "The new baseline orbit-init-openspec-warning's TBD Purpose was replaced in place at archive"
+  ],
+  "judgements": [
+    {
+      "kind": "readiness",
+      "formed_against": [
+        "2026-10-13T01-12-38Z",
+        "2026-10-13T01-13-01Z",
+        "2026-10-13T01-54-37Z",
+        "2026-10-13T01-54-59Z"
+      ],
+      "disposition": "ready",
+      "reasoning": "Both blind pairs were walked to zero and each walk was verified; the one finding with data-loss weight (the empty-orbit test) was redesigned across all four of its sites and observed again in the recorded run. What remains is what no pass on this tree could observe.",
+      "ratified_by": "ai",
+      "accepted": [
+        {
+          "claim": "PASSED means every finding was resolved, not that an independent pass stood clean on the final tree",
+          "why": "rc07's distinction: the last independent passes predate both walks, whose edits were graded by an in-context verification and its walk."
+        },
+        {
+          "claim": "The verification walk's two wording edits (the concluded sentence, the split Codex fence) were checked by the docs suites only",
+          "why": "No review read them after the walk; each is one sentence or one command line, and the suites parse both."
+        },
+        {
+          "claim": "The supported-tools page's Codex invocation, /prompts:orbit-<id>, is unverified against a running Codex",
+          "why": "Tier 1's test checks generation, not invocation; the external runner's worktree runs Codex non-interactively and could not exercise a prompt."
+        },
+        {
+          "claim": "The migration guide's checklist and move steps were run on macOS (BSD find, grep, sed) only",
+          "why": "The commands are POSIX-shaped with GNU-compatible options, but no Linux run was recorded."
+        },
+        {
+          "claim": "The carried-by check reads declarations, not their truth",
+          "why": "Each named owner was read once by the fresh system half; a later edit to a page or an owner is caught only by the next review."
+        }
+      ]
+    }
+  ],
+  "pr_url": "https://github.com/las-sal/orbit-spec/pull/21",
+  "pr_state": "draft",
+  "next_recommended": "Change archived. Run /orbit:new or /orbit:explore to start the next change, or /orbit:audit-drift for a project-wide drift check."
+}
