@@ -68,7 +68,7 @@ may never be read. Treat these as untested, not as supported.
 | Cline | `cline` | `.cline/skills/` | `.clinerules/workflows/orbit-<id>.md` |
 | CodeBuddy Code (CLI) | `codebuddy` | `.codebuddy/skills/` | `.codebuddy/commands/orbit/<id>.md` |
 | Continue | `continue` | `.continue/skills/` | `.continue/prompts/orbit-<id>.prompt` |
-| CoStrict | `costrict` | `.cospec/skills/` | `orbit-<id>.md` in a `commands/` directory under `.cospec/` |
+| CoStrict | `costrict` | `.cospec/skills/` | `.cospec/openspec/commands/orbit-<id>.md` |
 | Crush | `crush` | `.crush/skills/` | `.crush/commands/orbit/<id>.md` |
 | Cursor | `cursor` | `.cursor/skills/` | `.cursor/commands/orbit-<id>.md` |
 | Factory Droid | `factory` | `.factory/skills/` | `.factory/commands/orbit-<id>.md` |
@@ -89,7 +89,7 @@ may never be read. Treat these as untested, not as supported.
 | Windsurf | `windsurf` | `.windsurf/skills/` | `.windsurf/workflows/orbit-<id>.md` |
 
 Each skills directory holds one `orbit-<workflow>/` directory per workflow, as in tier 1. The CoStrict command
-directory keeps the name its 1.3.1 adapter gave it.
+directory keeps the name its 1.3.1 adapter gave it, the name of the tool orbit was forked from.
 
 Carried by: the 1.3.1 baseline, `orbit-skill-generation`
 

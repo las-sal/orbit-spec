@@ -224,7 +224,8 @@ Work too large for one change is declared as a program: an architecture document
 goals, rulings, and stages each of which becomes a change. `/orbit:architect` authors and resumes one.
 
 A stage's state is computed from disk: `in-change` while a change citing it is active, `exploring` while an
-exploration cites it, `quiescent` once its change is archived, `premised` before anything starts. A stage is
+exploration cites it, `quiescent` once its change is archived, `concluded` when its only citing exploration ended
+without a change, and `premised` before anything starts. A stage is
 `complete` only when it is quiescent and you have ratified it, and you can declare a stage ended without meeting its
 criteria. `orbit architecture status` shows where a program stands, and `orbit architecture show <doc> <stage>`
 prints one stage.
@@ -233,9 +234,11 @@ Carried by: `orbit-architect`, `orbit-architecture-engine`
 
 ## Pull requests
 
-With `pr` set in `orbit/config.yaml`, a change carries a pull request. At propose, the change gets its own branch and
-a draft pull request; at archive, the pull request is marked ready. Under `per-architecture`, the changes of one
-program share one pull request instead. `orbit pr` computes each step: it reads the repository and prints the git and
+With `pr` set in `orbit/config.yaml`, a change carries a pull request. Under `per-proposal`, the change gets its own
+branch and a draft pull request at propose, and archive marks that pull request ready. Under `per-architecture`, the
+changes that cite one program share that program's pull request: each archive adds its stage to the description and
+never marks it ready, because the program pull request is yours to mark ready and merge when the whole program is
+done (a change citing no program gets its own pull request, as under `per-proposal`). `orbit pr` computes each step: it reads the repository and prints the git and
 GitHub commands to run, and the workflow runs them. Merging is always yours: once the pull request is ready and you
 have read it, merge it yourself, for example with GitHub's CLI:
 

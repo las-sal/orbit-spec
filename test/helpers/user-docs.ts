@@ -42,9 +42,10 @@ const DIRECTORY_PREFIXES = [
   '~/AppData/Local',
 ];
 
-/** The admitted identifiers, matched as whole substrings: `.openspec.yaml` and each global directory with `/` or `\` before `openspec`. */
+/** The admitted identifiers, matched as whole substrings: `.openspec.yaml`, CoStrict's command directory, and each global directory with `/` or `\` before `openspec`. */
 export const ADMITTED_IDENTIFIERS = [
   '.openspec.yaml',
+  '.cospec/openspec/',
   ...DIRECTORY_PREFIXES.flatMap((prefix) => [`${prefix}/openspec`, `${prefix}\\openspec`]),
 ];
 

@@ -118,11 +118,15 @@ Code:
 rm -rf .claude/skills/openspec-* .claude/commands/opsx
 ```
 
-For Codex, whose commands are global:
+For Codex, whose commands are global (in `$CODEX_HOME/prompts/` when `CODEX_HOME` is set, otherwise
+`~/.codex/prompts/`):
 
 ```bash
 rm -rf .codex/skills/openspec-* .agents/skills/openspec-* ~/.codex/prompts/opsx-*
 ```
+
+The `opsx-*` prompts are shared by every project on the machine: if another project still uses OpenSpec with Codex,
+leave them in place until that project moves too.
 
 For any other tool, delete the `openspec-*` skill directories and `opsx` command files under its directory
 ([Supported tools](supported-tools.md) lists them). In zsh, a pattern that matches nothing stops the whole command;
@@ -134,14 +138,14 @@ What to run depends on whether `orbit/` exists yet:
 
 ```bash
 ls -d orbit
-find orbit/specs orbit/changes -type f
+find orbit -type f
 ```
 
 | State of `orbit/` | What to run |
 |---|---|
 | No `orbit/` (the first command prints an error) | `git mv openspec orbit`, then `orbit init --tools claude` |
-| `orbit/` exists, and the second command prints nothing: an `orbit init` created it empty | `rm -rf orbit`, then `git mv openspec orbit`, then `orbit init --tools claude` |
-| `orbit/` exists, and the second command prints files: it holds orbit work | No move command: merge by hand, below |
+| `orbit/` exists, and the second command prints nothing, or only `orbit/config.yaml`: an `orbit init` created it and nothing else is in it | `rm -rf orbit`, then `git mv openspec orbit`, then `orbit init --tools claude` |
+| `orbit/` exists, and the second command prints any other file: it holds orbit work | No move command: merge by hand, below |
 
 For the first two rows:
 
@@ -150,12 +154,15 @@ git mv openspec orbit
 orbit init --tools claude
 ```
 
-with `rm -rf orbit` first in the second row. Deleting the empty `orbit/` loses only an `orbit/config.yaml` that
-`orbit init` may have written; your `openspec/config.yaml` moves across as `orbit/config.yaml`. Name your own tools
-in place of `claude`, for example `--tools claude,codex`.
+with `rm -rf orbit` first in the second row. In that row the only file deleted is an `orbit/config.yaml`, which
+`orbit init` writes when run interactively; your `openspec/config.yaml` moves across in its place. If you edited
+`orbit/config.yaml`, keep a copy and merge what you added into the moved one. Name your own tools in place of
+`claude`, for example `--tools claude,codex`.
 
-**When `orbit/` already holds work, do not run `git mv openspec orbit`.** Moving a directory into one that exists puts
-it inside: the project would land at `orbit/openspec/`, where orbit reads nothing. Merge by hand instead: move each
+**When `orbit/` already holds work, do not run `git mv openspec orbit`.** Work is any file besides
+`orbit/config.yaml`: specs or changes, but also an architecture doc, an exploration, a schema or a lens file, none of
+which `orbit/specs/` or `orbit/changes/` would show. Moving a directory into one that exists puts it inside: the
+project would land at `orbit/openspec/`, where orbit reads nothing. Merge by hand instead: move each
 capability folder from `openspec/specs/` into `orbit/specs/` and each change folder from `openspec/changes/` into
 `orbit/changes/`, resolving any name that exists on both sides, and compare the two `config.yaml` files. Then delete
 `openspec/` and run `orbit init` for your tools.
@@ -181,7 +188,9 @@ OpenSpec has no fingerprints, so its archive can only warn that it cannot check.
 orbit fingerprint add-login
 ```
 
-A change with only added requirements needs none, and stamping it does no harm.
+A change with only added requirements needs none, and stamping it does no harm. The stamp records the baseline as
+it stands now, so it guards only against edits made after it: before stamping a change that has been open a long
+time, read its modified, removed and renamed requirements against the current baseline.
 
 ## What orbit does not have
 

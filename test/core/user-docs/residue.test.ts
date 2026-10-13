@@ -98,10 +98,14 @@ describe('the residue check', () => {
       'Data: `~/.local/share/openspec`.',
       'Windows: `%APPDATA%\\openspec` or `~/AppData/Local/openspec`.',
       'XDG: `$XDG_CONFIG_HOME/openspec` and `$XDG_DATA_HOME\\openspec`.',
-      'But `.openspec.yaml` is not openspec itself.',
+      'CoStrict: `.cospec/openspec/commands/orbit-apply.md`.',
+      'But `.openspec.yaml` is not openspec itself, nor is `.cospec/openspec` without its slash.',
     ].join('\n');
-    expect(residueFailures([doc('docs/x.md', text)])).toEqual([residue('docs/x.md', 6, 'openspec')]);
-    expect(ADMITTED_IDENTIFIERS).toHaveLength(17);
+    expect(residueFailures([doc('docs/x.md', text)])).toEqual([
+      residue('docs/x.md', 7, 'openspec'),
+      residue('docs/x.md', 7, 'openspec'),
+    ]);
+    expect(ADMITTED_IDENTIFIERS).toHaveLength(18);
     expect(residueFailures([doc('docs/x.md', ADMITTED_IDENTIFIERS.join(' '))])).toEqual([]);
   });
 });

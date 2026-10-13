@@ -3,9 +3,9 @@
 Exit (3) of the stage `update-gh-documentation › concept-docs`, per design D6 and task 4.1: `docs/migration-guide.md`'s
 steps run once, as written, on a fresh upstream 1.14.1 project carrying one fixture per checklist hazard.
 
-- **When:** 2026-10-13T01:41:51Z, on macOS (BSD `find`, `grep`, `sed`), git version 2.50.1 (Apple Git-155), node v25.9.0.
+- **When:** 2026-10-13T02:09:04Z, on macOS (BSD `find`, `grep`, `sed`), git version 2.50.1 (Apple Git-155), node v25.9.0.
 - **Upstream:** `npx @fission-ai/openspec@1.14.1` (`--version` prints `1.14.1`), run through a wrapper named `openspec`.
-- **orbit:** this repository's build at `01ab33d4` plus this change's apply working tree (the init warning included),
+- **orbit:** this repository's build at `c27c9baf` plus the system walk's working tree (the init warning included),
   run through a wrapper named `orbit`.
 - **Isolation:** `HOME` is a scratch directory, so `~/.config/openspec/config.json` and `~/.codex` are the run's,
   never the machine's. Paths under it print as `<run>`.
@@ -34,9 +34,11 @@ The project was made by `openspec init --tools claude` and `openspec new change 
 - **Every check reported its fixture** (section 1), and after the fixes every check but 4 and 8 printed nothing
   (section 3): 4 is kept until after the orbit archive, as its fix says, and 8's keys are ignored, not fixed.
 - **Both move states read the project** (4A: no `orbit/`; 4B: after an `orbit init` that printed the OpenSpec-project
-  warning and created `orbit/` empty): `orbit list` showed the eight active changes, `orbit validate --all` passed 12
+  warning and created `orbit/` holding no file, so `find orbit -type f` printed nothing): `orbit list` showed the eight active changes, `orbit validate --all` passed 12
   of 12, `orbit status --change add-login` rendered the spec-driven gates, and `find orbit -path 'orbit/openspec*'`
   printed nothing.
+- **The third state is refused a move** (4C: after an `orbit init`, with an exploration written in `orbit/`):
+  `find orbit -type f` printed the exploration, which the guide's table sends to merge by hand, with no move command.
 - **Archive** (section 5, on a copy of 4A): every fixture change archived; the flattened and renamed capabilities and
   the de-suffixed heading read as plain requirement headings; the delta's Purpose became the TBD placeholder, which
   check 4's fix then replaced, and `orbit validate --all` passed.
@@ -50,13 +52,18 @@ Two guide lines were falsified by an earlier run of this same script and fixed b
    fingerprints. The guide gained step 4, "Stamp your active changes" (`orbit fingerprint <change>`); in this run the
    stamp precedes the archive and the warning is gone.
 
+A third was found by the system review's external half, not by the run: the empty-`orbit/` test read only
+`orbit/specs/` and `orbit/changes/`, so it would have sent an `orbit/` holding an exploration or an architecture doc
+to `rm -rf orbit`. The guide now tests the whole directory (`find orbit -type f`, nothing or only
+`orbit/config.yaml`), and section 4C was added to observe the refused state; this transcript is the rerun with both.
+
 ## Transcript
 
 ## 1. The checklist, before any fix
 
 ```text
 $ git log --oneline
-a4ef5d2 OpenSpec 1.14.1 project with one fixture per checklist hazard
+6facdc3 OpenSpec 1.14.1 project with one fixture per checklist hazard
 [exit 0]
 ```
 
@@ -244,7 +251,7 @@ Check 8: nothing to fix; the keys stay and are ignored.
 
 ```text
 $ git add -A && git commit -qm 'Fix the checklist hazards' && git log --oneline -1
-aa06e5e Fix the checklist hazards
+e190a55 Fix the checklist hazards
 [exit 0]
 ```
 
@@ -313,9 +320,8 @@ ls: orbit: No such file or directory
 ```
 
 ```text
-$ find orbit/specs orbit/changes -type f
-find: orbit/specs: No such file or directory
-find: orbit/changes: No such file or directory
+$ find orbit -type f
+find: orbit: No such file or directory
 [exit 1]
 ```
 
@@ -457,10 +463,10 @@ Warning: this project has an OpenSpec project directory, openspec/.
 orbit keeps its project in orbit/, separate from openspec/, and reads nothing in openspec/specs/ or
 openspec/changes/. To move the project to orbit, first delete the openspec-* skills and opsx commands, then:
   - no orbit/ yet: git mv openspec orbit, then orbit init
-  - orbit/ created empty by orbit init (no file under orbit/specs/ or orbit/changes/): delete orbit/,
-    then git mv openspec orbit, then orbit init
-  - orbit/ holding work: merge by hand; a git mv into an existing orbit/ nests the project at
-    orbit/openspec/, where orbit reads nothing
+  - orbit/ created by orbit init and holding no file but orbit/config.yaml: delete orbit/ (keep a copy
+    of orbit/config.yaml if you edited it), then git mv openspec orbit, then orbit init
+  - orbit/ holding any other file (specs, changes, an architecture doc, an exploration): merge by hand;
+    a git mv into an existing orbit/ nests the project at orbit/openspec/, where orbit reads nothing
 Run the migration guide's before-you-move checklist first: https://github.com/las-sal/orbit-spec/blob/main/docs/migration-guide.md
 Continuing with init.
 
@@ -498,7 +504,7 @@ orbit
 ```
 
 ```text
-$ find orbit/specs orbit/changes -type f
+$ find orbit -type f
 [exit 0]
 ```
 
@@ -544,8 +550,8 @@ Changes:
   task-forms          2/8 tasks     just now
   dated-change        No tasks      just now
   numbered-change     No tasks      just now
-  delta-purpose       No tasks      just now
   rename-search       No tasks      just now
+  delta-purpose       No tasks      just now
   nested-delta        No tasks      just now
 [exit 0]
 ```
@@ -613,6 +619,68 @@ $ orbit fingerprint task-forms
 No MODIFIED/REMOVED/RENAMED requirements in task-forms's delta specs — nothing to fingerprint (ADDED requirements have no base).
 [exit 0]
 ```
+
+```text
+$ true
+[exit 0]
+```
+
+## 4C. After an orbit init, with an exploration written in orbit/: the merge-by-hand row
+
+```text
+$ orbit init --tools claude
+
+Warning: this project has an OpenSpec project directory, openspec/.
+orbit keeps its project in orbit/, separate from openspec/, and reads nothing in openspec/specs/ or
+openspec/changes/. To move the project to orbit, first delete the openspec-* skills and opsx commands, then:
+  - no orbit/ yet: git mv openspec orbit, then orbit init
+  - orbit/ created by orbit init and holding no file but orbit/config.yaml: delete orbit/ (keep a copy
+    of orbit/config.yaml if you edited it), then git mv openspec orbit, then orbit init
+  - orbit/ holding any other file (specs, changes, an architecture doc, an exploration): merge by hand;
+    a git mv into an existing orbit/ nests the project at orbit/openspec/, where orbit reads nothing
+Run the migration guide's before-you-move checklist first: https://github.com/las-sal/orbit-spec/blob/main/docs/migration-guide.md
+Continuing with init.
+
+- Creating OpenSpec structure...
+▌ OpenSpec structure created
+- Setting up Claude Code...
+✔ Setup complete for Claude Code
+Generated 21 reference files
+
+OpenSpec Setup Complete
+
+Created: Claude Code
+15 skills and 15 commands in .claude/
+Config: skipped (non-interactive mode)
+
+Getting started:
+  Start your first change: /orbit:propose "your idea"
+
+Learn more: https://github.com/Fission-AI/OpenSpec
+Feedback:   https://github.com/Fission-AI/OpenSpec/issues
+
+Restart your IDE for slash commands to take effect.
+[exit 0]
+```
+
+```text
+$ mkdir -p orbit/explore/checkout-speed && printf '# Exploration: checkout-speed\n' > orbit/explore/checkout-speed/explore.md
+[exit 0]
+```
+
+```text
+$ ls -d orbit
+orbit
+[exit 0]
+```
+
+```text
+$ find orbit -type f
+orbit/explore/checkout-speed/explore.md
+[exit 0]
+```
+
+The second command prints a file other than orbit/config.yaml, so the guide's table gives no move command: merge by hand.
 
 ## 5. Archive a copy of each fixture change (a copy of 4A)
 
@@ -1054,7 +1122,7 @@ stamp() {
 move_and_check() {
   r "rm -rf .claude/skills/openspec-* .claude/commands/opsx"
   r "ls -d orbit"
-  r "find orbit/specs orbit/changes -type f"
+  r "find orbit -type f"
 }
 
 # ── A: no orbit/ ─────────────────────────────────────────────────
@@ -1083,6 +1151,16 @@ r "orbit validate --all"
 r "orbit status --change add-login"
 r "find orbit -path 'orbit/openspec*'"
 stamp
+
+# ── C: orbit init, then an exploration written in orbit/ before the move ──
+rm -rf $R/c4 && cp -R $R/fixture $R/c4 && cd $R/c4
+r "true" >/dev/null
+say "## 4C. After an orbit init, with an exploration written in orbit/: the merge-by-hand row"
+r "orbit init --tools claude"
+r "mkdir -p orbit/explore/checkout-speed && printf '# Exploration: checkout-speed\n' > orbit/explore/checkout-speed/explore.md"
+r "ls -d orbit"
+r "find orbit -type f"
+say "The second command prints a file other than orbit/config.yaml, so the guide's table gives no move command: merge by hand."
 
 # ── archive a copy of each fixture change ─────────────────────────
 rm -rf $R/c && cp -R $R/a $R/c && cd $R/c

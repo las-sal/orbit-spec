@@ -213,7 +213,8 @@ kinds:
 - **`reviewed`** passes when the reviews its `cadence` names have run and every CRITICAL and WARNING finding is
   resolved by a walk. Its state is computed from the review trail in the change's `.orbit-runs/` directory.
 
-This is the gates list of the built-in `spec-driven` schema:
+This is the gates list of the built-in `spec-driven` schema, abridged: the shipped file also carries `confirm:` on
+both reviewed gates and an `instruction:` on the apply gate (both in the table below).
 
 ```yaml
 gates:
@@ -246,11 +247,13 @@ gates:
 | `kind` | `tracked` or `reviewed`; nothing else is accepted |
 | `requires` | The artifacts and gates that must be complete before the gate can be run |
 | `tracks` | A tracked gate's checklist file |
-| `inputs` | A reviewed gate's freshness scope: the artifacts whose change makes a passed review stale; defaults to `requires` |
+| `inputs` | A reviewed gate's declared freshness scope, defaulting to `requires`. No version of the engine reads it yet: today a review goes stale only when an apply runs after it, so an edit to an input during the proposal phase does not make a passed review stale |
 | `cadence` | A reviewed gate's ordered review slots, each `in-context`, `fresh`, `external`, `independent` (a fresh or an external review), `blind-pair` (one of each, blind to each other) or `invoked` (what you invoked: one independent review or a complete pair) |
-| `budget` | The number of independent reviews you expect to spend; reported beside the gate, never enforced |
+| `budget` | The number of independent reviews you expect to spend: a declaration, carried in `orbit status --change <name> --json` beside the spend and never enforced. Readouts show only the spend, the independent reviews actually run |
 | `before` | What the gate holds: an artifact or gate id, or the phase `apply` or `archive` |
 | `consent` | `user-invoked`: entering the `before` phase needs your explicit invocation; an AI that arrives there on its own asks first |
+| `confirm` | `no-new-findings` or `findings-resolved`; accepted so that older schemas stay valid, and read by no gate |
+| `instruction` | A tracked gate's instruction, shown when the AI asks for the phase's instructions |
 
 A gate never blocks you outright. When you run a phase whose gate has not passed, the workflow says so and asks
 whether to proceed, and a decision to proceed is recorded. `orbit status --change <name>` shows each gate's state.

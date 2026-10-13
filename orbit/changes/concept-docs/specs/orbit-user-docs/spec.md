@@ -86,6 +86,62 @@ starts on the pending-rewrite list; a head is added by the edit of the stage who
 - **WHEN** the `docs-inventory` fence declares a head that no unlisted user doc uses
 - **THEN** the suite fails, naming the head and its kind
 
+### Requirement: The old name appears in the user docs only in four admitted places
+
+In every unlisted user doc, every case-insensitive occurrence of `openspec`, `opsx` or `fission` SHALL be RESIDUE,
+and fail the suite naming the file, the line and the occurrence, unless it sits in one of four admitted places:
+
+| member | covered by |
+|---|---|
+| anything under the `README.md` heading `Built on OpenSpec` | admitted: the attribution |
+| anything under the `README.md` heading `How orbit improves on OpenSpec` | admitted: the comparison |
+| any occurrence in `docs/migration-guide.md` | admitted: the file describes what an adopter arriving from OpenSpec has |
+| the identifier `.openspec.yaml`, anywhere | admitted: a name the tool still writes on disk |
+| the directory `.cospec/openspec/`, anywhere | admitted: the CoStrict command directory the generator still writes (`src/core/command-generation/adapters/costrict.ts`), which `docs/supported-tools.md` names so a reader can find those files |
+| a global directory the tool still writes, anywhere: `~/.config/openspec`, `~/.local/share/openspec`, `$XDG_CONFIG_HOME/openspec`, `$XDG_DATA_HOME/openspec`, `%APPDATA%/openspec`, `%LOCALAPPDATA%/openspec`, `~/AppData/Roaming/openspec` or `~/AppData/Local/openspec`, with `/` or `\` before `openspec` | admitted: the global configuration and data directories (`src/core/global-config.ts`) |
+| `openspec` as a command, in any fence or span | residue |
+| a `/opsx:` slash command | residue |
+| `@fission-ai/openspec`, a Fission-AI URL, upstream's Discord or badges | residue |
+| any other occurrence, in prose, a path or a link | residue |
+
+The rows are tested in order and the first match wins, so an admitted place precedes every residue row: `openspec
+init` in a fence inside an admitted README section is admitted by this check (the tool inventory still judges its
+head, separately). A README section is the text from an ATX heading whose text is exactly one of the two admitted
+titles, at any level, to the next ATX heading whose level is at most the admitted heading's (a `##` section ends at
+the next `#` or `##`); everything in it, fenced or not, is admitted. A heading line inside a fence, an HTML block, a list item or a
+blockquote is not a heading: only a top-level ATX heading opens or ends a section.
+The admitted identifiers are matched as whole substrings, so `.openspec.yaml` admits that occurrence and nothing
+beside it, and `.cospec/openspec/` admits that directory and not `openspec/` on its own.
+
+Named limit (the residue check). Residual kind: an upstream name or link form that contains none of `openspec`,
+`opsx` or `fission` (a renamed product, a shortened URL, a logo asset path). Residual method: a case-insensitive grep
+of upstream's v1.3.1 README and docs (the `upstream/v1.3.1` tag) for its product, org and link names, compared
+against the three patterns, plus the public-readiness stage's sweep of upstream assets and links. The check also
+cannot judge intent: residue inside an admitted place passes (an upstream install line pasted into the comparison
+section, or the migration guide telling a NEW user to run `openspec`); review owns that. And a setext heading is not
+read as a heading: it neither opens nor ends an admitted section, so the README's sections are written with ATX
+headings.
+
+#### Scenario: An upstream command in a rewritten page is residue
+
+- **WHEN** an unlisted user doc other than `docs/migration-guide.md` carries `openspec init` in a shell fence
+- **THEN** the residue check fails, naming the file, the line and the occurrence
+
+#### Scenario: The attribution section admits the old name
+
+- **WHEN** `README.md` carries "OpenSpec" in prose under a heading titled exactly `Built on OpenSpec`
+- **THEN** the residue check passes that occurrence, and an occurrence under the next heading of the same level fails
+
+#### Scenario: An on-disk name is admitted anywhere
+
+- **WHEN** an unlisted user doc names `.openspec.yaml`, `~/.config/openspec`, `~/.local/share/openspec` or `.cospec/openspec/`
+- **THEN** the residue check passes those occurrences
+
+#### Scenario: A command inside an admitted section is admitted by the residue check
+
+- **WHEN** `README.md` carries `openspec init` in a shell fence under a heading titled exactly `How orbit improves on OpenSpec`
+- **THEN** the residue check passes that occurrence
+
 ## ADDED Requirements
 
 ### Requirement: Every H2 section of four concept pages declares its owner on a checked Carried by line
@@ -261,8 +317,8 @@ where orbit reads nothing:
 | member | covered by |
 |---|---|
 | no `orbit/` (the guide read before `orbit init`) | `git mv openspec orbit`, then `orbit init` |
-| `orbit/` present, and `find orbit/specs orbit/changes -type f` prints nothing (an `orbit init` created it empty) | delete `orbit/`, then `git mv openspec orbit`, then `orbit init`; an `orbit/config.yaml` that init wrote is lost, and `openspec/config.yaml` moves across |
-| `orbit/` present, holding a file under `orbit/specs/` or `orbit/changes/` | no move command: the guide says how to merge by hand, and that a move here nests the project |
+| `orbit/` present, and `find orbit -type f` prints nothing or only `orbit/config.yaml` (an `orbit init` created it and nothing else is in it) | delete `orbit/`, then `git mv openspec orbit`, then `orbit init`; `openspec/config.yaml` moves across in place of the deleted `orbit/config.yaml`, and the guide says to keep a copy of that file first if it was edited |
+| `orbit/` present, holding any other file (specs or changes, an architecture doc, an exploration, a schema, a lens file) | no move command: the guide says how to merge by hand, and that a move here nests the project |
 
 A checklist line finds a FORM, never a meaning: a clean checklist shows that no known hazard is present, nothing more.
 
@@ -275,7 +331,7 @@ Named limit (the migration checklist). Residual kind: a post-1.3.1 on-disk form 
 
 #### Scenario: A move into an existing orbit directory is never offered
 
-- **WHEN** `orbit/` holds a file under `orbit/specs/` or `orbit/changes/`
+- **WHEN** `orbit/` holds a file other than `orbit/config.yaml`, under `orbit/specs/` or `orbit/changes/` or anywhere else in it
 - **THEN** the guide's move steps give no move command for that state and say why
 
 #### Scenario: The guide names its measured version

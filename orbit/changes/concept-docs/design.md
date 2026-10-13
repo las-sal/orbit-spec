@@ -91,7 +91,9 @@ migrate command, which is more code than the carve-out covers. Sal took the warn
 - **`docs/supported-tools.md`.** D2's two tiers, and for each tier-1 tool the directories orbit writes and how the tool
   invokes the workflows (Codex's commands in `$CODEX_HOME/prompts/`, by default `~/.codex/prompts/`; `README.md` and
   `docs/commands.md` promise this page says how). Tier 1's sections are carried by `orbit-skill-generation`, tier 2's
-  by `the 1.3.1 baseline`.
+  by `the 1.3.1 baseline`. CoStrict's command directory, `.cospec/openspec/commands/`, is printed as it is: the residue
+  requirement admits `.cospec/openspec/` as an on-disk name, as it admits `.openspec.yaml` (carried at the system
+  walk).
 - **`docs/migration-guide.md`.** The checklist, the move steps, the "what orbit does not have" table, and a short
   "what changes for you" section (`/opsx:` becomes `/orbit:`; reviewed gates now sit between propose, apply and
   archive). It names 1.14.1 as the version it was measured against. Its `openspec` paths are admitted by the residue

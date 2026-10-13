@@ -1,10 +1,11 @@
 schema: spec-driven
 created: 2026-10-13
 schema_version: 5
+architecture:
+  doc: update-gh-documentation
+  stage: concept-docs
 base_fingerprints:
   orbit-user-docs:
     The user docs are a checked surface, gated by an exact pending-rewrite list: sha256:d7291eff6b55a5eb4f5698e6addd6d9f5cab4163aa5ccef36ca79d4be5dde3d5
     The user docs declare their own command heads: sha256:be3ba8845b86156c4279a764de81cdad16c2711882ec3651e1192b230dc0416d
-architecture:
-  doc: update-gh-documentation
-  stage: concept-docs
+    The old name appears in the user docs only in four admitted places: sha256:d68146d1193fd2f2502cd6bddb038d37e92986968949a6e9127aa027d407ef20

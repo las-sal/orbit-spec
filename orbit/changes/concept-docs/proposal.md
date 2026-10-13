@@ -44,6 +44,8 @@ them silent.
 - `orbit-user-docs`:
   - The pending-rewrite requirement lists two new file-local checks: the carried-by check and the tool-coverage check.
   - The `docs-inventory` fence gains `grep`, `find`, `ls` and `rm`.
+  - The residue requirement admits the identifier `.cospec/openspec/`, CoStrict's command directory, so
+    `docs/supported-tools.md` can give its real path (carried at the system walk).
   - Three requirements are ADDED: the carried-by check, the supported-tools coverage, and the migration guide's
     checklist.
 
