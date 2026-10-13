@@ -43,14 +43,14 @@ Three decisions were ratified during C1 remediation:
 - **D11 refinement — Claude primacy**: never trade Claude efficacy for cross-tool neutrality; upstream's
   named-tool idiom (`AskUserQuestion`, `Task tool`) stays in bodies by design.
 
-## The live program: update-gh-documentation
+## Programs: none live
 
-The live program is **`orbit/architecture/update-gh-documentation.md`** (opened 2026-10-12 from issue #1). This
-repository goes public when it ends, so it rewrites `README.md` and the `docs/` pages for orbit and puts them under
-machine checks (goals G1–G4, the R-ugd rulings), in the stages `docs-under-test`, `landing-page`, `reference-docs`,
-`concept-docs` and `public-readiness`. Position is COMPUTED: run `orbit architecture status`, and never trust a
-position stated here. The checks are `orbit-user-docs`' requirements; `test/core/user-docs/pending-rewrite.json`
-lists the pages still owed. Flipping the repository public is Sal's act at arc-done, never an orbit step.
+The last program, **`orbit/architecture/update-gh-documentation.md`** (2026-10-12 to 2026-10-13, from issue #1),
+is complete: every stage ratified. It rewrote `README.md` and the `docs/` pages for orbit, put them under machine
+checks (`orbit-user-docs`' requirements; `test/core/user-docs/pending-rewrite.json` is empty), released `v2.0.0`,
+and ended with the repository public. Follow-on work is tracked as GitHub issues, not a program: #24 "Refine
+Documentation" (the CLI's remaining user-visible OpenSpec strings, an architect-first Quickstart) and #23 (a Windows
+CI leg). A new program starts with `/orbit:architect <name>`; position is COMPUTED by `orbit architecture status`.
 
 ## Orientation
 
@@ -64,7 +64,7 @@ per stage. The narrative it carried until 2026-10-13 — the fork program, the D
 
 ## Source of truth for the plan
 
-- `orbit/architecture/update-gh-documentation.md` — the live program (above).
+- `orbit/architecture/update-gh-documentation.md` — the docs program (complete; above).
 - `orbit/architecture/clean-up-review-cycle.md` — the previous program, its stages all closed; read its Premise,
   Goals, Rulings index and "Carried at close" table, and slice a stage with
   `orbit architecture show clean-up-review-cycle <stage>`.
@@ -105,7 +105,7 @@ body.
 
 ## When in doubt
 
-- The fork plan's decisions remain citable — `orbit/architecture/fork-and-orbify.md` (program complete); the D-arc that followed it is `orbit/architecture/d-arc-arbitered-flow.md` (also complete — historical record). The previous program is `orbit/architecture/clean-up-review-cycle.md`, its stages all closed; read its Premise, Goals, Rulings index and "Carried at close" table, never the whole doc. The live program is `orbit/architecture/update-gh-documentation.md`; `orbit architecture status` gives its position.
+- The fork plan's decisions remain citable — `orbit/architecture/fork-and-orbify.md` (program complete); the D-arc that followed it is `orbit/architecture/d-arc-arbitered-flow.md` (also complete — historical record). The previous program is `orbit/architecture/clean-up-review-cycle.md`, its stages all closed; read its Premise, Goals, Rulings index and "Carried at close" table, never the whole doc. The docs program that followed is `orbit/architecture/update-gh-documentation.md` (complete). No program is live; `orbit architecture status` gives every doc's position.
 - Engine behavior is defined in the vendored TypeScript under `src/` (the architecture doc maps it).
 - Keep tests green: run `npm test` before and after substantive changes; the green baseline is the
   contract.

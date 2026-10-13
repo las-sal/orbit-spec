@@ -152,7 +152,7 @@ logs, then an in-context VERIFICATION grading six `landed`; a computed PASSED ga
 ### Stage landing-page — the README says what orbit is, why, and how to start
 
 Depends-on: docs-under-test
-Complete: [ ]
+Complete: [x] 2026-10-13 (Sal)
 
 Charter: rewrite `README.md` as orbit's landing page: what orbit is (a hard fork of OpenSpec 1.3.1, attributed),
 how it improves on OpenSpec (each claim naming the baseline capability that carries it), install (the pinned
@@ -419,3 +419,13 @@ capability; G3 MET, all eleven `docs/` pages are rewritten and the pending-rewri
 `git`/`gh` and inventory sweeps and the residue check read `README.md` and every `docs/` page; G1 PENDING, graded by
 landing-page's post-flip run. What remains is Sal's: the visibility flip and the description and topics, then
 landing-page's post-flip run and its ratification.
+
+**2026-10-13 — the repository is public; landing-page ratified (Sal), in an architect session. The program is
+complete.** Sal flipped the repository public (`gh repo view` reads `PUBLIC`, and the page answers without
+authentication) and set its description. The topics read empty in `gh repo view` at this entry, and setting them stays
+Sal's. Sal ran landing-page's exit (3) remainder: the README's install and quickstart, `/orbit:propose` included, in a
+clean Claude Code against the public URL. That run is Sal's observation, recorded on his word, and with the
+pre-flip shell half it meets exit (3), so all three exits are MET. Sal ratified the stage. Goal reading, completed: G1
+MET on that run; G2, G3 and G4 MET as read at the closing review. Every stage of the program is ratified. Follow-on
+work lives in issue #24, "Refine Documentation" (the CLI's remaining user-visible OpenSpec strings and an
+architect-first Quickstart), and issue #23 (a Windows CI leg).
