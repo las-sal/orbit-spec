@@ -166,6 +166,7 @@ describe('orbit validate --sources', () => {
     expect(json.source_domain.scan_complete).toBe(false);
   });
 
+  // @scenario behaviour orbit-source-lint :: The lint reads living documents across the whole project :: A checkout without git degrades to an empty domain
   it('an empty file domain is reported with its reason in BOTH output modes', async () => {
     // A checkout git cannot answer for: the run checks nothing and must say so rather than
     // reading as a clean verification.
@@ -204,6 +205,7 @@ describe('orbit validate --sources', () => {
     }
   });
 
+  // @scenario behaviour orbit-source-lint :: The lint reads living documents across the whole project :: An unresolvable domain reports sources as unverified, not passed
   it('names the unverified bucket in human output, so passed + failed != items stays legible', async () => {
     const nogit = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'orbit-nogit-human-')));
     try {
@@ -243,6 +245,7 @@ describe('orbit validate --sources', () => {
     }
   });
 
+  // @scenario behaviour orbit-source-lint :: The lint reads living documents across the whole project :: A partially unread domain also reports sources as unverified
   it('a PARTIAL domain failure also marks sources unverified, not passed', async () => {
     // One unreadable file may hold a source's only marker. Gating `unverified` on the WHOLE
     // domain failing repeated the very pattern the bucket was introduced to stop.

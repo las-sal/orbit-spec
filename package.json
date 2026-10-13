@@ -52,20 +52,14 @@
     "prepare": "npm run build",
     "prepublishOnly": "npm run build",
     "postinstall": "node scripts/postinstall.js",
-    "check:pack-version": "node scripts/pack-version-check.mjs",
     "release:tree": "node scripts/release-tree.mjs",
     "capture:gh": "node scripts/capture-gh-contract.mjs",
-    "capture:git": "vitest run --config scripts/capture.vitest.config.ts",
-    "release": "pnpm run release:ci",
-    "release:ci": "pnpm run check:pack-version && pnpm exec changeset publish",
-    "changeset": "changeset"
+    "capture:git": "vitest run --config scripts/capture.vitest.config.ts"
   },
   "engines": {
     "node": ">=20.19.0"
   },
   "devDependencies": {
-    "@changesets/changelog-github": "^0.5.2",
-    "@changesets/cli": "^2.27.7",
     "@types/node": "^24.2.0",
     "@vitest/ui": "^3.2.4",
     "eslint": "^9.39.2",

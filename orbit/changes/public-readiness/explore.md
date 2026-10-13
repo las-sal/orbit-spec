@@ -33,8 +33,8 @@ What the repository holds, measured 2026-10-13 at `371981b2`:
   file leaves a dead row, so the stage touches that capability.
 - **Scan probe (rough, not the stage's scan).** No token shapes (`ghp_`, `github_pat_`, `sk-`, `AKIA`, `xox[bp]-`,
   private-key headers) in tracked files or in `main`'s full history. Absolute local paths appear in 30 tracked files:
-  24 under `orbit/changes/archive/`, one architect trail emit naming `/Users/sal/code/home-env-test`, and the rest
-  are fixtures (`/home/user/…`, `/Users/john/…`) or `.devcontainer`'s `${localEnv:HOME}` mount. `main`'s authorship
+  24 under `orbit/changes/archive/`, one architect trail emit naming a directory under the author's home, and the
+  rest are fixtures (placeholder home directories) or `.devcontainer`'s `${localEnv:HOME}` mount. `main`'s authorship
   is `public@sallas.org` (887 commits) and `sal@sallas.org` (10).
 - **Origin carries 12 branch heads**, eleven of them past stage branches, all visible once the repository is public.
   The only tag on origin is `upstream/v1.3.1`.

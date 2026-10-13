@@ -126,10 +126,6 @@ export function isExcludedPath(repoRelative: string): boolean {
   if (/^orbit\/schemas\/[^/]+\/templates\//.test(p)) return true;
   // GENERATED — the source is what must be true.
   if (p.startsWith('.claude/')) return true;
-  // HISTORICAL — superseded by their own names.
-  const base = segments[segments.length - 1];
-  if (base === 'README_OLD.md') return true;
-  if (/^adopter-report-.*\.md$/.test(base)) return true;
   return false;
 }
 

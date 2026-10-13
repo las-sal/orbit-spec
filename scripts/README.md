@@ -1,37 +1,9 @@
-# OpenSpec Scripts
+# orbit scripts
 
-Utility scripts for OpenSpec maintenance and development.
+The maintenance and release scripts behind `package.json`'s scripts.
 
-## update-flake.sh
-
-Updates `flake.nix` pnpm dependency hash automatically.
-
-**When to use**: After updating dependencies (`pnpm install`, `pnpm update`).
-
-**Usage**:
-```bash
-./scripts/update-flake.sh
-```
-
-**What it does**:
-1. Reads version from `package.json` (dynamically used by `flake.nix`)
-2. Automatically determines the correct pnpm dependency hash
-3. Updates the hash in `flake.nix`
-4. Verifies the build succeeds
-
-**Example workflow**:
-```bash
-# After dependency updates
-pnpm install
-./scripts/update-flake.sh
-git add flake.nix
-git commit -m "chore: update flake.nix dependency hash"
-```
-
-## postinstall.js
-
-Post-installation script that runs after package installation.
-
-## pack-version-check.mjs
-
-Validates package version consistency before publishing.
+- `postinstall.js` — runs after `npm install`; prints the shell-completions tip (`npm run test:postinstall` runs it by hand).
+- `test-postinstall.sh` — exercises `postinstall.js` under a normal install, CI, and the opt-out variable.
+- `release-tree.mjs` — `npm run release:tree`: cuts a release as a built release tree and its annotated `v<version>` tag; orbit's only release path.
+- `capture-gh-contract.mjs` — `npm run capture:gh`: records the `gh` CLI contract the test suite validates documented `gh` commands against.
+- `capture-git-contract.capture.ts`, with `capture.vitest.config.ts` — `npm run capture:git`: records the `git` contract the same way, under its own vitest config so `npm test` never runs it.
