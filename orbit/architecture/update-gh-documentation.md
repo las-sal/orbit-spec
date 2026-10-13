@@ -200,7 +200,7 @@ teaches an upstream command.
 ### Stage concept-docs — the concept pages explain what orbit adds
 
 Depends-on: docs-under-test
-Complete: [ ]
+Complete: [x] 2026-10-13 (Sal)
 
 Charter: rewrite `docs/concepts.md`, `docs/customization.md`, `docs/supported-tools.md`, `docs/multi-language.md` and
 `docs/migration-guide.md` for orbit. Concepts covers what orbit adds over OpenSpec (reviewed gates and the cadence,
@@ -350,3 +350,8 @@ it builds an empty `orbit/` beside `openspec/` without a word. Sal took a warnin
 migrate command. R-ugd-11 carves the warning out of R-ugd-3, and the concept-docs charter names it. The same
 exploration measured that a 1.14.1 project degrades in the 1.3.1 engine; taking upstream fixes before launch went to
 Considered & out (Sal: docs only). landing-page completion offered a fourth time: not yet (Sal), on the same ground.
+
+**2026-10-13 — concept-docs ratified (Sal), in an architect session; landing-page not yet.** concept-docs' three exits
+were graded MET on its archived record (the Shipped-as paragraph above), and Sal ratified it after PR #21 merged.
+landing-page completion was offered a fifth time: not yet (Sal), on the same ground; exit (3)'s remaining halves need
+the public repository. public-readiness, the last stage, is now the program's next.

@@ -1,0 +1,34 @@
+{
+  "command": "architect",
+  "timestamp": "2026-10-13T02:30:54Z",
+  "change": null,
+  "doc": "update-gh-documentation",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "concept-docs ratified (Sal) on its three MET exits after PR #21 merged; landing-page offered a fifth time and left not yet; public-readiness, the last stage, is next.",
+  "stages_touched": [
+    "concept-docs",
+    "landing-page"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [
+    "concept-docs"
+  ],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      {
+        "path": "orbit/architecture/update-gh-documentation.md",
+        "why": "the program; read Premise, Rulings index and the public-readiness stage's charter and exits"
+      },
+      {
+        "path": "orbit/changes/archive/2026-10-13-concept-docs/.orbit-runs/archive-2026-10-13T02-27-29Z.json",
+        "why": "the last stage's accepted residuals, two of which (Codex invocation, Linux) public-readiness may meet"
+      }
+    ],
+    "next_command": "/orbit:explore public-readiness",
+    "model_hint": null,
+    "seam": "between stages: concept-docs complete, public-readiness premised; landing-page's exit (3) waits on the visibility flip"
+  },
+  "next_recommended": "/orbit:explore public-readiness"
+}
