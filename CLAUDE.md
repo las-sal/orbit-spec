@@ -15,7 +15,7 @@ The fork bootstrap (phase **A1**) is complete:
 - Vendored pristine v1.3.1 baseline (`upstream/v1.3.1` tag), fresh detached history.
 - **Telemetry removed** (no PostHog; `src/telemetry/` gone; `cli/index.ts` keeps only `--no-color`).
 - Upstream's own `openspec/` dogfooding dir stripped.
-- Rebranded to `orbit-spec`. **The user-facing rename is complete (D13):** the CLI bin is **`orbit`**,
+- Rebranded to `orbit-spec`. **The user-facing rename is complete:** the CLI bin is **`orbit`**,
   the project working dir is **`orbit/`** (where `specs/`, `changes/`, `config.yaml` live), skill dirs
   are **`orbit-*`** (e.g. `.claude/skills/orbit-explore/`), and the command namespace is **`/orbit:*`**
   (`.claude/commands/orbit/<id>.md`). Deferred to a later Tier-C scrub (kept as-is for now): `OpenSpec`
@@ -115,7 +115,7 @@ lists the pages still owed. Flipping the repository public is Sal's act at arc-d
 
 ## The previous program: clean-up-review-cycle (all stages closed 2026-10-12)
 
-**Current state, engine-checked:** the program's rulings index holds <!-- src:rulings -->14<!-- /src:rulings --> rulings, and `orbit/specs/` holds <!-- src:capabilities -->28<!-- /src:capabilities --> baseline capabilities. Every marked figure in this file is checked against `orbit/sources.yaml` by `orbit validate --sources`; an UNMARKED figure is invisible to that check.
+**Current state, engine-checked:** the program's rulings index holds <!-- src:rulings -->14<!-- /src:rulings --> rulings, and `orbit/specs/` holds <!-- src:capabilities -->29<!-- /src:capabilities --> baseline capabilities. Every marked figure in this file is checked against `orbit/sources.yaml` by `orbit validate --sources`; an UNMARKED figure is invisible to that check.
 
 As of 2026-09-11 the D-arc's six stages are all archived (d1 complete-ratified; d2–d6
 quiescent, awaiting ratification) and the live program became

@@ -212,6 +212,29 @@ Exit: (1) the five pages pass docs-under-test's checks with no recorded exceptio
 about orbit's behaviour names the capability that carries it; (3) the migration guide's steps are run once on a
 real OpenSpec project and the run is recorded.
 
+Shipped as (2026-10-13; archived as `orbit/changes/archive/2026-10-13-concept-docs/`; the charter stands): the five
+pages are rewritten for orbit and the pending-rewrite list is EMPTY, so the docs floors are set (`orbit` 100 of 142,
+`git` 2 of 4, `gh` 1 of 1 — the `gh` line is the user's merge in `docs/concepts.md`, Sal's choice at apply when the
+sweep read zero). Every H2 section of the four concept pages ends in a checked `Carried by:` line, and
+`docs/supported-tools.md` is held to `AI_TOOLS` in two tiers (Claude and Codex designed for and tested; 26 generated,
+untested). The migration guide opens with a before-you-move checklist measured against OpenSpec 1.14.1, then the move
+steps by the state of `orbit/` (a delete only when `find orbit -type f` shows nothing but `orbit/config.yaml`), a stamp
+step, and what orbit does not have. `orbit init` warns when an `openspec/` project sits beside it, and proceeds
+(R-ugd-11). `git mv` entered the git contract by recapture; `.cospec/openspec/` became an admitted residue identifier.
+Baseline capabilities 28 to 29 (`orbit-init-openspec-warning` ADDED).
+
+Exit (1) MET: the five pages are unlisted and pass every file-local check. Exit (2) MET: the carried-by check passes
+all four concept pages, every item resolving, and the system review's fresh half read each page's owners and its
+baseline sections for orbit behaviour (D-cd-3's residual method) and found none misattributed. Exit (3) MET: the guide
+was run as written on a fresh 1.14.1 project with one fixture per hazard, before and after an `orbit init`, and with an
+exploration in `orbit/` (`migration-run.md`; declared `observed` in the scenario ledger); the run itself falsified two
+guide lines, both fixed before the recorded rerun.
+
+The system blind pair (fresh 0C/1W/5S forward, external GPT-6 0C/2W/2S hold) converged on one finding (the CoStrict
+path) and the external half found the one with data-loss weight: the empty-`orbit/` test read only two subdirectories.
+Walked in two logs (Sal: A on both decisions), an in-context VERIFICATION graded seven `landed` and two `regressed` (two
+wordings, walked to zero), and the gate computed PASSED. 3679 tests green.
+
 ### Stage public-readiness — the repository is fit to be seen
 
 Depends-on: landing-page, reference-docs, concept-docs

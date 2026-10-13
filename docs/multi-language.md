@@ -1,10 +1,11 @@
-# Multi-Language Guide
+# Multi-language
 
-Configure OpenSpec to generate artifacts in languages other than English.
+orbit can have the AI write a change's artifacts in a language other than English. The mechanism is the `context`
+field of `orbit/config.yaml`, inherited unchanged from orbit's 1.3.1 baseline (see [Built on](../README.md)).
 
-## Quick Setup
+## Setting a language
 
-Add a language instruction to your `openspec/config.yaml`:
+Add a language instruction to the `context` of `orbit/config.yaml`:
 
 ```yaml
 schema: spec-driven
@@ -13,13 +14,15 @@ context: |
   Language: Portuguese (pt-BR)
   All artifacts must be written in Brazilian Portuguese.
 
-  # Your other project context below...
   Tech stack: TypeScript, React, Node.js
 ```
 
-That's it. All generated artifacts will now be in Portuguese.
+`context` is injected into the instructions for every artifact the AI writes: the proposal, the design, the delta
+specs and the tasks. From the next artifact on, they are written in that language.
 
-## Language Examples
+Carried by: the 1.3.1 baseline
+
+## Examples
 
 ### Portuguese (Brazil)
 
@@ -69,11 +72,13 @@ context: |
   Alle Artefakte müssen auf Deutsch verfasst werden.
 ```
 
+Carried by: the 1.3.1 baseline
+
 ## Tips
 
-### Handle Technical Terms
+### Technical terms
 
-Decide how to handle technical terminology:
+Say how to treat terms that read better untranslated:
 
 ```yaml
 context: |
@@ -83,33 +88,35 @@ context: |
   - Code examples and file paths remain in English
 ```
 
-### Combine with Other Context
+### The words the format needs
 
-Language settings work alongside your other project context:
+A delta spec's structure is read by the engine, so its keywords stay as they are in any language: the `## ADDED
+Requirements`, `## MODIFIED Requirements`, `## REMOVED Requirements` and `## RENAMED Requirements` headings, the
+`### Requirement:` and `#### Scenario:` prefixes, and the `SHALL` or `MUST` in each requirement's first line.
+Everything after those keywords can be in your language. If you want this spelled out to the AI, add it to the
+`context`.
 
-```yaml
-schema: spec-driven
+Carried by: the 1.3.1 baseline
 
-context: |
-  Language: Portuguese (pt-BR)
-  All artifacts must be written in Brazilian Portuguese.
+## Checking it
 
-  Tech stack: TypeScript, React 18, Node.js 20
-  Database: PostgreSQL with Prisma ORM
-```
-
-## Verification
-
-To verify your language config is working:
+Print the instructions the AI receives for an artifact; your language instruction appears in the context:
 
 ```bash
-# Check the instructions - should show your language context
-openspec instructions proposal --change my-change
-
-# Output will include your language context
+orbit instructions proposal --change my-change
 ```
 
-## Related Documentation
+Carried by: the 1.3.1 baseline
 
-- [Customization Guide](./customization.md) - Project configuration options
-- [Workflows Guide](./workflows.md) - Full workflow documentation
+## What stays in English
+
+`context` reaches the artifacts the AI writes. orbit's own output does not change language: the readouts of
+`orbit status`, the fixed labels and engine-computed lines of a rendered review report, and the engine's messages are
+English.
+
+Carried by: `orbit-orientation`, `orbit-report-rendering`
+
+## Related
+
+- [Customization](customization.md)
+- [Workflows](workflows.md)

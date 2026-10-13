@@ -1,0 +1,269 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-13T02:11:20Z",
+  "change": "concept-docs",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/concept-docs/.orbit-runs/review-system-2026-10-13T01-54-37Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-13T01-54-37Z",
+  "latest_apply_token": "2026-10-13T01-48-30Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 5
+  },
+  "pushback_verification": "All six verified against the current pages, the schema file, orbit-pr-lifecycle and orbit-architecture-engine's state requirement; none stale. The CoStrict finding converged with the external half's, and is walked here, in the earlier pass's log.",
+  "resolution_summary": {
+    "resolved": 6,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Pull requests section says archive marks the PR ready, which is false under per-architecture",
+      "marker_source": "internal-review",
+      "file": "docs/concepts.md",
+      "line": 237,
+      "classification": "trivial_fix",
+      "action": "scoped the ready flip to per-proposal; under per-architecture each archive adds its stage to the program pull request and never marks it ready, which is the user's at program end; an uncited change gets its own pull request",
+      "evidence": "orbit-pr-lifecycle: stage archives never flip a program PR; customization.md's pr row already scoped it",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "at archive, the pull request is marked ready"
+        ],
+        "introduced": [
+          {
+            "path": "docs/concepts.md",
+            "text": "never marks it ready, because the program pull request is yours to mark ready and merge"
+          }
+        ],
+        "searched": [
+          "marked ready",
+          "marks.*ready",
+          "per-architecture"
+        ],
+        "scope": [
+          "docs",
+          "README.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The gates list shown as spec-driven's own omits keys the shipped file carries",
+      "marker_source": "internal-review",
+      "file": "docs/customization.md",
+      "line": 216,
+      "classification": "trivial_fix",
+      "action": "said the list is abridged, naming confirm: and the apply gate's instruction:, and added both keys to the field table (confirm accepted and read by no gate)",
+      "evidence": "schemas/spec-driven/schema.yaml carries confirm: on both reviewed gates and instruction: on apply",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "This is the gates list of the built-in `spec-driven` schema:"
+        ],
+        "introduced": [
+          {
+            "path": "docs/customization.md",
+            "text": "the shipped file also carries `confirm:` on both reviewed gates"
+          },
+          {
+            "path": "docs/customization.md",
+            "text": "accepted so that older schemas stay valid, and read by no gate"
+          }
+        ],
+        "searched": [
+          "gates list",
+          "confirm"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The stage-state list leaves out `concluded`",
+      "marker_source": "internal-review",
+      "file": "docs/concepts.md",
+      "line": 226,
+      "classification": "trivial_fix",
+      "action": "added concluded between quiescent and premised, as orbit-architecture-engine's state requirement orders them",
+      "evidence": "orbit-architecture-engine spec: (4) any CONCLUDED explore citing it -> concluded",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "`quiescent` once its change is archived, `premised`"
+        ],
+        "introduced": [
+          {
+            "path": "docs/concepts.md",
+            "text": "`concluded` when its only citing exploration ended without a change"
+          }
+        ],
+        "searched": [
+          "premised",
+          "quiescent"
+        ],
+        "scope": [
+          "docs"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The CoStrict row does not give the command directory a reader could find",
+      "marker_source": "internal-review",
+      "file": "docs/supported-tools.md",
+      "line": 71,
+      "classification": "decision_required",
+      "action": "applied direction A: orbit-user-docs' residue requirement admits the identifier .cospec/openspec/ (carried into the delta as a MODIFIED block, fingerprint stamped), the helper's ADMITTED_IDENTIFIERS and the residue test carry it, and the row prints .cospec/openspec/commands/orbit-<id>.md",
+      "ratified_via": "chat",
+      "resolution": "A: admit .cospec/openspec/ as an on-disk residue identifier, as .openspec.yaml is admitted, and print the real path",
+      "evidence": "src/core/command-generation/adapters/costrict.ts writes .cospec/openspec/commands/; the residue check refused the word on this page",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/concept-docs/specs/orbit-user-docs/spec.md",
+          "test/helpers/user-docs.ts",
+          "test/core/user-docs/residue.test.ts",
+          "orbit/changes/concept-docs/proposal.md",
+          "orbit/changes/concept-docs/design.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/specs/orbit-user-docs/spec.md",
+            "reason": "baseline spec; add a delta to your current change's specs/<capability>/spec.md to capture this ripple"
+          }
+        ]
+      },
+      "sweep": {
+        "retired": [
+          "in a `commands/` directory under `.cospec/`"
+        ],
+        "introduced": [
+          {
+            "path": "docs/supported-tools.md",
+            "text": "`.cospec/openspec/commands/orbit-<id>.md`"
+          },
+          {
+            "path": "test/helpers/user-docs.ts",
+            "text": "'.cospec/openspec/',"
+          },
+          {
+            "path": "orbit/changes/concept-docs/specs/orbit-user-docs/spec.md",
+            "text": "the directory `.cospec/openspec/`, anywhere"
+          }
+        ],
+        "searched": [
+          "cospec",
+          "ADMITTED_IDENTIFIERS",
+          "toHaveLength(17)"
+        ],
+        "scope": [
+          "docs"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The Codex removal line deletes prompts that other OpenSpec projects on the machine still use, and ignores CODEX_HOME",
+      "marker_source": "internal-review",
+      "file": "docs/migration-guide.md",
+      "line": 121,
+      "classification": "trivial_fix",
+      "action": "named $CODEX_HOME/prompts/ as the location when CODEX_HOME is set, and said the opsx-* prompts serve every project on the machine, to be left until another OpenSpec project moves",
+      "evidence": "the prompts live in the global Codex home, as supported-tools.md says",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "docs/migration-guide.md",
+            "text": "leave them in place until that project moves too"
+          },
+          {
+            "path": "docs/migration-guide.md",
+            "text": "in `$CODEX_HOME/prompts/` when `CODEX_HOME` is set"
+          }
+        ],
+        "searched": [
+          "codex/prompts",
+          "CODEX_HOME"
+        ],
+        "scope": [
+          "docs"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The stamp step does not say it protects only from the moment of stamping",
+      "marker_source": "internal-review",
+      "file": "docs/migration-guide.md",
+      "line": 178,
+      "classification": "trivial_fix",
+      "action": "added that the stamp records the baseline as it stands now and guards only against later edits, so a long-open change's modified, removed and renamed requirements are read against the current baseline before stamping",
+      "evidence": "orbit fingerprint stamps the live baseline (add-missing-only)",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "docs/migration-guide.md",
+            "text": "it guards only against edits made after it"
+          }
+        ],
+        "searched": [
+          "fingerprint",
+          "stamp"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": "walk everything and then go 1 by 1 through decisions",
+  "final_assessment": "Six of six resolved: five obvious-lane repairs and the CoStrict path by Sal's direction A, which admits .cospec/openspec/ as a residue identifier and carries the residue requirement into the delta.",
+  "iteration": 4,
+  "next_recommended": "/orbit:address-reviews concept-docs",
+  "ripple_misses": 0
+}

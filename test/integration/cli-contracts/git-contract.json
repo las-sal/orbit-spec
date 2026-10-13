@@ -1,18 +1,12 @@
 {
   "git_version": "git version 2.50.1 (Apple Git-155)",
-  "captured_at": "2026-10-10",
+  "captured_at": "2026-10-13",
   "commands": {
     "add": {
       "known": true,
       "class": "parse-options",
       "positional_required": false,
-      "flags": [
-        {
-          "name": "-A",
-          "takes_value": false,
-          "accepted": true
-        }
-      ]
+      "flags": []
     },
     "branch": {
       "known": true,
@@ -21,18 +15,6 @@
       "flags": [
         {
           "name": "--show-current",
-          "takes_value": false,
-          "accepted": true
-        }
-      ]
-    },
-    "check-ref-format": {
-      "known": true,
-      "class": "run",
-      "positional_required": true,
-      "flags": [
-        {
-          "name": "--branch",
           "takes_value": false,
           "accepted": true
         }
@@ -69,25 +51,8 @@
           "name": "--name-only",
           "takes_value": false,
           "accepted": true
-        },
-        {
-          "name": "--quiet",
-          "takes_value": false,
-          "accepted": true
         }
       ]
-    },
-    "fetch": {
-      "known": true,
-      "class": "parse-options",
-      "positional_required": false,
-      "flags": []
-    },
-    "init": {
-      "known": true,
-      "class": "parse-options",
-      "positional_required": false,
-      "flags": []
     },
     "log": {
       "known": true,
@@ -122,11 +87,6 @@
       "positional_required": false,
       "flags": [
         {
-          "name": "--error-unmatch",
-          "takes_value": false,
-          "accepted": true
-        },
-        {
           "name": "--exclude-standard",
           "takes_value": false,
           "accepted": true
@@ -138,19 +98,7 @@
         }
       ]
     },
-    "merge": {
-      "known": true,
-      "class": "parse-options",
-      "positional_required": false,
-      "flags": [
-        {
-          "name": "--ff-only",
-          "takes_value": false,
-          "accepted": true
-        }
-      ]
-    },
-    "merge-base": {
+    "mv": {
       "known": true,
       "class": "parse-options",
       "positional_required": true,
@@ -160,13 +108,7 @@
       "known": true,
       "class": "parse-options",
       "positional_required": false,
-      "flags": [
-        {
-          "name": "-u",
-          "takes_value": false,
-          "accepted": true
-        }
-      ]
+      "flags": []
     },
     "rev-list": {
       "known": true,
@@ -224,23 +166,6 @@
       "known": true,
       "class": "parse-options",
       "positional_required": false,
-      "flags": [
-        {
-          "name": "--track",
-          "takes_value": false,
-          "accepted": true
-        },
-        {
-          "name": "-c",
-          "takes_value": true,
-          "accepted": true
-        }
-      ]
-    },
-    "symbolic-ref": {
-      "known": true,
-      "class": "parse-options",
-      "positional_required": true,
       "flags": []
     },
     "worktree add": {

@@ -63,7 +63,7 @@ describe('the git validator', () => {
   });
 
   it('a value-taking flag consumes the next token, separate, `=`-attached, or a short attached value', () => {
-    expect(v('git switch -c <branch> --track <r>/<b>').ok).toBe(true);
+    expect(v('git commit -F <file> -m <message>').ok).toBe(true);
     expect(v('git log --since <window>').ok).toBe(true);
     expect(v('git log --since=<window>').ok).toBe(true);
     expect(v('git log -S<symbol>').ok).toBe(true);
@@ -72,7 +72,7 @@ describe('the git validator', () => {
   });
 
   it('a value-taking flag with nothing after it fails', () => {
-    expect(v('git switch -c')).toEqual({ ok: false, message: 'flag -c on git switch requires a value' });
+    expect(v('git commit -F')).toEqual({ ok: false, message: 'flag -F on git commit requires a value' });
   });
 
   it('an attached short value on a flag that takes none is not recorded', () => {
@@ -89,7 +89,7 @@ describe('the git validator', () => {
 
   it('a command recorded as requiring a positional fails without one', () => {
     expect(v('git worktree remove --force')).toEqual({ ok: false, message: 'git worktree remove requires an argument' });
-    expect(v('git merge-base <a> <b>').ok).toBe(true);
+    expect(v('git mv <source> <destination>').ok).toBe(true);
   });
 
   // @scenario behaviour orbit-cli-grammar :: Every `git` and `gh` snippet on the generated surface validates against its tool's recorded contract :: The orbit-side rule rejects what git would accept
@@ -102,6 +102,6 @@ describe('the git validator', () => {
 
   it('a placeholder passes as a value or a positional, exactly as a real value', () => {
     expect(validate(['commit', '--only', '<the same enumerated paths>'], contract).ok).toBe(true);
-    expect(v('git symbolic-ref refs/remotes/<resolved-remote>/HEAD').ok).toBe(true);
+    expect(v('git worktree add <resolved-path>').ok).toBe(true);
   });
 });

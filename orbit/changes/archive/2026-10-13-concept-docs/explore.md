@@ -120,8 +120,8 @@ Domain: the hazards Case 2 lists, each disposed of by one checklist line or one 
 | tools added after 1.3.1, and newer tool directories (item 10) | the table, pointing at `docs/supported-tools.md` |
 | commands, flags and `--json` fields orbit lacks (item 11) | the table |
 Closure: BOUNDED — Case 2 is one changelog read and one run against 1.14.1, and upstream keeps releasing
-Residual kind: a post-1.3.1 on-disk form Case 2 missed (its four unverified items: brace or extglob `generates`, symlinked schema directories, `.openspec-workspace/`, Copilot cloud-agent files) or one upstream ships after 1.14.1
-Residual method: exit (3)'s recorded run on a 1.14.1 project (D-cd-6) for the first; for the second, the guide names the upstream version it was measured against, and a later stage re-reads upstream's changelog from there
+Residual kind: a post-1.3.1 on-disk form the measurement missed (four were never verified: brace or extglob `generates`, symlinked schema directories, `.openspec-workspace/`, Copilot cloud-agent files) or one upstream ships after 1.14.1
+Residual method: for the first, the recorded run of the guide's steps on an upstream 1.14.1 project; for the second, the guide names the upstream version it was measured against, and a later change re-reads upstream's changelog from that version
 Moves:
 - READ: applied — the two re-checked claims (Case 2); the rest are the subagent's runs, which exit (3)'s run re-executes
 - ENUMERATE: applied — this table, one row per Case 2 item, each with a check or a table row
@@ -138,13 +138,13 @@ Domain: what a sentence on the five pages can describe, by whose behaviour it is
 | member | covered by |
 |---|---|
 | behaviour orbit ADDED (gates and cadence, the blind pair, walks, emits and trails, orientation, the architect tier, `orbit pr`, fingerprints, consent, size, the scenario map …) | names the `orbit-*` capability that carries it |
-| inherited behaviour orbit CHANGED, where a capability states the change (archive's divergence guard, the modified explore, propose, verify and archive bodies, apply's tracked gate) | names that capability (`orbit-base-fingerprints`, `orbit-*-modifications`, `orbit-engine-gates`, `orbit-skill-generation`) |
-| inherited behaviour orbit CHANGED where no capability states it: telemetry removed (fork-and-orbify D12), the user-facing names (D13), every workflow installed regardless of profile (D15; `orbit-architect` only mentions it in passing) | cites the fork-and-orbify decision by ID; never presented as a capability |
+| inherited behaviour orbit CHANGED, where a capability states the change (archive's divergence guard, the modified explore, propose, verify and archive bodies, apply's tracked gate, the user-facing names) | names that capability (`orbit-base-fingerprints`, `orbit-*-modifications`, `orbit-engine-gates`, `orbit-skill-generation`; the names: `orbit-conventions`' `Distribution model — self-contained fork`) |
+| inherited behaviour orbit CHANGED where no capability states it: telemetry removed (fork-and-orbify D12), every workflow installed regardless of profile (D15; `orbit-architect` only mentions it in passing) | cites the fork-and-orbify decision by ID; never presented as a capability |
 | inherited behaviour orbit did NOT change (the spec and delta format, schemas and their resolution, `config.yaml` context and rules, the archive merge itself) | the page's ONE attribution to the OpenSpec 1.3.1 baseline; no capability owed |
 | statements about OpenSpec itself (what an adopter has, what upstream added after 1.3.1) | not orbit's behaviour; R-ugd-1's migration exception |
 | instructions (run this, write that) | not a claim about behaviour; the `orbit`, `git`/`gh` and inventory sweeps grade them |
 Closure: BOUNDED — which inherited behaviours orbit changed is not a closed list; three uncarried ones are named here, found by grepping the specs for the fork plan's decisions
-Residual kind: an orbit change to inherited behaviour that no capability states and that is not D12, D13 or D15, so a page could present it as inherited or as a capability claim
+Residual kind: an orbit change to inherited behaviour that no capability states and that is not fork-and-orbify D12 or D15, so a page could present it as inherited or as a capability claim
 Residual method: diff the page's claim against the upstream `1.3.1` tag (`git diff upstream/v1.3.1 -- <path>`) when the system review reads the page for orbit behaviour
 Moves:
 - READ: applied — all 28 baseline capabilities are `orbit-*` (`ls orbit/specs`); no spec states telemetry removal, and D15 appears only as one clause in `orbit-architect`
@@ -234,7 +234,8 @@ schema directories, `.openspec-workspace/`, Copilot cloud-agent files.
 - **2026-10-12 — D-cd-3: exit (2)'s "claim about orbit's behaviour" means what orbit adds or changes** (Sal: the
   recommendation, resolving Q-cd-1). Inherited 1.3.1 behaviour orbit leaves alone is attributed once per page to the
   OpenSpec 1.3.1 baseline and owes no capability. An orbit change to inherited behaviour names the capability that
-  states it, or, where none does (D12 telemetry, D13 names, D15 full surface), cites the fork-and-orbify decision. This
+  states it, or, where none does (D12 telemetry, D15 full surface; the names are `orbit-conventions`', corrected at the proposal walk — D13 is the
+  inline-TS decision), cites the fork-and-orbify decision. This
   is a reading of the exit's terms, recorded now so the exit is graded against it at archive, not narrowed then.
   Kind: rule
 - **2026-10-12 — D-cd-4: an OpenSpec 1.4–1.14 project is NOT a drop-in for orbit** (resolving Q-cd-4). Case 2 lists

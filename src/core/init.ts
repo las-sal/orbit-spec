@@ -78,6 +78,40 @@ type InitCommandOptions = {
 // Init Command Class
 // -----------------------------------------------------------------------------
 
+/** Where the migration guide lives on the orbit repository. */
+export const MIGRATION_GUIDE_URL = 'https://github.com/las-sal/orbit-spec/blob/main/docs/migration-guide.md';
+
+/**
+ * Whether the project holds an OpenSpec project directory (orbit-init-openspec-warning): a directory named by the
+ * literal 'openspec' (OPENSPEC_DIR_NAME is 'orbit' in this fork) holding a `specs/` or `changes/` directory. A regular
+ * file of any of those names is absent.
+ */
+export function detectOpenspecProject(projectPath: string): boolean {
+  const isDir = (p: string): boolean => {
+    try {
+      return fs.statSync(p).isDirectory();
+    } catch {
+      return false;
+    }
+  };
+  const upstream = path.join(projectPath, 'openspec');
+  return isDir(upstream) && (isDir(path.join(upstream, 'specs')) || isDir(path.join(upstream, 'changes')));
+}
+
+/** The warning's text: orbit/ is separate, the move steps by the state of orbit/, and the guide. */
+export const OPENSPEC_PROJECT_WARNING = [
+  'Warning: this project has an OpenSpec project directory, openspec/.',
+  'orbit keeps its project in orbit/, separate from openspec/, and reads nothing in openspec/specs/ or',
+  'openspec/changes/. To move the project to orbit, first delete the openspec-* skills and opsx commands, then:',
+  '  - no orbit/ yet: git mv openspec orbit, then orbit init',
+  '  - orbit/ created by orbit init and holding no file but orbit/config.yaml: delete orbit/ (keep a copy',
+  '    of orbit/config.yaml if you edited it), then git mv openspec orbit, then orbit init',
+  '  - orbit/ holding any other file (specs, changes, an architecture doc, an exploration): merge by hand;',
+  '    a git mv into an existing orbit/ nests the project at orbit/openspec/, where orbit reads nothing',
+  `Run the migration guide's before-you-move checklist first: ${MIGRATION_GUIDE_URL}`,
+  'Continuing with init.',
+].join('\n');
+
 export class InitCommand {
   private readonly toolsArg?: string;
   private readonly force: boolean;
@@ -104,6 +138,14 @@ export class InitCommand {
 
     // Validation happens silently in the background
     const extendMode = await this.validate(projectPath, openspecPath);
+
+    // orbit-init-openspec-warning: report an OpenSpec project beside this one, then proceed. Printed before the
+    // legacy cleanup (whose declined prompt exits) and before orbit/ is created.
+    if (detectOpenspecProject(projectPath)) {
+      console.log();
+      console.log(chalk.yellow(OPENSPEC_PROJECT_WARNING));
+      console.log();
+    }
 
     // Check for legacy artifacts and handle cleanup
     await this.handleLegacyCleanup(projectPath, extendMode);

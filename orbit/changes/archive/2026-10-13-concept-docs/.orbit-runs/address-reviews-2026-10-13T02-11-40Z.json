@@ -1,0 +1,178 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-13T02:11:40Z",
+  "change": "concept-docs",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/concept-docs/.orbit-runs/external-system-2026-10-13T01-54-59Z.md",
+  "source_command": null,
+  "source_token": "2026-10-13T01-54-59Z",
+  "latest_apply_token": "2026-10-13T01-48-30Z",
+  "external_reviewer": "GPT-6",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 2
+  },
+  "pushback_verification": "All four verified: the freshness claim against orbit-engine-gates' v1 freshness rule (inputs not consulted by v1), the budget claim against its rendering rule (independentSpend alone), the empty-orbit claim by reading the guide, the delta and the init warning; the CoStrict finding converged with the fresh half's.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 1,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Migration’s empty-directory test overlooks other orbit work",
+      "marker_source": "external",
+      "file": "docs/migration-guide.md",
+      "line": 143,
+      "classification": "decision_required",
+      "action": "applied direction A: orbit/ counts as created by init only when find orbit -type f prints nothing or only orbit/config.yaml (keep a copy of an edited config); any other file goes to merge by hand, the prose naming architecture docs, explorations, schemas and lens files; the delta's move-steps rows and scenario, the init warning and its test say the same; the recorded run was re-run with the new command and a case 4C (an exploration in orbit/ gets no move command)",
+      "ratified_via": "chat",
+      "resolution": "A: test the whole directory; delete only when it holds nothing but orbit/config.yaml",
+      "evidence": "the old test read only orbit/specs and orbit/changes, while orbit-architecture-engine and orbit-conventions place architecture docs and explorations elsewhere under orbit/",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/concept-docs/specs/orbit-user-docs/spec.md",
+          "src/core/init.ts",
+          "test/core/init-openspec-warning.test.ts",
+          "orbit/changes/concept-docs/migration-run.md",
+          "orbit/scenario-ledger.yaml"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "find orbit/specs orbit/changes -type f",
+          "created empty by orbit init (no file under",
+          "holding a file under `orbit/specs/` or `orbit/changes/`"
+        ],
+        "introduced": [
+          {
+            "path": "docs/migration-guide.md",
+            "text": "the second command prints nothing, or only `orbit/config.yaml`"
+          },
+          {
+            "path": "src/core/init.ts",
+            "text": "holding no file but orbit/config.yaml"
+          },
+          {
+            "path": "orbit/changes/concept-docs/specs/orbit-user-docs/spec.md",
+            "text": "`find orbit -type f` prints nothing or only `orbit/config.yaml`"
+          },
+          {
+            "path": "orbit/changes/concept-docs/migration-run.md",
+            "text": "## 4C. After an orbit init, with an exploration written in orbit/"
+          }
+        ],
+        "searched": [
+          "find orbit/specs",
+          "created empty",
+          "holding work",
+          "holds orbit work"
+        ],
+        "scope": [
+          "docs",
+          "src/core/init.ts",
+          "test/core"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Custom-schema documentation promises freshness tracking the engine does not implement",
+      "marker_source": "external",
+      "file": "docs/customization.md",
+      "line": 249,
+      "classification": "trivial_fix",
+      "action": "rewrote the inputs row: a declared freshness scope no engine version reads yet; a review goes stale only when an apply runs after it, so a proposal-phase edit does not stale a passed review",
+      "evidence": "orbit-engine-gates' v1 freshness rule: The inputs freshness scope is declared for this upgrade path but is not consulted by v1",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the artifacts whose change makes a passed review stale"
+        ],
+        "introduced": [
+          {
+            "path": "docs/customization.md",
+            "text": "No version of the engine reads it yet"
+          }
+        ],
+        "searched": [
+          "freshness",
+          "goes stale",
+          "stale"
+        ],
+        "scope": [
+          "docs"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Budget documentation confuses the declaration with recorded spend",
+      "marker_source": "external",
+      "file": "docs/customization.md",
+      "line": 251,
+      "classification": "trivial_fix",
+      "action": "said budget is a declaration carried in the status JSON beside the spend, never enforced, and that readouts show only the spend",
+      "evidence": "orbit-engine-gates: a rendered gate row shows independentSpend alone; the JSON carries budget as a separate field",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "reported beside the gate, never enforced"
+        ],
+        "introduced": [
+          {
+            "path": "docs/customization.md",
+            "text": "Readouts show only the spend"
+          }
+        ],
+        "searched": [
+          "budget",
+          "spend"
+        ],
+        "scope": [
+          "docs"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "CoStrict’s command location is unnecessarily incomplete",
+      "marker_source": "external",
+      "file": "docs/supported-tools.md",
+      "line": 70,
+      "classification": "stale",
+      "action": "converged with the fresh half's finding, walked in its log",
+      "evidence": "resolved in address-reviews-2026-10-13T02-11-20Z (the earlier pass's log), entry 'The CoStrict row does not give the command directory a reader could find' (docs/supported-tools.md): direction A, .cospec/openspec/ admitted as a residue identifier and the row prints .cospec/openspec/commands/orbit-<id>.md",
+      "outcome": "stale"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "delegation_directive": "walk everything and then go 1 by 1 through decisions",
+  "final_assessment": "Four of four closed: the empty-orbit test widened to the whole directory by Sal's direction A across the guide, the delta, the init warning and the recorded run; the inputs and budget rows corrected; the CoStrict path stale as converged with the fresh half's log.",
+  "iteration": 5,
+  "next_recommended": "/orbit:review --as system concept-docs",
+  "ripple_misses": 0
+}

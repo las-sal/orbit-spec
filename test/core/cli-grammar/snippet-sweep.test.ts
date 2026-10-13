@@ -37,9 +37,10 @@ describe('the orbit snippet sweep', () => {
 /**
  * The user docs' floor (docs-under-test design D5): `null` while any file is on the pending-rewrite
  * list, asserted only once the list is empty. The edit that empties the list sets it to a positive
- * integer at most the count this sweep measures over the user docs at that edit.
+ * integer at most the count this sweep measures over the user docs at that edit. concept-docs emptied the list: the
+ * sweep then read 142 snippets, and the floor sits below that, a non-vacuity floor, not a pin.
  */
-const DOCS_FLOOR: number | null = null;
+const DOCS_FLOOR: number | null = 100;
 
 const FENCE = '```';
 

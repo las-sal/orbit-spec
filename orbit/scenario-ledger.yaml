@@ -52,3 +52,7 @@ scenarios:
   - key: "orbit-engine-gates :: Inflection-prompt override contract :: The prompt is the only skip surface"
     kind: untestable
     why: "The THEN is an absence across every recommendation an AI composes in chat; the engine's eligibility lines are composed from the gate graph and never offer a skip, but a body's prose recommendation is authored in a session and no test can enumerate it."
+  # concept-docs (task 4.2, design D6) — exit (3): the migration guide run once, as written, on a 1.14.1 project.
+  - key: "orbit-user-docs :: The migration guide opens with a before-you-move checklist for an OpenSpec 1.x project :: The guide's steps move a 1.14.1 project"
+    kind: observed
+    record: "orbit/changes/concept-docs/migration-run.md — the checklist read from the guide's fences reported each of eight fixtures; after the fixes and the move, run before any orbit init (4A) and after one (4B), orbit list, orbit status and orbit validate --all read the project, with nothing under orbit/openspec/; and an orbit/ holding an exploration (4C) is given no move command"
