@@ -1,0 +1,161 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-13T00:16:00Z",
+  "change": "reference-docs",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/reference-docs/.orbit-runs/review-system-2026-10-12T23-53-20Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-12T23-53-20Z",
+  "latest_apply_token": "2026-10-12T23-45-06Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 3
+  },
+  "pushback_verification": "All three verified at HEAD: customization.md:342 still linked cli.md#schema-commands while cli.md's heading is now '## Schemas'; config-schema.ts:59 accepts featureFlags.<name>; workflow-engine.md:28 still read 'never leaves stale state behind'. None stale.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "SUGGESTION",
+      "title": "customization.md links to an anchor the cli.md rewrite removed",
+      "marker_source": "internal-review",
+      "file": "docs/customization.md",
+      "line": 342,
+      "classification": "trivial_fix",
+      "action": "option A: repointed the See Also link to cli.md#schemas and relabelled it 'Schemas' (a one-line edit on a pending page, the same carve-out as the migration-guide link); the page stays on the pending list for concept-docs",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Repoint docs/customization.md:342 to `cli.md#schemas` in this change (a one-line edit on a pending page, the same carve-out as the migration-guide link)."
+          },
+          {
+            "label": "B",
+            "body": "Leave customization.md untouched and record the dead anchor for concept-docs, which owns the page's rewrite."
+          }
+        ],
+        "chosen": "A"
+      },
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "cli.md#schema-commands"
+        ],
+        "introduced": [
+          {
+            "path": "docs/customization.md",
+            "text": "[CLI Reference: Schemas](cli.md#schemas)"
+          }
+        ],
+        "searched": [
+          "schema-commands",
+          "cli.md#"
+        ],
+        "scope": [
+          "docs",
+          "README.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "cli.md says externalRunner.preset is the only nested path config set accepts",
+      "marker_source": "internal-review",
+      "file": "docs/cli.md",
+      "line": 519,
+      "classification": "trivial_fix",
+      "action": "narrowed the sentence to 'the one nested path under `externalRunner` that `orbit config set` accepts', true beside featureFlags.<name>",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "is the one nested path `orbit config set` accepts"
+        ],
+        "introduced": [
+          {
+            "path": "docs/cli.md",
+            "text": "the one nested path under `externalRunner` that `orbit config set` accepts"
+          }
+        ],
+        "searched": [
+          "nested path",
+          "externalRunner.preset",
+          "featureFlags"
+        ],
+        "scope": [
+          "docs"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "workflow-engine.md's no-stale-state sentence reads against workflows.md's staleness caveat",
+      "marker_source": "internal-review",
+      "file": "docs/workflow-engine.md",
+      "line": 28,
+      "classification": "trivial_fix",
+      "action": "rewrote the sentence: computed state is recomputed and never cached; a review is evidence about the files it read, an edit does not mark it stale (only an apply does), so request another review after a substantive edit, pointing to workflows.md; the same page's gate paragraph ('nothing can drift from it') qualified the same way. Converged with the external pass's 'Artifact edits do not refresh review evidence', walked here as the earlier pass",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "never leaves stale state behind",
+          "so nothing can drift from it"
+        ],
+        "introduced": [
+          {
+            "path": "docs/workflow-engine.md",
+            "text": "editing an artifact afterwards does not mark it stale (only an apply does)"
+          },
+          {
+            "path": "docs/workflow-engine.md",
+            "text": "though a review that passed it can predate a later edit"
+          }
+        ],
+        "searched": [
+          "stale",
+          "drift",
+          "never caches",
+          "recomputed"
+        ],
+        "scope": [
+          "docs",
+          "README.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Three of three resolved: the dead cli.md anchor repointed, the config-path sentence narrowed to externalRunner, and the engine page's no-stale-state sentence split into computed state (never cached) and review currency (an edit does not stale a review), the latter converged with the external pass's warning.",
+  "iteration": 4,
+  "next_recommended": "/orbit:address-reviews reference-docs",
+  "ripple_misses": 0
+}

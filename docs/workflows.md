@@ -1,451 +1,186 @@
 # Workflows
 
-This guide covers common workflow patterns for OpenSpec and when to use each one. For basic setup, see [Getting Started](getting-started.md). For command reference, see [Commands](commands.md).
+This page covers how orbit's workflows fit together: the common patterns, the review cadence around apply, and when
+to update a change rather than start a new one. [Commands](commands.md) documents each workflow on its own.
 
-## Philosophy: Actions, Not Phases
+## Actions, not phases
 
-Traditional workflows force you through phases: planning, then implementation, then done. But real work doesn't fit neatly into boxes.
+A change is a folder of artifacts, and each workflow is an action on it. Nothing locks a change into a phase: you
+can edit the design during apply, add a task after a review, or write the specs before the design when the schema
+allows it. What orders the work is the artifact graph (tasks need the specs and the design) and the gates (apply
+waits on the proposal review, archive on the system review). Both are computed from the change's files.
+[Workflow engine](workflow-engine.md) describes the mechanism.
 
-OPSX takes a different approach:
+## Patterns
 
-```text
-Traditional (phase-locked):
+### One change, start to finish
 
-  PLANNING ────────► IMPLEMENTING ────────► DONE
-      │                    │
-      │   "Can't go back"  │
-      └────────────────────┘
-
-OPSX (fluid actions):
-
-  proposal ──► specs ──► design ──► tasks ──► implement
-```
-
-**Key principles:**
-
-- **Actions, not phases** - Commands are things you can do, not stages you're stuck in
-- **Dependencies are enablers** - They show what's possible, not what's required next
-
-> **Customization:** OPSX workflows are driven by schemas that define artifact sequences. See [Customization](customization.md) for details on creating custom schemas.
-
-## Two Modes
-
-### Default Quick Path (`core` profile)
-
-New installs default to `core`, which provides:
-- `/opsx:propose`
-- `/opsx:explore`
-- `/opsx:apply`
-- `/opsx:archive`
-
-Typical flow:
+The usual path, which [Getting started](getting-started.md) walks in full:
 
 ```text
-/opsx:propose ──► /opsx:apply ──► /opsx:archive
+/orbit:explore            optional: think it through
+/orbit:propose            write the change
+/orbit:review --as proposal --fresh
+/orbit:address-reviews    walk the findings
+/orbit:review --as proposal          confirm the walk
+/orbit:apply              implement
+/orbit:review --as system --fresh
+/orbit:address-reviews
+/orbit:review --as system
+/orbit:archive            merge the specs, archive the change
 ```
 
-### Expanded/Full Workflow (custom selection)
+You do not need to remember it. Each workflow ends with a `Ready when you are:` line naming what is eligible next.
 
-If you want explicit scaffold-and-build commands (`/opsx:new`, `/opsx:continue`, `/opsx:ff`, `/opsx:verify`, `/opsx:sync`, `/opsx:bulk-archive`, `/opsx:onboard`), enable them with:
+### Step by step
 
-```bash
-openspec config profile
-openspec update
-```
-
-## Workflow Patterns (Expanded Mode)
-
-### Quick Feature
-
-When you know what you want to build and just need to execute:
+When you want to read and adjust each artifact before the next is written, create the change with `/orbit:new` and
+write one artifact at a time with `/orbit:continue`:
 
 ```text
-/opsx:new ──► /opsx:ff ──► /opsx:apply ──► /opsx:verify ──► /opsx:archive
+/orbit:new add-dark-mode
+/orbit:continue           writes proposal.md
+/orbit:continue           writes the next ready artifact
+/orbit:ff                 or: write everything that remains
 ```
 
-**Example conversation:**
+Each `/orbit:continue` reads the artifacts the next one depends on, writes it, and shows what it unlocked.
 
-```text
-You: /opsx:new add-logout-button
+### Exploring first
 
-AI:  Created openspec/changes/add-logout-button/
-     Ready to create: proposal
+When the problem or the approach is unclear, start with `/orbit:explore`. It reads the code, asks questions and
+compares options, and changes nothing. When the conversation settles, it writes `orbit/explore/<name>/explore.md`,
+and `/orbit:propose` starts the change from it. An exploration can also end in nothing: deciding not to build is an
+outcome.
 
-You: /opsx:ff
+### Parallel changes
 
-AI:  Creating all planning artifacts...
-     ✓ proposal.md
-     ✓ specs/
-     ✓ design.md
-     ✓ tasks.md
-     Ready for implementation!
+Several changes can be in flight at once, each in its own folder. Each change fingerprints the baseline
+requirements its delta specs touch when it is proposed. If one change archives and edits a requirement another
+change also touches, archiving the second refuses to overwrite the first's edit and asks you to reconcile, rather
+than lose it. `/orbit:bulk-archive` archives several finished changes with the same check.
 
-You: /opsx:apply
+`orbit status` shows every change in flight; `orbit status --full` adds the architecture view.
 
-AI:  Working through tasks...
-     ✓ Added logout button to header
-     ✓ Implemented session clearing
-     ✓ Added confirmation dialog
-     All tasks complete!
+### A program of changes
 
-You: /opsx:archive
+Work too large for one change is declared as a program: an architecture doc under `orbit/architecture/`, authored
+with `/orbit:architect`, whose stages each become a change. orbit computes each stage's state from disk, and
+`orbit architecture status` shows where the program stands. A single change needs none of this.
 
-AI:  ✓ Merged specs
-     ✓ Archived change
+## The review cadence
+
+Two of the `spec-driven` schema's gates are **reviewed gates**: `review-proposal` (before apply) and `review-system`
+(before archive). Each passes when the reviews its cadence asks for have run and their findings are resolved. The
+gate's state is computed from the review records in the change's `.orbit-runs/` trail; no one asserts it.
+
+The cadence of both gates is two slots, in order:
+
+1. **An independent review**: what you invoked. One fresh review covers it, as does one external review, or a blind
+   pair once both its halves have landed.
+2. **An in-context review** after it: a review by your working session, which has the conversation. Run after a
+   walk, it checks that the walk's fixes landed.
+
+Between and after the reviews, `/orbit:address-reviews` walks the findings. A gate passes when both slots are
+covered and every CRITICAL and WARNING finding of every review is resolved by a walk. SUGGESTIONs never hold a gate,
+but the readout still names the walk of a review nobody has walked.
+
+The readout names the next review to run. By default it presents the blind pair for the first slot. To present a
+single fresh or external review instead, set `review_preference` in `orbit/config.yaml`, per gate:
+
+```yaml
+review_preference:
+  review-proposal: fresh
+  review-system: blind-pair
 ```
 
-**Best for:** Small to medium features, bug fixes, straightforward changes.
+The preference only changes what the readout suggests. Any independent review you invoke covers the slot.
 
-### Exploratory
+The third gate, `apply`, is **tracked**: it passes when every task in `tasks.md` is checked. A task the apply records
+as yours to validate does not hold it; archive asks about those tasks.
 
-When requirements are unclear or you need to investigate first:
+**Gates report; you decide.** No gate blocks you outright. If you run `/orbit:apply` before the proposal gate passes,
+or `/orbit:archive` before the system gate passes, the workflow says so and asks whether to proceed. A decision to
+proceed is recorded in the trail with the gate's state at that moment. The rules behind each gate are owned by the
+`orbit-engine-gates` capability in this repository's `orbit/specs/`.
 
-```text
-/opsx:explore ──► /opsx:new ──► /opsx:continue ──► ... ──► /opsx:apply
-```
+## When to update vs. start fresh
 
-**Example conversation:**
+You can always edit a change's proposal, design or specs, before implementation or during it. The question is when
+refining becomes different work.
 
-```text
-You: /opsx:explore
+### What a proposal captures
 
-AI:  What would you like to explore?
+A proposal defines three things:
 
-You: I want to improve page load performance but I'm not sure
-     where the bottlenecks are.
+1. **Intent**: what problem you are solving.
+2. **Scope**: what is in and out of bounds.
+3. **Approach**: how you will solve it.
 
-AI:  Let me help investigate...
-     [Analyzes bundle sizes, identifies slow queries, reviews
-     component render patterns]
+Which of them changed, and by how much?
 
-     I found three main bottlenecks:
-     1. Large unoptimized images
-     2. Synchronous data fetching in ProductList
-     3. Re-renders from context changes
+### Update the existing change when
 
-     Which would you like to address first?
+**The intent is the same and the execution is refined.**
 
-You: Let's tackle the data fetching issue.
+- You find edge cases you had not considered.
+- The approach needs adjusting, but the goal is unchanged.
+- Implementation shows the design was slightly off.
 
-You: /opsx:new optimize-product-list-fetching
+**The scope narrows.**
 
-AI:  Created change. Ready to create: proposal
+- The full scope is too big, and you want to ship a first version.
+- "Add dark mode" becomes "Add a dark mode toggle (system preference later)".
 
-You: /opsx:continue
+**Learning corrects the plan.**
 
-AI:  Creating proposal based on our exploration...
-     [Writes proposal incorporating investigation insights]
+- The codebase is not structured the way you thought.
+- A dependency does not work as expected.
 
-     Ready to create: specs, design
-     Which would you like next?
+### Start a new change when
 
-You: /opsx:continue
+**The intent has changed.**
 
-AI:  Creating specs...
-```
+- The problem itself is different now.
+- "Add dark mode" becomes "Add a theme system with custom colors, fonts and spacing".
 
-**Best for:** Performance optimization, debugging, architectural decisions, unclear requirements.
+**The scope has grown into different work.**
 
-### Parallel Changes
+- The original proposal would be unrecognizable after the updates.
+- "Fix the login bug" becomes "Rewrite authentication".
 
-Work on multiple changes at once:
+**The original can be finished.**
 
-```text
-Change A: /opsx:new ──► /opsx:ff ──► /opsx:apply (in progress)
-                                         │
-                                    context switch
-                                         │
-Change B: /opsx:new ──► /opsx:ff ──────► /opsx:apply
-```
+- The original change can be done as it stands, and the new work stands alone.
+- Archive "Add dark mode", then start "Enhance dark mode".
 
-**Example conversation:**
+### The tests
 
-```text
-You: I'm working on add-dark-mode but got pulled into a bug fix
+| Test | Update | New change |
+|---|---|---|
+| **Identity** | The same thing, refined | Different work |
+| **Overlap** | Most of the scope carries over | Little of it does |
+| **Completion** | The original cannot be done without these edits | The original can finish; the new work stands alone |
+| **Story** | The edits tell one coherent story | Patches would confuse more than clarify |
 
-You: /opsx:new fix-login-redirect
+Updating preserves context; a new change gives clarity. Choose to update when the history of your thinking is worth
+keeping, and a new change when starting fresh would be clearer than patching.
 
-AI:  Created openspec/changes/fix-login-redirect/
+A change that has been reviewed keeps its review trail when you update it. orbit marks a review stale only when an
+apply runs after it; an edit by hand or by a walk does not. After a substantive update, run another review yourself
+so that the gate is read against what the change now says.
 
-You: /opsx:ff
+## Practices
 
-AI:  ✓ Created planning artifacts
+- **Keep changes small.** A change should be reviewable in one sitting. A project can set `size_ceiling` in
+  `orbit/config.yaml`, and `orbit validate` then reports a change that exceeds it.
+- **Explore when unsure.** Ten minutes of `/orbit:explore` costs less than a proposal that reviews badly.
+- **Walk every review.** A review generates findings; only a walk resolves them, and the gate counts only resolved
+  findings.
+- **Name changes for what they do.** `add-dark-mode`, `fix-login-redirect`, `remove-legacy-export`: a kebab-case
+  name is the change's folder and its handle in every command.
 
-You: /opsx:apply
+## Next
 
-AI:  Working on fix-login-redirect...
-     [Implements the fix]
-     All tasks complete!
-
-You: /opsx:archive
-
-AI:  ✓ Archived fix-login-redirect
-
-You: Let's get back to dark mode
-
-You: /opsx:apply add-dark-mode
-
-AI:  Resuming add-dark-mode...
-     Picking up at task 2.3: Update Header...
-```
-
-**Best for:** Parallel work streams, urgent interrupts, team collaboration.
-
-When you have multiple completed changes, use `/opsx:bulk-archive`:
-
-```text
-You: /opsx:bulk-archive
-
-AI:  Found 3 completed changes:
-     - add-dark-mode (all tasks done)
-     - fix-login-redirect (all tasks done)
-     - update-footer (all tasks done)
-
-     Checking for spec conflicts...
-     ⚠ add-dark-mode and update-footer both touch specs/ui/
-
-     Inspecting codebase to resolve...
-     Both changes are implemented. Will apply in chronological order.
-
-     Archive all 3 changes?
-
-You: Yes
-
-AI:  ✓ Archived add-dark-mode
-     ✓ Archived fix-login-redirect
-     ✓ Archived update-footer
-     Specs merged in order: add-dark-mode → update-footer
-```
-
-Bulk archive detects when multiple changes touch the same specs and resolves conflicts by checking what's actually implemented.
-
-### Completing a Change
-
-The recommended completion flow:
-
-```text
-/opsx:apply ──► /opsx:verify ──► /opsx:archive
-                    │                 │
-              validates          prompts to sync
-              implementation     if needed
-```
-
-#### Verify: Check Your Work
-
-`/opsx:verify` validates implementation against your artifacts across three dimensions:
-
-```text
-You: /opsx:verify
-
-AI:  Verifying add-auth...
-
-     COMPLETENESS
-     ✓ All 12 tasks in tasks.md are checked
-     ✓ All requirements in specs have corresponding code
-     ⚠ Scenario "Session timeout after inactivity" not tested
-
-     CORRECTNESS
-     ✓ Implementation matches spec intent
-     ✓ Edge cases from scenarios are handled
-     ✓ Error states match spec definitions
-
-     COHERENCE
-     ✓ Design decisions reflected in code structure
-     ✓ Naming conventions consistent with design.md
-     ⚠ Design mentions "event-driven" but implementation uses polling
-
-     SUMMARY
-     ─────────────────────────────
-     Critical issues: 0
-     Warnings: 2
-     Ready to archive: Yes (with warnings)
-
-     Recommendations:
-     1. Add test for session timeout scenario
-     2. Consider refactoring to event-driven as designed, or update design.md
-```
-
-**What verify checks:**
-
-| Dimension | What it validates |
-|-----------|------------------|
-| Completeness | All tasks done, all requirements implemented, scenarios covered |
-| Correctness | Implementation matches spec intent, edge cases handled |
-| Coherence | Design decisions reflected in code, patterns consistent |
-
-Verify won't block archive, but it surfaces issues you might want to address first.
-
-#### Archive: Finalize the Change
-
-`/opsx:archive` completes the change and moves it to the archive:
-
-```text
-You: /opsx:archive
-
-AI:  Archiving add-auth...
-
-     Artifact status:
-     ✓ proposal.md exists
-     ✓ specs/ exists
-     ✓ design.md exists
-     ✓ tasks.md exists (12/12 tasks complete)
-
-     Delta specs: Not yet synced to main
-     → Would you like to sync now?
-
-You: Yes
-
-AI:  ✓ Synced specs to openspec/specs/auth/spec.md
-     ✓ Moved to openspec/changes/archive/2025-01-24-add-auth/
-
-     Change archived successfully.
-```
-
-Archive will prompt if specs aren't synced. It won't block on incomplete tasks, but it will warn you.
-
-## When to Use What
-
-### `/opsx:ff` vs `/opsx:continue`
-
-| Situation | Use |
-|-----------|-----|
-| Clear requirements, ready to build | `/opsx:ff` |
-| Exploring, want to review each step | `/opsx:continue` |
-| Want to iterate on proposal before specs | `/opsx:continue` |
-| Time pressure, need to move fast | `/opsx:ff` |
-| Complex change, want control | `/opsx:continue` |
-
-**Rule of thumb:** If you can describe the full scope upfront, use `/opsx:ff`. If you're figuring it out as you go, use `/opsx:continue`.
-
-### When to Update vs Start Fresh
-
-A common question: when is updating an existing change okay, and when should you start a new one?
-
-**Update the existing change when:**
-
-- Same intent, refined execution
-- Scope narrows (MVP first, rest later)
-- Learning-driven corrections (codebase isn't what you expected)
-- Design tweaks based on implementation discoveries
-
-**Start a new change when:**
-
-- Intent fundamentally changed
-- Scope exploded to different work entirely
-- Original change can be marked "done" standalone
-- Patches would confuse more than clarify
-
-```text
-                     ┌─────────────────────────────────────┐
-                     │     Is this the same work?          │
-                     └──────────────┬──────────────────────┘
-                                    │
-                 ┌──────────────────┼──────────────────┐
-                 │                  │                  │
-                 ▼                  ▼                  ▼
-          Same intent?      >50% overlap?      Can original
-          Same problem?     Same scope?        be "done" without
-                 │                  │          these changes?
-                 │                  │                  │
-       ┌────────┴────────┐  ┌──────┴──────┐   ┌───────┴───────┐
-       │                 │  │             │   │               │
-      YES               NO YES           NO  NO              YES
-       │                 │  │             │   │               │
-       ▼                 ▼  ▼             ▼   ▼               ▼
-    UPDATE            NEW  UPDATE       NEW  UPDATE          NEW
-```
-
-**Example: "Add dark mode"**
-
-- "Need to also support custom themes" → New change (scope exploded)
-- "System preference detection is harder than expected" → Update (same intent)
-- "Let's ship toggle first, add preferences later" → Update then archive, then new change
-
-## Best Practices
-
-### Keep Changes Focused
-
-One logical unit of work per change. If you're doing "add feature X and also refactor Y", consider two separate changes.
-
-**Why it matters:**
-- Easier to review and understand
-- Cleaner archive history
-- Can ship independently
-- Simpler rollback if needed
-
-### Use `/opsx:explore` for Unclear Requirements
-
-Before committing to a change, explore the problem space:
-
-```text
-You: /opsx:explore
-
-AI:  What would you like to explore?
-
-You: How should we handle rate limiting for our API?
-
-AI:  Let me investigate your current setup and options...
-     [Researches codebase, considers patterns]
-
-     I see three approaches we could take:
-     1. Middleware-based (simple, per-endpoint)
-     2. Redis-backed (scalable, shared state)
-     3. Token bucket per user (fair, complex)
-
-     Your current stack suggests #1 or #2. What's your scale?
-```
-
-Exploration clarifies thinking before you create artifacts.
-
-### Verify Before Archiving
-
-Use `/opsx:verify` to check implementation matches artifacts:
-
-```text
-You: /opsx:verify
-
-AI:  Verifying add-dark-mode...
-
-     ✓ All tasks in tasks.md are checked
-     ✓ Requirements in specs have corresponding code
-     ✓ Design decisions are reflected in implementation
-
-     Ready to archive!
-```
-
-Catches mismatches before you close out the change.
-
-### Name Changes Clearly
-
-Good names make `openspec list` useful:
-
-```text
-Good:                          Avoid:
-add-dark-mode                  feature-1
-fix-login-redirect             update
-optimize-product-query         changes
-implement-2fa                  wip
-```
-
-## Command Quick Reference
-
-For full command details and options, see [Commands](commands.md).
-
-| Command | Purpose | When to Use |
-|---------|---------|-------------|
-| `/opsx:propose` | Create change + planning artifacts | Fast default path (`core` profile) |
-| `/opsx:explore` | Think through ideas | Unclear requirements, investigation |
-| `/opsx:new` | Start a change scaffold | Expanded mode, explicit artifact control |
-| `/opsx:continue` | Create next artifact | Expanded mode, step-by-step artifact creation |
-| `/opsx:ff` | Create all planning artifacts | Expanded mode, clear scope |
-| `/opsx:apply` | Implement tasks | Ready to write code |
-| `/opsx:verify` | Validate implementation | Expanded mode, before archiving |
-| `/opsx:sync` | Merge delta specs | Expanded mode, optional |
-| `/opsx:archive` | Complete the change | All work finished |
-| `/opsx:bulk-archive` | Archive multiple changes | Expanded mode, parallel work |
-
-## Next Steps
-
-- [Commands](commands.md) - Full command reference with options
-- [Concepts](concepts.md) - Deep dive into specs, artifacts, and schemas
-- [Customization](customization.md) - Create custom workflows
+- [Commands](commands.md): each workflow, its arguments and its options
+- [Workflow engine](workflow-engine.md): the artifact graph and the gates underneath

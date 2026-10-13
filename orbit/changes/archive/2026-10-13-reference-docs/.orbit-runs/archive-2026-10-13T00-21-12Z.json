@@ -1,0 +1,69 @@
+{
+  "command": "archive",
+  "timestamp": "2026-10-13T00:21:12Z",
+  "change": "reference-docs",
+  "kind": "lifecycle",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Archived reference-docs to orbit/changes/archive/2026-10-13-reference-docs/: the six reference pages teach orbit and left the pending-rewrite list, the command-coverage check holds docs/cli.md and docs/commands.md to the program and the workflow registry, and orbit feedback files on las-sal/orbit-spec; review-system passed on a blind pair walked in two logs and an in-context verification grading six entries landed.",
+  "archive_path": "orbit/changes/archive/2026-10-13-reference-docs/",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": [
+      "orbit-user-docs"
+    ],
+    "added": 1,
+    "modified": 1,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
+  "user_decision": "proceeded_with_no_critical",
+  "consent": "user-invoked",
+  "warnings": [
+    "orbit init and orbit update still print upstream's Learn more URL, and orbit init its Feedback URL (src/core/init.ts, src/core/update.ts): CLI strings under R-ugd-3, outside this stage's carve-out, which covers orbit feedback alone; no page teaches them.",
+    "docs/supported-tools.md, which commands.md links for how Codex invokes the workflows, still describes upstream until concept-docs rewrites it.",
+    "Pre-archive audit: two Category 5 touchpoint SUGGESTIONs, both explained: docs/customization.md (the system walk's one-line anchor repoint) and orbit/architecture/update-gh-documentation.md (R-ugd-10's wording restated at the proposal walk, Sal: A)."
+  ],
+  "judgements": [
+    {
+      "kind": "readiness",
+      "formed_against": [
+        "2026-10-12T21-28-58Z",
+        "2026-10-12T21-29-15Z",
+        "2026-10-12T23-53-20Z",
+        "2026-10-12T23-53-44Z"
+      ],
+      "disposition": "ready",
+      "reasoning": "Both system halves read the shipped pages against the code: the fresh half checked every flag against --help and the config, profile, gate and body claims against their sources, and the external half found the two claims that could mislead a lifecycle decision (review freshness after an edit; what bulk-archive omits). The walk repaired both and four suggestions, and the verification graded all six landed with a clean residual check. The coverage check, the feedback retarget and the pending-list exactness are mechanical and green on the full suite.",
+      "ratified_by": "ai",
+      "accepted": [
+        {
+          "claim": "PASSED means every finding is resolved, not that an independent pass stood clean on the final tree: the walk's six edits were read only by the in-context verification.",
+          "why": "rc07's distinction; the edits are sentence-level rewordings each re-read at its source, and a further independent pass on prose would buy little against its cost."
+        },
+        {
+          "claim": "The coverage check proves a command is NAMED, never that it is TAUGHT correctly; prose accuracy rests on the two reviews, and four of the six system findings sat in prose written at apply.",
+          "why": "Teaching is review's by the requirement's own last line; the concept-docs stage reviews the neighbouring pages under the same cadence, and public-readiness is validated by use."
+        },
+        {
+          "claim": "The external half could not run orbit validate or the scenario map: the runner's worktree has no node_modules or dist.",
+          "why": "A known runner limit; the fresh half ran both, and strict validation and 11 of 11 declared scenarios were measured at apply."
+        }
+      ]
+    }
+  ],
+  "pr_url": "https://github.com/las-sal/orbit-spec/pull/20",
+  "pr_state": "draft",
+  "next_recommended": "Change archived. Run /orbit:new or /orbit:explore to start the next change, or /orbit:audit-drift for a project-wide drift check."
+}

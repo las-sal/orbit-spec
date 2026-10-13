@@ -1,0 +1,15 @@
+{
+  "command": "propose",
+  "timestamp": "2026-10-12T21:25:27Z",
+  "change": "reference-docs",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "reference-docs proposed from its exploration (consume mode; seven decisions, no open questions; D-rd-1's SOURCED Mechanism entry carried as the ADDED requirement's normative table). One capability, orbit-user-docs: 1 ADDED (the command-coverage check) + 1 MODIFIED (the file-local check set gains it), fingerprinted. Design narrows D-rd-1 to per-page coverage (cli.md for command paths, commands.md for workflow ids) and drops the feedback label the fork lacks. Size within the ceiling: 1 capability, 2 requirements, 3511 bytes, 14 tasks. Draft PR #20 opened.",
+  "pr_attachment": {
+    "branch": "reference-docs",
+    "granularity": "per-proposal",
+    "url": "https://github.com/las-sal/orbit-spec/pull/20",
+    "state": "draft"
+  },
+  "next_recommended": "/orbit:review reference-docs — proposal artifacts ready; review before apply"
+}

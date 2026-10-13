@@ -472,7 +472,7 @@ export function buildProgram(options: ProgramOptions = {}): Command {
   // Feedback command
   program
     .command('feedback <message>')
-    .description('Submit feedback about OpenSpec')
+    .description('Submit feedback about orbit')
     .option('--body <text>', 'Detailed description for the feedback')
     .action(async (message: string, options?: { body?: string }) => {
       try {

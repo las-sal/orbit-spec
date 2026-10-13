@@ -27,9 +27,11 @@ describe('the user docs surface', () => {
 
   // @scenario behaviour orbit-user-docs :: The user docs are a checked surface, gated by an exact pending-rewrite list :: An unlisted doc is held to every check
   it('an unlisted doc is read, and a failing one fails naming the file, the line and the check', async () => {
-    const pending = readPendingRewrite();
-    const unlisted = docSurfaces(pending).map(describeSurface);
-    expect(docSurfaces(pending.filter((f) => f !== 'docs/cli.md')).map(describeSurface)).toEqual([...unlisted, 'docs/cli.md'].sort());
+    const every = allDocSurfaces().map(describeSurface);
+    const named = 'docs/cli.md';
+    expect(every).toContain(named);
+    expect(docSurfaces([named]).map(describeSurface)).toEqual(every.filter((f) => f !== named));
+    expect(docSurfaces([]).map(describeSurface)).toEqual(every);
     const failing = doc('docs/new.md', `# New\n\n${FENCE}bash\norbit list --frobnicate\n${FENCE}\n\nUpstream was OpenSpec.\n`);
     const failures = await fileLocalFailures([failing]);
     expect(failures.some((f) => f.startsWith('[orbit] docs/new.md:4: orbit list --frobnicate'))).toBe(true);

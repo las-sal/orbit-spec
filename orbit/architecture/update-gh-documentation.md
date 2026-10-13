@@ -84,8 +84,9 @@ be seen. Flipping visibility to public is Sal's act at arc-done, never an orbit 
   `orbit feedback` is retargeted to orbit's own repository in the reference-docs stage. The command hardcodes
   `Fission-AI/OpenSpec` in its issue URL and its `gh issue create --repo` argv, so a documented `orbit feedback` on a
   public repository would send orbit's bug reports to OpenSpec's maintainers. The page that documents the command and
-  the command's target move together. The carve-out covers only `src/commands/feedback.ts` (both targets and its help
-  line) and its test. R-ugd-3 stands for every other `OpenSpec` string in CLI help and messages. The fork has no
+  the command's target move together. The carve-out covers only `src/commands/feedback.ts` (both targets), the
+  command's help description wherever it is defined (`src/cli/program.ts` and the completion registry,
+  `src/core/completions/command-registry.ts`), and its test. R-ugd-3 stands for every other `OpenSpec` string in CLI help and messages. The fork has no
   `feedback` label, which the command passes; the stage settles at propose whether it drops the label or Sal creates it.
 
 ## Open questions
@@ -285,3 +286,19 @@ must document every command in the program. Sal took retargeting over documentin
 or removing it (D-rd-6). R-ugd-10 carves that one command out of R-ugd-3, and the reference-docs charter names it. The
 exploration also settled that `docs/opsx.md` becomes `docs/workflow-engine.md` (D-rd-7, Sal). landing-page completion
 offered again: not yet (Sal), since exit (3)'s two observations are still to be recorded.
+
+**2026-10-12 — R-ugd-10's location restated (Sal: A), at reference-docs' proposal walk.** Both halves of the
+proposal's blind pair found that `orbit feedback`'s help line is not in `src/commands/feedback.ts`: it is commander's
+description in `src/cli/program.ts`, copied in the completion registry. The ruling's carve-out now names the help
+description wherever it is defined. The ruling's reach is unchanged: one command's targets, its help text and its test.
+
+**2026-10-13 — reference-docs archived** (`orbit/changes/archive/2026-10-13-reference-docs/`; PR #20 ready for Sal's
+merge). All three exits are MET as written. (1) The six pages left the pending-rewrite list, and the full suite holds
+them to every file-local check. (2) The new command-coverage check holds `docs/cli.md` to the program's 55 visible
+command paths and `docs/commands.md` to the 15 workflow ids, both read from the code. The check is per page, which is
+narrower than "at least one page" and so meets it (design D1). (3) No page names an upstream command (the residue
+check), and both system reviewers read every page for upstream behaviour taught under orbit's name. `docs/opsx.md`
+is now `docs/workflow-engine.md`, and `orbit feedback` files on `las-sal/orbit-spec` (R-ugd-10). The system walk also
+repointed one anchor in `docs/customization.md`, a page owed to concept-docs. Carried forward: `orbit init` and
+`orbit update` still print upstream's URLs (R-ugd-3; no page teaches them), and `docs/supported-tools.md`, which the
+commands page links for Codex, still describes upstream until concept-docs.

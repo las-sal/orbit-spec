@@ -1,0 +1,140 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-12T22:54:11Z",
+  "change": "reference-docs",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/reference-docs/.orbit-runs/external-proposal-2026-10-12T21-29-15Z.md",
+  "source_command": null,
+  "source_token": "2026-10-12T21-29-15Z",
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-6 Codex",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 3,
+    "suggestion": 2
+  },
+  "pushback_verification": "All five verified against HEAD; three converge with the fresh half and are recorded stale naming its log.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 3,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Feedback retarget omits the actual help owner and fallback label output",
+      "marker_source": "external",
+      "file": "orbit/changes/reference-docs/design.md",
+      "line": 115,
+      "classification": "stale",
+      "action": "converged with the fresh half's finding, walked in its log",
+      "evidence": "resolved in address-reviews-2026-10-12T22-53-55Z (the earlier pass's log), entry 'The feedback help line is not in src/commands/feedback.ts' (design.md): direction A, help description edited at program.ts and the registry, the Labels line and its assertions removed, R-ugd-10 restated",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Removing the pending CLI entry breaks an existing surface test",
+      "marker_source": "external",
+      "file": "orbit/changes/reference-docs/tasks.md",
+      "line": 22,
+      "classification": "stale",
+      "action": "converged with the fresh half's finding, walked in its log",
+      "evidence": "resolved in address-reviews-2026-10-12T22-53-55Z (the earlier pass's log), entry 'Touchpoints miss a test the pending-list edit turns red' (design.md): task 4.1 now rewrites the pending-rewrite.test.ts assertion to build its own pending set",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Installation outline conflates package upgrades with instruction refreshes",
+      "marker_source": "external",
+      "file": "orbit/changes/reference-docs/design.md",
+      "line": 76,
+      "classification": "trivial_fix",
+      "action": "installation outline and task 3.1 split upgrading into reinstalling the newer tag, then orbit update per project",
+      "evidence": "src/core/update.ts refreshes generated skills and commands; it fetches and installs nothing",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/reference-docs/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "Updating with `orbit update`"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/reference-docs/design.md",
+            "text": "`orbit update` downloads nothing"
+          },
+          {
+            "path": "orbit/changes/reference-docs/tasks.md",
+            "text": "upgrading as two steps"
+          }
+        ],
+        "searched": [
+          "orbit update",
+          "Updating"
+        ],
+        "scope": [
+          "src/core/update.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Execute the coverage procedure before handing it to implementation",
+      "marker_source": "external",
+      "file": "orbit/changes/reference-docs/explore.md",
+      "line": 53,
+      "classification": "trivial_fix",
+      "action": "ran the procedure with a throwaway vitest probe over the real program, both pages and eight constructed cases; recorded as Case 1 and the EXECUTE move",
+      "evidence": "probe: 55 paths, max depth 2, no hidden command, 15 ids; cli.md names 1 of 55 and commands.md 0 of 15 today; all eight boundary cases as the rule says; bulk-archive does not name archive",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "EXECUTE: not applied — the coverage test does not exist yet"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/reference-docs/explore.md",
+            "text": "### Case 1 — the procedure executed"
+          }
+        ],
+        "searched": [
+          "EXECUTE"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Fixed domain counts undermine the intended registry-driven maintenance",
+      "marker_source": "external",
+      "file": "orbit/changes/reference-docs/tasks.md",
+      "line": 5,
+      "classification": "stale",
+      "action": "converged with the fresh half's finding, walked in its log",
+      "evidence": "resolved in address-reviews-2026-10-12T22-53-55Z (the earlier pass's log), entry 'The exact 55/15 count test pins the domain it derives' (tasks.md): task 1.3 now asks for a non-vacuity test that types no total",
+      "outcome": "stale"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Two resolved by local repairs (the upgrade path, the executed procedure); three stale as converged with the fresh half, walked in its log.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal reference-docs",
+  "ripple_misses": 0
+}

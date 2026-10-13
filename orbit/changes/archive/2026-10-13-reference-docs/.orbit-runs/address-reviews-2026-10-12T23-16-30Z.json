@@ -1,0 +1,77 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-12T23:16:30Z",
+  "change": "reference-docs",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/reference-docs/.orbit-runs/review-proposal-2026-10-12T23-00-21Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-12T23-00-21Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 0
+  },
+  "pushback_verification": "Verified at HEAD: task 1.1 placed the rule in commandCoverageFailures, which fileLocalFailures (user-docs.ts:191) feeds only existing surfaces.",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The missing-page rule is a suite-level test, but tasks 1.1-1.2 and design D2 put it in the file-local helper",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 3,
+      "classification": "trivial_fix",
+      "action": "task 1.1 keeps only the per-page match; task 1.3 carries the missing-page scenario as a suite-level assertion over the pending list and the user-doc set; design D2 splits the file-local paragraph from a separate suite-level one placed after the helper",
+      "evidence": "fileLocalFailures(surfaces, inventory) at test/helpers/user-docs.ts:191 receives no pending list",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/reference-docs/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "an owing page neither listed nor present fails naming it",
+          "this is a suite-level test alongside"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/reference-docs/tasks.md",
+            "text": "the missing-page scenario among them as a SUITE-LEVEL assertion outside the file-local helper"
+          },
+          {
+            "path": "orbit/changes/reference-docs/design.md",
+            "text": "the missing-page rule is a separate SUITE-LEVEL assertion"
+          }
+        ],
+        "searched": [
+          "owing page",
+          "suite-level",
+          "file-local"
+        ],
+        "scope": [
+          "test/helpers/user-docs.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "One of one resolved: the missing-page rule moved out of the file-local helper into its own suite-level assertion; design D2 reordered.",
+  "iteration": 3,
+  "next_recommended": "/orbit:apply reference-docs — user-invoked",
+  "ripple_misses": 0
+}

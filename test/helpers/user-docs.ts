@@ -18,6 +18,9 @@ import {
 import { analyseOrbit, guardFailureLines, sweepFailures } from './orbit-sweep.js';
 import { analyseRecorded, recordedTools, sweepRecorded } from './recorded-sweep.js';
 import { analyseHeads, describeSurface, type Surface } from './surface-snippets.js';
+import { fromProgram, type ComparableCommand } from './registry-parity.js';
+import { buildProgram } from '../../src/cli/program.js';
+import { ALL_WORKFLOWS } from '../../src/core/profiles.js';
 
 const REPO = fileURLToPath(new URL('../../', import.meta.url));
 
@@ -175,6 +178,60 @@ export function claimsFailures(surfaces: Surface[], exists: (name: string) => bo
   return failures;
 }
 
+// ─── the command-coverage check (reference-docs design D2, D3) ────
+
+/** The two pages the check reads: the CLI reference owes every command path, the workflow reference every id. */
+export const CLI_PAGE = 'docs/cli.md';
+export const COMMANDS_PAGE = 'docs/commands.md';
+
+/** Every visible command path of a program tree as `orbit <command> <subcommand>…`, at every depth. */
+export function commandPathsOf(commands: ComparableCommand[], prefix = 'orbit'): string[] {
+  return commands.flatMap((c) => [`${prefix} ${c.name}`, ...commandPathsOf(c.subcommands, `${prefix} ${c.name}`)]);
+}
+
+/** The real domain: the program's visible paths (hidden commands dropped at every level by `fromProgram`). */
+export const commandPaths = (): string[] => commandPathsOf(fromProgram(buildProgram({ hooks: false })));
+
+/** The real domain: the installed workflow ids. */
+export const workflowIds = (): string[] => [...ALL_WORKFLOWS];
+
+const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+/** Whether a page's text NAMES a command path: case-sensitive, bounded before `orbit` and after the last word. */
+export const namesPath = (text: string, p: string): boolean =>
+  new RegExp(`(?<![A-Za-z0-9_/.-])${escapeRegExp(p)}(?![A-Za-z0-9_-])`).test(text);
+
+/** Whether a page's text NAMES a workflow id, as `/orbit:<id>` bounded after the id. */
+export const namesWorkflow = (text: string, id: string): boolean =>
+  new RegExp(`${escapeRegExp(`/orbit:${id}`)}(?![A-Za-z0-9_-])`).test(text);
+
+/**
+ * The command-coverage check over the given surfaces: `docs/cli.md` against every command path, `docs/commands.md`
+ * against every workflow id, over the whole file; every other surface passes. It reads only the pages it is given.
+ */
+export function commandCoverageFailures(surfaces: Surface[], paths: string[], ids: string[]): string[] {
+  const failures: string[] = [];
+  for (const surface of surfaces) {
+    if (surface.file === CLI_PAGE) {
+      for (const p of paths) {
+        if (!namesPath(surface.text, p)) failures.push(`${describeSurface(surface)}: does not name '${p}' (the command-coverage check)`);
+      }
+    } else if (surface.file === COMMANDS_PAGE) {
+      for (const id of ids) {
+        if (!namesWorkflow(surface.text, id)) failures.push(`${describeSurface(surface)}: does not name '/orbit:${id}' (the command-coverage check)`);
+      }
+    }
+  }
+  return failures;
+}
+
+/** The suite-level rule: each owing page is listed or present, so deleting or renaming one never empties the check. */
+export function missingOwingPageFailures(pending: string[], docs: Surface[]): string[] {
+  return [CLI_PAGE, COMMANDS_PAGE]
+    .filter((page) => !pending.includes(page) && !docs.some((d) => d.file === page))
+    .map((page) => `${page}: owed by the command-coverage check but neither listed nor present among the user docs`);
+}
+
 // ─── the file-local checks and the pending list (design D2) ───────
 
 /** The docs' declared set, read from `orbit-user-docs`' requirement as it stands. */
@@ -185,8 +242,8 @@ export function docsInventory(): Inventory {
 /**
  * Every FILE-LOCAL check over the given surfaces, each failure prefixed with its check: residue, the
  * `orbit` sweep and guard, the `git`/`gh` sweeps and guards, the inventory's unknown heads against
- * the docs' declared set (`inventory`, by default the real one), and the improvement-claims check
- * (`README.md` only).
+ * the docs' declared set (`inventory`, by default the real one), the improvement-claims check
+ * (`README.md` only), and the command-coverage check (`docs/cli.md` and `docs/commands.md` only).
  */
 export async function fileLocalFailures(surfaces: Surface[], inventory: Inventory = docsInventory()): Promise<string[]> {
   const tag = (check: string, list: string[]) => list.map((f) => `[${check}] ${f}`);
@@ -201,6 +258,7 @@ export async function fileLocalFailures(surfaces: Surface[], inventory: Inventor
   }
   failures.push(...tag('inventory', unknownHeadFailures(analyseHeads(surfaces), recordedHeads(), inventory)));
   failures.push(...tag('claims', claimsFailures(surfaces)));
+  failures.push(...tag('coverage', commandCoverageFailures(surfaces, commandPaths(), workflowIds())));
   return failures;
 }
 
