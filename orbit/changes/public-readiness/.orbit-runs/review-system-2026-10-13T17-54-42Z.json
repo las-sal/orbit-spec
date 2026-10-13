@@ -1,0 +1,106 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-13T17:54:42Z",
+  "change": "public-readiness",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {},
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    }
+  },
+  "findings": [
+    {
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "title": "The blob-scan paragraph claims every path-bearing name is covered by a row, but the record's own earlier versions are not",
+      "file": "orbit/changes/public-readiness/readiness-record.md",
+      "line": 62,
+      "recommendation": "The re-run blob scan's 11 history-only names include orbit/changes/public-readiness/readiness-record.md itself: its versions committed from 3f10556a until the walk quoted the absolute paths it resolved, and that history becomes public when the branch merges. No row of the record names it, so line 62's 'Every one of them is covered by a row below' is false for one name. Add it to the history-only table under 'any other living file' (RESOLVED: removed at HEAD by the system walk; history never rewritten), the same row the change's explore.md and boot-render.ts already take, and keep the count sentence true.",
+      "walk_entry": {
+        "title": "The history scan omits content introduced by merge commits",
+        "file": "orbit/changes/public-readiness/readiness-record.md"
+      }
+    }
+  ],
+  "commentary": "Graded each resolution against the tree rather than the walk's prose. The authorship row carries Sal's word; run-cli.ts names no pnpm anywhere under test/helpers and was shown to rebuild dist/ through npm; the refs claim was tested: origin/main is an ancestor of the branch, so GitHub's synthetic merge ref for PR #22 has the branch's own tree and adds no blob; the scan's path pattern matches nothing in the record now; the residual section's counts (1,197 swept, 1,201 entropy-scanned, 72 integrity hashes) match the measurements behind them. The one gap is the class of defect the stage keeps meeting: a sentence of completeness ('every one is covered') written over a set that contains the record itself. The residual check found no file outside the walks' edit records; validate --strict, validate --sources and the scenario map (15 of 15) still hold.",
+  "passes_run": [
+    "1",
+    "2",
+    "3"
+  ],
+  "passes_skipped": [
+    {
+      "pass": "0",
+      "reason": "verify-change: its subject is the whole change, not the walks' sweep scope (VERIFICATION genre)"
+    },
+    {
+      "pass": "4",
+      "reason": "orbit/lenses/ does not exist"
+    },
+    {
+      "pass": "5",
+      "reason": "orbit/lenses/ does not exist"
+    },
+    {
+      "pass": "6",
+      "reason": "audit-drift: its subject is the whole project, not the walks' sweep scope (VERIFICATION genre)"
+    }
+  ],
+  "verification": [
+    {
+      "title": "A second author address is ACCEPTED under a reason the record says it cannot know",
+      "file": "orbit/changes/public-readiness/readiness-record.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The test harness still builds with pnpm when dist/ is missing",
+      "file": "test/helpers/run-cli.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "The scan's domain names only the default branch, but other public refs carry history too",
+      "file": "orbit/changes/public-readiness/specs/orbit-public-repository/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The record quotes the paths it resolved, while it sits in a living path",
+      "file": "orbit/changes/public-readiness/readiness-record.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The history scan omits content introduced by merge commits",
+      "file": "orbit/changes/public-readiness/readiness-record.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "The residual review replaces the required read with another pattern scan",
+      "file": "orbit/changes/public-readiness/readiness-record.md",
+      "verdict": "landed"
+    }
+  ],
+  "final_assessment": "0 critical, 1 warning, 0 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-10-13T17-45-45Z",
+    "2026-10-13T17-46-02Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews public-readiness"
+}
