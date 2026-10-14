@@ -1,6 +1,9 @@
 schema: spec-driven
 created: 2026-10-14
 schema_version: 5
+architecture:
+  doc: refine-documentation-and-architect
+  stage: architect-first
 base_fingerprints:
   orbit-architect:
     Architect is a stance, never a gatekeeper: sha256:bfeeb359e855e9a1460ad7e477e6ef6d9ef64731b84f2e758c057c907c59202b
@@ -18,6 +21,3 @@ base_fingerprints:
     JSON output for both tiers: sha256:2e6c73fcb35aeb7b9f2fa813f88ba6f7f50956cc2529d77cf21edd69bc228585
   orbit-run-summary-emit:
     Named-mode explore recommendation by maturity: sha256:228a73e6610c6d4c56631ceda50de16930a9e5cfb2412f2b4b5d41f50702e0a4
-architecture:
-  doc: refine-documentation-and-architect
-  stage: architect-first

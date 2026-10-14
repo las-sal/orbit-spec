@@ -12,9 +12,11 @@ The view is a COMPOSITION of engine-computed and trail-recorded data only — it
 state from artifact contents (no task-file parsing beyond what the gate graph already computes,
 no marker scans, no mtime heuristics). Bare invocation with active changes is, before this
 capability, an error path ("Missing required option --change") — claiming it repurposes
-nothing; the PRE-EXISTING `--change` surface is byte-identical to pre-capability output, and the
-no-active-changes message is unchanged, followed by the idle next line the recommendation-sourcing
-requirement defines (later capabilities may EXTEND the `--change` form
+nothing; the PRE-EXISTING `--change` surface is byte-identical to pre-capability output except
+the two errors it raises when the named change does not exist and no change does, which name
+`/orbit:architect <name>` as where to start (`orbit-architect`'s `Start surfaces name the architect
+workflow first`); and the no-active-changes message is `No active changes.`, followed by the idle
+next line the recommendation-sourcing requirement defines (later capabilities may EXTEND the `--change` form
 with new flags — e.g. `--report`, D-arc Stage D4 — without touching its pre-existing outputs).
 
 #### Scenario: Bare invocation mid-sprint
@@ -25,7 +27,7 @@ with new flags — e.g. `--report`, D-arc Stage D4 — without touching its pre-
 #### Scenario: Error path claimed, neighbors unchanged
 
 - **WHEN** `orbit status` runs with active changes present (formerly the "Missing required option --change" error) and separately with `--change <name>` and with zero changes
-- **THEN** the bare invocation renders the sprint view (exit 0); the `--change` output is unchanged from pre-capability behavior, and the zero-changes invocation prints the unchanged no-active-changes message followed by the idle next line
+- **THEN** the bare invocation renders the sprint view (exit 0); the `--change` output for an existing change is unchanged from pre-capability behavior, and the zero-changes invocation prints `No active changes.` followed by the idle next line
 
 #### Scenario: No live inference beyond engine and trail
 
@@ -44,7 +46,7 @@ anchoring and the `--full` LAST band alike). Degradation ladder (rungs in
 precedence order, each predicate explicit): (1) ≥1 live workstream → the sprint view; (2) zero
 live workstreams AND ≥1 parseable architecture doc → bare renders the `--full` view (nothing in
 flight IS the orientation), followed by the idle next line; (3) zero live workstreams AND zero
-parseable architecture docs → the existing no-active-changes message, followed by the idle next
+parseable architecture docs → the no-active-changes message `No active changes.`, followed by the idle next
 line. The idle next line is the recommendation-sourcing requirement's; rungs 2 and 3 are the only
 rungs that render it. A live workstream with zero emits (pre-begin-emit staging
 dir) participates via its directory presence but cannot anchor recency — if NO live workstream
@@ -119,7 +121,12 @@ that does not exist, for the concluded rule's reason.
 #### Scenario: Idle next falls back to architect
 
 - **WHEN** no live workstream exists and the newest emit's `next_recommended` is `No markers remain in scope; the project trail records this walk.` — or no emit exists anywhere, as after a fresh `orbit init`
-- **THEN** the idle next line is `Ready when you are: /orbit:architect <name>`, on rung 2 after the `--full` view and on rung 3 after the no-active-changes message
+- **THEN** the idle next line is `Ready when you are: /orbit:architect <name>`, on rung 2 after the `--full` view and on rung 3 after `No active changes.`
+
+#### Scenario: Idle next keeps a recorded continuation
+
+- **WHEN** no live workstream and no parseable architecture doc exist, and the newest emit's `next_recommended` is `/orbit:explore next-stage — continue capturing thinking`
+- **THEN** bare `orbit status` prints `No active changes.` and then `Ready when you are: /orbit:explore next-stage — continue capturing thinking` — a recorded command is continuing work and renders as recorded; only the fallback constant names architect
 
 ### Requirement: JSON output for both tiers
 

@@ -53,17 +53,24 @@ first`, whose table is the surface set.
 - The strict rows are asserted by a new test: the archive next for a cited and an uncited change, `orbit init`'s
   getting-started output, and the first line of `orbit update`'s and the welcome screen's lists. They name
   `/orbit:architect` and none of `/orbit:explore`, `/orbit:new` or `/orbit:propose`.
-- The prose rows are the architect stance paragraph, the onboard body and the docs. They describe explore and new
-  as the one-off path, after architect.
+- Idle status is strict only for its fallback: a recorded `/orbit:` command is continuing work and renders as
+  recorded (proposal walk).
+- The no-active-changes message and the two `--change` no-changes errors in `src/commands/workflow/shared.ts` are a
+  strict row (proposal walk). The message becomes `No active changes.` and the errors name `/orbit:architect <name>`;
+  `orbit new change` is named on no start surface, because it is not the flow orbit's author uses (Sal).
+- The prose rows are the architect stance paragraph, the onboard body and the docs. They describe explore as the
+  one-off path, after architect. The docs row is pending stage `docs-refinement`.
 
 **4. The CLI hints (D-af-5).**
 - `orbit init`'s `Getting started:` becomes one line naming `/orbit:architect <name>`, and the unreachable
   `/orbit:new` branch goes.
-- `orbit update`'s legacy-upgrade list and the welcome screen's quick-start list lead with `/orbit:architect`, then
-  `/orbit:propose` and `/orbit:apply`. Those later lines list commands, not where to start.
+- `orbit update`'s legacy-upgrade list and the welcome screen's quick-start list read `/orbit:architect`,
+  `/orbit:explore`, `/orbit:propose`: the canonical flow's order. Those later lines list commands, not where to start.
 
-**5. Onboard (D-af-6).** The canonical-flow diagram gains an architect phase before the per-change phases, and its
-paragraph states that the session is never required. The try-it nudge's concrete-idea recommendation becomes
+**5. Onboard (D-af-6).** The canonical-flow diagram reads architect → the per-change phases → architect: the
+per-change phases run once per change (a stage may be served by several), and the closing architect session ratifies
+the stage (Sal, at the proposal walk). The architect paragraph states that the session is never required. The
+explore phase's "Thinking-mode entry" label is reworded, since explore now follows architect. The try-it nudge's concrete-idea recommendation becomes
 `/orbit:architect <name>`. The bare-mode `/orbit:explore` nudge for orientation-only users stays: it is a no-commitment
 look around, not a start.
 
@@ -112,6 +119,7 @@ The proposing AI's reading of the file; no engine record.
 - `src/core/orientation.ts` + `src/commands/workflow/status.ts` — the idle next line, text and JSON.
 - `src/core/emit-composition.ts` — archive's `next_recommended` from the archived metadata.
 - `src/core/init.ts` — the getting-started block.
+- `src/commands/workflow/shared.ts` — the two no-changes errors.
 - `src/core/update.ts` — the legacy-upgrade getting-started list.
 - `src/ui/welcome-screen.ts` — the quick-start list.
 - `src/core/templates/workflows/architect.ts` — the stance paragraph.

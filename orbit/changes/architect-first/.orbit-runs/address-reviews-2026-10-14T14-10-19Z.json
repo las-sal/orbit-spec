@@ -1,0 +1,154 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-14T14:10:19Z",
+  "change": "architect-first",
+  "kind": "editorial",
+  "model": null,
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/architect-first/.orbit-runs/external-proposal-2026-10-14T14-02-16Z.md",
+  "source_command": null,
+  "source_token": "2026-10-14T14-02-16Z",
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-6 (Codex)",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 3,
+    "suggestion": 2
+  },
+  "pushback_verification": "All five verified against current state; two stale (one converged, one by convention).",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 2,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Idle status is both a strict architect start and an unrestricted recorded-command surface",
+      "marker_source": "external",
+      "file": "orbit/changes/architect-first/specs/orbit-architect/spec.md",
+      "line": 19,
+      "classification": "stale",
+      "action": "Converged with the fresh pass's finding at the same site; walked there.",
+      "evidence": "Converged: resolved in walk 2026-10-14T14-10-03Z as 'Idle status is classed strict but renders recorded explore/propose commands verbatim, and no strict test covers it' — the idle row is now strict for its fallback only, and orbit-orientation gains 'Idle next keeps a recorded continuation' (rung 3, a recorded /orbit:explore kept as recorded).",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Optional architect scenario promises identical behavior that the change deliberately differentiates",
+      "marker_source": "external",
+      "file": "orbit/changes/architect-first/specs/orbit-architect/spec.md",
+      "line": 54,
+      "classification": "trivial_fix",
+      "action": "Scenario narrowed: no prerequisite, gate or penalty applies that a cited change escapes; citation-keyed behaviour (the archive recommendation, the pr: per-architecture target) still follows the citation.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "exactly as a cited change's does"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/architect-first/specs/orbit-architect/spec.md",
+            "text": "no prerequisite, gate or penalty applies to it that a cited change escapes"
+          }
+        ],
+        "searched": [
+          "exactly as",
+          "per-architecture"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Onboarding incorrectly limits the per-change flow to once per stage",
+      "marker_source": "external",
+      "file": "orbit/changes/architect-first/specs/orbit-onboard/spec.md",
+      "line": 5,
+      "classification": "trivial_fix",
+      "action": "The walkthrough says the per-change phases run once per change, a stage possibly served by several changes, with the return to architect ratifying the stage.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/architect-first/design.md",
+          "orbit/changes/architect-first/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "runs once per stage"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/architect-first/specs/orbit-onboard/spec.md",
+            "text": "once per change (a stage may be served by several changes)"
+          }
+        ],
+        "searched": [
+          "once per stage",
+          "per stage"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Promised Purpose edit has no executable task",
+      "marker_source": "external",
+      "file": "orbit/changes/architect-first/proposal.md",
+      "line": 48,
+      "classification": "trivial_fix",
+      "action": "Task 6.4 added: at archive, edit orbit-architect's Purpose in place to the architect-first stance.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/architect-first/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/architect-first/tasks.md",
+            "text": "edit `orbit-architect`'s Purpose in place"
+          }
+        ],
+        "searched": [
+          "Purpose"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Exploration still describes itself as awaiting promotion",
+      "marker_source": "external",
+      "file": "orbit/changes/architect-first/explore.md",
+      "line": 1,
+      "classification": "stale",
+      "action": "No edit: by convention.",
+      "evidence": "Every archived change since 2026-10-10-rc05b-git-grammar keeps the '> **Status**: exploring.' header in its explore.md; the propose body says explore.md 'persists unchanged as the historical record', and a concluded token there would make the explore re-entry table resolve the change as concluded.",
+      "outcome": "stale"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Three of five resolved in place; two stale — one converged with the fresh pass (walked in 2026-10-14T14-10-03Z), one the explore.md header kept by convention.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal architect-first",
+  "ripple_misses": 0
+}

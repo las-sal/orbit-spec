@@ -12,13 +12,21 @@ the five surfaces on Sal's word (see explore.md, D-af-2 to D-af-6).
   WAITING, and no `Ready when you are:` line.
   - On the ladder's rungs 2 and 3 it renders the newest emit's recorded `next_recommended` verbatim when that string
     begins with `/orbit:`. Otherwise, or when no emit exists, it renders `/orbit:architect <name>`.
-  - Rung 3's no-active-changes message stays and gains that line. Both rungs' `--json` carry the same `next`.
+  - Rung 3's no-active-changes message becomes `No active changes.` and gains that line. Both rungs' `--json` carry
+    the same `next`. A recorded `/orbit:` command is continuing work and renders as recorded; only the fallback names
+    architect.
 - **The archive emit's next follows the change's citation** (D-af-3). Today it reads "Change archived. Run /orbit:new or
   /orbit:explore to start the next change, …".
   - A change citing a program whose doc exists recommends `/orbit:architect <doc>`: review stage `<stage>` and take up
     the program's next stage.
   - Any other change recommends `/orbit:architect <name>` to plan the next piece of work.
   - Both begin with the command, so idle status renders them, and both keep `/orbit:audit-drift` as the alternative.
+- **The canonical flow is the one orbit's author uses** (Sal, at the proposal walk): architect → explore → propose →
+  review → apply → review → archive → architect, the closing architect session ratifying the stage. `/orbit:new` is
+  named on no start surface.
+- **The no-active-changes screen names architect** (proposal walk). `orbit status` with nothing in flight and no
+  program prints `No active changes.` and the idle next line, instead of `Create one with: orbit new change <name>`;
+  the two `--change` errors raised when no change exists name `/orbit:architect <name>`.
 - **The CLI's start hints name architect** (D-af-4, D-af-5):
   - `orbit init`'s `Getting started:` line, which today reads `/orbit:propose "your idea"`.
   - `orbit update`'s `Getting started:` list, which today leads with `/orbit:new`.
@@ -27,7 +35,7 @@ the five surfaces on Sal's word (see explore.md, D-af-2 to D-af-6).
   propose → …; an architect session stays never required, and nothing flags work that skipped it. A new requirement
   names the start surfaces and splits them as D-af-4 does:
   - Strict surfaces name architect and no other start, and a test checks them.
-  - Prose surfaces may describe explore and new as the one-off path, after architect.
+  - Prose surfaces may describe explore as the one-off path, after architect.
 - **The onboard body puts architect first** (D-af-6). The canonical-flow diagram shows architect as the step before
   the per-change flow, and the try-it nudge leads with `/orbit:architect <name>`. The per-change strip is unchanged.
 - **Mirrors follow:** `orbit-conventions`' example payload and the archive body's example carry the new archive
@@ -65,6 +73,7 @@ unratified stages (Considered & out in explore.md).
 - **`src/commands/workflow/status.ts`, `src/core/orientation.ts`:** the idle next line, text and JSON.
 - **`src/core/emit-composition.ts`:** archive's `next_recommended`, from the archived change's metadata.
 - **`src/core/init.ts`, `src/core/update.ts`, `src/ui/welcome-screen.ts`:** the start hints.
+- **`src/commands/workflow/shared.ts`:** the two no-changes errors.
 - **`src/core/templates/workflows/architect.ts`, `onboard.ts`, `archive-change.ts`:** the stance paragraph, the onboard
   flow and nudge, and the archive example. The generated surface is refreshed, and the pinned template hashes move.
 - **Tests:** a start-surfaces test (G1's strict rows), the idle-status cases, the archive next by citation, and the

@@ -40,9 +40,11 @@ composing it before the move would record an outcome that does not yet exist; no
 recompute runs against an archived change. Archive's `next_recommended` begins with the command
 (`orbit-architect`'s `Start surfaces name the architect workflow first`) and is chosen by the
 archived change's `architecture:` citation, read from the `.openspec.yaml` in the archived
-directory: when the citation's doc file `orbit/architecture/<doc>.md` exists, it is
+directory through the change-metadata schema: when the citation's doc file `orbit/architecture/<doc>.md` exists, it is
 `/orbit:architect <doc> — change archived; review stage <stage> and take up the program's next stage, or run /orbit:audit-drift for a project-wide drift check.`;
-when there is no citation, the doc file is missing, or the metadata cannot be read, it is
+when there is no citation, the doc file is missing, the metadata cannot be read, or the citation
+fails the change-metadata schema (a `doc` that is not a plain file stem, a `stage` that is not
+kebab-case), it is
 `/orbit:architect <name> — change archived; plan the next piece of work, or run /orbit:audit-drift for a project-wide drift check.`
 — the literal `<name>`, a placeholder the user fills. The recommendation never refuses the emit:
 an unreadable metadata file selects the second form.
@@ -74,5 +76,5 @@ an unreadable metadata file selects the second form.
 
 #### Scenario: An uncited or dangling change's archive recommends a new architect session
 
-- **WHEN** the archived change's metadata carries no `architecture:` citation, or cites a doc whose file no longer exists, or cannot be read
+- **WHEN** the archived change's metadata carries no `architecture:` citation, or cites a doc whose file no longer exists, or cannot be read, or carries a citation that fails the change-metadata schema (e.g. `doc: ../x`)
 - **THEN** `next_recommended` is `/orbit:architect <name> — change archived; plan the next piece of work, or run /orbit:audit-drift for a project-wide drift check.` and the emit is written
