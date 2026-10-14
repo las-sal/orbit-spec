@@ -1,0 +1,15 @@
+{
+  "command": "propose",
+  "timestamp": "2026-10-14T13:57:07Z",
+  "change": "architect-first",
+  "kind": "workflow",
+  "model": null,
+  "final_assessment": "Proposed from the exploration (consume mode, D-af-1..6): 6 capabilities, 11 requirements (1 ADDED, 10 MODIFIED), 17 tasks. Idle orbit status gains a next; the archive next follows the citation; CLI hints and onboard name architect first; orbit-architect's stance restated with a start-surfaces requirement. Capabilities breach declared (Sal). D-af-1's sweep corrected in design: orbit init prints /orbit:propose, not /orbit:new. Draft PR #25.",
+  "pr_attachment": {
+    "branch": "architect-first",
+    "granularity": "per-proposal",
+    "url": "https://github.com/las-sal/orbit-spec/pull/25",
+    "state": "draft"
+  },
+  "next_recommended": "/orbit:review architect-first — proposal artifacts ready; review before apply"
+}
