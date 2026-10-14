@@ -27,7 +27,7 @@ surgical cherry-picks only — there is no auto-ingest. A version bump is its ow
   update's smart detection may skip) so your local surface doesn't lag the source.
 - **Releases** are cut by `npm run release:tree` (the `orbit-release` capability), the only release path; pushing the
   tag is the maintainer's act.
-- `orbit/specs/` holds <!-- src:capabilities -->30<!-- /src:capabilities --> baseline capabilities. Every marked
+- `orbit/specs/` holds <!-- src:capabilities -->31<!-- /src:capabilities --> baseline capabilities. Every marked
   figure in this file is checked against `orbit/sources.yaml` by `orbit validate --sources`; an UNMARKED figure is
   invisible to that check.
 
