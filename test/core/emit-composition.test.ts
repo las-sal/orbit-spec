@@ -212,6 +212,7 @@ describe('target resolution and spine composition', () => {
     expect(() => composeAndWriteEmit('verify', { change: 'nope' }, base, { projectRoot: root })).toThrow(/workstream 'nope' not found — checked/);
   });
 
+  // @scenario behaviour orbit-emit-composition :: Atomic next_recommended — pre-computable and post-write classes :: Archive emit is pre-computable and lands on the archived trail
   it('archive resolves the lexically greatest archived directory, post-move only', () => {
     write('orbit/changes/archive/2026-01-01-foo/proposal.md', 'p');
     write('orbit/changes/archive/2026-03-01-foo/proposal.md', 'p');
@@ -224,11 +225,51 @@ describe('target resolution and spine composition', () => {
     );
     expect(r.path).toContain('orbit/changes/archive/2026-03-01-foo/.orbit-runs/archive-');
     expect(r.emit.kind).toBe('lifecycle');
-    expect(String(r.emit.next_recommended)).toContain('Change archived.');
+    expect(String(r.emit.next_recommended)).toContain('change archived;');
 
     expect(() =>
       composeAndWriteEmit('archive', { change: 'missing' }, { final_assessment: 'x', model: null }, { projectRoot: root })
     ).toThrow(/no archived directory matching/);
+  });
+
+  const UNCITED_ARCHIVE_NEXT =
+    '/orbit:architect <name> — change archived; plan the next piece of work, or run /orbit:audit-drift for a project-wide drift check.';
+  const archiveWith = (meta: string | null): string => {
+    write('orbit/changes/archive/2026-10-14-foo/proposal.md', 'p');
+    if (meta !== null) write('orbit/changes/archive/2026-10-14-foo/.openspec.yaml', meta);
+    const r = composeAndWriteEmit(
+      'archive',
+      { change: 'foo' },
+      { final_assessment: 'Archived foo.', archive_path: 'orbit/changes/archive/2026-10-14-foo/', model: null },
+      { projectRoot: root }
+    );
+    return String(r.emit.next_recommended);
+  };
+
+  // @scenario behaviour orbit-emit-composition :: Atomic next_recommended — pre-computable and post-write classes :: A cited change's archive recommends its program's architect session
+  it('archive next follows a citation whose doc exists back to the program\'s architect session (D-af-3)', () => {
+    write('orbit/architecture/prog.md', '# prog\n');
+    expect(archiveWith('schema: spec-driven\narchitecture:\n  doc: prog\n  stage: s1\n')).toBe(
+      "/orbit:architect prog — change archived; review stage s1 and take up the program's next stage, or run /orbit:audit-drift for a project-wide drift check."
+    );
+  });
+
+  // @scenario behaviour orbit-emit-composition :: Atomic next_recommended — pre-computable and post-write classes :: An uncited or dangling change's archive recommends a new architect session
+  it('archive next names a new architect session when uncited, dangling, unreadable or schema-failing — and still writes (D-af-3)', () => {
+    expect(archiveWith('schema: spec-driven\n')).toBe(UNCITED_ARCHIVE_NEXT);
+    fs.rmSync(path.join(root, 'orbit/changes/archive'), { recursive: true });
+    expect(archiveWith('schema: spec-driven\narchitecture:\n  doc: gone\n  stage: s1\n')).toBe(UNCITED_ARCHIVE_NEXT);
+    fs.rmSync(path.join(root, 'orbit/changes/archive'), { recursive: true });
+    expect(archiveWith('schema: [unclosed\n')).toBe(UNCITED_ARCHIVE_NEXT);
+    fs.rmSync(path.join(root, 'orbit/changes/archive'), { recursive: true });
+    expect(archiveWith(null)).toBe(UNCITED_ARCHIVE_NEXT);
+    fs.rmSync(path.join(root, 'orbit/changes/archive'), { recursive: true });
+    // The doc file exists in both schema-failing cases, so only the schema check selects the uncited form.
+    write('orbit/architecture/.x.md', '# x\n');
+    write('orbit/architecture/x.md', '# x\n');
+    expect(archiveWith('schema: spec-driven\narchitecture:\n  doc: .x\n  stage: s1\n')).toBe(UNCITED_ARCHIVE_NEXT);
+    fs.rmSync(path.join(root, 'orbit/changes/archive'), { recursive: true });
+    expect(archiveWith('schema: spec-driven\narchitecture:\n  doc: x\n  stage: Not_Kebab\n')).toBe(UNCITED_ARCHIVE_NEXT);
   });
 
   // @scenario behaviour orbit-archive-modifications :: Archive run summary written :: Gate override recorded in the summary
@@ -626,6 +667,46 @@ describe('deterministic facts', () => {
     expect(r.warnings.some((w) => /(five|5)[- ]sections?/.test(w))).toBe(false);
   });
 
+  // architect-first (task 6.2) — the Concluded rung read from the FILE's header, with no open rule and no defect.
+  // @scenario behaviour orbit-run-summary-emit :: Named-mode explore recommendation by maturity :: Concluded header collapses every count
+  it('explore: a concluded header with no open rule and no key defect emits exactly the Concluded prose, whatever the counts', () => {
+    write(
+      'orbit/explore/shut/explore.md',
+      '> **Status**: concluded 2026-09-25.\n\n## Decisions\n\n- **2026-09-25 — D-s-1: the conclusion** p.\n  Kind: scope\n  Re-entry: a third withdrawn stage\n\n## Open questions\n\n- q1\n- q2\n- q3\n'
+    );
+    const r = composeAndWriteEmit('explore', { change: 'shut' }, { final_assessment: 'concluded', model: null }, { projectRoot: root });
+    expect(r.emit.rules_open).toEqual([]);
+    expect(r.emit.key_defects).toEqual([]);
+    expect(r.emit.open_questions_count).toBe(3);
+    expect(r.emit.next_recommended).toBe('Concluded 2026-09-25. Reopens when: a third withdrawn stage.');
+    expect(String(r.emit.next_recommended)).not.toContain('/orbit:');
+  });
+
+  // architect-first (task 6.2) — the bound applies to the prose only; the emitted field keeps every entry.
+  // @scenario behaviour orbit-run-summary-emit :: Named-mode explore recommendation by maturity :: Open-rule list is bounded in prose and total in the field
+  it('explore: an Unaccounted rung names three open rules then +2 more, while rules_open carries all five', () => {
+    const content = [
+      '## Decisions',
+      '',
+      '- **2026-09-25 — D-x-1: one** p.',
+      '- **2026-09-25 — D-x-2: two** p.',
+      '- **2026-09-25 — D-x-3: three** p.',
+      '- **2026-09-25 — D-x-4: four** p.',
+      '- **Decision:** a fifth rule with no ID.',
+      '',
+      '## Open questions',
+      '',
+    ].join('\n');
+    write('orbit/explore/many/explore.md', content);
+    const r = composeAndWriteEmit('explore', { change: 'many' }, { final_assessment: 'boundary', model: null }, { projectRoot: root });
+    expect(String(r.emit.next_recommended)).toContain('5 of 5 live rules have open domains (D-x-1, D-x-2, D-x-3 +2 more)');
+    const open = r.emit.rules_open as Array<Record<string, unknown>>;
+    expect(open).toHaveLength(5);
+    expect(open.slice(0, 4).map((e) => e.id)).toEqual(['D-x-1', 'D-x-2', 'D-x-3', 'D-x-4']);
+    const fifthLine = content.split('\n').findIndex((l) => l.startsWith('- **Decision:**')) + 1;
+    expect(open[4]).toEqual({ state: 'open', line: fifthLine });
+  });
+
   // @scenario behaviour orbit-run-summary-emit :: Emit scope :: Named-mode explore BEGIN emit at scaffold (D-arc Stage D3)
   it('explore: the BEGIN-emit shape on an empty scaffold carries the five fields at their zero values', () => {
     write('orbit/explore/blank/explore.md', '> **Status**: exploring.\n\n# Exploration: blank\n\n## Premise\n\n## Mechanism\n\n## Decisions\n\n## Open questions\n\n## Considered & out\n\n## References\n');
@@ -772,6 +853,7 @@ describe('deterministic facts', () => {
 // ---------------------------------------------------------------------------
 
 describe('post-write semantics (synthetic trail, single atomic write)', () => {
+  // @scenario behaviour orbit-emit-composition :: Atomic next_recommended — pre-computable and post-write classes :: Post-write stamping matches the engine
   it('address-reviews: stamped next_recommended equals the engine next_command computed AFTER landing', () => {
     makeChange('foo');
     // A review pass with findings sits unresolved on the trail.
@@ -1037,6 +1119,7 @@ describe('post-write semantics (synthetic trail, single atomic write)', () => {
     expect(fs.readdirSync(path.join(root, 'orbit/architecture')).filter(f => f.endsWith('.json'))).toEqual([]);
   });
 
+  // @scenario behaviour orbit-emit-composition :: Atomic next_recommended — pre-computable and post-write classes :: Crash during synthetic-trail composition leaves no file
   it('a write failure past the gate leaves NO file — not even the dot-tmp (cleanup on the throw path)', () => {
     makeChange('foo');
     const runsDir = path.join(root, 'orbit/changes/foo/.orbit-runs');
@@ -1279,6 +1362,45 @@ describe('exactly-one-file guarantee', () => {
     expect(added[0]).toContain(path.basename(r.path));
     // No tmp residue.
     expect(listRuns('orbit/changes/foo/.orbit-runs').some(f => f.includes('.tmp'))).toBe(false);
+  });
+
+  // architect-first (task 6.2) — one command of each class: review (pre-computable), apply (post-write semantics).
+  // @scenario behaviour orbit-emit-composition :: Atomic next_recommended — pre-computable and post-write classes :: Every class writes once, complete
+  it('a pre-computable (review) and a post-write (apply) emit each add exactly one complete file, with no tmp residue', () => {
+    makeChange('foo');
+    const runs = 'orbit/changes/foo/.orbit-runs';
+    const cases: Array<[string, Record<string, unknown>]> = [
+      ['review', validReviewPayload()],
+      ['apply', { consent: 'user-invoked', model: null }],
+    ];
+    for (const [cmd, payload] of cases) {
+      const before = listRuns(runs);
+      const r = composeAndWriteEmit(cmd as Parameters<typeof composeAndWriteEmit>[0], { change: 'foo' }, payload, { projectRoot: root });
+      expect(listRuns(runs).filter((f) => !before.includes(f)), cmd).toEqual([path.basename(r.path)]);
+      const written = JSON.parse(fs.readFileSync(r.path, 'utf-8'));
+      expect(typeof written.next_recommended, cmd).toBe('string');
+      expect(written.next_recommended.length, cmd).toBeGreaterThan(0);
+      expect(written, cmd).toEqual(r.emit);
+      expect(listRuns(runs).some((f) => f.includes('.tmp')), cmd).toBe(false);
+    }
+  });
+
+  // architect-first (task 6.2) — the post-write class fails after its synthetic-trail status, at the atomic write.
+  // @scenario behaviour orbit-emit-composition :: Atomic next_recommended — pre-computable and post-write classes :: Crash during synthetic-trail composition leaves no file
+  it('a post-write (apply) emit refused at the write leaves the trail unchanged — no record, no tmp', () => {
+    makeChange('foo', { tasks: '# Tasks\n\n## 1. Group\n\n- [x] 1.1 done\n- [ ] 1.2 pending\n' });
+    const runsDir = path.join(root, 'orbit/changes/foo/.orbit-runs');
+    fs.mkdirSync(runsDir, { recursive: true });
+    const before = listRuns('orbit/changes/foo/.orbit-runs');
+    fs.chmodSync(runsDir, 0o555);
+    try {
+      expect(() =>
+        composeAndWriteEmit('apply', { change: 'foo' }, { consent: 'user-invoked', model: null }, { projectRoot: root })
+      ).toThrow();
+    } finally {
+      fs.chmodSync(runsDir, 0o755);
+    }
+    expect(listRuns('orbit/changes/foo/.orbit-runs')).toEqual(before);
   });
 });
 

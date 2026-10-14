@@ -576,6 +576,24 @@ function collectGlobalLast(projectRoot: string, live: LiveWorkstream[]): GlobalL
   return candidates[candidates.length - 1] ?? null;
 }
 
+/**
+ * The idle next line's fallback (orbit-orientation's recommendation-sourcing requirement): the
+ * architect-first start (orbit-architect's `Start surfaces name the architect workflow first`).
+ */
+export const IDLE_NEXT_FALLBACK = '/orbit:architect <name>';
+
+/**
+ * The idle next line's recommendation, without its label — rendered ONLY on the degradation
+ * ladder's rungs 2 and 3 (no live workstream). Sourced from the global LAST record (the `--full`
+ * LAST band's recency rule): its `next_recommended` verbatim when it begins with `/orbit:`, else
+ * the constant fallback. The prefix test is the only reading of the string — a prose
+ * recommendation under the eligibility label would assert an eligibility nothing has.
+ */
+export function idleNextRecommendation(last: GlobalLast | null): string {
+  const recorded = last?.emit.next_recommended ?? '';
+  return recorded.startsWith('/orbit:') ? recorded : IDLE_NEXT_FALLBACK;
+}
+
 // -----------------------------------------------------------------------------
 // collectOrientation — the single entry point
 // -----------------------------------------------------------------------------

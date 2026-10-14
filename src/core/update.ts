@@ -57,6 +57,17 @@ const require = createRequire(import.meta.url);
 const { version: OPENSPEC_VERSION } = require('../../package.json');
 
 /**
+ * `orbit update`'s legacy-upgrade `Getting started:` list. Its first line is a strict start surface
+ * (orbit-architect's `Start surfaces name the architect workflow first`); the rest follow the
+ * canonical flow's order.
+ */
+export const UPDATE_GETTING_STARTED: readonly string[] = [
+  '  /orbit:architect  Plan the work',
+  '  /orbit:explore    Think it through',
+  '  /orbit:propose    Propose a change',
+];
+
+/**
  * Options for the update command.
  */
 export interface UpdateCommandOptions {
@@ -294,9 +305,7 @@ export class UpdateCommand {
     if (newlyConfiguredTools.length > 0) {
       console.log();
       console.log(chalk.bold('Getting started:'));
-      console.log('  /orbit:new       Start a new change');
-      console.log('  /orbit:continue  Create the next artifact');
-      console.log('  /orbit:apply     Implement tasks');
+      for (const line of UPDATE_GETTING_STARTED) console.log(line);
       console.log();
       console.log(`Learn more: ${chalk.cyan('https://github.com/las-sal/orbit-spec')}`);
     }

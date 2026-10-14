@@ -123,6 +123,7 @@ const ids = (...list: string[]): RungIdentifier[] => list.map((id) => ({ id }));
 const rec = (d: number, q: number, f: Partial<MaturityFormInputs> = {}) => maturityRecommendation('foo', d, q, form(f));
 
 describe('maturityRecommendation — the six rungs', () => {
+  // @scenario behaviour orbit-run-summary-emit :: Named-mode explore recommendation by maturity :: Concluded header collapses every count
   it('Concluded: the header is read FIRST and collapses every count to prose naming no command', () => {
     const r = rec(5, 0, { status: { token: 'concluded', date: '2026-09-25', re_entry: 'a third withdrawn stage' } });
     expect(r).toBe('Concluded 2026-09-25. Reopens when: a third withdrawn stage.');
@@ -135,17 +136,21 @@ describe('maturityRecommendation — the six rungs', () => {
     expect(rec(5, 0, { status: { token: 'concluded', date: '2026-09-25' } })).toBe('Concluded 2026-09-25. Reopens when: (no Re-entry: slot found).');
   });
 
+  // @scenario behaviour orbit-run-summary-emit :: Named-mode explore recommendation by maturity :: Concluded with open domains carries the record after the prose
   it('Concluded with open domains carries the record AFTER the prose, still no /orbit: token', () => {
     const r = rec(5, 0, { status: { token: 'concluded', date: '2026-09-25', re_entry: 'a third withdrawn stage' }, rulesOpen: ids('D-x-1', 'D-x-2') });
     expect(r).toBe('Concluded 2026-09-25. Reopens when: a third withdrawn stage. · open domains: D-x-1, D-x-2');
     expect(r).not.toContain('/orbit:');
   });
 
+  // @scenario behaviour orbit-run-summary-emit :: Named-mode explore recommendation by maturity :: 1-decision explore recommends continued exploration
+  // @scenario behaviour orbit-run-summary-emit :: Named-mode explore recommendation by maturity :: 0-decision explore recommends continued exploration
   it('Early at 0 and 1 decisions: byte-identical to the pre-capability literals when rules_open is empty', () => {
     expect(rec(0, 0, { rulesTotal: 0 })).toBe(PRE.early0);
     expect(rec(1, 3, { rulesTotal: 1 })).toBe(PRE.early1);
   });
 
+  // @scenario behaviour orbit-run-summary-emit :: Named-mode explore recommendation by maturity :: Open domains are visible at Mid without changing the verb
   it('Mid: byte-identical when rules_open is empty; a PREFIX with the record when open domains exist', () => {
     expect(rec(3, 2, { rulesTotal: 3 })).toBe(PRE.mid);
     const withRecord = rec(3, 2, { rulesTotal: 3, rulesOpen: ids('D-x-1', 'D-x-2') });
@@ -153,6 +158,7 @@ describe('maturityRecommendation — the six rungs', () => {
     expect(withRecord).toBe(`${PRE.mid} · open domains: D-x-1, D-x-2`);
   });
 
+  // @scenario behaviour orbit-run-summary-emit :: Named-mode explore recommendation by maturity :: Stalled — 5 decisions captured but 3 open questions remain (the 4+ decisions threshold met, the open-question check fails)
   it('Stalled: byte-identical when rules_open is empty, no propose; a prefix with the record otherwise', () => {
     expect(rec(5, 3)).toBe(PRE.stalled);
     expect(rec(5, 3)).not.toContain('/orbit:propose');
@@ -161,6 +167,7 @@ describe('maturityRecommendation — the six rungs', () => {
     expect(withRecord.endsWith(' · open domains: D-x-9')).toBe(true);
   });
 
+  // @scenario behaviour orbit-run-summary-emit :: Named-mode explore recommendation by maturity :: 5 decisions, 0 open questions, one rule open — Unaccounted (the cell the retired Mature rung occupied)
   it('Unaccounted (the cell the retired Mature rung occupied): explore, the gap named inline, NO record suffix, NO propose', () => {
     const r = rec(5, 0, { rulesOpen: ids('D-x-3') });
     expect(r.startsWith('/orbit:explore foo')).toBe(true);
@@ -170,6 +177,7 @@ describe('maturityRecommendation — the six rungs', () => {
     expect(r).toBe('/orbit:explore foo — 1 of 4 live rules has an open domain (D-x-3); account for them before formalizing');
   });
 
+  // @scenario behaviour orbit-run-summary-emit :: Named-mode explore recommendation by maturity :: 5 decisions, 0 open questions, every rule accounted — the top rung reports
   it('Accounted: propose, reporting the live-rule count and the named residuals; explore as the alternative', () => {
     const r = rec(5, 0, { residuals: ids('D-x-4') });
     expect(r.startsWith('/orbit:propose foo')).toBe(true);
@@ -182,16 +190,19 @@ describe('maturityRecommendation — the six rungs', () => {
 });
 
 describe('maturityRecommendation — the record, the key-defect clause, K', () => {
+  // @scenario behaviour orbit-run-summary-emit :: Named-mode explore recommendation by maturity :: A malformed entry on a live rule is an open domain
   it('a malformed-entry live rule is counted in K and rendered with its line', () => {
     const r = rec(5, 0, { rulesTotal: 3, rulesOpen: [{ id: 'D-x-1', line: 40 }] });
     expect(r).toContain('1 of 3 live rules has an open domain (D-x-1 at line 40)');
   });
 
+  // @scenario behaviour orbit-run-summary-emit :: Named-mode explore recommendation by maturity :: A key defect is reported beside the rung, never counted in K
   it('the key-defect clause appends to an Unaccounted rung, never entering K or the open-domains list', () => {
     const r = rec(5, 0, { rulesOpen: ids('D-x-3', 'D-x-4'), keyDefects: [{ id: 'D-x-9', line: 88 }] });
     expect(r).toBe('/orbit:explore foo — 2 of 4 live rules have open domains (D-x-3, D-x-4); account for them before formalizing; 1 key defect (D-x-9 at line 88)');
   });
 
+  // @scenario behaviour orbit-run-summary-emit :: Named-mode explore recommendation by maturity :: A key defect alone does not change the verb
   it('a key defect alone does not change the verb: Accounted with the clause', () => {
     const r = rec(5, 0, { keyDefects: [{ id: 'D-x-2', line: 61 }] });
     expect(r.startsWith('/orbit:propose foo')).toBe(true);
@@ -215,6 +226,7 @@ describe('maturityRecommendation — the record, the key-defect clause, K', () =
 });
 
 describe('maturityRecommendation — the bound and the identifier rule', () => {
+  // @scenario behaviour orbit-run-summary-emit :: Named-mode explore recommendation by maturity :: Open-rule list is bounded in prose and total in the field
   it('five open rules in a stated order render the first three then +2 more, in the array\'s order', () => {
     const r = rec(5, 0, { rulesTotal: 5, rulesOpen: [...ids('D-x-1', 'D-x-2', 'D-x-3', 'D-x-4'), { line: 212 }] });
     expect(r).toContain('5 of 5 live rules have open domains (D-x-1, D-x-2, D-x-3 +2 more)');

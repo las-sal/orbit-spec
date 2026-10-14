@@ -139,7 +139,8 @@ describe('artifact-workflow CLI commands', () => {
       const result = await runCLI(['status'], { cwd: tempDir });
       expect(result.exitCode).toBe(0);
       expect(result.stdout).toContain('No active changes');
-      expect(result.stdout).toContain('orbit new change');
+      expect(result.stdout).toContain('/orbit:architect <name>');
+      expect(result.stdout).not.toContain('orbit new change');
     });
 
     it('exits gracefully with JSON when no changes exist', async () => {

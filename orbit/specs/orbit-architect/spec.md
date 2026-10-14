@@ -5,8 +5,10 @@ The `/orbit:architect` workflow — author or resume an architecture doc (the pr
 changes) as a first-class generated skill with thin launcher command. The body scaffolds the
 parseable format by construction, captures rulings / stage declarations / considered-and-out
 entries as they are ratified, renders all stage state from `orbit architecture status` (never
-hand-writes it), and offers completion-ratification as a recorded interaction. It is a stance,
-never a gatekeeper — `/orbit:explore` plus hand-editing remains a first-class path. Sessions
+hand-writes it), and offers completion-ratification as a recorded interaction. It is where new
+work starts and where it returns — orbit's start surfaces name `/orbit:architect` first, and the
+closing session ratifies the stage — yet a stance, never a gatekeeper: no session is ever required,
+and `/orbit:explore` plus hand-editing remains a first-class path, the one-off fix's. Sessions
 emit `architect-<TS>.json` to the architecture trail with the structured `handoff` section.
 ## Requirements
 ### Requirement: Architect workflow available

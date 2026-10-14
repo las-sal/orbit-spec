@@ -34,7 +34,7 @@ The orbit additions to \`/orbit:archive\` write a JSON summary to \`orbit/change
 
 ## Universal spine inheritance
 
-The spine every emit carries is owned by \`orbit-conventions\`' \`Internal-run JSON summary format\` requirement, and is not restated here; the write gate refuses every field the engine composes. For archive, \`final_assessment\` is the payload's narrative of what was archived (e.g. \`"Archived <change-name> to <archive_path>."\`), and \`next_recommended\` is the engine's fixed post-archive line shown in the block below.
+The spine every emit carries is owned by \`orbit-conventions\`' \`Internal-run JSON summary format\` requirement, and is not restated here; the write gate refuses every field the engine composes. For archive, \`final_assessment\` is the payload's narrative of what was archived (e.g. \`"Archived <change-name> to <archive_path>."\`), and \`next_recommended\` is the engine's post-archive line, chosen by the archived change's \`architecture:\` citation: a cited change whose doc exists gets \`/orbit:architect <doc> — change archived; review stage <stage> and take up the program's next stage, …\`, and any other change the uncited line shown in the block below (per \`orbit-emit-composition\`).
 
 The schema below documents the per-command extensions ADDED to that spine (\`archive_path\`, \`audit\`, \`sync_specs\`, \`unresolved_markers\`, \`user_decision\`, \`warnings\`), per the \`kind: "lifecycle"\` extensions in \`orbit-conventions\`, plus the \`consent\` field (D1), the conditional \`fingerprint_overridden\` / \`fingerprints_unverified\` (C2) fields, the conditional \`judgements\` array (rc04a), and the conditional \`deferred_validations\` array (rc10). A \`continuation\`/\`proceed\` entry of that array is the SOLE record of a proceed-anyway past a gate the Step 3.4 prompt listed (the gate set \`orbit-engine-gates\`' \`Inflection-prompt override contract\` owns): the C1-era field it once accompanied is RETIRED (rc04c), and emits written before that retirement carry it as a PRIOR GENERATION that readers continue to accept.
 
@@ -48,7 +48,7 @@ The schema below documents the per-command extensions ADDED to that spine (\`arc
   "timestamp": "<ISO-8601>",
   "change": "<change-name>",
   "final_assessment": "<narrative of what was archived>",
-  "next_recommended": "Change archived. Run /orbit:new or /orbit:explore to start the next change, or /orbit:audit-drift for a project-wide drift check.",
+  "next_recommended": "/orbit:architect <name> — change archived; plan the next piece of work, or run /orbit:audit-drift for a project-wide drift check.",
   "kind": "lifecycle",
   "archive_path": "orbit/changes/archive/<YYYY-MM-DD>-<change-name>/",
   "audit": {

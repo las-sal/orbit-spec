@@ -1189,7 +1189,7 @@ More user content after markers.
         expect.stringContaining('Getting started')
       );
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('/orbit:new')
+        expect.stringContaining('/orbit:architect')
       );
 
       // Skills should be created

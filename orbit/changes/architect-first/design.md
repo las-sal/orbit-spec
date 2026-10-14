@@ -106,7 +106,10 @@ The proposing AI's reading of the file; no engine record.
 ## Risks / Trade-offs
 
 - **D-af-4's residual** → its named limit lives in `orbit-architect`'s `Start surfaces name the architect workflow
-  first`. Task 6.1 runs its method at apply.
+  first`. Task 6.1 runs its method at apply. At apply the sweep's start-suggesting hits were the table's own rows, the command
+  listings (onboard's command table, the `new`/`propose`/`ff` descriptions, the CLI's `new change` help), explore's
+  crystallize-to-proposal prompts (continuing work, D-af-1), and one surface outside the table: bulk-archive's
+  `Create a new change to get started.`, in an upstream portion, recorded in the requirement as a known instance.
 - **A stale LAST string can render after its subject moves on.** The idle line shows the newest record verbatim, so an
   archive next naming a program that has since completed still reads `/orbit:architect <doc>`. That session is
   harmless: it renders the doc's state and offers nothing. This is the time-shifted contract's known shape, accepted
