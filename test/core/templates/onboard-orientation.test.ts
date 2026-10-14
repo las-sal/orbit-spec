@@ -48,3 +48,125 @@ describe('landing-page — the onboard Orientation section', () => {
     }
   });
 });
+
+/**
+ * architect-first (task 6.2) — `orbit-onboard`'s `Canonical-flow walkthrough section` (Section 3) and
+ * `Try-it nudge section` (Section 5), read against the generated body as it now stands: architect
+ * first, the nine per-change phases, the return to architect.
+ */
+const flow = onboard.slice(onboard.indexOf('## Section 3:'), onboard.indexOf('## Section 4:'));
+const nudge = onboard.slice(onboard.indexOf('## Section 5:'));
+const paragraphs = flow.split('\n\n');
+const paragraph = (lead: string): string => {
+  const hits = paragraphs.filter((p) => p.startsWith(lead));
+  expect(hits, lead).toHaveLength(1);
+  return hits[0];
+};
+/** From one bold lead to the next phase's bold lead (a phase may carry a following PR-layer paragraph). */
+const region = (lead: string, next: string | null): string => {
+  const from = flow.indexOf(lead);
+  expect(from, lead).toBeGreaterThanOrEqual(0);
+  return flow.slice(from, next === null ? undefined : flow.indexOf(next, from));
+};
+
+describe('architect-first — the onboard Canonical-flow walkthrough and Try-it nudge', () => {
+  it('both sections are found', () => {
+    expect(flow.length).toBeGreaterThan(0);
+    expect(nudge.startsWith('## Section 5:')).toBe(true);
+  });
+
+  // @scenario text orbit-onboard :: Canonical-flow walkthrough section :: Flow diagram
+  it('the diagram shows architect first, the nine per-change phases in order, then the return to architect', () => {
+    const fence = flow.match(/```\n([\s\S]*?)```/)?.[1] ?? '';
+    const tokens = fence
+      .split(/─+→?|[┌┐└┘│→\n]/)
+      .map((t) => t.trim())
+      .filter((t) => t.length > 0 && t !== 'per change');
+    expect(tokens).toEqual([
+      'architect',
+      'explore',
+      'propose',
+      'review',
+      'address-reviews',
+      'apply',
+      'verify',
+      'review --as system',
+      'address-reviews',
+      'archive',
+      'architect (ratify the stage)',
+    ]);
+  });
+
+  // @scenario text orbit-onboard :: Canonical-flow walkthrough section :: One paragraph per phase
+  it('architect and each of the nine phases get exactly one paragraph naming its /orbit: command', () => {
+    const phases: Array<[string, string]> = [
+      ['**Architect (', '/orbit:architect'],
+      ['**Phase 1 — explore', '/orbit:explore'],
+      ['**Phase 2 — propose', '/orbit:propose'],
+      ['**Phase 3 — review', '/orbit:review'],
+      ['**Phase 4 — address-reviews', '/orbit:address-reviews'],
+      ['**Phase 5 — apply', '/orbit:apply'],
+      ['**Phase 6 — verify', '/orbit:verify'],
+      ['**Phase 7 — review (system mode', '/orbit:review'],
+      ['**Phase 8 — address-reviews', '/orbit:address-reviews'],
+      ['**Phase 9 — archive', '/orbit:archive'],
+    ];
+    for (const [lead, command] of phases) expect(paragraph(lead), lead).toContain(command);
+    expect(paragraphs.filter((p) => /^\*\*Phase \d+ — /.test(p))).toHaveLength(9);
+  });
+
+  // @scenario text orbit-onboard :: Canonical-flow walkthrough section :: Lenses introduced contextually
+  it('lenses are introduced in the explore paragraph and re-referenced in system-mode review', () => {
+    const explore = paragraph('**Phase 1 — explore');
+    expect(explore).toContain('**lenses**');
+    expect(explore).toContain('`perspectives.md`');
+    expect(explore).toContain('`critical-paths.md`');
+    const system = paragraph('**Phase 7 — review (system mode');
+    expect(system).toContain('perspectives.md');
+    expect(system).toContain('critical-paths.md');
+  });
+
+  // @scenario text orbit-onboard :: Canonical-flow walkthrough section :: External-review named, not demoed
+  it('the external-review loop is named in the address-reviews paragraphs; no sample prompt or exchange is bundled', () => {
+    const p4 = paragraph('**Phase 4 — address-reviews');
+    expect(p4).toContain('**Cross-AI loop**');
+    expect(p4).toContain('the review skill states how the prompt reaches it');
+    expect(p4).toContain("the review skill's `references/external-handoff.md`");
+    expect(paragraph('**Phase 8 — address-reviews')).toContain('`/orbit:review <name> --as system --reviewer external`');
+    // The diagram is the section's only fence: no bundled prompt, no rendered exchange.
+    expect(flow.match(/```/g)).toHaveLength(2);
+  });
+
+  // @scenario text orbit-onboard :: Canonical-flow walkthrough section :: PR lifecycle taught where it happens
+  it('the draft PR is taught at propose and the tail at archive, unconditionally, naming never as the default', () => {
+    const propose = region('**Phase 2 — propose', '**Phase 3 — review');
+    expect(propose).toContain('**draft PR** opens');
+    expect(propose).toContain('`never` (the default');
+    const archive = region('**Phase 9 — archive', null);
+    expect(archive).toMatch(/\*\*tail\*\*: commit the archive's own writes, push, then[\s\S]*achievement landmark[\s\S]*\*\*READY\*\*/);
+  });
+
+  // @scenario text orbit-onboard :: Canonical-flow walkthrough section :: Config vocabulary and the human boundary stated once
+  it('the three pr: values and their home, the citation rule, the human merge boundary and the degradation are stated', () => {
+    const propose = region('**Phase 2 — propose', '**Phase 3 — review');
+    expect(propose).toContain('`pr:` in `orbit/config.yaml`');
+    expect(propose).toMatch(/`never` \(the default[\s\S]*`per-proposal`[\s\S]*`per-architecture`/);
+    expect(propose).toContain('a change with NO citation falls back to per-proposal');
+    expect(propose).toContain('The citation selects the target');
+    expect(propose).toMatch(/With no git remote or no `gh` CLI an active mode degrades to `never` behavior for that invocation and says so in one line/);
+    // The human boundary is stated in the propose region, beside the vocabulary.
+    expect(propose).toContain("READY is orbit's terminus: the archive phase flips the PR ready, and merging it is the user's act.");
+  });
+
+  // @scenario text orbit-onboard :: Try-it nudge section :: Named-mode recommendation for concrete-idea users
+  it('the concrete-idea recommendation runs /orbit:architect <name>, with no practice or demo framing', () => {
+    expect(nudge).toContain('**If you have a concrete project idea** — run `/orbit:architect <name>`');
+    expect(nudge).not.toMatch(/for practice|try a demo/i);
+  });
+
+  // @scenario text orbit-onboard :: Try-it nudge section :: Bare-mode recommendation for orientation-only users
+  it('the orientation-only recommendation runs bare /orbit:explore', () => {
+    expect(nudge).toContain("**If you're orienting and don't have a concrete idea yet** — run `/orbit:explore` (no name)");
+    expect(nudge).toContain('Bare-mode explore stays in thinking-mode without committing to a change');
+  });
+});

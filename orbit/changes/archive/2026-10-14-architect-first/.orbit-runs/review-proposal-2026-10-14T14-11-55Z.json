@@ -1,0 +1,141 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-14T14:11:55Z",
+  "change": "architect-first",
+  "kind": "editorial",
+  "model": null,
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "specs/orbit-architect/spec.md",
+      "line": 28,
+      "title": "The strict-surfaces scenario requires every row to name /orbit:architect, but the no-active-changes message names no command",
+      "recommendation": "The walk added the no-active-changes message and the --change errors to the scenario's WHEN, and the table row says the message is `No active changes.`, so the THEN ('each names /orbit:architect') fails by construction for the message, as task 5.1's '(or, for the message, no command)' already concedes. Restate the THEN: each names /orbit:architect, except the no-active-changes message, which names no command; and none names /orbit:explore, /orbit:new or /orbit:propose as where to start.",
+      "walk_entry": {
+        "title": "Rung 3 keeps 'Create one with: orbit new change <name>' ahead of the architect line",
+        "file": "specs/orbit-orientation/spec.md"
+      }
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "specs/orbit-orientation/spec.md",
+      "line": 16,
+      "title": "The no-changes errors are described by the wrong condition and as status-only",
+      "recommendation": "The Bare requirement says the two errors fire 'when the named change does not exist and no change does', but src/commands/workflow/shared.ts:121 fires when NO change is named and none exists (only :142 is the named-but-missing case), and both are raised through validateChangeExists by orbit instructions too (instructions.ts:55, :381), not only orbit status --change. Describe them as the two errors validateChangeExists raises when no change exists, shared by orbit status --change and orbit instructions, and name the same in the architect table row.",
+      "walk_entry": {
+        "title": "Rung 3 keeps 'Create one with: orbit new change <name>' ahead of the architect line",
+        "file": "specs/orbit-orientation/spec.md"
+      }
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/architect-first/.openspec.yaml",
+      "line": 4,
+      "title": "The metadata file changed after the base pass but is in no walk entry's edit record",
+      "recommendation": "The walk's re-run of orbit fingerprint reordered the architecture key above base_fingerprints; the content is unchanged (same citation, same ten fingerprints). A record gap, not a defect; nothing to repair."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Graded the nine resolved entries over their sweep scopes: the eight in-place repairs read cleanly against the deltas, tasks, design and proposal. The one regression is inside the widened F-W1 resolution — folding the message into the strict scenario made its THEN unsatisfiable for that row. Residual check against the external pass's commit found only the metadata reorder. orbit validate --strict passes.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "verification": [
+    {
+      "title": "Rung 3 keeps 'Create one with: orbit new change <name>' ahead of the architect line",
+      "file": "specs/orbit-orientation/spec.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "Idle status is classed strict but renders recorded explore/propose commands verbatim, and no strict test covers it",
+      "file": "specs/orbit-architect/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The user-docs prose row is false on the day this baseline lands",
+      "file": "specs/orbit-architect/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The archive body still calls next_recommended 'the engine's fixed post-archive line'",
+      "file": "src/core/templates/workflows/archive-change.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "The residual grep's terms miss 'entry' and 'Create one', the phrasings the bodies actually use",
+      "file": "specs/orbit-architect/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "'Cannot be read' does not say whether a schema-invalid citation counts",
+      "file": "specs/orbit-emit-composition/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Optional architect scenario promises identical behavior that the change deliberately differentiates",
+      "file": "orbit/changes/architect-first/specs/orbit-architect/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Onboarding incorrectly limits the per-change flow to once per stage",
+      "file": "orbit/changes/architect-first/specs/orbit-onboard/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Promised Purpose edit has no executable task",
+      "file": "orbit/changes/architect-first/proposal.md",
+      "verdict": "landed"
+    }
+  ],
+  "final_assessment": "0 critical, 1 warning, 2 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-10-14T14-10-03Z",
+    "2026-10-14T14-10-19Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews architect-first"
+}

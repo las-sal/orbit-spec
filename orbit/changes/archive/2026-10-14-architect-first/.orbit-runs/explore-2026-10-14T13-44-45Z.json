@@ -1,0 +1,25 @@
+{
+  "command": "explore",
+  "timestamp": "2026-10-14T13:44:45Z",
+  "change": "architect-first",
+  "kind": "workflow",
+  "model": null,
+  "final_assessment": "Sal settled all five open questions: idle status gives a next (D-af-2), the archive next follows the citation (D-af-3), G1 is strict for composed nexts and CLI hints (D-af-4), the CLI start hints are this stage's (D-af-5), onboard puts architect before the per-change flow (D-af-6). The three rules carry Mechanism entries; D-af-4 is BOUNDED with a named residual.",
+  "decisions_captured": 6,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 3,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [
+    {
+      "id": "D-af-4",
+      "kind": "a surface that steers new work to explore or new without naming either command (e.g. \"start by thinking it through\")",
+      "method": "grep the generated bodies and the CLI's user-visible strings for \"start\", \"begin\", \"first change\" and \"new work\" at apply, and classify each hit against this table"
+    }
+  ],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose architect-first — 3 live rules accounted, 1 bounded residual named (D-af-4); formalize when you are ready (or /orbit:explore architect-first to keep refining)"
+}

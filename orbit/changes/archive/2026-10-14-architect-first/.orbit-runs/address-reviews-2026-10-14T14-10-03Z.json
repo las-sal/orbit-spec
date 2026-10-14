@@ -1,0 +1,293 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-14T14:10:03Z",
+  "change": "architect-first",
+  "kind": "editorial",
+  "model": null,
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/architect-first/.orbit-runs/review-proposal-2026-10-14T14-01-54Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-14T14-01-54Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 3,
+    "suggestion": 3
+  },
+  "pushback_verification": "All six verified against current state (status.ts:176 and shared.ts:121/142 read; archive-change.ts:37 read; types.ts schema read); none stale.",
+  "resolution_summary": {
+    "resolved": 6,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Rung 3 keeps 'Create one with: orbit new change <name>' ahead of the architect line",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-orientation/spec.md",
+      "line": 16,
+      "classification": "decision_required",
+      "action": "Option A, widened by Sal: rung 3 prints 'No active changes.' then the idle next line; the message and the two --change no-changes errors become a strict start-surface row naming /orbit:architect only; the canonical flow becomes architect → explore → propose → review → apply → review → archive → architect (ratify) in orbit-architect and orbit-onboard; /orbit:new is named on no start surface; the CLI lists read architect, explore, propose.",
+      "ratified_via": "chat",
+      "resolution": "Sal: \"i don't use 'new' … i'd rather examples and documentation center around the flow i use architect->explore->propose->review->apply->review->archive->architect(to ratify)\" — read as A, widened to that flow across the start surfaces.",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Reword the rung-3 message, dropping the 'Create one with: orbit new change <name>' clause or replacing it with the architect line. Restate orbit-orientation's 'no-active-changes message is unchanged' clause (Bare requirement and the Error-path scenario), add the message to the start-surfaces table as a strict row, re-point status-orientation.test.ts:202/495, and decide whether shared.ts's two errors follow."
+          },
+          {
+            "label": "B",
+            "body": "Keep the message and add it to the start-surfaces table as a named exception: an upstream CLI hint naming the low-level command, not a suggestion of where to start. Then reword the requirement's 'first' so it still holds with the exception in place."
+          }
+        ],
+        "chosen": "A"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/architect-first/specs/orbit-architect/spec.md",
+          "orbit/changes/architect-first/specs/orbit-onboard/spec.md",
+          "orbit/changes/architect-first/proposal.md",
+          "orbit/changes/architect-first/design.md",
+          "orbit/changes/architect-first/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "no-active-changes message is unchanged",
+          "the existing no-active-changes message",
+          "explore and new",
+          "explore plus new",
+          "then `/orbit:propose` and `/orbit:apply`",
+          "after the unchanged no-active-changes message"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/architect-first/specs/orbit-orientation/spec.md",
+            "text": "the no-active-changes message `No active changes.`"
+          },
+          {
+            "path": "orbit/changes/architect-first/specs/orbit-architect/spec.md",
+            "text": "architect → explore → propose →\nreview → apply → review → archive → architect"
+          },
+          {
+            "path": "orbit/changes/architect-first/tasks.md",
+            "text": "the two no-changes errors name `/orbit:architect <name>`"
+          }
+        ],
+        "searched": [
+          "Create one with",
+          "orbit new change",
+          "no-active-changes",
+          "explore and new",
+          "/orbit:new"
+        ],
+        "scope": [
+          "src/commands/workflow/status.ts",
+          "src/commands/workflow/shared.ts"
+        ],
+        "kept": [
+          {
+            "path": "orbit/changes/architect-first/explore.md",
+            "why": "the exploration record quotes the pre-walk surface set and its prose rows; it travels unchanged as history"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Idle status is classed strict but renders recorded explore/propose commands verbatim, and no strict test covers it",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-architect/spec.md",
+      "line": 11,
+      "classification": "trivial_fix",
+      "action": "Idle status row made strict for its fallback only (a recorded /orbit: command is continuing work and renders as recorded); added orientation scenario 'Idle next keeps a recorded continuation'; the strict scenario and task 5.1 cover the fallback; task 2.3 adds the recorded-explore case.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/architect-first/specs/orbit-orientation/spec.md",
+          "orbit/changes/architect-first/tasks.md",
+          "orbit/changes/architect-first/design.md",
+          "orbit/changes/architect-first/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the newest recorded command, else `/orbit:architect <name>`"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/architect-first/specs/orbit-architect/spec.md",
+            "text": "strict for its fallback"
+          },
+          {
+            "path": "orbit/changes/architect-first/specs/orbit-orientation/spec.md",
+            "text": "Idle next keeps a recorded continuation"
+          }
+        ],
+        "searched": [
+          "strict",
+          "idle"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The user-docs prose row is false on the day this baseline lands",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-architect/spec.md",
+      "line": 17,
+      "classification": "trivial_fix",
+      "action": "The user-docs row is marked 'prose, pending stage docs-refinement', a named limit until that stage archives.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/architect-first/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "| prose | as the onboard body |"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/architect-first/specs/orbit-architect/spec.md",
+            "text": "pending stage `docs-refinement`"
+          }
+        ],
+        "searched": [
+          "user docs",
+          "docs-refinement"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The archive body still calls next_recommended 'the engine's fixed post-archive line'",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/archive-change.ts",
+      "line": 37,
+      "classification": "trivial_fix",
+      "action": "Task 1.3 extended to restate the archive body's 'fixed post-archive line' prose; the body itself is apply's edit.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/architect-first/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "Update the archive body's example payload"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/architect-first/tasks.md",
+            "text": "restate the prose that calls `next_recommended` the engine"
+          }
+        ],
+        "searched": [
+          "fixed post-archive"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The residual grep's terms miss 'entry' and 'Create one', the phrasings the bodies actually use",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-architect/spec.md",
+      "line": 22,
+      "classification": "trivial_fix",
+      "action": "Residual method terms gain 'entry' and 'create' in the requirement and task 6.1; task 4.2 rewords onboard's 'Thinking-mode entry'.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/architect-first/tasks.md",
+          "orbit/changes/architect-first/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "\"first change\" and \"new work\""
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/architect-first/specs/orbit-architect/spec.md",
+            "text": "\"new work\", \"entry\" and \"create\""
+          }
+        ],
+        "searched": [
+          "Residual method",
+          "Thinking-mode entry"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/architect-first/explore.md",
+            "why": "D-af-4's Mechanism entry records the residual method as captured at explore; history"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "'Cannot be read' does not say whether a schema-invalid citation counts",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-emit-composition/spec.md",
+      "line": 45,
+      "classification": "trivial_fix",
+      "action": "The citation is read through the change-metadata schema; a citation failing it selects the second form; the uncited/dangling scenario gains that case.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/architect-first/specs/orbit-emit-composition/spec.md",
+            "text": "fails the change-metadata schema"
+          }
+        ],
+        "searched": [
+          "cannot be read",
+          "change-metadata schema"
+        ],
+        "scope": [
+          "src/core/artifact-graph/types.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Six of six resolved: the rung-3 message by Sal's direction A, widened to his flow (architect → … → archive → architect) across the start surfaces; five by in-place spec and task repairs.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews architect-first",
+  "ripple_misses": 0
+}

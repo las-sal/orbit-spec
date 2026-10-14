@@ -1,0 +1,131 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-14T14:13:18Z",
+  "change": "architect-first",
+  "kind": "editorial",
+  "model": null,
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/architect-first/.orbit-runs/review-proposal-2026-10-14T14-11-55Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-14T14-11-55Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 2
+  },
+  "pushback_verification": "All three verified against current state; one stale.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 1,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The strict-surfaces scenario requires every row to name /orbit:architect, but the no-active-changes message names no command",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-architect/spec.md",
+      "line": 28,
+      "classification": "trivial_fix",
+      "action": "Restated the strict scenario's THEN: each names /orbit:architect, except the no-active-changes message, which names no command; the table row says the message names no command.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "each names `/orbit:architect` and none names"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/architect-first/specs/orbit-architect/spec.md",
+            "text": "except the no-active-changes message, which names no command"
+          }
+        ],
+        "searched": [
+          "each names",
+          "no-active-changes message"
+        ],
+        "scope": [
+          "orbit/changes/architect-first/tasks.md"
+        ],
+        "kept": []
+      },
+      "ripple_miss_of": {
+        "walk": "2026-10-14T14-10-03Z",
+        "title": "Rung 3 keeps 'Create one with: orbit new change <name>' ahead of the architect line",
+        "file": "specs/orbit-orientation/spec.md",
+        "kind": "judgement"
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The no-changes errors are described by the wrong condition and as status-only",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-orientation/spec.md",
+      "line": 16,
+      "classification": "trivial_fix",
+      "action": "The errors are described as the two raised when no change exists (none named, or the named one missing), shared by orbit status --change and orbit instructions; the architect table row, the strict scenario, task 5.1 and design follow.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/architect-first/specs/orbit-architect/spec.md",
+          "orbit/changes/architect-first/tasks.md",
+          "orbit/changes/architect-first/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "when the named change does not exist and no change does",
+          "`--change` no-changes errors"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/architect-first/specs/orbit-orientation/spec.md",
+            "text": "`orbit status --change` shares with `orbit instructions`"
+          }
+        ],
+        "searched": [
+          "no-changes errors",
+          "validateChangeExists"
+        ],
+        "scope": [
+          "src/commands/workflow/shared.ts",
+          "src/commands/workflow/instructions.ts"
+        ],
+        "kept": []
+      },
+      "ripple_miss_of": {
+        "walk": "2026-10-14T14-10-03Z",
+        "title": "Rung 3 keeps 'Create one with: orbit new change <name>' ahead of the architect line",
+        "file": "specs/orbit-orientation/spec.md",
+        "kind": "judgement"
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The metadata file changed after the base pass but is in no walk entry's edit record",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/architect-first/.openspec.yaml",
+      "line": 4,
+      "classification": "stale",
+      "action": "No edit.",
+      "evidence": "git diff 6fb8acdb -- .openspec.yaml shows only the architecture key moved above base_fingerprints by the fingerprint re-run; citation and all ten fingerprints are byte-identical. The pass itself says nothing to repair.",
+      "outcome": "stale"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Two of three resolved in place (both ripple misses of the first walk's widened rung-3 fix); one stale, the metadata reorder with nothing to repair.",
+  "iteration": 3,
+  "next_recommended": "/orbit:apply architect-first — user-invoked",
+  "ripple_misses": 2
+}

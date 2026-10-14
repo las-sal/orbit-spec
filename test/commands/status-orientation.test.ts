@@ -111,6 +111,8 @@ describe('status orientation surface', () => {
     );
   }
 
+  // @scenario behaviour orbit-orientation :: Bare `orbit status` renders the current sprint :: Bare invocation mid-sprint
+  // @scenario behaviour orbit-orientation :: Bare `orbit status` renders the current sprint :: Error path claimed, neighbors unchanged
   it('bare renders the sprint view mid-sprint (strip, last, next, also) with exit 0', async () => {
     await makeChange('sprint-change', { emit: true });
     await makeChange('other-change');
@@ -130,6 +132,64 @@ describe('status orientation surface', () => {
     // The also-line phase is the ENGINE frontier gate (review-proposal for a
     // complete-artifacts change), never a completed predecessor.
     expect(out).toContain('other-change (review)');
+  });
+
+  // architect-first (task 6.2) — one change mid-apply, nothing else live; its recorded next is stale on purpose.
+  // @scenario behaviour orbit-orientation :: Bare `orbit status` renders the current sprint :: Bare invocation mid-sprint
+  // @scenario behaviour orbit-orientation :: Next-recommendation sourcing is time-shifted, never live :: Change next comes from the engine
+  it('one change mid-apply: its strip, its latest emit as last, the ENGINE next (not the recorded one), and an also line naming no other workstream', async () => {
+    const dir = await makeChange('solo');
+    await fs.writeFile(path.join(dir, 'tasks.md'), '## 1. Work\n\n- [x] 1.1 Do the thing\n- [ ] 1.2 Do more\n');
+    const recorded = '/orbit:apply solo — recorded, now stale';
+    await fs.writeFile(
+      path.join(dir, '.orbit-runs', 'apply-2026-07-20T10-00-00Z.json'),
+      JSON.stringify({
+        command: 'apply',
+        timestamp: '2026-07-20T10:00:00Z',
+        change: 'solo',
+        final_assessment: 'Chunk one done. More detail.',
+        next_recommended: recorded,
+        kind: 'workflow',
+      })
+    );
+    const engineNext = JSON.parse((await runCLI(['status', '--change', 'solo', '--json'], { cwd: tempDir })).stdout).next_command;
+    expect(engineNext).not.toBe(recorded);
+
+    const result = await runCLI(['status'], { cwd: tempDir });
+    expect(result.exitCode).toBe(0);
+    const lines = result.stdout.split('\n');
+    expect(lines.some((l) => l.includes('apply ▶ 1/2'))).toBe(true); // the sprint strip, mid-apply
+    expect(lines.find((l) => l.startsWith('last:'))).toMatch(/^last: apply · .* — Chunk one done\.$/);
+    expect(result.stdout).toContain(`Ready when you are: ${engineNext}`);
+    expect(result.stdout).not.toContain(recorded);
+    const also = lines.find((l) => l.startsWith('also:'));
+    expect(also).toBeDefined();
+    expect(also).not.toMatch(/\([a-z-]+\)/); // no other workstream `name (phase)`; waiting items only
+  });
+
+  // architect-first (task 6.2) — the emit-less fallback seen through the CLI's text render.
+  // @scenario behaviour orbit-orientation :: Continuity predicate and degradation ladder :: Emit-less live workstream still participates
+  it('an emit-less staging explore anchors the sprint: strip explore ▶, last reports no emits yet, next the Early string', async () => {
+    await makeExplore('pre-d3');
+    const result = await runCLI(['status'], { cwd: tempDir });
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toContain('pre-d3');
+    expect(result.stdout).toContain('explore ▶');
+    expect(result.stdout).toContain('last: no emits yet');
+    expect(result.stdout).toContain('Ready when you are: /orbit:explore pre-d3 — continue capturing thinking');
+  });
+
+  // architect-first (task 6.2) — orientation parses no artifact content: prose, markers and mtimes move nothing.
+  // @scenario behaviour orbit-orientation :: Bare `orbit status` renders the current sprint :: No live inference beyond engine and trail
+  it('rewriting artifact prose, adding a marker and touching mtimes leaves bare --json byte-identical', async () => {
+    const dir = await makeChange('steady', { emit: true });
+    const before = (await runCLI(['status', '--json'], { cwd: tempDir })).stdout;
+    await fs.writeFile(path.join(dir, 'proposal.md'), '# Proposal\n\nRewritten prose. Status: BLOCKED. TODO: everything.\n');
+    await fs.writeFile(path.join(dir, 'design.md'), '# Design\n\n<!-- @review: is this right? -->\nAll done, ship it.\n');
+    const later = new Date(Date.now() + 3_600_000);
+    for (const f of ['proposal.md', 'design.md', 'tasks.md']) await fs.utimes(path.join(dir, f), later, later);
+    const after = (await runCLI(['status', '--json'], { cwd: tempDir })).stdout;
+    expect(after).toBe(before);
   });
 
   it('D5 model-hint garnish: bare and --full eligibility lines append the hint for change sprints when a models map resolves', async () => {
@@ -182,7 +242,8 @@ describe('status orientation surface', () => {
     expect(out).toContain('review ⟲3'); // 2 internal + 1 confident external; the unconfident file adds nothing
   });
 
-  it('regression: --change output keeps gate rows and gates[] markers; no-changes message unchanged', async () => {
+  // @scenario behaviour orbit-orientation :: Bare `orbit status` renders the current sprint :: Error path claimed, neighbors unchanged
+  it('regression: --change output keeps gate rows and gates[] markers; the no-changes message names no command', async () => {
     await makeChange('gated-change');
 
     const text = await runCLI(['status', '--change', 'gated-change'], { cwd: tempDir });
@@ -194,12 +255,12 @@ describe('status orientation surface', () => {
     expect(Array.isArray(payload.gates)).toBe(true);
     expect(payload.gates.length).toBeGreaterThan(0);
 
-    // No-changes message byte-identical (empty workspace).
+    // No-changes message (empty workspace): `No active changes.`, then the idle next line (D-af-2).
     const empty = await fs.mkdtemp(path.join(os.tmpdir(), 'orbit-status-empty-'));
     try {
       const none = await runCLI(['status'], { cwd: empty });
       expect(none.exitCode).toBe(0);
-      expect(none.stdout).toContain('No active changes. Create one with: orbit new change <name>');
+      expect(none.stdout).toBe('No active changes.\nReady when you are: /orbit:architect <name>\n');
     } finally {
       await fs.rm(empty, { recursive: true, force: true });
     }
@@ -309,6 +370,7 @@ describe('status orientation surface', () => {
     expect(out).toContain('→'); // entries still carry strips (the full tuple)
   });
 
+  // @scenario behaviour orbit-orientation :: JSON output for both tiers :: Bare JSON carries untruncated last
   it('bare --json emits {sprint, last, next, also, waiting, pr} with the shared entry shape', async () => {
     await makeChange('json-sprint', { emit: true });
 
@@ -327,6 +389,7 @@ describe('status orientation surface', () => {
     expect(payload.last.final_assessment).toContain('Extra detail sentence');
   });
 
+  // @scenario behaviour orbit-orientation :: JSON output for both tiers :: Explore sprint emits the explore variant
   it('an explore sprint emits the explore variant (kind, position, no status key)', async () => {
     await makeExplore('idea-x');
 
@@ -338,6 +401,8 @@ describe('status orientation surface', () => {
     expect(payload.sprint.next).toBe('/orbit:explore idea-x — continue capturing thinking');
   });
 
+  // @scenario behaviour orbit-orientation :: Next-recommendation sourcing is time-shifted, never live :: Concluded explore next renders bare
+  // @scenario behaviour orbit-orientation :: JSON output for both tiers :: Concluded explore sprint emits the concluded position
   it('a concluded explore sprint: position concluded, chip ■, and the next line BARE in text; --json carries the same string (rc13b)', async () => {
     const dir = await makeExplore('idea-done');
     await fs.mkdir(path.join(dir, '.orbit-runs'), { recursive: true });
@@ -407,6 +472,7 @@ describe('status orientation surface', () => {
     expect(row.position).toBe('concluded');
   });
 
+  // @scenario behaviour orbit-orientation :: JSON output for both tiers :: Degraded entry emits the degraded variant in both tiers
   it('degraded entries carry the degraded variant in both tiers; bare degraded sprint exits 0', async () => {
     const dir = await makeBrokenChange('busted');
     await fs.writeFile(
@@ -471,9 +537,10 @@ describe('status orientation surface', () => {
 
     const json = await runCLI(['status', '--json'], { cwd: tempDir });
     const payload = JSON.parse(json.stdout);
-    expect(Object.keys(payload).sort()).toEqual(['last', 'pr', 'program', 'waiting', 'workstreams']);
+    expect(Object.keys(payload).sort()).toEqual(['last', 'next', 'pr', 'program', 'waiting', 'workstreams']);
   });
 
+  // @scenario behaviour orbit-orientation :: JSON output for both tiers :: Every bare-tier JSON rung carries the resolved PR regime
   it('ladder rung 3: zero live workstreams + zero parseable docs → the no-changes JSON still carries pr (D6: the first-change rung)', async () => {
     // Regression guard for the fresh-adopter path: `pr: per-proposal`, no changes, no
     // docs. The bodies read `pr` from bare `orbit status --json`; an ABSENT key reads
@@ -484,17 +551,107 @@ describe('status orientation surface', () => {
     const json = await runCLI(['status', '--json'], { cwd: tempDir });
     expect(json.exitCode).toBe(0);
     const payload = JSON.parse(json.stdout);
-    expect(Object.keys(payload).sort()).toEqual(['changes', 'message', 'pr']);
+    expect(Object.keys(payload).sort()).toEqual(['changes', 'message', 'next', 'pr']);
     expect(payload.changes).toEqual([]);
     expect(payload.message).toBe('No active changes.');
+    expect(payload.next).toBe('/orbit:architect <name>');
     expect(payload.pr).toBe('per-proposal');
 
-    // Text rung stays byte-identical (the message, not the shape, is the D3 promise).
     const text = await runCLI(['status'], { cwd: tempDir });
     expect(text.exitCode).toBe(0);
-    expect(text.stdout).toContain('No active changes. Create one with: orbit new change <name>');
+    expect(text.stdout).toContain('No active changes.\nReady when you are: /orbit:architect <name>');
   });
 
+  // --- Idle next line (architect-first, D-af-2) -------------------------------------------
+
+  async function writeTrailEmit(runsDir: string, ts: string, next: string) {
+    await fs.mkdir(runsDir, { recursive: true });
+    await fs.writeFile(
+      path.join(runsDir, `archive-${ts}.json`),
+      JSON.stringify({
+        command: 'archive',
+        timestamp: ts.replace(/T(\d{2})-(\d{2})-(\d{2})Z$/, 'T$1:$2:$3Z'),
+        change: 'gone',
+        final_assessment: 'Archived gone.',
+        next_recommended: next,
+        kind: 'lifecycle',
+      })
+    );
+  }
+
+  const ARCHIVE_NEXT =
+    "/orbit:architect refine-documentation-and-architect — change archived; review stage architect-first and take up the program's next stage, or run /orbit:audit-drift for a project-wide drift check.";
+
+  // @scenario behaviour orbit-orientation :: Next-recommendation sourcing is time-shifted, never live :: Idle next renders the newest recorded command
+  // @scenario behaviour orbit-orientation :: Continuity predicate and degradation ladder :: Nothing in flight falls back to the arc view
+  it('idle rung 2: the --full view, then the newest recorded /orbit: command verbatim (text and JSON)', async () => {
+    await makeArcDoc('lonely-arc', 's1');
+    // An older project-wide emit, then the newest — an archived change's archive emit.
+    await writeTrailEmit(path.join(tempDir, 'orbit', '.orbit-runs'), '2026-10-01T10-00-00Z', '/orbit:audit-drift');
+    await writeTrailEmit(
+      path.join(tempDir, 'orbit', 'changes', 'archive', '2026-10-14-gone', '.orbit-runs'),
+      '2026-10-14T10-00-00Z',
+      ARCHIVE_NEXT
+    );
+
+    const text = await runCLI(['status'], { cwd: tempDir });
+    expect(text.exitCode).toBe(0);
+    expect(text.stdout).toContain('PROGRAM');
+    expect(text.stdout.trimEnd().split('\n').at(-1)).toBe(`Ready when you are: ${ARCHIVE_NEXT}`);
+
+    const json = JSON.parse((await runCLI(['status', '--json'], { cwd: tempDir })).stdout);
+    expect(json.next).toBe(ARCHIVE_NEXT);
+  });
+
+  // @scenario behaviour orbit-orientation :: Next-recommendation sourcing is time-shifted, never live :: Idle next falls back to architect
+  it('idle rung 2 with a prose LAST, and rung 3 with no emit, fall back to /orbit:architect <name>', async () => {
+    await makeArcDoc('lonely-arc', 's1');
+    await writeTrailEmit(
+      path.join(tempDir, 'orbit', '.orbit-runs'),
+      '2026-10-14T10-00-00Z',
+      'No markers remain in scope; the project trail records this walk.'
+    );
+    const text = await runCLI(['status'], { cwd: tempDir });
+    expect(text.stdout.trimEnd().split('\n').at(-1)).toBe('Ready when you are: /orbit:architect <name>');
+    expect(text.stdout).not.toContain('Ready when you are: No markers');
+    const json = JSON.parse((await runCLI(['status', '--json'], { cwd: tempDir })).stdout);
+    expect(json.next).toBe('/orbit:architect <name>');
+
+    const empty = await fs.mkdtemp(path.join(os.tmpdir(), 'orbit-status-idle-'));
+    try {
+      const none = await runCLI(['status'], { cwd: empty });
+      expect(none.stdout).toBe('No active changes.\nReady when you are: /orbit:architect <name>\n');
+    } finally {
+      await fs.rm(empty, { recursive: true, force: true });
+    }
+  });
+
+  // @scenario behaviour orbit-orientation :: Next-recommendation sourcing is time-shifted, never live :: Idle next keeps a recorded continuation
+  it('idle rung 3 keeps a recorded /orbit:explore continuation as recorded (text and JSON)', async () => {
+    const next = '/orbit:explore next-stage — continue capturing thinking';
+    await writeTrailEmit(path.join(tempDir, 'orbit', '.orbit-runs'), '2026-10-14T10-00-00Z', next);
+    const text = await runCLI(['status'], { cwd: tempDir });
+    expect(text.stdout).toBe(`No active changes.\nReady when you are: ${next}\n`);
+    const json = JSON.parse((await runCLI(['status', '--json'], { cwd: tempDir })).stdout);
+    expect(json.next).toBe(next);
+  });
+
+  it('an explicit --full carries no idle next line and no top-level next', async () => {
+    await makeArcDoc('lonely-arc', 's1');
+    const text = await runCLI(['status', '--full'], { cwd: tempDir });
+    expect(text.stdout).not.toContain('Ready when you are:');
+    const json = JSON.parse((await runCLI(['status', '--full', '--json'], { cwd: tempDir })).stdout);
+    expect('next' in json).toBe(false);
+  });
+
+  it('the sprint view (rung 1) renders no idle next line', async () => {
+    await makeChange('live-change', { emit: true });
+    await writeTrailEmit(path.join(tempDir, 'orbit', '.orbit-runs'), '2026-10-14T10-00-00Z', '/orbit:explore other');
+    const text = await runCLI(['status'], { cwd: tempDir });
+    expect(text.stdout).not.toContain('/orbit:explore other');
+  });
+
+  // @scenario behaviour orbit-orientation :: Bare `orbit status` renders the current sprint :: No live inference beyond engine and trail
   it('cold-start criterion (arc exit criterion 1): ONE --full --json answers position/last/next per workstream, read-only', async () => {
     await makeChange('ws-alpha', { emit: true });
     await makeChange('ws-beta', { emit: true });

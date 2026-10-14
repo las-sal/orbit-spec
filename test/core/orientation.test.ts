@@ -152,6 +152,7 @@ describe('continuity predicate', () => {
     expect(o.workstreams[0].name).toBe('beta'); // sprint-first ordering
   });
 
+  // @scenario behaviour orbit-orientation :: Continuity predicate and degradation ladder :: Archive emit does not orient to a closed sprint
   it('archive-emit edge: an archived trail never anchors the sprint BUT surfaces in global LAST', () => {
     const explore = makeExplore('staging-x');
     writeEmit(
@@ -176,6 +177,7 @@ describe('continuity predicate', () => {
     expect(o.workstreams.map((w) => w.name)).toEqual(['staging-x']);
   });
 
+  // @scenario behaviour orbit-orientation :: Continuity predicate and degradation ladder :: Same-second emits resolve deterministically
   it('same-second tokens tie-break by workstream name (sprint anchoring)', () => {
     const a = makeChange('alpha');
     const b = makeChange('beta');
@@ -219,6 +221,7 @@ describe('continuity predicate', () => {
 // ---------------------------------------------------------------------------
 
 describe('explore next sourcing', () => {
+  // @scenario behaviour orbit-orientation :: Continuity predicate and degradation ladder :: Emit-less live workstream still participates
   it('emit-less explore gets the Early canonical string and anchors via created', () => {
     makeExplore('fresh-idea');
     const o = collectOrientation(root);
@@ -228,6 +231,7 @@ describe('explore next sourcing', () => {
     expect(o.sprint?.status).toBeUndefined(); // no per-change payload on explores
   });
 
+  // @scenario behaviour orbit-orientation :: Next-recommendation sourcing is time-shifted, never live :: Explore next comes from the recorded trail
   it('explore with emits renders the recorded next_recommended verbatim', () => {
     const dir = makeExplore('deep-dive');
     writeEmit(

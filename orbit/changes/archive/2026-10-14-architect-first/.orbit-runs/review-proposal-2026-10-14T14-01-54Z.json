@@ -1,0 +1,124 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-14T14:01:54Z",
+  "change": "architect-first",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "specs/orbit-orientation/spec.md",
+      "line": 16,
+      "title": "Rung 3 keeps 'Create one with: orbit new change <name>' ahead of the architect line",
+      "recommendation": "The no-active-changes message (src/commands/workflow/status.ts:176) is itself a start hint naming new: 'No active changes. Create one with: orbit new change <name>'. The delta keeps it unchanged and appends the idle line after it, so on rung 3, the screen a fresh adopter sees after orbit init (task 6.4), orbit names new first and architect second. That breaks the ADDED requirement's 'SHALL name /orbit:architect <name> first' and the stage's exit criterion. D-af-1's sweep matched /orbit:new, and the residual grep's terms (start, begin, first change, new work) do not match 'Create one with', so neither the table nor task 6.1 would catch it. The same text is in src/commands/workflow/shared.ts:121 and :142 (the no-changes errors). Settle it in the specs before apply.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Reword the rung-3 message, dropping the 'Create one with: orbit new change <name>' clause or replacing it with the architect line. Restate orbit-orientation's 'no-active-changes message is unchanged' clause (Bare requirement and the Error-path scenario), add the message to the start-surfaces table as a strict row, re-point status-orientation.test.ts:202/495, and decide whether shared.ts's two errors follow."
+        },
+        {
+          "label": "B",
+          "body": "Keep the message and add it to the start-surfaces table as a named exception: an upstream CLI hint naming the low-level command, not a suggestion of where to start. Then reword the requirement's 'first' so it still holds with the exception in place."
+        }
+      ]
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "specs/orbit-architect/spec.md",
+      "line": 11,
+      "title": "Idle status is classed strict but renders recorded explore/propose commands verbatim, and no strict test covers it",
+      "recommendation": "The table's row says idle orbit status's next line is 'strict', and line 19 says 'A strict surface is checked by a test that fails when it names another start'. But orbit-orientation's sourcing rule renders the newest record's /orbit: command verbatim, which can be /orbit:explore <name> or /orbit:propose <name> (explore.md's EXECUTE move notes today's LAST is '/orbit:explore architect-first'). The scenario 'A strict surface names only architect' and task 5.1 leave idle status out. Implementers will split: one adds idle status to the start-surfaces test, which then fails by design, and another leaves it out, which contradicts the row. Reclassify the row as strict only for its fallback constant (task 2.3 tests that), and state that a recorded command is continuing work, not a start, so it is rendered as recorded. Or add the idle constant case to the strict scenario and task 5.1 with that qualification."
+    },
+    {
+      "pass": "3",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "specs/orbit-architect/spec.md",
+      "line": 17,
+      "title": "The user-docs prose row is false on the day this baseline lands",
+      "recommendation": "The ADDED requirement says every start surface SHALL name /orbit:architect first, and its table lists the user docs as a prose row. But the docs are stage docs-refinement's (Non-Goals), and they still lead with explore: README.md:100 ('1. /orbit:explore to think a change through') and docs/getting-started.md:18. After archive the baseline will claim something about the docs that is false until docs-refinement lands. Either mark the row as pending stage docs-refinement (a named limit in the requirement), or leave the row out and let docs-refinement's change add it when the docs comply."
+    },
+    {
+      "pass": "7",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "src/core/templates/workflows/archive-change.ts",
+      "line": 37,
+      "title": "The archive body still calls next_recommended 'the engine's fixed post-archive line'",
+      "recommendation": "Task 1.3 updates only the example payload at line 51, but line 37's prose calls the recommendation 'fixed', and after D-af-3 it depends on the citation. Extend task 1.3 to restate line 37, for example: 'the engine's post-archive line, chosen by the change's architecture citation; the uncited form is shown in the block below'."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "specs/orbit-architect/spec.md",
+      "line": 22,
+      "title": "The residual grep's terms miss 'entry' and 'Create one', the phrasings the bodies actually use",
+      "recommendation": "The onboard body calls explore 'Thinking-mode entry' in its Phase 1 paragraph (onboard.ts:79) and in its command table (onboard.ts:116). The rung-3 message says 'Create one with'. None of these matches start, begin, first change or new work. Add 'entry' and 'create' to the residual method's terms in the requirement and in task 6.1. If the explore phase stays labelled an entry, reword it now that architect precedes it."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "specs/orbit-emit-composition/spec.md",
+      "line": 45,
+      "title": "'Cannot be read' does not say whether a schema-invalid citation counts",
+      "recommendation": "The change-metadata schema (src/core/artifact-graph/types.ts:160-173) refuses a doc with path separators or traversal segments and a non-kebab stage. An implementation that reads the YAML raw could build orbit/architecture/<doc>.md from an invalid doc and print it into the recommendation. Say that the citation is read through the change-metadata schema, and that a citation failing the schema selects the second form, like unreadable metadata. Add that case to the uncited/dangling scenario."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "The engine work is well scoped and its decisions are traceable. The archive composition, the idle line's /orbit: prefix test and the JSON shapes are precise enough to implement the same way twice. The weak point is the boundary of the start-surface set. D-af-1 swept for the slash-command names, so it missed the CLI-form hint on the very rung this change touches, and it classed as strict a surface that renders recorded commands by design. Probed: every baseline block the deltas carry (diffed line by line against the change's MODIFIED blocks), the four CLI hint sites, the LAST-band recency code in orientation.ts, the archive case in emit-composition.ts, the metadata schema, the archive and onboard bodies, and the docs' current start lines. orbit validate --strict is clean apart from the declared capabilities breach and the carried-scenario INFO lines task 6.2 owns.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The design holds. Every finding is a spec-level edit to the start-surfaces boundary that a walk can settle in place, and none of them needs another exploration.\nSettle the rung-3 message first. It is the screen task 6.4's user validation will look at, and as written it names new before architect."
+  },
+  "final_assessment": "0 critical, 3 warning, 3 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews architect-first"
+}

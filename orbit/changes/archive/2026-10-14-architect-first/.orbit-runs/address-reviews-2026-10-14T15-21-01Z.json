@@ -1,0 +1,160 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-14T15:21:01Z",
+  "change": "architect-first",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/architect-first/.orbit-runs/review-system-2026-10-14T15-15-56Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-14T15-15-56Z",
+  "latest_apply_token": "2026-10-14T14-35-09Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 3
+  },
+  "pushback_verification": "All three verified at HEAD: the clean project-wide audit-drift next is prose (emit-composition.ts case audit-drift), the residual method read 'at apply', and 6.4 and the Touchpoint read 'at archive' after the apply-time edit.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "SUGGESTION",
+      "title": "Taking the archive next's own alternative erases its program pointer from idle status",
+      "marker_source": "internal-review",
+      "file": "src/core/orientation.ts",
+      "line": 592,
+      "classification": "decision_required",
+      "action": "applied the ratified direction A — named the shape in design.md's Risks and as a named limit of orbit-orientation's sourcing requirement; no code",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Name it in design.md's Risks and in orbit-orientation's sourcing requirement as a known shape of the time-shifted contract (the program band on rung 2 still shows the program)."
+          },
+          {
+            "label": "B",
+            "body": "Have a clean project-wide audit-drift emit defer to the newest prior `/orbit:` recommendation, as the change-scoped clean branch already defers to its trail, and add a test for archive-then-clean-audit."
+          }
+        ],
+        "chosen": "A"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/architect-first/design.md",
+          "orbit/changes/architect-first/specs/orbit-orientation/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/architect-first/design.md",
+            "text": "A later prose record hides an earlier command."
+          },
+          {
+            "path": "orbit/changes/architect-first/specs/orbit-orientation/spec.md",
+            "text": "later prose record — a clean project-wide `/orbit:audit-drift`"
+          }
+        ],
+        "searched": [
+          "audit-drift",
+          "idle next",
+          "newest record"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The ADDED requirement's residual method is phrased for this change's apply",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/architect-first/specs/orbit-architect/spec.md",
+      "line": 24,
+      "classification": "trivial_fix",
+      "action": "restated the residual method as standing (whenever a change adds or edits a user-visible start string), noting its first run at architect-first's apply",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "and \"create\" at apply, and classify"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/architect-first/specs/orbit-architect/spec.md",
+            "text": "whenever a change adds or edits a user-visible start string"
+          }
+        ],
+        "searched": [
+          "Residual method",
+          "at apply"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/architect-first/explore.md",
+            "why": "the exploration's historical record of D-af-4 as ruled"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Task 6.4 and the Touchpoints say 'at archive' but the baseline Purpose edit landed at apply",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/architect-first/tasks.md",
+      "line": 35,
+      "classification": "trivial_fix",
+      "action": "reworded task 6.4 and design.md's Touchpoint to the apply-time Purpose edit, archive having no Purpose edit left",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/architect-first/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "6.4 At archive, edit",
+          "the Purpose, edited in place at archive"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/architect-first/tasks.md",
+            "text": "made at apply; archive has no Purpose edit left"
+          }
+        ],
+        "searched": [
+          "at archive",
+          "Purpose"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Three of three resolved: the idle-next edge named as a known shape (Sal: A), the residual method restated as standing, and task 6.4 and its Touchpoint reworded to the apply-time Purpose edit.",
+  "iteration": 4,
+  "next_recommended": "/orbit:address-reviews architect-first",
+  "ripple_misses": 0
+}

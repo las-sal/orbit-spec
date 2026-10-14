@@ -1,0 +1,108 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-14T15:15:56Z",
+  "change": "architect-first",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "src/core/orientation.ts",
+      "line": 592,
+      "title": "Taking the archive next's own alternative erases its program pointer from idle status",
+      "recommendation": "The archive emit recommends `/orbit:architect <doc>` or, as its alternative, `/orbit:audit-drift`. A clean project-wide audit-drift writes `No project-wide drifts detected. Run /orbit:audit-drift periodically to catch new drift.` (src/core/emit-composition.ts, case 'audit-drift'), which becomes the newest emit; it does not begin with `/orbit:`, so idleNextRecommendation falls back to the generic `/orbit:architect <name>` and the cited program's `/orbit:architect <doc>` is no longer shown. The behaviour matches the orientation delta as written; the design's Risks section names the stale-LAST case but not this one. Either record it as a known shape or close it.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Name it in design.md's Risks and in orbit-orientation's sourcing requirement as a known shape of the time-shifted contract (the program band on rung 2 still shows the program)."
+        },
+        {
+          "label": "B",
+          "body": "Have a clean project-wide audit-drift emit defer to the newest prior `/orbit:` recommendation, as the change-scoped clean branch already defers to its trail, and add a test for archive-then-clean-audit."
+        }
+      ],
+      "reproduction": "Archive a change citing doc prog (archive emit next: /orbit:architect prog — …), then run a clean project-wide /orbit:audit-drift; with no live workstream, bare orbit status ends `Ready when you are: /orbit:architect <name>`."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/architect-first/specs/orbit-architect/spec.md",
+      "line": 24,
+      "title": "The ADDED requirement's residual method is phrased for this change's apply",
+      "recommendation": "`Residual method: grep … at apply, and classify each hit against this table` lands in the baseline at archive, where `at apply` no longer names an event. Restate it as a standing method (for example, run when a change adds or edits a user-visible start string) or say it was run once, at architect-first's apply."
+    },
+    {
+      "pass": "0",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/architect-first/tasks.md",
+      "line": 35,
+      "title": "Task 6.4 and the Touchpoints say 'at archive' but the baseline Purpose edit landed at apply",
+      "recommendation": "The Purpose of orbit/specs/orbit-architect/spec.md was edited in commit 694fde1c (the apply), and 6.4 is checked, while tasks.md:35 and design.md:135 both say the edit happens at archive. Until the sync, the baseline's Purpose (architect-first) sits beside its unchanged `Architect is a stance, never a gatekeeper` text saying the canonical flow (explore → propose → …) is unchanged (orbit/specs/orbit-architect/spec.md:140). Reword 6.4 and the Touchpoint to say the edit was made at apply, so the archive author does not do it again or read the baseline as already synced."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "pass": "3",
+      "title": "The onboard command table still lists /orbit:new as 'Start a new change'",
+      "evidence": "src/core/templates/workflows/onboard.ts:122 is a command listing; design.md's Risks classifies command listings (onboard's table, the new/propose/ff descriptions) as outside the start-surfaces table, and the requirement's prose row tests only the flow and nudge sections"
+    },
+    {
+      "pass": "1",
+      "title": "Baseline orbit-conventions example still carries the old archive string",
+      "evidence": "orbit/specs/orbit-conventions/spec.md:322 is replaced by the change's MODIFIED block (specs/orbit-conventions/spec.md:172), applied at the archive sync; the canonical-example test reads the delta while the change is active and is green"
+    }
+  ],
+  "commentary": "Probed in the live checkout at 6b1cdd1c (the pair's launch commit; nothing after it touches code): npm run build, the full npm test, and orbit validate architect-first --strict (valid; the scenario map raised nothing) were all green. Pass 0 was run by hand rather than through the verify skill: task-by-task against the diff 7807e5ca..HEAD, plus the user-validation flow in 6.5, run in a scratch dir with orbit init --tools claude then bare orbit status and --json. Both named /orbit:architect <name> and the JSON carried next. Pass 1 read each MODIFIED block against its baseline. Every baseline residue of the old strings (orbit-conventions' example, orbit-onboard's diagram scenario, orbit-architect:140) is replaced by this change's deltas at sync. Pass 2 traced validateChangeExists's callers, which are exactly status and instructions as the spec says, and the archive emit's changeDir resolution, which gives the archived directory. It also checked that a citation failing ChangeMetadataSchema selects the uncited form. Pass 3 swept the CLI's user-visible strings and the generated bodies for start/begin/create/get-started; the only hits are command listings and bulk-archive's recorded upstream instance. Passes 4 and 5 were skipped because orbit/lenses/ does not exist. Pass 6 was skipped: audit-drift was not invoked, and only a residue grep of the retired strings ran (docs/ still leads with explore, the named docs-refinement limit). The pattern: the engine half is small, well tested, and matches its specs. All three findings are about records and one edge of the time-shifted contract, not defects on a user path.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3"
+  ],
+  "passes_skipped": [
+    "4",
+    "5",
+    "6"
+  ],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The implementation does what the specs say on every strict surface, under tests that pin each row, and the user-validation flow behaves as written when run cold. What remains is wording in two records and one known-shape edge in idle status. That edge is worth naming or closing, but it misleads no one: the program band sits right above the line. None of it needs another apply before archive."
+  },
+  "final_assessment": "0 critical, 0 warning, 3 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews architect-first"
+}

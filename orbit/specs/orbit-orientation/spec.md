@@ -10,7 +10,6 @@ position/last/next tuple, plus LAST and WAITING bands). The surface is a COMPOSI
 engine-computed and trail-recorded data only — never new inference from artifact contents —
 answering the return-after-a-day and cold-start questions with one command and zero artifact
 reads. Invocation is CLI-only with a CLAUDE.md cold-start pointer; both tiers support `--json`.
-
 ## Requirements
 ### Requirement: Bare `orbit status` renders the current sprint
 
@@ -24,8 +23,12 @@ The view is a COMPOSITION of engine-computed and trail-recorded data only — it
 state from artifact contents (no task-file parsing beyond what the gate graph already computes,
 no marker scans, no mtime heuristics). Bare invocation with active changes is, before this
 capability, an error path ("Missing required option --change") — claiming it repurposes
-nothing; the no-active-changes message and the PRE-EXISTING `--change` surface are
-byte-identical to pre-capability output (later capabilities may EXTEND the `--change` form
+nothing; the PRE-EXISTING `--change` surface is byte-identical to pre-capability output except
+the two errors raised when no change exists — no change named, or the named change missing — which
+`orbit status --change` shares with `orbit instructions`, and which name
+`/orbit:architect <name>` as where to start (`orbit-architect`'s `Start surfaces name the architect
+workflow first`); and the no-active-changes message is `No active changes.`, followed by the idle
+next line the recommendation-sourcing requirement defines (later capabilities may EXTEND the `--change` form
 with new flags — e.g. `--report`, D-arc Stage D4 — without touching its pre-existing outputs).
 
 #### Scenario: Bare invocation mid-sprint
@@ -36,7 +39,7 @@ with new flags — e.g. `--report`, D-arc Stage D4 — without touching its pre-
 #### Scenario: Error path claimed, neighbors unchanged
 
 - **WHEN** `orbit status` runs with active changes present (formerly the "Missing required option --change" error) and separately with `--change <name>` and with zero changes
-- **THEN** the bare invocation renders the sprint view (exit 0); the `--change` output and the no-active-changes message are unchanged from pre-capability behavior
+- **THEN** the bare invocation renders the sprint view (exit 0); the `--change` output for an existing change is unchanged from pre-capability behavior, and the zero-changes invocation prints `No active changes.` followed by the idle next line
 
 #### Scenario: No live inference beyond engine and trail
 
@@ -54,8 +57,10 @@ full emit filename — the SAME tie-break applies wherever emit recency is compa
 anchoring and the `--full` LAST band alike). Degradation ladder (rungs in
 precedence order, each predicate explicit): (1) ≥1 live workstream → the sprint view; (2) zero
 live workstreams AND ≥1 parseable architecture doc → bare renders the `--full` view (nothing in
-flight IS the orientation); (3) zero live workstreams AND zero parseable architecture docs → the
-existing no-active-changes message. A live workstream with zero emits (pre-begin-emit staging
+flight IS the orientation), followed by the idle next line; (3) zero live workstreams AND zero
+parseable architecture docs → the no-active-changes message `No active changes.`, followed by the idle next
+line. The idle next line is the recommendation-sourcing requirement's; rungs 2 and 3 are the only
+rungs that render it. A live workstream with zero emits (pre-begin-emit staging
 dir) participates via its directory presence but cannot anchor recency — if NO live workstream
 has any emit, the most recently `created` (metadata date) live workstream anchors, ties broken
 by name.
@@ -73,7 +78,7 @@ by name.
 #### Scenario: Nothing in flight falls back to the arc view
 
 - **WHEN** no active changes and no staging explores exist but parseable architecture docs do
-- **THEN** bare `orbit status` renders the `--full` view (program band + LAST + WAITING)
+- **THEN** bare `orbit status` renders the `--full` view (program band + LAST + WAITING) followed by the idle next line
 
 #### Scenario: Emit-less live workstream still participates
 
@@ -150,6 +155,20 @@ recorded `next_recommended` is the Concluded rung's PROSE, which points at nothi
 line renders it BARE — verbatim, with no `Ready when you are:` label — because an eligibility label
 on a recommendation that names no command would assert an eligibility that does not exist.
 
+With NO live workstream — the degradation ladder's rungs 2 and 3 — the surface SHALL render ONE
+idle next line, sourced from the newest emit by the recency rule the `--full` LAST band uses (all
+four trail locations plus archived changes' relocated trails, the same tie-break), whether or not
+the rung renders that band: when the record's `next_recommended` begins with `/orbit:`, the line is
+`Ready when you are: <that string, verbatim>`; when it begins with anything else, or is empty, or
+no emit exists at all, the line is `Ready when you are: /orbit:architect <name>`. That constant is
+the second exception to "never fresh judgment generated by the CLI": it is the architect-first
+start (`orbit-architect`'s `Start surfaces name the architect workflow first`), never a reading of
+the record's prose — a prose recommendation rendered under the label would assert an eligibility
+that does not exist, for the concluded rule's reason. Named limit: only the newest record is read, so a
+later prose record — a clean project-wide `/orbit:audit-drift` taken as the archive next's alternative —
+hides an earlier recorded command, and the line falls back to the constant; on rung 2 the program band
+above it still names the program.
+
 #### Scenario: Change next comes from the engine
 
 - **WHEN** the sprint is a change whose review-system gate just passed
@@ -164,6 +183,21 @@ on a recommendation that names no command would assert an eligibility that does 
 
 - **WHEN** the sprint is a staging explore whose newest spine-valid emit carries `status.token: "concluded"` and `next_recommended: "Concluded 2026-09-25. Reopens when: a third withdrawn stage."`
 - **THEN** the `next` line is exactly that recorded string — no `Ready when you are:` prefix, no model hint — in the text render, while `--json`'s `next` carries the same string as every other entry
+
+#### Scenario: Idle next renders the newest recorded command
+
+- **WHEN** no live workstream exists, a parseable architecture doc exists, and the newest emit is an archive emit whose `next_recommended` is `/orbit:architect refine-documentation-and-architect — change archived; review stage architect-first and take up the program's next stage, or run /orbit:audit-drift for a project-wide drift check.`
+- **THEN** bare `orbit status` renders the `--full` view and then `Ready when you are: ` followed by that string verbatim
+
+#### Scenario: Idle next falls back to architect
+
+- **WHEN** no live workstream exists and the newest emit's `next_recommended` is `No markers remain in scope; the project trail records this walk.` — or no emit exists anywhere, as after a fresh `orbit init`
+- **THEN** the idle next line is `Ready when you are: /orbit:architect <name>`, on rung 2 after the `--full` view and on rung 3 after `No active changes.`
+
+#### Scenario: Idle next keeps a recorded continuation
+
+- **WHEN** no live workstream and no parseable architecture doc exist, and the newest emit's `next_recommended` is `/orbit:explore next-stage — continue capturing thinking`
+- **THEN** bare `orbit status` prints `No active changes.` and then `Ready when you are: /orbit:explore next-stage — continue capturing thinking` — a recorded command is continuing work and renders as recorded; only the fallback constant names architect
 
 ### Requirement: `--full` renders the arc view
 
@@ -389,9 +423,11 @@ bare-tier `--json` shape, including the zero-workstreams / zero-parseable-docs r
 this surface rather than parsing `orbit/config.yaml`, and a fresh adopter's FIRST change is
 proposed from exactly that rung, so an omitted key there would read as `never` by design. The JSON carries untruncated `final_assessment`
 strings (truncation is a text-render concern only). When the degradation ladder makes bare
-render the `--full` view (zero live workstreams), bare `--json` emits the FULL shape — the
-fallback switches the whole tier, not just the text render — and the no-changes rung keeps its
-text byte-identical while its JSON carries `pr`. No stability contract beyond shape
+render the `--full` view (zero live workstreams), bare `--json` emits the FULL shape plus a string
+`next` — the fallback switches the whole tier, not just the text render — and the no-changes rung's
+JSON is `{changes: [], message, next, pr}`. On both idle rungs `next` carries the idle next line's
+recommendation without its `Ready when you are:` label (per the recommendation-sourcing
+requirement); `--full` invoked explicitly carries no top-level `next`. No stability contract beyond shape
 is promised in this capability (deferred; see the change's proposal).
 
 #### Scenario: Bare JSON carries untruncated last
@@ -417,7 +453,7 @@ is promised in this capability (deferred; see the change's proposal).
 #### Scenario: Every bare-tier JSON rung carries the resolved PR regime
 
 - **WHEN** `orbit status --json` runs with `pr: per-proposal` configured and NO active workstream and NO parseable architecture doc (the degradation ladder's no-changes rung)
-- **THEN** the emitted object is `{changes: [], message, pr}` with `pr` equal to `"per-proposal"` — the same key rungs 1 and 2 carry — and the text render of that rung is unchanged
+- **THEN** the emitted object is `{changes: [], message, next, pr}` with `pr` equal to `"per-proposal"` — the same key rungs 1 and 2 carry — and `next` equal to the idle next line's recommendation
 
 ### Requirement: CLI-only invocation with a cold-start pointer
 
@@ -436,3 +472,4 @@ generated body recommends a slash-command form of it.
 
 - **WHEN** the generated surface is inspected after this capability lands
 - **THEN** no `orbit-status` skill and no `/orbit:status` command exist; the workflow count is unchanged
+

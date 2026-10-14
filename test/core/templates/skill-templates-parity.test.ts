@@ -103,6 +103,10 @@ import { generateSkillContent } from '../../../src/core/shared/skill-generation.
 // scoped to publish and tail steps (a failed select step shows no recovery); the checked mirror in
 // the propose/ff and archive references moved with it. Three function hashes moved (propose, ff,
 // archive); no SKILL.md body changed.
+// architect-first apply (2026-10-14), PLANNED moves (its task 4.3): the architect stance paragraph
+// restated architect-first (R-rda-2), the onboard flow, explore label and try-it nudge put architect first
+// (D-af-6), and the archive reference's example carries the uncited architect next (D-af-3). The onboard
+// body also gained its external-handoff pointer and the propose-side merge boundary its carried scenarios name.
 const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   getExploreSkillTemplate: '2835cca2ae531f797e0417d14f9bc66e6fd9c1b54558781ea95f3cbaad097583',
   getNewChangeSkillTemplate: '8f68be94db91a147b93d492f6f32ab3c02725a20a001c87602ac8d9741587614',
@@ -121,7 +125,7 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // landing-page (2026-10-12, task 2.2), a PLANNED move: the Orientation CLI bullet names `orbit --version` as
   // printing orbit's own version and states the upstream engine baseline 1.3.1 apart from it (design D6), because
   // `--version` prints 2.0.0 from this stage on. One re-record, both onboard hashes.
-  getOnboardSkillTemplate: '9aaff4cd3cdb90b643e3c0b26a1bb38de55fc3f8402196987a7fb27bad8b9791',
+  getOnboardSkillTemplate: '706e76f0cd39fb0fc4cdcf8cf0c1a36b03fc6fcab8bd1b63524fddb6f6150bad',
   getOrbitExploreCommandTemplate: '52892dbd4b5eb72264dc6eb54f8126a09fc903adc1c1654c58e0650df609bfb6',
   getOrbitNewCommandTemplate: '47d97305a2d3abca6eafa8f7ed5fe13fb83ea8ca0b71f007975b217135f5f5aa',
   getOrbitContinueCommandTemplate: 'e1ecd4fffee224e284453be717226824c7567041d7c1676b6b6bca4727e3a9dd',
@@ -138,7 +142,7 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // Step 3.2 reports cases 2, 3 and 8 and widens its DEFERRED rule to post-move state (fresh S2); bulk
   // archive briefs before each move and gains its per-change archive emit step (fresh W2, S1). The same
   // four hashes moved; no other pin did.
-  getArchiveChangeSkillTemplate: 'f81dca868ac2ff8b0ee1ef9ed43f5df274e2a492d662fe877e88096a701ead72',
+  getArchiveChangeSkillTemplate: 'b75f7c0265910b4f62018a39ca67077e16576f44cd6c17ef1f48daac4e378212',
   getBulkArchiveChangeSkillTemplate: 'a428418830dc7de9f65cdd60f8b3ffbde6a020697f10f3eaa0ea122a27e34668',
   getOrbitSyncCommandTemplate: '1067039e869d8dedf7922da46230b53a88253cf3fe27c7a5d60c96bc9a43453f',
   // rc06b-map-readers (2026-10-05) — verify moved DELIBERATELY, the first named edit to an upstream
@@ -199,7 +203,7 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // escaped each backtick around `orbit architecture status` twice inside the template literal, so the
   // generated doc scaffold carried a literal backslash before each one; it now carries plain backticks.
   // That one line, nothing else; held from here by test/core/cli-grammar/escaped-backticks.test.ts.
-  getArchitectSkillTemplate: 'afff0ad665d1ab8c9d571c0c3bf75fd1ef454d94e209122541036632b533d28b',
+  getArchitectSkillTemplate: '44099b5cbea566124c0a967acc391f33b5414cbea3ce501869c338670ed6f60a',
   getOrbitArchitectCommandTemplate: 'b65b8cca6431bb45aa8587d3bfc1e9458981e2e1bc925ae45cd57414143cb3db',
 };
 
@@ -220,9 +224,9 @@ const EXPECTED_GENERATED_SKILL_CONTENT_HASHES: Record<string, string> = {
   'orbit-archive-change': 'cfb8a7a67368606f6b57d1954e82717bd639c3ab38a7952acba543fe0df8ddcf', // rc10-apply-closure task 2.8, then its system walk (see the function-hash note above)
   'orbit-bulk-archive-change': '68512b443d468b98ade14ae343c40d1210500d97858599d31a5417829be05b3b', // rc10-apply-closure task 2.8, then its system walk (see the function-hash note above)
   'orbit-verify-change': '06080070b8f2dfd4e3053c9143845095d0b80c6efcce286cc46e9de37dfe8ea8', // rc06b-map-readers (2026-10-05): moved with the body's step 6 edit, then again at system walk 2's additions edit (see the function-hash note above)
-  'orbit-onboard': '1014debc138967f6073b955a21eba3b8638d67a94e819b9f4d83ae2a92f1fb75', // landing-page task 2.2 (see the function-hash note above)
+  'orbit-onboard': '1cc892d4aaf8a74f03b357ed741f0f04608915bdcf2766c9850a35ff94cec264', // landing-page task 2.2 (see the function-hash note above)
   'orbit-propose': 'b7d57981a3b67c9356807404bea4679da0d9ff68c51e9815a1442375e23cfb17', // rc13c, then rc03b, then rc05's system walk, then rc09a's size brief (task 5.3) and its system walk: moved with the body (see the function-hash notes above)
-  'orbit-architect': '74b7814712b3b9c5ca590a19b17ae7e9a1105ed548082b47a0630b0a30f8119a', // rc15: moved twice with the body — apply, then the system walk; a third time at the post-archive audit walk; a fourth at rc05's apply, the scaffold's escaped backticks (see the function-hash note above)
+  'orbit-architect': '43e70cb89f612a54c25a8a40c8f4a8201bc9d2e58fcdc453de74d01b395d16c5', // rc15: moved twice with the body — apply, then the system walk; a third time at the post-archive audit walk; a fourth at rc05's apply, the scaffold's escaped backticks (see the function-hash note above)
 };
 
 function stableStringify(value: unknown): string {

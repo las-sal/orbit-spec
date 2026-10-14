@@ -22,7 +22,7 @@ export function getArchitectSkillTemplate(): SkillTemplate {
 
 **Input**: Optional \`<doc-name>\` (the filename stem — the doc's citable identity). With a name: create \`orbit/architecture/<doc-name>.md\` if absent, or resume the existing doc. Bare: list docs via \`orbit architecture status\` and prompt selection via **AskUserQuestion** (offering create-new).
 
-**Never a gatekeeper**: architecture authoring via \`/orbit:explore\` plus hand-editing remains a first-class path. This command is a stance, not a checkpoint — no orbit surface requires an architect session, no validation or drift check flags architecture content for having originated outside one, and the canonical flow (explore → propose → …) is unchanged by this workflow's existence.
+**Never a gatekeeper**: architecture authoring via \`/orbit:explore\` plus hand-editing remains a first-class path. This command is a stance, not a checkpoint — no orbit surface requires an architect session, and no validation or drift check flags architecture content, or a change, for having originated outside one. The canonical flow is architect-first and returns here — architect → explore → propose → review → apply → review → archive → architect, the closing session ratifying the stage and taking up the next — and that is a suggestion, never a requirement: orbit's start surfaces name \`/orbit:architect\` first, and \`/orbit:explore\` remains a working path for a one-off fix.
 
 ## Four execution disciplines (epitome)
 

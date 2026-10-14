@@ -773,20 +773,11 @@ export class InitCommand {
       console.log(chalk.dim(`Config: skipped (non-interactive mode)`));
     }
 
-    // Getting started (task 7.6: show propose if in profile)
-    const globalCfg = getGlobalConfig();
-    const activeProfile: Profile = (this.profileOverride as Profile) ?? globalCfg.profile ?? 'core';
-    const activeWorkflows = [...getProfileWorkflows(activeProfile, globalCfg.workflows)];
+    // Getting started: the architect-first start (orbit-architect's `Start surfaces name the
+    // architect workflow first`). Every workflow is installed (D15), so no profile branch.
     console.log();
-    if (activeWorkflows.includes('propose')) {
-      console.log(chalk.bold('Getting started:'));
-      console.log('  Start your first change: /orbit:propose "your idea"');
-    } else if (activeWorkflows.includes('new')) {
-      console.log(chalk.bold('Getting started:'));
-      console.log('  Start your first change: /orbit:new "your idea"');
-    } else {
-      console.log("Done. Run 'orbit config profile' to configure your workflows.");
-    }
+    console.log(chalk.bold('Getting started:'));
+    console.log('  Plan your first piece of work: /orbit:architect <name>');
 
     // Links
     console.log();

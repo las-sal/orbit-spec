@@ -1,5 +1,7 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
+import * as yaml from 'yaml';
+import { ChangeMetadataSchema } from './artifact-graph/types.js';
 import { loadChangeContext, formatChangeStatus } from './artifact-graph/instruction-loader.js';
 import { collectSameModePasses } from './report-render.js';
 import { findArchivedDir } from './archived-change.js';
@@ -1815,6 +1817,38 @@ function judgementOrderingCheck(
   });
 }
 
+/**
+ * Archive's post-archive recommendation (orbit-emit-composition's atomic next_recommended;
+ * orbit-architect's `Start surfaces name the architect workflow first`). Chosen by the archived
+ * change's `architecture:` citation, read through the change-metadata schema: a cited change whose
+ * doc file exists returns to its program's architect session; anything else — no citation, a
+ * missing doc, unreadable metadata, a citation failing the schema — names a new architect session
+ * with the literal `<name>` placeholder. It never refuses the emit.
+ */
+export function archiveNextRecommended(projectRoot: string, archivedDir: string): string {
+  const uncited =
+    '/orbit:architect <name> — change archived; plan the next piece of work, or run /orbit:audit-drift for a project-wide drift check.';
+  let citation: { doc: string; stage: string } | undefined;
+  try {
+    const raw = yaml.parse(fs.readFileSync(path.join(archivedDir, '.openspec.yaml'), 'utf-8'));
+    const parsed = ChangeMetadataSchema.shape.architecture.safeParse(raw?.architecture);
+    citation = parsed.success ? parsed.data : undefined;
+  } catch {
+    return uncited;
+  }
+  // A FILE, as architecture discovery reads it — a directory named `<doc>.md` is no doc.
+  let isDoc = false;
+  try {
+    isDoc = !!citation && fs.statSync(path.join(projectRoot, 'orbit', 'architecture', `${citation.doc}.md`)).isFile();
+  } catch {
+    isDoc = false;
+  }
+  if (!citation || !isDoc) {
+    return uncited;
+  }
+  return `/orbit:architect ${citation.doc} — change archived; review stage ${citation.stage} and take up the program's next stage, or run /orbit:audit-drift for a project-wide drift check.`;
+}
+
 function writeGate(emit: Record<string, unknown>, target: ResolvedTarget, filePath: string): void {
   universalSpineCheck(emit, target);
   judgementOrderingCheck(emit, target, filePath);
@@ -2113,8 +2147,7 @@ export function composeAndWriteEmit(
       if (Array.isArray((emit as any).deferred_validations) && (emit as any).deferred_validations.length === 0) {
         delete (emit as any).deferred_validations;
       }
-      emit.next_recommended =
-        'Change archived. Run /orbit:new or /orbit:explore to start the next change, or /orbit:audit-drift for a project-wide drift check.';
+      emit.next_recommended = archiveNextRecommended(projectRoot, resolved.changeDir as string);
       break;
     }
     case 'architect': {

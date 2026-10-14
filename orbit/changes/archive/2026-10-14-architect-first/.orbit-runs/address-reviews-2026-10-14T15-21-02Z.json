@@ -1,0 +1,67 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-14T15:21:02Z",
+  "change": "architect-first",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/architect-first/.orbit-runs/external-system-2026-10-14T15-16-13Z.md",
+  "source_command": null,
+  "source_token": "2026-10-14T15-16-13Z",
+  "latest_apply_token": "2026-10-14T14-35-09Z",
+  "external_reviewer": "GPT-6",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 1
+  },
+  "pushback_verification": "Verified at HEAD: archiveNextRecommended tested the doc path with existsSync, which a directory satisfies.",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "SUGGESTION",
+      "title": "Archive recommendation accepts a directory as an architecture document",
+      "marker_source": "external",
+      "file": "src/core/emit-composition.ts",
+      "line": 1839,
+      "classification": "trivial_fix",
+      "action": "the cited doc must be a file (statSync().isFile(), errors selecting the uncited form); test case for a directory named dir.md, mutation-checked; rc03b pin moved with its note",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/emit-composition.test.ts",
+          "test/core/rc03b-untouched-modules.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "src/core/emit-composition.ts",
+            "text": "a directory named `<doc>.md` is no doc"
+          }
+        ],
+        "searched": [
+          "existsSync",
+          "architecture', `${citation.doc}.md`"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "One of one resolved: the archive next now requires the cited doc to be a file, as architecture discovery does.",
+  "iteration": 5,
+  "next_recommended": "/orbit:review --as system architect-first",
+  "ripple_misses": 0
+}

@@ -15,7 +15,7 @@ const ART_COLUMN_WIDTH = 24;
 /**
  * Welcome text content (right column)
  */
-function getWelcomeText(): string[] {
+export function getWelcomeText(): string[] {
   return [
     chalk.white.bold('Welcome to OpenSpec'),
     chalk.dim('A lightweight spec-driven framework'),
@@ -25,9 +25,9 @@ function getWelcomeText(): string[] {
     chalk.dim('  • /orbit:* slash commands'),
     '',
     chalk.white('Quick start after setup:'),
-    `  ${chalk.yellow('/orbit:new')}      ${chalk.dim('Create a change')}`,
-    `  ${chalk.yellow('/orbit:continue')} ${chalk.dim('Next artifact')}`,
-    `  ${chalk.yellow('/orbit:apply')}    ${chalk.dim('Implement tasks')}`,
+    `  ${chalk.yellow('/orbit:architect')} ${chalk.dim('Plan the work')}`,
+    `  ${chalk.yellow('/orbit:explore')}   ${chalk.dim('Think it through')}`,
+    `  ${chalk.yellow('/orbit:propose')}   ${chalk.dim('Propose a change')}`,
     '',
     chalk.cyan('Press Enter to select tools...'),
   ];

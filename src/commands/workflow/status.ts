@@ -14,6 +14,7 @@ import {
 } from '../../core/artifact-graph/index.js';
 import {
   collectOrientation,
+  idleNextRecommendation,
   type Orientation,
   type WorkstreamEntry,
   type OrientationChip,
@@ -143,7 +144,7 @@ export async function statusCommand(options: StatusOptions): Promise<void> {
     }
 
     // Orientation surface (D-arc Stage D3): bare = current sprint; --full = arc
-    // view. `--change` behavior and the no-changes message stay byte-identical.
+    // view. `--change` behavior stays byte-identical except its two no-changes errors.
     if (!options.change) {
       const orientation = collectOrientation(projectRoot);
       spinner?.stop();
@@ -155,25 +156,32 @@ export async function statusCommand(options: StatusOptions): Promise<void> {
 
       // Degradation ladder: (1) ≥1 live workstream → sprint view; (2) zero live
       // + ≥1 parseable doc → the --full view (JSON switches tier too); (3) zero
-      // live + zero parseable docs → the existing no-changes message (text
-      // unchanged; the JSON shape carries `pr` like every other rung — D6: the
+      // live + zero parseable docs → `No active changes.` (the JSON shape
+      // carries `pr` like every other rung — D6: the
       // bodies read the resolved regime here, and a fresh adopter's FIRST change
       // is proposed from exactly this rung).
       if (orientation.sprint) {
         printSprintView(orientation, options.json ?? false);
         return;
       }
+      // Rungs 2 and 3 — and only they — carry the idle next line (D-af-2).
+      const idleNext = idleNextRecommendation(orientation.last);
       if (orientation.program.parseable.length > 0) {
-        printFullView(orientation, options.json ?? false);
+        printFullView(orientation, options.json ?? false, idleNext);
         return;
       }
       if (options.json) {
         console.log(
-          JSON.stringify({ changes: [], message: 'No active changes.', pr: orientation.pr }, null, 2)
+          JSON.stringify(
+            { changes: [], message: 'No active changes.', next: idleNext, pr: orientation.pr },
+            null,
+            2
+          )
         );
         return;
       }
-      console.log('No active changes. Create one with: orbit new change <name>');
+      console.log('No active changes.');
+      console.log(`Ready when you are: ${idleNext}`);
       return;
     }
 
@@ -468,7 +476,12 @@ function phaseOf(entry: WorkstreamEntry): string {
   return lastDone ? `${lastDone.phase} done` : 'pending';
 }
 
-function printFullView(orientation: Orientation, json: boolean): void {
+/**
+ * The `--full` arc view. `idleNext` is passed only on the degradation ladder's rung 2 (bare with
+ * nothing live): the text gains the idle next line and the JSON a top-level string `next`; an
+ * explicit `--full` carries neither.
+ */
+function printFullView(orientation: Orientation, json: boolean, idleNext?: string): void {
   if (json) {
     console.log(
       JSON.stringify(
@@ -477,6 +490,7 @@ function printFullView(orientation: Orientation, json: boolean): void {
           workstreams: orientation.workstreams,
           last: orientation.last,
           waiting: orientation.waiting,
+          ...(idleNext !== undefined ? { next: idleNext } : {}),
           pr: orientation.pr,
         },
         null,
@@ -544,6 +558,7 @@ function printFullView(orientation: Orientation, json: boolean): void {
     console.log('WAITING');
     for (const w of orientation.waiting) console.log(`  ${w}`);
   }
+  if (idleNext !== undefined) console.log(`Ready when you are: ${idleNext}`);
 }
 
 /** Full-view entry: the full orientation tuple (degraded entries excepted). */
