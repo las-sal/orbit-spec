@@ -77,7 +77,7 @@ describe('UpdateCommand', () => {
       });
 
       await expect(updateCommand.execute(testDir)).rejects.toThrow(
-        "No OpenSpec directory found. Run 'orbit init' first."
+        "No orbit/ directory found. Run 'orbit init' first."
       );
     });
 
@@ -929,7 +929,7 @@ ${OPENSPEC_MARKERS.end}
 
       // Should show v1 upgrade message
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Upgrading to the new OpenSpec')
+        expect.stringContaining('Upgrading to orbit')
       );
 
       // Should show marker removal message (config files are never deleted, only have markers removed)
@@ -976,7 +976,7 @@ ${OPENSPEC_MARKERS.end}
 
       // Should show v1 upgrade message
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Upgrading to the new OpenSpec')
+        expect.stringContaining('Upgrading to orbit')
       );
 
       // Should show warning about --force
@@ -1093,7 +1093,7 @@ ${OPENSPEC_MARKERS.end}
         call.map(arg => String(arg)).join(' ')
       );
       const hasLegacyMessage = calls.some(call =>
-        call.includes('Upgrading to the new OpenSpec')
+        call.includes('Upgrading to orbit')
       );
       expect(hasLegacyMessage).toBe(false);
 

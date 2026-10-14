@@ -46,7 +46,7 @@ export class ZshGenerator implements CompletionGenerator {
     // Assemble final script with template literal
     return `#compdef orbit
 
-# Zsh completion script for OpenSpec CLI
+# Zsh completion script for the orbit CLI
 # Auto-generated - do not edit manually
 
 _orbit() {

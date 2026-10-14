@@ -546,9 +546,9 @@ export function formatDetectionSummary(detection: LegacyDetectionResult): string
   }
 
   // Header - welcoming upgrade message
-  lines.push(chalk.bold('Upgrading to the new OpenSpec'));
+  lines.push(chalk.bold('Upgrading to orbit'));
   lines.push('');
-  lines.push('OpenSpec now uses agent skills, the emerging standard across coding');
+  lines.push('orbit uses agent skills, the emerging standard across coding');
   lines.push('agents. This simplifies your setup while keeping everything working');
   lines.push('as before.');
   lines.push('');
@@ -643,7 +643,7 @@ export function formatProjectMdMigrationHint(): string {
   lines.push(chalk.dim('    We won\'t delete this file. It may contain useful project context.'));
   lines.push('');
   lines.push(chalk.dim('    The new orbit/config.yaml has a "context:" section for planning'));
-  lines.push(chalk.dim('    context. This is included in every OpenSpec request and works more'));
+  lines.push(chalk.dim('    context. This is included in every orbit request and works more'));
   lines.push(chalk.dim('    reliably than the old project.md approach.'));
   lines.push('');
   lines.push(chalk.dim('    Review project.md, move any useful content to config.yaml\'s context'));

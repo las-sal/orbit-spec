@@ -713,7 +713,7 @@ ${OPENSPEC_MARKERS.end}`);
       };
 
       const summary = formatDetectionSummary(detection);
-      expect(summary).toContain('Upgrading to the new OpenSpec');
+      expect(summary).toContain('Upgrading to orbit');
       expect(summary).toContain('agent skills');
       expect(summary).toContain('keeping everything working');
     });
@@ -907,7 +907,7 @@ ${OPENSPEC_MARKERS.end}`);
 
     it('should explain the new context section benefits', () => {
       const hint = formatProjectMdMigrationHint();
-      expect(hint).toContain('included in every OpenSpec request');
+      expect(hint).toContain('included in every orbit request');
       expect(hint).toContain('reliably');
     });
   });

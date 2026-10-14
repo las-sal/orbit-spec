@@ -1,6 +1,6 @@
 name: spec-driven
 version: 5
-description: Default OpenSpec workflow - proposal → specs → design → tasks
+description: Default orbit workflow - proposal → specs → design → tasks
 artifacts:
   - id: proposal
     generates: proposal.md

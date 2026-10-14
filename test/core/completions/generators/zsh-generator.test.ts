@@ -32,7 +32,7 @@ describe('ZshGenerator', () => {
       const script = generator.generate(commands);
 
       expect(script).toContain('#compdef orbit');
-      expect(script).toContain('# Zsh completion script for OpenSpec CLI');
+      expect(script).toContain('# Zsh completion script for the orbit CLI');
       expect(script).toContain('_orbit() {');
     });
 

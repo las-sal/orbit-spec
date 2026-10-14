@@ -61,7 +61,7 @@ export class ArchiveCommand {
     try {
       await fs.access(changesDir);
     } catch {
-      throw new Error("No OpenSpec changes directory found. Run 'orbit init' first.");
+      throw new Error("No orbit/changes/ directory found. Run 'orbit init' first.");
     }
 
     // Get change name interactively if not provided

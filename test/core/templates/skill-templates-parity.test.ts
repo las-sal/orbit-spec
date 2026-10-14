@@ -107,15 +107,18 @@ import { generateSkillContent } from '../../../src/core/shared/skill-generation.
 // restated architect-first (R-rda-2), the onboard flow, explore label and try-it nudge put architect first
 // (D-af-6), and the archive reference's example carries the uncited architect next (D-af-3). The onboard
 // body also gained its external-handoff pointer and the propose-side merge boundary its carried scenarios name.
+// cli-says-orbit apply (2026-10-14), a PLANNED move (its task 3.3): the named edits of `orbit-cli-name` say orbit
+// for OpenSpec in the explore, apply (skill and command), new, ff and continue bodies (D-cso-1). Six function
+// hashes and five generated-skill hashes moved; review is not pinned, and no other pin did.
 const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
-  getExploreSkillTemplate: '2835cca2ae531f797e0417d14f9bc66e6fd9c1b54558781ea95f3cbaad097583',
-  getNewChangeSkillTemplate: '8f68be94db91a147b93d492f6f32ab3c02725a20a001c87602ac8d9741587614',
-  getContinueChangeSkillTemplate: '98c49b247140ba301964c1e5a825686485b74a525f65f31a365d19e0aa84923e',
+  getExploreSkillTemplate: 'c706c4cac599762cf4aa4f9f0c4718f7e537214c51582138d00ad8b9f9d10335',
+  getNewChangeSkillTemplate: '2dc7266b88a623d980ef0129a96fa02d7de8f8191f6900d01dc4f598e8c1dcf4',
+  getContinueChangeSkillTemplate: '4a5340ad86b77d47edc78dfb68ccadc572939d699e237aa86f8416fdf6482033',
   // rc17a-invoked-coverage apply (2026-10-05), a PLANNED move (its task 4.2): Step 3's all_done clause
   // stopped naming "spec-driven v4" and `blind-pair` as the post-apply slot — under v5 which review comes
   // next depends on the cadence and the review preference, so the body says it is read, not predicted.
-  getApplyChangeSkillTemplate: 'a6fee1123aa05f50fb422bea764f5ed3dee8a4a3d85481515b65a693d2c38758',
-  getFfChangeSkillTemplate: 'f22904248247b1bb4d1abce6c019d9a7a7c7daa9a0eb5e4cfce81e315e6cc6a8',
+  getApplyChangeSkillTemplate: 'dedb84a9fd2cd4606904c9037070d917f6c8b7a6de71b022985b667a5a8fa559',
+  getFfChangeSkillTemplate: 'ee401b5efe4ce53deb1629dafe14ab0f22f81adc3930ab2b5d38595b6cd6ae5f',
   getSyncSpecsSkillTemplate: 'a9672b720eff36fb30f2229d835fd9a9e4cc88e81f1773bc74aff79247aa9809',
   // rc08b-walk-routing (2026-10-05, task 3.3): the command-table row's retired "auto-discovers … when invoked
   // with a change name and no markers found" became the discovery sentence. One re-record, both onboard hashes.
@@ -129,7 +132,7 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   getOrbitExploreCommandTemplate: '52892dbd4b5eb72264dc6eb54f8126a09fc903adc1c1654c58e0650df609bfb6',
   getOrbitNewCommandTemplate: '47d97305a2d3abca6eafa8f7ed5fe13fb83ea8ca0b71f007975b217135f5f5aa',
   getOrbitContinueCommandTemplate: 'e1ecd4fffee224e284453be717226824c7567041d7c1676b6b6bca4727e3a9dd',
-  getOrbitApplyCommandTemplate: 'e5a4f72b65777d13fdd9d968e3ba50ec3c9d49c890a604a64e8dbb472bf130f8',
+  getOrbitApplyCommandTemplate: 'b54e359f28e70c11a78a09aaf33a600259e10a2d42c1a121fe884d710a32022b',
   getOrbitFfCommandTemplate: '57607811009ca5ece844affae130fa47efc8e64f2c14c181113f581c81978405',
   // rc10-apply-closure (2026-10-11, task 2.8) — archive and bulk archive moved DELIBERATELY, one act:
   // archive's upstream Step 3 count excludes `(User-validation` tasks (a named edit), the new Step 3.2
@@ -215,11 +218,11 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
 // emit under orbit/.orbit-runs/. Their three function hashes and three generated-skill hashes moved;
 // no other pin did.
 const EXPECTED_GENERATED_SKILL_CONTENT_HASHES: Record<string, string> = {
-  'orbit-explore': 'd34772425aeff5415c9760e2ac7414facfc70d142bbb7e12f8ffbab50fde7004', // rc16-retirement-sweep: moved once with the body at apply, a second time at the system blind-pair walk (see the function-hash note above)
-  'orbit-new-change': '94c9d6377c6de0484f3a51923eba08214ca45cab5d87a55e46e032de2640b925',
-  'orbit-continue-change': 'f61634ab5e96436b33fd30c210f84a57f55baf1716d6ef4679c1ed2a518cc3d3',
-  'orbit-apply-change': '491bbad729e422441417760e937dfd15facaa5b1af64da61336732c7b66336b7', // rc17a apply: the v4 clause (see the function-hash note above)
-  'orbit-ff-change': 'e5d78989125f69b3a758b74d25f09975affe9da200ae031f2e76227b4fae722d',
+  'orbit-explore': 'f11a54ea384cdf0554d98254079df3aa202c77b00bdd1fb9be31a04e70db6add', // rc16-retirement-sweep: moved once with the body at apply, a second time at the system blind-pair walk (see the function-hash note above)
+  'orbit-new-change': 'c877eda944f7b991f466b04359ef8d8f2895c0c565094bddf7619a89816faa4c',
+  'orbit-continue-change': 'ee61e64d4a979ae5c1e42607188876e37092b9b933512ef5234160999f717c72',
+  'orbit-apply-change': '9bb49e53c6c6809bdc7ba48340173d484b4a14b5ed6c19b89392fdc1ada83a50', // rc17a apply: the v4 clause (see the function-hash note above)
+  'orbit-ff-change': 'abf991a607935347d3af6d3e6d0f07cc728097d5458fa5484cd098128aedb639',
   'orbit-sync-specs': '23adf56ababc77dac8dcc06048b4d74d27ded9bc4f49a57858e17c4ea7866a75',
   'orbit-archive-change': 'cfb8a7a67368606f6b57d1954e82717bd639c3ab38a7952acba543fe0df8ddcf', // rc10-apply-closure task 2.8, then its system walk (see the function-hash note above)
   'orbit-bulk-archive-change': '68512b443d468b98ade14ae343c40d1210500d97858599d31a5417829be05b3b', // rc10-apply-closure task 2.8, then its system walk (see the function-hash note above)

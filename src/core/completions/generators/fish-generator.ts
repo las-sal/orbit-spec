@@ -40,7 +40,7 @@ export class FishGenerator implements CompletionGenerator {
     const dynamicHelpers = FISH_DYNAMIC_HELPERS;
 
     // Assemble final script with template literal
-    return `# Fish completion script for OpenSpec CLI
+    return `# Fish completion script for the orbit CLI
 # Auto-generated - do not edit manually
 
 ${helperFunctions}

@@ -14,8 +14,9 @@ surgical cherry-picks only — there is no auto-ingest. A version bump is its ow
 - **The renames are made.** The CLI bin is **`orbit`**, a project's working directory is **`orbit/`** (where
   `specs/`, `changes/` and `config.yaml` live), skill directories are **`orbit-*`** (e.g.
   `.claude/skills/orbit-explore/`), and the command namespace is **`/orbit:*`** (`.claude/commands/orbit/<id>.md`).
-  Kept as-is until a later Tier-C scrub: `OpenSpec` branding prose, `.openspec.yaml`, data-format tags
-  (`openspec-change`), the global config/data dir, and legacy-openspec detection.
+  The CLI's user-visible strings say orbit, held by `orbit-cli-name`. Kept as-is until a later Tier-C scrub:
+  `.openspec.yaml`, data-format tags (`openspec-change`), the global config/data dir, legacy-openspec detection,
+  the `OPENSPEC_*` environment variables and the `OPENSPEC:START/END` rc-file markers.
 - **Telemetry is removed.** orbit collects nothing.
 - **Toolchain is npm, not pnpm.** `npm install` works end-to-end. Build = `npm run build` (`node build.js` → `tsc`);
   tests = `npm test` (vitest). CI runs `npm ci`, `npm run build` and `npm test` on Linux and macOS

@@ -10,7 +10,7 @@ import { PR_CHOREOGRAPHY_REFERENCE } from './pr-choreography.js';
 export function getFfChangeSkillTemplate(): SkillTemplate {
   return {
     name: 'orbit-ff-change',
-    description: 'Fast-forward through OpenSpec artifact creation. Use when the user wants to quickly create all artifacts needed for implementation without stepping through each one individually.',
+    description: 'Fast-forward through orbit artifact creation. Use when the user wants to quickly create all artifacts needed for implementation without stepping through each one individually.',
     instructions: `Fast-forward through artifact creation - generate everything needed to start implementation in one go.
 
 **Input**: The user's request should include a change name (kebab-case) OR a description of what they want to build.

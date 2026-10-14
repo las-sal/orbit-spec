@@ -11,7 +11,7 @@ const runTsc = (args = []) => {
   execFileSync(process.execPath, [tscPath, ...args], { stdio: 'inherit' });
 };
 
-console.log('🔨 Building OpenSpec...\n');
+console.log('🔨 Building orbit...\n');
 
 // Clean dist directory
 if (existsSync('dist')) {

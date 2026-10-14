@@ -136,7 +136,7 @@ describe('orbit CLI e2e basics', () => {
         env: { CODEX_HOME: codexHome },
       });
       expect(result.exitCode).toBe(0);
-      expect(result.stdout).toContain('OpenSpec Setup Complete');
+      expect(result.stdout).toContain('orbit Setup Complete');
 
       // Check that skills were created for multiple tools
       const claudeSkillPath = path.join(emptyProjectDir, '.claude/skills/orbit-explore/SKILL.md');
@@ -145,6 +145,7 @@ describe('orbit CLI e2e basics', () => {
       expect(await fileExists(cursorSkillPath)).toBe(true);
     });
 
+    // @scenario behaviour orbit-cli-name :: The old name appears in what the package ships only for an admitted reason :: orbit init prints orbit
     it('initializes with --tools list option', async () => {
       const projectDir = await prepareFixture('tmp-init');
       const emptyProjectDir = path.join(projectDir, '..', 'empty-project');
@@ -152,8 +153,9 @@ describe('orbit CLI e2e basics', () => {
 
       const result = await runCLI(['init', '--tools', 'claude'], { cwd: emptyProjectDir });
       expect(result.exitCode).toBe(0);
-      expect(result.stdout).toContain('OpenSpec Setup Complete');
+      expect(result.stdout).toContain('orbit Setup Complete');
       expect(result.stdout).toContain('Claude Code');
+      expect(result.stdout).not.toMatch(/openspec/i);
 
       // New init creates skills, not CLAUDE.md
       const claudeSkillPath = path.join(emptyProjectDir, '.claude/skills/orbit-explore/SKILL.md');
@@ -169,7 +171,7 @@ describe('orbit CLI e2e basics', () => {
 
       const result = await runCLI(['init', '--tools', 'none'], { cwd: emptyProjectDir });
       expect(result.exitCode).toBe(0);
-      expect(result.stdout).toContain('OpenSpec Setup Complete');
+      expect(result.stdout).toContain('orbit Setup Complete');
 
       // With --tools none, no tool skills should be created
       const claudeSkillPath = path.join(emptyProjectDir, '.claude/skills/orbit-explore/SKILL.md');
