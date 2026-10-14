@@ -24,7 +24,7 @@
 
 ## 5. Start-surfaces test (D-af-4, G1)
 
-- [ ] 5.1 Add a test asserting `orbit-architect`'s strict rows: the archive next for a cited and an uncited change, `orbit init`'s getting-started output, the first line of `orbit update`'s and the welcome screen's lists, idle `orbit status`'s fallback, and the no-active-changes message and `--change` no-changes errors name `/orbit:architect` (or, for the message, no command) and none of `/orbit:explore`, `/orbit:new` or `/orbit:propose` as where to start; mutation-check that it fails on each old string
+- [ ] 5.1 Add a test asserting `orbit-architect`'s strict rows: the archive next for a cited and an uncited change, `orbit init`'s getting-started output, the first line of `orbit update`'s and the welcome screen's lists, idle `orbit status`'s fallback, and the no-active-changes message and the two no-changes errors (raised by `orbit status --change` and `orbit instructions`) name `/orbit:architect` (or, for the message, no command) and none of `/orbit:explore`, `/orbit:new` or `/orbit:propose` as where to start; mutation-check that it fails on each old string
 - [ ] 5.2 Assert the onboard body's prose row: `/orbit:architect` appears before any other start command in its flow and nudge
 
 ## 6. Residual and records

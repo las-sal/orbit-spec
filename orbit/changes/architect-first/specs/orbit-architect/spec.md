@@ -9,7 +9,7 @@ Every orbit surface that suggests where NEW work starts SHALL name `/orbit:archi
 |---|---|---|
 | the archive emit's `next_recommended` (`orbit-emit-composition`) | strict | `/orbit:architect <doc>` or `/orbit:architect <name>`; no `/orbit:explore`, `/orbit:new` or `/orbit:propose` |
 | idle `orbit status`'s next line (`orbit-orientation`) | strict for its fallback | `/orbit:architect <name>` when no recorded command exists; a recorded `/orbit:` command is continuing work, not a start, and renders as recorded |
-| the no-active-changes message and the `--change` no-changes errors (`orbit-orientation`) | strict | `No active changes.`; the errors name `/orbit:architect <name>` only |
+| the no-active-changes message and the two no-changes errors raised by `orbit status --change` and `orbit instructions` (`orbit-orientation`) | strict | `No active changes.`, naming no command; the errors name `/orbit:architect <name>` only |
 | `orbit init`'s `Getting started:` line | strict | `/orbit:architect <name>` only |
 | `orbit update`'s `Getting started:` list | strict for its first line | `/orbit:architect`, then `/orbit:explore` and `/orbit:propose` — the canonical flow's order; later lines list commands, not where to start |
 | the welcome screen's quick-start list | strict for its first line | as `orbit update`'s list |
@@ -24,8 +24,8 @@ Residual method: grep the generated bodies and the CLI's user-visible strings fo
 
 #### Scenario: A strict surface names only architect
 
-- **WHEN** the start-surfaces test reads `orbit init`'s getting-started output, the first line of `orbit update`'s and the welcome screen's lists, the archive emit's `next_recommended` for a cited and an uncited change, idle `orbit status` with no emit, and the no-active-changes message and the `--change` no-changes errors
-- **THEN** each names `/orbit:architect` and none names `/orbit:explore`, `/orbit:new` or `/orbit:propose` as where to start
+- **WHEN** the start-surfaces test reads `orbit init`'s getting-started output, the first line of `orbit update`'s and the welcome screen's lists, the archive emit's `next_recommended` for a cited and an uncited change, idle `orbit status` with no emit, and the no-active-changes message and the two no-changes errors
+- **THEN** each names `/orbit:architect`, except the no-active-changes message, which names no command; and none names `/orbit:explore`, `/orbit:new` or `/orbit:propose` as where to start
 
 #### Scenario: A prose surface keeps the one-off path
 

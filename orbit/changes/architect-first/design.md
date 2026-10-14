@@ -55,7 +55,8 @@ first`, whose table is the surface set.
   `/orbit:architect` and none of `/orbit:explore`, `/orbit:new` or `/orbit:propose`.
 - Idle status is strict only for its fallback: a recorded `/orbit:` command is continuing work and renders as
   recorded (proposal walk).
-- The no-active-changes message and the two `--change` no-changes errors in `src/commands/workflow/shared.ts` are a
+- The no-active-changes message and the two no-changes errors in `src/commands/workflow/shared.ts` (raised by
+  `orbit status --change` and `orbit instructions`) are a
   strict row (proposal walk). The message becomes `No active changes.` and the errors name `/orbit:architect <name>`;
   `orbit new change` is named on no start surface, because it is not the flow orbit's author uses (Sal).
 - The prose rows are the architect stance paragraph, the onboard body and the docs. They describe explore as the

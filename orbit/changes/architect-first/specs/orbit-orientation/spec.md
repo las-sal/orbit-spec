@@ -13,7 +13,8 @@ state from artifact contents (no task-file parsing beyond what the gate graph al
 no marker scans, no mtime heuristics). Bare invocation with active changes is, before this
 capability, an error path ("Missing required option --change") — claiming it repurposes
 nothing; the PRE-EXISTING `--change` surface is byte-identical to pre-capability output except
-the two errors it raises when the named change does not exist and no change does, which name
+the two errors raised when no change exists — no change named, or the named change missing — which
+`orbit status --change` shares with `orbit instructions`, and which name
 `/orbit:architect <name>` as where to start (`orbit-architect`'s `Start surfaces name the architect
 workflow first`); and the no-active-changes message is `No active changes.`, followed by the idle
 next line the recommendation-sourcing requirement defines (later capabilities may EXTEND the `--change` form
