@@ -10,7 +10,7 @@
 - [ ] 1.3 Add the runtime help check to the same file: recurse over `buildProgram()`'s visible commands, render
   `helpInformation()`, and assert no case-insensitive `openspec` except `OPENSPEC_CONCURRENCY`. Tag it `@scenario`
 - [ ] 1.4 Add the real-package case (the scan over the shipped files must return no failures) and run it red: it
-  must list the 48 rename occurrences and the schema line and nothing else. Record the count
+  must list the 48 rename occurrences, the schema line and `build.js`' banner, and nothing else. Record the count
 
 ## 2. The CLI's strings
 

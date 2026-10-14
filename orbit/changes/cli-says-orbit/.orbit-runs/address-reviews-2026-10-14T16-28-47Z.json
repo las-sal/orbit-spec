@@ -1,0 +1,73 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-14T16:28:47Z",
+  "change": "cli-says-orbit",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/cli-says-orbit/.orbit-runs/review-proposal-2026-10-14T16-20-03Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-14T16-20-03Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 0
+  },
+  "pushback_verification": "Verified against current state: tasks.md:13 still omitted build.js.",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Task 1.4's expected red run omits build.js, which the walk made a scanned member",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/cli-says-orbit/tasks.md",
+      "line": 12,
+      "classification": "trivial_fix",
+      "action": "task 1.4's expected red run now reads: the 48 rename occurrences, the schema line and `build.js`' banner, and nothing else",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the 48 rename occurrences and the schema line and nothing else"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/cli-says-orbit/tasks.md",
+            "text": "the schema line and `build.js`' banner, and nothing else"
+          }
+        ],
+        "searched": [
+          "48 rename",
+          "nothing else",
+          "red run"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "ripple_miss_of": {
+        "walk": "2026-10-14T16-18-42Z",
+        "title": "build.js prints 'Building OpenSpec...' during the documented git install, outside every check",
+        "file": "specs/orbit-cli-name/spec.md",
+        "kind": "query"
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Resolved: task 1.4's expected red run now names build.js' banner beside the 48 renames and the schema line.",
+  "iteration": 3,
+  "next_recommended": "/orbit:apply cli-says-orbit — user-invoked",
+  "ripple_misses": 1
+}
