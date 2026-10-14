@@ -62,12 +62,12 @@ Section 2 of the body SHALL state what orbit IS and enumerate its distinctive la
 
 ### Requirement: Canonical-flow walkthrough section
 
-Section 3 of the body SHALL present orbit's canonical workflow as a diagram followed by one paragraph per phase.
+Section 3 of the body SHALL present orbit's canonical workflow as a diagram followed by one paragraph per phase. The workflow is architect-first and returns to architect: architect → explore → propose → review → apply → review → archive → architect, the per-change phases running once per change (a stage may be served by several changes) and the closing architect session ratifying the stage. The architect paragraph states that an architect session is never required — explore remains the path for a one-off fix.
 
 #### Scenario: Flow diagram
 
 - **WHEN** the Canonical-flow section is read
-- **THEN** a diagram (ASCII or equivalent markdown) shows the phases in order: explore → propose → review → address-reviews → apply → verify → review --as system → address-reviews → archive
+- **THEN** a diagram (ASCII or equivalent markdown) shows the architect phase first, then the per-change phases in order — explore → propose → review → address-reviews → apply → verify → review --as system → address-reviews → archive — and then the return to architect to ratify the stage
 
 #### Scenario: One paragraph per phase
 
@@ -115,7 +115,7 @@ Section 5 of the body SHALL conclude with two closing recommendations covering b
 #### Scenario: Named-mode recommendation for concrete-idea users
 
 - **WHEN** the Try-it nudge section is read
-- **THEN** one recommendation is "If you have a concrete project idea, run `/orbit:explore <name>`"; it does not use "for practice" / "try a demo" framing (no synthetic-change creation)
+- **THEN** one recommendation is "If you have a concrete project idea, run `/orbit:architect <name>`"; it does not use "for practice" / "try a demo" framing (no synthetic-change creation)
 
 #### Scenario: Bare-mode recommendation for orientation-only users
 

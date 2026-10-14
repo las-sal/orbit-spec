@@ -68,6 +68,19 @@ cites a program points at that program's next stage instead.
 Exit criteria: a test over those surfaces fails if any names explore or new as where new work starts (G1's engine
 half); the specs that stated explore-first are restated; the change is archived.
 
+Shipped as (2026-10-14; archived as `orbit/changes/archive/2026-10-14-architect-first/`; the charter stands, widened at
+propose by Sal's word to the CLI's start hints and the no-changes message and errors): every strict start surface names
+`/orbit:architect` first. The archive emit's next follows the change's citation, to `/orbit:architect <doc>` for a
+cited change whose doc file exists and `/orbit:architect <name>` otherwise. Idle `orbit status` gains a next line on
+the ladder's rungs 2 and 3: the newest recorded `/orbit:` command verbatim, or `/orbit:architect <name>`. `orbit init`,
+`orbit update`, the welcome screen, `No active changes.` and the two no-changes errors follow. `orbit-architect` gains
+`Start surfaces name the architect workflow first`, and `test/core/start-surfaces.test.ts` asserts its strict rows;
+reverting each of nine old strings turns it red. The stance paragraph, the onboard flow (architect, the per-change
+phases, architect to ratify) and its nudge are architect-first, and an architect session stays never required. Two
+named limits ride the specs: bulk-archive's upstream `Create a new change to get started.`, recorded rather than edited,
+and a later prose record (a clean project-wide audit-drift) hiding an earlier command from the idle line. Task 6.5, Sal
+running `orbit init` then `orbit status` cold, is deferred; the fresh system pass ran it and saw both name architect.
+
 ### Stage cli-says-orbit — the CLI's user-visible strings say orbit
 
 Depends-on: (none)

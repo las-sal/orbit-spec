@@ -263,8 +263,8 @@ requirements in `orbit-run-summary-emit` — no emitting command lacks a composi
 (a) PRE-COMPUTABLE — commands whose recommendation derives from the payload or an
 already-parsed on-disk source, with no dependence on the emit having landed (review's
 findings-dependent pointer from the payload's scorecard, T0's path template, explore's
-maturity grid from the parsed staging `explore.md`, archive's stock post-archive prose — an
-engine-owned constant, the ARCHITECTURE-SCOPED emits — review `--as architecture`'s
+maturity grid from the parsed staging `explore.md`, archive's post-archive recommendation — composed from the
+archived change's `.openspec.yaml` (below), the ARCHITECTURE-SCOPED emits — review `--as architecture`'s
 handoff mirror and the doc-scoped address-reviews walk, whose recommendation is the gate-less
 confirm pointer naming the doc (`/orbit:review --as architecture <doc>` to confirm the
 resolutions) since no change status exists to synthesize): composed before the write;
@@ -294,7 +294,17 @@ which diverges from the move's date across a UTC midnight); no match fails with 
 target-resolution contract's clean not-found error. The emit records an outcome
 (`archive_path`, the archived-to sentence), and
 composing it before the move would record an outcome that does not yet exist; no status
-recompute runs against an archived change.
+recompute runs against an archived change. Archive's `next_recommended` begins with the command
+(`orbit-architect`'s `Start surfaces name the architect workflow first`) and is chosen by the
+archived change's `architecture:` citation, read from the `.openspec.yaml` in the archived
+directory through the change-metadata schema: when the citation's doc file `orbit/architecture/<doc>.md` exists, it is
+`/orbit:architect <doc> — change archived; review stage <stage> and take up the program's next stage, or run /orbit:audit-drift for a project-wide drift check.`;
+when there is no citation, the doc file is missing, the metadata cannot be read, or the citation
+fails the change-metadata schema (a `doc` that is not a plain file stem, a `stage` that is not
+kebab-case), it is
+`/orbit:architect <name> — change archived; plan the next piece of work, or run /orbit:audit-drift for a project-wide drift check.`
+— the literal `<name>`, a placeholder the user fills. The recommendation never refuses the emit:
+an unreadable metadata file selects the second form.
 
 #### Scenario: Post-write stamping matches the engine
 
@@ -314,7 +324,17 @@ recompute runs against an archived change.
 #### Scenario: Archive emit is pre-computable and lands on the archived trail
 
 - **WHEN** `orbit emit archive --change foo` runs after the archive flow has moved the change to `orbit/changes/archive/2026-08-03-foo/`
-- **THEN** the emit writes once, complete, to `orbit/changes/archive/2026-08-03-foo/.orbit-runs/archive-<TS>.json` with the engine-composed stock post-archive `next_recommended`; no status recompute runs against the archived change
+- **THEN** the emit writes once, complete, to `orbit/changes/archive/2026-08-03-foo/.orbit-runs/archive-<TS>.json` with the engine-composed post-archive `next_recommended`; no status recompute runs against the archived change
+
+#### Scenario: A cited change's archive recommends its program's architect session
+
+- **WHEN** `orbit emit archive --change foo` runs and `orbit/changes/archive/2026-10-14-foo/.openspec.yaml` carries `architecture: {doc: prog, stage: s1}` and `orbit/architecture/prog.md` exists
+- **THEN** `next_recommended` is `/orbit:architect prog — change archived; review stage s1 and take up the program's next stage, or run /orbit:audit-drift for a project-wide drift check.`
+
+#### Scenario: An uncited or dangling change's archive recommends a new architect session
+
+- **WHEN** the archived change's metadata carries no `architecture:` citation, or cites a doc whose file no longer exists, or cannot be read, or carries a citation that fails the change-metadata schema (e.g. `doc: ../x`)
+- **THEN** `next_recommended` is `/orbit:architect <name> — change archived; plan the next piece of work, or run /orbit:audit-drift for a project-wide drift check.` and the emit is written
 
 ### Requirement: Write-gate validation via the shared normalizers
 
