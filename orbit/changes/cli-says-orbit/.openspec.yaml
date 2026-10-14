@@ -1,5 +1,6 @@
 schema: spec-driven
 created: 2026-10-14
+schema_version: 5
 architecture:
   doc: refine-documentation-and-architect
   stage: cli-says-orbit

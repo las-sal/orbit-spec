@@ -61,9 +61,9 @@ Domain: every path by which shipped text reaches a user's screen or files
 | `bin/` and `scripts/postinstall.js` | source scan (none today) |
 Closure: BOUNDED — the scan is SOURCED over the package's `files` list, but text can reach the screen without appearing in any shipped file as the literal word
 Residual kind: user-visible text that is not a literal `OpenSpec` in a shipped file: a string assembled from parts, output of a dependency, or lowercase prose "openspec" (the scan matches the product-name forms `OpenSpec`/`Openspec`; lowercase is overwhelmingly the protected paths, tags and identifiers)
-Residual method: the runtime check (`orbit init` in a scratch dir, `--help` for every command) asserting stdout free of the word in any case; and a lowercase grep for command-form prose (`openspec <verb>`), which returned nothing on 2026-10-14
+Residual method: the runtime check (`orbit init` in a scratch dir, `--help` for every command) asserting stdout free of the word in any case outside the admitted identifiers (the `OPENSPEC_CONCURRENCY` env var named in `validate --help`, D-cso-5); and a lowercase grep for command-form prose (`openspec <verb>`), which returned nothing on 2026-10-14
 Moves:
-- READ: applied — every member read at a cited line in the Premise table; the two removers read for D-cso-3; `files` read from package.json
+- READ: applied — every member read at a cited line in the Premise table; the `OPENSPEC_*` env vars read at propose (D-cso-5), one of them inside a `--help` string; the two removers read for D-cso-3; `files` read from package.json
 - ENUMERATE: applied — this table; package.json `files` named the members outside `src/` (Case 1)
 - COHERE: applied — the admitted reasons (OpenSpec's own artefact, the fork base, an identifier) are disjoint from the rename rows, and the same list serves both the scan and D-cso-1's three kept template lines
 - EXECUTE: applied — the grep the scan formalizes ran over `src/` (60 non-comment lines, each classified) and over `schemas`/`bin`/`scripts`
@@ -109,12 +109,17 @@ A scan of `src/**/*.ts` alone would pass with it in place. This was found by enu
   "No orbit/changes/ directory found. Run 'orbit init' first." The tests at `archive.test.ts:781`,
   `list.test.ts:38` and `update.test.ts:80` follow.
   Kind: scope
+- **2026-10-14 — D-cso-5: the two `OPENSPEC_*` environment variables keep their names** (Sal, at propose,
+  settling Q-cso-4). `OPENSPEC_NO_AUTO_CONFIG` (`bash-installer.ts:121`, `zsh-installer.ts:124`) and
+  `OPENSPEC_CONCURRENCY` (`validate.ts:223`) are names a user types. Renaming either silently breaks anyone who
+  set it, so they sit in R-ugd-3's protected class as identifiers. `OPENSPEC_CONCURRENCY` also appears inside
+  the `validate --concurrency` help text (`program.ts:285`, `command-registry.ts:124`). Those two strings keep
+  the name, and the runtime check of D-cso-2 admits it.
+  Kind: scope
 
 ## Open questions
 
-- **Q-cso-4 — `OPENSPEC_NO_AUTO_CONFIG`.** A user sets this env var, and the name is documented nowhere in orbit's
-  docs. Renaming it would break anyone who set it.
-  Standing recommendation: out. It is an identifier the user types, so it sits in R-ugd-3's protected class.
+(None open. Q-cso-4 was resolved at propose on 2026-10-14 as D-cso-5.)
 
 ## Considered & out
 
