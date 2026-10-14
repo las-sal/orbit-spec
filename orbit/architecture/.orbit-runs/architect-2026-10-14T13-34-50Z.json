@@ -1,0 +1,34 @@
+{
+  "command": "architect",
+  "timestamp": "2026-10-14T13:34:50Z",
+  "change": null,
+  "doc": "refine-documentation-and-architect",
+  "kind": "workflow",
+  "model": null,
+  "final_assessment": "Plan settled (Sal, 2026-10-14): R-rda-2 (architect-first changes the suggestion, never the requirement), R-rda-3 (four stages, release v2.0.1), R-rda-4 (goals G1-G4). Stages architect-first, cli-says-orbit, docs-refinement and release are declared; the doc validates and every stage is premised. CLAUDE.md now names this as the live program.",
+  "stages_touched": [
+    "architect-first",
+    "cli-says-orbit",
+    "docs-refinement",
+    "release"
+  ],
+  "rulings_captured": [
+    "R-rda-1",
+    "R-rda-2",
+    "R-rda-3",
+    "R-rda-4"
+  ],
+  "completions_ratified": [],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      "orbit/architecture/refine-documentation-and-architect.md — the program: rulings R-rda-1..4 and the four stage charters",
+      "orbit/specs/orbit-architect/spec.md — 'Architect is a stance, never a gatekeeper', the clause architect-first restates",
+      "https://github.com/las-sal/orbit-spec/issues/24 — the OpenSpec strings cli-says-orbit takes"
+    ],
+    "next_command": "/orbit:explore architect-first",
+    "model_hint": null,
+    "seam": "post-session"
+  },
+  "next_recommended": "/orbit:explore architect-first"
+}
