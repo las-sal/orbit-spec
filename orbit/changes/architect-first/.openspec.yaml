@@ -1,0 +1,23 @@
+schema: spec-driven
+created: 2026-10-14
+schema_version: 5
+base_fingerprints:
+  orbit-architect:
+    Architect is a stance, never a gatekeeper: sha256:bfeeb359e855e9a1460ad7e477e6ef6d9ef64731b84f2e758c057c907c59202b
+  orbit-conventions:
+    Internal-run JSON summary format: sha256:1064d72126e30466e08f97b20858dd6279f1fcee8a85fdcb566825391868547a
+  orbit-emit-composition:
+    Atomic next_recommended — pre-computable and post-write classes: sha256:86dc7f7fd075a64c8ac04ee91e5e1fbcdbd1e8b855070ad4953d310ad4984701
+  orbit-onboard:
+    Canonical-flow walkthrough section: sha256:c5ba890d98060454e3f33e681db0aed39386bd2afaddeb2664384ee91e9710b2
+    Try-it nudge section: sha256:0a237bdcd6d461db1cfb5556042780fb4c57f43431f19586d75e1207ac98ee2c
+  orbit-orientation:
+    Bare `orbit status` renders the current sprint: sha256:a19e33f4d8ed4246a719d51859fbc16b99db5295a6c8dcec06c90dfa4d54f7b2
+    Continuity predicate and degradation ladder: sha256:1a8ddff481b197208df34ba8a604e42e20c5d02bb5928a219a6c9615cdb5b01a
+    Next-recommendation sourcing is time-shifted, never live: sha256:325eb19ef0ae232c80d45ee2a0fda1ce7dcbbaa802a17ff2cdba8d5f78f15d60
+    JSON output for both tiers: sha256:2e6c73fcb35aeb7b9f2fa813f88ba6f7f50956cc2529d77cf21edd69bc228585
+  orbit-run-summary-emit:
+    Named-mode explore recommendation by maturity: sha256:228a73e6610c6d4c56631ceda50de16930a9e5cfb2412f2b4b5d41f50702e0a4
+architecture:
+  doc: refine-documentation-and-architect
+  stage: architect-first
