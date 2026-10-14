@@ -57,4 +57,4 @@
   and held by `orbit-cli-name`. The protected names stay listed, joined by the `OPENSPEC_*` environment variables
   and the rc-file markers
 - [x] 4.4 Run the full `npm test` and `orbit validate cli-says-orbit --strict`
-- [ ] 4.5 (User-validation) In a scratch directory, run `orbit init`, then `orbit --help`. Neither says OpenSpec
+- [x] 4.5 (User-validation) In a scratch directory, run `orbit init`, then `orbit --help`. Neither says OpenSpec. OBSERVED after archive, 2026-10-14: Sal ran both and reported them complete; the archive emit (archive-2026-10-14T17-30-10Z) records the task as deferred, which was true at that seam.

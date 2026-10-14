@@ -84,7 +84,7 @@ running `orbit init` then `orbit status` cold, is deferred; the fresh system pas
 ### Stage cli-says-orbit — the CLI's user-visible strings say orbit
 
 Depends-on: (none)
-Complete: [ ]
+Complete: [x] 2026-10-14 (Sal)
 
 The roughly 27 user-visible `OpenSpec` strings issue #24 lists — `orbit init`'s banners and spinners, `--help`
 descriptions, other command output — become orbit's. Out of scope by R-rda-3: `.openspec.yaml`, data-format tags,
@@ -103,8 +103,8 @@ tool-naming body sentences carry `orbit-cli-name`'s named edits, and the 13 laun
 plus `schemas/`, `bin/`, `scripts/postinstall.js` and `build.js` line by line), an exact admitted list of six
 entries, and a runtime check of every command's help and `orbit init`. Reverting a source string, the schema line
 or an admitted target turns the scan red. Kept as named residue: `OPENSPEC_CONCURRENCY` and `OPENSPEC_NO_AUTO_CONFIG`,
-and the skills' `metadata.author: 'openspec'`. Task 4.5, Sal running `orbit init` then `orbit --help`, is deferred;
-the fresh system pass ran both clean.
+and the skills' `metadata.author: 'openspec'`. Task 4.5, Sal running `orbit init` then `orbit --help`, was deferred at archive
+and observed by Sal the same day; the fresh system pass had run both clean.
 
 ### Stage docs-refinement — the docs follow the tool
 
@@ -146,3 +146,12 @@ independent and may run in either order.
 test (mutation-checked over nine old strings), the restated specs, the archive (`2026-10-14-architect-first`, PR #25
 merged). Task 6.5, Sal's cold `orbit init` then `orbit status`, stays deferred and is not an exit. `cli-says-orbit` is
 the one stage now startable; `docs-refinement` waits on it, and `release` on both.
+
+**2026-10-14 — `cli-says-orbit` ratified (Sal), in an architect session.** All three exits held: `orbit-cli-name`'s
+scan and help check (mutation-checked on a source string, the schema line and an admitted target), `orbit init` in a
+scratch project (the e2e case, and task 4.5, which Sal observed after archive), and the archive
+(`2026-10-14-cli-says-orbit`, PR #26 merged). `docs-refinement` is now startable, and `release` waits on it. Measured
+at this session for that stage: no user doc quotes a string `cli-says-orbit` renamed; the README names
+`/orbit:architect` only in its install table, not its Quickstart; `docs/workflows.md:51` says to start with
+`/orbit:explore` when the problem is unclear; issue #24's §3 ("Other documentation clean-up") has no items yet, so
+Sal's review at the stage's exit is where they arrive.
