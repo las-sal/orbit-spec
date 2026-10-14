@@ -57,7 +57,7 @@ documentation refined to match, released as a new version.
 ### Stage architect-first — orbit suggests architect for new work
 
 Depends-on: (none)
-Complete: [ ]
+Complete: [x] 2026-10-14 (Sal)
 
 The engine and spec half of R-rda-1, as R-rda-2 scopes it. `orbit-architect`'s `Architect is a stance, never a
 gatekeeper` keeps "never required" and states the new canonical flow. The archive emit's next (composed in
@@ -128,3 +128,8 @@ with standing recommendations.
 **2026-10-14 — plan settled (Sal).** Sal accepted the three standing recommendations: R-rda-2 (scope), R-rda-3 (four
 stages, release `v2.0.1`), R-rda-4 (goals G1–G4). Stages declared; `architect-first` and `cli-says-orbit` are
 independent and may run in either order.
+
+**2026-10-14 — `architect-first` ratified (Sal), in an architect session.** All three exits held: the start-surfaces
+test (mutation-checked over nine old strings), the restated specs, the archive (`2026-10-14-architect-first`, PR #25
+merged). Task 6.5, Sal's cold `orbit init` then `orbit status`, stays deferred and is not an exit. `cli-says-orbit` is
+the one stage now startable; `docs-refinement` waits on it, and `release` on both.
