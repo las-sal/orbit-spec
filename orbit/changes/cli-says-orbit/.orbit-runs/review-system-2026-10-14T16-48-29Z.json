@@ -1,0 +1,99 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-14T16:48:29Z",
+  "change": "cli-says-orbit",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "test/core/completions/installers/bash-installer.test.ts",
+      "line": 464,
+      "title": "The bash removal test's comment assert became vacuous",
+      "recommendation": "Restore the assert to the old comment the fixture carries: expect(newContent).not.toContain('OpenSpec shell completions configuration'), as zsh-installer.test.ts:595 kept it. Task 2.4(a) keeps the removal fixtures on the old comment because they model rc files users already have; the assert must follow the fixture, not the renamed source.",
+      "reproduction": "The 'should remove markers and config when present' fixture (bash-installer.test.ts:440-451) writes '# OpenSpec shell completions configuration' inside the marker block, and the assert at :464 now checks that 'Orbit shell completions configuration' is absent: a string the fixture never contained, so it holds whatever removeBashrcConfig does with the comment line. Before apply it checked the comment line was removed. The zsh twin (zsh-installer.test.ts:595) still checks the old comment and is not affected."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/cli-says-orbit/specs/orbit-cli-name/spec.md",
+      "line": 57,
+      "title": "The named limit's record misses the lowercase product-name prose in the generated launchers and skill metadata",
+      "recommendation": "Name what the lowercase residual actually holds in the record, at the walk or at archive: the 13 thin-launcher command bodies say 'upstream openspec behavior plus orbit's additions' (a fork-base reference, the class onboard's admission already uses), and 16 skill templates carry metadata { author: 'openspec' }, rendered as 'author: openspec' in every generated SKILL.md and read by no detection code. Also reconcile line 58's 'returned nothing' with the apply record, which found one comment (project-config.ts:18).",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Keep both as they are and state them in the named limit as known lowercase residue (fork-base prose and provenance metadata)."
+        },
+        {
+          "label": "B",
+          "body": "Rename them: launchers to 'upstream OpenSpec behavior' with an admitted fork-base entry per template, or to orbit's own wording, and metadata author to 'orbit'; both move skill-templates-parity pins."
+        }
+      ]
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "pass": "1",
+      "title": "orbit-review-external's quoted prompt still says 'an OpenSpec change' after review.ts was renamed",
+      "evidence": "orbit/specs/orbit-review-external/spec.md:86 lets the implementer adjust phrasing and keeps only the named sections and the output-format block verbatim; the full npm test (175 files, 3732 tests) passes, so no parity check pins the sentence"
+    },
+    {
+      "pass": "3",
+      "title": "The registry's change description keeps '(deprecated)' while program.ts does not",
+      "evidence": "design.md decision 1 names it as pre-existing and outside this change; orbit-cli-grammar's registry check does not compare descriptions"
+    }
+  ],
+  "commentary": "Probed hard on the instrument and the shipped output rather than the artifacts. Rebuilt dist, ran the full suite, ran `orbit init --tools claude`, `list`, `view` and `schemas` in a scratch project, and every visible command's `--help` through the real bin: only validate's OPENSPEC_CONCURRENCY appears, as admitted. The scenario map covers all eight delta scenarios with behaviour tests; validate --strict is clean. The 14 template edits match the named-edit table one for one, the skill-templates-parity note's six-and-five hash count matches the diff, and rc03b's unplanned schema.yaml pin is recorded where it moved. The scan helper's same-line admission and stale-entry logic are sound and the fixture cases exercise both. The one real defect is a test edit that renamed an assert in a fixture that, by the task's own rule, kept the old text. Grepping generated output in any case turned up the lowercase launcher and metadata prose, which the residual's command-form grep cannot reach. No lenses exist, so Passes 4 and 5 were skipped. Pass 6 (audit-drift) was not invoked from this worker; instead targeted residue greps ran over README, docs/, CLAUDE.md, the architecture doc and the baselines, and found no quote of a renamed string outside history prose. Pass 0 ran as the scenario map, task state and validate, not as a separate verify-change emit. CLAUDE.md's capability marker still reads 30 and must move at archive when orbit-cli-name lands.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3"
+  ],
+  "passes_skipped": [
+    "4",
+    "5",
+    "6"
+  ],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The change does what its stage asked: the CLI, its help, init's output and the generated skill descriptions say orbit, and the instrument fails on residue and on stale admissions. What is left is one weakened test assert, a one-line restore, and a record gap in the named limit. Neither changes shipped behaviour. Walk them and move on to Sal's user validation and archive."
+  },
+  "final_assessment": "0 critical, 1 warning, 1 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews cli-says-orbit"
+}
