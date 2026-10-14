@@ -1,0 +1,15 @@
+{
+  "command": "propose",
+  "timestamp": "2026-10-14T18:31:58Z",
+  "change": "docs-refinement",
+  "kind": "workflow",
+  "model": null,
+  "final_assessment": "Consumed explore docs-refinement (6 decisions, 0 open questions; D-dr-4 the one live rule, BOUNDED, residual slots carried verbatim into orbit-user-docs' new requirement and pointed at from design Risks). Two capabilities: orbit-user-docs ADDS 'The user docs' start sections name the architect workflow first' (seven (page, heading) members, /orbit:<id> and fenced '<id> ──►' forms, missing heading fails) and MODIFIES the pending-rewrite gate's file-local set; orbit-architect MODIFIES its start-surfaces table's user-docs row to checked and drops the pending limit. A propose-time probe of the planned check found six members leading with explore and corrected one member (concepts' paragraph is under ## Artifacts, not ## Changes). D-dr-3 (fact): no CLI output re-capture needed. Size 2/3/4025/14, no breaches; validate --strict clean; 4 new scenarios to declare at apply.",
+  "pr_attachment": {
+    "branch": "docs-refinement",
+    "granularity": "per-proposal",
+    "url": "https://github.com/las-sal/orbit-spec/pull/27",
+    "state": "draft"
+  },
+  "next_recommended": "/orbit:review docs-refinement — proposal artifacts ready; review before apply"
+}
