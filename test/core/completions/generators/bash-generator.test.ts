@@ -31,7 +31,7 @@ describe('BashGenerator', () => {
 
       const script = generator.generate(commands);
 
-      expect(script).toContain('# Bash completion script for OpenSpec CLI');
+      expect(script).toContain('# Bash completion script for the orbit CLI');
       expect(script).toContain('_orbit_completion() {');
       expect(script).toContain('local cur prev words cword');
       expect(script).toContain('_init_completion -n : || return');

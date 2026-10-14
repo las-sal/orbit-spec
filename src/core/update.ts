@@ -101,7 +101,7 @@ export class UpdateCommand {
 
     // 1. Check orbit directory exists
     if (!await FileSystemUtils.directoryExists(openspecPath)) {
-      throw new Error(`No OpenSpec directory found. Run 'orbit init' first.`);
+      throw new Error(`No orbit/ directory found. Run 'orbit init' first.`);
     }
 
     // Preflight validation (orbit-skill-generation): the VERY FIRST step after the

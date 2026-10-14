@@ -179,7 +179,7 @@ describe('FeedbackCommand', () => {
           '--title',
           'Feedback: Great tool!',
           '--body',
-          expect.stringContaining('Submitted via OpenSpec CLI'),
+          expect.stringContaining('Submitted via the orbit CLI'),
         ],
         expect.objectContaining({
           encoding: 'utf-8',
@@ -272,7 +272,7 @@ describe('FeedbackCommand', () => {
         'gh',
         expect.arrayContaining([
           '--body',
-          expect.stringMatching(/Submitted via OpenSpec CLI[\s\S]*Version:[\s\S]*Platform:[\s\S]*Timestamp:/),
+          expect.stringMatching(/Submitted via the orbit CLI[\s\S]*Version:[\s\S]*Platform:[\s\S]*Timestamp:/),
         ]),
         expect.any(Object)
       );

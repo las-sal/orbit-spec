@@ -2,7 +2,7 @@
 
 ## Purpose
 
-The unified `/orbit:review` command — editorial review of an OpenSpec change in proposal mode (pre-apply, 9 passes over artifacts) or system mode (post-apply, `verify-change` as Pass 0 + 6 system-wide passes), or of an architecture doc in architecture mode (a doc under `orbit/architecture/`, six passes, no gate). All modes share the 3-dimension scorecard (Completeness / Correctness / Coherence), the severity ladder (CRITICAL / WARNING / SUGGESTION), pushback discipline, and `.orbit-runs/` persistence. Generates findings but does not resolve them; resolution flows through `/orbit:address-reviews`.
+The unified `/orbit:review` command — editorial review of an orbit change in proposal mode (pre-apply, 9 passes over artifacts) or system mode (post-apply, `verify-change` as Pass 0 + 6 system-wide passes), or of an architecture doc in architecture mode (a doc under `orbit/architecture/`, six passes, no gate). All modes share the 3-dimension scorecard (Completeness / Correctness / Coherence), the severity ladder (CRITICAL / WARNING / SUGGESTION), pushback discipline, and `.orbit-runs/` persistence. Generates findings but does not resolve them; resolution flows through `/orbit:address-reviews`.
 ## Requirements
 ### Requirement: Review command available with `--as` mode flag
 

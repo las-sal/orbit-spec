@@ -9,8 +9,8 @@ import type { SkillTemplate, CommandTemplate } from '../types.js';
 export function getApplyChangeSkillTemplate(): SkillTemplate {
   return {
     name: 'orbit-apply-change',
-    description: 'Implement tasks from an OpenSpec change. Use when the user wants to start implementing, continue implementation, or work through tasks.',
-    instructions: `Implement tasks from an OpenSpec change.
+    description: 'Implement tasks from an orbit change. Use when the user wants to start implementing, continue implementation, or work through tasks.',
+    instructions: `Implement tasks from an orbit change.
 
 **Input**: Optionally specify a change name. If omitted, check if it can be inferred from conversation context. If vague or ambiguous you MUST prompt for available changes.
 
@@ -221,11 +221,11 @@ The ENGINE owns everything else: chunk detection from the tasks.md preamble (mal
 export function getOrbitApplyCommandTemplate(): CommandTemplate {
   return {
     name: 'ORBIT: Apply',
-    description: 'Implement tasks from an OpenSpec change (Experimental)',
+    description: 'Implement tasks from an orbit change (Experimental)',
     category: 'Workflow',
     tags: ['workflow', 'artifacts', 'experimental'],
     content: `Implement tasks from a change.
 
-This command is a thin launcher: invoke the \`orbit-apply-change\` skill, passing along any arguments given with the command (e.g., \`/orbit:apply <change-name>\`). The skill carries the complete workflow instructions — upstream openspec behavior plus orbit's additions. Do not improvise the workflow from this file; load the skill.`
+This command is a thin launcher: invoke the \`orbit-apply-change\` skill, passing along any arguments given with the command (e.g., \`/orbit:apply <change-name>\`). The skill carries the complete workflow instructions — upstream behavior plus orbit's additions. Do not improvise the workflow from this file; load the skill.`
   };
 }

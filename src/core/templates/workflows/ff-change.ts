@@ -10,7 +10,7 @@ import { PR_CHOREOGRAPHY_REFERENCE } from './pr-choreography.js';
 export function getFfChangeSkillTemplate(): SkillTemplate {
   return {
     name: 'orbit-ff-change',
-    description: 'Fast-forward through OpenSpec artifact creation. Use when the user wants to quickly create all artifacts needed for implementation without stepping through each one individually.',
+    description: 'Fast-forward through orbit artifact creation. Use when the user wants to quickly create all artifacts needed for implementation without stepping through each one individually.',
     instructions: `Fast-forward through artifact creation - generate everything needed to start implementation in one go.
 
 **Input**: The user's request should include a change name (kebab-case) OR a description of what they want to build.
@@ -198,6 +198,6 @@ export function getOrbitFfCommandTemplate(): CommandTemplate {
     tags: ['workflow', 'artifacts', 'experimental'],
     content: `Fast-forward: create all artifacts for a change in one go.
 
-This command is a thin launcher: invoke the \`orbit-ff-change\` skill, passing along any arguments given with the command (e.g., \`/orbit:ff <name>\`). The skill carries the complete workflow instructions — upstream openspec behavior plus orbit's additions. Do not improvise the workflow from this file; load the skill.`
+This command is a thin launcher: invoke the \`orbit-ff-change\` skill, passing along any arguments given with the command (e.g., \`/orbit:ff <name>\`). The skill carries the complete workflow instructions — upstream behavior plus orbit's additions. Do not improvise the workflow from this file; load the skill.`
   };
 }

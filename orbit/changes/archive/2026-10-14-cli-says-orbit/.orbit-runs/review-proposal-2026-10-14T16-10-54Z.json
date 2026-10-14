@@ -1,0 +1,124 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-14T16:10:54Z",
+  "change": "cli-says-orbit",
+  "kind": "editorial",
+  "model": null,
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-cli-name/spec.md",
+      "line": 7,
+      "title": "The shipped-file set is defined as package.json's `files`, but npm also always ships README.md, LICENSE and package.json",
+      "recommendation": "The requirement says \"The files the package ships are those under package.json's `files`\" and claims to cover \"every file the package ships\". `npm pack --dry-run --ignore-scripts` lists three more: LICENSE (1 `OpenSpec`, the upstream copyright notice, which must stay), README.md (6 `OpenSpec`, owned by `orbit-user-docs` and stage docs-refinement), and package.json (its `description` names `@fission-ai/openspec@1.3.1`; the scan's case-sensitive pattern does not match it, but a user reads it). Two implementers will split here: one builds the scan from `files` and leaves these three out silently, another adds them and has to invent reasons for admitting them. Fix the member table: add a row for npm's always-included files, naming who holds each one (README.md: orbit-user-docs' residue check; LICENSE: the upstream notice, not read or admitted as 'names the fork base'; package.json: read, or out of scope with a reason). Or narrow the requirement's first sentence so it no longer says 'every file the package ships'.",
+      "reproduction": "npm pack --dry-run --ignore-scripts | grep -v ' dist/' lists LICENSE, README.md, bin/orbit.js, package.json, schemas/**, scripts/postinstall.js; grep -c OpenSpec LICENSE README.md gives 1 and 6."
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "tasks.md",
+      "line": 23,
+      "title": "Task 2.4's test update can empty the removal tests that cover the old-comment rc block the proposal depends on",
+      "recommendation": "proposal.md:75-76 depends on one behaviour: an existing rc block that still carries the old comment `# OpenSpec shell completions configuration` is replaced (by install) or removed (by uninstall) between the unchanged markers. The removal fixtures at test/core/completions/installers/zsh-installer.test.ts:540-566 and bash-installer.test.ts:~410-435 build exactly that old-comment block, then assert `not.toContain('OpenSpec shell completions')`. Task 2.4 says only to 'Update the installer and generator tests that quote them'. Suppose an implementer rewrites those fixtures to the new `# Orbit shell completions configuration` and leaves the not.toContain on the old text: the assertion then passes without testing anything, and nothing covers the upgrade case for adopters. Have task 2.4 say three things: removal and replace fixtures keep the OLD comment, because they model rc files users already have; the install-content asserts (zsh-installer.test.ts:406, bash-installer.test.ts:120/276) move to the new comment; and one case shows a re-install over an old-comment block leaves the new comment and only one marker pair."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "design.md",
+      "line": 65,
+      "title": "Design decision 3 says the admitted list has five entries, then lists six",
+      "recommendation": "'Today it has five entries', but the list that follows has six: three for legacy-cleanup.ts, plus init.ts, onboard.ts and feedback.ts (one substring that admits both feedback lines). The exact list is the instrument's contract, and task 1.4's red run and task 4.1's stale check depend on it, so the count must match. Change 'five' to 'six'."
+    },
+    {
+      "pass": "3",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "CLAUDE.md",
+      "line": 17,
+      "title": "CLAUDE.md still lists `OpenSpec` branding prose as kept until a Tier-C scrub, and no task updates it",
+      "recommendation": "CLAUDE.md:17 reads 'Kept as-is until a later Tier-C scrub: `OpenSpec` branding prose, `.openspec.yaml`, data-format tags (`openspec-change`), the global config/data dir, and legacy-openspec detection.' After apply, the CLI's and the generated skills' branding prose is renamed, and only R-rda-3's four protections plus the admitted list remain. A session reading CLAUDE.md would take the CLI's prose as deliberately left as upstream wrote it. Add a task in section 4 that rewrites this line: branding prose is now renamed and held by `orbit-cli-name`; the rest of the list stays, along with the OPENSPEC_* environment variables and the rc markers."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "proposal.md",
+      "line": 70,
+      "title": "The Impact list and the tasks leave out several tests that quote renamed strings",
+      "recommendation": "Impact names basic, archive/list/update and the bash/zsh installer tests. Other tests also quote strings that change: test/commands/config.test.ts:100 ('View and modify global OpenSpec configuration', and no task names it), test/core/update.test.ts:932/979/1096 ('Upgrading to the new OpenSpec', where task 2.2 mentions update.test only for the directory error), test/core/legacy-cleanup.test.ts:716/910, test/commands/feedback.test.ts:182/275, and the three generator tests (bash/zsh/fish-generator.test.ts:34-35). Task 4.4's full `npm test` catches them, but naming them in tasks 2.3 and 2.5 and in Impact keeps the prediction honest."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "design.md",
+      "line": 34,
+      "title": "The house style says lower-case `orbit` even at line start, but the named-edit table capitalises a heading",
+      "recommendation": "Design decision 1: 'The house style is lower-case `orbit`, even at the start of a line'. Yet specs/orbit-cli-name/spec.md:44 makes explore's heading `## Orbit Awareness`. D-cso-3 justifies the capital O in the rc comment by PowerShell parity, but nothing justifies it for the heading. Either write `## orbit Awareness`, or add one clause to the design that exempts headings, such as the existing `# Orbit additions` sections."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "specs/orbit-cli-name/spec.md",
+      "line": 53,
+      "title": "build.js prints 'Building OpenSpec...' during the documented git install, outside every check",
+      "recommendation": "The documented install, `npm install -g github:las-sal/orbit-spec#v2.0.0` (README.md:52, docs/installation.md:14), runs `prepare`, which runs `node build.js`, and build.js prints '🔨 Building OpenSpec...'. build.js is not shipped, so the scan never reads it, and the runtime check does not run install. Whether npm shows prepare output for a git dependency depends on its version and flags, which is why this is a suggestion. Rename the one console line in build.js too, or name it in the requirement's named limit as a build-time string outside the shipped set."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Probed the measurement claims directly instead of trusting them. Listing the uppercase literals in src/ (excluding comments and identifiers) reproduces the 55 / 48 / 7 split and the 14 template lines exactly. `orbit init --tools claude` in a scratch dir and `--help` over each top-level command show the same strings the design lists, plus OPENSPEC_CONCURRENCY in validate --help. The case-insensitive `openspec <verb>` grep over src/schemas/bin/postinstall returns nothing, as the named limit states. Checked the five supporting claims too. The completion re-install path really is marker-based (FileSystemUtils.updateFileWithMarkers keyed on # OPENSPEC:START/END), so the 'nothing orphaned' claim holds. orbit-cli-grammar's registry table marks `description` 'not compared: prose'. orbit-review-external's quoted prompt explicitly allows phrasing adjustment, and no test pins the 'second pair of eyes' sentence. No test or spec references explore's `## OpenSpec Awareness` heading. The named-edit table meets orbit-conventions' Generated-file disposition rule (it names each step and its replacement). The main risk is at the boundaries, not in the rename: what 'the package ships' actually means to npm, and whether the test edits keep covering the adopter's old rc block. Side effect: an unflagged `npm pack --dry-run` ran `prepare` and rebuilt dist/ from the unchanged source. dist/ is gitignored and the tree is clean.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "Scope, instrument and counts all check out against the live source. The AST-based scan plus a runtime check is the right pair, and the admitted list is small and has reasons. What is left is boundary precision: the npm shipped set, one count, the test-fixture guidance, and one stale CLAUDE.md line. Each can be fixed in a walk with a sentence or a task line, and none needs the design reopened. Fix them in the walk and go to apply."
+  },
+  "final_assessment": "0 critical, 4 warning, 3 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews cli-says-orbit"
+}

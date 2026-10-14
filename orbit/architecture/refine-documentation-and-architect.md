@@ -93,6 +93,19 @@ the global config directory and legacy-OpenSpec detection.
 Exit criteria: a test over the CLI's user-visible strings fails on an unprotected `OpenSpec` (G2); `orbit init` in
 a scratch project prints no OpenSpec; the change is archived.
 
+Shipped as (2026-10-14; archived as `orbit/changes/archive/2026-10-14-cli-says-orbit/`; the charter stands, widened
+by Sal's word to the generated skills at explore and to the launchers at the system walk): the measured surface was
+48 strings in `src/`, not the roughly 27 the issue listed, plus the shipped schema's description and `build.js`'
+banner. All of them say orbit. The three directory errors now name `orbit/` and `orbit/changes/`, and the rc-file
+comment reads "Orbit" between the unchanged `OPENSPEC:START/END` markers. Fourteen lines of skill descriptions and
+tool-naming body sentences carry `orbit-cli-name`'s named edits, and the 13 launchers' shared sentence says
+"upstream behavior". The new `orbit-cli-name` holds it with a source scan (the TypeScript AST's string literals,
+plus `schemas/`, `bin/`, `scripts/postinstall.js` and `build.js` line by line), an exact admitted list of six
+entries, and a runtime check of every command's help and `orbit init`. Reverting a source string, the schema line
+or an admitted target turns the scan red. Kept as named residue: `OPENSPEC_CONCURRENCY` and `OPENSPEC_NO_AUTO_CONFIG`,
+and the skills' `metadata.author: 'openspec'`. Task 4.5, Sal running `orbit init` then `orbit --help`, is deferred;
+the fresh system pass ran both clean.
+
 ### Stage docs-refinement — the docs follow the tool
 
 Depends-on: architect-first, cli-says-orbit

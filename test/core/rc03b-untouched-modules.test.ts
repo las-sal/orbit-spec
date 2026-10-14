@@ -116,9 +116,12 @@ import { fileURLToPath } from "node:url";
  * here is unchanged.
  * MOVED AGAIN at architect-first's system walk (2026-10-14): `emit-composition.ts` only — the cited doc must be a
  * FILE (`statSync().isFile()`), as architecture discovery reads it (external S1).
+ * MOVED at cli-says-orbit apply (2026-10-14): `schemas/spec-driven/schema.yaml` only, one line — its description
+ * says "Default orbit workflow" (task 2.6, `orbit-cli-name`). A pin the task plan did not name, recorded here as its
+ * own act. No engine code moved.
  */
 const PINNED: Record<string, string> = {
-  "schemas/spec-driven/schema.yaml": "21e0ae86532a39be558a2b81d23738a6fbf92fbd32b0d01612a65e83d6a96739",
+  "schemas/spec-driven/schema.yaml": "569cd309420f02bbc2ed2cecddf761da7a153d01cbd158c5181b1bc50c9b6d9d",
   "schemas/spec-driven/templates/design.md": "3251f08057d142f6e3c26f65f5f100ab602ee7ce880d5503bfaa45668ba19f59",
   "schemas/spec-driven/templates/proposal.md": "9c554e0dbe918e3dc745dcc143a999e1d102954d75fb6e51e231c4cba78f06f3",
   "schemas/spec-driven/templates/spec.md": "e025078f238dc6e4df552a1e0a140cf9efce0bbdecbeb9f45837d45ed91dca01",

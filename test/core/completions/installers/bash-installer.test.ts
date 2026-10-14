@@ -117,7 +117,7 @@ describe('BashInstaller', () => {
 
       expect(content).toContain('# OPENSPEC:START');
       expect(content).toContain('# OPENSPEC:END');
-      expect(content).toContain('OpenSpec shell completions configuration');
+      expect(content).toContain('Orbit shell completions configuration');
     });
 
     it('should include instructions when auto-config is disabled', async () => {
@@ -273,7 +273,7 @@ describe('BashInstaller', () => {
 
       expect(content).toContain('# OPENSPEC:START');
       expect(content).toContain('# OPENSPEC:END');
-      expect(content).toContain('# OpenSpec shell completions configuration');
+      expect(content).toContain('# Orbit shell completions configuration');
       expect(content).toContain(completionsDir);
     });
 
@@ -353,6 +353,35 @@ describe('BashInstaller', () => {
       expect(content).toContain('alias ls="ls -G"');
       expect(content).toContain(completionsDir);
       expect(content).not.toContain('# Old OpenSpec config');
+    });
+
+    it('should rewrite an old-comment block with the new comment and one marker pair', async () => {
+      const rcPath = path.join(testHomeDir, '.bashrc');
+      const oldBlock = [
+        '# My config',
+        '',
+        '# OPENSPEC:START',
+        '# OpenSpec shell completions configuration',
+        '# old body',
+        '# OPENSPEC:END',
+        '',
+      ].join('\n');
+
+      await fs.writeFile(rcPath, oldBlock);
+
+      const result = await installer.configureBashrc(completionsDir);
+
+      expect(result).toBe(true);
+
+      const content = await fs.readFile(rcPath, 'utf-8');
+
+      expect(content).toContain('# Orbit shell completions configuration');
+      expect(content).not.toContain('OpenSpec shell completions configuration');
+      expect(content).not.toContain('# old body');
+      expect(content.match(/# OPENSPEC:START/g)).toHaveLength(1);
+      expect(content.match(/# OPENSPEC:END/g)).toHaveLength(1);
+      expect(content).toContain(completionsDir);
+      expect(content).toContain('# My config');
     });
 
     it('should return false when OPENSPEC_NO_AUTO_CONFIG is set', async () => {

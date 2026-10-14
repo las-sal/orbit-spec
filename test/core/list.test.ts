@@ -31,11 +31,12 @@ describe('ListCommand', () => {
   });
 
   describe('execute', () => {
+    // @scenario behaviour orbit-cli-name :: The old name appears in what the package ships only for an admitted reason :: A directory error names the directory
     it('should handle missing orbit/changes directory', async () => {
       const listCommand = new ListCommand();
       
       await expect(listCommand.execute(tempDir, 'changes')).rejects.toThrow(
-        "No OpenSpec changes directory found. Run 'orbit init' first."
+        "No orbit/changes/ directory found. Run 'orbit init' first."
       );
     });
 

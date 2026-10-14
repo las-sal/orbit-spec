@@ -86,7 +86,7 @@ const WORKFLOW_PROMPT_META: Record<string, WorkflowPromptMeta> = {
   },
   onboard: {
     name: 'Onboard',
-    description: 'Guided onboarding flow for OpenSpec',
+    description: 'Guided onboarding flow for orbit',
   },
 };
 
@@ -212,7 +212,7 @@ function maybeWarnConfigDrift(
 export function registerConfigCommand(program: Command, options: ProgramOptions = {}): void {
   const configCmd = program
     .command('config')
-    .description('View and modify global OpenSpec configuration')
+    .description('View and modify global orbit configuration')
     .option('--scope <scope>', 'Config scope (only "global" supported currently)');
 
   if (options.hooks !== false) {

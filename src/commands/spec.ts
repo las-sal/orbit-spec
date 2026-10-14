@@ -112,7 +112,7 @@ export class SpecCommand {
 export function registerSpecCommand(rootProgram: typeof program, options: ProgramOptions = {}) {
   const specCommand = rootProgram
     .command('spec')
-    .description('Manage and view OpenSpec specifications');
+    .description('Manage and view orbit specifications');
 
   // Deprecation notice for noun-based commands
   if (options.hooks !== false) {

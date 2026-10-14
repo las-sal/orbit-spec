@@ -74,7 +74,7 @@ export function buildProgram(options: ProgramOptions = {}): Command {
 
   program
     .command('init [path]')
-    .description('Initialize OpenSpec in your project')
+    .description('Initialize orbit in your project')
     .option('--tools <tools>', toolsOptionDescription)
     .option('--force', 'Auto-cleanup legacy files without prompting')
     .option('--profile <profile>', 'Override global config profile (core or custom)')
@@ -137,7 +137,7 @@ export function buildProgram(options: ProgramOptions = {}): Command {
 
   program
     .command('update [path]')
-    .description('Update OpenSpec instruction files')
+    .description('Update orbit instruction files')
     .option('--force', 'Force update even when tools are up to date')
     .action(async (targetPath = '.', options?: { force?: boolean }) => {
       try {
@@ -188,7 +188,7 @@ export function buildProgram(options: ProgramOptions = {}): Command {
   // Change command with subcommands
   const changeCmd = program
     .command('change')
-    .description('Manage OpenSpec change proposals');
+    .description('Manage orbit change proposals');
 
   // Deprecation notice for noun-based commands
   if (options.hooks !== false) {
@@ -488,7 +488,7 @@ export function buildProgram(options: ProgramOptions = {}): Command {
   // Completion command with subcommands
   const completionCmd = program
     .command('completion')
-    .description('Manage shell completions for OpenSpec CLI');
+    .description('Manage shell completions for the orbit CLI');
 
   completionCmd
     .command('generate [shell]')

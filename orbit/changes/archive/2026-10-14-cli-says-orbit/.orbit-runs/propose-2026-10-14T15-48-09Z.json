@@ -1,0 +1,15 @@
+{
+  "command": "propose",
+  "timestamp": "2026-10-14T15:48:09Z",
+  "change": "cli-says-orbit",
+  "kind": "workflow",
+  "model": null,
+  "final_assessment": "Consumed explore.md (D-cso-1..5; Q-cso-4 resolved at propose as D-cso-5 after reading a second env var, OPENSPEC_CONCURRENCY, in validate --help). One new capability, orbit-cli-name, one requirement: an exact admitted list over the shipped package (TS-AST scan of src/ string literals plus schemas/, bin/, postinstall.js) and a runtime help/init check; D-cso-2's BOUNDED residual carried verbatim as the named limit. A throwaway probe matched the exploration's classification line for line (55 literal occurrences: 48 rename, 7 admitted, plus the schema line). Size within ceiling (tasks 19 of 19). Draft PR #26.",
+  "pr_attachment": {
+    "branch": "cli-says-orbit",
+    "granularity": "per-proposal",
+    "url": "https://github.com/las-sal/orbit-spec/pull/26",
+    "state": "draft"
+  },
+  "next_recommended": "/orbit:review cli-says-orbit — proposal artifacts ready; review before apply"
+}

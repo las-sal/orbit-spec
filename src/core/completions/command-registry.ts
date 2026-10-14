@@ -35,7 +35,7 @@ const COMMON_FLAGS = {
 export const COMMAND_REGISTRY: CommandDefinition[] = [
   {
     name: 'init',
-    description: 'Initialize OpenSpec in your project',
+    description: 'Initialize orbit in your project',
     acceptsPositional: true,
     positionalType: 'path',
     flags: [
@@ -58,7 +58,7 @@ export const COMMAND_REGISTRY: CommandDefinition[] = [
   },
   {
     name: 'update',
-    description: 'Update OpenSpec instruction files',
+    description: 'Update orbit instruction files',
     acceptsPositional: true,
     positionalType: 'path',
     flags: [
@@ -199,7 +199,7 @@ export const COMMAND_REGISTRY: CommandDefinition[] = [
   },
   {
     name: 'change',
-    description: 'Manage OpenSpec change proposals (deprecated)',
+    description: 'Manage orbit change proposals (deprecated)',
     flags: [],
     subcommands: [
       {
@@ -246,7 +246,7 @@ export const COMMAND_REGISTRY: CommandDefinition[] = [
   },
   {
     name: 'spec',
-    description: 'Manage OpenSpec specifications',
+    description: 'Manage orbit specifications',
     flags: [],
     subcommands: [
       {
@@ -299,7 +299,7 @@ export const COMMAND_REGISTRY: CommandDefinition[] = [
   },
   {
     name: 'completion',
-    description: 'Manage shell completions for OpenSpec CLI',
+    description: 'Manage shell completions for the orbit CLI',
     flags: [],
     subcommands: [
       {
@@ -338,7 +338,7 @@ export const COMMAND_REGISTRY: CommandDefinition[] = [
   },
   {
     name: 'config',
-    description: 'View and modify global OpenSpec configuration',
+    description: 'View and modify global orbit configuration',
     flags: [
       {
         name: 'scope',

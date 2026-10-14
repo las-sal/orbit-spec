@@ -778,7 +778,7 @@ E1 updated`);
       
       await expect(
         archiveCommand.execute('any-change', { yes: true })
-      ).rejects.toThrow("No OpenSpec changes directory found. Run 'orbit init' first.");
+      ).rejects.toThrow("No orbit/changes/ directory found. Run 'orbit init' first.");
     });
   });
 

@@ -31,7 +31,7 @@ describe('FishGenerator', () => {
 
       const script = generator.generate(commands);
 
-      expect(script).toContain('# Fish completion script for OpenSpec CLI');
+      expect(script).toContain('# Fish completion script for the orbit CLI');
       expect(script).toContain('function __fish_orbit');
     });
 

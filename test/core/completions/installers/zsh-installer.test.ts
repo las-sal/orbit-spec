@@ -403,7 +403,7 @@ describe('ZshInstaller', () => {
 
       expect(content).toContain('# OPENSPEC:START');
       expect(content).toContain('# OPENSPEC:END');
-      expect(content).toContain('# OpenSpec shell completions configuration');
+      expect(content).toContain('# Orbit shell completions configuration');
       expect(content).toContain(`fpath=("${completionsDir}" $fpath)`);
       expect(content).toContain('autoload -Uz compinit');
       expect(content).toContain('compinit');
@@ -483,6 +483,35 @@ describe('ZshInstaller', () => {
       expect(content).toContain('alias ls="ls -G"');
       expect(content).toContain(`fpath=("${completionsDir}" $fpath)`);
       expect(content).not.toContain('# Old OpenSpec config');
+    });
+
+    it('should rewrite an old-comment block with the new comment and one marker pair', async () => {
+      const rcPath = path.join(testHomeDir, '.zshrc');
+      const oldBlock = [
+        '# My config',
+        '',
+        '# OPENSPEC:START',
+        '# OpenSpec shell completions configuration',
+        '# old body',
+        '# OPENSPEC:END',
+        '',
+      ].join('\n');
+
+      await fs.writeFile(rcPath, oldBlock);
+
+      const result = await installer.configureZshrc(completionsDir);
+
+      expect(result).toBe(true);
+
+      const content = await fs.readFile(rcPath, 'utf-8');
+
+      expect(content).toContain('# Orbit shell completions configuration');
+      expect(content).not.toContain('OpenSpec shell completions configuration');
+      expect(content).not.toContain('# old body');
+      expect(content.match(/# OPENSPEC:START/g)).toHaveLength(1);
+      expect(content.match(/# OPENSPEC:END/g)).toHaveLength(1);
+      expect(content).toContain(`fpath=("${completionsDir}" $fpath)`);
+      expect(content).toContain('# My config');
     });
 
     it('should return false when OPENSPEC_NO_AUTO_CONFIG is set', async () => {
@@ -705,7 +734,7 @@ describe('ZshInstaller', () => {
       const result = await installer.uninstall();
 
       expect(result.success).toBe(true);
-      expect(result.message).toContain('Removed OpenSpec configuration from ~/.zshrc');
+      expect(result.message).toContain('Removed orbit configuration from ~/.zshrc');
 
       // Verify .zshrc config was removed
       content = await fs.readFile(zshrcPath, 'utf-8');
@@ -732,7 +761,7 @@ describe('ZshInstaller', () => {
       const result = await installer.uninstall();
 
       expect(result.success).toBe(true);
-      expect(result.message).toContain('Removed OpenSpec configuration from ~/.zshrc');
+      expect(result.message).toContain('Removed orbit configuration from ~/.zshrc');
     });
 
     it('should include both messages when removing script and .zshrc', async () => {
@@ -742,7 +771,7 @@ describe('ZshInstaller', () => {
 
       expect(result.success).toBe(true);
       expect(result.message).toContain('Completion script removed');
-      expect(result.message).toContain('Removed OpenSpec configuration from ~/.zshrc');
+      expect(result.message).toContain('Removed orbit configuration from ~/.zshrc');
     });
   });
 });
