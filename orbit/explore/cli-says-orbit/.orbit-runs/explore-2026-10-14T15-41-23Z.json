@@ -1,0 +1,25 @@
+{
+  "command": "explore",
+  "timestamp": "2026-10-14T15:41:23Z",
+  "change": "cli-says-orbit",
+  "kind": "workflow",
+  "model": null,
+  "final_assessment": "Sal ruled Q-cso-1 (D-cso-1: generated skill descriptions and tool-naming body sentences in scope, 14 lines; the fork-base line and the never-generated feedback template kept). Method settled and recorded: D-cso-2 (rule, BOUNDED: a source scan over the shipped package plus a runtime init/--help check; the enumeration found schemas/spec-driven/schema.yaml outside src/), D-cso-3 (rc comment renamed, OPENSPEC markers kept; both removers read), D-cso-4 (the three directory errors name the directory). Recount: 60 non-comment lines in src/ plus one in schemas/. Q-cso-4 (OPENSPEC_NO_AUTO_CONFIG) stays open, leaning out.",
+  "decisions_captured": 4,
+  "open_questions_count": 1,
+  "open_questions_with_recommendation": "1 of 1",
+  "rules_total": 1,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [
+    {
+      "id": "D-cso-2",
+      "kind": "user-visible text that is not a literal `OpenSpec` in a shipped file: a string assembled from parts, output of a dependency, or lowercase prose \"openspec\" (the scan matches the product-name forms `OpenSpec`/`Openspec`; lowercase is overwhelmingly the protected paths, tags and identifiers)",
+      "method": "the runtime check (`orbit init` in a scratch dir, `--help` for every command) asserting stdout free of the word in any case; and a lowercase grep for command-form prose (`openspec <verb>`), which returned nothing on 2026-10-14"
+    }
+  ],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose cli-says-orbit — 1 live rule accounted, 1 bounded residual named (D-cso-2); formalize when you are ready (or /orbit:explore cli-says-orbit to keep refining)"
+}
