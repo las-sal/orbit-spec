@@ -52,6 +52,7 @@ case, as the bodies' existing `# Orbit additions` sections are, so explore's hea
 | `schemas/spec-driven/schema.yaml` | Default OpenSpec workflow - … | Default orbit workflow - … |
 | `build.js` (run by `prepare` in a git install) | 🔨 Building OpenSpec... | 🔨 Building orbit... |
 | the six templates | per the requirement's named-edit table, and `review.ts`' four "an OpenSpec change" | "an orbit change" |
+| the 13 launcher commands (system walk, Sal: C) | upstream openspec behavior plus orbit's additions | upstream behavior plus orbit's additions |
 
 The registry keeps its "(deprecated)" suffix on `change`. `orbit-cli-grammar`'s registry check does not compare
 descriptions (prose), and syncing the suffix is outside this change.
@@ -144,7 +145,7 @@ The proposing AI's reading of the file; no engine record.
 - `src/core/completions/installers/` — the rc-file comment and messages.
 - `src/commands/completion.ts` + `src/commands/feedback.ts` — the uninstall prompt and the feedback footer.
 - `src/core/legacy-cleanup.ts` — the upgrade banner.
-- `src/core/templates/workflows/*.ts` — the six templates' sentences.
+- `src/core/templates/workflows/*.ts` — the six templates' sentences, and the 13 launchers' shared sentence.
 - `schemas/spec-driven/schema.yaml` — the description.
 - `build.js` — the build banner a git install prints.
 - `test/helpers/cli-name.ts` + `test/core/cli-name.test.ts` — the scan, the admitted list, the runtime help check.

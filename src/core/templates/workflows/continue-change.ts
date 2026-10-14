@@ -178,6 +178,6 @@ export function getOrbitContinueCommandTemplate(): CommandTemplate {
     tags: ['workflow', 'artifacts', 'experimental'],
     content: `Create the next artifact in a change's workflow.
 
-This command is a thin launcher: invoke the \`orbit-continue-change\` skill, passing along any arguments given with the command (e.g., \`/orbit:continue <name>\`). The skill carries the complete workflow instructions — upstream openspec behavior plus orbit's additions. Do not improvise the workflow from this file; load the skill.`
+This command is a thin launcher: invoke the \`orbit-continue-change\` skill, passing along any arguments given with the command (e.g., \`/orbit:continue <name>\`). The skill carries the complete workflow instructions — upstream behavior plus orbit's additions. Do not improvise the workflow from this file; load the skill.`
   };
 }

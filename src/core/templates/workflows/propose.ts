@@ -418,6 +418,6 @@ export function getOrbitProposeCommandTemplate(): CommandTemplate {
     tags: ['workflow', 'artifacts', 'experimental'],
     content: `Generate proposal, design, specs, and tasks for a change.
 
-This command is a thin launcher: invoke the \`orbit-propose\` skill, passing along any arguments given with the command (e.g., \`/orbit:propose <name>\`). The skill carries the complete workflow instructions — upstream openspec behavior plus orbit's additions. Do not improvise the workflow from this file; load the skill.`
+This command is a thin launcher: invoke the \`orbit-propose\` skill, passing along any arguments given with the command (e.g., \`/orbit:propose <name>\`). The skill carries the complete workflow instructions — upstream behavior plus orbit's additions. Do not improvise the workflow from this file; load the skill.`
   };
 }

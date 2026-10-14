@@ -54,8 +54,8 @@ disposition`. This requirement replaces each sentence it names and no additions-
 | `ff-change.ts` | the description's "Fast-forward through OpenSpec artifact creation." | "Fast-forward through orbit artifact creation." |
 | `continue-change.ts` | the description's "Continue working on an OpenSpec change" | "Continue working on an orbit change" |
 
-Named limit (the source scan). Residual kind: user-visible text that is not a literal `OpenSpec` in a shipped file: a string assembled from parts, output of a dependency, or lowercase prose "openspec" (the scan matches the product-name forms `OpenSpec`/`Openspec`; lowercase is overwhelmingly the protected paths, tags and identifiers)
-Residual method: the runtime check (`orbit init` in a scratch dir, `--help` for every command) asserting stdout free of the word in any case outside the admitted identifiers (the `OPENSPEC_CONCURRENCY` env var named in `validate --help`, D-cso-5); and a lowercase grep for command-form prose (`openspec <verb>`), which returned nothing on 2026-10-14
+Named limit (the source scan). Residual kind: user-visible text that is not a literal `OpenSpec` in a shipped file: a string assembled from parts, output of a dependency, or lowercase prose "openspec" (the scan matches the product-name forms `OpenSpec`/`Openspec`; lowercase is overwhelmingly the protected paths, tags and identifiers). One lowercase occurrence is known and kept: the skill templates' `metadata.author: 'openspec'`, which every generated SKILL.md's frontmatter carries as provenance and no code reads
+Residual method: the runtime check (`orbit init` in a scratch dir, `--help` for every command) asserting stdout free of the word in any case outside the admitted identifiers (the `OPENSPEC_CONCURRENCY` env var named in `validate --help`, D-cso-5); and a lowercase grep for command-form prose (`openspec <verb>`), which on 2026-10-14 matched only a comment in `src/core/project-config.ts`, which no user reads
 The runtime check reads only the commands it runs. A message on a branch that neither `init` nor `--help` reaches
 is held by the source scan alone.
 

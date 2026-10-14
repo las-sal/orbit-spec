@@ -110,6 +110,9 @@ import { generateSkillContent } from '../../../src/core/shared/skill-generation.
 // cli-says-orbit apply (2026-10-14), a PLANNED move (its task 3.3): the named edits of `orbit-cli-name` say orbit
 // for OpenSpec in the explore, apply (skill and command), new, ff and continue bodies (D-cso-1). Six function
 // hashes and five generated-skill hashes moved; review is not pinned, and no other pin did.
+// cli-says-orbit system walk (2026-10-14, fresh S1, Sal: C): every thin launcher's shared sentence says "upstream
+// behavior plus orbit's additions" for "upstream openspec behavior …". Ten command-template function hashes moved
+// (apply, archive, bulk-archive, continue, explore, ff, new, propose, sync, verify); no generated-skill hash did.
 const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   getExploreSkillTemplate: 'c706c4cac599762cf4aa4f9f0c4718f7e537214c51582138d00ad8b9f9d10335',
   getNewChangeSkillTemplate: '2dc7266b88a623d980ef0129a96fa02d7de8f8191f6900d01dc4f598e8c1dcf4',
@@ -129,11 +132,11 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // printing orbit's own version and states the upstream engine baseline 1.3.1 apart from it (design D6), because
   // `--version` prints 2.0.0 from this stage on. One re-record, both onboard hashes.
   getOnboardSkillTemplate: '706e76f0cd39fb0fc4cdcf8cf0c1a36b03fc6fcab8bd1b63524fddb6f6150bad',
-  getOrbitExploreCommandTemplate: '52892dbd4b5eb72264dc6eb54f8126a09fc903adc1c1654c58e0650df609bfb6',
-  getOrbitNewCommandTemplate: '47d97305a2d3abca6eafa8f7ed5fe13fb83ea8ca0b71f007975b217135f5f5aa',
-  getOrbitContinueCommandTemplate: 'e1ecd4fffee224e284453be717226824c7567041d7c1676b6b6bca4727e3a9dd',
-  getOrbitApplyCommandTemplate: 'b54e359f28e70c11a78a09aaf33a600259e10a2d42c1a121fe884d710a32022b',
-  getOrbitFfCommandTemplate: '57607811009ca5ece844affae130fa47efc8e64f2c14c181113f581c81978405',
+  getOrbitExploreCommandTemplate: 'ca4bdbd66993b629a5d234d2166efc1681b69da7e7e5665c1926b8e8ab154dda',
+  getOrbitNewCommandTemplate: '18edaa0b230e31b5d55952d6b6328237c0ac7b6c85c23d44e5aa3e024a29aaba',
+  getOrbitContinueCommandTemplate: '19b561b34b9e9946e6babd7faa74169efca692190dc5d036d2d5044aed0e5d16',
+  getOrbitApplyCommandTemplate: 'f5fc0338e5705f0f614c48c7ca9bb84c27c49782820e457bdc29be4f5903b74c',
+  getOrbitFfCommandTemplate: '9dd1e0c82c3c2b15f77aa70761e19abf988dabc884ed6bcad872332eb31bed2a',
   // rc10-apply-closure (2026-10-11, task 2.8) — archive and bulk archive moved DELIBERATELY, one act:
   // archive's upstream Step 3 count excludes `(User-validation` tasks (a named edit), the new Step 3.2
   // carries the DEFERRAL REFUSALS production as a checked mirror, Step 3.4 reads every reviewed gate,
@@ -147,7 +150,7 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // four hashes moved; no other pin did.
   getArchiveChangeSkillTemplate: 'b75f7c0265910b4f62018a39ca67077e16576f44cd6c17ef1f48daac4e378212',
   getBulkArchiveChangeSkillTemplate: 'a428418830dc7de9f65cdd60f8b3ffbde6a020697f10f3eaa0ea122a27e34668',
-  getOrbitSyncCommandTemplate: '1067039e869d8dedf7922da46230b53a88253cf3fe27c7a5d60c96bc9a43453f',
+  getOrbitSyncCommandTemplate: 'b985d0a4d89b0e2cc3c6b6dec2521ef2a9d0df44a8ba9ec92a5495052c94a39c',
   // rc06b-map-readers (2026-10-05) — verify moved DELIBERATELY, the first named edit to an upstream
   // portion under `orbit-conventions`' narrowed `Generated-file disposition`: step 6's test-tracing
   // bullet was replaced IN PLACE by the scenario-map read and its reader table (a checked mirror of
@@ -159,10 +162,10 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // and classifies nothing; the emit paragraph stopped restating the precedence. Upstream portion
   // unchanged by this second move.
   getVerifyChangeSkillTemplate: '5db552e52e096f65444038e783172a98605d8909cc3499fc843bbbbc27e2ffcb',
-  getOrbitArchiveCommandTemplate: '92e3ebad046cbc2a68dfb204cbb3c847498d2cafcdd2065357d744580c05a8fe',
+  getOrbitArchiveCommandTemplate: '5889c3a6269b5c76c85578bf2ce6e6c4152b7536452e5ec1332dd93d3b493665',
   getOrbitOnboardCommandTemplate: '3a3e98c6a01517896dfdccaba4fa4477edea62fd69dc4189df1dd105bbedcc5b',
-  getOrbitBulkArchiveCommandTemplate: '6bc94ce2a406ceb934f461665bdd1e96f5a7149c798172c04f50d83c3630819a',
-  getOrbitVerifyCommandTemplate: 'b98377960f7416452e77f6042ffbb037df4c6461619aebe9b595a6883a752a9a',
+  getOrbitBulkArchiveCommandTemplate: 'bbb9fc75d87fb8339cf4a80ad75189f6d9a8b339c9b4539778e690b1c9043053',
+  getOrbitVerifyCommandTemplate: '8624a54f93f8e562c1f43660b4f410ed012871ceb2461103ebb3bbafce39c931',
   // rc13c (propose-consumes-mechanism, 2026-09-28): the orbit-propose body moved ONCE, deliberately — Step 0
   // (the concluded refuse; live-only naming inference; the Regenerate option's refuse sentence), Step 0a (the
   // six-section mirror), Step 0b (the interpolated entry form; the Mechanism read after the last file write),
@@ -186,7 +189,7 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // Split route's "the rest of the flow runs unchanged", "run" for "re-run" under Declare, and the heading
   // line's "exactly" dropped (the parser reads CommonMark indentation) — one re-record for the walk's edits.
   getOrbitProposeSkillTemplate: '8ba59305744ada15774bedaaed830f880ff0ec6114f80d04f92f880842461802',
-  getOrbitProposeCommandTemplate: 'b91222654d5050d7ae7f2f49b5d6c4b34e65638bd8c5ae3e622550eb1329c168',
+  getOrbitProposeCommandTemplate: '33077b4185c425952edcdf14f4f16f2a0fa9d5961158f3c63534b58cee2576fb',
   getFeedbackSkillTemplate: 'ded61ad85c5050f7bf241870b14bfcdd929f0be68a028c1130fd30a66efbda3b',
   // rc15 (ended-stage-state, 2026-09-29): the orbit-architect body moved ONCE, deliberately — §5 (the
   // ratify / not yet / ended offer; the ended write to `stages_ended`; an ended stage offered nothing; the

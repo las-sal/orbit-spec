@@ -28,6 +28,10 @@ explore.md, D-cso-1 to D-cso-5.
     requirement per `orbit-conventions`' `Generated-file disposition`.
   - Three lines stay. One is in the onboard body, which names upstream OpenSpec as the fork base. Two are in the
     feedback template, which is never generated.
+  - The 13 thin launcher commands said "upstream openspec behavior plus orbit's additions". They are orbit-authored
+    (D14) and now say "upstream behavior plus orbit's additions" (system walk, Sal: C).
+  - The skill templates' `metadata.author: 'openspec'` stays. It is frontmatter provenance that no code reads, and the
+    new requirement's named limit records it.
 - **The schema's description says orbit.** `schemas/spec-driven/schema.yaml` ships, and `orbit schemas` prints
   "Default OpenSpec workflow". The exploration found it by listing package.json's `files`, not by grepping `src/`.
 - **Kept, by R-rda-3's protections:**
