@@ -114,6 +114,11 @@ The proposing AI's reading of the file; no engine record.
   archive next naming a program that has since completed still reads `/orbit:architect <doc>`. That session is
   harmless: it renders the doc's state and offers nothing. This is the time-shifted contract's known shape, accepted
   as it is for explore.
+- **A later prose record hides an earlier command.** Taking the archive next's own alternative, a clean project-wide
+  `/orbit:audit-drift`, records prose (`No project-wide drifts detected. …`), so the idle line falls back to
+  `/orbit:architect <name>` and no longer names the cited doc. Accepted as the same known shape: rung 2's program band,
+  printed above the line, still names the program, and reaching past the newest record for an older command would
+  surface recommendations a later record superseded.
 - **Pinned template hashes move** (`skill-templates-parity`). Expected; apply re-pins them.
 - **Every MODIFIED block carries its scenarios** into the scenario map, and the current validator lists the
   undeclared ones. Apply declares each one, by `@scenario` tag or a ledger entry.
@@ -132,4 +137,4 @@ The proposing AI's reading of the file; no engine record.
 - `test/core/` — the start-surfaces test, the archive next and the pinned strings.
 - `test/commands/` — the idle status cases.
 - `orbit/scenario-ledger.yaml` — declarations for the carried scenarios.
-- `orbit/specs/orbit-architect/spec.md` — the Purpose, edited in place at archive.
+- `orbit/specs/orbit-architect/spec.md` — the Purpose, edited in place at apply (task 6.4); archive has no Purpose edit left.

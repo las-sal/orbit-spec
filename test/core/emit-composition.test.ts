@@ -260,6 +260,10 @@ describe('target resolution and spine composition', () => {
     fs.rmSync(path.join(root, 'orbit/changes/archive'), { recursive: true });
     expect(archiveWith('schema: spec-driven\narchitecture:\n  doc: gone\n  stage: s1\n')).toBe(UNCITED_ARCHIVE_NEXT);
     fs.rmSync(path.join(root, 'orbit/changes/archive'), { recursive: true });
+    // A directory named like the doc is no doc (architecture discovery reads files only).
+    fs.mkdirSync(path.join(root, 'orbit/architecture/dir.md'), { recursive: true });
+    expect(archiveWith('schema: spec-driven\narchitecture:\n  doc: dir\n  stage: s1\n')).toBe(UNCITED_ARCHIVE_NEXT);
+    fs.rmSync(path.join(root, 'orbit/changes/archive'), { recursive: true });
     expect(archiveWith('schema: [unclosed\n')).toBe(UNCITED_ARCHIVE_NEXT);
     fs.rmSync(path.join(root, 'orbit/changes/archive'), { recursive: true });
     expect(archiveWith(null)).toBe(UNCITED_ARCHIVE_NEXT);

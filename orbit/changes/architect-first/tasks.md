@@ -32,5 +32,5 @@
 - [x] 6.1 Run D-af-4's residual method: grep the generated bodies and the CLI's user-visible strings for "start", "begin", "first change", "new work", "entry" and "create", classify each hit against the start-surfaces table, and fix or record any surface it finds
 - [x] 6.2 Declare every scenario of the carried blocks (`@scenario` tags or `orbit/scenario-ledger.yaml` entries) so the scenario map reports none undeclared
 - [x] 6.3 Full `npm test` and `orbit validate architect-first --strict` green
-- [x] 6.4 At archive, edit `orbit-architect`'s Purpose in place to the architect-first stance: architect first and returning to architect, never required
+- [x] 6.4 Edit `orbit-architect`'s Purpose in place (made at apply; archive has no Purpose edit left) to the architect-first stance: architect first and returning to architect, never required
 - [ ] 6.5 (User-validation) In a scratch directory, run `orbit init` and then bare `orbit status`: both name `/orbit:architect <name>` as where to start

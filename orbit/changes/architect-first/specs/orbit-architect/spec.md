@@ -20,7 +20,7 @@ Every orbit surface that suggests where NEW work starts SHALL name `/orbit:archi
 A strict surface is checked by a test that fails when it names another start. A prose surface may
 describe explore, after architect and never as the default. Named limit: the table is the
 set a sweep of the command names found. Residual kind: a surface that steers new work to explore or new without naming either command (e.g. "start by thinking it through").
-Residual method: grep the generated bodies and the CLI's user-visible strings for "start", "begin", "first change", "new work", "entry" and "create" at apply, and classify each hit against this table. Known residual instance: the
+Residual method: whenever a change adds or edits a user-visible start string, grep the generated bodies and the CLI's user-visible strings for "start", "begin", "first change", "new work", "entry" and "create", and classify each hit against this table; it first ran at architect-first's apply. Known residual instance: the
 bulk-archive body's no-changes output (`No active changes found. Create a new change to get started.`)
 lies in the upstream portion of an orbit-modified body, which changes only through a named edit
 (`orbit-conventions`' `Generated-file disposition`); it is recorded here, not edited.

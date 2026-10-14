@@ -1836,7 +1836,14 @@ export function archiveNextRecommended(projectRoot: string, archivedDir: string)
   } catch {
     return uncited;
   }
-  if (!citation || !fs.existsSync(path.join(projectRoot, 'orbit', 'architecture', `${citation.doc}.md`))) {
+  // A FILE, as architecture discovery reads it — a directory named `<doc>.md` is no doc.
+  let isDoc = false;
+  try {
+    isDoc = !!citation && fs.statSync(path.join(projectRoot, 'orbit', 'architecture', `${citation.doc}.md`)).isFile();
+  } catch {
+    isDoc = false;
+  }
+  if (!citation || !isDoc) {
     return uncited;
   }
   return `/orbit:architect ${citation.doc} — change archived; review stage ${citation.stage} and take up the program's next stage, or run /orbit:audit-drift for a project-wide drift check.`;

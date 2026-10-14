@@ -114,6 +114,8 @@ import { fileURLToPath } from "node:url";
  * only — archive's `next_recommended` is composed from the archived change's `architecture:` citation
  * (`archiveNextRecommended`, read through the change-metadata schema) instead of a constant. Every other hash
  * here is unchanged.
+ * MOVED AGAIN at architect-first's system walk (2026-10-14): `emit-composition.ts` only — the cited doc must be a
+ * FILE (`statSync().isFile()`), as architecture discovery reads it (external S1).
  */
 const PINNED: Record<string, string> = {
   "schemas/spec-driven/schema.yaml": "21e0ae86532a39be558a2b81d23738a6fbf92fbd32b0d01612a65e83d6a96739",
@@ -132,7 +134,7 @@ const PINNED: Record<string, string> = {
   "src/core/artifact-graph/state.ts": "f59f748b94cd94ca2fe022ec5aa66b3251dd1b2c00bddb9a17cbd9273a04d0f2",
   "src/core/artifact-graph/trail.ts": "39b5d110ef53b7e03f49ddf292e86db598a14f426a02e6d84142e16231e37d69",
   "src/core/artifact-graph/types.ts": "d83e0cc6d7fca7b80618ffbb7ce052ee68e35be79e7949a941e989b2e102392c",
-  "src/core/emit-composition.ts": "14e8a93867a942ae543e803494664f4633792617a6327648d717b2b889290f4e",
+  "src/core/emit-composition.ts": "325357b3cfb9c53f042111475f771cceac237c240df4d5ef5fe60880a1b9e960",
   "src/core/report-render.ts": "d759878995ed8b5e5c70fb1165d88d134f0aeb91acfce99d155654d1506b9f36",
 };
 
