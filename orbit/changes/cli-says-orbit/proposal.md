@@ -38,8 +38,9 @@ explore.md, D-cso-1 to D-cso-5.
     in `validate --help` and keeps its name.
 - **A test holds it.** A new capability, `orbit-cli-name`, states that the old name appears in what the package
   ships only for an admitted reason. Two checks enforce it (D-cso-2):
-  - A source scan over the string literals of `src/` and the shipped `schemas/`, `bin/` and `scripts/postinstall.js`,
-    against an exact admitted list.
+  - A source scan over the string literals of `src/`, the shipped `schemas/`, `bin/` and `scripts/postinstall.js`,
+    and `build.js`, which a git install runs, against an exact admitted list. Each entry admits only the occurrence
+    inside its substring.
   - A runtime check: every command's help, read from the CLI's builder, and `orbit init` in a scratch project.
   `test/cli-e2e/basic.test.ts`'s three "OpenSpec Setup Complete" asserts become orbit's.
 
@@ -67,8 +68,11 @@ leaves it true and it is not carried.
 
 - `src/`: about 20 files of string edits. One new test file and its admitted list under `test/`.
 - `schemas/spec-driven/schema.yaml`: one description line.
-- Tests that quote old strings follow: `test/cli-e2e/basic.test.ts`, `test/core/{archive,list,update}.test.ts`, and
-  `test/core/completions/installers/{bash,zsh}-installer.test.ts`. The hash pins in
+- `build.js`: the "Building OpenSpec..." banner that a git install prints when it runs `prepare`.
+- `CLAUDE.md`: line 17 no longer lists branding prose as kept.
+- Tests that quote old strings follow: `test/cli-e2e/basic.test.ts`, `test/core/{archive,list,update}.test.ts`,
+  `test/core/legacy-cleanup.test.ts`, `test/commands/{config,feedback}.test.ts`,
+  `test/core/completions/installers/{bash,zsh}-installer.test.ts` and the three generator tests' header asserts. The hash pins in
   `test/core/templates/skill-templates-parity.test.ts` move for the edited bodies.
 - The generated `.claude/` surface refreshes with `orbit update --force`. Adopters see the new descriptions on
   their next `orbit update`.

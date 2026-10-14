@@ -31,7 +31,8 @@ lines with "OpenSpec".
 ## Decisions
 
 **1. The renamed strings.** These are the source-scan rows the exploration classified as rename. The house style is
-lower-case `orbit`, even at the start of a line, as the README writes it.
+lower-case `orbit`, even at the start of a line, as the README writes it. Headings are the exception: they are title
+case, as the bodies' existing `# Orbit additions` sections are, so explore's heading becomes `## Orbit Awareness`.
 
 | where | today | becomes |
 |---|---|---|
@@ -49,6 +50,7 @@ lower-case `orbit`, even at the start of a line, as the README writes it.
 | `src/commands/feedback.ts` | Submitted via OpenSpec CLI | Submitted via the orbit CLI |
 | `src/core/legacy-cleanup.ts` | Upgrading to the new OpenSpec / OpenSpec now uses agent skills … / included in every OpenSpec request | Upgrading to orbit / orbit uses agent skills … / included in every orbit request |
 | `schemas/spec-driven/schema.yaml` | Default OpenSpec workflow - … | Default orbit workflow - … |
+| `build.js` (run by `prepare` in a git install) | 🔨 Building OpenSpec... | 🔨 Building orbit... |
 | the six templates | per the requirement's named-edit table, and `review.ts`' four "an OpenSpec change" | "an orbit change" |
 
 The registry keeps its "(deprecated)" suffix on `change`. `orbit-cli-grammar`'s registry check does not compare
@@ -58,19 +60,22 @@ descriptions (prose), and syncing the suffix is outside this change.
 file. The scan reads `StringLiteral`, `NoSubstitutionTemplateLiteral` and the head and spans of a
 `TemplateExpression`, and maps each line of their text back to its source line. A line grep cannot tell a comment
 from a markdown `*` bullet inside a template body; the exploration's first count lost `explore.ts:76` that way. The
-non-TS shipped files (`schemas/`, `bin/`, `scripts/postinstall.js`) are read line by line, since everything in them
-can reach a user. The pattern is case-sensitive `OpenSpec|Openspec`. Lowercase `openspec` is overwhelmingly the
+non-TS files (`schemas/`, `bin/`, `scripts/postinstall.js`, and `build.js`, which a git install runs) are read line
+by line, since everything in them can reach a user. npm always ships `README.md`, `LICENSE` and `package.json`.
+The scan does not read them, and the requirement's table says who holds each: the docs residue check, the MIT notice
+and the fork-base description. The pattern is case-sensitive `OpenSpec|Openspec`. Lowercase `openspec` is overwhelmingly the
 protected names, and the runtime check catches the rest (the named limit).
 
 **3. The admitted list is exact, keyed by file and line substring, with a reason from a closed set.** Today it has
-five entries:
+six entries, admitting seven occurrences:
 - `legacy-cleanup.ts`, three entries: "Removed OpenSpec markers", "removing OpenSpec markers" and "OpenSpec markers
   will be removed". Reason: OpenSpec's own artefact.
 - `init.ts`, "an OpenSpec project directory". Reason: OpenSpec's own artefact (R-ugd-11's warning).
 - `onboard.ts`, "upstream OpenSpec". Reason: the fork base.
 - `feedback.ts` (template), "feedback about OpenSpec". Reason: never generated; it admits both lines.
 
-An entry that admits nothing fails as stale, as the docs' pending-rewrite list does. This keeps the list from
+An entry admits only the occurrences inside a match of its substring, so a second
+`OpenSpec` on the same line is still residue (the external pass's same-line case). An entry that admits nothing fails as stale, as the docs' pending-rewrite list does. This keeps the list from
 carrying admissions for strings that have already gone.
 
 **4. The runtime check reads help from the builder and `init` from the e2e harness.** Help:
@@ -141,7 +146,9 @@ The proposing AI's reading of the file; no engine record.
 - `src/core/legacy-cleanup.ts` — the upgrade banner.
 - `src/core/templates/workflows/*.ts` — the six templates' sentences.
 - `schemas/spec-driven/schema.yaml` — the description.
+- `build.js` — the build banner a git install prints.
 - `test/helpers/cli-name.ts` + `test/core/cli-name.test.ts` — the scan, the admitted list, the runtime help check.
 - `test/cli-e2e/basic.test.ts` — the init asserts.
 - `test/core/` — the error, installer and pinned-hash tests that quote old strings.
 - `orbit/specs/orbit-review/spec.md` — the Purpose, edited in place at apply.
+- `CLAUDE.md` — line 17's Tier-C list, which still keeps branding prose.

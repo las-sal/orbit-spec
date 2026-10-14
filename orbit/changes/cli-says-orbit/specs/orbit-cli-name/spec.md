@@ -2,19 +2,23 @@
 
 ### Requirement: The old name appears in what the package ships only for an admitted reason
 
-In every file the package ships, every occurrence of `OpenSpec` or `Openspec` that a user can read SHALL be RESIDUE,
-and fail the suite naming the file, the line and the occurrence, unless an entry of the exact admitted list admits it.
-The files the package ships are those under package.json's `files`. What a user can read in each is:
+In every file the package ships or its install runs, every occurrence of `OpenSpec` or `Openspec` a user can read SHALL
+be RESIDUE, and fail the suite naming the file, the line and the occurrence, unless an entry of the exact admitted list
+admits it. The files are those under package.json's `files`, the three npm ships whatever `files` says, and the
+build script a git install runs. What a user can read in each is:
 
 | member | covered by |
 |---|---|
 | `src/**/*.ts`, which builds to `dist/` | the source scan, over the text of every string literal, no-substitution template and template part; comments and identifiers are not read |
 | `schemas/**` | the source scan, over every line |
 | `bin/**` and `scripts/postinstall.js` | the source scan, over every line |
+| `README.md`, `LICENSE` and `package.json`, which npm ships whatever `files` says | not read by this scan: `README.md` is held by `orbit-user-docs`' residue check; `LICENSE` carries the upstream copyright notice the MIT license requires; `package.json`'s description names the fork base as `@fission-ai/openspec@1.3.1`, which the case-sensitive pattern does not match |
+| `build.js`, not shipped, which `prepare` runs during the documented git install, where its console output reaches the user | the source scan, over every line |
 | the `dist/` test files, maps and `__tests__` that `files` excludes | not shipped, not read |
 
 The admitted list SHALL be exact. Each entry names a file, a substring of the admitted occurrence's line and a reason
-from this closed set, and an entry that admits no occurrence fails the suite as stale:
+from this closed set. An entry admits only the occurrences that lie inside a match of its substring, so another
+occurrence on the same line stays residue. An entry that admits no occurrence fails the suite as stale:
 
 | reason | admits |
 |---|---|
@@ -74,6 +78,11 @@ is held by the source scan alone.
 
 - **WHEN** an admitted entry names `src/core/legacy-cleanup.ts`, the substring "OpenSpec markers will be removed" and the reason "names OpenSpec's own artefact", and a second entry admits no occurrence
 - **THEN** the source scan passes the first occurrence and fails on the second entry as stale
+
+#### Scenario: An admission covers only the occurrence inside its substring
+
+- **WHEN** a string literal reads "Removed OpenSpec markers. Welcome to OpenSpec" and an admitted entry names that file and the substring "Removed OpenSpec markers"
+- **THEN** the source scan passes the first occurrence and fails on the second, naming the file, the line and the occurrence
 
 #### Scenario: orbit init prints orbit
 
