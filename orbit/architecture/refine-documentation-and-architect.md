@@ -118,6 +118,20 @@ adds to issue #24. Depends on the first two so the docs describe what the CLI do
 Exit criteria: G1's docs half and G3 hold under the `orbit-user-docs` checks; Sal has reviewed the pages; the change
 is archived.
 
+Shipped as (2026-10-15; archived as `orbit/changes/archive/2026-10-15-docs-refinement/`; the charter stands, narrowed
+at explore by measurement): the user docs lead with `/orbit:architect`. README's first-change list and
+getting-started open with an architect session (getting-started's new step 0) and close with one that ratifies the
+stage (step 8). workflows' flow block, "Step by step", "Exploring first" and Practices name architect first,
+workflow-engine's diagram starts at `architect ──►`, and concepts' `## Artifacts` places explore after architect. The
+two reference tables list `/orbit:architect` first. `/orbit:explore` alone stays the one-off path, which stops at
+archive. The system walks added that the exploration is what records the stage citation, and that a `/orbit:new`
+change carries none unless `architecture: {doc, stage}` is added to its `.openspec.yaml`. `orbit-user-docs` gains
+`The user docs' start sections name the architect workflow first`: eight (page, heading) sections, held exactly, in
+each of which the first start command must be architect (a `/orbit:<id>` mention, or a fenced `<id> ──►`). The check
+joins the file-local set, and `orbit-architect`'s user-docs row is now checked prose. The re-capture item needed no
+edit: the docs quote no output either prior stage changed (D-dr-3, measured), and issue #24 §3 added no clean-up.
+Task 5.1, Sal reading the pages, was deferred at archive.
+
 ### Stage release — v2.0.1
 
 Depends-on: architect-first, cli-says-orbit, docs-refinement
