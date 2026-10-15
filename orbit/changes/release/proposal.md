@@ -16,7 +16,8 @@ every release after it (see explore.md, D-rel-1 and D-rel-2).
 - A new user-docs check: every version token in the user docs equals `package.json`'s version, or is on an exact
   admitted list naming why it is not orbit's current version (D-rel-1). It joins the file-local set.
 - Not in this change (D-rel-3, D-rel-5): cutting the tag. After archive and merge, `npm run release:tree` runs on
-  `main`'s merge commit, Sal pushes `v2.0.1` by name, and the install is observed at ratification. Sal closes issue #24
+  `main`'s merge commit, Sal pushes `v2.0.1` by name, and the install is observed at ratification (it is rehearsed at
+  apply from a scratch clone carrying a local tag, design D4). Sal closes issue #24
   at ratification. `scripts/release-tree.mjs` and `orbit-release` are unchanged.
 
 ## Capabilities

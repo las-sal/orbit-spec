@@ -43,6 +43,11 @@ describe('the version check', () => {
       "docs/cli.md:4: install target 'v2.0.0' is not package.json's version 2.0.1; no admission applies to an install target (the version check)",
     ]);
     expect(versionFailures([doc('docs/cli.md', `# CLI\n\n${install(VERSION)}\n`)], VERSION)).toEqual([]);
+    // The whole ref is read: a suffix after the current version is not the current target.
+    const target = (ref: string) => `docs/cli.md:1: install target '${ref}' is not package.json's version 2.0.1; no admission applies to an install target (the version check)`;
+    for (const ref of ['v2.0.1-rc.1', 'v2.0.1-missing', 'v2.0.1x', 'v2.0.1.5']) {
+      expect(versionFailures([doc('docs/cli.md', `${install(ref.slice(1))}\n`)], VERSION)).toEqual([target(ref)]);
+    }
   });
 
   // @scenario behaviour orbit-user-docs :: The user docs state orbit's current version as package.json's :: A stale version in prose fails, sentence-ending period and all
@@ -104,10 +109,16 @@ describe('the version check', () => {
     expect(versionFailures([doc('README.md', '# orbit\n')], VERSION)).toEqual([
       'README.md: carries no install command `npm install -g github:las-sal/orbit-spec#v2.0.1` (the version check)',
     ]);
-    // A longer version does not stand in for the current one.
-    expect(versionFailures([doc('README.md', `${install('2.0.10')}\n`)], VERSION)).toContain(
-      'README.md: carries no install command `npm install -g github:las-sal/orbit-spec#v2.0.1` (the version check)',
-    );
+    // A longer or suffixed version does not stand in for the current one.
+    for (const v of ['2.0.10', '2.0.1-rc.1', '2.0.1-missing']) {
+      expect(versionFailures([doc('README.md', `${install(v)}\n`)], VERSION)).toContain(
+        'README.md: carries no install command `npm install -g github:las-sal/orbit-spec#v2.0.1` (the version check)',
+      );
+    }
+    // A command that ends a sentence is still the command.
+    expect(versionFailures([doc('README.md', `Run ${install(VERSION)}.\n`)], VERSION)).toEqual([]);
+    // A placeholder ref names no version and is no install target.
+    expect(versionFailures([doc('docs/cli.md', 'npm install -g github:las-sal/orbit-spec#<tag>\n')], VERSION)).toEqual([]);
     expect(versionFailures([doc('docs/cli.md', '# CLI\n')], VERSION)).toEqual([]);
   });
 

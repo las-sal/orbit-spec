@@ -36,7 +36,9 @@ the real docs. It confirmed the table, and it showed that a rule rejecting a tra
   across lines 14–15): this admits the historical `2.0.0` without admitting `2.0.0` anywhere else (explore.md's
   COHERE move). An install target `github:las-sal/orbit-spec#v<x>` takes no admission at all, so `#v1.3.1` in an
   install command fails even though `1.3.1` is admitted as a value, and the two-page rule asks for the install
-  command itself, not the tag in prose.
+  command itself, not the tag in prose. An install target is read by its WHOLE ref, to the next whitespace, quote,
+  backtick, parenthesis or bracket, a sentence-ending mark not counted: `#v2.0.1-rc.1` is not the current target,
+  and a command that ends a sentence still counts (system walk).
 - **D2 — the check lives with its siblings.** It goes in `test/helpers/user-docs.ts` beside `startSectionFailures`,
   joins `fileLocalFailures` under the tag `version`, and reads the version from `package.json` as
   `test/helpers/surface-snippets.ts` already does. The two-page install-command rule keeps the check from passing
@@ -44,11 +46,17 @@ the real docs. It confirmed the table, and it showed that a rule rejecting a tra
   a file-local run over one page alone would find most admissions stale.
 - **D3 — the CHANGELOG entry** (D-rel-4): `## 2.0.1` above `## 2.0.0`, with three bullets. Where orbit suggests
   starting new work, it names `/orbit:architect` first. The CLI's user-visible strings say orbit, with the kept names
-  listed (`.openspec.yaml`, the data-format tags, the global config directory, the `OPENSPEC_*` variables). The user
+  listed (`.openspec.yaml`, the data-format tags, the global config directory, the `OPENSPEC_*` variables, and the
+  `# OPENSPEC:START` / `# OPENSPEC:END` markers the bash and zsh completion installers write into an rc file). The user
   docs lead with architect. Then a link to issue #24. The docs check is internal and is left out.
 - **D4 — the order** (D-rel-3): this change, then review, merge and archive. Then `npm run release:tree` runs on `main`
   at the merge commit, Sal pushes `git push origin v2.0.1`, and an install from the tag is observed (`orbit --version`
   prints `2.0.1`, and `orbit init` in a scratch project says orbit) as the stage's G4 evidence at ratification.
+  Before that, at apply, the README's install and Quickstart shell steps are rehearsed in a fresh sandbox, as
+  `orbit-conventions`' `Install documentation describes actual install surface` requires of a change that edits the
+  README's install section: from a scratch clone carrying a local `v2.0.1` cut by `npm run release:tree`, the way
+  landing-page's task 5.2 did for `v2.0.0`. The tag never leaves the clone, and the observation at ratification still
+  installs from the pushed tag.
 
 ### Alternatives considered
 

@@ -527,6 +527,37 @@ export const VERSION_ADMISSIONS: VersionAdmission[] = [
 export const INSTALL_PAGES = ['README.md', 'docs/installation.md'];
 
 const INSTALL_PREFIX = 'github:las-sal/orbit-spec#';
+/**
+ * An install target: a ref `v<digit>…` after the `#`, running to the next whitespace, quote, backtick, parenthesis or
+ * bracket. A placeholder such as `#<tag>` names no version and is no target.
+ */
+const INSTALL_TARGET = /github:las-sal\/orbit-spec#(v\d[^\s`'"()<>[\]]*)/g;
+
+interface InstallTarget {
+  /** The whole ref after the `#`, a sentence-ending punctuation mark not counted. */
+  ref: string;
+  line: number;
+  /** Whether `npm install -g ` stands right before it, making it an install command. */
+  command: boolean;
+  start: number;
+  end: number;
+}
+
+/** Every install target of a text, with its whole ref. */
+function installTargets(text: string): InstallTarget[] {
+  return [...text.matchAll(INSTALL_TARGET)].map((m) => {
+    const ref = m[1].replace(/[.,;:!?]+$/, '');
+    const start = m.index! + m[0].length - m[1].length;
+    return {
+      ref,
+      line: text.slice(0, m.index!).split('\n').length,
+      command: text.slice(Math.max(0, m.index! - 'npm install -g '.length), m.index!) === 'npm install -g ',
+      start,
+      end: start + ref.length,
+    };
+  });
+}
+
 /** A version token: three dot-separated digit runs, optionally `v`-prefixed; a sentence-ending period does not hide it. */
 const VERSION_TOKEN = /(?<![A-Za-z0-9.])v?\d+\.\d+\.\d+(?![A-Za-z0-9]|\.\d)/g;
 
@@ -554,13 +585,14 @@ interface VersionToken {
 /** Every version token of a surface, with its 1-based line and the admissions that admit it. */
 function versionTokens(surface: Surface, admissions: VersionAdmission[]): VersionToken[] {
   const text = surface.text;
+  const targets = installTargets(text);
   const spans = admissions
     .filter((a): a is { file: string; phrase: string } => 'phrase' in a && a.file === surface.file)
     .flatMap((a) => [...text.matchAll(phrasePattern(a.phrase))].map((m) => ({ a, start: m.index!, end: m.index! + m[0].length })));
   return [...text.matchAll(VERSION_TOKEN)].map((m) => {
     const start = m.index!;
     const end = start + m[0].length;
-    const install = text.slice(Math.max(0, start - INSTALL_PREFIX.length), start) === INSTALL_PREFIX;
+    const install = targets.some((t) => t.start <= start && end <= t.end);
     const bare = m[0].replace(/^v/, '');
     const admittedBy = install
       ? []
@@ -573,8 +605,9 @@ function versionTokens(surface: Surface, admissions: VersionAdmission[]): Versio
 }
 
 /**
- * The version check over the given surfaces (file-local): every token is current or admitted, an install target is
- * current whatever the list says, and each of the two install pages it is given carries the current install command.
+ * The version check over the given surfaces (file-local): every token is current or admitted, an install target's
+ * whole ref is `v<version>` whatever the list says, and each of the two install pages it is given carries an install
+ * command whose whole ref is `v<version>`.
  */
 export function versionFailures(
   surfaces: Surface[],
@@ -585,16 +618,20 @@ export function versionFailures(
   const current = (token: string) => token === version || token === `v${version}`;
   for (const surface of surfaces) {
     const where = describeSurface(surface);
+    const targets = installTargets(surface.text);
+    for (const t of targets) {
+      if (t.ref !== `v${version}`) {
+        failures.push(`${where}:${t.line}: install target '${t.ref}' is not package.json's version ${version}; no admission applies to an install target (the version check)`);
+      }
+    }
     for (const t of versionTokens(surface, admissions)) {
-      if (current(t.token)) continue;
-      if (t.install) {
-        failures.push(`${where}:${t.line}: install target '${t.token}' is not package.json's version ${version}; no admission applies to an install target (the version check)`);
-      } else if (t.admittedBy.length === 0) {
+      if (t.install || current(t.token)) continue;
+      if (t.admittedBy.length === 0) {
         failures.push(`${where}:${t.line}: version token '${t.token}' is neither package.json's version ${version} nor admitted (the version check)`);
       }
     }
     const command = `npm install -g ${INSTALL_PREFIX}v${version}`;
-    if (INSTALL_PAGES.includes(surface.file) && !new RegExp(`${command.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![A-Za-z0-9.])`).test(surface.text)) {
+    if (INSTALL_PAGES.includes(surface.file) && !targets.some((t) => t.command && t.ref === `v${version}`)) {
       failures.push(`${where}: carries no install command \`${command}\` (the version check)`);
     }
   }

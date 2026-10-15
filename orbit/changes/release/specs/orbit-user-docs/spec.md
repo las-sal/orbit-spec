@@ -7,7 +7,10 @@ or be ADMITTED by an entry of an exact admitted list held in the test. A VERSION
 digits, optionally prefixed by `v`, neither preceded by a letter, digit or dot nor followed by a letter, a digit or a
 dot that is followed by a digit (a sentence-ending period does not hide a token). A token equal to `v<version>` or
 `<version>` is CURRENT. An INSTALL TARGET — `github:las-sal/orbit-spec#v<x>` — SHALL be current whatever the
-admitted list says: no admission applies to it. A VALUE admission compares the token with any leading `v` removed, so
+admitted list says: no admission applies to it. Its REF is read whole: from the `#`, a `v` and a digit, to the next
+whitespace, quote, backtick, parenthesis or bracket, a sentence-ending punctuation mark not counted; it is current
+only when the whole ref is `v<version>`, so `#v2.0.1-rc.1` is not the current target at `2.0.1`, and a placeholder
+such as `#<tag>` is no install target. A VALUE admission compares the token with any leading `v` removed, so
 `1.3.1` admits `v1.3.1`. A PHRASE admission matches the file's text read with each line break, and the indentation
 after it, as one space, so a phrase the page wraps still matches; each token it admits is still reported at its own
 line. The list is exact, by this table, which is the measurement of 2026-10-15: a grep for the token
@@ -26,7 +29,7 @@ over `README.md` and `docs/*.md`, every hit classified:
 
 The check fails the suite, naming the file, the line, the token and `package.json`'s version, when a token is neither
 current nor admitted. It fails naming the page when `README.md` or `docs/installation.md` carries no install command
-`npm install -g github:las-sal/orbit-spec#v<version>`, so dropping every install command never passes empty, and
+`npm install -g github:las-sal/orbit-spec#v<version>` whose ref, read whole, is `v<version>`, so dropping every install command never passes empty, and
 a current tag named in prose never stands in for one. Both rules are file-local: run over one doc alone, the check reports that doc's
 tokens, and the install-command rule applies to the page it reads when that page is one of the two. The list's exactness is a
 WHOLE-DOCS rule, run over the unlisted user docs together and never over one listed file: it fails naming the entry
