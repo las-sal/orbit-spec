@@ -1,0 +1,84 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-15T16:32:08Z",
+  "change": "docs-refinement",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    }
+  },
+  "findings": [],
+  "stale_suppressed": [],
+  "commentary": "Graded the two system walks entry by entry over each entry's file, its applied ripples and its sweep scope, then listed the files changed since the external return's commit: README.md, docs/getting-started.md, docs/workflows.md, start-sections.test.ts and user-docs.ts, each inside some entry's edit record, so the residual check finds no unrecorded edit.\n\nThe claim most worth probing was the new Step by step sentence, which points readers at a hand-written `architecture: {doc, stage}` key: the change-metadata schema declares the field valid in change metadata (src/core/artifact-graph/types.ts:155-173) and the stage-state reader counts a well-shaped one on an active change (src/core/architecture/state.ts:81-88, 138), so the route the docs name is one the engine reads. Getting-started's step 0 now attributes the citation to the exploration's offer and propose's carry, which matches orbit-explore's body (the offer) and orbit-propose's merge (the staged architecture: field carried forward).\n\nThe level match was shown red under a title-only mutation and the inventory pin red with one member dropped; both test edits keep the scenario tags they carried. One edge the fresh finding named stays as it was and no walk entry claimed it: two headings with the same text and level on one page still resolve to the first. No listed page has such a pair today.\n\nPass 0 (verify-change) and Pass 6 (audit-drift) cover the whole change and the whole project and are not run by a pass that verifies walks; Passes 4 and 5 have no lens files to read.",
+  "passes_run": [
+    "1",
+    "2",
+    "3"
+  ],
+  "passes_skipped": [
+    "0",
+    "4",
+    "5",
+    "6"
+  ],
+  "verification": [
+    {
+      "title": "Getting-started's step 1 says skip explore, but only the exploration records the stage citation step 0 promises",
+      "file": "docs/getting-started.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The start-sections check finds a listed heading by its text alone, not its level",
+      "file": "test/helpers/user-docs.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "README says explore alone starts the change; the other pages say propose starts it",
+      "file": "README.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Explicitly skip stage ratification on the one-off path",
+      "file": "docs/getting-started.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Assert the start-section inventory independently",
+      "file": "test/core/user-docs/start-sections.test.ts",
+      "verdict": "landed"
+    }
+  ],
+  "final_assessment": "No findings.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-10-15T16-26-12Z",
+    "2026-10-15T16-27-35Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "orbit status --change docs-refinement --report"
+}
