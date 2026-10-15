@@ -1,0 +1,146 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-15T17:08:18Z",
+  "change": "release",
+  "kind": "editorial",
+  "model": null,
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/release/.orbit-runs/review-proposal-2026-10-15T17-07-31Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-15T17-07-31Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 2
+  },
+  "pushback_verification": "All three verified at e39797e5+pass commit: spec.md:71's WHEN said 'carries no `#v<version>` install pin'; design.md:75 said 'admit a stale `20.19.0` pin'; spec.md:59's THEN carried 'each reported at its own line when it fails'. None stale.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The last scenario still asks for a `#v<version>` pin, not the install command the rule now requires",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/release/specs/orbit-user-docs/spec.md",
+      "line": 71,
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "action": "Retitled the scenario 'A page without its install command fails'. Its WHEN is now: no install command `npm install -g github:las-sal/orbit-spec#v<version>`, with the current `#v<version>` named only in prose.",
+      "sweep": {
+        "retired": [
+          "A page without its install pin fails",
+          "carries no `#v<version>` install pin"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/release/specs/orbit-user-docs/spec.md",
+            "text": "A page without its install command fails"
+          }
+        ],
+        "searched": [
+          "install pin",
+          "#v<version>"
+        ],
+        "scope": [
+          "orbit/changes/release/tasks.md",
+          "orbit/changes/release/design.md"
+        ],
+        "kept": []
+      },
+      "ripple_miss_of": {
+        "walk": "2026-10-15T17-06-20Z",
+        "title": "Value admissions and a tag-only presence check can accept a wrong install pin",
+        "file": "orbit/changes/release/specs/orbit-user-docs/spec.md",
+        "kind": "judgement"
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Risks' 20.19.0 collision line predates the rule that install targets take no admission",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/release/design.md",
+      "line": 75,
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "action": "The Risks line now reads 'admit a stale `20.19.0` stated in prose (an install target takes no admission, so a `#v20.19.0` pin still fails)'.",
+      "sweep": {
+        "retired": [
+          "admit a stale `20.19.0` pin."
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/release/design.md",
+            "text": "admit a stale `20.19.0` stated in prose"
+          }
+        ],
+        "searched": [
+          "20.19.0"
+        ],
+        "scope": [
+          "orbit/changes/release/specs/orbit-user-docs/spec.md"
+        ],
+        "kept": []
+      },
+      "ripple_miss_of": {
+        "walk": "2026-10-15T17-06-20Z",
+        "title": "Value admissions and a tag-only presence check can accept a wrong install pin",
+        "file": "orbit/changes/release/specs/orbit-user-docs/spec.md",
+        "kind": "query"
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The phrase scenario's 'each reported at its own line when it fails' cannot occur in a scenario where both tokens pass",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/release/specs/orbit-user-docs/spec.md",
+      "line": 59,
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "action": "Dropped 'each reported at its own line when it fails' from the phrase scenario's THEN. The requirement text keeps the per-line report rule.",
+      "sweep": {
+        "retired": [
+          "each reported at its own line when it fails"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/release/specs/orbit-user-docs/spec.md",
+            "text": "both tokens inside the phrase pass, and the other token fails"
+          }
+        ],
+        "searched": [
+          "reported at its own line"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Three of three resolved as repairs. The last scenario now asks for the install command and is retitled. The Risks 20.19.0 line names prose only. The phrase scenario's untestable clause is dropped.",
+  "iteration": 3,
+  "next_recommended": "/orbit:apply release — user-invoked",
+  "ripple_misses": 2
+}

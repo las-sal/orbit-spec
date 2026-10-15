@@ -72,7 +72,7 @@ the real docs. It confirmed the table, and it showed that a rule rejecting a tra
   21.5.0's. → The G4 observation at ratification installs from the pushed tag. The limit stays where `orbit-release`
   states it.
 - **[An admission by value that later collides]** `20.19.0` is a version orbit could in principle reach. → That is far
-  off, and at that point the check would admit a stale `20.19.0` pin. Named here and not engineered against.
+  off, and at that point the check would admit a stale `20.19.0` stated in prose (an install target takes no admission, so a `#v20.19.0` pin still fails). Named here and not engineered against.
 
 ## Touchpoints
 

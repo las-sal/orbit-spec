@@ -50,7 +50,7 @@ when an admitted entry admits no token in them, so a stale admission never linge
 #### Scenario: An admitted phrase admits only its own tokens
 
 - **WHEN** `README.md` carries the admitted phrase "orbit 2.0.0 is orbit's first release, not OpenSpec 2.0.0" wrapped across two lines, as the shipped page wraps it, and, elsewhere, a `2.0.0` outside any admitted phrase
-- **THEN** both tokens inside the phrase pass, each reported at its own line when it fails, and the other token fails
+- **THEN** both tokens inside the phrase pass, and the other token fails
 
 #### Scenario: A wrong install target fails beside current-tag prose
 
@@ -62,9 +62,9 @@ when an admitted entry admits no token in them, so a stale admission never linge
 - **WHEN** an admitted entry admits no token in the user docs
 - **THEN** the suite fails, naming the entry
 
-#### Scenario: A page without its install pin fails
+#### Scenario: A page without its install command fails
 
-- **WHEN** `docs/installation.md` carries no `#v<version>` install pin
+- **WHEN** `docs/installation.md` carries no install command `npm install -g github:las-sal/orbit-spec#v<version>`, and names the current `#v<version>` only in prose
 - **THEN** the suite fails, naming the page
 
 ## MODIFIED Requirements
