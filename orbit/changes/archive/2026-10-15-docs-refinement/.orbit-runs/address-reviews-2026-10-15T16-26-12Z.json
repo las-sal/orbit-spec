@@ -1,0 +1,153 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-15T16:26:12Z",
+  "change": "docs-refinement",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/docs-refinement/.orbit-runs/review-system-2026-10-15T16-09-37Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-15T16-09-37Z",
+  "latest_apply_token": "2026-10-15T15-34-58Z",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 2
+  },
+  "pushback_verification": "All three verified at HEAD: getting-started:37 read \"Skip this step when you already know what you want.\" and only explore offers the architecture: citation (orbit-explore SKILL.md:336-341; propose copies the staged field, orbit new change takes none); user-docs.ts matched `s.title === heading`; README:110 read \"alone starts the change\".",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Getting-started's step 1 says skip explore, but only the exploration records the stage citation step 0 promises",
+      "marker_source": "internal-review",
+      "file": "docs/getting-started.md",
+      "line": 37,
+      "classification": "trivial_fix",
+      "action": "step 0 says the exploration offers to cite the stage and the change propose starts from it carries the citation; step 1's skip sentence keeps the step on a program's stage (the exploration records the citation) and skips it only for a change that serves no stage; workflows' Step by step says a /orbit:new change carries no citation and names the `architecture: {doc, stage}` key to add to its .openspec.yaml (read by src/core/architecture/state.ts:81-88)",
+      "ripple_cascade": {
+        "applied": [
+          "docs/workflows.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "Skip this step when you already know what you want.",
+          "the exploration and change that follow cite it"
+        ],
+        "introduced": [
+          {
+            "path": "docs/getting-started.md",
+            "text": "the exploration is what records the stage citation"
+          },
+          {
+            "path": "docs/workflows.md",
+            "text": "A change created with `/orbit:new` carries no stage citation."
+          }
+        ],
+        "searched": [
+          "cite",
+          "citation",
+          "Skip this step",
+          "Skip it"
+        ],
+        "scope": [
+          "README.md",
+          "docs/concepts.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The start-sections check finds a listed heading by its text alone, not its level",
+      "marker_source": "internal-review",
+      "file": "test/helpers/user-docs.ts",
+      "line": 485,
+      "classification": "trivial_fix",
+      "action": "START_SECTIONS entries carry the heading as the requirement's table writes it (`### Your first change`), atxSections records each section's level, and startSectionFailures matches level and text, so a promoted or demoted heading is reported not found; a demoted-heading fixture case covers it, shown red under a title-only match",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/user-docs/start-sections.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "all.find((s) => s.title === heading)"
+        ],
+        "introduced": [
+          {
+            "path": "test/helpers/user-docs.ts",
+            "text": "{ page: 'README.md', heading: '### Your first change' }"
+          },
+          {
+            "path": "test/core/user-docs/start-sections.test.ts",
+            "text": "at its listed level"
+          }
+        ],
+        "searched": [
+          "START_SECTIONS",
+          "startSectionFailures",
+          "Your first change: heading not found"
+        ],
+        "scope": [
+          "test/core/user-docs/claims.test.ts",
+          "test/core/user-docs/carried-by.test.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "README says explore alone starts the change; the other pages say propose starts it",
+      "marker_source": "internal-review",
+      "file": "README.md",
+      "line": 110,
+      "classification": "trivial_fix",
+      "action": "README's one-off sentence now reads `/orbit:explore <change>` alone is the path, getting-started's wording; the other pages keep `/orbit:propose` as what starts the change",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "alone starts the change"
+        ],
+        "introduced": [
+          {
+            "path": "README.md",
+            "text": "`/orbit:explore <change>` alone is the path."
+          }
+        ],
+        "searched": [
+          "alone starts",
+          "starts the change"
+        ],
+        "scope": [
+          "docs"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "The fresh system pass's three findings resolved: getting-started keeps the exploration on a stage because it records the citation, Step by step names the citation key a /orbit:new change needs, the start-sections check matches each heading at its level, and README's one-off sentence no longer says explore starts the change.",
+  "iteration": 4,
+  "next_recommended": "/orbit:address-reviews docs-refinement",
+  "ripple_misses": 0
+}

@@ -197,10 +197,10 @@ Every orbit surface that suggests where NEW work starts SHALL name `/orbit:archi
 | the welcome screen's quick-start list | strict for its first line | as `orbit update`'s list |
 | this workflow's body (its stance paragraph) | prose | the architect-first canonical flow, and that an architect session is never required |
 | the onboard body (`orbit-onboard`) | prose | architect first; explore described as the one-off path, after architect |
-| the user docs (`orbit-user-docs`) | prose, pending stage `docs-refinement` | as the onboard body, once that stage archives; until then the docs still lead with explore, a named limit |
+| the user docs' start sections (`orbit-user-docs`) | prose, checked | as the onboard body; `orbit-user-docs`' `The user docs' start sections name the architect workflow first` lists the sections and checks that each names `/orbit:architect` before any other start |
 
 A strict surface is checked by a test that fails when it names another start. A prose surface may
-describe explore, after architect and never as the default. Named limit: the table is the
+describe explore, after architect and never as the default; a checked prose surface's test reads that order. Named limit: the table is the
 set a sweep of the command names found. Residual kind: a surface that steers new work to explore or new without naming either command (e.g. "start by thinking it through").
 Residual method: whenever a change adds or edits a user-visible start string, grep the generated bodies and the CLI's user-visible strings for "start", "begin", "first change", "new work", "entry" and "create", and classify each hit against this table; it first ran at architect-first's apply. Known residual instance: the
 bulk-archive body's no-changes output (`No active changes found. Create a new change to get started.`)

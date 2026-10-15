@@ -1,0 +1,108 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-15T15:12:48Z",
+  "change": "docs-refinement",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {},
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "Task 2.3's model clause for Step by step names no `/orbit:architect`, so the check would read `/orbit:new` first",
+      "file": "orbit/changes/docs-refinement/tasks.md",
+      "line": 12,
+      "recommendation": "The walk listed `docs/workflows.md` › `### Step by step` and gave task 2.3 the model clause \"After an architect session declares the work, …\". The start-sections check counts only a `/orbit:<id>` mention or a fenced `<id> ──►` (specs/orbit-user-docs/spec.md:9-11); \"an architect session\" is neither, and the section's next start command is `/orbit:new` (docs/workflows.md:37), so a page written to the model clause fails task 3.1. The red run catches it, so nothing ships wrong, but the task's own example contradicts the requirement it serves. Make the clause name the command: \"After `/orbit:architect <program>` declares the work, …\".",
+      "walk_entry": {
+        "title": "Start-headed passages outside the seven members are left to the catch-all row and to task 4.1's discretion",
+        "file": "orbit/changes/docs-refinement/specs/orbit-user-docs/spec.md"
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "Task 2.2 says to renumber after adding step 0, then fixes the closing step as `### 8.`",
+      "file": "orbit/changes/docs-refinement/tasks.md",
+      "line": 11,
+      "recommendation": "getting-started numbers its steps `### 1. Explore` … `### 7. Archive` (docs/getting-started.md:15-103). Task 2.2 adds \"step 0\", says \"renumber\", and the walk added \"a closing step after Archive (`### 8. Ratify the stage`\" (design.md's new decision repeats `### 8.`). With step 0 kept as `### 0.`, no renumber is needed and the closing step is 8; if \"renumber\" shifts the existing steps up, Archive becomes 8 and the closing step 9. Drop \"renumber\" from task 2.2 (step 0 is `### 0. Architect`, the existing steps keep their numbers), so the task and design.md agree on `### 8.`.",
+      "walk_entry": {
+        "title": "The walks start at architect but never return to it: no task carries the ratify step the onboard model ends with",
+        "file": "orbit/changes/docs-refinement/tasks.md"
+      }
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Verified the fresh-pass walk entry by entry over its sweep scopes (the change's four artifacts, docs/workflows.md, docs/commands.md, docs/getting-started.md, docs/workflow-engine.md, docs/concepts.md, README.md, the onboard skill and the orbit-architect baseline). F3-F6 landed as written: the whole-word fence form is in the spec and task 1.1, task 2.4 names the diagram form and today's loop already spans propose to archive, and orbit-architect is a real capability for the Carried by line. Both decision entries landed their substance, the eighth member and the closing ratify step, and each left one wording seam in the tasks: a model clause the check cannot see, and a step number that depends on whether \"renumber\" shifts the walk. The external log's two stale entries name the fresh log correctly. The residual diff from the fresh pass's commit touches only files in the walk's edit record, and strict validate stays clean apart from the four undeclared new scenarios apply tags.",
+  "passes_run": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "passes_skipped": [],
+  "verification": [
+    {
+      "title": "Start-headed passages outside the seven members are left to the catch-all row and to task 4.1's discretion",
+      "file": "orbit/changes/docs-refinement/specs/orbit-user-docs/spec.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "The walks start at architect but never return to it: no task carries the ratify step the onboard model ends with",
+      "file": "orbit/changes/docs-refinement/tasks.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "getting-started's intro counts \"the six commands of a first change\", which task 2.1 makes seven",
+      "file": "docs/getting-started.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The fenced `<id> ──►` form does not say the id is a whole word",
+      "file": "orbit/changes/docs-refinement/specs/orbit-user-docs/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Starting the workflow-engine diagram at architect sits against its section's \"each workflow is an action on [a change]\"",
+      "file": "orbit/changes/docs-refinement/tasks.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "concepts `## Artifacts`' new architect sentence has no owner on its Carried by line",
+      "file": "orbit/changes/docs-refinement/tasks.md",
+      "verdict": "landed"
+    }
+  ],
+  "final_assessment": "0 critical, 0 warning, 2 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-10-15T15-10-56Z",
+    "2026-10-15T15-11-07Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews docs-refinement"
+}

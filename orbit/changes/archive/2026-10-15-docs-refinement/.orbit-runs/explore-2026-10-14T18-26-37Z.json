@@ -1,0 +1,25 @@
+{
+  "command": "explore",
+  "timestamp": "2026-10-14T18:26:37Z",
+  "change": "docs-refinement",
+  "kind": "workflow",
+  "model": null,
+  "final_assessment": "Six decisions, all Sal-settled or measured: getting-started opens with a step-0 architect session (D-dr-1); scope is the architect-first docs, their check and the re-capture probe, with issue #24 section 3 adding nothing (D-dr-2); the docs quote no CLI output either prior stage changed, so re-capture needs no edit (D-dr-3, fact); a declared (page, heading) start-section list in a new orbit-user-docs requirement holds architect-first order (D-dr-4, rule; Mechanism entry BOUNDED, residual = an unlisted start passage, found by orbit-architect's residual grep); the two reference tables reorder architect-first, unchecked (D-dr-5); workflow-engine.md's diagram and concepts.md's exploration paragraph join the reach (D-dr-6). No open questions. Propose must also restate orbit-architect's user-docs row (pending stage docs-refinement), carrying its two scenarios.",
+  "decisions_captured": 6,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 1,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [
+    {
+      "id": "D-dr-4",
+      "kind": "a passage that suggests where new work starts under a heading the list does not name, or one that steers to explore without naming a command",
+      "method": "`orbit-architect`'s residual grep (\"start\", \"begin\", \"first change\", \"new work\", \"entry\", \"create\") run over README.md and docs/ whenever a change edits a user doc, each hit classified against this table"
+    }
+  ],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose docs-refinement — 1 live rule accounted, 1 bounded residual named (D-dr-4); formalize when you are ready (or /orbit:explore docs-refinement to keep refining)"
+}

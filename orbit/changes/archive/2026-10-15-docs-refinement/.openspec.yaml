@@ -1,0 +1,11 @@
+schema: spec-driven
+created: 2026-10-14
+schema_version: 5
+base_fingerprints:
+  orbit-architect:
+    Start surfaces name the architect workflow first: sha256:9b0af7d3705296a7def43c313a10a8b8c491ddebe86c21e6169ed1a9fb6e2810
+  orbit-user-docs:
+    The user docs are a checked surface, gated by an exact pending-rewrite list: sha256:feae48d3016d5784df348665b634ca4a0af7d2d7a9f05f0a2a14f92f8093d3eb
+architecture:
+  doc: refine-documentation-and-architect
+  stage: docs-refinement

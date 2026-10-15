@@ -9,6 +9,8 @@ import { DOCS_WORKFLOW, allDocSurfaces, docSurfaces, readPendingRewrite, type Su
 import { claimsFailures, fileLocalFailures, pendingListFailures } from '../../helpers/user-docs.js';
 
 const FENCE = '```';
+/** The README start section the start-sections check reads, so a fixture README passes that check. */
+const STARTS = '\n\n## Quickstart\n\n### Your first change\n\nRun `/orbit:architect <program>`.';
 const readme = (body: string): Surface => ({
   workflowId: DOCS_WORKFLOW,
   file: 'README.md',
@@ -109,12 +111,12 @@ describe('the improvement-claims check', () => {
     expect(docSurfaces(pending).some((s) => s.file === 'README.md')).toBe(false);
     expect((await fileLocalFailures(docSurfaces(pending))).filter((f) => f.startsWith('[claims]'))).toEqual([]);
 
-    const finished = readme('- Gates (`orbit-engine-gates`).');
+    const finished = readme('- Gates (`orbit-engine-gates`).' + STARTS);
     expect(await fileLocalFailures([finished])).toEqual([]);
     expect(await pendingListFailures(['README.md'], [finished])).toEqual([
       'README.md: passes every file-local check; remove it from the pending-rewrite list',
     ]);
-    const unfinished = readme('- Gates, naming nothing.');
+    const unfinished = readme('- Gates, naming nothing.' + STARTS);
     expect(await fileLocalFailures([unfinished])).toEqual([`[claims] ${noName(5)}`]);
     expect(await pendingListFailures(['README.md'], [unfinished])).toEqual([]);
   });

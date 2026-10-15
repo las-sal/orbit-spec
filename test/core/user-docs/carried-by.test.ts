@@ -16,6 +16,8 @@ import {
 
 const FENCE = '```';
 const CONCEPTS = 'docs/concepts.md';
+/** The concepts start section the start-sections check reads, so a fixture page passes that check. */
+const STARTS = '\n## Artifacts\n\nRun `/orbit:architect <program>`.\n\nCarried by: the 1.3.1 baseline\n';
 const page = (body: string, file = CONCEPTS): Surface => ({ workflowId: DOCS_WORKFLOW, file, text: `# Concepts\n\nIntro.\n\n${body}\n` });
 /** A body's first line is line 5: the heading `## …` sits there. */
 const none = (line: number, file = CONCEPTS) => `${file}:${line}: section has no carried-by line (the carried-by check)`;
@@ -112,9 +114,9 @@ describe('the carried-by check', () => {
   });
 
   it('joins fileLocalFailures, so the exactness rule runs it over a listed page alone', async () => {
-    const failing = page('## Gates\n\nText.\n');
+    const failing = page(`## Gates\n\nText.\n${STARTS}`);
     expect(await fileLocalFailures([failing])).toEqual([`[carried-by] ${none(5)}`]);
-    const clean = page('## Gates\n\nCarried by: the 1.3.1 baseline\n');
+    const clean = page(`## Gates\n\nCarried by: the 1.3.1 baseline\n${STARTS}`);
     expect(await pendingListFailures([CONCEPTS], [clean])).toEqual([
       `${CONCEPTS}: passes every file-local check; remove it from the pending-rewrite list`,
     ]);

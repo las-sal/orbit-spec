@@ -1,7 +1,7 @@
 /**
  * The user docs as a checked surface (docs-under-test): `orbit-user-docs`' residue check, the
  * improvement-claims check (landing-page), the command-coverage check (reference-docs), the carried-by and
- * tool-coverage checks (concept-docs), the pending-rewrite list's exactness, and the docs sweeps' non-vacuity floors. This module implements that capability's checks; it states none of its rules.
+ * tool-coverage checks (concept-docs), the start-sections check (docs-refinement), the pending-rewrite list's exactness, and the docs sweeps' non-vacuity floors. This module implements that capability's checks; it states none of its rules.
  */
 import * as fs from 'node:fs';
 import * as path from 'node:path';
@@ -54,9 +54,10 @@ const RESIDUE = /openspec|opsx|fission/gi;
 /** HTML enabled, as GitHub renders the README: a heading inside an HTML block is no heading. */
 const md = new MarkdownIt({ html: true });
 
-/** A top-level ATX section: its title, and its 0-based line range [start, end). */
+/** A top-level ATX section: its title, its heading level, and its 0-based line range [start, end). */
 interface Section {
   title: string;
+  level: number;
   start: number;
   end: number;
 }
@@ -75,6 +76,7 @@ function atxSections(tokens: ReturnType<typeof md.parse>, lineCount: number): Se
   });
   return headings.map((heading, k) => ({
     title: heading.text,
+    level: heading.level,
     start: heading.line,
     end: headings.slice(k + 1).find((h) => h.level <= heading.level)?.line ?? lineCount,
   }));
@@ -425,6 +427,86 @@ export function toolCoverageFailures(surfaces: Surface[], tools: ToolEntry[] = A
   return failures;
 }
 
+// ─── the start-sections check (docs-refinement D-dr-4) ────────────
+
+/** A listed start section: its page, and its heading as the requirement's table writes it (`### Your first change`). */
+export interface StartSection {
+  page: string;
+  heading: string;
+}
+
+/** The listed start sections, (page, heading), exactly as the requirement's table lists them. */
+export const START_SECTIONS: StartSection[] = [
+  { page: 'README.md', heading: '### Your first change' },
+  { page: 'docs/getting-started.md', heading: '## The change' },
+  { page: 'docs/workflows.md', heading: '### One change, start to finish' },
+  { page: 'docs/workflows.md', heading: '### Step by step' },
+  { page: 'docs/workflows.md', heading: '### Exploring first' },
+  { page: 'docs/workflows.md', heading: '## Practices' },
+  { page: 'docs/workflow-engine.md', heading: '## Actions, not phases' },
+  { page: 'docs/concepts.md', heading: '## Artifacts' },
+];
+
+/** The start commands; the first one a listed section names must be the first of these. */
+export const START_COMMANDS = ['architect', 'explore', 'new', 'propose', 'ff'];
+
+const START_IDS = START_COMMANDS.join('|');
+/** `/orbit:<id>` anywhere, bounded after the id. */
+const SLASH_START = new RegExp(`/orbit:(${START_IDS})(?![A-Za-z0-9_-])`, 'g');
+/** Inside a fence: `<id>` as a whole word followed by ` ──►`, the flow-diagram form. */
+const ARROW_START = new RegExp(`(?<![A-Za-z0-9-])(${START_IDS}) ──►`, 'g');
+
+/** The first start command named in lines [start, end) of a page, reading `fenced` lines for the arrow form too. */
+function firstStartCommand(lines: string[], start: number, end: number, fenced: Set<number>): string | undefined {
+  for (let l = start; l < end; l++) {
+    const hits = [...lines[l].matchAll(SLASH_START), ...(fenced.has(l) ? [...lines[l].matchAll(ARROW_START)] : [])];
+    if (hits.length > 0) return hits.reduce((a, b) => ((b.index ?? 0) < (a.index ?? 0) ? b : a))[1];
+  }
+  return undefined;
+}
+
+/** 0-based lines inside a fence of a parse (the fence's own ``` lines included). */
+function fencedLines(tokens: ReturnType<typeof md.parse>): Set<number> {
+  const lines = new Set<number>();
+  for (const token of tokens) {
+    if (token.type !== 'fence' || !token.map) continue;
+    for (let l = token.map[0]; l < token.map[1]; l++) lines.add(l);
+  }
+  return lines;
+}
+
+/**
+ * The start-sections check over the given surfaces: on each listed page it is given, each listed heading's section
+ * must name `/orbit:architect` as its first start command; a heading not found at its listed level fails. Every other
+ * surface passes.
+ */
+export function startSectionFailures(surfaces: Surface[], sections: StartSection[] = START_SECTIONS): string[] {
+  const failures: string[] = [];
+  for (const surface of surfaces) {
+    const listed = sections.filter((s) => s.page === surface.file);
+    if (listed.length === 0) continue;
+    const lines = surface.text.split('\n');
+    const tokens = md.parse(surface.text, {});
+    const all = atxSections(tokens, lines.length);
+    const fenced = fencedLines(tokens);
+    for (const { heading } of listed) {
+      const where = `${describeSurface(surface)} › ${heading}`;
+      const section = all.find((s) => `${'#'.repeat(s.level)} ${s.title}` === heading);
+      if (!section) {
+        failures.push(`${where}: heading not found (the start-sections check)`);
+        continue;
+      }
+      const first = firstStartCommand(lines, section.start, section.end, fenced);
+      if (first === undefined) failures.push(`${where}: names no start command (the start-sections check)`);
+      else if (first !== 'architect') failures.push(`${where}: first start command is '${first}', not 'architect' (the start-sections check)`);
+    }
+  }
+  return failures;
+}
+
+/** The pages the start-sections check owes, for the suite-level missing-page rule. */
+export const START_PAGES = [...new Set(START_SECTIONS.map((s) => s.page))];
+
 // ─── the file-local checks and the pending list (design D2) ───────
 
 /** The docs' declared set, read from `orbit-user-docs`' requirement as it stands. */
@@ -437,7 +519,8 @@ export function docsInventory(): Inventory {
  * `orbit` sweep and guard, the `git`/`gh` sweeps and guards, the inventory's unknown heads against
  * the docs' declared set (`inventory`, by default the real one), the improvement-claims check
  * (`README.md` only), the command-coverage check (`docs/cli.md` and `docs/commands.md` only), the carried-by
- * check (the four concept pages only), and the tool-coverage check (`docs/supported-tools.md` only).
+ * check (the four concept pages only), the tool-coverage check (`docs/supported-tools.md` only), and the
+ * start-sections check (the pages its list names only).
  */
 export async function fileLocalFailures(surfaces: Surface[], inventory: Inventory = docsInventory()): Promise<string[]> {
   const tag = (check: string, list: string[]) => list.map((f) => `[${check}] ${f}`);
@@ -455,6 +538,7 @@ export async function fileLocalFailures(surfaces: Surface[], inventory: Inventor
   failures.push(...tag('coverage', commandCoverageFailures(surfaces, commandPaths(), workflowIds())));
   failures.push(...tag('carried-by', carriedByFailures(surfaces)));
   failures.push(...tag('tools', toolCoverageFailures(surfaces)));
+  failures.push(...tag('start-sections', startSectionFailures(surfaces)));
   return failures;
 }
 

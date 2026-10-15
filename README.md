@@ -74,6 +74,7 @@ orbit init --tools claude
 
 | Command | Command file | Skill directory |
 |---|---|---|
+| `/orbit:architect` | `.claude/commands/orbit/architect.md` | `.claude/skills/orbit-architect/` |
 | `/orbit:explore` | `.claude/commands/orbit/explore.md` | `.claude/skills/orbit-explore/` |
 | `/orbit:new` | `.claude/commands/orbit/new.md` | `.claude/skills/orbit-new-change/` |
 | `/orbit:continue` | `.claude/commands/orbit/continue.md` | `.claude/skills/orbit-continue-change/` |
@@ -87,7 +88,6 @@ orbit init --tools claude
 | `/orbit:archive` | `.claude/commands/orbit/archive.md` | `.claude/skills/orbit-archive-change/` |
 | `/orbit:bulk-archive` | `.claude/commands/orbit/bulk-archive.md` | `.claude/skills/orbit-bulk-archive-change/` |
 | `/orbit:audit-drift` | `.claude/commands/orbit/audit-drift.md` | `.claude/skills/orbit-audit-drift/` |
-| `/orbit:architect` | `.claude/commands/orbit/architect.md` | `.claude/skills/orbit-architect/` |
 | `/orbit:onboard` | `.claude/commands/orbit/onboard.md` | `.claude/skills/orbit-onboard/` |
 
 Each skill directory holds a `SKILL.md`. The skills of eight commands (`address-reviews`, `architect`, `archive`,
@@ -97,13 +97,18 @@ Each skill directory holds a `SKILL.md`. The skills of eight commands (`address-
 
 In Claude Code:
 
-1. `/orbit:explore` to think a change through with the AI.
-2. `/orbit:propose <change>` to write the proposal, design, delta specs and tasks.
-3. `/orbit:review --as proposal --fresh <change>` to review the proposal in a clean context before any code is
+1. `/orbit:architect <program>` to declare the work: a program whose stages each become a change.
+2. `/orbit:explore <change>` to think the stage's change through with the AI.
+3. `/orbit:propose <change>` to write the proposal, design, delta specs and tasks.
+4. `/orbit:review --as proposal --fresh <change>` to review the proposal in a clean context before any code is
    written.
-4. `/orbit:apply <change>` to implement the tasks.
-5. `/orbit:review --as system --fresh <change>` to review the implementation the same way.
-6. `/orbit:archive <change>` to merge the change's specs into your baseline.
+5. `/orbit:apply <change>` to implement the tasks.
+6. `/orbit:review --as system --fresh <change>` to review the implementation the same way.
+7. `/orbit:archive <change>` to merge the change's specs into your baseline.
+8. `/orbit:architect <program>` to review the stage and ratify it.
+
+An architect session is never required: for a one-off fix, `/orbit:explore <change>` alone is the path, and step 8
+does not apply.
 
 A review starts its gate; it does not pass it on its own. Each of these commands ends with a `Ready when you are:`
 line, computed from your change's state: after a review it names, in turn, the walk of its findings

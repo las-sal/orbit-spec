@@ -1,0 +1,319 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-15T15:10:56Z",
+  "change": "docs-refinement",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/docs-refinement/.orbit-runs/review-proposal-2026-10-15T13-34-06Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-15T13-34-06Z",
+  "latest_apply_token": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 3,
+    "suggestion": 3
+  },
+  "pushback_verification": "All six verified against current state: the residual grep hits workflows.md:35/37 (/orbit:new), commands.md:38 and workflows.md:140 under no listed heading; getting-started ends at ### 7. Archive while orbit-architect spec:192 makes the archive emit name /orbit:architect next; getting-started.md:3 says six commands; the fence form had no word boundary; task 2.4 named no form; concepts.md:104 lacks orbit-architect.",
+  "resolution_summary": {
+    "resolved": 6,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Start-headed passages outside the seven members are left to the catch-all row and to task 4.1's discretion",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/docs-refinement/specs/orbit-user-docs/spec.md",
+      "line": 23,
+      "classification": "decision_required",
+      "ratified_via": "chat",
+      "resolution": "A (Sal, chat: \"F1:A\"): list docs/workflows.md › ### Step by step as an eighth member, task 2.3 opening it after an architect session; classify docs/commands.md › ## Starting a change and docs/workflows.md › ### Start a new change when in explicit not-listed rows with their reasons",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "List `docs/commands.md` › `## Starting a change` as a member (and move or mention `/orbit:architect` at its head, with a task under 2.x); add explicit not-listed rows for workflows.md's `### Step by step` and `### Start a new change when` with their reasons."
+          },
+          {
+            "label": "B",
+            "body": "Keep the seven members and add an explicit not-listed row naming all three passages, each with its reason (a per-command reference section; an alternative to propose, not where new work starts; a judgement about scope that names no command), so task 4.1 finds them already classified."
+          }
+        ],
+        "chosen": "A"
+      },
+      "action": "added the Step by step member row and two not-listed rows to the requirement table; tasks 1.1/1.4 count eight members; task 2.3 opens Step by step after architect; design records the classification; proposal names the Step by step edit",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/docs-refinement/tasks.md",
+          "orbit/changes/docs-refinement/design.md",
+          "orbit/changes/docs-refinement/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "(the seven (page, heading) members",
+          "fails on all seven sections"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/docs-refinement/specs/orbit-user-docs/spec.md",
+            "text": "| `docs/workflows.md` › `### Step by step` | listed |"
+          },
+          {
+            "path": "orbit/changes/docs-refinement/specs/orbit-user-docs/spec.md",
+            "text": "| `docs/commands.md` › `## Starting a change` | not listed: a per-command reference section"
+          },
+          {
+            "path": "orbit/changes/docs-refinement/specs/orbit-user-docs/spec.md",
+            "text": "| `docs/workflows.md` › `### Start a new change when` | not listed: a judgement about scope"
+          },
+          {
+            "path": "orbit/changes/docs-refinement/tasks.md",
+            "text": "open \"Step by step\" with a clause placing it after an architect session"
+          },
+          {
+            "path": "orbit/changes/docs-refinement/design.md",
+            "text": "`### Step by step` is a start section; two start-headed neighbours are not"
+          }
+        ],
+        "searched": [
+          "seven",
+          "Step by step",
+          "Starting a change",
+          "Start a new change when"
+        ],
+        "scope": [
+          "docs/workflows.md",
+          "docs/commands.md"
+        ],
+        "kept": [
+          {
+            "path": "orbit/changes/docs-refinement/explore.md",
+            "why": "the exploration's dated Mechanism record counts the seven members it measured"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The walks start at architect but never return to it: no task carries the ratify step the onboard model ends with",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/docs-refinement/tasks.md",
+      "line": 11,
+      "classification": "decision_required",
+      "ratified_via": "chat",
+      "resolution": "A (Sal, chat: \"F2:A\"): getting-started gains ### 8. Ratify the stage (/orbit:architect <program> reviews and ratifies the stage, gating nothing) and README's list ends with the same line",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Extend tasks 2.1 and 2.2: getting-started gains a closing step after Archive (`/orbit:architect <program>` reviews and ratifies the stage), and README's list ends with the same line."
+          },
+          {
+            "label": "B",
+            "body": "Record in design.md's Decisions that the walks open at architect but leave ratification to the commands page, and say so in one sentence at the end of getting-started's Archive step."
+          }
+        ],
+        "chosen": "A"
+      },
+      "action": "extended tasks 2.1 and 2.2 with the closing ratify step; design records the decision and that the check leaves the closing step unchecked; proposal and touchpoints name it",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/docs-refinement/design.md",
+          "orbit/changes/docs-refinement/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/docs-refinement/tasks.md",
+            "text": "### 8. Ratify the stage"
+          },
+          {
+            "path": "orbit/changes/docs-refinement/tasks.md",
+            "text": "end the list with `/orbit:architect <program>` reviewing and ratifying the stage after archive"
+          },
+          {
+            "path": "orbit/changes/docs-refinement/design.md",
+            "text": "**The walks return to architect**"
+          },
+          {
+            "path": "orbit/changes/docs-refinement/proposal.md",
+            "text": "The walk ends with a closing"
+          }
+        ],
+        "searched": [
+          "ratify",
+          "Archive",
+          "archive ─→ architect"
+        ],
+        "scope": [
+          "docs/getting-started.md",
+          "README.md",
+          ".claude/skills/orbit-onboard/SKILL.md",
+          "orbit/specs/orbit-architect/spec.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "getting-started's intro counts \"the six commands of a first change\", which task 2.1 makes seven",
+      "marker_source": "internal-review",
+      "file": "docs/getting-started.md",
+      "line": 3,
+      "classification": "trivial_fix",
+      "action": "task 2.2 now rewrites getting-started's intro so it states no command count (\"lists the commands of a first change\"); the page itself is edited at apply",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/docs-refinement/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/docs-refinement/tasks.md",
+            "text": "so it states no command count"
+          }
+        ],
+        "searched": [
+          "six commands"
+        ],
+        "scope": [
+          "README.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The fenced `<id> ──►` form does not say the id is a whole word",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/docs-refinement/specs/orbit-user-docs/spec.md",
+      "line": 10,
+      "classification": "trivial_fix",
+      "action": "the fence form now requires <id> as a whole word (not preceded by a letter, digit or hyphen); task 1.1 states the same",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/docs-refinement/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "inside a fence, `<id>` followed by",
+          "and `<id> ──►` inside a fence, for"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/docs-refinement/specs/orbit-user-docs/spec.md",
+            "text": "`<id>` as a whole word (not preceded by a letter, digit or"
+          },
+          {
+            "path": "orbit/changes/docs-refinement/tasks.md",
+            "text": "inside a fence with `<id>` a whole word"
+          }
+        ],
+        "searched": [
+          "──►",
+          "followed by"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Starting the workflow-engine diagram at architect sits against its section's \"each workflow is an action on [a change]\"",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/docs-refinement/tasks.md",
+      "line": 13,
+      "classification": "trivial_fix",
+      "action": "task 2.4 names the form architect ──► explore ──► propose ──► …, the return loop still spanning propose…archive, and one clause saying architect plans the program before any change exists",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the flow diagram starts at architect, without changing"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/docs-refinement/tasks.md",
+            "text": "its return loop still spanning propose…archive only"
+          }
+        ],
+        "searched": [
+          "diagram"
+        ],
+        "scope": [
+          "docs/workflow-engine.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "concepts `## Artifacts`' new architect sentence has no owner on its Carried by line",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/docs-refinement/tasks.md",
+      "line": 14,
+      "classification": "trivial_fix",
+      "action": "task 2.5 adds orbit-architect to the ## Artifacts Carried by: line",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "keep its `Carried by:` line valid"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/docs-refinement/tasks.md",
+            "text": "add `orbit-architect` (whose `Start surfaces name the architect workflow first` owns the sentence)"
+          }
+        ],
+        "searched": [
+          "Carried by"
+        ],
+        "scope": [
+          "docs/concepts.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "All six findings of the fresh proposal pass resolved: per Sal F1:A Step by step is the eighth listed start section with its two neighbours classified not listed, per Sal F2:A the walks close with an architect ratify step, and four task/spec precision fixes landed.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews docs-refinement",
+  "ripple_misses": 0
+}

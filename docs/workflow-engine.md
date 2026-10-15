@@ -12,13 +12,13 @@ you write your own schema.
 ## Actions, not phases
 
 orbit has no planning phase that locks before an implementing phase. A change is a folder of artifacts, and each
-workflow is an action on it:
+workflow is an action on it. Before any change exists, `/orbit:architect` plans the program the change serves:
 
 ```text
-   explore ──► propose ──► review ──► apply ──► review ──► archive
-                  ▲           │         │          │
-                  └───────────┴─────────┴──────────┘
-                     edit any artifact, at any point
+architect ──► explore ──► propose ──► review ──► apply ──► review ──► archive
+                             ▲           │         │          │
+                             └───────────┴─────────┴──────────┘
+                                edit any artifact, at any point
 ```
 
 What orders the actions is not a phase but two things the engine computes:
