@@ -1,0 +1,87 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-15T16:09:37Z",
+  "change": "docs-refinement",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "1",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "docs/getting-started.md",
+      "line": 37,
+      "title": "Getting-started's step 1 says skip explore, but only the exploration records the stage citation step 0 promises",
+      "recommendation": "Step 0 (docs/getting-started.md:23-24) says the exploration and change that follow cite the stage, so orbit computes its state from them. The citation is written only by explore: orbit-explore's body OFFERS `architecture: {doc, stage}` when an exploration serves a stage and carries it into the change at promotion (.claude/skills/orbit-explore/SKILL.md:336-341); propose has no citation path of its own. Step 1 still ends `Skip this step when you already know what you want.`, so a reader who follows step 0 and then skips step 1 gets an uncited change: the stage never leaves `premised`, and step 8's ratification offer (keyed on quiescent-awaiting-ratification, orbit-architect's `Completion-ratification flow`) never fires. Qualify the skip sentence for the planned path (keep the exploration on a stage: it records the citation, accept its offer; skip it only on the one-off path) and have step 0 or step 1 say the citation is the exploration's offer to accept.",
+      "reproduction": "Follow docs/getting-started.md as written: run step 0 (/orbit:architect app-theming), skip step 1 per line 37, run /orbit:propose add-dark-mode through /orbit:archive. The change's .openspec.yaml carries no architecture: field, so orbit architecture status never shows the stage in-change or quiescent, and step 8's /orbit:architect app-theming offers no ratification."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "test/helpers/user-docs.ts",
+      "line": 485,
+      "title": "The start-sections check finds a listed heading by its text alone, not its level",
+      "recommendation": "orbit-user-docs' new requirement names each member with its level (`README.md` › `### Your first change`), and a section's span depends on that level, but START_SECTIONS stores only the heading text and startSectionFailures takes the first heading of that text at any level (`all.find((s) => s.title === heading)`). A promoted or demoted heading changes the span the check reads without failing, and a second heading of the same text on a page is never read. Store the level in each START_SECTIONS entry and match level and text, so the list is held as exactly as the requirement's table states it."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "README.md",
+      "line": 110,
+      "title": "README says explore alone starts the change; the other pages say propose starts it",
+      "recommendation": "README.md:110 reads `/orbit:explore <change>` alone starts the change, while docs/concepts.md:104, docs/workflows.md:58 and docs/commands.md's `/orbit:explore` entry all say `/orbit:propose` starts the change from the exploration. Use getting-started's wording (`/orbit:explore <change>` alone is the path) so the one-off sentence does not contradict where a change is created."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "The implementation is small and well-instrumented: the eight listed sections all open with /orbit:architect, the diagram's return loop was shifted consistently (both rows moved eleven columns), the two reference tables were reordered without dropping a row, and the existing claims and carried-by fixtures were extended so they still pass the new file-local check. I probed the check's matcher by reading it against the spec's two forms (the lookbehind excludes `proposal ──►`, the lookahead excludes `/orbit:new-x`) and confirmed the full suite and the scenario map from the live checkout (HEAD is the pair's T0 commit, whose parent holds the same non-trail tree). The pattern behind the one substantive finding is that the docs now promise the planned path's bookkeeping (citation, then ratification) without saying which step makes it happen, and the one step that does is still described as skippable. Task 1.3 names pending-rewrite.test.ts as the wiring site; the wiring landed in fileLocalFailures, which that suite already calls, so the behaviour holds though the named file is unchanged. Passes 4 and 5 were skipped because orbit/lenses/ has neither perspectives.md nor critical-paths.md; Pass 6 (audit-drift) was not run by this worker, a project-wide scan, and a residue grep over README.md and docs/ for stale step counts found none.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3"
+  ],
+  "passes_skipped": [
+    "4",
+    "5",
+    "6"
+  ],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The change does what the stage asked: the user docs now lead with architect and a check holds that order. What remains is wording: the getting-started skip sentence undercuts the citation step 0 relies on, and two smaller seams. Walk them and continue to archive; none needs a redesign."
+  },
+  "final_assessment": "0 critical, 1 warning, 2 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews docs-refinement"
+}
