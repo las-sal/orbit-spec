@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-10-15T16:55:33Z",
+  "change": "release",
+  "kind": "workflow",
+  "model": null,
+  "final_assessment": "Grounded the release stage. The release-tree mechanism needs no change. Nothing pins the docs' install tag: five sites state 2.0.0. D-rel-1 (rule, Sal): every semver token in the user docs equals package.json's version or is on an exact admitted list; its Mechanism entry is SOURCED over the measured grep. D-rel-2 (fact): the five current sites and four admitted kinds. Open, each with a standing recommendation: Q-rel-1 the order (one change, then the tag cut from the merge commit as ratification evidence), Q-rel-2 the CHANGELOG bullets, Q-rel-3 closing issue #24 at ratification.",
+  "decisions_captured": 2,
+  "open_questions_count": 3,
+  "open_questions_with_recommendation": "3 of 3",
+  "rules_total": 1,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:explore release — continue thinking, or /orbit:propose release if ready to formalize"
+}
