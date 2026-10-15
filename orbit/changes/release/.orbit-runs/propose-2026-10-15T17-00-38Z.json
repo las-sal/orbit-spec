@@ -1,0 +1,15 @@
+{
+  "command": "propose",
+  "timestamp": "2026-10-15T17:00:38Z",
+  "change": "release",
+  "kind": "workflow",
+  "model": null,
+  "final_assessment": "Proposed `release` from the exploration (consume mode). Q-rel-1, Q-rel-2 and Q-rel-3 were resolved by Sal as D-rel-3, D-rel-4 and D-rel-5 (all scope). D-rel-1 (SOURCED) became orbit-user-docs' new requirement `The user docs state orbit's current version as package.json's`, carried as a normative table. `The user docs are a checked surface…` was MODIFIED to name the version check in the file-local set and its stale-admission rule among the whole-docs rules. A propose-time probe confirmed the domain and showed that a sentence-ending period must not hide a token. Size: 1 capability, 2 requirements, 10 tasks, no breach. The tag cut stays outside the change: it is cut from the merge commit after archive.",
+  "pr_attachment": {
+    "branch": "release",
+    "granularity": "per-proposal",
+    "url": "https://github.com/las-sal/orbit-spec/pull/28",
+    "state": "draft"
+  },
+  "next_recommended": "/orbit:review release — proposal artifacts ready; review before apply"
+}
