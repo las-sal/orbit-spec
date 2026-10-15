@@ -1,0 +1,119 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-15T17:03:50Z",
+  "change": "release",
+  "kind": "editorial",
+  "model": null,
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 2
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-user-docs/spec.md",
+      "line": 17,
+      "title": "The admitted phrase spans two README lines, but a phrase entry admits tokens 'on a line of that file'",
+      "recommendation": "State how a phrase entry matches text that wraps across lines, and make the scenario quote the same phrase the list holds. The table row says an entry (file, phrase) 'admits the tokens inside that phrase on a line of that file', but README.md wraps the phrase: line 14 ends 'orbit 2.0.0 is orbit's first' and line 15 begins 'release, not OpenSpec 2.0.0.' (design.md D1 itself calls the site 'README.md:14–15'). A line-by-line matcher never finds the phrase, so the shipped-docs scenario fails on both tokens; an implementer who reads the file as one string has gone beyond the spec. The scenario at line 47 also quotes a shorter phrase, 'orbit 2.0.0 is orbit's first release', than the table's entry, and that shorter phrase wraps in the same way. Task 2.1 copies the table's full phrase.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Define the match over the file's text with each line break read as a space, with each admitted token reported at its own line; keep the one full-phrase entry, and quote the full phrase in the scenario at line 47."
+        },
+        {
+          "label": "B",
+          "body": "Keep matching line by line, and split the admission into two entries: (README.md, \"orbit 2.0.0 is orbit's first\") and (README.md, \"not OpenSpec 2.0.0\"). Update the table row, the scenario and task 2.1 to match."
+        },
+        {
+          "label": "C",
+          "body": "Rewrap README.md so that the whole phrase sits on one line, and add that edit to task 3.1 (another README edit beyond the five sites)."
+        }
+      ]
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "specs/orbit-user-docs/spec.md",
+      "line": 18,
+      "title": "Whether a value admission covers the v-prefixed token is left to the implementer",
+      "recommendation": "Say that a value admission compares the token with any leading `v` removed, so `1.3.1` admits both `1.3.1` and `v1.3.1`. That matches task 2.1's three value entries, and it keeps task 2.3's exact-list assertion and the stale-admission rule from depending on whether `v1.3.1` is a separate entry. `v1.3.1` appears only at README.md:13 (`upstream/v1.3.1`)."
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "tasks.md",
+      "line": 10,
+      "title": "Task 2.2 places the stale-admission rule 'beside the unused docs-inventory rule', which lives in another directory",
+      "recommendation": "Name the file the whole-docs stale-admission run goes in. The unused docs-inventory rule is exercised in test/core/cli-grammar/tool-inventory.test.ts (its whole-surface test, 'every declared head read'), while design.md's Touchpoints puts the stale-admission run under test/core/user-docs/*.test.ts. Naming test/core/user-docs/version.test.ts, for example, would remove the choice."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "design.md",
+      "line": 32,
+      "title": "D1 says every value admission 'can never be orbit's version', which the Risks section contradicts for 20.19.0",
+      "recommendation": "Narrow D1's sentence. `1.3.1` and `1.14.1` can never be orbit's version, because they sort below 2.0.0. `20.19.0` is admitted as the `engines` floor, which is how the spec's table row puts it, and Risks names its possible future collision. As written, D1 and 'An admission by value that later collides' disagree."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "proposal.md",
+      "line": 5,
+      "title": "The proposal says 'five places … pin the install', but only three of the five are install pins",
+      "recommendation": "Say 'five places in the user docs state the current version' (three install pins and two prose statements), which is how the proposal's line 14 and D-rel-2 describe them. README.md:56 and installation.md:30 state what `orbit --version` prints and pin nothing."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "The probe was aimed at the new check's rules over the real docs as they stand now. A token grep over README.md and docs/*.md reproduces the D-rel-2 table exactly: the five current sites, 1.3.1/v1.3.1 across seven pages, 1.14.1 in migration-guide only, 20.19.0 at README.md:48 and installation.md:8, and the historical pair at README.md:14 and :15. No unclassified token exists. The token rule's boundary clauses hold on every hit: `@1.3.1`, `upstream/v1.3.1` and the sentence-ending `2.0.0.` are all read as tokens. The one place the spec and the real docs part is the line wrap under the phrase admission, and design.md already names that site as a line range. Risks checked and found absent: no src/ or test fixture pins 2.0.0 (the two test hits are comments), and skill-templates-parity hashes generated skills with the stamp 'PARITY-BASELINE', not package.json's version, so the bump does not move a pinned hash. The MODIFIED block differs from the baseline only in the two intended clauses (plus a trailing blank line), and its four carried scenarios are already declared as behaviour tests in pending-rewrite.test.ts. The task order is sound: 1.1 bumps before 2.1 adds the check, so task 2.4's red run against the 2.0.0 docs is reachable and the green run comes only at 3.1. orbit-release couples nothing to the CHANGELOG, so D-rel-3's post-archive tag cut needs nothing from this change.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The change is small, well measured and correctly ordered, and its check fits the real docs except at one spot: the admitted historical phrase wraps across two README lines, and the requirement says a phrase admits tokens on a line. That needs one clarifying sentence (or a split entry) before apply, because otherwise the first implementation of the shipped-docs scenario either fails or quietly invents a cross-line match. The rest are wording repairs that a walk can do in passing. Nothing calls for revisiting the design."
+  },
+  "final_assessment": "0 critical, 1 warning, 4 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews release"
+}
