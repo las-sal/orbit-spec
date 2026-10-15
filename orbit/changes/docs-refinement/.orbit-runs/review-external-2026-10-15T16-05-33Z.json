@@ -1,0 +1,14 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-10-15T16:05:33Z",
+  "change": "docs-refinement",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "prompt_path": "orbit/changes/docs-refinement/.orbit-runs/external-prompt-system-2026-10-15T16-04-59Z.md",
+  "target": "codex",
+  "final_assessment": "External review prompt packaged for docs-refinement (iter 1, mode system) as the external half of a launched blind pair; awaiting findings from codex.",
+  "pair": true,
+  "awaiting_findings": true,
+  "next_recommended": "Paste orbit/changes/docs-refinement/.orbit-runs/external-prompt-system-2026-10-15T16-04-59Z.md into the target AI, and save the response as orbit/changes/docs-refinement/.orbit-runs/external-system-<TS>.md"
+}
