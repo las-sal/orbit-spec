@@ -54,9 +54,10 @@ const RESIDUE = /openspec|opsx|fission/gi;
 /** HTML enabled, as GitHub renders the README: a heading inside an HTML block is no heading. */
 const md = new MarkdownIt({ html: true });
 
-/** A top-level ATX section: its title, and its 0-based line range [start, end). */
+/** A top-level ATX section: its title, its heading level, and its 0-based line range [start, end). */
 interface Section {
   title: string;
+  level: number;
   start: number;
   end: number;
 }
@@ -75,6 +76,7 @@ function atxSections(tokens: ReturnType<typeof md.parse>, lineCount: number): Se
   });
   return headings.map((heading, k) => ({
     title: heading.text,
+    level: heading.level,
     start: heading.line,
     end: headings.slice(k + 1).find((h) => h.level <= heading.level)?.line ?? lineCount,
   }));
@@ -427,16 +429,22 @@ export function toolCoverageFailures(surfaces: Surface[], tools: ToolEntry[] = A
 
 // ─── the start-sections check (docs-refinement D-dr-4) ────────────
 
+/** A listed start section: its page, and its heading as the requirement's table writes it (`### Your first change`). */
+export interface StartSection {
+  page: string;
+  heading: string;
+}
+
 /** The listed start sections, (page, heading), exactly as the requirement's table lists them. */
-export const START_SECTIONS: Array<{ page: string; heading: string }> = [
-  { page: 'README.md', heading: 'Your first change' },
-  { page: 'docs/getting-started.md', heading: 'The change' },
-  { page: 'docs/workflows.md', heading: 'One change, start to finish' },
-  { page: 'docs/workflows.md', heading: 'Step by step' },
-  { page: 'docs/workflows.md', heading: 'Exploring first' },
-  { page: 'docs/workflows.md', heading: 'Practices' },
-  { page: 'docs/workflow-engine.md', heading: 'Actions, not phases' },
-  { page: 'docs/concepts.md', heading: 'Artifacts' },
+export const START_SECTIONS: StartSection[] = [
+  { page: 'README.md', heading: '### Your first change' },
+  { page: 'docs/getting-started.md', heading: '## The change' },
+  { page: 'docs/workflows.md', heading: '### One change, start to finish' },
+  { page: 'docs/workflows.md', heading: '### Step by step' },
+  { page: 'docs/workflows.md', heading: '### Exploring first' },
+  { page: 'docs/workflows.md', heading: '## Practices' },
+  { page: 'docs/workflow-engine.md', heading: '## Actions, not phases' },
+  { page: 'docs/concepts.md', heading: '## Artifacts' },
 ];
 
 /** The start commands; the first one a listed section names must be the first of these. */
@@ -469,9 +477,10 @@ function fencedLines(tokens: ReturnType<typeof md.parse>): Set<number> {
 
 /**
  * The start-sections check over the given surfaces: on each listed page it is given, each listed heading's section
- * must name `/orbit:architect` as its first start command; a heading not found fails. Every other surface passes.
+ * must name `/orbit:architect` as its first start command; a heading not found at its listed level fails. Every other
+ * surface passes.
  */
-export function startSectionFailures(surfaces: Surface[], sections = START_SECTIONS): string[] {
+export function startSectionFailures(surfaces: Surface[], sections: StartSection[] = START_SECTIONS): string[] {
   const failures: string[] = [];
   for (const surface of surfaces) {
     const listed = sections.filter((s) => s.page === surface.file);
@@ -482,7 +491,7 @@ export function startSectionFailures(surfaces: Surface[], sections = START_SECTI
     const fenced = fencedLines(tokens);
     for (const { heading } of listed) {
       const where = `${describeSurface(surface)} › ${heading}`;
-      const section = all.find((s) => s.title === heading);
+      const section = all.find((s) => `${'#'.repeat(s.level)} ${s.title}` === heading);
       if (!section) {
         failures.push(`${where}: heading not found (the start-sections check)`);
         continue;

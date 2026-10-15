@@ -32,7 +32,7 @@ The usual path, which [Getting started](getting-started.md) walks in full:
 /orbit:architect          review the stage and ratify it
 ```
 
-An architect session is never required: for a one-off fix, start at `/orbit:explore`.
+An architect session is never required: for a one-off fix, start at `/orbit:explore` and stop at archive.
 
 You do not need to remember it. Each workflow ends with a `Ready when you are:` line naming what is eligible next.
 
@@ -49,6 +49,10 @@ is written: create the change with `/orbit:new` and write one artifact at a time
 ```
 
 Each `/orbit:continue` reads the artifacts the next one depends on, writes it, and shows what it unlocked.
+
+A change created with `/orbit:new` carries no stage citation. To tie it to the program's stage, add
+`architecture: {doc: <program>, stage: <stage>}` to the change's `.openspec.yaml`, and orbit counts the change toward
+that stage.
 
 ### Exploring first
 

@@ -15,17 +15,28 @@ import {
 
 const FENCE = '```';
 const PAGE = 'docs/start.md';
-const LIST = [{ page: PAGE, heading: 'Begin' }];
+const LIST = [{ page: PAGE, heading: '## Begin' }];
 const page = (body: string, heading = 'Begin'): Surface => ({
   workflowId: DOCS_WORKFLOW,
   file: PAGE,
   text: `# Start\n\n## ${heading}\n\n${body}\n\n## Later\n\nRun \`/orbit:explore\`.\n`,
 });
-const where = `${PAGE} › Begin`;
+const where = `${PAGE} › ## Begin`;
 
 describe('the start-sections check', () => {
   // @scenario behaviour orbit-user-docs :: The user docs' start sections name the architect workflow first :: Every listed section leads with architect
   it('passes every listed section of the shipped user docs', () => {
+    // The requirement's table, written out here so dropping a member from START_SECTIONS fails.
+    expect(START_SECTIONS).toEqual([
+      { page: 'README.md', heading: '### Your first change' },
+      { page: 'docs/getting-started.md', heading: '## The change' },
+      { page: 'docs/workflows.md', heading: '### One change, start to finish' },
+      { page: 'docs/workflows.md', heading: '### Step by step' },
+      { page: 'docs/workflows.md', heading: '### Exploring first' },
+      { page: 'docs/workflows.md', heading: '## Practices' },
+      { page: 'docs/workflow-engine.md', heading: '## Actions, not phases' },
+      { page: 'docs/concepts.md', heading: '## Artifacts' },
+    ]);
     const docs = allDocSurfaces();
     expect(START_SECTIONS.every((s) => docs.some((d) => d.file === s.page))).toBe(true);
     expect(startSectionFailures(docs)).toEqual([]);
@@ -64,10 +75,12 @@ describe('the start-sections check', () => {
   });
 
   // @scenario behaviour orbit-user-docs :: The user docs' start sections name the architect workflow first :: A missing heading fails
-  it('fails a listed heading not found on its page, naming the page and the heading', () => {
+  it('fails a listed heading not found on its page at its listed level, naming the page and the heading', () => {
     expect(startSectionFailures([page('Run `/orbit:architect`.', 'Renamed')], LIST)).toEqual([
       `${where}: heading not found (the start-sections check)`,
     ]);
+    const demoted: Surface = { workflowId: DOCS_WORKFLOW, file: PAGE, text: '# Start\n\n### Begin\n\nRun `/orbit:architect`.\n' };
+    expect(startSectionFailures([demoted], LIST)).toEqual([`${where}: heading not found (the start-sections check)`]);
     const fenced = page(`${FENCE}markdown\n## Begin\n${FENCE}`, 'Other');
     expect(startSectionFailures([fenced], LIST)).toEqual([`${where}: heading not found (the start-sections check)`]);
   });
@@ -89,7 +102,7 @@ describe('the start-sections check', () => {
     expect(startSectionFailures([other])).toEqual([]);
     const readme: Surface = { workflowId: DOCS_WORKFLOW, file: 'README.md', text: '# orbit\n' };
     expect(await fileLocalFailures([readme])).toContain(
-      '[start-sections] README.md › Your first change: heading not found (the start-sections check)',
+      '[start-sections] README.md › ### Your first change: heading not found (the start-sections check)',
     );
   });
 });

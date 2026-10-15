@@ -20,11 +20,12 @@ The example adds a dark mode to an app. Its change name is `add-dark-mode`.
 
 New work starts here. The architect session writes a program, an architecture doc at
 `orbit/architecture/app-theming.md`: its goals, the rulings that bind it, and its stages, each of which becomes a
-change. Dark mode is one stage, and the exploration and change that follow cite it, so orbit computes the stage's
-state from them. The session plans the work; the change itself starts at the next step.
+change. Dark mode is one stage. The exploration that follows offers to cite it; accept, and the change propose
+starts from that exploration carries the citation, so orbit computes the stage's state from them. The session plans
+the work; the change itself starts at the next step.
 
 An architect session is never required. For a one-off fix too small to plan, `/orbit:explore <change>` alone is the
-path, and the steps below run the same way without a citation.
+path: it runs steps 1 to 7 without a citation and skips step 8, which ratifies a program's stage.
 
 ### 1. Explore
 
@@ -34,7 +35,8 @@ path, and the steps below run the same way without a citation.
 
 A conversation, not a form: the AI reads the code, asks questions and sketches options. Exploring changes no code.
 When the thinking is worth keeping, it writes `orbit/explore/<name>/explore.md`, which the next step picks up.
-Skip this step when you already know what you want.
+On a program's stage, keep this step: the exploration is what records the stage citation. Skip it only for a
+change that serves no stage, when you already know what you want.
 
 ### 2. Propose
 
@@ -130,9 +132,9 @@ requirements this one touches since it was proposed.
 /orbit:architect app-theming
 ```
 
-The walk returns to where it started. Once the stage's change is archived, the architect session reviews the stage
-against its exit criteria and asks you to ratify it; a ratified stage is complete, and the session takes up the next.
-The step gates nothing: no orbit surface requires it.
+On a program's stage, the walk returns to where it started. Once the stage's change is archived, the architect
+session reviews the stage against its exit criteria and asks you to ratify it; a ratified stage is complete, and the
+session takes up the next. The step gates nothing: no orbit surface requires it.
 
 ## The readout
 

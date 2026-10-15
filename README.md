@@ -107,7 +107,8 @@ In Claude Code:
 7. `/orbit:archive <change>` to merge the change's specs into your baseline.
 8. `/orbit:architect <program>` to review the stage and ratify it.
 
-An architect session is never required: for a one-off fix, `/orbit:explore <change>` alone starts the change.
+An architect session is never required: for a one-off fix, `/orbit:explore <change>` alone is the path, and step 8
+does not apply.
 
 A review starts its gate; it does not pass it on its own. Each of these commands ends with a `Ready when you are:`
 line, computed from your change's state: after a review it names, in turn, the walk of its findings
