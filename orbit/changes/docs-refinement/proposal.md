@@ -11,8 +11,10 @@ workflow first`. Until this change lands, the README Quickstart, getting-started
   `/orbit:architect` first (D-dr-5).
 - **docs/getting-started.md**: a new step 0 runs `/orbit:architect <program>` to declare the work, and the
   `add-dark-mode` walk that follows is that program's stage's change. The page names `/orbit:explore` alone as the
-  working path for a one-off fix, after architect and never as the default (D-dr-1).
-- **docs/workflows.md**: "One change, start to finish" opens its flow block with architect; "Exploring first" and the
+  working path for a one-off fix, after architect and never as the default (D-dr-1). The walk ends with a closing
+  architect session that ratifies the stage, and README's list ends the same way.
+- **docs/workflows.md**: "One change, start to finish" opens its flow block with architect; "Step by step" opens
+  after an architect session; "Exploring first" and the
   "Explore when unsure" practice place explore after architect.
 - **docs/commands.md**: the Quick reference lists `/orbit:architect` first (D-dr-5).
 - **docs/workflow-engine.md**: the flow diagram starts at architect; **docs/concepts.md** gains a sentence placing

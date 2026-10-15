@@ -36,7 +36,7 @@ architect is where new work starts and where it returns; `/orbit:explore` alone 
   sections exactly as (page, heading); the test holds the list exactly. Alternatives: inline HTML-comment markers
   (puts check machinery into user-facing source) and a page-wide first-mention rule (fails on reference pages, and
   checks one passage per page) — see Alternatives considered. A propose-time probe of the planned check over
-  today's docs (2026-10-14) found six of the seven members leading with explore, and one wrong member: the concepts
+  today's docs (2026-10-14) found six of the seven members then listed leading with explore, and one wrong member: the concepts
   paragraph sits under `## Artifacts`, not the `## Changes` explore.md's Mechanism entry names. The requirement
   lists `## Artifacts`; explore.md stays as written, the historical record.
 - **Two match forms: `/orbit:<id>` and a fenced `<id> ──►`.** The workflow-engine diagram draws bare
@@ -48,6 +48,16 @@ architect is where new work starts and where it returns; `/orbit:explore` alone 
 - **The new check joins the pending-rewrite gate's file-local set.** `The user docs are a checked surface, gated by
   an exact pending-rewrite list` enumerates every file-local check; the new check is added to that sentence (MODIFIED,
   its four scenarios carried and already declared in `pending-rewrite.test.ts`).
+- **`### Step by step` is a start section; two start-headed neighbours are not** (proposal review, walk of
+  2026-10-15). workflows.md's `### Step by step` walks a path to a new change (`/orbit:new`), the sibling of
+  `### One change, start to finish`, so it is listed and opens with a clause placing it after an architect session.
+  commands.md's `## Starting a change` is a per-command reference section (architect starts a program and is
+  documented under `## Across the project`), and workflows.md's `### Start a new change when` names no command; the
+  requirement's table classifies both as not listed, so the residual sweep finds them settled.
+- **The walks return to architect** (proposal review, walk of 2026-10-15). getting-started ends with `### 8. Ratify
+  the stage` and README's list ends with the same line, as the onboard flow ends `archive ─→ architect (ratify the
+  stage)` and the archive emit names `/orbit:architect <doc>` next; the step gates nothing. The start-sections check
+  reads only the opening order, so the closing step is unchecked.
 - **The two reference tables reorder, unchecked** (D-dr-5): README's command table and commands.md's Quick reference
   list `/orbit:architect` first, as the onboard table does. A reference order is not a suggestion, so neither is a
   start section.
@@ -94,8 +104,8 @@ the proposing AI's reading of the file; no engine record
 ## Touchpoints
 
 - `README.md` — "Your first change" and the command table.
-- `docs/getting-started.md` — step 0 and the one-off path.
-- `docs/workflows.md` — the flow block, "Exploring first", the Practices tip.
+- `docs/getting-started.md` — step 0, the closing ratify step, the intro and the one-off path.
+- `docs/workflows.md` — the flow block, "Step by step", "Exploring first", the Practices tip.
 - `docs/commands.md` — Quick reference order.
 - `docs/workflow-engine.md` — the flow diagram.
 - `docs/concepts.md` — the `## Artifacts` sentence.

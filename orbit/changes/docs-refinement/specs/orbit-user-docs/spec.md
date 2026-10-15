@@ -7,7 +7,8 @@ first START COMMAND named SHALL be `/orbit:architect` (R-rda-1, R-rda-2; `orbit-
 architect workflow first`). A page is parsed as the improvement-claims check parses `README.md` (markdown-it). A
 SECTION is the text from its heading to the next heading of the same or a higher level, or the end of the file, fences
 included. A START COMMAND is one of `architect`, `explore`, `new`, `propose` or `ff`, met in either of two
-forms: a `/orbit:<id>` mention, or, inside a fence, `<id>` followed by ` ──►` (the flow-diagram form the docs draw).
+forms: a `/orbit:<id>` mention, or, inside a fence, `<id>` as a whole word (not preceded by a letter, digit or
+hyphen) followed by ` ──►` (the flow-diagram form the docs draw).
 The start sections are exactly this table, held in the test as an exact list:
 
 | member | covered by |
@@ -15,11 +16,14 @@ The start sections are exactly this table, held in the test as an exact list:
 | `README.md` › `### Your first change` | listed |
 | `docs/getting-started.md` › `## The change` | listed |
 | `docs/workflows.md` › `### One change, start to finish` | listed |
+| `docs/workflows.md` › `### Step by step` | listed |
 | `docs/workflows.md` › `### Exploring first` | listed |
 | `docs/workflows.md` › `## Practices` | listed |
 | `docs/workflow-engine.md` › `## Actions, not phases` | listed |
 | `docs/concepts.md` › `## Artifacts` | listed |
 | `README.md`'s command table, `docs/commands.md` › `## Quick reference` | not listed: a reference order, not a suggestion |
+| `docs/commands.md` › `## Starting a change` | not listed: a per-command reference section, documenting the commands that create a change; `/orbit:architect` starts a program and is documented under `## Across the project` |
+| `docs/workflows.md` › `### Start a new change when` | not listed: a judgement about scope (update or start anew) that names no command |
 | `docs/cli.md`, `docs/migration-guide.md`, `docs/supported-tools.md`, and every other passage | not listed: commands named as reference or example, never as where to start |
 
 The check fails the suite, naming the page, the heading and the reason, when a listed section's first start command is
