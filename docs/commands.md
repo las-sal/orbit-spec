@@ -11,6 +11,7 @@ next step and does not run it unasked: you invoke each workflow. When the AI arr
 
 | Workflow | Purpose |
 |---|---|
+| [`/orbit:architect`](#orbitarchitect) | Author an architecture doc: a program of changes as stages |
 | [`/orbit:explore`](#orbitexplore) | Think an idea through before committing to a change |
 | [`/orbit:propose`](#orbitpropose) | Create a change and write all its artifacts in one step |
 | [`/orbit:new`](#orbitnew) | Create a change and stop, to write its artifacts one at a time |
@@ -24,7 +25,6 @@ next step and does not run it unasked: you invoke each workflow. When the AI arr
 | [`/orbit:archive`](#orbitarchive) | Merge the specs and archive the change |
 | [`/orbit:bulk-archive`](#orbitbulk-archive) | Archive several changes at once |
 | [`/orbit:audit-drift`](#orbitaudit-drift) | Find drift between the project's documents and the repository |
-| [`/orbit:architect`](#orbitarchitect) | Author an architecture doc: a program of changes as stages |
 | [`/orbit:onboard`](#orbitonboard) | A one-page orientation to orbit |
 
 ## Other assistants

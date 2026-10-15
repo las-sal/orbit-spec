@@ -18,7 +18,8 @@ waits on the proposal review, archive on the system review). Both are computed f
 The usual path, which [Getting started](getting-started.md) walks in full:
 
 ```text
-/orbit:explore            optional: think it through
+/orbit:architect          declare the work: a program and its stages
+/orbit:explore            think the stage's change through
 /orbit:propose            write the change
 /orbit:review --as proposal --fresh
 /orbit:address-reviews    walk the findings
@@ -28,14 +29,17 @@ The usual path, which [Getting started](getting-started.md) walks in full:
 /orbit:address-reviews
 /orbit:review --as system
 /orbit:archive            merge the specs, archive the change
+/orbit:architect          review the stage and ratify it
 ```
+
+An architect session is never required: for a one-off fix, start at `/orbit:explore`.
 
 You do not need to remember it. Each workflow ends with a `Ready when you are:` line naming what is eligible next.
 
 ### Step by step
 
-When you want to read and adjust each artifact before the next is written, create the change with `/orbit:new` and
-write one artifact at a time with `/orbit:continue`:
+After `/orbit:architect <program>` declares the work, you may want to read and adjust each artifact before the next
+is written: create the change with `/orbit:new` and write one artifact at a time with `/orbit:continue`:
 
 ```text
 /orbit:new add-dark-mode
@@ -48,10 +52,11 @@ Each `/orbit:continue` reads the artifacts the next one depends on, writes it, a
 
 ### Exploring first
 
-When the problem or the approach is unclear, start with `/orbit:explore`. It reads the code, asks questions and
-compares options, and changes nothing. When the conversation settles, it writes `orbit/explore/<name>/explore.md`,
-and `/orbit:propose` starts the change from it. An exploration can also end in nothing: deciding not to build is an
-outcome.
+New work starts with `/orbit:architect <program>`, which declares the stages; when a stage's problem or approach is
+unclear, explore it next with `/orbit:explore`, or start there alone for a one-off fix. Explore reads the code, asks
+questions and compares options, and changes nothing. When the conversation settles, it writes
+`orbit/explore/<name>/explore.md`, and `/orbit:propose` starts the change from it. An exploration can also end in
+nothing: deciding not to build is an outcome.
 
 ### Parallel changes
 
@@ -174,6 +179,8 @@ so that the gate is read against what the change now says.
 
 - **Keep changes small.** A change should be reviewable in one sitting. A project can set `size_ceiling` in
   `orbit/config.yaml`, and `orbit validate` then reports a change that exceeds it.
+- **Plan before you explore.** `/orbit:architect <program>` declares the work as stages, so each change knows
+  what it serves and where the program stands.
 - **Explore when unsure.** Ten minutes of `/orbit:explore` costs less than a proposal that reviews badly.
 - **Walk every review.** A review generates findings; only a walk resolves them, and the gate counts only resolved
   findings.

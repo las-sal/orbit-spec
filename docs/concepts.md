@@ -96,12 +96,15 @@ proposal ──► specs ──► tasks
 
 The order is a dependency graph, not a set of locked phases: you can revise any artifact while implementing.
 
+New work starts with `/orbit:architect`, which declares a program's stages; the exploration of a stage's change comes
+after it, and a one-off fix can start at the exploration alone.
+
 orbit adds an exploration before the proposal. `/orbit:explore` thinks a change through with you and, when the
 conversation settles, writes `orbit/explore/<name>/explore.md`: a premise, the rules decided and how far each was
 worked out, decisions, open questions and what was considered and left out. `/orbit:propose` then starts the change
 from that file, carrying its decisions and open questions into the artifacts, and keeps it with the change.
 
-Carried by: the 1.3.1 baseline, `orbit-explore-modifications`, `orbit-propose-modifications`
+Carried by: the 1.3.1 baseline, `orbit-architect`, `orbit-explore-modifications`, `orbit-propose-modifications`
 
 ## Delta specs
 

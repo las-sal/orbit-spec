@@ -1,6 +1,6 @@
 # Getting started
 
-The README's [Quickstart](../README.md#quickstart) installs orbit's workflows and lists the six commands of a first
+The README's [Quickstart](../README.md#quickstart) installs orbit's workflows and lists the commands of a first
 change. This page walks that change end to end, with the step the Quickstart leaves implicit (the walk of each
 review's findings) and what every step writes on disk. It assumes Claude Code and a project where `orbit init` has
 run; [Installation](installation.md) covers both.
@@ -11,6 +11,20 @@ command ends with a `Ready when you are:` line naming what is eligible next.
 ## The change
 
 The example adds a dark mode to an app. Its change name is `add-dark-mode`.
+
+### 0. Architect
+
+```text
+/orbit:architect app-theming
+```
+
+New work starts here. The architect session writes a program, an architecture doc at
+`orbit/architecture/app-theming.md`: its goals, the rulings that bind it, and its stages, each of which becomes a
+change. Dark mode is one stage, and the exploration and change that follow cite it, so orbit computes the stage's
+state from them. The session plans the work; the change itself starts at the next step.
+
+An architect session is never required. For a one-off fix too small to plan, `/orbit:explore <change>` alone is the
+path, and the steps below run the same way without a citation.
 
 ### 1. Explore
 
@@ -109,6 +123,16 @@ review the readout names.
 Archive merges the change's delta specs into `orbit/specs/` and moves the change folder, trail included, to
 `orbit/changes/archive/<YYYY-MM-DD>-add-dark-mode/`. Before it merges, it checks that no other change has edited the
 requirements this one touches since it was proposed.
+
+### 8. Ratify the stage
+
+```text
+/orbit:architect app-theming
+```
+
+The walk returns to where it started. Once the stage's change is archived, the architect session reviews the stage
+against its exit criteria and asks you to ratify it; a ratified stage is complete, and the session takes up the next.
+The step gates nothing: no orbit surface requires it.
 
 ## The readout
 
