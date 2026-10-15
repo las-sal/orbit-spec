@@ -2,8 +2,8 @@
 
 `v2.0.0` carries the old CLI: `orbit init` says "Welcome to OpenSpec", nothing suggests `/orbit:architect`, and the
 docs on `main` describe a tool the tag does not install. The program's last stage (`refine-documentation-and-architect`,
-stage `release`, G4) cuts `v2.0.1` so that the installed CLI matches the docs. Five places in the user docs pin the
-install to `2.0.0`, and nothing checks them, so this bump would be a hand edit with nothing to catch a miss, now and at
+stage `release`, G4) cuts `v2.0.1` so that the installed CLI matches the docs. Five places in the user docs state the
+current version as `2.0.0` (three install pins and two prose statements), and nothing checks them, so this bump would be a hand edit with nothing to catch a miss, now and at
 every release after it (see explore.md, D-rel-1 and D-rel-2).
 
 ## What Changes

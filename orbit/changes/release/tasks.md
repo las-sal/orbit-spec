@@ -6,9 +6,9 @@
 
 ## 2. The version check
 
-- [ ] 2.1 In `test/helpers/user-docs.ts`, add the version check per `orbit-user-docs`' `The user docs state orbit's current version as package.json's`: the token rule (sentence-ending period accepted), current-or-admitted, the exact admitted list (by value: `1.3.1`, `1.14.1`, `20.19.0`; by phrase: README.md's "orbit 2.0.0 is orbit's first release, not OpenSpec 2.0.0"), and the two-page pin rule; join it to `fileLocalFailures` under `version`
-- [ ] 2.2 Add the stale-admission rule to the whole-docs run over the unlisted user docs, beside the unused docs-inventory rule
-- [ ] 2.3 Write `test/core/user-docs/version.test.ts` with one `@scenario behaviour` test per scenario of the new requirement (six), each shown able to fail, and an exact-list assertion on the admitted list
+- [ ] 2.1 In `test/helpers/user-docs.ts`, add the version check per `orbit-user-docs`' `The user docs state orbit's current version as package.json's`: the token rule (sentence-ending period accepted), current-or-admitted, install targets current whatever the list says, the exact admitted list (by value, a leading `v` stripped: `1.3.1`, `1.14.1`, `20.19.0`; by phrase, a line break read as a space: README.md's "orbit 2.0.0 is orbit's first release, not OpenSpec 2.0.0"), and the two-page install-command rule; join it to `fileLocalFailures` under `version`
+- [ ] 2.2 Add the stale-admission rule as a whole-docs run over the unlisted user docs, in `test/core/user-docs/version.test.ts`
+- [ ] 2.3 Write `test/core/user-docs/version.test.ts` with one `@scenario behaviour` test per scenario of the new requirement (seven), each shown able to fail, and an exact-list assertion on the admitted list
 - [ ] 2.4 Mutation-check: with the docs still at `2.0.0`, the shipped-docs test fails naming all five sites. Reverting one admitted phrase, or adding a stale value admission, turns it red
 
 ## 3. The docs

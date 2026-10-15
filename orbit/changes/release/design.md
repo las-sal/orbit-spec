@@ -29,14 +29,18 @@ the real docs. It confirmed the table, and it showed that a rule rejecting a tra
 
 - **D1 — the check is a scan plus an exact admitted list, after `orbit-cli-name`** (D-rel-1, see explore.md). Every
   version token is current or admitted. A check over `#v<x>` alone would miss two of the five sites, which state the
-  version in prose (README.md:56, installation.md:30). Admissions come in two kinds. By VALUE (`1.3.1`, `1.14.1`,
-  `20.19.0`): these can never be orbit's version, because orbit's versions start at `2.0.0` and only grow. By PHRASE
-  (file plus a phrase that contains the token): this admits README.md:14–15's historical `2.0.0` without admitting
-  `2.0.0` anywhere else, so a stale install pin at `2.0.0` still fails (explore.md's COHERE move).
+  version in prose (README.md:56, installation.md:30). Admissions come in two kinds. By VALUE, compared with a leading `v`
+  stripped: `1.3.1` and `1.14.1` sort below `2.0.0`, where orbit's versions start, so they can never be orbit's
+  version; `20.19.0` is admitted as the `engines` floor, and Risks names its far-off collision. By PHRASE (file plus a
+  phrase that contains the token, matched with each line break read as a space, because README.md wraps the phrase
+  across lines 14–15): this admits the historical `2.0.0` without admitting `2.0.0` anywhere else (explore.md's
+  COHERE move). An install target `github:las-sal/orbit-spec#v<x>` takes no admission at all, so `#v1.3.1` in an
+  install command fails even though `1.3.1` is admitted as a value, and the two-page rule asks for the install
+  command itself, not the tag in prose.
 - **D2 — the check lives with its siblings.** It goes in `test/helpers/user-docs.ts` beside `startSectionFailures`,
   joins `fileLocalFailures` under the tag `version`, and reads the version from `package.json` as
-  `test/helpers/surface-snippets.ts` already does. The two-page pin rule keeps the check from passing empty when every
-  pin is dropped. The stale-admission rule runs over the unlisted docs together, as the docs-inventory unused rule does:
+  `test/helpers/surface-snippets.ts` already does. The two-page install-command rule keeps the check from passing
+  empty when every install command is dropped. The stale-admission rule runs over the unlisted docs together, as the docs-inventory unused rule does:
   a file-local run over one page alone would find most admissions stale.
 - **D3 — the CHANGELOG entry** (D-rel-4): `## 2.0.1` above `## 2.0.0`, with three bullets. Where orbit suggests
   starting new work, it names `/orbit:architect` first. The CLI's user-visible strings say orbit, with the kept names

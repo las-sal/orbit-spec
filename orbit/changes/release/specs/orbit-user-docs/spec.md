@@ -6,24 +6,29 @@ The VERSION CHECK SHALL read every VERSION TOKEN in the user docs, and each SHAL
 or be ADMITTED by an entry of an exact admitted list held in the test. A VERSION TOKEN is three dot-separated runs of
 digits, optionally prefixed by `v`, neither preceded by a letter, digit or dot nor followed by a letter, a digit or a
 dot that is followed by a digit (a sentence-ending period does not hide a token). A token equal to `v<version>` or
-`<version>` is CURRENT. The list is exact, by this table, which is the measurement of 2026-10-15: a grep for the token
+`<version>` is CURRENT. An INSTALL TARGET — `github:las-sal/orbit-spec#v<x>` — SHALL be current whatever the
+admitted list says: no admission applies to it. A VALUE admission compares the token with any leading `v` removed, so
+`1.3.1` admits `v1.3.1`. A PHRASE admission matches the file's text read with each line break, and the indentation
+after it, as one space, so a phrase the page wraps still matches; each token it admits is still reported at its own
+line. The list is exact, by this table, which is the measurement of 2026-10-15: a grep for the token
 over `README.md` and `docs/*.md`, every hit classified:
 
 | member | covered by |
 |---|---|
-| an install pin `github:las-sal/orbit-spec#v<x>` (`README.md`, `docs/installation.md`) | current: `<x>` is `package.json`'s version |
+| an install target `github:las-sal/orbit-spec#v<x>` (`README.md`, `docs/installation.md`) | current: `<x>` is `package.json`'s version, and no admission applies |
 | a stated version `orbit --version` prints (`README.md`, `docs/installation.md`) | current |
 | `docs/installation.md`'s `#v<x>` naming the tag in prose | current |
-| `README.md`'s "orbit 2.0.0 is orbit's first release, not OpenSpec 2.0.0" | admitted by PHRASE: an entry (file, phrase) admits the tokens inside that phrase on a line of that file; true at every later version |
+| `README.md`'s "orbit 2.0.0 is orbit's first release, not OpenSpec 2.0.0" | admitted by PHRASE: an entry (file, phrase) admits the tokens inside each occurrence of that phrase in that file, a line break read as a space; true at every later version |
 | `1.3.1` and `v1.3.1` (the upstream baseline, on many pages) | admitted by VALUE: not orbit's version, because orbit's versions begin at 2.0.0 |
 | `1.14.1` (`docs/migration-guide.md`'s measured upstream version) | admitted by VALUE, owned by `The migration guide opens with a before-you-move checklist for an OpenSpec 1.x project` |
 | `20.19.0` (the Node floor in `README.md` and `docs/installation.md`) | admitted by VALUE: the `engines` range, not orbit's version |
 | any other token | fails |
 
 The check fails the suite, naming the file, the line, the token and `package.json`'s version, when a token is neither
-current nor admitted. It fails naming the page when `README.md` or `docs/installation.md` carries no install pin `#v<version>`, so
-dropping every pin never passes empty. Both rules are file-local: run over one doc alone, the check reports that doc's
-tokens, and the pin rule applies to the page it reads when that page is one of the two. The list's exactness is a
+current nor admitted. It fails naming the page when `README.md` or `docs/installation.md` carries no install command
+`npm install -g github:las-sal/orbit-spec#v<version>`, so dropping every install command never passes empty, and
+a current tag named in prose never stands in for one. Both rules are file-local: run over one doc alone, the check reports that doc's
+tokens, and the install-command rule applies to the page it reads when that page is one of the two. The list's exactness is a
 WHOLE-DOCS rule, run over the unlisted user docs together and never over one listed file: it fails naming the entry
 when an admitted entry admits no token in them, so a stale admission never lingers.
 
@@ -44,8 +49,13 @@ when an admitted entry admits no token in them, so a stale admission never linge
 
 #### Scenario: An admitted phrase admits only its own tokens
 
-- **WHEN** `README.md` carries the admitted phrase "orbit 2.0.0 is orbit's first release" and, elsewhere, a `2.0.0` outside any admitted phrase
-- **THEN** the token inside the phrase passes and the other fails
+- **WHEN** `README.md` carries the admitted phrase "orbit 2.0.0 is orbit's first release, not OpenSpec 2.0.0" wrapped across two lines, as the shipped page wraps it, and, elsewhere, a `2.0.0` outside any admitted phrase
+- **THEN** both tokens inside the phrase pass, each reported at its own line when it fails, and the other token fails
+
+#### Scenario: A wrong install target fails beside current-tag prose
+
+- **WHEN** `docs/installation.md` carries `npm install -g github:las-sal/orbit-spec#v1.3.1` and the prose "The `#v2.0.1` tag names a release tree" while `package.json` says `2.0.1`
+- **THEN** the suite fails, naming the install target `v1.3.1` (no value admission applies to it) and the page's missing current install command
 
 #### Scenario: A stale admission fails
 
