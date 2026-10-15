@@ -25,4 +25,4 @@
 
 ## 5. Review
 
-- [ ] 5.1 (User-validation) Sal reads the edited pages — README Quickstart, getting-started, workflows, workflow-engine's diagram, concepts' `## Artifacts` — and confirms they read architect-first (the stage's exit criterion "Sal has reviewed the pages").
+- [x] 5.1 (User-validation) Sal reads the edited pages — README Quickstart, getting-started, workflows, workflow-engine's diagram, concepts' `## Artifacts` — and confirms they read architect-first (the stage's exit criterion "Sal has reviewed the pages"). — observed by Sal at the ratifying architect session, 2026-10-15.

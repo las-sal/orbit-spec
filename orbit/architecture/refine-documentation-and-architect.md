@@ -109,7 +109,7 @@ and observed by Sal the same day; the fresh system pass had run both clean.
 ### Stage docs-refinement — the docs follow the tool
 
 Depends-on: architect-first, cli-says-orbit
-Complete: [ ]
+Complete: [x] 2026-10-15 (Sal)
 
 The README Quickstart led by `/orbit:architect`; the workflow and getting-started pages following the
 architect-first canonical flow; quoted CLI output re-captured after `cli-says-orbit`; and the further clean-up Sal
@@ -169,3 +169,8 @@ at this session for that stage: no user doc quotes a string `cli-says-orbit` ren
 `/orbit:architect` only in its install table, not its Quickstart; `docs/workflows.md:51` says to start with
 `/orbit:explore` when the problem is unclear; issue #24's §3 ("Other documentation clean-up") has no items yet, so
 Sal's review at the stage's exit is where they arrive.
+
+**2026-10-15 — `docs-refinement` ratified (Sal), in an architect session.** All three exits held: the `orbit-user-docs`
+checks, the new start-sections check among them, pass over the merged docs; Sal read the edited pages (task 5.1,
+deferred at archive and observed here); the archive (`2026-10-15-docs-refinement`, PR #27 merged). Sal named no
+clean-up item for issue #24 §3 at ratification. `release` is now startable, the program's last stage.
