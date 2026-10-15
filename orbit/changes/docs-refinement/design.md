@@ -50,7 +50,7 @@ architect is where new work starts and where it returns; `/orbit:explore` alone 
   its four scenarios carried and already declared in `pending-rewrite.test.ts`).
 - **`### Step by step` is a start section; two start-headed neighbours are not** (proposal review, walk of
   2026-10-15). workflows.md's `### Step by step` walks a path to a new change (`/orbit:new`), the sibling of
-  `### One change, start to finish`, so it is listed and opens with a clause placing it after an architect session.
+  `### One change, start to finish`, so it is listed and opens with a clause naming `/orbit:architect` before `/orbit:new`.
   commands.md's `## Starting a change` is a per-command reference section (architect starts a program and is
   documented under `## Across the project`), and workflows.md's `### Start a new change when` names no command; the
   requirement's table classifies both as not listed, so the residual sweep finds them settled.

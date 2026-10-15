@@ -1,0 +1,108 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-15T15:13:50Z",
+  "change": "docs-refinement",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/docs-refinement/.orbit-runs/review-proposal-2026-10-15T15-12-48Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-15T15-12-48Z",
+  "latest_apply_token": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 2
+  },
+  "pushback_verification": "Both verified at HEAD: tasks.md:12 quoted \"After an architect session declares the work, …\", which names no /orbit:<id>; tasks.md:11 said \"renumber\" beside a fixed `### 8.` while getting-started numbers 1-7.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "SUGGESTION",
+      "title": "Task 2.3's model clause for Step by step names no `/orbit:architect`, so the check would read `/orbit:new` first",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/docs-refinement/tasks.md",
+      "line": 12,
+      "classification": "trivial_fix",
+      "action": "task 2.3's model clause now names the command (\"After `/orbit:architect <program>` declares the work, …\") and says the check counts only a named command; design.md's decision says the clause names `/orbit:architect` before `/orbit:new`",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/docs-refinement/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "(\"After an architect session declares the work, …\")",
+          "opens with a clause placing it after an architect session."
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/docs-refinement/tasks.md",
+            "text": "(\"After `/orbit:architect <program>` declares the work, …\""
+          },
+          {
+            "path": "orbit/changes/docs-refinement/design.md",
+            "text": "opens with a clause naming `/orbit:architect` before `/orbit:new`"
+          }
+        ],
+        "searched": [
+          "after an architect session",
+          "architect session declares"
+        ],
+        "scope": [
+          "orbit/changes/docs-refinement/proposal.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Task 2.2 says to renumber after adding step 0, then fixes the closing step as `### 8.`",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/docs-refinement/tasks.md",
+      "line": 11,
+      "classification": "trivial_fix",
+      "action": "task 2.2 drops \"renumber\": step 0 is `### 0. Architect`, the existing steps keep their numbers, so the closing step is `### 8.` as design.md says",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "stage), renumber, add a closing step"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/docs-refinement/tasks.md",
+            "text": "the existing steps keep their numbers"
+          }
+        ],
+        "searched": [
+          "renumber",
+          "### 8."
+        ],
+        "scope": [
+          "docs/getting-started.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Both suggestions of the verification pass resolved: Step by step's model clause names /orbit:architect, and getting-started keeps its step numbers with step 0 and a closing step 8.",
+  "iteration": 3,
+  "next_recommended": "/orbit:apply docs-refinement — user-invoked",
+  "ripple_misses": 0
+}
