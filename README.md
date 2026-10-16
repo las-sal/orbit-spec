@@ -6,6 +6,9 @@ reviewers check it, and its specs are merged into your project's living baseline
 first, with Codex as its second supported assistant. It is for people who want an AI to do the development while
 they stay informed and keep the decisions.
 
+For a walkthrough of the loop and two case studies of orbit in use, see the
+[overview deck](OrbitOverview_CaseStudies.pdf) (PDF).
+
 ## Built on OpenSpec
 
 orbit is a hard fork of
