@@ -19,8 +19,19 @@ skill generator. orbit adds the editorial layer on top of it, in the same CLI.
 
 ## How orbit improves on OpenSpec
 
+Orbit adds some much needed features in OpenSpec. It adds an "architect" capability that allows you to work through
+big changes with the AI. The AI documents these and breaks them down into stages - each corresponding to an OpenSpec
+Explore->Propose. The engine works to limit the size of each stage as one of the issues we've seen with OpenSpec is 
+very large proposals tend to start falling down. It also adds a review cycle and gives the ability to have both a 
+proposal and apply validated by a fresh context AI review, an external AI review, or a blind-pair - both in parallel 
+restricted from seeing each others results. A mechanism to walk the results and address them is also provided. Other 
+features include a status command that orients you in the flow as well as boots a clean context and detailed records
+of the development flow. More details listed below.
+
 Each claim names the capabilities whose specs, under [`orbit/specs/`](orbit/specs/), carry it.
 
+- **The architect tier.** A program of changes is declared as stages in an architecture document, and each stage's
+  state is computed from disk (`orbit-architect`, `orbit-architecture-engine`).
 - **Reviewed gates with a computed cadence.** A change cannot reach apply or archive silently: each gate's state
   is computed from the review trail on disk, never asserted (`orbit-engine-gates`, `orbit-review`).
 - **The blind pair and the external runner.** One command runs a fresh review and an external review from another
@@ -33,8 +44,6 @@ Each claim names the capabilities whose specs, under [`orbit/specs/`](orbit/spec
 - **Engine-composed records.** Each lifecycle and review workflow records its run in a summary the engine
   composes and validates, and every review renders through one engine-owned report (`orbit-emit-composition`, `orbit-run-summary-emit`,
   `orbit-report-rendering`).
-- **The architect tier.** A program of changes is declared as stages in an architecture document, and each stage's
-  state is computed from disk (`orbit-architect`, `orbit-architecture-engine`).
 - **Safe parallel archive.** Each change fingerprints the baseline requirements it touches, so archiving one change
   never silently overwrites another's edits (`orbit-base-fingerprints`).
 - **You invoke every lifecycle step.** The AI recommends the next step and never runs it unasked; an AI-initiated
