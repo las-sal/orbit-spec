@@ -158,6 +158,16 @@ observation from the pushed tag, and issue #24's closure, are the ratification's
 
 ## Considered & out
 
+- **Making an architect session required** (2026-10-14, R-rda-2). R-rda-1 could have been read as a gate: no change
+  without an architect session. Rejected: architect-first changes what orbit suggests, never what it requires, so
+  `/orbit:explore` plus hand-editing stays a working path and nothing flags work that skipped the session.
+- **Bumping the docs' install pins by hand, with no check** (2026-10-15, `release` explore, Sal). Rejected: nothing
+  would catch a missed pin, now or at the next release, so `release` added the version check to `orbit-user-docs`.
+- **Deferring the README install check to ratification by amending `orbit-conventions`** (2026-10-15, `release`
+  system walk, Sal). The tag cannot exist before the merge, so an apply-time install from it is impossible. Rejected
+  in favour of an apply-time rehearsal from a scratch clone carrying a local tag, which keeps the requirement whole;
+  the install from the pushed tag stayed the ratification's.
+
 ## Status log
 
 **2026-10-13 — program opened (Sal), in an architect session.** Opened the same day `update-gh-documentation`
@@ -195,3 +205,8 @@ an isolated HOME, npm prefix and PATH with no `orbit` on it, `npm install -g git
 claude` printed "orbit Setup Complete", "15 skills and 15 commands in .claude/" and the `/orbit:architect <name>`
 suggestion, and `orbit status` pointed at `/orbit:architect <name>`. Issue #24 is closed. Every stage of the program
 is now complete.
+
+**2026-10-16 — closing architecture review walked (Sal: a).** The review (`review-architecture-2026-10-16T13-53-54Z`)
+found three suggestions, all repaired: `architect-first`'s task 6.5, deferred since 2026-10-14, is ticked in its
+archived tasks on the evidence of the `release` ratification's clean install, which ran exactly its case; Considered &
+out records the three routes the program turned down; `CLAUDE.md` no longer names this program as live.

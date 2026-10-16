@@ -1,0 +1,171 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-16T13:57:50Z",
+  "change": null,
+  "doc": "refine-documentation-and-architect",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "from-file",
+  "source_path": "orbit/architecture/.orbit-runs/review-architecture-2026-10-16T13-53-54Z.json",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 3
+  },
+  "pushback_verification": "All three verified at HEAD: task 6.5 was '- [ ]' in the archived tasks; the doc's Considered & out heading had no body; CLAUDE.md:47 read 'Programs: one live' naming this program, and its Source of truth and When in doubt lines called it the live program.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "SUGGESTION",
+      "title": "architect-first's task 6.5 stays unticked though the release ratification observed exactly its case",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/archive/2026-10-14-architect-first/tasks.md",
+      "line": 36,
+      "classification": "decision_required",
+      "action": "applied the ratified option A: ticked 6.5 with an OBSERVED note citing the 2026-10-16 clean install of v2.0.1 (init and bare status both named /orbit:architect <name>), in the form cli-says-orbit's 4.5 used; the doc's status log records the closure",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Tick 6.5 in orbit/changes/archive/2026-10-14-architect-first/tasks.md with a note citing the 2026-10-16 G4 observation (status log, release ratification)."
+          },
+          {
+            "label": "B",
+            "body": "Leave 6.5 unticked for Sal's own cold run, and add one status-log line naming it as the program's one open validation."
+          }
+        ],
+        "chosen": "A"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/architecture/refine-documentation-and-architect.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "- [ ] 6.5 (User-validation)"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/archive/2026-10-14-architect-first/tasks.md",
+            "text": "OBSERVED after archive, 2026-10-16, at the `release` ratification"
+          },
+          {
+            "path": "orbit/architecture/refine-documentation-and-architect.md",
+            "text": "closing architecture review walked (Sal: a)"
+          }
+        ],
+        "searched": [
+          "6.5",
+          "User-validation"
+        ],
+        "scope": [
+          "orbit/changes/archive/2026-10-14-cli-says-orbit/tasks.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Considered & out is empty although the program rejected route-level directions",
+      "marker_source": "internal-review",
+      "file": "orbit/architecture/refine-documentation-and-architect.md",
+      "line": 159,
+      "classification": "trivial_fix",
+      "action": "added three dated entries: making an architect session required (R-rda-2), bumping the install pins by hand with no check (release explore), and deferring the README install check by amending orbit-conventions (release system walk)",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/architecture/refine-documentation-and-architect.md",
+            "text": "**Making an architect session required** (2026-10-14, R-rda-2)"
+          },
+          {
+            "path": "orbit/architecture/refine-documentation-and-architect.md",
+            "text": "**Bumping the docs' install pins by hand, with no check**"
+          },
+          {
+            "path": "orbit/architecture/refine-documentation-and-architect.md",
+            "text": "**Deferring the README install check to ratification by amending `orbit-conventions`**"
+          }
+        ],
+        "searched": [
+          "Considered & out",
+          "rejected",
+          "Alternatives considered"
+        ],
+        "scope": [
+          "orbit/changes/archive/2026-10-16-release/design.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "CLAUDE.md's 'Programs: one live' still names this program as live",
+      "marker_source": "internal-review",
+      "file": "CLAUDE.md",
+      "line": 47,
+      "classification": "trivial_fix",
+      "action": "rewrote the section as 'Programs: none live' recording this program complete (2026-10-13 to 2026-10-16, v2.0.1) beside update-gh-documentation, and restated the Source of truth and When in doubt lines that called it the live program",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "## Programs: one live",
+          "the live program (architect-first",
+          "The live program is `orbit/architecture/refine-documentation-and-architect.md`"
+        ],
+        "introduced": [
+          {
+            "path": "CLAUDE.md",
+            "text": "## Programs: none live"
+          },
+          {
+            "path": "CLAUDE.md",
+            "text": "is complete too; no program is live"
+          }
+        ],
+        "searched": [
+          "live program",
+          "one live",
+          "the live"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Three of three resolved as repairs: task 6.5 ticked on the release ratification's evidence (ratified A), Considered & out records three rejected routes, and CLAUDE.md names no live program.",
+  "iteration": 1,
+  "next_recommended": "/orbit:review --as architecture refine-documentation-and-architect — confirm the resolutions",
+  "ripple_misses": 0
+}
