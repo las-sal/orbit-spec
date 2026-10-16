@@ -135,7 +135,7 @@ Task 5.1, Sal reading the pages, was deferred at archive.
 ### Stage release — v2.0.1
 
 Depends-on: architect-first, cli-says-orbit, docs-refinement
-Complete: [ ]
+Complete: [x] 2026-10-16 (Sal)
 
 Cut `v2.0.1` by `npm run release:tree`, with a CHANGELOG entry, so the installed CLI matches the docs. Pushing the
 tag is Sal's act.
@@ -187,3 +187,11 @@ Sal's review at the stage's exit is where they arrive.
 checks, the new start-sections check among them, pass over the merged docs; Sal read the edited pages (task 5.1,
 deferred at archive and observed here); the archive (`2026-10-15-docs-refinement`, PR #27 merged). Sal named no
 clean-up item for issue #24 §3 at ratification. `release` is now startable, the program's last stage.
+
+**2026-10-16 — `release` ratified (Sal), in an architect session.** G4 held. After PR #28 merged (`3985b4cc`), Sal ran
+`npm run release:tree` on `main` (release commit `baf1e76b`) and pushed `v2.0.1`; `git ls-remote` shows the tag. In
+an isolated HOME, npm prefix and PATH with no `orbit` on it, `npm install -g github:las-sal/orbit-spec#v2.0.1` exited
+0 and installed a directory; `orbit --version` printed `2.0.1`; in a new `git init` project, `orbit init --tools
+claude` printed "orbit Setup Complete", "15 skills and 15 commands in .claude/" and the `/orbit:architect <name>`
+suggestion, and `orbit status` pointed at `/orbit:architect <name>`. Issue #24 is closed. Every stage of the program
+is now complete.
