@@ -1,0 +1,91 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-16T13:53:54Z",
+  "change": null,
+  "doc": "refine-documentation-and-architect",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "architecture",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {},
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/archive/2026-10-14-architect-first/tasks.md",
+      "line": 36,
+      "title": "architect-first's task 6.5 stays unticked though the release ratification observed exactly its case",
+      "recommendation": "Task 6.5 (orbit init, then bare orbit status, in a scratch directory; both name /orbit:architect <name>) is the program's one open user-validation, and the doc's status log (line 174) still says it stays deferred. The 2026-10-16 G4 run did that case from a clean install of v2.0.1: init printed 'Plan your first piece of work: /orbit:architect <name>' and orbit status printed 'Ready when you are: /orbit:architect <name>'. Either tick it in the archived tasks citing that observation, as cli-says-orbit's 4.5 was ticked after Sal's run, or leave it for Sal's own cold run and say so in the status log.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Tick 6.5 in orbit/changes/archive/2026-10-14-architect-first/tasks.md with a note citing the 2026-10-16 G4 observation (status log, release ratification)."
+        },
+        {
+          "label": "B",
+          "body": "Leave 6.5 unticked for Sal's own cold run, and add one status-log line naming it as the program's one open validation."
+        }
+      ]
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/architecture/refine-documentation-and-architect.md",
+      "line": 159,
+      "title": "Considered & out is empty although the program rejected route-level directions",
+      "recommendation": "Record the directions the rulings and stages turned down, each with its date: making an architect session REQUIRED (R-rda-2 kept it a suggestion, 2026-10-14); keeping the docs' install pins as a hand edit with no check (release explore, rejected by Sal 2026-10-15); and amending orbit-conventions' install-docs requirement to defer the sandbox install to ratification (release system walk, 2026-10-15, Sal chose the apply-time rehearsal). A closed program's doc is what a later session reads to learn why the route ran as it did."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "CLAUDE.md",
+      "line": 47,
+      "title": "CLAUDE.md's 'Programs: one live' still names this program as live",
+      "recommendation": "Once this closing review lands, rewrite the section the way update-gh-documentation's close was recorded: no program live, this one complete (architect-first, CLI says orbit, docs refined, v2.0.1 released 2026-10-16), its doc linked under Source of truth as complete. Until then a cold session's orientation reads a finished program as the live one, though `orbit architecture status` renders every stage complete."
+    }
+  ],
+  "commentary": "First architecture review for this doc. Ran all six passes over the doc with `orbit architecture status --json` beside it. The premise, rulings and goals trace cleanly to the four stages: R-rda-2's surface list is architect-first's charter, R-rda-3's protections are cli-says-orbit's scope, and G1–G4 each land as a stage's exit, every one observed and ratified. The Depends-on graph (two roots, docs-refinement on both, release on all three) matches the status log's sequencing and has no cycle. Layer-fit holds: rulings stay arc-level, and test and mutation detail sits in the Shipped-as paragraphs, where CLAUDE.md says stage narrative lives. Each Shipped-as is a record true at its archive (release's 'the tag still to cut', docs-refinement's 'Task 5.1 ... was deferred'), and the status log carries what happened after, which is the pattern the program kept throughout. The doc's read cost is modest: `orbit architecture show` slices a stage and the engine renders position, so no state line duplicates it.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6"
+  ],
+  "handoff": {
+    "boot_sequence": [
+      "orbit/architecture/refine-documentation-and-architect.md — the program doc; every stage ratified",
+      "orbit/architecture/.orbit-runs/ — this review emit, whose findings the walk reads"
+    ],
+    "next_command": "/orbit:address-reviews --from-file <this emit's path>",
+    "model_hint": "claude-opus-5-5",
+    "seam": "closing architecture review → walk"
+  },
+  "final_assessment": "0 critical, 0 warning, 3 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews --from-file orbit/architecture/.orbit-runs/review-architecture-2026-10-16T13-53-54Z.json"
+}
