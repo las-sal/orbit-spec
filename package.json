@@ -41,7 +41,6 @@
   ],
   "scripts": {
     "lint": "eslint src/",
-    "build": "node build.js",
     "dev": "tsc --watch",
     "dev:cli": "npm run build && node bin/orbit.js",
     "test": "vitest run",
@@ -49,9 +48,7 @@
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
     "test:postinstall": "node scripts/postinstall.js",
-    "prepare": "npm run build",
     "prepublishOnly": "npm run build",
-    "postinstall": "node scripts/postinstall.js",
     "release:tree": "node scripts/release-tree.mjs",
     "capture:gh": "node scripts/capture-gh-contract.mjs",
     "capture:git": "vitest run --config scripts/capture.vitest.config.ts"

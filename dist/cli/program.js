@@ -1,0 +1,618 @@
+import { Command } from 'commander';
+import { createRequire } from 'module';
+import ora from 'ora';
+import path from 'path';
+import { promises as fs } from 'fs';
+import { AI_TOOLS } from '../core/config.js';
+import { UpdateCommand } from '../core/update.js';
+import { ListCommand } from '../core/list.js';
+import { ArchiveCommand } from '../core/archive.js';
+import { ViewCommand } from '../core/view.js';
+import { registerSpecCommand } from '../commands/spec.js';
+import { ChangeCommand } from '../commands/change.js';
+import { ValidateCommand } from '../commands/validate.js';
+import { ShowCommand } from '../commands/show.js';
+import { CompletionCommand } from '../commands/completion.js';
+import { FeedbackCommand } from '../commands/feedback.js';
+import { registerConfigCommand } from '../commands/config.js';
+import { registerSchemaCommand } from '../commands/schema.js';
+import { statusCommand, instructionsCommand, applyInstructionsCommand, templatesCommand, schemasCommand, newChangeCommand, DEFAULT_SCHEMA, } from '../commands/workflow/index.js';
+/**
+ * Build the `orbit` commander program: the CLI's grammar, stated once
+ * (`orbit-cli-grammar`). `src/cli/index.ts` builds it and parses; a test builds
+ * the same program in-process without running any command.
+ */
+export function buildProgram(options = {}) {
+    const program = new Command();
+    const require = createRequire(import.meta.url);
+    const { version } = require('../../package.json');
+    program
+        .name('orbit')
+        .description('AI-native system for spec-driven development')
+        .version(version);
+    // Global options
+    program.option('--no-color', 'Disable color output');
+    // Apply global flags before any command runs
+    if (options.hooks !== false) {
+        program.hook('preAction', async (thisCommand) => {
+            const opts = thisCommand.opts();
+            if (opts.color === false) {
+                process.env.NO_COLOR = '1';
+            }
+        });
+    }
+    const availableToolIds = AI_TOOLS.filter((tool) => tool.skillsDir).map((tool) => tool.value);
+    const toolsOptionDescription = `Configure AI tools non-interactively. Use "all", "none", or a comma-separated list of: ${availableToolIds.join(', ')}`;
+    program
+        .command('init [path]')
+        .description('Initialize orbit in your project')
+        .option('--tools <tools>', toolsOptionDescription)
+        .option('--force', 'Auto-cleanup legacy files without prompting')
+        .option('--profile <profile>', 'Override global config profile (core or custom)')
+        .action(async (targetPath = '.', options) => {
+        try {
+            // Validate that the path is a valid directory
+            const resolvedPath = path.resolve(targetPath);
+            try {
+                const stats = await fs.stat(resolvedPath);
+                if (!stats.isDirectory()) {
+                    throw new Error(`Path "${targetPath}" is not a directory`);
+                }
+            }
+            catch (error) {
+                if (error.code === 'ENOENT') {
+                    // Directory doesn't exist, but we can create it
+                    console.log(`Directory "${targetPath}" doesn't exist, it will be created.`);
+                }
+                else if (error.message && error.message.includes('not a directory')) {
+                    throw error;
+                }
+                else {
+                    throw new Error(`Cannot access path "${targetPath}": ${error.message}`);
+                }
+            }
+            const { InitCommand } = await import('../core/init.js');
+            const initCommand = new InitCommand({
+                tools: options?.tools,
+                force: options?.force,
+                profile: options?.profile,
+            });
+            await initCommand.execute(targetPath);
+        }
+        catch (error) {
+            console.log(); // Empty line for spacing
+            ora().fail(`Error: ${error.message}`);
+            process.exit(1);
+        }
+    });
+    // Hidden alias: 'experimental' -> 'init' for backwards compatibility
+    program
+        .command('experimental', { hidden: true })
+        .description('Alias for init (deprecated)')
+        .option('--tool <tool-id>', 'Target AI tool (maps to --tools)')
+        .option('--no-interactive', 'Disable interactive prompts')
+        .action(async (options) => {
+        try {
+            console.log('Note: "orbit experimental" is deprecated. Use "orbit init" instead.');
+            const { InitCommand } = await import('../core/init.js');
+            const initCommand = new InitCommand({
+                tools: options?.tool,
+                interactive: options?.noInteractive === true ? false : undefined,
+            });
+            await initCommand.execute('.');
+        }
+        catch (error) {
+            console.log();
+            ora().fail(`Error: ${error.message}`);
+            process.exit(1);
+        }
+    });
+    program
+        .command('update [path]')
+        .description('Update orbit instruction files')
+        .option('--force', 'Force update even when tools are up to date')
+        .action(async (targetPath = '.', options) => {
+        try {
+            const resolvedPath = path.resolve(targetPath);
+            const updateCommand = new UpdateCommand({ force: options?.force });
+            await updateCommand.execute(resolvedPath);
+        }
+        catch (error) {
+            console.log(); // Empty line for spacing
+            ora().fail(`Error: ${error.message}`);
+            process.exit(1);
+        }
+    });
+    program
+        .command('list')
+        .description('List items (changes by default). Use --specs to list specs.')
+        .option('--specs', 'List specs instead of changes')
+        .option('--changes', 'List changes explicitly (default)')
+        .option('--sort <order>', 'Sort order: "recent" (default) or "name"', 'recent')
+        .option('--json', 'Output as JSON (for programmatic use)')
+        .action(async (options) => {
+        try {
+            const listCommand = new ListCommand();
+            const mode = options?.specs ? 'specs' : 'changes';
+            const sort = options?.sort === 'name' ? 'name' : 'recent';
+            await listCommand.execute('.', mode, { sort, json: options?.json });
+        }
+        catch (error) {
+            console.log(); // Empty line for spacing
+            ora().fail(`Error: ${error.message}`);
+            process.exit(1);
+        }
+    });
+    program
+        .command('view')
+        .description('Display an interactive dashboard of specs and changes')
+        .action(async () => {
+        try {
+            const viewCommand = new ViewCommand();
+            await viewCommand.execute('.');
+        }
+        catch (error) {
+            console.log(); // Empty line for spacing
+            ora().fail(`Error: ${error.message}`);
+            process.exit(1);
+        }
+    });
+    // Change command with subcommands
+    const changeCmd = program
+        .command('change')
+        .description('Manage orbit change proposals');
+    // Deprecation notice for noun-based commands
+    if (options.hooks !== false) {
+        changeCmd.hook('preAction', () => {
+            console.error('Warning: The "orbit change ..." commands are deprecated. Prefer verb-first commands (e.g., "orbit list", "orbit validate --changes").');
+        });
+    }
+    changeCmd
+        .command('show [change-name]')
+        .description('Show a change proposal in JSON or markdown format')
+        .option('--json', 'Output as JSON')
+        .option('--deltas-only', 'Show only deltas (JSON only)')
+        .option('--requirements-only', 'Alias for --deltas-only (deprecated)')
+        .option('--no-interactive', 'Disable interactive prompts')
+        .action(async (changeName, options) => {
+        try {
+            const changeCommand = new ChangeCommand();
+            await changeCommand.show(changeName, options);
+        }
+        catch (error) {
+            console.error(`Error: ${error.message}`);
+            process.exitCode = 1;
+        }
+    });
+    changeCmd
+        .command('list')
+        .description('List all active changes (DEPRECATED: use "orbit list" instead)')
+        .option('--json', 'Output as JSON')
+        .option('--long', 'Show id and title with counts')
+        .action(async (options) => {
+        try {
+            console.error('Warning: "orbit change list" is deprecated. Use "orbit list".');
+            const changeCommand = new ChangeCommand();
+            await changeCommand.list(options);
+        }
+        catch (error) {
+            console.error(`Error: ${error.message}`);
+            process.exitCode = 1;
+        }
+    });
+    changeCmd
+        .command('validate [change-name]')
+        .description('Validate a change proposal')
+        .option('--strict', 'Enable strict validation mode')
+        .option('--json', 'Output validation report as JSON')
+        .option('--no-interactive', 'Disable interactive prompts')
+        .action(async (changeName, options) => {
+        try {
+            const changeCommand = new ChangeCommand();
+            await changeCommand.validate(changeName, options);
+            if (typeof process.exitCode === 'number' && process.exitCode !== 0) {
+                process.exit(process.exitCode);
+            }
+        }
+        catch (error) {
+            console.error(`Error: ${error.message}`);
+            process.exitCode = 1;
+        }
+    });
+    program
+        .command('archive [change-name]')
+        .description('Archive a completed change and update main specs')
+        .option('-y, --yes', 'Skip confirmation prompts')
+        .option('--skip-specs', 'Skip spec update operations (useful for infrastructure, tooling, or doc-only changes)')
+        .option('--no-validate', 'Skip validation (not recommended, requires confirmation)')
+        .option('--override-fingerprints', 'Proceed past base-fingerprint divergence (deliberate; overwrites divergent live content)')
+        .action(async (changeName, options) => {
+        try {
+            const archiveCommand = new ArchiveCommand();
+            await archiveCommand.execute(changeName, options);
+        }
+        catch (error) {
+            console.log(); // Empty line for spacing
+            ora().fail(`Error: ${error.message}`);
+            process.exit(1);
+        }
+    });
+    registerSpecCommand(program, options);
+    registerConfigCommand(program, options);
+    registerSchemaCommand(program, options);
+    // Top-level validate command
+    program
+        .command('validate [item-name]')
+        .description('Validate changes, specs, and marked source spans')
+        .option('--all', 'Validate all changes and specs, and lint marked source spans')
+        .option('--changes', 'Validate all changes')
+        .option('--specs', 'Validate all specs')
+        .option('--sources', 'Lint marked source spans against orbit/sources.yaml')
+        .option('--type <type>', 'Specify item type when ambiguous: change|spec')
+        .option('--strict', 'Enable strict validation mode')
+        .option('--json', 'Output validation results as JSON')
+        .option('--concurrency <n>', 'Max concurrent validations (defaults to env OPENSPEC_CONCURRENCY or 6)')
+        .option('--no-interactive', 'Disable interactive prompts')
+        .action(async (itemName, options) => {
+        try {
+            const validateCommand = new ValidateCommand();
+            await validateCommand.execute(itemName, options);
+        }
+        catch (error) {
+            console.log();
+            ora().fail(`Error: ${error.message}`);
+            process.exit(1);
+        }
+    });
+    // Generic emit surface (D5 context economy): engine-owned run-summary composition
+    program
+        .command('emit <emit-command>')
+        .description('Compose and write a run-summary emit — the AI supplies the narrative payload; the engine owns the spine, deterministic facts, and computed extensions')
+        .option('--change <name>', 'Target workstream (a change, or the staging exploration for explore-trail emits)')
+        .option('--doc <doc-name>', 'Target architecture doc (architecture-scoped commands)')
+        .option('--payload <file>', 'Payload JSON file (when present, stdin is not consulted)')
+        .option('--json', 'Stdout becomes exactly one {path, emit, render?} object')
+        .option('--render', 'Proposal/system review emits: print the engine report render after the write')
+        .action(async (emitCommand, options) => {
+        try {
+            const { EmitCommand } = await import('../commands/emit.js');
+            const exitCode = await new EmitCommand().execute(emitCommand, options ?? {});
+            if (exitCode !== 0)
+                process.exit(exitCode);
+        }
+        catch (error) {
+            // Error paths keep stdout empty: message on stderr, non-zero exit.
+            console.error(`Error: ${error.message}`);
+            process.exit(1);
+        }
+    });
+    // Top-level fingerprint command (C2 parallel-merge guardrail)
+    program
+        .command('fingerprint <change-name>')
+        .description("Stamp or check base fingerprints for a change's delta specs")
+        .option('--check', 'Check mode: recompute live hashes and report per-requirement status (never writes)')
+        .option('--refresh', 'Stamp mode: overwrite existing fingerprints (deliberate re-stamp after reconciling)')
+        .option('--json', 'Output results as JSON')
+        .action(async (changeName, options) => {
+        try {
+            const { FingerprintCommand } = await import('../commands/fingerprint.js');
+            const exitCode = await new FingerprintCommand().execute(changeName, options ?? {});
+            if (exitCode !== 0)
+                process.exit(exitCode);
+        }
+        catch (error) {
+            console.log();
+            ora().fail(`Error: ${error.message}`);
+            process.exit(1);
+        }
+    });
+    // External runner (rc17d): read the user's recorded runner; save an external return into a trail
+    const external = program
+        .command('external')
+        .description("External review: the user's recorded runner, and saving a raw return into a change's trail");
+    external
+        .command('runner')
+        .description('Print the resolved external runner record (never executes it)')
+        .option('--json', 'Output as JSON')
+        .action(async (options) => {
+        const { ExternalCommand } = await import('../commands/external.js');
+        const exitCode = new ExternalCommand().runner(options ?? {});
+        if (exitCode !== 0)
+            process.exit(exitCode);
+    });
+    external
+        .command('save <change-name>')
+        .description("Save an external AI's raw return into the change's trail as external-<mode>-<TS>.md")
+        .requiredOption('--as <mode>', 'Review mode: proposal or system')
+        .requiredOption('--from <path>', 'The raw return file')
+        .option('--launch <token>', "The launch's T0 token; refuses a return older than a later apply")
+        .option('--json', 'Output as JSON')
+        .action(async (changeName, options) => {
+        const { ExternalCommand } = await import('../commands/external.js');
+        const exitCode = new ExternalCommand().save(changeName, options ?? {});
+        if (exitCode !== 0)
+            process.exit(exitCode);
+    });
+    // PR lifecycle (rc12): observe and print — the read-only queries a seam needs, every write as argv
+    const pr = program
+        .command('pr')
+        .description('PR lifecycle: observe and print the writes for a seam (never performs a write)');
+    const prSub = (name, arg, description) => pr.command(`${name} ${arg}`).description(description).option('--json', 'Output as JSON');
+    const runPr = async (name, target, options) => {
+        const { PrCommand } = await import('../commands/pr.js');
+        const exitCode = new PrCommand().execute(name, target, options);
+        if (exitCode !== 0)
+            process.exit(exitCode);
+    };
+    prSub('select', '<name>', 'Propose and ff Phase 1: resolve the branch and print the switch')
+        .action((name, options) => runPr('select', name, options ?? {}));
+    prSub('publish', '<change-name>', 'Propose and ff Phase 3: the commit scope and the land-and-open segments')
+        .action((name, options) => runPr('publish', name, options ?? {}));
+    prSub('preflight', '<change-name>', 'Archive preflight: validate the attachment and decide one outcome')
+        .action((name, options) => runPr('preflight', name, options ?? {}));
+    prSub('tail', '<change-name>', 'Archive tail: the commit scope and PR steps, from the outcome and the archive emit')
+        .option('--outcome <code>', 'The preflight outcome (observations.outcome), passed verbatim')
+        .option('--include <path>', 'An at-archive-note edit to add to the commit scope (repeatable)', (v, prev = []) => [...prev, v])
+        .action((name, options) => runPr('tail', name, options ?? {}));
+    prSub('program', '<doc>', 'Architect arc-done readout: the program PR, its live state, and the human acts')
+        .action((doc, options) => runPr('program', doc, options ?? {}));
+    // Architecture tier (D-arc D2): computed program position over orbit/architecture/ docs
+    const architecture = program
+        .command('architecture')
+        .description('Architecture-tier declarations: computed program position, stage sections, doc validation');
+    architecture
+        .command('status')
+        .description('Computed stage states across all architecture docs (bucketed parseable/legacy/malformed)')
+        .option('--json', 'Output as JSON')
+        .action(async (options) => {
+        try {
+            const { ArchitectureCommand } = await import('../commands/architecture.js');
+            const exitCode = new ArchitectureCommand().status(options ?? {});
+            if (exitCode !== 0)
+                process.exit(exitCode);
+        }
+        catch (error) {
+            console.log();
+            ora().fail(`Error: ${error.message}`);
+            process.exit(1);
+        }
+    });
+    architecture
+        .command('show <doc> [stage]')
+        .description("Print one stage's section (or the doc's stage index)")
+        .option('--json', 'Output as JSON')
+        .action(async (doc, stage, options) => {
+        try {
+            const { ArchitectureCommand } = await import('../commands/architecture.js');
+            const exitCode = new ArchitectureCommand().show(doc, stage, options ?? {});
+            if (exitCode !== 0)
+                process.exit(exitCode);
+        }
+        catch (error) {
+            console.log();
+            ora().fail(`Error: ${error.message}`);
+            process.exit(1);
+        }
+    });
+    architecture
+        .command('validate <doc>')
+        .description('Validate a doc\'s parseable structure (heading form, slot syntax, id uniqueness, Depends-on resolution)')
+        .option('--json', 'Output as JSON')
+        .action(async (doc, options) => {
+        try {
+            const { ArchitectureCommand } = await import('../commands/architecture.js');
+            const exitCode = new ArchitectureCommand().validate(doc, options ?? {});
+            if (exitCode !== 0)
+                process.exit(exitCode);
+        }
+        catch (error) {
+            console.log();
+            ora().fail(`Error: ${error.message}`);
+            process.exit(1);
+        }
+    });
+    // Top-level show command
+    program
+        .command('show [item-name]')
+        .description('Show a change or spec')
+        .option('--json', 'Output as JSON')
+        .option('--type <type>', 'Specify item type when ambiguous: change|spec')
+        .option('--no-interactive', 'Disable interactive prompts')
+        // change-only flags
+        .option('--deltas-only', 'Show only deltas (JSON only, change)')
+        .option('--requirements-only', 'Alias for --deltas-only (deprecated, change)')
+        // spec-only flags
+        .option('--requirements', 'JSON only: Show only requirements (exclude scenarios)')
+        .option('--no-scenarios', 'JSON only: Exclude scenario content')
+        .option('-r, --requirement <id>', 'JSON only: Show specific requirement by ID (1-based)')
+        // allow unknown options to pass-through to underlying command implementation
+        .allowUnknownOption(true)
+        .action(async (itemName, options) => {
+        try {
+            const showCommand = new ShowCommand();
+            await showCommand.execute(itemName, options ?? {});
+        }
+        catch (error) {
+            console.log();
+            ora().fail(`Error: ${error.message}`);
+            process.exit(1);
+        }
+    });
+    // Feedback command
+    program
+        .command('feedback <message>')
+        .description('Submit feedback about orbit')
+        .option('--body <text>', 'Detailed description for the feedback')
+        .action(async (message, options) => {
+        try {
+            const feedbackCommand = new FeedbackCommand();
+            await feedbackCommand.execute(message, options);
+        }
+        catch (error) {
+            console.log();
+            ora().fail(`Error: ${error.message}`);
+            process.exit(1);
+        }
+    });
+    // Completion command with subcommands
+    const completionCmd = program
+        .command('completion')
+        .description('Manage shell completions for the orbit CLI');
+    completionCmd
+        .command('generate [shell]')
+        .description('Generate completion script for a shell (outputs to stdout)')
+        .action(async (shell) => {
+        try {
+            const completionCommand = new CompletionCommand();
+            await completionCommand.generate({ shell });
+        }
+        catch (error) {
+            console.log();
+            ora().fail(`Error: ${error.message}`);
+            process.exit(1);
+        }
+    });
+    completionCmd
+        .command('install [shell]')
+        .description('Install completion script for a shell')
+        .option('--verbose', 'Show detailed installation output')
+        .action(async (shell, options) => {
+        try {
+            const completionCommand = new CompletionCommand();
+            await completionCommand.install({ shell, verbose: options?.verbose });
+        }
+        catch (error) {
+            console.log();
+            ora().fail(`Error: ${error.message}`);
+            process.exit(1);
+        }
+    });
+    completionCmd
+        .command('uninstall [shell]')
+        .description('Uninstall completion script for a shell')
+        .option('-y, --yes', 'Skip confirmation prompts')
+        .action(async (shell, options) => {
+        try {
+            const completionCommand = new CompletionCommand();
+            await completionCommand.uninstall({ shell, yes: options?.yes });
+        }
+        catch (error) {
+            console.log();
+            ora().fail(`Error: ${error.message}`);
+            process.exit(1);
+        }
+    });
+    // Hidden command for machine-readable completion data
+    program
+        .command('__complete <type>', { hidden: true })
+        .description('Output completion data in machine-readable format (internal use)')
+        .action(async (type) => {
+        try {
+            const completionCommand = new CompletionCommand();
+            await completionCommand.complete({ type });
+        }
+        catch (error) {
+            // Silently fail for graceful shell completion experience
+            process.exitCode = 1;
+        }
+    });
+    // ═══════════════════════════════════════════════════════════
+    // Workflow Commands (formerly experimental)
+    // ═══════════════════════════════════════════════════════════
+    // Status command
+    program
+        .command('status')
+        .description('Orientation: bare = current sprint; --full = arc view; --change <id> = per-change artifact status')
+        .option('--change <id>', 'Change name to show status for')
+        .option('--schema <name>', 'Schema override (auto-detected from config.yaml)')
+        .option('--full', 'Render the arc view (program band + all workstreams + LAST + WAITING)')
+        .option('--report [ts]', 'Render a review pass as the engine-computed report (rides --change; no <TS> = newest pass)')
+        .option('--boot', 'Render the cold-start boot sequence — ordered pointers into existing artifacts (rides --change; composes with --json)')
+        .option('--scenarios', 'Render the scenario map — which test or ledger entry declares each delta scenario (rides --change; composes with --json)')
+        .option('--json', 'Output as JSON')
+        .action(async (options) => {
+        try {
+            await statusCommand(options);
+        }
+        catch (error) {
+            // Diagnostics stay off stdout — --report promises no partial output on
+            // its error paths (stdout is the report channel; ora writes to stderr).
+            console.error();
+            ora().fail(`Error: ${error.message}`);
+            process.exit(1);
+        }
+    });
+    // Instructions command
+    program
+        .command('instructions [artifact]')
+        .description('Output enriched instructions for creating an artifact or applying tasks')
+        .option('--change <id>', 'Change name')
+        .option('--schema <name>', 'Schema override (auto-detected from config.yaml)')
+        .option('--json', 'Output as JSON')
+        .action(async (artifactId, options) => {
+        try {
+            // Special case: "apply" is not an artifact, but a command to get apply instructions
+            if (artifactId === 'apply') {
+                await applyInstructionsCommand(options);
+            }
+            else {
+                await instructionsCommand(artifactId, options);
+            }
+        }
+        catch (error) {
+            console.log();
+            ora().fail(`Error: ${error.message}`);
+            process.exit(1);
+        }
+    });
+    // Templates command
+    program
+        .command('templates')
+        .description('Show resolved template paths for all artifacts in a schema')
+        .option('--schema <name>', `Schema to use (default: ${DEFAULT_SCHEMA})`)
+        .option('--json', 'Output as JSON mapping artifact IDs to template paths')
+        .action(async (options) => {
+        try {
+            await templatesCommand(options);
+        }
+        catch (error) {
+            console.log();
+            ora().fail(`Error: ${error.message}`);
+            process.exit(1);
+        }
+    });
+    // Schemas command
+    program
+        .command('schemas')
+        .description('List available workflow schemas with descriptions')
+        .option('--json', 'Output as JSON (for agent use)')
+        .action(async (options) => {
+        try {
+            await schemasCommand(options);
+        }
+        catch (error) {
+            console.log();
+            ora().fail(`Error: ${error.message}`);
+            process.exit(1);
+        }
+    });
+    // New command group with change subcommand
+    const newCmd = program.command('new').description('Create new items');
+    newCmd
+        .command('change <name>')
+        .description('Create a new change directory')
+        .option('--description <text>', 'Description to add to README.md')
+        .option('--schema <name>', `Workflow schema to use (default: ${DEFAULT_SCHEMA})`)
+        .action(async (name, options) => {
+        try {
+            await newChangeCommand(name, options);
+        }
+        catch (error) {
+            console.log();
+            ora().fail(`Error: ${error.message}`);
+            process.exit(1);
+        }
+    });
+    return program;
+}
+//# sourceMappingURL=program.js.map
