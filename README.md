@@ -7,7 +7,7 @@ first, with Codex as its second supported assistant. It is for people who want a
 they stay informed and keep the decisions.
 
 For a walkthrough of the loop and two case studies of orbit in use, see the
-[overview deck](OrbitOverview_CaseStudies.pdf) (PDF).
+[overview deck](docs/OrbitOverview_CaseStudies.pdf) (PDF).
 
 ## Built on OpenSpec
 
