@@ -1,7 +1,7 @@
 /**
  * The user docs as a checked surface (docs-under-test): `orbit-user-docs`' residue check, the
  * improvement-claims check (landing-page), the command-coverage check (reference-docs), the carried-by and
- * tool-coverage checks (concept-docs), the start-sections check (docs-refinement), the pending-rewrite list's exactness, and the docs sweeps' non-vacuity floors. This module implements that capability's checks; it states none of its rules.
+ * tool-coverage checks (concept-docs), the start-sections check (docs-refinement), the version check and its admitted list's exactness (release), the pending-rewrite list's exactness, and the docs sweeps' non-vacuity floors. This module implements that capability's checks; it states none of its rules.
  */
 import * as fs from 'node:fs';
 import * as path from 'node:path';
@@ -507,6 +507,145 @@ export function startSectionFailures(surfaces: Surface[], sections: StartSection
 /** The pages the start-sections check owes, for the suite-level missing-page rule. */
 export const START_PAGES = [...new Set(START_SECTIONS.map((s) => s.page))];
 
+// ─── the version check (release D1, D2) ───────────────────────────
+
+/** `package.json`'s `version`, the one current version. */
+export const PACKAGE_VERSION: string = JSON.parse(fs.readFileSync(path.join(REPO, 'package.json'), 'utf-8')).version;
+
+/** An admission: by VALUE (compared with a leading `v` stripped), or by PHRASE in one file (a line break read as a space). */
+export type VersionAdmission = { value: string } | { file: string; phrase: string };
+
+/** The admitted list, exactly as the requirement's table lists it. */
+export const VERSION_ADMISSIONS: VersionAdmission[] = [
+  { file: 'README.md', phrase: "orbit 2.0.0 is orbit's first release, not OpenSpec 2.0.0" },
+  { value: '1.3.1' },
+  { value: '1.14.1' },
+  { value: '20.19.0' },
+];
+
+/** The two pages that must carry the current install command. */
+export const INSTALL_PAGES = ['README.md', 'docs/installation.md'];
+
+const INSTALL_PREFIX = 'github:las-sal/orbit-spec#';
+/**
+ * An install target: a ref `v<digit>…` after the `#`, running to the next whitespace, quote, backtick, parenthesis or
+ * bracket. A placeholder such as `#<tag>` names no version and is no target.
+ */
+const INSTALL_TARGET = /github:las-sal\/orbit-spec#(v\d[^\s`'"()<>[\]]*)/g;
+
+interface InstallTarget {
+  /** The whole ref after the `#`, a sentence-ending punctuation mark not counted. */
+  ref: string;
+  line: number;
+  /** Whether `npm install -g ` stands right before it, making it an install command. */
+  command: boolean;
+  start: number;
+  end: number;
+}
+
+/** Every install target of a text, with its whole ref. */
+function installTargets(text: string): InstallTarget[] {
+  return [...text.matchAll(INSTALL_TARGET)].map((m) => {
+    const ref = m[1].replace(/[.,;:!?]+$/, '');
+    const start = m.index! + m[0].length - m[1].length;
+    return {
+      ref,
+      line: text.slice(0, m.index!).split('\n').length,
+      command: text.slice(Math.max(0, m.index! - 'npm install -g '.length), m.index!) === 'npm install -g ',
+      start,
+      end: start + ref.length,
+    };
+  });
+}
+
+/** A version token: three dot-separated digit runs, optionally `v`-prefixed; a sentence-ending period does not hide it. */
+const VERSION_TOKEN = /(?<![A-Za-z0-9.])v?\d+\.\d+\.\d+(?![A-Za-z0-9]|\.\d)/g;
+
+const describeAdmission = (a: VersionAdmission): string =>
+  'value' in a ? `value '${a.value}'` : `${a.file} phrase "${a.phrase}"`;
+
+/** A phrase as a pattern matching each of its spaces as a space or a line break plus the indentation after it. */
+const phrasePattern = (phrase: string): RegExp =>
+  new RegExp(
+    phrase
+      .split(' ')
+      .map((word) => word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+      .join('(?: |\\r?\\n[ \\t]*)'),
+    'g',
+  );
+
+interface VersionToken {
+  token: string;
+  line: number;
+  install: boolean;
+  /** The admissions that admit it; always empty for an install target. */
+  admittedBy: VersionAdmission[];
+}
+
+/** Every version token of a surface, with its 1-based line and the admissions that admit it. */
+function versionTokens(surface: Surface, admissions: VersionAdmission[]): VersionToken[] {
+  const text = surface.text;
+  const targets = installTargets(text);
+  const spans = admissions
+    .filter((a): a is { file: string; phrase: string } => 'phrase' in a && a.file === surface.file)
+    .flatMap((a) => [...text.matchAll(phrasePattern(a.phrase))].map((m) => ({ a, start: m.index!, end: m.index! + m[0].length })));
+  return [...text.matchAll(VERSION_TOKEN)].map((m) => {
+    const start = m.index!;
+    const end = start + m[0].length;
+    const install = targets.some((t) => t.start <= start && end <= t.end);
+    const bare = m[0].replace(/^v/, '');
+    const admittedBy = install
+      ? []
+      : [
+          ...admissions.filter((a) => 'value' in a && a.value === bare),
+          ...spans.filter((s) => s.start <= start && end <= s.end).map((s) => s.a),
+        ];
+    return { token: m[0], line: text.slice(0, start).split('\n').length, install, admittedBy };
+  });
+}
+
+/**
+ * The version check over the given surfaces (file-local): every token is current or admitted, an install target's
+ * whole ref is `v<version>` whatever the list says, and each of the two install pages it is given carries an install
+ * command whose whole ref is `v<version>`.
+ */
+export function versionFailures(
+  surfaces: Surface[],
+  version: string = PACKAGE_VERSION,
+  admissions: VersionAdmission[] = VERSION_ADMISSIONS,
+): string[] {
+  const failures: string[] = [];
+  const current = (token: string) => token === version || token === `v${version}`;
+  for (const surface of surfaces) {
+    const where = describeSurface(surface);
+    const targets = installTargets(surface.text);
+    for (const t of targets) {
+      if (t.ref !== `v${version}`) {
+        failures.push(`${where}:${t.line}: install target '${t.ref}' is not package.json's version ${version}; no admission applies to an install target (the version check)`);
+      }
+    }
+    for (const t of versionTokens(surface, admissions)) {
+      if (t.install || current(t.token)) continue;
+      if (t.admittedBy.length === 0) {
+        failures.push(`${where}:${t.line}: version token '${t.token}' is neither package.json's version ${version} nor admitted (the version check)`);
+      }
+    }
+    const command = `npm install -g ${INSTALL_PREFIX}v${version}`;
+    if (INSTALL_PAGES.includes(surface.file) && !targets.some((t) => t.command && t.ref === `v${version}`)) {
+      failures.push(`${where}: carries no install command \`${command}\` (the version check)`);
+    }
+  }
+  return failures;
+}
+
+/** The list's exactness (WHOLE-DOCS, never run on one listed file): an admission that admits no token in the given docs is stale. */
+export function staleAdmissionFailures(surfaces: Surface[], admissions: VersionAdmission[] = VERSION_ADMISSIONS): string[] {
+  const used = new Set(surfaces.flatMap((s) => versionTokens(s, admissions).flatMap((t) => t.admittedBy)));
+  return admissions
+    .filter((a) => !used.has(a))
+    .map((a) => `admitted ${describeAdmission(a)}: admits no version token in the user docs (a stale admission)`);
+}
+
 // ─── the file-local checks and the pending list (design D2) ───────
 
 /** The docs' declared set, read from `orbit-user-docs`' requirement as it stands. */
@@ -519,8 +658,8 @@ export function docsInventory(): Inventory {
  * `orbit` sweep and guard, the `git`/`gh` sweeps and guards, the inventory's unknown heads against
  * the docs' declared set (`inventory`, by default the real one), the improvement-claims check
  * (`README.md` only), the command-coverage check (`docs/cli.md` and `docs/commands.md` only), the carried-by
- * check (the four concept pages only), the tool-coverage check (`docs/supported-tools.md` only), and the
- * start-sections check (the pages its list names only).
+ * check (the four concept pages only), the tool-coverage check (`docs/supported-tools.md` only), the
+ * start-sections check (the pages its list names only), and the version check (every user doc).
  */
 export async function fileLocalFailures(surfaces: Surface[], inventory: Inventory = docsInventory()): Promise<string[]> {
   const tag = (check: string, list: string[]) => list.map((f) => `[${check}] ${f}`);
@@ -539,6 +678,7 @@ export async function fileLocalFailures(surfaces: Surface[], inventory: Inventor
   failures.push(...tag('carried-by', carriedByFailures(surfaces)));
   failures.push(...tag('tools', toolCoverageFailures(surfaces)));
   failures.push(...tag('start-sections', startSectionFailures(surfaces)));
+  failures.push(...tag('version', versionFailures(surfaces)));
   return failures;
 }
 

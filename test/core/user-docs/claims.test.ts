@@ -6,11 +6,11 @@
  */
 import { describe, expect, it } from 'vitest';
 import { DOCS_WORKFLOW, allDocSurfaces, docSurfaces, readPendingRewrite, type Surface } from '../../helpers/surface-snippets.js';
-import { claimsFailures, fileLocalFailures, pendingListFailures } from '../../helpers/user-docs.js';
+import { PACKAGE_VERSION, claimsFailures, fileLocalFailures, pendingListFailures } from '../../helpers/user-docs.js';
 
 const FENCE = '```';
-/** The README start section the start-sections check reads, so a fixture README passes that check. */
-const STARTS = '\n\n## Quickstart\n\n### Your first change\n\nRun `/orbit:architect <program>`.';
+/** The README start section the start-sections check reads, and the install command the version check owes, so a fixture README passes both. */
+const STARTS = `\n\n## Quickstart\n\n\`npm install -g github:las-sal/orbit-spec#v${PACKAGE_VERSION}\`\n\n### Your first change\n\nRun \`/orbit:architect <program>\`.`;
 const readme = (body: string): Surface => ({
   workflowId: DOCS_WORKFLOW,
   file: 'README.md',

@@ -143,6 +143,19 @@ tag is Sal's act.
 Exit criteria: G4 — an install from the tag prints 2.0.1 and its `orbit init` says orbit; issue #24 closed or its
 remainder re-filed.
 
+Shipped as (2026-10-16; archived as `orbit/changes/archive/2026-10-16-release/`; the charter stands, the tag still to
+cut): `package.json` and the lockfile say `2.0.1`, `CHANGELOG.md` gains a `2.0.1` entry (architect named first, the
+CLI says orbit with the kept names listed, the docs lead with architect, a link to issue #24), and the five
+current-version sites in `README.md` and `docs/installation.md` say `2.0.1`. `orbit-user-docs` gains `The user docs
+state orbit's current version as package.json's`: every version token is current or on an exact admitted list (three
+values and one README phrase), an install target is read by its whole ref and is never admitted, both install pages
+carry the current install command, and a stale admission fails. The system walks added the whole-ref reading (codex
+found `#v2.0.1-rc.1` passing; the fresh pass found a sentence-ending command refused) and an apply-time sandbox
+rehearsal that `orbit-conventions` requires of a README install edit: from a scratch clone with a local `v2.0.1`, the
+install printed `2.0.1` and `orbit init --tools claude` wrote the README's surface and said orbit. The tag itself is
+cut after the merge: `npm run release:tree` on `main`'s merge commit, then Sal pushes `v2.0.1` by name; the G4
+observation from the pushed tag, and issue #24's closure, are the ratification's.
+
 ## Considered & out
 
 ## Status log

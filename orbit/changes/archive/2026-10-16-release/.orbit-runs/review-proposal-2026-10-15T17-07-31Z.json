@@ -1,0 +1,127 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-15T17:07:31Z",
+  "change": "release",
+  "kind": "editorial",
+  "model": null,
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "The last scenario still asks for a `#v<version>` pin, not the install command the rule now requires",
+      "file": "orbit/changes/release/specs/orbit-user-docs/spec.md",
+      "line": 71,
+      "recommendation": "Restate the scenario 'A page without its install pin fails' in the walk's terms. It should read: WHEN `docs/installation.md` carries no install command `npm install -g github:las-sal/orbit-spec#v<version>` (a current `#v<version>` in prose only), THEN the suite fails naming the page. The external walk entry moved the requirement text from 'carries no install pin `#v<version>`' to the install command, and added the wrong-target scenario. But this scenario's WHEN still says 'carries no `#v<version>` install pin'. A test written to the scenario would check only that the tag is present, which is the hole the walk closed. Retitling the scenario 'A page without its install command fails' keeps it aligned with the rule.",
+      "walk_entry": {
+        "title": "Value admissions and a tag-only presence check can accept a wrong install pin",
+        "file": "orbit/changes/release/specs/orbit-user-docs/spec.md"
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "title": "Risks' 20.19.0 collision line predates the rule that install targets take no admission",
+      "file": "orbit/changes/release/design.md",
+      "line": 75,
+      "recommendation": "Narrow the Risks line 'the check would admit a stale `20.19.0` pin'. After the walk, an install target takes no admission, so a `#v20.19.0` install pin would fail. Only a prose statement of `20.19.0` would still be admitted. Say 'a stale `20.19.0` stated in prose'.",
+      "walk_entry": {
+        "title": "Value admissions and a tag-only presence check can accept a wrong install pin",
+        "file": "orbit/changes/release/specs/orbit-user-docs/spec.md"
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "The phrase scenario's 'each reported at its own line when it fails' cannot occur in a scenario where both tokens pass",
+      "file": "orbit/changes/release/specs/orbit-user-docs/spec.md",
+      "line": 59,
+      "recommendation": "Drop the clause from the scenario's THEN. The rule it gestures at, that a phrase-admitted token is reported at its own line, belongs to the requirement text, which already says it. In this scenario both phrase tokens pass, so a passing token has no report and the clause tests nothing. If the per-line report needs a test, name it in task 2.3 as an assertion on a failing token outside the phrase.",
+      "walk_entry": {
+        "title": "The admitted phrase spans two README lines, but a phrase entry admits tokens 'on a line of that file'",
+        "file": "specs/orbit-user-docs/spec.md"
+      }
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "This pass verified the walk's six resolutions against the change as committed at e39797e5, over the union of their sweep scopes (the four change artifacts). The residual check against the base file's add commit 1734c7ac listed only design.md, proposal.md, tasks.md and the spec, all inside the entries' edit records. The value-v, task-file, D1-narrowing and proposal-wording fixes landed whole. The two resolutions that rewrote rules left residue in sibling text. The install-target rule moved the requirement but not the last scenario's WHEN, and not the Risks line about 20.19.0. The phrase rule's scenario gained a clause about failing tokens in a case where they pass. These are local wording repairs; the rules themselves now hold against the real docs (README.md:52 is an install target; installation.md:17's `#v2.0.0` is prose, not a target; README.md:14–15's phrase is admitted across the wrap).",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "verification": [
+    {
+      "title": "The admitted phrase spans two README lines, but a phrase entry admits tokens 'on a line of that file'",
+      "file": "specs/orbit-user-docs/spec.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "Whether a value admission covers the v-prefixed token is left to the implementer",
+      "file": "specs/orbit-user-docs/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Task 2.2 places the stale-admission rule 'beside the unused docs-inventory rule', which lives in another directory",
+      "file": "tasks.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "D1 says every value admission 'can never be orbit's version', which the Risks section contradicts for 20.19.0",
+      "file": "design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The proposal says 'five places … pin the install', but only three of the five are install pins",
+      "file": "proposal.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Value admissions and a tag-only presence check can accept a wrong install pin",
+      "file": "orbit/changes/release/specs/orbit-user-docs/spec.md",
+      "verdict": "regressed"
+    }
+  ],
+  "final_assessment": "0 critical, 1 warning, 2 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-10-15T17-06-13Z",
+    "2026-10-15T17-06-20Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews release"
+}

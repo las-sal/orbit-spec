@@ -2,6 +2,18 @@
 
 orbit's version numbers are its own. orbit 2.0.0 is orbit's first release, not OpenSpec 2.0.0.
 
+## 2.0.1
+
+- Where orbit suggests starting new work, it names `/orbit:architect <name>` first. An architect session stays
+  optional.
+- The CLI's user-visible strings say orbit, not OpenSpec. Some names are kept for now: `.openspec.yaml`, the
+  data-format tags (such as `openspec-change`), the global config directory, the `OPENSPEC_*` environment
+  variables, and the `# OPENSPEC:START` / `# OPENSPEC:END` markers around the completion block orbit writes into a
+  bash or zsh rc file.
+- The user docs lead with `/orbit:architect` and describe the CLI this release installs.
+
+See [issue #24](https://github.com/las-sal/orbit-spec/issues/24).
+
 ## 2.0.0
 
 orbit's first release: a hard fork of [`@fission-ai/openspec@1.3.1`](https://github.com/Fission-AI/OpenSpec),

@@ -1,0 +1,9 @@
+schema: spec-driven
+created: 2026-10-15
+schema_version: 5
+base_fingerprints:
+  orbit-user-docs:
+    The user docs are a checked surface, gated by an exact pending-rewrite list: sha256:67b30879a644aa4fc496dd272fa31f885cbba1ba42a35ea11ddd7f506a356b0e
+architecture:
+  doc: refine-documentation-and-architect
+  stage: release

@@ -1,0 +1,94 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-15T17:06:20Z",
+  "change": "release",
+  "kind": "editorial",
+  "model": null,
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/release/.orbit-runs/external-proposal-2026-10-15T17-04-09Z.md",
+  "source_command": null,
+  "source_token": "2026-10-15T17-04-09Z",
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-6",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 0
+  },
+  "pushback_verification": "Both verified. The phrase-wrap claim converges with the fresh pass's WARNING at the same site and was resolved in that log. The install-target claim reproduced against the spec as written: `#v1.3.1` was admitted by value, and the pin rule read any `#v<version>`.",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale_suppressed": 1,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The historical phrase admission cannot match the shipped README",
+      "marker_source": "external",
+      "file": "orbit/changes/release/specs/orbit-user-docs/spec.md",
+      "line": 17,
+      "classification": "stale",
+      "action": "Converged with the fresh pass (2026-10-15T17-03-50Z) WARNING at the same site; resolved in walk log 2026-10-15T17-06-13Z (option A: line breaks read as spaces; the scenario quotes the full wrapped phrase).",
+      "evidence": "walk log address-reviews-2026-10-15T17-06-13Z resolved the same claim at specs/orbit-user-docs/spec.md:17",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Value admissions and a tag-only presence check can accept a wrong install pin",
+      "marker_source": "external",
+      "file": "orbit/changes/release/specs/orbit-user-docs/spec.md",
+      "line": 24,
+      "classification": "trivial_fix",
+      "action": "An INSTALL TARGET `github:las-sal/orbit-spec#v<x>` SHALL be current whatever the admitted list says, with no admission applying. The two-page rule now requires the install command `npm install -g github:las-sal/orbit-spec#v<version>`, so a current tag in prose never stands in for one. Added the scenario 'A wrong install target fails beside current-tag prose'. Tasks 2.1 and 2.3 (seven scenarios) and design D1/D2 follow.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/release/tasks.md",
+          "orbit/changes/release/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "carries no install pin",
+          "two-page pin rule",
+          "and the pin rule applies"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/release/specs/orbit-user-docs/spec.md",
+            "text": "A wrong install target fails beside current-tag prose"
+          },
+          {
+            "path": "orbit/changes/release/specs/orbit-user-docs/spec.md",
+            "text": "no admission applies to it"
+          },
+          {
+            "path": "orbit/changes/release/tasks.md",
+            "text": "(seven)"
+          }
+        ],
+        "searched": [
+          "install pin",
+          "pin rule",
+          "#v<version>",
+          "(six)"
+        ],
+        "scope": [
+          "orbit/changes/release/proposal.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "One of two resolved as a repair, and one stale against the earlier fresh log. Install targets now take no admission. The two-page rule asks for the install command itself, and a new scenario covers a wrong target beside current-tag prose. The phrase-wrap finding converged with the fresh pass's and was walked there.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal release",
+  "ripple_misses": 0
+}
