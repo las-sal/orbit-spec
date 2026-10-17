@@ -1,0 +1,69 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-17T23:44:25Z",
+  "change": "openspec-path-fix",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "1",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/openspec-path-fix/specs/orbit-cli-name/spec.md",
+      "line": 66,
+      "title": "The schema-copy limit omits that the user-level directory is shared with upstream OpenSpec",
+      "recommendation": "Extend the limit's last sentence: the global data directory keeps its upstream name (GLOBAL_DATA_DIR_NAME = 'openspec', src/core/global-config.ts:8), so a user-level spec-driven schema placed there by an OpenSpec install is resolved by orbit too and serves OpenSpec's own paths; it was never orbit's copy, so 'a copy made before a fix' does not describe it. One clause, no code.",
+      "reproduction": "getUserSchemasDir() = path.join(getGlobalDataDir(), 'schemas') (resolver.ts:35-37); getGlobalDataDir uses GLOBAL_DATA_DIR_NAME 'openspec', identical to upstream v1.3.1's global-config.ts. getSchemaDir checks that directory before the package schema (resolver.ts:76-81)."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Probed: every lowercase openspec under schemas/ (grep -rni: none remain after apply; five files, as D1 says); the served text of orbit instructions proposal and specs after npm run build (orbit/specs/ only, no openspec/); both directions of the new test by reading the per-path pattern switch (a case-sensitive pattern on schemas would return [] and fail the first expectation; a case-insensitive one on src would fail the second); path keys are posix-joined in walk(), so startsWith('schemas/') holds off Linux too; the resolver's resolution order and orbit schema fork's use of getSchemaDir against the new limit sentence; the delta block against the baseline (only the three intended edits plus the new scenario); every scenario of the carried block is declared by a test; the fingerprint check verifies; npm test 177 files green; validate --sources clean. Pass 0 ran inline (tasks, scenario declarations, validate, test suite) rather than through the verify skill, and Pass 6 ran as a targeted residue sweep over src, bin, scripts, docs and README for openspec/specs|changes|schemas: the hits are init.ts's legacy-directory warning, the kept global data directory and the migration guide's commands, all legitimate. The change is small and does what it says; the one note is an adopter-arriving-from-OpenSpec angle on a limit that is already named.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "6"
+  ],
+  "passes_skipped": [
+    "4: no perspectives defined (orbit/lenses/ absent); skip Pass 4",
+    "5: no critical paths defined (orbit/lenses/ absent); skip Pass 5"
+  ],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The fix is complete at every site it claims, the new guard is shown to bite on exactly the defect class that slipped through, and nothing outside the change regressed. The one note is a clarifying clause on an already-named limit; it can be taken at the walk or left, and neither choice should hold archive."
+  },
+  "final_assessment": "0 critical, 0 warning, 1 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews openspec-path-fix"
+}
