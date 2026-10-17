@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-10-17T22:45:25Z",
+  "change": "openspec-path-fix",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Ready to propose. D-opf-1 (Sal, Q1 b): fix the four openspec/specs/ paths and make orbit-cli-name's scan read schemas/** case-insensitively; its Mechanism entry is SOURCED over the five schema files, with no new admission (measured). D-opf-2 (Sal): path only; the read obligation stays #29's. D-opf-3: the two stale resolver.ts comments are in scope under fix-what-we-see-now; resolver.ts's hash pin moves with schema.yaml's and proposal.md's. Named limit: a project's forked schema keeps the stale paths. One capability modified (orbit-cli-name).",
+  "decisions_captured": 3,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 1,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:explore openspec-path-fix — continue thinking, or /orbit:propose openspec-path-fix if ready to formalize"
+}
