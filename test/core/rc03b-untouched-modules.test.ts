@@ -119,11 +119,15 @@ import { fileURLToPath } from "node:url";
  * MOVED at cli-says-orbit apply (2026-10-14): `schemas/spec-driven/schema.yaml` only, one line — its description
  * says "Default orbit workflow" (task 2.6, `orbit-cli-name`). A pin the task plan did not name, recorded here as its
  * own act. No engine code moved.
+ * MOVED at openspec-path-fix apply (2026-10-17) — a PLANNED act (its task 3.1, design D4): three pins, no code line.
+ * `schemas/spec-driven/schema.yaml` (lines 17, 39, 55) and `schemas/spec-driven/templates/proposal.md` (line 18)
+ * name `orbit/specs/` where they named `openspec/specs/` (issue #30); `src/core/artifact-graph/resolver.ts`'s two
+ * comments name the project schema directory `<projectRoot>/orbit/schemas/`, as `getProjectSchemasDir` returns.
  */
 const PINNED: Record<string, string> = {
-  "schemas/spec-driven/schema.yaml": "569cd309420f02bbc2ed2cecddf761da7a153d01cbd158c5181b1bc50c9b6d9d",
+  "schemas/spec-driven/schema.yaml": "ce8a5274855b9bd8a69220a4691e5a8ba93c4676e8e5b9551afa2d53f6316f6a",
   "schemas/spec-driven/templates/design.md": "3251f08057d142f6e3c26f65f5f100ab602ee7ce880d5503bfaa45668ba19f59",
-  "schemas/spec-driven/templates/proposal.md": "9c554e0dbe918e3dc745dcc143a999e1d102954d75fb6e51e231c4cba78f06f3",
+  "schemas/spec-driven/templates/proposal.md": "fafaad1c77c8f65ae7411e5dfae9ecc59f7d50028364370f695ef0754c1cf456",
   "schemas/spec-driven/templates/spec.md": "e025078f238dc6e4df552a1e0a140cf9efce0bbdecbeb9f45837d45ed91dca01",
   "schemas/spec-driven/templates/tasks.md": "b2a6a4c08c15f347a1d8c3e2d43e0c8fb066dc5cc0feb795f47555f176f9c421",
   "src/core/artifact-graph/gates.ts": "46a86a52955269e9ddfd759ac2aca321608fdb8a874fd8e397538e08287f0761",
@@ -132,7 +136,7 @@ const PINNED: Record<string, string> = {
   "src/core/artifact-graph/instruction-loader.ts": "6e79d8b17fe1140dc98287156253df5e41d4073d0fa5382d1b7fd07c8a02600c",
   "src/core/artifact-graph/pass-genre.ts": "af72ef5bc3b543b79c8c4d1a4678ca667f8e307dd3325110d38bb8319fa26a04",
   "src/core/artifact-graph/outputs.ts": "7a95459becd3831b3cc0416aa473990169d671a1e491a284df4695d1c8008047",
-  "src/core/artifact-graph/resolver.ts": "3b10b86eeda7e1264ff6a549e2abcdce8fd3bee3e28cb42441ed49e5ebb3d81b",
+  "src/core/artifact-graph/resolver.ts": "469400c0fcfa579e334396d32cb2e9d15ce54dcea72a02b1a6fb4d0abd34286b",
   "src/core/artifact-graph/schema.ts": "fb80cfd9a9088ce9dbbd42e43d9525864f7035b51db99aa019489b18f1b1e3b0",
   "src/core/artifact-graph/state.ts": "f59f748b94cd94ca2fe022ec5aa66b3251dd1b2c00bddb9a17cbd9273a04d0f2",
   "src/core/artifact-graph/trail.ts": "39b5d110ef53b7e03f49ddf292e86db598a14f426a02e6d84142e16231e37d69",

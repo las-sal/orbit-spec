@@ -12,6 +12,8 @@ const REPO = fileURLToPath(new URL('../../', import.meta.url));
 
 /** The product-name forms, case-sensitive (design decision 2; lowercase is the named limit's). */
 const PATTERN = /OpenSpec|Openspec/g;
+/** Every case, in a file under `schemas/**` (openspec-path-fix design D1). */
+const SCHEMA_PATTERN = /openspec/gi;
 
 export type AdmittedReason = "names OpenSpec's own artefact" | 'names the fork base' | 'never generated';
 
@@ -69,7 +71,9 @@ function occurrences(f: ShippedFile): Occurrence[] {
   for (let i = 0; i < f.text.length; i++) if (f.text[i] === '\n') lineStarts.push(i + 1);
   const lines = f.text.split('\n');
   const out: Occurrence[] = [];
-  for (const m of f.text.matchAll(PATTERN)) {
+  // A shipped schema is served to the agent as instructions: there `openspec` is residue in any case.
+  const pattern = f.file.startsWith('schemas/') ? SCHEMA_PATTERN : PATTERN;
+  for (const m of f.text.matchAll(pattern)) {
     const at = m.index!;
     if (!ranges.some(([start, end]) => at >= start && at + m[0].length <= end)) continue;
     let line = lineStarts.length - 1;
