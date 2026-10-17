@@ -1,0 +1,100 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-17T23:34:14Z",
+  "change": "openspec-path-fix",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/openspec-path-fix/.orbit-runs/review-proposal-2026-10-17T23-30-20Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-17T23-30-20Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "walk",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 2
+  },
+  "pushback_verification": "Both findings re-read at HEAD; both still applied; none stale.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "SUGGESTION",
+      "title": "The named limit's parenthetical 'there' reads as pointing at schemas/**",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/openspec-path-fix/specs/orbit-cli-name/spec.md",
+      "line": 59,
+      "classification": "trivial_fix",
+      "action": "replaced the parenthetical's 'there' with 'in every other shipped file the scan matches only the product-name forms'",
+      "evidence": "re-read the cited line at HEAD before editing: the wording still read as the finding says",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "(there the scan matches the product-name forms"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/openspec-path-fix/specs/orbit-cli-name/spec.md",
+            "text": "in every other shipped file the scan matches only the product-name forms"
+          }
+        ],
+        "searched": [
+          "there the scan",
+          "product-name forms"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The new schemas sentence carries a dangling appositive",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/openspec-path-fix/specs/orbit-cli-name/spec.md",
+      "line": 8,
+      "classification": "trivial_fix",
+      "action": "rewrote the sentence as 'In every file the shipped-file walk returns under `schemas/**`, `openspec` in ANY case is residue'",
+      "evidence": "re-read the cited line at HEAD before editing: the wording still read as the finding says",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "every file the shipped-file walk returns there"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/openspec-path-fix/specs/orbit-cli-name/spec.md",
+            "text": "In every file the shipped-file walk returns under `schemas/**`"
+          }
+        ],
+        "searched": [
+          "returns there",
+          "In a file under `schemas/**`"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Two of two resolved as wording repairs in the delta spec: the named limit's parenthetical now says 'in every other shipped file', and the schemas sentence names its scope once.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews openspec-path-fix",
+  "ripple_misses": 0
+}

@@ -17,7 +17,7 @@ the shipped-file walk, 2026-10-17).
 **Non-Goals:**
 - Telling the agent to read the spec of each modified capability (issue #29; D-opf-2).
 - A case-insensitive scan over `src/`, `bin/`, `scripts/` or `build.js` (Considered & out in explore.md).
-- Migrating a project's forked schema.
+- Migrating a schema copy outside the package (a project fork or a user-level copy).
 
 ## Decisions
 
@@ -71,7 +71,9 @@ The proposing AI's reading of the file; no engine record.
 
 ## Risks / Trade-offs
 
-- A project that already ran `orbit schema fork` keeps the stale paths in its own `orbit/schemas/` copy until it
-  re-forks. That copy is not shipped, so no check here reaches it; the requirement names it as a limit.
+- A project that already ran `orbit schema fork` keeps the stale paths in its own `orbit/schemas/` copy, and a user
+  schema copy under the global data directory's `schemas/` keeps them too; both outrank the package schema
+  (`getSchemaDir`, `resolver.ts:69-82`), and a fork takes whichever copy resolves. Neither copy is shipped, so no
+  check here reaches it; the requirement names both as a limit. Nothing in orbit writes the user directory.
 - A future schema line that names a kept name in lowercase (for example `.openspec.yaml`) fails the suite until an
   admission is added. That is the intended cost: the admission records why.

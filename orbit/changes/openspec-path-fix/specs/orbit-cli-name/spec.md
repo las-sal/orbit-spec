@@ -5,8 +5,8 @@
 In every file the package ships or its install runs, every occurrence of `OpenSpec` or `Openspec` a user can read SHALL
 be RESIDUE, and fail the suite naming the file, the line and the occurrence, unless an entry of the exact admitted list
 admits it. The files are those under package.json's `files`, the three npm ships whatever `files` says, and the
-build script a git install runs. In a file under `schemas/**`, every file the shipped-file walk returns there,
-`openspec` in ANY case is residue, not only those two forms: a shipped schema's text is served to the agent as
+build script a git install runs. In every file the shipped-file walk returns under `schemas/**`, `openspec` in ANY
+case is residue, not only those two forms: a shipped schema's text is served to the agent as
 instructions, and no lowercase path or name in it is protected. What a user can read in each is:
 
 | member | covered by |
@@ -56,13 +56,14 @@ disposition`. This requirement replaces each sentence it names and no additions-
 | `ff-change.ts` | the description's "Fast-forward through OpenSpec artifact creation." | "Fast-forward through orbit artifact creation." |
 | `continue-change.ts` | the description's "Continue working on an OpenSpec change" | "Continue working on an orbit change" |
 
-Named limit (the source scan). Residual kind: user-visible text that is not a literal `OpenSpec` in a shipped file: a string assembled from parts, output of a dependency, or lowercase prose "openspec" outside `schemas/**` (there the scan matches the product-name forms `OpenSpec`/`Openspec`; lowercase is overwhelmingly the protected paths, tags and identifiers). One lowercase occurrence is known and kept: the skill templates' `metadata.author: 'openspec'`, which every generated SKILL.md's frontmatter carries as provenance and no code reads
+Named limit (the source scan). Residual kind: user-visible text that is not a literal `OpenSpec` in a shipped file: a string assembled from parts, output of a dependency, or lowercase prose "openspec" outside `schemas/**` (in every other shipped file the scan matches only the product-name forms `OpenSpec`/`Openspec`; lowercase is overwhelmingly the protected paths, tags and identifiers). One lowercase occurrence is known and kept: the skill templates' `metadata.author: 'openspec'`, which every generated SKILL.md's frontmatter carries as provenance and no code reads
 Residual method: the runtime check (`orbit init` in a scratch dir, `--help` for every command) asserting stdout free of the word in any case outside the admitted identifiers (the `OPENSPEC_CONCURRENCY` env var named in `validate --help`, D-cso-5); and a lowercase grep for command-form prose (`openspec <verb>`), which on 2026-10-14 matched only a comment in `src/core/project-config.ts`, which no user reads
 The runtime check reads only the commands it runs. A message on a branch that neither `init` nor `--help` reaches
 is held by the source scan alone.
 
-A project's forked schema is not shipped and not read: `orbit schema fork` copies the package schema into the
-project's `orbit/schemas/`, and a copy forked before a fix keeps what it copied.
+A schema copy outside the package is not shipped and not read. A user-level copy under the global data directory's
+`schemas/` outranks the package schema, and a project's `orbit/schemas/` outranks both; `orbit schema fork` copies
+whichever source resolves. A copy made before a fix, or forked from such a copy, keeps what it copied.
 
 #### Scenario: An unadmitted OpenSpec in a string literal is residue
 

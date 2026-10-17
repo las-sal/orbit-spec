@@ -32,7 +32,7 @@ Not changed: whether propose must read the spec of every modified capability (is
 ### Modified Capabilities
 
 - `orbit-cli-name`: `The old name appears in what the package ships only for an admitted reason` — the source scan
-  reads `schemas/**` for any case of `openspec`, and the named limit says so and names a project's forked schema.
+  reads `schemas/**` for any case of `openspec`, and the named limit says so and names the schema copies outside the package (a user-level copy and a project fork).
 
 ## Impact
 
@@ -40,5 +40,6 @@ Not changed: whether propose must read the spec of every modified capability (is
 - `test/helpers/cli-name.ts`, `test/core/cli-name.test.ts` — the scan and its scenarios.
 - `src/core/artifact-graph/resolver.ts` — two comments; no code moves.
 - `test/core/rc03b-untouched-modules.test.ts` — three pins.
-- Adopters: a project that already ran `orbit schema fork` keeps its copy's stale paths until it re-forks; the
-  fix reaches the package schema and every fork made after it.
+- Adopters: a project that already ran `orbit schema fork`, or a user with a schema copy under the global data
+  directory's `schemas/`, keeps that copy's stale paths: both outrank the package schema. The fix reaches the
+  package schema and every fork made from it after the fix; a fork takes whichever copy resolves.
