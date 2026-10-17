@@ -1,0 +1,6 @@
+schema: spec-driven
+created: 2026-10-17
+schema_version: 5
+base_fingerprints:
+  orbit-cli-name:
+    The old name appears in what the package ships only for an admitted reason: sha256:5542eb7f4a077822c900d941cfe61af3ea4d529f8170f52b9c776b0edc46fe5a

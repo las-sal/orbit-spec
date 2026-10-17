@@ -1,0 +1,78 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-17T23:30:20Z",
+  "change": "openspec-path-fix",
+  "kind": "editorial",
+  "model": null,
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/openspec-path-fix/specs/orbit-cli-name/spec.md",
+      "line": 59,
+      "title": "The named limit's parenthetical 'there' reads as pointing at schemas/**",
+      "recommendation": "The parenthetical after 'lowercase prose \"openspec\" outside `schemas/**`' opens with 'there the scan matches the product-name forms', whose nearest antecedent is `schemas/**` — the one place this change makes the scan match every case. Reword so the referent is unambiguous, e.g. '... outside `schemas/**` (outside `schemas/**` the scan matches only the product-name forms `OpenSpec`/`Openspec`; ...)' or move the qualifier into the parenthetical: '(in every file outside `schemas/**` the scan matches ...)'."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/openspec-path-fix/specs/orbit-cli-name/spec.md",
+      "line": 8,
+      "title": "The new schemas sentence carries a dangling appositive",
+      "recommendation": "'In a file under `schemas/**`, every file the shipped-file walk returns there, `openspec` in ANY case is residue' interrupts the subject with an appositive that names the domain twice. Suggested: 'In every file the shipped-file walk returns under `schemas/**`, `openspec` in ANY case is residue, not only those two forms: ...'. The member table row already says 'for `openspec` in any case', so the meaning is not in doubt; this is wording only."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Probed hardest at the seams a widened residue rule usually breaks: whether the admitted list's substring/column matching survives a case-insensitive pattern (it does — positions and lengths are unchanged), whether any other spec or doc restates the scan as case-sensitive (none outside orbit-cli-name itself; orbit-user-docs' case-insensitive rule is a separate check over docs), whether the shipped-file walk and rc03b's pinned listing agree on the five schema files (they do), and whether a project-local fork would hide the fix in this very repo (there is none). The forked-schema named limit is honest; a user-level override under the global data dir would carry the same stale text for the same reason, but nothing creates one automatically, so it is not worth a sentence.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The change is small, its premise reproduces on the live checkout, and every claim it makes about current state held when read.\n`orbit instructions specs` still serves `openspec/specs/<capability>/` and `openspec/specs/<capability>/spec.md`; a case-insensitive grep of `schemas/` finds exactly the four lines the proposal names (schema.yaml 17, 39, 55; templates/proposal.md 18); the resolver comments sit at lines 52 and 97 and `getProjectSchemasDir` returns `orbit/schemas`; all three files named for pin moves are pinned in rc03b-untouched-modules; this repo has no `orbit/schemas/` fork, so the package fix reaches its own propose flow.\nThe scan change is sound as designed: `admits` compares column and length, which `/openspec/gi` preserves, no admitted entry names a schema file, and the per-path switch in `occurrences` is the only edit the helper needs. Task 1.3 shows the widened oracle able to fail over the real package before the fix, and task 1.2's fixture pairs a failing schema line with a passing src literal, so both sides of the per-path choice are exercised.\nThe two remaining notes are spec wording; neither changes what an implementer would build. Go ahead to apply."
+  },
+  "final_assessment": "0 critical, 0 warning, 2 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews openspec-path-fix"
+}

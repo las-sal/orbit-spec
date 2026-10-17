@@ -49,7 +49,7 @@ export function getProjectSchemasDir(projectRoot: string): string {
  * Resolves a schema name to its directory path.
  *
  * Resolution order (when projectRoot is provided):
- * 1. Project-local: <projectRoot>/openspec/schemas/<name>/schema.yaml
+ * 1. Project-local: <projectRoot>/orbit/schemas/<name>/schema.yaml
  * 2. User override: ${XDG_DATA_HOME}/openspec/schemas/<name>/schema.yaml
  * 3. Package built-in: <package>/schemas/<name>/schema.yaml
  *
@@ -94,7 +94,7 @@ export function getSchemaDir(
  * Resolves a schema name to a SchemaYaml object.
  *
  * Resolution order (when projectRoot is provided):
- * 1. Project-local: <projectRoot>/openspec/schemas/<name>/schema.yaml
+ * 1. Project-local: <projectRoot>/orbit/schemas/<name>/schema.yaml
  * 2. User override: ${XDG_DATA_HOME}/openspec/schemas/<name>/schema.yaml
  * 3. Package built-in: <package>/schemas/<name>/schema.yaml
  *

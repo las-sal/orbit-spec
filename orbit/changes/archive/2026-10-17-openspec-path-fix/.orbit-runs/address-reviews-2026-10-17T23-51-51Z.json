@@ -1,0 +1,75 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-17T23:51:51Z",
+  "change": "openspec-path-fix",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/openspec-path-fix/.orbit-runs/review-system-2026-10-17T23-44-25Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-17T23-44-25Z",
+  "latest_apply_token": "2026-10-17T23-39-41Z",
+  "external_reviewer": null,
+  "walk_mode": "walk",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 1
+  },
+  "pushback_verification": "Re-read spec.md:64-66 (the limit named only copies made before a fix or forked from one) and global-config.ts:8 (GLOBAL_DATA_DIR_NAME = 'openspec'); the finding still applied.",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "SUGGESTION",
+      "title": "The schema-copy limit omits that the user-level directory is shared with upstream OpenSpec",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/openspec-path-fix/specs/orbit-cli-name/spec.md",
+      "line": 66,
+      "classification": "trivial_fix",
+      "action": "appended to the limit: the global data directory keeps OpenSpec's name, so a spec-driven schema an OpenSpec install put under its schemas/ is resolved by orbit too, and serves OpenSpec's paths",
+      "evidence": "spec.md:66 ended at 'keeps what it copied'; GLOBAL_DATA_DIR_NAME is 'openspec'",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/openspec-path-fix/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/openspec-path-fix/specs/orbit-cli-name/spec.md",
+            "text": "data directory keeps OpenSpec's name"
+          },
+          {
+            "path": "orbit/changes/openspec-path-fix/design.md",
+            "text": "keeps OpenSpec's name (`GLOBAL_DATA_DIR_NAME`"
+          }
+        ],
+        "searched": [
+          "global data directory",
+          "user-level copy",
+          "GLOBAL_DATA_DIR_NAME"
+        ],
+        "scope": [
+          "src/core/global-config.ts",
+          "src/core/artifact-graph/resolver.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "One of one resolved as a repair: the schema-copy limit now says the global data directory keeps OpenSpec's name, so a spec-driven schema an OpenSpec install left there is resolved by orbit too; the design's Risks entry carries the same point.",
+  "iteration": 3,
+  "next_recommended": "/orbit:review --as system openspec-path-fix",
+  "ripple_misses": 0
+}

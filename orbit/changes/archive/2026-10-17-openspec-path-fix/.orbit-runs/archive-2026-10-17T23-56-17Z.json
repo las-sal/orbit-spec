@@ -1,0 +1,74 @@
+{
+  "command": "archive",
+  "timestamp": "2026-10-17T23:56:17Z",
+  "change": "openspec-path-fix",
+  "kind": "lifecycle",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Archived openspec-path-fix to orbit/changes/archive/2026-10-17-openspec-path-fix/: the served propose instructions name orbit/specs/, and orbit-cli-name's source scan reads schemas/** for openspec in any case (issue #30).",
+  "archive_path": "orbit/changes/archive/2026-10-17-openspec-path-fix/",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": [
+      "orbit-cli-name"
+    ],
+    "added": 0,
+    "modified": 1,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
+  "user_decision": "proceeded_past_gate",
+  "consent": "user-invoked",
+  "warnings": [],
+  "judgements": [
+    {
+      "kind": "continuation",
+      "disposition": "proceed",
+      "formed_against": [
+        "2026-10-17T23-44-25Z",
+        "2026-10-17T23-44-42Z"
+      ],
+      "reasoning": "Sal skipped the in-context confirming pass. Both halves of the system blind pair directed forward with no CRITICAL or WARNING; the walk resolved the one suggestion as a clause in the spec's named limit, and the confirming pass would grade only that clause.",
+      "ratified_by": "user",
+      "gate": "review-system",
+      "gate_state": "unpassed",
+      "gate_reason": "cadence class 'in-context' has no fresh pass"
+    },
+    {
+      "kind": "readiness",
+      "formed_against": [
+        "2026-10-17T23-30-20Z",
+        "2026-10-17T23-30-40Z",
+        "2026-10-17T23-44-25Z",
+        "2026-10-17T23-44-42Z"
+      ],
+      "disposition": "ready",
+      "reasoning": "Four independent passes across two blind pairs found no CRITICAL or WARNING, all four walked findings were wording repairs, the widened scan was shown to fail on the real four lines before the fix, and the full suite passes.",
+      "ratified_by": "ai",
+      "accepted": [
+        {
+          "claim": "Neither in-context confirming pass ran, so no pass graded the four walk repairs",
+          "why": "Each repair was a sentence of prose with no code effect; strict validate, the fingerprint and the full suite passed after them."
+        },
+        {
+          "claim": "A schema copy outside the package (a project fork, a user-level copy, or one an OpenSpec install left) keeps the stale paths",
+          "why": "Named as a limit in the requirement; nothing in orbit writes those copies, and migrating them is out of scope."
+        }
+      ]
+    }
+  ],
+  "pr_url": "https://github.com/las-sal/orbit-spec/pull/31",
+  "pr_state": "draft",
+  "next_recommended": "/orbit:architect <name> — change archived; plan the next piece of work, or run /orbit:audit-drift for a project-wide drift check."
+}

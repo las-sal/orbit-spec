@@ -1,0 +1,91 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-17T23:34:26Z",
+  "change": "openspec-path-fix",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/openspec-path-fix/.orbit-runs/external-proposal-2026-10-17T23-30-40Z.md",
+  "source_command": null,
+  "source_token": "2026-10-17T23-30-40Z",
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-6",
+  "walk_mode": "walk",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 1
+  },
+  "pushback_verification": "Re-read getSchemaDir (resolver.ts:69-82: project-local, then user override, then package) and the fork source (schema.ts:596-597: getSchemaResolution, whichever resolves); the finding still applied. The fresh pass's commentary judged the user-level copy not worth a sentence; its premise (nothing in orbit writes the user directory) holds by grep — only reads of getUserSchemasDir — so the two passes differ on worth, not fact, and no disagreement test was owed.",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "SUGGESTION",
+      "title": "Include user-level schema overrides in the adoption caveat",
+      "marker_source": "external",
+      "file": "orbit/changes/openspec-path-fix/proposal.md",
+      "line": 43,
+      "classification": "trivial_fix",
+      "action": "named the user-level copy under the global data directory's schemas/ beside the project fork, stated the precedence and that a fork takes whichever copy resolves; qualified the fix's reach to forks made from the package schema",
+      "evidence": "proposal.md:43-44 named only the project fork and claimed every later fork received the fix",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/openspec-path-fix/specs/orbit-cli-name/spec.md",
+          "orbit/changes/openspec-path-fix/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "every fork made after it",
+          "a copy forked before a fix keeps what it copied",
+          "names a project's forked schema",
+          "Migrating a project's forked schema"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/openspec-path-fix/specs/orbit-cli-name/spec.md",
+            "text": "A user-level copy under the global data directory's"
+          },
+          {
+            "path": "orbit/changes/openspec-path-fix/proposal.md",
+            "text": "every fork made from it after the fix"
+          },
+          {
+            "path": "orbit/changes/openspec-path-fix/design.md",
+            "text": "Nothing in orbit writes the user directory."
+          }
+        ],
+        "searched": [
+          "forked schema",
+          "forked before",
+          "every fork made",
+          "fork"
+        ],
+        "scope": [
+          "src/core/artifact-graph/resolver.ts",
+          "src/commands/schema.ts"
+        ],
+        "kept": [
+          {
+            "path": "orbit/changes/openspec-path-fix/explore.md",
+            "why": "the exploration's historical record; its FALSIFY move line predates this walk and names the project fork only"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "One of one resolved as a repair: the adoption limit now names the user-level schema copy beside the project fork, in the spec's named limit, the design's Risks and the proposal's Impact, and 'every fork made after it' is qualified to forks made from the package schema.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal openspec-path-fix",
+  "ripple_misses": 0
+}

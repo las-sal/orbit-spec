@@ -1,0 +1,14 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-10-17T23:41:21Z",
+  "change": "openspec-path-fix",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "prompt_path": "orbit/changes/openspec-path-fix/.orbit-runs/external-prompt-system-2026-10-17T23-41-20Z.md",
+  "target": "codex",
+  "final_assessment": "External review prompt packaged for openspec-path-fix (iter 1, mode system) as the external half of a launched blind pair; awaiting findings from codex.",
+  "pair": true,
+  "awaiting_findings": true,
+  "next_recommended": "Paste orbit/changes/openspec-path-fix/.orbit-runs/external-prompt-system-2026-10-17T23-41-20Z.md into the target AI, and save the response as orbit/changes/openspec-path-fix/.orbit-runs/external-system-<TS>.md"
+}

@@ -1,0 +1,52 @@
+{
+  "command": "apply",
+  "timestamp": "2026-10-17T23:39:41Z",
+  "change": "openspec-path-fix",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "consent": "user-invoked",
+  "judgements": [
+    {
+      "kind": "continuation",
+      "disposition": "proceed",
+      "gate": "review-proposal",
+      "gate_state": "unpassed",
+      "gate_reason": "cadence class 'in-context' has no fresh pass",
+      "formed_against": [
+        "2026-10-17T23-30-20Z",
+        "2026-10-17T23-30-40Z"
+      ],
+      "reasoning": "Sal skipped the in-context confirming pass. Both independent halves of the blind pair directed forward with no CRITICAL or WARNING, and the walk resolved their three suggestions as wording repairs to the spec, proposal and design; a confirming pass would only grade those three edits.",
+      "ratified_by": "user"
+    }
+  ],
+  "tasks_completed": 9,
+  "tasks_remaining": 0,
+  "user_validation_remaining": 0,
+  "chunk": null,
+  "chunk_name": null,
+  "chunk_complete": true,
+  "tasks_completed_this_session": 9,
+  "files_touched": [
+    "orbit/changes/openspec-path-fix/.orbit-runs/address-reviews-2026-10-17T23-34-14Z.json",
+    "orbit/changes/openspec-path-fix/.orbit-runs/address-reviews-2026-10-17T23-34-26Z.json",
+    "orbit/changes/openspec-path-fix/.orbit-runs/external-prompt-proposal-2026-10-17T23-27-51Z.md",
+    "orbit/changes/openspec-path-fix/.orbit-runs/external-proposal-2026-10-17T23-30-40Z.md",
+    "orbit/changes/openspec-path-fix/.orbit-runs/propose-2026-10-17T22-48-51Z.json",
+    "orbit/changes/openspec-path-fix/.orbit-runs/review-external-2026-10-17T23-28-00Z.json",
+    "orbit/changes/openspec-path-fix/.orbit-runs/review-proposal-2026-10-17T23-30-20Z.json",
+    "orbit/changes/openspec-path-fix/design.md",
+    "orbit/changes/openspec-path-fix/proposal.md",
+    "orbit/changes/openspec-path-fix/specs/orbit-cli-name/spec.md",
+    "orbit/changes/openspec-path-fix/tasks.md",
+    "schemas/spec-driven/schema.yaml",
+    "schemas/spec-driven/templates/proposal.md",
+    "src/core/artifact-graph/resolver.ts",
+    "test/core/cli-name.test.ts",
+    "test/core/rc03b-untouched-modules.test.ts",
+    "test/helpers/cli-name.ts"
+  ],
+  "diff_base": "9771a518eb89d836a9a3e202c83913ba6e9d5cdd",
+  "final_assessment": "9 of 9 tasks done. the widened scan failed on exactly the four real lines before the fix (task 1.3), and the full suite passes at 3,748 tests in 177 files",
+  "next_recommended": "/orbit:review --as system --reviewer blind-pair openspec-path-fix"
+}

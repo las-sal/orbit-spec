@@ -45,6 +45,16 @@ describe('the source scan', () => {
     ]);
   });
 
+  // @scenario behaviour orbit-cli-name :: The old name appears in what the package ships only for an admitted reason :: A lowercase openspec in a shipped schema file is residue
+  it('a lowercase openspec in a shipped schema file is residue; the same path in a src/ literal is not', () => {
+    const schema = 'instruction: |\n  Check `openspec/specs/` for existing spec names.\n';
+    expect(residue([{ file: 'schemas/spec-driven/schema.yaml', text: schema }], [])).toEqual([
+      "schemas/spec-driven/schema.yaml:2: residue 'openspec'",
+    ]);
+    const src = "const hint = 'Check openspec/specs/ for existing spec names';\n";
+    expect(residue([{ file: 'src/core/x.ts', text: src }], [])).toEqual([]);
+  });
+
   // @scenario behaviour orbit-cli-name :: The old name appears in what the package ships only for an admitted reason :: An admitted occurrence passes and a stale admission fails
   it('an admitted occurrence passes and a stale admission fails', () => {
     const file = 'src/core/legacy-cleanup.ts';
