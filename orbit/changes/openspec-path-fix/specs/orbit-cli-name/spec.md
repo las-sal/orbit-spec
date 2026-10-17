@@ -63,7 +63,9 @@ is held by the source scan alone.
 
 A schema copy outside the package is not shipped and not read. A user-level copy under the global data directory's
 `schemas/` outranks the package schema, and a project's `orbit/schemas/` outranks both; `orbit schema fork` copies
-whichever source resolves. A copy made before a fix, or forked from such a copy, keeps what it copied.
+whichever source resolves. A copy made before a fix, or forked from such a copy, keeps what it copied. The global
+data directory keeps OpenSpec's name, so a `spec-driven` schema an OpenSpec install put under its `schemas/` is
+resolved by orbit too, and serves OpenSpec's paths.
 
 #### Scenario: An unadmitted OpenSpec in a string literal is residue
 

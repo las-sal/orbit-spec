@@ -74,6 +74,8 @@ The proposing AI's reading of the file; no engine record.
 - A project that already ran `orbit schema fork` keeps the stale paths in its own `orbit/schemas/` copy, and a user
   schema copy under the global data directory's `schemas/` keeps them too; both outrank the package schema
   (`getSchemaDir`, `resolver.ts:69-82`), and a fork takes whichever copy resolves. Neither copy is shipped, so no
-  check here reaches it; the requirement names both as a limit. Nothing in orbit writes the user directory.
+  check here reaches it; the requirement names both as a limit. Nothing in orbit writes the user directory, but it
+  keeps OpenSpec's name (`GLOBAL_DATA_DIR_NAME`, `src/core/global-config.ts:8`), so a `spec-driven` schema an
+  OpenSpec install left there is resolved by orbit too.
 - A future schema line that names a kept name in lowercase (for example `.openspec.yaml`) fails the suite until an
   admission is added. That is the intended cost: the admission records why.
