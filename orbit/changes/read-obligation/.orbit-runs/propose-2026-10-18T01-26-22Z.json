@@ -1,0 +1,15 @@
+{
+  "command": "propose",
+  "timestamp": "2026-10-18T01:26:22Z",
+  "change": "read-obligation",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Proposed from orbit/explore/read-obligation (consume mode; D-ro-1..5, no open questions), stage read-obligation of propose-reads-specs. One capability, two requirements: ADDED Propose-shaped bodies read the baseline before writing proposal.md (the fenced two lines a test holds both bodies to) and MODIFIED Upstream propose behavior preserved in standalone mode, which said 'exactly as upstream' and now names its three exceptions, found by applying the new rule to this change. Thirteen tasks: the test first, shown able to fail; the edit and the moved pins; the 2.0.2 bump; one user-validation task for the pushed tag. Size within every maximum. Draft PR #33.",
+  "pr_attachment": {
+    "branch": "read-obligation",
+    "granularity": "per-proposal",
+    "url": "https://github.com/las-sal/orbit-spec/pull/33",
+    "state": "draft"
+  },
+  "next_recommended": "/orbit:review read-obligation — proposal artifacts ready; review before apply"
+}
