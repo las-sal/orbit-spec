@@ -29,11 +29,12 @@ modified before writing `proposal.md`, and a record of that read that a review c
 Ratified by Sal, 2026-10-17. Each goal names what makes it fail.
 
 - **G0 — The instruction is where the failure happens.** The generated propose and ff skills carry three read
-  steps, at the point where the modified capabilities are known and before `proposal.md` is written: (1) read the
-  whole baseline spec of each modified capability; (2) copy each MODIFIED block whole from the baseline; (3) grep
-  `orbit/specs/` for the rule being changed, to find specs that restate it. A surface test holds them, and the fix
-  ships as a release. Fails if either generated skill lacks a step, or carries one after the step that writes
-  `proposal.md`.
+  steps: before `proposal.md` is written, (1) read the whole baseline spec of each modified capability and (3) grep
+  `orbit/specs/` for the rule being changed, to find specs that restate it; at the specs artifact, (2) copy each
+  MODIFIED block whole from the baseline. A surface test holds them, and the fix ships as a release. Fails if either
+  generated skill lacks a step, or carries step 1 or 3 after the step that writes `proposal.md`. (Placement amended
+  2026-10-17 by Sal, at read-obligation's exploration, D-ro-2: step 2 acts on the delta specs, which follow
+  `proposal.md`.)
 - **G1 — Agents read.** Across the next 8 proposals in Sal's other projects whose loaded propose skill carries the
   fix (read from the transcript itself), no more than 10% of modified capabilities have their spec unread before
   `proposal.md` is written. The baseline is 30% (39 of 130, the #29 scan of orbit-spec and overtime before this
@@ -126,3 +127,5 @@ Exit criteria:
   Sal raised the wider idea of measuring orbit's effectiveness across all projects over time, outside this program;
   this program's measure stage would be its first consumer. Filed as issue #32.
 - 2026-10-17 — Sal ratified the goals G0–G3; stages `read-obligation` and `measure` declared.
+- 2026-10-17 — G0's placement amended at Sal's word (read-obligation exploration, D-ro-2): steps 1 and 3 before
+  `proposal.md` is written, step 2 at the specs artifact.
