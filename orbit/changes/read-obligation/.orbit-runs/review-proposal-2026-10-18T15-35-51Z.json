@@ -1,0 +1,97 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-18T15:35:51Z",
+  "change": "read-obligation",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 3,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    }
+  },
+  "findings": [
+    {
+      "pass": "4",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "specs/orbit-propose-modifications/spec.md",
+      "line": 36,
+      "title": "The standalone requirement's exception list reads as exhaustive but omits other both-mode orbit steps",
+      "recommendation": "The MODIFIED text says upstream behavior is preserved 'except for the orbit edits that apply in both modes:' and names three. The propose body carries further steps that run in standalone mode too: `## Base-fingerprint capture (NEW step — both modes)` (propose.ts:288, owned by orbit-base-fingerprints) and the completion-prompt override (propose.ts:399), which replaces upstream's closing prompt in either mode. D3's motive was to stop the requirement claiming something the body contradicts; with a closed list of three it still does. Either enumerate every both-mode step, or make the list explicitly open.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Enumerate them: add the base-fingerprint capture (orbit-base-fingerprints' capture requirement) and the completion-prompt override to the list, and check the PR choreography's standalone behavior, adding it if it runs there; update D3's 'three exceptions' wording to match."
+        },
+        {
+          "label": "B",
+          "body": "Make the list open: 'except for the orbit steps the body marks as applying in both modes, among them the baseline read of ..., the Touchpoints section and the size brief', and say so in D3."
+        }
+      ]
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "tasks.md",
+      "line": 6,
+      "title": "Task 1.4 pins the body's 'ONE addition' sentence, which the new requirement makes false, and no task edits it",
+      "recommendation": "propose.ts:279 (the `## Standalone mode (unchanged from upstream)` section) says 'Upstream behavior is otherwise unchanged, with ONE addition: the generated design.md still carries the ## Touchpoints section'. After this change the MODIFIED requirement names at least three standalone exceptions, the baseline read among them, so that sentence contradicts its owner; task 1.4 then declares the Standalone scenario on an assertion that the section 'names its one addition', pinning the stale text as the evidence. Add a task (group 2, with the step 4a edit, so the propose hash moves once) rewriting the section's sentence to name the exceptions the MODIFIED requirement names (or to point at that requirement), add propose.ts's standalone section to design's Touchpoints entry for propose.ts, and reword 1.4 to assert the rewritten sentence."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "design.md",
+      "line": 36,
+      "title": "D2 cites task 2.2 for the run-before-the-edit failure check; that task is 1.3",
+      "recommendation": "design.md:36 says the test 'is shown able to fail by running it before the edit lands (task 2.2)'. Task 2.2 moves the parity hashes; the before-edit failing run is task 1.3. Change the cross-reference to task 1.3."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Probed hardest at the seam between the new requirement and the rewritten standalone requirement, because that is where the change makes claims about the rest of the propose body rather than about its own two lines. Read the whole propose body's both-mode markers (Touchpoints, base-fingerprint capture, size brief, completion-prompt override) against the MODIFIED text, and grepped specs, docs and src for 'exactly as upstream' / 'ONE addition' residue: the body sentence at propose.ts:279 is the one live residue. The test design checks out mechanically: fencedProduction needs the fence's first line, which is the proposal line, and trimming handles the six-space indent; after archive ownerText falls back to the baseline because the archive directory holds no specs/<capability> at its top level. continue-change.ts:68 carries the same dependency-read line and is out of scope by design; nothing in the change claims otherwise. orbit validate passes; the three undeclared-scenario infos are what tasks 1.2 and 1.4 declare.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The core of the change is sound and small: the two-line in-place edit at step 4a sits where the agent decides what to read, the fence-held test reads the owner through ownerText the way the other mirror tests do, the cited constructs all exist as named (both template functions, the dependency-read lines at propose.ts:72 and ff-change.ts:61, schema.yaml:54-60's MODIFIED workflow, orbit-run-summary-emit's propose-shaped requirement), and the five version sites match what the version check reads.\nThe weak point is the secondary edit, D3. Rewriting the standalone requirement to name its exceptions is the right instinct, but as drafted it swaps one inaccurate claim for a narrower one and leaves the body's own 'ONE addition' sentence stale, with a task that would pin that stale sentence as evidence. Fix the exception list and give the body's sentence a task before apply; the main edit needs no rework."
+  },
+  "final_assessment": "0 critical, 3 warning, 0 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews read-obligation"
+}
