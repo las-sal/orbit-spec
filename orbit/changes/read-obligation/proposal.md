@@ -11,13 +11,14 @@ the agent decides what to read, and releases it as v2.0.2 so Sal's other project
 
 - Upstream step 4a of the propose and ff bodies (`src/core/templates/workflows/propose.ts`, `ff-change.ts`) gains two
   lines, a named in-place edit (D-ro-1), right after "Read any completed dependency files for context":
-  - before the proposal artifact: list the capabilities the change will modify, read each one's whole baseline spec,
-    and grep `orbit/specs/` for the rule the change alters, listing any spec that restates it;
+  - before the proposal artifact: list the capabilities the change will modify, grep `orbit/specs/` for the rule the
+    change alters and list each spec that restates it too, then read each listed capability's whole baseline spec;
   - before the specs artifact: copy each MODIFIED requirement whole, as the schema's MODIFIED requirements workflow
     says, because a scenario left out is dropped from the baseline at archive (D-ro-3).
 - `orbit-propose-modifications` gains the requirement that owns both edits (D-ro-4) and fences the two lines, which a
-  test holds each generated body to. Its standalone-mode requirement names its exceptions, this edit among them,
-  instead of claiming the body behaves exactly as upstream; its Purpose is edited in place to match.
+  test holds each generated body to. Its standalone-mode requirement excepts the orbit steps that run in both modes, this edit
+  among them, instead of claiming the body behaves exactly as upstream; the body's standalone sentence and the
+  capability's Purpose are edited to match.
 - orbit moves to 2.0.2: `package.json`, `package-lock.json`, a CHANGELOG entry, and the install pins in `README.md`
   and `docs/installation.md`.
 
@@ -32,8 +33,8 @@ No artifact section and no validation or emit check is added (G3).
 ### Modified Capabilities
 
 - `orbit-propose-modifications`: ADDED `Propose-shaped bodies read the baseline before writing proposal.md`; MODIFIED
-  `Upstream propose behavior preserved in standalone mode`, which names the orbit edits that apply without an
-  exploration.
+  `Upstream propose behavior preserved in standalone mode`, which excepts the orbit steps that run in both
+  modes.
 
 ## Impact
 

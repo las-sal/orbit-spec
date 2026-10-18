@@ -22,7 +22,8 @@ specs before filling this in", pointed at `openspec/specs/` until openspec-path-
 corrected the path; it still asks for research, not a read of each capability the proposal modifies.
 
 This program must produce a propose flow in which the agent reads the baseline spec of every capability it lists as
-modified before writing `proposal.md`, and a record of that read that a review can check.
+modified before writing `proposal.md`, and a record of that read that a review can check. (G3 later chose an instruction
+with no record; see Considered & out, option C.)
 
 ## Goals
 
@@ -65,13 +66,13 @@ Depends-on: (none)
 Complete: [ ]
 
 The fix. The propose body (`src/core/templates/workflows/propose.ts`) and the ff body
-(`src/core/templates/workflows/ff-change.ts`) gain G0's three read steps, placed where the modified capabilities
-become known and before `proposal.md` is written, and a surface test holds them in the generated skills. The change
-carries the specs that own those bodies, and is sized under R-crc-1.
+(`src/core/templates/workflows/ff-change.ts`) gain G0's three read steps, steps 1 and 3 placed where the modified
+capabilities become known and before `proposal.md` is written, step 2 at the specs artifact, and a surface test holds
+them in the generated skills. The change carries the specs that own those bodies, and is sized under R-crc-1.
 
 Exit criteria:
-- G0 holds: both generated skills carry the three steps before the `proposal.md` write, and the surface test fails
-  on a skill missing one (shown able to fail).
+- G0 holds: both generated skills carry steps 1 and 3 before the `proposal.md` write and step 2 at the specs artifact,
+  and the surface test fails on a skill missing one (shown able to fail).
 - G3 holds for this stage: no artifact section, no validation or emit check added.
 - The fix is released as orbit v2.0.2, cut by `npm run release:tree`; pushing the tag stays Sal's act.
 

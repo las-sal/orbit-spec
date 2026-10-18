@@ -11,7 +11,7 @@ by these two, and no `# Orbit additions` text restates them. The bodies are the 
 and `/orbit:ff`; `/orbit:continue`, which writes one artifact per invocation, does not carry them.
 
 ```
-- Before writing the proposal artifact: list the capabilities the change will modify, read each one's whole baseline spec (`orbit/specs/<capability>/spec.md`), and grep `orbit/specs/` for the rule the change alters; a spec that restates that rule is a capability to list too
+- Before writing the proposal artifact: list the capabilities the change will modify, grep `orbit/specs/` for the rule the change alters and list each spec that restates it too, then read each listed capability's whole baseline spec (`orbit/specs/<capability>/spec.md`)
 - Before writing the specs artifact: copy each MODIFIED requirement whole from its baseline block, as the instruction's MODIFIED requirements workflow says; a scenario left out is dropped from the baseline at archive
 ```
 
@@ -33,9 +33,9 @@ emit check records the read. Whether agents read is measured outside this reposi
 
 ### Requirement: Upstream propose behavior preserved in standalone mode
 
-The system SHALL preserve upstream `/orbit:propose`'s behavior when no `orbit/explore/<name>/` staging directory exists, except for the orbit edits that apply in both modes: the baseline read of `Propose-shaped bodies read the baseline before writing proposal.md`, the `## Touchpoints` section of `design.md`, and the size brief of `Size brief after generation`.
+The system SHALL preserve upstream `/orbit:propose`'s behavior when no `orbit/explore/<name>/` staging directory exists, except for the orbit steps that run in both modes, among them the baseline read of `Propose-shaped bodies read the baseline before writing proposal.md`, the `## Touchpoints` section of `design.md`, and the size brief of `Size brief after generation`.
 
 #### Scenario: Standalone mode
 
 - **WHEN** the user invokes `/orbit:propose <name>` and `orbit/explore/<name>/` does not exist
-- **THEN** the command behaves as upstream, apart from those edits: takes a description, generates `proposal.md` / `design.md` / `specs/<capability>/spec.md` / `tasks.md` into `orbit/changes/<name>/`
+- **THEN** the command behaves as upstream, apart from the orbit steps that run in both modes: takes a description, generates `proposal.md` / `design.md` / `specs/<capability>/spec.md` / `tasks.md` into `orbit/changes/<name>/`

@@ -1,0 +1,175 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-18T15:50:33Z",
+  "change": "read-obligation",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/read-obligation/.orbit-runs/review-proposal-2026-10-18T15-35-51Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-18T15-35-51Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "walk",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 3,
+    "suggestion": 0
+  },
+  "pushback_verification": "All three re-read at HEAD before editing and still applied: the MODIFIED text's closed list of three, propose.ts:279's 'with ONE addition' sentence with task 1.4 asserting it, and design.md:36's '(task 2.2)'. A grep of propose.ts for 'both modes' confirmed the further both-mode steps (base-fingerprint capture :288, size brief :311) and the unconditional completion-prompt override (:399).",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The standalone requirement's exception list reads as exhaustive but omits other both-mode orbit steps",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-propose-modifications/spec.md",
+      "line": 36,
+      "classification": "decision_required",
+      "action": "made the exception list open (option B): the MODIFIED text now excepts 'the orbit steps that run in both modes, among them' the baseline read, the Touchpoints section and the size brief; the scenario's THEN says 'apart from the orbit steps that run in both modes'; D3, the proposal's two descriptions and task 2.4's Purpose wording follow",
+      "evidence": "propose.ts carries base-fingerprint capture (:288) and the size brief (:311), both marked 'both modes', and the completion-prompt override (:399) is unconditional; a closed list of three is false today and would be false at the next both-mode step",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Enumerate them: add the base-fingerprint capture (orbit-base-fingerprints' capture requirement) and the completion-prompt override to the list, and check the PR choreography's standalone behavior, adding it if it runs there; update D3's 'three exceptions' wording to match."
+          },
+          {
+            "label": "B",
+            "body": "Make the list open: 'except for the orbit steps the body marks as applying in both modes, among them the baseline read of ..., the Touchpoints section and the size brief', and say so in D3."
+          }
+        ],
+        "chosen": "B"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/read-obligation/design.md",
+          "orbit/changes/read-obligation/proposal.md",
+          "orbit/changes/read-obligation/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "edits that apply in both modes",
+          "apart from those edits",
+          "names the three exceptions",
+          "names its exceptions",
+          "names the orbit edits that apply"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/read-obligation/specs/orbit-propose-modifications/spec.md",
+            "text": "except for the orbit steps that run in both modes, among them the baseline read of"
+          },
+          {
+            "path": "orbit/changes/read-obligation/design.md",
+            "text": "an open list naming three of them"
+          }
+        ],
+        "searched": [
+          "exactly as upstream",
+          "edits that apply in both modes",
+          "three exceptions",
+          "names its exceptions",
+          "both modes"
+        ],
+        "scope": [
+          "src/core/templates/workflows/propose.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Task 1.4 pins the body's 'ONE addition' sentence, which the new requirement makes false, and no task edits it",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 6,
+      "classification": "trivial_fix",
+      "action": "task 2.1 now also replaces propose.ts's standalone sentence ('otherwise unchanged, with ONE addition') with one excepting the orbit steps marked as running in both modes, in the same task as the step 4a edit so the propose hash moves once; task 1.4 asserts the rewritten sentence; design's Touchpoints entry for propose.ts names the standalone section",
+      "evidence": "propose.ts:279 reads 'Upstream behavior is otherwise unchanged, with ONE addition'; task 1.4 asserted 'names its one addition'",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/read-obligation/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "names its one addition"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/read-obligation/tasks.md",
+            "text": "Upstream behavior is otherwise kept, apart from the orbit steps marked as running in both modes"
+          },
+          {
+            "path": "orbit/changes/read-obligation/design.md",
+            "text": "the standalone section's sentence (D3)"
+          }
+        ],
+        "searched": [
+          "ONE addition",
+          "one addition",
+          "unchanged from upstream"
+        ],
+        "scope": [
+          "src/core/templates/workflows/propose.ts",
+          "orbit/specs"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "D2 cites task 2.2 for the run-before-the-edit failure check; that task is 1.3",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 36,
+      "classification": "trivial_fix",
+      "action": "changed '(task 2.2)' to '(task 1.3)'",
+      "evidence": "tasks.md 1.3 is the before-edit failing run; 2.2 moves the parity hashes",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "(task 2.2)"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/read-obligation/design.md",
+            "text": "before the edit lands (task 1.3)"
+          }
+        ],
+        "searched": [
+          "task 2.2"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Three of three resolved as repairs: the standalone requirement now excepts an open list of both-mode steps (option B, ratified in chat), task 2.1 rewrites the body's stale 'ONE addition' sentence and 1.4 asserts the new one, and D2 cites task 1.3.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews read-obligation",
+  "ripple_misses": 0
+}

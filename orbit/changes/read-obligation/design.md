@@ -33,15 +33,18 @@ names the consequence; it does not restate the workflow. In the template sources
 active, through the `ownerText` helper the other mirror tests use. For each of the two template functions
 (`getOrbitProposeSkillTemplate`, `getFfChangeSkillTemplate`) it finds the dependency-read line and asserts that the
 next two lines, trimmed, equal the fence's two lines and that `- Create the artifact file using` follows. A failure
-names the body and the line. The test is shown able to fail by running it before the edit lands (task 2.2).
+names the body and the line. The test is shown able to fail by running it before the edit lands (task 1.3).
 
-**D3 — The standalone requirement names its exceptions.** `Upstream propose behavior preserved in standalone mode`
-said the body behaves exactly as upstream without an exploration, which the size brief and the `## Touchpoints`
-section already contradicted and this edit would contradict again. Its MODIFIED text names the three exceptions; its
-one scenario (THEN) says "as upstream, apart from those edits". The scenario has no declaring test today, so the
-change adds one (task 1.4): carrying a block carries its scenarios. The capability's Purpose line, which says
-upstream's propose "is preserved when no exploration exists", is edited in place in the baseline to say the same
-(a Purpose is never carried by a delta).
+**D3 — The standalone requirement admits the both-mode steps.** `Upstream propose behavior preserved in standalone mode`
+said the body behaves exactly as upstream without an exploration, which the size brief and the `## Touchpoints` section
+already contradicted and this edit would contradict again. Its MODIFIED text excepts the orbit steps that run in both
+modes, an open list naming three of them (the baseline read, the Touchpoints section, the size brief): a closed list
+would be false today (the base-fingerprint capture and the completion-prompt override run in standalone mode too) and
+false again at the next both-mode step. Its one scenario (THEN) says "as upstream, apart from the orbit steps that run
+in both modes". The body's own standalone sentence (`propose.ts:279`, "with ONE addition") says the same in its terms
+(task 2.1). The scenario has no declaring test today, so the change adds one (task 1.4): carrying a block carries its
+scenarios. The capability's Purpose line, which says upstream's propose "is preserved when no exploration exists", is
+edited in place in the baseline to say the same (a Purpose is never carried by a delta).
 
 **D4 — The 2.0.2 bump.** `npm version 2.0.2 --no-git-tag-version` moves `package.json` and `package-lock.json`.
 `CHANGELOG.md` gains a `## 2.0.2` entry above `## 2.0.1`. The five version sites the version check reads move to
@@ -58,7 +61,7 @@ the propose emit.
 
 ## Touchpoints
 
-- `src/core/templates/workflows/propose.ts` — step 4a.
+- `src/core/templates/workflows/propose.ts` — step 4a; the standalone section's sentence (D3).
 - `src/core/templates/workflows/ff-change.ts` — step 4a.
 - `test/core/templates/propose-reads-baseline.test.ts` — the new test (D2, and the standalone scenario's).
 - `test/core/templates/skill-templates-parity.test.ts` — the moved hashes.
