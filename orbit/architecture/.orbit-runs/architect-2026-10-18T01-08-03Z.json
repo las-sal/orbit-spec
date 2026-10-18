@@ -1,0 +1,38 @@
+{
+  "command": "architect",
+  "timestamp": "2026-10-18T01:08:03Z",
+  "change": null,
+  "doc": "propose-reads-specs",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Created propose-reads-specs from issue #29. A probe of 44 proposals answered Sal's question whether a checked read record buys better code than a well-aimed instruction: it does not (unread capabilities drew fewer findings; the costly misses were six baseline-contradiction CRITICALs, all caught at proposal review), so the checked record went to Considered & out with a re-entry trigger. Sal ratified R-prs-1 (measure only in other projects; this AI stays neutral) and goals G0-G3; stages read-obligation and measure declared. CLAUDE.md now names the live program. The wider cross-project measurement idea is filed as issue #32.",
+  "stages_touched": [
+    "read-obligation",
+    "measure"
+  ],
+  "rulings_captured": [
+    "R-prs-1"
+  ],
+  "completions_ratified": [],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      {
+        "path": "orbit/architecture/propose-reads-specs.md",
+        "why": "Premise, Goals G0-G3, R-prs-1, both stages and the probe in the status log"
+      },
+      {
+        "path": "src/core/templates/workflows/propose.ts",
+        "why": "the propose body that gains the three read steps"
+      },
+      {
+        "path": "src/core/templates/workflows/ff-change.ts",
+        "why": "the ff body that gains them too"
+      }
+    ],
+    "next_command": "/orbit:explore read-obligation",
+    "model_hint": null,
+    "seam": "stage read-obligation premised; explore it next"
+  },
+  "next_recommended": "/orbit:explore read-obligation"
+}
