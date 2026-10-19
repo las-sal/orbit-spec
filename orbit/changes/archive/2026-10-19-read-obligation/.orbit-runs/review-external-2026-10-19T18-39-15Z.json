@@ -1,0 +1,14 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-10-19T18:39:15Z",
+  "change": "read-obligation",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "prompt_path": "orbit/changes/read-obligation/.orbit-runs/external-prompt-system-2026-10-19T18-39-07Z.md",
+  "target": "codex",
+  "final_assessment": "External review prompt packaged for read-obligation (iter 1, mode system) as the external half of a launched blind pair; awaiting findings from codex.",
+  "pair": true,
+  "awaiting_findings": true,
+  "next_recommended": "Paste orbit/changes/read-obligation/.orbit-runs/external-prompt-system-2026-10-19T18-39-07Z.md into the target AI, and save the response as orbit/changes/read-obligation/.orbit-runs/external-system-<TS>.md"
+}

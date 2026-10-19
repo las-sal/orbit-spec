@@ -11,10 +11,10 @@ how to set up a project, and how to upgrade.
 ## Install the CLI
 
 ```bash
-npm install -g github:las-sal/orbit-spec#v2.0.1
+npm install -g github:las-sal/orbit-spec#v2.0.2
 ```
 
-The `#v2.0.1` tag names a **release tree**: a commit that carries orbit's built output alongside its source. npm
+The `#v2.0.2` tag names a **release tree**: a commit that carries orbit's built output alongside its source. npm
 installs it as it stands, so nothing is compiled on your machine and no build tools are needed. A branch or an
 untagged commit is not a release tree; install from a tag.
 
@@ -27,7 +27,7 @@ route has been run against a release tree.
 orbit --version
 ```
 
-It prints the version of the tag you installed, `2.0.1` for the line above.
+It prints the version of the tag you installed, `2.0.2` for the line above.
 
 ## Set up a project
 

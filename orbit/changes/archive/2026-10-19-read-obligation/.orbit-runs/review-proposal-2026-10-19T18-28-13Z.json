@@ -1,0 +1,112 @@
+{
+  "command": "review",
+  "timestamp": "2026-10-19T18:28:13Z",
+  "change": "read-obligation",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "tasks.md",
+      "line": 13,
+      "title": "Task 2.1 rewrites the standalone sentence but keeps its heading '(unchanged from upstream)'",
+      "recommendation": "The walk's fix rewrites propose.ts:279 to 'Upstream behavior is otherwise kept, apart from the orbit steps ... in both modes', but the heading directly above it, `## Standalone mode (unchanged from upstream)` (propose.ts:277), keeps the claim the MODIFIED requirement now retracts. The walk searched 'unchanged from upstream' and neither retired nor kept it. Add to task 2.1: retitle the heading `## Standalone mode`, so the section no longer says both 'unchanged' and 'apart from'. grep shows no test or spec pins the heading text.",
+      "walk_entry": {
+        "title": "Task 1.4 pins the body's 'ONE addition' sentence, which the new requirement makes false, and no task edits it",
+        "file": "tasks.md"
+      }
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "tasks.md",
+      "line": 13,
+      "title": "The rewritten sentence says 'marked as running in both modes', but step 4a carries no such mark",
+      "recommendation": "Task 2.1's new sentence (and task 1.4's assertion) speak of 'the orbit steps marked as running in both modes — among them the step 4a baseline read', yet the step 4a lines sit in the upstream portion with no 'both modes' marker; only the Touchpoints step (:207), base-fingerprint capture (:288) and size brief (:311) are marked. Drop 'marked as' in both tasks so the sentence reads 'the orbit steps that run in both modes', the MODIFIED requirement's own wording.",
+      "walk_entry": {
+        "title": "Task 1.4 pins the body's 'ONE addition' sentence, which the new requirement makes false, and no task edits it",
+        "file": "tasks.md"
+      }
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Verification of both walks of the blind pair. The open exception list holds against propose.ts: every section marked 'both modes' (Touchpoints :207, base-fingerprint :288, size brief :311) is covered by 'among them', and `Size brief after generation` resolves to a real requirement of orbit-propose-modifications (:622). The reordered fence line now reads list, grep, read, so a grep-found spec is read whole; proposal and architecture doc match it, and G0's placement text (steps 1 and 3 before proposal.md) is unaffected by the reorder. The residual check found every edited file inside some entry's edit record. The one gap is the rewritten standalone section: its new sentence lands, but the heading above it still says 'unchanged from upstream', so the generated body would contradict itself in two adjacent lines. Both findings are one edit to task 2.1's text.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "verification": [
+    {
+      "title": "The standalone requirement's exception list reads as exhaustive but omits other both-mode orbit steps",
+      "file": "specs/orbit-propose-modifications/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Task 1.4 pins the body's 'ONE addition' sentence, which the new requirement makes false, and no task edits it",
+      "file": "tasks.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "D2 cites task 2.2 for the run-before-the-edit failure check; that task is 1.3",
+      "file": "design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Capabilities discovered by grep are listed without an explicit whole-spec read",
+      "file": "orbit/changes/read-obligation/specs/orbit-propose-modifications/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The governing program still states superseded placement and evidence requirements",
+      "file": "orbit/architecture/propose-reads-specs.md",
+      "verdict": "landed"
+    }
+  ],
+  "final_assessment": "0 critical, 1 warning, 1 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-10-18T15-50-33Z",
+    "2026-10-18T15-50-58Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews read-obligation"
+}

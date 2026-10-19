@@ -1,0 +1,9 @@
+schema: spec-driven
+created: 2026-10-18
+schema_version: 5
+base_fingerprints:
+  orbit-propose-modifications:
+    Upstream propose behavior preserved in standalone mode: sha256:f1cb750f53d0c35f5ed823a9ed717e9f8314bd6c71176a0b3e3da90b133d758a
+architecture:
+  doc: propose-reads-specs
+  stage: read-obligation

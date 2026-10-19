@@ -1,0 +1,121 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-19T18:29:20Z",
+  "change": "read-obligation",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/read-obligation/.orbit-runs/review-proposal-2026-10-19T18-28-13Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-19T18-28-13Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "walk",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 1
+  },
+  "pushback_verification": "Both re-read at HEAD before editing and still applied: propose.ts:277 still reads '## Standalone mode (unchanged from upstream)' and task 2.1 left it; tasks 2.1 and 1.4 said 'marked as running in both modes', while propose.ts marks only Step 0c.5 (:207), base-fingerprint capture (:288) and the size brief (:311). A repo grep found the heading text in no test or spec, only propose.ts and the task quoting it.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Task 2.1 rewrites the standalone sentence but keeps its heading '(unchanged from upstream)'",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 13,
+      "classification": "trivial_fix",
+      "action": "task 2.1 now retitles propose.ts's heading '## Standalone mode (unchanged from upstream)' to '## Standalone mode' in the same edit as the sentence; task 1.4 asserts the section under that heading; design D3 and the propose.ts Touchpoints entry name the heading",
+      "evidence": "propose.ts:277 heading kept the 'unchanged' claim directly above the rewritten 'apart from' sentence",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/read-obligation/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the standalone section's sentence (D3)",
+          "`## Standalone mode (unchanged from upstream)` section replace"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/read-obligation/tasks.md",
+            "text": "to `## Standalone mode` and replace"
+          },
+          {
+            "path": "orbit/changes/read-obligation/tasks.md",
+            "text": "under the heading `## Standalone mode`"
+          },
+          {
+            "path": "orbit/changes/read-obligation/design.md",
+            "text": "the standalone section's heading and sentence (D3)"
+          }
+        ],
+        "searched": [
+          "unchanged from upstream",
+          "Standalone mode ("
+        ],
+        "scope": [
+          "src/core/templates/workflows/propose.ts",
+          "test",
+          "orbit/specs"
+        ],
+        "kept": []
+      },
+      "ripple_miss_of": {
+        "walk": "2026-10-18T15-50-33Z",
+        "title": "Task 1.4 pins the body's 'ONE addition' sentence, which the new requirement makes false, and no task edits it",
+        "file": "tasks.md",
+        "kind": "judgement"
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The rewritten sentence says 'marked as running in both modes', but step 4a carries no such mark",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 13,
+      "classification": "trivial_fix",
+      "action": "dropped 'marked as' in tasks 2.1 and 1.4: both now say 'the orbit steps that run in both modes'",
+      "evidence": "step 4a's lines sit in propose.ts's upstream portion with no 'both modes' marker",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "steps marked as running in both modes"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/read-obligation/tasks.md",
+            "text": "apart from the orbit steps that run in both modes — among them"
+          }
+        ],
+        "searched": [
+          "marked as running",
+          "marked as"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Two of two resolved as repairs: task 2.1 now also retitles the standalone heading to '## Standalone mode' and task 1.4 asserts it; both tasks say 'the orbit steps that run in both modes', the requirement's wording.",
+  "iteration": 3,
+  "next_recommended": "/orbit:apply read-obligation — user-invoked",
+  "ripple_misses": 1
+}
