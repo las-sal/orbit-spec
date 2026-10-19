@@ -42,7 +42,7 @@ modes, an open list naming three of them (the baseline read, the Touchpoints sec
 would be false today (the base-fingerprint capture and the completion-prompt override run in standalone mode too) and
 false again at the next both-mode step. Its one scenario (THEN) says "as upstream, apart from the orbit steps that run
 in both modes". The body's own standalone sentence (`propose.ts:279`, "with ONE addition") says the same in its terms
-(task 2.1). The scenario has no declaring test today, so the change adds one (task 1.4): carrying a block carries its
+(task 2.1, which also drops "(unchanged from upstream)" from its heading). The scenario has no declaring test today, so the change adds one (task 1.4): carrying a block carries its
 scenarios. The capability's Purpose line, which says upstream's propose "is preserved when no exploration exists", is
 edited in place in the baseline to say the same (a Purpose is never carried by a delta).
 
@@ -61,7 +61,7 @@ the propose emit.
 
 ## Touchpoints
 
-- `src/core/templates/workflows/propose.ts` — step 4a; the standalone section's sentence (D3).
+- `src/core/templates/workflows/propose.ts` — step 4a; the standalone section's heading and sentence (D3).
 - `src/core/templates/workflows/ff-change.ts` — step 4a.
 - `test/core/templates/propose-reads-baseline.test.ts` — the new test (D2, and the standalone scenario's).
 - `test/core/templates/skill-templates-parity.test.ts` — the moved hashes.
