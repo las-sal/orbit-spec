@@ -1,0 +1,357 @@
+/**
+ * Instructions Command
+ *
+ * Generates enriched instructions for creating artifacts or applying tasks.
+ * Includes both artifact instructions and apply instructions.
+ */
+import ora from 'ora';
+import path from 'path';
+import * as fs from 'fs';
+import { loadChangeContext, generateInstructions, resolveArtifactOutputs, normalizeGates, computeGateStates, } from '../../core/artifact-graph/index.js';
+import { validateChangeExists, validateSchemaExists, } from './shared.js';
+// -----------------------------------------------------------------------------
+// Artifact Instructions Command
+// -----------------------------------------------------------------------------
+export async function instructionsCommand(artifactId, options) {
+    const spinner = options.json ? undefined : ora('Generating instructions...').start();
+    try {
+        const projectRoot = process.cwd();
+        const changeName = await validateChangeExists(options.change, projectRoot);
+        // Validate schema if explicitly provided
+        if (options.schema) {
+            validateSchemaExists(options.schema, projectRoot);
+        }
+        // loadChangeContext will auto-detect schema from metadata if not provided
+        const context = loadChangeContext(projectRoot, changeName, options.schema);
+        if (!artifactId) {
+            spinner?.stop();
+            const validIds = context.graph.getAllArtifacts().map((a) => a.id);
+            throw new Error(`Missing required argument <artifact>. Valid artifacts:\n  ${validIds.join('\n  ')}`);
+        }
+        const artifact = context.graph.getArtifact(artifactId);
+        if (!artifact) {
+            spinner?.stop();
+            const validIds = context.graph.getAllArtifacts().map((a) => a.id);
+            throw new Error(`Artifact '${artifactId}' not found in schema '${context.schemaName}'. Valid artifacts:\n  ${validIds.join('\n  ')}`);
+        }
+        const instructions = generateInstructions(context, artifactId, projectRoot);
+        const isBlocked = instructions.dependencies.some((d) => !d.done);
+        spinner?.stop();
+        if (options.json) {
+            console.log(JSON.stringify(instructions, null, 2));
+            return;
+        }
+        printInstructionsText(instructions, isBlocked);
+    }
+    catch (error) {
+        spinner?.stop();
+        throw error;
+    }
+}
+export function printInstructionsText(instructions, isBlocked) {
+    const { artifactId, changeName, schemaName, changeDir, outputPath, description, instruction, context, rules, template, dependencies, unlocks, } = instructions;
+    // Opening tag
+    console.log(`<artifact id="${artifactId}" change="${changeName}" schema="${schemaName}">`);
+    console.log();
+    // Warning for blocked artifacts
+    if (isBlocked) {
+        const missing = dependencies.filter((d) => !d.done).map((d) => d.id);
+        console.log('<warning>');
+        console.log('This artifact has unmet dependencies. Complete them first or proceed with caution.');
+        console.log(`Missing: ${missing.join(', ')}`);
+        console.log('</warning>');
+        console.log();
+    }
+    // Task directive
+    console.log('<task>');
+    console.log(`Create the ${artifactId} artifact for change "${changeName}".`);
+    console.log(description);
+    console.log('</task>');
+    console.log();
+    // Project context (AI constraint - do not include in output)
+    if (context) {
+        console.log('<project_context>');
+        console.log('<!-- This is background information for you. Do NOT include this in your output. -->');
+        console.log(context);
+        console.log('</project_context>');
+        console.log();
+    }
+    // Rules (AI constraint - do not include in output)
+    if (rules && rules.length > 0) {
+        console.log('<rules>');
+        console.log('<!-- These are constraints for you to follow. Do NOT include this in your output. -->');
+        for (const rule of rules) {
+            console.log(`- ${rule}`);
+        }
+        console.log('</rules>');
+        console.log();
+    }
+    // Dependencies (files to read for context)
+    if (dependencies.length > 0) {
+        console.log('<dependencies>');
+        console.log('Read these files for context before creating this artifact:');
+        console.log();
+        for (const dep of dependencies) {
+            const status = dep.done ? 'done' : 'missing';
+            const fullPath = path.join(changeDir, dep.path);
+            console.log(`<dependency id="${dep.id}" status="${status}">`);
+            console.log(`  <path>${fullPath}</path>`);
+            console.log(`  <description>${dep.description}</description>`);
+            console.log('</dependency>');
+        }
+        console.log('</dependencies>');
+        console.log();
+    }
+    // Output location
+    console.log('<output>');
+    console.log(`Write to: ${path.join(changeDir, outputPath)}`);
+    console.log('</output>');
+    console.log();
+    // Instruction (guidance)
+    if (instruction) {
+        console.log('<instruction>');
+        console.log(instruction.trim());
+        console.log('</instruction>');
+        console.log();
+    }
+    // Template
+    console.log('<template>');
+    console.log('<!-- Use this as the structure for your output file. Fill in the sections. -->');
+    console.log(template.trim());
+    console.log('</template>');
+    console.log();
+    // Success criteria placeholder
+    console.log('<success_criteria>');
+    console.log('<!-- To be defined in schema validation rules -->');
+    console.log('</success_criteria>');
+    console.log();
+    // Unlocks
+    if (unlocks.length > 0) {
+        console.log('<unlocks>');
+        console.log(`Completing this artifact enables: ${unlocks.join(', ')}`);
+        console.log('</unlocks>');
+        console.log();
+    }
+    // Closing tag
+    console.log('</artifact>');
+}
+// -----------------------------------------------------------------------------
+// Apply Instructions Command
+// -----------------------------------------------------------------------------
+/**
+ * Parses tasks.md content and extracts task items with their completion status.
+ */
+function parseTasksFile(content) {
+    const tasks = [];
+    const lines = content.split('\n');
+    let taskIndex = 0;
+    for (const line of lines) {
+        // Match checkbox patterns: - [ ] or - [x] or - [X]
+        const checkboxMatch = line.match(/^[-*]\s*\[([ xX])\]\s*(.+)\s*$/);
+        if (checkboxMatch) {
+            taskIndex++;
+            const done = checkboxMatch[1].toLowerCase() === 'x';
+            const description = checkboxMatch[2].trim();
+            tasks.push({
+                id: `${taskIndex}`,
+                description,
+                done,
+            });
+        }
+    }
+    return tasks;
+}
+/**
+ * Generates apply instructions for implementing tasks from a change.
+ * Schema-aware: reads apply phase configuration from schema to determine
+ * required artifacts, tracking file, and instruction.
+ */
+export async function generateApplyInstructions(projectRoot, changeName, schemaName) {
+    // loadChangeContext will auto-detect schema from metadata if not provided
+    const context = loadChangeContext(projectRoot, changeName, schemaName);
+    const changeDir = context.changeDir;
+    // Derive apply-phase config from the normalized `apply` gate (folds the upstream
+    // `apply:` block or a declared tracked gate; C1). Fallback: require all artifacts.
+    const schema = context.schema;
+    const normalizedGates = normalizeGates(schema);
+    const applyGate = normalizedGates.find((g) => g.id === 'apply');
+    const requiredArtifactIds = applyGate?.requires ?? schema.artifacts.map((a) => a.id);
+    const tracksFile = applyGate?.tracks ?? null;
+    const schemaInstruction = applyGate?.instruction ?? null;
+    // Check which required artifacts are missing
+    const missingArtifacts = [];
+    for (const artifactId of requiredArtifactIds) {
+        const artifact = schema.artifacts.find((a) => a.id === artifactId);
+        if (artifact && resolveArtifactOutputs(changeDir, artifact.generates).length === 0) {
+            missingArtifacts.push(artifactId);
+        }
+    }
+    // Build context files from all existing artifacts in schema
+    const contextFiles = {};
+    for (const artifact of schema.artifacts) {
+        const outputs = resolveArtifactOutputs(changeDir, artifact.generates);
+        if (outputs.length > 0) {
+            contextFiles[artifact.id] = outputs;
+        }
+    }
+    // Parse tasks if tracking file exists
+    let tasks = [];
+    let tracksFileExists = false;
+    if (tracksFile) {
+        const tracksPath = path.join(changeDir, tracksFile);
+        tracksFileExists = fs.existsSync(tracksPath);
+        if (tracksFileExists) {
+            const tasksContent = await fs.promises.readFile(tracksPath, 'utf-8');
+            tasks = parseTasksFile(tasksContent);
+        }
+    }
+    // Calculate progress
+    const total = tasks.length;
+    const complete = tasks.filter((t) => t.done).length;
+    const remaining = total - complete;
+    // Determine state and instruction
+    let state;
+    let instruction;
+    if (missingArtifacts.length > 0) {
+        state = 'blocked';
+        instruction = `Cannot apply this change yet. Missing artifacts: ${missingArtifacts.join(', ')}.\nUse the orbit-continue-change skill to create the missing artifacts first.`;
+    }
+    else if (tracksFile && !tracksFileExists) {
+        // Tracking file configured but doesn't exist yet
+        const tracksFilename = path.basename(tracksFile);
+        state = 'blocked';
+        instruction = `The ${tracksFilename} file is missing and must be created.\nUse orbit-continue-change to generate the tracking file.`;
+    }
+    else if (tracksFile && tracksFileExists && total === 0) {
+        // Tracking file exists but contains no tasks
+        const tracksFilename = path.basename(tracksFile);
+        state = 'blocked';
+        instruction = `The ${tracksFilename} file exists but contains no tasks.\nAdd tasks to ${tracksFilename} or regenerate it with orbit-continue-change.`;
+    }
+    else if (tracksFile && remaining === 0 && total > 0) {
+        state = 'all_done';
+        // D1 eligibility framing: don't advertise archive here — the gate graph owns the
+        // lifecycle flow (post-apply it points at review-system, not archive).
+        instruction =
+            'All tasks are complete.\nRun `orbit status --change "<name>" --json` for the gate graph\'s next step (the position readout and eligibility line own what comes next).';
+    }
+    else if (!tracksFile) {
+        // No tracking file configured in schema - ready to apply
+        state = 'ready';
+        instruction = schemaInstruction?.trim() ?? 'All required artifacts complete. Proceed with implementation.';
+    }
+    else {
+        state = 'ready';
+        instruction = schemaInstruction?.trim() ?? 'Read context files, work through pending tasks, mark complete as you go.\nPause if you hit blockers or need clarification.';
+    }
+    // C1: gate-awareness. When apply is otherwise runnable (`ready`) but the gate
+    // that gates the apply phase (`before: apply`, e.g. review-proposal) is unpassed
+    // or stale, surface `blocked-by-gate` with the gate + canonical next command.
+    // Apply-parity: this is informational — the consuming skill prompts; it never
+    // hard-blocks. Gates without a `before: apply` reviewed gate leave `ready` intact.
+    // Only gate ENTRY to apply (no task completed yet). Once implementation is
+    // underway, don't re-block: post-apply, proposal passes go stale relative to the
+    // apply emit (expected + moot per the v1 freshness scope) and the gate already
+    // served its purpose gating entry.
+    let gate;
+    let nextCommand;
+    if (state === 'ready' && complete === 0) {
+        const { gates } = computeGateStates(schema, changeName, changeDir, context.completed);
+        const applyGateStatus = gates.find((g) => g.before === 'apply' && g.kind === 'reviewed');
+        if (applyGateStatus && (applyGateStatus.state === 'unpassed' || applyGateStatus.state === 'stale')) {
+            state = 'blocked-by-gate';
+            gate = { id: applyGateStatus.id, state: applyGateStatus.state, reason: applyGateStatus.reason };
+            nextCommand = applyGateStatus.nextCommand;
+            instruction =
+                `The '${applyGateStatus.id}' gate is ${applyGateStatus.state}` +
+                    (applyGateStatus.reason ? ` (${applyGateStatus.reason})` : '') +
+                    `. Address it, or proceed anyway at the inflection prompt (the override is recorded).` +
+                    (nextCommand ? `\nReady when you are: ${nextCommand}` : '');
+        }
+    }
+    return {
+        changeName,
+        changeDir,
+        schemaName: context.schemaName,
+        contextFiles,
+        progress: { total, complete, remaining },
+        tasks,
+        state,
+        missingArtifacts: missingArtifacts.length > 0 ? missingArtifacts : undefined,
+        instruction,
+        gate,
+        next_command: nextCommand,
+    };
+}
+export async function applyInstructionsCommand(options) {
+    const spinner = options.json ? undefined : ora('Generating apply instructions...').start();
+    try {
+        const projectRoot = process.cwd();
+        const changeName = await validateChangeExists(options.change, projectRoot);
+        // Validate schema if explicitly provided
+        if (options.schema) {
+            validateSchemaExists(options.schema, projectRoot);
+        }
+        // generateApplyInstructions uses loadChangeContext which auto-detects schema
+        const instructions = await generateApplyInstructions(projectRoot, changeName, options.schema);
+        spinner?.stop();
+        if (options.json) {
+            console.log(JSON.stringify(instructions, null, 2));
+            return;
+        }
+        printApplyInstructionsText(instructions);
+    }
+    catch (error) {
+        spinner?.stop();
+        throw error;
+    }
+}
+export function printApplyInstructionsText(instructions) {
+    const { changeName, schemaName, contextFiles, progress, tasks, state, missingArtifacts, instruction } = instructions;
+    console.log(`## Apply: ${changeName}`);
+    console.log(`Schema: ${schemaName}`);
+    console.log();
+    // Warning for blocked state
+    if (state === 'blocked' && missingArtifacts) {
+        console.log('### ⚠️ Blocked');
+        console.log();
+        console.log(`Missing artifacts: ${missingArtifacts.join(', ')}`);
+        console.log('Use the orbit-continue-change skill to create these first.');
+        console.log();
+    }
+    // Context files (dynamically from schema)
+    const contextFileEntries = Object.entries(contextFiles);
+    if (contextFileEntries.length > 0) {
+        console.log('### Context Files');
+        for (const [artifactId, filePaths] of contextFileEntries) {
+            for (const filePath of filePaths) {
+                console.log(`- ${artifactId}: ${filePath}`);
+            }
+        }
+        console.log();
+    }
+    // Progress (only show if we have tracking)
+    if (progress.total > 0 || tasks.length > 0) {
+        console.log('### Progress');
+        if (state === 'all_done') {
+            console.log(`${progress.complete}/${progress.total} complete ✓`);
+        }
+        else {
+            console.log(`${progress.complete}/${progress.total} complete`);
+        }
+        console.log();
+    }
+    // Tasks
+    if (tasks.length > 0) {
+        console.log('### Tasks');
+        for (const task of tasks) {
+            const checkbox = task.done ? '[x]' : '[ ]';
+            console.log(`- ${checkbox} ${task.description}`);
+        }
+        console.log();
+    }
+    // Instruction
+    console.log('### Instruction');
+    console.log(instruction);
+}
+//# sourceMappingURL=instructions.js.map
