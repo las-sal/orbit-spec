@@ -2,6 +2,14 @@
 
 orbit's version numbers are its own. orbit 2.0.0 is orbit's first release, not OpenSpec 2.0.0.
 
+## 2.0.2
+
+- `/orbit:propose` and `/orbit:ff` now tell the agent to read the baseline spec of each capability the change
+  modifies, and to search the specs for the rule it changes, before writing `proposal.md`; and to copy each MODIFIED
+  requirement whole, so no baseline scenario is dropped at archive. Run `orbit update` in a project to pick it up.
+
+See [issue #29](https://github.com/las-sal/orbit-spec/issues/29).
+
 ## 2.0.1
 
 - Where orbit suggests starting new work, it names `/orbit:architect <name>` first. An architect session stays

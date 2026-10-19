@@ -59,6 +59,8 @@ export function getFfChangeSkillTemplate(): SkillTemplate {
         - \`outputPath\`: Where to write the artifact
         - \`dependencies\`: Completed artifacts to read for context
       - Read any completed dependency files for context
+      - Before writing the proposal artifact: list the capabilities the change will modify, grep \`orbit/specs/\` for the rule the change alters and list each spec that restates it too, then read each listed capability's whole baseline spec (\`orbit/specs/<capability>/spec.md\`)
+      - Before writing the specs artifact: copy each MODIFIED requirement whole from its baseline block, as the instruction's MODIFIED requirements workflow says; a scenario left out is dropped from the baseline at archive
       - Create the artifact file using \`template\` as the structure
       - Apply \`context\` and \`rules\` as constraints - but do NOT copy them into the file
       - Show brief progress: "✓ Created <artifact-id>"

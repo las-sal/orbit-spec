@@ -70,6 +70,8 @@ When ready to implement, run /orbit:apply
         - \`outputPath\`: Where to write the artifact
         - \`dependencies\`: Completed artifacts to read for context
       - Read any completed dependency files for context
+      - Before writing the proposal artifact: list the capabilities the change will modify, grep \`orbit/specs/\` for the rule the change alters and list each spec that restates it too, then read each listed capability's whole baseline spec (\`orbit/specs/<capability>/spec.md\`)
+      - Before writing the specs artifact: copy each MODIFIED requirement whole from its baseline block, as the instruction's MODIFIED requirements workflow says; a scenario left out is dropped from the baseline at archive
       - Create the artifact file using \`template\` as the structure
       - Apply \`context\` and \`rules\` as constraints - but do NOT copy them into the file
       - Show brief progress: "Created <artifact-id>"
@@ -274,9 +276,9 @@ After the move, \`orbit/changes/<name>/\` contains both:
 
 \`explore.md\` persists unchanged as the historical record of how the change took shape.
 
-## Standalone mode (unchanged from upstream)
+## Standalone mode
 
-When no \`orbit/explore/<name>/\` exists, fall through to upstream Step 1: prompt for description, generate artifacts from the description. Upstream behavior is otherwise unchanged, with ONE addition: the generated \`design.md\` still carries the \`## Touchpoints\` section (Step 0c.5 — authored fresh from the description and codebase reads; the entry grammar and frozen-at-apply rule apply identically).
+When no \`orbit/explore/<name>/\` exists, fall through to upstream Step 1: prompt for description, generate artifacts from the description. Upstream behavior is otherwise kept, apart from the orbit steps that run in both modes — among them the step 4a baseline read and the \`## Touchpoints\` section (Step 0c.5 — authored fresh from the description and codebase reads; the entry grammar and frozen-at-apply rule apply identically).
 
 ## Graceful degradation
 

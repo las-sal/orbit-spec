@@ -61,11 +61,11 @@ You need Node.js 20.19.0 or higher, and Git: npm fetches orbit from GitHub with 
 ahead of time, so nothing is compiled on your machine.
 
 ```bash
-npm install -g github:las-sal/orbit-spec#v2.0.1
+npm install -g github:las-sal/orbit-spec#v2.0.2
 orbit --version
 ```
 
-`orbit --version` prints `2.0.1`.
+`orbit --version` prints `2.0.2`.
 
 ## Quickstart
 
