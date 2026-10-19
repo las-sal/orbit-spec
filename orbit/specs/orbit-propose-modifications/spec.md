@@ -1,7 +1,7 @@
 # orbit-propose-modifications Specification
 
 ## Purpose
-Orbit's additions to upstream's propose, which is preserved when no exploration exists apart from the orbit steps that run in both modes: consuming a staging exploration into the change's artifacts (validating its structure, mapping its sections, carrying its open questions and Mechanism entries, and keeping `explore.md` as the record), name inference, and the config-gated PR choreography with its branch preconditions.
+Orbit's additions to upstream's propose, which is preserved when no exploration exists, apart from the orbit steps that run in both modes: consuming a staging exploration into the change's artifacts (validating its structure, mapping its sections, carrying its open questions and Mechanism entries, and keeping `explore.md` as the record), name inference, and the config-gated PR choreography with its branch preconditions.
 ## Requirements
 ### Requirement: Upstream propose behavior preserved in standalone mode
 

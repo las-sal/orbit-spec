@@ -1,0 +1,113 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-10-19T18:46:33Z",
+  "change": "read-obligation",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/read-obligation/.orbit-runs/review-system-2026-10-19T18-42-33Z.json",
+  "source_command": "review",
+  "source_token": "2026-10-19T18-42-33Z",
+  "latest_apply_token": "2026-10-19T18-36-05Z",
+  "external_reviewer": null,
+  "walk_mode": "walk",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 2
+  },
+  "pushback_verification": "Both re-read at HEAD and still applied: docs/workflow-engine.md:100 said propose and ff 'repeat that' with no mention of the baseline read, docs/commands.md's /orbit:propose entry listed validate, fingerprints and the draft PR but not the read; the baseline Purpose read 'when no exploration exists apart from the orbit steps'. The external half of the pair carries no findings.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "SUGGESTION",
+      "title": "User docs do not describe the new step 4a baseline read of propose and ff",
+      "marker_source": "internal-review",
+      "file": "docs/workflow-engine.md",
+      "line": 100,
+      "classification": "trivial_fix",
+      "action": "workflow-engine.md now says propose and ff take two steps continue does not (the baseline read before proposal.md, after searching orbit/specs/ for the rule, and the whole-block copy at the delta specs); commands.md's /orbit:propose entry opens its behaviour paragraph with the read",
+      "evidence": "neither page named the read the CHANGELOG's 2.0.2 entry announces",
+      "ripple_cascade": {
+        "applied": [
+          "docs/commands.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "repeat that until every artifact is done. Because"
+        ],
+        "introduced": [
+          {
+            "path": "docs/workflow-engine.md",
+            "text": "with two steps `/orbit:continue` does not"
+          },
+          {
+            "path": "docs/commands.md",
+            "text": "Before writing `proposal.md` it reads the baseline spec of each capability the change modifies"
+          }
+        ],
+        "searched": [
+          "repeat that",
+          "/orbit:ff",
+          "dependency files"
+        ],
+        "scope": [
+          "docs",
+          "README.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Edited Purpose sentence parses ambiguously",
+      "marker_source": "internal-review",
+      "file": "orbit/specs/orbit-propose-modifications/spec.md",
+      "line": 4,
+      "classification": "trivial_fix",
+      "action": "added a comma: 'when no exploration exists, apart from the orbit steps that run in both modes'; task 2.4's quote of the sentence follows",
+      "evidence": "the Purpose read 'no exploration exists apart from the orbit steps', which parses as a claim about explorations",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/read-obligation/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "exploration exists apart from"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/specs/orbit-propose-modifications/spec.md",
+            "text": "when no exploration exists, apart from the orbit steps that run in both modes"
+          }
+        ],
+        "searched": [
+          "exploration exists apart"
+        ],
+        "scope": [
+          "orbit/specs/orbit-propose-modifications/spec.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Two of two resolved as repairs: workflow-engine.md and commands.md now describe propose and ff's baseline read, and the Purpose sentence (and task 2.4's quote of it) sets the exception off with a comma.",
+  "iteration": 4,
+  "next_recommended": "/orbit:review --as system read-obligation",
+  "ripple_misses": 0
+}

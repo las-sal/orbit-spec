@@ -10,7 +10,7 @@
 - [x] 2.1 In `src/core/templates/workflows/propose.ts` and `src/core/templates/workflows/ff-change.ts`, add the fence's two lines immediately after `      - Read any completed dependency files for context`, each indented six spaces as that line is, backticks escaped as the template's others are; and in `propose.ts`'s standalone section retitle the heading `## Standalone mode (unchanged from upstream)` to `## Standalone mode` and replace ``Upstream behavior is otherwise unchanged, with ONE addition: the generated `design.md` still carries the `## Touchpoints` section`` with ``Upstream behavior is otherwise kept, apart from the orbit steps that run in both modes — among them the step 4a baseline read and the `## Touchpoints` section``, keeping the parenthetical after it (backticks escaped in the source, as above).
 - [x] 2.2 Move both bodies' function and generated-skill hashes in `test/core/templates/skill-templates-parity.test.ts`, and add the act to its header comment in the form its earlier entries use.
 - [x] 2.3 Run `npx vitest run test/core/templates/` and confirm the new test and the parity test pass.
-- [x] 2.4 Edit `orbit/specs/orbit-propose-modifications/spec.md`'s Purpose in place: upstream's propose is preserved when no exploration exists apart from the orbit steps that run in both modes (design D3).
+- [x] 2.4 Edit `orbit/specs/orbit-propose-modifications/spec.md`'s Purpose in place: upstream's propose is preserved when no exploration exists, apart from the orbit steps that run in both modes (design D3).
 
 ## 3. The release bump (design D4)
 

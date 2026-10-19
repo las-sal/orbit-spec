@@ -97,8 +97,11 @@ So `/orbit:continue` runs, in effect:
 2. `orbit instructions` for it;
 3. reads the dependencies, writes the artifact, and reports what it unlocked.
 
-`/orbit:propose` and `/orbit:ff` repeat that until every artifact is done. Because each step re-reads the state,
-you can stop and resume between any two, in a new session or after editing a file by hand.
+`/orbit:propose` and `/orbit:ff` repeat that until every artifact is done, with two steps `/orbit:continue` does not
+take: before writing `proposal.md` they read the baseline spec of each capability the change modifies, after
+searching `orbit/specs/` for the rule it changes, and at the delta specs they copy each modified requirement whole.
+Because each step re-reads the state, you can stop and resume between any two, in a new session or after editing a
+file by hand.
 
 ## Iteration
 

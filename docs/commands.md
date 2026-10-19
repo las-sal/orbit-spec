@@ -60,8 +60,10 @@ in `orbit/changes/<name>/`. Give it a kebab-case name or describe what you want.
 /orbit:propose add a dark mode to the settings page
 ```
 
-It validates what it wrote, and stamps the fingerprints of the baseline requirements the change touches. In a
-project whose `orbit/config.yaml` sets `pr:`, it also opens a draft pull request for the change.
+Before writing `proposal.md` it reads the baseline spec of each capability the change modifies, after searching
+`orbit/specs/` for the rule it changes. It validates what it wrote, and stamps the fingerprints of the baseline
+requirements the change touches. In a project whose `orbit/config.yaml` sets `pr:`, it also opens a draft pull
+request for the change.
 
 ### `/orbit:new`
 
