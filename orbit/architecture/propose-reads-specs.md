@@ -76,6 +76,18 @@ Exit criteria:
 - G3 holds for this stage: no artifact section, no validation or emit check added.
 - The fix is released as orbit v2.0.2, cut by `npm run release:tree`; pushing the tag stays Sal's act.
 
+Shipped as (2026-10-19; archived as `orbit/changes/archive/2026-10-19-read-obligation/`; the charter stands, the tag
+still to cut): upstream step 4a of the propose and ff bodies carries two lines after "Read any completed dependency
+files for context", a named in-place edit. The first, before the proposal artifact, lists the modified capabilities,
+greps `orbit/specs/` for the rule the change alters and lists each spec that restates it, then reads each listed
+spec whole (G0's steps 1 and 3, the grep first so a spec it finds is read too); the second, at the specs artifact,
+copies each MODIFIED requirement whole (step 2). `orbit-propose-modifications` owns both as `Propose-shaped bodies
+read the baseline before writing proposal.md`, whose fence `test/core/templates/propose-reads-baseline.test.ts` holds
+both bodies to; the test failed on both before the edit. The standalone requirement now excepts the orbit steps that
+run in both modes, and propose's standalone section says the same. No record or check of the read was added (G3).
+`package.json`, the CHANGELOG and the five install pins say `2.0.2`, and `docs/workflow-engine.md` and
+`docs/commands.md` describe the read; the release tree and the `v2.0.2` tag follow the merge.
+
 ### Stage measure — Grade G1 and G2 on Sal's other projects
 
 Depends-on: read-obligation

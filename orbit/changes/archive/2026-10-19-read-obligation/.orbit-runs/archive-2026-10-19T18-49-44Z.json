@@ -1,0 +1,69 @@
+{
+  "command": "archive",
+  "timestamp": "2026-10-19T18:49:44Z",
+  "change": "read-obligation",
+  "kind": "lifecycle",
+  "model": "claude-opus-5-5",
+  "final_assessment": "read-obligation archived: the propose and ff bodies carry the two baseline-read lines at step 4a, held to their owning fence by a test shown able to fail, and orbit is at 2.0.2; one user-validation task deferred to the release.",
+  "archive_path": "orbit/changes/archive/2026-10-19-read-obligation",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": [
+      "orbit-propose-modifications"
+    ],
+    "added": 1,
+    "modified": 1,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
+  "user_decision": "proceeded_with_no_critical",
+  "consent": "user-invoked",
+  "warnings": [],
+  "judgements": [
+    {
+      "kind": "readiness",
+      "formed_against": [
+        "2026-10-18T15-35-51Z",
+        "2026-10-18T15-36-08Z",
+        "2026-10-19T18-42-33Z",
+        "2026-10-19T18-42-48Z"
+      ],
+      "disposition": "ready",
+      "reasoning": "Two blind pairs: the proposal pair's warnings were walked as repairs (one by Sal's option B) and verified, with one regression caught and repaired in a second walk; both system halves directed forward with no critical or warning, and the fresh half's two suggestions were walked and verified landed. The new test failed on both bodies before the edit, only the four expected pins moved, and the full suite passes.",
+      "ratified_by": "ai",
+      "accepted": [
+        {
+          "claim": "The external system half ran no tests or scenario map (its worktree has no dist or node_modules)",
+          "why": "The fresh half and apply both ran the full suite, strict validate and the scenario map on the same tree; the external half reviewed the text."
+        },
+        {
+          "claim": "The instruction can be present and ignored; nothing checks that an agent reads",
+          "why": "By design (G3); the measure stage grades that in Sal's other projects, and a failure there is the trigger to reconsider a checked record."
+        }
+      ]
+    }
+  ],
+  "pr_url": "https://github.com/las-sal/orbit-spec/pull/33",
+  "pr_state": "draft",
+  "deferred_validations": [
+    {
+      "task": "3.5",
+      "why": "It can happen only after the change ships: it needs the merged main, a release tree cut from it, and the pushed v2.0.2 tag, none of which exists before this archive.",
+      "when": "After Sal merges PR #33, runs npm run release:tree on main and pushes v2.0.2.",
+      "where": "main, then one other project that runs orbit update."
+    }
+  ],
+  "next_recommended": "/orbit:architect propose-reads-specs — change archived; review stage read-obligation and take up the program's next stage, or run /orbit:audit-drift for a project-wide drift check."
+}
