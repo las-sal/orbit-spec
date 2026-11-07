@@ -44,7 +44,13 @@ Three decisions were ratified during C1 remediation:
 - **D11 refinement — Claude primacy**: never trade Claude efficacy for cross-tool neutrality; upstream's
   named-tool idiom (`AskUserQuestion`, `Task tool`) stays in bodies by design.
 
-## Programs: none live
+## Programs: one live
+
+**`orbit/architecture/automate-dev-flow.md`** (from 2026-11-07) is live: it makes orbit able to run a whole program
+with Sal present only where Sal adds value, seam-chained or autonomous, with every permission an explicit setting
+that defaults to today's behaviour (R-adf-1, R-adf-6). It is built here under today's supervised flow and first
+proven on a big, non-critical project (R-adf-5: never dogfooded in orbit-spec). Its stages' positions are computed
+by `orbit architecture status`.
 
 **`orbit/architecture/propose-reads-specs.md`** (2026-10-17 to 2026-11-07, issue #29, closed) is complete: it made
 the propose and ff bodies tell the agent to read the baseline spec of every capability it modifies, released as
@@ -71,7 +77,8 @@ per stage. The narrative it carried until 2026-10-13 — the fork program, the D
 
 ## Source of truth for the plan
 
-- `orbit/architecture/propose-reads-specs.md` — the latest program (complete; above: the propose read instruction, `v2.0.2`, its measurement moved to #32).
+- `orbit/architecture/automate-dev-flow.md` — the live program (above: settings, seam-chaining, the driver, a trial elsewhere).
+- `orbit/architecture/propose-reads-specs.md` — the previous program (complete; above: the propose read instruction, `v2.0.2`, its measurement moved to #32).
 - `orbit/architecture/refine-documentation-and-architect.md` — the architect-first program (complete; above: architect-first, CLI says orbit, docs, `v2.0.1`).
 - `orbit/architecture/update-gh-documentation.md` — the docs program (complete; above).
 - `orbit/architecture/clean-up-review-cycle.md` — the previous program, its stages all closed; read its Premise,
@@ -114,7 +121,7 @@ body.
 
 ## When in doubt
 
-- The fork plan's decisions remain citable — `orbit/architecture/fork-and-orbify.md` (program complete); the D-arc that followed it is `orbit/architecture/d-arc-arbitered-flow.md` (also complete — historical record). The previous program is `orbit/architecture/clean-up-review-cycle.md`, its stages all closed; read its Premise, Goals, Rulings index and "Carried at close" table, never the whole doc. The docs program that followed is `orbit/architecture/update-gh-documentation.md` (complete). The program after it, `orbit/architecture/refine-documentation-and-architect.md`, is complete too. The latest, `orbit/architecture/propose-reads-specs.md`, is complete as well (its measurement moved to issue #32); no program is live. `orbit architecture status` gives every doc's position.
+- The fork plan's decisions remain citable — `orbit/architecture/fork-and-orbify.md` (program complete); the D-arc that followed it is `orbit/architecture/d-arc-arbitered-flow.md` (also complete — historical record). The previous program is `orbit/architecture/clean-up-review-cycle.md`, its stages all closed; read its Premise, Goals, Rulings index and "Carried at close" table, never the whole doc. The docs program that followed is `orbit/architecture/update-gh-documentation.md` (complete). The program after it, `orbit/architecture/refine-documentation-and-architect.md`, is complete too. The latest, `orbit/architecture/propose-reads-specs.md`, is complete as well (its measurement moved to issue #32). The live program is `orbit/architecture/automate-dev-flow.md`. `orbit architecture status` gives every doc's position.
 - Engine behavior is defined in the vendored TypeScript under `src/` (the architecture doc maps it).
 - Keep tests green: run `npm test` before and after substantive changes; the green baseline is the
   contract.

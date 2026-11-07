@@ -1,0 +1,237 @@
+# Program: automate-dev-flow
+
+> Position is COMPUTED — run `orbit architecture status`. This doc declares; the engine renders.
+
+## Premise
+
+Sal, 2026-11-07: orbit's flow takes too long, and Sal keeps it moving at points where Sal adds no value — typing the
+next command, clearing context and re-booting with `orbit status --boot`. To use orbit to build really big things,
+it must take far less intervention. Every lifecycle transition is user-invoked today (D1's no-chaining contract,
+`orbit-conventions`' `No-chaining contract`), so a stage costs one typed command per seam.
+
+This program must produce a flow that can run a whole program with Sal present only where Sal adds value, in two
+regimes, chosen per project or per program at architect:
+
+- **Seam-chained (regime 2):** orbit runs the stretches Sal always approves without being asked, and stops at
+  named seams.
+- **Autonomous (regime 3):** orbit runs the program and stops only on ultra-critical issues, with one sign-off
+  before archive, given over a plain-language summary of the program (new definitions, concepts and seams).
+
+Sal's terms: everything between the seams is the AI's domain; every AI judgement that affects the end user or
+involves security is recorded (a new decision-tracking layer); none of today's tracking is lost; and the AI may
+decide at architect which parts of a program run in parallel with subagents and which run linearly. Two questions
+the design must answer: how context is cleared between phases without Sal, and how orbit detects that the AI has
+gone sideways on a program.
+
+## Goals
+
+Ratified by Sal, 2026-11-07. Each goal names what makes it fail. G0 is graded here, at every
+stage; G1–G6 are graded at first-run, on that project's trail and transcripts.
+
+- **G0 — Today's flow is untouched, and nothing is lost.** With every setting at its default, orbit behaves exactly
+  as it does now: the engine's readouts, gates and generated bodies are unchanged, and the existing test suite passes
+  unedited. Under any setting, every record today's flow writes is still written. Fails if a default install
+  behaves differently, or if a first-run trail lacks a record type the supervised flow would have written.
+- **G1 — Sal only shows up where Sal adds value.** In first-run, every Sal turn after the opening architect session
+  is one of: answering a stop record, a sign-off, or a voluntary interjection Sal makes. Fails on a single turn where
+  Sal had to type the next command, clear context, or re-boot a session to keep the run moving.
+- **G2 — Stops are complete.** Every event in first-run that meets one of R-adf-3's six conditions produced a stop
+  record before the run went past it. A closing review classifies the trial's diffs and ledger against the six to
+  find any it missed. Fails on one missed stop.
+- **G3 — Stops are rare enough to be worth it.** At most one stop record in four is judged unwarranted by Sal at the
+  stop. Fails above that, since a run that stops for nothing brings back the pain.
+- **G4 — Judgements are recorded.** Every AI judgement in first-run that affects the end user or involves security
+  has a ledger entry. The same closing review looks for unrecorded ones. Fails on one.
+- **G5 — The brief is enough to sign off on.** Reading only the program brief, Sal can say what was built, the new
+  terms and seams, and every ledger judgement, and signs off or declines without opening another artifact. Sal
+  grades it. Fails if Sal needs another artifact to decide.
+- **G6 — Sideways is caught.** Each tripwire fires on a fixture that should trip it and not on a clean one (graded
+  here, each shown able to fail). In first-run, no drift that a tripwire covers is found later by Sal or a review
+  without that tripwire having fired. Fails on either.
+- **G7 — Concurrency loses nothing.** In first-run, concurrent lanes' archives preserve every lane's synced
+  requirements (base fingerprints verified at each archive), and no lane overwrites another's work. Fails on one
+  lost or overwritten requirement.
+
+## Rulings index
+
+- **R-adf-1** (Sal, 2026-11-07) — Three standing rules are formally amended into configuration: D1's no-chaining
+  contract (`orbit-conventions`' `No-chaining contract`, with `orbit-lifecycle-consent`), the single-user,
+  single-session operating model (concurrency as a non-goal, Sal 2026-08-20), and D6's outward-actions rule
+  (`orbit-conventions`' `Residual outward-actions rule`). Rationale (Sal): they were the hooks that kept the flow
+  honest while Sal learned how to build with an AI; now each is a config decision. Confirmed by Sal the same day: every
+  setting defaults to today's behaviour, so no install or upgrade becomes autonomous silently. The sign-off before
+  archive is a setting too, not a floor (Sal, overruling the AI's recommendation): a sensitive project, such as a
+  home-control system with authentication, gates archive on it; a sandboxed app can let the AI run without one.
+- **R-adf-2** (Sal, 2026-11-07) — Sign-off granularity follows the regime. Autonomous: once per program, given over
+  the program brief before the program PR (`pr: per-architecture`) goes READY. Seam-chained: at each stage's
+  archive. Whether sign-off is required at all is a setting (R-adf-1).
+- **R-adf-3** (Sal, 2026-11-07) — An autonomous run stops only on a stop condition, and the set is closed:
+  (1) a security-relevant choice with no precedent in specs or rulings; (2) an end-user-visible behaviour choice no
+  ratified goal covers; (3) amending a ratified ruling or goal; (4) an outward or irreversible act the config has
+  not granted; (5) a sideways tripwire firing; (6) a CRITICAL the walk cannot resolve inside the change (the
+  redesign route). Every other judgement is the AI's, and is recorded per the judgement ledger.
+- **R-adf-4** (Sal, 2026-11-07) — Concurrency is allowed. The AI decides at architect how concurrently a program's
+  stages run, from their dependencies; that decision is recorded in the doc.
+- **R-adf-5** (Sal, 2026-11-07) — Not dogfooded. orbit-spec is too critical to Sal's development to run under the
+  automation it builds, so this program is built in today's supervised flow, and the automation is first proven on
+  a big, non-critical project after this program.
+- **R-adf-6** (Sal, 2026-11-07) — Settings are granular: each permission (chaining, sign-off, each outward act,
+  concurrency, and so on) is its own explicit setting, and no umbrella setting derives them. Rationale (Sal): what is
+  allowed must be exactly clear, and a sensitive project can still be highly automated.
+- **R-adf-7** (Sal, 2026-11-07) — The program brief is written in every mode, whether or not a sign-off waits on it.
+- **R-adf-8** (Sal, 2026-11-07) — Context is cleared by construction: an engine-run driver launches a fresh headless
+  session per phase, chosen from the engine's computed next command and booted from file-resident state
+  (`orbit status --boot`), rather than a long-lived conductor session spawning subagents.
+
+## Program stages
+
+Every stage is built and proven in orbit-spec under today's supervised flow (R-adf-5): its mechanism is held by
+tests over fixtures and stubs, never by running orbit-spec autonomously. Concurrency (R-adf-4): this program runs
+supervised, one command at a time, so its dependencies decide order only; seam-chaining, program-brief and
+tripwires depend only on decision-layer and may be taken in any order.
+
+### Stage decision-layer — the judgement ledger and the stop record
+
+Depends-on: (none)
+Complete: [ ]
+
+The records everything after consumes. The judgement ledger: one record per AI judgement that affects the end user
+or involves security — what was decided, the alternatives, why, and where — with a closed rule for what qualifies.
+The stop record: a typed record naming which of R-adf-3's six conditions fired, and on what. Both are written
+through `orbit emit`, beside the existing records, never instead of them.
+
+Exit criteria:
+- The ledger record and the stop record are emitted and validated by the engine, with tests shown able to fail on
+  a malformed record of each kind.
+- The qualifying rule for a ledger entry is written in the owning spec, as a closed set with its residual stated.
+- G0 holds: with nothing configured, no existing readout, gate or body changes.
+
+### Stage seam-chaining — the granular settings and regime 2
+
+Depends-on: decision-layer
+Complete: [ ]
+
+The settings R-adf-1 and R-adf-6 name, each its own explicit key and each defaulting to today's behaviour:
+chaining, sign-off, each outward act, concurrency. D1's no-chaining contract, the single-session model and D6's
+outward-actions rule are amended in their owning specs to hold conditionally on those settings. With chaining on,
+a command that ends on a passed gate runs the engine's next command itself, and stops at a configured seam or on
+a stop record. Consent provenance gains a value for a transition taken by setting.
+
+Exit criteria:
+- The amended requirements name each setting, and a test per setting shows today's behaviour at its default.
+- With chaining on, a test over a fixture change shows a passed gate followed by the next command, and a stop
+  record halting it.
+- G0 holds.
+
+### Stage program-brief — the brief and the sign-off seam
+
+Depends-on: decision-layer
+Complete: [ ]
+
+The engine composes the program brief from the trail: what was built, the capabilities and requirements added or
+changed, new terms and seams, the ledger, stops and tripwires fired, and deviations from the charter — in plain
+language. It is written in every mode (R-adf-7). The sign-off seam follows R-adf-2, gated by its setting.
+
+Exit criteria:
+- A golden test renders the brief for a fixture program, and a second for a program with ledger entries and stops.
+- The sign-off seam holds archive (seam-chained) or the program PR's READY flip (autonomous) when the setting
+  requires it, and does not when it does not, each tested.
+- G0 holds.
+
+### Stage tripwires — detecting that a run has gone sideways
+
+Depends-on: decision-layer
+Complete: [ ]
+
+Signals that write stop records: a diff that leaves the change's frozen `## Touchpoints` or touches an undeclared
+capability; review iterations that stop converging; size or walk budgets exceeded; an edit to a ratified ruling or
+goal; and a steward pass at each stage boundary (`/orbit:review --as architecture` aimed at one stage) asking
+whether the work is still the declared stage. In supervised mode each reports without stopping.
+
+Exit criteria:
+- G6's first half: each tripwire fires on a fixture trail that should trip it and not on a clean one, each test
+  shown able to fail.
+- G0 holds.
+
+### Stage driver — regime 3, one fresh session per phase
+
+Depends-on: seam-chaining, program-brief, tripwires
+Complete: [ ]
+
+`orbit run <doc>` (R-adf-8): read the engine's computed next command, launch a fresh headless session booted from
+`orbit status --boot`, wait, read the emit it wrote, and loop, stopping on a stop record or at the sign-off seam.
+It reuses the external runner's launch pattern, keeps a live log Sal can watch, and resumes after a stop. Linear:
+one stage at a time.
+
+Exit criteria:
+- Against a stub session launcher, a test runs a fixture program from its first stage to the sign-off seam, and a
+  second halts on an injected stop record and resumes.
+- The driver never launches a real session against orbit-spec (R-adf-5).
+- G0 holds.
+
+### Stage parallel-lanes — concurrent stages
+
+Depends-on: driver
+Complete: [ ]
+
+Architect records which stages may run together (R-adf-4), from the `Depends-on` graph. The driver gives each lane
+its own worktree and session, and serializes archives, which base fingerprints already guard against the archive
+merge data-loss bug.
+
+Exit criteria:
+- Against stubbed lanes, a test runs two independent stages concurrently and archives both with every synced
+  requirement preserved (G7's mechanism).
+- With concurrency off, the driver runs the same program linearly.
+- G0 holds.
+
+### Stage release — a tagged orbit for the trial
+
+Depends-on: parallel-lanes
+Complete: [ ]
+
+The program's mechanisms are released as a tagged orbit version, cut by `npm run release:tree`; pushing the tag
+stays Sal's act unless a setting says otherwise.
+
+Exit criteria:
+- The version is tagged and on origin, and the user docs describe the settings, the driver and the brief.
+
+### Stage first-run — the trial on a big, non-critical project
+
+Depends-on: release
+Complete: [ ]
+
+Writes no orbit code. Sal starts a new, big, non-critical project at the released version, chooses its settings,
+and runs a program in it under the driver. Its trigger is Sal starting that project. Afterwards a closing review
+of that project's trail, ledger and diffs, read from here, grades the goals.
+
+Exit criteria:
+- G1–G7 graded, each Met or Failed, with the evidence, in this doc's status log; G2 and G4 by the closing review's
+  classification of the trial's diffs and ledger.
+- On a failure, a ruling: fix and re-run, or accept.
+
+## Considered & out
+
+- **2026-11-07 — One sensitivity setting (`stakes: sensitive | sandboxed`) deriving the defaults:** out (Sal,
+  R-adf-6). It hides what is allowed behind a label, and sensitivity and automation are independent.
+- **2026-11-07 — A conductor session spawning a subagent per phase:** out (R-adf-8). The conductor's own context
+  still grows, and subagents cannot ask the user anything.
+
+## Status log
+
+- 2026-11-07 — Doc created at `/orbit:architect automate-dev-flow`. Premise, goals and stages await Sal.
+- 2026-11-07 — Sal ratified R-adf-1..5 from the AI's first sketch (regimes, a fresh process per phase driven by the
+  engine, sideways tripwires, the judgement ledger, the program brief, six draft stages). Pending at the time, since resolved
+  (a, b, c → R-adf-6..8):
+  (a) a single per-program sensitivity setting (e.g. `stakes: sensitive | sandboxed`) that sets the defaults for
+  sign-off, the security stop conditions and ledger depth, each still overridable — AI recommendation; (b) the
+  program brief is written in every mode, even when no sign-off waits on it — AI recommendation; (c) the context
+  mechanism: an engine-run driver launching a fresh headless session per phase (`orbit run`), over a conductor
+  session spawning subagents — AI recommendation; (d) the six-stage order, and how R-adf-5's trial on another
+  project gets a trigger (measure stalled for want of one).
+- 2026-11-07 — Sal ratified goals G0–G7 as drafted (G3's one-in-four threshold and G1's single-turn strictness
+  included; speed is carried by G1, not measured directly). The seven-stage order (decision-layer, seam-chaining,
+  program-brief, tripwires, driver, parallel-lanes, first-run, with a release before first-run) was presented and
+  awaits declaration.
+- 2026-11-07 — Sal: stages declared as drafted, with a separate `release` stage between parallel-lanes and
+  first-run, so the trial runs a tagged orbit: decision-layer, seam-chaining, program-brief, tripwires, driver,
+  parallel-lanes, release, first-run.

@@ -1,0 +1,51 @@
+{
+  "command": "architect",
+  "timestamp": "2026-11-07T17:02:58Z",
+  "change": null,
+  "doc": "automate-dev-flow",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Created automate-dev-flow from Sal's aim: run a whole program with Sal present only where Sal adds value, seam-chained (regime 2) or autonomous (regime 3). Sal ratified R-adf-1..8: D1 no-chaining, the single-session model and D6's outward-actions rule become granular settings defaulting to today's behaviour, sign-off included; sign-off once per program (autonomous) or per stage (seam-chained); a closed set of six stop conditions; concurrency allowed and decided at architect; not dogfooded (built supervised, first proven on a big non-critical project); the brief written in every mode; context cleared by an engine-run driver launching a fresh session per phase. Goals G0-G7 ratified. Eight stages declared: decision-layer, seam-chaining, program-brief, tripwires, driver, parallel-lanes, release, first-run. CLAUDE.md names the live program.",
+  "stages_touched": [
+    "decision-layer",
+    "seam-chaining",
+    "program-brief",
+    "tripwires",
+    "driver",
+    "parallel-lanes",
+    "release",
+    "first-run"
+  ],
+  "rulings_captured": [
+    "R-adf-1",
+    "R-adf-2",
+    "R-adf-3",
+    "R-adf-4",
+    "R-adf-5",
+    "R-adf-6",
+    "R-adf-7",
+    "R-adf-8"
+  ],
+  "completions_ratified": [],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      {
+        "path": "orbit/architecture/automate-dev-flow.md",
+        "why": "Premise, R-adf-1..8, Goals G0-G7, and the decision-layer stage's charter"
+      },
+      {
+        "path": "orbit/specs/orbit-run-summary-emit/spec.md",
+        "why": "the record family the judgement ledger and stop record join"
+      },
+      {
+        "path": "orbit/specs/orbit-emit-composition/spec.md",
+        "why": "how a new emit kind is composed and validated"
+      }
+    ],
+    "next_command": "/orbit:explore decision-layer",
+    "model_hint": null,
+    "seam": "program declared; decision-layer premised, the first stage, on which every other depends"
+  },
+  "next_recommended": "/orbit:explore decision-layer"
+}
