@@ -179,9 +179,9 @@ How the rows are read:
 - A `resolution` citation names its record by the history it belongs to and its filename token, never by path, because
   the history moves: an exploration's moves into the change at propose, and a change's moves into the archive. The
   lookup for `{change, token}` tries, in order, `orbit/changes/<change>/.orbit-runs/decisions/`,
-  `orbit/explore/<change>/.orbit-runs/decisions/`, and the `decisions/` folder of the archived change whose directory is
-  `orbit/changes/archive/<YYYY-MM-DD>-<change>/`, taking the lexically greatest when several match; the first folder
-  holding `resolution-<token>.json` is used. The lookup for `{doc, token}` reads
+  `orbit/explore/<change>/.orbit-runs/decisions/`, then the `decisions/` folder of each archived change whose directory
+  is `orbit/changes/archive/<YYYY-MM-DD>-<change>/`, newest first when a name was archived more than once; the first
+  folder holding `resolution-<token>.json` is used. The lookup for `{doc, token}` reads
   `orbit/architecture/.orbit-runs/decisions/`, and the record's `doc` must equal `<doc>`.
 - A cited record that cannot be read, is not valid JSON, or is not a resolution is refused, naming the citation.
 - A stop belongs to the same work as the record naming it when the stop's `change` and `doc` equal that record's own.
@@ -217,6 +217,13 @@ Residual method: such a citation is refused at write, which surfaces the kind; a
   `orbit/changes/archive/2026-11-08-bar/`, and a ledger payload in another change cites
   `{kind: "resolution", change: "bar", token: "2026-11-07T10-00-00Z"}`
 - **THEN** the citation resolves in the archived change's `decisions/` folder and the entry is written
+
+#### Scenario: A precedent in an older archive of a reused name is found
+
+- **WHEN** `orbit/changes/archive/2026-11-08-bar/` and `orbit/changes/archive/2026-12-01-bar/` both exist, only the
+  older holds `resolution-2026-11-07T10-00-00Z.json`, and a ledger payload cites
+  `{kind: "resolution", change: "bar", token: "2026-11-07T10-00-00Z"}`
+- **THEN** the citation resolves in `orbit/changes/archive/2026-11-08-bar/` and the entry is written
 
 #### Scenario: A goal ID matches only as a whole
 

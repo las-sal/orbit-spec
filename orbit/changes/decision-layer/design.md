@@ -57,7 +57,8 @@ they come first.
    always in it; the stop must also carry the naming record's own `change` and `doc`, since every program's architect
    sessions share one folder. A resolution cited as precedent may come from any change, so it is named
    `{change, token}` (or `{doc, token}`) and found by looking in the active change, the exploration of that name, then
-   the archived change of that name, the lexically greatest as `orbit emit archive` already resolves it. Alternatives:
+   each archived change of that name, newest first, using the first folder that holds the record (unlike
+   `orbit emit archive`, which takes only the lexically greatest, since a precedent may sit in an older archive). Alternatives:
    a repo path — rejected, it breaks when the exploration is proposed or the change archived; only same-history
    precedent — rejected, an answered question would stop the next change again; a kept index of resolutions — rejected,
    new machinery for this stage.

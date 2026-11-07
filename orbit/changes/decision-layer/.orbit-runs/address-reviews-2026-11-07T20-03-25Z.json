@@ -1,0 +1,117 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-07T20:03:25Z",
+  "change": "decision-layer",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/decision-layer/.orbit-runs/review-proposal-2026-11-07T20-02-00Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-07T20-02-00Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "walk",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 0
+  },
+  "pushback_verification": "Both re-read at HEAD and still applied. The first sits at a site the earlier walk's citation entry should have reached (in its check scope, matched by none of its strings: a query miss); the second is a gap in that entry's new text.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The well-formed ledger scenario still describes the goal by its bare prefix `**G1`",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/decision-layer/specs/orbit-emit-composition/spec.md",
+      "line": 36,
+      "classification": "trivial_fix",
+      "action": "the scenario's precondition now reads 'the doc holds `**G1 — …**` under `## Goals`', the whole-ID form",
+      "evidence": "emit-composition delta line 36 still said `**G1`; automate-dev-flow.md:35 writes `**G1 — …`",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the doc holds `**G1` under"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-layer/specs/orbit-emit-composition/spec.md",
+            "text": "the doc holds `**G1 — …**` under `## Goals`"
+          }
+        ],
+        "searched": [
+          "`**G1`",
+          "**G"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "ripple_miss_of": {
+        "walk": "2026-11-07T19-56-53Z",
+        "title": "Citation existence tests leave identifiers, paths and matching open to the implementer",
+        "file": "specs/orbit-decision-records/spec.md",
+        "kind": "query"
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The archived-change lookup reads two ways when a change name was archived more than once",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/decision-layer/specs/orbit-decision-records/spec.md",
+      "line": 184,
+      "classification": "trivial_fix",
+      "action": "the lookup now tries each archived change of the name newest first and uses the first folder holding the record; scenario 'A precedent in an older archive of a reused name is found' added; design Decision 5 says the same and why it differs from `orbit emit archive`",
+      "evidence": "the old text paired 'taking the lexically greatest' with 'the first folder holding', which read two ways",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/decision-layer/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "taking the lexically greatest when several match",
+          "the lexically greatest as `orbit emit archive` already resolves it"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-layer/specs/orbit-decision-records/spec.md",
+            "text": "newest first when a name was archived more than once"
+          },
+          {
+            "path": "orbit/changes/decision-layer/specs/orbit-decision-records/spec.md",
+            "text": "A precedent in an older archive of a reused name is found"
+          },
+          {
+            "path": "orbit/changes/decision-layer/design.md",
+            "text": "each archived change of that name, newest first"
+          }
+        ],
+        "searched": [
+          "lexically greatest",
+          "archived change"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Two resolved as repairs: the well-formed ledger scenario uses the whole goal ID, and the archived lookup searches every archive of a name newest first.",
+  "iteration": 3,
+  "next_recommended": "/orbit:apply decision-layer — user-invoked",
+  "ripple_misses": 1
+}
