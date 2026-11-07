@@ -24,8 +24,8 @@ failure, and the probe's method written down for issue #32.
   be graded: the fix has not reached any measured project, and nothing in the program makes it arrive (an update
   is a manual `orbit update` per project). Rather than hold a program open on it, the grading moves to #32, the
   cross-project measurement instrument that already names this stage as its first consumer. A comment on #32
-  carries G1, G2, the window, R-prs-1 and the open items below. The stage is to be marked ended at
-  `/orbit:architect propose-reads-specs`.
+  carries G1, G2, the window, R-prs-1 and the open items below. The concluded exploration is what ends the
+  stage: the engine renders it `ended-from-explore`, so no `Complete:` mark is written.
   Kind: scope
   Re-entry: the orbit projects on both machines run a propose skill of v2.0.2 or later and 8 proposals have run with it, or #32 is taken up
 - **2026-11-07 — D-msr-3: issue #29 closes with a pointer to #32** (Sal) The fix shipped in v2.0.2; the open
