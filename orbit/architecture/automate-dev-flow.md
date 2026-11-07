@@ -106,6 +106,21 @@ Exit criteria:
 - The qualifying rule for a ledger entry is written in the owning spec, as a closed set with its residual stated.
 - G0 holds: with nothing configured, no existing readout, gate or body changes.
 
+Shipped as (2026-11-07; archived as `orbit/changes/archive/2026-11-07-decision-layer/`; the charter stands, with the
+two departures below): three records, not two — the ledger entry, the stop record and a resolution (Sal's answer to a
+stop, citable as precedent) — written by `orbit emit ledger | stop | resolution` to the `decisions/` folder of a
+change's, an exploration's or the architecture trail, where no existing reader looks. `orbit-decision-records` owns
+them: the eighteen ledger areas as the closed qualifying set with its residual, what an entry may rely on (a baseline
+requirement, a ruling, a goal, a resolution, a live explore decision) or else the stop it raised, the plain-language
+rule held by a `defines` list, and that no stop halts anything yet. `src/core/decision-records.ts` checks each record
+for form and existence before the write, and every refusal was shown able to fail. The two departures: the instruction
+to write the records and the reading step that grades their prose went to a follow-on stage (D-dl-8), so nothing yet
+tells the AI to write one; and G0 as written did not hold — two existing test files changed, ratified by Sal at apply
+(the `emit-composition.ts` hash pin moved; the every-command spine test now leaves out the three non-run-summary
+commands), and that goes to G0's rewording (D-dl-9). The system walk added a no-overwrite publish (an exclusive
+temporary file and a link) and named the one-resolution race across concurrent writers as a limit routed to stage
+`parallel-lanes`.
+
 ### Stage seam-chaining — the granular settings and regime 2
 
 Depends-on: decision-layer

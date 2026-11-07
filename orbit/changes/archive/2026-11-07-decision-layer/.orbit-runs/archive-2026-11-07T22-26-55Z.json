@@ -1,0 +1,66 @@
+{
+  "command": "archive",
+  "timestamp": "2026-11-07T22:26:55Z",
+  "change": "decision-layer",
+  "kind": "lifecycle",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Archived decision-layer to orbit/changes/archive/2026-11-07-decision-layer/: the ledger entry, stop record and resolution, written by orbit emit to each trail's decisions/ folder and checked before the write; orbit-decision-records joins the baseline as its 32nd capability.",
+  "archive_path": "orbit/changes/archive/2026-11-07-decision-layer/",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": {
+      "critical": 0,
+      "warning": 4,
+      "suggestion": 6
+    },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": [
+      "orbit-decision-records",
+      "orbit-emit-composition"
+    ],
+    "added": 8,
+    "modified": 4,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
+  "user_decision": "proceeded_with_no_critical",
+  "consent": "user-invoked",
+  "warnings": [
+    "G0 as written (the existing suite passes unedited) did not hold: test/core/rc03b-untouched-modules.test.ts (the emit-composition.ts pin, moved twice) and test/core/emit-composition.test.ts (the spine test scoped to run summaries) changed, both ratified by Sal at apply; carried to G0's rewording at the next architect session (D-dl-9).",
+    "Pre-archive audit, Category 5: ten paths touched beyond design.md's Touchpoints prediction, each recorded by the apply emit or a walk entry — src/cli/program.ts, src/core/completions/command-registry.ts, src/core/containment.ts and src/core/parsers/explore-rules.ts (WARNING); docs/concepts.md, orbit/scenario-ledger.yaml, orbit/specs/orbit-emit-composition/spec.md, and three test files (SUGGESTION).",
+    "At archive: the engine sync's TBD Purpose of orbit-decision-records replaced in place; CLAUDE.md's marked capability figure moved 31 to 32; the stage's Shipped as paragraph written in orbit/architecture/automate-dev-flow.md."
+  ],
+  "judgements": [
+    {
+      "kind": "readiness",
+      "formed_against": [
+        "2026-11-07T18-51-30Z",
+        "2026-11-07T18-51-54Z",
+        "2026-11-07T21-58-40Z",
+        "2026-11-07T21-59-31Z"
+      ],
+      "disposition": "ready",
+      "reasoning": "Both blind pairs were walked in full, and the in-context verification found every system-walk resolution landed with no residue. What remains is a limit the external pass named and the walk accepted on purpose, not an open defect.",
+      "ratified_by": "ai",
+      "accepted": [
+        {
+          "claim": "Two concurrent writers can both pass the one-resolution check and leave two resolutions of one stop",
+          "why": "Sal chose option A at the system walk: the same-token overwrite is closed, the race is a named limit whose duplicate surfaces at the next resolution, and serializing writers belongs to stage parallel-lanes, where concurrent writers first share a folder."
+        },
+        {
+          "claim": "The external system pass could not build in its read-only worktree, so it did not independently run the tests, strict validation or the scenario map",
+          "why": "The fresh half and the in-context verification both ran them on the same state: 3805 tests passing, strict validation clean, 62 of 62 delta scenarios covered."
+        }
+      ]
+    }
+  ],
+  "pr_url": "https://github.com/las-sal/orbit-spec/pull/34",
+  "pr_state": "draft",
+  "next_recommended": "/orbit:architect automate-dev-flow — change archived; review stage decision-layer and take up the program's next stage, or run /orbit:audit-drift for a project-wide drift check."
+}

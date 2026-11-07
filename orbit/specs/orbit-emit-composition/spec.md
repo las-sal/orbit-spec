@@ -89,7 +89,10 @@ argument, `timestamp` as the current UTC instant in standard colon format, `chan
 `--change` (or `null` with a `doc` extension for architecture-scoped commands), `kind` from an
 engine-internal command→kind taxonomy table (workflow / editorial / lifecycle — the taxonomy in
 `orbit-conventions` becomes engine data, not prose bodies re-state), and the emit path from the
-command's persistence location (change trail, explore trail, or architecture trail). The
+command's persistence location (change trail, explore trail, or architecture trail). A DECISION
+RECORD (`ledger`, `stop`, `resolution`, per `orbit-decision-records`) is not a run summary: it
+carries no `kind`, and its path is the `decisions/` child of the resolved trail, per
+`orbit-decision-records`' `Where decision records are kept`. The
 target-resolution contract: `--change <name>` names the WORKSTREAM — a change, or the staging
 exploration for explore-trail emits — resolved per the command's trail. Scope capability is
 PER COMMAND: `architect` is architecture-ONLY, taking `--doc <doc-name>` (supplying `--change`
@@ -107,7 +110,11 @@ never defaulting to a clean record — every walk persists through the surface, 
 hand-writes its log;
 `audit-drift` is dual-scope on the change/PROJECT axis — with `--change` it is
 change-scoped, bare it is project-scoped, resolving `orbit/.orbit-runs/` (created if absent)
-with `change: null`, and `--doc` on it is a usage error; every other command is
+with `change: null`, and `--doc` on it is a usage error; the three decision-record commands are
+DUAL-SCOPE on the change/architecture axis like `review` — `--change` resolves an active change or
+a staging exploration (never an archived change: a decision is recorded while the work is live),
+`--doc` the architecture trail with `change: null` + `doc` — and a bare invocation of them is a
+missing-target usage error; every other command is
 change-scoped-only (`--doc` to it is a clean usage error). Both flags at once is always a
 clean usage error, and a bare invocation of any command without a bare scope (everything
 except the two project-scoped commands, `audit-drift` and `address-reviews`) is a
@@ -119,7 +126,8 @@ names); an existing target directory that physically resolves outside its orbit 
 symlinked container escape) is refused; and the `.orbit-runs` trail child must physically BE its container's canonical `.orbit-runs`
 child (IDENTITY, not ancestry: an in-container alias like `.orbit-runs -> .` or a sibling
 redirect is refused exactly like an outside escape — a lexically-correct path whose physical
-record no trail reader would find is not a trail), checked TWICE — after creation, and again
+record no trail reader would find is not a trail), checked TWICE (and, for a decision record, its `decisions/` child must likewise physically BE the
+trail's canonical `decisions` child) — after creation, and again
 AFTER every caller-supplied value is materialized into the final bytes, immediately before
 the write (no caller-controlled code runs between the final check and the write, closing the
 check/use window across composition). The CONTENT is frozen the same way: the record is
@@ -135,7 +143,9 @@ filename `<TS>` token is the timestamp with colons replaced by hyphens; when ANY
 target trail directory already carries that token — of any command, any extension (a pass
 record, a walk log, an external findings or prompt file) — the token is bumped forward one
 second until no trail file carries it (the collision rule bodies previously taught as prose —
-engine-owned here, preserving lexical ordering guarantees). Within one trail, token order is
+engine-owned here, preserving lexical ordering guarantees). For a decision record the target directory is the trail's
+`decisions/` child, so the token is unique among decision records and independent of the trail's
+own files. Within one trail, token order is
 therefore WRITE order for every reader that orders records by strict token comparison (the
 reviewed gate, the pass-genre computation, the judgement ordering check): a walk and the review
 written after it in the same second cannot share a token and read as unordered. Prior trails
@@ -179,6 +189,11 @@ path, never a pre-bump token.
 - **WHEN** `orbit emit audit-drift` runs with neither `--change` nor `--doc`
 - **THEN** the file lands at `orbit/.orbit-runs/audit-drift-<TS>.json` with `change: null`; the same invocation with `--change foo` is change-scoped to foo's trail, and supplying `--doc` is a clean usage error
 
+#### Scenario: A decision record lands in the trail's decisions folder
+
+- **WHEN** `orbit emit stop --change foo` runs for an active change, and `orbit emit ledger --doc my-program` runs for an architecture doc
+- **THEN** the first writes `orbit/changes/foo/.orbit-runs/decisions/stop-<TS>.json` and the second `orbit/architecture/.orbit-runs/decisions/ledger-<TS>.json` with `change: null` and `doc: "my-program"`; neither record carries `kind`, and `orbit emit ledger --change` naming a change that exists only under `orbit/changes/archive/` fails with the not-found error
+
 ### Requirement: Deterministic facts are engine-composed per command
 
 Where a capability defines an emit field as a deterministic fact, the surface SHALL compute it
@@ -220,7 +235,10 @@ engine-COPIED verbatim from the payload's architect-owned `handoff.next_command`
 second author; direct payload supply of spine `next_recommended` stays rejected). The
 remaining emitting commands (the propose family, verify, audit-drift) derive their
 recommendations as deterministic facts from their owning capability's recommendation
-requirements in `orbit-run-summary-emit` — no emitting command lacks a composition rule.
+requirements in `orbit-run-summary-emit` — no emitting command lacks a composition rule. A
+decision record (`ledger`, `stop`, `resolution`) records one decision, not a run, and recommends
+nothing: its rule is ABSENCE — it carries neither `next_recommended` nor `final_assessment`, and a
+payload supplying either is refused as engine-owned (per `orbit-decision-records`).
 
 #### Scenario: Review counts sentence composed from the payload scorecard
 
@@ -257,9 +275,16 @@ requirements in `orbit-run-summary-emit` — no emitting command lacks a composi
 - **WHEN** a proposal-mode payload for change `foo` carries no findings
 - **THEN** `next_recommended` is `orbit status --change foo --report`
 
+#### Scenario: A decision record carries no recommendation
+
+- **WHEN** `orbit emit ledger --change foo` writes a well-formed entry, and a second ledger payload supplies `next_recommended`
+- **THEN** the first record carries neither `next_recommended` nor `final_assessment`; the second is refused naming the field as engine-owned, and no file is written
+
 ### Requirement: Atomic next_recommended — pre-computable and post-write classes
 
-`next_recommended` SHALL be composed in one of two engine-owned ways, resolved per command:
+`next_recommended` SHALL be composed, on every run summary, in one of two engine-owned ways, resolved per command (a
+DECISION RECORD — `ledger`, `stop`, `resolution`, per `orbit-decision-records` — carries none, per `Deterministic facts
+are engine-composed per command`):
 (a) PRE-COMPUTABLE — commands whose recommendation derives from the payload or an
 already-parsed on-disk source, with no dependence on the emit having landed (review's
 findings-dependent pointer from the payload's scorecard, T0's path template, explore's
@@ -347,7 +372,11 @@ rejects by design (`mode` pinned to `proposal|system`, spine `change` required t
 string) — instead pass the universal-spine checks (which SHALL accept `change: null` plus a
 required `doc` for architecture-scoped emits), the same scorecard/findings cell-rollup
 equality, and the `orbit-architect`-owned `handoff`-section shape. Every kind passes the
-universal-spine checks. Validation failure means NO file, a non-zero exit, the field-naming
+universal-spine checks. A DECISION RECORD (`ledger`, `stop`, `resolution`, per `orbit-decision-records`) carries no
+kind and no run-summary reader reads it: it passes instead the decision-record spine checks — `command`, `timestamp`
+and `model` present, and `change` a string, or `null` with a string `doc` for an architecture-scoped record — and the
+checks of `The write gate checks decision records`; `final_assessment`, `next_recommended` and `kind` are neither
+required of it nor accepted from it. Validation failure means NO file, a non-zero exit, the field-naming
 error on stderr, and empty stdout. One validator, two gates: the fail-loud boundary that D4
 placed at render time moves to write time, so a malformed emit is refused before it becomes a
 record rather than discovered when rendered.
@@ -480,6 +509,11 @@ JUDGEMENT.
 - **WHEN** any emit without a `judgements` key is composed
 - **THEN** the ordering check does not run and the emit's behaviour is byte-identical to before this
   change — the check is scoped by PRESENCE so no existing emit can newly fail
+
+#### Scenario: A decision record passes its own spine checks
+
+- **WHEN** `orbit emit stop --change foo` composes a well-formed stop record, which has no `final_assessment`, `next_recommended` or `kind`, and a second stop payload omits `model`
+- **THEN** the first record is written; the second is refused naming `model`, and no file is written
 
 ### Requirement: Per-command computed extensions
 
@@ -1184,4 +1218,71 @@ by it, and `pair: false` or an absent `pair` writes the ordinary T0.
 
 - **WHEN** the payload carries `pair: true` and no `mode`, or a `mode` other than `proposal` or `system`
 - **THEN** the surface exits non-zero naming `mode`, and no file is written
+
+### Requirement: The write gate checks decision records
+
+`orbit emit ledger`, `orbit emit stop` and `orbit emit resolution` SHALL compose and write the three decision records
+`orbit-decision-records` defines, through the same narrative-only payload contract as every other command (an
+engine-owned field or an unknown key is refused naming it; `model` is required). The engine composes `command`,
+`timestamp`, `change` and, for an architecture-scoped record, `doc`; nothing else. The payload tables:
+
+| command | payload fields |
+|---|---|
+| `ledger` | `area`, `decided`, `alternatives`, `why`, `relies_on`, `raised_stop` (optional), `defines` (optional), `detail` (optional) |
+| `stop` | `condition`, `about`, `question`, `defines` (optional), `detail` (optional) |
+| `resolution` | `stop`, `answer`, `effect`, `defines` (optional), `detail` (optional) |
+
+Before ANY write the gate SHALL refuse, writing no file, with a non-zero exit, empty stdout and the field named:
+
+| check | refused when |
+|---|---|
+| plain fields | `decided`, `why`, `about`, `question`, `answer` or `effect` is absent, not a string, or blank after trimming; `alternatives` is not a non-empty array of such strings |
+| defines | `defines` is present and not an array of objects `{term, definition}`, both non-blank strings, no other key, no term twice |
+| detail | `detail` is present and not a string |
+| area | `area` is not one of the eighteen ids of `orbit-decision-records`' `The ledger's eighteen areas`; the refusal lists them |
+| condition | `condition` is not one of `security-unprecedented`, `user-facing-uncovered`, `ruling-amendment`, `outward-act`, `unresolvable-critical`; `tripwire` is refused from a payload, since orbit raises it itself |
+| relies on | `relies_on` is not an array; an entry is not one of the shapes `orbit-decision-records`' `A ledger entry names what it relies on` lists; or an entry names something that does not exist by that requirement's test |
+| raised stop | `relies_on` is empty and `raised_stop` is absent; `relies_on` is not empty and `raised_stop` is present; or `raised_stop` names no stop record in the same `decisions/` folder, one belonging to other work (its `change` or `doc` differs from the record's own), or one whose condition is not `security-unprecedented` or `user-facing-uncovered` |
+| resolution's stop | `stop` names no stop record in the same `decisions/` folder, one belonging to other work (its `change` or `doc` differs from the record's own), or one a resolution already names |
+
+A stop or resolution is NAMED by its record's filename (`stop-<TS>.json`), read from the same `decisions/` folder; a
+`resolution` citation in `relies_on` names its history and token, never a path, and is found by
+`orbit-decision-records`' lookup, so it survives the moves at propose and at archive. The gate judges FORM and EXISTENCE only (R-crc-10):
+whether a call belongs in an area, whether a citation covers the decision, and whether prose is clear are judgements
+outside it. No existing command's payload table or check changes.
+
+A decision record is published WITHOUT OVERWRITING: its temporary file is created exclusively and linked to its final
+name, so a second writer that drew the same token in the same `decisions/` folder is refused naming the collision,
+writing nothing, rather than replacing a record or another writer's temporary file. A resolution's refusal for an
+already-resolved stop names EVERY resolution that names it.
+
+#### Scenario: A well-formed ledger entry writes
+
+- **WHEN** `orbit emit ledger --change foo` receives `{model, area: "defaults", decided: "…", alternatives: ["…"], why: "…", relies_on: [{kind: "goal", doc: "automate-dev-flow", id: "G1"}]}` and the doc holds `**G1 — …**` under `## Goals`
+- **THEN** the record is written to `orbit/changes/foo/.orbit-runs/decisions/ledger-<TS>.json` carrying the payload's fields with `command`, `timestamp` and `change`
+
+#### Scenario: A tripwire stop from a payload is refused
+
+- **WHEN** a stop payload carries `condition: "tripwire"`
+- **THEN** the emit is refused naming `condition`; no file is written
+
+#### Scenario: A second resolution of one stop is refused
+
+- **WHEN** `stop-2026-11-07T10-00-00Z.json` already has a resolution and another resolution payload names it
+- **THEN** the emit is refused naming the stop; no file is written
+
+#### Scenario: A same-token writer cannot replace a record
+
+- **WHEN** a stop is emitted while the temporary file for its token already exists in the `decisions/` folder (another writer mid-write)
+- **THEN** the emit is refused naming the collision; that temporary file is left in place, and no record is written or replaced
+
+#### Scenario: A stop of another program is refused
+
+- **WHEN** `orbit emit resolution --doc prog-b` names, as `stop`, a stop record in `orbit/architecture/.orbit-runs/decisions/` whose `doc` is `prog-a`
+- **THEN** the emit is refused naming `stop`; no file is written
+
+#### Scenario: A raised stop of the wrong condition is refused
+
+- **WHEN** a ledger payload with `relies_on: []` names, as `raised_stop`, a stop whose condition is `outward-act`
+- **THEN** the emit is refused naming `raised_stop`; no file is written
 
