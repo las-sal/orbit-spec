@@ -140,7 +140,7 @@ bodies — greppable.
 ### Stage d2-architect — architect (the program layer)
 
 Depends-on: d1-explicit-lifecycle-consent
-Complete: [ ]
+Complete: [x] 2026-11-06 (Sal)
 
 
 **RULED (R-d-1, Sal, 2026-07-08): architecture is FIRST-CLASS ENGINE, not prose.** "Part of the goal of
@@ -184,7 +184,7 @@ via CLI instead of the whole doc.
 ### Stage d3-orientation — orientation (status absorption)
 
 Depends-on: d2-architect
-Complete: [ ]
+Complete: [x] 2026-11-06 (Sal)
 
 
 The positional half of "where am I": a surface answering, across ALL active changes at once —
@@ -205,7 +205,7 @@ pattern).
 ### Stage d4-review-consistency — review-consistency
 
 Depends-on: d2-architect
-Complete: [ ]
+Complete: [x] 2026-11-06 (Sal)
 
 
 Reviews are effective; their PRESENTATION varies per AI interpretation, and the address-reviews
@@ -227,7 +227,7 @@ body-text-checkable plus one observed cycle — the honest limit for a UX behavi
 ### Stage d5-context-economy — context-economy, native execution, and model strategy
 
 Depends-on: d2-architect
-Complete: [ ]
+Complete: [x] 2026-11-06 (Sal)
 
 
 Three braided threads, one governing concern (what's in the window and who's reading it):
@@ -285,7 +285,7 @@ readouts.
 ### Stage d6-pr-lifecycle — pr-lifecycle (orbit-native git integration)
 
 Depends-on: d1-explicit-lifecycle-consent
-Complete: [ ]
+Complete: [x] 2026-11-06 (Sal)
 
 
 Split out of Stage D1 (2026-07-08) once its true size was visible. The ratified direction
@@ -727,3 +727,17 @@ invisible in tasks.md typography).
   5.8):** D6 adds an outward-facing capability with no predecessor to reclaim from, so it
   names NO removal — the rule stands; this departure is dated and visible rather than silent
   (rationale in the change's design.md).
+
+- **2026-11-06 — d2–d6 ratified (Sal, at `/orbit:architect d-arc-arbitered-flow`).** All five had been
+  archived since 2026-09-11 with unmarked slots. Exits graded in the session: d2 met (status render,
+  dangling-citation refusal in `test/core/architecture/engine.test.ts`, review-architecture emits,
+  `orbit architecture show`); d3 met (`orbit status` per-change readout; `~/code/orbit-status`
+  gone); d4 met (golden-tested render, `test/core/report-render.test.ts`; the per-finding walk);
+  d6 met (PR #33 ran the whole arc, draft 2026-10-18 → ready_for_review → CI green → merged by Sal
+  2026-10-19; `pr: never` and no-remote covered by tests). d5 ratified MET-IN-INTENT on exit
+  criterion 3: the cross-model cold boot was run at the pre-archive seam only (Sonnet, PASS,
+  2026-08-10); mid-explore, post-review, pre-apply and mid-apply-chunk were never formally run.
+  Sal accepted the pre-archive run plus the handoff mechanism's use since (the external codex
+  reviewer reads each change cold from file-resident material) as sufficient, the same reading
+  given exit criterion 1's size miss. The arc's closing `/orbit:review --as architecture` has not
+  been run; the doc's one architecture review is 2026-07-16, during D2.
