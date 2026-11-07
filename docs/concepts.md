@@ -294,7 +294,7 @@ Carried by: fork-and-orbify D12, fork-and-orbify D15
 | **Scenario** | A concrete, checkable example of a requirement |
 | **Schema** | The definition of a change's artifacts, their dependencies and its gates |
 | **Spec** | A capability's requirements and scenarios, the source of truth for its behaviour |
-| **Trail** | A change's `.orbit-runs/` directory: every review and run summary |
+| **Trail** | A change's `.orbit-runs/` directory: every review and run summary, and in `decisions/` its decision records |
 | **Walk** | Resolving a review's findings one at a time, with pushback |
 
 Carried by: the 1.3.1 baseline, `orbit-engine-gates`, `orbit-conventions`, `orbit-address-reviews`

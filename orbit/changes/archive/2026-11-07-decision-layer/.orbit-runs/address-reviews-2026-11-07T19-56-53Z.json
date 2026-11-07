@@ -1,0 +1,463 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-07T19:56:53Z",
+  "change": "decision-layer",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/decision-layer/.orbit-runs/review-proposal-2026-11-07T18-51-30Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-07T18-51-30Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "walk",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 6,
+    "suggestion": 4
+  },
+  "pushback_verification": "All ten re-read at HEAD and still applied. Findings 3 and 4 converge with three of the external pass's findings (log 2 records them stale against this walk). The passes' directions differ but no claim contradicts, so no disagreement test was owed. Findings 1, 2 and 4(a) went to the decision lane; Sal took A1, B1 and C1.",
+  "resolution_summary": {
+    "resolved": 10,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Two unmodified baseline requirements still bind every emit to the universal spine and a composed next_recommended",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-emit-composition/spec.md",
+      "line": 249,
+      "classification": "decision_required",
+      "ratified_via": "chat",
+      "resolution": "A1 — carry both baseline requirements and narrow them",
+      "action": "carried `Atomic next_recommended — pre-computable and post-write classes` and `Write-gate validation via the shared normalizers` as MODIFIED: the first says its two ways cover run summaries and a decision record carries none; the second names the decision-record spine checks (command, timestamp, model, change or doc) and adds the scenario `A decision record passes its own spine checks`; fingerprints stamped; proposal, design Decision 2 and tasks 2.3/3.2/3.3 follow",
+      "evidence": "baseline spec.md:262 and :350 speak of every record; the delta modified neither; carrying them brings 6 Atomic scenarios already tagged by existing tests and 11 Write-gate scenarios tagged by none, which task 3.3 now covers with new tests",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/decision-layer/proposal.md",
+          "orbit/changes/decision-layer/design.md",
+          "orbit/changes/decision-layer/tasks.md",
+          "orbit/changes/decision-layer/.openspec.yaml"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "resolved per command:",
+          "universal-spine checks. Validation failure means"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-layer/specs/orbit-emit-composition/spec.md",
+            "text": "on every run summary, in one of two engine-owned ways"
+          },
+          {
+            "path": "orbit/changes/decision-layer/specs/orbit-emit-composition/spec.md",
+            "text": "passes instead the decision-record spine checks"
+          },
+          {
+            "path": "orbit/changes/decision-layer/proposal.md",
+            "text": "decision records pass their own spine checks"
+          },
+          {
+            "path": "orbit/changes/decision-layer/tasks.md",
+            "text": "eleven carried scenarios of `Write-gate validation via the shared normalizers`"
+          }
+        ],
+        "searched": [
+          "Every kind",
+          "resolved per command",
+          "universal-spine",
+          "next_recommended"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The `decision` citation drops D-dl-3's 'Sal made' qualifier and ignores superseded and doc-scoped cases",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-decision-records/spec.md",
+      "line": 169,
+      "classification": "decision_required",
+      "ratified_via": "chat",
+      "resolution": "B1 — live entries only, refused on doc scope, authorship a named gap",
+      "action": "the `decision` row resolves only a Decisions entry whose `Disposition:` is `live` or absent and is refused on an architecture-scoped entry; a bullet states that who wrote the entry is not checked and names the reading step and G4's closing review as where it is found; scenario `A superseded decision is not citable` added; design Decision 6 and task 1.3 follow",
+      "evidence": "orbit-conventions' entry grammar: Disposition absent means live, superseded/assigned say the claim does not stand; explore.md records no author",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/decision-layer/design.md",
+          "orbit/changes/decision-layer/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "holds a Decisions entry with that ID |"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-layer/specs/orbit-decision-records/spec.md",
+            "text": "whose `Disposition:` is `live` or absent"
+          },
+          {
+            "path": "orbit/changes/decision-layer/specs/orbit-decision-records/spec.md",
+            "text": "Who wrote a Decisions entry is not checked"
+          },
+          {
+            "path": "orbit/changes/decision-layer/design.md",
+            "text": "A `decision` citation resolves only to a live entry"
+          }
+        ],
+        "searched": [
+          "Decisions entry",
+          "Sal made",
+          "superseded"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Stop links on the shared architecture trail never check that the stop belongs to the same doc",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-emit-composition/spec.md",
+      "line": 270,
+      "classification": "trivial_fix",
+      "action": "the raised-stop and resolution's-stop gate rows refuse a stop belonging to other work (its change or doc differs from the record's own); orbit-decision-records says what same work means on the shared architecture folder; scenario `A stop of another program is refused` added; design Decision 5 and task 1.4 follow",
+      "evidence": "orbit/architecture/.orbit-runs/decisions/ is shared by every doc; the rows checked only the folder",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/decision-layer/specs/orbit-decision-records/spec.md",
+          "orbit/changes/decision-layer/design.md",
+          "orbit/changes/decision-layer/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "in the same history and its condition"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-layer/specs/orbit-emit-composition/spec.md",
+            "text": "one belonging to other work (its `change` or `doc` differs from the record's own)"
+          },
+          {
+            "path": "orbit/changes/decision-layer/specs/orbit-decision-records/spec.md",
+            "text": "A stop belongs to the same work as the record naming it"
+          },
+          {
+            "path": "orbit/changes/decision-layer/specs/orbit-emit-composition/spec.md",
+            "text": "A stop of another program is refused"
+          }
+        ],
+        "searched": [
+          "same `decisions/` folder",
+          "same history"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Citation existence tests leave identifiers, paths and matching open to the implementer",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-decision-records/spec.md",
+      "line": 165,
+      "classification": "decision_required",
+      "ratified_via": "chat",
+      "resolution": "C1 for (a): cite a resolution by {change, token} or {doc, token} with a moving lookup; (b)-(d) applied as previewed",
+      "action": "(a) the `resolution` kind is `{kind, change, token}` or `{kind, doc, token}`, found through the active change, the exploration, then the archived change `<YYYY-MM-DD>-<change>` (lexically greatest), and must read as JSON with `command: resolution`; an unreadable or wrong-kind record is refused; (b) capability, doc and change are held to the --change/--doc identifier rule; (c) IDs match whole, a goal ID followed by a space, an em dash or `**`; (d) fenced matches do not count; scenarios added for archive survival, G1 against G10/G11 and an unreadable record; the gate's naming sentence, design Decisions 5-6 and task 1.3 follow",
+      "evidence": "the old row said only 'is a resolution record inside some history's decisions/ folder' and design Decision 5 chose repo paths, which the propose and archive moves break; `**<id>` was a prefix test",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/decision-layer/specs/orbit-emit-composition/spec.md",
+          "orbit/changes/decision-layer/design.md",
+          "orbit/changes/decision-layer/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "{kind, path}",
+          "is a repo-relative path",
+          "resolution by repo path",
+          "a precedent resolution by its repo path"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-layer/specs/orbit-decision-records/spec.md",
+            "text": "never by path, because the history moves"
+          },
+          {
+            "path": "orbit/changes/decision-layer/specs/orbit-decision-records/spec.md",
+            "text": "A goal ID matches only as a whole"
+          },
+          {
+            "path": "orbit/changes/decision-layer/specs/orbit-decision-records/spec.md",
+            "text": "A resolution citation survives the archive"
+          },
+          {
+            "path": "orbit/changes/decision-layer/specs/orbit-decision-records/spec.md",
+            "text": "An unreadable cited record is refused"
+          },
+          {
+            "path": "orbit/changes/decision-layer/specs/orbit-emit-composition/spec.md",
+            "text": "names its history and token, never a path"
+          },
+          {
+            "path": "orbit/changes/decision-layer/design.md",
+            "text": "a precedent resolution by its history and token"
+          }
+        ],
+        "searched": [
+          "path",
+          "repo-relative",
+          "**<id>",
+          "fenced"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Task 3.5 names two judgement scenarios as untestable, but at least four more have THENs no test can show",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 516,
+      "classification": "trivial_fix",
+      "action": "`A coined term is defined in the record` joins task 3.5's untestable list (a reader's judgement); `A call with no precedent writes a stop, then its ledger entry` and `Amending a ruling raises a stop with no ledger entry` now state what orbit accepts; `Records made while exploring travel with the change` now writes a stop in the exploration, moves the folder, and resolves it from the change, a test of the lookup",
+      "evidence": "the four THENs were about what the AI chooses to write or what the propose skill's mv does",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/decision-layer/specs/orbit-decision-records/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the two scenarios that are a writer",
+          "it writes a stop record of condition",
+          "now live in `orbit/changes/foo/.orbit-runs/decisions/`"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-layer/tasks.md",
+            "text": "the three scenarios that are a writer's or reader's judgement"
+          },
+          {
+            "path": "orbit/changes/decision-layer/specs/orbit-decision-records/spec.md",
+            "text": "both records are written, and the ledger entry points at the stop"
+          },
+          {
+            "path": "orbit/changes/decision-layer/specs/orbit-decision-records/spec.md",
+            "text": "a stop of that condition needs no ledger entry"
+          },
+          {
+            "path": "orbit/changes/decision-layer/specs/orbit-decision-records/spec.md",
+            "text": "the stop is found in `orbit/changes/foo/.orbit-runs/decisions/`"
+          }
+        ],
+        "searched": [
+          "untestable",
+          "THEN"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "docs/cli.md's closed list of emit commands goes stale and no task updates it",
+      "marker_source": "internal-review",
+      "file": "proposal.md",
+      "line": 51,
+      "classification": "trivial_fix",
+      "action": "task 2.4 updates docs/cli.md's `orbit emit` section to name ledger, stop and resolution and say they are decision records, not run summaries; Impact and Touchpoints name the page",
+      "evidence": "docs/cli.md:355-360 calls every emit a run summary and closes the list at thirteen commands",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/decision-layer/tasks.md",
+          "orbit/changes/decision-layer/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-layer/tasks.md",
+            "text": "Update `docs/cli.md`'s `orbit emit` section"
+          },
+          {
+            "path": "orbit/changes/decision-layer/proposal.md",
+            "text": "the `orbit emit` paragraph and its list of commands"
+          }
+        ],
+        "searched": [
+          "docs/cli.md"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The new capability moves CLAUDE.md's marked capability figure from 31 to 32",
+      "marker_source": "internal-review",
+      "file": "proposal.md",
+      "line": 46,
+      "classification": "trivial_fix",
+      "action": "Impact names CLAUDE.md's marked capability figure going from 31 to 32 at archive",
+      "evidence": "CLAUDE.md:30 carries <!-- src:capabilities -->31",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-layer/proposal.md",
+            "text": "its marked capability figure goes from 31 to 32"
+          }
+        ],
+        "searched": [
+          "capabilities",
+          "31"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Whether `raised_stop` may accompany a non-empty `relies_on` is unstated",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-emit-composition/spec.md",
+      "line": 270,
+      "classification": "trivial_fix",
+      "action": "`raised_stop` is allowed only with an empty `relies_on`: the requirement says 'never both', the gate row refuses a non-empty relies_on with a raised_stop, and scenario `An entry cannot both cite and name a stop` is added; task 1.4 follows",
+      "evidence": "the requirement read as exclusive while the gate row refused only the empty case",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/decision-layer/specs/orbit-decision-records/spec.md",
+          "orbit/changes/decision-layer/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-layer/specs/orbit-emit-composition/spec.md",
+            "text": "`relies_on` is not empty and `raised_stop` is present"
+          },
+          {
+            "path": "orbit/changes/decision-layer/specs/orbit-decision-records/spec.md",
+            "text": "An entry cannot both cite and name a stop"
+          }
+        ],
+        "searched": [
+          "raised_stop"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Decision 1's reader list omits the gates' trail reader",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 30,
+      "classification": "trivial_fix",
+      "action": "Decision 1 names all six readers: orientation, report-render, the apply-boundary reads, readTrail, the boot render and attachmentsOnTrail, each with its filename filter",
+      "evidence": "read at HEAD: trail.ts:208-229 needs a .json name with a token or an external- name; boot-render.ts:57 a review- name; pr/inputs.ts:72-78 the attaching-emit pattern; a `decisions` entry matches none",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-layer/design.md",
+            "text": "The six readers"
+          }
+        ],
+        "searched": [
+          "readTrail",
+          "collectBoot",
+          "attachmentsOnTrail"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "'One row per stop condition' introduces a table that also has two non-condition rows",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-decision-records/spec.md",
+      "line": 13,
+      "classification": "trivial_fix",
+      "action": "the table's intro now says it has a row for a plain ledger call, one row per stop condition, and a row for Sal's answer",
+      "evidence": "the table had eight rows, six of them conditions",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "by this table, one row per stop condition, which is"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-layer/specs/orbit-decision-records/spec.md",
+            "text": "a row for a plain ledger call, one row per stop condition"
+          }
+        ],
+        "searched": [
+          "one row per"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Ten resolved as repairs: two carried baseline requirements now exclude decision records, decision citations need a live entry, stops must belong to the same work, a resolution is cited by history and token so it survives propose and archive, citation matching is exact, and the scenario, docs and design gaps are closed.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews decision-layer",
+  "ripple_misses": 0
+}

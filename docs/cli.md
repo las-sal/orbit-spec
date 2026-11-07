@@ -358,7 +358,12 @@ AI supplies only the narrative fields, in a payload; the engine composes the res
 what is next) and refuses a payload that fails its checks.
 
 Usage: `orbit emit <emit-command>`, where `<emit-command>` is one of `explore`, `propose`, `new`, `continue`, `ff`,
-`apply`, `verify`, `architect`, `review`, `address-reviews`, `audit-drift`, `review-external` or `archive`.
+`apply`, `verify`, `architect`, `review`, `address-reviews`, `audit-drift`, `review-external`, `archive`, `ledger`,
+`stop` or `resolution`.
+
+`ledger`, `stop` and `resolution` are not run summaries. They write decision records — a call the AI made that affects
+the user or security, a moment a run needed you, and your answer to it — to `.orbit-runs/decisions/<command>-<TS>.json`
+of the change, exploration or architecture trail. They take `--change` or `--doc`, and carry no next step.
 
 | Option | Description |
 |---|---|

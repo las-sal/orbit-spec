@@ -5,7 +5,7 @@ import { ChangeMetadataSchema } from './artifact-graph/types.js';
 import { loadChangeContext, formatChangeStatus } from './artifact-graph/instruction-loader.js';
 import { collectSameModePasses } from './report-render.js';
 import { findArchivedDir } from './archived-change.js';
-import { resolvesWithin } from './containment.js';
+import { resolvesWithin, isSingleName } from './containment.js';
 import { normalizeInternalPass } from './report-render.js';
 import {
   readTrail,
@@ -39,6 +39,13 @@ import {
   isGitRepo,
   type CheckboxState,
 } from './parsers/apply-state.js';
+import {
+  DECISION_PAYLOAD_FIELDS,
+  DecisionRecordError,
+  checkDecisionRecord,
+  isDecisionCommand,
+  type DecisionCommand,
+} from './decision-records.js';
 
 /**
  * `orbit emit <command>` — the engine-owned emit-composition surface (D-arc Stage D5,
@@ -57,7 +64,8 @@ export class EmitError extends Error {}
 export type EmitKind = 'workflow' | 'editorial' | 'lifecycle';
 
 interface CommandSpec {
-  kind: EmitKind;
+  /** Null for a DECISION RECORD (`ledger`, `stop`, `resolution`): not a run summary, so no kind. */
+  kind: EmitKind | null;
   /** Scope capability per the target-resolution contract. */
   scopes: { change?: boolean; doc?: boolean; project?: boolean };
   /** The authoritative payload-field row (model is implicit on every command). */
@@ -70,7 +78,15 @@ interface CommandSpec {
  * and asserts the table accepts it. Exposes nothing the write gate does not already enforce.
  */
 export function payloadFieldsFor(command: string): readonly string[] | undefined {
-  return COMMANDS[command]?.payloadFields;
+  return commandSpec(command)?.payloadFields;
+}
+
+/**
+ * The command's row, by OWN property only (decision-layer system walk, external W2's ripple): an
+ * inherited key such as `toString` names no command and must reach the unknown-command error.
+ */
+function commandSpec(command: string): CommandSpec | undefined {
+  return Object.prototype.hasOwnProperty.call(COMMANDS, command) ? COMMANDS[command] : undefined;
 }
 
 /** The engine-internal command→kind taxonomy table (orbit-conventions becomes engine data). */
@@ -225,6 +241,12 @@ const COMMANDS: Record<string, CommandSpec> = {
       'deferred_validations',
     ],
   },
+  // decision-layer: the three DECISION RECORDS (`orbit-decision-records`). Not run summaries: no
+  // kind, no recommendation, written to the trail's `decisions/` child; dual-scope like `review`,
+  // with no archived fallback (a decision is recorded while the work is live) and no bare scope.
+  ledger: { kind: null, scopes: { change: true, doc: true }, payloadFields: DECISION_PAYLOAD_FIELDS.ledger },
+  stop: { kind: null, scopes: { change: true, doc: true }, payloadFields: DECISION_PAYLOAD_FIELDS.stop },
+  resolution: { kind: null, scopes: { change: true, doc: true }, payloadFields: DECISION_PAYLOAD_FIELDS.resolution },
 };
 
 /** Spine + deterministic facts + computed extensions per command — REJECTED in payloads. */
@@ -260,6 +282,11 @@ export const ENGINE_OWNED_EXTRA: Record<string, string[]> = {
   // rc07b (`orbit-emit-composition`'s `Audit-drift counts are engine-computed`): a supplied count
   // was a second voice on `findings.length` — and the only input the clean branch read.
   'audit-drift': ['findings_total', 'findings_by_category'],
+  // decision-layer: a decision record recommends nothing — `final_assessment` is refused beside the
+  // spine's `next_recommended` and `kind` (`Deterministic facts are engine-composed per command`).
+  ledger: ['final_assessment'],
+  stop: ['final_assessment'],
+  resolution: ['final_assessment'],
 };
 
 /**
@@ -681,11 +708,10 @@ function validateWalkResolutions(resolutions: unknown, ctx: WalkContext): number
  * Emit targets are single canonical identifiers — a workstream name or a doc filename
  * stem, never a path (the same contained-identity rule as architecture doc names, D2).
  * Rejecting separators, traversal segments, and leading dots closes the path-traversal
- * write primitive on a surface whose whole contract is writing only orbit trails.
+ * write primitive on a surface whose whole contract is writing only orbit trails. The rule itself is
+ * `isSingleName` in `containment.ts`, shared with the decision records' citation names so the two can
+ * never drift (decision-layer system walk, fresh S2).
  */
-function isValidTargetName(name: string): boolean {
-  return name.length > 0 && !/[\\/]/.test(name) && !name.startsWith('.') && !name.includes('..');
-}
 
 /**
  * Defense in depth behind the name rule: an existing target directory must physically
@@ -729,12 +755,12 @@ function resolveTarget(projectRoot: string, command: string, target: EmitTarget)
   if (change !== undefined && doc !== undefined) {
     throw new EmitError('supply --change or --doc, never both — one target per invocation.');
   }
-  if (change !== undefined && !isValidTargetName(change)) {
+  if (change !== undefined && !isSingleName(change)) {
     throw new EmitError(
       `--change '${change}' is not a canonical workstream name (single name, no separators, no traversal).`
     );
   }
-  if (doc !== undefined && !isValidTargetName(doc)) {
+  if (doc !== undefined && !isSingleName(doc)) {
     throw new EmitError(
       `--doc '${doc}' is not a canonical doc name (single filename stem, no separators, no traversal).`
     );
@@ -1872,6 +1898,147 @@ function writeGate(emit: Record<string, unknown>, target: ResolvedTarget, filePa
   }
 }
 
+/**
+ * decision-layer: the `decisions/` child must physically BE the trail's canonical `decisions` child —
+ * the same IDENTITY rule `assertCanonicalTrailDir` holds the trail to, one level down.
+ */
+function assertCanonicalDecisionsDir(decisionsDir: string): void {
+  let realDir: string;
+  let realParent: string;
+  try {
+    realDir = fs.realpathSync(decisionsDir);
+    realParent = fs.realpathSync(path.dirname(decisionsDir));
+  } catch {
+    return; // unresolvable paths fail at the write itself
+  }
+  if (realDir !== path.join(realParent, 'decisions')) {
+    throw new EmitError(
+      `decisions directory ${decisionsDir} does not physically resolve to its trail's canonical decisions child — aliased entries are never writable emit trails.`
+    );
+  }
+}
+
+/**
+ * The decision-record spine checks (`Write-gate validation via the shared normalizers`): `command`,
+ * `timestamp` and `model` present, and `change` a string, or null with a string `doc`. A decision
+ * record carries no `kind`, `final_assessment` or `next_recommended`.
+ */
+function decisionSpineCheck(emit: Record<string, unknown>, target: ResolvedTarget): void {
+  for (const f of ['command', 'timestamp']) {
+    if (typeof emit[f] !== 'string' || (emit[f] as string).trim() === '') {
+      throw new EmitError(`write gate: spine field '${f}' missing or empty.`);
+    }
+  }
+  if (!('model' in emit)) {
+    throw new EmitError(`write gate: spine field 'model' missing (nullable, never absent).`);
+  }
+  if (emit.model !== null && typeof emit.model !== 'string') {
+    throw new EmitError(`write gate: spine field 'model' must be a string or null.`);
+  }
+  if (target.scope === 'doc') {
+    if (emit.change !== null) throw new EmitError(`write gate: 'change' must be null for doc-scoped emits.`);
+    if (typeof emit.doc !== 'string') throw new EmitError(`write gate: 'doc' required for architecture-scoped emits.`);
+  } else if (typeof emit.change !== 'string') {
+    throw new EmitError(`write gate: 'change' must be a string for change-scoped emits.`);
+  }
+  for (const f of ['kind', 'final_assessment', 'next_recommended']) {
+    if (f in emit) throw new EmitError(`write gate: a decision record carries no '${f}'.`);
+  }
+}
+
+/**
+ * decision-layer: compose and write one DECISION RECORD (`orbit-decision-records`). The same payload
+ * contract and target resolution as every run summary; then the trail's `decisions/` child, a token
+ * unique within that folder, the decision-record spine, the module's checks on the frozen record, and
+ * one atomic write.
+ */
+function composeDecisionRecord(
+  command: DecisionCommand,
+  resolved: ResolvedTarget,
+  payload: Record<string, unknown>,
+  projectRoot: string
+): ComposeResult {
+  fs.mkdirSync(resolved.runsDir, { recursive: true });
+  assertCanonicalTrailDir(resolved.runsDir);
+  const decisionsDir = path.join(resolved.runsDir, 'decisions');
+  fs.mkdirSync(decisionsDir, { recursive: true });
+  assertCanonicalDecisionsDir(decisionsDir);
+
+  // The collision bump is scoped to the decisions folder: unique among decision records,
+  // independent of the trail's own files.
+  const folderTokens = new Set(fs.readdirSync(decisionsDir).map(n => parseTsToken(n)).filter(t => t !== null));
+  let { token } = utcNow();
+  while (folderTokens.has(token)) {
+    token = bumpToken(token);
+  }
+  const filename = `${command}-${token}.json`;
+  const filePath = path.join(decisionsDir, filename);
+
+  const emit: Record<string, unknown> = {
+    command,
+    timestamp: tokenToTimestamp(token),
+    change: resolved.change,
+    ...(resolved.doc !== null ? { doc: resolved.doc } : {}),
+    model: payload.model ?? null,
+  };
+  for (const f of COMMANDS[command].payloadFields) {
+    if (f in payload) emit[f] = payload[f];
+  }
+
+  // MATERIALIZE first, as the run-summary path does: the checks and the bytes read one frozen record.
+  const materialized = JSON.parse(JSON.stringify(emit)) as Record<string, unknown>;
+  decisionSpineCheck(materialized, resolved);
+  const workDir =
+    resolved.scope === 'explore'
+      ? path.join(projectRoot, 'orbit', 'explore', resolved.change as string)
+      : resolved.scope === 'change'
+        ? resolved.changeDir
+        : null;
+  try {
+    checkDecisionRecord(command, materialized, {
+      projectRoot,
+      change: resolved.change,
+      doc: resolved.doc,
+      decisionsDir,
+      workDir,
+    });
+  } catch (err) {
+    if (err instanceof DecisionRecordError) throw new EmitError(`write gate: ${err.message}`);
+    throw err;
+  }
+
+  const serialized = JSON.stringify(materialized, null, 2) + '\n';
+  assertCanonicalTrailDir(resolved.runsDir);
+  assertCanonicalDecisionsDir(decisionsDir);
+  // decision-layer system walk (external W1, Sal: A): published WITHOUT overwriting. The temporary file
+  // is created exclusively and LINKED to the final name, which fails when the name exists, so a second
+  // writer that drew the same token in the same second is refused naming the collision instead of
+  // replacing a record. (Two writers racing the one-resolution check is a named limit, not closed here.)
+  const tmp = path.join(decisionsDir, `.${filename}.tmp`);
+  const collision = (what: string): EmitError =>
+    new EmitError(`write gate: ${what} already exists — another writer drew token ${token} in this decisions folder; nothing was written, so re-run the emit.`);
+  try {
+    fs.writeFileSync(tmp, serialized, { encoding: 'utf-8', flag: 'wx' });
+  } catch (err) {
+    // The temporary file is another writer's: never remove it.
+    if ((err as NodeJS.ErrnoException).code === 'EEXIST') throw collision(tmp);
+    throw err;
+  }
+  try {
+    fs.linkSync(tmp, filePath);
+  } catch (err) {
+    if ((err as NodeJS.ErrnoException).code === 'EEXIST') throw collision(filePath);
+    throw err;
+  } finally {
+    try {
+      fs.unlinkSync(tmp);
+    } catch {
+      // best-effort cleanup; the original failure is the story
+    }
+  }
+  return { path: filePath, emit: materialized, warnings: [] };
+}
+
 // ---------------------------------------------------------------------------
 // Composition
 // ---------------------------------------------------------------------------
@@ -1892,7 +2059,7 @@ export function composeAndWriteEmit(
   options: ComposeOptions = {}
 ): ComposeResult {
   const projectRoot = options.projectRoot ?? '.';
-  const spec = COMMANDS[command];
+  const spec = commandSpec(command);
   if (!spec) {
     throw new EmitError(
       `unknown emit command '${command}' — supported: ${Object.keys(COMMANDS).join(', ')}.`
@@ -1904,6 +2071,9 @@ export function composeAndWriteEmit(
 
   const resolved = resolveTarget(projectRoot, command, target);
   validatePayload(command, payload);
+  if (isDecisionCommand(command)) {
+    return composeDecisionRecord(command, resolved, payload, projectRoot);
+  }
 
   const warnings: string[] = [];
 

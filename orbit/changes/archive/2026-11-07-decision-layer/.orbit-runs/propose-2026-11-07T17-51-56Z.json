@@ -1,0 +1,15 @@
+{
+  "command": "propose",
+  "timestamp": "2026-11-07T17:51:56Z",
+  "change": "decision-layer",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Proposed decision-layer in consume mode from D-dl-1..7, plus two scope decisions Sal made at propose: D-dl-8 (this change ships the three records and their checks; the instruction to write them and the reading step move to a follow-on stage) and D-dl-9 (G0 is reworded to its intent at the next architect session). New capability orbit-decision-records (seven requirements: the three records, the architecture-level reader rule, how it is held, the eighteen areas, what an entry relies on, where records are kept, every mode) and orbit-emit-composition (one added write-gate requirement; the spine and deterministic-facts requirements modified). Records live in each history's decisions/ folder, which no existing reader lists, so G0 holds as written. Size: 2 capabilities, 10 requirements, 15 tasks, no breach. The seven carried spine scenarios are covered by new tests, so no existing test file is edited.",
+  "pr_attachment": {
+    "branch": "decision-layer",
+    "granularity": "per-proposal",
+    "url": "https://github.com/las-sal/orbit-spec/pull/34",
+    "state": "draft"
+  },
+  "next_recommended": "/orbit:review decision-layer — proposal artifacts ready; review before apply"
+}

@@ -171,7 +171,7 @@ Moves:
 - CONFORM: applied — R-crc-10 (the engine checks form, prose clarity is a reader's judgement)
 - FEASIBILITY: not applied — a field check per record, one reading pass per change
 - CONSUME: applied — the program brief inherits records that passed both
-- INVOKE: applied — the shape check fires at every write; the reading step runs in the change's review after implementation, when every record the change will hold has been written
+- INVOKE: applied — the shape check fires at every write; the reading step's trigger moves to the follow-on stage (D-dl-8), where it runs in the change's review after implementation
 
 ### D-dl-7 — everything is recorded in every mode
 Domain: the settings a run can be under, and what a stop record does in each
@@ -251,6 +251,20 @@ the rule from that pattern.
   "I would have stopped here": the AI asks Sal as it does now, and the records show whether stops would have been
   warranted (G3) before anything runs unattended. A stop halts a run only when a setting says so.
   Kind: rule
+
+- **2026-11-07 — D-dl-8: this change ships the records and their checks; writing them and the reading step follow**
+  (Sal, at propose) The change defines the three records and orbit's checks on them, and nothing more. Telling the AI
+  to write them (a fifth execution discipline in every generated skill, plus the specs that list the four) and D-dl-6's
+  reading step in review move to a follow-on stage after decision-layer, to be declared at the next
+  `/orbit:architect automate-dev-flow`. Rationale: together they exceed the size ceiling (the discipline alone touches
+  every skill and four specs), and the records are useful to build and test first.
+  Kind: scope
+- **2026-11-07 — D-dl-9: G0 is reworded to its intent at the next architect session** (Sal, at propose) G0 as written
+  (default settings leave generated bodies and the test suite unedited) cannot hold for any stage that edits skills.
+  Its intent stands: with default settings orbit behaves as today. The rewording is Sal's, at
+  `/orbit:architect automate-dev-flow`; this change does not edit the architecture doc. This change keeps G0 as
+  written: it edits no skill and changes no existing reader.
+  Kind: scope
 
 ## Open questions
 
