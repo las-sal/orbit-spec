@@ -1,0 +1,29 @@
+{
+  "command": "architect",
+  "timestamp": "2026-11-07T00:16:37Z",
+  "change": null,
+  "doc": "propose-reads-specs",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Resumed propose-reads-specs and graded read-obligation's three exits against current state: G0 is met (both generated skills carry the step 4a lines, the fence test is green), G3 is met, and the release is met (v2.0.2 points at a32ee7e Release v2.0.2 (built tree), on origin). Sal ratified the stage. The Shipped-as paragraph's stale 'the tag still to cut' was corrected. measure is now the program's only open stage; it waits on 8 proposals in Sal's other projects that ran v2.0.2, under R-prs-1. Issue #29 stays open until measure grades G1 and G2.",
+  "stages_touched": [
+    "read-obligation"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [
+    "read-obligation"
+  ],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      {
+        "path": "orbit/architecture/propose-reads-specs.md",
+        "why": "Goals G1/G2, R-prs-1, the measure stage's charter, and the probe's method in the status log"
+      }
+    ],
+    "next_command": "/orbit:explore measure",
+    "model_hint": null,
+    "seam": "read-obligation ratified; measure is premised and runs once 8 proposals in other projects carry v2.0.2's skill (transcripts from both machines, the Mac's supplied by Sal)"
+  },
+  "next_recommended": "/orbit:explore measure"
+}

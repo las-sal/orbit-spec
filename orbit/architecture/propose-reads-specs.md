@@ -63,7 +63,7 @@ drifted into it without deciding to.
 ### Stage read-obligation — The propose and ff bodies tell the agent to read the baseline
 
 Depends-on: (none)
-Complete: [ ]
+Complete: [x] 2026-11-06 (Sal)
 
 The fix. The propose body (`src/core/templates/workflows/propose.ts`) and the ff body
 (`src/core/templates/workflows/ff-change.ts`) gain G0's three read steps, steps 1 and 3 placed where the modified
@@ -76,8 +76,8 @@ Exit criteria:
 - G3 holds for this stage: no artifact section, no validation or emit check added.
 - The fix is released as orbit v2.0.2, cut by `npm run release:tree`; pushing the tag stays Sal's act.
 
-Shipped as (2026-10-19; archived as `orbit/changes/archive/2026-10-19-read-obligation/`; the charter stands, the tag
-still to cut): upstream step 4a of the propose and ff bodies carries two lines after "Read any completed dependency
+Shipped as (2026-10-19; archived as `orbit/changes/archive/2026-10-19-read-obligation/`; the charter stands; the
+`v2.0.2` tag was cut later and pushed): upstream step 4a of the propose and ff bodies carries two lines after "Read any completed dependency
 files for context", a named in-place edit. The first, before the proposal artifact, lists the modified capabilities,
 greps `orbit/specs/` for the rule the change alters and lists each spec that restates it, then reads each listed
 spec whole (G0's steps 1 and 3, the grep first so a spec it finds is read too); the second, at the specs artifact,
@@ -86,7 +86,7 @@ read the baseline before writing proposal.md`, whose fence `test/core/templates/
 both bodies to; the test failed on both before the edit. The standalone requirement now excepts the orbit steps that
 run in both modes, and propose's standalone section says the same. No record or check of the read was added (G3).
 `package.json`, the CHANGELOG and the five install pins say `2.0.2`, and `docs/workflow-engine.md` and
-`docs/commands.md` describe the read; the release tree and the `v2.0.2` tag follow the merge.
+`docs/commands.md` describe the read; the release tree (`a32ee7e`) and the `v2.0.2` tag followed the merge.
 
 ### Stage measure — Grade G1 and G2 on Sal's other projects
 
@@ -142,3 +142,8 @@ Exit criteria:
 - 2026-10-17 — Sal ratified the goals G0–G3; stages `read-obligation` and `measure` declared.
 - 2026-10-17 — G0's placement amended at Sal's word (read-obligation exploration, D-ro-2): steps 1 and 3 before
   `proposal.md` is written, step 2 at the specs artifact.
+- 2026-11-06 — Sal ratified stage `read-obligation` at `/orbit:architect propose-reads-specs`. Exits graded: G0 met
+  (both generated skills carry the step 4a lines; the fence test is green), G3 met, the release met (`v2.0.2` points at
+  `a32ee7e Release v2.0.2 (built tree)`, on origin). The Shipped-as paragraph's "the tag still to cut" was stale and was
+  corrected. Stage `measure` is next; it waits on 8 proposals in other projects that run v2.0.2. Issue #29 stays open
+  until measure grades G1 and G2.
