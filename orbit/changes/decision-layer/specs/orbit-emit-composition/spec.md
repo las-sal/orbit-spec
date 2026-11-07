@@ -23,11 +23,12 @@ Before ANY write the gate SHALL refuse, writing no file, with a non-zero exit, e
 | area | `area` is not one of the eighteen ids of `orbit-decision-records`' `The ledger's eighteen areas`; the refusal lists them |
 | condition | `condition` is not one of `security-unprecedented`, `user-facing-uncovered`, `ruling-amendment`, `outward-act`, `unresolvable-critical`; `tripwire` is refused from a payload, since orbit raises it itself |
 | relies on | `relies_on` is not an array; an entry is not one of the shapes `orbit-decision-records`' `A ledger entry names what it relies on` lists; or an entry names something that does not exist by that requirement's test |
-| raised stop | `relies_on` is empty and `raised_stop` is absent; or `raised_stop` names no stop record in the same `decisions/` folder, or one whose condition is not `security-unprecedented` or `user-facing-uncovered` |
-| resolution's stop | `stop` names no stop record in the same `decisions/` folder, or one a resolution already names |
+| raised stop | `relies_on` is empty and `raised_stop` is absent; `relies_on` is not empty and `raised_stop` is present; or `raised_stop` names no stop record in the same `decisions/` folder, one belonging to other work (its `change` or `doc` differs from the record's own), or one whose condition is not `security-unprecedented` or `user-facing-uncovered` |
+| resolution's stop | `stop` names no stop record in the same `decisions/` folder, one belonging to other work (its `change` or `doc` differs from the record's own), or one a resolution already names |
 
 A stop or resolution is NAMED by its record's filename (`stop-<TS>.json`), read from the same `decisions/` folder; a
-`resolution` citation in `relies_on` is a repo-relative path. The gate judges FORM and EXISTENCE only (R-crc-10):
+`resolution` citation in `relies_on` names its history and token, never a path, and is found by
+`orbit-decision-records`' lookup, so it survives the moves at propose and at archive. The gate judges FORM and EXISTENCE only (R-crc-10):
 whether a call belongs in an area, whether a citation covers the decision, and whether prose is clear are judgements
 outside it. No existing command's payload table or check changes.
 
@@ -45,6 +46,11 @@ outside it. No existing command's payload table or check changes.
 
 - **WHEN** `stop-2026-11-07T10-00-00Z.json` already has a resolution and another resolution payload names it
 - **THEN** the emit is refused naming the stop; no file is written
+
+#### Scenario: A stop of another program is refused
+
+- **WHEN** `orbit emit resolution --doc prog-b` names, as `stop`, a stop record in `orbit/architecture/.orbit-runs/decisions/` whose `doc` is `prog-a`
+- **THEN** the emit is refused naming `stop`; no file is written
 
 #### Scenario: A raised stop of the wrong condition is refused
 
@@ -250,3 +256,238 @@ payload supplying either is refused as engine-owned (per `orbit-decision-records
 
 - **WHEN** `orbit emit ledger --change foo` writes a well-formed entry, and a second ledger payload supplies `next_recommended`
 - **THEN** the first record carries neither `next_recommended` nor `final_assessment`; the second is refused naming the field as engine-owned, and no file is written
+
+### Requirement: Atomic next_recommended — pre-computable and post-write classes
+
+`next_recommended` SHALL be composed, on every run summary, in one of two engine-owned ways, resolved per command (a
+DECISION RECORD — `ledger`, `stop`, `resolution`, per `orbit-decision-records` — carries none, per `Deterministic facts
+are engine-composed per command`):
+(a) PRE-COMPUTABLE — commands whose recommendation derives from the payload or an
+already-parsed on-disk source, with no dependence on the emit having landed (review's
+findings-dependent pointer from the payload's scorecard, T0's path template, explore's
+maturity grid from the parsed staging `explore.md`, archive's post-archive recommendation — composed from the
+archived change's `.openspec.yaml` (below), the ARCHITECTURE-SCOPED emits — review `--as architecture`'s
+handoff mirror and the doc-scoped address-reviews walk, whose recommendation is the gate-less
+confirm pointer naming the doc (`/orbit:review --as architecture <doc>` to confirm the
+resolutions) since no change status exists to synthesize): composed before the write;
+(b) POST-WRITE SEMANTICS — CHANGE-SCOPED invocations of commands whose
+recommendation is the engine's canonical `next_command` AFTER this emit joins the trail
+(address-reviews, apply; the class keeps the POST-WRITE name for its SEMANTICS — the
+recommendation reflects the landed state — though no provisional file is ever written): the
+engine composes the candidate complete except `next_recommended`, computes the change status
+against a SYNTHETIC TRAIL — the on-disk trail plus the in-memory candidate treated as already
+landed — stamps the field, passes the now-complete record through the full write gate, and
+writes EXACTLY ONCE, atomically (temp-file + rename or equivalent). No provisional RECORD
+ever exists on the trail: the write gate's before-any-write claim holds for every kind with
+ZERO exceptions — the temp file's name never parses as an emit, so no trail reader can see a
+half-written record; any failure the process survives cleans the temp file up (a hard kill MAY
+strand an inert temp file — noise the trail never reads, never a record) — and the
+written emit's `next_recommended` equals the engine's post-landing `next_command` BY
+CONSTRUCTION — extended, for apply chunk emits only, by the engine-composed
+` — next chunk: <chunk-name>` suffix from the preamble (still one voice: every character is
+engine-owned). The emitting AI never performs the write-then-check-then-correct dance.
+(`orbit-orientation`'s spine-invalid surfacing remains as defense-in-depth against corruption
+from OTHER sources — hand-tampering, partial copies, pre-capability tooling; nothing on this
+path can produce a half-written record.) `orbit emit archive` writes to the ARCHIVED change's
+trail (`orbit/changes/archive/<YYYY-MM-DD>-<name>/.orbit-runs/`) AFTER the directory move
+completes — the archive directory is resolved by scanning `orbit/changes/archive/` for
+`*-<name>/` matches and taking the lexically greatest (never composed from today's date,
+which diverges from the move's date across a UTC midnight); no match fails with the
+target-resolution contract's clean not-found error. The emit records an outcome
+(`archive_path`, the archived-to sentence), and
+composing it before the move would record an outcome that does not yet exist; no status
+recompute runs against an archived change. Archive's `next_recommended` begins with the command
+(`orbit-architect`'s `Start surfaces name the architect workflow first`) and is chosen by the
+archived change's `architecture:` citation, read from the `.openspec.yaml` in the archived
+directory through the change-metadata schema: when the citation's doc file `orbit/architecture/<doc>.md` exists, it is
+`/orbit:architect <doc> — change archived; review stage <stage> and take up the program's next stage, or run /orbit:audit-drift for a project-wide drift check.`;
+when there is no citation, the doc file is missing, the metadata cannot be read, or the citation
+fails the change-metadata schema (a `doc` that is not a plain file stem, a `stage` that is not
+kebab-case), it is
+`/orbit:architect <name> — change archived; plan the next piece of work, or run /orbit:audit-drift for a project-wide drift check.`
+— the literal `<name>`, a placeholder the user fills. The recommendation never refuses the emit:
+an unreadable metadata file selects the second form.
+
+#### Scenario: Post-write stamping matches the engine
+
+- **WHEN** `orbit emit address-reviews --change foo` completes with all findings resolved
+- **THEN** the written emit's `next_recommended` equals `orbit status --change foo --json`'s `next_command` computed AFTER the emit landed — byte-identical, by construction
+
+#### Scenario: Every class writes once, complete
+
+- **WHEN** `orbit emit review --change foo` (pre-computable) or `orbit emit apply --change foo` (post-write semantics) runs
+- **THEN** the file is written exactly once, complete — no transient missing-field state exists for ANY class
+
+#### Scenario: Crash during synthetic-trail composition leaves no file
+
+- **WHEN** the surface crashes after computing the synthetic-trail status but before the atomic write completes
+- **THEN** the trail is unchanged — no file, no partial record; the invocation simply failed
+
+#### Scenario: Archive emit is pre-computable and lands on the archived trail
+
+- **WHEN** `orbit emit archive --change foo` runs after the archive flow has moved the change to `orbit/changes/archive/2026-08-03-foo/`
+- **THEN** the emit writes once, complete, to `orbit/changes/archive/2026-08-03-foo/.orbit-runs/archive-<TS>.json` with the engine-composed post-archive `next_recommended`; no status recompute runs against the archived change
+
+#### Scenario: A cited change's archive recommends its program's architect session
+
+- **WHEN** `orbit emit archive --change foo` runs and `orbit/changes/archive/2026-10-14-foo/.openspec.yaml` carries `architecture: {doc: prog, stage: s1}` and `orbit/architecture/prog.md` exists
+- **THEN** `next_recommended` is `/orbit:architect prog — change archived; review stage s1 and take up the program's next stage, or run /orbit:audit-drift for a project-wide drift check.`
+
+#### Scenario: An uncited or dangling change's archive recommends a new architect session
+
+- **WHEN** the archived change's metadata carries no `architecture:` citation, or cites a doc whose file no longer exists, or cannot be read, or carries a citation that fails the change-metadata schema (e.g. `doc: ../x`)
+- **THEN** `next_recommended` is `/orbit:architect <name> — change archived; plan the next piece of work, or run /orbit:audit-drift for a project-wide drift check.` and the emit is written
+
+### Requirement: Write-gate validation via the shared normalizers
+
+Before ANY write, the composed candidate SHALL pass the same validation the read side uses.
+For review emits the gate is MODE-SCOPED (D4's architecture-mode render exemption drawn at
+write time): proposal/system review emits pass `orbit-report-rendering`'s strict internal
+normalizer (spine semantics, scorecard/findings cell-rollup equality, single-line slot
+enforcement, dimension membership); architecture-mode review emits — which that normalizer
+rejects by design (`mode` pinned to `proposal|system`, spine `change` required to be a
+string) — instead pass the universal-spine checks (which SHALL accept `change: null` plus a
+required `doc` for architecture-scoped emits), the same scorecard/findings cell-rollup
+equality, and the `orbit-architect`-owned `handoff`-section shape. Every kind passes the
+universal-spine checks. A DECISION RECORD (`ledger`, `stop`, `resolution`, per `orbit-decision-records`) carries no
+kind and no run-summary reader reads it: it passes instead the decision-record spine checks — `command`, `timestamp`
+and `model` present, and `change` a string, or `null` with a string `doc` for an architecture-scoped record — and the
+checks of `The write gate checks decision records`; `final_assessment`, `next_recommended` and `kind` are neither
+required of it nor accepted from it. Validation failure means NO file, a non-zero exit, the field-naming
+error on stderr, and empty stdout. One validator, two gates: the fail-loud boundary that D4
+placed at render time moves to write time, so a malformed emit is refused before it becomes a
+record rather than discovered when rendered.
+
+**THE ORDERING REFUSAL (rc04a).** A payload carrying JUDGEMENT RECORDS — identified by the presence
+of the top-level `judgements` KEY, and by nothing else — SHALL additionally pass an ORDERING check
+PER ENTRY. `judgements` is an ARRAY (shape owned by `orbit-run-summary-emit`) and each entry carries
+its own `formed_against`, so the check iterates: it is not one comparison against a merged set, and
+two entries on one emit may legitimately cite different passes. For EVERY entry,
+every token in that entry's `formed_against` MUST be STRICTLY EARLIER than the EMIT'S OWN `<TS>` FILENAME
+TOKEN — the engine-composed one, compared in that single representation. The record carries no
+timestamp of its own; the comparand is the emit's, and naming it explicitly matters because the
+emit holds that instant in TWO forms (the colon-bearing JSON `timestamp` and the hyphenated
+filename `<TS>`) and comparing across the two would silently never match. An ENTRY citing a token equal to or later than that
+is REFUSED, naming the offending token, the emit's token, and the entry's index — an array of
+judgements needs the index or the error cannot be acted on. This is the single computed thing about a judgement
+record and the reason the record is buildable at all: R-crc-11(g) requires the AI to judge
+readiness KNOWING what the independent reviewers returned, belief is not observable, and ORDERING
+is. The engine SHALL NOT evaluate whether the judgement was correct, whether the cited passes were
+clean, or whether enough of them were cited — it refuses only a claim that COULD NOT have been
+informed by the evidence it names.
+
+The check is SCOPED BY PRESENCE so that no emit that exists today can newly fail: a payload with no
+`judgements` key carries no judgement record and is not ordering-checked. Scoping on the KEY rather
+than on a nested field is what keeps the check cheap and total — the engine decides whether to
+descend at all before it reads anything inside. The RESOLUTION SOURCE is the trail reader's PASS SET — the same `trail.passes` that clause (a)
+coverage reads, which admits `review-(proposal|system)-<TS>.json` AND `external-(proposal|system)-<TS>.md`.
+Naming it matters: an external pass has no JSON emit and `review-external-<TS>.json` is a PACKAGING
+record rather than a pass, so without this the most common external citation would look
+unresolvable. A token naming nothing in that set is REFUSED as unresolvable rather than silently
+skipped — a citation that cannot be resolved certifies nothing, which is the `Q-crc-17` failure
+mode in a new field.
+
+Two edges are settled rather than left to the implementer. (a) An `in-context` token is REFUSED:
+`formed_against` names INDEPENDENT passes, and an in-context pass is not one — this is a
+well-formedness check on the citation, not the forbidden judgement about whether ENOUGH passes were
+cited. (b) A REJECTED external return (`trail.rejectedExternals` — a return that came back
+unreadable and still cost a run) is not a pass and citing one is REFUSED: it satisfies no slot and
+carries no findings a judgement could have been formed against. (c) The cited pass's MODE is
+DELIBERATELY NOT CHECKED, and this is settled rather than overlooked: `TrailPass.mode` is as
+observable as the other two, so a terminal `readiness` at archive citing only a
+`review-proposal` pass could be refused as a category confusion. It is not, because a proposal-phase
+pass genuinely CAN inform a terminal judgement — a design objection raised before apply and accepted
+without resolution is exactly an `accepted` pair — and refusing it would be the engine ruling on
+whether the cited evidence was the RIGHT evidence, which is the judgement R-crc-10 puts off limits.
+(d) An EMPTY `formed_against` is REFUSED on a `continuation`/`proceed` entry WHEN ANY independent
+pass in the resolution set is strictly earlier than the emit's own token, naming the LATEST such
+pass and the entry's index; it is ACCEPTED when none is. `orbit-run-summary-emit` owns the rule's
+statement and its scope (the exemption exists for `continuation`/`proceed` alone); this requirement
+names it because THIS is the check that performs it, and a reader asking what the ordering check
+may refuse must find it here.
+
+**Edge (d) is well-formedness, NOT sufficiency, and the distinction is the same one edge (a)
+already turns on.** The SHALL-NOT above forbids the engine judging whether ENOUGH passes were
+cited — a question about adequacy, answerable only by opinion, and it remains forbidden: the engine
+still never asks whether two passes should have been three. Edge (d) asks something the trail
+answers outright — the entry asserts *there was nothing to cite*, and the trail either bears that
+out or contradicts it. Refusing a contradicted assertion is the same act as refusing an
+`in-context` token or a rejected external: the CITATION is malformed, not the judgement inadequate.
+The boundary is ZERO: at zero the claim is checkable against the trail; above zero, adequacy is
+opinion and the engine stays out.
+
+Edges (a), (b) and (d) are well-formedness of the CITATION; mode would be an opinion about the
+JUDGEMENT.
+
+#### Scenario: Scorecard/findings mismatch refused at write
+
+- **WHEN** a review payload's scorecard shows zero warnings while its findings contain a WARNING entry
+- **THEN** `orbit emit review` exits non-zero naming the mismatched cell; no file is written; stdout is empty
+
+#### Scenario: Forged single-line slot refused at write
+
+- **WHEN** a review payload's finding title contains an embedded newline
+- **THEN** the surface exits non-zero naming the slot; no file is written
+
+#### Scenario: Architecture-mode review emit passes the mode-scoped gate
+
+- **WHEN** `orbit emit review --doc my-program` composes an architecture-mode summary (`change: null`, `doc`, `handoff` section) with a valid spine and a rollup-consistent scorecard
+- **THEN** the emit writes — the strict internal normalizer (proposal/system-only) is not applied; the universal-spine checks accept `change: null` + `doc`, and a missing or malformed `handoff` section is refused naming the section
+
+#### Scenario: A readiness record citing a LATER pass is refused
+
+- **WHEN** an archive payload's `judgements` array holds a `readiness` entry whose `formed_against`
+  names a pass token later than the emit's own `<TS>` token
+- **THEN** the surface exits non-zero naming the offending token and the emit's `<TS>` token; no file
+  is written; stdout is empty
+
+#### Scenario: A record citing its own timestamp exactly is refused
+
+- **WHEN** an entry's `formed_against` names a token EQUAL to the emit's own `<TS>` token
+- **THEN** it is refused — the comparison is STRICTLY earlier, because a judgement formed in the
+  same second as the pass it cites cannot be shown to have been informed by it
+
+#### Scenario: An unresolvable citation is refused rather than skipped
+
+- **WHEN** an entry's `formed_against` names a token matching no readable pass on the change's trail
+- **THEN** the emit is refused naming the unresolvable token — a citation that resolves to nothing
+  certifies nothing
+
+#### Scenario: The check runs per entry, not over a merged set
+
+- **WHEN** an emit's `judgements` array holds two entries, one citing only earlier tokens and one
+  citing a later token
+- **THEN** the emit is refused naming the SECOND entry's index and its offending token — a valid
+  entry does not rescue an invalid one, and a merged comparison would have hidden it
+
+#### Scenario: An empty citation is refused when the trail contradicts it
+
+- **WHEN** a `continuation`/`proceed` entry carries `formed_against: []` and the resolution set holds
+  an independent pass strictly earlier than the emit's own token
+- **THEN** the emit is REFUSED, naming the LATEST such pass and the entry's index — the entry
+  asserts an empty cadence and the trail contradicts it, which is a malformed CITATION rather than
+  an opinion about whether enough passes were cited
+
+#### Scenario: An empty citation is accepted when the trail bears it out
+
+- **WHEN** a `continuation`/`proceed` entry carries `formed_against: []` and no independent pass in
+  the resolution set precedes the emit's own token
+- **THEN** the ordering check ACCEPTS it — the assertion is true of the trail, and this is the case
+  that makes the record total over the proceed-anyway domain
+
+#### Scenario: Sufficiency above zero remains outside the engine
+
+- **WHEN** an entry cites ONE independent pass while two preceded the emit
+- **THEN** the emit is ACCEPTED — whether the cited evidence was ENOUGH is the judgement R-crc-10
+  puts off limits, and edge (d)'s boundary is exactly zero
+
+#### Scenario: A payload with no judgement record is not ordering-checked
+
+- **WHEN** any emit without a `judgements` key is composed
+- **THEN** the ordering check does not run and the emit's behaviour is byte-identical to before this
+  change — the check is scoped by PRESENCE so no existing emit can newly fail
+
+#### Scenario: A decision record passes its own spine checks
+
+- **WHEN** `orbit emit stop --change foo` composes a well-formed stop record, which has no `final_assessment`, `next_recommended` or `kind`, and a second stop payload omits `model`
+- **THEN** the first record is written; the second is refused naming `model`, and no file is written

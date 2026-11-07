@@ -1,10 +1,12 @@
 schema: spec-driven
 created: 2026-11-07
 schema_version: 5
+architecture:
+  doc: automate-dev-flow
+  stage: decision-layer
 base_fingerprints:
   orbit-emit-composition:
     Engine-owned spine composition and filename discipline: sha256:03dd0197e0475c5aff42c14ccecfde873ed74da48f1a106db70d46ce3e8a229a
     Deterministic facts are engine-composed per command: sha256:095b869e4f1116f958cfb658c04b4820b59ab84243a8c264a22615f4dd1ca9b3
-architecture:
-  doc: automate-dev-flow
-  stage: decision-layer
+    Atomic next_recommended — pre-computable and post-write classes: sha256:bb08d9ae6df01cc06894e4b6f4edda950e88543e3a15d782e010152fb38c6c5e
+    Write-gate validation via the shared normalizers: sha256:91d9a3fab62729252919794aee82a66f0a37c271238873045433e577658beba2

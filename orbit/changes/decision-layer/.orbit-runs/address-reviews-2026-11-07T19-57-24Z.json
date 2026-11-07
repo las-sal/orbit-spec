@@ -1,0 +1,74 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-07T19:57:24Z",
+  "change": "decision-layer",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/decision-layer/.orbit-runs/external-proposal-2026-11-07T18-51-54Z.md",
+  "source_command": null,
+  "source_token": "2026-11-07T18-51-54Z",
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-6",
+  "walk_mode": "walk",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 3,
+    "suggestion": 1
+  },
+  "pushback_verification": "All four re-read at HEAD; each converges with a finding of the fresh pass and is recorded stale naming walk 2026-11-07T19-56-53Z, where it resolved. The passes' directions differ (the fresh pass's against hold) but no claim contradicts, so no disagreement test was owed.",
+  "resolution_summary": {
+    "resolved": 0,
+    "stale_suppressed": 4,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Resolution citations break when their owning history moves",
+      "file": "orbit/changes/decision-layer/specs/orbit-decision-records/spec.md",
+      "line": 168,
+      "marker_source": "external",
+      "classification": "stale",
+      "evidence": "converges with the fresh pass's 'Citation existence tests leave identifiers, paths and matching open to the implementer' (part a: same site, same claim), resolved in walk 2026-11-07T19-56-53Z: a resolution is cited by {change, token} or {doc, token} and found through the active change, the exploration, then the archived change",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Architecture-scoped resolutions can answer another program's stop",
+      "file": "orbit/changes/decision-layer/specs/orbit-emit-composition/spec.md",
+      "line": 27,
+      "marker_source": "external",
+      "classification": "stale",
+      "evidence": "converges with the fresh pass's 'Stop links on the shared architecture trail never check that the stop belongs to the same doc' (same site, same claim), resolved in walk 2026-11-07T19-56-53Z: both stop rows refuse a stop whose change or doc differs, with scenario 'A stop of another program is refused'",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Goal existence checks accept another goal's ID prefix",
+      "file": "orbit/changes/decision-layer/specs/orbit-decision-records/spec.md",
+      "line": 167,
+      "marker_source": "external",
+      "classification": "stale",
+      "evidence": "converges with the fresh pass's 'Citation existence tests leave identifiers, paths and matching open to the implementer' (part c), resolved in walk 2026-11-07T19-56-53Z: a goal ID is followed by a space, an em dash or `**`, with scenario 'A goal ID matches only as a whole'",
+      "outcome": "stale"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Citation-read failure behavior needs an explicit contract",
+      "file": "orbit/changes/decision-layer/specs/orbit-decision-records/spec.md",
+      "line": 168,
+      "marker_source": "external",
+      "classification": "stale",
+      "evidence": "converges with the fresh pass's 'Citation existence tests leave identifiers, paths and matching open to the implementer' (part a), resolved in walk 2026-11-07T19-56-53Z: an unreadable, invalid or wrong-kind cited record is refused naming the citation, with scenario 'An unreadable cited record is refused'",
+      "outcome": "stale"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Four converged findings recorded stale against the fresh pass's walk, where each resolved: resolution citations survive the moves, stops belong to the same work, goal IDs match whole, and unreadable cited records are refused.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal decision-layer",
+  "ripple_misses": 0
+}

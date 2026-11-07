@@ -40,14 +40,20 @@ and the tripwires all read them (see explore.md, D-dl-1..9).
 
 - `orbit-emit-composition`: the emit surface writes the three records. Modified: `Engine-owned spine composition and
   filename discipline` (the three commands take `--change` or `--doc`, write to the `decisions/` folder, and carry no
-  `kind`) and `Deterministic facts are engine-composed per command` (decision records carry no `next_recommended`).
-  Added: the write gate's checks on the three records.
+  `kind`), `Deterministic facts are engine-composed per command` (decision records carry no `next_recommended`),
+  `Atomic next_recommended — pre-computable and post-write classes` (its two ways cover run summaries only) and
+  `Write-gate validation via the shared normalizers` (decision records pass their own spine checks, not the run-summary
+  ones). Added: the write gate's checks on the three records.
 
 ## Impact
 
 - `src/core/emit-composition.ts`: three rows in the command table, the `decisions/` path, the record shape, the
   write-gate checks, and citation resolution.
 - New tests over the three records; no existing test or generated skill changes.
+- `docs/cli.md`: the `orbit emit` paragraph and its list of commands name the three new commands, which are not run
+  summaries.
+- `CLAUDE.md`: its marked capability figure goes from 31 to 32 when the archive adds `orbit-decision-records` to the
+  baseline.
 - No generated skill, existing reader, gate or readout changes (G0, as written).
 - `automate-dev-flow`: a follow-on stage (writing the records, the reading step) and G0's rewording are Sal's, at the
   next architect session (D-dl-8, D-dl-9); this change does not edit the architecture doc.

@@ -28,10 +28,12 @@ they come first.
 ## Decisions
 
 1. **A `decisions/` child of each history folder, not the history folder itself.** Every reader of run summaries
-   lists only the files directly in `.orbit-runs/` and filters by filename: `src/core/orientation.ts` (lines ~161, ~209,
-   `endsWith('.json')`), `src/core/report-render.ts` (~1001, ~1040, by `parseTsToken`), and the apply-boundary reads in
-   `src/core/emit-composition.ts` (~1590, ~1617, by an `apply-` pattern). A `decisions` directory entry matches none of
-   them, so no reader sees the records and none needs changing (G0). Writing the records beside the run summaries
+   lists only the files directly in `.orbit-runs/` and filters by filename. The six readers: `src/core/orientation.ts`
+   (lines ~161, ~209, `endsWith('.json')`), `src/core/report-render.ts` (~1001, ~1040, by `parseTsToken`), the
+   apply-boundary reads in `src/core/emit-composition.ts` (~1590, ~1617, by an `apply-` pattern), `readTrail` in
+   `src/core/artifact-graph/trail.ts` (~208, a `.json` name with a token, or an `external-` name), the boot render in
+   `src/core/boot-render.ts` (~57, a `review-` name), and `attachmentsOnTrail` in `src/core/pr/inputs.ts` (~72, an
+   attaching-emit name). A `decisions` directory entry matches none of them, so no reader sees the records and none needs changing (G0). Writing the records beside the run summaries
    instead would put a `ledger-<TS>.json` where `orbit status` picks the latest record's `next_recommended` — a record
    that recommends nothing would become the change's "next". Alternative: a separate top-level folder
    (`orbit/decisions/<change>/`). Rejected: it would not move with the change at archive or at propose, which the
@@ -40,7 +42,9 @@ they come first.
    architecture-scoped) and `model`, and no `kind`, `final_assessment` or `next_recommended`. Giving them a fourth
    `kind` would make `orbit-conventions`' spine enumeration and per-kind command lists false and bring in a third
    capability; giving them `workflow` would misstate what they are. The surface treats them as a separate family that
-   shares the payload contract.
+   shares the payload contract. Two baseline requirements speak of every record, so both are carried and narrowed:
+   `Write-gate validation via the shared normalizers` names the decision-record spine checks (`command`, `timestamp`,
+   `model`, `change` or `doc`), and `Atomic next_recommended` says its two ways cover run summaries.
 3. **Three commands, not one with a discriminator.** `orbit emit ledger | stop | resolution` gives each record its own
    payload table and filename prefix, so a history listing shows what each file is. Alternative: one `decision` command
    with a `record` field. Rejected: one table with three conditional shapes is what the per-command table exists to
@@ -48,13 +52,23 @@ they come first.
 4. **Records are checked in a new module.** `src/core/decision-records.ts` holds the eighteen ids, the six condition
    names, the shape checks and citation resolution; `emit-composition.ts` gains the three table rows and calls it. Keeps
    the 2,341-line composition module from growing a second record family inline.
-5. **A stop is named by its filename; a precedent resolution by its repo path.** A ledger entry's `raised_stop` and a
-   resolution's `stop` are filenames in the same `decisions/` folder, because the stop they name is always in it. A
-   resolution cited as precedent may come from any change, including an archived one, so it is a repo-relative path.
+5. **A stop is named by its filename; a precedent resolution by its history and token.** A ledger entry's
+   `raised_stop` and a resolution's `stop` are filenames in the same `decisions/` folder, because the stop they name is
+   always in it; the stop must also carry the naming record's own `change` and `doc`, since every program's architect
+   sessions share one folder. A resolution cited as precedent may come from any change, so it is named
+   `{change, token}` (or `{doc, token}`) and found by looking in the active change, the exploration of that name, then
+   the archived change of that name, the lexically greatest as `orbit emit archive` already resolves it. Alternatives:
+   a repo path — rejected, it breaks when the exploration is proposed or the change archived; only same-history
+   precedent — rejected, an answered question would stop the next change again; a kept index of resolutions — rejected,
+   new machinery for this stage.
 6. **Ruling and goal citations are read from the doc's own sections.** A ruling exists when `**<id>**` appears under
    `## Rulings index`; a goal when `**<id>` opens an item under `## Goals` — the forms every parseable architecture doc
-   uses today (`automate-dev-flow.md`: `**R-adf-1**`, `**G0 — …**`). A requirement citation reads only the baseline
-   (`orbit/specs/`), not the change's own delta: a requirement being proposed is not yet approved.
+   uses today (`automate-dev-flow.md`: `**R-adf-1**`, `**G0 — …**`). The ID matches whole (a goal ID is followed by a
+   space, an em dash or `**`, so `G1` never matches `G10`), and a match inside a fenced block does not count. A
+   requirement citation reads only the baseline (`orbit/specs/`), not the change's own delta: a requirement being
+   proposed is not yet approved. A `decision` citation resolves only to a live entry, and is refused on an
+   architecture-scoped record, which has no `explore.md`; who wrote the entry is not checkable, and the spec names
+   that gap.
 7. **Archived changes are not a decision-record target.** `--change` resolves an active change or a staging
    exploration only. A decision is recorded while the work is live; the archive fallback `address-reviews` uses exists
    for walks of finished work.
@@ -92,6 +106,7 @@ that are not about the user into the ledger Sal reads at sign-off.
 - `src/core/emit-composition.ts` — three table rows, dual scope, the `decisions/` path and its identity check, the
   no-kind spine, the no-recommendation rule, the call into the new module.
 - `test/core/decision-records.test.ts` — new: every refusal and acceptance in the two specs.
+- `docs/cli.md` — the `orbit emit` paragraph and its command list.
 
 ## Mechanism → artifacts
 
