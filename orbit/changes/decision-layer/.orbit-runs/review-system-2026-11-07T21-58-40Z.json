@@ -1,0 +1,86 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-07T21:58:40Z",
+  "change": "decision-layer",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "src/cli/program.ts",
+      "line": 301,
+      "title": "orbit emit --help still describes every emit as a run summary",
+      "recommendation": "Reword the emit command's description (src/cli/program.ts:301, and the completions registry's src/core/completions/command-registry.ts:496) so it covers the decision records, e.g. 'Compose and write a run summary or a decision record ...', matching the paragraph docs/cli.md now carries. A user reading `orbit emit --help` today is told that ledger/stop/resolution write run summaries, which docs/cli.md says they do not."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "src/core/decision-records.ts",
+      "line": 114,
+      "title": "The citation identifier rule is a copy of the emit surface's, held equal by nothing",
+      "recommendation": "orbit-decision-records says `capability`, `doc` and `change` in a citation are 'held to the same rule as the emit surface's --change and --doc values'. decision-records.ts:114 `isIdentifier` re-implements emit-composition.ts:705 `isValidTargetName` byte-for-byte today, but a later tightening of one would leave the other behind silently. Export one function and call it from both, or add a parity test over a shared case list."
+    },
+    {
+      "pass": "1",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/specs/orbit-emit-composition/spec.md",
+      "line": 5,
+      "title": "The emit-composition Purpose names only run summaries",
+      "recommendation": "At archive, edit the baseline Purpose in place (no delta carries ## Purpose) to say the surface also composes and writes the three decision records to each trail's decisions/ child. docs/concepts.md:297's Trail glossary row ('every review and run summary') is the same omission and can be fixed in the same edit."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Probed hard on the two claims the change rests on. G0's reader claim: every readdir over an .orbit-runs directory in src/ (orientation.ts 161/209/511, report-render.ts 1001/1040, trail.ts 208, emit-composition.ts 1611/1638/2089/2165/2250/2373, external-runner.ts 335, pr/inputs.ts, boot-render.ts) filters by filename or a token parse, so a decisions entry is invisible to all of them, including two readers design D1 does not list (the external returned-count in orientation.ts:511 and the run-summary clean-deferral scan); a live CLI probe in a scratch project confirmed bare orbit status and orbit status --change are unchanged by a decisions folder on an exploration or a change. The write gate: refusals exit non-zero with empty stdout (probed through bin/orbit.js); three clean mutations (drop the stop's doc comparison, drop the goal whole-ID suffix, drop the doc-scoped resolution's doc check) each turned exactly one decision-records test red, and the source was restored byte-identical. The full suite is green at 3801 tests; validate --strict passes; the scenario map shows 61 delta scenarios with none uncovered. Move hazards: archive moves the change directory whole and propose moves .orbit-runs whole, so decisions/ travels with both. One record gap, below finding level: src/core/parsers/explore-rules.ts gained liveDecisionIds, which design.md's Touchpoints (a frozen prediction) does not list. Readings came from the live checkout, whose HEAD differs from the apply commit only by the pair-launch trail files.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3"
+  ],
+  "passes_skipped": [
+    "4: no perspectives defined (orbit/lenses/ absent)",
+    "5: no critical paths defined (orbit/lenses/ absent)",
+    "6: the audit-drift library was not invoked from this fresh subagent (it writes its own emit); scoped residue checks ran instead: orbit validate --sources clean, residue greps over docs/ and the CLI help"
+  ],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The implementation does what the two specs say and nothing that today's flow can feel: the records sit where no existing reader looks, the gate refuses each malformed shape the tables name, and the existence checks are held by tests that fail when the check is removed. What remains is wording on two user-facing descriptions and one duplicated rule, none of which changes behaviour, so this can go to the walk and on to archive; the Purpose edit belongs to the archive itself."
+  },
+  "final_assessment": "0 critical, 0 warning, 3 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews decision-layer"
+}
