@@ -149,17 +149,15 @@ refused naming `resolution-D`; an entry written before the replacement keeps its
 
 ## Open questions
 
-- **(For the reader child) How does the reading step's brief sit with `orbit-conventions`' rule that a REVIEW-genre
-  brief names no path under `.orbit-runs/` to read?** The records live in `.orbit-runs/decisions/`. The rule exists
-  to keep reviewers blind to prior findings, and records are not findings, but the rule as written does not say so.
-  Options: (a) the reading-step requirement states that the reader is not a review-genre reviewer and that its brief,
-  rendered by orbit, carries the records' content and never a path; (b) amend the conventions rule with a named
-  exemption (a MODIFIED block carrying all its scenarios). Related: the reading step could be a perspective inside
-  system Pass 4 (Perspective reviews), so `System mode runs verify-change + six system-wide passes` keeps its count.
-  Standing recommendation: (a), and the reading step as a Pass 4 perspective — both keep existing requirements true without editing them.
-
 ## Considered & out
 
+- **2026-11-07 — The reading step's brief and the review-genre brief rule** (from the open question, out of this
+  change at propose: it is stage decision-reading's) The records live in `.orbit-runs/decisions/`, and
+  `orbit-conventions`' pass-genre requirement forbids a REVIEW-genre brief to name a path under `.orbit-runs/` to read.
+  Standing recommendation, kept for decision-reading: the reading-step requirement states that the reader is not a
+  review-genre reviewer and that its brief, rendered by orbit, carries the records' content and never a path; and the
+  reading step runs as a perspective inside system Pass 4, so `System mode runs verify-change + six system-wide
+  passes` keeps its count.
 - **2026-11-07 — Editing a record in place** (from Q1, option b) — breaks the rule that trail files are never
   rewritten, and loses what the reader was first shown.
 - **2026-11-07 — The reading step as its own review mode (`--as records`)** (from Q2, option B) — a new trail genre

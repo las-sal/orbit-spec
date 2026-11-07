@@ -1,0 +1,21 @@
+schema: spec-driven
+created: 2026-11-07
+schema_version: 5
+base_fingerprints:
+  orbit-architect:
+    Architect workflow available: sha256:cd36e4b812204fc402d5a5886f773011e8744e0118460632b3bfea5e88eee37d
+  orbit-conventions:
+    No-chaining contract: sha256:d8fa5c479a6406ca2e307abd44450ae8514efb4c6c62cb0d73b8ed2fd26cdfa1
+    Generated-file disposition: sha256:bde69cac309fb71ff37ace2939a5ea952b85365ab5d46b269129d8e2630ff720
+  orbit-decision-records:
+    Three decision records, one job each: sha256:69169a3e424051f50e2d2498c978cd7e40f8212e5ecbad7412f7b25c3202cbd5
+    Decision records are written for a reader who knows only the architecture: sha256:d780f9b90af07ea6cbfab00a7aa452d6e881dc4eaf78a06e1fe36dadc7c03e33
+    The plain-language rule is held by structure and by a reader: sha256:172200c647853ee1f87dded68e093ffd4890ea4ce1ea62616d42fd68f55115c2
+    A ledger entry names what it relies on: sha256:bd50fd113c4a33baeb8b6dade1bc0ba6c09f1fd9f3add18bae6c3ef1b75d55b7
+    Where decision records are kept: sha256:f5b0b5d503cb32aba91ca724372e40277a3673ae683e22193539978054045a71
+    Decision records are written in every mode: sha256:f14d5cb8c363c47d4256c361f6107c03fe9b7aaf1ec4fcb572fb427e21413d54
+  orbit-onboard:
+    Identity statement section: sha256:943751d73539046fad7bf200dbdf1dc8c69ebbc9013af716573a7975bd80a50c
+architecture:
+  doc: automate-dev-flow
+  stage: decision-writing
