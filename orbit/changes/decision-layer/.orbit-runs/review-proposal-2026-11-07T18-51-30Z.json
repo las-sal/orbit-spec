@@ -1,0 +1,191 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-07T18:51:30Z",
+  "change": "decision-layer",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 3,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 3
+    }
+  },
+  "findings": [
+    {
+      "pass": "4",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "specs/orbit-emit-composition/spec.md",
+      "line": 249,
+      "title": "Two unmodified baseline requirements still bind every emit to the universal spine and a composed next_recommended",
+      "recommendation": "The baseline `Write-gate validation via the shared normalizers` (orbit/specs/orbit-emit-composition/spec.md:350) says 'Every kind passes the universal-spine checks', and the code it describes (src/core/emit-composition.ts:1672 universalSpineCheck) requires `final_assessment`, `next_recommended` and `kind` as non-empty strings. The baseline `Atomic next_recommended — pre-computable and post-write classes` (spec.md:262) says next_recommended SHALL be composed in one of two ways, resolved per command. A decision record carries none of the three, and the change modifies neither requirement, so after archive the baseline contradicts the new ADDED gate and an implementer must invent which spine checks a decision record passes (the change/doc null rule? model?). State it in the spec: either carry `Write-gate validation via the shared normalizers` (and the one sentence of `Atomic next_recommended`) as MODIFIED, naming the decision-record spine check, or say in the ADDED `The write gate checks decision records` exactly which universal-spine checks apply and that the two requirements' 'every kind' / 'per command' clauses exclude decision records.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Carry `Write-gate validation via the shared normalizers` as MODIFIED with a decision-record spine clause (requirements go 10 to 11, under the ceiling of 12), plus a one-sentence exclusion in `Atomic next_recommended` if it is carried too (12)."
+        },
+        {
+          "label": "B",
+          "body": "Keep the requirement count: add to the ADDED `The write gate checks decision records` a sentence naming the spine checks a decision record passes (command, timestamp, change/doc rule, model) and stating that the universal-spine `final_assessment`/`next_recommended`/`kind` checks and the two next_recommended classes do not apply to it."
+        }
+      ]
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-decision-records/spec.md",
+      "line": 169,
+      "title": "The `decision` citation drops D-dl-3's 'Sal made' qualifier and ignores superseded and doc-scoped cases",
+      "recommendation": "D-dl-3's Domain row is 'a Decisions entry Sal made in the change's own exploration'; the spec's test is only 'holds a Decisions entry with that ID'. Three cases are then open: (1) an entry the AI wrote itself, which would let a security or user-facing call cite the AI's own note instead of raising a stop; (2) an entry carrying `Disposition: superseded` (orbit-conventions' explore format), which is no longer approved; (3) a `--doc`-scoped ledger entry, which has no explore.md at all. State each: whether attribution is checked (and if not, name the gap as a residual of `A ledger entry names what it relies on`), whether a superseded or assigned entry resolves, and that a `decision` citation on an architecture-scoped entry is refused.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Narrow the existence test: the entry must be live (`Disposition:` live or absent) and of `Kind: rule`; a `--doc`-scoped `decision` citation is refused; name AI-written entries as a residual a reader catches."
+        },
+        {
+          "label": "B",
+          "body": "Keep the existence test as written, and state all three cases as named limits in the requirement, with the reader of D-dl-6 as the guard."
+        }
+      ]
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-emit-composition/spec.md",
+      "line": 270,
+      "title": "Stop links on the shared architecture trail never check that the stop belongs to the same doc",
+      "recommendation": "`orbit/architecture/.orbit-runs/decisions/` is shared by every doc (orbit-decision-records spec.md:206). The `raised stop` and `resolution's stop` checks look only for a stop record 'in the same decisions/ folder', so `orbit emit resolution --doc A` can resolve, and `orbit emit ledger --doc A` can point at, a stop raised for doc B. The emit surface anchors per doc elsewhere on this trail (review-architecture iteration, address-reviews iteration). State whether the named stop's `doc` must equal the invocation's `--doc`, and add a scenario for the refusal if it must."
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-decision-records/spec.md",
+      "line": 165,
+      "title": "Citation existence tests leave identifiers, paths and matching open to the implementer",
+      "recommendation": "Make each row of the citable-kinds table decidable: (a) `resolution`: does 'is a resolution record inside some history's decisions/ folder' mean the filename matches `resolution-<TS>.json`, or the JSON parses with `command: \"resolution\"`; is the path normalised and required to stay under `orbit/` (a `..` segment in a repo-relative path); and do archived trails count (design Decision 5 says yes, the spec does not)? (b) `requirement`/`ruling`/`goal`: are `capability` and `doc` held to the emit surface's canonical-identifier rule (no separators, no traversal), as `--change`/`--doc` are? (c) `goal`: '`**<id>` opens an item' is a prefix test, so a `G1` citation resolves against a doc that holds only `**G10 — …**`; require a delimiter after the id (space, em dash or `**`). (d) `ruling`/`goal`: is a match inside a fenced block under the heading counted? Two implementers will differ on each."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "tasks.md",
+      "line": 516,
+      "title": "Task 3.5 names two judgement scenarios as untestable, but at least four more have THENs no test can show",
+      "recommendation": "Besides `Detail is never the only statement` and `An internal call writes no entry`, these scenarios' THENs are about what the AI writes or what the propose body's `mv` does, not about anything orbit's code decides: `A coined term is defined in the record` (the gate never checks that a coined term is listed; that is a reader row), `A call with no precedent writes a stop, then its ledger entry` and `Amending a ruling raises a stop with no ledger entry` (the AI's choice of records), and `Records made while exploring travel with the change` (the move is the propose skill's shell step, not engine code, so a test would only exercise fs.rename). Task 3.1's 'every scenario a test can run' leaves the call to the implementer, who would either write tests that assert only that the gate accepts a payload (a behaviour tag the THEN does not earn) or add declarations task 3.5 does not list.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Extend task 3.5's untestable list to name all six scenarios, each with a `why`."
+        },
+        {
+          "label": "B",
+          "body": "Reword the four scenarios so their THEN is what the gate decides (e.g. 'the stop then the ledger entry pointing at it are both accepted'), and keep task 3.5's list at two."
+        }
+      ]
+    },
+    {
+      "pass": "3",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "proposal.md",
+      "line": 51,
+      "title": "docs/cli.md's closed list of emit commands goes stale and no task updates it",
+      "recommendation": "docs/cli.md:355-360 describes `orbit emit` as 'Compose and write a run summary' and says `<emit-command>` 'is one of' thirteen named commands; after this change three more exist and they are not run summaries. The proposal's Impact says no doc changes, and no task touches docs/cli.md. Add a task updating the paragraph and the list (docs/cli.md is not a generated skill, so G0 as written is untouched), or record why the page is left stale."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "proposal.md",
+      "line": 46,
+      "title": "The new capability moves CLAUDE.md's marked capability figure from 31 to 32",
+      "recommendation": "CLAUDE.md:30 carries `<!-- src:capabilities -->31`, checked by `orbit validate --sources` against `specs.capability-count`; adding `orbit-decision-records` makes it 32 once synced. Name the bump in Impact so the archive does it in the same commit."
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "specs/orbit-emit-composition/spec.md",
+      "line": 270,
+      "title": "Whether `raised_stop` may accompany a non-empty `relies_on` is unstated",
+      "recommendation": "`A ledger entry names what it relies on` reads as exclusive ('cite … each approved thing, or cite nothing and name … the stop'), but the gate's `raised stop` row refuses only an empty `relies_on` without a stop. State whether an entry with citations and a `raised_stop` is accepted (and its stop still checked) or refused."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "design.md",
+      "line": 30,
+      "title": "Decision 1's reader list omits the gates' trail reader",
+      "recommendation": "Decision 1 says every reader lists only files directly in `.orbit-runs/` and names three modules, but the reader the reviewed gates use is `readTrail` in src/core/artifact-graph/trail.ts (line 168), and `collectBoot` (src/core/boot-render.ts) and `attachmentsOnTrail` (src/core/pr/inputs.ts) read the trail too. The claim holds for all of them (each filters by token or prefix); name them, or say the three are examples, so the claim is checkable."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "specs/orbit-decision-records/spec.md",
+      "line": 13,
+      "title": "'One row per stop condition' introduces a table that also has two non-condition rows",
+      "recommendation": "The table carries the plain ledger-entry row and the resolution row as well as the six conditions; say 'one row per stop condition, plus the ledger entry and the resolution'."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "pass": "2",
+      "title": "Carried Deterministic-facts scenarios lack task coverage",
+      "evidence": "orbit status --change decision-layer --scenarios shows the seven carried Deterministic-facts scenarios already covered by existing @scenario tags in test/core/emit-composition.test.ts; only the spine requirement's seven are uncovered, and task 3.3 covers them"
+    },
+    {
+      "pass": "1",
+      "title": "MODIFIED blocks may have drifted from the baseline",
+      "evidence": "a word diff of both MODIFIED blocks against orbit/specs/orbit-emit-composition/spec.md shows only additions: the decision-record sentences and the two new scenarios"
+    }
+  ],
+  "commentary": "The design is coherent and G0's 'no reader sees the folder' claim holds: I read every readdir over .orbit-runs in src/ (orientation, report-render, trail, boot-render, pr inputs, external-runner, the apply-boundary reads) and each filters by token or prefix, so a `decisions` entry is inert. The pattern behind the warnings is the spec stopping one step short of decidable at its seams: where the new record family meets baseline text written for 'every emit', and where the citation and stop-link tests meet edge inputs (superseded or AI-written decisions, the shared architecture trail, path and prefix matching). The MODIFIED carries are clean. validate --strict passes and there are no review markers.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "direction": {
+    "disposition": "hold",
+    "reasoning": "Walk before apply. The spine contradiction and the decision-citation gap decide what the write gate's code does, and both are fixed in the spec in a few sentences; resolving them now costs less than an apply that has to guess. The other items are small, and the change's shape — a separate decisions/ folder, a separate module, three commands — is sound and should stay."
+  },
+  "final_assessment": "0 critical, 6 warning, 4 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews decision-layer"
+}
