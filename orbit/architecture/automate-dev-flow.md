@@ -29,9 +29,13 @@ Ratified by Sal, 2026-11-07. Each goal names what makes it fail. G0 is graded he
 stage; G1–G6 are graded at first-run, on that project's trail and transcripts.
 
 - **G0 — Today's flow is untouched, and nothing is lost.** With every setting at its default, orbit behaves exactly
-  as it does now: the engine's readouts, gates and generated bodies are unchanged, and the existing test suite passes
-  unedited. Under any setting, every record today's flow writes is still written. Fails if a default install
-  behaves differently, or if a first-run trail lacks a record type the supervised flow would have written.
+  as it does now: the engine's readouts and gates are unchanged, and a generated body changes only by an addition
+  that tells the AI to record something, never by a change to what it does at a seam or what Sal sees. Every existing
+  test still passes. An existing test is edited only where it enumerates a closed set the stage extends (a command
+  list, a hash pin), never to weaken what it asserts about today's behaviour, and each such edit is named in the
+  stage's archive. Under any setting, every record today's flow writes is still written. Fails if a default install
+  behaves differently, if an existing test's assertion about today's behaviour is weakened, or if a first-run trail
+  lacks a record type the supervised flow would have written. (Reworded by Sal, 2026-11-07, R-adf-9.)
 - **G1 — Sal only shows up where Sal adds value.** In first-run, every Sal turn after the opening architect session
   is one of: answering a stop record, a sign-off, or a voluntary interjection Sal makes. Fails on a single turn where
   Sal had to type the next command, clear context, or re-boot a session to keep the run moving.
@@ -82,18 +86,24 @@ stage; G1–G6 are graded at first-run, on that project's trail and transcripts.
 - **R-adf-8** (Sal, 2026-11-07) — Context is cleared by construction: an engine-run driver launches a fresh headless
   session per phase, chosen from the engine's computed next command and booted from file-resident state
   (`orbit status --boot`), rather than a long-lived conductor session spawning subagents.
+- **R-adf-9** (Sal, 2026-11-07) — G0 is reworded to its intent (D-dl-9): default behaviour, readouts and gates are
+  unchanged; a generated body changes only by an addition that tells the AI to record something; an existing test is
+  edited only where it enumerates a closed set the stage extends, never to weaken an assertion about today's
+  behaviour, and each such edit is named at archive. The old wording ("generated bodies are unchanged, and the
+  existing test suite passes unedited") could not hold for any stage that adds a record type or edits a skill;
+  decision-layer broke it twice (a hash pin, an every-command spine test).
 
 ## Program stages
 
 Every stage is built and proven in orbit-spec under today's supervised flow (R-adf-5): its mechanism is held by
 tests over fixtures and stubs, never by running orbit-spec autonomously. Concurrency (R-adf-4): this program runs
-supervised, one command at a time, so its dependencies decide order only; seam-chaining, program-brief and
-tripwires depend only on decision-layer and may be taken in any order.
+supervised, one command at a time, so its dependencies decide order only; decision-writing, seam-chaining,
+program-brief and tripwires depend only on decision-layer and may be taken in any order.
 
 ### Stage decision-layer — the judgement ledger and the stop record
 
 Depends-on: (none)
-Complete: [ ]
+Complete: [x] 2026-11-07 (Sal)
 
 The records everything after consumes. The judgement ledger: one record per AI judgement that affects the end user
 or involves security — what was decided, the alternatives, why, and where — with a closed rule for what qualifies.
@@ -120,6 +130,24 @@ tells the AI to write one; and G0 as written did not hold — two existing test 
 commands), and that goes to G0's rewording (D-dl-9). The system walk added a no-overwrite publish (an exclusive
 temporary file and a link) and named the one-resolution race across concurrent writers as a limit routed to stage
 `parallel-lanes`.
+
+### Stage decision-writing — the AI writes the records, and a reader checks them
+
+Depends-on: decision-layer
+Complete: [ ]
+
+A fifth execution discipline in every generated skill tells the AI when to write a ledger entry (a call in one of
+the eighteen areas) and a stop record (one of R-adf-3's conditions), and to write Sal's answer as a resolution.
+Under supervised settings it still asks Sal exactly as today; the record only keeps the moment. A reading step, a
+review pass given only the architecture doc and the records, judges the reader rows of `orbit-decision-records`'
+plain-language table: undefined new terms, prose that leans on implementation detail, and prose that is correct but
+unclear. Each problem it finds is a finding, walked like any other. (From decision-layer's D-dl-8.)
+
+Exit criteria:
+- Every generated skill carries the discipline, held by a parity test against one owning statement.
+- The reading step runs on a fixture change that carries decision records, and not on one without; its brief is
+  shown to carry only the architecture doc and the records.
+- G0 holds.
 
 ### Stage seam-chaining — the granular settings and regime 2
 
@@ -170,7 +198,7 @@ Exit criteria:
 
 ### Stage driver — regime 3, one fresh session per phase
 
-Depends-on: seam-chaining, program-brief, tripwires
+Depends-on: decision-writing, seam-chaining, program-brief, tripwires
 Complete: [ ]
 
 `orbit run <doc>` (R-adf-8): read the engine's computed next command, launch a fresh headless session booted from
@@ -250,3 +278,8 @@ Exit criteria:
 - 2026-11-07 — Sal: stages declared as drafted, with a separate `release` stage between parallel-lanes and
   first-run, so the trial runs a tagged orbit: decision-layer, seam-chaining, program-brief, tripwires, driver,
   parallel-lanes, release, first-run.
+- 2026-11-07 — Architect session after decision-layer's archive (merged as PR #34). Sal ratified stage
+  decision-layer complete; reworded G0 to its intent (R-adf-9, from D-dl-9); declared stage decision-writing from
+  D-dl-8, with driver now depending on it, since an autonomous run that writes no records fails G2 and G4 by
+  construction. Sal chose decision-writing as the next stage (AI recommendation: every later stage reads or raises
+  these records, and nothing writes one yet).
