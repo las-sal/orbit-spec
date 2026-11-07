@@ -1,0 +1,25 @@
+{
+  "command": "explore",
+  "timestamp": "2026-11-07T22:41:34Z",
+  "change": "decision-writing",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Settled the three open questions as method calls, the user consenting: D-dw-1 fixes a record by an appending replacement that keeps every link field, with the write gate's three link checks collapsing chains (the earlier one-check estimate was wrong); D-dw-2 makes the reading step a system-review pass the in-context session dispatches to a clean subagent; D-dw-3 sets the fifth discipline's four triggers. D-dw-4 (scope, the user's ask): orbit's text says 'the user', attributions stay. One new open question: how the reading step's brief is shown to carry only the architecture doc and the records (recommend: engine-rendered).",
+  "decisions_captured": 4,
+  "open_questions_count": 1,
+  "open_questions_with_recommendation": "1 of 1",
+  "rules_total": 3,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [
+    {
+      "id": "D-dw-1",
+      "kind": "a reader of `decisions/` that a later stage adds and that reads a replaced record as current",
+      "method": "when a stage adds a reader of `decisions/`, its proposal checks it against this table; the requirement's named limit says so"
+    }
+  ],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose decision-writing — 3 live rules accounted, 1 bounded residual named (D-dw-1); formalize when you are ready (or /orbit:explore decision-writing to keep refining)"
+}
