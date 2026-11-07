@@ -4,15 +4,15 @@
 
 ## Premise
 
-Sal, 2026-11-07: orbit's flow takes too long, and Sal keeps it moving at points where Sal adds no value — typing the
+Sal, 2026-11-07: orbit's flow takes too long, and the user keeps it moving at points where the user adds no value — typing the
 next command, clearing context and re-booting with `orbit status --boot`. To use orbit to build really big things,
 it must take far less intervention. Every lifecycle transition is user-invoked today (D1's no-chaining contract,
 `orbit-conventions`' `No-chaining contract`), so a stage costs one typed command per seam.
 
-This program must produce a flow that can run a whole program with Sal present only where Sal adds value, in two
+This program must produce a flow that can run a whole program with the user present only where the user adds value, in two
 regimes, chosen per project or per program at architect:
 
-- **Seam-chained (regime 2):** orbit runs the stretches Sal always approves without being asked, and stops at
+- **Seam-chained (regime 2):** orbit runs the stretches the user always approves without being asked, and stops at
   named seams.
 - **Autonomous (regime 3):** orbit runs the program and stops only on ultra-critical issues, with one sign-off
   before archive, given over a plain-language summary of the program (new definitions, concepts and seams).
@@ -20,7 +20,7 @@ regimes, chosen per project or per program at architect:
 Sal's terms: everything between the seams is the AI's domain; every AI judgement that affects the end user or
 involves security is recorded (a new decision-tracking layer); none of today's tracking is lost; and the AI may
 decide at architect which parts of a program run in parallel with subagents and which run linearly. Two questions
-the design must answer: how context is cleared between phases without Sal, and how orbit detects that the AI has
+the design must answer: how context is cleared between phases without the user, and how orbit detects that the AI has
 gone sideways on a program.
 
 ## Goals
@@ -30,27 +30,27 @@ stage; G1–G6 are graded at first-run, on that project's trail and transcripts.
 
 - **G0 — Today's flow is untouched, and nothing is lost.** With every setting at its default, orbit behaves exactly
   as it does now: the engine's readouts and gates are unchanged, and a generated body changes only by an addition
-  that tells the AI to record something, never by a change to what it does at a seam or what Sal sees. Every existing
+  that tells the AI to record something, never by a change to what it does at a seam or what the user sees. Every existing
   test still passes. An existing test is edited only where it enumerates a closed set the stage extends (a command
   list, a hash pin), never to weaken what it asserts about today's behaviour, and each such edit is named in the
   stage's archive. Under any setting, every record today's flow writes is still written. Fails if a default install
   behaves differently, if an existing test's assertion about today's behaviour is weakened, or if a first-run trail
   lacks a record type the supervised flow would have written. (Reworded by Sal, 2026-11-07, R-adf-9.)
-- **G1 — Sal only shows up where Sal adds value.** In first-run, every Sal turn after the opening architect session
-  is one of: answering a stop record, a sign-off, or a voluntary interjection Sal makes. Fails on a single turn where
-  Sal had to type the next command, clear context, or re-boot a session to keep the run moving.
+- **G1 — The user only shows up where the user adds value.** In first-run, every user turn after the opening architect session
+  is one of: answering a stop record, a sign-off, or a voluntary interjection the user makes. Fails on a single turn where
+  the user had to type the next command, clear context, or re-boot a session to keep the run moving.
 - **G2 — Stops are complete.** Every event in first-run that meets one of R-adf-3's six conditions produced a stop
   record before the run went past it. A closing review classifies the trial's diffs and ledger against the six to
   find any it missed. Fails on one missed stop.
-- **G3 — Stops are rare enough to be worth it.** At most one stop record in four is judged unwarranted by Sal at the
+- **G3 — Stops are rare enough to be worth it.** At most one stop record in four is judged unwarranted by the user at the
   stop. Fails above that, since a run that stops for nothing brings back the pain.
 - **G4 — Judgements are recorded.** Every AI judgement in first-run that affects the end user or involves security
   has a ledger entry. The same closing review looks for unrecorded ones. Fails on one.
-- **G5 — The brief is enough to sign off on.** Reading only the program brief, Sal can say what was built, the new
-  terms and seams, and every ledger judgement, and signs off or declines without opening another artifact. Sal
-  grades it. Fails if Sal needs another artifact to decide.
+- **G5 — The brief is enough to sign off on.** Reading only the program brief, the user can say what was built, the new
+  terms and seams, and every ledger judgement, and signs off or declines without opening another artifact. The user
+  grades it. Fails if the user needs another artifact to decide.
 - **G6 — Sideways is caught.** Each tripwire fires on a fixture that should trip it and not on a clean one (graded
-  here, each shown able to fail). In first-run, no drift that a tripwire covers is found later by Sal or a review
+  here, each shown able to fail). In first-run, no drift that a tripwire covers is found later by the user or a review
   without that tripwire having fired. Fails on either.
 - **G7 — Concurrency loses nothing.** In first-run, concurrent lanes' archives preserve every lane's synced
   requirements (base fingerprints verified at each archive), and no lane overwrites another's work. Fails on one
@@ -92,13 +92,18 @@ stage; G1–G6 are graded at first-run, on that project's trail and transcripts.
   behaviour, and each such edit is named at archive. The old wording ("generated bodies are unchanged, and the
   existing test suite passes unedited") could not hold for any stage that adds a record type or edits a skill;
   decision-layer broke it twice (a hash pin, an every-command spine test).
+- **R-adf-10** (Sal, 2026-11-07) — orbit's text names the person it answers to as "the user", never by name
+  (D-dw-4). Text a stage writes says "the user"; this doc's Premise, Goals and stage charters were reworded to it the
+  same day, with no change of meaning. Attributions stay as written — "(Sal, <date>)" on a ruling, "Ratified by Sal",
+  "Rationale (Sal)", the status log — because each records who acted, not a role.
 
 ## Program stages
 
 Every stage is built and proven in orbit-spec under today's supervised flow (R-adf-5): its mechanism is held by
 tests over fixtures and stubs, never by running orbit-spec autonomously. Concurrency (R-adf-4): this program runs
 supervised, one command at a time, so its dependencies decide order only; decision-writing, seam-chaining,
-program-brief and tripwires depend only on decision-layer and may be taken in any order.
+program-brief and tripwires depend only on decision-layer and may be taken in any order; decision-reading follows
+decision-writing.
 
 ### Stage decision-layer — the judgement ledger and the stop record
 
@@ -131,22 +136,38 @@ commands), and that goes to G0's rewording (D-dl-9). The system walk added a no-
 temporary file and a link) and named the one-resolution race across concurrent writers as a limit routed to stage
 `parallel-lanes`.
 
-### Stage decision-writing — the AI writes the records, and a reader checks them
+### Stage decision-writing — the AI writes the records
 
 Depends-on: decision-layer
 Complete: [ ]
 
 A fifth execution discipline in every generated skill tells the AI when to write a ledger entry (a call in one of
-the eighteen areas) and a stop record (one of R-adf-3's conditions), and to write Sal's answer as a resolution.
-Under supervised settings it still asks Sal exactly as today; the record only keeps the moment. A reading step, a
-review pass given only the architecture doc and the records, judges the reader rows of `orbit-decision-records`'
-plain-language table: undefined new terms, prose that leans on implementation detail, and prose that is correct but
-unclear. Each problem it finds is a finding, walked like any other. (From decision-layer's D-dl-8.)
+the eighteen areas) and a stop record (one of R-adf-3's conditions), and to write the user's answer as a
+resolution. Under supervised settings it still asks the user exactly as today; the record only keeps the moment.
+The specs that state the set of disciplines say five, and `orbit-decision-records` says "the user" where it names
+the person orbit answers to (R-adf-10). (From decision-layer's D-dl-8; split from the reading step at propose,
+`orbit/explore/decision-writing/explore.md` D-dw-6.)
 
 Exit criteria:
 - Every generated skill carries the discipline, held by a parity test against one owning statement.
+- G0 holds.
+
+### Stage decision-reading — a reader checks the records
+
+Depends-on: decision-writing
+
+A reading step, a review pass given only the architecture doc and the records, judges the reader rows of
+`orbit-decision-records`' plain-language table: undefined new terms, prose that leans on implementation detail, and
+prose that is correct but unclear. orbit renders the reader's brief, so what the reader is given can be checked.
+Each problem it finds is a finding, walked like any other; a record the walk fixes is fixed by a new record that
+replaces it, since the history is never rewritten, and every check that follows a link between records follows
+the replacement. (From D-dl-8, split at propose: D-dw-1, D-dw-2 and D-dw-5 in the decision-writing exploration.)
+
+Exit criteria:
 - The reading step runs on a fixture change that carries decision records, and not on one without; its brief is
   shown to carry only the architecture doc and the records.
+- A replacement record passes every link check its original passed, and a link to a replaced record is refused
+  naming its replacement, each tested.
 - G0 holds.
 
 ### Stage seam-chaining — the granular settings and regime 2
@@ -198,12 +219,12 @@ Exit criteria:
 
 ### Stage driver — regime 3, one fresh session per phase
 
-Depends-on: decision-writing, seam-chaining, program-brief, tripwires
+Depends-on: decision-writing, decision-reading, seam-chaining, program-brief, tripwires
 Complete: [ ]
 
 `orbit run <doc>` (R-adf-8): read the engine's computed next command, launch a fresh headless session booted from
 `orbit status --boot`, wait, read the emit it wrote, and loop, stopping on a stop record or at the sign-off seam.
-It reuses the external runner's launch pattern, keeps a live log Sal can watch, and resumes after a stop. Linear:
+It reuses the external runner's launch pattern, keeps a live log the user can watch, and resumes after a stop. Linear:
 one stage at a time.
 
 Exit criteria:
@@ -233,7 +254,7 @@ Depends-on: parallel-lanes
 Complete: [ ]
 
 The program's mechanisms are released as a tagged orbit version, cut by `npm run release:tree`; pushing the tag
-stays Sal's act unless a setting says otherwise.
+stays the user's act unless a setting says otherwise.
 
 Exit criteria:
 - The version is tagged and on origin, and the user docs describe the settings, the driver and the brief.
@@ -243,8 +264,8 @@ Exit criteria:
 Depends-on: release
 Complete: [ ]
 
-Writes no orbit code. Sal starts a new, big, non-critical project at the released version, chooses its settings,
-and runs a program in it under the driver. Its trigger is Sal starting that project. Afterwards a closing review
+Writes no orbit code. The user starts a new, big, non-critical project at the released version, chooses its settings,
+and runs a program in it under the driver. Its trigger is the user starting that project. Afterwards a closing review
 of that project's trail, ledger and diffs, read from here, grades the goals.
 
 Exit criteria:
@@ -283,3 +304,10 @@ Exit criteria:
   D-dl-8, with driver now depending on it, since an autonomous run that writes no records fails G2 and G4 by
   construction. Sal chose decision-writing as the next stage (AI recommendation: every later stage reads or raises
   these records, and nothing writes one yet).
+- 2026-11-07 — Architect session after decision-writing's propose stopped on a size breach (six to seven
+  capabilities against a ceiling of three; D-dw-6). Sal split the stage: decision-writing keeps its id and becomes
+  the fifth discipline alone, so the exploration that cites it proposes directly; a new stage decision-reading
+  (depends on decision-writing) takes the replacement chain, the reading step and its rendered brief; driver now
+  depends on both (AI recommendation: records unchecked for plain language would put G5 at risk). Sal ratified
+  R-adf-10 ("the user", not a name) and chose its scope: role text in the Premise, Goals and charters reworded,
+  attributions and this log kept (AI recommendation).

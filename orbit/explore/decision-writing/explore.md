@@ -108,6 +108,7 @@ refused naming `resolution-D`; an entry written before the replacement keeps its
   collapse chains before checking. Rationale: records are never rewritten, the walk cannot edit the trail, and keeping
   links fixed makes a chain one event reworded. Cost: one field plus a chain lookup at three sites, not one.
   Kind: rule
+  Disposition: assigned decision-reading
 - **2026-11-07 — D-dw-2: the reading step is a system-review pass the invoking session dispatches to a clean
   reader** An added pass in system review: the in-context session dispatches a clean subagent given only the
   architecture doc and the change's records, and folds its findings into the review emit so the walk works unchanged;
@@ -115,6 +116,7 @@ refused naming `resolution-D`; an entry written before the replacement keeps its
   Rationale: no existing reviewer knows only the architecture; a separate mode would add a trail genre and a gate slot
   for one pass.
   Kind: rule
+  Disposition: assigned decision-reading
 - **2026-11-07 — D-dw-3: the fifth discipline triggers on four observable moments** Write the stop record BEFORE
   asking the user a question one of the five AI-raised conditions describes; write a resolution with the user's
   answer; write a ledger entry after any call in the eighteen areas made without asking; consent, gate and sync
@@ -132,6 +134,7 @@ refused naming `resolution-D`; an entry written before the replacement keeps its
   session passes it to the reader verbatim; a test inspects the rendered brief. Rationale: the exit criterion needs
   the brief shown, not asserted, and a brief the engine composes is one the body cannot add context to.
   Kind: rule
+  Disposition: assigned decision-reading
 - **2026-11-07 — D-dw-6: the stage splits in two, the discipline first, the reader second** (the user, at propose)
   The change exceeds the size ceiling (3 capabilities, 12 requirements): it touches six to seven specs and about
   fifteen requirements. It splits. The FIRST child is the discipline: D-dw-3 and D-dw-4 — the fifth discipline in

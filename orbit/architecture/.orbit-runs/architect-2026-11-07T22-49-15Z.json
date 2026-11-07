@@ -1,0 +1,31 @@
+{
+  "command": "architect",
+  "timestamp": "2026-11-07T22:49:15Z",
+  "change": null,
+  "doc": "automate-dev-flow",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Split stage decision-writing after its propose stopped on a size breach (D-dw-6): decision-writing keeps its id as the fifth discipline alone; new stage decision-reading (depends on decision-writing) takes the replacement chain, the reading step and its rendered brief; driver depends on both. Ratified R-adf-10 ('the user', not a name) and reworded role text in the Premise, Goals and charters, keeping attributions and the status log. The exploration's D-dw-1, D-dw-2 and D-dw-5 are assigned to decision-reading.",
+  "stages_touched": [
+    "decision-writing",
+    "decision-reading",
+    "driver"
+  ],
+  "rulings_captured": [
+    "R-adf-10"
+  ],
+  "completions_ratified": [],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      "CLAUDE.md — repo orientation and the four execution disciplines",
+      "orbit/architecture/automate-dev-flow.md — stage decision-writing's narrowed charter, stage decision-reading, R-adf-10",
+      "orbit/explore/decision-writing/explore.md — D-dw-3 and D-dw-4 are this stage's; D-dw-1, D-dw-2, D-dw-5 are assigned to decision-reading; D-dw-6 is the split",
+      "orbit/specs/orbit-conventions/spec.md — owner of the execution disciplines, where the fifth's owning statement goes"
+    ],
+    "next_command": "/orbit:propose decision-writing",
+    "model_hint": null,
+    "seam": "post-architect: decision-writing narrowed to the discipline and ready to propose; decision-reading declared, premised"
+  },
+  "next_recommended": "/orbit:propose decision-writing"
+}
