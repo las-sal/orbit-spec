@@ -3,6 +3,7 @@ import * as path from 'node:path';
 import { collectSections } from './parsers/explore-counter.js';
 import { liveDecisionIds } from './parsers/explore-rules.js';
 import { createFenceTracker } from './markdown-fence.js';
+import { isSingleName } from './containment.js';
 
 /**
  * The three DECISION RECORDS (stage `decision-layer`, capability `orbit-decision-records`) — the
@@ -108,11 +109,6 @@ function hasOwn(o: Record<string, unknown>, k: string): boolean {
 
 function nonBlank(v: unknown): v is string {
   return typeof v === 'string' && v.trim() !== '';
-}
-
-/** The emit surface's identifier rule for `--change` / `--doc`, held by citation names too. */
-function isIdentifier(v: unknown): v is string {
-  return typeof v === 'string' && v.length > 0 && !/[\\/]/.test(v) && !v.startsWith('.') && !v.includes('..');
 }
 
 function describe(v: unknown): string {
@@ -228,7 +224,8 @@ function citationLabel(i: number): string {
 function checkCitationShape(c: unknown, i: number): void {
   const where = citationLabel(i);
   if (!isPlainObject(c)) refuse(`'${where}' must be a citation object (got ${describe(c)}).`);
-  const shapes = typeof c.kind === 'string' ? CITATION_SHAPES[c.kind] : undefined;
+  // Own properties only: an inherited key (`toString`, `constructor`, `__proto__`) is not a kind.
+  const shapes = typeof c.kind === 'string' && hasOwn(CITATION_SHAPES, c.kind) ? CITATION_SHAPES[c.kind] : undefined;
   if (!shapes) {
     refuse(`'${where}' has kind ${describe(c.kind)} — a citation's kind is one of: ${Object.keys(CITATION_SHAPES).join(', ')}.`);
   }
@@ -237,7 +234,7 @@ function checkCitationShape(c: unknown, i: number): void {
     refuse(`'${where}' ${describe(c)} is not a ${c.kind} citation — written as ${shapes.map(s => `{${s.join(', ')}}`).join(' or ')}.`);
   }
   for (const k of ['capability', 'doc', 'change'] as const) {
-    if (hasOwn(c, k) && !isIdentifier(c[k])) {
+    if (hasOwn(c, k) && !isSingleName(c[k])) {
       refuse(`'${where}.${k}' ${describe(c[k])} is not a single name (no separator, no '..', not empty).`);
     }
   }
@@ -431,11 +428,14 @@ export function checkDecisionLinks(command: DecisionCommand, record: Record<stri
     } catch {
       siblings = [];
     }
-    for (const f of siblings) {
+    // Every resolution already naming the stop is named, so a duplicate two concurrent writers left
+    // (the named limit in `Three decision records, one job each`) surfaces at the next resolution of it.
+    const already = siblings.sort().filter(f => {
       const other = readJson(path.join(ctx.decisionsDir, f));
-      if (other !== null && other.command === 'resolution' && other.stop === name) {
-        refuse(`'stop' '${name}' is already resolved by ${f} — a stop has at most one resolution.`);
-      }
+      return other !== null && other.command === 'resolution' && other.stop === name;
+    });
+    if (already.length > 0) {
+      refuse(`'stop' '${name}' is already resolved by ${already.join(', ')} — a stop has at most one resolution.`);
     }
   }
 }

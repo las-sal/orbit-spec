@@ -18,3 +18,13 @@ export function resolvesWithin(dir: string, root: string): boolean {
   }
   return real === realRoot || real.startsWith(realRoot + path.sep);
 }
+
+/**
+ * The ONE single-name rule (decision-layer system walk, fresh S2): a workstream name or doc filename
+ * stem, never a path — no separator, no traversal segment, no leading dot, not empty. Held by the emit
+ * surface's `--change` / `--doc` values and by a decision record's citation names (`capability`, `doc`,
+ * `change`), which `orbit-decision-records` holds to the same rule.
+ */
+export function isSingleName(name: unknown): name is string {
+  return typeof name === 'string' && name.length > 0 && !/[\\/]/.test(name) && !name.startsWith('.') && !name.includes('..');
+}

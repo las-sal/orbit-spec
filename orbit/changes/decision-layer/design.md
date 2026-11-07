@@ -99,6 +99,10 @@ that are not about the user into the ledger Sal reads at sign-off.
   and by a reader`.
 - [Citation forms are textual] A ruling or goal written in some other markup than bold would not resolve → the
   refusal names the citation, so the mismatch surfaces at the first write rather than silently passing.
+- [Concurrent writers] The one-resolution check reads the folder, then writes → a named limit in
+  `orbit-decision-records`' `Three decision records, one job each`, routed to stage `parallel-lanes` (R-adf-4); a
+  same-token collision is refused rather than overwriting, since a record is published by an exclusive temporary file
+  and a link (system walk, external W1, Sal: A).
 - [A later reader descends into `.orbit-runs/` recursively] It would see decision records as unknown files → each
   reader today filters by filename, and the decision records' prefixes (`ledger-`, `stop-`, `resolution-`) match no
   run-summary pattern.

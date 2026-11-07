@@ -1,0 +1,164 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-07T22:07:48Z",
+  "change": "decision-layer",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/decision-layer/.orbit-runs/review-system-2026-11-07T21-58-40Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-07T21-58-40Z",
+  "latest_apply_token": "2026-11-07T21-22-21Z",
+  "external_reviewer": null,
+  "walk_mode": "walk",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 3
+  },
+  "pushback_verification": "All three re-read at HEAD and still applied: the help text at program.ts:301 and command-registry.ts:496 said run summary only; isIdentifier was a byte-for-byte copy of isValidTargetName with no shared definition; the baseline Purpose and the concepts.md Trail row named run summaries only.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "SUGGESTION",
+      "title": "orbit emit --help still describes every emit as a run summary",
+      "marker_source": "internal-review",
+      "file": "src/cli/program.ts",
+      "line": 301,
+      "classification": "trivial_fix",
+      "action": "the emit description now reads 'a run-summary emit or a decision record (ledger, stop, resolution)', in program.ts and in the completions registry",
+      "evidence": "program.ts:301 and command-registry.ts:496 read 'Compose and write a run-summary emit' only",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/completions/command-registry.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "Compose and write a run-summary emit —",
+          "Compose and write a run-summary emit from a narrative payload"
+        ],
+        "introduced": [
+          {
+            "path": "src/cli/program.ts",
+            "text": "a run-summary emit or a decision record (ledger, stop, resolution)"
+          },
+          {
+            "path": "src/core/completions/command-registry.ts",
+            "text": "a run-summary emit or a decision record from a narrative payload"
+          }
+        ],
+        "searched": [
+          "Compose and write a run-summary",
+          "run-summary emit"
+        ],
+        "scope": [
+          "docs/cli.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The citation identifier rule is a copy of the emit surface's, held equal by nothing",
+      "marker_source": "internal-review",
+      "file": "src/core/decision-records.ts",
+      "line": 114,
+      "classification": "trivial_fix",
+      "action": "the rule now lives once, as isSingleName in src/core/containment.ts; the emit surface's --change/--doc checks and the citation name checks both call it, and the two private copies are gone",
+      "evidence": "decision-records.ts:114 isIdentifier and emit-composition.ts:705 isValidTargetName held the same body",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/containment.ts",
+          "src/core/emit-composition.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "function isIdentifier",
+          "function isValidTargetName",
+          "isValidTargetName("
+        ],
+        "introduced": [
+          {
+            "path": "src/core/containment.ts",
+            "text": "export function isSingleName(name: unknown): name is string"
+          },
+          {
+            "path": "src/core/decision-records.ts",
+            "text": "!isSingleName(c[k])"
+          },
+          {
+            "path": "src/core/emit-composition.ts",
+            "text": "!isSingleName(change)"
+          }
+        ],
+        "searched": [
+          "isIdentifier",
+          "isValidTargetName",
+          "startsWith('.')"
+        ],
+        "scope": [
+          "src/core"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The emit-composition Purpose names only run summaries",
+      "marker_source": "internal-review",
+      "file": "orbit/specs/orbit-emit-composition/spec.md",
+      "line": 5,
+      "classification": "trivial_fix",
+      "action": "the baseline Purpose, edited in place (no delta carries ## Purpose), now says the surface also writes the three decision records to each trail's decisions/ child; docs/concepts.md's Trail row names the decisions/ folder",
+      "evidence": "spec.md:5 said 'every run-summary JSON' with no decision records; concepts.md:297 said 'every review and run summary'",
+      "ripple_cascade": {
+        "applied": [
+          "docs/concepts.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "every review and run summary |"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/specs/orbit-emit-composition/spec.md",
+            "text": "The same surface writes the three DECISION RECORDS of `orbit-decision-records`"
+          },
+          {
+            "path": "docs/concepts.md",
+            "text": "and in `decisions/` its decision records"
+          }
+        ],
+        "searched": [
+          "run summary",
+          "Trail"
+        ],
+        "scope": [
+          "docs"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "final_assessment": "Walked 3 suggestions from the fresh system pass; resolved 3.",
+  "iteration": 4,
+  "next_recommended": "/orbit:address-reviews decision-layer",
+  "ripple_misses": 0
+}

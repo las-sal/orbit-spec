@@ -128,6 +128,9 @@ import { fileURLToPath } from "node:url";
  * writing to the trail's `decisions/` child with its own spine check and identity check. A pin the task plan did not
  * name, which made the change's "existing test suite passes unedited" (G0 as written, D-dl-9) untrue; Sal ratified
  * moving it at apply. Every other hash here is unchanged.
+ * MOVED AGAIN at decision-layer's system walk (2026-11-07): `emit-composition.ts` only — the single-name rule is
+ * `containment.ts`' `isSingleName` (fresh S2), the command row is read by own property (external W2's ripple), and a
+ * decision record is published by an exclusive temporary file and a link, never overwriting (external W1, Sal: A).
  */
 const PINNED: Record<string, string> = {
   "schemas/spec-driven/schema.yaml": "ce8a5274855b9bd8a69220a4691e5a8ba93c4676e8e5b9551afa2d53f6316f6a",
@@ -146,7 +149,7 @@ const PINNED: Record<string, string> = {
   "src/core/artifact-graph/state.ts": "f59f748b94cd94ca2fe022ec5aa66b3251dd1b2c00bddb9a17cbd9273a04d0f2",
   "src/core/artifact-graph/trail.ts": "39b5d110ef53b7e03f49ddf292e86db598a14f426a02e6d84142e16231e37d69",
   "src/core/artifact-graph/types.ts": "d83e0cc6d7fca7b80618ffbb7ce052ee68e35be79e7949a941e989b2e102392c",
-  "src/core/emit-composition.ts": "bf456f9e604b9c7faac0a8c9a274a632aeb65509f7df2606af8e8e31b6a52690",
+  "src/core/emit-composition.ts": "52d5ed4f2a454758b18eafd00232ca1755463cde8e779ffa7c415c401ecbbb21",
   "src/core/report-render.ts": "d759878995ed8b5e5c70fb1165d88d134f0aeb91acfce99d155654d1506b9f36",
 };
 

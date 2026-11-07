@@ -1,0 +1,135 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-07T22:11:46Z",
+  "change": "decision-layer",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/decision-layer/.orbit-runs/external-system-2026-11-07T21-59-31Z.md",
+  "source_command": null,
+  "source_token": "2026-11-07T21-59-31Z",
+  "latest_apply_token": "2026-11-07T21-22-21Z",
+  "external_reviewer": "Codex (GPT-6)",
+  "walk_mode": "walk",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 0
+  },
+  "pushback_verification": "Both held at HEAD. W2 reproduced through bin/orbit.js in a scratch project: relies_on [{kind: toString}] (and constructor, __proto__, hasOwnProperty) exited with 'shapes.some is not a function'. W1's check-then-write gap read in decision-records.ts; its same-token half confirmed: the temporary file was written with flag 'w' and renamed, so a second same-second writer would overwrite.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Concurrent writes can bypass the single-resolution rule",
+      "marker_source": "external",
+      "file": "src/core/emit-composition.ts",
+      "line": 1991,
+      "classification": "decision_required",
+      "ratified_via": "chat",
+      "resolution": "Option A: a decision record is published by an exclusive temporary file and a link, so a same-token writer is refused instead of overwriting; the check-then-write race on the one-resolution rule is a named limit routed to stage parallel-lanes (R-adf-4), and the refusal names every resolution already naming the stop so a duplicate surfaces.",
+      "action": "composeDecisionRecord writes the temporary file with flag 'wx' and links it to the final name (never removing another writer's file); checkDecisionLinks names every resolution of the stop; orbit-decision-records' first requirement carries the named limit and residual; orbit-emit-composition's ADDED requirement states the no-overwrite publish with a scenario held by test/core/decision-records-race.test.ts; design Risks names it",
+      "evidence": "emit-composition.ts published via writeFileSync(tmp) + renameSync, and the sibling scan ran before it with nothing holding the folder",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/decision-records.ts",
+          "orbit/changes/decision-layer/specs/orbit-decision-records/spec.md",
+          "orbit/changes/decision-layer/specs/orbit-emit-composition/spec.md",
+          "orbit/changes/decision-layer/design.md",
+          "test/core/decision-records-race.test.ts",
+          "test/core/decision-records.test.ts",
+          "test/core/rc03b-untouched-modules.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "const tmp = path.join(decisionsDir, `.${filename}.tmp`);\n  try {\n    fs.writeFileSync(tmp, serialized, utf-8);"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/emit-composition.ts",
+            "text": "fs.linkSync(tmp, filePath);"
+          },
+          {
+            "path": "src/core/emit-composition.ts",
+            "text": "flag: 'wx'"
+          },
+          {
+            "path": "orbit/changes/decision-layer/specs/orbit-decision-records/spec.md",
+            "text": "Named limit — the at-most-one-resolution check assumes one writer per `decisions/` folder at a time"
+          },
+          {
+            "path": "orbit/changes/decision-layer/specs/orbit-emit-composition/spec.md",
+            "text": "#### Scenario: A same-token writer cannot replace a record"
+          }
+        ],
+        "searched": [
+          "renameSync",
+          "at most one resolution",
+          "already resolved"
+        ],
+        "scope": [
+          "src/core/emit-composition.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Prototype property names bypass citation-kind validation",
+      "marker_source": "external",
+      "file": "src/core/decision-records.ts",
+      "line": 231,
+      "classification": "trivial_fix",
+      "action": "a citation's kind is looked up by own property only, so an inherited key is refused like any unknown kind naming relies_on[i]; the same defect on the emit surface's command lookup (orbit emit toString passed the unknown-command check) fixed by commandSpec, an own-property read",
+      "evidence": "CITATION_SHAPES[c.kind] returned Object.prototype members; COMMANDS[command] likewise",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/emit-composition.ts",
+          "test/core/decision-records.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "typeof c.kind === 'string' ? CITATION_SHAPES[c.kind] : undefined",
+          "const spec = COMMANDS[command];\n  if (!spec) {",
+          "return COMMANDS[command]?.payloadFields;"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/decision-records.ts",
+            "text": "hasOwn(CITATION_SHAPES, c.kind)"
+          },
+          {
+            "path": "src/core/emit-composition.ts",
+            "text": "function commandSpec(command: string): CommandSpec | undefined"
+          }
+        ],
+        "searched": [
+          "CITATION_SHAPES[",
+          "COMMANDS[",
+          "Record<string, "
+        ],
+        "scope": [
+          "src/core/decision-records.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "final_assessment": "Walked 2 warnings from the external system pass; resolved 2 (W1 by Sal's option A).",
+  "iteration": 5,
+  "next_recommended": "/orbit:review --as system decision-layer",
+  "ripple_misses": 0
+}

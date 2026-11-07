@@ -30,6 +30,13 @@ never enters the ledger, so a stop raised by `ruling-amendment`, `outward-act` o
 ledger entry of its own. A ledger entry is not the cadence judgement of `orbit-run-summary-emit`'s `The judgement
 record — one spine, two kinds`: that record stays as it is, on its three emits, and the two never share a key.
 
+Named limit — the at-most-one-resolution check assumes one writer per `decisions/` folder at a time: it reads the
+folder, then writes, and nothing holds the folder between the two.
+
+Residual kind: two resolutions of one stop written concurrently, each passing the check before the other lands
+
+Residual method: a later resolution of that stop is refused naming every resolution already naming it, so the duplicate surfaces; serializing writers belongs to stage `parallel-lanes` of `automate-dev-flow` (R-adf-4), where concurrent writers first arise
+
 #### Scenario: A call with no precedent writes a stop, then its ledger entry
 
 - **WHEN** a stop record of condition `security-unprecedented` is written, and then a ledger entry in area `secrets`

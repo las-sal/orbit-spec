@@ -32,6 +32,11 @@ A stop or resolution is NAMED by its record's filename (`stop-<TS>.json`), read 
 whether a call belongs in an area, whether a citation covers the decision, and whether prose is clear are judgements
 outside it. No existing command's payload table or check changes.
 
+A decision record is published WITHOUT OVERWRITING: its temporary file is created exclusively and linked to its final
+name, so a second writer that drew the same token in the same `decisions/` folder is refused naming the collision,
+writing nothing, rather than replacing a record or another writer's temporary file. A resolution's refusal for an
+already-resolved stop names EVERY resolution that names it.
+
 #### Scenario: A well-formed ledger entry writes
 
 - **WHEN** `orbit emit ledger --change foo` receives `{model, area: "defaults", decided: "…", alternatives: ["…"], why: "…", relies_on: [{kind: "goal", doc: "automate-dev-flow", id: "G1"}]}` and the doc holds `**G1 — …**` under `## Goals`
@@ -46,6 +51,11 @@ outside it. No existing command's payload table or check changes.
 
 - **WHEN** `stop-2026-11-07T10-00-00Z.json` already has a resolution and another resolution payload names it
 - **THEN** the emit is refused naming the stop; no file is written
+
+#### Scenario: A same-token writer cannot replace a record
+
+- **WHEN** a stop is emitted while the temporary file for its token already exists in the `decisions/` folder (another writer mid-write)
+- **THEN** the emit is refused naming the collision; that temporary file is left in place, and no record is written or replaced
 
 #### Scenario: A stop of another program is refused
 

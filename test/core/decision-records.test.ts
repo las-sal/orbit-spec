@@ -326,6 +326,11 @@ describe('orbit-decision-records: a ledger entry names what it relies on', () =>
       { kind: 'resolution', change: 'bar', token: '../../x' },
       'G1',
       null,
+      // Inherited keys are not kinds (system walk, external W2): each is refused like any unknown kind.
+      { kind: 'toString' },
+      { kind: 'constructor' },
+      { kind: '__proto__' },
+      { kind: 'hasOwnProperty' },
     ];
     for (const c of bad) {
       expectRefused(() => emit('ledger', { change: 'foo' }, ledgerPayload({ relies_on: [c] })), /relies_on\[0\]/, DEC('foo'));
@@ -346,6 +351,13 @@ describe('orbit-decision-records: a ledger entry names what it relies on', () =>
       DEC('foo')
     );
     expectRefused(() => emit('ledger', { change: 'foo' }, ledgerPayload({ relies_on: 'G1' })), /'relies_on'/, DEC('foo'));
+    for (const kind of ['toString', 'constructor', '__proto__']) {
+      expectRefused(() => emit('ledger', { change: 'foo' }, ledgerPayload({ relies_on: [{ kind }] })), /'relies_on\[0\]' has kind .* a citation's kind is one of/, DEC('foo'));
+    }
+    // The same defect class on the emit surface's own command lookup: an inherited key is no command.
+    for (const command of ['toString', 'constructor', 'hasOwnProperty']) {
+      expect(() => emit(command, { change: 'foo' }, { model: null })).toThrow(/unknown emit command/);
+    }
   });
 
   // @scenario behaviour orbit-decision-records :: A ledger entry names what it relies on :: An entry relying on nothing must name its stop
@@ -485,6 +497,19 @@ describe('orbit-emit-composition: the write gate checks decision records', () =>
     expectRefused(() => emit('resolution', { change: 'foo' }, resolutionPayload('stop-2026-11-07T11-00-00Z.json')), /'stop'/, DEC('foo'));
     write(`${DEC('foo')}/stop-2026-11-07T12-00-00Z.json`, JSON.stringify({ command: 'ledger', change: 'foo' }));
     expectRefused(() => emit('resolution', { change: 'foo' }, resolutionPayload('stop-2026-11-07T12-00-00Z.json')), /'stop'.*not a stop/, DEC('foo'));
+  });
+
+  it('a resolution of a stop two writers already resolved names both resolutions', () => {
+    makeChange('foo');
+    write(`${DEC('foo')}/stop-2026-11-07T10-00-00Z.json`, JSON.stringify({ command: 'stop', change: 'foo', condition: 'outward-act' }));
+    for (const t of ['11', '12']) {
+      write(`${DEC('foo')}/resolution-2026-11-07T${t}-00-00Z.json`, JSON.stringify({ command: 'resolution', change: 'foo', stop: 'stop-2026-11-07T10-00-00Z.json' }));
+    }
+    expectRefused(
+      () => emit('resolution', { change: 'foo' }, resolutionPayload('stop-2026-11-07T10-00-00Z.json')),
+      /resolved by resolution-2026-11-07T11-00-00Z\.json, resolution-2026-11-07T12-00-00Z\.json/,
+      DEC('foo')
+    );
   });
 
   // @scenario behaviour orbit-emit-composition :: The write gate checks decision records :: A stop of another program is refused

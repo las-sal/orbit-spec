@@ -5,7 +5,7 @@ import { ChangeMetadataSchema } from './artifact-graph/types.js';
 import { loadChangeContext, formatChangeStatus } from './artifact-graph/instruction-loader.js';
 import { collectSameModePasses } from './report-render.js';
 import { findArchivedDir } from './archived-change.js';
-import { resolvesWithin } from './containment.js';
+import { resolvesWithin, isSingleName } from './containment.js';
 import { normalizeInternalPass } from './report-render.js';
 import {
   readTrail,
@@ -78,7 +78,15 @@ interface CommandSpec {
  * and asserts the table accepts it. Exposes nothing the write gate does not already enforce.
  */
 export function payloadFieldsFor(command: string): readonly string[] | undefined {
-  return COMMANDS[command]?.payloadFields;
+  return commandSpec(command)?.payloadFields;
+}
+
+/**
+ * The command's row, by OWN property only (decision-layer system walk, external W2's ripple): an
+ * inherited key such as `toString` names no command and must reach the unknown-command error.
+ */
+function commandSpec(command: string): CommandSpec | undefined {
+  return Object.prototype.hasOwnProperty.call(COMMANDS, command) ? COMMANDS[command] : undefined;
 }
 
 /** The engine-internal command→kind taxonomy table (orbit-conventions becomes engine data). */
@@ -700,11 +708,10 @@ function validateWalkResolutions(resolutions: unknown, ctx: WalkContext): number
  * Emit targets are single canonical identifiers — a workstream name or a doc filename
  * stem, never a path (the same contained-identity rule as architecture doc names, D2).
  * Rejecting separators, traversal segments, and leading dots closes the path-traversal
- * write primitive on a surface whose whole contract is writing only orbit trails.
+ * write primitive on a surface whose whole contract is writing only orbit trails. The rule itself is
+ * `isSingleName` in `containment.ts`, shared with the decision records' citation names so the two can
+ * never drift (decision-layer system walk, fresh S2).
  */
-function isValidTargetName(name: string): boolean {
-  return name.length > 0 && !/[\\/]/.test(name) && !name.startsWith('.') && !name.includes('..');
-}
 
 /**
  * Defense in depth behind the name rule: an existing target directory must physically
@@ -748,12 +755,12 @@ function resolveTarget(projectRoot: string, command: string, target: EmitTarget)
   if (change !== undefined && doc !== undefined) {
     throw new EmitError('supply --change or --doc, never both — one target per invocation.');
   }
-  if (change !== undefined && !isValidTargetName(change)) {
+  if (change !== undefined && !isSingleName(change)) {
     throw new EmitError(
       `--change '${change}' is not a canonical workstream name (single name, no separators, no traversal).`
     );
   }
-  if (doc !== undefined && !isValidTargetName(doc)) {
+  if (doc !== undefined && !isSingleName(doc)) {
     throw new EmitError(
       `--doc '${doc}' is not a canonical doc name (single filename stem, no separators, no traversal).`
     );
@@ -2003,17 +2010,31 @@ function composeDecisionRecord(
   const serialized = JSON.stringify(materialized, null, 2) + '\n';
   assertCanonicalTrailDir(resolved.runsDir);
   assertCanonicalDecisionsDir(decisionsDir);
+  // decision-layer system walk (external W1, Sal: A): published WITHOUT overwriting. The temporary file
+  // is created exclusively and LINKED to the final name, which fails when the name exists, so a second
+  // writer that drew the same token in the same second is refused naming the collision instead of
+  // replacing a record. (Two writers racing the one-resolution check is a named limit, not closed here.)
   const tmp = path.join(decisionsDir, `.${filename}.tmp`);
+  const collision = (what: string): EmitError =>
+    new EmitError(`write gate: ${what} already exists — another writer drew token ${token} in this decisions folder; nothing was written, so re-run the emit.`);
   try {
-    fs.writeFileSync(tmp, serialized, 'utf-8');
-    fs.renameSync(tmp, filePath);
+    fs.writeFileSync(tmp, serialized, { encoding: 'utf-8', flag: 'wx' });
   } catch (err) {
+    // The temporary file is another writer's: never remove it.
+    if ((err as NodeJS.ErrnoException).code === 'EEXIST') throw collision(tmp);
+    throw err;
+  }
+  try {
+    fs.linkSync(tmp, filePath);
+  } catch (err) {
+    if ((err as NodeJS.ErrnoException).code === 'EEXIST') throw collision(filePath);
+    throw err;
+  } finally {
     try {
       fs.unlinkSync(tmp);
     } catch {
       // best-effort cleanup; the original failure is the story
     }
-    throw err;
   }
   return { path: filePath, emit: materialized, warnings: [] };
 }
@@ -2038,7 +2059,7 @@ export function composeAndWriteEmit(
   options: ComposeOptions = {}
 ): ComposeResult {
   const projectRoot = options.projectRoot ?? '.';
-  const spec = COMMANDS[command];
+  const spec = commandSpec(command);
   if (!spec) {
     throw new EmitError(
       `unknown emit command '${command}' — supported: ${Object.keys(COMMANDS).join(', ')}.`
