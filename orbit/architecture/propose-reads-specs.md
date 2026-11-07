@@ -147,3 +147,10 @@ Exit criteria:
   `a32ee7e Release v2.0.2 (built tree)`, on origin). The Shipped-as paragraph's "the tag still to cut" was stale and was
   corrected. Stage `measure` is next; it waits on 8 proposals in other projects that run v2.0.2. Issue #29 stays open
   until measure grades G1 and G2.
+- 2026-11-07 — Stage `measure` ended from its exploration (`orbit/explore/measure/`, concluded 2026-11-07 at Sal's
+  word, D-msr-1..3). The fix had reached no measured project: on Fedora `chat_mover` carried a 2.0.1 propose skill,
+  `overtime` a 1.3.1 one, there is no `home-env` checkout, and no session had run in any of them since 2026-10-17;
+  nothing in the program makes an update happen. G1 and G2 stay ungraded. The grading moved to issue #32 (comment
+  posted 2026-11-07 with G1, G2, the window, R-prs-1 and the open items), and #29 was closed with a pointer to #32.
+  The Considered & out re-entry for option C (G1 or G2 fails) now fires from #32's grading. Both stages are closed;
+  the program's closing `/orbit:review --as architecture` is optional and has not been run.
