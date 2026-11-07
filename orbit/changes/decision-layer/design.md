@@ -16,7 +16,9 @@ they come first.
 - Each record's plain-language fields readable by someone who knows only the architecture doc, held by structure
   (D-dl-1, D-dl-6).
 - The eighteen areas and the citable kinds stated in the owning spec, each with its gap named (D-dl-3, D-dl-4).
-- G0 as written: no generated skill, existing reader, gate or readout changes; the existing test suite passes unedited.
+- G0's intent: no generated skill, existing reader, gate or readout changes. G0 as written also says the existing test
+  suite passes unedited; two existing test files change (a hash pin on `emit-composition.ts`, and a spine test whose case
+  list read every supported command as a run summary), ratified by Sal at apply and carried into G0's rewording (D-dl-9).
 
 **Non-Goals:**
 - Telling the AI to write the records (a fifth execution discipline in every skill) and the review step in which a

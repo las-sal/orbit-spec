@@ -49,11 +49,15 @@ and the tripwires all read them (see explore.md, D-dl-1..9).
 
 - `src/core/emit-composition.ts`: three rows in the command table, the `decisions/` path, the record shape, the
   write-gate checks, and citation resolution.
-- New tests over the three records; no existing test or generated skill changes.
+- New tests over the three records; no generated skill changes. Two existing test files change, ratified by Sal at
+  apply: `test/core/rc03b-untouched-modules.test.ts` (its hash pin on `emit-composition.ts` moves, with a dated note), and
+  `test/core/emit-composition.test.ts` (its every-command spine case list leaves out the three decision records, which
+  are not run summaries).
 - `docs/cli.md`: the `orbit emit` paragraph and its list of commands name the three new commands, which are not run
   summaries.
 - `CLAUDE.md`: its marked capability figure goes from 31 to 32 when the archive adds `orbit-decision-records` to the
   baseline.
-- No generated skill, existing reader, gate or readout changes (G0, as written).
+- No generated skill, existing reader, gate or readout changes. G0 as written also says the existing test suite passes
+  unedited; that part does not hold (two test files above), and is carried into G0's rewording (D-dl-9).
 - `automate-dev-flow`: a follow-on stage (writing the records, the reading step) and G0's rewording are Sal's, at the
   next architect session (D-dl-8, D-dl-9); this change does not edit the architecture doc.

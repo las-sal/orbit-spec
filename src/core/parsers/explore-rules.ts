@@ -372,6 +372,24 @@ export function parseExploreRules(content: string): ExploreRules {
   return { rules_total: rulesTotal, rules_open: rulesOpen, key_defects: keyDefects, residuals, status, notes };
 }
 
+/**
+ * The IDs of the Decisions entries whose `Disposition:` is `live` or absent, read through the same
+ * entry reader the FORM parse uses (decision-layer: a ledger entry's `decision` citation resolves
+ * only to such an entry, per `orbit-decision-records`). A duplicate ID is owned by its first entry,
+ * as in the FORM parse.
+ */
+export function liveDecisionIds(content: string): Set<string> {
+  const ids = new Set<string>();
+  const seen = new Set<string>();
+  for (const entry of collectSections(content).get('Decisions')?.entries ?? []) {
+    const d = readDecision(entry);
+    if (d.id === undefined || seen.has(d.id)) continue;
+    seen.add(d.id);
+    if (d.liveDisposition) ids.add(d.id);
+  }
+  return ids;
+}
+
 /** From an explore.md path. Missing file → zeros, `status: {token: "exploring"}`, no notes (the counter's missing-section notes stand alone). */
 export function parseExploreRulesFile(explorePath: string): ExploreRules {
   let content: string;

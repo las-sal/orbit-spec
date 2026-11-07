@@ -3,6 +3,7 @@ import * as fs from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
 import { composeAndWriteEmit, EmitError } from '../../src/core/emit-composition.js';
+import { DECISION_COMMANDS } from '../../src/core/decision-records.js';
 import { normalizeInternalPass } from '../../src/core/report-render.js';
 import { loadChangeContext, formatChangeStatus } from '../../src/core/artifact-graph/instruction-loader.js';
 
@@ -133,10 +134,17 @@ describe('payload contract', () => {
       ['review-external', { change: 'foo' }, { mode: 'proposal', prompt_path: 'orbit/changes/foo/.orbit-runs/external-prompt-proposal-2026-08-05T10-00-00Z.md', target: null, final_assessment: 'x', model: null }, 'editorial'],
       ['archive', { change: 'bar' }, { ...plain, archive_path: 'orbit/changes/archive/2026-03-01-bar/' }, 'lifecycle'],
     ];
-    // The case list is held to the surface's own command set (its unknown-command error names it).
+    // The case list is held to the surface's own command set (its unknown-command error names it),
+    // less the decision records (decision-layer): `ledger`, `stop` and `resolution` write no run
+    // summary, so the run-summary spine is not theirs (test/core/decision-records.test.ts holds theirs).
     let supported = '';
     try { composeAndWriteEmit('frobnicate', { change: 'foo' }, { model: null }, { projectRoot: root }); } catch (e) { supported = (e as Error).message; }
-    const engineCommands = supported.replace(/^.*supported: /, '').replace(/\.$/, '').split(', ').sort();
+    const engineCommands = supported
+      .replace(/^.*supported: /, '')
+      .replace(/\.$/, '')
+      .split(', ')
+      .filter(c => !(DECISION_COMMANDS as readonly string[]).includes(c))
+      .sort();
     expect(cases.map(c => c[0]).sort()).toEqual(engineCommands);
     const SPINE = ['command', 'timestamp', 'change', 'final_assessment', 'next_recommended', 'kind', 'model'];
     for (const [command, target, payload, kind] of cases) {
