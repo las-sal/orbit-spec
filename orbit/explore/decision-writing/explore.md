@@ -127,13 +127,33 @@ refused naming `resolution-D`; an entry written before the replacement keeps its
   which modifies that spec anyway. Attributions stay as written: a `(Sal, <date>)` on a ruling or a `ratified … by Sal`
   is a fact about who acted, not a role. The architecture doc's prose is the user's to reword at an architect session.
   Kind: scope
+- **2026-11-07 — D-dw-5: orbit renders the reading step's brief** (the user, at propose) The reading step's brief —
+  the architecture doc and the change's records, nothing else — is rendered by orbit for a change, and the reviewing
+  session passes it to the reader verbatim; a test inspects the rendered brief. Rationale: the exit criterion needs
+  the brief shown, not asserted, and a brief the engine composes is one the body cannot add context to.
+  Kind: rule
+- **2026-11-07 — D-dw-6: the stage splits in two, the discipline first, the reader second** (the user, at propose)
+  The change exceeds the size ceiling (3 capabilities, 12 requirements): it touches six to seven specs and about
+  fifteen requirements. It splits. The FIRST child is the discipline: D-dw-3 and D-dw-4 — the fifth discipline in
+  every generated body; its owning statement in `orbit-conventions`; the "four execution disciplines" statements in
+  `orbit-architect` and `orbit-onboard`; and `orbit-decision-records`' every-mode named limit retired and its prose
+  reworded to "the user" (four capabilities, a declared breach). The SECOND child is the reader: D-dw-1, D-dw-2 and
+  D-dw-5 — the replacement chain, the reading step and its rendered brief (`orbit-decision-records`,
+  `orbit-emit-composition`, `orbit-review`; within the ceiling). Rationale: the discipline makes records exist, and
+  the reader has nothing to read until they do. Declaring the two stages is the user's, at
+  `/orbit:architect automate-dev-flow`; each child then proposes from this exploration, renamed or copied to its id.
+  Kind: scope
 
 ## Open questions
 
-- **How is the reading step's brief shown to carry only the architecture doc and the records?** The exit criterion
-  needs it shown, not asserted. Options: (a) the engine renders the brief (a command printing it for a change), and a
-  test inspects what it contains; (b) the body composes it from a template, and a parity test pins the template.
-  Standing recommendation: (a) — the engine owns the composition, so the test checks the actual brief, and the body cannot add context to it.
+- **(For the reader child) How does the reading step's brief sit with `orbit-conventions`' rule that a REVIEW-genre
+  brief names no path under `.orbit-runs/` to read?** The records live in `.orbit-runs/decisions/`. The rule exists
+  to keep reviewers blind to prior findings, and records are not findings, but the rule as written does not say so.
+  Options: (a) the reading-step requirement states that the reader is not a review-genre reviewer and that its brief,
+  rendered by orbit, carries the records' content and never a path; (b) amend the conventions rule with a named
+  exemption (a MODIFIED block carrying all its scenarios). Related: the reading step could be a perspective inside
+  system Pass 4 (Perspective reviews), so `System mode runs verify-change + six system-wide passes` keeps its count.
+  Standing recommendation: (a), and the reading step as a Pass 4 perspective — both keep existing requirements true without editing them.
 
 ## Considered & out
 
@@ -150,4 +170,6 @@ refused naming `resolution-D`; an entry written before the replacement keeps its
 - `orbit/changes/archive/2026-11-07-decision-layer/explore.md` — D-dl-1..9, especially D-dl-6 (the reader) and D-dl-8 (this stage's scope)
 - `src/core/decision-records.ts` — the write gate's link checks D-dw-1 must collapse chains in
 - `orbit/specs/orbit-address-reviews/spec.md` — "OUT — audit trail": why the walk cannot edit a record
-- `orbit/specs/orbit-conventions/spec.md` — owner of the four disciplines today; the fifth's owning statement goes here
+- `orbit/specs/orbit-conventions/spec.md` — owner of the four disciplines today; the fifth's owning statement goes here; its pass-genre requirement holds the review-genre brief rule
+- `orbit/specs/orbit-review/spec.md` — `System mode runs verify-change + six system-wide passes` (Pass 4, Perspective reviews)
+- `orbit/specs/orbit-emit-composition/spec.md` — the decision-record payload-field table `replaces` joins

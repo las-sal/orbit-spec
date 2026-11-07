@@ -1,0 +1,30 @@
+{
+  "command": "explore",
+  "timestamp": "2026-11-07T22:45:51Z",
+  "change": "decision-writing",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Propose stopped before generation on a size breach (six to seven capabilities, about fifteen requirements, against a ceiling of 3 and 12); the user chose to split. D-dw-5 (orbit renders the reading step's brief) resolved at propose; D-dw-6 records the split: the discipline child first (D-dw-3, D-dw-4; four capabilities, declared), the reader child second (D-dw-1, D-dw-2, D-dw-5). One open question for the reader child: how its brief sits with the review-genre brief rule. No change directory or branch remains; declaring the two stages is the user's, at /orbit:architect automate-dev-flow.",
+  "decisions_captured": 6,
+  "open_questions_count": 1,
+  "open_questions_with_recommendation": "1 of 1",
+  "rules_total": 4,
+  "rules_open": [
+    {
+      "id": "D-dw-5",
+      "state": "absent"
+    }
+  ],
+  "key_defects": [],
+  "residuals": [
+    {
+      "id": "D-dw-1",
+      "kind": "a reader of `decisions/` that a later stage adds and that reads a replaced record as current",
+      "method": "when a stage adds a reader of `decisions/`, its proposal checks it against this table; the requirement's named limit says so"
+    }
+  ],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:explore decision-writing — 1 of 4 live rules has an open domain (D-dw-5); account for them before formalizing"
+}
