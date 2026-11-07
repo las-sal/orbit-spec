@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-11-07T17:17:31Z",
+  "change": "decision-layer",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Scaffolded orbit/explore/decision-layer with the citation architecture: {doc: automate-dev-flow, stage: decision-layer} (Sal accepted). Premise restates the stage charter and names the existing cadence-judgement record the ledger sits beside.",
+  "decisions_captured": 0,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 0,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:explore decision-layer — continue capturing thinking — no decisions captured yet"
+}

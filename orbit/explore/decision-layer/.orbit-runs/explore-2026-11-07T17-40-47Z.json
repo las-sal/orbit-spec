@@ -1,0 +1,35 @@
+{
+  "command": "explore",
+  "timestamp": "2026-11-07T17:40:47Z",
+  "change": "decision-layer",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Seven rules decided by Sal, each with its Mechanism entry; no open questions. D-dl-1: records are written for a reader who knows only what architect decided (raised by Sal from the AI's own jargon). D-dl-2: three records, one job each (ledger entry, stop record, resolution); stop conditions 1-2 begin as a ledger entry that finds nothing to rely on. D-dl-3: a ledger entry cites what it relies on and orbit checks the citation exists; resolutions become precedent. D-dl-4: a fixed list of eighteen areas decides what goes in the ledger, no catch-all test. D-dl-5: records go through orbit emit into the history beside the work. D-dl-6: D-dl-1 is held by record structure plus a reading step in review. D-dl-7: everything is recorded in every mode; a stop halts only when a setting says so.",
+  "decisions_captured": 7,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 7,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [
+    {
+      "id": "D-dl-1",
+      "kind": "a prose field a later stage adds to a record, or a new surface that renders record prose to the user",
+      "method": "when a field or surface is added, ask whether its text reaches the user; if it does, it joins this table"
+    },
+    {
+      "id": "D-dl-3",
+      "kind": "an approved source a ledger entry relies on that is not one of these kinds",
+      "method": "such a citation is refused at write, which surfaces the kind; adding it is a change to the requirement"
+    },
+    {
+      "id": "D-dl-4",
+      "kind": "a judgement that affects the end user or involves security and falls in none of the eighteen areas",
+      "method": "G4's closing review classifies a run's changes against the list; a qualifying call in no area adds its area, as a change to the requirement"
+    }
+  ],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose decision-layer — 7 live rules accounted, 3 bounded residuals named (D-dl-1, D-dl-3, D-dl-4); formalize when you are ready (or /orbit:explore decision-layer to keep refining)"
+}
