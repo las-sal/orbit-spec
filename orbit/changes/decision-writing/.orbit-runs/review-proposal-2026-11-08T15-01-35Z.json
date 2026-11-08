@@ -1,0 +1,151 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-08T15:01:35Z",
+  "change": "decision-writing",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 125,
+      "title": "The reference's field scenario says 'no other' field, but the reference must also name model",
+      "recommendation": "The requirement's first bullet makes the reference name `model`, which `DECISION_PAYLOAD_FIELDS` does not list; the scenario's THEN ('every field DECISION_PAYLOAD_FIELDS lists for that command and no other') and task 1.4 ('names exactly each command's DECISION_PAYLOAD_FIELDS') then contradict it, and two test authors split on whether `model` is a field. Say 'and no other besides `model`' in the scenario and task 1.4.",
+      "walk_entry": {
+        "title": "The statement ships the ids but not the record fields, the citation kinds or the plain-language rule",
+        "file": "specs/orbit-conventions/spec.md"
+      }
+    },
+    {
+      "pass": "7",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "proposal.md",
+      "line": 7,
+      "title": "Two sites still say the discipline is in every generated skill",
+      "recommendation": "The walk's resolution claims the proposal and the stage charter now say every workflow body carrying a disciplines epitome; proposal.md:7 ('every generated skill carries') and automate-dev-flow.md:144 ('A fifth execution discipline in every generated skill') still say every skill. Reword both to the epitome bodies, onboard naming it.",
+      "walk_entry": {
+        "title": "Onboard exception conflicts with the program’s universal exit criterion",
+        "file": "orbit/changes/decision-writing/design.md"
+      }
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 10,
+      "title": "The statement does not say a named exploration is recorded with --change",
+      "recommendation": "The statement says to name the work as `--change <name>` or `--doc <doc>`, and to write nothing in 'an unnamed exploration'; it never says a NAMED exploration is written with `--change <its name>` (the emit surface resolves it to orbit/explore/<name>/, per orbit-decision-records' `Where decision records are kept`). An AI in a named exploration, which has no change yet, may read itself as having neither. Write '`--change <name>` — a change, or a named exploration'."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Graded the two walks over their sweep scopes and the residual diff from the external return's commit (every changed file is inside an entry's edit record). The heavy edits held: the fence still reads as one instruction after four entries edited it, the moments table matches it row for row, the open-stop reading agrees with the write gate (a raised_stop needs no resolution) and with the baseline's own open-stop notion, and the new reference requirement stays out of emit-composition's counted set. The two regressions are small: a scenario's 'no other' that forgets model, and a scope rewording that missed two 'every generated skill' sites.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "verification": [
+    {
+      "title": "A no-precedent call made today without asking: the statement either adds a question or leaves the record unwritable",
+      "file": "specs/orbit-conventions/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The statement ships the ids but not the record fields, the citation kinds or the plain-language rule",
+      "file": "specs/orbit-conventions/spec.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "The seam set is not defined, and its precedence over a stop condition is unstated",
+      "file": "specs/orbit-conventions/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Onboard's fifth item is said to be held by its Identity scenario, whose tagged test asserts no discipline",
+      "file": "design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The Goal says the only body change is an addition; D3 renames the heading and intro in fourteen bodies",
+      "file": "design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Two counts in the design disagree with the tree",
+      "file": "design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "D-dw-3's live text gives the pointer bullet the design rejects",
+      "file": "explore.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "In this repository the bodies and CLAUDE.md will point at emit commands the installed orbit refuses",
+      "file": "tasks.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "No rule for a moment that belongs to no change and no doc",
+      "file": "specs/orbit-conventions/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The shipped ledger trigger excludes calls that required asking the user",
+      "file": "orbit/changes/decision-writing/specs/orbit-conventions/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Onboard exception conflicts with the program’s universal exit criterion",
+      "file": "orbit/changes/decision-writing/design.md",
+      "verdict": "regressed"
+    }
+  ],
+  "final_assessment": "0 critical, 1 warning, 2 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-11-08T14-58-16Z",
+    "2026-11-08T14-59-02Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews decision-writing"
+}
