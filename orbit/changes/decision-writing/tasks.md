@@ -4,7 +4,7 @@
 - [ ] 1.2 Write `test/core/decision-writing-parity.test.ts`: the module string equals the owning fence (read through `test/helpers/owner-text.js`); it names every payload condition and ledger area in order and not `tripwire`; show each assertion able to fail with a clean mutation
 
 - [ ] 1.3 Export the citation shapes and plain-field list from `src/core/decision-records.ts`; add `DECISION_RECORDS_REFERENCE` to `src/core/disciplines.ts`: per record the command, payload form, fields, citation kinds, the plain-language rule, and one example payload as a plain `json` block (design D8)
-- [ ] 1.4 Extend the parity test: the reference names exactly each command's `DECISION_PAYLOAD_FIELDS` and every citation kind; each example payload is submitted unchanged through its `orbit emit` command in a disposable project seeded with what it cites, and accepted; `emit-schema-parity`'s reference list is unchanged; show each assertion able to fail with a clean mutation
+- [ ] 1.4 Extend the parity test: the reference names exactly each command's `DECISION_PAYLOAD_FIELDS`, and no other field besides `model`, and every citation kind; each example payload is submitted unchanged through its `orbit emit` command in a disposable project seeded with what it cites, and accepted; `emit-schema-parity`'s reference list is unchanged; show each assertion able to fail with a clean mutation
 
 ## 2. The bodies
 

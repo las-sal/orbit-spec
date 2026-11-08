@@ -141,7 +141,7 @@ temporary file and a link) and named the one-resolution race across concurrent w
 Depends-on: decision-layer
 Complete: [ ]
 
-A fifth execution discipline in every generated skill tells the AI when to write a ledger entry (a call in one of
+A fifth execution discipline in every generated workflow body carrying a disciplines epitome tells the AI when to write a ledger entry (a call in one of
 the eighteen areas) and a stop record (one of R-adf-3's conditions), and to write the user's answer as a
 resolution. Under supervised settings it still asks the user exactly as today; the record only keeps the moment.
 The specs that state the set of disciplines stop stating a count (onboard's names all five), and `orbit-decision-records` says "the user" where it names

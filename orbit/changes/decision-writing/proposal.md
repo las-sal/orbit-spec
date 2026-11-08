@@ -4,7 +4,7 @@ Stage `decision-writing` of `automate-dev-flow` (from decision-layer's D-dl-8). 
 decision records — ledger entry, stop record, resolution — and their write-gate checks, but nothing tells the AI to
 write one: `orbit-decision-records`' every-mode requirement says so as a named limit, and until it is lifted no run
 leaves the record G2, G3 and G4 are graded from. This change adds the instruction, as a fifth execution discipline
-every generated skill carries (see explore.md, D-dw-3). The reading step that judges the records' prose was split off
+every workflow body carrying a disciplines epitome carries (see explore.md, D-dw-3). The reading step that judges the records' prose was split off
 to stage `decision-reading` at propose (D-dw-6).
 
 ## What Changes
