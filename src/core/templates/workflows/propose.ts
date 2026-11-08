@@ -8,6 +8,7 @@ import type { SkillTemplate, CommandTemplate } from '../types.js';
 import { PR_CHOREOGRAPHY_REFERENCE } from './pr-choreography.js';
 import { EXPLORE_DECISION_ENTRY_PRODUCTION, EXPLORE_MECHANISM_ENTRY_PRODUCTION } from '../../explore-grammar.js';
 import { SIZE_DECLARATION_PRODUCTION } from '../../change-size.js';
+import { DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../disciplines.js';
 
 export function getOrbitProposeSkillTemplate(): SkillTemplate {
   return {
@@ -121,14 +122,15 @@ After completing all artifacts, summarize:
 
 The sections below describe orbit-specific additions on top of upstream's standalone propose flow. The upstream content above is as \`orbit-conventions\`' \`Generated-file disposition\` records it. Orbit adds a **consume mode** that activates when \`orbit/explore/<name>/explore.md\` exists from a prior \`/orbit:explore\` session — the exploration becomes the authoritative seed for artifact generation rather than asking the user for a description.
 
-## Four execution disciplines (epitome)
+## Execution disciplines (epitome)
 
-The four disciplines from \`orbit-conventions\`, embedded per body; detail lives where each fires.
+The disciplines from \`orbit-conventions\`, embedded per body; detail lives where each fires.
 
 - **Read-before-reference (authoring-time)**: read a construct's actual definition before naming it; unverifiable → ask or leave a \`@review:\` marker, never guess.
 - **Change completeness (modification-time)**: apply substantive modifications fully across ALL affected artifacts; after mechanical edits, sweep for residue AND new bugs the replacement introduced.
 - **Pushback (review-time)**: verify each flagged issue against current state before acting; suppress stale findings with evidence rather than re-fixing already-fixed state.
 - **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line — gate \`passed\` means *eligible*, not *commanded*.
+${DECISION_WRITING_DISCIPLINE}
 
 ## Mode detection (NEW Step 0 — runs before upstream Step 1)
 
@@ -405,6 +407,7 @@ failure line names the recovery.
         name: 'pr-choreography.md',
         content: PR_CHOREOGRAPHY_REFERENCE,
       },
+      { name: 'decision-records.md', content: DECISION_RECORDS_REFERENCE },
     ],
     license: 'MIT',
     compatibility: 'Requires orbit CLI.',

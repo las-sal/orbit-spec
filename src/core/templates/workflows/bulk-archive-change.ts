@@ -6,6 +6,7 @@
  */
 import type { SkillTemplate, CommandTemplate } from '../types.js';
 import { DEFERRAL_REFUSALS } from './archive-change.js';
+import { DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../disciplines.js';
 
 export function getBulkArchiveChangeSkillTemplate(): SkillTemplate {
   return {
@@ -251,14 +252,15 @@ No active changes found. Create a new change to get started.
 
 # Orbit additions
 
-## Four execution disciplines (epitome)
+## Execution disciplines (epitome)
 
-The four disciplines from \`orbit-conventions\`, embedded per body; detail lives where each fires.
+The disciplines from \`orbit-conventions\`, embedded per body; detail lives where each fires.
 
 - **Read-before-reference (authoring-time)**: read a construct's actual definition before naming it; unverifiable → ask or leave a \`@review:\` marker, never guess.
 - **Change completeness (modification-time)**: apply substantive modifications fully across ALL affected artifacts; after mechanical edits, sweep for residue AND new bugs the replacement introduced.
 - **Pushback (review-time)**: verify each flagged issue against current state before acting; suppress stale findings with evidence rather than re-fixing already-fixed state.
 - **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line — gate \`passed\` means *eligible*, not *commanded*.
+${DECISION_WRITING_DISCIPLINE}
 
 ## Per-change consent (D1 — per \`orbit-lifecycle-consent\`)
 
@@ -354,6 +356,9 @@ user's explicit choice, and record the per-change outcome in the Step 9 summary 
 \`/orbit:bulk-archive\` is a wrapper around \`/orbit:archive\`; each archived change gets its own \`archive-<TS>.json\`, written by the per-change archive emit step above per the universal-spine convention. The outer \`/orbit:bulk-archive\` wrapper adds NO additional "what's next" signal and SHALL NOT emit a separate \`bulk-archive-<TS>.json\`.
 
 Downstream consumers see N \`archive-<TS>.json\` files (one per inner archive) and read each independently.`,
+    references: [
+      { name: 'decision-records.md', content: DECISION_RECORDS_REFERENCE },
+    ],
     license: 'MIT',
     compatibility: 'Requires orbit CLI.',
     metadata: { author: 'openspec', version: '1.0' },

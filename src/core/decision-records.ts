@@ -71,7 +71,7 @@ export const DECISION_PAYLOAD_FIELDS: Record<DecisionCommand, string[]> = {
 };
 
 /** The plain-language fields each record binds (`Decision records are written for a reader …`). */
-const PLAIN_FIELDS: Record<DecisionCommand, string[]> = {
+export const PLAIN_FIELDS: Record<DecisionCommand, string[]> = {
   ledger: ['decided', 'why'],
   stop: ['about', 'question'],
   resolution: ['answer', 'effect'],
@@ -206,7 +206,8 @@ export function checkDecisionShape(command: DecisionCommand, record: Record<stri
   }
 }
 
-const CITATION_SHAPES: Record<string, string[][]> = {
+/** The citation kinds of `relies_on` and the keys each is written with (`A ledger entry names what it relies on`). */
+export const CITATION_SHAPES: Record<string, string[][]> = {
   requirement: [['kind', 'capability', 'title']],
   ruling: [['kind', 'doc', 'id']],
   goal: [['kind', 'doc', 'id']],

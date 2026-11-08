@@ -6,6 +6,7 @@
  * to the orbit-run-summary-emit baseline where the change's iter-1 review corrected it.
  */
 import type { SkillTemplate, CommandTemplate } from '../types.js';
+import { DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../disciplines.js';
 
 const ADDRESS_REVIEWS_EXTERNAL_FINDINGS_FORMAT_REFERENCE = `# Reference: external-findings file format (for \`--from-file\` markdown parsing)
 
@@ -1010,14 +1011,15 @@ export function getAddressReviewsSkillTemplate(): SkillTemplate {
 
 **Input**: Optional scope (path or pattern) and optional flags. Default: whole-repo scan with safe exclusions.
 
-## Four execution disciplines (epitome)
+## Execution disciplines (epitome)
 
-The four disciplines from \`orbit-conventions\`, embedded per body; detail lives in the step where each fires.
+The disciplines from \`orbit-conventions\`, embedded per body; detail lives in the step where each fires.
 
 - **Pushback (review-time) — primary here**: verify every claim against current state before acting (procedure in Step 3a); stale findings are suppressed with evidence, never re-fixed.
 - **Read-before-reference (authoring-time)**: read a file's actual current content before editing or citing it; re-read after edits to confirm they landed.
 - **Change completeness (modification-time)**: apply resolutions across ALL affected artifacts — the Step 3d ripple cascade is this discipline mechanized; sweep just-touched files for residue after mechanical edits.
 - **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line — gate \`passed\` means *eligible*, not *commanded*.
+${DECISION_WRITING_DISCIPLINE}
 
 ## Steps
 
@@ -1293,6 +1295,7 @@ Every no-input, malformed-input, and unsupported-format case exits clean with a 
         name: 'run-summary-schema.md',
         content: ADDRESS_REVIEWS_RUN_SUMMARY_SCHEMA_REFERENCE,
       },
+      { name: 'decision-records.md', content: DECISION_RECORDS_REFERENCE },
     ],
     license: 'MIT',
     compatibility: "Requires orbit CLI. Ingests findings via `--from-file` (external-review markdown OR internal `review-<mode>-*.json` OR `audit-drift-*.json`) OR via discovery on a change: its inline markers, every outstanding pass `orbit status --change <name> --json` lists on its reviewed gates, and its unwalked audit-drift emits, one log per source. Default behaviors: walk-mode (per-finding); cascade-on (auto-applies ripples to IN-set files). `--batch` opts INTO batch-mode; `--no-cascade` opts OUT of cascade. `--mark` is optional, not prerequisite.",

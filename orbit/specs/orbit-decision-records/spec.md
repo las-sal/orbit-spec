@@ -1,7 +1,7 @@
 # orbit-decision-records Specification
 
 ## Purpose
-The three DECISION RECORDS a run keeps for the people it answers to (stage `decision-layer` of `automate-dev-flow`): the LEDGER ENTRY, for a call the AI makes in one of eighteen named areas that affect the end user or involve security, with what it relies on; the STOP RECORD, for a moment one of R-adf-3's stop conditions arises; and the RESOLUTION, Sal's answer to a stop, which later entries may cite as precedent. Each is written in plain language for a reader who knows only the program's architecture doc, checked for form and existence before it is written, and kept in the `decisions/` folder of the history it belongs to. The records are written in every mode and halt nothing by themselves.
+The three DECISION RECORDS a run keeps for the people it answers to (stage `decision-layer` of `automate-dev-flow`): the LEDGER ENTRY, for a call the AI makes in one of eighteen named areas that affect the end user or involve security, with what it relies on; the STOP RECORD, for a moment one of R-adf-3's stop conditions arises; and the RESOLUTION, the user's answer to a stop, which later entries may cite as precedent. Each is written in plain language for a reader who knows only the program's architecture doc, checked for form and existence before it is written, and kept in the `decisions/` folder of the history it belongs to. The records are written in every mode and halt nothing by themselves.
 ## Requirements
 ### Requirement: Three decision records, one job each
 
