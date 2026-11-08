@@ -117,7 +117,7 @@ describe('config profile interactive flow', () => {
 
     // archive declares references (orbit-skill-generation); a synced surface carries them.
     // D6 added pr-archive-tail.md alongside the summary schema.
-    for (const refName of ['archive-summary-schema.md', 'pr-archive-tail.md']) {
+    for (const refName of ['archive-summary-schema.md', 'pr-archive-tail.md', 'decision-records.md']) {
       const archiveRefPath = path.join(
         projectDir, '.claude', 'skills', 'orbit-archive-change', 'references', refName
       );
@@ -127,14 +127,22 @@ describe('config profile interactive flow', () => {
 
     // B3 editorial skills declare references too; a synced surface carries them.
     // D6 added the shared PR choreography to propose and ff.
+    // decision-writing (design D8): every epitome-carrying skill also ships decision-records.md.
+    const DR = 'decision-records.md';
     const editorialRefs: Record<string, string[]> = {
-      'orbit-explore': ['capture-formats.md'],
-      'orbit-propose': ['pr-choreography.md'],
-      'orbit-ff-change': ['pr-choreography.md'],
-      'orbit-architect': ['pr-resolution.md'],
-      'orbit-review': ['run-summary-schema.md', 'passes-proposal.md', 'passes-system.md', 'passes-architecture.md', 'external-handoff.md', 'blind-pair.md', 'mode-sections.md', 'prompt-template.md', 'flags-detail.md'],
-      'orbit-address-reviews': ['external-findings-format.md', 'internal-findings-format.md', 'resolution-detail.md', 'run-summary-schema.md'],
-      'orbit-audit-drift': ['run-summary-schema.md', 'worked-example.md'],
+      'orbit-explore': ['capture-formats.md', DR],
+      'orbit-propose': ['pr-choreography.md', DR],
+      'orbit-ff-change': ['pr-choreography.md', DR],
+      'orbit-architect': ['pr-resolution.md', DR],
+      'orbit-review': ['run-summary-schema.md', 'passes-proposal.md', 'passes-system.md', 'passes-architecture.md', 'external-handoff.md', 'blind-pair.md', 'mode-sections.md', 'prompt-template.md', 'flags-detail.md', DR],
+      'orbit-address-reviews': ['external-findings-format.md', 'internal-findings-format.md', 'resolution-detail.md', 'run-summary-schema.md', DR],
+      'orbit-audit-drift': ['run-summary-schema.md', 'worked-example.md', DR],
+      'orbit-new-change': [DR],
+      'orbit-continue-change': [DR],
+      'orbit-apply-change': [DR],
+      'orbit-sync-specs': [DR],
+      'orbit-bulk-archive-change': [DR],
+      'orbit-verify-change': [DR],
     };
     for (const [dirName, refNames] of Object.entries(editorialRefs)) {
       for (const refName of refNames) {

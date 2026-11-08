@@ -1,7 +1,7 @@
 # orbit-decision-records Specification
 
 ## Purpose
-The three DECISION RECORDS a run keeps for the people it answers to (stage `decision-layer` of `automate-dev-flow`): the LEDGER ENTRY, for a call the AI makes in one of eighteen named areas that affect the end user or involve security, with what it relies on; the STOP RECORD, for a moment one of R-adf-3's stop conditions arises; and the RESOLUTION, Sal's answer to a stop, which later entries may cite as precedent. Each is written in plain language for a reader who knows only the program's architecture doc, checked for form and existence before it is written, and kept in the `decisions/` folder of the history it belongs to. The records are written in every mode and halt nothing by themselves.
+The three DECISION RECORDS a run keeps for the people it answers to (stage `decision-layer` of `automate-dev-flow`): the LEDGER ENTRY, for a call the AI makes in one of eighteen named areas that affect the end user or involve security, with what it relies on; the STOP RECORD, for a moment one of R-adf-3's stop conditions arises; and the RESOLUTION, the user's answer to a stop, which later entries may cite as precedent. Each is written in plain language for a reader who knows only the program's architecture doc, checked for form and existence before it is written, and kept in the `decisions/` folder of the history it belongs to. The records are written in every mode and halt nothing by themselves.
 ## Requirements
 ### Requirement: Three decision records, one job each
 
@@ -10,11 +10,11 @@ orbit SHALL keep three DECISION RECORDS, each written for exactly one kind of ev
 | record | written when | carries |
 |---|---|---|
 | ledger entry | the AI makes a call that falls in one of the ledger's eighteen areas (`The ledger's eighteen areas`) | the area, what was decided, the alternatives, why, and what approved thing it relies on |
-| stop record | one of `automate-dev-flow`'s R-adf-3 stop conditions arises | which condition, what it is about, and the question for Sal |
-| resolution | Sal answers a stop | which stop, the answer, and what happens next |
+| stop record | one of `automate-dev-flow`'s R-adf-3 stop conditions arises | which condition, what it is about, and the question for the user |
+| resolution | the user answers a stop | which stop, the answer, and what happens next |
 
 Each event maps to its records by this table: a row for a plain ledger call, one row per stop condition (the closed set
-R-adf-3 ratifies), and a row for Sal's answer:
+R-adf-3 ratifies), and a row for the user's answer:
 
 | event | records |
 |---|---|
@@ -25,10 +25,10 @@ R-adf-3 ratifies), and a row for Sal's answer:
 | condition `outward-act`: an outward or irreversible act the settings do not grant | a stop record, raised directly |
 | condition `tripwire`: a sideways tripwire firing | a stop record raised by orbit itself (stage `tripwires`), never by the AI |
 | condition `unresolvable-critical`: a CRITICAL review finding that no edit inside the change resolves | a stop record, raised directly |
-| Sal answers a stop | a resolution naming that stop |
+| the user answers a stop | a resolution naming that stop |
 
 A stop is OPEN until a resolution names it, and a stop has at most one resolution. The ledger records every call the
-AI made in those areas, and the stops record every time it needed Sal; a call that is not about the user or security
+AI made in those areas, and the stops record every time it needed the user; a call that is not about the user or security
 never enters the ledger, so a stop raised by `ruling-amendment`, `outward-act` or `unresolvable-critical` carries no
 ledger entry of its own. A ledger entry is not the cadence judgement of `orbit-run-summary-emit`'s `The judgement
 record — one spine, two kinds`: that record stays as it is, on its three emits, and the two never share a key.
@@ -54,7 +54,7 @@ Residual method: a later resolution of that stop is refused naming every resolut
 #### Scenario: A stop stays open until answered
 
 - **WHEN** a stop record exists and no resolution names it
-- **THEN** the stop is open; once Sal's resolution is written naming it, the stop is closed and a second resolution
+- **THEN** the stop is open; once the user's resolution is written naming it, the stop is closed and a second resolution
   naming it is refused
 
 ### Requirement: Decision records are written for a reader who knows only the architecture
@@ -68,7 +68,7 @@ the only statement of what was decided. The fields the rule binds:
 | field | record | reaches the reader as |
 |---|---|---|
 | `decided`, `alternatives`, `why` | ledger entry | the ledger, and the program brief built from it |
-| `about`, `question` | stop record | the question put to Sal at the stop |
+| `about`, `question` | stop record | the question put to the user at the stop |
 | `answer`, `effect` | resolution | the answer as recorded, and the precedent later entries cite |
 | `detail` | all three | not bound: may be technical, never the only statement |
 
@@ -102,9 +102,8 @@ them reach every way a record can fail it:
 | a plain field that is correct and still unclear | a reader |
 
 orbit checks FORM only: whether prose is clear is a reader's judgement (R-crc-10). The READER is a review step in which
-someone given only the architecture doc and the record judges whether the record makes sense. Named limit — this
-change ships the structure and its checks; the review step, and what makes it run, belong to the follow-on stage
-`automate-dev-flow` declares after `decision-layer` (explore.md, D-dl-8). Until then the reader rows of this table are
+someone given only the architecture doc and the record judges whether the record makes sense. Named limit — the review step, and what makes it run, belong to stage `decision-reading` of `automate-dev-flow`
+(D-dl-8, split from stage `decision-writing` at its propose); until that stage ships, the reader rows of this table are
 covered by no step.
 
 #### Scenario: An empty plain field is refused
@@ -198,10 +197,10 @@ How the rows are read:
   Every program's architect sessions share one `decisions/` folder, so there the test is the `doc`: a record for one
   program cannot name another program's stop.
 - Who wrote a Decisions entry is not checked: `explore.md` records no author a check can read, so an entry the AI wrote
-  resolves the same as one Sal made. The reading step of the follow-on stage (explore.md, D-dl-8) and G4's closing
+  resolves the same as one the user made. The reading step of stage `decision-reading` and G4's closing
   review, which read the ledger beside the exploration, are where such a citation is found.
 
-A citation that points at nothing is refused, naming it. A resolution, once written, is citable, so a question Sal has
+A citation that points at nothing is refused, naming it. A resolution, once written, is citable, so a question the user has
 answered does not stop a run twice. orbit confirms that a cited thing EXISTS, never that it COVERS the decision: whether
 it does, and whether every qualifying call was recorded at all, are judgements for G4's closing review (R-crc-10).
 
@@ -273,7 +272,7 @@ named `<record>-<TS>.json` where `<record>` is `ledger`, `stop` or `resolution`:
 | during a change | `orbit/changes/<name>/.orbit-runs/decisions/` |
 | during an exploration, before any change exists | `orbit/explore/<name>/.orbit-runs/decisions/`, moved into the change with the rest of the history at propose |
 | during an architect session on a program | `orbit/architecture/.orbit-runs/decisions/`, the record naming its doc |
-| as Sal's answer to a stop | the same folder as the stop it answers |
+| as the user's answer to a stop | the same folder as the stop it answers |
 
 The folder moves with a change when it is archived, as the rest of its history does. These are the three history
 locations the emit surface writes by its scopes (change, doc); a project-wide record is not a place a judgement
@@ -299,18 +298,18 @@ arises. No reader of run summaries reads the folder: each reads only the files d
 ### Requirement: Decision records are written in every mode
 
 Decision records SHALL be written under every setting, today's supervised flow included. Under supervised settings a
-stop record means "the AI would have stopped here": the AI asks Sal as it does today, and the record keeps the moment so
+stop record means "the AI would have stopped here": the AI asks the user where it does today and nowhere else (a stop where today's flow asks nothing stays open), and
+the record keeps the moment so
 that G3 (stops are rare enough to be worth it) can be graded before anything runs unattended. A stop halts a run only
 when a setting says so; this capability defines no setting, so in it no stop halts anything. Writing a record never
-changes what Sal sees in today's flow.
+changes what the user sees in today's flow.
 
-Named limit — nothing in any generated skill yet tells the AI to write these records; until the follow-on stage
-`automate-dev-flow` declares after `decision-layer` (explore.md, D-dl-8) adds that instruction, a record is written
-only when the AI or Sal invokes the command directly.
+What tells the AI to write them is `orbit-conventions`' `Decision-writing discipline`, which every generated
+workflow body with a disciplines epitome carries (onboard, which has none, names it); a record may also be written by invoking its command directly.
 
 #### Scenario: A stop under supervised settings halts nothing
 
 - **WHEN** a stop record is written while every setting is at its default
-- **THEN** no gate, readout or next command changes, and the AI asks Sal its question as it would have without the
+- **THEN** no gate, readout or next command changes, and the AI asks the user its question as it would have without the
   record
 

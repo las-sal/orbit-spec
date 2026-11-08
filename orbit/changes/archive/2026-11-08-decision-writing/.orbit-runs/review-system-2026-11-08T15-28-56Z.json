@@ -1,0 +1,111 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-08T15:28:56Z",
+  "change": "decision-writing",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "pass": "1",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/decision-writing/specs/orbit-conventions/spec.md",
+      "line": 10,
+      "title": "The statement gives user-facing-uncovered two different triggers",
+      "recommendation": "The fence glosses `user-facing-uncovered` as 'an end-user-visible call no ratified goal covers' (R-adf-3's wording, and the baseline event table's), but its ledger clause, and the moments table rows at lines 24-25, raise that stop only 'when nothing approved covers the call' / 'with nothing approved to rely on'. A requirement, ruling, resolution or explore decision counts as approved for `relies_on`, so an end-user-visible call that a spec requirement supports but no ratified goal covers, made without asking, gets a ledger entry citing the requirement and no stop under the ledger clause, while the gloss and R-adf-3 say it is a stop. The scenario at line 68 uses the goal wording. G2 at first-run is graded on R-adf-3's six conditions, so following the statement as written can fail G2. The same composed text is in src/core/disciplines.ts:31 and :52 and carried into fourteen bodies, so the fix is to the fence and the module together, with the parity test following.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Keep R-adf-3's predicates: reword the ledger clause and table rows 24-25 so each of the two conditions triggers on its own gloss (security: nothing approved to rely on; user-facing: no ratified goal covers), so a user-facing call relying only on a requirement still writes the stop and cites nothing."
+        },
+        {
+          "label": "B",
+          "body": "Read 'approved' as the intended trigger for both, change the user-facing gloss to 'an end-user-visible call nothing approved covers', and take the R-adf-3 rewording to the user at an architect session (a ruling amendment), since the change cannot amend the ruling itself."
+        }
+      ]
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/decision-writing/specs/orbit-conventions/spec.md",
+      "line": 205,
+      "title": "Upstream-verbatim scenario does not name the reference sync-specs now ships",
+      "recommendation": "The `Upstream-verbatim — kept unchanged` THEN lists what orbit-sync-specs's `# Orbit additions` carries (the epitome and invocation notes). Since this change, the sync-specs template also declares `references: [decision-records.md]` (src/core/templates/workflows/sync-specs.ts), so the skill now ships a file upstream's never did. Not a violation of the sentence, which speaks of the body, but a cherry-pick reader of the disposition would not learn of it; add a clause naming the decision-record reference the epitome's statement points at."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "src/core/disciplines.ts",
+      "line": 106,
+      "title": "Reference's citation existence rules are looser than the write gate's",
+      "recommendation": "CITATION_EXISTS says a `goal` is accepted when the doc 'opens a ## Goals item with **<id>' (no whole-ID rule: `G1` does not match `**G10`), and a `resolution` when a record 'exists', omitting that it must read as JSON with `command: resolution` and, for `{doc, token}`, carry that doc. A writer following the reference gets a refusal round-trip rather than a wrong record, so the cost is low; state the whole-match rule and the resolution checks, as `orbit-decision-records`' `A ledger entry names what it relies on` does."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "docs/cli.md",
+      "line": 364,
+      "title": "Docs do not say the workflows now write decision records on their own",
+      "recommendation": "docs/cli.md describes `ledger`, `stop` and `resolution` as commands, and docs/ names no execution discipline anywhere. After this change every workflow body tells the AI to write records under every setting, so an adopter upgrading will find `.orbit-runs/decisions/` files appearing in their trail with no page saying why. One sentence in the `orbit emit` section (or the trail description in docs/concepts.md) naming the decision-writing discipline would close it."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "pass": "1",
+      "title": "Baseline specs still say 'four execution disciplines'",
+      "evidence": "orbit/specs/orbit-architect/spec.md:18, orbit/specs/orbit-conventions/spec.md:814 and orbit/specs/orbit-onboard/spec.md:56 still read 'four', but each block is MODIFIED by this change's deltas, which drop the count; the baselines move at archive sync, not apply"
+    }
+  ],
+  "commentary": "Probed: the full src diff from the change start (2a376f9) with the trail excluded; every template diff line is one of the heading, intro, fifth bullet, import or references entry (D2's 'four existing bullets untouched' holds by a uniq count of the diff); a grep of src/, docs/, README.md, CLAUDE.md and the installed .claude/ surface finds no remaining 'four disciplines' wording outside the three baselines the deltas carry; `node bin/orbit.js validate decision-writing --strict` is valid with the size breach declared; the full suite after a fresh build is 181 files / 3840 tests green. Pass 0 was run as its checks (task state, strict validate, suite, scenario declarations through validate) rather than by loading orbit-verify-change; Pass 6 was a targeted residue sweep (count wording, the retired follow-on-stage pointer, docs mentions of the emit commands) rather than a full audit-drift run. The reference module is well built: composed from the gate's own lists with throw-on-missing guards, and its examples are executed through composeAndWriteEmit. The one substantive issue is semantic, inherited from the boundary between R-adf-3's goal-based wording and the ledger's approved-thing citations: the statement now carries both predicates for the same condition, and fourteen bodies will teach whichever an AI reads first. Context: the decisions/ folder of this change is empty, which is expected (the discipline landed at apply); from now on sessions in this repo carry the discipline and CLAUDE.md routes them to the built CLI, which sits beside R-adf-5's 'not dogfooded' as recording, not automation.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "6"
+  ],
+  "passes_skipped": [
+    "4: no perspectives defined (orbit/lenses/ is absent); skip Pass 4",
+    "5: no critical paths defined (orbit/lenses/ is absent); skip Pass 5"
+  ],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The instruction is complete, composed from the write gate's lists and held to its owning fence, and today's flow is unchanged in every body I read. The one warning is a wording conflict inside the statement about when a user-facing call raises a stop; it is worth settling at the walk before archive because fourteen bodies will carry whichever reading ships, but it does not hold the change, and the suggestions are polish."
+  },
+  "final_assessment": "0 critical, 1 warning, 3 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews decision-writing"
+}

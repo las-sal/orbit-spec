@@ -1,0 +1,15 @@
+{
+  "command": "propose",
+  "timestamp": "2026-11-07T22:58:13Z",
+  "change": "decision-writing",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Consumed orbit/explore/decision-writing into a change for the narrowed stage: one ADDED requirement (orbit-conventions' Decision-writing discipline, the owning fence of the fifth discipline, composed in code from the write gate's condition and area lists) and ten MODIFIED (the count-free disciplines wording in orbit-conventions, orbit-architect and orbit-onboard; orbit-decision-records' every-mode limit retired, its reading-step pointers naming decision-reading, and 'the user' per R-adf-10). D-dw-3 carried as a normative table; D-dw-1/2/5 not carried (assigned to decision-reading). Open question abandoned here as decision-reading's. Size: capabilities 4 > 3, declared; 11 requirements, 11 tasks. Eleven delta scenarios (four new, seven carried) await declaration at apply.",
+  "pr_attachment": {
+    "branch": "decision-writing",
+    "granularity": "per-proposal",
+    "url": "https://github.com/las-sal/orbit-spec/pull/35",
+    "state": "draft"
+  },
+  "next_recommended": "/orbit:review decision-writing — proposal artifacts ready; review before apply"
+}

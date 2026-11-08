@@ -1,0 +1,136 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-08T14:59:02Z",
+  "change": "decision-writing",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/decision-writing/.orbit-runs/external-proposal-2026-11-08T00-27-02Z.md",
+  "source_command": null,
+  "source_token": "2026-11-08T00-27-02Z",
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-6",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 3,
+    "suggestion": 1
+  },
+  "pushback_verification": "All four verified against current state; two converged with the fresh half's findings (the record contents; the no-scope moment) and were walked in its log.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 2,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Generated instructions omit the information needed to write valid records",
+      "marker_source": "external",
+      "file": "orbit/changes/decision-writing/specs/orbit-conventions/spec.md",
+      "line": 10,
+      "classification": "stale",
+      "action": "converged with the fresh half's finding on the record fields and plain-language rule, walked in its log",
+      "evidence": "resolved in address-reviews-2026-11-08T14-58-16Z (the earlier pass's log): direction C, a shared references/decision-records.md with executed examples",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The shipped ledger trigger excludes calls that required asking the user",
+      "marker_source": "external",
+      "file": "orbit/changes/decision-writing/specs/orbit-conventions/spec.md",
+      "line": 10,
+      "classification": "trivial_fix",
+      "action": "the statement's ledger trigger reads 'AFTER any call that falls in a ledger area — made without asking, or made with the user's answer to a stop'; the entry names the stop asked at or the one reached; a scenario covers stop, question, resolution and ledger in sequence",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "AFTER a call made without asking that falls in a ledger area"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-writing/specs/orbit-conventions/spec.md",
+            "text": "made without asking, or made with the user's answer to a stop"
+          },
+          {
+            "path": "orbit/changes/decision-writing/specs/orbit-conventions/spec.md",
+            "text": "A call put to the user leaves all three records"
+          }
+        ],
+        "searched": [
+          "made without asking",
+          "raised_stop"
+        ],
+        "scope": [
+          "orbit/specs/orbit-decision-records/spec.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Universal recording has no scope rule for workflows without a change or doc",
+      "marker_source": "external",
+      "file": "orbit/changes/decision-writing/specs/orbit-conventions/spec.md",
+      "line": 10,
+      "classification": "stale",
+      "action": "converged with the fresh half's no-change-no-doc finding, walked in its log",
+      "evidence": "resolved in address-reviews-2026-11-08T14-58-16Z (the earlier pass's log): no record in a session with neither, a table row, a named limit and a scenario",
+      "outcome": "stale"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Onboard exception conflicts with the program’s universal exit criterion",
+      "marker_source": "external",
+      "file": "orbit/changes/decision-writing/design.md",
+      "line": 54,
+      "classification": "trivial_fix",
+      "action": "the stage's exit criterion, its charter's count sentence, decision-records' every-mode pointer and the proposal now say every workflow body carrying a disciplines epitome carries the statement, and onboard names it",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/architecture/automate-dev-flow.md",
+          "orbit/changes/decision-writing/specs/orbit-decision-records/spec.md",
+          "orbit/changes/decision-writing/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "Every generated skill carries the discipline",
+          "The specs that state the set of disciplines say five"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/architecture/automate-dev-flow.md",
+            "text": "onboard, a reference read with no epitome, names it"
+          },
+          {
+            "path": "orbit/changes/decision-writing/specs/orbit-decision-records/spec.md",
+            "text": "workflow body with a disciplines epitome carries"
+          }
+        ],
+        "searched": [
+          "every generated skill",
+          "every generated workflow body",
+          "say five"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Two stale as converged with the fresh half's log (resolved there), two repaired: the ledger trigger now covers a call made with the user's answer, and the stage's exit criterion and the specs name onboard's exception.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal decision-writing",
+  "ripple_misses": 0
+}

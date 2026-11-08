@@ -1,0 +1,71 @@
+{
+  "command": "archive",
+  "timestamp": "2026-11-08T18:55:53Z",
+  "change": "decision-writing",
+  "kind": "lifecycle",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Archived decision-writing to orbit/changes/archive/2026-11-08-decision-writing/: the fifth execution discipline (decision-writing) ships byte-equal in the fourteen epitome bodies with the shared decision-records reference, synced as 2 ADDED and 10 MODIFIED requirements across four capabilities.",
+  "archive_path": "orbit/changes/archive/2026-11-08-decision-writing/",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": [
+      "orbit-architect",
+      "orbit-conventions",
+      "orbit-decision-records",
+      "orbit-onboard"
+    ],
+    "added": 2,
+    "modified": 10,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
+  "user_decision": "proceeded_with_no_critical",
+  "consent": "user-invoked",
+  "warnings": [
+    "Pre-archive audit (Category 5): docs/cli.md was touched without being predicted in design.md's Touchpoints (a docs line added at the system walk).",
+    "Pre-archive audit (Category 5): orbit/architecture/automate-dev-flow.md was touched without being predicted (the proposal walk's charter wording and this archive's Shipped-as paragraph)."
+  ],
+  "judgements": [
+    {
+      "kind": "readiness",
+      "formed_against": [
+        "2026-11-08T00-26-37Z",
+        "2026-11-08T00-27-02Z",
+        "2026-11-08T15-28-56Z",
+        "2026-11-08T15-29-19Z"
+      ],
+      "disposition": "ready",
+      "reasoning": "Both blind pairs' findings were walked as repairs and the in-context verification of the system walks graded six of seven landed; its two findings were walked too, the suite and strict validation are green, and every synced delta block is byte-equal in the baselines. Nothing open holds the change.",
+      "ratified_by": "ai",
+      "accepted": [
+        {
+          "claim": "The statement was rewritten by two walks after the last pass that read the whole change; the final review graded only the walks' edits.",
+          "why": "Each walk added a branch the pairs found missing and the verification pass held them; any remaining uncovered moment leaves a record unwritten and changes nothing the user sees under today's settings, and first-run's closing review reads the trail for exactly that."
+        },
+        {
+          "claim": "Fifteen of the fifty delta scenarios are untestable AI-conduct claims; nothing mechanical shows an AI follows the discipline.",
+          "why": "By design (D6): the write gate checks a record's form, never that one was owed; G2 and G4 grade conduct from first-run's trail."
+        },
+        {
+          "claim": "In this repository the installed orbit (2.0.2) refuses the record commands the bodies name.",
+          "why": "A dogfooding gap only: CLAUDE.md routes records here to the built CLI, and an adopter's installed orbit and generated bodies ship together; the next release closes it."
+        }
+      ]
+    }
+  ],
+  "pr_url": "https://github.com/las-sal/orbit-spec/pull/35",
+  "pr_state": "draft",
+  "next_recommended": "/orbit:architect automate-dev-flow — change archived; review stage decision-writing and take up the program's next stage, or run /orbit:audit-drift for a project-wide drift check."
+}

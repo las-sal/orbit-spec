@@ -122,10 +122,13 @@ refused naming `resolution-D`; an entry written before the replacement keeps its
   answer; write a ledger entry after any call in the eighteen areas made without asking; consent, gate and sync
   prompts are seams, not stops, and write nothing. The epitome bullet in each body: "when a call or a stop arises,
   write its record per `orbit-decision-records`". Rationale: each trigger is an act the AI can see itself about to do.
+  (Since propose the bullet's wording is the owning fence in `orbit-conventions`' `Decision-writing discipline`, which
+  carries the ids an adopter's skill needs, not this pointer; the proposal review added the open-stop and seam rows
+  there. The fence is the current statement.)
   Kind: rule
 - **2026-11-07 — D-dw-4: orbit's text says "the user", not a person's name** (the user, in session) Text this stage
   writes — the discipline, the reading-step brief, and the spec text it adds or changes — names the person orbit
-  answers to as "the user". The normative uses of a name in `orbit-decision-records` (16) are reworded in this change,
+  answers to as "the user". Of the 16 uses of a name in `orbit-decision-records`, 15 are reworded in this change (the Purpose's by direct edit), and one, `The ledger's eighteen areas`' limit, is an attribution kept,
   which modifies that spec anyway. Attributions stay as written: a `(Sal, <date>)` on a ruling or a `ratified … by Sal`
   is a fact about who acted, not a role. The architecture doc's prose is the user's to reword at an architect session.
   Kind: scope
@@ -149,17 +152,15 @@ refused naming `resolution-D`; an entry written before the replacement keeps its
 
 ## Open questions
 
-- **(For the reader child) How does the reading step's brief sit with `orbit-conventions`' rule that a REVIEW-genre
-  brief names no path under `.orbit-runs/` to read?** The records live in `.orbit-runs/decisions/`. The rule exists
-  to keep reviewers blind to prior findings, and records are not findings, but the rule as written does not say so.
-  Options: (a) the reading-step requirement states that the reader is not a review-genre reviewer and that its brief,
-  rendered by orbit, carries the records' content and never a path; (b) amend the conventions rule with a named
-  exemption (a MODIFIED block carrying all its scenarios). Related: the reading step could be a perspective inside
-  system Pass 4 (Perspective reviews), so `System mode runs verify-change + six system-wide passes` keeps its count.
-  Standing recommendation: (a), and the reading step as a Pass 4 perspective — both keep existing requirements true without editing them.
-
 ## Considered & out
 
+- **2026-11-07 — The reading step's brief and the review-genre brief rule** (from the open question, out of this
+  change at propose: it is stage decision-reading's) The records live in `.orbit-runs/decisions/`, and
+  `orbit-conventions`' pass-genre requirement forbids a REVIEW-genre brief to name a path under `.orbit-runs/` to read.
+  Standing recommendation, kept for decision-reading: the reading-step requirement states that the reader is not a
+  review-genre reviewer and that its brief, rendered by orbit, carries the records' content and never a path; and the
+  reading step runs as a perspective inside system Pass 4, so `System mode runs verify-change + six system-wide
+  passes` keeps its count.
 - **2026-11-07 — Editing a record in place** (from Q1, option b) — breaks the rule that trail files are never
   rewritten, and loses what the reader was first shown.
 - **2026-11-07 — The reading step as its own review mode (`--as records`)** (from Q2, option B) — a new trail genre

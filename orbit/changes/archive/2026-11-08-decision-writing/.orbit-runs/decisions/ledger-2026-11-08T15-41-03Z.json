@@ -1,0 +1,20 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-08T15:41:03Z",
+  "change": "decision-writing",
+  "model": "claude-opus-5-5",
+  "area": "things-others-build-on",
+  "decided": "The instruction every workflow skill carries now treats the two kinds of uncovered call separately: a security choice stops when nothing approved backs it, and an end-user-visible choice stops when no ratified goal covers it, even if a spec requirement supports it.",
+  "alternatives": [
+    "treat both as stopping only when nothing approved backs them, which would change the stop conditions the program ratified"
+  ],
+  "why": "The program's ruling on stop conditions defines the user-facing stop by goal coverage, not by precedent; keeping the instruction to that ruling means the stops the first run is graded on are the ones the instruction tells the AI to keep.",
+  "relies_on": [
+    {
+      "kind": "ruling",
+      "doc": "automate-dev-flow",
+      "id": "R-adf-3"
+    }
+  ],
+  "detail": "Fresh system pass W1 (review-system-2026-11-08T15-28-56Z), option A; option B would amend R-adf-3."
+}

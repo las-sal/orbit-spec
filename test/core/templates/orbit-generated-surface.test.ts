@@ -43,34 +43,42 @@ vi.mock('../../../src/prompts/searchable-multi-select.js', () => ({
 
 // dirName -> [commandId, required skill markers]
 const SURFACE: Array<[string, string, string[]]> = [
-  ['orbit-explore', 'explore', ['execution disciplines', 'Run-summary emit', 'Minimal explore metadata']],
-  ['orbit-propose', 'propose', ['execution disciplines', 'Run-summary emit', 'Completion-prompt override', 'staged-metadata MERGE', 'fresh-owned DENYLIST']],
-  ['orbit-new-change', 'new', ['execution disciplines', 'Run-summary emit']],
-  ['orbit-continue-change', 'continue', ['execution disciplines', 'Run-summary emit', 'Completion-prompt override']],
-  ['orbit-apply-change', 'apply', ['execution disciplines', 'Run-summary emit', 'Completion-prompt override']],
-  ['orbit-ff-change', 'ff', ['execution disciplines', 'Run-summary emit', 'Completion-prompt override']],
-  ['orbit-sync-specs', 'sync', ['execution disciplines', 'Consent inheritance']], // gained the orbit layer in D1
-  ['orbit-archive-change', 'archive', ['execution disciplines', 'run summary', 'Stage-line garnish']],
+  ['orbit-explore', 'explore', ['Execution disciplines', 'Run-summary emit', 'Minimal explore metadata']],
+  ['orbit-propose', 'propose', ['Execution disciplines', 'Run-summary emit', 'Completion-prompt override', 'staged-metadata MERGE', 'fresh-owned DENYLIST']],
+  ['orbit-new-change', 'new', ['Execution disciplines', 'Run-summary emit']],
+  ['orbit-continue-change', 'continue', ['Execution disciplines', 'Run-summary emit', 'Completion-prompt override']],
+  ['orbit-apply-change', 'apply', ['Execution disciplines', 'Run-summary emit', 'Completion-prompt override']],
+  ['orbit-ff-change', 'ff', ['Execution disciplines', 'Run-summary emit', 'Completion-prompt override']],
+  ['orbit-sync-specs', 'sync', ['Execution disciplines', 'Consent inheritance']], // gained the orbit layer in D1
+  ['orbit-archive-change', 'archive', ['Execution disciplines', 'run summary', 'Stage-line garnish']],
   ['orbit-bulk-archive-change', 'bulk-archive', ['# Orbit additions']],
-  ['orbit-verify-change', 'verify', ['execution disciplines', 'Run-summary emit']],
-  ['orbit-onboard', 'onboard', ['execution disciplines', 'self-contained', 'Program architecture', 'orbit/architecture/.orbit-runs/', 'architecture mode — D-arc Stage D2']],
-  ['orbit-review', 'review', ['execution disciplines', 'Paste the output VERBATIM', 'hand-rendering them is PROHIBITED', 'REVIEWER axis', 'references/external-handoff.md', 'references/passes-<mode>.md', 'orbit emit review', 'Using doc:', 'First architecture review for this doc']],
-  ['orbit-address-reviews', 'address-reviews', ['execution disciplines', 'Ripple cascade', 'resolution log', 'Architecture-scoped']],
-  ['orbit-audit-drift', 'audit-drift', ['execution disciplines', 'Vocabulary residue', 'Persist the run summary', 'Architecture staleness check']],
-  ['orbit-architect', 'architect', ['execution disciplines', 'Run-summary emit', 'Completion-ratification flow', 'a gatekeeper']],
+  ['orbit-verify-change', 'verify', ['Execution disciplines', 'Run-summary emit']],
+  ['orbit-onboard', 'onboard', ['Execution disciplines', 'self-contained', 'Program architecture', 'orbit/architecture/.orbit-runs/', 'architecture mode — D-arc Stage D2']],
+  ['orbit-review', 'review', ['Execution disciplines', 'Paste the output VERBATIM', 'hand-rendering them is PROHIBITED', 'REVIEWER axis', 'references/external-handoff.md', 'references/passes-<mode>.md', 'orbit emit review', 'Using doc:', 'First architecture review for this doc']],
+  ['orbit-address-reviews', 'address-reviews', ['Execution disciplines', 'Ripple cascade', 'resolution log', 'Architecture-scoped']],
+  ['orbit-audit-drift', 'audit-drift', ['Execution disciplines', 'Vocabulary residue', 'Persist the run summary', 'Architecture staleness check']],
+  ['orbit-architect', 'architect', ['Execution disciplines', 'Run-summary emit', 'Completion-ratification flow', 'a gatekeeper']],
 ];
 
 // B3 editorial skills bundle reference files (multi-file skills)
+// decision-writing (design D8): every epitome-carrying skill also ships the shared `decision-records.md`.
+const DR = 'decision-records.md';
 const REFERENCE_SKILLS: Record<string, string[]> = {
-  'orbit-explore': ['capture-formats.md'],
+  'orbit-explore': ['capture-formats.md', DR],
   // D6: propose and ff share ONE choreography reference (see pr-choreography.ts).
-  'orbit-propose': ['pr-choreography.md'],
-  'orbit-ff-change': ['pr-choreography.md'],
+  'orbit-propose': ['pr-choreography.md', DR],
+  'orbit-ff-change': ['pr-choreography.md', DR],
   // D6 (external iter 1): the arc-done readout carries the shared resolution algorithm.
-  'orbit-architect': ['pr-resolution.md'],
-  'orbit-review': ['run-summary-schema.md', 'passes-proposal.md', 'passes-system.md', 'passes-architecture.md', 'external-handoff.md', 'blind-pair.md', 'mode-sections.md', 'prompt-template.md', 'flags-detail.md'],
-  'orbit-address-reviews': ['external-findings-format.md', 'internal-findings-format.md', 'resolution-detail.md', 'run-summary-schema.md'],
-  'orbit-audit-drift': ['run-summary-schema.md', 'worked-example.md'],
+  'orbit-architect': ['pr-resolution.md', DR],
+  'orbit-review': ['run-summary-schema.md', 'passes-proposal.md', 'passes-system.md', 'passes-architecture.md', 'external-handoff.md', 'blind-pair.md', 'mode-sections.md', 'prompt-template.md', 'flags-detail.md', DR],
+  'orbit-address-reviews': ['external-findings-format.md', 'internal-findings-format.md', 'resolution-detail.md', 'run-summary-schema.md', DR],
+  'orbit-audit-drift': ['run-summary-schema.md', 'worked-example.md', DR],
+  'orbit-new-change': [DR],
+  'orbit-continue-change': [DR],
+  'orbit-apply-change': [DR],
+  'orbit-sync-specs': [DR],
+  'orbit-bulk-archive-change': [DR],
+  'orbit-verify-change': [DR],
 };
 
 describe('generated surface fidelity (real init, all workflows, claude + codex)', () => {

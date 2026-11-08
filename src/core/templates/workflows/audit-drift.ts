@@ -6,6 +6,7 @@
  * to the orbit-run-summary-emit baseline where the change's iter-1 review corrected it.
  */
 import type { SkillTemplate, CommandTemplate } from '../types.js';
+import { DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../disciplines.js';
 
 const AUDIT_DRIFT_RUN_SUMMARY_SCHEMA_REFERENCE = `# Reference: audit-drift run-summary schema
 
@@ -164,14 +165,15 @@ Findings roll into the standard 3-dimension scorecard. The final-assessment phra
 - **Project-wide standalone** — \`/orbit:audit-drift\` (no positional): user invokes with no args; no caller signal. Operates project-wide; emits to \`orbit/.orbit-runs/audit-drift-<TS>.json\`.
 - **Library / pre-archive** — caller signal present (set by \`/orbit:review --as system\` Pass 6 or \`/orbit:archive\` pre-archive sweep): invocation context comes from the caller; positional args ignored.
 
-## Four execution disciplines (epitome)
+## Execution disciplines (epitome)
 
-The four disciplines from \`orbit-conventions\`, embedded per body; detail lives in the category step where each fires.
+The disciplines from \`orbit-conventions\`, embedded per body; detail lives in the category step where each fires.
 
 - **Read-before-reference (authoring-time)**: findings cite file:line — read the line before reporting it; distinguishing actual residue from documentation OF the residue pattern requires reading, not grep alone.
 - **Change completeness (modification-time)**: audit-drift is scan-only; when a prior \`.orbit-runs/audit-drift-*.json\` is malformed or partial, the new summary is a clean rewrite — never merged with broken prior state.
 - **Pushback (review-time)**: verify each potential finding against current state per its category (term still present; capability genuinely missing, not renamed; both sides of a disagreement still exist; requirement truly absent from baseline). Suppress stale findings with an evidence note into \`stale_suppressed\` — never the user-facing report.
 - **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line — gate \`passed\` means *eligible*, not *commanded*.
+${DECISION_WRITING_DISCIPLINE}
 
 **Bias toward lower severity when uncertain.** SUGGESTION beats WARNING beats CRITICAL — signal, not volume.
 
@@ -379,6 +381,7 @@ When \`/orbit:audit-drift\` is called by \`/orbit:archive\` (library / pre-archi
         name: 'worked-example.md',
         content: AUDIT_DRIFT_WORKED_EXAMPLE_REFERENCE,
       },
+      { name: 'decision-records.md', content: DECISION_RECORDS_REFERENCE },
     ],
     license: 'MIT',
     compatibility: "Requires orbit CLI. Composes with `/orbit:review --as system` (Pass 6) and `/orbit:archive` (pre-archive sweep).",

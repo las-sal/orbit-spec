@@ -124,16 +124,22 @@ describe('profile sync drift detection', () => {
   });
 
   it('detects reference drift: undesired references/ root on a reference-less skill', () => {
-    setupCoreSkills(tempDir);
-    setupCoreCommands(tempDir);
-    // orbit-new-change declares no references (explore gained capture-formats.md in D5;
-    // propose and ff gained pr-choreography.md in D6, so neither is a valid example here).
+    // orbit-onboard is the one skill that declares no references (decision-writing gave every
+    // epitome-carrying skill decision-records.md, so orbit-new-change no longer is). It is made a
+    // DESIRED workflow so the drift comes from its references root, not from an extra skill dir.
+    const desired = [...CORE_WORKFLOWS, 'onboard'];
+    for (const w of desired) {
+      writeSkill(tempDir, w);
+      writeCommand(tempDir, w);
+    }
+    expect(getSkillTemplates(['onboard'])[0].template.references ?? []).toEqual([]);
+    expect(hasProjectConfigDrift(tempDir, desired, 'both')).toBe(false);
     fs.mkdirSync(
-      path.join(tempDir, '.claude', 'skills', 'orbit-new-change', 'references'),
+      path.join(tempDir, '.claude', 'skills', 'orbit-onboard', 'references'),
       { recursive: true }
     );
 
-    expect(hasProjectConfigDrift(tempDir, CORE_WORKFLOWS, 'both')).toBe(true);
+    expect(hasProjectConfigDrift(tempDir, desired, 'both')).toBe(true);
   });
 
   it('returns false when project files match core profile and delivery', () => {

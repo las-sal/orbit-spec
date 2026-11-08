@@ -1,0 +1,161 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-08T00:26:37Z",
+  "change": "decision-writing",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 4,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 24,
+      "title": "A no-precedent call made today without asking: the statement either adds a question or leaves the record unwritable",
+      "recommendation": "The row for 'a call in a ledger area with nothing approved to rely on' says: a stop record, then, after the answer, the ledger entry. The stop arm of the fence fires only BEFORE asking a question. When today's supervised AI would make that call without asking (it picks a default, a hash, a dependency), the row implies a new question, which breaks the fence's own first sentence ('without changing what the user sees or is asked'), line 32 and G0; if instead the AI does not ask, no stop exists and the ledger entry (relies_on [] needs raised_stop) is refused. Two AIs following this text split. State which: the baseline's 'a stop record means the AI would have stopped here' supports option A.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "When the AI would not ask today, it still writes the stop record (the question it would have asked) and the ledger entry naming it, asks nothing, and the stop stays open; say in the fence and the table that an open stop under supervised settings is expected, and add a scenario for it."
+        },
+        {
+          "label": "B",
+          "body": "Make such a call a question under every setting, and record that as a named G0 deviation for the user to ratify (it changes what the user is asked)."
+        }
+      ]
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 10,
+      "title": "The statement ships the ids but not the record fields, the citation kinds or the plain-language rule",
+      "recommendation": "The fence names the conditions and areas so an adopter's skill carries what it points at, but an adopter's AI still has no source for: the payload form (`--payload <file>` with a required `model` key), each record's fields (condition/about/question; stop/answer/effect; area/decided/alternatives/why/relies_on/raised_stop; defines/detail), the five `relies_on` citation shapes, or the rule that the plain fields are written for a reader who knows only the architecture doc with any other term in `defines`. Refusals name one field at a time (ran `node bin/orbit.js emit stop` with `{model:null}`: refused naming only `about`), and they check form only, so the plain-language rule is never learned from them: the records the reading stage will judge would be written by an AI never told the rule. Either carry a compact clause for fields and the reader rule in the statement (it stays one line; measure the size), or name the gap as a limit in the requirement.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Add to the statement one clause naming each record's fields, the citation kinds and the reader rule (plain fields for a reader of the architecture doc only; other terms in `defines`), composed from DECISION_PAYLOAD_FIELDS like the ids."
+        },
+        {
+          "label": "B",
+          "body": "Keep the statement as is and add a named limit to `Decision-writing discipline`: the AI learns field names from refusals and is not told the plain-language rule until stage decision-reading."
+        }
+      ]
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 25,
+      "title": "The seam set is not defined, and its precedence over a stop condition is unstated",
+      "recommendation": "'Consent, gate and sync prompts' is the whole definition of a seam. 'Sync prompt' is a term no baseline spec uses, and other designed prompts exist (the fingerprint-divergence inflection prompt, the walk's decision-lane closure prompt, user-validation closure). Where a designed prompt is also an event a condition describes (archive's gate inflection prompt over an unresolved CRITICAL review finding meets `unresolvable-critical`), the table puts it in two rows with opposite outputs, and G2 counts a missed stop as a failure. Name the seams by their owners' terms (the consent prompt of `orbit-lifecycle-consent`, the inflection prompts of `orbit-engine-gates` and `orbit-archive-modifications`, and so on) and state which rule wins when a seam is also described by a condition; mirror it in the closure sentence."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "design.md",
+      "line": 57,
+      "title": "Onboard's fifth item is said to be held by its Identity scenario, whose tagged test asserts no discipline",
+      "recommendation": "D4 says onboard 'is held by its Identity scenario'. The scenario `Enumerates orbit-distinctive layers` is declared by `test/core/templates/blind-pair-command.test.ts:278`, which asserts the reviewer-axis wording and four layer strings and no discipline at all; task 3.1 only 'updates' the `'Four execution disciplines'` marker in `orbit-content-fidelity.test.ts`. An apply that left onboard's list at four would pass. Add to task 2.2 or 3.1 an assertion, in the test tagged to that scenario, that onboard names decision-writing (and the five disciplines), and show it can fail."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "design.md",
+      "line": 24,
+      "title": "The Goal says the only body change is an addition; D3 renames the heading and intro in fourteen bodies",
+      "recommendation": "Goal 4 restates G0 (R-adf-9): 'a generated body changes only by an addition that tells the AI to record something'. D3 and task 2.1/2.2 also change text that is not an addition: the epitome heading and intro in fourteen bodies, three count mentions in review.ts, onboard's list heading. The edits change nothing the AI does at a seam or the user sees, so the intent of G0 holds, but its ratified wording does not, and the archive's G0 note would be grading against a Goal the design itself contradicts. Reword the Goal to what G0's intent requires, name the label edits as non-additive in the archive's G0 note, and put that reading to the user, since G0's wording is ratified."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "design.md",
+      "line": 49,
+      "title": "Two counts in the design disagree with the tree",
+      "recommendation": "(1) D3, the proposal (line 48) and Touchpoints say review.ts has 'two count mentions'; it has three: `src/core/templates/workflows/review.ts:406` (external handoff), `:1059` (flags-detail `--parallel`) and `:1308` (the body's Step 11 gist, 'subagents inherit the four disciplines'). (2) D6 counts seven undeclared carried scenarios including 'one in Generated-file disposition'; `orbit status --change decision-writing --scenarios` shows all seven of that block declared today, so the carried undeclared set is six (four No-chaining, two Architect). Task 2.3's sweep and 4.3's validate would catch both; correct the figures."
+    },
+    {
+      "pass": "7",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "explore.md",
+      "line": 123,
+      "title": "D-dw-3's live text gives the pointer bullet the design rejects",
+      "recommendation": "D-dw-3 (live, no disposition) says the epitome bullet is \"when a call or a stop arises, write its record per `orbit-decision-records`\"; design D1 rejects exactly that pointer form for adopters. D-dw-4 counts '16' normative name uses, but one of the 16 (`The ledger's eighteen areas`' limit) is kept as an attribution (design D5). Note in D-dw-3 that the bullet's wording is the fence's, and correct the count to the reworded uses."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "tasks.md",
+      "line": 19,
+      "title": "In this repository the bodies and CLAUDE.md will point at emit commands the installed orbit refuses",
+      "recommendation": "After task 5.1, every generated body here and the CLAUDE.md entry (task 4.2) tell the AI to run `orbit emit stop | ledger | resolution`. The installed `orbit` on this machine (`~/.npm-global/bin/orbit`, 2.0.2) answers `unknown emit command 'stop'` (ran it); `node bin/orbit.js emit stop` reaches the write gate. The statement's 'a refused record names the field to fix' does not cover an unknown command. Name it in the design's Risks (until a release is installed, records here are written with the built CLI), and word the CLAUDE.md entry accordingly."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 10,
+      "title": "No rule for a moment that belongs to no change and no doc",
+      "recommendation": "'A record names the work it belongs to (`--change <name>`, or `--doc <doc>`)'; decision records have no project scope (the emit table gives them change and doc only). A stop or ledger moment in a project-wide audit-drift run, an unnamed exploration or an onboard read has nowhere to go, and the statement does not say whether to skip it or attach it to the change it concerns. Add one clause."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "The core design is right: one owning fence, composed in code from the write gate's own lists and held by a parity test, is the correct answer to the adopter rule, and dropping the count from the epitome heading pays off at the next discipline. I checked the fence's ids against `LEDGER_AREAS` and `PAYLOAD_STOP_CONDITIONS` (same order, eighteen and five, no tripwire), diffed every MODIFIED block against its baseline (only the intended words move; every 'Sal' in the deltas is gone, the one attribution kept), read every epitome's bullets (no-chaining is the fourth in all fourteen), grepped specs, docs, README and tests for count residue, and ran the stop emit to see what an AI learns from a refusal. The weak spot is the statement as an instruction to an AI rather than as a string: it says when to write, but at its edges (a call today made silently, a designed prompt that is also a condition, a moment with no change) it leaves the AI to choose, and it does not tell the writer the plain-language rule the next stage will grade it by. Those are the edges G2 and G4 will be graded on at first-run.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "Walk these and then apply. Nothing here is structural: the mechanism (a composed fence, a parity test, the label edits) stands, and each gap is a sentence or a table row in the owning requirement plus one test assertion for onboard.\nThe first item matters most: decide whether a call the AI makes silently today, with nothing to rely on, gets a question or an open stop, because that choice is the line between this stage holding G0 and changing what the user is asked."
+  },
+  "final_assessment": "0 critical, 5 warning, 4 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews decision-writing"
+}

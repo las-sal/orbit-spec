@@ -6,6 +6,7 @@
  */
 import type { SkillTemplate, CommandTemplate } from '../types.js';
 import { PR_ARCHIVE_TAIL_REFERENCE } from './pr-choreography.js';
+import { DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../disciplines.js';
 
 
 // Reference: full schema for the Step 5.5 archive run summary. Migrated from the overlay
@@ -281,14 +282,15 @@ All artifacts complete. All tasks complete.
 
 The sections below describe orbit-specific additions on top of upstream's archive flow. The upstream content above is as \`orbit-conventions\`' \`Generated-file disposition\` records it. Orbit adds a **consent check at entry** (D1), a **pre-archive \`audit-drift\` sweep**, a \`--skip-audit\` opt-out, an **unresolved \`@review:\` marker warning**, a **user-validation closure** (rc10), a **base-fingerprint divergence check** (C2), an **archive run summary** written to \`.orbit-runs/\`, and a small set of edge-case behaviors.
 
-## Four execution disciplines (epitome)
+## Execution disciplines (epitome)
 
-The four disciplines from \`orbit-conventions\`, embedded per body; detail lives in the step where each fires.
+The disciplines from \`orbit-conventions\`, embedded per body; detail lives in the step where each fires.
 
 - **Read-before-reference (authoring-time)**: the run summary cites audit findings, the user decision, and sync-specs results — read the actual outputs before composing it; false claims corrupt the archived trail.
 - **Change completeness (modification-time)**: the flow moves the change dir, writes baseline via sync-specs, and emits the summary — sweep after each step so no dangling baseline references or unreflected deltas survive.
 - **Pushback (review-time)**: second-pass-verify each pre-archive audit finding against current session state; stale findings get a note in the summary, not a re-prompt.
 - **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line — gate \`passed\` means *eligible*, not *commanded*.
+${DECISION_WRITING_DISCIPLINE}
 
 ## NEW Step 0 — Consent at entry (provenance rule, per \`orbit-lifecycle-consent\`)
 
@@ -564,6 +566,7 @@ This is a deliberate choice (per \`orbit-archive-modifications\`' \`Audit inform
         name: 'pr-archive-tail.md',
         content: PR_ARCHIVE_TAIL_REFERENCE,
       },
+      { name: 'decision-records.md', content: DECISION_RECORDS_REFERENCE },
     ],
     license: 'MIT',
     compatibility: 'Requires orbit CLI.',

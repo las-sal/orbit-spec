@@ -257,12 +257,15 @@ describe('Generated-file disposition is visible in the bodies (rc06b, task 4.2)'
     const additions = t.instructions.slice(t.instructions.indexOf('\n# Orbit additions\n'));
     const headings = additions.split('\n').filter((l) => l.startsWith('## '));
     expect(headings).toEqual([
-      '## Four execution disciplines (epitome)',
+      '## Execution disciplines (epitome)',
       '## Consent inheritance (D1, per `orbit-lifecycle-consent`)',
     ]);
     // No numbered step and no command block: notes only.
     expect(additions).not.toMatch(/^\s*\d+\. \*\*/m);
     expect(additions).not.toContain('```');
+    // decision-writing: beside the body it ships only the shared reference the statement points at.
+    expect((t.references ?? []).map((r) => r.name)).toEqual(['decision-records.md']);
+    expect(additions).toContain('references/decision-records.md');
   });
 
   // @scenario text orbit-conventions :: Generated-file disposition :: Orbit-authored — full ownership

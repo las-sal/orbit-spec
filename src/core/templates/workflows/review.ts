@@ -7,6 +7,7 @@
  * definitions into lazy references (passes-{proposal,system,architecture}.md).
  */
 import type { SkillTemplate, CommandTemplate } from '../types.js';
+import { DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../disciplines.js';
 
 const REVIEW_RUN_SUMMARY_SCHEMA_REFERENCE = `# Reference: review run-summary schema
 
@@ -403,7 +404,7 @@ This branch packages a review request for an external AI (codex, fresh Claude, G
 
 ## Disciplines
 
-The four execution disciplines travel with the review body that loaded this reference; the one branch-specific note: the prompt instructs the external AI **not** to apply pushback (\`Do not push back on stale findings\`) — pushback is enforced at resolution, in \`/orbit:address-reviews\`.
+The execution disciplines travel with the review body that loaded this reference; the one branch-specific note: the prompt instructs the external AI **not** to apply pushback (\`Do not push back on stale findings\`) — pushback is enforced at resolution, in \`/orbit:address-reviews\`.
 
 ## Steps
 
@@ -1056,7 +1057,7 @@ If \`--parallel\` is set:
 - Proposal mode: spawn subagents for Passes 2 (Internal Coherence), 4 (Archive Consistency), 6 (Gap Hunt). Run Passes 1, 3, 5, 7, 8, 9 in the main context.
 - System mode: spawn subagents for Passes 2 (Cohesion), 3 (Surface Walk), 4 (Perspectives), 5 (Critical Paths). Run Passes 0, 1, 6 in the main context.
 
-Each subagent gets a focused brief (the pass description + the relevant context files). Merge findings into the unified report. Subagents inherit the four execution disciplines.
+Each subagent gets a focused brief (the pass description + the relevant context files). Merge findings into the unified report. Subagents inherit the execution disciplines.
 
 ### 13. \`--focus\` lens
 
@@ -1083,14 +1084,15 @@ export function getReviewSkillTemplate(): SkillTemplate {
 
 **Input**: Optional change name (or, with \`--as architecture\`, a doc name) and optional \`--as proposal|system|architecture\` mode flag plus secondary flags. If change name omitted, prompt via \`AskUserQuestion\` over \`orbit list --json\` (architecture mode prompts over \`orbit architecture status --json\`'s parseable docs instead). If mode omitted, infer from \`tasks.md\` state (see Step 3) — architecture mode is NEVER inferred.
 
-## Four execution disciplines (epitome)
+## Execution disciplines (epitome)
 
-The four disciplines from \`orbit-conventions\`, embedded per body; detail lives in the step where each fires.
+The disciplines from \`orbit-conventions\`, embedded per body; detail lives in the step where each fires.
 
 - **Pushback (review-time) — primary here**: verify every finding against current state before reporting; suppress a stale finding with an evidence note (\`stale finding suppressed: <evidence>\`) whose evidence is what the current state shows. A VERIFICATION-genre pass additionally reads its walk (Step 5).
 - **Read-before-reference (authoring-time)**: every construct a finding names is backed by an actual read (enforcement rule under Special cases); unverifiable → downgrade or omit.
 - **Change completeness (modification-time)**: \`--mark\` insertions land fully in one pass, then sweep for residue (Step 11); stale or partial prior \`.orbit-runs/\` files are cleaned before persisting.
 - **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line — review-cycle COUNT is the user's call; gate \`passed\` means *eligible*, not *commanded*.
+${DECISION_WRITING_DISCIPLINE}
 
 ## Pass genre
 
@@ -1305,7 +1307,7 @@ Direction: hold
 
 ### 11. Rarely-used flags: \`--mark\`, \`--parallel\`, \`--focus\`
 
-Full procedures live in \`references/flags-detail.md\` — load it ONLY when one of these flags is set. Gist: \`--mark\` (proposal mode only) writes \`@review:\` markers at CRITICAL/WARNING finding sites — and no marker for a block, which is already a condition the artifact carries (a marker would be a second record of it) — then sweeps for residue per change completeness (system mode: accepted but ignored with a note); \`--parallel\` spawns subagents for the heavy passes and merges their findings (subagents inherit the four disciplines); \`--focus <lens>\` applies elevated rigor to the lens's pass set without skipping any pass.
+Full procedures live in \`references/flags-detail.md\` — load it ONLY when one of these flags is set. Gist: \`--mark\` (proposal mode only) writes \`@review:\` markers at CRITICAL/WARNING finding sites — and no marker for a block, which is already a condition the artifact carries (a marker would be a second record of it) — then sweeps for residue per change completeness (system mode: accepted but ignored with a note); \`--parallel\` spawns subagents for the heavy passes and merges their findings (subagents inherit the execution disciplines); \`--focus <lens>\` applies elevated rigor to the lens's pass set without skipping any pass.
 
 ## Special cases
 
@@ -1389,6 +1391,7 @@ next, anything the structure can't say — never contradicting the tail's engine
         name: 'flags-detail.md',
         content: REVIEW_FLAGS_DETAIL_REFERENCE,
       },
+      { name: 'decision-records.md', content: DECISION_RECORDS_REFERENCE },
     ],
     license: 'MIT',
     compatibility: "Requires orbit CLI. System-mode Pass 0 invokes the `orbit-verify-change` skill. System-mode Pass 6 invokes the `orbit-audit-drift` skill.",

@@ -12,6 +12,7 @@
 import type { SkillTemplate, CommandTemplate } from '../types.js';
 import { COMPLETE_SLOT_PRODUCTIONS } from '../../architecture/parser.js';
 import { PR_RESOLUTION_REFERENCE } from './pr-choreography.js';
+import { DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../disciplines.js';
 
 export function getArchitectSkillTemplate(): SkillTemplate {
   return {
@@ -24,14 +25,15 @@ export function getArchitectSkillTemplate(): SkillTemplate {
 
 **Never a gatekeeper**: architecture authoring via \`/orbit:explore\` plus hand-editing remains a first-class path. This command is a stance, not a checkpoint — no orbit surface requires an architect session, and no validation or drift check flags architecture content, or a change, for having originated outside one. The canonical flow is architect-first and returns here — architect → explore → propose → review → apply → review → archive → architect, the closing session ratifying the stage and taking up the next — and that is a suggestion, never a requirement: orbit's start surfaces name \`/orbit:architect\` first, and \`/orbit:explore\` remains a working path for a one-off fix.
 
-## Four execution disciplines (epitome)
+## Execution disciplines (epitome)
 
-The four disciplines from \`orbit-conventions\`, embedded per body; detail lives where each fires.
+The disciplines from \`orbit-conventions\`, embedded per body; detail lives where each fires.
 
 - **Read-before-reference (authoring-time)**: read a construct's actual definition before naming it in the doc or a ruling; unverifiable → ask or leave a \`@review:\` marker, never guess.
 - **Change completeness (modification-time)**: doc edits land whole — a stage added to the grammar, its Depends-on slots, and the status-log entry move together; re-read after to confirm.
 - **Pushback (review-time)**: verify a claimed stage state against \`orbit architecture status\` before restating it; computed state wins over remembered state.
 - **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line — gate \`passed\` means *eligible*, not *commanded*.
+${DECISION_WRITING_DISCIPLINE}
 
 ## Steps
 
@@ -159,6 +161,7 @@ Render the doc's computed position from \`orbit architecture status\` verbatim, 
         name: 'pr-resolution.md',
         content: PR_RESOLUTION_REFERENCE,
       },
+      { name: 'decision-records.md', content: DECISION_RECORDS_REFERENCE },
     ],
     license: 'MIT',
     compatibility:

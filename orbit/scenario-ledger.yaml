@@ -70,10 +70,52 @@ scenarios:
   # decision-layer (task 3.5) — three scenarios that are a writer's or a reader's judgement (R-crc-10).
   - key: "orbit-decision-records :: Decision records are written for a reader who knows only the architecture :: Detail is never the only statement"
     kind: untestable
-    why: "Whether `decided` states the decision or only points at `detail` is a reader's judgement on prose; orbit checks only that the field is a non-blank string, and the reading step that grades it belongs to the follow-on stage (D-dl-8)."
+    why: "Whether `decided` states the decision or only points at `detail` is a reader's judgement on prose; orbit checks only that the field is a non-blank string, and the reading step that grades it belongs to stage `decision-reading` (D-dl-8)."
   - key: "orbit-decision-records :: The ledger's eighteen areas :: An internal call writes no entry"
     kind: untestable
-    why: "The THEN is an entry the AI does not write; whether a call falls in an area is the AI's judgement, and no skill yet tells the AI to write entries at all (D-dl-8). orbit checks only that a written entry names one of the eighteen ids."
+    why: "The THEN is an entry the AI does not write; whether a call falls in an area is the AI's judgement, which the decision-writing discipline (`orbit-conventions`) leaves to it. orbit checks only that a written entry names one of the eighteen ids."
   - key: "orbit-decision-records :: Decision records are written for a reader who knows only the architecture :: A coined term is defined in the record"
     kind: untestable
     why: "Whether a term is new to a reader of the architecture doc is a reader's judgement; the write gate checks that every listed term has a definition (`An undefined term is refused`), never that every new term was listed."
+  # decision-writing (task 4.3, design D6) — the AI-conduct scenarios of the MODIFIED `No-chaining contract`
+  # (carried unchanged) and of the ADDED `Decision-writing discipline`. Each THEN is what an AI does in a live
+  # session; the body text that instructs it is held by test/core/decision-writing-parity.test.ts, and whether a
+  # run followed it is read from its trail at automate-dev-flow's first-run (G2, G4).
+  - key: "orbit-conventions :: No-chaining contract :: Command completion ends the turn"
+    kind: untestable
+    why: "The THEN is the AI stopping its turn after the readout instead of invoking the eligible command, an act in a live session; no test runs a session. The bodies' no-chaining bullet is held by the epitome tests."
+  - key: "orbit-conventions :: No-chaining contract :: Blanket delegation does not cross commands"
+    kind: untestable
+    why: "The THEN is how the AI reads a user's delegation phrase across commands, a judgement in a live session; no test runs a session."
+  - key: "orbit-conventions :: No-chaining contract :: Explicit multi-command requests are honored as scoped"
+    kind: untestable
+    why: "The THEN is the AI running exactly the commands a user's message names, a judgement in a live session; no test runs a session."
+  - key: "orbit-conventions :: Decision-writing discipline :: A stop record precedes the question it keeps"
+    kind: untestable
+    why: "The THEN is the order of the AI's acts in a live session (the stop record, then the question, then the resolution); the write gate checks each record's form, never that one was owed. First-run's closing review grades it from the trail (G2, G4)."
+  - key: "orbit-conventions :: Decision-writing discipline :: A call put to the user leaves all three records"
+    kind: untestable
+    why: "The THEN is the AI writing a stop, a resolution and a ledger entry around a question it asks in a live session; the gate's acceptance of each record is tested in decision-records.test.ts, the writing of them is not runnable. Graded at first-run (G2, G4)."
+  - key: "orbit-conventions :: Decision-writing discipline :: A call relying on nothing, made without asking, names an open stop"
+    kind: untestable
+    why: "The THEN is the AI recognising an uncovered call where today's flow asks nothing and recording an open stop; the gate's acceptance of `relies_on: []` with `raised_stop` is tested in decision-records.test.ts, the recognition is a judgement in a live session. Graded at first-run (G2, G4)."
+  - key: "orbit-conventions :: Decision-writing discipline :: A session with no change and no doc writes no record"
+    kind: untestable
+    why: "The THEN is the AI withholding a record during a project-wide run, an act in a live session; no test runs a session, and an unwritten record leaves nothing to inspect."
+  - key: "orbit-conventions :: Decision-writing discipline :: A seam prompt writes nothing"
+    kind: untestable
+    why: "The THEN is the AI writing no record at a consent or inflection prompt, an act in a live session; no test runs a session, and an unwritten record leaves nothing to inspect."
+  - key: "orbit-conventions :: Decision-writing discipline :: A seam a stop condition describes writes its stop first"
+    kind: untestable
+    why: "The THEN is the AI writing an unresolvable-critical stop before a gate's inflection prompt, the order of acts in a live session; no test runs a session. Graded at first-run (G2, G4)."
+  # decision-writing system walk (2026-11-08, external W2/W3) — the two moments the walk added to the statement.
+  - key: "orbit-conventions :: Decision-writing discipline :: An act the user directed writes its stop and its resolution"
+    kind: untestable
+    why: "The THEN is the AI recognising a ruling amendment the user directed and writing a stop and a resolution around it, the order of acts in a live session; no test runs a session. Graded at first-run (G2, G4)."
+  - key: "orbit-conventions :: Decision-writing discipline :: A walk of an archived change writes no record"
+    kind: untestable
+    why: "The THEN is the AI withholding a record during a walk of an archived change; no test runs a session, and an unwritten record leaves nothing to inspect. The engine's refusal of a decision record on an archived change is its existing scope rule (no archived fallback for ledger, stop or resolution)."
+  # decision-writing system verification walk (2026-11-08) — the third way of reaching a ledger call.
+  - key: "orbit-conventions :: Decision-writing discipline :: A call after a clarifying question writes its ledger entry"
+    kind: untestable
+    why: "The THEN is the AI writing a ledger entry after a clarifying question it asked in a live session; no test runs a session. Graded at first-run from the trail."

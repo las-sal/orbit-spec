@@ -113,6 +113,14 @@ body.
   position readout + the engine's eligibility line (`Ready when you are:`); blanket delegation covers
   work WITHIN the requested command, never the next one — gate `passed` means *eligible*, not
   *commanded*.
+- **Decision-writing** (`orbit-conventions`, stage `decision-writing`) — keep a decision record
+  (`orbit-decision-records`) without changing what the user sees or is asked: a stop record BEFORE asking a
+  question one of the five AI-raised stop conditions describes (or before an act one describes, taken without
+  asking), a resolution with the answer, a ledger entry after any call in one of the eighteen ledger areas; a
+  designed prompt (consent, inflection, closure) is a seam and writes nothing, and a walk of an archived change
+  writes no record. The full statement is the fifth epitome bullet in every workflow body with a disciplines
+  epitome; what a record holds is each skill's `references/decision-records.md`. Until a release carrying decision records is installed, the
+  installed `orbit` refuses these commands here: write records with `node bin/orbit.js emit stop|resolution|ledger …`.
 - **Outward actions stay the human's** (D6, `orbit-conventions`) — merging any PR, publishing
   releases, and filing issues on external trackers are invoked outside orbit workflows, in
   non-orbit sessions on this repo as much as in orbit ones. Recommend them; never perform them.

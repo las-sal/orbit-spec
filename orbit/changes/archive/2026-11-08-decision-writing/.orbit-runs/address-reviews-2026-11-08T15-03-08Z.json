@@ -1,0 +1,150 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-08T15:03:08Z",
+  "change": "decision-writing",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/decision-writing/.orbit-runs/review-proposal-2026-11-08T15-01-35Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-08T15-01-35Z",
+  "latest_apply_token": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 2
+  },
+  "pushback_verification": "All three verified at HEAD: spec.md:125 and tasks.md 1.4 said 'no other' without model; proposal.md:7 and automate-dev-flow.md:144 said 'every generated skill'; the statement named no exploration scope. None stale.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The reference's field scenario says 'no other' field, but the reference must also name model",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 125,
+      "classification": "trivial_fix",
+      "action": "the scenario's THEN and task 1.4 now say 'no other besides `model`'",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/decision-writing/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "lists for that command and no other, and",
+          "each command's `DECISION_PAYLOAD_FIELDS` and every citation kind"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-writing/specs/orbit-conventions/spec.md",
+            "text": "and no other besides `model`"
+          },
+          {
+            "path": "orbit/changes/decision-writing/tasks.md",
+            "text": "no other field besides `model`"
+          }
+        ],
+        "searched": [
+          "DECISION_PAYLOAD_FIELDS",
+          "no other"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Two sites still say the discipline is in every generated skill",
+      "marker_source": "internal-review",
+      "file": "proposal.md",
+      "line": 7,
+      "classification": "trivial_fix",
+      "action": "proposal.md's Why and the stage charter in automate-dev-flow.md now say every workflow body carrying a disciplines epitome",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/architecture/automate-dev-flow.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "ripple_miss_of": {
+        "walk": "2026-11-08T14-59-02Z",
+        "title": "Onboard exception conflicts with the program’s universal exit criterion",
+        "file": "orbit/changes/decision-writing/design.md",
+        "kind": "judgement"
+      },
+      "sweep": {
+        "retired": [
+          "every generated skill"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-writing/proposal.md",
+            "text": "every workflow body carrying a disciplines epitome carries"
+          },
+          {
+            "path": "orbit/architecture/automate-dev-flow.md",
+            "text": "in every generated workflow body carrying a disciplines epitome"
+          }
+        ],
+        "searched": [
+          "every generated skill",
+          "every generated workflow body"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The statement does not say a named exploration is recorded with --change",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 10,
+      "classification": "trivial_fix",
+      "action": "the statement reads '`--change <name>` for a change or a named exploration'",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "(`--change <name>`, or `--doc <doc>` in an architect session)"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-writing/specs/orbit-conventions/spec.md",
+            "text": "`--change <name>` for a change or a named exploration"
+          }
+        ],
+        "searched": [
+          "--change <name>",
+          "named exploration"
+        ],
+        "scope": [
+          "orbit/specs/orbit-decision-records/spec.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Three of three resolved as obvious fixes: the reference's field rule admits model, the discipline's scope reads as epitome bodies at the two missed sites, and a named exploration records with --change.",
+  "iteration": 3,
+  "next_recommended": "/orbit:apply decision-writing — user-invoked",
+  "ripple_misses": 1
+}

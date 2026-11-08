@@ -1,0 +1,20 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-08T18:30:42Z",
+  "change": "decision-writing",
+  "model": "claude-opus-5-5",
+  "area": "things-others-build-on",
+  "decided": "The instruction every workflow skill with a disciplines epitome carries now asks for a ledger entry after any call in the ledger's areas, however the AI reached it, including after a clarifying question no stop condition describes.",
+  "alternatives": [
+    "keep recording only calls made without asking or with the user's answer to a stop"
+  ],
+  "why": "The decision records are meant to keep every call the AI made in those areas; a call reached after a clarifying question is still such a call, and leaving it out would leave gaps in the record the first run is graded from.",
+  "relies_on": [
+    {
+      "kind": "requirement",
+      "capability": "orbit-decision-records",
+      "title": "Three decision records, one job each"
+    }
+  ],
+  "detail": "In-context system verification pass W (review-system-2026-11-08T16-10-28Z)."
+}

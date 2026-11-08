@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { COMPLETE_SLOT_PRODUCTIONS } from '../../../src/core/architecture/parser.js';
+import { COMPLETE_SLOT_PRODUCTIONS, parseArchitectureDoc } from '../../../src/core/architecture/parser.js';
 import { ownerText } from '../../helpers/owner-text.js';
 import { analyseRecorded, recordedTool, sweepRecorded } from '../../helpers/recorded-sweep.js';
 import fs from 'node:fs';
@@ -66,25 +66,25 @@ import { EXPLORE_MECHANISM_ENTRY_PRODUCTION } from '../../../src/core/explore-gr
 // the write gate refuses. The sentence is stated in four bodies; this pin is what keeps the
 // qualifier from dropping out of one of them silently.
 const RELOCATED: Array<[string, () => SkillTemplate, string[]]> = [
-  ['explore', getExploreSkillTemplate, ['execution disciplines', 'Run-summary emit', 'BEGIN emit', 'orbit emit explore', 'No retro-fire', 'BACK-FILLED counts']],
+  ['explore', getExploreSkillTemplate, ['Execution disciplines', 'Run-summary emit', 'BEGIN emit', 'orbit emit explore', 'No retro-fire', 'BACK-FILLED counts']],
   // rc13c (propose-consumes-mechanism): the concluded refuse in Step 0, live-only naming inference, the
   // section-list mirror, the Mechanism read after the last file write, the Step 0c.6 record and its
   // no-engine-record header, the rule-answer note at Step 0b. Position and parity assertions live in
   // the `rc13c propose consume-mode integrity` block below.
-  ['propose', getOrbitProposeSkillTemplate, ['execution disciplines', 'Run-summary emit', 'Completion-prompt override', 'this exploration concluded on', 'is never reached', 'LIVE staging director', 'Mechanism → artifacts', 'no engine record', 'Residual kind:', 'no Mechanism entry is authored at propose', 'second claim on one truth']],
-  ['new-change', getNewChangeSkillTemplate, ['execution disciplines', 'Run-summary emit']],
-  ['continue-change', getContinueChangeSkillTemplate, ['execution disciplines', 'Run-summary emit', 'Completion-prompt override']],
-  ['apply-change', getApplyChangeSkillTemplate, ['execution disciplines', 'Run-summary emit', 'Completion-prompt override', 'blocked-by-gate', 'continuation', 'formed_against: []', 'ACCEPTED as a pass', 'Consent at entry', 'consent_era_from', '"user-invoked" | "prompted"', 'orbit emit apply']],
-  ['ff-change', getFfChangeSkillTemplate, ['execution disciplines', 'Run-summary emit', 'Completion-prompt override']],
-  ['bulk-archive-change', getBulkArchiveChangeSkillTemplate, ['# Orbit additions', 'execution disciplines', 'Per-change consent', 'consent_era_from', 'Per-change user-validation closure']],
-  ['verify-change', getVerifyChangeSkillTemplate, ['execution disciplines', 'Run-summary emit']],
-  ['archive-change', getArchiveChangeSkillTemplate, ['execution disciplines', 'run summary', 'Gate inflection prompt', 'User-validation closure', 'DEFERRAL REFUSALS', 'continuation', 'formed_against: []', 'ACCEPTED as a pass', 'Consent at entry', 'consent_era_from', 'Sync inheritance']],
-  ['onboard', getOnboardSkillTemplate, ['execution disciplines', 'self-contained', 'Four execution disciplines']],
-  ['sync-specs', getSyncSpecsSkillTemplate, ['execution disciplines', 'Consent inheritance']],
+  ['propose', getOrbitProposeSkillTemplate, ['Execution disciplines', 'Run-summary emit', 'Completion-prompt override', 'this exploration concluded on', 'is never reached', 'LIVE staging director', 'Mechanism → artifacts', 'no engine record', 'Residual kind:', 'no Mechanism entry is authored at propose', 'second claim on one truth']],
+  ['new-change', getNewChangeSkillTemplate, ['Execution disciplines', 'Run-summary emit']],
+  ['continue-change', getContinueChangeSkillTemplate, ['Execution disciplines', 'Run-summary emit', 'Completion-prompt override']],
+  ['apply-change', getApplyChangeSkillTemplate, ['Execution disciplines', 'Run-summary emit', 'Completion-prompt override', 'blocked-by-gate', 'continuation', 'formed_against: []', 'ACCEPTED as a pass', 'Consent at entry', 'consent_era_from', '"user-invoked" | "prompted"', 'orbit emit apply']],
+  ['ff-change', getFfChangeSkillTemplate, ['Execution disciplines', 'Run-summary emit', 'Completion-prompt override']],
+  ['bulk-archive-change', getBulkArchiveChangeSkillTemplate, ['# Orbit additions', 'Execution disciplines', 'Per-change consent', 'consent_era_from', 'Per-change user-validation closure']],
+  ['verify-change', getVerifyChangeSkillTemplate, ['Execution disciplines', 'Run-summary emit']],
+  ['archive-change', getArchiveChangeSkillTemplate, ['Execution disciplines', 'run summary', 'Gate inflection prompt', 'User-validation closure', 'DEFERRAL REFUSALS', 'continuation', 'formed_against: []', 'ACCEPTED as a pass', 'Consent at entry', 'consent_era_from', 'Sync inheritance']],
+  ['onboard', getOnboardSkillTemplate, ['Execution disciplines', 'self-contained', '**Execution disciplines** codified in']],
+  ['sync-specs', getSyncSpecsSkillTemplate, ['Execution disciplines', 'Consent inheritance']],
   // B3 editorial workflows (net-new relocation; parity proof per D-b3-4)
-  ['review', getReviewSkillTemplate, ['execution disciplines', 'orbit status --change <name> --report', 'Paste the output VERBATIM', 'hand-rendering them is PROHIBITED', 'architecture mode is EXEMPT', 'recommendation_options', 'reviewer_class', 'commentary', 'REVIEWER axis', 'references/external-handoff.md', 'references/passes-<mode>.md', 'orbit emit review']],
-  ['address-reviews', getAddressReviewsSkillTemplate, ['execution disciplines', 'Ripple cascade', 'obvious-fix lane preview', 'present → discuss → ratify', "AFTER the finding's discussion concludes", 'RE-PRESENTS the finding', 'one prompt NEVER spans multiple findings', 'ratified_via', 'delegation_directive', 'resolution log']],
-  ['audit-drift', getAuditDriftSkillTemplate, ['execution disciplines', 'Vocabulary residue', 'Persist the run summary', 'recommendation_options']],
+  ['review', getReviewSkillTemplate, ['Execution disciplines', 'orbit status --change <name> --report', 'Paste the output VERBATIM', 'hand-rendering them is PROHIBITED', 'architecture mode is EXEMPT', 'recommendation_options', 'reviewer_class', 'commentary', 'REVIEWER axis', 'references/external-handoff.md', 'references/passes-<mode>.md', 'orbit emit review']],
+  ['address-reviews', getAddressReviewsSkillTemplate, ['Execution disciplines', 'Ripple cascade', 'obvious-fix lane preview', 'present → discuss → ratify', "AFTER the finding's discussion concludes", 'RE-PRESENTS the finding', 'one prompt NEVER spans multiple findings', 'ratified_via', 'delegation_directive', 'resolution log']],
+  ['audit-drift', getAuditDriftSkillTemplate, ['Execution disciplines', 'Vocabulary residue', 'Persist the run summary', 'recommendation_options']],
 ];
 
 // D1 (explicit-lifecycle-consent): every generated body echoes the no-chaining
@@ -110,9 +110,9 @@ const ALL_SURFACE_SKILLS: Array<[string, () => SkillTemplate]> = [
 
 // dirName -> exact reference declarations for the B3 multi-file editorial skills
 const B3_REFERENCES: Array<[string, () => SkillTemplate, string[]]> = [
-  ['review', getReviewSkillTemplate, ['run-summary-schema.md', 'passes-proposal.md', 'passes-system.md', 'passes-architecture.md', 'external-handoff.md', 'blind-pair.md', 'mode-sections.md', 'prompt-template.md', 'flags-detail.md']],
-  ['address-reviews', getAddressReviewsSkillTemplate, ['external-findings-format.md', 'internal-findings-format.md', 'resolution-detail.md', 'run-summary-schema.md']],
-  ['audit-drift', getAuditDriftSkillTemplate, ['run-summary-schema.md', 'worked-example.md']],
+  ['review', getReviewSkillTemplate, ['run-summary-schema.md', 'passes-proposal.md', 'passes-system.md', 'passes-architecture.md', 'external-handoff.md', 'blind-pair.md', 'mode-sections.md', 'prompt-template.md', 'flags-detail.md', 'decision-records.md']],
+  ['address-reviews', getAddressReviewsSkillTemplate, ['external-findings-format.md', 'internal-findings-format.md', 'resolution-detail.md', 'run-summary-schema.md', 'decision-records.md']],
+  ['audit-drift', getAuditDriftSkillTemplate, ['run-summary-schema.md', 'worked-example.md', 'decision-records.md']],
 ];
 
 // Every generated /orbit:* command is a thin launcher delegating to its skill —
@@ -286,6 +286,34 @@ describe('rc15 ended-stage-state: the architect §5 offer, the unprompted route,
     expect(architect).not.toContain('| observed');
   });
 
+  // decision-writing (task 4.3, design D6): the two scenarios its MODIFIED `Architect workflow available` carries.
+  // @scenario behaviour orbit-architect :: Architect workflow available :: Create scaffolds the parseable format
+  it('§2\'s scaffold, with its placeholders filled, parses as a well-formed architecture doc with the full skeleton', () => {
+    const open = architect.indexOf('```markdown\n# Program: <doc-name>');
+    expect(open).toBeGreaterThan(-1);
+    const start = architect.indexOf('\n', open) + 1;
+    const scaffold = architect.slice(start, architect.indexOf('\n```', start));
+    for (const section of ['## Premise', '## Goals', '## Rulings index', '## Program stages', '## Status log']) {
+      expect(scaffold, section).toContain(`\n${section}\n`);
+    }
+    expect(scaffold).toContain('> Position is COMPUTED');
+    const filled = scaffold.replace('<doc-name>', 'my-program').replace('### Stage <kebab-id> — <title>', '### Stage first-stage — The first stage');
+    const doc = parseArchitectureDoc(filled, 'my-program');
+    expect(doc.violations).toEqual([]);
+    expect(doc.docClass).toBe('parseable');
+    expect(doc.stages.map((st) => st.id)).toEqual(['first-stage']);
+    expect(doc.stages[0].hasDependsOnSlot).toBe(true);
+    // Mutation: a malformed stage heading in the scaffold is caught by the same parse.
+    const broken = parseArchitectureDoc(filled.replace('### Stage first-stage — The first stage', '### Stage First Stage - t'), 'my-program');
+    expect(broken.violations.length + (broken.stages.length === 1 ? 0 : 1)).toBeGreaterThan(0);
+  });
+
+  // @scenario text orbit-architect :: Architect workflow available :: Resume reads the doc as authoritative
+  it('§3 tells the body to read the doc and its computed position before any edit', () => {
+    const s3 = h3(architect, '3. Resume (doc exists) — the doc is authoritative');
+    expect(s3).toContain('Read the doc AND `orbit architecture status` (its computed position) BEFORE any edit.');
+  });
+
   it('§5 contains exactly ONE AskUserQuestion prompt', () => {
     const s5 = h3(architect, '5. Completion-ratification flow');
     expect(s5.split('**AskUserQuestion**').length - 1).toBe(1);
@@ -355,7 +383,7 @@ describe('orbit content fidelity (B1 relocation)', () => {
 
       it('echoes the no-chaining contract (fourth discipline)', () => {
         expect(skill).toContain('No-chaining');
-        expect(skill).toContain('execution disciplines');
+        expect(skill).toContain('Execution disciplines');
       });
 
       it('renders no imperative Next: label', () => {
@@ -386,6 +414,18 @@ describe('orbit content fidelity (B1 relocation)', () => {
     expect(body).not.toMatch(/\(or append this stage's entry, for a program PR\), and flip the PR/);
   });
 
+  // decision-writing (design D4): onboard has no epitome; its disciplines list names all five.
+  // @scenario text orbit-onboard :: Identity statement section :: Enumerates orbit-distinctive layers
+  it('onboard names all five execution disciplines, decision-writing among them', () => {
+    const skill = getOnboardSkillTemplate().instructions;
+    const start = skill.indexOf('- **Execution disciplines** codified in');
+    expect(start).toBeGreaterThan(-1);
+    const list = skill.slice(start, skill.indexOf('\n\n', start));
+    for (const name of ['Read-before-reference', 'Change completeness', 'Pushback', 'No-chaining', 'Decision-writing']) {
+      expect(list, name).toContain(`  - **${name}**`);
+    }
+  });
+
   it('onboard reflects the self-contained fork, not the dead overlay model', () => {
     const skill = getOnboardSkillTemplate().instructions;
     // new orbit-spec framing present
@@ -402,23 +442,24 @@ describe('orbit content fidelity (B1 relocation)', () => {
   describe('references declarations (orbit-skill-generation, D-b2-4 lean scope)', () => {
     it('archive-change declares its exact reference set (D6 added the PR tail)', () => {
       const refs = getArchiveChangeSkillTemplate().references ?? [];
-      expect(refs.map((r) => r.name)).toEqual(['archive-summary-schema.md', 'pr-archive-tail.md']);
+      expect(refs.map((r) => r.name)).toEqual(['archive-summary-schema.md', 'pr-archive-tail.md', 'decision-records.md']);
     });
 
     it('propose and ff declare exactly the shared PR choreography (D6)', () => {
       for (const getTemplate of [getOrbitProposeSkillTemplate, getFfChangeSkillTemplate]) {
         const refs = getTemplate().references ?? [];
-        expect(refs.map((r) => r.name)).toEqual(['pr-choreography.md']);
+        expect(refs.map((r) => r.name)).toEqual(['pr-choreography.md', 'decision-records.md']);
       }
     });
 
     it('explore declares exactly capture-formats.md (D5 body-economy move)', () => {
       const refs = getExploreSkillTemplate().references ?? [];
-      expect(refs.map((r) => r.name)).toEqual(['capture-formats.md']);
+      expect(refs.map((r) => r.name)).toEqual(['capture-formats.md', 'decision-records.md']);
     });
 
-    it('no other workflow declares references', () => {
-      // D6 added references to propose and ff (the shared PR choreography).
+    it('every other workflow declares only the shared decision-record reference', () => {
+      // D6 added references to propose and ff (the shared PR choreography); decision-writing
+      // (design D8) gave every epitome-carrying workflow `decision-records.md`, onboard excepted.
       const withReferences = new Set([
         'archive-change',
         'explore',
@@ -429,7 +470,8 @@ describe('orbit content fidelity (B1 relocation)', () => {
       ]);
       for (const [name, getTemplate] of RELOCATED) {
         if (withReferences.has(name)) continue;
-        expect(getTemplate().references ?? [], `${name} must not declare references`).toEqual([]);
+        const expected = name === 'onboard' ? [] : ['decision-records.md'];
+        expect((getTemplate().references ?? []).map((r) => r.name), `${name} declares only ${JSON.stringify(expected)}`).toEqual(expected);
       }
     });
 

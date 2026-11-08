@@ -59,11 +59,12 @@ What makes orbit distinctive vs running upstream alone:
 
 - **Cold-start orientation** — \`orbit status\` (bare = the current sprint; \`--full\` = the whole program) and \`orbit status --change <name> --boot\` (D-arc Stage D5): ordered artifact pointers in read order, the latest emit per command family with a one-sentence headline, explore-history presence, and the **Touchpoints** view — predicted (design.md's \`## Touchpoints\` section, authored at propose) before apply commits exist; the diff-computed ACTUAL file map (never prose) once they do. Boot is READ-ONLY and computed fresh per invocation — no hand-maintained handoff files anywhere.
 
-- **Four execution disciplines** codified in \`orbit-conventions\`:
+- **Execution disciplines** codified in \`orbit-conventions\`:
   - **Read-before-reference** (authoring-time): when generating code, specs, or docs that name a specific construct, read the actual definition first. Don't infer the shape from common patterns or training-data conventions.
   - **Change completeness** (modification-time): substantive modifications to a change-in-flight must apply fully across ALL affected artifacts before being declared done. Known residue MUST NOT be left for a downstream review to catch.
   - **Pushback** (review-time): verify each flagged issue against current state before acting. Stale findings get reported with evidence and suppressed.
   - **No-chaining** (turn boundary): the AI invokes at most the orbit workflow commands the user's message explicitly requests — one command per explicit request; it recommends, never invokes. Completing a command ends the turn at the position readout and the engine's eligibility line (\`Ready when you are:\`); gate \`passed\` means *eligible*, not *commanded*.
+  - **Decision-writing** (call-time): under every setting, the AI keeps a record of each call it makes in one of the ledger's areas and of each moment it needs the user — a stop record before such a question, a resolution with the user's answer, a ledger entry after the call (\`orbit emit stop\`, \`orbit emit resolution\`, \`orbit emit ledger\`) — without changing what the user sees or is asked. A designed prompt (consent, inflection, closure) is a seam, not a stop, and writes nothing.
 
 ---
 

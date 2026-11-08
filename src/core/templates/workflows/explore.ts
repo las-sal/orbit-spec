@@ -5,6 +5,7 @@
  * templates file into workflow-focused modules.
  */
 import type { SkillTemplate, CommandTemplate } from '../types.js';
+import { DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../disciplines.js';
 import {
   EXPLORE_STATUS_HEADER_PRODUCTION,
   EXPLORE_DECISION_ENTRY_PRODUCTION,
@@ -353,14 +354,15 @@ But this summary is optional. Sometimes the thinking IS the value.
 
 The sections below describe orbit-specific additions on top of upstream's "stance, not workflow" character. The upstream content above is as \`orbit-conventions\`' \`Generated-file disposition\` records it; orbit layers capture affordances, an \`explore.md\` authoring convention, and three invocation modes that activate when the conversation produces material worth keeping.
 
-## Four execution disciplines (epitome)
+## Execution disciplines (epitome)
 
-The four disciplines from \`orbit-conventions\`, embedded per body; detail lives where each fires.
+The disciplines from \`orbit-conventions\`, embedded per body; detail lives where each fires.
 
 - **Read-before-reference (authoring-time)**: before a captured artifact names a specific construct, read its actual definition; unverifiable → ask the user or leave a \`@review:\` marker instead of guessing.
 - **Change completeness (modification-time)**: section moves in \`explore.md\` land whole (a resolved Open question MOVES to Decisions — never left in both); re-read the section after to confirm.
 - **Pushback (review-time)**: when the conversation flags something as already-decided, verify against \`explore.md\` before treating it as new; don't re-litigate captured decisions.
 - **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line — gate \`passed\` means *eligible*, not *commanded*.
+${DECISION_WRITING_DISCIPLINE}
 
 ## Three invocation modes
 
@@ -715,6 +717,7 @@ This warning convention aligns with orbit's don't-auto-invoke-commands and infle
         name: 'capture-formats.md',
         content: EXPLORE_CAPTURE_FORMATS_REFERENCE,
       },
+      { name: 'decision-records.md', content: DECISION_RECORDS_REFERENCE },
     ],
     license: 'MIT',
     compatibility: 'Requires orbit CLI.',

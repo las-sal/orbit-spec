@@ -141,16 +141,36 @@ temporary file and a link) and named the one-resolution race across concurrent w
 Depends-on: decision-layer
 Complete: [ ]
 
-A fifth execution discipline in every generated skill tells the AI when to write a ledger entry (a call in one of
+A fifth execution discipline in every generated workflow body carrying a disciplines epitome tells the AI when to write a ledger entry (a call in one of
 the eighteen areas) and a stop record (one of R-adf-3's conditions), and to write the user's answer as a
 resolution. Under supervised settings it still asks the user exactly as today; the record only keeps the moment.
-The specs that state the set of disciplines say five, and `orbit-decision-records` says "the user" where it names
+The specs that state the set of disciplines stop stating a count (onboard's names all five), and `orbit-decision-records` says "the user" where it names
 the person orbit answers to (R-adf-10). (From decision-layer's D-dl-8; split from the reading step at propose,
 `orbit/explore/decision-writing/explore.md` D-dw-6.)
 
 Exit criteria:
-- Every generated skill carries the discipline, held by a parity test against one owning statement.
+- Every generated workflow body carrying a disciplines epitome carries the discipline, held by a parity test against
+  one owning statement; onboard, a reference read with no epitome, names it.
 - G0 holds.
+
+Shipped as (2026-11-08; archived as `orbit/changes/archive/2026-11-08-decision-writing/`; the charter stands, with the
+additions below): the fifth execution discipline, decision-writing, owned by one fence in `orbit-conventions`'
+`Decision-writing discipline` and composed in `src/core/disciplines.ts` from the write gate's own lists, carried
+byte-equal as the fifth epitome bullet by the fourteen workflow bodies that have an epitome (held by
+`test/core/decision-writing-parity.test.ts`); onboard names it. Every one of those skills also ships
+`references/decision-records.md` — each record's fields, citations and plain-language rule, with an example the test
+submits through the write gate (a proposal-review addition). The epitome headings and the specs that stated a count
+say none now, and `orbit-decision-records` says "the user". The system review closed the statement's moments further:
+the user-facing stop reads by R-adf-3's goal predicate, an act a directly raised condition describes writes its stop
+when nobody asks, a call reached after a clarifying question writes its ledger entry, and a walk of an archived change
+writes no record (the engine's existing scope; a named limit). G0, read as R-adf-9 words it, holds: no readout, gate or
+emit changed, and with every setting at its default the AI asks the user exactly as today. The body edits that are not
+additions are labels only — the fourteen epitome headings and intros, review's three count mentions and onboard's list
+heading lose "four" — and the tests that changed enumerate the edited text or files: the skill hash pins, the
+relocation markers and reference sets in `orbit-content-fidelity.test.ts` and `orbit-generated-surface.test.ts`, the
+sync-specs heading list, `config-profile.test.ts`'s synced fixture and `profile-sync-drift.test.ts`'s reference-less
+example, each recorded under the change's task 3.1. Named limit: until a release carrying decision records is
+installed, the installed `orbit` refuses these commands here, so records are written with the built CLI (CLAUDE.md).
 
 ### Stage decision-reading — a reader checks the records
 
@@ -311,3 +331,8 @@ Exit criteria:
   depends on both (AI recommendation: records unchecked for plain language would put G5 at risk). Sal ratified
   R-adf-10 ("the user", not a name) and chose its scope: role text in the Premise, Goals and charters reworded,
   attributions and this log kept (AI recommendation).
+- 2026-11-08 — decision-writing's proposal review: the user accepted, as within G0's intent (R-adf-9), the epitome
+  heading, intro and count-word edits that correct the discipline count the fifth discipline makes false; G0's
+  wording is unchanged, and the stage's archive names those edits as non-additive (AI recommendation). The stage's
+  first exit criterion is read as every workflow body carrying an epitome; onboard names the discipline without
+  carrying the statement.

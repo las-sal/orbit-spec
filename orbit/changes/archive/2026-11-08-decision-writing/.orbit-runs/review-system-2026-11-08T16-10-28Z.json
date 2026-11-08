@@ -1,0 +1,129 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-08T16:10:28Z",
+  "change": "decision-writing",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/decision-writing/specs/orbit-conventions/spec.md",
+      "line": 10,
+      "title": "The ledger trigger skips a call made after a question no stop condition describes",
+      "recommendation": "The statement's ledger trigger reads 'AFTER any call that falls in a ledger area — made without asking, or made with the user's answer to a stop', and the moment table's row for a covered call says 'made without asking'. A call the AI makes after asking a clarifying question that no stop condition describes (something approved covers it, the AI still checks a name or a wording with the user) satisfies neither branch, so an AI following the statement writes no entry, while `orbit-decision-records`' `Three decision records, one job each` says the ledger records every call the AI made in those areas. The closure sentence's call branch ('in an area neither ledger condition describes, in an area one does (asked, or not asked), or in none') applies asked/not-asked only to the uncovered rows, which is where the gap hides. Make the trigger independent of how the call was reached — 'AFTER any call that falls in a ledger area, however it was reached (without asking, after a question no condition describes, or with the user's answer to a stop)' — and make the covered-call row and the closure say the same; the parity test follows the fence. Found beside the walk's edit to that row, which kept the old 'made without asking' wording: the walk record's W1 rewrote the row's condition, not its trigger, so this is outside the walk record."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "docs/cli.md",
+      "line": 366,
+      "title": "The docs sentence says every workflow skill carries the discipline; onboard does not",
+      "recommendation": "The walk's new sentence reads 'Every workflow skill's decision-writing discipline tells the AI when to write them'. Onboard is one of the fifteen workflow skills and carries no statement (it names the discipline only), which is the overclaim the proposal walk retired as 'every generated skill' (its entry 'Two sites still say the discipline is in every generated skill'). CLAUDE.md:121, from apply, says the same ('the fifth epitome bullet in every workflow body'). Say 'Every workflow skill with a disciplines epitome' in docs/cli.md and 'every workflow body with a disciplines epitome' in CLAUDE.md.",
+      "walk_entry": {
+        "title": "Docs do not say the workflows now write decision records on their own",
+        "file": "docs/cli.md"
+      }
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Graded both walks over their sweep scopes: the fence (statement, moment table, closure, the two added scenarios), src/core/disciplines.ts and decision-records.ts, the proposal, design D8, CLAUDE.md, docs/cli.md, the scenario ledger and the three edited tests. The residual check since the base pass file's commit found every changed file inside some entry's edit record. The archived-change exception was run, not read: `orbit emit stop --change foo` in a scratch project holding only orbit/changes/archive/2026-01-01-foo/ is refused ('workstream foo not found') and writes nothing, so the statement now matches the engine. The user-facing repair was checked against R-adf-3's text (automate-dev-flow.md:72-73), whose condition (2) is goal-based. The citation rules were read against goalExists, rulingExists, checkResolutionCitation and requirementExists. The pattern in what remains: each walk repair closed the branch its finding named, and the one gap left is a third way of reaching a call (after a clarifying question) that neither the proposal walk nor this one enumerated. Passes 4 and 5 have no lens files to run against.",
+  "passes_run": [
+    "1",
+    "2",
+    "3"
+  ],
+  "passes_skipped": [
+    {
+      "pass": "0",
+      "reason": "verification genre: verify-change's subject is the whole change, not the walks' sweep scopes"
+    },
+    {
+      "pass": "4",
+      "reason": "orbit/lenses/perspectives.md does not exist"
+    },
+    {
+      "pass": "5",
+      "reason": "orbit/lenses/critical-paths.md does not exist"
+    },
+    {
+      "pass": "6",
+      "reason": "verification genre: audit-drift's subject is the whole project"
+    }
+  ],
+  "verification": [
+    {
+      "title": "The statement gives user-facing-uncovered two different triggers",
+      "file": "orbit/changes/decision-writing/specs/orbit-conventions/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Upstream-verbatim scenario does not name the reference sync-specs now ships",
+      "file": "orbit/changes/decision-writing/specs/orbit-conventions/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Reference's citation existence rules are looser than the write gate's",
+      "file": "src/core/disciplines.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "Docs do not say the workflows now write decision records on their own",
+      "file": "docs/cli.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "The shared reference omits alternatives from the plain-language rule",
+      "file": "src/core/disciplines.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "Archived-change walks cannot obey the new recording instruction",
+      "file": "src/core/disciplines.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "Stop conditions without a question or ledger entry can go unrecorded",
+      "file": "src/core/disciplines.ts",
+      "verdict": "landed"
+    }
+  ],
+  "final_assessment": "0 critical, 1 warning, 1 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-11-08T15-42-17Z",
+    "2026-11-08T15-42-42Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews decision-writing"
+}
