@@ -153,6 +153,25 @@ Exit criteria:
   one owning statement; onboard, a reference read with no epitome, names it.
 - G0 holds.
 
+Shipped as (2026-11-08; archived as `orbit/changes/archive/2026-11-08-decision-writing/`; the charter stands, with the
+additions below): the fifth execution discipline, decision-writing, owned by one fence in `orbit-conventions`'
+`Decision-writing discipline` and composed in `src/core/disciplines.ts` from the write gate's own lists, carried
+byte-equal as the fifth epitome bullet by the fourteen workflow bodies that have an epitome (held by
+`test/core/decision-writing-parity.test.ts`); onboard names it. Every one of those skills also ships
+`references/decision-records.md` — each record's fields, citations and plain-language rule, with an example the test
+submits through the write gate (a proposal-review addition). The epitome headings and the specs that stated a count
+say none now, and `orbit-decision-records` says "the user". The system review closed the statement's moments further:
+the user-facing stop reads by R-adf-3's goal predicate, an act a directly raised condition describes writes its stop
+when nobody asks, a call reached after a clarifying question writes its ledger entry, and a walk of an archived change
+writes no record (the engine's existing scope; a named limit). G0, read as R-adf-9 words it, holds: no readout, gate or
+emit changed, and with every setting at its default the AI asks the user exactly as today. The body edits that are not
+additions are labels only — the fourteen epitome headings and intros, review's three count mentions and onboard's list
+heading lose "four" — and the tests that changed enumerate the edited text or files: the skill hash pins, the
+relocation markers and reference sets in `orbit-content-fidelity.test.ts` and `orbit-generated-surface.test.ts`, the
+sync-specs heading list, `config-profile.test.ts`'s synced fixture and `profile-sync-drift.test.ts`'s reference-less
+example, each recorded under the change's task 3.1. Named limit: until a release carrying decision records is
+installed, the installed `orbit` refuses these commands here, so records are written with the built CLI (CLAUDE.md).
+
 ### Stage decision-reading — a reader checks the records
 
 Depends-on: decision-writing

@@ -53,7 +53,7 @@ Section 2 of the body SHALL state what orbit IS and enumerate its distinctive la
 #### Scenario: Enumerates orbit-distinctive layers
 
 - **WHEN** the Identity section is read
-- **THEN** the prose names the distinctive layers concretely: editorial review (`/orbit:review` with its reviewer axis — named, with its values left to `orbit-review`'s "Review command available with `--as` mode flag" rather than enumerated here; `/orbit:address-reviews`), drift audit (`/orbit:audit-drift`), capture (lenses — `orbit/lenses/perspectives.md`, `orbit/lenses/critical-paths.md`), program architecture (`/orbit:architect`, `orbit architecture status` — the cross-change declaration tier, D-arc Stage D2), JSON run-summary emission, four execution disciplines (read-before-reference / change completeness / pushback / no-chaining)
+- **THEN** the prose names the distinctive layers concretely: editorial review (`/orbit:review` with its reviewer axis — named, with its values left to `orbit-review`'s "Review command available with `--as` mode flag" rather than enumerated here; `/orbit:address-reviews`), drift audit (`/orbit:audit-drift`), capture (lenses — `orbit/lenses/perspectives.md`, `orbit/lenses/critical-paths.md`), program architecture (`/orbit:architect`, `orbit architecture status` — the cross-change declaration tier, D-arc Stage D2), JSON run-summary emission, the execution disciplines (read-before-reference / change completeness / pushback / no-chaining / decision-writing)
 
 #### Scenario: No augmentation / overlay language
 

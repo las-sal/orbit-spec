@@ -15,7 +15,7 @@ emit `architect-<TS>.json` to the architecture trail with the structured `handof
 
 The system SHALL expose `/orbit:architect [<doc-name>]` as a first-class generated workflow with
 the complete command anatomy: a generated skill (`orbit-architect`) plus a thin launcher command
-(per the D14 pattern), the four execution disciplines block, a run-summary emit, registration in
+(per the D14 pattern), the execution disciplines block, a run-summary emit, registration in
 every generator registry, and installation for all tools (D15 full surface — the addition
 grew the generated surface to 16 workflows at D2; 15 post-D5's review-external merge). Invoked with a `<doc-name>`: create `orbit/architecture/
 <doc-name>.md` scaffolded in the parseable format (per `orbit-architecture-engine`) if absent, or
