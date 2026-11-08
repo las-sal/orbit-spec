@@ -1,0 +1,146 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-08T18:30:58Z",
+  "change": "decision-writing",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/decision-writing/.orbit-runs/review-system-2026-11-08T16-10-28Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-08T16-10-28Z",
+  "latest_apply_token": "2026-11-08T15-22-58Z",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 1
+  },
+  "pushback_verification": "Both verified at HEAD: the statement (spec.md:10, disciplines.ts:55) read 'made without asking, or made with the user's answer to a stop', the covered-call row 'made without asking', and the closure's call branch carried no reach qualifier, so a call after a clarifying question matched no branch; docs/cli.md:366 read 'Every workflow skill's decision-writing discipline' and CLAUDE.md:121 'in every workflow body', while onboard carries no statement. None stale.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The ledger trigger skips a call made after a question no stop condition describes",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/decision-writing/specs/orbit-conventions/spec.md",
+      "line": 10,
+      "classification": "trivial_fix",
+      "action": "the statement's ledger trigger reads 'however you reached it: without asking, after a question no condition describes, or with the user's answer to a stop'; the covered-call row and the closure's call branch carry the same qualifier; the bare-question row says a call it leads to is a call row; a scenario ('A call after a clarifying question writes its ledger entry') is declared untestable; the module composes the same text. Ledger entry ledger-2026-11-08T18-30-42Z records the call.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/disciplines.ts",
+          "orbit/scenario-ledger.yaml",
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "ripple_miss_of": {
+        "walk": "2026-11-08T14-59-02Z",
+        "title": "The shipped ledger trigger excludes calls that required asking the user",
+        "file": "orbit/changes/decision-writing/specs/orbit-conventions/spec.md",
+        "kind": "judgement"
+      },
+      "sweep": {
+        "retired": [
+          "made without asking, or made with the user's answer to a stop",
+          "| a call in a ledger area made without asking that neither"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-writing/specs/orbit-conventions/spec.md",
+            "text": "however you reached it: without asking, after a question no condition describes, or with the user's answer to a stop"
+          },
+          {
+            "path": "src/core/disciplines.ts",
+            "text": "however you reached it: without asking, after a question no condition describes"
+          },
+          {
+            "path": "orbit/changes/decision-writing/specs/orbit-conventions/spec.md",
+            "text": "#### Scenario: A call after a clarifying question writes its ledger entry"
+          },
+          {
+            "path": "orbit/changes/decision-writing/specs/orbit-conventions/spec.md",
+            "text": "nothing for the question itself; a call it leads to is a call row"
+          },
+          {
+            "path": "orbit/scenario-ledger.yaml",
+            "text": "A call after a clarifying question writes its ledger entry"
+          }
+        ],
+        "searched": [
+          "made without asking",
+          "made with the user's answer",
+          "a question no condition describes"
+        ],
+        "scope": [
+          "CLAUDE.md",
+          "orbit/changes/decision-writing/specs/orbit-decision-records/spec.md",
+          "src/core/templates/workflows/onboard.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The docs sentence says every workflow skill carries the discipline; onboard does not",
+      "marker_source": "internal-review",
+      "file": "docs/cli.md",
+      "line": 366,
+      "classification": "trivial_fix",
+      "action": "docs/cli.md reads 'The decision-writing discipline in every workflow skill with a disciplines epitome tells the AI when to write them'; CLAUDE.md reads 'the fifth epitome bullet in every workflow body with a disciplines epitome'",
+      "ripple_cascade": {
+        "applied": [
+          "CLAUDE.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "ripple_miss_of": {
+        "walk": "2026-11-08T15-03-08Z",
+        "title": "Two sites still say the discipline is in every generated skill",
+        "file": "proposal.md",
+        "kind": "scope"
+      },
+      "sweep": {
+        "retired": [
+          "skill's decision-writing discipline tells the AI",
+          "fifth epitome bullet in every workflow body;"
+        ],
+        "introduced": [
+          {
+            "path": "docs/cli.md",
+            "text": "in every workflow skill with a disciplines epitome tells the AI"
+          },
+          {
+            "path": "CLAUDE.md",
+            "text": "in every workflow body with a disciplines\n  epitome"
+          }
+        ],
+        "searched": [
+          "every workflow skill",
+          "every workflow body",
+          "every generated"
+        ],
+        "scope": [
+          "docs/",
+          "README.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": 0,
+  "final_assessment": "Two of two resolved as repairs: the ledger trigger names a call reached after a clarifying question, and the docs and CLAUDE.md say the statement rides every workflow body with a disciplines epitome.",
+  "iteration": 6,
+  "next_recommended": "/orbit:archive decision-writing — user-invoked",
+  "ripple_misses": 2
+}

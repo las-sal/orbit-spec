@@ -115,3 +115,7 @@ scenarios:
   - key: "orbit-conventions :: Decision-writing discipline :: A walk of an archived change writes no record"
     kind: untestable
     why: "The THEN is the AI withholding a record during a walk of an archived change; no test runs a session, and an unwritten record leaves nothing to inspect. The engine's refusal of a decision record on an archived change is its existing scope rule (no archived fallback for ledger, stop or resolution)."
+  # decision-writing system verification walk (2026-11-08) — the third way of reaching a ledger call.
+  - key: "orbit-conventions :: Decision-writing discipline :: A call after a clarifying question writes its ledger entry"
+    kind: untestable
+    why: "The THEN is the AI writing a ledger entry after a clarifying question it asked in a live session; no test runs a session. Graded at first-run from the trail."
