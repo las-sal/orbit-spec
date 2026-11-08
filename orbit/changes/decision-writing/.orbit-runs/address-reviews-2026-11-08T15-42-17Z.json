@@ -1,0 +1,200 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-08T15:42:17Z",
+  "change": "decision-writing",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/decision-writing/.orbit-runs/review-system-2026-11-08T15-28-56Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-08T15-28-56Z",
+  "latest_apply_token": "2026-11-08T15-22-58Z",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 3
+  },
+  "pushback_verification": "All four verified at HEAD: R-adf-3 (automate-dev-flow.md:72-73) defines condition (2) by ratified-goal coverage and (1) by precedent, while the fence's ledger clause and rows 24-25 used 'nothing approved' for both; the Upstream-verbatim THEN named no reference though sync-specs.ts now declares decision-records.md; CITATION_EXISTS omitted the whole-ID, fence and resolution-content checks decision-records.ts makes; docs/cli.md's emit section named no discipline. None stale.",
+  "resolution_summary": {
+    "resolved": 4,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The statement gives user-facing-uncovered two different triggers",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/decision-writing/specs/orbit-conventions/spec.md",
+      "line": 10,
+      "classification": "trivial_fix",
+      "action": "option A, conforming to R-adf-3: the statement's ledger clause now reads 'when `security-unprecedented` or `user-facing-uncovered` describes the call, by its own gloss above, the entry cites nothing and names that stop'; the moment table's three ledger rows and the closure sentence read each condition by its own gloss, the closure stating that a requirement-supported call no ratified goal covers is user-facing-uncovered; the open-stop scenario's WHEN names such a call; the module composes the same text; the proposal's What Changes and the reference's [] sentence follow. Option B (amending R-adf-3) not taken. Ledger entry ledger-2026-11-08T15-41-03Z records the call.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/disciplines.ts",
+          "orbit/changes/decision-writing/proposal.md",
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "when nothing approved covers the call, the entry names its stop",
+          "in an area with nothing to rely on (asked, or not asked)",
+          "naming the stop it raised when nothing approved covers it",
+          "When nothing approved covers the call"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-writing/specs/orbit-conventions/spec.md",
+            "text": "describes the call, by its own gloss above, the entry cites nothing and names that stop"
+          },
+          {
+            "path": "orbit/changes/decision-writing/specs/orbit-conventions/spec.md",
+            "text": "ratified goal covers is `user-facing-uncovered`, and its entry cites nothing and names that stop"
+          },
+          {
+            "path": "src/core/disciplines.ts",
+            "text": "describes the call, by its own gloss above, the entry cites nothing and names that stop"
+          },
+          {
+            "path": "orbit/changes/decision-writing/proposal.md",
+            "text": "`user-facing-uncovered` describes it, each by its own gloss"
+          }
+        ],
+        "searched": [
+          "nothing approved covers",
+          "nothing approved to rely on",
+          "no ratified goal covers",
+          "with something approved to rely on"
+        ],
+        "scope": [
+          "CLAUDE.md",
+          "docs/cli.md",
+          "test/core/decision-writing-parity.test.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Upstream-verbatim scenario does not name the reference sync-specs now ships",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/decision-writing/specs/orbit-conventions/spec.md",
+      "line": 205,
+      "classification": "trivial_fix",
+      "action": "the Upstream-verbatim THEN now adds 'beside the body, the skill ships only the shared decision-record reference (`references/decision-records.md`) that the epitome's decision-writing statement points at'; its tagged text test in verify-scenario-map.test.ts asserts sync-specs's references are exactly that file and its additions name it",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/templates/verify-scenario-map.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-writing/specs/orbit-conventions/spec.md",
+            "text": "beside the body, the skill ships only the shared decision-record reference"
+          },
+          {
+            "path": "test/core/templates/verify-scenario-map.test.ts",
+            "text": "toEqual(['decision-records.md'])"
+          }
+        ],
+        "searched": [
+          "Upstream-verbatim",
+          "orbit-sync-specs"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Reference's citation existence rules are looser than the write gate's",
+      "marker_source": "internal-review",
+      "file": "src/core/disciplines.ts",
+      "line": 106,
+      "classification": "trivial_fix",
+      "action": "CITATION_EXISTS now states the gate's rules: requirement and ruling headings outside fenced code, ruling and goal IDs matched whole (`G1` does not match `**G10`), the resolution lookup order and its JSON/`command`/`doc` checks, and the decision's live-or-absent Disposition",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "accepted when a resolution record"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/disciplines.ts",
+            "text": "so `G1` does not match `**G10`"
+          },
+          {
+            "path": "src/core/disciplines.ts",
+            "text": "reads as JSON whose `command` is `resolution`"
+          }
+        ],
+        "searched": [
+          "CITATION_EXISTS",
+          "goalExists",
+          "rulingExists",
+          "checkResolutionCitation"
+        ],
+        "scope": [
+          "src/core/decision-records.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Docs do not say the workflows now write decision records on their own",
+      "marker_source": "internal-review",
+      "file": "docs/cli.md",
+      "line": 364,
+      "classification": "trivial_fix",
+      "action": "docs/cli.md's emit section now says every workflow skill's decision-writing discipline tells the AI when to write the records, under every setting and without changing what the user is asked, so a trail's decisions/ folder fills as the work runs; a walk of an archived change writes none",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "docs/cli.md",
+            "text": "a trail's `decisions/` folder fills as the work runs"
+          }
+        ],
+        "searched": [
+          "decision record",
+          "decisions/"
+        ],
+        "scope": [
+          "docs/concepts.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": 0,
+  "final_assessment": "Four of four resolved as repairs: the user-facing stop reads by R-adf-3's goal predicate (option A), the Upstream-verbatim scenario names the shared reference, the reference states the gate's citation rules, and docs/cli.md names the discipline.",
+  "iteration": 4,
+  "next_recommended": "/orbit:address-reviews decision-writing",
+  "ripple_misses": 0
+}

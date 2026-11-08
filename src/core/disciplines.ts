@@ -5,7 +5,7 @@ import {
   LEDGER_AREAS,
   LEDGER_STOP_CONDITIONS,
   PAYLOAD_STOP_CONDITIONS,
-  PLAIN_FIELDS,
+  READER_BOUND_FIELDS,
   STOP_CONDITIONS,
   type DecisionCommand,
 } from './decision-records.js';
@@ -42,17 +42,21 @@ export const DECISION_RECORDS_REFERENCE_NAME = 'decision-records.md';
 const CONDITIONS = PAYLOAD_STOP_CONDITIONS.map(c => `${code(c)} (${CONDITION_GLOSS[c as PayloadStopCondition]})`).join(', ');
 const AREAS = LEDGER_AREAS.map(code).join(', ');
 const LEDGER_STOPS = LEDGER_STOP_CONDITIONS.map(code).join(' or ');
+/** The conditions raised directly, with no ledger entry: the payload conditions the ledger names no stop of. */
+const DIRECT_STOPS = PAYLOAD_STOP_CONDITIONS.filter(c => !(LEDGER_STOP_CONDITIONS as readonly string[]).includes(c)).map(code);
+const DIRECT_STOPS_TEXT = `${DIRECT_STOPS.slice(0, -1).join(', ')} or ${DIRECT_STOPS[DIRECT_STOPS.length - 1]}`;
 
 /** The epitome's fifth bullet, carried byte-equal by every workflow body that has an epitome. */
 export const DECISION_WRITING_DISCIPLINE =
   `- **Decision-writing (call-time)**: under every setting, keep a record of each call and each stop without changing what the user sees or is asked. ` +
   `BEFORE asking the user a question that a stop condition describes — ${CONDITIONS} — write a stop record (\`orbit emit stop\`), then ask exactly as you would have; ` +
   `with the user's answer, write a resolution naming that stop (\`orbit emit resolution\`); ` +
+  `when ${DIRECT_STOPS_TEXT} describes an act you take without asking — the user directed it (they told you to amend a ruling), or no flow asks — write its stop record before the act, then, when the user directed it, a resolution naming that stop whose answer is their direction, and otherwise leave the stop open; ` +
   `AFTER any call that falls in a ledger area — made without asking, or made with the user's answer to a stop — ${AREAS} — write a ledger entry (\`orbit emit ledger\`) citing what it relies on; ` +
-  `when nothing approved covers the call, the entry names its stop (${LEDGER_STOPS}): the one you asked at, or, where you would not have asked, one you write first — ask nothing and leave that stop open. ` +
+  `when ${LEDGER_STOPS} describes the call, by its own gloss above, the entry cites nothing and names that stop: the one you asked at, or, where you would not have asked, one you write first — ask nothing and leave that stop open. ` +
   `A designed prompt — a consent prompt, an inflection prompt (at a gate, or at a base-fingerprint divergence), a walk's closure prompt — is a seam, not a stop, and writes nothing, unless a stop condition also describes it: then write the stop record first and fire the prompt as designed. ` +
   `A question no condition describes writes nothing, nor does a call in no area. ` +
-  `A record names the work it belongs to (\`--change <name>\` for a change or a named exploration, or \`--doc <doc>\` in an architect session); in a session with neither (a project-wide run, an unnamed exploration) write no record, never attaching it to other work. ` +
+  `A record names the work it belongs to (\`--change <name>\` for a change or a named exploration, or \`--doc <doc>\` in an architect session); in a session with neither (a project-wide run, an unnamed exploration), or on an archived change (orbit writes no record to its trail), write no record, never attaching it to other work. ` +
   `What each record carries — its fields, its citations and the plain-language rule, with an example of each — is in \`references/${DECISION_RECORDS_REFERENCE_NAME}\`, beside this skill; a refused record names the field to fix.`;
 
 // ---------------------------------------------------------------------------
@@ -90,7 +94,7 @@ const FIELD_FORM: Record<DecisionCommand, Record<string, string>> = {
   ledger: {
     area: `one of the ledger areas: ${LEDGER_AREAS.map(code).join(', ')}`,
     decided: 'plain; non-blank — what was decided',
-    alternatives: 'a non-empty array of non-blank strings — the options not taken',
+    alternatives: 'plain; a non-empty array of non-blank strings — the options not taken',
     why: 'plain; non-blank — why this one',
     relies_on: 'an array of citations (below), or `[]` together with `raised_stop`',
     raised_stop: `present only when \`relies_on\` is \`[]\`: the stop the call raised, by filename (\`stop-<TS>.json\`), in the same \`decisions/\` folder, of condition ${LEDGER_STOPS}`,
@@ -101,11 +105,11 @@ const FIELD_FORM: Record<DecisionCommand, Record<string, string>> = {
 
 /** How the write gate confirms each citation kind exists. */
 const CITATION_EXISTS: Record<string, string> = {
-  requirement: '`orbit/specs/<capability>/spec.md` holds `### Requirement: <title>`',
-  ruling: '`orbit/architecture/<doc>.md` holds `**<id>**` under `## Rulings index`',
-  goal: '`orbit/architecture/<doc>.md` opens a `## Goals` item with `**<id>`',
-  resolution: 'a resolution record `resolution-<token>.json` exists for that change (active, its exploration, or archived) or in the architecture trail for that doc',
-  decision: "the `explore.md` of the work the entry belongs to holds a live Decisions entry with that ID (refused on a `--doc` record)",
+  requirement: '`orbit/specs/<capability>/spec.md` holds `### Requirement: <title>`, outside fenced code',
+  ruling: '`orbit/architecture/<doc>.md` holds `**<id>**` under `## Rulings index`, outside fenced code, the ID matched whole',
+  goal: '`orbit/architecture/<doc>.md` opens a `## Goals` item with `**<id>` followed by a space, an em dash or `**`, outside fenced code — the ID matched whole, so `G1` does not match `**G10`',
+  resolution: 'a record `resolution-<token>.json` is found for that change (active, then its exploration, then each archive of it, newest first) or in the architecture trail for that doc, reads as JSON whose `command` is `resolution`, and, for `{doc, token}`, whose `doc` is that doc',
+  decision: "the `explore.md` of the work the entry belongs to holds a Decisions entry with that ID whose `Disposition:` is `live` or absent (refused on a `--doc` record)",
 };
 
 /** One example payload per record; a test submits each, unchanged, through its `orbit emit` command. */
@@ -166,14 +170,14 @@ function recordSection(command: DecisionCommand): string {
       '',
       citationLines(),
       '',
-      `When nothing approved covers the call, write \`"relies_on": []\` and \`"raised_stop": "stop-<TS>.json"\`, naming the ${LEDGER_STOPS} stop you wrote for it — never both a citation and a stop.`
+      `When ${LEDGER_STOPS} describes the call (each by its gloss in the decision-writing statement), write \`"relies_on": []\` and \`"raised_stop": "stop-<TS>.json"\`, naming the ${LEDGER_STOPS} stop you wrote for it — never both a citation and a stop.`
     );
   }
   parts.push('', 'Example:', '', '```json', JSON.stringify(DECISION_RECORD_EXAMPLES[command], null, 2), '```');
   return parts.join('\n');
 }
 
-const PLAIN_LIST = DECISION_COMMANDS.flatMap(c => PLAIN_FIELDS[c]).map(code).join(', ');
+const PLAIN_LIST = DECISION_COMMANDS.flatMap(c => READER_BOUND_FIELDS[c]).map(code).join(', ');
 
 /** `references/decision-records.md`, shipped beside every skill whose epitome carries the statement. */
 export const DECISION_RECORDS_REFERENCE = [

@@ -263,6 +263,9 @@ describe('Generated-file disposition is visible in the bodies (rc06b, task 4.2)'
     // No numbered step and no command block: notes only.
     expect(additions).not.toMatch(/^\s*\d+\. \*\*/m);
     expect(additions).not.toContain('```');
+    // decision-writing: beside the body it ships only the shared reference the statement points at.
+    expect((t.references ?? []).map((r) => r.name)).toEqual(['decision-records.md']);
+    expect(additions).toContain('references/decision-records.md');
   });
 
   // @scenario text orbit-conventions :: Generated-file disposition :: Orbit-authored — full ownership

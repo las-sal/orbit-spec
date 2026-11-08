@@ -108,3 +108,10 @@ scenarios:
   - key: "orbit-conventions :: Decision-writing discipline :: A seam a stop condition describes writes its stop first"
     kind: untestable
     why: "The THEN is the AI writing an unresolvable-critical stop before a gate's inflection prompt, the order of acts in a live session; no test runs a session. Graded at first-run (G2, G4)."
+  # decision-writing system walk (2026-11-08, external W2/W3) — the two moments the walk added to the statement.
+  - key: "orbit-conventions :: Decision-writing discipline :: An act the user directed writes its stop and its resolution"
+    kind: untestable
+    why: "The THEN is the AI recognising a ruling amendment the user directed and writing a stop and a resolution around it, the order of acts in a live session; no test runs a session. Graded at first-run (G2, G4)."
+  - key: "orbit-conventions :: Decision-writing discipline :: A walk of an archived change writes no record"
+    kind: untestable
+    why: "The THEN is the AI withholding a record during a walk of an archived change; no test runs a session, and an unwritten record leaves nothing to inspect. The engine's refusal of a decision record on an archived change is its existing scope rule (no archived fallback for ledger, stop or resolution)."

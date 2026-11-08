@@ -1,0 +1,201 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-08T15:42:42Z",
+  "change": "decision-writing",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/decision-writing/.orbit-runs/external-system-2026-11-08T15-29-19Z.md",
+  "source_command": null,
+  "source_token": "2026-11-08T15-29-19Z",
+  "latest_apply_token": "2026-11-08T15-22-58Z",
+  "external_reviewer": "GPT-6 (Codex)",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 3,
+    "suggestion": 0
+  },
+  "pushback_verification": "All three verified at HEAD: PLAIN_LIST was composed from PLAIN_FIELDS (no alternatives) while orbit-decision-records' reader table binds decided, alternatives and why; COMMANDS gives ledger/stop/resolution change and doc scopes with no archived fallback (emit-composition.ts:246, 'a decision is recorded while the work is live'), so the statement directed an archived walk at a refused write; the statement wrote a stop only before a question or for the two ledger conditions, so an unasked ruling-amendment, outward-act or unresolvable-critical had no branch, and D-dw-3's closure (question or call) missed the act a user directs. None stale. The fresh pass's findings converge with none of these.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The shared reference omits alternatives from the plain-language rule",
+      "marker_source": "external",
+      "file": "src/core/disciplines.ts",
+      "line": 176,
+      "classification": "trivial_fix",
+      "action": "decision-records.ts exports READER_BOUND_FIELDS (the requirement table's list, alternatives included) beside PLAIN_FIELDS, now documented as the gate's non-blank subset; the reference's plain-language rule is composed from it and alternatives' form is marked plain; the delta's reference requirement names all seven fields; design D8 names the list; the parity test asserts the rule names every reader-bound field and the gate's list is a subset, with the shipped bug as its mutation",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/decision-records.ts",
+          "orbit/changes/decision-writing/specs/orbit-conventions/spec.md",
+          "orbit/changes/decision-writing/design.md",
+          "test/core/decision-writing-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "binds as plain (`about`"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/decision-records.ts",
+            "text": "export const READER_BOUND_FIELDS"
+          },
+          {
+            "path": "orbit/changes/decision-writing/specs/orbit-conventions/spec.md",
+            "text": "binds as plain (`decided`, `alternatives`,"
+          },
+          {
+            "path": "src/core/disciplines.ts",
+            "text": "flatMap(c => READER_BOUND_FIELDS[c])"
+          },
+          {
+            "path": "orbit/changes/decision-writing/design.md",
+            "text": "`READER_BOUND_FIELDS`"
+          }
+        ],
+        "searched": [
+          "PLAIN_FIELDS",
+          "plain-field list",
+          "binds as plain"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Archived-change walks cannot obey the new recording instruction",
+      "marker_source": "external",
+      "file": "src/core/disciplines.ts",
+      "line": 55,
+      "classification": "trivial_fix",
+      "action": "the statement's no-home clause names the engine's existing rule: 'or on an archived change (orbit writes no record to its trail), write no record'; the moment table's no-home row and the named limit include an archived change; a new scenario ('A walk of an archived change writes no record') is declared untestable in the scenario ledger; CLAUDE.md's summary and docs/cli.md say so. No engine scope changes. Ledger entry ledger-2026-11-08T15-41-05Z records the call.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/decision-writing/specs/orbit-conventions/spec.md",
+          "CLAUDE.md",
+          "orbit/scenario-ledger.yaml"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "an unnamed exploration) write no record, never",
+          "with no change and no doc goes unrecorded"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/disciplines.ts",
+            "text": "or on an archived change (orbit writes no record to its trail), write no record"
+          },
+          {
+            "path": "orbit/changes/decision-writing/specs/orbit-conventions/spec.md",
+            "text": "#### Scenario: A walk of an archived change writes no record"
+          },
+          {
+            "path": "orbit/changes/decision-writing/specs/orbit-conventions/spec.md",
+            "text": "with no change and no doc, or on an archived change, goes unrecorded"
+          },
+          {
+            "path": "orbit/scenario-ledger.yaml",
+            "text": "A walk of an archived change writes no record"
+          },
+          {
+            "path": "CLAUDE.md",
+            "text": "a walk of an archived change\n  writes no record"
+          }
+        ],
+        "searched": [
+          "archived",
+          "no change and no doc",
+          "write no record"
+        ],
+        "scope": [
+          "src/core/emit-composition.ts",
+          "docs/cli.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Stop conditions without a question or ledger entry can go unrecorded",
+      "marker_source": "external",
+      "file": "src/core/disciplines.ts",
+      "line": 49,
+      "classification": "trivial_fix",
+      "action": "the statement gains the branch 'when `ruling-amendment`, `outward-act` or `unresolvable-critical` describes an act you take without asking — the user directed it, or no flow asks — write its stop record before the act, then, when the user directed it, a resolution naming that stop whose answer is their direction, and otherwise leave the stop open' (the three composed from PAYLOAD_STOP_CONDITIONS minus LEDGER_STOP_CONDITIONS); the moment table gains that row and the closure derivation names the act as its own branch; a new scenario ('An act the user directed writes its stop and its resolution') is declared untestable; the proposal and CLAUDE.md summaries follow; the parity test's condition-order check is scoped to the condition list, which the new clause's second mention had made vacuous. Ledger entry ledger-2026-11-08T15-41-04Z records the call.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/decision-writing/specs/orbit-conventions/spec.md",
+          "orbit/changes/decision-writing/proposal.md",
+          "CLAUDE.md",
+          "orbit/scenario-ledger.yaml",
+          "test/core/decision-writing-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "in an area with something to rely on"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/disciplines.ts",
+            "text": "describes an act you take without asking"
+          },
+          {
+            "path": "orbit/changes/decision-writing/specs/orbit-conventions/spec.md",
+            "text": "or an act a directly raised condition describes, taken with no question"
+          },
+          {
+            "path": "orbit/changes/decision-writing/specs/orbit-conventions/spec.md",
+            "text": "#### Scenario: An act the user directed writes its stop and its resolution"
+          },
+          {
+            "path": "orbit/changes/decision-writing/proposal.md",
+            "text": "or before an act a directly raised one describes"
+          },
+          {
+            "path": "CLAUDE.md",
+            "text": "or before an act one describes, taken without"
+          },
+          {
+            "path": "test/core/decision-writing-parity.test.ts",
+            "text": "function conditionList("
+          }
+        ],
+        "searched": [
+          "raised directly",
+          "without asking",
+          "ruling-amendment",
+          "a question for the user"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": 0,
+  "final_assessment": "Three of three resolved as repairs: the reference's plain-language rule names alternatives from a reader-bound list, the statement names an archived change's walk as having no home for a record, and an act a directly raised condition describes writes its stop when nobody asks.",
+  "iteration": 5,
+  "next_recommended": "/orbit:review --as system decision-writing",
+  "ripple_misses": 0
+}

@@ -363,7 +363,9 @@ Usage: `orbit emit <emit-command>`, where `<emit-command>` is one of `explore`, 
 
 `ledger`, `stop` and `resolution` are not run summaries. They write decision records — a call the AI made that affects
 the user or security, a moment a run needed you, and your answer to it — to `.orbit-runs/decisions/<command>-<TS>.json`
-of the change, exploration or architecture trail. They take `--change` or `--doc`, and carry no next step.
+of the change, exploration or architecture trail. They take `--change` or `--doc`, and carry no next step. Every workflow
+skill's decision-writing discipline tells the AI when to write them, under every setting and without changing what
+you are asked, so a trail's `decisions/` folder fills as the work runs; a walk of an archived change writes none.
 
 | Option | Description |
 |---|---|

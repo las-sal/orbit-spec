@@ -70,7 +70,18 @@ export const DECISION_PAYLOAD_FIELDS: Record<DecisionCommand, string[]> = {
   resolution: ['stop', 'answer', 'effect', 'defines', 'detail'],
 };
 
-/** The plain-language fields each record binds (`Decision records are written for a reader …`). */
+/**
+ * The fields `Decision records are written for a reader who knows only the architecture` binds, per
+ * record — the reader-facing list, as that requirement's table names them. `PLAIN_FIELDS` below is
+ * the write gate's subset of it that must be a non-blank string (`alternatives` is checked as an array).
+ */
+export const READER_BOUND_FIELDS: Record<DecisionCommand, string[]> = {
+  ledger: ['decided', 'alternatives', 'why'],
+  stop: ['about', 'question'],
+  resolution: ['answer', 'effect'],
+};
+
+/** The plain-language fields the write gate holds to a non-blank string (a subset of `READER_BOUND_FIELDS`). */
 export const PLAIN_FIELDS: Record<DecisionCommand, string[]> = {
   ledger: ['decided', 'why'],
   stop: ['about', 'question'],

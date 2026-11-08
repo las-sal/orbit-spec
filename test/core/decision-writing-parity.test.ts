@@ -20,6 +20,8 @@ import {
   DECISION_PAYLOAD_FIELDS,
   LEDGER_AREAS,
   PAYLOAD_STOP_CONDITIONS,
+  PLAIN_FIELDS,
+  READER_BOUND_FIELDS,
   type DecisionCommand,
 } from '../../src/core/decision-records.js';
 import { composeAndWriteEmit } from '../../src/core/emit-composition.js';
@@ -122,6 +124,13 @@ function citationFailure(ref: string): string | null {
   return null;
 }
 
+/** The statement's condition list: between its BEFORE clause's opening dash and `write a stop record`. */
+function conditionList(statement: string): string {
+  const start = statement.indexOf('a stop condition describes — ');
+  const end = statement.indexOf(' — write a stop record', start);
+  return start < 0 || end < 0 ? '' : statement.slice(start, end);
+}
+
 // ---------------------------------------------------------------------------
 
 describe('decision-writing statement ↔ owning fence', () => {
@@ -135,7 +144,7 @@ describe('decision-writing statement ↔ owning fence', () => {
 
   // @scenario text orbit-conventions :: Decision-writing discipline :: The statement is composed from the write gate's lists
   it('names every payload condition and every ledger area, in the lists\' order, and not tripwire', () => {
-    expect(inOrder(DECISION_WRITING_DISCIPLINE, PAYLOAD_STOP_CONDITIONS)).toBeNull();
+    expect(inOrder(conditionList(DECISION_WRITING_DISCIPLINE), PAYLOAD_STOP_CONDITIONS)).toBeNull();
     expect(inOrder(DECISION_WRITING_DISCIPLINE, LEDGER_AREAS)).toBeNull();
     expect(DECISION_WRITING_DISCIPLINE).not.toContain('tripwire');
   });
@@ -147,7 +156,7 @@ describe('decision-writing statement ↔ owning fence', () => {
     // A dropped area, and two swapped conditions, are each caught by the order check.
     expect(inOrder(DECISION_WRITING_DISCIPLINE.replace('`licensing`, ', ''), LEDGER_AREAS)).toBe('licensing');
     const swapped = DECISION_WRITING_DISCIPLINE.replace('`ruling-amendment`', '`@@`').replace('`outward-act`', '`ruling-amendment`').replace('`@@`', '`outward-act`');
-    expect(inOrder(swapped, PAYLOAD_STOP_CONDITIONS)).not.toBeNull();
+    expect(inOrder(conditionList(swapped), PAYLOAD_STOP_CONDITIONS)).not.toBeNull();
     expect(DECISION_WRITING_DISCIPLINE.replace('`outward-act`', '`tripwire`')).toContain('tripwire');
   });
 });
@@ -233,6 +242,26 @@ describe('the decision-record reference', () => {
   // @scenario text orbit-conventions :: Decision-record reference ships beside the statement :: The reference's fields are the write gate's
   it('names every citation kind the write gate accepts', () => {
     expect(citationFailure(DECISION_RECORDS_REFERENCE)).toBeNull();
+  });
+
+  /** Why the reference's plain-language rule fails to name exactly the reader-bound fields, or null. */
+  const plainRuleFailure = (ref: string): string | null => {
+    const m = ref.match(/The plain fields — ([^\n]*?) — are written for a reader/);
+    if (!m) return 'no plain-language rule';
+    const named = [...m[1].matchAll(/`([a-z_]+)`/g)].map(x => x[1]);
+    const want = DECISION_COMMANDS.flatMap(c => READER_BOUND_FIELDS[c]);
+    return JSON.stringify(named) === JSON.stringify(want) ? null : `the rule names ${JSON.stringify(named)}`;
+  };
+
+  // @scenario text orbit-conventions :: Decision-record reference ships beside the statement :: The reference's fields are the write gate's
+  it('the plain-language rule names every reader-bound field (alternatives among them), and the gate\'s list is a subset', () => {
+    expect(plainRuleFailure(DECISION_RECORDS_REFERENCE)).toBeNull();
+    expect(READER_BOUND_FIELDS.ledger).toContain('alternatives');
+    for (const c of DECISION_COMMANDS) {
+      for (const f of PLAIN_FIELDS[c]) expect(READER_BOUND_FIELDS[c], `${c}.${f}`).toContain(f);
+    }
+    // Mutation: the rule composed from the gate's scalar list alone (the shipped bug) fails.
+    expect(plainRuleFailure(DECISION_RECORDS_REFERENCE.replace('`decided`, `alternatives`, `why`', '`decided`, `why`'))).toMatch(/names/);
   });
 
   it('carries no `json example` block and joins no schema-reference set', () => {

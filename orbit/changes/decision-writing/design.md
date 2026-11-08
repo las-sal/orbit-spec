@@ -77,7 +77,7 @@ question; a seam prompt writes nothing) are `untestable`, their evidence being f
 **D8 — What a record holds ships as a shared reference (proposal review).** The statement says WHEN; a reference
 `references/decision-records.md` says WHAT: each record's command, payload form, fields (composed from
 `DECISION_PAYLOAD_FIELDS`), the citation shapes (the write gate's `CITATION_SHAPES`, exported for it), the
-plain-language rule (from the plain-field list), and one example payload per record (a plain `json` block) executed through the write gate by this change's own
+plain-language rule (from the reader-bound field list, `READER_BOUND_FIELDS`, which the requirement's table names; the gate's non-blank list is its subset), and one example payload per record (a plain `json` block) executed through the write gate by this change's own
 test, which seeds what each example cites. It carries no emit schema block and no `json example` block, so it stays
 outside `orbit-emit-composition`'s round-trip set, whose requirement counts its blocks and seeds by two fixed rules;
 joining that set would modify a fifth capability.

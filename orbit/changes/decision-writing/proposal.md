@@ -12,10 +12,13 @@ to stage `decision-reading` at propose (D-dw-6).
 - A fifth execution discipline, **decision-writing**, owned by one statement in `orbit-conventions` and carried
   byte-equal by every generated workflow body that carries a disciplines epitome (fourteen; onboard, which has
   none, names it). It names the moments: write the stop record BEFORE asking the user a
-  question one of the five AI-raised stop conditions describes; write a resolution with the user's answer; write a
-  ledger entry after any call in the eighteen ledger areas, naming the stop it raised when nothing approved covers it
-  (a stop left OPEN where today's flow asks nothing); and write nothing at a designed prompt (a consent, inflection or
-  closure prompt), a seam, unless a stop condition also describes it. Under supervised settings the AI still asks exactly as today.
+  question one of the five AI-raised stop conditions describes, or before an act a directly raised one describes
+  taken without asking; write a resolution with the user's answer (or their direction); write a ledger entry after
+  any call in the eighteen ledger areas, naming the stop it raised when `security-unprecedented` or
+  `user-facing-uncovered` describes it, each by its own gloss (a stop left OPEN where today's flow asks nothing); write
+  nothing at a designed prompt (a consent, inflection or closure prompt), a seam, unless a stop condition also
+  describes it; and write nothing in a session with no home for a record, an archived change's walk included. Under
+  supervised settings the AI still asks exactly as today.
 - The statement interpolates the stop-condition and area ids from `src/core/decision-records.ts`, so an adopter's
   skill carries what it points at; a parity test holds the generated statement byte-equal to the owning spec's fence.
 - What a record holds — its fields, its citations, the plain-language rule, one example each, executed by a test — ships as a
