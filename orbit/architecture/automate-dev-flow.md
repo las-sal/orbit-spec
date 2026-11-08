@@ -139,7 +139,7 @@ temporary file and a link) and named the one-resolution race across concurrent w
 ### Stage decision-writing — the AI writes the records
 
 Depends-on: decision-layer
-Complete: [ ]
+Complete: [x] 2026-11-08 (Sal)
 
 A fifth execution discipline in every generated workflow body carrying a disciplines epitome tells the AI when to write a ledger entry (a call in one of
 the eighteen areas) and a stop record (one of R-adf-3's conditions), and to write the user's answer as a
@@ -336,3 +336,8 @@ Exit criteria:
   wording is unchanged, and the stage's archive names those edits as non-additive (AI recommendation). The stage's
   first exit criterion is read as every workflow body carrying an epitome; onboard names the discipline without
   carrying the statement.
+- 2026-11-08 — Architect session after decision-writing's archive: Sal ratified stage decision-writing (both exit
+  criteria met; AI recommendation). Its system review added four moments to the statement — the user-facing stop by
+  R-adf-3's goal predicate, an act a directly raised condition describes with nobody asked, a call reached after a
+  clarifying question, and no record on an archived change's walk — recorded in its Shipped-as paragraph. The walks
+  wrote this program's first four ledger entries, in the archived change's `decisions/` folder.

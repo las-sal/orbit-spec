@@ -1,0 +1,30 @@
+{
+  "command": "architect",
+  "timestamp": "2026-11-08T19:19:27Z",
+  "change": null,
+  "doc": "automate-dev-flow",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Ratified stage decision-writing (both exit criteria met) and logged the session; decision-reading, which depends on it, is now the program's next stage, premised with no exploration yet.",
+  "stages_touched": [
+    "decision-writing"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [
+    "decision-writing"
+  ],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      "CLAUDE.md — repo orientation and the five execution disciplines (decision-writing's records here use the built CLI)",
+      "orbit/architecture/automate-dev-flow.md — stage decision-reading's charter and exit criteria; decision-writing's Shipped-as paragraph",
+      "orbit/changes/archive/2026-11-08-decision-writing/explore.md — D-dw-1, D-dw-2 and D-dw-5, assigned to decision-reading",
+      "orbit/changes/archive/2026-11-08-decision-writing/.orbit-runs/decisions/ — four real ledger entries a reading step can be tried on",
+      "orbit/specs/orbit-decision-records/spec.md — the plain-language table whose reader rows the stage covers"
+    ],
+    "next_command": "/orbit:explore decision-reading",
+    "model_hint": null,
+    "seam": "post-architect: decision-writing ratified; decision-reading premised and ready to explore"
+  },
+  "next_recommended": "/orbit:explore decision-reading"
+}
