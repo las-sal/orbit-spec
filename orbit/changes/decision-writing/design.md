@@ -20,8 +20,11 @@ four baseline sentences state the count (`orbit-conventions` twice, `orbit-archi
 - The statement names the stop conditions and ledger areas itself, because an adopter's generated skill has neither
   this repository's specs nor its parser.
 - No baseline sentence states a discipline count that the fifth discipline makes false.
-- G0 as reworded (R-adf-9): with every setting at its default, the AI asks the user exactly as today; the only body
-  change is an addition telling the AI to record something.
+- G0 as reworded (R-adf-9), read to its intent as the user accepted at the proposal review: with every setting at its
+  default, the AI asks the user exactly as today; the only instruction a body gains is one telling the AI to record
+  something, and the only other body edits are labels correcting a count that addition makes false (D3) — none
+  changes what the AI does at a seam or what the user sees. The archive's G0 note names those label edits as
+  non-additive.
 
 **Non-Goals:**
 - The reading step, its brief, and replacement records (stage `decision-reading`).
@@ -46,15 +49,18 @@ byte-equality check is then a substring test with no indentation question.
 
 **D3 — The epitome heading and intro lose their count.** `## Four execution disciplines (epitome)` becomes
 `## Execution disciplines (epitome)`, and "The four disciplines from `orbit-conventions`" becomes "The disciplines from
-`orbit-conventions`"; the two count mentions in `review.ts` (the external-handoff note and the `--parallel` subagent
-note) say "the execution disciplines". The spec sentences that state the count are reworded the same way (no count),
+`orbit-conventions`"; the three count mentions in `review.ts` (the external-handoff note, the flags-detail `--parallel`
+subagent note, and Step 11's gist) say "the execution disciplines". The spec sentences that state the count are reworded the same way (no count),
 except `orbit-onboard`'s, which names all five. Rationale: a count in fifteen headings is what made this change touch
-four capabilities; a sixth discipline should not repeat it (D-dw-6's size breach).
+four capabilities; a sixth discipline should not repeat it (D-dw-6's size breach). These label edits are the non-additive body edits
+the G0 Goal above names; the archive's G0 note lists each.
 
 **D4 — The onboard body names the discipline, it does not carry the statement.** Onboard is a reference read that
 writes nothing (`orbit-onboard`'s non-emission requirement) and has no epitome; its list of disciplines gains a fifth
 descriptive item, and its list heading loses its count. The parity test covers the fourteen epitome bodies; onboard
-is held by its Identity scenario.
+is held by an assertion in `orbit-content-fidelity.test.ts` that its body names all five disciplines, decision-writing
+among them, shown able to fail (task 2.2). Its Identity scenario's tagged test asserts no discipline, so it does not
+hold this.
 
 **D5 — `orbit-decision-records` says "the user" (D-dw-4, R-adf-10).** Six requirements are carried for it: "Sal" as
 the person orbit answers to becomes "the user"; the every-mode named limit is replaced by a pointer at the new
@@ -62,16 +68,32 @@ discipline; and the two pointers at "the follow-on stage (explore.md, D-dl-8)" n
 `The ledger's eighteen areas` limit ("the list is Sal's choice of what matters") is an attribution of who chose and
 stays. The spec's Purpose is edited in place at apply (no delta carries `## Purpose`).
 
-**D6 — Carried scenarios are declared, not left.** Seven baseline scenarios ride in the MODIFIED blocks with no
-declaration today (four in `No-chaining contract`, two in `Architect workflow available`, one in `Generated-file
-disposition`), plus the four new ones. Each gets a `@scenario` tag on a test that asserts what its THEN is about, or an
+**D6 — Carried scenarios are declared, not left.** Six baseline scenarios ride in the MODIFIED blocks with no
+declaration today (four in `No-chaining contract`, two in `Architect workflow available`; every `Generated-file
+disposition` scenario is declared already), plus the new ones. Each gets a `@scenario` tag on a test that asserts what its THEN is about, or an
 `orbit/scenario-ledger.yaml` entry; scenarios about the AI's conduct in a live session (a stop record precedes its
 question; a seam prompt writes nothing) are `untestable`, their evidence being first-run's trail.
 
+**D8 — What a record holds ships as a shared reference (proposal review).** The statement says WHEN; a reference
+`references/decision-records.md` says WHAT: each record's command, payload form, fields (composed from
+`DECISION_PAYLOAD_FIELDS`), the citation shapes (the write gate's `CITATION_SHAPES`, exported for it), the
+plain-language rule (from the plain-field list), and one example payload per record (a plain `json` block) executed through the write gate by this change's own
+test, which seeds what each example cites. It carries no emit schema block and no `json example` block, so it stays
+outside `orbit-emit-composition`'s round-trip set, whose requirement counts its blocks and seeds by two fixed rules;
+joining that set would modify a fifth capability.
+It is one constant, `DECISION_RECORDS_REFERENCE`, in `src/core/disciplines.ts`, attached to each of the fourteen
+epitome templates' `references` array — the way `PR_CHOREOGRAPHY_REFERENCE` is shared by propose and ff. The
+statement's last sentence points at it. Alternatives: an inline clause in the statement (longer in fourteen bodies,
+no executed example; rejected) and a named limit leaving fields to refusals and the reader rule untold until
+`decision-reading` (the records that stage grades would be written by an AI never told its rule; rejected).
+
 **D7 — Tests edited because they enumerate what this change edits (G0, R-adf-9).** The generated-skill hash pins in
 `skill-templates-parity.test.ts` (every body changes); the onboard marker `'Four execution disciplines'` in
-`orbit-content-fidelity.test.ts`; and the sync-specs additions heading list in `verify-scenario-map.test.ts`. Each is
-named in the archive. No assertion about today's behaviour is weakened.
+`orbit-content-fidelity.test.ts`; and the sync-specs additions heading list in `verify-scenario-map.test.ts`. With D8, the per-skill reference lists
+in `orbit-generated-surface.test.ts` and `config-profile.test.ts` gain `decision-records.md` for the fourteen
+skills, and `profile-sync-drift.test.ts`'s reference-less example (`orbit-new-change`, which now ships the reference)
+is re-pointed at a skill that still ships none. Each is named in the archive. No assertion about today's behaviour is
+weakened.
 
 ## Alternatives considered
 
@@ -88,6 +110,10 @@ From explore.md's Considered & out:
 - [An AI may not follow the discipline] → Nothing mechanical can show it does; the scenario ledger says so, and
   first-run's closing review grades G2 and G4 from the trail. Under supervised settings an unwritten record changes
   nothing the user sees.
+- [In this repository the bodies point at commands the installed orbit refuses] → The installed `orbit` (2.0.2)
+  predates decision-layer and answers `unknown emit command 'stop'`. Until a release carrying it is installed, records
+  here are written with the built CLI (`node bin/orbit.js emit …`); the CLAUDE.md entry says so (task 4.2). An
+  adopter's installed orbit and its generated bodies ship together, so this is a dogfooding gap, not an adopter one.
 - [A gloss drifts from the spec's event table] → The fence owns the glosses and the parity test holds the code to it;
   the event table in `orbit-decision-records` is the source the glosses were written from, and both are named in the
   fence's requirement.
@@ -105,10 +131,11 @@ the proposing AI's reading of the file; no engine record
 
 ## Touchpoints
 
-- `src/core/disciplines.ts` — new: `DECISION_WRITING_DISCIPLINE` and the condition glosses.
-- `src/core/templates/workflows/*.ts` — the epitome heading, intro and fifth bullet in fourteen bodies; onboard's list; review's two count mentions.
-- `test/core/decision-writing-parity.test.ts` — new: fence parity, composition, every body carries it.
-- `test/core/templates/skill-templates-parity.test.ts` + `test/core/templates/orbit-content-fidelity.test.ts` + `test/core/templates/verify-scenario-map.test.ts` — the enumerations named in D7.
+- `src/core/disciplines.ts` — new: `DECISION_WRITING_DISCIPLINE`, the condition glosses, and `DECISION_RECORDS_REFERENCE`.
+- `src/core/decision-records.ts` — export the citation shapes and the plain-field list the reference is composed from.
+- `src/core/templates/workflows/*.ts` — the epitome heading, intro and fifth bullet in fourteen bodies; onboard's list; review's three count mentions.
+- `test/core/decision-writing-parity.test.ts` — new: fence parity, composition, every body carries it, every such skill ships the reference, its fields and examples.
+- `test/core/templates/skill-templates-parity.test.ts` + `test/core/templates/orbit-content-fidelity.test.ts` + `test/core/templates/verify-scenario-map.test.ts` + `test/core/templates/orbit-generated-surface.test.ts` + `test/commands/config-profile.test.ts` + `test/core/profile-sync-drift.test.ts` — the enumerations named in D7.
 - `orbit/scenario-ledger.yaml` — entries for the scenarios no test can run.
 - `orbit/specs/orbit-decision-records/spec.md` — the Purpose, edited in place.
 - `CLAUDE.md` — the fifth discipline in its execution disciplines list.

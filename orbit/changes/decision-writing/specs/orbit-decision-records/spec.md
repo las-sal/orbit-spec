@@ -248,13 +248,14 @@ arises. No reader of run summaries reads the folder: each reads only the files d
 ### Requirement: Decision records are written in every mode
 
 Decision records SHALL be written under every setting, today's supervised flow included. Under supervised settings a
-stop record means "the AI would have stopped here": the AI asks the user as it does today, and the record keeps the moment so
+stop record means "the AI would have stopped here": the AI asks the user where it does today and nowhere else (a stop where today's flow asks nothing stays open), and
+the record keeps the moment so
 that G3 (stops are rare enough to be worth it) can be graded before anything runs unattended. A stop halts a run only
 when a setting says so; this capability defines no setting, so in it no stop halts anything. Writing a record never
 changes what the user sees in today's flow.
 
 What tells the AI to write them is `orbit-conventions`' `Decision-writing discipline`, which every generated
-workflow body carries; a record may also be written by invoking its command directly.
+workflow body with a disciplines epitome carries (onboard, which has none, names it); a record may also be written by invoking its command directly.
 
 #### Scenario: A stop under supervised settings halts nothing
 

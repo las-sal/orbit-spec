@@ -1,0 +1,453 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-08T14:58:16Z",
+  "change": "decision-writing",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/decision-writing/.orbit-runs/review-proposal-2026-11-08T00-26-37Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-08T00-26-37Z",
+  "latest_apply_token": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 5,
+    "suggestion": 4
+  },
+  "pushback_verification": "All nine verified against current state: the write gate accepts a ledger entry naming an unresolved stop (src/core/decision-records.ts raised_stop check); review.ts carries three count mentions (406, 1059, 1308); the scenario map shows six carried scenarios undeclared; 16 uses of the name in the baseline, one kept. None stale.",
+  "resolution_summary": {
+    "resolved": 9,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "A no-precedent call made today without asking: the statement either adds a question or leaves the record unwritable",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 24,
+      "classification": "decision_required",
+      "action": "applied the ratified direction A: the statement and table write the stop record and the ledger entry naming it, ask nothing where today's flow asks nothing, and leave the stop open; a scenario covers it; decision-records' every-mode sentence says the AI asks where it does today and nowhere else",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "When the AI would not ask today, it still writes the stop record and the ledger entry naming it, asks nothing, and the stop stays open."
+          },
+          {
+            "label": "B",
+            "body": "Make such a call a question under every setting, as a G0 deviation for the user to ratify."
+          }
+        ],
+        "chosen": "A"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/decision-writing/specs/orbit-decision-records/spec.md",
+          "orbit/changes/decision-writing/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "with nothing approved to rely on | a stop record (`security-unprecedented`",
+          "or, for a call that needed a stop, naming that stop"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-writing/specs/orbit-conventions/spec.md",
+            "text": "leave that stop open"
+          },
+          {
+            "path": "orbit/changes/decision-writing/specs/orbit-conventions/spec.md",
+            "text": "names an open stop"
+          },
+          {
+            "path": "orbit/changes/decision-writing/specs/orbit-decision-records/spec.md",
+            "text": "a stop where today's flow asks nothing stays open"
+          }
+        ],
+        "searched": [
+          "nothing approved to rely on",
+          "asks the user as it does today",
+          "raised_stop"
+        ],
+        "scope": [
+          "src/core/decision-records.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The statement ships the ids but not the record fields, the citation kinds or the plain-language rule",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 10,
+      "classification": "decision_required",
+      "action": "applied the ratified direction C (off the finding's menu, nearest the external pass's ask): an ADDED requirement ships a shared references/decision-records.md beside every statement-carrying skill, composed from the write gate's field and citation lists, with the plain-language rule and one executed example per record; the statement points at it; design D8, tasks 1.3-1.4, D7's test enumerations, proposal",
+      "ratified_via": "chat",
+      "resolution": "C — a shared reference file attached to the fourteen epitome skills, its fields composed from DECISION_PAYLOAD_FIELDS and the citation shapes, one example payload per record executed through the write gate by this change's own test; outside emit-composition's round-trip set so no fifth capability",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Add to the statement one clause naming each record's fields, the citation kinds and the reader rule, composed from DECISION_PAYLOAD_FIELDS."
+          },
+          {
+            "label": "B",
+            "body": "Keep the statement and add a named limit: fields learned from refusals, the plain-language rule untold until decision-reading."
+          }
+        ],
+        "chosen": "other"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/decision-writing/design.md",
+          "orbit/changes/decision-writing/tasks.md",
+          "orbit/changes/decision-writing/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "and a refused record names the field to fix."
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-writing/specs/orbit-conventions/spec.md",
+            "text": "Decision-record reference ships beside the statement"
+          },
+          {
+            "path": "orbit/changes/decision-writing/specs/orbit-conventions/spec.md",
+            "text": "is in `references/decision-records.md`, beside this skill"
+          },
+          {
+            "path": "orbit/changes/decision-writing/design.md",
+            "text": "D8 — What a record holds"
+          },
+          {
+            "path": "orbit/changes/decision-writing/tasks.md",
+            "text": "DECISION_RECORDS_REFERENCE"
+          }
+        ],
+        "searched": [
+          "json example",
+          "Payload schema references are proven by execution",
+          "pr-choreography.md",
+          "references:"
+        ],
+        "scope": [
+          "orbit/specs/orbit-emit-composition/spec.md",
+          "test/core/emit-schema-parity.test.ts",
+          "test/core/templates/orbit-generated-surface.test.ts",
+          "test/commands/config-profile.test.ts",
+          "test/core/profile-sync-drift.test.ts",
+          "src/core/templates/workflows/propose.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The seam set is not defined, and its precedence over a stop condition is unstated",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 25,
+      "classification": "trivial_fix",
+      "action": "named the seams by their owners' terms (consent, inflection at a gate or base-fingerprint divergence, a walk's closure prompt); a seam a stop condition also describes writes the stop first and fires as designed; two table rows, the closure sentence, a scenario; proposal reworded",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/decision-writing/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "Consent, gate and sync prompts are seams",
+          "a consent, gate or sync prompt |",
+          "sync prompts, which are seams"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-writing/specs/orbit-conventions/spec.md",
+            "text": "A seam a stop condition describes writes its stop first"
+          },
+          {
+            "path": "orbit/changes/decision-writing/specs/orbit-conventions/spec.md",
+            "text": "a seam no condition\ndescribes, a seam one does"
+          }
+        ],
+        "searched": [
+          "sync prompt",
+          "inflection prompt",
+          "closure prompt",
+          "consent prompt"
+        ],
+        "scope": [
+          "orbit/specs"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Onboard's fifth item is said to be held by its Identity scenario, whose tagged test asserts no discipline",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 57,
+      "classification": "trivial_fix",
+      "action": "D4 now names an assertion in orbit-content-fidelity.test.ts that onboard names all five disciplines; task 2.2 adds it with a mutation check",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/decision-writing/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "is held by its Identity scenario"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-writing/design.md",
+            "text": "Its Identity scenario's tagged test asserts no discipline"
+          },
+          {
+            "path": "orbit/changes/decision-writing/tasks.md",
+            "text": "show the assertion fails with the fifth item removed"
+          }
+        ],
+        "searched": [
+          "Identity scenario",
+          "onboard"
+        ],
+        "scope": [
+          "test/core/templates/blind-pair-command.test.ts",
+          "test/core/templates/orbit-content-fidelity.test.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The Goal says the only body change is an addition; D3 renames the heading and intro in fourteen bodies",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 24,
+      "classification": "decision_required",
+      "action": "applied the ratified direction A: Goal 4 reads G0 to its intent (the only instruction added is the record-keeping one; the other body edits are labels correcting a count it makes false), D3 names them as the non-additive edits the archive's G0 note lists, and the program's status log records the user's acceptance; G0's wording unchanged",
+      "ratified_via": "chat",
+      "resolution": "A — accept the label edits as within G0's intent; name them non-additive in the archive's G0 note; status-log line in automate-dev-flow.md; no G0 amendment",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/architecture/automate-dev-flow.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the only body\n  change is an addition telling the AI to record something"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-writing/design.md",
+            "text": "non-additive"
+          },
+          {
+            "path": "orbit/architecture/automate-dev-flow.md",
+            "text": "decision-writing's proposal review"
+          }
+        ],
+        "searched": [
+          "only by an addition",
+          "only body change"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Two counts in the design disagree with the tree",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 49,
+      "classification": "trivial_fix",
+      "action": "review.ts count mentions corrected to three (406, 1059, 1308) in D3, Touchpoints, proposal and task 2.2; D6's carried undeclared scenarios corrected to six",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/decision-writing/proposal.md",
+          "orbit/changes/decision-writing/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "two count mentions",
+          "Seven baseline scenarios",
+          "review.ts`'s two mentions"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-writing/design.md",
+            "text": "three count mentions"
+          },
+          {
+            "path": "orbit/changes/decision-writing/design.md",
+            "text": "Six baseline scenarios"
+          }
+        ],
+        "searched": [
+          "four disciplines",
+          "four execution",
+          "orbit status --scenarios"
+        ],
+        "scope": [
+          "src/core/templates/workflows/review.ts"
+        ],
+        "kept": [
+          {
+            "path": "orbit/changes/decision-writing/.orbit-runs/review-proposal-2026-11-08T00-26-37Z.json",
+            "why": "the review pass quotes the old counts"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "D-dw-3's live text gives the pointer bullet the design rejects",
+      "marker_source": "internal-review",
+      "file": "explore.md",
+      "line": 123,
+      "classification": "trivial_fix",
+      "action": "D-dw-3 notes the owning fence is the current statement; D-dw-4's count reads 15 reworded and one attribution kept",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "(16) are reworded"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-writing/explore.md",
+            "text": "The fence is the current statement."
+          },
+          {
+            "path": "orbit/changes/decision-writing/explore.md",
+            "text": "15 are reworded in this change"
+          }
+        ],
+        "searched": [
+          "Sal"
+        ],
+        "scope": [
+          "orbit/specs/orbit-decision-records/spec.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "In this repository the bodies and CLAUDE.md will point at emit commands the installed orbit refuses",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 19,
+      "classification": "trivial_fix",
+      "action": "a design Risk names the installed 2.0.2 gap; task 4.2's CLAUDE.md entry says records here are written with node bin/orbit.js emit until a release is installed",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/decision-writing/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-writing/design.md",
+            "text": "a dogfooding gap"
+          },
+          {
+            "path": "orbit/changes/decision-writing/tasks.md",
+            "text": "node bin/orbit.js emit"
+          }
+        ],
+        "searched": [
+          "unknown emit command",
+          "installed orbit"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "No rule for a moment that belongs to no change and no doc",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 10,
+      "classification": "trivial_fix",
+      "action": "the statement writes no record in a session with neither a change nor a doc; a table row, a named limit (nothing tells the user, since telling would change what the user sees) and a scenario",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-writing/specs/orbit-conventions/spec.md",
+            "text": "A session with no change and no doc writes no record"
+          },
+          {
+            "path": "orbit/changes/decision-writing/specs/orbit-conventions/spec.md",
+            "text": "write no record, never attaching it to other work"
+          }
+        ],
+        "searched": [
+          "project-wide",
+          "Where decision records are kept"
+        ],
+        "scope": [
+          "orbit/specs/orbit-decision-records/spec.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Nine of nine resolved: three by the user's ratified directions (#1 A, an open stop where today's flow asks nothing; #2 C, a shared decision-record reference; #5 A, label edits read as within G0's intent), six as obvious fixes.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews decision-writing",
+  "ripple_misses": 0
+}

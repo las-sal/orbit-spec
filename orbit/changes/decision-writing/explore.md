@@ -122,10 +122,13 @@ refused naming `resolution-D`; an entry written before the replacement keeps its
   answer; write a ledger entry after any call in the eighteen areas made without asking; consent, gate and sync
   prompts are seams, not stops, and write nothing. The epitome bullet in each body: "when a call or a stop arises,
   write its record per `orbit-decision-records`". Rationale: each trigger is an act the AI can see itself about to do.
+  (Since propose the bullet's wording is the owning fence in `orbit-conventions`' `Decision-writing discipline`, which
+  carries the ids an adopter's skill needs, not this pointer; the proposal review added the open-stop and seam rows
+  there. The fence is the current statement.)
   Kind: rule
 - **2026-11-07 — D-dw-4: orbit's text says "the user", not a person's name** (the user, in session) Text this stage
   writes — the discipline, the reading-step brief, and the spec text it adds or changes — names the person orbit
-  answers to as "the user". The normative uses of a name in `orbit-decision-records` (16) are reworded in this change,
+  answers to as "the user". Of the 16 uses of a name in `orbit-decision-records`, 15 are reworded in this change (the Purpose's by direct edit), and one, `The ledger's eighteen areas`' limit, is an attribution kept,
   which modifies that spec anyway. Attributions stay as written: a `(Sal, <date>)` on a ruling or a `ratified … by Sal`
   is a fact about who acted, not a role. The architecture doc's prose is the user's to reword at an architect session.
   Kind: scope

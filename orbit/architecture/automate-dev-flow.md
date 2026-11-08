@@ -144,12 +144,13 @@ Complete: [ ]
 A fifth execution discipline in every generated skill tells the AI when to write a ledger entry (a call in one of
 the eighteen areas) and a stop record (one of R-adf-3's conditions), and to write the user's answer as a
 resolution. Under supervised settings it still asks the user exactly as today; the record only keeps the moment.
-The specs that state the set of disciplines say five, and `orbit-decision-records` says "the user" where it names
+The specs that state the set of disciplines stop stating a count (onboard's names all five), and `orbit-decision-records` says "the user" where it names
 the person orbit answers to (R-adf-10). (From decision-layer's D-dl-8; split from the reading step at propose,
 `orbit/explore/decision-writing/explore.md` D-dw-6.)
 
 Exit criteria:
-- Every generated skill carries the discipline, held by a parity test against one owning statement.
+- Every generated workflow body carrying a disciplines epitome carries the discipline, held by a parity test against
+  one owning statement; onboard, a reference read with no epitome, names it.
 - G0 holds.
 
 ### Stage decision-reading — a reader checks the records
@@ -311,3 +312,8 @@ Exit criteria:
   depends on both (AI recommendation: records unchecked for plain language would put G5 at risk). Sal ratified
   R-adf-10 ("the user", not a name) and chose its scope: role text in the Premise, Goals and charters reworded,
   attributions and this log kept (AI recommendation).
+- 2026-11-08 — decision-writing's proposal review: the user accepted, as within G0's intent (R-adf-9), the epitome
+  heading, intro and count-word edits that correct the discipline count the fifth discipline makes false; G0's
+  wording is unchanged, and the stage's archive names those edits as non-additive (AI recommendation). The stage's
+  first exit criterion is read as every workflow body carrying an epitome; onboard names the discipline without
+  carrying the statement.

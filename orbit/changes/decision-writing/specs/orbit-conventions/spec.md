@@ -7,7 +7,7 @@ discipline, DECISION-WRITING, stated once in this fence and carried byte-equal b
 disciplines epitome:
 
 ```
-- **Decision-writing (call-time)**: under every setting, keep a record of each call and each stop without changing what the user sees or is asked. BEFORE asking the user a question that a stop condition describes — `security-unprecedented` (a security-relevant call with nothing approved to rely on), `user-facing-uncovered` (an end-user-visible call no ratified goal covers), `ruling-amendment` (amending a ratified ruling or goal), `outward-act` (an outward or irreversible act the settings do not grant), `unresolvable-critical` (a CRITICAL review finding no edit inside the change resolves) — write a stop record (`orbit emit stop`), then ask exactly as you would have; with the user's answer, write a resolution naming that stop (`orbit emit resolution`); AFTER a call made without asking that falls in a ledger area — `user-sees-or-does`, `defaults`, `when-things-go-wrong`, `user-data`, `things-others-build-on`, `docs`, `who-can-get-in`, `secrets`, `network-exposure`, `trusting-input`, `new-dependencies`, `permissions-and-sandboxing`, `encryption`, `personal-data-and-privacy`, `cost`, `licensing`, `accessibility`, `performance-user-feels` — write a ledger entry (`orbit emit ledger`) citing what it relies on, or, for a call that needed a stop, naming that stop. Consent, gate and sync prompts are seams, not stops, and write nothing; neither does a question no condition describes, nor a call in no area. A record names the work it belongs to (`--change <name>`, or `--doc <doc>` in an architect session), and a refused record names the field to fix.
+- **Decision-writing (call-time)**: under every setting, keep a record of each call and each stop without changing what the user sees or is asked. BEFORE asking the user a question that a stop condition describes — `security-unprecedented` (a security-relevant call with nothing approved to rely on), `user-facing-uncovered` (an end-user-visible call no ratified goal covers), `ruling-amendment` (amending a ratified ruling or goal), `outward-act` (an outward or irreversible act the settings do not grant), `unresolvable-critical` (a CRITICAL review finding no edit inside the change resolves) — write a stop record (`orbit emit stop`), then ask exactly as you would have; with the user's answer, write a resolution naming that stop (`orbit emit resolution`); AFTER any call that falls in a ledger area — made without asking, or made with the user's answer to a stop — `user-sees-or-does`, `defaults`, `when-things-go-wrong`, `user-data`, `things-others-build-on`, `docs`, `who-can-get-in`, `secrets`, `network-exposure`, `trusting-input`, `new-dependencies`, `permissions-and-sandboxing`, `encryption`, `personal-data-and-privacy`, `cost`, `licensing`, `accessibility`, `performance-user-feels` — write a ledger entry (`orbit emit ledger`) citing what it relies on; when nothing approved covers the call, the entry names its stop (`security-unprecedented` or `user-facing-uncovered`): the one you asked at, or, where you would not have asked, one you write first — ask nothing and leave that stop open. A designed prompt — a consent prompt, an inflection prompt (at a gate, or at a base-fingerprint divergence), a walk's closure prompt — is a seam, not a stop, and writes nothing, unless a stop condition also describes it: then write the stop record first and fire the prompt as designed. A question no condition describes writes nothing, nor does a call in no area. A record names the work it belongs to (`--change <name>`, or `--doc <doc>` in an architect session); in a session with neither (a project-wide run, an unnamed exploration) write no record, never attaching it to other work. What each record carries — its fields, its citations and the plain-language rule, with an example of each — is in `references/decision-records.md`, beside this skill; a refused record names the field to fix.
 ```
 
 The fence is the owner. A generated body cannot read this spec, so the statement it carries names the stop conditions
@@ -21,16 +21,21 @@ writes:
 | the AI is about to ask the user a question a stop condition describes | a stop record, then the question, asked exactly as without the record |
 | the user answers that question | a resolution naming the stop |
 | a call in a ledger area made without asking, with something approved to rely on | a ledger entry citing it |
-| a call in a ledger area with nothing approved to rely on | a stop record (`security-unprecedented` or `user-facing-uncovered`), then, after the answer, the ledger entry naming the stop |
-| a consent, gate or sync prompt | nothing: a designed seam is not a stop |
+| a call in a ledger area with nothing approved to rely on, put to the user as a question | a stop record (`security-unprecedented` or `user-facing-uncovered`), then the question, then, after the answer, the resolution and the ledger entry naming the stop |
+| a call in a ledger area with nothing approved to rely on, made without asking (where today's flow asks nothing) | a stop record of the same conditions, then the ledger entry naming it; nothing is asked, and the stop stays OPEN — no resolution answers it |
+| a designed prompt — a consent prompt, an inflection prompt (at a gate, or at a base-fingerprint divergence), a walk's closure prompt — that no stop condition describes | nothing: a designed seam is not a stop |
+| a designed prompt a stop condition also describes (a gate's inflection prompt over a CRITICAL finding no edit inside the change resolves: `unresolvable-critical`) | a stop record, then the prompt as designed; with the user's answer, the resolution naming the stop |
 | a question no condition describes | nothing |
 | a call in no ledger area | nothing |
+| any moment in a session with no change and no architecture doc (a project-wide audit-drift run, an unnamed exploration, an onboard read) | nothing: decision records have no project-wide home (`orbit-decision-records`' `Where decision records are kept`), and a record is never attached to work it does not belong to |
 | a `tripwire` stop | nothing from the AI: orbit raises it (stage `tripwires` of `automate-dev-flow`), and a payload naming it is refused |
 
-The table is closed by derivation: a moment is either a question for the user — a stop condition, a seam, or
-neither — or a call the AI makes — in an area with or without something to rely on, or in none — and every branch is a
-row. Under supervised settings the discipline changes nothing the user sees or is asked: a stop record keeps the
-moment and halts nothing (`orbit-decision-records`' `Decision records are written in every mode`). Whether a moment
+The table is closed by derivation: a moment is either a question for the user — a stop condition, a seam no condition
+describes, a seam one does, or neither — or a call the AI makes — in an area with something to rely on, in an area with nothing to rely on (asked, or not asked), or in none — and
+every branch is a row; a moment in a session with no change and no doc is its own row whatever its branch. Under supervised settings the discipline changes nothing the user sees or is asked: a stop record keeps the
+moment and halts nothing (`orbit-decision-records`' `Decision records are written in every mode`), and an OPEN stop —
+one written where today's flow asks nothing — is expected: it marks a moment a later setting may halt on. Named limit — a moment in a session
+with no change and no doc goes unrecorded, and nothing tells the user so. Whether a moment
 WAS recorded is a reader's judgement, graded at `automate-dev-flow`'s first-run (G2, G4): orbit checks a record's form
 when it is written, never that a record was owed.
 
@@ -51,10 +56,80 @@ when it is written, never that a record was owed.
 - **THEN** it writes a stop record of condition `ruling-amendment` first, then asks exactly as it would have, and on
   the user's answer writes a resolution naming that stop
 
+#### Scenario: A call put to the user leaves all three records
+
+- **WHEN** the AI is about to ask the user how to handle a security-relevant call with nothing approved to rely on
+- **THEN** it writes a stop record of condition `security-unprecedented`, asks exactly as it would have, writes a
+  resolution naming that stop with the user's answer, and, once it makes the call, a ledger entry whose `raised_stop`
+  names that stop
+
+#### Scenario: A call relying on nothing, made without asking, names an open stop
+
+- **WHEN** under default settings the AI picks a default no ratified goal covers, where today's flow asks nothing
+- **THEN** it writes a stop record of condition `user-facing-uncovered`, then a ledger entry with `relies_on: []`
+  whose `raised_stop` names that stop; it asks the user nothing, and no resolution is written
+
+#### Scenario: A session with no change and no doc writes no record
+
+- **WHEN** during a project-wide `/orbit:audit-drift` run the AI is about to ask the user a question a stop condition
+  describes
+- **THEN** it writes no decision record and asks exactly as it would have
+
 #### Scenario: A seam prompt writes nothing
 
-- **WHEN** the AI asks the user for consent at a consent-marked seam, or fires a gate's inflection prompt
+- **WHEN** the AI asks the user for consent at a consent-marked seam, or fires a gate's inflection prompt, and no stop
+  condition describes the prompt
 - **THEN** no decision record is written: the prompt is a seam, not a stop
+
+#### Scenario: A seam a stop condition describes writes its stop first
+
+- **WHEN** a gate's inflection prompt is about to fire over a CRITICAL review finding no edit inside the change
+  resolves
+- **THEN** the AI writes a stop record of condition `unresolvable-critical`, fires the prompt exactly as designed,
+  and on the user's answer writes a resolution naming that stop
+
+### Requirement: Decision-record reference ships beside the statement
+
+Every generated workflow skill whose epitome carries the decision-writing statement SHALL ship the reference
+`references/decision-records.md`, one constant shared by every such skill, so that the statement's pointer names a
+file the installed skill holds. The reference says, for each of the three records (`orbit-decision-records`):
+
+- the command and the payload form: a JSON file passed with `--payload <file>`, carrying `model` (a model id or
+  `null`) and the work it belongs to given as `--change <name>` or `--doc <doc>`;
+- its fields, composed in code from `DECISION_PAYLOAD_FIELDS`, each with the form the write gate accepts;
+- for a ledger entry, the citation kinds of `relies_on`, composed from the write gate's citation shapes, and the
+  `[]`-with-`raised_stop` form;
+- the plain-language rule: the fields `orbit-decision-records` binds as plain (`about`, `question`, `answer`,
+  `effect`, `decided`, `why`) are written for a reader who knows only the program's architecture doc, and any other
+  term the record uses is defined in `defines`;
+- one example payload per record, a fenced `json` block under that record's heading, which a test submits unchanged
+  through the record's `orbit emit` command, in a disposable project seeded with what the example cites (the stop a
+  resolution or ledger entry names, the requirement or ruling it relies on), and which the gate accepts.
+
+The reference documents no emit schema block and carries no `json example` block, so it is outside the set
+`orbit-emit-composition`'s `Payload schema references are proven by execution` counts and seeds; its examples are
+executed by this requirement's own test.
+
+The reference restates no event the statement owns: when to write a record is the statement's, what a record holds is
+the reference's.
+
+#### Scenario: Every statement-carrying skill ships the reference
+
+- **WHEN** the generated workflow skills are generated
+- **THEN** every skill whose epitome carries the decision-writing statement ships `references/decision-records.md`,
+  byte-equal across them, and no other skill ships it
+
+#### Scenario: The reference's fields are the write gate's
+
+- **WHEN** the reference is read
+- **THEN** it names, for each record, every field `DECISION_PAYLOAD_FIELDS` lists for that command and no other, and
+  every citation kind the write gate accepts
+
+#### Scenario: Each example passes the write gate
+
+- **WHEN** each example payload in the reference is submitted through its `orbit emit` command, in a disposable
+  project seeded with what it cites
+- **THEN** the gate accepts it and writes the record
 
 ## MODIFIED Requirements
 
