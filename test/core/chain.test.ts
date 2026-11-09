@@ -253,9 +253,14 @@ describe('The change status says whether the next command may run unasked', () =
     review(T(1), 'system', 'fresh', [['WARNING', 'w']]);
     decision(`stop-${T(3)}.json`, { command: 'stop', condition: 'outward-act', about: 'a', question: 'q?' });
     decision(`stop-${T(4)}.json`, { command: 'stop', condition: 'outward-act', about: 'a2', question: 'q2?', replaces: `stop-${T(3)}.json` });
-    expect(chain().why).toBe('open-stop');
-    // The resolution names the ORIGINAL stop; its replacement is answered with it.
-    decision(`resolution-${T(5)}.json`, { command: 'resolution', stop: `stop-${T(3)}.json`, answer: 'yes', effect: 'e' });
+    // The open stop is named by its LATEST record: the replacement carries the current question, and a
+    // new resolution must name it (the write gate refuses one naming the replaced original).
+    expect(chain()).toMatchObject({ why: 'open-stop', stop: `orbit/changes/x/.orbit-runs/decisions/stop-${T(4)}.json` });
+    decision(`resolution-${T(5)}.json`, { command: 'resolution', stop: `stop-${T(4)}.json`, answer: 'yes', effect: 'e' });
+    expect(chain()).toMatchObject({ may_run: true });
+    // A resolution an older writer left naming the original still answers the chain.
+    fs.rmSync(path.join(runs, 'decisions', `resolution-${T(5)}.json`));
+    decision(`resolution-${T(6)}.json`, { command: 'resolution', stop: `stop-${T(3)}.json`, answer: 'yes', effect: 'e' });
     expect(chain()).toMatchObject({ may_run: true });
   });
 

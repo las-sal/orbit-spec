@@ -41,7 +41,8 @@ input: it enters no gate row, no state, no reason, no position token and no `nex
 
 `orbit status --change <name> --json` SHALL carry a top-level `chain` object — `next` (the change's `next_command`, or
 `null`), `configured` (whether `orbit/config.yaml` carries a `chain` map), `may_run`, `head`, when `may_run` is false
-`why`, and when `why` is `open-stop` `stop` (the trail path of the earliest open stop record) — composed from the gate
+`why`, and when `why` is `open-stop` `stop` (the trail path of the latest record in the earliest open stop's
+replacement chain, which carries the current question and is the record a resolution names) — composed from the gate
 computation and the `chain` setting alone. `head` is the latest token among the change trail's run records — its
 `<command>-<TS>.json` emits and its `external-<mode>-<TS>.md` returns — leaving out the external launch record
 `review-external-<TS>.json`, the `external-prompt-*.md` files and the `decisions/` folder, or `null` when there is none:

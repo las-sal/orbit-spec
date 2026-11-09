@@ -18,7 +18,10 @@ an external review or a blind pair in its launch record's `final_assessment`, an
 `commentary` (the review emit owns a pass's `final_assessment`); a chained fresh review records nothing, because its
 pass is written by a worker whose brief carries nothing from the session that dispatched it — a named limit. Only the session that invoked a
 command reads the object at its end: a worker that session dispatched — a fresh reviewer, a blind pair's fresh half —
-persists its pass and returns, and never chains. With no `chain` setting the object never allows a command,
+persists its pass and returns, and never chains. A command with no change target — an architecture-mode review, a
+`--doc` walk, a project-wide walk — reads no object and ends at its readout. A chained external review or blind pair
+needs a committed tree: on an uncommitted one it writes no run record, the object reports `no-progress`, and the AI
+says the tree is uncommitted — a named limit. With no `chain` setting the object never allows a command,
 and the contract holds exactly as without the setting. Blanket delegation
 ("follow the cadence", "take it through review") covers work WITHIN each explicitly requested
 command (the passes of one review, the tasks of one apply), never the next command; gate `passed`

@@ -10,7 +10,7 @@
 import * as fs from 'fs';
 import path from 'path';
 import { CHAIN_KEYS, resolveChainSetting, type ChainKey } from './project-config.js';
-import { chainOf, readDecisionFolder } from './decision-records.js';
+import { chainOf, latestInChain, readDecisionFolder } from './decision-records.js';
 import { resolveExternalRunner, type RunnerResolution } from './external-runner.js';
 
 export { CHAIN_KEYS, type ChainKey };
@@ -113,9 +113,11 @@ export function trailHead(changeDir: string): string | null {
 }
 
 /**
- * The earliest open stop record in the change's `decisions/` folder, as its repo-relative trail path:
- * a stop is open when no resolution's `stop` names any record of its replacement chain. `null` when
- * every stop is answered (or the folder is absent).
+ * The earliest open stop in the change's `decisions/` folder, as the repo-relative trail path of the
+ * LATEST record in its replacement chain: a stop is open when no resolution's `stop` names any record of
+ * its chain. The latest record carries the current question, and a new resolution must name it (the
+ * write gate refuses one naming a replaced record). `null` when every stop is answered (or the folder
+ * is absent).
  */
 export function earliestOpenStop(projectRoot: string, changeDir: string): string | null {
   const dir = path.join(changeDir, '.orbit-runs', 'decisions');
@@ -128,7 +130,8 @@ export function earliestOpenStop(projectRoot: string, changeDir: string): string
   for (const [name, r] of folder.records) {
     if (!name.startsWith('stop-') || !r || r.command !== 'stop') continue;
     if (chainOf(folder, name).some(member => answered.has(member))) continue;
-    return path.relative(projectRoot, path.join(dir, name)).split(path.sep).join('/');
+    const current = latestInChain(folder, name);
+    return path.relative(projectRoot, path.join(dir, current)).split(path.sep).join('/');
   }
   return null;
 }

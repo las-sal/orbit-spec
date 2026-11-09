@@ -44,7 +44,8 @@ and `/orbit:archive`. The engine never names a review before an unpassed gate it
    - `open-stop` reads the change's `decisions/` folder with `readDecisionFolder` and `chainOf` from
      `src/core/decision-records.ts`: a stop is open when no resolution's `stop` names any record of its chain. The
      decision-writing discipline leaves some stops open by design (an act taken without asking), so the object names
-     the earliest open one as `stop`; the end step puts that stop's question to the user, and the resolution their
+     the earliest open one as `stop`, by the latest record of its replacement chain (the current question, and the
+     record a resolution must name); the end step puts that stop's question to the user, and the resolution their
      answer writes clears the row on the next read.
    - `needs-user` reads `resolveExternalRunner` (`src/core/external-runner.ts`): no runner, or one not reachable,
      means the external half would be pasted.
@@ -113,6 +114,13 @@ and `/orbit:archive`. The engine never names a review before an unpassed gate it
   proposal walk, 2026-11-09, option A over a routine "file as task" default). → A named limit: if these stops turn out
   to be a frequent reason a chain halts, the routine reading (option B) is reopened — the fixture chain and the trial
   elsewhere (R-adf-5) are where that frequency shows.
+- [A chained external review or blind pair meets an uncommitted tree] Apply and the walk commit nothing, while the
+  pair's preflight refuses any uncommitted change and a launched external review needs a clean tree, so the common
+  arrivals under `review-external` (apply, then the pair; a walk, then a re-review) write no run record. → A named
+  limit: the chain stops on `no-progress`, and the end step says the tree is uncommitted. A `dirty-tree` reason would
+  have the engine read git state, which no engine step does. A commit before the chained command — the fix that makes
+  the loop run — is carried to the stage's second change (the system walk, 2026-11-09, the user's word: "c feels right
+  to me. ok to do a first").
 - [A long chain grows the session's context] → A named limit until the driver, which clears context per phase (R-adf-8).
 - [A review-and-walk loop that never converges spends without bound] → Each iteration writes records, so
   `no-progress` does not catch it; the tripwires stage's budget signal, and D-sc-18's follow-up program, own it.

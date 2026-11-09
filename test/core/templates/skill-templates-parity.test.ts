@@ -134,8 +134,10 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // rc17a-invoked-coverage apply (2026-10-05), a PLANNED move (its task 4.2): Step 3's all_done clause
   // stopped naming "spec-driven v4" and `blind-pair` as the post-apply slot — under v5 which review comes
   // next depends on the cadence and the review preference, so the body says it is read, not predicted.
-  getApplyChangeSkillTemplate: '34c70c78939e02074da441ee6d53901ac9e24109e2777b7d53e41c2fd34489cf',
-  getFfChangeSkillTemplate: 'aa52dbc4d4154eff15b39bd9a980b6b6d98a10ef74bceab3ce94f231756e2f9d',
+  // seam-chaining (2026-11-09): the Chain end step and the no-chaining epitome clause, at apply (task 3.1) and again at the system walk.
+  getApplyChangeSkillTemplate: '121b4c9bdde016a74cff0eb9e877f90eb12c095c585974740651e2b7a82ef7cb',
+  // seam-chaining (2026-11-09): the Chain end step and the no-chaining epitome clause, at apply (task 3.1) and again at the system walk.
+  getFfChangeSkillTemplate: 'eb297c29a9b5700782c7609b4af9917195693a867c691b30ea7322940fc9aefe',
   getSyncSpecsSkillTemplate: '4db517054b746be971860338953a7e3327c60fd90d815f3f4c53f45f90a924d5',
   // rc08b-walk-routing (2026-10-05, task 3.3): the command-table row's retired "auto-discovers … when invoked
   // with a change name and no markers found" became the discovery sentence. One re-record, both onboard hashes.
@@ -145,7 +147,8 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // landing-page (2026-10-12, task 2.2), a PLANNED move: the Orientation CLI bullet names `orbit --version` as
   // printing orbit's own version and states the upstream engine baseline 1.3.1 apart from it (design D6), because
   // `--version` prints 2.0.0 from this stage on. One re-record, both onboard hashes.
-  getOnboardSkillTemplate: '24c7d5898101cd9ee3249a233c1b971e6ed25ca07683c172e395ff49501d9edf',
+  // seam-chaining system walk (2026-11-09): the No-chaining line qualified by the project's `chain` setting.
+  getOnboardSkillTemplate: 'b425441abd792a0da63706d56d1a7f9cf668beafa46f8729b99550d7ee1e1bc8',
   getOrbitExploreCommandTemplate: 'ca4bdbd66993b629a5d234d2166efc1681b69da7e7e5665c1926b8e8ab154dda',
   getOrbitNewCommandTemplate: '18edaa0b230e31b5d55952d6b6328237c0ac7b6c85c23d44e5aa3e024a29aaba',
   getOrbitContinueCommandTemplate: '19b561b34b9e9946e6babd7faa74169efca692190dc5d036d2d5044aed0e5d16',
@@ -202,7 +205,8 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // Moved a second time at rc09a's system walk (2026-10-11): the brief's validation named as non-strict, the
   // Split route's "the rest of the flow runs unchanged", "run" for "re-run" under Declare, and the heading
   // line's "exactly" dropped (the parser reads CommonMark indentation) — one re-record for the walk's edits.
-  getOrbitProposeSkillTemplate: '9fd81ccfc3fda83371f6f2dbc8b5e62475e4d777c1c28e8843482c56a87828ba',
+  // seam-chaining (2026-11-09): the Chain end step and the no-chaining epitome clause, at apply (task 3.1) and again at the system walk.
+  getOrbitProposeSkillTemplate: '934a2955ba4f6e3163642949b27c80481b20891c29ebd224ed9fb93aec9a4ba3',
   getOrbitProposeCommandTemplate: '33077b4185c425952edcdf14f4f16f2a0fa9d5961158f3c63534b58cee2576fb',
   getFeedbackSkillTemplate: 'ded61ad85c5050f7bf241870b14bfcdd929f0be68a028c1130fd30a66efbda3b',
   // rc15 (ended-stage-state, 2026-09-29): the orbit-architect body moved ONCE, deliberately — §5 (the
@@ -238,14 +242,14 @@ const EXPECTED_GENERATED_SKILL_CONTENT_HASHES: Record<string, string> = {
   'orbit-explore': '76dca5fd1d4695ed615200485340acbbd092f84307bdd46eb02e7d1fcd6c9127', // rc16-retirement-sweep: moved once with the body at apply, a second time at the system blind-pair walk (see the function-hash note above)
   'orbit-new-change': '7a474b86d0e0156a1b89516d97878e50c9e3a4e0fa6ef2d66a35670f46731806',
   'orbit-continue-change': 'd6e3515a1bd92815cedf4a6718d9d2c7374854dddddc16c16dc89db5bc479541',
-  'orbit-apply-change': 'f2ec79d391e305889ab22a9f186a459bc58c4671401668906fde254762683bbc', // rc17a apply: the v4 clause (see the function-hash note above)
-  'orbit-ff-change': '2c73d97b6145df21e5df72cc0cf8923726e6e589e088009a233ea27abff9e0c6',
+  'orbit-apply-change': 'c8854be0cf84504853b71296cb4e1d330c52abd06a42438dc3e86cf6d724908e', // rc17a apply: the v4 clause (see the function-hash note above); then seam-chaining: the Chain end step and the epitome clause, at apply and the system walk
+  'orbit-ff-change': 'c2835ef5beb94c3d85c1dffb3f11ca68b1aed5709f40913685a570bcf8dd02c9', // seam-chaining: the Chain end step and the epitome clause, at apply and the system walk
   'orbit-sync-specs': '09ebdddd32d976022699b1575f8cf5e85fabf57ea71f1aa1afce1c793f322c99',
   'orbit-archive-change': '224a3b96f64594ba9dada22c73e6b5df459e8511ed5f8f456f21440ac62298e0', // rc10-apply-closure task 2.8, then its system walk (see the function-hash note above)
   'orbit-bulk-archive-change': 'ebbccd064bd5237d4ea18c08ac0e88114a24733588900fea32d67d44e36cf6b4', // rc10-apply-closure task 2.8, then its system walk (see the function-hash note above)
   'orbit-verify-change': '86d0fad7fe26e44c2df6e52bcac54c015a4911afd13bb288a825495773c99390', // rc06b-map-readers (2026-10-05): moved with the body's step 6 edit, then again at system walk 2's additions edit (see the function-hash note above)
-  'orbit-onboard': '687ccb052066c4a0cb96b02ed20a8c4a5508a78503d6367f9dd577b0894a429e', // landing-page task 2.2 (see the function-hash note above)
-  'orbit-propose': '5519ef7b7ab9b6817a64a6c555ad283b522302c27c187527a52ec9ff06205264', // rc13c, then rc03b, then rc05's system walk, then rc09a's size brief (task 5.3) and its system walk: moved with the body (see the function-hash notes above)
+  'orbit-onboard': 'e704c183201dc18a574de32da10a8722e8a53cc590e455fd66580317761d4698', // landing-page task 2.2 (see the function-hash note above); then seam-chaining system walk: the No-chaining line qualified by the chain setting
+  'orbit-propose': '39ecd70e89577bafbf86093b6049f42479490db982e4b4659403dd1a502ddaef', // rc13c, then rc03b, then rc05's system walk, then rc09a's size brief (task 5.3) and its system walk: moved with the body (see the function-hash notes above); then seam-chaining: the Chain end step and the epitome clause, at apply and the system walk
   'orbit-architect': '3bc22ef12bdb7f4a63aefedaf699077ef6ad112ae331710400fb7cc21697f8b1', // rc15: moved twice with the body — apply, then the system walk; a third time at the post-archive audit walk; a fourth at rc05's apply, the scaffold's escaped backticks (see the function-hash note above)
 };
 
