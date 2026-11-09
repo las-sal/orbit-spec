@@ -1,0 +1,15 @@
+{
+  "command": "propose",
+  "timestamp": "2026-11-09T00:49:04Z",
+  "change": "decision-reading",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Consume-mode propose from the decision-reading exploration (6 live rules, all accounted; 4 bounded residuals carried verbatim into spec text). 3 capabilities, 7 requirements (4 ADDED, 3 MODIFIED), 18 tasks, within every ceiling. Two departures settled at propose: the reading runs by default, a departure from G0 as worded that the user chose over a default-off setting (ruling-amendment stop and resolution recorded, with a defaults ledger entry); and the reading is its own step outside Pass 4, refining D-dr-8, because Pass 4's no-perspectives and --fast skips would contradict a reading placed inside it. The walk's address-reviews body is checked at apply for whether replacement needs a sentence there.",
+  "pr_attachment": {
+    "branch": "decision-reading",
+    "granularity": "per-proposal",
+    "url": "https://github.com/las-sal/orbit-spec/pull/36",
+    "state": "draft"
+  },
+  "next_recommended": "/orbit:review decision-reading — proposal artifacts ready; review before apply"
+}
