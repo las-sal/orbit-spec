@@ -7,7 +7,7 @@
  * definitions into lazy references (passes-{proposal,system,architecture}.md).
  */
 import type { SkillTemplate, CommandTemplate } from '../types.js';
-import { DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../disciplines.js';
+import { CHAIN_END_STEP, DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../disciplines.js';
 
 const REVIEW_RUN_SUMMARY_SCHEMA_REFERENCE = `# Reference: review run-summary schema
 
@@ -444,7 +444,7 @@ const REVIEW_EXTERNAL_HANDOFF_REFERENCE = `# Reference: the external-handoff bra
 
 This branch packages a review request for an external AI (codex, fresh Claude, GPT, etc.) to perform a second-opinion review of an orbit change — the behavior formerly invoked as the standalone \`/orbit:review-external\` command (RETIRED at D-arc Stage D5; the RECORD VOCABULARY IS FROZEN: the T0 emit keeps \`command: "review-external"\` and its \`review-external-<TS>.json\` filename, prompts keep \`external-prompt-<as>-<TS>.md\`, findings keep \`external-<as>-<TS>.md\` — gates, orientation WAITING arithmetic, the report ordinal, and the address-reviews parser all key on those names). The branch writes a self-contained markdown prompt to \`orbit/changes/<change-name>/.orbit-runs/external-prompt-<as>-<TS>.md\` (committed; the external AI reads it from the repo), then takes ONE of two routes. **With no runner launched** (none recorded, or the recorded one not on \`PATH\`) it emits a short invocation snippet to chat that tells the user what to paste into the external AI's session — the handoff exactly as it was before runners existed. **With the user's recorded runner reachable** it launches that runner on the prompt itself, in a throwaway worktree at the handoff commit, and saves and commits the return — no paste (Step 9).
 
-**Runs the review ONLY through the user's recorded runner, and NEVER ingests findings.** The runner is the one the user recorded in their per-user global config (\`orbit-external-runner\`; read through \`orbit external runner --json\`); a runner merely present on \`PATH\` is never launched. With none, the external AI is the user's to run. Either way, ingestion is the change-scoped \`/orbit:address-reviews <change-name>\`, which discovers the saved return as an outstanding pass, or an explicit \`--from-file <path>\` aim — invoked separately, never by this branch.
+**Runs the review ONLY through the user's recorded runner, and NEVER ingests findings.** The runner is the one the user recorded in their per-user global config (\`orbit-external-runner\`; read through \`orbit external runner --json\`); a runner merely present on \`PATH\` is never launched. With none, the external AI is the user's to run. Either way, ingestion is the change-scoped \`/orbit:address-reviews <change-name>\`, which discovers the saved return as an outstanding pass, or an explicit \`--from-file <path>\` aim — invoked separately, never by this branch's own steps: by the user, or, when the change status's \`chain\` object allows it, by the review body's Chain end step.
 
 **Input**: the change name and \`--as proposal|system\` resolved by the review trunk before this reference loads (\`--reviewer external\` requires \`--as proposal|system\`; architecture mode never reaches this branch). Compose the T0 emit via \`orbit emit review-external --change <name>\` — the engine owns the spine, the recommendation \`orbit-run-summary-emit\`'s \`Review-external T0 multi-step recommendation\` owns, and \`awaiting_findings\`.
 
@@ -458,7 +458,7 @@ The execution disciplines travel with the review body that loaded this reference
 
 If a change name is provided, use it. Otherwise:
 - Run \`orbit list --json\` to get available changes.
-- Use **AskUserQuestion** to let the user select.
+- Use **AskUserQuestion** to let the user select. (chain: target)
 
 State \`Using change: <name>\` at the top of the chat output.
 
@@ -469,7 +469,7 @@ Mode comes from \`--as proposal|system\` if specified. If omitted:
 1. Read \`orbit/changes/<name>/tasks.md\`.
 2. **All unchecked** → infer \`proposal\`.
 3. **All checked + code changes visible** (heuristic: \`git log\` shows commits after the change directory was created) → infer \`system\`.
-4. **Ambiguous** → use **AskUserQuestion** to let the user pick.
+4. **Ambiguous** → use **AskUserQuestion** to let the user pick. (chain: target)
 
 Emit a one-line inference note in chat output when \`--as\` was omitted: \`\` Generating external-review prompt as \`<as>\` (inferred from tasks state). \`\`
 
@@ -552,7 +552,7 @@ The **"Output format"** block inside the prompt MUST appear verbatim — the sec
 
 ### 8. Emit the chat invocation snippet (no runner launched)
 
-On the launch route, skip this step: Step 9 owns the chat output. Otherwise print to chat, in this exact order:
+On the launch route, skip this step: Step 9 owns the chat output. Otherwise print to chat, in this exact order (the external return the user pastes back is (chain: not a prompt): the change status's \`chain\` object refuses this route with \`needs-user\` before the command runs):
 
 1. **(optional)** Mode-inference note when \`--as\` was omitted: \`\` Generating external-review prompt as \`<as>\` (inferred from tasks state). \`\`
 2. **(required)** Recommended-session note: \`Recommended session: <phrasing from Step 6>\`
@@ -616,7 +616,7 @@ git commit --only <saved-path> -F '<run-dir>/commit-msg.txt'
 git push
 \`\`\`
 
-(Omit the "Removed" paragraph when nothing was removed.) Then \`git worktree remove --force <run-dir>/worktree\` — a failed removal is reported, never fatal. Then render the return's report with \`orbit status --change <change-name> --report <saved TS>\` and paste it. Do NOT walk it: the walk is \`/orbit:address-reviews\`, invoked separately.
+(Omit the "Removed" paragraph when nothing was removed.) Then \`git worktree remove --force <run-dir>/worktree\` — a failed removal is reported, never fatal. Then render the return's report with \`orbit status --change <change-name> --report <saved TS>\` and paste it. The walk is \`/orbit:address-reviews\`, invoked separately: this step does not walk it, and it runs only when the user invokes it or the change status's \`chain\` object allows it at the review body's Chain end step.
 
 **A failed run** — a non-zero exit, or ANY \`orbit external save\` refusal (no unfenced heading, another change's heading, a reader rejection, an apply after the launch) — commits NOTHING for the return. Report the cause (the exit status, or the save's stderr) and the raw return's path (\`<run-dir>/return.md\`, when it exists; it stays outside the repository), remove the worktree as above, then print the paste fallback: Step 8 item 2 (the recommended-session note, now that the prompt is printed for paste); \`The prompt's ## Repo line names the launch worktree, now removed — read the repository at <repo URL, or the live checkout's path> at commit <handoff-sha> instead.\` — for a pair half, the pair's REVIEWED COMMIT in place of \`<handoff-sha>\` (Step 3b); the Step 8 item 4 pull invocation with its attestation when the handoff push landed, or, when it did not, \`Handoff blocked: the handoff commit <short-sha> is not pushed. Push, then hand off: Pull <repo URL> and read <prompt-path>. ...\` — the prompt is already committed, so only the push leads (never Step 8's commit-the-pending-work text); then Step 8 item 5. The T0 stands, so the gate keeps presenting the external half. An apply after the launch is the one failure with NO paste fallback: the prompt reviews a superseded state, so say so and that the review should be re-run, which packages a new prompt.
 
@@ -1068,7 +1068,7 @@ For each LANDED pass — the fresh pass, then the saved external return — rend
 
 ### 13. End
 
-Render the position readout and the engine's eligibility line from \`orbit status --change <change-name> --json\` — \`Ready when you are: <next_command>\`. The walk is NEVER invoked: \`/orbit:address-reviews\` is the user's to run (no-chaining). When a half is missing — after Step 5b, or a run that failed or wrote nothing — the pair ends OPEN and no half covers alone; read what the gate reports from that same status JSON, never from this text. With one half landed it carries \`openPair\` naming the missing class (after Step 5b, \`{missing: "external"}\`: the pasted return completes the pair when it is saved); with BOTH missing it carries no \`openPair\` and its reason says neither member has landed.
+Render the position readout and the engine's eligibility line from \`orbit status --change <change-name> --json\` — \`Ready when you are: <next_command>\`. The walk is invoked only when the change status's \`chain\` object allows \`/orbit:address-reviews\` — by the review body's Chain end step, which this step ends at — and never otherwise (no-chaining). When a half is missing — after Step 5b, or a run that failed or wrote nothing — the pair ends OPEN and no half covers alone; read what the gate reports from that same status JSON, never from this text. With one half landed it carries \`openPair\` naming the missing class (after Step 5b, \`{missing: "external"}\`: the pasted return completes the pair when it is saved); with BOTH missing it carries no \`openPair\` and its reason says neither member has landed.
 
 ## Session end
 
@@ -1128,7 +1128,7 @@ export function getReviewSkillTemplate(): SkillTemplate {
 
 **Generates findings; does not resolve them.** Resolution flows through \`/orbit:address-reviews\` (inline \`@review:\` markers, OR \`--from-file\` ingesting external-review markdown OR internal review JSON OR audit-drift JSON) or by the user replying directly to the report.
 
-**Input**: Optional change name (or, with \`--as architecture\`, a doc name) and optional \`--as proposal|system|architecture\` mode flag plus secondary flags. If change name omitted, prompt via \`AskUserQuestion\` over \`orbit list --json\` (architecture mode prompts over \`orbit architecture status --json\`'s parseable docs instead). If mode omitted, infer from \`tasks.md\` state (see Step 3) — architecture mode is NEVER inferred.
+**Input**: Optional change name (or, with \`--as architecture\`, a doc name) and optional \`--as proposal|system|architecture\` mode flag plus secondary flags. If change name omitted, prompt via \`AskUserQuestion\` over \`orbit list --json\` (architecture mode prompts over \`orbit architecture status --json\`'s parseable docs instead). If mode omitted, infer from \`tasks.md\` state (see Step 3) — architecture mode is NEVER inferred. (chain: target)
 
 ## Execution disciplines (epitome)
 
@@ -1137,7 +1137,7 @@ The disciplines from \`orbit-conventions\`, embedded per body; detail lives in t
 - **Pushback (review-time) — primary here**: verify every finding against current state before reporting; suppress a stale finding with an evidence note (\`stale finding suppressed: <evidence>\`) whose evidence is what the current state shows. A VERIFICATION-genre pass additionally reads its walk (Step 5).
 - **Read-before-reference (authoring-time)**: every construct a finding names is backed by an actual read (enforcement rule under Special cases); unverifiable → downgrade or omit.
 - **Change completeness (modification-time)**: \`--mark\` insertions land fully in one pass, then sweep for residue (Step 11); stale or partial prior \`.orbit-runs/\` files are cleaned before persisting.
-- **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line — review-cycle COUNT is the user's call; gate \`passed\` means *eligible*, not *commanded*.
+- **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line, invoking no next command unless the change status's \`chain\` object allows it — review-cycle COUNT is the user's call; gate \`passed\` means *eligible*, not *commanded*.
 ${DECISION_WRITING_DISCIPLINE}
 
 ## Pass genre
@@ -1159,13 +1159,13 @@ The table below is a CHECKED MIRROR of \`orbit-conventions\`' \`Review mode deci
 
 ### 1. Resolve the mode
 
-Resolve the MODE first — it decides what the positional even IS. Mode comes from \`--as proposal|system|architecture\`. **Architecture mode is NEVER inferred** — it requires the explicit flag; a positional that happens to match a doc name does NOT trigger it. If \`--as\` is omitted, infer between the change modes from \`orbit/changes/<name>/tasks.md\` checkbox arithmetic: all unchecked → \`proposal\`; all checked + code changes since the change was proposed (\`git log --format=%h -- orbit/changes/<name>/ ':!orbit/changes/<name>/.orbit-runs'\` — hashes only: the inference needs only whether such a commit exists, and commit subjects can carry prior passes' counts) → \`system\`; mixed or ambiguous → \`AskUserQuestion\`. State the resolution in the report header (\`Mode: proposal (inferred from 12 unchecked tasks)\`).
+Resolve the MODE first — it decides what the positional even IS. Mode comes from \`--as proposal|system|architecture\`. **Architecture mode is NEVER inferred** — it requires the explicit flag; a positional that happens to match a doc name does NOT trigger it. If \`--as\` is omitted, infer between the change modes from \`orbit/changes/<name>/tasks.md\` checkbox arithmetic: all unchecked → \`proposal\`; all checked + code changes since the change was proposed (\`git log --format=%h -- orbit/changes/<name>/ ':!orbit/changes/<name>/.orbit-runs'\` — hashes only: the inference needs only whether such a commit exists, and commit subjects can carry prior passes' counts) → \`system\`; mixed or ambiguous → \`AskUserQuestion\` (chain: target). State the resolution in the report header (\`Mode: proposal (inferred from 12 unchecked tasks)\`).
 
 ### 2. Resolve the target
 
-**Change modes** — the target is a CHANGE: use the provided name; otherwise prompt via \`AskUserQuestion\` over \`orbit list --json\` (mark changes with incomplete tasks \`(In Progress)\`). Announce \`Using change: <name> --as <mode>\` at the start of the report header.
+**Change modes** — the target is a CHANGE: use the provided name; otherwise prompt via \`AskUserQuestion\` over \`orbit list --json\` (mark changes with incomplete tasks \`(In Progress)\`) (chain: target). Announce \`Using change: <name> --as <mode>\` at the start of the report header.
 
-**Architecture mode** — the target is a DOC, never a change: do NOT run \`orbit list\` or prompt over changes, and NONE of the change-oriented steps below apply (Step 4's change CLI calls, Step 9's gate tail). The positional resolves against \`orbit/architecture/\` (the filename stem); when omitted or ambiguous, prompt over \`orbit architecture status --json\`'s parseable docs. A doc resolving LEGACY (zero stage-prefixed headings outside fences) is an error suggesting retrofit; MALFORMED (fails the near-miss rule) is an error naming the grammar violation. Announce \`Using doc: <doc-name> --as architecture\`.
+**Architecture mode** — the target is a DOC, never a change: do NOT run \`orbit list\` or prompt over changes, and NONE of the change-oriented steps below apply (Step 4's change CLI calls, Step 9's gate tail). The positional resolves against \`orbit/architecture/\` (the filename stem); when omitted or ambiguous, prompt over \`orbit architecture status --json\`'s parseable docs (chain: target). A doc resolving LEGACY (zero stage-prefixed headings outside fences) is an error suggesting retrofit; MALFORMED (fails the near-miss rule) is an error naming the grammar violation. Announce \`Using doc: <doc-name> --as architecture\`.
 
 ### 3. Resolve flags
 
@@ -1250,7 +1250,7 @@ PATH — strip a trailing :<line> or :<line>:<column> (digits only, at the very 
 
 ### Dispatching a fresh pass (\`--reviewer fresh\`)
 
-A fresh pass is REVIEW pass genre. Spawn a clean-context subagent (the **Task tool**, general-purpose — never a fork of this conversation, which would carry its context) with the review contract, and hand it the brief below. What the brief may carry is \`orbit-conventions\`' \`Review mode decision framework\`'s rule, stated there once; the brief adds nothing beyond it and nothing from the trail. The subagent persists through \`orbit emit review\` with \`reviewer_class: "fresh"\` and its owed \`direction\` (Step 8); this conversation then renders the report from the engine (Step 10) and pastes it. Dispatch is the INVOKING session's act alone: a subagent holding this brief is the worker, skips this step, and never dispatches again.
+A fresh pass is REVIEW pass genre. Spawn a clean-context subagent (the **Task tool**, general-purpose — never a fork of this conversation, which would carry its context) with the review contract, and hand it the brief below. What the brief may carry is \`orbit-conventions\`' \`Review mode decision framework\`'s rule, stated there once; the brief adds nothing beyond it and nothing from the trail. The subagent persists through \`orbit emit review\` with \`reviewer_class: "fresh"\` and its owed \`direction\` (Step 8); this conversation then renders the report from the engine (Step 10) and pastes it. Dispatch is the INVOKING session's act alone: a subagent holding this brief is the worker, skips this step, and never dispatches again. So is the Chain end step: the worker skips it and returns once its pass is persisted, so it never starts a walk or a review while the session that dispatched it is still running — assembling a pair, say.
 
 \`\`\`
 You are the fresh-context reviewer this session dispatched for /orbit:review --as <mode> --reviewer
@@ -1259,7 +1259,8 @@ its steps for that mode as a REVIEW-genre pass, SKIPPING its "Dispatching a fres
 is the invoking session's and is already done; you never dispatch again. Read what the skill's read list
 names for the mode — the change's artifacts, the baseline specs, the lens files and, in system mode, the
 commit range with the trail excluded by the pathspec it gives. Persist through orbit emit review with
-reviewer_class "fresh" and a direction.
+reviewer_class "fresh" and a direction. Skip the skill's closing Chain end step too: once your pass is
+persisted, return — never run another orbit command, whatever the change status's chain object says.
 \`\`\`
 
 **A re-run of a blind pair's missing fresh half.** Before dispatching, read \`orbit status --change <name> --json\`. When the mode's reviewed gate row carries \`openPair: {missing: "fresh"}\`, the run is a RE-RUN: find the pair's open launch L — the latest \`review-external-<TS>.json\` of this mode carrying \`pair: true\`, reading only its \`mode\` and \`pair\` fields — and list the trail's \`apply-*.json\` tokens. With NO apply token later than L, BASE is \`git log --diff-filter=A --format=%H -- <L's T0 path> | tail -1\` (a hash-only read) and the REVIEWED COMMIT is \`git rev-parse <BASE>^1\`. With an apply token later than L, the landed external member was emitted after it and reviewed the post-apply state, and the engine counts this run as the pair's missing member: the REVIEWED COMMIT is \`git rev-parse <M>^1\`, M being \`git log --diff-filter=A --format=%H -- <member path> | tail -1\` for the earliest \`external-<mode>-*.md\` later than L (when M is empty, stop and say to commit that file alone first). Either way the brief gains these lines after its last: \`Review the repository as it stands at commit <REVIEWED COMMIT>, not the live checkout: read the change's files and, in system mode, the code and the commit range ending at that commit (git show <commit>:<path>; git diff <change-start>..<commit>). Where the skill's steps read state through the orbit CLI — orbit status, orbit instructions, the scenario map, Pass 0's structural check — that output describes the live checkout, not the reviewed commit: take the artifacts you review from the commit, use the CLI only for what the emit needs, and say in the pass which readings came from the live checkout. Run orbit emit review from the repository root as usual.\` The isolation is instructed, not physical — the rule and its named limit are \`orbit-review-external\`'s \`A pair's external half reads the pair's reviewed state\`. When the mode has no \`openPair\` and the latest launch's one landed member is STALE — read from the trail: exactly one landed member later than L (an earliest fresh \`review-<mode>-*.json\` or earliest \`external-<mode>-*.md\`, and none of the other class), no \`address-reviews-*.json\` naming it in its \`source_path\`, and an \`apply-*.json\` token later than it — never from the gate's reason — say \`The pair launched at <L> reviewed a superseded state (an apply landed after its <class> member); this run is an ordinary single on the current state.\` and dispatch the brief unchanged. The re-run test is this body's reading of the trail; the gate's computation is authoritative.
@@ -1363,7 +1364,7 @@ Full procedures live in \`references/flags-detail.md\` — load it ONLY when one
 - **Proposal mode, no \`*_convention.md\` and no \`project.md\`** → Pass 3 lens-driven cross-checks skipped; rest of Pass 3 (\`CLAUDE.md\` checks) still runs.
 - **System mode, empty \`orbit/lenses/\`** → Passes 4 and 5 skipped; Pass 3 still runs against capabilities derived from \`orbit/specs/\`.
 - **System mode, \`verify-change\` unavailable** → Pass 0 fails with a note; continue with Passes 1–6 and downgrade the assessment to \`unable to delegate Pass 0; partial review\`.
-- **Missing \`tasks.md\`** → use \`AskUserQuestion\` for mode rather than inferring.
+- **Missing \`tasks.md\`** → use \`AskUserQuestion\` for mode rather than inferring. (chain: target)
 
 ### Pushback bias
 
@@ -1399,6 +1400,8 @@ next, anything the structure can't say — never contradicting the tail's engine
 \`\`\`
 
 
+
+${CHAIN_END_STEP}
 `,
     references: [
       {

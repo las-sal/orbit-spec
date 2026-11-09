@@ -214,7 +214,8 @@ time, read its modified, removed and renamed requirements against the current ba
 - **Reviews sit between the steps.** The `spec-driven` schema adds reviewed gates: a review of the proposal before
   apply, and a review of the implementation before archive. A change you were midway through gains these gates when
   it moves; `orbit status --change <name>` shows where it stands. [Workflows](workflows.md) describes the cadence.
-- **You invoke each step.** orbit recommends the next command and does not run it for you.
+- **You invoke each step.** orbit recommends the next command and does not run it for you, unless your project's
+  `chain` setting grants that command ([Customization](customization.md)).
 
 ## Related
 

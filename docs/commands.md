@@ -4,7 +4,8 @@ orbit's workflows are commands you type to your AI assistant. In Claude Code eac
 carries all 15. The [CLI](cli.md) is the terminal side; the workflows call it.
 
 Every workflow ends its turn with a `Ready when you are:` line naming what is eligible next. The AI recommends the
-next step and does not run it unasked: you invoke each workflow. When the AI arrives at `apply`, `archive` or
+next step and does not run it unasked, unless your project's `chain` setting grants that command
+([Customization](customization.md)): otherwise you invoke each workflow. When the AI arrives at `apply`, `archive` or
 `bulk-archive` by any route other than your typing it, it asks before writing anything.
 
 ## Quick reference

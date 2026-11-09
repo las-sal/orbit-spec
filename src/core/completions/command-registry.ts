@@ -709,6 +709,16 @@ export const COMMAND_REGISTRY: CommandDefinition[] = [
         name: 'scenarios',
         description: 'Render the scenario map (rides --change)',
       },
+      {
+        name: 'chain-ran',
+        description: 'The command a chain just ran (rides --change --json; with --chain-head)',
+        takesValue: true,
+      },
+      {
+        name: 'chain-head',
+        description: 'The trail head read before that command ran (rides --change --json; with --chain-ran)',
+        takesValue: true,
+      },
       COMMON_FLAGS.json,
     ],
   },

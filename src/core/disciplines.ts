@@ -10,6 +10,7 @@ import {
   STOP_CONDITIONS,
   type DecisionCommand,
 } from './decision-records.js';
+import { CHAIN_KEY_TABLE, CHAIN_KEYS } from './chain.js';
 
 /**
  * The fifth execution discipline, DECISION-WRITING (stage `decision-writing` of `automate-dev-flow`),
@@ -59,6 +60,44 @@ export const DECISION_WRITING_DISCIPLINE =
   `A question no condition describes writes nothing, nor does a call in no area. ` +
   `A record names the work it belongs to (\`--change <name>\` for a change or a named exploration, or \`--doc <doc>\` in an architect session); in a session with neither (a project-wide run, an unnamed exploration), or on an archived change (orbit writes no record to its trail), write no record, never attaching it to other work. ` +
   `What each record carries — its fields, its citations and the plain-language rule, with an example of each — is in \`references/${DECISION_RECORDS_REFERENCE_NAME}\`, beside this skill; a refused record names the field to fix.`;
+
+// ---------------------------------------------------------------------------
+// The chain end step (seam-chaining, `orbit-conventions`' `No-chaining contract`)
+// ---------------------------------------------------------------------------
+
+/**
+ * The clause the no-chaining epitome bullet gains in the five bodies whose end can name a change's
+ * next command (propose, ff, apply, review, address-reviews) — and in no other body.
+ */
+export const NO_CHAINING_CHAIN_CLAUSE = "unless the change status's `chain` object allows it";
+
+/** The bodies that carry the chain end step and the epitome clause, by skill name. */
+export const CHAIN_END_STEP_SKILLS = [
+  'orbit-propose',
+  'orbit-ff-change',
+  'orbit-apply-change',
+  'orbit-review',
+  'orbit-address-reviews',
+] as const;
+
+const KEY_ROWS = CHAIN_KEYS.map(k => `  - \`${k}\` — ${CHAIN_KEY_TABLE[k].map(code).join(', ')}`).join('\n');
+
+/**
+ * The closing step, carried byte-equal by the five bodies. The key table is interpolated from the
+ * engine's own (`CHAIN_KEY_TABLE`), so an adopter's generated skill ships the mapping it relies on.
+ */
+export const CHAIN_END_STEP = [
+  "## Chain end step (the closing step — `orbit-conventions`' `No-chaining contract`)",
+  '',
+  "This step is the LAST act of the session the command was invoked in, after the position readout and the eligibility line. A worker that session dispatched — a fresh reviewer, a blind pair's fresh half — never runs it: it persists its pass and returns. Read the `chain` object from `orbit status --change \"<name>\" --json` — the call that supplied the eligibility line, or, where a render supplied the line, a call made right after it — and obey it; judge no reason of your own:",
+  '',
+  '- **`may_run: true`** → print `Chaining: <next> (granted by chain.<key>)` and run `<next>` as the next act of this turn. `<key>` is the row covering `<next>`:',
+  KEY_ROWS,
+  '',
+  "  The chained command runs as on a typed arrival except for its prompts, each tagged at its site: a `(chain: target)` prompt does not fire (the next command names the change and the mode); a `(chain: routine, default: <option>)` prompt takes that default, and the run summary's `final_assessment` records `The chain took the default: <prompt> — <answer>.`; a `(chain: decision)` prompt is asked exactly as on a typed arrival, and after a decision the chain does not continue — the command's own closing step states in one line that the chain stopped at a decision and runs nothing. The chained command records `Chained: granted by chain.<key>.` as one sentence in the record its session writes: a walk in its run summary's `final_assessment`; an external review or a blind pair in its launch record's `final_assessment`; an in-context review in its pass's `commentary` (the review emit owns a pass's `final_assessment`). A chained fresh review records nothing — its worker writes the pass, and its brief carries nothing from this session (a named limit). The chained command's closing step reads the status with `--chain-ran \"<next>\" --chain-head \"<head>\"` added — the `next` and `head` this read reported, a null `head` written as the word `null` — so a command that wrote no run record stops the chain on `no-progress`.",
+  '- **`may_run: false` with `configured: true`** → print `Chain stops: <why>` and end the turn. On `open-stop` print `Chain stops: open-stop — <stop>: <question>`, reading `question` from the stop record at the `stop` path, and put that question to the user; the resolution their answer writes lets the next read pass that row.',
+  '- **`configured: false`** → print nothing more: the turn ends at the eligibility line exactly as without the setting.',
+].join('\n');
 
 // ---------------------------------------------------------------------------
 // The shared reference (`orbit-conventions`' `Decision-record reference ships beside the statement`)

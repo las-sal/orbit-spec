@@ -49,7 +49,8 @@ Each claim names the capabilities whose specs, under [`orbit/specs/`](orbit/spec
   `orbit-report-rendering`).
 - **Safe parallel archive.** Each change fingerprints the baseline requirements it touches, so archiving one change
   never silently overwrites another's edits (`orbit-base-fingerprints`).
-- **You invoke every lifecycle step.** The AI recommends the next step and never runs it unasked; an AI-initiated
+- **You invoke every lifecycle step.** The AI recommends the next step and never runs it unasked, unless your project's
+  `chain` setting grants that command ([customization](docs/customization.md)); an AI-initiated
   apply or archive asks first (`orbit-lifecycle-consent`).
 - **A PR lifecycle and a drift audit.** A change can open a draft pull request at proposal and mark it ready at
   archive, and a project-wide audit finds drift between what the project's documents record and what is actually

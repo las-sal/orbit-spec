@@ -8,7 +8,7 @@ import type { SkillTemplate, CommandTemplate } from '../types.js';
 import { PR_CHOREOGRAPHY_REFERENCE } from './pr-choreography.js';
 import { EXPLORE_DECISION_ENTRY_PRODUCTION, EXPLORE_MECHANISM_ENTRY_PRODUCTION } from '../../explore-grammar.js';
 import { SIZE_DECLARATION_PRODUCTION } from '../../change-size.js';
-import { DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../disciplines.js';
+import { CHAIN_END_STEP, DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../disciplines.js';
 
 export function getOrbitProposeSkillTemplate(): SkillTemplate {
   return {
@@ -129,7 +129,7 @@ The disciplines from \`orbit-conventions\`, embedded per body; detail lives wher
 - **Read-before-reference (authoring-time)**: read a construct's actual definition before naming it; unverifiable → ask or leave a \`@review:\` marker, never guess.
 - **Change completeness (modification-time)**: apply substantive modifications fully across ALL affected artifacts; after mechanical edits, sweep for residue AND new bugs the replacement introduced.
 - **Pushback (review-time)**: verify each flagged issue against current state before acting; suppress stale findings with evidence rather than re-fixing already-fixed state.
-- **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line — gate \`passed\` means *eligible*, not *commanded*.
+- **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line, invoking no next command unless the change status's \`chain\` object allows it — gate \`passed\` means *eligible*, not *commanded*.
 ${DECISION_WRITING_DISCIPLINE}
 
 ## Mode detection (NEW Step 0 — runs before upstream Step 1)
@@ -401,6 +401,8 @@ reaches the branch. After a failed step or a PR-half degradation the emit stays 
 failure line names the recovery.
 
 **Completion-prompt override (chat)**: where the upstream steps above prompt "Run \`/orbit:apply\` or ask me to implement", instead prompt: "Run \`/orbit:review <name>\` — review the artifacts before implementation." The upstream text above is kept verbatim; this override is the operative instruction — except after the size brief's **Split** route, whose split recommendation is the closing chat line instead.
+
+${CHAIN_END_STEP}
 `,
     references: [
       {

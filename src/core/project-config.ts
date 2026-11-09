@@ -83,6 +83,15 @@ export const ProjectConfigSchema = z.object({
     })
     .optional()
     .describe('Size ceiling: { capabilities, requirements, changed_bytes, tasks } maxima; a figure over its maximum is a breach'),
+
+  // Optional: the chain setting (seam-chaining, `orbit-engine-gates`' `The chain setting grants each
+  // command on its own key`) — a map from a command key to a boolean. Typed here for documentation
+  // only: the change status reads it ON ITS OWN through `resolveChainSetting`, and it is NOT a
+  // gate-state input.
+  chain: z
+    .record(z.string(), z.boolean())
+    .optional()
+    .describe('Chain setting: { review, review-external, address-reviews: true|false } — what the AI may run unasked'),
 });
 
 export type ProjectConfig = z.infer<typeof ProjectConfigSchema>;
@@ -276,6 +285,51 @@ export function resolveSizeCeiling(projectRoot: string): SizeCeiling | null {
     ceiling[key as SizeDimension] = max;
   }
   return Object.keys(ceiling).length > 0 ? ceiling : null;
+}
+
+/** The closed set of `chain` keys (`orbit-engine-gates`' `The chain setting grants each command on its own key`). */
+export const CHAIN_KEYS = ['review', 'review-external', 'address-reviews'] as const;
+export type ChainKey = (typeof CHAIN_KEYS)[number];
+
+/** The resolved `chain` setting: whether a map is configured, and each key's grant. */
+export interface ChainSetting {
+  /** True exactly when `orbit/config.yaml` carries a `chain` value that is a map. */
+  configured: boolean;
+  grants: Record<ChainKey, boolean>;
+}
+
+/**
+ * Resolve the `chain` key, reading ONLY that key from `orbit/config.yaml` (the `resolveSizeCeiling`
+ * pattern). The ONE resolver for the setting: an absent file, an unparseable file, an absent key and
+ * a value that is not a map grant nothing (`configured: false`); in a map, a key is granted only when
+ * it is one of `CHAIN_KEYS` and its value is the boolean `true` — an absent, false or non-boolean
+ * entry grants nothing, and any other key is not a grant. No key derives another. Silent by design:
+ * the setting is read on every `orbit status --change`, and a grant that is not exactly `true` is
+ * simply today's behaviour.
+ */
+export function resolveChainSetting(projectRoot: string): ChainSetting {
+  const grants = Object.fromEntries(CHAIN_KEYS.map(k => [k, false])) as Record<ChainKey, boolean>;
+  const none: ChainSetting = { configured: false, grants };
+  let configPath = path.join(projectRoot, 'orbit', 'config.yaml');
+  if (!existsSync(configPath)) {
+    configPath = path.join(projectRoot, 'orbit', 'config.yml');
+    if (!existsSync(configPath)) return none;
+  }
+  let raw: unknown;
+  try {
+    raw = parseYaml(readFileSync(configPath, 'utf-8'));
+  } catch {
+    return none;
+  }
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return none;
+  if (!Object.prototype.hasOwnProperty.call(raw, 'chain')) return none;
+  const value = (raw as Record<string, unknown>).chain;
+  if (value === null || typeof value !== 'object' || Array.isArray(value)) return none;
+  const map = value as Record<string, unknown>;
+  for (const key of CHAIN_KEYS) {
+    if (Object.prototype.hasOwnProperty.call(map, key) && map[key] === true) grants[key] = true;
+  }
+  return { configured: true, grants };
 }
 
 const MAX_CONTEXT_SIZE = 50 * 1024; // 50KB hard limit

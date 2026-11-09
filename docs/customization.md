@@ -47,7 +47,7 @@ Carried by: the 1.3.1 baseline
 
 ## orbit's config keys
 
-orbit reads five more optional keys from `orbit/config.yaml`. Each is off, or at its default, when absent.
+orbit reads six more optional keys from `orbit/config.yaml`. Each is off, or at its default, when absent.
 
 | Key | What it does |
 |---|---|
@@ -56,6 +56,7 @@ orbit reads five more optional keys from `orbit/config.yaml`. Each is off, or at
 | `pr` | The pull-request regime: `never` (the default), `per-proposal` (each change gets a branch and a draft PR at propose, marked ready at archive), or `per-architecture` (the changes of one architecture doc share one program PR). Merging is always yours. |
 | `scenario_map` | Turns on the scenario map: `tests` lists globs of test files whose `// @scenario` tags declare which delta scenario each test covers, and `orbit validate <change>` reports undeclared scenarios. |
 | `size_ceiling` | Maxima for a change's size: `capabilities`, `requirements`, `changed_bytes` and `tasks`. `orbit validate <change>` warns when a change exceeds one without declaring it in a `## Size` section of its proposal. |
+| `chain` | What the AI may run unasked when a workflow ends on it as the change's next command: `review` (an in-context or fresh review), `review-external` (an external review or a blind pair, which send the change to an outside service and can cost money) and `address-reviews` (the walk), each `true` to grant it. Absent, or any key not `true`, grants nothing: every workflow ends at its `Ready when you are:` line, as without the key. No key grants apply or archive, and granting `review` never grants `review-external`. The AI still stops at every real decision, at an unanswered stop, when an external review would need pasting, and when the command it just ran wrote nothing. |
 
 A complete example:
 
@@ -73,6 +74,9 @@ size_ceiling:
   requirements: 12
   changed_bytes: 40960
   tasks: 19
+chain:
+  review: true
+  address-reviews: true
 ```
 
 Carried by: `orbit-engine-gates`, `orbit-pr-lifecycle`, `orbit-scenario-map`, `orbit-change-size`

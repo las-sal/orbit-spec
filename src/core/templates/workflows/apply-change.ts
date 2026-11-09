@@ -5,7 +5,7 @@
  * templates file into workflow-focused modules.
  */
 import type { SkillTemplate, CommandTemplate } from '../types.js';
-import { DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../disciplines.js';
+import { CHAIN_END_STEP, DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../disciplines.js';
 
 export function getApplyChangeSkillTemplate(): SkillTemplate {
   return {
@@ -186,7 +186,7 @@ The disciplines from \`orbit-conventions\`, embedded per body; detail lives wher
 - **Read-before-reference (authoring-time)**: read a construct's actual definition before naming it; unverifiable → ask or leave a \`@review:\` marker, never guess.
 - **Change completeness (modification-time)**: apply substantive modifications fully across ALL affected artifacts; after mechanical edits, sweep for residue AND new bugs the replacement introduced.
 - **Pushback (review-time)**: verify each flagged issue against current state before acting; suppress stale findings with evidence rather than re-fixing already-fixed state.
-- **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line — blanket delegation covers work WITHIN the requested command, never the next one; gate \`passed\` means *eligible*, not *commanded*.
+- **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line, invoking no next command unless the change status's \`chain\` object allows it — blanket delegation covers work WITHIN the requested command, never the next one; gate \`passed\` means *eligible*, not *commanded*.
 ${DECISION_WRITING_DISCIPLINE}
 
 ## Run-summary emit (chunk-aware — via the engine emit surface)
@@ -213,6 +213,8 @@ The ENGINE owns everything else: chunk detection from the tasks.md preamble (mal
 **Completion-prompt override (chat)**: on \`all_done\`, do NOT congratulate-and-suggest-archive (upstream) and do NOT hand-write \`/orbit:verify\` — instead render the gate graph's computed \`next_command\` + \`position\` from \`orbit status --change <name> --json\`. The lifecycle flow lives in the gate graph, not in this body; verify is Pass 0 of the \`review-system\` step the graph points to, not a separate lifecycle node (D5 — a separate verify gate would double-count).
 
 **Why chunk-aware**: per-chunk emits bound post-apply regression bisection to a single chunk's task set (typically 10-20× blast-radius reduction) and give clean resume boundaries between sessions.
+
+${CHAIN_END_STEP}
 `,
     references: [
       { name: 'decision-records.md', content: DECISION_RECORDS_REFERENCE },

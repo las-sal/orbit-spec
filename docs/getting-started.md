@@ -5,7 +5,8 @@ change. This page walks that change end to end, with the step the Quickstart lea
 review's findings) and what every step writes on disk. It assumes Claude Code and a project where `orbit init` has
 run; [Installation](installation.md) covers both.
 
-Every step below is a command you type. orbit's AI recommends the next step and never runs it unasked, and each
+Every step below is a command you type. orbit's AI recommends the next step and never runs it unasked (unless your project's `chain` setting grants it; see
+[Customization](customization.md)), and each
 command ends with a `Ready when you are:` line naming what is eligible next.
 
 ## The change
