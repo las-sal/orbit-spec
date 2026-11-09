@@ -32,7 +32,8 @@ and `/orbit:archive`. The engine never names a review before an unpassed gate it
 ## Decisions
 
 1. **The engine decides; the body obeys** (D-sc-6 → D-sc-14). The `chain` object carries `next`, `configured`,
-   `may_run`, `head` and, when refused, `why`. The body reads only `may_run` and `why`. Alternative considered: the AI
+   `may_run`, `head`, when refused `why`, and on `open-stop` the `stop` record's path. The body reads only `may_run`,
+   `why` and `stop`. Alternative considered: the AI
    reading config and gates itself — out, it puts a gate-shaped judgement in the body (explore.md, Considered & out).
 2. **A map keyed by command, absent meaning not granted** (D-sc-5). Alternatives: a list of seams to stop at (an omitted
    seam would grant), a list of transitions (only the arriving command matters) — both out.
@@ -41,27 +42,42 @@ and `/orbit:archive`. The engine never names a review before an unpassed gate it
 4. **Five refusal reasons, tested in order** (D-sc-14): `none`, `not-granted`, `open-stop`, `needs-user`,
    `no-progress`. An unpassed gate is NOT a reason: it is what names the next review (D-sc-6, superseded).
    - `open-stop` reads the change's `decisions/` folder with `readDecisionFolder` and `chainOf` from
-     `src/core/decision-records.ts`: a stop is open when no resolution's `stop` names any record of its chain.
+     `src/core/decision-records.ts`: a stop is open when no resolution's `stop` names any record of its chain. The
+     decision-writing discipline leaves some stops open by design (an act taken without asking), so the object names
+     the earliest open one as `stop`; the end step puts that stop's question to the user, and the resolution their
+     answer writes clears the row on the next read.
    - `needs-user` reads `resolveExternalRunner` (`src/core/external-runner.ts`): no runner, or one not reachable,
      means the external half would be pasted.
    - `no-progress` needs to know what the chain just ran, and status is stateless, so the body passes back the `next`
-     and `head` it read as `--chain-ran` and `--chain-head`. Apply's chunks name `/orbit:apply` again, but each chunk
-     writes an emit, so the head moves and they run. Alternative considered: the engine inferring the previous command
-     from the latest trail record — out, a launch that wrote nothing leaves no record to infer from.
+     and `head` it read as `--chain-ran` and `--chain-head`. `head` counts run records only — `<command>-<TS>.json`
+     emits and `external-<mode>-<TS>.md` returns — and leaves out the `review-external-<TS>.json` launch record, the
+     prompt files and `decisions/`: the external handoff writes its launch record before the runner starts, so a runner
+     that keeps failing would otherwise move the head on every launch and relaunch without end. Alternative considered:
+     the engine inferring the previous command from the latest trail record — out, a failed launch leaves only a launch
+     record to infer from.
 5. **`chain` is not a gate-state input**, as `review_preference` is not: it enters no gate row, state, reason, position
    token or `next_command`, and the human `orbit status --change` output renders nothing of it.
 6. **The body's end step.** In propose, ff, apply, review and address-reviews, the closing step reads `chain` from the
    same `orbit status --change <name> --json` call that supplies the eligibility line. On `may_run: true` it prints
    `Chaining: <next> (granted by chain.<key>)` after the eligibility line and runs the command; on `may_run: false`
-   with `configured: true` it prints `Chain stops: <why>`; with `configured: false` it prints nothing more. The
-   no-chaining epitome bullet in those five bodies gains the clause "unless the change status's `chain` object allows
-   it". The other bodies keep theirs unchanged: none ends on a change's next command a key grants.
+   with `configured: true` it prints `Chain stops: <why>` (on `open-stop`, `Chain stops: open-stop — <stop>: <its
+   question>`); with `configured: false` it prints nothing more. The no-chaining epitome bullet in those five bodies
+   gains the clause "unless the change status's `chain` object allows it". The other bodies keep theirs unchanged: none
+   ends on a change's next command a key grants. The step is the INVOKING session's alone: the fresh-reviewer brief in
+   `review.ts` already tells the worker to skip the dispatch step, and now also tells it to skip the closing chain
+   step and return once its pass is persisted — otherwise a worker could start the walk, or launch a review, while the
+   session that dispatched it is still assembling a pair. The external-handoff reference's two "invoked separately" /
+   "Do NOT walk it" lines (`review.ts`) become conditional the same way; the baseline `orbit-review-external` sentence
+   ("walked by `/orbit:address-reviews`, invoked separately") stays true as written, because the walk remains its own
+   command whether the user or the closing step invokes it.
 7. **Prompt kinds** (D-sc-12) and **tags** (D-sc-13), narrowed to the two arrival bodies, review and address-reviews.
-   The tags are `(chain: target)`, `(chain: routine, default: <option>)`, `(chain: decision)`; the test reads the
+   The tags are `(chain: target)`, `(chain: routine, default: <option>)`, `(chain: decision)`, and `(chain: not a
+   prompt)` on a line that only mentions `AskUserQuestion` or the pause pattern; the test reads the
    generated bodies and references, finds every `AskUserQuestion` site and every prose ask of the pause pattern, and
    fails on an untagged site or a tag the requirement's table does not name.
 8. **A taken default is a sentence in `final_assessment`** (D-sc-20): `The chain took the default: <prompt> —
-   <answer>.` A new payload field would join the payload tables, their schema references and executed examples, and
+   <answer>.` A command that ran because of a chain records that the same way: `Chained: granted by chain.<key>.`, so a
+   later reader can tell a chained run from a typed one without a new field. A new payload field would join the payload tables, their schema references and executed examples, and
    make `orbit-emit-composition`'s "only" in `The write gate checks decision records` false.
 9. **The blind pair's row 13** names the walk as chained only through the contract (`orbit-review`).
 10. **The consent vocabulary is untouched here.** No key grants apply or archive, so `orbit-engine-gates`'
@@ -84,10 +100,15 @@ and `/orbit:archive`. The engine never names a review before an unpassed gate it
 - **D-sc-13** — the tag test's reach is a named limit, stated in `orbit-conventions`' `Each chained prompt states its kind`.
 - **D-sc-14** — the refusal reasons are a named limit, stated in `orbit-engine-gates`' `The change status says whether
   the next command may run unasked`.
-- [A chained external launch may be refused by the harness] The recorded codex runner works only with the sandbox off,
-  and on 2026-10-14 the harness refused such a launch the user had not invoked. → The refused launch writes nothing;
-  `no-progress` stops the chain on the next read. The first-run trial must show a `review-external` grant reaches the
+- [A chained external launch may be refused by the harness, or its runner may fail] The recorded codex runner works
+  only with the sandbox off, and on 2026-10-14 the harness refused such a launch the user had not invoked. → A refused
+  or failed launch writes only its prompt and its launch record, neither of which moves `head`; `no-progress` stops
+  the chain on the next read. The first-run trial must show a `review-external` grant reaches the
   harness (D-sc-16, FEASIBILITY).
+- [An unresolvable finding stops a chained walk] Its alternatives prompt is a decision (the user's word at the
+  proposal walk, 2026-11-09, option A over a routine "file as task" default). → A named limit: if these stops turn out
+  to be a frequent reason a chain halts, the routine reading (option B) is reopened — the fixture chain and the trial
+  elsewhere (R-adf-5) are where that frequency shows.
 - [A long chain grows the session's context] → A named limit until the driver, which clears context per phase (R-adf-8).
 - [A review-and-walk loop that never converges spends without bound] → Each iteration writes records, so
   `no-progress` does not catch it; the tripwires stage's budget signal, and D-sc-18's follow-up program, own it.
@@ -102,12 +123,18 @@ and `/orbit:archive`. The engine never names a review before an unpassed gate it
 - `src/core/chain.ts` — the `chain` object's composition and the key table.
 - `src/commands/workflow/status.ts` + `src/commands/workflow/shared.ts` — the object on the JSON, the two flags.
 - `src/cli/program.ts` — `--chain-ran` and `--chain-head` registration.
+- `src/core/completions/command-registry.ts` — the two flags in the completions registry.
 - `src/core/templates/workflows/propose.ts` — the end step and epitome clause.
 - `src/core/templates/workflows/ff-change.ts` — the end step and epitome clause.
 - `src/core/templates/workflows/apply-change.ts` — the end step and epitome clause.
-- `src/core/templates/workflows/review.ts` — the end step, epitome clause, blind-pair row 13, prompt tags.
+- `src/core/templates/workflows/review.ts` — the end step, epitome clause, blind-pair row 13, the external-handoff ending, the worker brief, prompt tags.
 - `src/core/templates/workflows/address-reviews.ts` — the end step, epitome clause, prompt tags, the taken-default sentence.
 - `docs/customization.md` — the `chain` key beside the other project settings.
+- `README.md` — its never-unasked sentence, qualified by the setting.
+- `docs/concepts.md` — its never-unasked sentence, qualified by the setting.
+- `docs/commands.md` — its never-unasked sentence, qualified by the setting.
+- `docs/migration-guide.md` — its never-unasked sentence, qualified by the setting.
+- `CLAUDE.md` — the two no-chaining statements note that this repo sets no `chain` key (R-adf-5).
 - `test/core/chain.test.ts` — the setting and the object.
 - `test/core/templates/chain-prompt-tags.test.ts` — the tag test and the end-step surface.
 

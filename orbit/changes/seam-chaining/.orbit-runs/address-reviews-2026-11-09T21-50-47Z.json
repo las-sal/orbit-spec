@@ -1,0 +1,312 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-09T21:50:47Z",
+  "change": "seam-chaining",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/seam-chaining/.orbit-runs/review-proposal-2026-11-09T19-38-09Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-09T19-38-09Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 3,
+    "suggestion": 4
+  },
+  "pushback_verification": "All seven verified against current state (generated skills, review.ts, the delta specs, the docs lines); none stale.",
+  "resolution_summary": {
+    "resolved": 7,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The prompt list omits AskUserQuestion sites the tag test will find in the review and address-reviews bodies",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/seam-chaining/specs/orbit-conventions/spec.md",
+      "line": 85,
+      "classification": "decision_required",
+      "action": "applied A: the unresolvable lane's alternatives prompt is a decision (stops the chain); rows added for the mode prompt when --as is not given (tasks.md missing, mixed or ambiguous) and for architecture mode's doc selection, both target; a fourth tag form (chain: not a prompt) marks lines that only mention AskUserQuestion or the pause pattern, and the not-a-prompt row; the user's concern recorded as a named limit in design.md that reopens option B if these stops prove frequent",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Classify the unresolvable lane's alternatives prompt as decision: stops. It leaves work unfinished (filed as a task, or an escalated marker), which the requirement's own 'would leave unfinished work behind' clause already makes a decision."
+          },
+          {
+            "label": "B",
+            "body": "Classify it as routine with default 'file as task', recorded in final_assessment. This keeps a chained walk moving, and the filed task stays visible to apply's gate."
+          }
+        ],
+        "chosen": "A"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/seam-chaining/design.md",
+          "orbit/changes/seam-chaining/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "which mode, when `tasks.md` is missing |"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining/specs/orbit-conventions/spec.md",
+            "text": "an unresolvable finding's alternatives to filing a task"
+          },
+          {
+            "path": "orbit/changes/seam-chaining/specs/orbit-conventions/spec.md",
+            "text": "carry `(chain: not a prompt)`"
+          },
+          {
+            "path": "orbit/changes/seam-chaining/design.md",
+            "text": "the routine reading (option B) is reopened"
+          }
+        ],
+        "searched": [
+          "AskUserQuestion",
+          "(chain: decision)",
+          "which mode",
+          "unresolvable"
+        ],
+        "scope": [
+          ".claude/skills/orbit-review/SKILL.md",
+          ".claude/skills/orbit-address-reviews/SKILL.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "open-stop says when a chain halts but not how the halt ends, and decision-writing leaves some stops open by design",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/seam-chaining/specs/orbit-engine-gates/spec.md",
+      "line": 52,
+      "classification": "trivial_fix",
+      "action": "the chain object carries stop (the earliest open stop record) on open-stop; the end step prints Chain stops: open-stop — <stop>: <its question> and puts that question to the user; the resolution their answer writes clears the row on the next read; scenario added",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/seam-chaining/specs/orbit-conventions/spec.md",
+          "orbit/changes/seam-chaining/design.md",
+          "orbit/changes/seam-chaining/tasks.md",
+          "orbit/changes/seam-chaining/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining/specs/orbit-engine-gates/spec.md",
+            "text": "#### Scenario: An answered stop lets the chain run again"
+          },
+          {
+            "path": "orbit/changes/seam-chaining/design.md",
+            "text": "leaves some stops open by design"
+          }
+        ],
+        "searched": [
+          "open-stop",
+          "Chain stops:"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "User-facing docs keep saying the AI never runs the next step unasked; only customization.md is in the tasks",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/seam-chaining/tasks.md",
+      "line": 28,
+      "classification": "trivial_fix",
+      "action": "task 5.2 extended to qualify README.md:52, docs/concepts.md:258, docs/commands.md:7 and docs/migration-guide.md:217, and to note at CLAUDE.md's two no-chaining statements that this repo sets no chain key (R-adf-5); Touchpoints and Impact list the files",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/seam-chaining/design.md",
+          "orbit/changes/seam-chaining/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining/tasks.md",
+            "text": "note at `CLAUDE.md`'s two no-chaining statements"
+          },
+          {
+            "path": "orbit/changes/seam-chaining/design.md",
+            "text": "- `docs/migration-guide.md` — its never-unasked sentence"
+          }
+        ],
+        "searched": [
+          "never runs it unasked",
+          "never runs it for you",
+          "does not run it unasked",
+          "user-invoked"
+        ],
+        "scope": [
+          "README.md",
+          "docs/concepts.md",
+          "docs/commands.md",
+          "docs/migration-guide.md",
+          "CLAUDE.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "`head` ('the latest record token on the change's trail') does not say which files count",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/seam-chaining/specs/orbit-engine-gates/spec.md",
+      "line": 44,
+      "classification": "trivial_fix",
+      "action": "head defined over run records only (<command>-<TS>.json emits and external-<mode>-<TS>.md returns), leaving out the review-external launch record, prompt files and decisions/ (also closes the external pass's failed-launch finding)",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/seam-chaining/design.md",
+          "orbit/changes/seam-chaining/tasks.md",
+          "orbit/changes/seam-chaining/explore.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the latest record token on the change's trail"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining/specs/orbit-engine-gates/spec.md",
+            "text": "leaving out the external launch record"
+          }
+        ],
+        "searched": [
+          "head",
+          "latest record token"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "'judges no reason of its own' conflicts with the body stopping after a decision prompt",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/seam-chaining/specs/orbit-engine-gates/spec.md",
+      "line": 45,
+      "classification": "trivial_fix",
+      "action": "named the one exception in the engine-gates sentence: beyond a decision prompt it asked",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining/specs/orbit-engine-gates/spec.md",
+            "text": "beyond a decision prompt it asked"
+          }
+        ],
+        "searched": [
+          "judges no reason"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Nothing on the trail records that a review or walk ran because of the chain",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/seam-chaining/design.md",
+      "line": 67,
+      "classification": "trivial_fix",
+      "action": "a chained command writes Chained: granted by chain.<key>. in its final_assessment (No-chaining contract, design Decision 8, task 3.1, the granted-walk scenario)",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/seam-chaining/design.md",
+          "orbit/changes/seam-chaining/tasks.md",
+          "orbit/changes/seam-chaining/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining/specs/orbit-conventions/spec.md",
+            "text": "`Chained: granted by chain.<key>.`"
+          }
+        ],
+        "searched": [
+          "final_assessment",
+          "taken default"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Touchpoints and Impact omit the completions registry that task 2.2 edits",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/seam-chaining/design.md",
+      "line": 99,
+      "classification": "trivial_fix",
+      "action": "added src/core/completions/command-registry.ts to Touchpoints and to Impact",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/seam-chaining/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining/design.md",
+            "text": "- `src/core/completions/command-registry.ts` — the two flags"
+          }
+        ],
+        "searched": [
+          "completions registry"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Seven of seven resolved: the unresolvable prompt by the user's ratified option A (with their concern recorded as a named limit that reopens B), six as previewed obvious fixes. The head definition here also closes the external pass's failed-launch finding.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews seam-chaining",
+  "ripple_misses": 0
+}

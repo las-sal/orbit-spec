@@ -40,10 +40,15 @@ input: it enters no gate row, no state, no reason, no position token and no `nex
 ### Requirement: The change status says whether the next command may run unasked
 
 `orbit status --change <name> --json` SHALL carry a top-level `chain` object — `next` (the change's `next_command`, or
-`null`), `configured` (whether `orbit/config.yaml` carries a `chain` map), `may_run`, `head` (the latest record token on
-the change's trail, or `null`) and, when `may_run` is false, `why` — composed from the gate computation and the
-`chain` setting alone. The workflow body runs the next command only when `may_run` is true and judges no reason of its
-own. `may_run` is true exactly when no row below matches; the rows are tested in order and the first match is `why`:
+`null`), `configured` (whether `orbit/config.yaml` carries a `chain` map), `may_run`, `head`, when `may_run` is false
+`why`, and when `why` is `open-stop` `stop` (the trail path of the earliest open stop record) — composed from the gate
+computation and the `chain` setting alone. `head` is the latest token among the change trail's run records — its
+`<command>-<TS>.json` emits and its `external-<mode>-<TS>.md` returns — leaving out the external launch record
+`review-external-<TS>.json`, the `external-prompt-*.md` files and the `decisions/` folder, or `null` when there is none:
+a launch that wrote only its launch record and prompt has not moved it. The workflow body runs the next command only
+when `may_run` is true and judges no reason of its own, beyond a decision prompt it asked (`orbit-conventions`' `A
+chain treats each prompt by its kind`). `may_run` is true exactly when no row below matches; the rows are tested in
+order and the first match is `why`:
 
 | `why` | matches when |
 |---|---|
@@ -51,10 +56,12 @@ own. `may_run` is true exactly when no row below matches; the rows are tested in
 | `not-granted` | the `chain` setting grants no row covering the next command (`The chain setting grants each command on its own key`) |
 | `open-stop` | a stop record in the change's trail `decisions/` folder has no resolution naming any record of its replacement chain |
 | `needs-user` | the next command is an external or blind-pair review and `orbit external runner --json` reports no runner or one not reachable, so the external half would go out by paste |
-| `no-progress` | the status call carries `--chain-ran <command> --chain-head <token>`, the next command equals `<command>`, and `head` equals `<token>`: the command the chain just ran wrote nothing |
+| `no-progress` | the status call carries `--chain-ran <command> --chain-head <token>`, the next command equals `<command>`, and `head` equals `<token>`: the command the chain just ran wrote no run record — an external launch whose runner failed, or whose return `orbit external save` refused, included |
 
 A body that runs a chained command passes the `next` and `head` it read as `--chain-ran` and `--chain-head` on its
-next status call; a call without the two flags never matches `no-progress`. The human `orbit status --change` output
+next status call; a call without the two flags never matches `no-progress`. A stop record left open stays open until a
+resolution names it: when the chain stops on `open-stop`, the body names the `stop` record and puts its question to the
+user, and the resolution their answer writes lets the next status read pass that row. The human `orbit status --change` output
 renders no part of the object. These reasons are a named limit, not a closed set — Residual kind: a state where the
 next command is granted and would run, yet running it unasked is wrong. Residual method: the stage's fixture chain,
 and each signal the tripwires stage adds, read as a candidate reason.
@@ -67,17 +74,25 @@ and each signal the tripwires stage adds, read as a candidate reason.
 #### Scenario: An open stop record halts a granted chain
 
 - **WHEN** the same state holds and the change's trail carries a `stop-<TS>.json` that no resolution names
-- **THEN** the `chain` object reports `may_run: false` with `why: "open-stop"`
+- **THEN** the `chain` object reports `may_run: false` with `why: "open-stop"` and `stop` naming that record's path
+
+#### Scenario: An answered stop lets the chain run again
+
+- **WHEN** the chain stopped on `open-stop`, the user answered the named stop's question, and a resolution naming that
+  stop was written
+- **THEN** the next status read no longer matches `open-stop`, and `may_run` follows the remaining rows
 
 #### Scenario: A pasted external review needs the user
 
 - **WHEN** `chain` is `{review-external: true}`, the next command is `/orbit:review --as system --reviewer blind-pair <change>`, and no external runner is recorded
 - **THEN** the `chain` object reports `may_run: false` with `why: "needs-user"`
 
-#### Scenario: A command that wrote nothing is not run again
+#### Scenario: A launch that wrote no run record is not run again
 
-- **WHEN** a body ran `/orbit:review --as system --reviewer external <change>` under a grant, the launch wrote nothing, and its status call passes `--chain-ran` with that command and `--chain-head` with the head it read before running it
-- **THEN** the `chain` object reports `may_run: false` with `why: "no-progress"`
+- **WHEN** a body ran `/orbit:review --as system --reviewer external <change>` under a grant, the recorded runner exited
+  non-zero so the launch wrote only its prompt and its `review-external-<TS>.json` launch record, and the status call
+  passes `--chain-ran` with that command and `--chain-head` with the head it read before running it
+- **THEN** `head` is unchanged and the `chain` object reports `may_run: false` with `why: "no-progress"`
 
 #### Scenario: The human readout is unchanged
 

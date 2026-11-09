@@ -16,11 +16,13 @@ adds the apply and archive grants and the `consent: "setting"` value.
   fresh reviews only; an external review or a blind pair needs `review-external`, because it sends the change to an
   outside service and costs money (D-sc-16). No key grants apply or archive in this change.
 - **A `chain` object in `orbit status --change <name> --json`**: the next command, whether it may run unasked, and
-  when not, why — `none`, `not-granted`, `open-stop`, `needs-user` or `no-progress` (D-sc-14). The engine decides;
-  the body only obeys. The human readout is unchanged.
+  when not, why — `none`, `not-granted`, `open-stop`, `needs-user` or `no-progress` (D-sc-14); on `open-stop` it names
+  the stop, whose question the AI then puts to the user. The engine decides; the body only obeys. The human readout is
+  unchanged.
 - **The no-chaining contract becomes conditional**: at the end of propose, ff, apply, review or address-reviews the AI
   runs the engine's next command itself when the `chain` object says it may, names the key that granted it, and
-  otherwise ends the turn exactly as today.
+  otherwise ends the turn exactly as today. Only the session that invoked a command chains; a fresh reviewer it
+  dispatched never does. A chained command says so in its run summary.
 - **Each prompt has a kind** (D-sc-12, D-sc-13): on a chained review or walk, a target prompt never fires, a routine
   confirmation is answered with its marked default and recorded in `final_assessment` (D-sc-20), and every real
   decision stops the chain. Each such prompt states its kind in the skill's own text, and a test holds the skills to
@@ -47,8 +49,11 @@ adds the apply and archive grants and the `consent: "setting"` value.
 ## Impact
 
 - `src/core/project-config.ts` (the `chain` key and its resolver), a new `src/core/chain.ts` (the `chain` object),
-  `src/commands/workflow/status.ts` and the CLI registration (the object and the two `--chain-*` flags).
+  `src/commands/workflow/status.ts`, the CLI registration and the completions registry
+  (`src/core/completions/command-registry.ts`) (the object and the two `--chain-*` flags).
 - The workflow templates of propose, ff, apply, review and address-reviews (the conditional end step) and the review
-  and address-reviews bodies and references (the prompt tags).
+  and address-reviews bodies and references (the prompt tags, the external-handoff ending, the fresh-reviewer brief).
+- The user docs that say the AI never runs the next step unasked (`README.md`, `docs/concepts.md`, `docs/commands.md`,
+  `docs/migration-guide.md`), qualified by the setting, and `docs/customization.md` for the key itself.
 - No change at the defaults: with no `chain` key every prompt fires, every command ends at the eligibility line, and
   every readout is unchanged (G0, as R-adf-12 words it).

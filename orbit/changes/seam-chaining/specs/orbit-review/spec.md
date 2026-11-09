@@ -42,7 +42,7 @@ as under `--reviewer fresh`, the external half as under `--reviewer external`.
 
 #### Scenario: A launched pair commits each half alone
 
-- **WHEN** `/orbit:review foo --as system --blind-pair` runs on a clean tree with a reachable runner recorded, and both halves return well-formed
+- **WHEN** `/orbit:review foo --as system --blind-pair` runs on a clean tree with a reachable runner recorded, both halves return well-formed, and the `chain` object reports `may_run: false`
 - **THEN** exactly three commits are added, in order — BASE (the prompt file and the `pair: true` T0), the fresh pass file alone, the saved external return alone — the fresh pass's token is earlier than the external return's, both are later than the launch, no walk record is written, the branch is pushed once after the third commit, and the gate's `invoked` slot is covered by the COMPLETE pair
 
 #### Scenario: The external return waits for the fresh commit

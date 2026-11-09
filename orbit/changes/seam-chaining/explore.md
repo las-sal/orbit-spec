@@ -187,6 +187,7 @@ Domain: every route a granted review can take
 | blind pair, launched | key `review-external` |
 | blind pair, pasted | refused as `needs-user` (D-sc-14) |
 | a launch refused on a dirty working tree | not a route: the review writes nothing, so the next status names it again with no new record, and `no-progress` stops the chain |
+| a launch whose runner fails, or whose return `orbit external save` refuses | not a route: it writes only its prompt and its launch record, which `head` leaves out (added at the proposal walk, 2026-11-09), so `no-progress` stops the chain |
 Closure: DERIVED — the routes are the reviewer classes (in-context, fresh, external, blind pair) times the external half's two routes (launched, pasted)
 Moves:
 - READ: applied — the routes from `orbit-review`'s `references/external-handoff.md` (runner reachable or not, the dirty-tree refusal) and `references/blind-pair.md` Step 1
