@@ -1,0 +1,141 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-09T19:38:09Z",
+  "change": "seam-chaining",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 2
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/seam-chaining/specs/orbit-conventions/spec.md",
+      "line": 85,
+      "title": "The prompt list omits AskUserQuestion sites the tag test will find in the review and address-reviews bodies",
+      "recommendation": "The table in `A chain treats each prompt by its kind` names seven prompts, and `Each chained prompt states its kind` makes the test fail on any untagged AskUserQuestion site and on any tagged site the list does not name. The generated bodies carry sites the list omits: review SKILL.md:48 (the mode prompt when tasks.md is mixed or ambiguous; the list has only 'which mode, when tasks.md is missing'), review SKILL.md:17 (architecture mode's doc selection, never chained but inside the test's scope), and address-reviews SKILL.md:112 (the unresolvable lane's 'Alternatives via AskUserQuestion': convert to @todo or escalate). The last is reachable on a chained walk and has no kind, so an implementer must invent one. The bodies also MENTION the tool without asking it (address-reviews SKILL.md:110 'without AskUserQuestion'; references/run-summary-schema.md:385; references/resolution-detail.md:84), and the requirement does not say whether the test counts a mention as a site. Add rows for the missing prompts, decide the unresolvable lane's kind, and state how the test tells an ask from a mention.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Classify the unresolvable lane's alternatives prompt as decision: stops. It leaves work unfinished (filed as a task, or an escalated marker), which the requirement's own 'would leave unfinished work behind' clause already makes a decision."
+        },
+        {
+          "label": "B",
+          "body": "Classify it as routine with default 'file as task', recorded in final_assessment. This keeps a chained walk moving, and the filed task stays visible to apply's gate."
+        }
+      ],
+      "reproduction": "grep -rn AskUserQuestion .claude/skills/orbit-review .claude/skills/orbit-address-reviews lists 12 lines; the ask at orbit-review/SKILL.md:48 ('mixed or ambiguous → AskUserQuestion') and the ask at orbit-address-reviews/SKILL.md:112 ('Alternatives via **AskUserQuestion**') match no row of the table at specs/orbit-conventions/spec.md:85-93, so task 4.2's test fails on day one whether they are tagged or not."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/seam-chaining/specs/orbit-engine-gates/spec.md",
+      "line": 52,
+      "title": "open-stop says when a chain halts but not how the halt ends, and decision-writing leaves some stops open by design",
+      "recommendation": "`Decision-writing discipline` tells the AI to leave a stop OPEN when it acts without asking and no flow asks: outward-act, ruling-amendment or unresolvable-critical taken undirected, and security-unprecedented or user-facing-uncovered 'where you would not have asked'. `orbit-decision-records`' `Decision records are written in every mode` says the same: 'a stop where today's flow asks nothing stays open'. Under this change, one such stop makes every later `chain` read on the change `open-stop`, for the rest of the change's life. The AI prints `Chain stops: open-stop` (design.md Decision 6) with no question to put to the user, and no requirement says how the stop closes, so the chain cannot resume. Specify what the stop line names (the stop file and its question) and how it closes, for example by the AI asking that stop's question and writing the resolution, after which the next status read lets the chain resume. Otherwise, state this as a named limit with its residual.",
+      "reproduction": "Under chain {address-reviews: true}, the AI takes an outward act during apply without asking and writes stop-<TS>.json (condition outward-act) with no resolution, as the epitome directs. Every later status read returns why: open-stop. Nothing in the delta tells the AI or the user what closes it."
+    },
+    {
+      "pass": "3",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/seam-chaining/tasks.md",
+      "line": 28,
+      "title": "User-facing docs keep saying the AI never runs the next step unasked; only customization.md is in the tasks",
+      "recommendation": "After apply, the following still state the absolute rule the change makes conditional: README.md:52 ('The AI recommends the next step and never runs it unasked'), docs/concepts.md:258 (Consent: 'never runs it for you', with orbit-conventions named under 'Carried by'), docs/commands.md:7 ('does not run it unasked: you invoke each workflow') and docs/migration-guide.md:217. Root CLAUDE.md's No-chaining discipline bullet (line 111) also states the unconditional rule. Extend task 5.2, or add a task, to qualify each sentence: true at the default, unless the project's `chain` setting grants the next command. CLAUDE.md can stay as written, because R-adf-5 keeps this repo unchained, but then the task should say so."
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/seam-chaining/specs/orbit-engine-gates/spec.md",
+      "line": 44,
+      "title": "`head` ('the latest record token on the change's trail') does not say which files count",
+      "recommendation": "Name the record set `head` is taken over. The trail holds `<cmd>-<TS>.json` emits, `external-prompt-*.md`, `external-<mode>-*.md` returns and `decisions/*.json`. Whether a decisions/ record or a prompt file moves the head decides whether a chained command that wrote only one of them reads as progress. Two implementers would differ, and the no-progress test would pin whichever one was chosen."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "orbit/changes/seam-chaining/specs/orbit-engine-gates/spec.md",
+      "line": 45,
+      "title": "'judges no reason of its own' conflicts with the body stopping after a decision prompt",
+      "recommendation": "The engine-gates requirement says the body runs the next command when `may_run` is true and 'judges no reason of its own'. `A chain treats each prompt by its kind` (orbit-conventions delta, lines 80-82) has the body end the chain after a decision prompt even when `may_run` is true, and the object cannot see that a decision fired. Name that one exception in the engine-gates sentence, for example: 'beyond a decision prompt it asked (`A chain treats each prompt by its kind`)'. That keeps the two requirements from reading as contradictory."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/seam-chaining/design.md",
+      "line": 67,
+      "title": "Nothing on the trail records that a review or walk ran because of the chain",
+      "recommendation": "Only a taken default leaves a trace (Decision 8). A chained review or walk that took no default writes a record identical to a typed one, so a later reader (the program brief, an audit) cannot tell which commands ran unasked. The `consent: \"setting\"` value covers apply and archive only, in the second change. Consider a one-sentence `final_assessment` marker on every chained arrival, the same mechanism Decision 8 already uses ('Chained: granted by chain.<key>.'). Alternatively, record the gap as a named limit until the second change."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/seam-chaining/design.md",
+      "line": 99,
+      "title": "Touchpoints and Impact omit the completions registry that task 2.2 edits",
+      "recommendation": "Task 2.2 registers the two flags 'in src/cli/program.ts and the completions registry' (src/core/completions/command-registry.ts), but neither design.md's Touchpoints nor proposal.md's Impact lists that file. Add it, so that the system pass's touchpoint comparison does not flag it as unplanned."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "pass": "4",
+      "title": "Stored stops in the archive would read as open-stop",
+      "evidence": "The one archived stop no resolution names directly (decision-reading stop-2026-11-09T15-44-20Z.json) carries replaces: stop-2026-11-08T20-48-08Z.json, which resolution-2026-11-09T15-44-19Z.json names. The rule 'no resolution names any record of its chain' (chainOf in src/core/decision-records.ts:487) treats it as answered, so the design's chain-aware wording already covers this case."
+    }
+  ],
+  "commentary": "I probed the delta against the engine rather than the explore. The next-command strings in the key table match the strings commandForClass and canonicalNextForReviewed actually return (gates.ts:139-147, 1130-1135). instruction-loader.ts's next_command carries no model-hint garnish (the hint is applied at render only), so `chain.next` can safely equal next_command byte for byte. readDecisionFolder, chainOf and resolveExternalRunner exist with the shapes the design names, and the runner record exposes `reachable`. The baseline restatements of no-chaining were checked: orbit-lifecycle-consent's sync line and orbit-pr-lifecycle's single-session line stay true while no key grants sync, apply or archive, and the single-session amendment belongs to parallel-lanes. The risk sits where the spec meets the bodies as they are today: the prompt list was enumerated from a grep that missed two real asks, and the open-stop reason meets the decision-writing rule, which deliberately leaves stops open. Both stay invisible until the first chained walk, which is why I graded them as gaps rather than suggestions. Validate passes, and no @review: marker sits in artifact prose.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The design holds together. The engine computes the permission, the body only reads it, the keys are separate grants, and nothing changes at the defaults. These claims are checked against the code the change touches, and they hold.\nTwo gaps need closing before apply, because an implementer would otherwise invent the answer: the kind of the unresolvable-lane prompt, and how an open stop the AI left open by design is ever cleared. Both are edits inside the change's own artifacts, settled in one walk; neither needs another exploration.\nThe docs gap is cheap to fold into task 5.2 now, and it is cheaper there than at archive."
+  },
+  "final_assessment": "0 critical, 3 warning, 4 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews seam-chaining"
+}
