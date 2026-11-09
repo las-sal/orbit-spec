@@ -1,0 +1,11 @@
+schema: spec-driven
+created: 2026-11-09
+schema_version: 5
+base_fingerprints:
+  orbit-conventions:
+    No-chaining contract: sha256:ead6ca83e37f558cdeab552e89057ca01fdea994c4936e0360f00e2abbf0f100
+  orbit-review:
+    The blind-pair reviewer runs both halves in one invocation: sha256:fa8645fa9548f445731d600bc7f51903f63fafbe79c1935a1184e29623f507a3
+architecture:
+  doc: automate-dev-flow
+  stage: seam-chaining

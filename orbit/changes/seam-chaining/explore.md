@@ -250,6 +250,11 @@ Read 2026-11-09: `src/core/artifact-graph/instruction-loader.ts` walks the gates
 - **2026-11-09 — D-sc-18: bounding what a run spends, in tokens and money, internal and external reviews alike, is out of this stage and a candidate follow-up program** Today nothing bounds it: a reviewed gate counts independent passes (`independentSpend`) and nothing consults the count (`src/core/artifact-graph/gates.ts`). The tripwires stage's "size or walk budgets exceeded" signal is the nearest home inside this program. Raised by the user, 2026-11-09 ("probably a topic for a follow up program").
   Kind: scope
 
+- **2026-11-09 — D-sc-19: the stage lands as two changes split by grant: this one chains review and address-reviews; a second adds the apply and archive grants with `consent: "setting"`** Letting a chain enter apply or archive makes false every requirement listing the consent values as exactly two — in `orbit-lifecycle-consent`, `orbit-conventions`' summary format, `orbit-run-summary-emit` and `orbit-archive-modifications` — which put one change at seven capabilities and about fifteen requirements against ceilings of three and twelve. The review-and-walk loop needs none of them. D-sc-7 and the apply and archive rows of D-sc-5 and D-sc-12 land with the second change. User's word at propose, 2026-11-09 ("Split by grant").
+  Kind: scope
+- **2026-11-09 — D-sc-20: a default a chain takes is recorded as one sentence in the command's `final_assessment`, not in a new payload field** A new field joins the payload tables, their schema references and executed examples, and the emit-composition requirement that says decision-reading changed the run-summary commands "only" so; the narrative field every emit already carries holds the record with no new owner. The AI's method call, recorded per R-crc-3.
+  Kind: scope
+
 ## Open questions
 
 ## Considered & out
