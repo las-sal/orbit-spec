@@ -32,13 +32,16 @@ stage; G1–G6 are graded at first-run, on that project's trail and transcripts.
   as it does now, with the exceptions the user has ratified (R-adf-11): a system review of a change that has decision
   records also has a clean reader check them, which adds review findings and the walk that fixes them. Otherwise
   the engine's readouts and gates are unchanged, and a generated body changes only by an addition
-  that tells the AI to record something, never by a change to what it does at a seam or what the user sees. Every existing
+  that tells the AI to record something, or by text whose effect depends on a setting and which, with every setting
+  at its default, leaves what the AI does unchanged (R-adf-12) — never by a change to what it does at a seam or
+  what the user sees at the defaults. Every existing
   test still passes. An existing test is edited only where it enumerates a closed set the stage extends (a command
   list, a hash pin), never to weaken what it asserts about today's behaviour, and each such edit is named in the
   stage's archive. Under any setting, every record today's flow writes is still written. Fails if a default install
   behaves differently, if an existing test's assertion about today's behaviour is weakened, or if a first-run trail
   lacks a record type the supervised flow would have written; a default install behaving differently beyond a
-  ratified exception fails it. (Reworded by Sal, 2026-11-07, R-adf-9; exceptions by Sal, 2026-11-09, R-adf-11.)
+  ratified exception fails it. (Reworded by Sal, 2026-11-07, R-adf-9; exceptions by Sal, 2026-11-09, R-adf-11; setting-dependent text by Sal,
+  2026-11-09, R-adf-12.)
 - **G1 — The user only shows up where the user adds value.** In first-run, every user turn after the opening architect session
   is one of: answering a stop record, a sign-off, or a voluntary interjection the user makes. Fails on a single turn where
   the user had to type the next command, clear context, or re-boot a session to keep the run moving.
@@ -104,6 +107,12 @@ stage; G1–G6 are graded at first-run, on that project's trail and transcripts.
   reader runs by default on every system review of a change with decision records (chosen at its proposal: "orbit
   has one user - me. so i'd prefer to do the best thing here for future users"). Recorded as
   `stop-2026-11-09T16-09-40Z.json` and its resolution in this trail's `decisions/` folder.
+- **R-adf-12** (Sal, 2026-11-09) — G0's body clause allows, in general, generated-body text whose effect depends on a
+  setting, provided that with every setting at its default the AI does what it did before. The user chose this over
+  naming seam-chaining's conditional no-chaining text as a second exception (the AI's recommendation): every
+  settings stage rewrites bodies that way, and its defaults test is what keeps it honest. R-adf-11 still governs
+  behaviour that runs by default: each such behaviour needs its own named exception. Recorded as
+  `stop-2026-11-09T17-52-07Z.json` and its resolution in this trail's `decisions/` folder.
 
 ## Program stages
 
@@ -227,11 +236,13 @@ fourth capability (a declared size breach).
 Depends-on: decision-layer
 Complete: [ ]
 
-The settings R-adf-1 and R-adf-6 name, each its own explicit key and each defaulting to today's behaviour:
-chaining, sign-off, each outward act, concurrency. D1's no-chaining contract, the single-session model and D6's
-outward-actions rule are amended in their owning specs to hold conditionally on those settings. With chaining on,
-a command that ends on a passed gate runs the engine's next command itself, and stops at a configured seam or on
-a stop record. Consent provenance gains a value for a transition taken by setting.
+Of the settings R-adf-1 and R-adf-6 name, the ones a chain reads, each its own explicit key and each defaulting to
+today's behaviour: chaining, and the outward acts a chain crosses stages with (merging the stage's PR and returning
+to the default branch). D1's no-chaining contract and D6's outward-actions rule are amended in their owning specs
+to hold conditionally on those settings. With chaining on, a command that ends on a passed gate runs the engine's
+next command itself, and stops at a configured seam or on a stop record. Consent provenance gains a value for a
+transition taken by setting. Sign-off is program-brief's setting, and concurrency with the single-session model's
+amendment is parallel-lanes' (the user, 2026-11-09: each setting lives with the stage that reads it).
 
 Exit criteria:
 - The amended requirements name each setting, and a test per setting shows today's behaviour at its default.
@@ -246,12 +257,14 @@ Complete: [ ]
 
 The engine composes the program brief from the trail: what was built, the capabilities and requirements added or
 changed, new terms and seams, the ledger, stops and tripwires fired, and deviations from the charter — in plain
-language. It is written in every mode (R-adf-7). The sign-off seam follows R-adf-2, gated by its setting.
+language. It is written in every mode (R-adf-7). The sign-off seam follows R-adf-2, gated by its setting, which this
+stage adds: its own key, defaulting to today's behaviour (R-adf-1, R-adf-6).
 
 Exit criteria:
 - A golden test renders the brief for a fixture program, and a second for a program with ledger entries and stops.
 - The sign-off seam holds archive (seam-chained) or the program PR's READY flip (autonomous) when the setting
   requires it, and does not when it does not, each tested.
+- The sign-off setting's owning requirement names it, and a test shows today's behaviour at its default.
 - G0 holds.
 
 ### Stage tripwires — detecting that a run has gone sideways
@@ -292,12 +305,13 @@ Complete: [ ]
 
 Architect records which stages may run together (R-adf-4), from the `Depends-on` graph. The driver gives each lane
 its own worktree and session, and serializes archives, which base fingerprints already guard against the archive
-merge data-loss bug.
+merge data-loss bug. The concurrency setting is this stage's: its own key, defaulting to today's
+single-session model, which is amended in its owning spec to hold conditionally on it (R-adf-1, R-adf-6).
 
 Exit criteria:
 - Against stubbed lanes, a test runs two independent stages concurrently and archives both with every synced
   requirement preserved (G7's mechanism).
-- With concurrency off, the driver runs the same program linearly.
+- With concurrency off (its default), the driver runs the same program linearly.
 - G0 holds.
 
 ### Stage release — a tagged orbit for the trial
@@ -334,6 +348,9 @@ Exit criteria:
 - **2026-11-09 — G0 allowing, in general, any default-on change the user ratifies at a stage's proposal:** out (Sal,
   R-adf-11). G0 would then hold by whatever was ratified and could not fail; naming each exception keeps it
   falsifiable.
+- **2026-11-09 — Naming each setting-dependent body change as its own G0 exception:** out (Sal, R-adf-12, over the
+  AI's recommendation for seam-chaining). Every settings stage rewrites bodies to depend on a setting, and the
+  defaults test each stage owes already makes that falsifiable.
 
 ## Status log
 
@@ -382,3 +399,12 @@ Exit criteria:
   to name each exception over a general allowance; AI recommendation), and the stage's first exit criterion now
   says what the brief carries. The stage's first live reading fixed ten records by replacement; eight replacements
   reached no reader before archive (D-dr-2's named limit).
+- 2026-11-09 — seam-chaining's exploration: the user moved the sign-off setting to program-brief and the concurrency
+  setting, with the single-session model's amendment, to parallel-lanes, so each setting lives with the stage that
+  reads it; seam-chaining keeps chaining and the outward acts a chain crosses stages with (AI recommendation, D-sc-4
+  in `orbit/explore/seam-chaining/explore.md`). R-adf-1 and R-adf-6 are unchanged: every setting is still its own
+  key, defaulting to today's behaviour.
+- 2026-11-09 — Architect session during seam-chaining's exploration: G0's body clause now allows generated-body text
+  that depends on a setting and leaves the AI's behaviour unchanged at the defaults (R-adf-12; the user chose this
+  general rewording over the AI's recommendation, a second named exception). D-sc-8 in the exploration is superseded
+  by it. No stage awaited ratification.

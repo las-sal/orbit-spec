@@ -1,0 +1,10 @@
+{
+  "command": "resolution",
+  "timestamp": "2026-11-09T17:53:14Z",
+  "change": null,
+  "doc": "automate-dev-flow",
+  "model": "claude-opus-5-5",
+  "stop": "stop-2026-11-09T17-52-07Z.json",
+  "answer": "The user chose to reword G0 in general rather than name this text as a second exception: a skill's text may change where what it says depends on a setting, provided that at every setting's default the AI does exactly what it does today.",
+  "effect": "G0 is reworded so its rule about skill text allows text that depends on a setting when it changes nothing at the defaults; behaviour that runs by default still needs its own named exception, as R-adf-11 says. Stage seam-chaining can then propose without a further amendment of G0."
+}

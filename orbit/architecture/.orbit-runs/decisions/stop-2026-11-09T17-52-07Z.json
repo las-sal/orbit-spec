@@ -1,0 +1,11 @@
+{
+  "command": "stop",
+  "timestamp": "2026-11-09T17:52:07Z",
+  "change": null,
+  "doc": "automate-dev-flow",
+  "model": "claude-opus-5-5",
+  "condition": "ruling-amendment",
+  "about": "Goal G0 says a skill's text changes only by an addition that tells the AI to record something. Stage seam-chaining makes the rule that the AI never runs the next command itself depend on a setting, so the text of every skill changes, though what the AI does stays the same while the setting grants no command.",
+  "question": "Should G0 name the setting-dependent text that lets the AI run the next command as a second exception, under R-adf-11, holding only while no command is granted by default?",
+  "detail": "From D-sc-8 in orbit/explore/seam-chaining/explore.md; the chaining map is D-sc-5 (absent = not granted)."
+}

@@ -1,0 +1,40 @@
+{
+  "command": "explore",
+  "timestamp": "2026-11-09T17:51:58Z",
+  "change": "seam-chaining",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "The user split sign-off to program-brief and concurrency to parallel-lanes (charters edited) and adopted the eight recommendations as D-sc-3 to D-sc-10; five rules await their Mechanism entries, and the G0 exception (D-sc-8) goes to an architect session before propose.",
+  "decisions_captured": 10,
+  "open_questions_count": 1,
+  "open_questions_with_recommendation": "1 of 1",
+  "rules_total": 5,
+  "rules_open": [
+    {
+      "id": "D-sc-3",
+      "state": "absent"
+    },
+    {
+      "id": "D-sc-5",
+      "state": "absent"
+    },
+    {
+      "id": "D-sc-6",
+      "state": "absent"
+    },
+    {
+      "id": "D-sc-7",
+      "state": "absent"
+    },
+    {
+      "id": "D-sc-10",
+      "state": "absent"
+    }
+  ],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:explore seam-chaining — 5 of 5 live rules have open domains (D-sc-3, D-sc-5, D-sc-6 +2 more); account for them before formalizing"
+}

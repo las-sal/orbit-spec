@@ -1,0 +1,35 @@
+{
+  "command": "architect",
+  "timestamp": "2026-11-09T17:53:39Z",
+  "change": null,
+  "doc": "automate-dev-flow",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "G0's body clause now allows generated-body text that depends on a setting and leaves the AI's behaviour unchanged at the defaults (R-adf-12, the user's general rewording over the AI's recommended second named exception); earlier in the same exploration the user moved sign-off to program-brief and concurrency to parallel-lanes. No stage awaited ratification; seam-chaining stays exploring with five rules owing Mechanism entries.",
+  "stages_touched": [
+    "seam-chaining",
+    "program-brief",
+    "parallel-lanes"
+  ],
+  "rulings_captured": [
+    "R-adf-12"
+  ],
+  "completions_ratified": [],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      {
+        "path": "orbit/explore/seam-chaining/explore.md",
+        "why": "ten decisions; five rules owe Mechanism entries, the one open question"
+      },
+      {
+        "path": "orbit/architecture/automate-dev-flow.md",
+        "why": "G0 as reworded (R-adf-12) and seam-chaining's narrowed charter"
+      }
+    ],
+    "next_command": "/orbit:explore seam-chaining",
+    "model_hint": "claude-opus-5-5",
+    "seam": "the Mechanism entries for D-sc-3, -5, -6, -7 and -10, then propose"
+  },
+  "next_recommended": "/orbit:explore seam-chaining"
+}
