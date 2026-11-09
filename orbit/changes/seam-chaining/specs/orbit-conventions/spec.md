@@ -12,8 +12,11 @@ workflow, review iterations included — unless the user's message requests it o
 the command it runs and the setting key that granted it, and runs that command as the next act of the same turn; the
 chained command ends the same way, so a chain continues until the object reports `may_run: false`, and the AI then
 states its `why` in one line whenever `configured` is true — on `open-stop`, naming the object's `stop` record and
-putting that stop's question to the user. A command run because the object allowed it records that in its run
-summary's `final_assessment` as one sentence: `Chained: granted by chain.<key>.`. Only the session that invoked a
+putting that stop's question to the user. A command run because the object allowed it records that as one sentence,
+`Chained: granted by chain.<key>.`, in the record its session writes: a walk in its run summary's `final_assessment`,
+an external review or a blind pair in its launch record's `final_assessment`, an in-context review in its pass's
+`commentary` (the review emit owns a pass's `final_assessment`); a chained fresh review records nothing, because its
+pass is written by a worker whose brief carries nothing from the session that dispatched it — a named limit. Only the session that invoked a
 command reads the object at its end: a worker that session dispatched — a fresh reviewer, a blind pair's fresh half —
 persists its pass and returns, and never chains. With no `chain` setting the object never allows a command,
 and the contract holds exactly as without the setting. Blanket delegation

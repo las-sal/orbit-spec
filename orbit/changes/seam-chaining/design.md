@@ -76,8 +76,12 @@ and `/orbit:archive`. The engine never names a review before an unpassed gate it
    generated bodies and references, finds every `AskUserQuestion` site and every prose ask of the pause pattern, and
    fails on an untagged site or a tag the requirement's table does not name.
 8. **A taken default is a sentence in `final_assessment`** (D-sc-20): `The chain took the default: <prompt> —
-   <answer>.` A command that ran because of a chain records that the same way: `Chained: granted by chain.<key>.`, so a
-   later reader can tell a chained run from a typed one without a new field. A new payload field would join the payload tables, their schema references and executed examples, and
+   <answer>.` A command that ran because of a chain records `Chained: granted by chain.<key>.`, so a later reader can tell a
+   chained run from a typed one without a new field — in the record the session itself writes: the walk's
+   `final_assessment`, an external review's or blind pair's launch record `final_assessment`, and an in-context pass's
+   `commentary`, because `orbit emit review` refuses a `final_assessment` in a pass payload (engine-owned). A chained
+   fresh review leaves no such sentence: its worker writes the pass, and its brief carries nothing from the dispatching
+   session (a named limit; the second change's consent value is where a structural record could land). A new payload field would join the payload tables, their schema references and executed examples, and
    make `orbit-emit-composition`'s "only" in `The write gate checks decision records` false.
 9. **The blind pair's row 13** names the walk as chained only through the contract (`orbit-review`).
 10. **The consent vocabulary is untouched here.** No key grants apply or archive, so `orbit-engine-gates`'
@@ -130,6 +134,7 @@ and `/orbit:archive`. The engine never names a review before an unpassed gate it
 - `src/core/templates/workflows/review.ts` — the end step, epitome clause, blind-pair row 13, the external-handoff ending, the worker brief, prompt tags.
 - `src/core/templates/workflows/address-reviews.ts` — the end step, epitome clause, prompt tags, the taken-default sentence.
 - `docs/customization.md` — the `chain` key beside the other project settings.
+- `docs/getting-started.md` — its never-unasked sentence, qualified by the setting.
 - `README.md` — its never-unasked sentence, qualified by the setting.
 - `docs/concepts.md` — its never-unasked sentence, qualified by the setting.
 - `docs/commands.md` — its never-unasked sentence, qualified by the setting.
