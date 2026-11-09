@@ -1,0 +1,137 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-09T23:04:10Z",
+  "change": "seam-chaining",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 4
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "src/core/chain.ts",
+      "line": 128,
+      "title": "open-stop names a replaced stop, whose question is superseded and which the resolution write gate refuses",
+      "recommendation": "earliestOpenStop walks folder.records in filename order and returns the first stop whose chain is unanswered, which is the ORIGINAL of a replaced stop, not the latest record in its chain. The end step then reads `question` from that path (the superseded wording) and the AI writes a resolution naming it, which checkDecisionLinks refuses via refuseReplacedTarget ('has been replaced — cite <latest>'). Return latestInChain(folder, name) for the open chain (and skip a stop already reported through its chain), and add a test whose open stop has a replacement: `stop` names the replacement and its question is the replacement's.",
+      "reproduction": "In test/core/chain.test.ts's 'an answered stop lets the chain run again' fixture, stop-T3 is replaced by stop-T4 and neither is answered: chain() reports stop: orbit/changes/x/.orbit-runs/decisions/stop-T3.json (question 'q?', not the current 'q2?'), and `orbit emit resolution` with stop: stop-T3.json is refused by src/core/decision-records.ts refuseReplacedTarget."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/seam-chaining/design.md",
+      "line": 7,
+      "title": "A chained blind pair or launched external review from apply (or propose/ff without a PR regime) is refused by the dirty tree, and the chain reports it as no-progress",
+      "recommendation": "The design chains 'the start of [the loop] from propose, ff and apply', and the default review_preference names a blind pair after apply. But apply never commits, and propose/ff commit only under a PR regime, while the pair's preflight refuses any `git status --porcelain` output and writes nothing (review.ts Step 1 of the pair reference), and the single external launch route needs a clean tree (Step 3a; a dirty tree falls to the paste route, writing only the prompt and launch record). So under `review-external: true` the most common chained arrival from apply always fails, and the next read stops on `no-progress`, a reason that names a runner failure, not the uncommitted work. Either name and route it, or make it work.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Name the limit: state in the design's Risks, the end step and docs/customization.md that a chained external review or pair needs a committed tree, so from apply (and propose/ff without a PR regime) the chain stops on no-progress until the user commits."
+        },
+        {
+          "label": "B",
+          "body": "Add a row before needs-user (e.g. `dirty-tree`: the next command is an external or blind-pair review and the working tree is not clean) to `The change status says whether the next command may run unasked`, with its test, so the stop names its cause."
+        },
+        {
+          "label": "C",
+          "body": "Give the apply body's end step a commit of the apply's named paths before reading chain when the next command is an external form (designed steps may commit), with its test and a ledger entry in the defaults area."
+        }
+      ]
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "src/core/templates/workflows/onboard.ts",
+      "line": 66,
+      "title": "The onboard body still teaches that the AI never runs the next command",
+      "recommendation": "The change qualified every user doc's never-unasked sentence by the `chain` setting, but the orbit-onboard body's No-chaining line ('one command per explicit request; it recommends, never invokes') is user-facing orientation that is now false under a `chain` grant. It is not an epitome bullet (design decision 6's 'other bodies keep theirs' covers epitomes, not this explanation). Qualify it as the docs were: '... unless the project's `chain` setting grants the next command', and re-record the onboard parity hashes."
+    },
+    {
+      "pass": "0",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "src/core/disciplines.ts",
+      "line": 92,
+      "title": "The end step says 'judge no reason of your own', then makes a decision prompt a reason",
+      "recommendation": "The step's opening says 'obey it; judge no reason of your own', while its may_run: true paragraph says a command that asked a (chain: decision) prompt runs nothing after it. The owning requirement words this as 'judges no reason of its own, beyond a decision prompt it asked'. Carry that qualifier into the opening sentence so a reader of the step's first line does not chain past a decision."
+    },
+    {
+      "pass": "0",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "src/core/disciplines.ts",
+      "line": 92,
+      "title": "The end step does not say what to do when there is no change (architecture-mode review, doc or project-wide walk)",
+      "recommendation": "The step is appended to the whole review and address-reviews bodies and tells the AI to read `orbit status --change \"<name>\" --json`, but an architecture-mode review, a `--doc` walk and a bare project-wide walk have no change. Add one clause: with no change target, the step prints nothing and the turn ends at the readout."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "docs/cli.md",
+      "line": 272,
+      "title": "The CLI reference's `orbit status` options table omits --chain-ran and --chain-head",
+      "recommendation": "Add the two options beside --boot and --scenarios (with --change --json: what a chained body passes back to detect no-progress). The command-coverage check owes commands, not flags, so nothing caught it."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "test/core/templates/skill-templates-parity.test.ts",
+      "line": 241,
+      "title": "The re-recorded propose, ff and apply hashes carry no seam-chaining provenance note",
+      "recommendation": "Every earlier re-record in this table names the change and task that moved it; the seam-chaining moves (task 3.1, the chain end step and epitome clause) are silent, and the orbit-apply-change comment still names only 'rc17a apply: the v4 clause'. Append a 'seam-chaining apply: the Chain end step and the epitome clause' note at the moved function and content hashes."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "The engine half is tight: the resolver reads only its own key, the object is composed beside size outside formatChangeStatus so no gate row, position or next_command can read it, the key regexes cover every producer literal (the test reads gates.ts and instruction-loader.ts themselves), model hints ride only the human line so the JSON next_command stays matchable, and the head rule's exclusion of launch records and prompt files does what the no-progress row needs. Full npm test is green (187 files, 3932 tests), validate passes, and the scenario map covers all 30 delta scenarios. The weaker half is where the chain meets the rest of the flow: the open-stop row and the resolution write gate disagree about replaced stops, and the most common external arrival (apply, then the default blind pair) meets a dirty-tree refusal the object cannot name. Pass 0 and Pass 6 were run inline in this worker (structural validate, task and scenario coverage, and a residue grep of docs and generated bodies for the never-unasked phrasing) rather than through the verify and audit-drift skills, so that this pair member writes no record to the trail besides its pass. Passes 4 and 5 were skipped: orbit/lenses/ does not exist. Readings came from the live checkout at the pair's handoff commit 07379be8, the tree clean.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "6"
+  ],
+  "passes_skipped": [
+    "4",
+    "5"
+  ],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The engine object and the setting are sound and inert at the defaults, so the change can go forward to the walk. The two correctness points want repair before archive: name the latest stop in a replaced chain, and decide how a chained external review meets the uncommitted tree apply leaves (name it, give it its own reason, or commit first). Nothing here argues for re-opening the design."
+  },
+  "final_assessment": "0 critical, 3 warning, 4 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews seam-chaining"
+}
