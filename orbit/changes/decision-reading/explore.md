@@ -29,7 +29,7 @@ Domain: every point in a change's life at which decision records are written, an
 | an architect session's records (the architecture trail) | not covered — the named limit D-dw-2 carried |
 Closure: BOUNDED — the change-level sites follow from the spec-driven cadence (`[invoked, in-context]` before archive), but the set of skills that write records grows as stages add them
 Residual kind: a record written in work no system review cycle reaches, or at a step a later stage adds after the last reading
-Residual method: when a stage adds a step that writes records, its proposal places it against this table; D-dr-3's count surfaces any that reach archive unread
+Residual method: when a stage adds a step that writes records, its proposal places it against this table; the archive emit's unread count surfaces any that reach archive unread
 Moves:
 - READ: applied — cadence `[invoked, in-context]` and `confirm: findings-resolved` in `schemas/spec-driven/schema.yaml`; the ordering constraint and clause (b) in `orbit-engine-gates`' `Reviewed-gate pass condition`; all four real records written during walks (the decision-writing trail)
 - ENUMERATE: applied — this table; D-dw-2's table enumerated review contexts, not write points, and missed w3
@@ -103,7 +103,7 @@ Domain: the ways a record can fail its plain-language rule, and what catches eac
 | a plain field that restates something the record cites, so that its meaning shifts | the reader, holding the cited text (D-dr-6) — NEW |
 Closure: BOUNDED — the rows came from the decision-layer design and one probe, not a structure
 Residual kind: a way a record misleads its reader that none of the six rows names
-Residual method: classify each reading's findings against the rows at its walk (D-dr-4's residual method); a finding that fits none adds a row, as a change to the requirement
+Residual method: classify each reading's findings against the rows at its walk; a finding that fits none adds a row, as a change to the requirement
 Moves:
 - READ: applied — the five rows of `The plain-language rule is held by structure and by a reader`; the probe's one WARNING (record 2's "an outward act" dropping R-adf-3 (4)'s qualifier)
 - ENUMERATE: applied — this table

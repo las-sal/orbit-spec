@@ -1,0 +1,9 @@
+{
+  "command": "resolution",
+  "timestamp": "2026-11-09T00:41:57Z",
+  "change": "decision-reading",
+  "model": "claude-opus-5-5",
+  "stop": "stop-2026-11-09T00-29-52Z.json",
+  "answer": "Back off G0: the reading step does not have to leave orbit acting exactly as before. orbit has one user today, so do what is best for future users.",
+  "effect": "The reading step runs by default whenever a change has records to read, with no setting. The change states this as a departure from G0 as worded, for the user to reword G0 at the program's next architect session."
+}
