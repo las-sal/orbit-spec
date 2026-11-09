@@ -190,6 +190,27 @@ Exit criteria:
   naming its replacement, each tested.
 - G0 holds.
 
+Shipped as (2026-11-09; archived as `orbit/changes/archive/2026-11-09-decision-reading/`; the charter stands, with the
+departures below): `orbit decisions brief <change> [--json]` renders the reader's brief — the architecture doc, each
+selected record with the text of what it points at, and a fixed reader's task — and the in-context system pass
+dispatches it verbatim to a clean-context reader whose findings fold under Coherence as the `reading` pass. A record
+counts as read only when a system review lists it in `decision_records_read` (the engine refuses a pass that is
+silent, reads without a list, lists without a read, or lists outside the selection), and archive records the count
+of unread records in its run record, shown on no screen. A record is fixed by a replacement whose `replaces` names
+the latest record of its chain and whose link fields are unchanged; every reader takes the latest in a chain, a
+carried link is exempt from the replaced-target check, and a stop chain takes at most one resolution chain. The
+system walk ratified one replacement per resolved finding, chained. The first live reading read 17 records and found
+ten worth fixing, most of them restatements that shifted what they cite; the walk replaced them, and those ten
+replacements (eight chain heads) reach no reader before archive, D-dr-2's named limit. The departures: G0 as written
+does not hold — the reading runs by default and adds findings to every system review of a change with records,
+which the user chose at propose (the change's design decision 1) — and the exit criterion's "only" is read as no
+knowledge of the work beyond the doc and the records, since the brief ends with the fixed reader's task (decision
+5); rewording both is the user's, at the next architect session. Closed-set tests that moved (R-adf-9), each
+recorded under the change's task 4.4: the skill hash pins (11 skills, the archive's twice), `rc03b`'s
+`emit-composition.ts` pin, `schema-references.ts`'s engine-owned keys with `emit-schema-parity`'s archive negative
+case, `reference-roundtrip`'s third seeding rule, and `orbit-conventions`' canonical archive example, carried as a
+fourth capability (a declared size breach).
+
 ### Stage seam-chaining — the granular settings and regime 2
 
 Depends-on: decision-layer

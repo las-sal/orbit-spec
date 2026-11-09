@@ -361,6 +361,20 @@ export function buildProgram(options: ProgramOptions = {}): Command {
       if (exitCode !== 0) process.exit(exitCode);
     });
 
+  // decision-reading: the reading step's brief, rendered read-only
+  const decisions = program
+    .command('decisions')
+    .description('Decision records: the brief the reading step gives its reader (read-only)');
+  decisions
+    .command('brief <change-name>')
+    .description('Render the brief of the decision records no reading has yet read (writes nothing)')
+    .option('--json', 'Output as JSON')
+    .action(async (changeName: string, options?: { json?: boolean }) => {
+      const { DecisionsCommand } = await import('../commands/decisions.js');
+      const exitCode = new DecisionsCommand().brief(changeName, options ?? {});
+      if (exitCode !== 0) process.exit(exitCode);
+    });
+
   // PR lifecycle (rc12): observe and print — the read-only queries a seam needs, every write as argv
   const pr = program
     .command('pr')

@@ -6,6 +6,7 @@ import {
   LEDGER_STOP_CONDITIONS,
   PAYLOAD_STOP_CONDITIONS,
   READER_BOUND_FIELDS,
+  REPLACEMENT_LINK_FIELDS,
   STOP_CONDITIONS,
   type DecisionCommand,
 } from './decision-records.js';
@@ -75,6 +76,10 @@ const RECORD_TITLE: Record<DecisionCommand, string> = {
 const DEFINES_FORM = 'optional; an array of `{term, definition}` objects, both non-blank, each term once — every term a plain field uses that the architecture doc does not';
 const DETAIL_FORM = 'optional; a string, not bound by the plain-language rule — implementation detail may go here, never as the only statement of what was decided';
 
+/** `replaces`, per record: a replacement rewords and carries that record's link fields unchanged. */
+const replacesForm = (command: DecisionCommand): string =>
+  `optional; the filename (\`${command}-<TS>.json\`) of the ${RECORD_TITLE[command].toLowerCase()} this one REPLACES, in the same \`decisions/\` folder, belonging to the same work, and not already replaced — a replacement rewords and carries ${REPLACEMENT_LINK_FIELDS[command].map(code).join(', ')} unchanged`;
+
 /** The form the write gate accepts for each payload field, per record. */
 const FIELD_FORM: Record<DecisionCommand, Record<string, string>> = {
   stop: {
@@ -83,6 +88,7 @@ const FIELD_FORM: Record<DecisionCommand, Record<string, string>> = {
     question: 'plain; non-blank — the question as you put it to the user',
     defines: DEFINES_FORM,
     detail: DETAIL_FORM,
+    replaces: replacesForm('stop'),
   },
   resolution: {
     stop: 'the stop it answers, by filename (`stop-<TS>.json`), in the same `decisions/` folder and belonging to the same work; a stop has at most one resolution',
@@ -90,6 +96,7 @@ const FIELD_FORM: Record<DecisionCommand, Record<string, string>> = {
     effect: 'plain; non-blank — what happens next because of it',
     defines: DEFINES_FORM,
     detail: DETAIL_FORM,
+    replaces: replacesForm('resolution'),
   },
   ledger: {
     area: `one of the ledger areas: ${LEDGER_AREAS.map(code).join(', ')}`,
@@ -100,6 +107,7 @@ const FIELD_FORM: Record<DecisionCommand, Record<string, string>> = {
     raised_stop: `present only when \`relies_on\` is \`[]\`: the stop the call raised, by filename (\`stop-<TS>.json\`), in the same \`decisions/\` folder, of condition ${LEDGER_STOPS}`,
     defines: DEFINES_FORM,
     detail: DETAIL_FORM,
+    replaces: replacesForm('ledger'),
   },
 };
 
@@ -192,6 +200,10 @@ export const DECISION_RECORDS_REFERENCE = [
   '## The plain-language rule',
   '',
   `The plain fields — ${PLAIN_LIST} — are written for a reader who knows only the program's architecture doc (its Premise, Goals, Rulings and stage charters) and nothing else. Any other term a record uses is defined in its \`defines\` list, or not used. Implementation detail (internal names, file layouts, mechanisms coined during the work) may go in \`detail\`, and is never the only statement of what was decided.`,
+  '',
+  '## Fixing a record',
+  '',
+  "A record is never edited or deleted once written. To fix one — because a reading found it wanting, or because you did — write a NEW record of the same kind whose `replaces` names the old record's filename; the latest record in a chain is the current one. A replacement rewords and never changes what happened, so it carries the old record's link fields unchanged (a ledger entry's `area`, `relies_on` and `raised_stop`; a stop's `condition`; a resolution's `stop`), and orbit refuses one that differs, naming the field. Replace the LATEST record of a chain: when a second fix lands on a record already replaced, the new record replaces that replacement. A new link (a `raised_stop`, a resolution's `stop`, or a `resolution` citation) names the LATEST record of its chain; orbit refuses one naming a replaced record, naming the record to cite instead.",
   '',
   ...REFERENCE_RECORD_ORDER.flatMap(c => [recordSection(c), '']),
 ].join('\n');

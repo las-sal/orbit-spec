@@ -1,0 +1,226 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-09T14:40:22Z",
+  "change": "decision-reading",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 5,
+      "suggestion": 6
+    }
+  },
+  "findings": [
+    {
+      "pass": "reading",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/decision-reading/.orbit-runs/decisions/ledger-2026-11-09T03-19-05Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-09T03-19-05Z.json, row 3: decided and why read as accepting every link to a replaced record",
+      "recommendation": "Write a replacement whose decided says the acceptance covers only links a rewording record copies from the record it replaces, and that a new link naming a replaced record is still refused, naming the latest version to cite; let why rest on that refusal."
+    },
+    {
+      "pass": "reading",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/decision-reading/.orbit-runs/decisions/ledger-2026-11-09T03-19-06Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-09T03-19-06Z.json, row 4: decided restates D-dr-2 without saying it departs from its by-time selection",
+      "recommendation": "Write a replacement whose decided or why says this replaces D-dr-2's selection of the records written since the last reading with an explicit list of what each reading read, and why (so a reader does not take the listed-as-read rule for D-dr-2's own words)."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/decision-reading/.orbit-runs/decisions/ledger-2026-11-09T03-19-06Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-09T03-19-06Z.json, row 2: why leans on how orbit stores times",
+      "recommendation": "In the same replacement, say plainly why time cannot decide it: a skipped reading would still move the cut-off, and a record written while a reading ran could fall either side of it."
+    },
+    {
+      "pass": "reading",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/decision-reading/.orbit-runs/decisions/ledger-2026-11-09T03-19-09Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-09T03-19-09Z.json, row 4: \"orbit's own list of the five conditions\" shifts the cited six",
+      "recommendation": "Write a replacement that says the brief words each stop's condition as the event table of `Three decision records, one job each` does (six conditions, five of which the AI raises), not as R-adf-3 words them."
+    },
+    {
+      "pass": "reading",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/decision-reading/.orbit-runs/decisions/ledger-2026-11-09T14-08-01Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-09T14-08-01Z.json, row 4: why credits D-dr-6 with a purpose it does not state",
+      "recommendation": "Write a replacement whose why gives D-dr-6's own reason (a citation a reader cannot read cannot be checked) and attributes \"what the reader is given can be checked\" to the stage charter that states it."
+    },
+    {
+      "pass": "reading",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/decision-reading/.orbit-runs/decisions/ledger-2026-11-09T14-31-50Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-09T14-31-50Z.json, row 3: alternatives names a documentation stage the program does not have",
+      "recommendation": "Write a replacement whose alternative says leaving it to stage `release`, whose exit criterion has the user docs describe the program's mechanisms."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/decision-reading/.orbit-runs/decisions/ledger-2026-11-09T14-31-50Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-09T14-31-50Z.json, row 1: \"a clean reader\" is used without a definition",
+      "recommendation": "In the same replacement, add \"clean reader\" to defines: a reader given only the brief orbit prints, with no other context from the work."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/decision-reading/.orbit-runs/decisions/ledger-2026-11-09T00-42-13Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-09T00-42-13Z.json, row 3: \"its record of the archive\" could be a new or a decision record",
+      "recommendation": "Write a replacement saying the count is kept in the record orbit already writes of each archive run, which no screen shows."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/decision-reading/.orbit-runs/decisions/resolution-2026-11-08T20-54-23Z.json",
+      "line": 1,
+      "title": "resolution-2026-11-08T20-54-23Z.json, row 2: \"archive's record of the run\" relies on an internal notion",
+      "recommendation": "Write a replacement whose answer names it as the record orbit already writes of each archive run and says no screen shows it."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/decision-reading/.orbit-runs/decisions/stop-2026-11-08T20-48-08Z.json",
+      "line": 1,
+      "title": "stop-2026-11-08T20-48-08Z.json, row 2: question relies on \"archive's record of the run\"",
+      "recommendation": "Write a replacement whose question names it as the record orbit already writes of each archive run, which no screen shows; keep the condition."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "src/core/templates/workflows/address-reviews.ts",
+      "line": 1170,
+      "title": "The chained-replacement paragraph still names \"the old record\" and \"the replaced record\"",
+      "recommendation": "In the walk paragraph, say replaces names the LATEST record of the chain (the record the finding named only when it has not been replaced yet), and that kept lists the record the replacement replaces; the write gate already refuses a stale replaces naming the latest, so this is wording only.",
+      "walk_entry": {
+        "title": "One replacement for several findings conflicts with the default walk",
+        "file": "src/core/templates/workflows/address-reviews.ts"
+      }
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Verified the two walks over their sweep scopes; every file changed since the external pass sits in some entry's edit record, so the residual check is empty. The one regressed verdict is wording: the chain fix left two phrases that read as the first record in a chain. This pass also ran the first live reading step: one run of `orbit decisions brief decision-reading --json` selected 17 records, and its markdown went verbatim to a clean subagent. The reader found that the program's own ledger entries most often go wrong by restating what they cite: three restate an explore decision or the event table so that its meaning shifts, which is the fourth reader row this change added. Two of the reader's findings name terms the architecture doc does not carry (the archive's run record, a documentation stage). Each record finding is fixed by a replacement in the walk, one per resolved finding.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "reading"
+  ],
+  "passes_skipped": [
+    "0: VERIFICATION genre — a whole-change pass is not run",
+    "4: no perspectives defined (orbit/lenses/ is absent)",
+    "5: no critical paths defined (orbit/lenses/ is absent)",
+    "6: VERIFICATION genre — a whole-project pass is not run"
+  ],
+  "verification": [
+    {
+      "title": "The brief renders a replaced stop's superseded wording under a record that names it",
+      "file": "src/core/decision-records.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "The replacement sweep record is matched against raw JSON and is untested end to end",
+      "file": "src/core/templates/workflows/address-reviews.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "User docs do not describe the reading step or replacement records",
+      "file": "docs/concepts.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "One replacement for several findings conflicts with the default walk",
+      "file": "src/core/templates/workflows/address-reviews.ts",
+      "verdict": "regressed"
+    },
+    {
+      "title": "Separate brief invocations can mark unseen records as read",
+      "file": "src/core/templates/workflows/review.ts",
+      "verdict": "landed"
+    }
+  ],
+  "decision_records_read": [
+    "ledger-2026-11-09T00-42-12Z.json",
+    "ledger-2026-11-09T00-42-13Z.json",
+    "ledger-2026-11-09T03-19-05Z.json",
+    "ledger-2026-11-09T03-19-06Z.json",
+    "ledger-2026-11-09T03-19-07Z.json",
+    "ledger-2026-11-09T03-19-08Z.json",
+    "ledger-2026-11-09T03-19-09Z.json",
+    "ledger-2026-11-09T14-08-01Z.json",
+    "ledger-2026-11-09T14-08-02Z.json",
+    "ledger-2026-11-09T14-31-49Z.json",
+    "ledger-2026-11-09T14-31-50Z.json",
+    "resolution-2026-11-08T20-54-23Z.json",
+    "resolution-2026-11-09T00-28-39Z.json",
+    "resolution-2026-11-09T00-41-57Z.json",
+    "stop-2026-11-08T20-48-08Z.json",
+    "stop-2026-11-09T00-08-59Z.json",
+    "stop-2026-11-09T00-29-52Z.json"
+  ],
+  "final_assessment": "0 critical, 5 warning, 6 suggestion.",
+  "decision_records_owed": [
+    "ledger-2026-11-09T00-42-12Z.json",
+    "ledger-2026-11-09T00-42-13Z.json",
+    "ledger-2026-11-09T03-19-05Z.json",
+    "ledger-2026-11-09T03-19-06Z.json",
+    "ledger-2026-11-09T03-19-07Z.json",
+    "ledger-2026-11-09T03-19-08Z.json",
+    "ledger-2026-11-09T03-19-09Z.json",
+    "ledger-2026-11-09T14-08-01Z.json",
+    "ledger-2026-11-09T14-08-02Z.json",
+    "ledger-2026-11-09T14-31-49Z.json",
+    "ledger-2026-11-09T14-31-50Z.json",
+    "resolution-2026-11-08T20-54-23Z.json",
+    "resolution-2026-11-09T00-28-39Z.json",
+    "resolution-2026-11-09T00-41-57Z.json",
+    "stop-2026-11-08T20-48-08Z.json",
+    "stop-2026-11-09T00-08-59Z.json",
+    "stop-2026-11-09T00-29-52Z.json"
+  ],
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-11-09T14-25-43Z",
+    "2026-11-09T14-32-20Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews decision-reading"
+}

@@ -1,0 +1,97 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-09T14:19:10Z",
+  "change": "decision-reading",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 3
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "src/core/decision-records.ts",
+      "line": 869,
+      "title": "The brief renders a replaced stop's superseded wording under a record that names it",
+      "recommendation": "In buildDecisionBrief, resolve the named stop with latestInChain(folder, stopName) before reading its about/question (as the resolution-citation branch at line 846 already does for a cited resolution), render the latest record's filename, and add a brief test: stop-S replaced by stop-T, a ledger entry naming stop-S, the brief shows stop-T's about/question. If the original wording is wanted for history, render both, the latest marked current; either way state the choice in the brief requirement's 'a ledger entry's raised_stop or a resolution's stop' row.",
+      "reproduction": "Throwaway vitest over the decision-brief fixture: emit stop-S (about OLD-ABOUT), a ledger entry with raised_stop stop-S, then a stop replacing stop-S (about NEW-ABOUT). renderDecisionBrief(buildDecisionBrief(root,'foo')) prints under the ledger entry 'It names the stop stop-…01Z.json: about: OLD-ABOUT, question: OLD-Q?'. The change's own requirement 'A record is fixed by a replacement, never edited' says every reader of decisions/ takes the LATEST record in each chain as the current one, and its named limit lists the brief among readers that 'each take the latest in every chain'; the resolution-citation branch follows the chain, the named-stop branch does not. The reader then judges the entry against wording the walk already replaced, and can raise a finding the replacement already fixed."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "src/core/decision-records.ts",
+      "line": 621,
+      "title": "AREA_ROWS and CONDITION_WORDING copy spec tables with no parity check",
+      "recommendation": "Add a parity test that parses orbit/specs/orbit-decision-records/spec.md's 'The ledger's eighteen areas' table and the event table of 'Three decision records, one job each' and holds AREA_ROWS and CONDITION_WORDING equal to them (both match today). The brief tells its reader these are the spec's rows; today a later rewording of either table would leave the brief showing the old wording with every test green (decision-brief.test.ts asserts the brief against the constants, not the spec)."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "src/core/templates/workflows/address-reviews.ts",
+      "line": 1170,
+      "title": "The replacement sweep record is matched against raw JSON and is untested end to end",
+      "recommendation": "The sweep gate (emit-composition.ts:696-704) matches an introduced text literally against the file's raw text, and a replacement is JSON, so a phrase holding a double quote, a backslash or a line break occurs there only escaped and the walk is refused. Either add to this paragraph that the introduced phrase is chosen free of quotes, backslashes and line breaks, or match decision-record paths against their parsed field values; and add one address-reviews emit test with a replacement-resolved entry (introduced = the replacement, kept = the replaced record), since design decision 6's claim that the gate 'accepts it as it stands' is not exercised by any test."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "docs/concepts.md",
+      "line": 154,
+      "title": "User docs do not describe the reading step or replacement records",
+      "recommendation": "System review now runs a reading step by default on any change with decision records (decision 1's ratified G0 departure), but docs/concepts.md's System-mode paragraph still describes only verify plus six passes, and docs/cli.md's ledger/stop/resolution paragraph (line 364) does not mention 'replaces'. Add a sentence to each so an adopter learns why a system review reports findings against decision records and how one is fixed."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Probed hardest: the chain logic in checkDecisionLinks (carried-link exemption, the one-resolution-chain count with the replaced resolution's own chain excluded), the selection's use of read lists rather than timestamps, the engine-owned owed/unread fields, and what the brief renders. The stop-chain defect was confirmed by a throwaway vitest over the decision-brief fixture (deleted after). Pass 0 readings came from the live checkout: validate passes, the scenario map shows every delta scenario covered, and npm test ran 185 files and 3885 tests, all passing. Pass 6 was not run as the audit-drift library; a targeted sweep for the retired phrase 'covered by no step' found it only in the unsynced baseline, which the delta retires at archive. The diff also touched src/core/parsers/explore-rules.ts (decisionEntryText), a file design.md's Touchpoints does not list; noted, not graded, since Touchpoints is a frozen prediction. The brief's 'work' line reads the record's own change field, so records carried in from an exploration under another name show that name, and a replacement of one is refused as other work; this follows the pre-existing same-work rule and was not graded.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3"
+  ],
+  "passes_skipped": [
+    "4: no perspectives defined (orbit/lenses/perspectives.md absent)",
+    "5: no critical paths defined (orbit/lenses/critical-paths.md absent)",
+    "6: audit-drift not invoked as a library by this fresh worker; a targeted residue sweep ran instead (see commentary)",
+    "reading: fresh pass; the in-context pass of the cycle reads"
+  ],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The change does what its proposal and specs say: the write gate's chain checks, the selection, the brief, the review and archive fields and the reading step in the review body are all present, the full suite is green, every delta scenario is declared, and the four refusals and engine-owned fields behave as specified.\nThe one material defect is narrow: the brief does not follow a named stop's replacement chain, unlike the cited-resolution branch beside it. It is a one-line fix with a small test, and it should land before the first real reading on a change that has replaced a stop.\nThe rest are drift guards and docs; none blocks moving on once the stop-chain fix is walked."
+  },
+  "final_assessment": "0 critical, 1 warning, 3 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews decision-reading"
+}

@@ -1,0 +1,28 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-09T14:31:50Z",
+  "change": "decision-reading",
+  "model": "claude-opus-5-5",
+  "area": "docs",
+  "decided": "The concepts page now says that a system review of a change with unread decision records also has a clean reader check whether each record makes sense, and that a record found wanting is fixed by a new record that replaces it; the command reference says a record is never edited and how a replacement names the record it replaces.",
+  "alternatives": [
+    "leave the reading step out of the user docs until the program's documentation stage"
+  ],
+  "why": "The reading step runs by default, so a user who reads the concepts page should learn why a system review reports findings against decision records and how they are fixed.",
+  "relies_on": [
+    {
+      "kind": "decision",
+      "id": "D-dr-2"
+    },
+    {
+      "kind": "decision",
+      "id": "D-dr-4"
+    }
+  ],
+  "defines": [
+    {
+      "term": "decision record",
+      "definition": "a file orbit keeps for each call the AI made that affects the user or security, each time a run needed the user, and each answer the user gave"
+    }
+  ]
+}

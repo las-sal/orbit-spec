@@ -1,0 +1,172 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-09T01:22:23Z",
+  "change": "decision-reading",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 3,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 3,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 3
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/decision-reading/specs/orbit-emit-composition/spec.md",
+      "line": 29,
+      "title": "A replacement must keep a link the replaced-target check refuses",
+      "recommendation": "The `replaces` check requires a replacement to carry its original's link fields unchanged, while the new `replaced target` check refuses any `raised_stop`, resolution `stop` or `relies_on` resolution citation that names a replaced record. A record whose target was replaced can then never be replaced itself. Exempt a replacement's carried links from the replaced-target check (it re-states a link written before the target was replaced, which the chain table at orbit-decision-records spec.md:117 already says stays as written), and add a scenario for it; or let a replacement re-point an unchanged link to the latest of the target's chain and say that 'unchanged' compares chains rather than filenames.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Exempt a payload carrying `replaces` from the `replaced target` check for the link fields it carries unchanged; add a scenario: stop-S replaced by stop-T, ledger-L (raised_stop stop-S) replaced, the replacement written with raised_stop stop-S."
+        },
+        {
+          "label": "B",
+          "body": "Define 'unchanged' for links as 'naming the same chain': the replacement must name the latest in the target's chain (stop-T), and the link-field equality check compares chains; add the same scenario with stop-T."
+        }
+      ],
+      "reproduction": "One reading finds wording problems in stop-S and in ledger-L, whose raised_stop is stop-S. The walk replaces stop-S with stop-T first. It then writes the replacement of ledger-L: the replaces check requires raised_stop stop-S (spec.md:28 and orbit-decision-records spec.md:98-102), and the replaced-target check (spec.md:29) refuses raised_stop stop-S, naming stop-T. Either value is refused, so ledger-L cannot be fixed. The same holds for a resolution whose stop was replaced, and for a ledger entry citing a replaced resolution."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/decision-reading/specs/orbit-review/spec.md",
+      "line": 17,
+      "title": "A skipped reading's records do not stay selected under the stated selection",
+      "recommendation": "The no-subagent row says the records 'stay selected for the next reading', but the selection is 'records written after the latest in-context system review emit' (orbit-decision-records spec.md:167-169; orbit-emit-composition spec.md:94), and the emit that skipped the reading is that latest emit. Measure the selection against the latest in-context system review emit that listed `reading` in `passes_run` or owed nothing (`decision_records_owed: []`), matching D-dr-2's own wording 'after the last pass that carried a reading' (explore.md:24), and state it the same way in all three places; add a scenario for a skipped reading followed by a second in-context pass and by archive.",
+      "reproduction": "A change carries ledger-A. An in-context system pass runs where no subagent can be dispatched: it lists `reading` in `passes_skipped` and its emit E carries decision_records_owed [ledger-A]. A later in-context pass, or archive, selects records written after E: ledger-A is not selected, so it is never read and decision_records_unread at archive is 0, though no reading saw it."
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/decision-reading/specs/orbit-review/spec.md",
+      "line": 7,
+      "title": "The reader's brief carries no task, yet the session may add nothing to it",
+      "recommendation": "The reader is given 'that brief verbatim and nothing else' (also orbit-decision-records spec.md:163-164 'adds nothing', and the scenario at orbit-review spec.md:60), but the brief's parts table (orbit-decision-records spec.md:173-184) carries no instructions: not the four reader rows, the severity rule, nor the shape the reader returns findings in. The probe told its reader the rows (sketches/probe-2026-11-08.md:3-7). Add a part to the brief, rendered by orbit, that states the reader's task (the reader rows, what a finding is, how it reports one per record), or state exactly which fixed instruction text the body adds around the brief and narrow 'nothing else' to it.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Add a final part to `The reading step's brief is rendered by orbit`: the reader's task — the reader rows of `The plain-language rule is held by structure and by a reader`, the severity rule, and the return shape — rendered by orbit, so the scenario 'nothing else' holds."
+        },
+        {
+          "label": "B",
+          "body": "Keep the brief to content, and state in the orbit-review requirement the fixed instruction text the body wraps it in, narrowing 'nothing else' to 'no path, finding or pass token'."
+        }
+      ]
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/decision-reading/tasks.md",
+      "line": 12,
+      "title": "The new command misses the completion registry the parity test holds",
+      "recommendation": "`orbit-cli-grammar`'s `The completion registry is a checked copy of the program` (test/core/cli-grammar/registry-parity.test.ts) fails when a command is registered in `src/cli/program.ts` and not in `COMMAND_REGISTRY` (src/core/completions/command-registry.ts, where `fingerprint` sits at line 525). Add the registry entry to task 2.3 and `src/core/completions/command-registry.ts` to the design's Touchpoints (design.md:84-92)."
+    },
+    {
+      "pass": "4",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/decision-reading/specs/orbit-emit-composition/spec.md",
+      "line": 36,
+      "title": "The carried sentence 'No run-summary command's payload table or check changes' is false on day one",
+      "recommendation": "The baseline said 'No existing command's payload table or check changes'; the delta narrows it to run-summary commands, but this same change adds an engine-owned field and a refusal to `review` and a field to `archive` (spec.md:94-105). Reword it to name what changes, e.g. 'No run-summary command's payload table changes; the review and archive emits gain the engine-computed fields and the refusal of `The reading's selection is recorded at review and archive`.'"
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/decision-reading/design.md",
+      "line": 74,
+      "title": "How the walk resolves a reading finding is left to apply, and the sweep gate would refuse the obvious record",
+      "recommendation": "Decision 6 defers to apply whether the address-reviews body needs a sentence, and so whether a spec delta is added then. The walk write gate checks a resolved entry's `sweep.retired` strings against a scope that includes the entry's `file` (`orbit-emit-composition`'s `The walk write gate checks sweep evidence`), and here that file is the original record, which keeps the old wording by rule. A walk retiring the old wording is refused unless it lists the record under `kept`. Settle it at propose: state in the orbit-review (or address-reviews) requirement how a reading finding's resolved entry is composed: the replacement's path under `introduced`, the original under `kept` with its reason, and what a later verification pass reads as the 'edit'. Then the scope is reviewed now rather than grown after review."
+    },
+    {
+      "pass": "4",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/specs/orbit-decision-records/spec.md",
+      "line": 200,
+      "title": "The baseline promises the reading step finds AI-written decision citations; the reader rows do not include that",
+      "recommendation": "`A ledger entry names what it relies on` says 'The reading step of stage `decision-reading` and G4's closing review ... are where such a citation is found' (an explore decision the AI wrote, cited as precedent). This change's reader judges only wording (four rows), escalates citation problems (orbit-decision-records delta spec.md:107), and gets no authorship in the brief. Either carry that requirement and drop the reading step from the sentence (leaving G4's closing review), or give the reader a row and the brief the attribution it would need."
+    },
+    {
+      "pass": "7",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/decision-reading/specs/orbit-decision-records/spec.md",
+      "line": 182,
+      "title": "The brief's condition wording comes from the spec table, not R-adf-3 as D-dr-6 ratified",
+      "recommendation": "D-dr-6 (explore.md) renders a stop's condition 'as R-adf-3 words it, from the doc, beside its id'; the delta renders 'the condition's wording in `Three decision records, one job each`', whose table paraphrases R-adf-3 ('the settings do not grant' vs the doc's 'the config has not granted'). The fourth reader row judges restatements against cited text, so the source matters. Use R-adf-3's text, or record the refinement in design.md as decision 2 does for D-dr-8."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/decision-reading/specs/orbit-review/spec.md",
+      "line": 16,
+      "title": "'passes_skipped with the reason' conflicts with pass-id-only arrays",
+      "recommendation": "The run-summary schema says `passes_run` / `passes_skipped` are strings (pass IDs) and skip reasons go in the report body, not the array. Say that `reading` is listed in `passes_skipped` and the reason is in the commentary or report, so an implementer does not write 'reading: no subagent' as the id the refusal (orbit-emit-composition spec.md:101-103) looks for."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/decision-reading/specs/orbit-decision-records/spec.md",
+      "line": 106,
+      "title": "'Fixed in the brief' is not a walk resolution a change can make",
+      "recommendation": "The brief is rendered by orbit's own code, so a walk inside any change outside orbit-spec, or in a change about something else, cannot fix a brief gap. Say what the walk does with such a finding (deferred, naming it as a finding against `The reading step's brief is rendered by orbit`), consistent with the escalated row for wrong citations."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "The design is coherent and well sourced: every explore decision has a destination, the named limits match their explore rows word for word, the MODIFIED blocks carry every baseline scenario, and orbit validate is clean. The weak points are where two new rules meet. The replacement chain was designed one link at a time, and the carry-links-unchanged rule collides with the refuse-replaced-targets rule as soon as a walk fixes two linked records. The selection was simplified at propose from D-dr-2's 'last pass that carried a reading' to 'last in-context system emit', which quietly drops the skipped-reading case the orbit-review table still promises. Probed: the baseline texts of the three carried requirements diffed against the deltas, the passes_run schema, the completion registry parity test, the docs/cli.md heading, the sweep gate's check scope, and the probe sketch's brief. Not probed: whether the decision citation's explore.md lookup in the brief matches the write gate's for archived changes.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "direction": {
+    "disposition": "hold",
+    "reasoning": "The scope and decomposition are right and need no redesign, but two rules contradict each other as written: a replacement that must keep a link the gate now refuses, and a selection that drops records a skipped reading promised to keep. Both would be built faithfully and fail at the first real walk. The reader's brief also carries no task under a rule that forbids adding one. These are local spec edits; settle them, and the walk-side handling the design defers, before apply."
+  },
+  "final_assessment": "0 critical, 7 warning, 3 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews decision-reading"
+}

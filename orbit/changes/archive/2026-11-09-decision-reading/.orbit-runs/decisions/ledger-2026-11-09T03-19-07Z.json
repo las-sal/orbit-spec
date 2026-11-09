@@ -1,0 +1,19 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-09T03:19:07Z",
+  "change": "decision-reading",
+  "model": "claude-opus-5-5",
+  "area": "things-others-build-on",
+  "decided": "The text orbit prepares for the reader of decision records ends with the reader's instructions: what kinds of problem to look for, how serious each is, and how to report one, naming each record by its file name.",
+  "alternatives": [
+    "keep that text to the records and their sources, and have the reviewing session wrap it in fixed instructions of its own"
+  ],
+  "why": "The reader is told it gets that text and nothing else, so its instructions must be part of it; and with one source, a test of the text checks everything the reader is told.",
+  "relies_on": [
+    {
+      "kind": "decision",
+      "id": "D-dr-6"
+    }
+  ],
+  "detail": "Proposal walk of fresh W3 / external W5, option C1; the reader's task part of `The reading step's brief is rendered by orbit`."
+}

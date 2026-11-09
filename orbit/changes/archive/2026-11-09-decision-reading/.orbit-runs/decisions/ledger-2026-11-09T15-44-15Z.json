@@ -1,0 +1,21 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-09T15:44:15Z",
+  "change": "decision-reading",
+  "model": "claude-opus-5-5",
+  "area": "things-others-build-on",
+  "decided": "The text prepared for the reader words each stop's condition as the event table of orbit-decision-records' requirement Three decision records, one job each does (six conditions, five of which the AI raises and one, tripwire, that orbit raises itself), not as this program's ruling R-adf-3 words them.",
+  "alternatives": [
+    "word each condition as this program's ruling R-adf-3 does, as the exploration first said"
+  ],
+  "why": "orbit's wording of the conditions is the same for every project using it, and other projects' architecture docs do not hold this program's ruling, so orbit's own wording is the only one every reader can be given.",
+  "relies_on": [
+    {
+      "kind": "requirement",
+      "capability": "orbit-decision-records",
+      "title": "Three decision records, one job each"
+    }
+  ],
+  "detail": "Proposal walk of fresh S1; departs from D-dr-6's 'as R-adf-3 words it', recorded in design.md decision 5.",
+  "replaces": "ledger-2026-11-09T03-19-09Z.json"
+}

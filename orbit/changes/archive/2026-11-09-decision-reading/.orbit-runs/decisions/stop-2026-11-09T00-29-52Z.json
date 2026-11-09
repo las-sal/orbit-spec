@@ -1,0 +1,10 @@
+{
+  "command": "stop",
+  "timestamp": "2026-11-09T00:29:52Z",
+  "change": "decision-reading",
+  "model": "claude-opus-5-5",
+  "condition": "ruling-amendment",
+  "about": "Whether the new reading step runs by default. G0 says that with every setting at its default orbit behaves exactly as now, and a workflow's instructions change only by additions that tell the AI to record something. The reading step adds review work and findings the user sees, and records are already written by default, so if it runs by default every system review of a change with records changes.",
+  "question": "Should the reading step run only when a new project setting turns it on (default off, so G0 holds as worded), or run by default, which needs G0 amended or read as allowing it?",
+  "detail": "Exploration decision-reading D-dr-2 and D-dr-8 claimed G0 held because the reading folds into the in-context review emit; that misses the findings it adds to the report and the walk they require. A setting would be owned by orbit-decision-records, as pr-lifecycle owns pr and change-size owns its ceiling."
+}

@@ -13,7 +13,7 @@ This page documents every command and subcommand. Each command's flags are as `o
 | [Validation](#validation) | `orbit validate` |
 | [Lifecycle](#lifecycle) | `orbit archive` |
 | [Workflow support](#workflow-support) | `orbit status`, `orbit instructions`, `orbit templates`, `orbit schemas`, `orbit new change` |
-| [Engine surfaces](#engine-surfaces) | `orbit emit`, `orbit fingerprint`, `orbit external`, `orbit pr`, `orbit architecture` |
+| [Engine surfaces](#engine-surfaces) | `orbit emit`, `orbit decisions`, `orbit fingerprint`, `orbit external`, `orbit pr`, `orbit architecture` |
 | [Schemas](#schemas) | `orbit schema` |
 | [Configuration](#configuration) | `orbit config` |
 | [Utility](#utility) | `orbit feedback`, `orbit completion` |
@@ -363,7 +363,9 @@ Usage: `orbit emit <emit-command>`, where `<emit-command>` is one of `explore`, 
 
 `ledger`, `stop` and `resolution` are not run summaries. They write decision records — a call the AI made that affects
 the user or security, a moment a run needed you, and your answer to it — to `.orbit-runs/decisions/<command>-<TS>.json`
-of the change, exploration or architecture trail. They take `--change` or `--doc`, and carry no next step. The
+of the change, exploration or architecture trail. They take `--change` or `--doc`, and carry no next step. A record is
+never edited: one is fixed by a new record of the same kind whose `replaces` names the old record's filename and whose
+links (the stop it names, what it relies on) are unchanged. The
 decision-writing discipline in every workflow skill with a disciplines epitome tells the AI when to write them, under
 every setting and without changing what you are asked, so a trail's `decisions/` folder fills as the work runs; a walk of an archived change writes none.
 
@@ -377,6 +379,29 @@ every setting and without changing what you are asked, so a trail's `decisions/`
 
 ```bash
 orbit emit apply --change add-dark-mode --payload payload.json
+```
+
+### `orbit decisions`
+
+Decision records, read back.
+
+#### `orbit decisions brief`
+
+Print the brief that a system review's reading step gives its reader: the change's architecture doc, each decision
+record no reading has yet read (the latest version of each, by filename), what each record points at (the text of a
+cited requirement, resolution or explore decision, its area, its stop's condition and question, when and in what work
+it was written), and the reader's task last. It writes nothing. When every record has been read it says there is
+nothing to read and exits zero; when a record or a source it renders cannot be read, it exits non-zero naming it and
+prints nothing.
+
+Usage: `orbit decisions brief <change-name>`.
+
+| Option | Description |
+|---|---|
+| `--json` | Output the same content as JSON, with the brief's text under `markdown` |
+
+```bash
+orbit decisions brief add-dark-mode
 ```
 
 ### `orbit fingerprint`

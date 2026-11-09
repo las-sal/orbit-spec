@@ -1,0 +1,19 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-09T03:19:06Z",
+  "change": "decision-reading",
+  "model": "claude-opus-5-5",
+  "area": "things-others-build-on",
+  "decided": "A decision record counts as read only once a system review lists it among the records its reader was given; until then it stays in the set the next reading is given, including when a reading was skipped or the record was written while a review was running.",
+  "alternatives": [
+    "treat every record written before the latest system review as read, judged by the time each was written"
+  ],
+  "why": "Judging by time lost records: a skipped reading moved the cut-off past records no one read, and the times orbit gives records and reviews cannot be reliably compared, so only an explicit list of what was read keeps every record reaching a reader.",
+  "relies_on": [
+    {
+      "kind": "decision",
+      "id": "D-dr-2"
+    }
+  ],
+  "detail": "Proposal walk of fresh W2 / external W1 and W2, option B; new review payload field decision_records_read."
+}

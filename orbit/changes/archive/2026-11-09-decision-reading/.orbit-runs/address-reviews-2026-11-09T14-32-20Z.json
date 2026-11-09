@@ -1,0 +1,185 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-09T14:32:20Z",
+  "change": "decision-reading",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/decision-reading/.orbit-runs/external-system-2026-11-09T14-19-31Z.md",
+  "source_command": null,
+  "source_token": "2026-11-09T14-19-31Z",
+  "latest_apply_token": "2026-11-09T14-08-09Z",
+  "external_reviewer": "GPT-6",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 3,
+    "suggestion": 0
+  },
+  "pushback_verification": "All three verified against HEAD; one converged with the fresh pass's stop-chain finding, walked in its log.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 1,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The brief renders superseded stop wording",
+      "marker_source": "external",
+      "file": "src/core/decision-records.ts",
+      "line": 871,
+      "classification": "stale",
+      "action": "converged with the fresh half's finding, walked in its log",
+      "evidence": "resolved in address-reviews-2026-11-09T14-25-43Z (the earlier pass's log): the named-stop branch resolves through latestInChain",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "One replacement for several findings conflicts with the default walk",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/address-reviews.ts",
+      "line": 1170,
+      "classification": "decision_required",
+      "action": "applied the ratified direction A: each resolved reading finding writes its own replacement of the latest record in the chain, so walk mode's one-finding-at-a-time cycle holds; the requirement's sentence and scenario, design decision 6, the proposal, the walk body and the shared reference say so; a test chains three replacements and reads the third as current",
+      "evidence": "orbit/specs/orbit-address-reviews/spec.md:416 requires each finding's full inner cycle, fix included, before the next begins; the change's rule required one replacement holding every fix to a record",
+      "ratified_via": "chat",
+      "resolution": "A — one replacement per resolved finding, chained to the latest; D-dr-4's one-per-record rule revised rather than changing orbit-address-reviews",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/decision-reading/specs/orbit-decision-records/spec.md",
+          "orbit/changes/decision-reading/design.md",
+          "orbit/changes/decision-reading/proposal.md",
+          "src/core/disciplines.ts",
+          "test/core/templates/reading-step-surface.test.ts",
+          "test/core/decision-replacements.test.ts",
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "One replacement carries every fix to one record",
+          "Write ONE replacement per record however many findings you resolve on it",
+          "carrying all three fixes",
+          "Several fixes to one record make one replacement"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/templates/workflows/address-reviews.ts",
+            "text": "writes its OWN replacement, of the LATEST record"
+          },
+          {
+            "path": "orbit/changes/decision-reading/specs/orbit-decision-records/spec.md",
+            "text": "Each resolved finding writes its own replacement, of the LATEST record in the chain"
+          },
+          {
+            "path": "orbit/changes/decision-reading/design.md",
+            "text": "revised at the system walk: one replacement"
+          },
+          {
+            "path": "orbit/changes/decision-reading/proposal.md",
+            "text": "each resolved finding writes one replacement of the latest in the chain"
+          },
+          {
+            "path": "src/core/disciplines.ts",
+            "text": "Replace the LATEST record of a chain"
+          },
+          {
+            "path": "test/core/decision-replacements.test.ts",
+            "text": "three fixes, one after another, chain three replacements"
+          }
+        ],
+        "searched": [
+          "one replacement",
+          "every fix to one record",
+          "ONE replacement",
+          "holding them all",
+          "carrying all three fixes"
+        ],
+        "scope": [
+          "docs/cli.md",
+          "docs/concepts.md",
+          "orbit/changes/decision-reading/explore.md",
+          "orbit/changes/decision-reading/tasks.md"
+        ],
+        "kept": [
+          {
+            "path": "orbit/changes/decision-reading/tasks.md",
+            "why": "task 4.2's text records what apply documented; the rule it names was revised at this walk, which design decision 6 records"
+          },
+          {
+            "path": "orbit/changes/decision-reading/explore.md",
+            "why": "D-dr-4 is the exploration's record of what was decided; design decision 6 records its revision"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Separate brief invocations can mark unseen records as read",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 380,
+      "classification": "trivial_fix",
+      "action": "orbit decisions brief --json now carries the rendered brief as markdown; the reading step runs the command once, dispatches that run's markdown and records that run's selected list; both requirements and docs/cli.md say so; a test holds the JSON's markdown equal to the text output and fails when the field is removed",
+      "evidence": "re-read review.ts:380: step 1 ran the command twice, once as text and once as --json",
+      "ripple_cascade": {
+        "applied": [
+          "src/commands/decisions.ts",
+          "orbit/changes/decision-reading/specs/orbit-decision-records/spec.md",
+          "orbit/changes/decision-reading/specs/orbit-review/spec.md",
+          "docs/cli.md",
+          "test/core/decision-brief.test.ts",
+          "test/core/templates/reading-step-surface.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "beside it for its"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/templates/workflows/review.ts",
+            "text": "ONCE and keep its output"
+          },
+          {
+            "path": "src/commands/decisions.ts",
+            "text": "{ ...brief, markdown }"
+          },
+          {
+            "path": "orbit/changes/decision-reading/specs/orbit-decision-records/spec.md",
+            "text": "brief's text as `markdown`, so one run gives the reading step"
+          },
+          {
+            "path": "orbit/changes/decision-reading/specs/orbit-review/spec.md",
+            "text": "come from ONE run of `orbit decisions brief <change> --json`"
+          },
+          {
+            "path": "docs/cli.md",
+            "text": "with the brief's text under `markdown`"
+          }
+        ],
+        "searched": [
+          "decisions brief",
+          "selected",
+          "--json"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "One stale as converged with the fresh half's log, and two resolved: the walk now chains one replacement per resolved finding (the user's direction A), and the reading step takes its brief and its read list from one run of the brief command.",
+  "iteration": 5,
+  "next_recommended": "/orbit:review --as system decision-reading",
+  "ripple_misses": 0
+}

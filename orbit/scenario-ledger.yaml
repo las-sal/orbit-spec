@@ -70,7 +70,7 @@ scenarios:
   # decision-layer (task 3.5) — three scenarios that are a writer's or a reader's judgement (R-crc-10).
   - key: "orbit-decision-records :: Decision records are written for a reader who knows only the architecture :: Detail is never the only statement"
     kind: untestable
-    why: "Whether `decided` states the decision or only points at `detail` is a reader's judgement on prose; orbit checks only that the field is a non-blank string, and the reading step that grades it belongs to stage `decision-reading` (D-dl-8)."
+    why: "Whether `decided` states the decision or only points at `detail` is a reader's judgement on prose; orbit checks only that the field is a non-blank string, and a reader grades it: the reading step of `orbit-review`'s `The reading step checks decision records in system review` (stage `decision-reading`)."
   - key: "orbit-decision-records :: The ledger's eighteen areas :: An internal call writes no entry"
     kind: untestable
     why: "The THEN is an entry the AI does not write; whether a call falls in an area is the AI's judgement, which the decision-writing discipline (`orbit-conventions`) leaves to it. orbit checks only that a written entry names one of the eighteen ids."
@@ -119,3 +119,11 @@ scenarios:
   - key: "orbit-conventions :: Decision-writing discipline :: A call after a clarifying question writes its ledger entry"
     kind: untestable
     why: "The THEN is the AI writing a ledger entry after a clarifying question it asked in a live session; no test runs a session. Graded at first-run from the trail."
+  # decision-reading (task 5.2) — the reader's judgements (R-crc-10). The reading step that makes them is held on the
+  # generated surface by test/core/templates/reading-step-surface.test.ts; its findings are graded at its walk.
+  - key: "orbit-decision-records :: Decision records are written for a reader who knows only the architecture :: A restatement keeps the cited text's meaning"
+    kind: untestable
+    why: "Whether a restatement widens or narrows what it cites is a reader's judgement on prose; the write gate checks only that the cited ruling exists. The reading step's brief carries the cited text and the fourth reader row, so the reader can make the judgement (`A shifted restatement is a reader's finding`)."
+  - key: "orbit-decision-records :: The plain-language rule is held by structure and by a reader :: A shifted restatement is a reader's finding"
+    kind: untestable
+    why: "The reader reporting the entry under the fourth row is a clean subagent's judgement in a live review; no test runs one. The other half of the THEN, that the write gate accepted the entry, is held by test/core/decision-brief.test.ts."

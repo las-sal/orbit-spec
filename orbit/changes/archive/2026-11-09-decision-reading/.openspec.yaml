@@ -1,0 +1,16 @@
+schema: spec-driven
+created: 2026-11-09
+schema_version: 5
+architecture:
+  doc: automate-dev-flow
+  stage: decision-reading
+base_fingerprints:
+  orbit-decision-records:
+    Decision records are written for a reader who knows only the architecture: sha256:b2765da088df7011ce8e50934d5bbe164e2a46ca093747ec2467d0f88a0324b6
+    The plain-language rule is held by structure and by a reader: sha256:30acb4ac8a1e113db21a54ed9787c4529e56ea4b05fa37f57fc82f7ac3a167d0
+    A ledger entry names what it relies on: sha256:dc337577fdb467a252036f23d8bba276a3e4caa6264a5c1dafca6d04e5a0887e
+  orbit-emit-composition:
+    The write gate checks decision records: sha256:04bca830d8affee7a85645154785e9b9a6eec55375ddf2f7ea1fc941982342a6
+    Payload schema references are proven by execution: sha256:fb36e57b1dc32a7589d114d99063b071db3f883f42ca72049a4228d655c5db75
+  orbit-conventions:
+    Internal-run JSON summary format: sha256:0dcd54fda8aa86cd63682609a88d69d976b7e9e5fe5dca22245366b0ab0d908f

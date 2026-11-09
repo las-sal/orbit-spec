@@ -1,0 +1,25 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-09T14:08:02Z",
+  "change": "decision-reading",
+  "model": "claude-opus-5-5",
+  "area": "docs",
+  "decided": "The command reference describes the new command that prints the reader's brief: what the brief holds, that it writes nothing, that it says so when there is nothing to read, and that it stops with an error and prints nothing when something it must show cannot be read.",
+  "alternatives": [
+    "a one-line entry naming the command and its option only"
+  ],
+  "why": "The reference pages must name every command, and a user who runs this one by hand needs to know that an error means nothing was printed, not that there was nothing to read.",
+  "relies_on": [
+    {
+      "kind": "requirement",
+      "capability": "orbit-user-docs",
+      "title": "The reference pages name every command and every workflow"
+    }
+  ],
+  "defines": [
+    {
+      "term": "brief",
+      "definition": "the text orbit prints for the reader of the decision records: the architecture doc, each record to read and what it points at, and the reader's task"
+    }
+  ]
+}

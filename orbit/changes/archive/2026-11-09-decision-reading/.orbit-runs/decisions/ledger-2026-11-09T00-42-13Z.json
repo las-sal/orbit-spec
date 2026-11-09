@@ -1,0 +1,19 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-09T00:42:13Z",
+  "change": "decision-reading",
+  "model": "claude-opus-5-5",
+  "area": "user-sees-or-does",
+  "decided": "When a change is archived, orbit counts the decision records that no reader checked and keeps that count in its record of the archive, without showing it on screen.",
+  "alternatives": [
+    "show the count as a line on screen at every archive"
+  ],
+  "why": "A line on screen would change what the user sees at archive; the program brief, which the user reads at sign-off, can bring the count to them instead.",
+  "relies_on": [
+    {
+      "kind": "resolution",
+      "change": "decision-reading",
+      "token": "2026-11-08T20-54-23Z"
+    }
+  ]
+}

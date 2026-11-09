@@ -152,7 +152,10 @@ session, which checks the fixes made since.
 
 A review is an editorial pass in one of three modes. **Proposal** mode reads the artifacts in nine passes before
 apply. **System** mode runs verify as its Pass 0, checking the code against the tasks and the specs, then reads the
-change in six system-wide passes. **Architecture** mode reads a program document and holds no gate. Each finding
+change in six system-wide passes. When the change holds decision records no review has yet read, the in-context
+system review also runs a reading step: a clean reader, given only the architecture doc and those records, reports any
+record a reader would misread or find unclear, and the walk fixes such a record by writing a new one that replaces it.
+**Architecture** mode reads a program document and holds no gate. Each finding
 carries a severity: CRITICAL, when a user path breaks or data is lost, with a reproduction; WARNING, when an
 implementation built to the artifact as written could diverge from what it intends; SUGGESTION, everything else.
 SUGGESTIONs never hold a gate.

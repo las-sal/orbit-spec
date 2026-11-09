@@ -235,7 +235,8 @@ describe('schema-table parity: every AI-supplied field a schema reference docume
     // Simulate by deriving against a table missing one documented key.
     const ref = (getArchiveChangeSkillTemplate().references ?? []).find((r) => r.name === 'archive-summary-schema.md')!;
     const { keys } = documentedKeys(ref.content);
-    const owned = new Set(ENGINE_OWNED);
+    // decision-reading: the archive's own engine-owned set (`decision_records_unread`), not only the spine.
+    const owned = engineOwnedFor('archive');
     const aiSupplied = [...keys].filter((k) => !owned.has(k));
     // The victim is a FIXTURE choice, not the subject: it must be documented in the archive
     // reference and live in the table. `fingerprint_overridden` (rc04c: the previous victim

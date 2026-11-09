@@ -1,0 +1,165 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-09T03:21:04Z",
+  "change": "decision-reading",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/decision-reading/.orbit-runs/external-proposal-2026-11-09T01-22-48Z.md",
+  "source_command": null,
+  "source_token": "2026-11-09T01-22-48Z",
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-6",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 6,
+    "suggestion": 1
+  },
+  "pushback_verification": "All seven verified against current state after the fresh walk; five stale with evidence naming it.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 5,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The selection cutoff discards records that were never read",
+      "file": "orbit/changes/decision-reading/specs/orbit-decision-records/spec.md",
+      "line": 167,
+      "marker_source": "external",
+      "classification": "stale",
+      "action": "converged or already fixed; no edit",
+      "evidence": "converges with the fresh pass's W2 ('A skipped reading's records do not stay selected under the stated selection'), resolved in address-reviews-2026-11-09T03-20-40Z by explicit coverage: the selection is records no emit lists in decision_records_read, and the scenarios 'A skipped reading leaves its records selected' and 'A record written during the pass stays selected' cover both sequences; design.md's risk line now says such a record stays selected",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Independent token allocation cannot establish ordering across the two folders",
+      "file": "orbit/changes/decision-reading/design.md",
+      "line": 51,
+      "marker_source": "external",
+      "classification": "stale",
+      "action": "converged or already fixed; no edit",
+      "evidence": "already fixed at HEAD by the fresh pass's W2 entry in address-reviews-2026-11-09T03-20-40Z: no timestamp is compared; orbit-emit-composition's 'The reading's selection is recorded at review and archive' states the tokens of decisions/ and .orbit-runs/ are allocated independently and selection is by decision_records_read alone",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Preserving an existing link can make its replacement impossible",
+      "file": "orbit/changes/decision-reading/specs/orbit-decision-records/spec.md",
+      "line": 95,
+      "marker_source": "external",
+      "classification": "stale",
+      "action": "converged or already fixed; no edit",
+      "evidence": "converges with the fresh pass's W1 ('A replacement must keep a link the replaced-target check refuses'), resolved in address-reviews-2026-11-09T03-20-40Z by option A1: a link a replacement carries equal to its original's is exempt from the replaced-target check; scenario 'A replacement carries a link to a replaced stop'",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Resolution uniqueness is not explicitly preserved across stop replacements",
+      "file": "orbit/changes/decision-reading/specs/orbit-emit-composition/spec.md",
+      "line": 27,
+      "marker_source": "external",
+      "classification": "stale",
+      "action": "converged or already fixed; no edit",
+      "evidence": "already fixed at HEAD by the fresh pass's W1 entry in address-reviews-2026-11-09T03-20-40Z: the at-most-one-resolution rule counts over the whole stop chain; scenarios 'A second answer through a replaced stop is refused' and 'A stop answered through its earlier record is not answered again'",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The clean reader receives no specified task or evaluation instructions",
+      "file": "orbit/changes/decision-reading/specs/orbit-review/spec.md",
+      "line": 7,
+      "marker_source": "external",
+      "classification": "stale",
+      "action": "converged or already fixed; no edit",
+      "evidence": "converges with the fresh pass's W3 ('The reader's brief carries no task, yet the session may add nothing to it'), resolved in address-reviews-2026-11-09T03-20-40Z by option C1: the brief ends with an orbit-rendered reader's task (rows, severity rule, return shape) and names each record by its bare filename, which the session maps to the finding's file",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Rendering cited content conflicts with the absolute ban on trail paths",
+      "file": "orbit/changes/decision-reading/specs/orbit-decision-records/spec.md",
+      "line": 186,
+      "marker_source": "external",
+      "classification": "trivial_fix",
+      "action": "the ban now forbids pointing the reader at a file; quoted text is rendered whole, paths included; scenario citing Where decision records are kept added; task 2.5 extended",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/decision-reading/tasks.md",
+          "orbit/changes/decision-reading/design.md",
+          "orbit/changes/decision-reading/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "The brief carries content and never a path under"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-reading/specs/orbit-decision-records/spec.md",
+            "text": "#### Scenario: A cited path is quoted whole"
+          }
+        ],
+        "searched": [
+          "never a path",
+          ".orbit-runs/ path"
+        ],
+        "scope": [
+          "orbit/changes/decision-reading/explore.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Specify brief failures after previously valid references disappear",
+      "file": "orbit/changes/decision-reading/specs/orbit-decision-records/spec.md",
+      "line": 163,
+      "marker_source": "external",
+      "classification": "trivial_fix",
+      "action": "a brief is whole or absent: an unreadable record or a vanished source exits non-zero naming it with nothing on stdout; the review lists reading in passes_skipped with the error in commentary and the records stay selected",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/decision-reading/specs/orbit-review/spec.md",
+          "orbit/changes/decision-reading/tasks.md",
+          "orbit/changes/decision-reading/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-reading/specs/orbit-decision-records/spec.md",
+            "text": "A brief is whole or absent, never partial"
+          },
+          {
+            "path": "orbit/changes/decision-reading/specs/orbit-decision-records/spec.md",
+            "text": "#### Scenario: A missing source fails the brief"
+          }
+        ],
+        "searched": [
+          "exits non-zero",
+          "nothing to read"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Seven findings: two resolved here (X6, X7); five stale, each converged with or already fixed by an entry of the fresh pass's walk log address-reviews-2026-11-09T03-20-40Z.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal decision-reading",
+  "ripple_misses": 0
+}
