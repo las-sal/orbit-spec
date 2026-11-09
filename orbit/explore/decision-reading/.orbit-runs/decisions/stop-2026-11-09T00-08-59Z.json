@@ -1,0 +1,10 @@
+{
+  "command": "stop",
+  "timestamp": "2026-11-09T00:08:59Z",
+  "change": "decision-reading",
+  "model": "claude-opus-5-5",
+  "condition": "outward-act",
+  "about": "Pushing the committed exploration to the shared main branch so that the change's pull request can be opened from it. orbit's pull-request step for this change will not start a branch while the exploration exists only on this machine.",
+  "question": "Should I push the exploration commit to main on the remote, so the change gets its draft pull request, or proceed on main without a pull request?",
+  "detail": "orbit pr select returned skip, reason generation-input: origin/main lacks orbit/explore/decision-reading (commit 56f4ff6, main ahead 1)."
+}
