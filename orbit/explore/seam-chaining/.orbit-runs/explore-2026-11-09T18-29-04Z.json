@@ -1,0 +1,35 @@
+{
+  "command": "explore",
+  "timestamp": "2026-11-09T18:29:04Z",
+  "change": "seam-chaining",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Every rule now has its Mechanism entry: D-sc-12 classifies the 26 prompts a chain can meet, D-sc-14 replaces D-sc-6 with five refusal reasons, D-sc-16 gives external reviews their own key, and D-sc-17 moves the merge and return to the driver. Cost bounding is named as a candidate follow-up program (D-sc-18). No open questions; three BOUNDED residuals travel to propose.",
+  "decisions_captured": 18,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 7,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [
+    {
+      "id": "D-sc-12",
+      "kind": "a question a chained body asks in prose that matches neither pattern of Case 1",
+      "method": "D-sc-13's test over the generated bodies, and a fixture chain run through each granted command, any turn that ends awaiting the user without a listed prompt being the missed member"
+    },
+    {
+      "id": "D-sc-13",
+      "kind": "a question a chained body asks in prose that neither pattern matches",
+      "method": "the stage's fixture chain, where a turn ending on the user without a tagged prompt is the missed member"
+    },
+    {
+      "id": "D-sc-14",
+      "kind": "a state where the next command is granted and would run, yet running it unasked is wrong",
+      "method": "the stage's fixture chain, and each signal the tripwires stage adds, read as a candidate reason"
+    }
+  ],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose seam-chaining — 7 live rules accounted, 3 bounded residuals named (D-sc-12, D-sc-13, D-sc-14); formalize when you are ready (or /orbit:explore seam-chaining to keep refining)"
+}

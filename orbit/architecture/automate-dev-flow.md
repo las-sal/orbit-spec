@@ -236,13 +236,12 @@ fourth capability (a declared size breach).
 Depends-on: decision-layer
 Complete: [ ]
 
-Of the settings R-adf-1 and R-adf-6 name, the ones a chain reads, each its own explicit key and each defaulting to
-today's behaviour: chaining, and the outward acts a chain crosses stages with (merging the stage's PR and returning
-to the default branch). D1's no-chaining contract and D6's outward-actions rule are amended in their owning specs
-to hold conditionally on those settings. With chaining on, a command that ends on a passed gate runs the engine's
-next command itself, and stops at a configured seam or on a stop record. Consent provenance gains a value for a
-transition taken by setting. Sign-off is program-brief's setting, and concurrency with the single-session model's
-amendment is parallel-lanes' (the user, 2026-11-09: each setting lives with the stage that reads it).
+Of the settings R-adf-1 and R-adf-6 name, the one a chain reads: chaining, its own explicit key defaulting to
+today's behaviour. D1's no-chaining contract is amended in its owning spec to hold conditionally on it. With
+chaining on, a command that ends on a passed gate runs the engine's next command itself, and stops at a configured
+seam or on a stop record. Consent provenance gains a value for a transition taken by setting. Sign-off is
+program-brief's setting; concurrency, with the single-session model's amendment, is parallel-lanes'; the outward
+acts that cross stages are the driver's (the user, 2026-11-09: each setting lives with the stage that reads it).
 
 Exit criteria:
 - The amended requirements name each setting, and a test per setting shows today's behaviour at its default.
@@ -290,11 +289,15 @@ Complete: [ ]
 `orbit run <doc>` (R-adf-8): read the engine's computed next command, launch a fresh headless session booted from
 `orbit status --boot`, wait, read the emit it wrote, and loop, stopping on a stop record or at the sign-off seam.
 It reuses the external runner's launch pattern, keeps a live log the user can watch, and resumes after a stop. Linear:
-one stage at a time.
+one stage at a time. Crossing from one stage to the next needs two outward acts, merging the stage's PR and
+returning to the default branch; each is this stage's setting, its own key defaulting to the user doing it, and D6's
+outward-actions rule is amended in its owning spec to hold conditionally on them (R-adf-1, R-adf-6).
 
 Exit criteria:
 - Against a stub session launcher, a test runs a fixture program from its first stage to the sign-off seam, and a
   second halts on an injected stop record and resumes.
+- The merge and return settings' owning requirement names each, and a test per setting shows today's behaviour at
+  its default.
 - The driver never launches a real session against orbit-spec (R-adf-5).
 - G0 holds.
 
@@ -408,3 +411,9 @@ Exit criteria:
   that depends on a setting and leaves the AI's behaviour unchanged at the defaults (R-adf-12; the user chose this
   general rewording over the AI's recommendation, a second named exception). D-sc-8 in the exploration is superseded
   by it. No stage awaited ratification.
+- 2026-11-09 — seam-chaining's exploration: the user moved the two outward acts that cross stages (merging the
+  stage's PR, returning to the default branch) to the driver, since a seam-chained run ends at archive and nothing
+  in seam-chaining reads them (AI recommendation, D-sc-17); seam-chaining now owns chaining alone. The user also
+  raised bounding the tokens and money a run spends, internal and external reviews alike: today nothing bounds it
+  (a gate counts independent passes and consults the count nowhere); named as a candidate follow-up program
+  (D-sc-18 in the exploration).
