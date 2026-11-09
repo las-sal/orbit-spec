@@ -1,0 +1,412 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-09T15:45:06Z",
+  "change": "decision-reading",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/decision-reading/.orbit-runs/review-system-2026-11-09T14-40-22Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-09T14-40-22Z",
+  "latest_apply_token": "2026-11-09T14-08-09Z",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 5,
+    "suggestion": 6
+  },
+  "pushback_verification": "All eleven verified at HEAD: each record carries the wording its finding quotes; D-dr-2 selects by time, the event table lists six conditions, D-dr-6 states its own reason, the program has no documentation stage, and the walk paragraph says old record and replaced record.",
+  "resolution_summary": {
+    "resolved": 11,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "ledger-2026-11-09T03-19-05Z.json, row 3: decided and why read as accepting every link to a replaced record",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/decision-reading/.orbit-runs/decisions/ledger-2026-11-09T03-19-05Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote replacement ledger-2026-11-09T15-44-13Z.json (replaces ledger-2026-11-09T03-19-05Z.json): decided now limits the acceptance to links a replacement copies and says a new link to a replaced record is still refused, naming the latest version; why rests on that refusal",
+      "evidence": "read ledger-2026-11-09T03-19-05Z.json at HEAD; the wording the finding quotes is present",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-reading/.orbit-runs/decisions/ledger-2026-11-09T15-44-13Z.json",
+            "text": "is still refused, and the refusal names the latest version to cite"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/decision-reading/.orbit-runs/decisions/ledger-2026-11-09T03-19-05Z.json",
+            "why": "a replaced decision record is never edited; the replacement supersedes it"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "ledger-2026-11-09T03-19-06Z.json, row 4: decided restates D-dr-2 without saying it departs from its by-time selection",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/decision-reading/.orbit-runs/decisions/ledger-2026-11-09T03-19-06Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote replacement ledger-2026-11-09T15-44-14Z.json (replaces ledger-2026-11-09T03-19-06Z.json): decided now says it departs from D-dr-2’s by-time selection",
+      "evidence": "read ledger-2026-11-09T03-19-06Z.json at HEAD; the wording the finding quotes is present",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-reading/.orbit-runs/decisions/ledger-2026-11-09T15-44-14Z.json",
+            "text": "This departs from D-dr-2, which selected the records written since the last reading by time"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/decision-reading/.orbit-runs/decisions/ledger-2026-11-09T03-19-06Z.json",
+            "why": "a replaced decision record is never edited; the replacement supersedes it"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "ledger-2026-11-09T03-19-06Z.json, row 2: why leans on how orbit stores times",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/decision-reading/.orbit-runs/decisions/ledger-2026-11-09T03-19-06Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote replacement ledger-2026-11-09T15-44-21Z.json (replaces ledger-2026-11-09T15-44-14Z.json): why now says plainly why time cannot decide it, without how orbit stores times (chained: replaces this walk’s replacement for finding 2)",
+      "evidence": "read ledger-2026-11-09T03-19-06Z.json at HEAD; the wording the finding quotes is present",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-reading/.orbit-runs/decisions/ledger-2026-11-09T15-44-21Z.json",
+            "text": "could fall on either side of it"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/decision-reading/.orbit-runs/decisions/ledger-2026-11-09T15-44-14Z.json",
+            "why": "a replaced decision record is never edited; the replacement supersedes it"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "ledger-2026-11-09T03-19-09Z.json, row 4: \"orbit's own list of the five conditions\" shifts the cited six",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/decision-reading/.orbit-runs/decisions/ledger-2026-11-09T03-19-09Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote replacement ledger-2026-11-09T15-44-15Z.json (replaces ledger-2026-11-09T03-19-09Z.json): decided now words conditions as the event table of Three decision records, one job each: six, five AI-raised",
+      "evidence": "read ledger-2026-11-09T03-19-09Z.json at HEAD; the wording the finding quotes is present",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-reading/.orbit-runs/decisions/ledger-2026-11-09T15-44-15Z.json",
+            "text": "six conditions, five of which the AI raises"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/decision-reading/.orbit-runs/decisions/ledger-2026-11-09T03-19-09Z.json",
+            "why": "a replaced decision record is never edited; the replacement supersedes it"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "ledger-2026-11-09T14-08-01Z.json, row 4: why credits D-dr-6 with a purpose it does not state",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/decision-reading/.orbit-runs/decisions/ledger-2026-11-09T14-08-01Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote replacement ledger-2026-11-09T15-44-16Z.json (replaces ledger-2026-11-09T14-08-01Z.json): why now gives D-dr-6’s own reason and credits the checkable-brief purpose to the stage charter",
+      "evidence": "read ledger-2026-11-09T14-08-01Z.json at HEAD; the wording the finding quotes is present",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-reading/.orbit-runs/decisions/ledger-2026-11-09T15-44-16Z.json",
+            "text": "because a citation a reader cannot read cannot be checked"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/decision-reading/.orbit-runs/decisions/ledger-2026-11-09T14-08-01Z.json",
+            "why": "a replaced decision record is never edited; the replacement supersedes it"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "ledger-2026-11-09T14-31-50Z.json, row 3: alternatives names a documentation stage the program does not have",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/decision-reading/.orbit-runs/decisions/ledger-2026-11-09T14-31-50Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote replacement ledger-2026-11-09T15-44-17Z.json (replaces ledger-2026-11-09T14-31-50Z.json): the alternative now names stage release and its docs exit criterion",
+      "evidence": "read ledger-2026-11-09T14-31-50Z.json at HEAD; the wording the finding quotes is present",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-reading/.orbit-runs/decisions/ledger-2026-11-09T15-44-17Z.json",
+            "text": "until stage release, whose exit criterion"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/decision-reading/.orbit-runs/decisions/ledger-2026-11-09T14-31-50Z.json",
+            "why": "a replaced decision record is never edited; the replacement supersedes it"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "ledger-2026-11-09T14-31-50Z.json, row 1: \"a clean reader\" is used without a definition",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/decision-reading/.orbit-runs/decisions/ledger-2026-11-09T14-31-50Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote replacement ledger-2026-11-09T15-44-22Z.json (replaces ledger-2026-11-09T15-44-17Z.json): defines now carries clean reader (chained: replaces this walk’s replacement for finding 6)",
+      "evidence": "read ledger-2026-11-09T14-31-50Z.json at HEAD; the wording the finding quotes is present",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-reading/.orbit-runs/decisions/ledger-2026-11-09T15-44-22Z.json",
+            "text": "with no other context from the work"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/decision-reading/.orbit-runs/decisions/ledger-2026-11-09T15-44-17Z.json",
+            "why": "a replaced decision record is never edited; the replacement supersedes it"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "ledger-2026-11-09T00-42-13Z.json, row 3: \"its record of the archive\" could be a new or a decision record",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/decision-reading/.orbit-runs/decisions/ledger-2026-11-09T00-42-13Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote replacement ledger-2026-11-09T15-44-18Z.json (replaces ledger-2026-11-09T00-42-13Z.json): decided now names the record orbit already writes of each archive run, which no screen shows",
+      "evidence": "read ledger-2026-11-09T00-42-13Z.json at HEAD; the wording the finding quotes is present",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-reading/.orbit-runs/decisions/ledger-2026-11-09T15-44-18Z.json",
+            "text": "the record orbit already writes of each archive run"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/decision-reading/.orbit-runs/decisions/ledger-2026-11-09T00-42-13Z.json",
+            "why": "a replaced decision record is never edited; the replacement supersedes it"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "resolution-2026-11-08T20-54-23Z.json, row 2: \"archive's record of the run\" relies on an internal notion",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/decision-reading/.orbit-runs/decisions/resolution-2026-11-08T20-54-23Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote replacement resolution-2026-11-09T15-44-19Z.json (replaces resolution-2026-11-08T20-54-23Z.json): answer and effect now name the record orbit already writes of each archive run; the stop link is carried",
+      "evidence": "read resolution-2026-11-08T20-54-23Z.json at HEAD; the wording the finding quotes is present",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-reading/.orbit-runs/decisions/resolution-2026-11-09T15-44-19Z.json",
+            "text": "the record orbit already writes of each archive run"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/decision-reading/.orbit-runs/decisions/resolution-2026-11-08T20-54-23Z.json",
+            "why": "a replaced decision record is never edited; the replacement supersedes it"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "stop-2026-11-08T20-48-08Z.json, row 2: question relies on \"archive's record of the run\"",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/decision-reading/.orbit-runs/decisions/stop-2026-11-08T20-48-08Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote replacement stop-2026-11-09T15-44-20Z.json (replaces stop-2026-11-08T20-48-08Z.json): question now names the record orbit already writes of each archive run; the condition is carried",
+      "evidence": "read stop-2026-11-08T20-48-08Z.json at HEAD; the wording the finding quotes is present",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-reading/.orbit-runs/decisions/stop-2026-11-09T15-44-20Z.json",
+            "text": "the record orbit already writes of each archive run"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/decision-reading/.orbit-runs/decisions/stop-2026-11-08T20-48-08Z.json",
+            "why": "a replaced decision record is never edited; the replacement supersedes it"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The chained-replacement paragraph still names \"the old record\" and \"the replaced record\"",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/address-reviews.ts",
+      "line": 1170,
+      "classification": "trivial_fix",
+      "action": "the walk paragraph now says replaces names the LATEST record of the chain (the record the finding named until a replacement of it exists), that the entry’s file stays the record the finding named, and that kept lists the record the replacement replaces; the requirement’s sentence says the same; the surface test asserts both",
+      "evidence": "address-reviews.ts:1170 said replaces names the old record’s filename and the entry’s file stays the replaced record, which a chained second replacement contradicts",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/decision-reading/specs/orbit-decision-records/spec.md",
+          "test/core/templates/reading-step-surface.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "naming the old record's filename and every link field unchanged",
+          "stays the replaced record, as the finding named it"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/templates/workflows/address-reviews.ts",
+            "text": "naming the LATEST record of the chain — the record the finding named, until a replacement of it exists"
+          },
+          {
+            "path": "orbit/changes/decision-reading/specs/orbit-decision-records/spec.md",
+            "text": "stays the record the finding named, even when its replacement replaces a later record"
+          },
+          {
+            "path": "test/core/templates/reading-step-surface.test.ts",
+            "text": "The entry's `file` stays the record the finding named"
+          }
+        ],
+        "searched": [
+          "old record's filename",
+          "the replaced record",
+          "stays the replaced"
+        ],
+        "scope": [
+          "docs/cli.md",
+          "src/core/disciplines.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "All eleven resolved: ten reading findings by ten replacement records, one per finding (two of them chained onto this walk’s own replacements), the next brief selecting the eight chain heads; the regressed walk wording now names the latest record of a chain.",
+  "iteration": 6,
+  "next_recommended": "/orbit:archive decision-reading — user-invoked",
+  "ripple_misses": 0
+}

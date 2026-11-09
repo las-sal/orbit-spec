@@ -211,9 +211,9 @@ fixed; the walk escalates it.
 
 A walk entry that resolves a finding by a replacement records, in its sweep, the replacement's path and a phrase of its
 new wording under `introduced`, chosen free of double quotes, backslashes and line breaks because the gate matches it
-against the record's JSON text, where those are escaped, and the replaced record under `kept`, its `why` being that a replaced record is never
-edited (`orbit-emit-composition`'s `The walk write gate checks sweep evidence`); the entry's `file` stays the replaced
-record, as the finding named it.
+against the record's JSON text, where those are escaped, and the record the replacement replaces under `kept`, its `why` being that a
+replaced record is never edited (`orbit-emit-composition`'s `The walk write gate checks sweep evidence`); the entry's `file`
+stays the record the finding named, even when its replacement replaces a later record of that record's chain.
 
 How each link between records follows a chain:
 

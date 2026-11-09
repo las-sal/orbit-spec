@@ -1,0 +1,20 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-09T15:44:13Z",
+  "change": "decision-reading",
+  "model": "claude-opus-5-5",
+  "area": "things-others-build-on",
+  "decided": "When a decision record is reworded by a new record that replaces it, the links the new record copies from the old one (the stop it named, what it relied on) stay exactly as first written, and orbit accepts those copied links even if what they point at has itself been replaced since. A new link that names a replaced record, in a record that is not copying it, is still refused, and the refusal names the latest version to cite. A stop that was answered keeps that one answer even after the stop is reworded.",
+  "alternatives": [
+    "make the rewording record point each link at the newest version of what it points at, and compare links by what they point at rather than by their exact text"
+  ],
+  "why": "Rewording must never change what happened, so copied links stay exactly as first written, while refusing new links to replaced records keeps every new citation on the current version; without the exception for copied links, a record whose stop had been reworded could never be reworded itself, and a reworded stop could be answered twice.",
+  "relies_on": [
+    {
+      "kind": "decision",
+      "id": "D-dw-1"
+    }
+  ],
+  "detail": "Proposal walk of fresh pass W1 / external W3 and W4, option A1; orbit-decision-records `A record is fixed by a replacement, never edited`.",
+  "replaces": "ledger-2026-11-09T03-19-05Z.json"
+}

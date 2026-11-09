@@ -68,7 +68,9 @@ describe("orbit-decision-records: A record is fixed by a replacement, never edit
   // @scenario text orbit-decision-records :: A record is fixed by a replacement, never edited :: Several fixes to one record make a chain
   it('the walk writes one replacement per resolved finding, of the latest in the chain, records it in its sweep, and defers a brief gap', () => {
     expect(walk).toMatch(/Each finding you resolve writes its OWN replacement, of the LATEST record in the record's chain/);
-    expect(walk).toMatch(/its `sweep` records the replacement's path and a phrase of its new wording under `introduced` — a phrase free of double quotes, backslashes and line breaks[^\n]* — and the replaced record under `kept`/);
+    expect(walk).toMatch(/its `sweep` records the replacement's path and a phrase of its new wording under `introduced` — a phrase free of double quotes, backslashes and line breaks[^\n]* — and the record the replacement replaces under `kept`/);
+    expect(walk).toMatch(/its `replaces` naming the LATEST record of the chain — the record the finding named, until a replacement of it exists —/);
+    expect(walk).toMatch(/The entry's `file` stays the record the finding named, and its/);
     expect(walk).toMatch(/gap in the BRIEF[^\n]*resolved `deferred` against `orbit-decision-records`' `The reading step's brief is rendered by orbit`/);
     expect(walk).toMatch(/cites the wrong thing[^\n]*escalate it/);
   });
