@@ -19,7 +19,7 @@ Create the trail directory if it doesn't exist. The file is **committed** (not g
 
 The spine every emit carries is owned by \`orbit-conventions\`' \`Internal-run JSON summary format\` requirement, and is not restated here. For review the engine composes every spine field and the payload supplies only \`model\`: \`final_assessment\` is the DETERMINISTIC severity-counts sentence computed from the emit's own scorecard (\`"X critical, Y warning, Z suggestion."\` / \`"No findings."\`, never a verdict), and in change modes \`next_recommended\` is the DETERMINISTIC pointer \`orbit-emit-composition\`'s \`Deterministic facts are engine-composed per command\` composes — the change-scoped walk when the pass has findings, the report render when clean; that requirement owns the values, and this body does not restate them (the engine-computed canonical next rides the rendered tail, never the emit). \`change\` is \`null\` in architecture mode, where a \`doc\` field names the reviewed doc instead.
 
-The schema below documents per-command extensions ADDED to that spine (\`mode\`, \`iteration\`, \`depth\`, \`reviewer_class\`, \`flags\`, \`passes_run\`, \`passes_skipped\`, \`scorecard\`, \`findings\`, \`blocks\`, \`stale_suppressed\`, \`commentary\`, \`direction\`, \`verification\`, and the engine-computed \`pass_genre\` and \`verified_walks\`). The former \`findings_summary\` and \`iteration_note\` fields are RETIRED in CHANGE MODES (D-arc Stage D4): \`scorecard\` supersedes the counts (readers tolerate both generations), and the iteration note is RENDERER-computed from the trail — a stored copy would be a second stale voice. (Architecture-mode emits carry the same \`scorecard\` shape; the interim hand-rendered report path documented below reads it — no render surface covers the architecture trail yet.) Per-command extensions are review-specific state; they supplement, not replace, the spine.
+The schema below documents per-command extensions ADDED to that spine (\`mode\`, \`iteration\`, \`depth\`, \`reviewer_class\`, \`flags\`, \`passes_run\`, \`passes_skipped\`, \`scorecard\`, \`findings\`, \`blocks\`, \`stale_suppressed\`, \`commentary\`, \`direction\`, \`verification\`, \`decision_records_read\`, and the engine-computed \`pass_genre\`, \`verified_walks\` and \`decision_records_owed\`). The former \`findings_summary\` and \`iteration_note\` fields are RETIRED in CHANGE MODES (D-arc Stage D4): \`scorecard\` supersedes the counts (readers tolerate both generations), and the iteration note is RENDERER-computed from the trail — a stored copy would be a second stale voice. (Architecture-mode emits carry the same \`scorecard\` shape; the interim hand-rendered report path documented below reads it — no render surface covers the architecture trail yet.) Per-command extensions are review-specific state; they supplement, not replace, the spine.
 
 ## Schema
 
@@ -35,6 +35,8 @@ The schema below documents per-command extensions ADDED to that spine (\`mode\`,
   "iteration": <integer, per-mode>,
   "pass_genre": "REVIEW" | "VERIFICATION",        // engine-computed; refused in the payload
   "verified_walks": ["<address-reviews TS token>"], // engine-computed; [] on every REVIEW-genre pass
+  "decision_records_owed": ["<ledger|stop|resolution>-<TS>.json"], // engine-computed; in-context system passes only
+  "decision_records_read": ["<ledger|stop|resolution>-<TS>.json"], // in-context system passes only; the reading step's brief
   "depth": "fast" | "full" | "thorough",
   "reviewer_class": "in-context" | "fresh" | "external",
   "flags": {
@@ -152,6 +154,38 @@ A payload file the body writes for a fresh proposal-mode pass — real JSON, acc
 }
 \`\`\`
 
+A payload file the body writes for an in-context system pass whose reading step ran over one decision record: \`reading\` in \`passes_run\`, the brief's record in \`decision_records_read\`, and the reader's one finding folded with \`pass: "reading"\`. The test seeds that record in the trail's \`decisions/\` folder before submitting it.
+
+\`\`\`json example change
+{
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": { "parallel": false, "focus": null, "strict": false, "fresh": false, "mark": false, "skip_verify": false },
+  "passes_run": ["0", "1", "2", "3", "6", "reading"],
+  "passes_skipped": ["4", "5"],
+  "scorecard": {
+    "completeness": { "critical": 0, "warning": 0, "suggestion": 0 },
+    "correctness": { "critical": 0, "warning": 0, "suggestion": 0 },
+    "coherence": { "critical": 0, "warning": 0, "suggestion": 1 }
+  },
+  "findings": [
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/add-export/.orbit-runs/decisions/ledger-2026-11-08T10-00-00Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-08T10-00-00Z.json, row 3: why is correct and still unclear",
+      "recommendation": "Write one replacement whose why says which goal the weekly default serves."
+    }
+  ],
+  "stale_suppressed": [],
+  "decision_records_read": ["ledger-2026-11-08T10-00-00Z.json"],
+  "model": "claude-opus-5-5"
+}
+\`\`\`
+
 ## Field notes
 
 - **\`reviewer_class\`** (C1) is the first-class execution-context field the engine's reviewed-gate convergence reads for cadence class coverage: \`"fresh"\` when the pass ran in a clean context (\`--fresh\`), else \`"in-context"\` (externally-sourced findings in \`external-<as>-<TS>.md\` are structurally \`"external"\`). For emits predating this field the engine infers (\`flags.fresh: true\` → \`fresh\`; \`external-*.md\` provenance → \`external\`; otherwise \`in-context\`), so absence never breaks gate computation.
@@ -167,6 +201,7 @@ A payload file the body writes for a fresh proposal-mode pass — real JSON, acc
 - **\`direction\`** (rc04b) is the pass's FORWARD RECOMMENDATION, the object the block above shows: OWED when \`reviewer_class\` is \`fresh\` or \`external\` and OPTIONAL in-context — \`orbit emit review\` refuses the payload otherwise, in every mode. Its SHAPE is owned by \`orbit-emit-composition\`'s **The review payload carries \`direction\`** and its CONTENT contract by \`orbit-report-rendering\`'s **Direction renders as its own section and its absence is marked on independent passes** (which also renders it as \`### Direction\` and marks a prior-generation independent pass \`[no direction]\`); the authoring instruction is Step 8 of the body. The vocabulary is \`orbit-run-summary-emit\`'s judgement record's (\`disposition\` + \`reasoning\`) — adopted, not invented. This note names the owners and re-lists nothing.
 - **\`pass_genre\` / \`verified_walks\`** (rc03c) are ENGINE-COMPUTED on every review emit, in every mode, and REFUSED in the payload: the pass genre by the table \`orbit-conventions\`' **Review mode decision framework** owns, and the qualifying walks it read, by \`orbit-emit-composition\`'s **The review emit records its pass genre and the walks it verifies**. Never supply either; a refusal naming the owed record is how a body learns the engine computed VERIFICATION.
 - **\`verification\` / \`walk_entry\`** (rc03c) are the VERIFICATION RECORD and a finding's link to it: \`verification\` is OWED when the computed \`pass_genre\` is \`VERIFICATION\` (\`[]\` when nothing is owed) and REFUSED in any form on a REVIEW-genre pass; \`walk_entry\` is optional on each finding. Their shapes, the owed set and the meaning of \`landed\` / \`regressed\` are owned by \`orbit-emit-composition\`'s **A VERIFICATION-genre payload carries its verdicts and its findings link to the walk record**; the render (\`### Verification\`, the \`walk entry:\` line, \`[outside the walk record]\`, \`[no verification record]\`) by \`orbit-report-rendering\`'s **Verification renders as its own section and its absence is marked**; the grading procedure is Step 5's VERIFICATION branch. This note names the owners and re-lists nothing.
+- **\`decision_records_read\` / \`decision_records_owed\`** (decision-reading) record the READING STEP, on an in-context system pass only. \`decision_records_read\` is the payload's: the filenames of the records the reader's brief (\`orbit decisions brief <name>\`) rendered, listed with \`reading\` in \`passes_run\`; absent or \`[]\` when no reading ran, and refused on every other pass. \`decision_records_owed\` is ENGINE-COMPUTED and refused in the payload: the records no earlier in-context system pass listed as read, when this emit is written. \`orbit emit review\` refuses an in-context system payload that owed records and lists \`reading\` in neither \`passes_run\` nor \`passes_skipped\`, one listing \`reading\` with no read list, a read list without \`reading\`, and a read list naming a record outside the owed set — \`orbit-emit-composition\`'s \`The reading's selection is recorded at review and archive\` owns them. A skip is listed as \`reading: <reason>\` in \`passes_skipped\`, the reason in \`commentary\` too. No readout and no gate reads either field.
 - **\`recommendation_options\`** is OPTIONAL on each finding. Present only when the finding's recommendation is genuinely disjunctive — multiple defensible paths the user must choose between. Producer-side contract (per \`orbit-review\` spec's \`Optional recommendation_options field on finding entries\`): MUST contain ≥ 2 entries; each entry MUST have non-empty \`label\` (typically \`"A"\`, \`"B"\`, \`"C"\`, … or \`"1"\`, \`"2"\`, …) and non-empty \`body\`. The prose \`recommendation\` field still summarizes the disjunction for human readers. Consumer (address-reviews) uses this for the structured decision-fork detection path; absence triggers heuristic fallback. Omit the field for single-recommendation findings.
 
 ## Architecture-mode extensions (D-arc Stage D2)
@@ -338,9 +373,20 @@ PASS                                  WHAT IT CHECKS
 
 **Pass 6 — Drift / Residue**. Invoke \`/orbit:audit-drift\` as a library function (via the orbit-audit-drift skill). Fold its findings into the report under the Coherence dimension. Audit-drift handles its own scorecard and severity assignment; preserve those (a statement site the Severity ladder names as a known limit — not this body's to re-grade).
 
+#### The reading step (not a numbered pass)
+
+The READING STEP judges whether the change's decision records make sense to their reader. It is not one of Passes 0–6 and not part of Pass 4: its trigger is the records \`orbit decisions brief <change-name>\` selects, so it runs whether or not \`orbit/lenses/perspectives.md\` exists and at every depth, \`--fast\` included. It runs on the IN-CONTEXT pass only: never on a fresh pass (a fresh reviewer is itself a dispatched worker and dispatches no reader) or an external one, whose emit carries no read list; the in-context pass of the same cycle reads.
+
+1. **Render the brief.** Run \`orbit decisions brief <change-name>\`, and \`orbit decisions brief <change-name> --json\` beside it for its \`selected\` list. When it says there is nothing to read, run no reader: list \`reading\` in neither list, or in \`passes_skipped\` as \`reading: nothing selected\`. When it exits non-zero, run no reader: list \`reading: <reason>\` in \`passes_skipped\`, put the command's error in \`commentary\`, and send no \`decision_records_read\` — the records stay selected for the next reading.
+2. **Dispatch a clean reader.** Spawn a clean-context subagent (the **Task tool**, general-purpose — never a fork of this conversation) whose prompt is the brief's markdown output VERBATIM and nothing else: no file to open, no finding title, no pass token, no word of your own. The brief ends with the reader's task. When no subagent can be dispatched, run no reader and skip as above, the reason in \`commentary\`.
+3. **Fold its findings.** Each reader finding becomes one of this pass's findings: \`pass: "reading"\`, \`dimension: "coherence"\`, its \`file\` the path of the record the reader named (that filename in the change trail's \`decisions/\` folder), and a \`title\` naming the record and the reader row. The reader rows are the four of \`orbit-decision-records\`' \`The plain-language rule is held by structure and by a reader\`: a new term used in a plain field and left off the \`defines\` list; a plain field that relies on implementation detail; a plain field that is correct and still unclear; a plain field that restates something the record cites so that its meaning shifts. Grade by consequence, per \`orbit-conventions\`' Severity ladder, the rule the brief states to the reader: a record a reader would misread, or whose restatement shifts what it cites, is a WARNING; one that only slows a reader is a SUGGESTION. On a VERIFICATION-genre pass a reading finding carries no \`walk_entry\`, so it renders \`[outside the walk record]\`.
+4. **Record what was read.** List \`reading\` in \`passes_run\` and every filename of the brief's \`selected\` list in \`decision_records_read\`. The write gate refuses an in-context system payload that owed records and lists \`reading\` in neither \`passes_run\` nor \`passes_skipped\`.
+
+The reader is not a review-genre reviewer: the rule that a review-genre pass reads the artifacts and the code, never the trail's findings, governs this pass, not the reader's brief, which orbit renders. Its findings are walked like any finding, and a record they fix is fixed by a replacement record (\`replaces\`), never edited.
+
 ##### \`--fast\` subset (system mode)
 
-When \`--fast\` is set, run Passes 0, 1, 6. Report remaining as \`skipped per --fast\`. Combining \`--fast --skip-verify\` runs only Passes 1 and 6.
+When \`--fast\` is set, run Passes 0, 1, 6. Report remaining as \`skipped per --fast\`. Combining \`--fast --skip-verify\` runs only Passes 1 and 6. The reading step runs under \`--fast\` too, on the in-context pass, whenever records are selected.
 
 
 #### System-mode mapping
@@ -349,7 +395,7 @@ When \`--fast\` is set, run Passes 0, 1, 6. Report remaining as \`skipped per --
 |---|---|
 | **Completeness** | Pass 0 (verify-change completeness portion: task-completion + spec-coverage), Pass 5 (critical-paths existence) |
 | **Correctness** | Pass 0 (verify-change correctness portion: requirement-implementation-mapping + scenario-coverage), Pass 1 (Baseline), Pass 2 (Cohesion), Pass 5 (critical-paths working) |
-| **Coherence** | Pass 0 (verify-change coherence portion: design-adherence + code-pattern-consistency), Pass 3 (Surface Walk), Pass 4 (Perspective Reviews), Pass 6 (Drift/Residue from audit-drift) |
+| **Coherence** | Pass 0 (verify-change coherence portion: design-adherence + code-pattern-consistency), Pass 3 (Surface Walk), Pass 4 (Perspective Reviews), Pass 6 (Drift/Residue from audit-drift), the reading step (\`pass: "reading"\`) |
 
 `;
 
@@ -1220,7 +1266,7 @@ reviewer_class "fresh" and a direction.
 
 ### 6. Run passes (load the resolved mode's reference ONLY)
 
-Load \`references/passes-<mode>.md\` for the RESOLVED mode — proposal (9 passes), system (0–6), or architecture (6) — and run its pass set sequentially (or in parallel for the marked passes when \`--parallel\` is on). Only the resolved mode's reference is loaded; the other two stay lazy. For each pass:
+Load \`references/passes-<mode>.md\` for the RESOLVED mode — proposal (9 passes), system (0–6, plus the reading step on the in-context pass whenever \`orbit decisions brief <name>\` selects records), or architecture (6) — and run its pass set sequentially (or in parallel for the marked passes when \`--parallel\` is on). Only the resolved mode's reference is loaded; the other two stay lazy. For each pass:
 
 1. Apply the read-before-reference discipline to every cited construct.
 2. Apply the pushback discipline against current state.
@@ -1249,7 +1295,7 @@ run.\` / \`First architecture review for this doc.\`
 
 ### 9. Persist via the emit surface (persist-first)
 
-Compose the NARRATIVE payload only — \`mode\`, \`reviewer_class\` (\`"fresh"\` under \`--reviewer fresh\`, else \`"in-context"\`), \`depth\`, \`flags\`, \`scorecard\`, \`findings\` (each with its owning \`dimension\`, \`title\`, \`file\`, \`line\`, \`recommendation\`, \`reproduction\` — a string, multi-line allowed, never a single-line slot; REQUIRED non-empty when \`severity\` is CRITICAL per \`orbit-conventions\`' Severity ladder and refused by the surface otherwise, optional below — plus \`recommendation_options\` when disjunctive), \`blocks\` (optional array of single-line strings — Pass 1's validate failure and Pass 8's unresolved markers compose into it, never into \`findings[]\`; absent when none), \`direction\` (OWED when \`reviewer_class\` is \`fresh\` or \`external\` — the surface refuses the payload without it — and optional in-context; composed per Step 8), \`verification\` (OWED when the engine computes VERIFICATION pass genre, refused on a REVIEW-genre pass; each finding may carry \`walk_entry\` — composed per Step 5's VERIFICATION branch), \`stale_suppressed\`, \`commentary\`, \`passes_run\`/\`passes_skipped\`, and the required nullable \`model\` — and invoke:
+Compose the NARRATIVE payload only — \`mode\`, \`reviewer_class\` (\`"fresh"\` under \`--reviewer fresh\`, else \`"in-context"\`), \`depth\`, \`flags\`, \`scorecard\`, \`findings\` (each with its owning \`dimension\`, \`title\`, \`file\`, \`line\`, \`recommendation\`, \`reproduction\` — a string, multi-line allowed, never a single-line slot; REQUIRED non-empty when \`severity\` is CRITICAL per \`orbit-conventions\`' Severity ladder and refused by the surface otherwise, optional below — plus \`recommendation_options\` when disjunctive), \`blocks\` (optional array of single-line strings — Pass 1's validate failure and Pass 8's unresolved markers compose into it, never into \`findings[]\`; absent when none), \`direction\` (OWED when \`reviewer_class\` is \`fresh\` or \`external\` — the surface refuses the payload without it — and optional in-context; composed per Step 8), \`verification\` (OWED when the engine computes VERIFICATION pass genre, refused on a REVIEW-genre pass; each finding may carry \`walk_entry\` — composed per Step 5's VERIFICATION branch), \`stale_suppressed\`, \`commentary\`, \`passes_run\`/\`passes_skipped\`, \`decision_records_read\` (in-context system pass only: the records the reading step's brief rendered, per \`references/passes-system.md\`'s reading step), and the required nullable \`model\` — and invoke:
 
 \`\`\`bash
 orbit emit review --change <name> --payload <payload.json> --render   # proposal/system

@@ -108,6 +108,14 @@ list, when and in what work a record was written), not the records'.
    is carried and the sentence leaves the reading step out. Alternative: a reader row and an authorship part in the
    brief, which needs an author record nothing writes.
 
+9. **The canonical archive example carries the count (found at apply).** `orbit-conventions`' `Internal-run JSON
+   summary format` holds a canonical archive example that a test executes through the write gate, holding its key set
+   equal to the written emit's. Every archive emit now carries `decision_records_unread`, so the example gains
+   `"decision_records_unread": 0` in a MODIFIED delta, the requirement carried otherwise byte-equal. The user chose this
+   at apply over writing the field only when it is above zero, which would leave a reader unable to tell zero unread
+   records from an archive written before this change. It is the change's fourth capability, a breach declared in
+   the proposal's `## Size`.
+
 ## Touchpoints
 
 - `src/core/decision-records.ts` — `replaces` in `DECISION_PAYLOAD_FIELDS`; chain resolution; chain-aware link checks; the selection; the brief renderer.

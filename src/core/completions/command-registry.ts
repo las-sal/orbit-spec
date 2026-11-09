@@ -576,6 +576,20 @@ export const COMMAND_REGISTRY: CommandDefinition[] = [
     ],
   },
   {
+    name: 'decisions',
+    description: 'Decision records: the brief the reading step gives its reader (read-only)',
+    flags: [],
+    subcommands: [
+      {
+        name: 'brief',
+        description: 'Render the brief of the decision records no reading has yet read',
+        acceptsPositional: true,
+        positionalType: 'change-id',
+        flags: [COMMON_FLAGS.json],
+      },
+    ],
+  },
+  {
     name: 'pr',
     description: 'PR lifecycle: observe and print the writes for a seam (never performs a write)',
     flags: [],

@@ -109,10 +109,12 @@ function seedChangeDir(root: string, rel: string, validationTasks: string[] = []
 }
 
 /**
- * The TWO seeding rules. (1) Every token an example names in a `formed_against` array becomes a
+ * The THREE seeding rules. (1) Every token an example names in a `formed_against` array becomes a
  * pass on the trail (rc07b design D3). (2) Every task an example's `deferred_validations` names
  * becomes an unchecked `(User-validation` task in the seeded tasks.md (rc10), so the archive write
  * gate's presence check has the task the deferral keys; an example with no deferral seeds none.
+ * (3) Every filename an example's `decision_records_read` names becomes a minimal record in the
+ * trail's `decisions/` folder (decision-reading), so the read list is inside the selection.
  */
 function deferredTasks(payload: Record<string, unknown>): string[] {
   const d = payload.deferred_validations;
@@ -123,6 +125,11 @@ function citedTokens(payload: Record<string, unknown>): string[] {
   const j = payload.judgements;
   if (!Array.isArray(j)) return [];
   return j.flatMap((e) => (Array.isArray((e as any)?.formed_against) ? ((e as any).formed_against as string[]) : []));
+}
+
+function readRecords(payload: Record<string, unknown>): string[] {
+  const r = payload.decision_records_read;
+  return Array.isArray(r) ? r.map(String) : [];
 }
 
 /** SUBMIT one example to one scope in a FRESH disposable project; returns the gate's result. */
@@ -146,6 +153,12 @@ function submit(command: string, example: Example, scope: Scope): ComposeResult 
     for (const token of citedTokens(example.payload)) {
       if (!trailDir) throw new Error(`example ${blockName(example)} cites a pass but scope '${scope}' has no trail to seed`);
       write(root, `${trailDir}/review-proposal-${token}.json`, JSON.stringify({ command: 'review', mode: 'proposal', reviewer_class: 'fresh', findings: [] }));
+    }
+    // decision-reading: the third rule — one minimal record file at every filename an example's
+    // `decision_records_read` names, in the target trail's `decisions/` folder.
+    for (const name of readRecords(example.payload)) {
+      if (!trailDir) throw new Error(`example ${blockName(example)} names a read record but scope '${scope}' has no trail to seed`);
+      write(root, `${trailDir}/decisions/${name}`, JSON.stringify({ command: name.split('-')[0] }));
     }
     const result = composeAndWriteEmit(command, target, example.payload, { projectRoot: root });
     if (!fs.existsSync(result.path)) throw new Error(`the gate accepted ${blockName(example)} but wrote no file`);

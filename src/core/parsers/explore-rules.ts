@@ -400,3 +400,16 @@ export function parseExploreRulesFile(explorePath: string): ExploreRules {
   }
   return parseExploreRules(content);
 }
+
+/**
+ * decision-reading: the text of the Decisions entry with `id`, the first that owns the key, as written
+ * (every line of the entry, fenced lines included); null when no entry carries it. The reading step's
+ * brief renders it for a `decision` citation (`orbit-decision-records`' `The reading step's brief is
+ * rendered by orbit`).
+ */
+export function decisionEntryText(content: string, id: string): string | null {
+  for (const entry of collectSections(content).get('Decisions')?.entries ?? []) {
+    if (readDecision(entry).id === id) return entry.lines.map((l) => l.text).join('\n').trimEnd();
+  }
+  return null;
+}

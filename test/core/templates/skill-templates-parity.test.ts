@@ -128,15 +128,15 @@ import { generateSkillContent } from '../../../src/core/shared/skill-generation.
 // decision-writing system verification walk (2026-11-08): the ledger trigger names the call reached after a clarifying
 // question. The same eleven function and eleven generated-skill hashes moved; onboard and the command templates did not.
 const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
-  getExploreSkillTemplate: 'c37dc13ffe95d0a69c9d50b6821238dba29b77c29a1c9b911a89f34512231872',
-  getNewChangeSkillTemplate: 'bcfd0fc18ed54f1250a9ccda6f24541bffa9f354e5a882b151127c7d667af49b',
-  getContinueChangeSkillTemplate: '311565e62a07d03c7e5cdd61de217556b86c7799b80b7203b2ca9893c68c32d3',
+  getExploreSkillTemplate: '36dcbeaeaf705ec575df46eb8034a812a2c0849a5c1bfb4183479678f3366aa9',
+  getNewChangeSkillTemplate: '7f5f162661315ebbc561b964c16452ce8d78a4de1eb985b2992fc95e038aa669',
+  getContinueChangeSkillTemplate: '8f4634c176f9d9edb326c470670e5c63d13d8efeb092bbdb9917a41752e71ccf',
   // rc17a-invoked-coverage apply (2026-10-05), a PLANNED move (its task 4.2): Step 3's all_done clause
   // stopped naming "spec-driven v4" and `blind-pair` as the post-apply slot — under v5 which review comes
   // next depends on the cadence and the review preference, so the body says it is read, not predicted.
-  getApplyChangeSkillTemplate: '74cc306fd7005f8f6be1a4c20a79564f1b38b1e98a262e5c473030fe554c2761',
-  getFfChangeSkillTemplate: 'f7cd904b3099a4c874359d8348d88fa58c43ce64632ffd6b93a61ff66e42552e',
-  getSyncSpecsSkillTemplate: '2bf56471ac7639c1740bd3b6a02ded38d55a8c4d84f0594ac804ea265f08c2eb',
+  getApplyChangeSkillTemplate: 'd5b4a50699099163e83f6edc58d7cb0b36cdf02d79b33968c2eb359593418716',
+  getFfChangeSkillTemplate: '5c49c9b4dfb0178dd3302d5c0c32b552bb4445d1e523160974a878e4819944c7',
+  getSyncSpecsSkillTemplate: '92c78448adf64ea12f0f5771ff37272ec81061e453a193a4807832865d6d76aa',
   // rc08b-walk-routing (2026-10-05, task 3.3): the command-table row's retired "auto-discovers … when invoked
   // with a change name and no markers found" became the discovery sentence. One re-record, both onboard hashes.
   // rc17b-blind-pair-command (2026-10-06, task 5.1), a PLANNED move: the Identity, Phase 4 cross-AI and
@@ -162,8 +162,8 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // Step 3.2 reports cases 2, 3 and 8 and widens its DEFERRED rule to post-move state (fresh S2); bulk
   // archive briefs before each move and gains its per-change archive emit step (fresh W2, S1). The same
   // four hashes moved; no other pin did.
-  getArchiveChangeSkillTemplate: '36dcabc0dd05b951f541f4be6732d7c92c49be860581acbeb7a1ff1d3c7ba995',
-  getBulkArchiveChangeSkillTemplate: '9669a78d0edc88c9bacb4a6a813a156d599699bf22cf28f04ba42cebc68d18ca',
+  getArchiveChangeSkillTemplate: 'c248ccbf9ffcb7d863365e6e0dc922333f4dadea0be9e897bb2ac267f67c8b08',
+  getBulkArchiveChangeSkillTemplate: '2bc2020a066512192d18b3b97d2dcf5057a591a06308290d083dfb9de768d8ef',
   getOrbitSyncCommandTemplate: 'b985d0a4d89b0e2cc3c6b6dec2521ef2a9d0df44a8ba9ec92a5495052c94a39c',
   // rc06b-map-readers (2026-10-05) — verify moved DELIBERATELY, the first named edit to an upstream
   // portion under `orbit-conventions`' narrowed `Generated-file disposition`: step 6's test-tracing
@@ -175,7 +175,7 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // take the first mode by precedence), because the engine composes from the mode verify hands it
   // and classifies nothing; the emit paragraph stopped restating the precedence. Upstream portion
   // unchanged by this second move.
-  getVerifyChangeSkillTemplate: '5c81ff51dba0e21cd1cfc65ed8e7817844374142e6ea8a0bf7733cde81cd67ad',
+  getVerifyChangeSkillTemplate: 'eba3099b7cb0fc967a0cc6ac30b31b6a706c76eb4d83216bfae091a4c8b5e604',
   getOrbitArchiveCommandTemplate: '5889c3a6269b5c76c85578bf2ce6e6c4152b7536452e5ec1332dd93d3b493665',
   getOrbitOnboardCommandTemplate: '3a3e98c6a01517896dfdccaba4fa4477edea62fd69dc4189df1dd105bbedcc5b',
   getOrbitBulkArchiveCommandTemplate: 'bbb9fc75d87fb8339cf4a80ad75189f6d9a8b339c9b4539778e690b1c9043053',
@@ -202,7 +202,7 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // Moved a second time at rc09a's system walk (2026-10-11): the brief's validation named as non-strict, the
   // Split route's "the rest of the flow runs unchanged", "run" for "re-run" under Declare, and the heading
   // line's "exactly" dropped (the parser reads CommonMark indentation) — one re-record for the walk's edits.
-  getOrbitProposeSkillTemplate: '83a335b2c10a217f95dbf4c4443de964c7e492463cf7f24706cbb7eda3d770f7',
+  getOrbitProposeSkillTemplate: 'dd49a34b6b926b940af971f6ad70073138ad346ebba606dc186279c1fe7a932a',
   getOrbitProposeCommandTemplate: '33077b4185c425952edcdf14f4f16f2a0fa9d5961158f3c63534b58cee2576fb',
   getFeedbackSkillTemplate: 'ded61ad85c5050f7bf241870b14bfcdd929f0be68a028c1130fd30a66efbda3b',
   // rc15 (ended-stage-state, 2026-09-29): the orbit-architect body moved ONCE, deliberately — §5 (the
@@ -223,7 +223,7 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // escaped each backtick around `orbit architecture status` twice inside the template literal, so the
   // generated doc scaffold carried a literal backslash before each one; it now carries plain backticks.
   // That one line, nothing else; held from here by test/core/cli-grammar/escaped-backticks.test.ts.
-  getArchitectSkillTemplate: '8aecc12dbc5d1aaba9ac8bf4ac4a46d8ace94fa5b9129282198c13a86d984681',
+  getArchitectSkillTemplate: 'fd9c9ae7f4edc86d998062513e28ec8e4d833b1112d1d9219e08d6c107935873',
   getOrbitArchitectCommandTemplate: 'b65b8cca6431bb45aa8587d3bfc1e9458981e2e1bc925ae45cd57414143cb3db',
 };
 

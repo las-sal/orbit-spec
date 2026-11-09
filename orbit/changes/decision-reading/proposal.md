@@ -51,6 +51,9 @@ builds the reader.
   new requirement for the read list and the engine-computed selection on the in-context system review emit and the
   unread count on the archive emit.
 - `orbit-review`: a new requirement for the reading step in system review.
+- `orbit-conventions`: `Internal-run JSON summary format`'s canonical archive example gains the engine-computed
+  `decision_records_unread`, because that example is executed against the write gate and every archive emit now
+  carries the count (found at apply; the user chose to carry the requirement).
 
 ## Impact
 
@@ -61,6 +64,11 @@ builds the reader.
 - The review skill's template (`src/core/templates/workflows/`) and its `references/passes-system.md` gain the
   reading step; the shared `references/decision-records.md` gains `replaces`, composed from the payload table.
 - `docs/cli.md` names the new command (the command-coverage check owes it).
+- `orbit-conventions`' canonical archive example, which `test/core/canonical-examples.test.ts` executes, gains the
+  count (added at apply).
 - Tests: fixtures with and without records, the rendered brief, the chain checks, the review refusal and the archive
   count. Closed-set tests the new field or command extends (the decision payload table, hash pins on edited skills)
   move, and are named at archive (R-adf-9).
+
+## Size
+- capabilities: the fourth, `orbit-conventions`, was found at apply. Its canonical archive example is executed against the write gate, so the new engine-computed `decision_records_unread` must appear in it; the user chose to carry the requirement over leaving the field out at zero

@@ -1167,6 +1167,8 @@ PATH — strip a trailing :<line> or :<line>:<column> (digits only, at the very 
 
 \`orbit emit address-reviews\` checks the record against the files as they stand at emit time. A refusal names the string, the path and the line: fix that file, or list it under \`kept\` with its \`why\` — never trim \`retired\` to get past it.
 
+**A reading finding** (\`pass: "reading"\`, its \`file\` a decision record under \`.orbit-runs/decisions/\`) is never fixed by an edit: a decision record is never edited once written. Resolve it by writing a REPLACEMENT — a new record of the same kind through the same \`orbit emit <ledger|stop|resolution>\` command, its \`replaces\` naming the old record's filename and every link field unchanged (\`references/decision-records.md\`). Write ONE replacement per record however many findings you resolve on it, holding all of their fixes; a finding you leave \`stale\`, \`deferred\` or \`escalated\` writes none. The entry's \`file\` stays the replaced record, as the finding named it, and its \`sweep\` records the replacement's path and a phrase of its new wording under \`introduced\`, and the replaced record under \`kept\`, its \`why\` being that a replaced record is never edited. A finding that is a gap in the BRIEF rather than the record (the reader lacked something the record points at) is resolved \`deferred\` against \`orbit-decision-records\`' \`The reading step's brief is rendered by orbit\`, since only orbit's own code can fix it, and writes no replacement. A finding that a record cites the wrong thing is outside what a replacement can fix (its links are fixed): escalate it.
+
 #### 3e. Remove the marker (invariant)
 
 Unless \`--keep-resolved-markers\` is set, delete the original \`@review: <text>\` from its source file:

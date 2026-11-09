@@ -42,8 +42,10 @@ import {
 import {
   DECISION_PAYLOAD_FIELDS,
   DecisionRecordError,
+  RECORD_FILENAME,
   checkDecisionRecord,
   isDecisionCommand,
+  selectUnreadRecords,
   type DecisionCommand,
 } from './decision-records.js';
 
@@ -164,6 +166,8 @@ const COMMANDS: Record<string, CommandSpec> = {
       // `pass_genre` is VERIFICATION and refused on a REVIEW-genre pass; shape-checked at every genre.
       // Each finding may carry `walk_entry` (a finding-level key, so not listed in this table).
       'verification',
+      // decision-reading: the records the reading step's brief rendered — in-context system passes only.
+      'decision_records_read',
     ],
   },
   'address-reviews': {
@@ -253,7 +257,8 @@ const COMMANDS: Record<string, CommandSpec> = {
 export const SPINE_FIELDS = ['command', 'timestamp', 'change', 'kind', 'next_recommended', 'doc'];
 export const ENGINE_OWNED_EXTRA: Record<string, string[]> = {
   // rc03c: `pass_genre` / `verified_walks` are computed at write beside `iteration`.
-  review: ['final_assessment', 'iteration', 'pass_genre', 'verified_walks'],
+  // decision-reading: `decision_records_owed` is the selection when an in-context system pass is written.
+  review: ['final_assessment', 'iteration', 'pass_genre', 'verified_walks', 'decision_records_owed'],
   apply: [
     'final_assessment',
     'tasks_completed',
@@ -279,6 +284,8 @@ export const ENGINE_OWNED_EXTRA: Record<string, string[]> = {
   ],
   'address-reviews': ['iteration'],
   'review-external': ['awaiting_findings'],
+  // decision-reading: the number of records no reading saw, counted at archive (run record only).
+  archive: ['decision_records_unread'],
   // rc07b (`orbit-emit-composition`'s `Audit-drift counts are engine-computed`): a supplied count
   // was a second voice on `findings.length` — and the only input the clean branch read.
   'audit-drift': ['findings_total', 'findings_by_category'],
@@ -913,6 +920,72 @@ function validatePayload(command: string, payload: Record<string, unknown>): voi
   // rc10: the deferral record's SHAPE. Its presence against the tasks file is checked at
   // composition, which knows the archived directory.
   validateDeferredValidationsShape(command, payload);
+
+  // decision-reading: the read list's SHAPE and where it is admitted. Its checks against the
+  // selection need the change's trail and run at composition.
+  validateDecisionRecordsReadShape(command, payload);
+}
+
+// ---------------------------------------------------------------------------------------
+// decision-reading: THE READING'S SELECTION (`orbit-emit-composition`'s `The reading's selection
+// is recorded at review and archive`). One function computes the selection —
+// `selectUnreadRecords` in `decision-records.ts` — for the brief, this check and the archive count.
+// ---------------------------------------------------------------------------------------
+
+function validateDecisionRecordsReadShape(command: string, payload: Record<string, unknown>): void {
+  if (command !== 'review' || !('decision_records_read' in payload)) return;
+  if (payload.mode !== 'system' || payload.reviewer_class !== 'in-context') {
+    throw new EmitError(
+      `payload field 'decision_records_read' is admitted only on an in-context system review — the reading step runs in no other pass (mode ${JSON.stringify(payload.mode)}, reviewer_class ${JSON.stringify(payload.reviewer_class)}).`
+    );
+  }
+  const list = payload.decision_records_read;
+  if (!Array.isArray(list) || list.some(f => typeof f !== 'string' || !RECORD_FILENAME.test(f))) {
+    throw new EmitError(
+      `'decision_records_read' must be an array of decision-record filenames (<ledger|stop|resolution>-<TS>.json), got ${JSON.stringify(list)}.`
+    );
+  }
+}
+
+/** A pass id as `passes_run` / `passes_skipped` write it: the id, or `<id>: <reason>` in a skip entry. */
+function passIds(v: unknown): Set<string> {
+  const ids = new Set<string>();
+  if (Array.isArray(v)) {
+    for (const e of v) if (typeof e === 'string') ids.add(e.split(':')[0].trim());
+  }
+  return ids;
+}
+
+/**
+ * The four refusals on an in-context system review payload, against the selection when the emit is
+ * written; returns that selection, the emit's `decision_records_owed`. Checks the pass DECLARES the
+ * reading, never that a reader ran or read well (R-crc-10).
+ */
+function decisionReadingCheck(changeDir: string, payload: Record<string, unknown>): string[] {
+  const owed = selectUnreadRecords(changeDir);
+  const run = passIds(payload.passes_run);
+  const skipped = passIds(payload.passes_skipped);
+  const read = Array.isArray(payload.decision_records_read) ? (payload.decision_records_read as string[]) : [];
+  if (owed.length > 0 && !run.has('reading') && !skipped.has('reading')) {
+    throw new EmitError(
+      `write gate: this pass owes a reading of ${owed.length} decision record(s) (${owed.join(', ')}) and lists 'reading' in neither passes_run nor passes_skipped — run the reading step, or list it as skipped with the reason in commentary.`
+    );
+  }
+  if (run.has('reading') && read.length === 0) {
+    throw new EmitError(`write gate: 'reading' is in passes_run but 'decision_records_read' is absent or empty — list the records the reader's brief rendered.`);
+  }
+  if (read.length > 0 && !run.has('reading')) {
+    throw new EmitError(`write gate: 'decision_records_read' lists records but 'reading' is not in passes_run — a read list needs the reading that read it.`);
+  }
+  const selection = new Set(owed);
+  for (const f of read) {
+    if (!selection.has(f)) {
+      throw new EmitError(
+        `write gate: 'decision_records_read' names ${f}, which is not in the selection (${owed.join(', ') || 'empty'}) — it was already read, has been replaced, or is not a record of this change.`
+      );
+    }
+  }
+  return owed;
 }
 
 // ---------------------------------------------------------------------------------------
@@ -2179,6 +2252,9 @@ export function composeAndWriteEmit(
           : readTrail(resolved.changeDir as string);
       const genre = computePassGenre(trail, (payload as any).reviewer_class, mode, token);
       verificationOwedCheck(payload, genre, resolved.changeDir);
+      if (mode === 'system' && (payload as any).reviewer_class === 'in-context') {
+        emit.decision_records_owed = decisionReadingCheck(resolved.changeDir as string, payload);
+      }
       emit.pass_genre = genre.passGenre;
       emit.verified_walks = genre.verifiedWalks;
       if (mode === 'architecture') {
@@ -2318,6 +2394,7 @@ export function composeAndWriteEmit(
         delete (emit as any).deferred_validations;
       }
       emit.next_recommended = archiveNextRecommended(projectRoot, resolved.changeDir as string);
+      emit.decision_records_unread = selectUnreadRecords(resolved.changeDir as string).length;
       break;
     }
     case 'architect': {
