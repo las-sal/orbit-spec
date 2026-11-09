@@ -1,0 +1,11 @@
+{
+  "command": "stop",
+  "timestamp": "2026-11-09T16:09:40Z",
+  "change": null,
+  "doc": "automate-dev-flow",
+  "model": "claude-opus-5-5",
+  "condition": "ruling-amendment",
+  "about": "Goal G0 says that with every setting at its default, orbit behaves exactly as it does now. Stage decision-reading shipped a check that runs by default: a system review of a change that has decision records also has a clean reader, one given only the program doc and the records, check them, which adds review findings and the walk to fix them. The user chose that at the stage's proposal, so G0 as worded no longer holds.",
+  "question": "Should G0 be reworded to name this one exception, so that any later default-on behaviour still needs its own amendment, or to allow in general any default-on change the user ratifies at a stage's proposal?",
+  "detail": "Owed since decision-reading's propose (its archived design.md decision 1, resolution-2026-11-09T00-41-57Z in the change's trail); named in the stage's Shipped as paragraph."
+}

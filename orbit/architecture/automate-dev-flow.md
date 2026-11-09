@@ -29,13 +29,16 @@ Ratified by Sal, 2026-11-07. Each goal names what makes it fail. G0 is graded he
 stage; G1–G6 are graded at first-run, on that project's trail and transcripts.
 
 - **G0 — Today's flow is untouched, and nothing is lost.** With every setting at its default, orbit behaves exactly
-  as it does now: the engine's readouts and gates are unchanged, and a generated body changes only by an addition
+  as it does now, with the exceptions the user has ratified (R-adf-11): a system review of a change that has decision
+  records also has a clean reader check them, which adds review findings and the walk that fixes them. Otherwise
+  the engine's readouts and gates are unchanged, and a generated body changes only by an addition
   that tells the AI to record something, never by a change to what it does at a seam or what the user sees. Every existing
   test still passes. An existing test is edited only where it enumerates a closed set the stage extends (a command
   list, a hash pin), never to weaken what it asserts about today's behaviour, and each such edit is named in the
   stage's archive. Under any setting, every record today's flow writes is still written. Fails if a default install
   behaves differently, if an existing test's assertion about today's behaviour is weakened, or if a first-run trail
-  lacks a record type the supervised flow would have written. (Reworded by Sal, 2026-11-07, R-adf-9.)
+  lacks a record type the supervised flow would have written; a default install behaving differently beyond a
+  ratified exception fails it. (Reworded by Sal, 2026-11-07, R-adf-9; exceptions by Sal, 2026-11-09, R-adf-11.)
 - **G1 — The user only shows up where the user adds value.** In first-run, every user turn after the opening architect session
   is one of: answering a stop record, a sign-off, or a voluntary interjection the user makes. Fails on a single turn where
   the user had to type the next command, clear context, or re-boot a session to keep the run moving.
@@ -96,6 +99,11 @@ stage; G1–G6 are graded at first-run, on that project's trail and transcripts.
   (D-dw-4). Text a stage writes says "the user"; this doc's Premise, Goals and stage charters were reworded to it the
   same day, with no change of meaning. Attributions stay as written — "(Sal, <date>)" on a ruling, "Ratified by Sal",
   "Rationale (Sal)", the status log — because each records who acted, not a role.
+- **R-adf-11** (Sal, 2026-11-09) — G0 names each default-on behaviour the user has ratified, rather than allowing any
+  in general, so G0 stays falsifiable and each later one needs its own amendment. The first: stage decision-reading's
+  reader runs by default on every system review of a change with decision records (chosen at its proposal: "orbit
+  has one user - me. so i'd prefer to do the best thing here for future users"). Recorded as
+  `stop-2026-11-09T16-09-40Z.json` and its resolution in this trail's `decisions/` folder.
 
 ## Program stages
 
@@ -175,6 +183,7 @@ installed, the installed `orbit` refuses these commands here, so records are wri
 ### Stage decision-reading — a reader checks the records
 
 Depends-on: decision-writing
+Complete: [x] 2026-11-09 (Sal)
 
 A reading step, a review pass given only the architecture doc and the records, judges the reader rows of
 `orbit-decision-records`' plain-language table: undefined new terms, prose that leans on implementation detail, and
@@ -185,7 +194,9 @@ the replacement. (From D-dl-8, split at propose: D-dw-1, D-dw-2 and D-dw-5 in th
 
 Exit criteria:
 - The reading step runs on a fixture change that carries decision records, and not on one without; its brief is
-  shown to carry only the architecture doc and the records.
+  shown to carry the architecture doc, the records with what each points at, and a fixed reader's task, and nothing
+  else about the work. (Reworded by Sal, 2026-11-09, to what shipped; it said "only the architecture doc and the
+  records".)
 - A replacement record passes every link check its original passed, and a link to a replaced record is refused
   naming its replacement, each tested.
 - G0 holds.
@@ -320,6 +331,9 @@ Exit criteria:
   R-adf-6). It hides what is allowed behind a label, and sensitivity and automation are independent.
 - **2026-11-07 — A conductor session spawning a subagent per phase:** out (R-adf-8). The conductor's own context
   still grows, and subagents cannot ask the user anything.
+- **2026-11-09 — G0 allowing, in general, any default-on change the user ratifies at a stage's proposal:** out (Sal,
+  R-adf-11). G0 would then hold by whatever was ratified and could not fail; naming each exception keeps it
+  falsifiable.
 
 ## Status log
 
@@ -362,3 +376,9 @@ Exit criteria:
   R-adf-3's goal predicate, an act a directly raised condition describes with nobody asked, a call reached after a
   clarifying question, and no record on an archived change's walk — recorded in its Shipped-as paragraph. The walks
   wrote this program's first four ledger entries, in the archived change's `decisions/` folder.
+- 2026-11-09 — Architect session after decision-reading's archive: Sal ratified stage decision-reading (exit
+  criteria met: the reading runs only on a change with records, each replacement link rule tested, G0 holding as
+  reworded; AI recommendation). G0 now names the reader as a ratified default-on exception (R-adf-11, Sal choosing
+  to name each exception over a general allowance; AI recommendation), and the stage's first exit criterion now
+  says what the brief carries. The stage's first live reading fixed ten records by replacement; eight replacements
+  reached no reader before archive (D-dr-2's named limit).

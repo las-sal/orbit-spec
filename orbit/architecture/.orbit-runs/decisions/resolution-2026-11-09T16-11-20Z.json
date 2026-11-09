@@ -1,0 +1,10 @@
+{
+  "command": "resolution",
+  "timestamp": "2026-11-09T16:11:20Z",
+  "change": null,
+  "doc": "automate-dev-flow",
+  "model": "claude-opus-5-5",
+  "stop": "stop-2026-11-09T16-09-40Z.json",
+  "answer": "Name the exception: G0 lists the default-on behaviour the user has ratified, starting with the decision-records reader at system review, under a new ruling R-adf-11.",
+  "effect": "G0 is reworded and R-adf-11 is added to the rulings index; any later default-on behaviour needs its own amendment of G0, so the goal stays falsifiable. Stage decision-reading's exit criterion is reworded to match what the brief carries, and the stage is marked complete."
+}

@@ -1,0 +1,35 @@
+{
+  "command": "architect",
+  "timestamp": "2026-11-09T16:11:42Z",
+  "change": null,
+  "doc": "automate-dev-flow",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Stage decision-reading ratified complete. G0 now names the decision-records reader as a ratified default-on exception under new ruling R-adf-11, with the general allowance recorded as considered and out; the stage's first exit criterion says what the brief carries.",
+  "stages_touched": [
+    "decision-reading"
+  ],
+  "rulings_captured": [
+    "R-adf-11"
+  ],
+  "completions_ratified": [
+    "decision-reading"
+  ],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      {
+        "path": "orbit/architecture/automate-dev-flow.md",
+        "why": "the live program: G0 with its ratified exceptions, R-adf-1/6 settings, and stage seam-chaining's charter"
+      },
+      {
+        "path": "orbit/changes/archive/2026-11-09-decision-reading/design.md",
+        "why": "the latest stage's decisions, including how the reading step defaults"
+      }
+    ],
+    "next_command": "/orbit:explore seam-chaining",
+    "model_hint": "claude-opus-5-5",
+    "seam": "stage seam-chaining is premised and depends only on decision-layer; its exploration opens it"
+  },
+  "next_recommended": "/orbit:explore seam-chaining"
+}
