@@ -316,6 +316,7 @@ Lifecycle-kind example — an `archive` emit written after `/orbit:archive boots
   "user_decision": "proceeded_with_no_critical",
   "consent": "user-invoked",
   "warnings": [],
+  "decision_records_unread": 0,
   "judgements": [
     { "kind": "readiness", "formed_against": ["2026-05-19T22-10-04Z"], "disposition": "ready", "reasoning": "The system gate passed and the one independent pass's findings are all resolved.", "ratified_by": "user", "accepted": [{ "claim": "no independent pass read the final tree", "why": "the walk's edits were single-line repairs the verification graded landed" }] }
   ],
