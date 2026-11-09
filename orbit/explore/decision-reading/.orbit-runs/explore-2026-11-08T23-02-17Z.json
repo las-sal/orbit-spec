@@ -1,0 +1,40 @@
+{
+  "command": "explore",
+  "timestamp": "2026-11-08T23:02:17Z",
+  "change": "decision-reading",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Ran a reader probe over the program's four real ledger entries (1 warning, 9 suggestions; every record restatable) and settled the stage's design: the reader runs inside system Pass 4 of the in-context pass over records new since the last reading (D-dr-2, D-dr-8); orbit renders a brief carrying each record's cited texts, area, condition, time and work (D-dr-6); a fourth reader row for a restatement that shifts what it cites (D-dr-7); findings are walked like any other, one replacement per record (D-dr-4); archive records the count of unread records in its run record only, keeping G0 (D-dr-3, D-dr-5, answering a ruling-amendment stop). D-dw-1 is carried in live; D-dw-2 and D-dw-5 are superseded. No open questions; the change is estimated at about five capabilities against a ceiling of three.",
+  "decisions_captured": 11,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 6,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [
+    {
+      "id": "D-dr-2",
+      "kind": "a record written in work no system review cycle reaches, or at a step a later stage adds after the last reading",
+      "method": "when a stage adds a step that writes records, its proposal places it against this table; D-dr-3's count surfaces any that reach archive unread"
+    },
+    {
+      "id": "D-dr-4",
+      "kind": "a reader finding about something other than a record's wording or the brief",
+      "method": "classify each reading's findings against this table at its walk; a finding that fits no row is a finding against this rule"
+    },
+    {
+      "id": "D-dr-7",
+      "kind": "a way a record misleads its reader that none of the six rows names",
+      "method": "classify each reading's findings against the rows at its walk (D-dr-4's residual method); a finding that fits none adds a row, as a change to the requirement"
+    },
+    {
+      "id": "D-dw-1",
+      "kind": "a reader of `decisions/` that a later stage adds and that reads a replaced record as current",
+      "method": "when a stage adds a reader of `decisions/`, its proposal checks it against this table; the requirement's named limit says so"
+    }
+  ],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose decision-reading — 6 live rules accounted, 4 bounded residuals named (D-dr-2, D-dr-4, D-dr-7 +1 more); formalize when you are ready (or /orbit:explore decision-reading to keep refining)"
+}

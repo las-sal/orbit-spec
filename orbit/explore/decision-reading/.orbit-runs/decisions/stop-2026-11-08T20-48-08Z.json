@@ -1,0 +1,10 @@
+{
+  "command": "stop",
+  "timestamp": "2026-11-08T20:48:08Z",
+  "change": "decision-reading",
+  "model": "claude-opus-5-5",
+  "condition": "ruling-amendment",
+  "about": "Where archive reports how many decision records were written after the last reading step. G0 says that with every setting at its default, orbit's readouts are unchanged; records are written under default settings, so a count shown in archive's readout would change a readout by default.",
+  "question": "Should the count of unread records be shown in archive's readout, which needs G0 reworded at an architect session, or be kept only in archive's record of the run, which later stages (the program brief, tripwires) can read without changing what the user sees today?",
+  "detail": "Decided in exploration decision-reading (D-dr-3: the count is added in this stage); this stop is about its surface only. The archive emit is a run summary; adding an engine-computed field there changes no readout."
+}

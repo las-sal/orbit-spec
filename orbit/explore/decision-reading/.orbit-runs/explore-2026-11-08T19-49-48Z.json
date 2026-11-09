@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-11-08T19:49:48Z",
+  "change": "decision-reading",
+  "kind": "workflow",
+  "model": null,
+  "final_assessment": "Named exploration scaffolded for stage decision-reading of automate-dev-flow; the architecture citation was accepted and recorded. Premise and references back-filled from the stage charter and decision-writing's assigned decisions (D-dw-1, D-dw-2, D-dw-5), which are to be re-measured before adoption.",
+  "decisions_captured": 0,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 0,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:explore decision-reading — continue capturing thinking — no decisions captured yet"
+}

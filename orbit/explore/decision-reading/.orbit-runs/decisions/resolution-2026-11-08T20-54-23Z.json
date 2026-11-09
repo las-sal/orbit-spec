@@ -1,0 +1,9 @@
+{
+  "command": "resolution",
+  "timestamp": "2026-11-08T20:54:23Z",
+  "change": "decision-reading",
+  "model": "claude-opus-5-5",
+  "stop": "stop-2026-11-08T20-48-08Z.json",
+  "answer": "Keep the count only in archive's record of the run; do not show it in archive's readout.",
+  "effect": "G0 stays as worded and no readout changes. The program brief and the tripwires stage can read the count from archive's record, so the user meets it through the brief."
+}
