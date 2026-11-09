@@ -1,0 +1,462 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-09T03:20:40Z",
+  "change": "decision-reading",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/decision-reading/.orbit-runs/review-proposal-2026-11-09T01-22-23Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-09T01-22-23Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 7,
+    "suggestion": 3
+  },
+  "pushback_verification": "All ten verified against current state; none stale.",
+  "resolution_summary": {
+    "resolved": 10,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "A replacement must keep a link the replaced-target check refuses",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/decision-reading/specs/orbit-emit-composition/spec.md",
+      "line": 29,
+      "classification": "decision_required",
+      "action": "applied A1: a replacement's carried links are exempt from the replaced-target check; the at-most-one-resolution rule counts over the whole stop chain (external W4 folded in); scenarios added in both specs",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Exempt a payload carrying `replaces` from the `replaced target` check for the link fields it carries unchanged; add a scenario: stop-S replaced by stop-T, ledger-L (raised_stop stop-S) replaced, the replacement written with raised_stop stop-S."
+          },
+          {
+            "label": "B",
+            "body": "Define 'unchanged' for links as 'naming the same chain': the replacement must name the latest in the target's chain (stop-T), and the link-field equality check compares chains; add the same scenario with stop-T."
+          }
+        ],
+        "chosen": "A"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/decision-reading/specs/orbit-decision-records/spec.md",
+          "orbit/changes/decision-reading/design.md",
+          "orbit/changes/decision-reading/tasks.md",
+          "orbit/changes/decision-reading/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "names a record that has been replaced; the refusal",
+          "counting each replacement chain once"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-reading/specs/orbit-emit-composition/spec.md",
+            "text": "(a carried link is not new)"
+          },
+          {
+            "path": "orbit/changes/decision-reading/specs/orbit-decision-records/spec.md",
+            "text": "A record whose target was replaced can still be replaced"
+          }
+        ],
+        "searched": [
+          "replaced target",
+          "at-most-one-resolution",
+          "link fields"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "A skipped reading's records do not stay selected under the stated selection",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/decision-reading/specs/orbit-review/spec.md",
+      "line": 17,
+      "classification": "decision_required",
+      "action": "applied B (explicit coverage): a record is read once an in-context system review emit lists it in the payload field decision_records_read; the selection is the latest record in each chain no emit lists; four refusal checks; skipped-reading and mid-pass scenarios added",
+      "ratified_via": "chat",
+      "resolution": "B: explicit coverage via decision_records_read, no timestamp ordering",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/decision-reading/specs/orbit-decision-records/spec.md",
+          "orbit/changes/decision-reading/specs/orbit-emit-composition/spec.md",
+          "orbit/changes/decision-reading/design.md",
+          "orbit/changes/decision-reading/tasks.md",
+          "orbit/changes/decision-reading/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "No reading marker is stored",
+          "records written after the latest in-context system review emit",
+          "lands in `decision_records_owed` unread"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-reading/specs/orbit-emit-composition/spec.md",
+            "text": "#### Scenario: A skipped reading leaves its records selected"
+          },
+          {
+            "path": "orbit/changes/decision-reading/specs/orbit-decision-records/spec.md",
+            "text": "in its `decision_records_read`"
+          }
+        ],
+        "searched": [
+          "written after",
+          "since the last reading",
+          "after the latest",
+          "token ordering"
+        ],
+        "scope": [
+          "orbit/changes/decision-reading/explore.md"
+        ],
+        "kept": [
+          {
+            "path": "orbit/changes/decision-reading/explore.md",
+            "why": "the exploration record states D-dr-2 as ratified then; design.md decision 3 records the refinement"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The reader's brief carries no task, yet the session may add nothing to it",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/decision-reading/specs/orbit-review/spec.md",
+      "line": 7,
+      "classification": "decision_required",
+      "action": "applied C1: the brief ends with an orbit-rendered reader's task part (four reader rows, severity rule, baseline note, return shape) and names each record by its bare filename",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Add a final part to `The reading step's brief is rendered by orbit`: the reader's task — the reader rows of `The plain-language rule is held by structure and by a reader`, the severity rule, and the return shape — rendered by orbit, so the scenario 'nothing else' holds."
+          },
+          {
+            "label": "B",
+            "body": "Keep the brief to content, and state in the orbit-review requirement the fixed instruction text the body wraps it in, narrowing 'nothing else' to 'no path, finding or pass token'."
+          }
+        ],
+        "chosen": "A"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/decision-reading/specs/orbit-review/spec.md",
+          "orbit/changes/decision-reading/design.md",
+          "orbit/changes/decision-reading/tasks.md",
+          "orbit/changes/decision-reading/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-reading/specs/orbit-decision-records/spec.md",
+            "text": "| the reader's task, last |"
+          }
+        ],
+        "searched": [
+          "nothing else",
+          "adds nothing",
+          "reader rows"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The new command misses the completion registry the parity test holds",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/decision-reading/tasks.md",
+      "line": 12,
+      "classification": "trivial_fix",
+      "action": "added the COMMAND_REGISTRY entry to task 2.3 and command-registry.ts to Touchpoints and Impact",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/decision-reading/design.md",
+          "orbit/changes/decision-reading/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-reading/tasks.md",
+            "text": "`COMMAND_REGISTRY` in `src/core/completions/command-registry.ts`"
+          }
+        ],
+        "searched": [
+          "command-registry",
+          "registry-parity"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The carried sentence 'No run-summary command's payload table or check changes' is false on day one",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/decision-reading/specs/orbit-emit-composition/spec.md",
+      "line": 36,
+      "classification": "trivial_fix",
+      "action": "reworded to name the review payload field and the two engine-computed fields the change adds",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "No run-summary command's payload table or check changes"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-reading/specs/orbit-emit-composition/spec.md",
+            "text": "The run-summary commands change only as"
+          }
+        ],
+        "searched": [
+          "payload table or check changes"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "How the walk resolves a reading finding is left to apply, and the sweep gate would refuse the obvious record",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/decision-reading/design.md",
+      "line": 74,
+      "classification": "trivial_fix",
+      "action": "settled at propose: a resolved walk entry names the replacement under introduced and the replaced record under kept; the address-reviews body gains the sentence (task 4.3)",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/decision-reading/design.md",
+          "orbit/changes/decision-reading/tasks.md",
+          "orbit/changes/decision-reading/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "is checked at apply against the address-reviews body"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-reading/specs/orbit-decision-records/spec.md",
+            "text": "the replaced record under `kept`, its `why` being that a replaced record is never"
+          }
+        ],
+        "searched": [
+          "address-reviews body",
+          "sweep"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The baseline promises the reading step finds AI-written decision citations; the reader rows do not include that",
+      "marker_source": "internal-review",
+      "file": "orbit/specs/orbit-decision-records/spec.md",
+      "line": 200,
+      "classification": "decision_required",
+      "action": "applied D1: carried `A ledger entry names what it relies on` as MODIFIED; its authorship bullet leaves the reading step out, naming G4's closing review; fingerprint stamped",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Carry the requirement and drop the reading step from the sentence"
+          },
+          {
+            "label": "B",
+            "body": "Give the reader a row and the brief the attribution it needs"
+          }
+        ],
+        "chosen": "A"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/decision-reading/specs/orbit-decision-records/spec.md",
+          "orbit/changes/decision-reading/design.md",
+          "orbit/changes/decision-reading/proposal.md",
+          "orbit/changes/decision-reading/.openspec.yaml"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/specs/orbit-decision-records/spec.md",
+            "reason": "baseline spec; add a delta to your current change's specs/<capability>/spec.md to capture this ripple"
+          }
+        ]
+      },
+      "sweep": {
+        "retired": [
+          "The reading step of stage `decision-reading` and G4's closing"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-reading/specs/orbit-decision-records/spec.md",
+            "text": "the reading step judges a record's wording, not who wrote what it cites"
+          }
+        ],
+        "searched": [
+          "decision-reading",
+          "who wrote"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/specs/orbit-decision-records/spec.md",
+            "why": "baseline spec; the carried delta replaces the sentence at archive"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The brief's condition wording comes from the spec table, not R-adf-3 as D-dr-6 ratified",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/decision-reading/specs/orbit-decision-records/spec.md",
+      "line": 182,
+      "classification": "trivial_fix",
+      "action": "reclassified at walk (announced): kept orbit's own table as the source and recorded the refinement of D-dr-6 in design.md decision 5, since R-adf-3 is this program's ruling and an adopter's doc holds none",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/decision-reading/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-reading/design.md",
+            "text": "not from R-adf-3 as D-dr-6 said"
+          }
+        ],
+        "searched": [
+          "R-adf-3",
+          "condition's wording"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "'passes_skipped with the reason' conflicts with pass-id-only arrays",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/decision-reading/specs/orbit-review/spec.md",
+      "line": 16,
+      "classification": "trivial_fix",
+      "action": "skip rows list `reading` in passes_skipped and put the reason in commentary",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/decision-reading/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "`passes_skipped` with the reason, and the records stay selected"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-reading/specs/orbit-review/spec.md",
+            "text": "gives the reason in its commentary"
+          }
+        ],
+        "searched": [
+          "passes_skipped"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "'Fixed in the brief' is not a walk resolution a change can make",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/decision-reading/specs/orbit-decision-records/spec.md",
+      "line": 106,
+      "classification": "trivial_fix",
+      "action": "a brief gap is recorded deferred, as a finding against `The reading step's brief is rendered by orbit`; no replacement",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/decision-reading/design.md",
+          "orbit/changes/decision-reading/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "is fixed in the brief, never by a replacement"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-reading/specs/orbit-decision-records/spec.md",
+            "text": "which only orbit's own code can fix"
+          }
+        ],
+        "searched": [
+          "fixed in the brief"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Ten of ten resolved: four by ratified directions (A1, B, C1, D1), six as obvious fixes; F8 reclassified at walk to a recorded refinement.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews decision-reading",
+  "ripple_misses": 0
+}

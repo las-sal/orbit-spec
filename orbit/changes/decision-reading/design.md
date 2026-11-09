@@ -48,36 +48,60 @@ list, when and in what work a record was written), not the records'.
    count holds; its own trigger (selected records) makes it run regardless of lenses or depth, which is D-dr-8's FALSIFY
    finding; and its brief rule is D-dr-8's. Scoring under Coherence matches Pass 4's dimension.
 
-3. **The selection is a pure function of the trail (D-dr-2).** "Records new since the last reading" is computed as
-   records written after the latest in-context system review emit, latest in each chain. No reading marker is stored:
-   the token ordering is the same one the gate uses (`orbit-engine-gates`' `v1 freshness rule`). The brief, the review
-   emit's `decision_records_owed` and the archive emit's `decision_records_unread` all call one function in
-   `src/core/decision-records.ts`.
+3. **A record is read when a reading lists it (D-dr-2, refined at the proposal walk).** D-dr-2 selects "records new
+   since the last reading", and propose first computed that as a timestamp cut-off at the newest in-context
+   system review emit. Both reviewers of the proposal showed it loses records: a skipped reading's own emit moves the cutoff,
+   a record written between the brief and the emit falls behind it, and tokens in `decisions/` and `.orbit-runs/` are
+   allocated independently, so neither can be ordered against the other. The user chose explicit coverage instead:
+   the in-context system review payload lists, in `decision_records_read`, the records its reader's brief rendered,
+   and the selection is the latest record in each chain that no such emit lists. No timestamp is compared. The brief,
+   the read-list check, the review emit's `decision_records_owed` and the archive emit's `decision_records_unread` all
+   call one function in `src/core/decision-records.ts`. A replacement is a new record, so it is read at the next pass.
 
 4. **A pass that owed a reading must say so.** The review emit refuses an in-context system payload that owed records
    and lists `reading` in neither `passes_run` nor `passes_skipped`. That makes a skipped reading visible without making
    orbit judge the reader (R-crc-10); see `orbit-emit-composition`'s `The reading's selection is recorded at review and
-   archive`. Alternative: no refusal (a body that forgot the step would leave no trace) or a reader-output check (orbit
+   archive`. The same requirement refuses a read list without a reading, a reading without a read list, and a read
+   list naming a record outside the selection. Alternative: no refusal (a body that forgot the step would leave no trace) or a reader-output check (orbit
    would be judging prose).
 
 5. **One command renders the brief (D-dw-5, D-dr-6).** `orbit decisions brief <change> [--json]`, read-only, so the
    brief a test inspects is the brief the reader gets. The review body passes its output verbatim. The parts and their
    order are `orbit-decision-records`' `The reading step's brief is rendered by orbit`. A requirement citation renders the
-   requirement from its heading to its first scenario, from the baseline spec.
+   requirement from its heading to its first scenario, from the baseline spec. Refined at the proposal walk: the brief
+   names each record by its bare filename and ends with the reader's task (the four reader rows, the severity rule,
+   the return shape), so the session adds nothing and the reader's findings map back to records; text it quotes is
+   rendered whole, paths inside it included, since the ban is on pointing the reader at a file, not on quoted text;
+   and a brief is whole or absent, a failed source exiting non-zero. A stop's condition is worded from orbit's own
+   table in `Three decision records, one job each`, not from R-adf-3 as D-dr-6 said: the five conditions are orbit's,
+   defined for every install, and R-adf-3 is this program's ruling, which an adopter's architecture doc does not hold.
 
 6. **Replacements (D-dw-1, D-dr-4).** `replaces` joins all three payload tables; the link fields a replacement keeps are
    per record (ledger: `area`, `relies_on`, `raised_stop`; stop: `condition`; resolution: `stop`). The walk writes one
-   replacement per record however many findings it resolves on it. A replacement is written through the same `orbit
+   replacement per record however many findings it resolves on it. A replacement's carried links are exempt from the
+   replaced-target check (the user's choice at the proposal walk, over re-pointing them to the latest in each chain):
+   they are not new, so the equality check stays a byte equality and a record whose target was replaced can still be
+   reworded. The at-most-one-resolution rule counts over the whole stop chain, so a stop answered through its earlier
+   record is not answered again through its replacement. A replacement is written through the same `orbit
    emit` command as the original, and the shared `references/decision-records.md` documents `replaces`, composed from
    `DECISION_PAYLOAD_FIELDS` as every other field is. No `orbit-address-reviews` requirement changes: a reading finding's
    resolution is an emit the walk runs, never an edit of the record, and the cascade's OUT — audit trail category
-   (`Ripple cascade by default`) still keeps every ripple edit out of `.orbit-runs/`. Whether the walk body needs a
-   sentence saying so is checked at apply against the address-reviews body; if it does, that is an addition telling
-   the AI to record something, and the spec delta is added then.
+   (`Ripple cascade by default`) still keeps every ripple edit out of `.orbit-runs/`. How the walk records it is
+   settled here, not at apply (the proposal walk): `A record is fixed by a replacement, never edited` says the entry's
+   sweep names the replacement under `introduced` and the replaced record under `kept`, which the sweep gate
+   (`The walk write gate checks sweep evidence`) accepts as it stands; the address-reviews body gains that sentence,
+   an addition telling the AI to record something. A gap in the brief is recorded `deferred`, against the brief's
+   requirement, since only orbit's code can fix it.
 
 7. **The fourth reader row (D-dr-7).** A restatement that shifts what it cites is its own row, and
    `Decision records are written for a reader who knows only the architecture` says a restatement keeps the cited
    text's meaning.
+
+8. **The reading step does not judge who wrote a cited decision (the proposal walk).** The baseline's `A ledger entry
+   names what it relies on` named the reading step, with G4's closing review, as where a citation of an explore
+   decision the AI wrote is found. This reader judges wording, and `explore.md` records no author, so the requirement
+   is carried and the sentence leaves the reading step out. Alternative: a reader row and an authorship part in the
+   brief, which needs an author record nothing writes.
 
 ## Touchpoints
 
@@ -85,8 +109,10 @@ list, when and in what work a record was written), not the records'.
 - `src/core/emit-composition.ts` — `decision_records_owed` on in-context system review emits, `decision_records_unread` on archive emits, the review refusal.
 - `src/commands/decisions.ts` — the new `orbit decisions brief` command.
 - `src/cli/program.ts` — registration.
+- `src/core/completions/command-registry.ts` — the completion registry entry the parity test owes.
 - `src/core/templates/workflows/review.ts` — the reading step in the system-mode body and `references/passes-system.md`; the run-summary schema reference names `decision_records_owed` and the `reading` pass id.
 - `src/core/templates/workflows/archive-change.ts` — the archive schema reference names `decision_records_unread`.
+- `src/core/templates/workflows/address-reviews.ts` — the sentence on how a replacement is recorded in a walk entry's sweep.
 - `src/core/disciplines.ts` — the shared `references/decision-records.md` documents `replaces`.
 - `docs/cli.md` — the command-coverage check owes `orbit decisions brief`.
 - `test/core/` — the fixtures and tests the tasks name.
@@ -98,11 +124,11 @@ the proposing AI's reading of the file; no engine record
 | rule | closure / state | owner's state | destination |
 |---|---|---|---|
 | D-dr-1 | — | fact | not carried (history) |
-| D-dr-2 | BOUNDED | live rule | `orbit-review`'s `The reading step checks decision records in system review` (named limit, verbatim) |
+| D-dr-2 | BOUNDED | live rule | `orbit-review`'s `The reading step checks decision records in system review` (named limit, verbatim); refined by decision 3 |
 | D-dr-3 | — | scope | not carried (history) |
 | D-dr-4 | BOUNDED | live rule | `orbit-decision-records`' `A record is fixed by a replacement, never edited` (second named limit, verbatim) |
 | D-dr-5 | — | scope | not carried (history) |
-| D-dr-6 | SOURCED | live rule | `orbit-decision-records`' `The reading step's brief is rendered by orbit` — a normative TABLE (the parts rendered), the source sentence naming the payload tables |
+| D-dr-6 | SOURCED | live rule | `orbit-decision-records`' `The reading step's brief is rendered by orbit` — a normative TABLE (the parts rendered), the source sentence naming the payload tables; refined by decision 5 |
 | D-dr-7 | BOUNDED | live rule | `orbit-decision-records`' `The plain-language rule is held by structure and by a reader` (named limit, verbatim) |
 | D-dr-8 | SOURCED | live rule | `orbit-review`'s `The reading step checks decision records in system review` — a normative TABLE (where it runs); refined by decision 2 |
 | D-dw-1 | BOUNDED | live rule | `orbit-decision-records`' `A record is fixed by a replacement, never edited` (named limit, verbatim) |
@@ -117,7 +143,7 @@ the proposing AI's reading of the file; no engine record
 - [D-dr-7: a way a record misleads that no row names] → named limit in `orbit-decision-records`' `The plain-language rule is held by structure and by a reader`.
 - [D-dw-1: a later reader of `decisions/` that reads a replaced record as current] → named limit in `orbit-decision-records`' `A record is fixed by a replacement, never edited`.
 - [A cited requirement rendered from the baseline while the change rewrites it] → named limit in `The reading step's brief is rendered by orbit`.
-- [A record written during the in-context pass, after the brief was rendered, lands in `decision_records_owed` unread] → the window is one pass long; the next reading selects after that emit, so such a record is counted unread at archive only if no later in-context pass runs. Accepted.
+- [A record written during the in-context pass, after the brief was rendered] → it is in that emit's `decision_records_owed` and not its `decision_records_read`, so it stays selected for the next reading and is counted at archive if none runs (decision 3).
 - [Reader findings have a `file` under `.orbit-runs/`] → the walk's cascade treats the trail as OUT (audit trail); a reading finding is resolved by an emit, never an edit, so the cascade never needs to write there. The verification pass's residual check excludes the trail already.
 - [Cost] → one subagent per in-context system pass with selected records; the probe took two tool uses.
 
