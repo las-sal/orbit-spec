@@ -30,11 +30,11 @@ describe("orbit-review: The reading step checks decision records in system revie
   // @scenario text orbit-review :: The reading step checks decision records in system review :: The reading runs on a change with records
   it('the system-pass reference carries the step: render the brief, dispatch a clean reader, fold, record the read list', () => {
     expect(step.length).toBeGreaterThan(0);
-    expect(step).toContain('`orbit decisions brief <change-name>`');
+    expect(step).toMatch(/Run `orbit decisions brief <change-name> --json` ONCE and keep its output: its `markdown` is the brief you dispatch and its `selected` is the read list you record, both from that one run/);
     expect(step).toMatch(/Spawn a clean-context subagent[^\n]*never a fork/);
     expect(step).toContain('`pass: "reading"`');
     expect(step).toContain('`dimension: "coherence"`');
-    expect(step).toMatch(/List `reading` in `passes_run` and every filename of the brief's `selected` list in `decision_records_read`/);
+    expect(step).toMatch(/List `reading` in `passes_run` and every filename of that same run's `selected` list in `decision_records_read` — never from a second run of the command/);
     // The four reader rows and the severity rule, as the engine's constants word them.
     for (const row of READER_ROWS) expect(step).toContain(row.replace(/^a /, ''));
     expect(step).toContain(READER_SEVERITY_RULE.replace(/^A record/, 'a record'));
@@ -45,7 +45,7 @@ describe("orbit-review: The reading step checks decision records in system revie
 
   // @scenario text orbit-review :: The reading step checks decision records in system review :: The reader's brief carries no path
   it("the reader's prompt is the brief verbatim and nothing else", () => {
-    expect(step).toMatch(/whose prompt is the brief's markdown output VERBATIM and nothing else: no file to open, no finding title, no pass token, no word of your own/);
+    expect(step).toMatch(/whose prompt is that run's `markdown` VERBATIM and nothing else: no file to open, no finding title, no pass token, no word of your own/);
   });
 
   // @scenario text orbit-review :: The reading step checks decision records in system review :: The reading runs with no perspectives defined
@@ -65,10 +65,10 @@ describe("orbit-review: The reading step checks decision records in system revie
 describe("orbit-decision-records: A record is fixed by a replacement, never edited (generated surface)", () => {
   const walk = skill('orbit-address-reviews').body;
 
-  // @scenario text orbit-decision-records :: A record is fixed by a replacement, never edited :: Several fixes to one record make one replacement
-  it('the walk writes one replacement per record, records it in its sweep, and defers a brief gap', () => {
-    expect(walk).toMatch(/Write ONE replacement per record however many findings you resolve on it, holding all of their fixes/);
-    expect(walk).toMatch(/its `sweep` records the replacement's path and a phrase of its new wording under `introduced`, and the replaced record under `kept`/);
+  // @scenario text orbit-decision-records :: A record is fixed by a replacement, never edited :: Several fixes to one record make a chain
+  it('the walk writes one replacement per resolved finding, of the latest in the chain, records it in its sweep, and defers a brief gap', () => {
+    expect(walk).toMatch(/Each finding you resolve writes its OWN replacement, of the LATEST record in the record's chain/);
+    expect(walk).toMatch(/its `sweep` records the replacement's path and a phrase of its new wording under `introduced` — a phrase free of double quotes, backslashes and line breaks[^\n]* — and the replaced record under `kept`/);
     expect(walk).toMatch(/gap in the BRIEF[^\n]*resolved `deferred` against `orbit-decision-records`' `The reading step's brief is rendered by orbit`/);
     expect(walk).toMatch(/cites the wrong thing[^\n]*escalate it/);
   });
@@ -76,7 +76,7 @@ describe("orbit-decision-records: A record is fixed by a replacement, never edit
   it('the shared reference documents replaces on all three records, and the fixing rule', () => {
     expect(DECISION_RECORDS_REFERENCE.match(/^- `replaces` — optional; the filename/gm)).toHaveLength(3);
     expect(DECISION_RECORDS_REFERENCE).toContain('## Fixing a record');
-    expect(DECISION_RECORDS_REFERENCE).toMatch(/One replacement carries every fix to one record/);
+    expect(DECISION_RECORDS_REFERENCE).toMatch(/Replace the LATEST record of a chain/);
     expect(DECISION_RECORDS_REFERENCE).toMatch(/carries the old record's link fields unchanged \(a ledger entry's `area`, `relies_on` and `raised_stop`; a stop's `condition`; a resolution's `stop`\)/);
   });
 });

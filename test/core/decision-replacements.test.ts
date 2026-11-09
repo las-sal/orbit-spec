@@ -8,7 +8,7 @@ import * as fs from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
 import { composeAndWriteEmit, EmitError } from '../../src/core/emit-composition.js';
-import { readDecisionFolder, latestInChain, chainOf } from '../../src/core/decision-records.js';
+import { readDecisionFolder, latestInChain, chainOf, selectUnreadRecords } from '../../src/core/decision-records.js';
 
 let root: string;
 
@@ -160,6 +160,22 @@ describe('orbit-decision-records: A record is fixed by a replacement, never edit
     const b = emit('resolution', resolutionPayload(s));
     const t = emit('stop', stopPayload({ replaces: s, question: 'Reworded question?' }));
     expectRefused(() => emit('resolution', resolutionPayload(t)), [/'stop'/, esc(b)]);
+  });
+});
+
+describe('orbit-decision-records: several fixes to one record (the system walk)', () => {
+  // @scenario behaviour orbit-decision-records :: A record is fixed by a replacement, never edited :: Several fixes to one record make a chain
+  it('three fixes, one after another, chain three replacements; the third is current to every reader', () => {
+    const a = emit('ledger', ledgerPayload());
+    const r1 = emit('ledger', ledgerPayload({ replaces: a, decided: 'Fix one.' }));
+    const r2 = emit('ledger', ledgerPayload({ replaces: r1, decided: 'Fix one and two.' }));
+    const r3 = emit('ledger', ledgerPayload({ replaces: r2, decided: 'Fix one, two and three.' }));
+    const folder = readDecisionFolder(path.join(root, DEC('foo')));
+    expect(chainOf(folder, a)).toEqual([a, r1, r2, r3]);
+    expect(latestInChain(folder, a)).toBe(r3);
+    expect(selectUnreadRecords(path.join(root, 'orbit/changes/foo'))).toEqual([r3]);
+    // The link checks: a replacement of anything but the latest is refused, naming the latest.
+    expectRefused(() => emit('ledger', ledgerPayload({ replaces: r1, decided: 'Late.' })), [/'replaces'/, esc(r3)]);
   });
 });
 

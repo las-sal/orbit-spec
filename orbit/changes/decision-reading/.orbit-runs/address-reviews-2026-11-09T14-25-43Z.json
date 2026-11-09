@@ -1,0 +1,176 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-09T14:25:43Z",
+  "change": "decision-reading",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/decision-reading/.orbit-runs/review-system-2026-11-09T14-19-10Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-09T14-19-10Z",
+  "latest_apply_token": "2026-11-09T14-08-09Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 3
+  },
+  "pushback_verification": "All four verified against HEAD; the parity suggestion is stale (test/core/decision-brief.test.ts:234 holds both constants to the spec rows since cad16f7).",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 1,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The brief renders a replaced stop's superseded wording under a record that names it",
+      "marker_source": "internal-review",
+      "file": "src/core/decision-records.ts",
+      "line": 869,
+      "classification": "trivial_fix",
+      "action": "the named-stop branch resolves the stop through latestInChain, renders that stop's about and question, and says when the named stop was reworded; the brief requirement's row says the latest in its chain; a test (stop-S replaced by stop-T) shows the new wording and fails when the fix is reverted",
+      "evidence": "re-read decision-records.ts:869-873: folder.records.get(stopName) with no chain lookup, unlike the resolution branch",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/decision-reading/specs/orbit-decision-records/spec.md",
+          "test/core/decision-brief.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "src/core/decision-records.ts",
+            "text": "since reworded as"
+          },
+          {
+            "path": "orbit/changes/decision-reading/specs/orbit-decision-records/spec.md",
+            "text": "the named stop's `about` and `question`, the latest in its chain"
+          },
+          {
+            "path": "test/core/decision-brief.test.ts",
+            "text": "shows a named stop's latest wording when the stop was replaced"
+          }
+        ],
+        "searched": [
+          "folder.records.get(stopName)",
+          "named_stop",
+          "raised_stop` or a resolution's `stop`"
+        ],
+        "scope": [
+          "docs/cli.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "AREA_ROWS and CONDITION_WORDING copy spec tables with no parity check",
+      "marker_source": "internal-review",
+      "file": "src/core/decision-records.ts",
+      "line": 621,
+      "classification": "stale",
+      "action": "no edit: the parity check exists",
+      "evidence": "test/core/decision-brief.test.ts:234-249 ('the brief constants match the baseline tables they render') asserts every AREA_ROWS row and every CONDITION_WORDING entry appears in orbit/specs/orbit-decision-records/spec.md; committed in cad16f7",
+      "outcome": "stale"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The replacement sweep record is matched against raw JSON and is untested end to end",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/address-reviews.ts",
+      "line": 1170,
+      "classification": "trivial_fix",
+      "action": "the body says the introduced phrase holds no double quote, backslash or line break, since the gate matches the record's JSON text; the requirement and design decision 6 say the same; a walk-gate test accepts a replacement-resolved entry and refuses a quoted phrase",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/decision-reading/specs/orbit-decision-records/spec.md",
+          "orbit/changes/decision-reading/design.md",
+          "test/core/emit-walk-sweep.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "src/core/templates/workflows/address-reviews.ts",
+            "text": "a phrase free of double quotes, backslashes and line breaks"
+          },
+          {
+            "path": "orbit/changes/decision-reading/specs/orbit-decision-records/spec.md",
+            "text": "chosen free of double quotes, backslashes and line breaks"
+          },
+          {
+            "path": "orbit/changes/decision-reading/design.md",
+            "text": "provided the `introduced` phrase holds no"
+          },
+          {
+            "path": "test/core/emit-walk-sweep.test.ts",
+            "text": "a walk entry resolved by a replacement record"
+          }
+        ],
+        "searched": [
+          "a phrase of its new wording",
+          "under `introduced`",
+          "accepts as it stands"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "User docs do not describe the reading step or replacement records",
+      "marker_source": "internal-review",
+      "file": "docs/concepts.md",
+      "line": 154,
+      "classification": "trivial_fix",
+      "action": "concepts.md's system-mode paragraph gains the reading step; cli.md's decision-record paragraph says a record is fixed by a replacement naming the old one in replaces",
+      "ripple_cascade": {
+        "applied": [
+          "docs/cli.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "docs/concepts.md",
+            "text": "also runs a reading step"
+          },
+          {
+            "path": "docs/cli.md",
+            "text": "whose `replaces` names the old record's filename"
+          }
+        ],
+        "searched": [
+          "six system-wide passes",
+          "decision records"
+        ],
+        "scope": [
+          "README.md",
+          "docs/workflows.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Three of four resolved and one stale: the brief now follows a named stop's chain, the walk body says how to pick a replacement's sweep phrase, and the docs describe the reading step and replacements; the parity suggestion was already met by a test.",
+  "iteration": 4,
+  "next_recommended": "/orbit:address-reviews decision-reading",
+  "ripple_misses": 0
+}

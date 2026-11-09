@@ -22,7 +22,7 @@ builds the reader.
 - **A fourth reader row**: a plain field that restates something the record cites so that its meaning shifts
   (D-dr-7). The named limit "covered by no step" is retired.
 - **Replacement records.** A record is fixed by a new record of the same kind carrying `replaces: <filename>`, with
-  every link field unchanged; one replacement carries every fix to one record. The write gate's link checks follow
+  every link field unchanged; each resolved finding writes one replacement of the latest in the chain. The write gate's link checks follow
   chains to their latest record, a replacement's carried links excepted, and a stop chain takes one resolution chain
   (D-dw-1, D-dr-4).
 - **The selection is recorded.** The in-context system review emit lists the records its reader was given

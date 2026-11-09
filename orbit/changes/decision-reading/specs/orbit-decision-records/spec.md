@@ -200,15 +200,18 @@ unchanged:
 | stop record | `condition` |
 | resolution | `stop` |
 
-One replacement carries every fix to one record: when a walk resolves several findings on one record, it writes ONE
-replacement holding all of them. A finding a walk does not resolve (stale, deferred or escalated) writes none. A finding
+Each resolved finding writes its own replacement, of the LATEST record in the chain: when a walk resolves several
+findings on one record, the first replaces the record, the next replaces that replacement, and so on, so each link of the
+chain carries one walk entry's fix and the walk's one-finding-at-a-time cycle (`orbit-address-reviews`' `Walk-mode by
+default with --batch opt-in`) holds unchanged. A finding a walk does not resolve (stale, deferred or escalated) writes none. A finding
 that is a gap in the brief rather than in the record is a finding against `The reading step's brief is rendered by
 orbit`, which only orbit's own code can fix: the walk records it `deferred`, naming that requirement, and writes no
 replacement. A finding that a record cites the wrong thing is outside what a replacement can fix, since its links are
 fixed; the walk escalates it.
 
 A walk entry that resolves a finding by a replacement records, in its sweep, the replacement's path and a phrase of its
-new wording under `introduced`, and the replaced record under `kept`, its `why` being that a replaced record is never
+new wording under `introduced`, chosen free of double quotes, backslashes and line breaks because the gate matches it
+against the record's JSON text, where those are escaped, and the replaced record under `kept`, its `why` being that a replaced record is never
 edited (`orbit-emit-composition`'s `The walk write gate checks sweep evidence`); the entry's `file` stays the replaced
 record, as the finding named it.
 
@@ -260,10 +263,11 @@ Residual method: classify each reading's findings against this table at its walk
 - **THEN** the emit is refused naming `resolution-D` as the record to cite; an entry written before the replacement
   keeps its citation
 
-#### Scenario: Several fixes to one record make one replacement
+#### Scenario: Several fixes to one record make a chain
 
-- **WHEN** a walk resolves three reading findings, all on `ledger-A`
-- **THEN** it writes one replacement of `ledger-A` carrying all three fixes
+- **WHEN** a walk resolves three reading findings, all on `ledger-A`, one after another
+- **THEN** it writes three replacements, each replacing the latest in `ledger-A`'s chain and carrying one finding's fix,
+  and the brief, the selection and the link checks read the third as current
 
 #### Scenario: A record whose target was replaced can still be replaced
 
@@ -281,7 +285,8 @@ Residual method: classify each reading's findings against this table at its walk
 
 `orbit decisions brief <change>` SHALL render, read-only, the brief the reading step gives its reader, and SHALL be the
 only source of that brief: the reviewing session passes it to the reader verbatim and adds nothing. It writes no file
-and prints the brief to standard output (`--json` prints the same content as structured data).
+and prints the brief to standard output (`--json` prints the same content as structured data, together with the
+brief's text as `markdown`, so one run gives the reading step both the text it dispatches and the filenames it records).
 
 It SELECTS the records to read: the latest record in each replacement chain of the change's `decisions/` folder that no
 in-context system review emit on the change's history lists in its `decision_records_read`
@@ -301,7 +306,7 @@ For the selected records it renders, in this order:
 | a `decision` citation | that Decisions entry's text from the `explore.md` it belongs to |
 | a ledger entry's `area` | its row of `The ledger's eighteen areas`: the area's name and what it covers |
 | a stop's `condition` | the condition's wording in `Three decision records, one job each` |
-| a ledger entry's `raised_stop` or a resolution's `stop` | the named stop's `about` and `question` |
+| a ledger entry's `raised_stop` or a resolution's `stop` | the named stop's `about` and `question`, the latest in its chain |
 | when and in what work | the record's timestamp and the change or exploration it belongs to |
 | the reader's task, last | the four reader rows of `The plain-language rule is held by structure and by a reader`; the severity rule of `orbit-review`'s `The reading step checks decision records in system review`; that cited requirement text is the baseline's; and the return shape: one finding per record and row, naming the record by its filename, the row, the field, and what a reader would take it to mean |
 

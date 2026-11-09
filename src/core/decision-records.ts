@@ -726,7 +726,8 @@ export interface BriefRecord {
   area?: { id: string; area: string; covers: string };
   condition?: { id: string; wording: string };
   cites: BriefCitation[];
-  named_stop?: { record: string; about: string; question: string };
+  /** `record` as the record names it; `current`, when that stop was replaced, the latest in its chain, whose wording is shown. */
+  named_stop?: { record: string; current?: string; about: string; question: string };
 }
 
 export interface DecisionBrief {
@@ -868,9 +869,16 @@ export function buildDecisionBrief(projectRoot: string, change: string): Decisio
     }
     const stopName = command === 'ledger' ? r.raised_stop : command === 'resolution' ? r.stop : undefined;
     if (typeof stopName === 'string') {
-      const stop = folder.records.get(stopName);
-      if (stop === null || stop === undefined || stop.command !== 'stop') briefFail(`record ${filename} names stop ${stopName}, which cannot be read as a stop record.`);
-      entry.named_stop = { record: stopName, about: String(stop.about), question: String(stop.question) };
+      // The latest in the stop's chain is the current one (`A record is fixed by a replacement, never edited`).
+      const current = latestInChain(folder, stopName);
+      const stop = folder.records.get(current);
+      if (stop === null || stop === undefined || stop.command !== 'stop') briefFail(`record ${filename} names stop ${current}, which cannot be read as a stop record.`);
+      entry.named_stop = {
+        record: stopName,
+        ...(current !== stopName ? { current } : {}),
+        about: String(stop.about),
+        question: String(stop.question),
+      };
     }
     records.push(entry);
   }
@@ -929,7 +937,10 @@ export function renderDecisionBrief(brief: DecisionBrief): string {
     }
     if (r.detail !== null) out.push(`- detail (not bound by the plain-language rule; may be technical):${renderFieldValue(r.detail)}`);
     if (r.named_stop) {
-      out.push('', `It names the stop ${r.named_stop.record}:`, '', `- about: ${r.named_stop.about}`, `- question: ${r.named_stop.question}`);
+      const named = r.named_stop.current
+        ? `It names the stop ${r.named_stop.record}, since reworded as ${r.named_stop.current}:`
+        : `It names the stop ${r.named_stop.record}:`;
+      out.push('', named, '', `- about: ${r.named_stop.about}`, `- question: ${r.named_stop.question}`);
     }
     if (r.cites.length > 0) {
       out.push('', 'What it relies on:', '');

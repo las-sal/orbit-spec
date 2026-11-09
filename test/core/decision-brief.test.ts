@@ -123,6 +123,21 @@ describe("orbit-decision-records: The reading step's brief is rendered by orbit"
     expect(out).toContain('Ruling R-p-1 of `prog`: in the architecture doc above.');
   });
 
+  it("shows a named stop's latest wording when the stop was replaced", () => {
+    const s = emit('stop', { model: null, condition: 'user-facing-uncovered', about: 'OLD-ABOUT', question: 'OLD-Q?' });
+    const l = emit('ledger', ledgerPayload({ relies_on: [], raised_stop: s, area: 'user-sees-or-does' }));
+    const t = emit('stop', { model: null, condition: 'user-facing-uncovered', about: 'NEW-ABOUT', question: 'NEW-Q?', replaces: s });
+    // Only the ledger entry is selected for this check; the stops are read already.
+    reviewEmit('foo', '2026-01-01T00-00-00Z', { decision_records_read: [t] });
+    const brief = buildDecisionBrief(root, 'foo');
+    expect(brief.selected).toEqual([l]);
+    expect(brief.records[0].named_stop).toEqual({ record: s, current: t, about: 'NEW-ABOUT', question: 'NEW-Q?' });
+    const out = renderDecisionBrief(brief);
+    expect(out).toContain(`It names the stop ${s}, since reworded as ${t}:`);
+    expect(out).toContain('- about: NEW-ABOUT');
+    expect(out).not.toContain('OLD-ABOUT');
+  });
+
   // @scenario behaviour orbit-decision-records :: The reading step's brief is rendered by orbit :: Only records no reading listed are selected
   it('selects only the records no in-context system review emit lists as read', () => {
     const a = emit('ledger', ledgerPayload());
@@ -216,6 +231,10 @@ describe("orbit-decision-records: The reading step's brief is rendered by orbit"
     expect(j.docs).toEqual([]);
     expect(j.records[0].fields.decided).toBe('LEDGER-DECIDED the export runs weekly.');
     expect(j.task.rows).toEqual([...READER_ROWS]);
+    // One run carries both the text the reader is given and the filenames recorded as read.
+    const text = await runCLI(['decisions', 'brief', 'bar'], { cwd: root });
+    expect(j.markdown).toBe(text.stdout);
+    expect(j.markdown).toContain(`### ${j.selected[0]}`);
   });
 });
 

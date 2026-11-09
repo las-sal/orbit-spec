@@ -383,3 +383,44 @@ describe('A ripple-miss pointer resolves and is counted', () => {
     refused(() => emit([entry()], { ripple_misses: 0 }), /ripple_misses/);
   });
 });
+
+describe('decision-reading: a walk entry resolved by a replacement record', () => {
+  const stop = (over: Record<string, unknown> = {}) =>
+    path.basename(
+      composeAndWriteEmit(
+        'stop',
+        { change: 'foo' },
+        { model: null, condition: 'ruling-amendment', about: 'Whether the export runs weekly.', question: 'Should it?', ...over },
+        { projectRoot: root }
+      ).path
+    );
+
+  it('accepts the replacement under introduced and the replaced record under kept; a quoted phrase is matched against the raw JSON', () => {
+    const a = stop();
+    const b = stop({ replaces: a, about: 'Whether the "weekly export" runs by default.' });
+    const replaced = `${RUNS}/decisions/${a}`;
+    const replacement = `${RUNS}/decisions/${b}`;
+    const kept = [{ path: replaced, why: 'a replaced decision record is never edited' }];
+    const ok = emit([
+      entry({
+        title: `${a}, row 3: about is correct and still unclear`,
+        file: replaced,
+        sweep: { ...emptySweep(), introduced: [{ path: replacement, text: 'runs by default' }], kept },
+      }),
+    ]);
+    expect(fs.existsSync(ok.path)).toBe(true);
+    // A phrase holding a double quote occurs in the record only escaped, so the gate refuses it:
+    // the address-reviews body tells the walk to choose a phrase free of quotes, backslashes and line breaks.
+    refused(
+      () =>
+        emit([
+          entry({
+            title: `${a}, row 3: about is correct and still unclear`,
+            file: replaced,
+            sweep: { ...emptySweep(), introduced: [{ path: replacement, text: '"weekly export"' }], kept },
+          }),
+        ]),
+      /introduced text/
+    );
+  });
+});

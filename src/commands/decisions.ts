@@ -12,7 +12,10 @@ export class DecisionsCommand {
     let output: string;
     try {
       const brief = buildDecisionBrief('.', change);
-      output = options.json ? JSON.stringify(brief, null, 2) + '\n' : renderDecisionBrief(brief);
+      const markdown = renderDecisionBrief(brief);
+      // --json carries the rendered text too, so one run gives the reading step both the brief it
+      // dispatches and the filenames it records (the system walk: two runs could disagree).
+      output = options.json ? JSON.stringify({ ...brief, markdown }, null, 2) + '\n' : markdown;
     } catch (e) {
       if (e instanceof DecisionBriefError) {
         console.error(`orbit decisions brief: ${e.message} No brief was printed.`);

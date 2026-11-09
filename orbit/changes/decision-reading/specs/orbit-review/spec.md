@@ -6,7 +6,9 @@ An in-context system review SHALL run a READING STEP whenever `orbit decisions b
 (`orbit-decision-records`' `The reading step's brief is rendered by orbit`): the invoking session renders the brief,
 dispatches a clean-context subagent given that brief verbatim and nothing else, folds the reader's findings into
 the pass's own findings, and lists the filenames the brief rendered in the emit's `decision_records_read`
-(`orbit-emit-composition`'s `The reading's selection is recorded at review and archive`). The reader judges each record against the reader rows of `orbit-decision-records`' `The
+(`orbit-emit-composition`'s `The reading's selection is recorded at review and archive`). The brief it dispatches and
+the filenames it records come from ONE run of `orbit decisions brief <change> --json` (its `markdown` and its
+`selected`), so the read list names exactly what the reader was given. The reader judges each record against the reader rows of `orbit-decision-records`' `The
 plain-language rule is held by structure and by a reader`.
 
 Where it runs, and where it does not:

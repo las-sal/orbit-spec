@@ -82,8 +82,10 @@ list, when and in what work a record was written), not the records'.
    say so is the user's, at the program's next architect session, beside G0's rewording (decision 1).
 
 6. **Replacements (D-dw-1, D-dr-4).** `replaces` joins all three payload tables; the link fields a replacement keeps are
-   per record (ledger: `area`, `relies_on`, `raised_stop`; stop: `condition`; resolution: `stop`). The walk writes one
-   replacement per record however many findings it resolves on it. A replacement's carried links are exempt from the
+   per record (ledger: `area`, `relies_on`, `raised_stop`; stop: `condition`; resolution: `stop`). Each finding the walk
+   resolves writes its own replacement of the latest record in the chain (revised at the system walk: one replacement
+   per record, as D-dr-4 put it, would break walk mode's rule that each finding's fix lands before the next finding
+   begins; the user chose the chain over changing `orbit-address-reviews`). A replacement's carried links are exempt from the
    replaced-target check (the user's choice at the proposal walk, over re-pointing them to the latest in each chain):
    they are not new, so the equality check stays a byte equality and a record whose target was replaced can still be
    reworded. The at-most-one-resolution rule counts over the whole stop chain, so a stop answered through its earlier
@@ -94,7 +96,8 @@ list, when and in what work a record was written), not the records'.
    (`Ripple cascade by default`) still keeps every ripple edit out of `.orbit-runs/`. How the walk records it is
    settled here, not at apply (the proposal walk): `A record is fixed by a replacement, never edited` says the entry's
    sweep names the replacement under `introduced` and the replaced record under `kept`, which the sweep gate
-   (`The walk write gate checks sweep evidence`) accepts as it stands; the address-reviews body gains that sentence,
+   (`The walk write gate checks sweep evidence`) accepts as it stands, provided the `introduced` phrase holds no
+   double quote, backslash or line break (the gate matches the record's raw JSON text; a test runs both cases); the address-reviews body gains that sentence,
    an addition telling the AI to record something. A gap in the brief is recorded `deferred`, against the brief's
    requirement, since only orbit's code can fix it.
 

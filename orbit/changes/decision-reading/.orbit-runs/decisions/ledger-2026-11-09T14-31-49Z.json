@@ -1,0 +1,25 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-09T14:31:49Z",
+  "change": "decision-reading",
+  "model": "claude-opus-5-5",
+  "area": "things-others-build-on",
+  "decided": "The structured form of the reader's brief now also carries the brief's printed text, so one run of the command gives a review both the text it hands the reader and the list of records it then records as read.",
+  "alternatives": [
+    "run the command twice, once for the text and once for the list",
+    "take the list of records from the headings of the printed text"
+  ],
+  "why": "Two runs could disagree when a record is written between them, and a record the reader never saw would then be recorded as read and never read; one run cannot disagree with itself.",
+  "relies_on": [
+    {
+      "kind": "decision",
+      "id": "D-dr-6"
+    }
+  ],
+  "defines": [
+    {
+      "term": "brief",
+      "definition": "the text orbit prints for the reader of the decision records: the architecture doc, each record to read and what it points at, and the reader's task"
+    }
+  ]
+}
