@@ -1,0 +1,15 @@
+{
+  "command": "propose",
+  "timestamp": "2026-11-09T18:51:16Z",
+  "change": "seam-chaining",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Proposed seam-chaining from its exploration as the first of the stage's two changes, split by grant at the user's word (D-sc-19): a chain setting for review, external review and the walk; a chain object in the change status with five refusal reasons; the no-chaining contract made conditional in five bodies; prompt kinds and tags on the review and walk. Three capabilities, six requirements, fifteen tasks, no size breach. Three BOUNDED residuals carried verbatim into spec text; D-sc-7 lands with the second change.",
+  "pr_attachment": {
+    "branch": "seam-chaining",
+    "granularity": "per-proposal",
+    "url": "https://github.com/las-sal/orbit-spec/pull/37",
+    "state": "draft"
+  },
+  "next_recommended": "/orbit:review seam-chaining — proposal artifacts ready; review before apply"
+}
