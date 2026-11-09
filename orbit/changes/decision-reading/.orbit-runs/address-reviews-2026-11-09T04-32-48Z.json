@@ -1,0 +1,78 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-09T04:32:48Z",
+  "change": "decision-reading",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/decision-reading/.orbit-runs/review-proposal-2026-11-09T03-44-31Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-09T03-44-31Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 0
+  },
+  "pushback_verification": "Verified against current state: design.md:19 still read \"carry only the architecture doc and the records' content\".",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The Goals' exit criterion says the brief carries only the doc and the records, but it now ends with the reader's task",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/decision-reading/design.md",
+      "line": 19,
+      "classification": "trivial_fix",
+      "action": "restated the Goal: no knowledge of the work beyond the doc and the records' content, plus the fixed reader's task; decision 5 notes the reading of the exit criterion's 'only' and that its rewording is the user's at the next architect session",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/architecture/automate-dev-flow.md",
+            "reason": "cross-change ripple; cascade scope is current change only"
+          }
+        ]
+      },
+      "sweep": {
+        "retired": [
+          "carry only the architecture doc and the records' content"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/decision-reading/design.md",
+            "text": "its only other text the fixed reader's task orbit renders"
+          },
+          {
+            "path": "orbit/changes/decision-reading/design.md",
+            "text": "this change reads\n   that \"only\" as no knowledge of the work beyond them"
+          }
+        ],
+        "searched": [
+          "carry only",
+          "only the architecture doc"
+        ],
+        "scope": [
+          "orbit/changes/decision-reading/tasks.md",
+          "orbit/changes/decision-reading/proposal.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "One of one resolved: the Goals restatement of the exit criterion now admits the fixed reader's task, and decision 5 records how the criterion's \"only\" is read.",
+  "iteration": 3,
+  "next_recommended": "/orbit:apply decision-reading — user-invoked",
+  "ripple_misses": 0
+}

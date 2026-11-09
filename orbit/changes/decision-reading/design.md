@@ -16,7 +16,9 @@ list, when and in what work a record was written), not the records'.
 
 **Goals:**
 - The stage's exit criteria: the reading step runs on a fixture change that carries records and not on one without,
-  and its brief is shown to carry only the architecture doc and the records' content; a replacement passes every link
+  and its brief is shown to carry no knowledge of the work beyond the architecture doc and the records' content (what
+  each record points at included), its only other text the fixed reader's task orbit renders (decision 5); a
+  replacement passes every link
   check its original passed, and a link to a replaced record is refused naming its replacement.
 - A reader can check what a record relies on, because the brief carries what each record points at (D-dr-6).
 - Nothing read is read twice, and what no reading saw is counted (D-dr-2, D-dr-3).
@@ -75,6 +77,9 @@ list, when and in what work a record was written), not the records'.
    and a brief is whole or absent, a failed source exiting non-zero. A stop's condition is worded from orbit's own
    table in `Three decision records, one job each`, not from R-adf-3 as D-dr-6 said: the five conditions are orbit's,
    defined for every install, and R-adf-3 is this program's ruling, which an adopter's architecture doc does not hold.
+   The stage's exit criterion says the brief carries "only the architecture doc and the records"; this change reads
+   that "only" as no knowledge of the work beyond them, so the fixed task text meets it. Rewording the criterion to
+   say so is the user's, at the program's next architect session, beside G0's rewording (decision 1).
 
 6. **Replacements (D-dw-1, D-dr-4).** `replaces` joins all three payload tables; the link fields a replacement keeps are
    per record (ledger: `area`, `relies_on`, `raised_stop`; stop: `condition`; resolution: `stop`). The walk writes one
