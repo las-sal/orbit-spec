@@ -1,0 +1,67 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-10T20:22:10Z",
+  "change": "replacement-liveness",
+  "kind": "editorial",
+  "model": "claude-fable-5-2",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/replacement-liveness/.orbit-runs/review-system-2026-11-10T20-20-27Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-10T20-20-27Z",
+  "latest_apply_token": "2026-11-10T20-12-12Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 1
+  },
+  "pushback_verification": "Verified against current state: the Impact list named four files and not test/core/templates/skill-templates-parity.test.ts, which the apply commit edited. Not stale. The external half of the pair carries no finding.",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "SUGGESTION",
+      "title": "Impact omits the re-recorded skill-template hash pins",
+      "marker_source": "internal-review",
+      "file": "proposal.md",
+      "line": 39,
+      "classification": "trivial_fix",
+      "action": "added one Impact line to proposal.md naming test/core/templates/skill-templates-parity.test.ts and why its eleven function-hash pins moved; design.md's Touchpoints, a frozen prediction, is unchanged",
+      "evidence": "grep for skill-templates-parity over the change's artifacts returned nothing before the edit",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/replacement-liveness/proposal.md",
+            "text": "eleven function-hash pins re-recorded"
+          }
+        ],
+        "searched": [
+          "skill-templates-parity",
+          "hash pins"
+        ],
+        "scope": [
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "One of one SUGGESTION resolved as an obvious fix: the proposal's Impact list now names the skill-template parity test and why its eleven function-hash pins moved.",
+  "iteration": 3,
+  "next_recommended": "/orbit:review --as system replacement-liveness",
+  "ripple_misses": 0
+}

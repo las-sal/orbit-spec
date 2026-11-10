@@ -41,4 +41,7 @@ changes D-sga-1 set for finishing stage `seam-chaining` of `automate-dev-flow` (
 - `test/core/decision-records.test.ts` — the new scenarios, an assigned decision, and the brief rendering the cited entry.
 - `test/core/decision-writing-parity.test.ts` — an assertion that the generated reference's `decision` line names the
   carried exception.
+- `test/core/templates/skill-templates-parity.test.ts` — eleven function-hash pins re-recorded: every pinned skill that
+  carries the `decision-records.md` reference moved when `CITATION_EXISTS.decision` changed (onboard, which carries
+  none, did not).
 - No change to the brief, to any other record kind, or to what a user is asked.
