@@ -1,0 +1,30 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-10T01:04:46Z",
+  "change": "seam-chaining",
+  "model": "claude-opus-5-5",
+  "area": "defaults",
+  "decided": "The setting that lets the AI run the next command itself grants a command only when the setting marks that command true; a command left out, or marked anything else, is not granted, so a project that adds no setting works exactly as today.",
+  "alternatives": [
+    "a list of the places where the AI must stop, so any place left out is granted",
+    "a list of moves from one command to the next"
+  ],
+  "why": "Leaving a command out should never give the AI a permission; each permission is written down on its own, as the program's rulings require.",
+  "relies_on": [
+    {
+      "kind": "ruling",
+      "doc": "automate-dev-flow",
+      "id": "R-adf-1"
+    },
+    {
+      "kind": "ruling",
+      "doc": "automate-dev-flow",
+      "id": "R-adf-6"
+    },
+    {
+      "kind": "decision",
+      "id": "D-sc-5"
+    }
+  ],
+  "replaces": "ledger-2026-11-09T17-50-53Z.json"
+}

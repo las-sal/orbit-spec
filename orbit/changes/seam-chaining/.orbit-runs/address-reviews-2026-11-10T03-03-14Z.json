@@ -1,0 +1,526 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-10T03:03:14Z",
+  "change": "seam-chaining",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/seam-chaining/.orbit-runs/review-system-2026-11-10T01-01-51Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-10T01-01-51Z",
+  "latest_apply_token": "2026-11-09T22-16-10Z",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 7,
+    "suggestion": 7
+  },
+  "pushback_verification": "All fourteen verified against current state: the end step still said an external launch falls to the paste route while the handoff's Step 3a writes nothing on a dirty tree; each reader finding re-read against its record at HEAD, none stale. The 22-12-40Z claim about per-entry behaviour was run against the resolver in a scratch project.",
+  "resolution_summary": {
+    "resolved": 14,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The end step's dirty-tree sentence says an external launch falls to the paste route; the launch route refuses and writes nothing",
+      "file": "src/core/disciplines.ts",
+      "line": 97,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "The end step's dirty-tree clause now matches the handoff's launch route (Step 3a: a dirty tree writes nothing and launches nothing) and the pair preflight: both refuse and write nothing, so the chain stops on no-progress. The tag test asserts the new clause and the absence of paste route, shown failing on the old text; propose, ff and apply hashes re-recorded with a provenance note.",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/templates/chain-prompt-tags.test.ts",
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "falls to the paste route"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/disciplines.ts",
+            "text": "the pair and a launched external review each refuse and write nothing"
+          },
+          {
+            "path": "test/core/templates/chain-prompt-tags.test.ts",
+            "text": "the pair and a launched external review each refuse and write nothing"
+          }
+        ],
+        "searched": [
+          "paste route",
+          "paste"
+        ],
+        "scope": [
+          "src/core/disciplines.ts",
+          "orbit/changes/seam-chaining/design.md",
+          "orbit/changes/seam-chaining/specs",
+          "docs/customization.md"
+        ],
+        "kept": []
+      },
+      "ripple_miss_of": {
+        "walk": "2026-11-09T23-32-30Z",
+        "title": "A chained blind pair or launched external review from apply (or propose/ff without a PR regime) is refused by the dirty tree, and the chain reports it as no-progress",
+        "file": "orbit/changes/seam-chaining/design.md",
+        "kind": "judgement"
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "ledger-2026-11-09T17-50-53Z.json: reader row 4 (decided) — \"named in it\" drops D-sc-5's true value: `apply: false` is named and not granted",
+      "file": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-09T17-50-53Z.json",
+      "line": 1,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "Replacement record states that a command is granted only when marked true; one left out or marked anything else is not granted.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-10T01-04-46Z.json"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-10T01-04-46Z.json",
+            "text": "only when the setting marks that command true"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-09T17-50-53Z.json",
+            "why": "a decision record is never edited; it is followed by a replacement or a new entry"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "ledger-2026-11-09T17-50-54Z.json: reader row 4 (decided) — says the merge and return become permissions, omitting D-sc-9's \"assigned driver\" disposition",
+      "file": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-09T17-50-54Z.json",
+      "line": 1,
+      "marker_source": "internal-review",
+      "classification": "decision",
+      "action": "A replacement is refused (its carried D-sc-9 citation is no longer live, D-sc-9 being assigned driver), so a NEW ledger entry citing D-sc-17 records that this change grants neither permission and that the driver stage owns them; the 17:50 record stays as history. Ratified in chat 2026-11-10 (option C). Named limit: a record whose cited decision is later superseded cannot be replaced, only followed by a new entry; exempting carried decision citations from the liveness check is left to a later change.",
+      "ratified_via": "chat",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-10T03-00-50Z.json"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-10T03-00-50Z.json",
+            "text": "letting the user grant them is left to the program"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-09T17-50-54Z.json",
+            "why": "a decision record is never edited; it is followed by a replacement or a new entry"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "ledger-2026-11-09T18-10-03Z.json: reader row 4 (decided) — \"every other question stops the run\" drops D-sc-12's target prompt, which never fires",
+      "file": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-09T18-10-03Z.json",
+      "line": 1,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "Replacement names all three kinds of question (which change or review, routine with a default, every other) and leaves the archive cases to the stage's second change.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-10T01-05-20Z.json"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-10T01-05-20Z.json",
+            "text": "it treats each question by its kind"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-09T18-10-03Z.json",
+            "why": "a decision record is never edited; it is followed by a replacement or a new entry"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "ledger-2026-11-09T18-17-24Z.json: reader row 3 (decided) — \"reviews it does itself\" does not say whether a fresh review counts",
+      "file": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-09T18-17-24Z.json",
+      "line": 1,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "Replacement says the review grant covers in-session reviews and reviews by a clean copy of this AI.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-10T01-05-21Z.json"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-10T01-05-21Z.json",
+            "text": "whether in the session or by a clean copy of itself"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-09T18-17-24Z.json",
+            "why": "a decision record is never edited; it is followed by a replacement or a new entry"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "ledger-2026-11-09T18-17-24Z.json: reader row 1 (decided) — \"half of a pair\" is undefined",
+      "file": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-09T18-17-24Z.json",
+      "line": 1,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "Replacement (chained after the row-3 fix) says blind pair and defines it.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-10T01-05-22Z.json"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-10T01-05-22Z.json",
+            "text": "half of a blind pair"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-09T18-17-24Z.json",
+            "why": "a decision record is never edited; it is followed by a replacement or a new entry"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "ledger-2026-11-09T21-50-02Z.json: reader row 3 (decided) — \"a finding nobody can settle yet\" is vague",
+      "file": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-09T21-50-02Z.json",
+      "line": 1,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "Replacement names the finding as one no edit inside the change can fix.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-10T01-05-23Z.json"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-10T01-05-23Z.json",
+            "text": "a finding that no edit inside the change can fix"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-09T21-50-02Z.json",
+            "why": "a decision record is never edited; it is followed by a replacement or a new entry"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "ledger-2026-11-09T21-50-03Z.json: reader row 1 (why) — \"launch note\" is undefined",
+      "file": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-09T21-50-03Z.json",
+      "line": 1,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "Replacement replaces the launch note with what it is: a record written before the review runs.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-10T01-05-24Z.json"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-10T01-05-24Z.json",
+            "text": "A failed launch still writes a record before the review runs"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-09T21-50-03Z.json",
+            "why": "a decision record is never edited; it is followed by a replacement or a new entry"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "ledger-2026-11-09T21-50-03Z.json: reader row 3 (alternatives/why) — \"progress\" is not tied to D-sc-14's new-record test, so the loop is unexplained",
+      "file": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-09T21-50-03Z.json",
+      "line": 1,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "Replacement (chained) defines progress as a new record on the change's trail since the command ran, per D-sc-14.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-10T01-05-26Z.json"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-10T01-05-26Z.json",
+            "text": "meaning a new record on the change"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-09T21-50-03Z.json",
+            "why": "a decision record is never edited; it is followed by a replacement or a new entry"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "ledger-2026-11-09T21-50-04Z.json: reader row 3 (why) — \"recorded without being asked\" makes the reader reconstruct an unasked stop",
+      "file": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-09T21-50-04Z.json",
+      "line": 1,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "Replacement says plainly which stops these are.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-10T01-05-27Z.json"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-10T01-05-27Z.json",
+            "text": "Some stops are recorded at a moment when nobody is asked"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-09T21-50-04Z.json",
+            "why": "a decision record is never edited; it is followed by a replacement or a new entry"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "ledger-2026-11-09T22-12-40Z.json: reader row 3 (decided) — reads as one bad entry turning off the whole setting; only that entry grants nothing",
+      "file": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-09T22-12-40Z.json",
+      "line": 1,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "Replacement states the resolver's actual per-entry behaviour, verified in a scratch project (review: yes with address-reviews: true gives configured true, no warning).",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-10T01-05-28Z.json"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-10T01-05-28Z.json",
+            "text": "an entry whose value is not true grants nothing while the other entries still grant"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-09T22-12-40Z.json",
+            "why": "a decision record is never edited; it is followed by a replacement or a new entry"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "ledger-2026-11-09T22-12-40Z.json: reader row 3 (alternatives) — \"the size and review settings\" are not introduced",
+      "file": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-09T22-12-40Z.json",
+      "line": 1,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "Replacement (chained) names the settings that do warn.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-10T01-05-29Z.json"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-10T01-05-29Z.json",
+            "text": "size ceiling and review preference settings"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-09T22-12-40Z.json",
+            "why": "a decision record is never edited; it is followed by a replacement or a new entry"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "ledger-2026-11-09T23-31-55Z.json: reader row 3 (why) — \"the rule that orbit never reads git state\" is no ruling the reader can find, and what stops the run is unsaid",
+      "file": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-09T23-31-55Z.json",
+      "line": 1,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "Replacement drops the non-ruling and says the review's own instructions refuse uncommitted work.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-10T01-05-30Z.json"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-10T01-05-30Z.json",
+            "text": "The stop comes from the review"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-09T23-31-55Z.json",
+            "why": "a decision record is never edited; it is followed by a replacement or a new entry"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "ledger-2026-11-09T23-31-55Z.json: reader row 1 (decided) — \"a blind pair\" is undefined",
+      "file": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-09T23-31-55Z.json",
+      "line": 1,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "Replacement (chained) defines blind pair.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-10T01-05-31Z.json"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-10T01-05-31Z.json",
+            "text": "kept apart from each other"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-09T23-31-55Z.json",
+            "why": "a decision record is never edited; it is followed by a replacement or a new entry"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Thirteen resolved as previewed obvious fixes (the regressed dirty-tree clause and twelve reader findings, each by its own replacement record, chained where a record had two) and one decision ratified in chat: the 17:50 permissions record cannot be replaced because its D-sc-9 citation is no longer live, so a new entry citing D-sc-17 records the move to the driver. Named limit: a record whose cited decision is later superseded can only be followed, never replaced.",
+  "iteration": 6,
+  "next_recommended": "/orbit:archive seam-chaining — user-invoked",
+  "ripple_misses": 1
+}

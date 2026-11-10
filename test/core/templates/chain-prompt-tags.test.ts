@@ -82,6 +82,9 @@ describe('No-chaining contract — the five bodies carry the end step and the cl
     expect(CHAIN_END_STEP).toContain('With no change target — an architecture-mode review, a `--doc` walk, a project-wide walk — the step does nothing: the turn ends at the readout.');
     expect(CHAIN_END_STEP).toContain('judge no reason of your own beyond a decision prompt the command asked');
     expect(CHAIN_END_STEP).toContain('A chained external review or blind pair needs a committed tree');
+    // Both refuse on a dirty tree (the pair's preflight; the handoff's launch route writes nothing) — no paste fallback.
+    expect(CHAIN_END_STEP).toContain('the pair and a launched external review each refuse and write nothing');
+    expect(CHAIN_END_STEP).not.toContain('paste route');
   });
 
   // @scenario text orbit-conventions :: No-chaining contract :: A dispatched worker never chains

@@ -1,0 +1,19 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-10T01:05:26Z",
+  "change": "seam-chaining",
+  "model": "claude-opus-5-5",
+  "area": "when-things-go-wrong",
+  "decided": "When an outside review that the AI started on its own fails, the AI does not start it again; it stops and hands the review back to the user.",
+  "alternatives": [
+    "count the record a failed launch writes before the review runs as progress, where progress means a new record on the change's trail since the AI last ran the command"
+  ],
+  "why": "The AI runs the next command again only when the last one made progress, meaning a new record on the change's trail since it ran. A failed launch still writes a record before the review runs; if that record counted, every failed launch would look like progress and a broken reviewer would start over and over without end.",
+  "relies_on": [
+    {
+      "kind": "decision",
+      "id": "D-sc-14"
+    }
+  ],
+  "replaces": "ledger-2026-11-10T01-05-24Z.json"
+}
