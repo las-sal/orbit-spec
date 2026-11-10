@@ -1,0 +1,66 @@
+{
+  "command": "archive",
+  "timestamp": "2026-11-10T20:36:20Z",
+  "change": "replacement-liveness",
+  "kind": "lifecycle",
+  "model": "claude-fable-5-2",
+  "final_assessment": "Archived replacement-liveness to orbit/changes/archive/2026-11-10-replacement-liveness/. One MODIFIED requirement of orbit-decision-records synced through the engine's merge and verified byte-equal to the delta; the full test suite passed after the move.",
+  "archive_path": "orbit/changes/archive/2026-11-10-replacement-liveness/",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": [
+      "orbit-decision-records"
+    ],
+    "added": 0,
+    "modified": 1,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
+  "user_decision": "proceeded_with_no_critical",
+  "consent": "user-invoked",
+  "warnings": [
+    "Audit-drift, touchpoints divergence: test/core/decision-writing-parity.test.ts and test/core/templates/skill-templates-parity.test.ts were edited and not predicted in design.md's Touchpoints; the proposal's Impact list names both.",
+    "The five replacement ledger records the last walk wrote were read by no reader before archive.",
+    "orbit/architecture/automate-dev-flow.md gained stage seam-chaining's shipped-as paragraph for this change at archive."
+  ],
+  "judgements": [
+    {
+      "kind": "readiness",
+      "formed_against": [
+        "2026-11-10T18-49-37Z",
+        "2026-11-10T18-49-54Z",
+        "2026-11-10T20-20-27Z",
+        "2026-11-10T20-20-44Z"
+      ],
+      "disposition": "ready",
+      "reasoning": "Both system-mode halves of the blind pair recommended forward: the fresh half mutation-checked each new test and ran the full suite, and the external half found nothing. The one finding between them was a record gap in the proposal's Impact list, closed at the walk and verified landed. The change is one predicate behind an existing flag, and the gate and the reader's brief now share one function for a carried decision citation.",
+      "ratified_by": "ai",
+      "accepted": [
+        {
+          "claim": "The external half could not run the tests: its worktree has no dependencies or build output.",
+          "why": "The fresh half ran the full suite and the mutation checks, and the suite passed again after the move."
+        },
+        {
+          "claim": "The safety of the looser check rests on the original record having passed the live check through the write gate; a record placed in the decisions folder by hand is outside that argument.",
+          "why": "The same holds for every other check on a replacement, and orbit writes records only through the write gate."
+        }
+      ]
+    }
+  ],
+  "pr_url": "https://github.com/las-sal/orbit-spec/pull/38",
+  "pr_state": "draft",
+  "next_recommended": "/orbit:architect automate-dev-flow — change archived; review stage seam-chaining and take up the program's next stage, or run /orbit:audit-drift for a project-wide drift check.",
+  "decision_records_unread": 1
+}

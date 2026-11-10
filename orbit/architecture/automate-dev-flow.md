@@ -265,6 +265,17 @@ superseded cannot be replaced (the write gate re-checks a carried decision citat
 followed by a new entry instead — a gap a later change of this stage fixes (Sal, 2026-11-10). Tests that moved because they pin body text (R-adf-9):
 the propose, ff and apply skill hash pins (re-recorded three times) and the blind pair's row-13 walk sentence.
 
+Shipped as, second change (2026-11-10; archived as `orbit/changes/archive/2026-11-10-replacement-liveness/`; the first
+of the three changes D-sga-1 set for finishing the stage, which stays open): on a replacement, the write gate accepts a
+carried `decision` citation when the work's `explore.md` holds a Decisions entry with that ID, whatever its
+`Disposition:` (the reader's brief's own predicate), so a record whose cited decision was later superseded or assigned
+can be replaced. A new citation still needs a live entry, and a carried citation of an ID the file no longer holds is
+refused. A carried requirement, ruling or goal citation whose source is renamed or removed mid-flight stays refused, a
+named limit (D-rl-2). Every generated `decision-records.md` reference states the exception beside the live rule. Tests
+that moved because they pin body text (R-adf-9): eleven skill function-hash pins, re-recorded once. The system review's
+reading step found the change's own ledger entry overstating what the baseline's carried-link row says; the walk fixed
+it by five chained replacements, which reach no reader before archive (D-dr-2's named limit).
+
 ### Stage program-brief — the brief and the sign-off seam
 
 Depends-on: decision-layer

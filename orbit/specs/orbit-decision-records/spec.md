@@ -201,7 +201,7 @@ entry that cites something and also names a stop. The citable kinds, and how orb
 | `ruling` | `{kind, doc, id}` | `orbit/architecture/<doc>.md` holds the ruling ID in bold (`**<id>**`) under `## Rulings index` |
 | `goal` | `{kind, doc, id}` | `orbit/architecture/<doc>.md` holds the goal ID in bold (`**<id>`) under `## Goals`, followed by a space, an em dash or `**` |
 | `resolution` | `{kind, change, token}` or `{kind, doc, token}` | a resolution record `resolution-<token>.json` is found by the lookup below, and reads as JSON whose `command` is `resolution` |
-| `decision` | `{kind, id}` | the `explore.md` of the change or exploration the entry belongs to holds a Decisions entry with that ID whose `Disposition:` is `live` or absent; on an architecture-scoped entry, which has no `explore.md`, the kind is refused |
+| `decision` | `{kind, id}` | the `explore.md` of the change or exploration the entry belongs to holds a Decisions entry with that ID whose `Disposition:` is `live` or absent; on a replacement, whose citation is carried, an entry with that ID whatever its `Disposition:`; on an architecture-scoped entry, which has no `explore.md`, the kind is refused |
 | nothing | `relies_on: []` and `raised_stop` | the named stop exists in the same `decisions/` folder, belongs to the same work, and its condition is `security-unprecedented` or `user-facing-uncovered` |
 
 How the rows are read:
@@ -229,6 +229,20 @@ How the rows are read:
 A citation that points at nothing is refused, naming it. A resolution, once written, is citable, so a question the user has
 answered does not stop a run twice. orbit confirms that a cited thing EXISTS, never that it COVERS the decision: whether
 it does, and whether every qualifying call was recorded at all, are judgements for G4's closing review (R-crc-10).
+
+A replacement's citations are its original's (`A record is fixed by a replacement, never edited`), and every one of them
+was checked when the original was written, so a carried citation is checked for what a reader can still open, not for
+whether it is still current. The rows above are every existence check the write gate runs on a ledger entry, and each
+applies to a carried citation exactly as to a new one except the `decision` row: a superseded or assigned decision
+stays citable by the record that cited it while it was live, as the brief renders any Decisions entry with its
+`Disposition:` line (`The reading step's brief is rendered by orbit`). A carried `decision` citation of an ID the
+`explore.md` no longer holds is refused, as a new one is.
+
+Named limit — a carried `requirement`, `ruling` or `goal` citation is checked as a new one is: when another change's
+archive renames or removes the cited requirement, or an architect session drops or renumbers the cited ruling or goal
+ID, while this work is in flight, a replacement of the record is refused naming the citation; for a requirement, the
+brief also fails on the record. Each case needs the cited source edited mid-flight, which orbit's one-session-at-a-time
+use makes rare; the refusal surfaces it.
 
 Named limit — other approved sources may exist (a project's CLAUDE.md rule, a convention file).
 
@@ -268,8 +282,21 @@ Residual method: such a citation is refused at write, which surfaces the kind; a
 
 #### Scenario: A superseded decision is not citable
 
-- **WHEN** a ledger payload cites `{kind: "decision", id: "D-foo-2"}` and the change's `explore.md` holds `D-foo-2` with
-  `Disposition: superseded D-foo-3`
+- **WHEN** a ledger payload without `replaces` cites `{kind: "decision", id: "D-foo-2"}` and the change's `explore.md`
+  holds `D-foo-2` with `Disposition: superseded D-foo-3`
+- **THEN** the emit is refused naming the citation; no file is written
+
+#### Scenario: A replacement keeps its citation of a superseded decision
+
+- **WHEN** ledger entry `ledger-A` cites `{kind: "decision", id: "D-foo-2"}`, `D-foo-2` then gains
+  `Disposition: superseded D-foo-3`, and a ledger payload carries `replaces: "ledger-A.json"`, a reworded `decided`, and
+  `area` and `relies_on` equal to `ledger-A`'s
+- **THEN** the replacement is written, and a payload carrying the same citation without `replaces` is still refused
+
+#### Scenario: A carried decision citation that names nothing is refused
+
+- **WHEN** ledger entry `ledger-A` cites `{kind: "decision", id: "D-foo-2"}`, the change's `explore.md` no longer holds
+  `D-foo-2`, and a ledger payload carries `replaces: "ledger-A.json"` with `ledger-A`'s `area` and `relies_on`
 - **THEN** the emit is refused naming the citation; no file is written
 
 #### Scenario: An unreadable cited record is refused
