@@ -262,7 +262,7 @@ the default branch moved to the driver (D-sc-17), and bounding what a run spends
 (D-sc-18); a chained external review on an uncommitted tree stops on `no-progress` rather than committing first,
 carried to the second change. The verification walk found that a decision record whose cited decision is later
 superseded cannot be replaced (the write gate re-checks a carried decision citation for liveness), so one record is
-followed by a new entry instead — a gap for a later change. Tests that moved because they pin body text (R-adf-9):
+followed by a new entry instead — a gap the stage's second change fixes (Sal, 2026-11-10). Tests that moved because they pin body text (R-adf-9):
 the propose, ff and apply skill hash pins (re-recorded three times) and the blind pair's row-13 walk sentence.
 
 ### Stage program-brief — the brief and the sign-off seam
@@ -433,3 +433,11 @@ Exit criteria:
   raised bounding the tokens and money a run spends, internal and external reviews alike: today nothing bounds it
   (a gate counts independent passes and consults the count nowhere); named as a candidate follow-up program
   (D-sc-18 in the exploration).
+- 2026-11-10 — Architect session after seam-chaining's first change was archived (merged as PR #37). Stage
+  seam-chaining is left unratified (Sal: not yet; AI recommendation): it lands as two changes (D-sc-19), and the
+  second is still owed — the apply and archive grants with `consent: "setting"` (D-sc-7 and the apply and archive
+  rows of D-sc-5 and D-sc-12), and committing named paths before a chained external review, carried from the first
+  change's system walk. Sal folded into that second change the engine gap its verification walk found: a
+  replacement record re-checks a carried decision citation for liveness, so a record whose cited decision was later
+  superseded cannot be replaced (AI recommendation: one exemption beside the existing carried-link one, and the
+  second change will meet it again). Ratification is offered again at that change's archive.
