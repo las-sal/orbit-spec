@@ -1,0 +1,25 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-10T18:16:24Z",
+  "change": "replacement-liveness",
+  "model": "claude-opus-5-5",
+  "area": "trusting-input",
+  "decided": "When a decision record is replaced, the write gate accepts a carried citation of a decision whatever that decision's disposition, provided the exploration still holds an entry with that ID; a new citation must still name a live decision, and every other kind of citation is checked as today.",
+  "alternatives": [
+    "check a carried citation of any kind only for equality with the original's",
+    "let a replacement re-point a citation of a superseded decision to its successor"
+  ],
+  "why": "A carried citation already equals the original's, which passed the live check when written, so the looser check only ever admits a citation that was once valid; it matches what the brief renders and the spec's rule that a carried link stays as its original wrote it. Checking for equality alone would let a carried requirement citation point at nothing, which the brief refuses to render; re-pointing would change a link field, which the replacement rule forbids.",
+  "relies_on": [
+    {
+      "kind": "requirement",
+      "capability": "orbit-decision-records",
+      "title": "A record is fixed by a replacement, never edited"
+    },
+    {
+      "kind": "decision",
+      "id": "D-rl-1"
+    }
+  ],
+  "detail": "Option A of the exploration's open question, ratified in chat 2026-11-10 ('A'). The motivating case is ledger-2026-11-09T17-50-54Z.json of seam-chaining."
+}

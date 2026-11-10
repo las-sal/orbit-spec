@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-11-10T18:16:31Z",
+  "change": "replacement-liveness",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Premise gains the goal and five done-when criteria. The open question resolved as D-rl-1 (rule, option A, ratified by Sal): on a replacement, a carried decision citation is checked with the brief's own predicate, any Decisions entry with that ID; new citations and every other kind keep today's check. Its Mechanism entry is SOURCED over the gate's existence checks, with Case 1 the D-sc-9 refusal. D-rl-2 (scope) records requirement-citation rot as a named limit for the requirement text. Options B and C moved to Considered & out. Ledger entry ledger-2026-11-10T18-16-24Z.json records the call. Surfaces for propose: the citation table's decision row and a new scenario beside 'A superseded decision is not citable' in orbit-decision-records, checkCitationExists, and the generated decision-records reference's decision line.",
+  "decisions_captured": 2,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 1,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:explore replacement-liveness — continue thinking, or /orbit:propose replacement-liveness if ready to formalize"
+}
