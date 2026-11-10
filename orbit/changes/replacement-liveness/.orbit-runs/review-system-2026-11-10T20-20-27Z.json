@@ -1,0 +1,68 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-10T20:20:27Z",
+  "change": "replacement-liveness",
+  "kind": "editorial",
+  "model": "claude-fable-5-2",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    }
+  },
+  "findings": [
+    {
+      "pass": "0",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "proposal.md",
+      "line": 39,
+      "title": "Impact omits the re-recorded skill-template hash pins",
+      "recommendation": "The apply re-recorded eleven function hashes in test/core/templates/skill-templates-parity.test.ts (every pinned skill that carries the decision-records.md reference moved when CITATION_EXISTS.decision changed), but no task, no Impact line and no Touchpoints line names that file; the engine's boot readout lists it under actual_unpredicted. Add one Impact line to proposal.md naming the file and why its pins moved, so the archived record states every file the change edited. design.md's Touchpoints is a frozen prediction and stays as written."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "What was probed. The code change is one predicate selected by the existing carried flag, so the review went at the safety argument and at the oracles rather than at breadth. (1) The delta block was diffed against the baseline requirement: every baseline line and scenario is carried, and the only differences are the decision row, the carried paragraph, the named limit, the narrowed WHEN and the two new scenarios. (2) The three tests were mutation-checked in a scratch copy of the tree, never in the checkout: reverting the predicate to the live check fails the superseded/assigned test; letting a carried citation skip the check fails the names-nothing test; widening the new-citation path to any disposition fails both the existing not-citable test and the new one. So each oracle can fail, and the old shape is still held. (3) The motivating entry was read in the archived seam-chaining explore.md: D-sc-9 sits in Decisions with a parseable opener and a Disposition line of the assigned form, which is the shape the second loop iteration of the new test submits. (4) Restatements of the live rule were searched across the baseline specs, the workflow templates, docs/ and README: the only statements are the spec row, CITATION_EXISTS.decision and the generated reference line, and all three now agree; docs/cli.md describes replacement without stating the live rule, so nothing there went false. (5) The gate and the brief now call the same function on the same file for a carried citation, and liveDecisionIds and decisionEntryText both give a duplicate ID to its first entry, so the two predicates cannot disagree on which entry an ID names. Pass 0 ran as verify-change's checks done inline (task arithmetic, the engine's scenario map, validate, the fingerprint check, the full suite) with no separate verify record written by this worker; Pass 6 ran as audit-drift's library path, whose findings would fold here and which found none (validate --sources agrees with CLAUDE.md's marked figure; the lens categories have no lens files to read). Risk texture: the safety of the looser predicate rests on the original having passed the live check through the write gate, which the code does not re-derive and cannot; a record placed in decisions/ by hand is outside that argument, as it is outside every other check on a replacement. The named limit for requirement, ruling and goal rot is a ratified scope call and was read as such, not re-litigated.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "6"
+  ],
+  "passes_skipped": [
+    "4: no perspectives defined; skip Pass 4",
+    "5: no critical paths defined; skip Pass 5"
+  ],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The change does what its five done-when criteria say and nothing else. The carried exception is confined to the decision kind, rides the flag that already exempts carried links from the replaced-target checks, and uses the brief's own function, so the gate cannot admit a citation the reader cannot open. The tests fail under each mutation that would undo the rule or widen it. The baseline requirement, the generated reference and the code state the same rule in the same words. The one thing found is a record gap in the proposal's file list, which a walk can close in a line and which changes no behaviour. I see no reason to hold this before archive."
+  },
+  "final_assessment": "0 critical, 0 warning, 1 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews replacement-liveness"
+}
