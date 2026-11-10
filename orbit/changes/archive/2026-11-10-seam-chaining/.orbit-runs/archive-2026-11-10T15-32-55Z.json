@@ -1,0 +1,71 @@
+{
+  "command": "archive",
+  "timestamp": "2026-11-10T15:32:55Z",
+  "change": "seam-chaining",
+  "kind": "lifecycle",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Archived seam-chaining to orbit/changes/archive/2026-11-10-seam-chaining/: the chain setting, the chain object on the change status, the conditional end step in five bodies and the prompt-kind tags; 4 requirements added and 2 modified across 3 capabilities. First of the stage's two changes.",
+  "archive_path": "orbit/changes/archive/2026-11-10-seam-chaining/",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 3
+    },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": [
+      "orbit-conventions",
+      "orbit-engine-gates",
+      "orbit-review"
+    ],
+    "added": 4,
+    "modified": 2,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
+  "user_decision": "proceeded_with_no_critical",
+  "consent": "user-invoked",
+  "warnings": [
+    "audit-drift (pre-archive) Category 5: src/core/disciplines.ts and src/core/templates/workflows/onboard.ts changed without a Touchpoints entry (WARNING); docs/cli.md, test/core/templates/blind-pair-command.test.ts and test/core/templates/skill-templates-parity.test.ts rode along unpredicted (SUGGESTION)",
+    "the grep for @review: in the change matched four prose mentions in explore.md and design.md (backticked quotations of the term), not markers"
+  ],
+  "judgements": [
+    {
+      "kind": "readiness",
+      "formed_against": [
+        "2026-11-09T19-38-09Z",
+        "2026-11-09T19-38-33Z",
+        "2026-11-09T23-04-10Z",
+        "2026-11-09T23-04-36Z"
+      ],
+      "disposition": "ready",
+      "reasoning": "Both blind pairs were walked, the verification pass graded the system walks (one regression, fixed in the next walk), and every reader finding was fixed by a replacement or a new entry; the full suite passes and both base fingerprints verified.",
+      "ratified_by": "ai",
+      "accepted": [
+        {
+          "claim": "a chained external review or blind pair on an uncommitted tree refuses and stops on no-progress rather than committing first",
+          "why": "the user chose option A on 2026-11-09; committing named paths first is carried to the stage's second change"
+        },
+        {
+          "claim": "a decision record whose cited decision is later superseded cannot be replaced, only followed by a new entry",
+          "why": "the write gate re-checks a carried decision citation for liveness; the user chose a new entry (option C) on 2026-11-10, and exempting carried citations is left to a later change"
+        },
+        {
+          "claim": "the replacement records the verification walk wrote reach no reader before archive",
+          "why": "D-dr-2's named limit for records written after the last reading; archive records the unread count"
+        }
+      ]
+    }
+  ],
+  "pr_url": "https://github.com/las-sal/orbit-spec/pull/37",
+  "pr_state": "draft",
+  "next_recommended": "/orbit:architect automate-dev-flow — change archived; review stage seam-chaining and take up the program's next stage, or run /orbit:audit-drift for a project-wide drift check.",
+  "decision_records_unread": 9
+}

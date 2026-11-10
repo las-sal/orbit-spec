@@ -1,0 +1,126 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-09T22:00:56Z",
+  "change": "seam-chaining",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/seam-chaining/.orbit-runs/review-proposal-2026-11-09T21-53-23Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-09T21-53-23Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 1
+  },
+  "pushback_verification": "Both verified: emit-composition.ts:261 lists final_assessment as engine-owned for review; docs/getting-started.md:8 carries the sentence.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "A chained review cannot write 'Chained: granted by chain.<key>.' into final_assessment: the review emit owns that field",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/seam-chaining/specs/orbit-conventions/spec.md",
+      "line": 15,
+      "classification": "trivial_fix",
+      "action": "applied option A, refined: the Chained sentence goes in the record the session itself writes — the walk's final_assessment, an external review's or blind pair's launch record final_assessment, an in-context pass's commentary; a chained fresh review records nothing, a named limit (its worker writes the pass and its brief carries nothing from the dispatching session); restated in design Decision 8, task 3.1 and the proposal",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/seam-chaining/design.md",
+          "orbit/changes/seam-chaining/tasks.md",
+          "orbit/changes/seam-chaining/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "records that in its run\nsummary's `final_assessment` as one sentence",
+          "in its `final_assessment`;",
+          "A chained command says so in its run summary."
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining/specs/orbit-conventions/spec.md",
+            "text": "a chained fresh review records nothing"
+          },
+          {
+            "path": "orbit/changes/seam-chaining/design.md",
+            "text": "refuses a `final_assessment` in a pass payload"
+          }
+        ],
+        "searched": [
+          "Chained:",
+          "final_assessment",
+          "run summary"
+        ],
+        "scope": [
+          "src/core/emit-composition.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "docs/getting-started.md:8 also says the AI never runs the next step unasked, and task 5.2 does not list it",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/seam-chaining/tasks.md",
+      "line": 28,
+      "classification": "trivial_fix",
+      "action": "added docs/getting-started.md (line 8) to task 5.2, to Touchpoints and to the proposal Impact list",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/seam-chaining/design.md",
+          "orbit/changes/seam-chaining/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining/tasks.md",
+            "text": "`docs/getting-started.md` (line 8)"
+          },
+          {
+            "path": "orbit/changes/seam-chaining/design.md",
+            "text": "- `docs/getting-started.md` — its never-unasked sentence"
+          }
+        ],
+        "searched": [
+          "never runs it unasked",
+          "does not run it",
+          "you invoke"
+        ],
+        "scope": [
+          "README.md",
+          "docs/"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_miss_of": {
+        "walk": "2026-11-09T21-50-47Z",
+        "title": "User-facing docs keep saying the AI never runs the next step unasked; only customization.md is in the tasks",
+        "file": "orbit/changes/seam-chaining/tasks.md",
+        "kind": "judgement"
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Two of two resolved as previewed obvious fixes; the chained-run sentence now routes to a field each record lets its session write, with a chained fresh review a named limit.",
+  "iteration": 3,
+  "next_recommended": "/orbit:apply seam-chaining — user-invoked",
+  "ripple_misses": 1
+}

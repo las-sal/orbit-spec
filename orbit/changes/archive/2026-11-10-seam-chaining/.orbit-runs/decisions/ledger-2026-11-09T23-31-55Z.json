@@ -1,0 +1,24 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-09T23:31:55Z",
+  "change": "seam-chaining",
+  "model": "claude-opus-5-5",
+  "area": "when-things-go-wrong",
+  "decided": "When the AI would run an external review or a blind pair on its own but your work is not committed yet, it stops and tells you the work is uncommitted, rather than committing the work for you; committing first is left to the stage's next change.",
+  "alternatives": [
+    "have orbit itself check for uncommitted work and give that its own reason to stop",
+    "commit the work automatically before running the review"
+  ],
+  "why": "Stopping and saying why keeps this change small and never does anything you did not ask for; having orbit check the work itself would break the rule that orbit never reads git state, and committing for you is new behaviour nobody has reviewed yet.",
+  "relies_on": [
+    {
+      "kind": "decision",
+      "id": "D-sc-14"
+    },
+    {
+      "kind": "decision",
+      "id": "D-sc-19"
+    }
+  ],
+  "detail": "Option A of the fresh system pass's dirty-tree finding (review-system-2026-11-09T23-04-10Z), ratified in chat 2026-11-09: 'c feels right to me. ok to do a first to keep things moving'. Option C (a commit of named paths before a chained external command) is carried to the stage's second change."
+}

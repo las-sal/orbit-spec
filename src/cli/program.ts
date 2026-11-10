@@ -587,6 +587,14 @@ export function buildProgram(options: ProgramOptions = {}): Command {
       '--scenarios',
       'Render the scenario map — which test or ledger entry declares each delta scenario (rides --change; composes with --json)'
     )
+    .option(
+      '--chain-ran <command>',
+      'The chain object\'s next a body just ran unasked (rides --change --json; with --chain-head, detects no-progress)'
+    )
+    .option(
+      '--chain-head <token>',
+      'The chain object\'s head the body read before running it (rides --change --json; with --chain-ran)'
+    )
     .option('--json', 'Output as JSON')
     .action(async (options: StatusOptions) => {
       try {

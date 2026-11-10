@@ -169,11 +169,12 @@ describe('rc17b — the pair reference (task 3.3)', () => {
   });
 
   // @scenario text orbit-review :: The blind-pair reviewer runs both halves in one invocation :: The pair does not walk its findings
-  it('ends at the readout and never invokes the walk', () => {
+  it('ends at the readout and invokes the walk only when the chain object allows it', () => {
     const end = steps.split('### 13. End')[1];
     expect(end).toContain('Ready when you are: <next_command>');
-    expect(end).toContain('The walk is NEVER invoked: `/orbit:address-reviews` is the user\'s to run (no-chaining)');
-    // The walk command appears only in that prohibition.
+    // seam-chaining: the walk runs only through the review body's Chain end step, never otherwise.
+    expect(end).toContain("The walk is invoked only when the change status's `chain` object allows `/orbit:address-reviews` — by the review body's Chain end step, which this step ends at — and never otherwise (no-chaining)");
+    // The walk command appears only in that condition.
     const mentions = pairRef.split('\n').filter((l) => l.includes('/orbit:address-reviews'));
     expect(mentions).toHaveLength(1);
   });

@@ -187,6 +187,7 @@ Domain: every route a granted review can take
 | blind pair, launched | key `review-external` |
 | blind pair, pasted | refused as `needs-user` (D-sc-14) |
 | a launch refused on a dirty working tree | not a route: the review writes nothing, so the next status names it again with no new record, and `no-progress` stops the chain |
+| a launch whose runner fails, or whose return `orbit external save` refuses | not a route: it writes only its prompt and its launch record, which `head` leaves out (added at the proposal walk, 2026-11-09), so `no-progress` stops the chain |
 Closure: DERIVED — the routes are the reviewer classes (in-context, fresh, external, blind pair) times the external half's two routes (launched, pasted)
 Moves:
 - READ: applied — the routes from `orbit-review`'s `references/external-handoff.md` (runner reachable or not, the dirty-tree refusal) and `references/blind-pair.md` Step 1
@@ -248,6 +249,11 @@ Read 2026-11-09: `src/core/artifact-graph/instruction-loader.ts` walks the gates
 - **2026-11-09 — D-sc-17: seam-chaining owns chaining alone; merging the stage's PR and returning to the default branch are the driver's settings** A seam-chained run ends at archive: the command after it is not a change command, and the next stage opens at an architect session and propose, which ask the user by design (D-sc-12). Nothing in this stage would read the two keys. Charters for seam-chaining and driver edited the same day. User's word, 2026-11-09 ("yes, move them to the driver").
   Kind: scope
 - **2026-11-09 — D-sc-18: bounding what a run spends, in tokens and money, internal and external reviews alike, is out of this stage and a candidate follow-up program** Today nothing bounds it: a reviewed gate counts independent passes (`independentSpend`) and nothing consults the count (`src/core/artifact-graph/gates.ts`). The tripwires stage's "size or walk budgets exceeded" signal is the nearest home inside this program. Raised by the user, 2026-11-09 ("probably a topic for a follow up program").
+  Kind: scope
+
+- **2026-11-09 — D-sc-19: the stage lands as two changes split by grant: this one chains review and address-reviews; a second adds the apply and archive grants with `consent: "setting"`** Letting a chain enter apply or archive makes false every requirement listing the consent values as exactly two — in `orbit-lifecycle-consent`, `orbit-conventions`' summary format, `orbit-run-summary-emit` and `orbit-archive-modifications` — which put one change at seven capabilities and about fifteen requirements against ceilings of three and twelve. The review-and-walk loop needs none of them. D-sc-7 and the apply and archive rows of D-sc-5 and D-sc-12 land with the second change. User's word at propose, 2026-11-09 ("Split by grant").
+  Kind: scope
+- **2026-11-09 — D-sc-20: a default a chain takes is recorded as one sentence in the command's `final_assessment`, not in a new payload field** A new field joins the payload tables, their schema references and executed examples, and the emit-composition requirement that says decision-reading changed the run-summary commands "only" so; the narrative field every emit already carries holds the record with no new owner. The AI's method call, recorded per R-crc-3.
   Kind: scope
 
 ## Open questions

@@ -271,6 +271,8 @@ ready next.
 | `--report [ts]` | With `--change`: render a review pass as the engine's report (the newest pass, or the one at `<ts>`) |
 | `--boot` | With `--change`: the cold-start sequence, pointers into the change's artifacts for a new session |
 | `--scenarios` | With `--change`: the scenario map, which test or ledger entry declares each delta scenario |
+| `--chain-ran <command>` | With `--change --json` and `--chain-head`: the command a chain just ran unasked; the `chain` object then reports `no-progress` when that command wrote no run record |
+| `--chain-head <token>` | With `--change --json` and `--chain-ran`: the `chain` object's `head` read before that command ran |
 | `--schema <name>` | Override the schema (read from the change by default) |
 | `--json` | Output JSON |
 

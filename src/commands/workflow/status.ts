@@ -34,6 +34,7 @@ import * as fs from 'fs';
 import { modelHintFor, withModelHint } from '../../core/model-hints.js';
 import { composeStatusSize, renderSizeLine, type StatusSize } from '../../core/change-size.js';
 import { resolveSizeCeiling } from '../../core/project-config.js';
+import { composeChainObject } from '../../core/chain.js';
 import {
   validateChangeExists,
   validateSchemaExists,
@@ -57,6 +58,10 @@ export interface StatusOptions {
   boot?: boolean;
   /** rc06a `--scenarios`: the engine-computed scenario map (rides --change; composes with --json). */
   scenarios?: boolean;
+  /** seam-chaining `--chain-ran <command>`: the `next` a body just ran unasked (rides --change --json). */
+  chainRan?: string;
+  /** seam-chaining `--chain-head <token>`: the `head` the body read before running it. */
+  chainHead?: string;
 }
 
 // -----------------------------------------------------------------------------
@@ -207,7 +212,16 @@ export async function statusCommand(options: StatusOptions): Promise<void> {
     spinner?.stop();
 
     if (options.json) {
-      console.log(JSON.stringify({ ...status, size }, null, 2));
+      // seam-chaining (design 5): the `chain` object is composed HERE, beside size, from the gate
+      // computation's `next_command` and the `chain` setting alone — never inside `formatChangeStatus`,
+      // so no gate row, position or `next_command` reads it, and the human readout renders none of it.
+      const chain = composeChainObject(
+        projectRoot,
+        path.join(projectRoot, 'orbit', 'changes', changeName),
+        status.next_command,
+        { chainRan: options.chainRan, chainHead: options.chainHead }
+      );
+      console.log(JSON.stringify({ ...status, size, chain }, null, 2));
       return;
     }
 

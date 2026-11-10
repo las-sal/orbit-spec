@@ -1,0 +1,253 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-10T01:01:51Z",
+  "change": "seam-chaining",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 6,
+      "suggestion": 7
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "src/core/disciplines.ts",
+      "line": 97,
+      "title": "The end step's dirty-tree sentence says an external launch falls to the paste route; the launch route refuses and writes nothing",
+      "recommendation": "The walk's F2 edit added to CHAIN_END_STEP: \"on an uncommitted one the pair refuses and an external launch falls to the paste route, neither writes a run record\". The external handoff's Step 3a (review.ts:497, the generated references/external-handoff.md:55) says the opposite for a reachable runner: a dirty tree means \"do NOT launch and write NOTHING (no prompt file, no T0)\" and print `Not launched: …`. The chain's conclusion holds either way (no run record, so `no-progress`), but the five bodies carrying the end step now state a fallback the handoff never takes, so an AI reading it would expect a paste snippet that is not printed. Reword to \"on an uncommitted one the pair and a launched external review both refuse and write nothing, so the chain stops on `no-progress`\", re-record the five bodies' hashes, and check the delta (specs/orbit-conventions/spec.md:22-24) and docs/customization.md, which state it correctly already.",
+      "walk_entry": {
+        "title": "A chained blind pair or launched external review from apply (or propose/ff without a PR regime) is refused by the dirty tree, and the chain reports it as no-progress",
+        "file": "orbit/changes/seam-chaining/design.md"
+      }
+    },
+    {
+      "pass": "reading",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-09T17-50-53Z.json",
+      "title": "ledger-2026-11-09T17-50-53Z.json: reader row 4 (decided) — \"named in it\" drops D-sc-5's true value: `apply: false` is named and not granted",
+      "recommendation": "Replace with a record whose decided says a command is granted only when the setting marks it true; leaving it out, or any other value, grants nothing.",
+      "line": 1
+    },
+    {
+      "pass": "reading",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-09T17-50-54Z.json",
+      "title": "ledger-2026-11-09T17-50-54Z.json: reader row 4 (decided) — says the merge and return become permissions, omitting D-sc-9's \"assigned driver\" disposition",
+      "recommendation": "Replace with a record that says the two acts become the driver stage's settings, not this change's (D-sc-9, disposition assigned driver).",
+      "line": 1
+    },
+    {
+      "pass": "reading",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-09T18-10-03Z.json",
+      "title": "ledger-2026-11-09T18-10-03Z.json: reader row 4 (decided) — \"every other question stops the run\" drops D-sc-12's target prompt, which never fires",
+      "recommendation": "Replace with a record naming all three kinds: a which-change/which-mode question is not asked, a routine one takes its default, every other one stops the run; say the archive cases land with the stage's second change (D-sc-19).",
+      "line": 1
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-09T18-17-24Z.json",
+      "title": "ledger-2026-11-09T18-17-24Z.json: reader row 3 (decided) — \"reviews it does itself\" does not say whether a fresh review counts",
+      "recommendation": "Say \"reviews by this AI, in the session or by a clean copy of itself\".",
+      "line": 1
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-09T18-17-24Z.json",
+      "title": "ledger-2026-11-09T18-17-24Z.json: reader row 1 (decided) — \"half of a pair\" is undefined",
+      "recommendation": "Define a blind pair (one fresh and one outside review run together) or add it to defines.",
+      "line": 1
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-09T21-50-02Z.json",
+      "title": "ledger-2026-11-09T21-50-02Z.json: reader row 3 (decided) — \"a finding nobody can settle yet\" is vague",
+      "recommendation": "Say a finding no edit inside the change can fix, whose alternatives the user must choose between.",
+      "line": 1
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-09T21-50-03Z.json",
+      "title": "ledger-2026-11-09T21-50-03Z.json: reader row 1 (why) — \"launch note\" is undefined",
+      "recommendation": "Say \"the record a launch writes before the review runs\".",
+      "line": 1
+    },
+    {
+      "pass": "reading",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-09T21-50-03Z.json",
+      "title": "ledger-2026-11-09T21-50-03Z.json: reader row 3 (alternatives/why) — \"progress\" is not tied to D-sc-14's new-record test, so the loop is unexplained",
+      "recommendation": "Say progress means a new record on the change's trail since the last run, so a failed launch's own record would let it relaunch forever.",
+      "line": 1
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-09T21-50-04Z.json",
+      "title": "ledger-2026-11-09T21-50-04Z.json: reader row 3 (why) — \"recorded without being asked\" makes the reader reconstruct an unasked stop",
+      "recommendation": "Say a stop written when nobody was asked has no answer until the user is asked.",
+      "line": 1
+    },
+    {
+      "pass": "reading",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-09T22-12-40Z.json",
+      "title": "ledger-2026-11-09T22-12-40Z.json: reader row 3 (decided) — reads as one bad entry turning off the whole setting; only that entry grants nothing",
+      "recommendation": "Say an entry whose value is not true grants nothing, the other entries still grant, and a setting that is not a map grants nothing at all.",
+      "line": 1
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-09T22-12-40Z.json",
+      "title": "ledger-2026-11-09T22-12-40Z.json: reader row 3 (alternatives) — \"the size and review settings\" are not introduced",
+      "recommendation": "Name them as orbit's size ceiling and review preference settings.",
+      "line": 1
+    },
+    {
+      "pass": "reading",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-09T23-31-55Z.json",
+      "title": "ledger-2026-11-09T23-31-55Z.json: reader row 3 (why) — \"the rule that orbit never reads git state\" is no ruling the reader can find, and what stops the run is unsaid",
+      "recommendation": "Say the stop comes from the review's own instructions (they refuse an uncommitted tree, so no record lands and the chain reports no progress), and that the engine's status reads no git state by design.",
+      "line": 1
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/seam-chaining/.orbit-runs/decisions/ledger-2026-11-09T23-31-55Z.json",
+      "title": "ledger-2026-11-09T23-31-55Z.json: reader row 1 (decided) — \"a blind pair\" is undefined",
+      "recommendation": "Define it or add it to defines.",
+      "line": 1
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Verification of the two walks over their sweep scopes. Seven of the eight resolved entries landed: the replaced-stop fix reads the chain's latest record and its test now proves both resolution forms; the tag test's closed inventory fails a new prompt carrying any valid tag; the no-change-target and decision-prompt sentences, the onboard qualification, the cli.md rows and the hash provenance notes are present. The dirty-tree entry regressed on one clause: its end-step sentence describes a paste fallback the launch route never takes, contradicting the handoff reference it summarizes, while the delta and the docs state it correctly — a mechanism claim written without reading the owner. The residual diff since the external return's commit lists only files inside the walks' edit records. The reader's twelve findings cluster on restatement: four records (17-50-53Z, 17-50-54Z, 18-10-03Z, and 22-12-40Z by its own detail) narrow or widen what they cite, and three lean on unintroduced terms (blind pair, launch note). The two records addressing \"you\" rather than \"the user\" (R-adf-10) fall outside the reader rows.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "reading"
+  ],
+  "passes_skipped": [
+    "0: verification genre — a whole-change pass is not run over the walks' sweep scopes",
+    "6: verification genre — a whole-project pass is not run over the walks' sweep scopes"
+  ],
+  "verification": [
+    {
+      "title": "open-stop names a replaced stop, whose question is superseded and which the resolution write gate refuses",
+      "file": "src/core/chain.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "A chained blind pair or launched external review from apply (or propose/ff without a PR regime) is refused by the dirty tree, and the chain reports it as no-progress",
+      "file": "orbit/changes/seam-chaining/design.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "The onboard body still teaches that the AI never runs the next command",
+      "file": "src/core/templates/workflows/onboard.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "The end step says 'judge no reason of your own', then makes a decision prompt a reason",
+      "file": "src/core/disciplines.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "The end step does not say what to do when there is no change (architecture-mode review, doc or project-wide walk)",
+      "file": "src/core/disciplines.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "The CLI reference's `orbit status` options table omits --chain-ran and --chain-head",
+      "file": "docs/cli.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The re-recorded propose, ff and apply hashes carry no seam-chaining provenance note",
+      "file": "test/core/templates/skill-templates-parity.test.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "Prompt enforcement checks tag vocabulary rather than listed prompt membership",
+      "file": "test/core/templates/chain-prompt-tags.test.ts",
+      "verdict": "landed"
+    }
+  ],
+  "decision_records_read": [
+    "ledger-2026-11-09T17-50-53Z.json",
+    "ledger-2026-11-09T17-50-54Z.json",
+    "ledger-2026-11-09T18-10-03Z.json",
+    "ledger-2026-11-09T18-17-24Z.json",
+    "ledger-2026-11-09T21-50-02Z.json",
+    "ledger-2026-11-09T21-50-03Z.json",
+    "ledger-2026-11-09T21-50-04Z.json",
+    "ledger-2026-11-09T22-12-40Z.json",
+    "ledger-2026-11-09T23-31-55Z.json"
+  ],
+  "final_assessment": "0 critical, 7 warning, 7 suggestion.",
+  "decision_records_owed": [
+    "ledger-2026-11-09T17-50-53Z.json",
+    "ledger-2026-11-09T17-50-54Z.json",
+    "ledger-2026-11-09T18-10-03Z.json",
+    "ledger-2026-11-09T18-17-24Z.json",
+    "ledger-2026-11-09T21-50-02Z.json",
+    "ledger-2026-11-09T21-50-03Z.json",
+    "ledger-2026-11-09T21-50-04Z.json",
+    "ledger-2026-11-09T22-12-40Z.json",
+    "ledger-2026-11-09T23-31-55Z.json"
+  ],
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-11-09T23-32-30Z",
+    "2026-11-09T23-32-46Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews seam-chaining"
+}

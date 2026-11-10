@@ -593,7 +593,7 @@ work the user stages during the run stays out. The external half's launch, save 
 | 10. push | once, after rows 7 and 9; a failed push is reported, the commits stand, no retry |
 | 11. the worktree | removed per the launch requirement (row 5a only); a failed removal is reported, never fatal |
 | 12. reports | `orbit status --change <change> --report <TS>` rendered for each landed pass |
-| 13. end | the position readout and the engine's eligibility line; the walk is never invoked (no-chaining). When a half is missing — after row 5b, or a half that failed or wrote nothing — the pair ends OPEN and no half covers alone: with one half landed the gate reports `openPair` naming the missing class (after row 5b, `{missing: "external"}`); with both missing it reports no `openPair` and a reason saying neither member has landed |
+| 13. end | the position readout and the engine's eligibility line; the walk is invoked only when the change status's `chain` object allows `/orbit:address-reviews` (`orbit-conventions`' `No-chaining contract`), and never otherwise (no-chaining). When a half is missing — after row 5b, or a half that failed or wrote nothing — the pair ends OPEN and no half covers alone: with one half landed the gate reports `openPair` naming the missing class (after row 5b, `{missing: "external"}`); with both missing it reports no `openPair` and a reason saying neither member has landed |
 
 Closure: DERIVED — the steps are the pair's acts in dependency order (the launch before both halves; BASE holds the
 launch; the external reads BASE; the fresh pass file is committed before the external return enters the repository;
@@ -610,7 +610,7 @@ as under `--reviewer fresh`, the external half as under `--reviewer external`.
 
 #### Scenario: A launched pair commits each half alone
 
-- **WHEN** `/orbit:review foo --as system --blind-pair` runs on a clean tree with a reachable runner recorded, and both halves return well-formed
+- **WHEN** `/orbit:review foo --as system --blind-pair` runs on a clean tree with a reachable runner recorded, both halves return well-formed, and the `chain` object reports `may_run: false`
 - **THEN** exactly three commits are added, in order — BASE (the prompt file and the `pair: true` T0), the fresh pass file alone, the saved external return alone — the fresh pass's token is earlier than the external return's, both are later than the launch, no walk record is written, the branch is pushed once after the third commit, and the gate's `invoked` slot is covered by the COMPLETE pair
 
 #### Scenario: The external return waits for the fresh commit
@@ -635,8 +635,15 @@ as under `--reviewer fresh`, the external half as under `--reviewer external`.
 
 #### Scenario: The pair does not walk its findings
 
-- **WHEN** a pair run ends with findings in either half
+- **WHEN** a pair run ends with findings in either half and the `chain` object reports `may_run: false`
 - **THEN** the run ends at the position readout and the eligibility line; `/orbit:address-reviews` is not invoked
+
+#### Scenario: A granted walk follows the pair
+
+- **WHEN** a pair run ends with findings, both halves landed, and the `chain` object reports `may_run: true` for
+  `/orbit:address-reviews <change>`
+- **THEN** after the position readout and the eligibility line the AI names the walk and the key `address-reviews`, and
+  runs the walk in the same turn
 
 #### Scenario: A fresh worker stopped after it persisted is the landed member
 

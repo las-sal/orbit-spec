@@ -1,0 +1,153 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-09T21:53:23Z",
+  "change": "seam-chaining",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/seam-chaining/specs/orbit-conventions/spec.md",
+      "line": 15,
+      "title": "A chained review cannot write 'Chained: granted by chain.<key>.' into final_assessment: the review emit owns that field",
+      "recommendation": "The walk's fix for the missing chained-run record puts the sentence in every chained command's run summary `final_assessment` (No-chaining contract, design.md Decision 8, task 3.1). For `review`, `final_assessment` is engine-owned: `ENGINE_OWNED_EXTRA.review` in src/core/emit-composition.ts:261 lists it, so `orbit emit review` refuses a payload carrying it. A chained in-context or fresh review therefore cannot record the sentence as the requirement says, and task 3.1 cannot be implemented as written. The walk's sentence does hold for the walk, whose `final_assessment` is a payload field, and for an external review's T0 (payloadFields at emit-composition.ts:211). Fix one of two ways: (A) state where each record goes — the walk and the external T0 in `final_assessment`, an in-context or fresh pass in its optional `commentary` — and restate Decision 8 and task 3.1 to match; or (B) keep the sentence for the walk alone and state the review case as a named limit until the second change's consent value.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Route the sentence by record: final_assessment for the walk and the external T0, commentary for an in-context or fresh review pass; restate the No-chaining contract sentence, Decision 8 and task 3.1."
+        },
+        {
+          "label": "B",
+          "body": "Keep the sentence for the walk only and record chained reviews as a named limit in design.md's Risks."
+        }
+      ],
+      "reproduction": "grep -n \"review: \\['final_assessment'\" src/core/emit-composition.ts → 261: review: ['final_assessment', 'iteration', 'pass_genre', 'verified_walks', 'decision_records_owed'] (the rejected-in-payload list); specs/orbit-conventions/spec.md:13-14 requires a chained command's final_assessment to carry the sentence.",
+      "walk_entry": {
+        "title": "Nothing on the trail records that a review or walk ran because of the chain",
+        "file": "orbit/changes/seam-chaining/design.md"
+      }
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/seam-chaining/tasks.md",
+      "line": 28,
+      "title": "docs/getting-started.md:8 also says the AI never runs the next step unasked, and task 5.2 does not list it",
+      "recommendation": "The walk extended task 5.2 to four user docs. docs/getting-started.md:8 states the same claim ('orbit's AI recommends the next step and never runs it unasked'). Add it to task 5.2 and to design.md's Touchpoints, or note in the task that the getting-started walkthrough runs at the defaults, where the sentence stays true.",
+      "walk_entry": {
+        "title": "User-facing docs keep saying the AI never runs the next step unasked; only customization.md is in the tasks",
+        "file": "orbit/changes/seam-chaining/tasks.md"
+      }
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Graded each resolved entry of both walks over its file, its ripple paths and its sweep scope. Re-read the three deltas, re-ran strict validate, and ran the residual diff from the pair's base commit: every edited file is in some entry's edit record. Checked the new head rule against the sequences codex raised: a single failed launch, a refused save, and a blind pair whose fresh half lands while its external half fails. Each stops at no-progress within one relaunch. Re-enumerated every AskUserQuestion site in the two generated skills and their references against the widened prompt table; each is a listed row or a mention for the new not-a-prompt tag. A stop record carries a question field, so asking the open stop's question is implementable. The two stale entries in the external log are correct calls. One fix does not hold: the review emit owns final_assessment.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "verification": [
+    {
+      "title": "The prompt list omits AskUserQuestion sites the tag test will find in the review and address-reviews bodies",
+      "file": "orbit/changes/seam-chaining/specs/orbit-conventions/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "open-stop says when a chain halts but not how the halt ends, and decision-writing leaves some stops open by design",
+      "file": "orbit/changes/seam-chaining/specs/orbit-engine-gates/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "User-facing docs keep saying the AI never runs the next step unasked; only customization.md is in the tasks",
+      "file": "orbit/changes/seam-chaining/tasks.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "`head` ('the latest record token on the change's trail') does not say which files count",
+      "file": "orbit/changes/seam-chaining/specs/orbit-engine-gates/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "'judges no reason of its own' conflicts with the body stopping after a decision prompt",
+      "file": "orbit/changes/seam-chaining/specs/orbit-engine-gates/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Nothing on the trail records that a review or walk ran because of the chain",
+      "file": "orbit/changes/seam-chaining/design.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "Touchpoints and Impact omit the completions registry that task 2.2 edits",
+      "file": "orbit/changes/seam-chaining/design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Failed external launches defeat the no-progress guard",
+      "file": "orbit/changes/seam-chaining/specs/orbit-engine-gates/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Chaining has no single owner when a fresh worker loads the review skill",
+      "file": "orbit/changes/seam-chaining/tasks.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The external-only review branch retains an unconditional prohibition on walking",
+      "file": "orbit/changes/seam-chaining/tasks.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The retained launched-pair scenario needs a grant precondition",
+      "file": "orbit/changes/seam-chaining/specs/orbit-review/spec.md",
+      "verdict": "landed"
+    }
+  ],
+  "final_assessment": "0 critical, 1 warning, 1 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-11-09T21-50-47Z",
+    "2026-11-09T21-51-12Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews seam-chaining"
+}

@@ -1,0 +1,88 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-09T23:32:46Z",
+  "change": "seam-chaining",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/seam-chaining/.orbit-runs/external-system-2026-11-09T23-04-36Z.md",
+  "source_command": null,
+  "source_token": "2026-11-09T23-04-36Z",
+  "latest_apply_token": "2026-11-09T22-16-10Z",
+  "external_reviewer": "GPT-6 Codex",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 3,
+    "suggestion": 0
+  },
+  "pushback_verification": "All three verified against current state: chain.ts:128's earliest-filename return, the tag test's vocabulary-only check (an added (chain: decision) site passed), and the end step's unconditional status read; none stale at HEAD. Two converge with the fresh pass and closed in its log.",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale_suppressed": 2,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Open-stop handling returns superseded questions",
+      "file": "src/core/chain.ts",
+      "line": 128,
+      "marker_source": "external",
+      "classification": "stale",
+      "evidence": "converges with the fresh pass's finding ('open-stop names a replaced stop, whose question is superseded and which the resolution write gate refuses'), resolved in address-reviews-2026-11-09T23-32-30Z: earliestOpenStop now returns latestInChain of the earliest open chain, and the fixture asserts the replacement is named and a resolution naming it clears the row",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Prompt enforcement checks tag vocabulary rather than listed prompt membership",
+      "file": "test/core/templates/chain-prompt-tags.test.ts",
+      "line": 128,
+      "marker_source": "external",
+      "classification": "trivial_fix",
+      "action": "the tag test now holds a closed INVENTORY of the eighteen tagged sites (file, anchor, tags, the requirement's row or 'mention'); a tagged line the inventory does not name fails, and so does a listed prompt retagged with another kind; a new test shows an added AskUserQuestion carrying (chain: decision), the routine tag or (chain: target) failing, and removing the inventory check makes that test fail",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "test/core/templates/chain-prompt-tags.test.ts",
+            "text": "tagged site the list does not name"
+          },
+          {
+            "path": "test/core/templates/chain-prompt-tags.test.ts",
+            "text": "a new prompt carrying a valid tag fails: the inventory, not the vocabulary, decides"
+          }
+        ],
+        "searched": [
+          "ALLOWED_TAGS",
+          "tagFailures"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The shared closing step has no architecture-mode exclusion",
+      "file": "src/core/disciplines.ts",
+      "line": 92,
+      "marker_source": "external",
+      "classification": "stale",
+      "evidence": "converges with the fresh pass's finding ('The end step does not say what to do when there is no change (architecture-mode review, doc or project-wide walk)'), resolved in address-reviews-2026-11-09T23-32-30Z: the end step does nothing with no change target, the No-chaining delta carries the rule, and a generated-surface test asserts it",
+      "outcome": "stale"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "One resolved as a previewed obvious fix (the tag test now holds a closed inventory of tagged sites); two converged with the fresh pass and closed in its log.",
+  "iteration": 5,
+  "next_recommended": "/orbit:review --as system seam-chaining",
+  "ripple_misses": 0
+}

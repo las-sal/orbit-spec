@@ -69,7 +69,7 @@ released `v2.0.1`. The program before it, **`orbit/architecture/update-gh-docume
 
 Position is COMPUTED, never stated here. Orientation: run `orbit status` — bare for the current sprint,
 `--full` for the whole arc (answers position / last / next per workstream with no artifact reads);
-`orbit architecture status` gives each program's stage states. Every lifecycle transition is USER-invoked: recommend, never invoke.
+`orbit architecture status` gives each program's stage states. Every lifecycle transition is USER-invoked: recommend, never invoke (this repo sets no `chain` key, R-adf-5).
 
 Each stage's narrative lives in its `Shipped as` paragraph in its architecture doc; this file no longer carries one
 per stage. The narrative it carried until 2026-10-13 — the fork program, the D-arc and clean-up-review-cycle — is in
@@ -109,7 +109,8 @@ body.
 - **Pushback** — verify each flagged issue against current state before acting; report and suppress
   stale findings with evidence rather than re-fixing already-fixed state.
 - **No-chaining** (D1, `orbit-conventions`) — invoke at most the orbit workflow commands the user's
-  message explicitly requests; recommend, never invoke. Completing a command ENDS the turn at the
+  message explicitly requests; recommend, never invoke. The contract yields only to a project `chain` setting, and
+  this repo sets no `chain` key (R-adf-5). Completing a command ENDS the turn at the
   position readout + the engine's eligibility line (`Ready when you are:`); blanket delegation covers
   work WITHIN the requested command, never the next one — gate `passed` means *eligible*, not
   *commanded*.
