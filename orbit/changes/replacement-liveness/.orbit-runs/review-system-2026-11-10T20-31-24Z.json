@@ -1,0 +1,116 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-10T20:31:24Z",
+  "change": "replacement-liveness",
+  "kind": "editorial",
+  "model": "claude-fable-5-2",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 4
+    }
+  },
+  "findings": [
+    {
+      "pass": "reading",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/replacement-liveness/.orbit-runs/decisions/ledger-2026-11-10T18-16-24Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-10T18-16-24Z.json — why restates the cited carried-link rule so that its meaning shifts",
+      "recommendation": "The why field says the looser check matches the spec's rule that a carried link stays as its original wrote it. A reader takes that to mean the cited requirement already says a carried citation of a decision stays valid once that decision is superseded. The cited row is narrower: it covers a link whose target record has since been replaced by a newer record, and says nothing of an explore decision whose disposition changed or of what the write gate checks. Replace the record with one whose why says the decision extends that row's principle to decision citations, rather than that the spec already states it."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/replacement-liveness/.orbit-runs/decisions/ledger-2026-11-10T18-16-24Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-10T18-16-24Z.json — decided is unclear about which record a new citation is on",
+      "recommendation": "The decided field opens with 'When a decision record is replaced' and then says a new citation must still name a live decision, so a reader takes it that a replacement may add a citation, which the cited requirement forbids. Reword in a replacement: a citation on a record that replaces nothing must still name a live decision."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/replacement-liveness/.orbit-runs/decisions/ledger-2026-11-10T18-16-24Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-10T18-16-24Z.json — why does not say how a carried requirement citation comes to point at nothing",
+      "recommendation": "The why field says checking for equality alone would let a carried requirement citation point at nothing, and the reader must guess how a citation that passed when written comes to do so. Add one clause in a replacement naming the case: the requirement was since renamed or removed from the baseline."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/replacement-liveness/.orbit-runs/decisions/ledger-2026-11-10T18-16-24Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-10T18-16-24Z.json — why says 'the brief' where the doc has two briefs",
+      "recommendation": "The why field says 'what the brief renders' and 'which the brief refuses to render'. The architecture doc has a program brief and the reader's brief of decision records; the record means the second. Say 'the reader's brief' in a replacement."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/replacement-liveness/.orbit-runs/decisions/ledger-2026-11-10T18-16-24Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-10T18-16-24Z.json — decided uses 'disposition' as a new term, undefined",
+      "recommendation": "The decided field says 'whatever that decision's disposition'. Disposition as a property of an explore decision is not in the architecture doc and the record has no defines list, so a reader cannot tell which states are admitted. In a replacement, add the term to defines or say 'whether it is still live or has since been superseded or assigned to a stage'."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "This pass verified the system walk rather than re-reviewing the change. The walk's one resolution is a prose addition to the proposal's Impact list; it was read in place and checked against the test file it names: the pins that moved are the eleven the line states, and onboard's pin did not move. The residual check lists only proposal.md as changed since the commit that added the later pass file, which is the walk entry's own file. Passes 0 and 6 were not run because their subject is the whole change or the whole project, not the walk's file set; passes 4 and 5 were skipped because the project has no lens files. The reading step ran over the one record the engine's brief selected, with a clean-context reader given the brief verbatim. Everything it found is about that ledger entry's wording, written at explore before the delta spec existed: the entry leans on the baseline's carried-link row as if it already covered decision citations, where the change is what extends it. That is a property of the record's prose, not of the code or the spec delta, and each is fixable only by a replacement record. Those replacements will themselves exercise the rule this change ships, since the entry cites D-rl-1 and the baseline requirement.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "reading"
+  ],
+  "passes_skipped": [
+    "0",
+    "4",
+    "5",
+    "6"
+  ],
+  "verification": [
+    {
+      "title": "Impact omits the re-recorded skill-template hash pins",
+      "file": "proposal.md",
+      "verdict": "landed"
+    }
+  ],
+  "decision_records_read": [
+    "ledger-2026-11-10T18-16-24Z.json"
+  ],
+  "final_assessment": "0 critical, 1 warning, 4 suggestion.",
+  "decision_records_owed": [
+    "ledger-2026-11-10T18-16-24Z.json"
+  ],
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-11-10T20-22-10Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews replacement-liveness"
+}
