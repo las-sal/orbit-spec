@@ -16,7 +16,7 @@ assigned decision is written; a new citation of one is still refused; a carried 
 is still refused; every other kind and both named-stop links are checked as today; the brief renders whatever a
 replacement may cite.
 
-**Non-Goals:** a carried `requirement` citation that rots (D-rl-2, a named limit in the requirement); re-pointing a
+**Non-Goals:** a carried `requirement`, `ruling` or `goal` citation that rots (D-rl-2, a named limit in the requirement); re-pointing a
 citation to a successor; any change to the brief, to stop or resolution records, or to what a user is asked.
 
 ## Decisions
@@ -38,7 +38,9 @@ original's, and the original passed the live check when it was written, so the l
 citation that was live once.
 
 **D-rl-2 — requirement rot stays refused, as a named limit** (scope; see `explore.md`). Stated in the requirement's
-text, not fixed.
+text, not fixed. The limit names ruling and goal citations too: `checkCitationExists` re-runs `rulingExists` and
+`goalExists` on a replacement, so an architect session that drops or renumbers a cited ID refuses the replacement the
+same way; only a requirement citation also fails the brief, which renders a ruling or goal by its ID alone.
 
 The generated reference: `CITATION_EXISTS.decision` in `src/core/disciplines.ts` gains the carried exception, so every
 `decision-records.md` reference states it beside the live rule.
@@ -56,7 +58,7 @@ The generated reference: `CITATION_EXISTS.decision` in `src/core/disciplines.ts`
   scenario `A carried decision citation that names nothing is refused` holds it.
 - [The live predicate and the any-disposition predicate drift apart] → both are read from the same Decisions parse
   (`collectSections` and `readDecision`); the tests submit one fixture through both paths.
-- [Requirement rot (D-rl-2)] → the named limit in `A ledger entry names what it relies on`; the refusal names the
+- [Citation rot: a requirement, ruling or goal renamed or removed mid-flight (D-rl-2)] → the named limit in `A ledger entry names what it relies on`; the refusal names the
   citation, so it surfaces.
 
 ## Touchpoints

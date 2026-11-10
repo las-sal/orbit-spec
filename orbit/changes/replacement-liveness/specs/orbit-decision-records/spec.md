@@ -49,9 +49,10 @@ stays citable by the record that cited it while it was live, as the brief render
 `Disposition:` line (`The reading step's brief is rendered by orbit`). A carried `decision` citation of an ID the
 `explore.md` no longer holds is refused, as a new one is.
 
-Named limit — a carried `requirement` citation is checked as a new one is: when another change's archive renames or
-removes the cited requirement while this work is in flight, a replacement of the record is refused naming the citation,
-and the brief fails on the record. The case needs a second change archived mid-flight, which orbit's one-session-at-a-time
+Named limit — a carried `requirement`, `ruling` or `goal` citation is checked as a new one is: when another change's
+archive renames or removes the cited requirement, or an architect session drops or renumbers the cited ruling or goal
+ID, while this work is in flight, a replacement of the record is refused naming the citation; for a requirement, the
+brief also fails on the record. Each case needs the cited source edited mid-flight, which orbit's one-session-at-a-time
 use makes rare; the refusal surfaces it.
 
 Named limit — other approved sources may exist (a project's CLAUDE.md rule, a convention file).

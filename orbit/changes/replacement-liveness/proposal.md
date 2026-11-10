@@ -16,8 +16,8 @@ changes D-sga-1 set for finishing stage `seam-chaining` of `automate-dev-flow` (
   ID the `explore.md` does not hold is still refused.
 - Every other citation kind (`requirement`, `ruling`, `goal`, `resolution`) and the named-stop links (`raised_stop`,
   `stop`) are checked exactly as today.
-- A carried `requirement` citation whose requirement another change's archive renamed or removed stays refused, stated
-  as a named limit (D-rl-2).
+- A carried `requirement`, `ruling` or `goal` citation whose source was renamed or removed mid-flight (another change's
+  archive, or an architect session) stays refused, stated as a named limit (D-rl-2).
 - The generated `decision-records.md` reference states the carried exception beside the live rule.
 
 ## Capabilities
@@ -30,7 +30,7 @@ changes D-sga-1 set for finishing stage `seam-chaining` of `automate-dev-flow` (
 
 - `orbit-decision-records`: `A ledger entry names what it relies on` — the `decision` row of the citation table gains
   the carried exception, a scenario shows a replacement keeping its citation of a superseded decision, and a named limit
-  records the requirement-rot case.
+  records the case where a cited requirement, ruling or goal is renamed or removed mid-flight.
 
 ## Impact
 
@@ -38,5 +38,7 @@ changes D-sga-1 set for finishing stage `seam-chaining` of `automate-dev-flow` (
   passes it.
 - `src/core/disciplines.ts` — the `decision` line of `CITATION_EXISTS`, which every generated `decision-records.md`
   reference carries.
-- `test/core/decision-records.test.ts` — the new scenarios.
+- `test/core/decision-records.test.ts` — the new scenarios, an assigned decision, and the brief rendering the cited entry.
+- `test/core/decision-writing-parity.test.ts` — an assertion that the generated reference's `decision` line names the
+  carried exception.
 - No change to the brief, to any other record kind, or to what a user is asked.
