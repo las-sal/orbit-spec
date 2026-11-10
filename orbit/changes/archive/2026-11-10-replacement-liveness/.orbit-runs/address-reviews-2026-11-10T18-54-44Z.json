@@ -1,0 +1,74 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-10T18:54:44Z",
+  "change": "replacement-liveness",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/replacement-liveness/.orbit-runs/external-proposal-2026-11-10T18-49-54Z.md",
+  "source_command": null,
+  "source_token": "2026-11-10T18-49-54Z",
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-6 (Codex)",
+  "walk_mode": "walk",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 1
+  },
+  "pushback_verification": "Verified against current state: task 2.1 exercised only a superseded decision and never called the brief. Not stale; no overlap with the fresh pass's findings.",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "SUGGESTION",
+      "title": "Cover the assigned disposition and brief rendering in the test plan",
+      "marker_source": "external",
+      "file": "orbit/changes/replacement-liveness/tasks.md",
+      "line": 8,
+      "classification": "trivial_fix",
+      "action": "extended task 2.1 to repeat the replacement case with Disposition: assigned <stage-id> (the motivating D-sc-9 case) and to show buildDecisionBrief renders the cited entry with its Disposition: line; the proposal's Impact line for decision-records.test.ts says so",
+      "evidence": "task 2.1 named only a superseded decision and no brief assertion",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/replacement-liveness/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/replacement-liveness/tasks.md",
+            "text": "repeat with `Disposition: assigned <stage-id>` (the motivating D-sc-9 case)"
+          },
+          {
+            "path": "orbit/changes/replacement-liveness/proposal.md",
+            "text": "an assigned decision, and the brief rendering the cited entry"
+          }
+        ],
+        "searched": [
+          "assigned",
+          "buildDecisionBrief"
+        ],
+        "scope": [
+          "src/core/decision-records.ts",
+          "test/core/decision-brief.test.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "One of one SUGGESTION resolved as an obvious fix: task 2.1 now covers an assigned decision and the brief rendering the cited entry.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal replacement-liveness",
+  "ripple_misses": 0
+}

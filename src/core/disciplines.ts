@@ -156,7 +156,7 @@ const CITATION_EXISTS: Record<string, string> = {
   ruling: '`orbit/architecture/<doc>.md` holds `**<id>**` under `## Rulings index`, outside fenced code, the ID matched whole',
   goal: '`orbit/architecture/<doc>.md` opens a `## Goals` item with `**<id>` followed by a space, an em dash or `**`, outside fenced code — the ID matched whole, so `G1` does not match `**G10`',
   resolution: 'a record `resolution-<token>.json` is found for that change (active, then its exploration, then each archive of it, newest first) or in the architecture trail for that doc, reads as JSON whose `command` is `resolution`, and, for `{doc, token}`, whose `doc` is that doc',
-  decision: "the `explore.md` of the work the entry belongs to holds a Decisions entry with that ID whose `Disposition:` is `live` or absent (refused on a `--doc` record)",
+  decision: "the `explore.md` of the work the entry belongs to holds a Decisions entry with that ID whose `Disposition:` is `live` or absent; on a replacement, whose citation is carried, an entry with that ID whatever its `Disposition:` (refused on a `--doc` record)",
 };
 
 /** One example payload per record; a test submits each, unchanged, through its `orbit emit` command. */

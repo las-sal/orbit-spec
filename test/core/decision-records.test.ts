@@ -10,7 +10,7 @@ import * as fs from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
 import { composeAndWriteEmit, EmitError } from '../../src/core/emit-composition.js';
-import { LEDGER_AREAS } from '../../src/core/decision-records.js';
+import { LEDGER_AREAS, buildDecisionBrief, renderDecisionBrief } from '../../src/core/decision-records.js';
 import { loadChangeContext, formatChangeStatus } from '../../src/core/artifact-graph/instruction-loader.js';
 import { readTrail } from '../../src/core/artifact-graph/trail.js';
 import { renderReport } from '../../src/core/report-render.js';
@@ -295,6 +295,61 @@ describe('orbit-decision-records: a ledger entry names what it relies on', () =>
     expect(() => emit('ledger', { change: 'foo' }, cite('D-foo-3'))).not.toThrow();
     expectRefused(() => emit('ledger', { change: 'foo' }, cite('D-foo-9')), /relies_on\[0\]/, DEC('foo'));
     expectRefused(() => emit('ledger', { doc: 'prog' }, cite('D-foo-1')), /architecture-scoped/, ARCH_DEC);
+  });
+
+  /** An `explore.md` whose Decisions hold `D-foo-2` (with `disposition`, or none when null) and a live `D-foo-3`. */
+  const exploreWith = (disposition: string | null, withD2 = true): string =>
+    [
+      '## Decisions',
+      '',
+      ...(withD2 ? ['- **2026-11-07 — D-foo-2: the cited one** CITED-SENTINEL text', ...(disposition === null ? [] : [`  Disposition: ${disposition}`])] : []),
+      '- **2026-11-07 — D-foo-3: another** text',
+      '  Disposition: live',
+      '',
+    ].join('\n');
+  const citeD2 = (over: Record<string, unknown> = {}) => ledgerPayload({ relies_on: [{ kind: 'decision', id: 'D-foo-2' }], ...over });
+
+  // @scenario behaviour orbit-decision-records :: A ledger entry names what it relies on :: A replacement keeps its citation of a superseded decision
+  it('a replacement keeps its citation of a superseded or assigned decision, a new citation of it is refused, and the brief renders it', () => {
+    // `superseded` is the scenario; `assigned <stage-id>` is the motivating case (D-sc-9).
+    for (const [change, disposition] of [['foo', 'superseded D-foo-3'], ['bar', 'assigned seam-chaining']] as const) {
+      if (change !== 'foo') makeChange(change);
+      const explore = `orbit/changes/${change}/explore.md`;
+      write(explore, exploreWith(null));
+      const a = path.basename(emit('ledger', { change }, citeD2()).path);
+      write(explore, exploreWith(disposition));
+      const b = emit('ledger', { change }, citeD2({ replaces: a, decided: 'REWORDED the export runs weekly.' }));
+      expect(fs.existsSync(b.path), disposition).toBe(true);
+      expect(b.emit.replaces).toBe(a);
+      // The same citation on a record that replaces nothing is new, and still needs a live entry.
+      expectRefused(() => emit('ledger', { change }, citeD2()), /relies_on\[0\].*no live Decisions entry D-foo-2/, DEC(change));
+      // Whatever the gate admits, the brief renders: the replacement, with the cited entry and its Disposition line.
+      const brief = buildDecisionBrief(root, change);
+      const rec = brief.records.find(r => r.filename === path.basename(b.path));
+      expect(rec, 'the replacement is in the brief').toBeDefined();
+      const cited = rec!.cites.find(c => c.kind === 'decision') as { id: string; text: string };
+      expect(cited.id).toBe('D-foo-2');
+      expect(cited.text).toContain('CITED-SENTINEL text');
+      expect(cited.text).toContain(`Disposition: ${disposition}`);
+      const out = renderDecisionBrief(brief);
+      expect(out).toContain('REWORDED the export runs weekly.');
+      expect(out).toContain(`Disposition: ${disposition}`);
+    }
+  });
+
+  // @scenario behaviour orbit-decision-records :: A ledger entry names what it relies on :: A carried decision citation that names nothing is refused
+  it('a carried decision citation of an ID the explore.md no longer holds is refused naming it', () => {
+    write('orbit/changes/foo/explore.md', exploreWith(null));
+    const a = path.basename(emit('ledger', { change: 'foo' }, citeD2()).path);
+    write('orbit/changes/foo/explore.md', exploreWith(null, false));
+    expectRefused(
+      () => emit('ledger', { change: 'foo' }, citeD2({ replaces: a, decided: 'Reworded.' })),
+      /relies_on\[0\].*holds no Decisions entry D-foo-2/,
+      DEC('foo')
+    );
+    // With no explore.md at all it is refused the same way.
+    fs.rmSync(path.join(root, 'orbit/changes/foo/explore.md'));
+    expectRefused(() => emit('ledger', { change: 'foo' }, citeD2({ replaces: a, decided: 'Reworded.' })), /relies_on\[0\].*D-foo-2/, DEC('foo'));
   });
 
   // @scenario behaviour orbit-decision-records :: A ledger entry names what it relies on :: An unreadable cited record is refused

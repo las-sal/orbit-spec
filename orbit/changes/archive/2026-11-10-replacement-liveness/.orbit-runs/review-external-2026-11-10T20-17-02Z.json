@@ -1,0 +1,14 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-11-10T20:17:02Z",
+  "change": "replacement-liveness",
+  "kind": "editorial",
+  "model": "claude-fable-5-2",
+  "mode": "system",
+  "prompt_path": "orbit/changes/replacement-liveness/.orbit-runs/external-prompt-system-2026-11-10T20-16-55Z.md",
+  "target": "codex",
+  "final_assessment": "External review prompt packaged for replacement-liveness (iter 1, mode system) as the external half of a launched blind pair; awaiting findings from codex.",
+  "pair": true,
+  "awaiting_findings": true,
+  "next_recommended": "Paste orbit/changes/replacement-liveness/.orbit-runs/external-prompt-system-2026-11-10T20-16-55Z.md into the target AI, and save the response as orbit/changes/replacement-liveness/.orbit-runs/external-system-<TS>.md"
+}

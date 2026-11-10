@@ -392,8 +392,12 @@ function checkResolutionCitation(ctx: DecisionContext, c: Record<string, unknown
   return file;
 }
 
-/** Refuses a citation that points at nothing; returns the resolution file a `resolution` citation found, else null. */
-function checkCitationExists(ctx: DecisionContext, c: Record<string, unknown>, i: number): string | null {
+/**
+ * Refuses a citation that points at nothing; returns the resolution file a `resolution` citation found, else null.
+ * `carried` (the citation is a replacement's, equal to its original's) changes the `decision` check alone: the
+ * original passed the live check when written, so a carried one needs only an entry the brief can still render.
+ */
+function checkCitationExists(ctx: DecisionContext, c: Record<string, unknown>, i: number, carried: boolean): string | null {
   const where = citationLabel(i);
   switch (c.kind) {
     case 'requirement':
@@ -418,8 +422,10 @@ function checkCitationExists(ctx: DecisionContext, c: Record<string, unknown>, i
         refuse(`'${where}' ${describe(c)}: a decision citation is refused on an architecture-scoped record, which has no explore.md.`);
       }
       const content = readOrNull(path.join(ctx.workDir, 'explore.md'));
-      if (content === null || !liveDecisionIds(content).has(c.id as string)) {
-        refuse(`'${where}' ${describe(c)} resolves to nothing — the work's explore.md holds no live Decisions entry ${c.id as string}.`);
+      const id = c.id as string;
+      const found = content !== null && (carried ? decisionEntryText(content, id) !== null : liveDecisionIds(content).has(id));
+      if (!found) {
+        refuse(`'${where}' ${describe(c)} resolves to nothing — the work's explore.md holds no ${carried ? '' : 'live '}Decisions entry ${id}.`);
       }
       return null;
     }
@@ -564,7 +570,7 @@ export function checkDecisionLinks(command: DecisionCommand, record: Record<stri
   if (carried) checkReplaces(command, record, ctx, folder);
   if (command === 'ledger') {
     (record.relies_on as Record<string, unknown>[]).forEach((c, i) => {
-      const found = checkCitationExists(ctx, c, i);
+      const found = checkCitationExists(ctx, c, i, carried);
       if (!carried && found !== null) {
         refuseReplacedTarget(citationLabel(i), path.basename(found), readDecisionFolder(path.dirname(found)));
       }

@@ -1,0 +1,199 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-10T20:32:44Z",
+  "change": "replacement-liveness",
+  "kind": "editorial",
+  "model": "claude-fable-5-2",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/replacement-liveness/.orbit-runs/review-system-2026-11-10T20-31-24Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-10T20-31-24Z",
+  "latest_apply_token": "2026-11-10T20-12-12Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 4
+  },
+  "pushback_verification": "All five verified against the record as written; none stale. Every replacement carries area and relies_on unchanged and passed the write gate.",
+  "resolution_summary": {
+    "resolved": 5,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "ledger-2026-11-10T18-16-24Z.json — why restates the cited carried-link rule so that its meaning shifts",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/replacement-liveness/.orbit-runs/decisions/ledger-2026-11-10T18-16-24Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote a replacement whose why says the decision extends the carried-link rule's principle to decision citations, and that the rule itself covers only a replaced target record (ledger-2026-11-10T20-32-24Z.json)",
+      "evidence": "read the record: the quoted wording was present as the finding says",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/replacement-liveness/.orbit-runs/decisions/ledger-2026-11-10T20-32-24Z.json",
+            "text": "it extends to citations of decisions the principle behind the spec's rule"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/replacement-liveness/.orbit-runs/decisions/ledger-2026-11-10T18-16-24Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "ledger-2026-11-10T18-16-24Z.json — decided is unclear about which record a new citation is on",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/replacement-liveness/.orbit-runs/decisions/ledger-2026-11-10T18-16-24Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote a replacement whose decided says a citation on a record that replaces nothing must still name a live decision (ledger-2026-11-10T20-32-25Z.json)",
+      "evidence": "read the record: the quoted wording was present as the finding says",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/replacement-liveness/.orbit-runs/decisions/ledger-2026-11-10T20-32-25Z.json",
+            "text": "a citation on a record that replaces nothing must still name a live decision"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/replacement-liveness/.orbit-runs/decisions/ledger-2026-11-10T20-32-24Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "ledger-2026-11-10T18-16-24Z.json — why does not say how a carried requirement citation comes to point at nothing",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/replacement-liveness/.orbit-runs/decisions/ledger-2026-11-10T18-16-24Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote a replacement whose why names the case: the requirement has since been renamed or removed (ledger-2026-11-10T20-32-26Z.json)",
+      "evidence": "read the record: the quoted wording was present as the finding says",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/replacement-liveness/.orbit-runs/decisions/ledger-2026-11-10T20-32-26Z.json",
+            "text": "when the requirement has since been renamed or removed"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/replacement-liveness/.orbit-runs/decisions/ledger-2026-11-10T20-32-25Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "ledger-2026-11-10T18-16-24Z.json — why says 'the brief' where the doc has two briefs",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/replacement-liveness/.orbit-runs/decisions/ledger-2026-11-10T18-16-24Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote a replacement whose why says the reader's brief in both places (ledger-2026-11-10T20-32-27Z.json)",
+      "evidence": "read the record: the quoted wording was present as the finding says",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/replacement-liveness/.orbit-runs/decisions/ledger-2026-11-10T20-32-27Z.json",
+            "text": "which the reader's brief refuses to render"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/replacement-liveness/.orbit-runs/decisions/ledger-2026-11-10T20-32-26Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "ledger-2026-11-10T18-16-24Z.json — decided uses 'disposition' as a new term, undefined",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/replacement-liveness/.orbit-runs/decisions/ledger-2026-11-10T18-16-24Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote a replacement that defines disposition in its defines list (ledger-2026-11-10T20-32-29Z.json)",
+      "evidence": "read the record: the quoted wording was present as the finding says",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/replacement-liveness/.orbit-runs/decisions/ledger-2026-11-10T20-32-29Z.json",
+            "text": "the state an exploration records for one of its decisions"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/replacement-liveness/.orbit-runs/decisions/ledger-2026-11-10T20-32-27Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Five of five reading findings resolved, each by its own replacement of the change's one ledger entry, chained; the latest is ledger-2026-11-10T20-32-29Z.json. No file of the change was edited.",
+  "iteration": 4,
+  "next_recommended": "/orbit:archive replacement-liveness — user-invoked",
+  "ripple_misses": 0
+}

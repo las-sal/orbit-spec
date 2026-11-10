@@ -1,0 +1,119 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-10T18:54:34Z",
+  "change": "replacement-liveness",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/replacement-liveness/.orbit-runs/review-proposal-2026-11-10T18-49-37Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-10T18-49-37Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "walk",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 2
+  },
+  "pushback_verification": "Both verified against current state: checkCitationExists re-runs rulingExists and goalExists on a replacement with no carried exemption (src/core/decision-records.ts:404-413), and citationFailure checks only that each kind is named (test/core/decision-writing-parity.test.ts:119). None stale.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "SUGGESTION",
+      "title": "The rot named limit names only requirement citations; ruling and goal citations can rot the same way",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-decision-records/spec.md",
+      "line": 52,
+      "classification": "trivial_fix",
+      "action": "widened the named limit to carried requirement, ruling and goal citations, naming the architect-session case and that only a requirement citation also fails the brief (the brief renders a ruling or goal by ID alone, src/core/decision-records.ts:839-842); proposal and design wording follow",
+      "evidence": "spec.md's named limit named only requirement citations; rulingExists and goalExists run on a replacement unexempted",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/replacement-liveness/proposal.md",
+          "orbit/changes/replacement-liveness/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "a carried `requirement` citation is checked as a new one is",
+          "records the requirement-rot case"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/replacement-liveness/specs/orbit-decision-records/spec.md",
+            "text": "a carried `requirement`, `ruling` or `goal` citation is checked as a new one is"
+          },
+          {
+            "path": "orbit/changes/replacement-liveness/design.md",
+            "text": "only a requirement citation also fails the brief"
+          }
+        ],
+        "searched": [
+          "rot",
+          "requirement` citation",
+          "D-rl-2"
+        ],
+        "scope": [
+          "src/core/decision-records.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The generated reference's carried exception is checked by eye only",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 11,
+      "classification": "trivial_fix",
+      "action": "added task 2.4, an assertion in test/core/decision-writing-parity.test.ts that the reference's decision line names the carried exception, shown able to fail by reverting CITATION_EXISTS.decision; the rebuild became task 2.5; the proposal's Impact names the test file",
+      "evidence": "task 2.4 confirmed the generated reference by inspection only; citationFailure checks only that each kind is named",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/replacement-liveness/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "confirm the generated `decision-records.md` references carry the new `decision` line"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/replacement-liveness/tasks.md",
+            "text": "names the carried exception (a replacement's carried citation"
+          },
+          {
+            "path": "orbit/changes/replacement-liveness/proposal.md",
+            "text": "test/core/decision-writing-parity.test.ts"
+          }
+        ],
+        "searched": [
+          "DECISION_RECORDS_REFERENCE",
+          "citationFailure"
+        ],
+        "scope": [
+          "test/core/decision-writing-parity.test.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Two of two SUGGESTIONs resolved as obvious fixes: the rot named limit widened to ruling and goal citations, and a task added asserting the generated reference's carried exception.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews replacement-liveness",
+  "ripple_misses": 0
+}

@@ -1,0 +1,9 @@
+schema: spec-driven
+created: 2026-11-10
+schema_version: 5
+base_fingerprints:
+  orbit-decision-records:
+    A ledger entry names what it relies on: sha256:c7ad88a87ac47c96650434c4e715f6f06559a7d6762a5f372b311653a89ae69a
+architecture:
+  doc: automate-dev-flow
+  stage: seam-chaining
