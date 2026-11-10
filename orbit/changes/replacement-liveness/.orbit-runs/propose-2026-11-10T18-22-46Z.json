@@ -1,0 +1,15 @@
+{
+  "command": "propose",
+  "timestamp": "2026-11-10T18:22:46Z",
+  "change": "replacement-liveness",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Consume mode from orbit/explore/replacement-liveness: all six sections present, no open questions. Mechanism: D-rl-1 (live rule, SOURCED, conforming) carried into orbit-decision-records' 'A ledger entry names what it relies on' as the citation table's decision row plus a sentence naming the source; D-rl-2 (scope) written into the same requirement as a named limit. One MODIFIED requirement, whole block carried (nine existing scenarios, all declared; the superseded-decision scenario narrowed to a payload without replaces; two new scenarios, undeclared until apply). Base fingerprint stamped. Size: 1 capability, 1 requirement, 6 tasks, no breach. Staged metadata merged (architecture citation carried), staging moved. Draft PR #38 on branch replacement-liveness.",
+  "pr_attachment": {
+    "branch": "replacement-liveness",
+    "granularity": "per-proposal",
+    "url": "https://github.com/las-sal/orbit-spec/pull/38",
+    "state": "draft"
+  },
+  "next_recommended": "/orbit:review replacement-liveness — proposal artifacts ready; review before apply"
+}
