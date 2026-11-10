@@ -249,6 +249,22 @@ Exit criteria:
   record halting it.
 - G0 holds.
 
+Shipped as, first of two changes (2026-11-10; archived as `orbit/changes/archive/2026-11-10-seam-chaining/`; the
+stage lands as two changes split by grant, D-sc-19, so it stays open until the second): a `chain` map in
+`orbit/config.yaml` grants `review` (in-context and fresh), `review-external` (an external review or a blind pair,
+which reach the network and cost money) and `address-reviews`, each only when marked `true`; an absent key, any other
+value or an unknown key grants nothing, read silently. `orbit status --change <name> --json` carries a `chain` object —
+the next command, whether it may run unasked, and when not, why (`none`, `not-granted`, `open-stop`, `needs-user`,
+`no-progress`) — and the propose, ff, apply, review and address-reviews bodies end by running the next command only
+when it says so; with no key set they end exactly as before. Each prompt in the review and walk bodies states its
+kind (target, routine, decision), held by a tag test. Departures and limits: merging the stage's PR and returning to
+the default branch moved to the driver (D-sc-17), and bounding what a run spends is a candidate follow-up program
+(D-sc-18); a chained external review on an uncommitted tree stops on `no-progress` rather than committing first,
+carried to the second change. The verification walk found that a decision record whose cited decision is later
+superseded cannot be replaced (the write gate re-checks a carried decision citation for liveness), so one record is
+followed by a new entry instead — a gap for a later change. Tests that moved because they pin body text (R-adf-9):
+the propose, ff and apply skill hash pins (re-recorded three times) and the blind pair's row-13 walk sentence.
+
 ### Stage program-brief — the brief and the sign-off seam
 
 Depends-on: decision-layer
