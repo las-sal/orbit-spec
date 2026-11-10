@@ -244,6 +244,25 @@ describe('the decision-record reference', () => {
     expect(citationFailure(DECISION_RECORDS_REFERENCE)).toBeNull();
   });
 
+  /** Why the reference's `decision` line fails to state both the live rule and the carried exception, or null. */
+  const decisionLineFailure = (ref: string): string | null => {
+    const line = ref.split('\n').find(l => l.startsWith('- `decision` — '));
+    if (line === undefined) return 'no decision line';
+    if (!line.includes('whose `Disposition:` is `live` or absent')) return 'the decision line drops the live rule';
+    if (!line.includes('on a replacement, whose citation is carried, an entry with that ID whatever its `Disposition:`')) {
+      return 'the decision line does not name the carried exception';
+    }
+    return null;
+  };
+
+  it("the decision line names the carried exception beside the live rule", () => {
+    expect(decisionLineFailure(DECISION_RECORDS_REFERENCE)).toBeNull();
+    // Mutation: the line as it read before the exception (CITATION_EXISTS.decision reverted) fails.
+    const reverted = DECISION_RECORDS_REFERENCE.replace('; on a replacement, whose citation is carried, an entry with that ID whatever its `Disposition:`', '');
+    expect(reverted).not.toBe(DECISION_RECORDS_REFERENCE);
+    expect(decisionLineFailure(reverted)).toMatch(/carried exception/);
+  });
+
   /** Why the reference's plain-language rule fails to name exactly the reader-bound fields, or null. */
   const plainRuleFailure = (ref: string): string | null => {
     const m = ref.match(/The plain fields — ([^\n]*?) — are written for a reader/);

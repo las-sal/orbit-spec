@@ -127,18 +127,21 @@ import { generateSkillContent } from '../../../src/core/shared/skill-generation.
 // statement, did not — and no command-template pin did.
 // decision-writing system verification walk (2026-11-08): the ledger trigger names the call reached after a clarifying
 // question. The same eleven function and eleven generated-skill hashes moved; onboard and the command templates did not.
+// replacement-liveness apply (2026-11-10): the shared decision-records.md reference's `decision` line gained the
+// carried exception (`CITATION_EXISTS.decision`, D-rl-1). Eleven function hashes moved — every pinned skill carrying
+// the reference; onboard, which carries none, did not — and no generated-skill or command-template pin did.
 const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
-  getExploreSkillTemplate: 'abd598b33df4313fa66efcddec48a15fd9856a6b0419cef78c99c6c5c8877050',
-  getNewChangeSkillTemplate: '6db9f3825c9956932a57035057f274481c14f7688c3f3e2cf80a59aa2a03b3a7',
-  getContinueChangeSkillTemplate: 'b4fe455c6e9e1c88909b55412f0eaefb9e7f8f68830e7023c9d698634c1b6baf',
+  getExploreSkillTemplate: '95a415b0d74b2c78e69f949519bd8863da052afb087fabca5734cc6a72543ea2',
+  getNewChangeSkillTemplate: '5ed2e894d1df739fd015d720832da2313f1900fccd0231f452c4497add5b9201',
+  getContinueChangeSkillTemplate: '3386adb1018015d0bfd823b6b049c0c2773e1e450c3904927e5c66c83a171c27',
   // rc17a-invoked-coverage apply (2026-10-05), a PLANNED move (its task 4.2): Step 3's all_done clause
   // stopped naming "spec-driven v4" and `blind-pair` as the post-apply slot — under v5 which review comes
   // next depends on the cadence and the review preference, so the body says it is read, not predicted.
   // seam-chaining (2026-11-09): the Chain end step and the no-chaining epitome clause, at apply (task 3.1), again at the system walk, and a third time at the verification walk (the dirty-tree clause).
-  getApplyChangeSkillTemplate: '9f2a397487141d49211cd3611a894ab36091aff50570b6fc5d2cc68ac65b5807',
+  getApplyChangeSkillTemplate: '2f7ab7db3212aba7c10ed2994caebb70444f591a42e86f37b78db5e6552e8e74',
   // seam-chaining (2026-11-09): the Chain end step and the no-chaining epitome clause, at apply (task 3.1), again at the system walk, and a third time at the verification walk (the dirty-tree clause).
-  getFfChangeSkillTemplate: '867fef005f0bc10b966bcd3e2dc97f938dd0307e6a93ef7e55ccb496849aca85',
-  getSyncSpecsSkillTemplate: '4db517054b746be971860338953a7e3327c60fd90d815f3f4c53f45f90a924d5',
+  getFfChangeSkillTemplate: '0fb634af7e0dbf90db3f97bf438c14505c031bd294ed4328474baaeaf0ef8baa',
+  getSyncSpecsSkillTemplate: 'a63e917c3d85e986634285b04f2a9662baab19639bd7225ae74ac1a99c79b97a',
   // rc08b-walk-routing (2026-10-05, task 3.3): the command-table row's retired "auto-discovers … when invoked
   // with a change name and no markers found" became the discovery sentence. One re-record, both onboard hashes.
   // rc17b-blind-pair-command (2026-10-06, task 5.1), a PLANNED move: the Identity, Phase 4 cross-AI and
@@ -165,8 +168,8 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // Step 3.2 reports cases 2, 3 and 8 and widens its DEFERRED rule to post-move state (fresh S2); bulk
   // archive briefs before each move and gains its per-change archive emit step (fresh W2, S1). The same
   // four hashes moved; no other pin did.
-  getArchiveChangeSkillTemplate: '6a95b68543a47f5a1cffac1900b224ce83eb4ea657815ea64c154f4a4b863d6e',
-  getBulkArchiveChangeSkillTemplate: '2d62e596e1abe30b3bd6ed65d738feda145d50cd2a3b2e5433acc969127f0c6f',
+  getArchiveChangeSkillTemplate: '7eba0fc803954b7418d2013222035e3444e887e48e0c3eb6011551afb571eff4',
+  getBulkArchiveChangeSkillTemplate: '21195e4c5505a19d0826fdce42a5f7c4729dec50260f427443375ec08b681598',
   getOrbitSyncCommandTemplate: 'b985d0a4d89b0e2cc3c6b6dec2521ef2a9d0df44a8ba9ec92a5495052c94a39c',
   // rc06b-map-readers (2026-10-05) — verify moved DELIBERATELY, the first named edit to an upstream
   // portion under `orbit-conventions`' narrowed `Generated-file disposition`: step 6's test-tracing
@@ -178,7 +181,7 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // take the first mode by precedence), because the engine composes from the mode verify hands it
   // and classifies nothing; the emit paragraph stopped restating the precedence. Upstream portion
   // unchanged by this second move.
-  getVerifyChangeSkillTemplate: '1437309a8e07a4d2b876493aca7d3ddde2ab24b5c3fc4c4601e40f9fbd4f0c3b',
+  getVerifyChangeSkillTemplate: '282082ffc25b2e6c084a38b1d98561c3f1937c6ff0ebf032297e2e4993702f1d',
   getOrbitArchiveCommandTemplate: '5889c3a6269b5c76c85578bf2ce6e6c4152b7536452e5ec1332dd93d3b493665',
   getOrbitOnboardCommandTemplate: '3a3e98c6a01517896dfdccaba4fa4477edea62fd69dc4189df1dd105bbedcc5b',
   getOrbitBulkArchiveCommandTemplate: 'bbb9fc75d87fb8339cf4a80ad75189f6d9a8b339c9b4539778e690b1c9043053',
@@ -206,7 +209,7 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // Split route's "the rest of the flow runs unchanged", "run" for "re-run" under Declare, and the heading
   // line's "exactly" dropped (the parser reads CommonMark indentation) — one re-record for the walk's edits.
   // seam-chaining (2026-11-09): the Chain end step and the no-chaining epitome clause, at apply (task 3.1), again at the system walk, and a third time at the verification walk (the dirty-tree clause).
-  getOrbitProposeSkillTemplate: '82671ee3b82c51dd29e433c3af9291e00b8e88042dec850b225123c7057b10e6',
+  getOrbitProposeSkillTemplate: '4877cd1e46ca052c1d02ecdda46cb47c36a65fb55e9d7efde21a8e13152da45a',
   getOrbitProposeCommandTemplate: '33077b4185c425952edcdf14f4f16f2a0fa9d5961158f3c63534b58cee2576fb',
   getFeedbackSkillTemplate: 'ded61ad85c5050f7bf241870b14bfcdd929f0be68a028c1130fd30a66efbda3b',
   // rc15 (ended-stage-state, 2026-09-29): the orbit-architect body moved ONCE, deliberately — §5 (the
@@ -227,7 +230,7 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // escaped each backtick around `orbit architecture status` twice inside the template literal, so the
   // generated doc scaffold carried a literal backslash before each one; it now carries plain backticks.
   // That one line, nothing else; held from here by test/core/cli-grammar/escaped-backticks.test.ts.
-  getArchitectSkillTemplate: 'c264ad4f85b45f8b2be2d61bcf1457233e6a1d31848fb84157f3285e6a0df4d7',
+  getArchitectSkillTemplate: '5a35d5a960814ac1aefb1b692f8a4bf094af8ce6515e7d5d96e2dbfafa395891',
   getOrbitArchitectCommandTemplate: 'b65b8cca6431bb45aa8587d3bfc1e9458981e2e1bc925ae45cd57414143cb3db',
 };
 
