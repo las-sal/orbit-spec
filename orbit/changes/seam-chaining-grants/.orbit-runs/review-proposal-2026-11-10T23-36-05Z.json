@@ -1,0 +1,186 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-10T23:36:05Z",
+  "change": "seam-chaining-grants",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 4,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 3
+    }
+  },
+  "findings": [
+    {
+      "pass": "4",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/specs/orbit-conventions/spec.md",
+      "line": 238,
+      "title": "Internal-run JSON summary format still types consent as two values",
+      "recommendation": "Carry `Internal-run JSON summary format` into the orbit-conventions delta and widen both consent sentences (the `kind: \"workflow\"` bullet at 238 and the `kind: \"lifecycle\"` bullet at 240) to `\"user-invoked\" | \"prompted\" | \"setting\"`, per lifecycle-consent's emit-field requirement. D-sga-7 (explore.md:116) named exactly these \"two consent mentions\" in orbit-conventions, but the propose carried only the chain requirements. The change already sits at its requirements ceiling, so the carry needs a declared requirements breach beside the declared capabilities breach. Count the scenarios the carried block pulls in before declaring it."
+    },
+    {
+      "pass": "4",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/specs/orbit-archive-modifications/spec.md",
+      "line": 695,
+      "title": "PR-attached archive tail still names only two consent stories for the outward writes",
+      "recommendation": "Carry `PR-attached archive tail` into the orbit-archive-modifications delta and change \"the archive's OWN entry consent (user-typed or prompted-and-proceeded)\" to include the granted arrival. For example: \"(user-typed, prompted-and-proceeded, or granted by the `archive` key, whose row names these writes)\". After apply, this is the sentence that says what authorizes the push and the flip, and a granted archive is the case the change exists to add. This carry also counts against the requirements ceiling."
+    },
+    {
+      "pass": "4",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/specs/orbit-lifecycle-consent/spec.md",
+      "line": 96,
+      "title": "\"Engine changes for this capability are declaration parsing and display wording only\" becomes false",
+      "recommendation": "This change gives the capability an engine check: the write gate refuses an ungranted `setting` and any value outside the three, and its owner is this capability's `Consent recorded in consent-scoped lifecycle emits`. Carry `The engine never prompts for consent` and restate the sentence. For example: \"engine changes for this capability are declaration parsing, display wording, and the write gate's check of the `consent` value; the engine never adds an interactive prompt\". Also edit the baseline Purpose in place at archive. \"Consent is determined by invocation provenance\" and \"The enforcement ceiling is deliberately the body-prompt layer\" (lines 6-11) both need the granted arrival and the gate's `setting` check, because no delta carries `## Purpose`."
+    },
+    {
+      "pass": "4",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/specs/orbit-engine-gates/spec.md",
+      "line": 48,
+      "title": "The consent vocabulary still says a marked phase requires an explicit user invocation",
+      "recommendation": "`Gate declaration in schema YAML`'s consent vocabulary says `consent: user-invoked` \"declares that entry into the gate's `before:` phase requires an explicit user invocation\". Under a granted `apply` or `archive` key, entry no longer requires one. Task 5.1 fixes the same sentence in docs/customization.md's `consent` row (\"a marked step is one you invoke or grant with `chain`\"), but the owning spec keeps the old meaning. Either carry the requirement and add the same clause (\"…an explicit user invocation, or a grant by the project's `chain` setting per `orbit-lifecycle-consent`\"), or record why the spec sentence may stay stricter than the docs. The design's Risks line about the marker covers only the rendered marker, not this definition."
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "design.md",
+      "line": 67,
+      "title": "Archive's Step 0 tag-rule sentence would fail the tag test, and nothing says how to exempt it",
+      "recommendation": "Decision 4 (and task 3.2) has archive's granted bullet state the tag rules in a sentence that carries the literal forms `(chain: target)`, `(chain: routine, default: <option>)` and `(chain: decision)`. The scanner in test/core/templates/chain-prompt-tags.test.ts:161 strips only `CHAIN_END_STEP` (\"The end step states the tag grammar itself; it is not a site\"). Once task 4.1 scans `orbit-archive-change`, that sentence reports \"tag the list does not name: (chain: routine, default: <option>)\" and \"tagged site the list does not name\". `Each chained prompt states its kind` names no exemption for a grammar statement outside the end step. Settle which form to use before apply.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Export the archive's tag-rule sentence as a constant in src/core/disciplines.ts, strip it in tagFailures beside CHAIN_END_STEP, and name in `Each chained prompt states its kind` that a body's statement of the tag grammar is not a site."
+        },
+        {
+          "label": "B",
+          "body": "Word the sentence without the parenthesized tag forms (\"a target prompt does not fire; a routine prompt takes the default its tag names…\"), so the scanner sees no tag on that line, and state that wording in task 3.2."
+        }
+      ]
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-lifecycle-consent/spec.md",
+      "line": 152,
+      "title": "The withdrawn-grant recovery (\"asks the user and records prompted\") is undefined for archive and contradicts chunk constancy for apply",
+      "recommendation": "Two gaps follow from the named limit. First, the archive emit is written after the sync and the move, so a question asked then is not a consent prompt before writes. `prompted` (\"the consent prompt fired and the user chose Proceed\") would misstate the record, and the spec gives no outcome for a refusal: an Abort writes no summary, which would leave an archived change with no archive emit. Second, for a chunked apply, earlier chunk emits already carry `setting`, so recording `prompted` on a later one breaks `Consent constant across one apply's chunk emits` (orbit-run-summary-emit). Define the recovery in the named limit itself.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "On the refusal, write the emit with no `consent` field and name the withdrawn grant in its `warnings` or assessment: the gate accepts an absent field, and the audit-drift tripwire then flags exactly this unconsented-looking transition. Restate the named limit and note the chunk-constancy exception."
+        },
+        {
+          "label": "B",
+          "body": "Keep the post-hoc ask, but define it: what is asked, that the writes stand whatever the answer, which value is recorded (and that it may differ from earlier chunk emits), and that no Abort is offered after the writes."
+        }
+      ]
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "specs/orbit-lifecycle-consent/spec.md",
+      "line": 50,
+      "title": "The arrival table's \"exactly one row\" overlaps when chain.next names another command",
+      "recommendation": "The chain object tests `not-granted` before `open-stop`, against whatever `next` is. So an arrival at apply while `next` names an ungranted review matches both the `why: not-granted` row and the \"`chain.next` names another command\" row (the same holds for `open-stop`). Behaviour does not split, since both fire the prompt, but the closure claim is false. Qualify rows 3 and 4 as \"`chain.next` is this command and `why: …`\", and make row 5 \"`chain.next` names another command (whatever its `why`), or `why: none`\"."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 13,
+      "title": "The No-chaining contract says every chained command ends with the chain read, but a chained archive has no closing step",
+      "recommendation": "Lines 13-15 say \"the chained command ends the same way, so a chain continues until the object reports `may_run: false`, and the AI then states its `why`…\". Design Decision 4 gives archive no Chain end step, because the command after it is not a change command (D-sc-17), but the requirement does not say so. Add one clause: \"a chained archive ends the chain at its completion readout and reads no object: the command after it is not a change command\". Otherwise an implementer could add a post-move status read to the archive body."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "proposal.md",
+      "line": 68,
+      "title": "The proposal's Impact omits docs/getting-started.md",
+      "recommendation": "Design Decision 7, its Touchpoints and task 5.1 all edit `docs/getting-started.md`'s marker sentence, but the proposal's Impact (line 68) and its What Changes docs bullet (line 30) name only customization.md and workflow-engine.md. Add getting-started.md to both."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "src/core/project-config.ts",
+      "line": 94,
+      "title": "The chain schema's describe string and comment will still list three keys and one reader",
+      "recommendation": "Task 1.1 updates \"the module comments that say no key grants the two commands\". The zod `.describe('Chain setting: { review, review-external, address-reviews: true|false } …')` at line 94 lists the keys, and the comment at lines 87-90 says the change status reads the setting \"ON ITS OWN\". After this change, the emit write gate reads it too. Name both in task 1.1 so they move with `CHAIN_KEYS`."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "pass": "2",
+      "title": "The design's census of consent values on record may be stale",
+      "evidence": "re-counted 2026-11-10 over every apply-*.json and archive-*.json under orbit/changes: 139 emits, 125 consent user-invoked, 14 without the field, none other, matching design.md:12-13"
+    },
+    {
+      "pass": "5",
+      "title": "Task 1.3 assumes the end-step test iterates CHAIN_KEYS",
+      "evidence": "test/core/templates/chain-prompt-tags.test.ts:35 loops `for (const k of CHAIN_KEYS)`, and disciplines.ts:83 builds KEY_ROWS from CHAIN_KEYS and CHAIN_KEY_TABLE"
+    },
+    {
+      "pass": "4",
+      "title": "The archive key bundles the push and the ready flip, against R-adf-6's 'each outward act is its own setting'",
+      "evidence": "explore.md:110 records D-sga-4 as the user's word choosing option A over a flip with its own key, and explore.md:44's CONFORM line records the reading (the row names each outward write); a ratified scope call, not a defect"
+    }
+  ],
+  "commentary": "Every artifact was read from the live checkout at HEAD 13476c26 (clean tree), which is also the pair's launch commit. The delta edits themselves are careful. I diffed all twelve carried blocks against their baselines, and each differs only by the intended edits. The arrival table and the value table close over the chain object's real why set in src/core/chain.ts. The write-gate design reuses resolveChainSetting, so the entry and the gate share one definition of granted. The misses are elsewhere. Several baseline sentences restate the two-valued consent model or the 'explicit invocation' meaning of the marker, and they sit in requirements the change does not carry. Explore's D-sga-7 grep named one of them, the summary format's consent mentions, and propose did not pick it up. Carrying them meets the size ceiling, because the requirements figure is already at its maximum. That is the walk's first call. The two completeness gaps are both things an implementer would otherwise have to decide: whether the archive's tag-grammar sentence counts as a tag site, and what the session does when the write gate refuses a grant the entry saw. Probed and holding: validate --strict passes, the scenario arithmetic matches the design, there are no @review: markers outside inline code, and the archive and apply prompt inventories match the template sites I grepped.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "direction": {
+    "disposition": "hold",
+    "reasoning": "Walk before apply. The grants themselves are well specified. What holds this is that, as written, the archive would leave several baseline requirements still describing consent as typed-or-prompted. Fixing that means carrying them past the requirements ceiling, a size declaration the walk should make knowingly rather than discover at archive. The tag-sentence and withdrawn-grant gaps are cheap to settle now and would otherwise be invented during apply."
+  },
+  "final_assessment": "0 critical, 6 warning, 4 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews seam-chaining-grants"
+}
