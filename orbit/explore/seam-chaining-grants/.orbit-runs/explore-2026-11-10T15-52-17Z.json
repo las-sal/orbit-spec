@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-11-10T15:52:17Z",
+  "change": "seam-chaining-grants",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "The owed work measured at six capabilities against a ceiling of three; the user split it into three changes citing stage seam-chaining (D-sga-1): the replacement-liveness exemption first as its own small change, then the consent value with the apply and archive grants (this exploration, a declared breach), then the commit before a chained external review. No rule captured yet; this exploration resumes after the liveness change archives.",
+  "decisions_captured": 1,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 0,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:explore seam-chaining-grants — continue capturing thinking"
+}

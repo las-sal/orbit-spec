@@ -262,7 +262,7 @@ the default branch moved to the driver (D-sc-17), and bounding what a run spends
 (D-sc-18); a chained external review on an uncommitted tree stops on `no-progress` rather than committing first,
 carried to the second change. The verification walk found that a decision record whose cited decision is later
 superseded cannot be replaced (the write gate re-checks a carried decision citation for liveness), so one record is
-followed by a new entry instead — a gap the stage's second change fixes (Sal, 2026-11-10). Tests that moved because they pin body text (R-adf-9):
+followed by a new entry instead — a gap a later change of this stage fixes (Sal, 2026-11-10). Tests that moved because they pin body text (R-adf-9):
 the propose, ff and apply skill hash pins (re-recorded three times) and the blind pair's row-13 walk sentence.
 
 ### Stage program-brief — the brief and the sign-off seam
@@ -441,3 +441,8 @@ Exit criteria:
   replacement record re-checks a carried decision citation for liveness, so a record whose cited decision was later
   superseded cannot be replaced (AI recommendation: one exemption beside the existing carried-link one, and the
   second change will meet it again). Ratification is offered again at that change's archive.
+- 2026-11-10 — In the exploration `seam-chaining-grants`, the owed work measured at six capabilities against a
+  ceiling of three, so Sal split it into three changes, all citing stage seam-chaining (D-sga-1; AI recommendation):
+  the replacement-liveness exemption first, then the consent value with the apply and archive grants (a declared
+  breach), then the commit before a chained external review. This revises the earlier entry's fold of the gap into
+  the second change, which was made before the size was measured.
