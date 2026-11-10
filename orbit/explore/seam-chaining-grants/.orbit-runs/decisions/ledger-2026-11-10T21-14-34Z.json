@@ -1,0 +1,31 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-10T21:14:34Z",
+  "change": "seam-chaining-grants",
+  "model": "claude-fable-5-2",
+  "area": "trusting-input",
+  "decided": "A record of apply or archive states where consent came from as one of three values: the user typed the command, the user answered a prompt, or a setting granted it. orbit refuses to write a record claiming a setting granted the command when the chain map does not grant it, and refuses any value outside the three. The first two values are still taken on the session's word.",
+  "alternatives": [
+    "take the third value on the session's word, like the other two",
+    "add a separate field naming which key granted the command"
+  ],
+  "why": "Whether a setting grants a command is written in a file orbit can read, so the claim can be checked; whether the user typed a command or answered a prompt is not in any file. Each key grants one command, so the value alone says which key it was.",
+  "relies_on": [
+    {
+      "kind": "ruling",
+      "doc": "automate-dev-flow",
+      "id": "R-adf-6"
+    },
+    {
+      "kind": "decision",
+      "id": "D-sga-6"
+    }
+  ],
+  "defines": [
+    {
+      "term": "consent",
+      "definition": "the user's agreement that orbit may start apply or archive; today it comes from the user typing the command or answering a prompt"
+    }
+  ],
+  "detail": "Values user-invoked, prompted, setting on the consent field of the apply and archive emits; the check reads resolveChainSetting. Named limit: a grant withdrawn between a command's entry and its emit refuses a true record. All 139 apply and archive emits on record carry user-invoked or no field. The AI's method call."
+}
