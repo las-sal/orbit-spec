@@ -457,3 +457,8 @@ Exit criteria:
   the replacement-liveness exemption first, then the consent value with the apply and archive grants (a declared
   breach), then the commit before a chained external review. This revises the earlier entry's fold of the gap into
   the second change, which was made before the size was measured.
+- 2026-11-10 — Architect session after `replacement-liveness` was archived (merged as PR #38), the first of
+  D-sga-1's three changes: a replacement now keeps its citation of a superseded or assigned decision (the stage's
+  second Shipped-as paragraph). No ratification was offered: the exploration `seam-chaining-grants` is live, and two
+  changes are still owed — the consent value with the apply and archive grants (a declared breach), then the commit
+  before a chained external review. No ruling, goal or stage changed.
