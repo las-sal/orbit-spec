@@ -122,6 +122,14 @@ stage; G1–G6 are graded at first-run, on that project's trail and transcripts.
   recommendation) over reading the repair of an existing requirement's promise as outside G0, so G0 keeps no "bug fix"
   reading later stages could lean on. Recorded as `stop-2026-11-11T03-17-05Z.json` and its resolution in this trail's
   `decisions/` folder.
+- **R-adf-14** (Sal, 2026-11-11) — A program runs on one branch and one pull request: the pull request is opened at the
+  program's first architect session, that branch and pull request last for the whole program, orbit commits and pushes
+  the work to it throughout, and the user gives the go-ahead for the merge at the end. Committing and pushing are each
+  an opt-in setting, defaulting to today's behaviour (R-adf-1, R-adf-6); orbit never commits on its own to the default
+  branch, and a commit takes everything uncommitted that `.gitignore` does not exclude, naming each untracked file it
+  adds (D-chrc-1 to D-chrc-6 in `orbit/explore/chained-review-commit/explore.md`). New projects get
+  `pr: per-architecture` from `orbit init` (D-chrc-7). Stated by Sal during that exploration as true of the entire
+  program.
 
 ## Program stages
 
@@ -345,15 +353,22 @@ Complete: [ ]
 `orbit run <doc>` (R-adf-8): read the engine's computed next command, launch a fresh headless session booted from
 `orbit status --boot`, wait, read the emit it wrote, and loop, stopping on a stop record or at the sign-off seam.
 It reuses the external runner's launch pattern, keeps a live log the user can watch, and resumes after a stop. Linear:
-one stage at a time. Crossing from one stage to the next needs two outward acts, merging the stage's PR and
-returning to the default branch; each is this stage's setting, its own key defaulting to the user doing it, and D6's
-outward-actions rule is amended in its owning spec to hold conditionally on them (R-adf-1, R-adf-6).
+one stage at a time. Under `pr: per-architecture` every stage lands on the one program branch (R-adf-14), so the
+driver moves from stage to stage with no merge and no return to the default branch; the program pull request's merge
+stays the user's act at the end. Under `pr: per-proposal` it stops at each stage's end until the user has merged.
+The driver opens the program pull request at the program's first architect session (D-chrc-1), an outward act behind
+its own setting defaulting to today's behaviour, where the pull request is born at the first citing propose (R-adf-1,
+R-adf-6). (The merge and return settings this charter carried until 2026-11-11 are dropped: under R-adf-14 nothing
+merges between stages. Recorded as `stop-2026-11-11T17-40-24Z.json` and its resolution in this trail's `decisions/`
+folder.)
 
 Exit criteria:
 - Against a stub session launcher, a test runs a fixture program from its first stage to the sign-off seam, and a
   second halts on an injected stop record and resumes.
-- The merge and return settings' owning requirement names each, and a test per setting shows today's behaviour at
-  its default.
+- Against a stub, a test crosses a fixture program's stages on one program branch with no merge, and under
+  `pr: per-proposal` the driver stops at the first stage's end.
+- The setting that opens the program pull request at the architect session is named in its owning requirement, and
+  a test shows today's behaviour at its default.
 - The driver never launches a real session against orbit-spec (R-adf-5).
 - G0 holds.
 
@@ -379,10 +394,14 @@ Depends-on: parallel-lanes
 Complete: [ ]
 
 The program's mechanisms are released as a tagged orbit version, cut by `npm run release:tree`; pushing the tag
-stays the user's act unless a setting says otherwise.
+stays the user's act unless a setting says otherwise. Before the cut, a small change makes `orbit init` write
+`pr: per-architecture` into a new project's config (D-chrc-7, R-adf-14), so the trial project starts on one program
+branch; existing projects are unchanged, and an absent `pr:` still means `never`. It changes what a fresh install
+writes, so G0 names it as a ratified exception at the architect session after it ships, as R-adf-11 and R-adf-13 did.
 
 Exit criteria:
 - The version is tagged and on origin, and the user docs describe the settings, the driver and the brief.
+- A fresh `orbit init` writes `pr: per-architecture`, a test holds it, and G0 names the exception.
 
 ### Stage first-run — the trial on a big, non-critical project
 
@@ -499,3 +518,10 @@ Exit criteria:
 - 2026-11-11 — Architect session, nothing new since the last: stage seam-chaining offered again and left unratified
   (Sal: not yet; AI recommendation). Its exit criteria are met, but D-sga-1's third change, the commit before a chained
   external review, has no exploration or change yet. No ruling, goal or stage changed.
+- 2026-11-11 — Architect session during the exploration `chained-review-commit` (D-sga-1's third change, which widened
+  to an opt-in commit and push at every command's end on the change's pull request branch): Sal's statement of the
+  whole program became R-adf-14 (one branch and pull request per program, opened at the first architect session,
+  committed to throughout, merged by the user at the end). The driver's charter dropped the merge and return settings,
+  since nothing merges between stages on one branch, and took the pull request's opening at the architect session
+  (Sal; AI recommendation; a stop and its resolution in this trail). The release stage took the change that makes
+  `orbit init` write `pr: per-architecture` (D-chrc-7; Sal; AI recommendation). No stage awaited ratification.

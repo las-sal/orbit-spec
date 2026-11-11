@@ -69,11 +69,15 @@ ever committing work that is not the chain's.
   apart. The AI's call (the user delegates method, recorded with rationale under R-crc-3).
   Kind: rule
 
+- **2026-11-11 — D-chrc-9: D-chrc-7's change cites stage `release`** It is in that stage's charter and exit criteria in
+  `orbit/architecture/automate-dev-flow.md`: the stage prepares the orbit the trial project installs, and that
+  project's `orbit init` is the first to use the new default. The user's word at the architect session, 2026-11-11
+  ("release"; AI recommendation). At the same session the user's program statement became R-adf-14, and the driver
+  stage's charter dropped the merge and return settings: nothing merges between stages on one program branch.
+  Kind: scope
+
 ## Open questions
 
-- **Q7 — where D-chrc-7's change sits in the program.** Which stage it cites, or none.
-  Standing recommendation: stage `release`, the stage that prepares the orbit the trial project installs, since what
-  `orbit init` writes matters first there.
 - **Q8 — the engine's part in the commit step.** Whether an `orbit pr` subcommand observes the facts the step needs
   (the attached branch and whether HEAD is on it, D-chrc-6; the untracked files a commit would add, D-chrc-5; both
   settings) and prints the commit and push, as `orbit pr publish` and `orbit pr tail` do under

@@ -1,0 +1,16 @@
+{
+  "command": "stop",
+  "timestamp": "2026-11-11T17:40:24Z",
+  "change": null,
+  "doc": "automate-dev-flow",
+  "model": "claude-opus-5-5",
+  "condition": "ruling-amendment",
+  "about": "The driver stage's charter says crossing from one stage to the next needs two outward acts, merging the stage's pull request and returning to the main branch, each its own setting under R-adf-1 and R-adf-6. Under R-adf-14 a program runs on one branch and one pull request that the user merges at the end, so stages cross on that branch with no merge. Dropping the two settings narrows what R-adf-1 made configurable.",
+  "question": "Should the driver cross stages on the program branch with no merge, dropping the merge and return settings and stopping at each stage's end for the user's merge only when a project uses one pull request per change, or keep the two settings as the charter says?",
+  "defines": [
+    {
+      "term": "program branch",
+      "definition": "the one git branch a program's work lands on; the program's one pull request merges it into the main branch"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "command": "resolution",
+  "timestamp": "2026-11-11T17:56:49Z",
+  "change": null,
+  "doc": "automate-dev-flow",
+  "model": "claude-opus-5-5",
+  "stop": "stop-2026-11-11T17-40-24Z.json",
+  "answer": "No merge between stages: on a program branch the driver moves from stage to stage with no merge, the two settings are dropped, and the merge of the program's pull request stays the user's act at the end.",
+  "effect": "The driver stage's charter drops the merge and return settings and their exit criterion, opens the program's pull request at the architect session, and, where a project uses one pull request per change, stops at each stage's end until the user merges."
+}

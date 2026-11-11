@@ -1,0 +1,38 @@
+{
+  "command": "architect",
+  "timestamp": "2026-11-11T17:57:29Z",
+  "change": null,
+  "doc": "automate-dev-flow",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Captured Sal's statement of the whole program as R-adf-14: one branch and pull request per program, opened at the first architect session, committed and pushed to throughout under opt-in settings, merged by the user at the end. The driver's charter dropped the merge and return settings (nothing merges between stages on one branch; a stop and its resolution) and took the pull request's opening at the architect session; the release stage took D-chrc-7's change (orbit init writes pr: per-architecture). Seam-chaining renders exploring, so no ratification was offered.",
+  "stages_touched": [
+    "driver",
+    "release"
+  ],
+  "rulings_captured": [
+    "R-adf-14"
+  ],
+  "completions_ratified": [],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      {
+        "path": "orbit/explore/chained-review-commit/explore.md",
+        "why": "nine decisions; Mechanism entries owed for the five rules (D-chrc-2, 4, 5, 6, 8) and Q8 open"
+      },
+      {
+        "path": "orbit/architecture/automate-dev-flow.md",
+        "why": "R-adf-14 and the driver and release charters as revised this session"
+      },
+      {
+        "path": "src/core/pr/tail.ts",
+        "why": "the engine's existing printed commit scope, the precedent Q8's standing recommendation leans on"
+      }
+    ],
+    "next_command": "/orbit:explore chained-review-commit",
+    "model_hint": "any frontier model; Mechanism entries need reads of the bodies that write and of orbit pr",
+    "seam": "explore (Mechanism entries, Q8) → propose of D-sga-1's third change; seam-chaining is offered for ratification at its archive"
+  },
+  "next_recommended": "/orbit:explore chained-review-commit"
+}
