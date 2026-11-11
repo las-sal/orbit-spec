@@ -1,0 +1,488 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-11T01:35:43Z",
+  "change": "seam-chaining-grants",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/seam-chaining-grants/.orbit-runs/review-proposal-2026-11-10T23-36-05Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-10T23-36-05Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 6,
+    "suggestion": 4
+  },
+  "pushback_verification": "All ten verified against current state, each cited line read; none stale. Two converge with the external pass (F1 with its summary-format finding, F6 with its chunk-constancy finding) and are walked here.",
+  "resolution_summary": {
+    "resolved": 10,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Internal-run JSON summary format still types consent as two values",
+      "marker_source": "internal-review",
+      "file": "orbit/specs/orbit-conventions/spec.md",
+      "line": 238,
+      "classification": "decision_required",
+      "action": "carried Internal-run JSON summary format into the orbit-conventions delta and widened both consent types to three values; declared the requirements breach in proposal Size; named the requirement in proposal Modified Capabilities and design Decision 7; task 6.1 counts its 12 scenarios",
+      "ratified_via": "chat",
+      "resolution": "1A — carry all four requirements and declare requirements 16 over the ceiling of 12",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/seam-chaining-grants/specs/orbit-conventions/spec.md",
+          "orbit/changes/seam-chaining-grants/proposal.md",
+          "orbit/changes/seam-chaining-grants/design.md",
+          "orbit/changes/seam-chaining-grants/tasks.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/specs/orbit-conventions/spec.md",
+            "reason": "baseline spec; add a delta to your current change's specs/<capability>/spec.md to capture this ripple"
+          }
+        ]
+      },
+      "sweep": {
+        "retired": [
+          "consent: \"user-invoked\" | \"prompted\"`"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining-grants/specs/orbit-conventions/spec.md",
+            "text": "consent: \"user-invoked\" | \"prompted\" | \"setting\""
+          },
+          {
+            "path": "orbit/changes/seam-chaining-grants/proposal.md",
+            "text": "Declare, chosen at the proposal walk 2026-11-10"
+          }
+        ],
+        "searched": [
+          "\"user-invoked\" | \"prompted\"",
+          "Consent-era"
+        ],
+        "scope": [
+          "orbit/specs/orbit-conventions/spec.md"
+        ],
+        "kept": [
+          {
+            "path": "orbit/specs/orbit-conventions/spec.md",
+            "why": "baseline spec; it changes only at the archive sync of this delta"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "PR-attached archive tail still names only two consent stories for the outward writes",
+      "marker_source": "internal-review",
+      "file": "orbit/specs/orbit-archive-modifications/spec.md",
+      "line": 695,
+      "classification": "decision_required",
+      "action": "carried PR-attached archive tail into the orbit-archive-modifications delta; the outward writes ride a user-typed, prompted-and-proceeded, or granted entry",
+      "ratified_via": "chat",
+      "resolution": "1A — carry all four requirements and declare requirements 16 over the ceiling of 12",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/seam-chaining-grants/specs/orbit-archive-modifications/spec.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/specs/orbit-archive-modifications/spec.md",
+            "reason": "baseline spec; add a delta to your current change's specs/<capability>/spec.md to capture this ripple"
+          }
+        ]
+      },
+      "sweep": {
+        "retired": [
+          "entry consent (user-typed or prompted-and-proceeded)"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining-grants/specs/orbit-archive-modifications/spec.md",
+            "text": "granted by the `archive` key, whose row names"
+          }
+        ],
+        "searched": [
+          "prompted-and-proceeded",
+          "entry consent"
+        ],
+        "scope": [
+          "orbit/specs/orbit-archive-modifications/spec.md",
+          "src/"
+        ],
+        "kept": [
+          {
+            "path": "orbit/specs/orbit-archive-modifications/spec.md",
+            "why": "baseline spec; it changes only at the archive sync of this delta"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "\"Engine changes for this capability are declaration parsing and display wording only\" becomes false",
+      "marker_source": "internal-review",
+      "file": "orbit/specs/orbit-lifecycle-consent/spec.md",
+      "line": 96,
+      "classification": "decision_required",
+      "action": "carried The engine never prompts for consent into the orbit-lifecycle-consent delta; the engine changes include the write gate check; design Migration Plan records the in-place Purpose edit at archive",
+      "ratified_via": "chat",
+      "resolution": "1A — carry all four requirements and declare requirements 16 over the ceiling of 12",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/seam-chaining-grants/specs/orbit-lifecycle-consent/spec.md",
+          "orbit/changes/seam-chaining-grants/design.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/specs/orbit-lifecycle-consent/spec.md",
+            "reason": "baseline spec; add a delta to your current change's specs/<capability>/spec.md to capture this ripple"
+          }
+        ]
+      },
+      "sweep": {
+        "retired": [
+          "declaration parsing and display wording only"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining-grants/specs/orbit-lifecycle-consent/spec.md",
+            "text": "display wording, and the write gate's check"
+          },
+          {
+            "path": "orbit/changes/seam-chaining-grants/design.md",
+            "text": "Purpose is edited in place, since no delta carries"
+          }
+        ],
+        "searched": [
+          "display wording only",
+          "enforcement ceiling",
+          "never prompts"
+        ],
+        "scope": [
+          "orbit/specs/orbit-lifecycle-consent/spec.md"
+        ],
+        "kept": [
+          {
+            "path": "orbit/specs/orbit-lifecycle-consent/spec.md",
+            "why": "baseline spec; its requirement changes at the archive sync, its Purpose by the in-place edit the design records"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The consent vocabulary still says a marked phase requires an explicit user invocation",
+      "marker_source": "internal-review",
+      "file": "orbit/specs/orbit-engine-gates/spec.md",
+      "line": 48,
+      "classification": "decision_required",
+      "action": "carried Gate declaration in schema YAML into the orbit-engine-gates delta; a marked phase is entered by a user invocation or a grant by the chain setting",
+      "ratified_via": "chat",
+      "resolution": "1A — carry all four requirements and declare requirements 16 over the ceiling of 12",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/seam-chaining-grants/specs/orbit-engine-gates/spec.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/specs/orbit-engine-gates/spec.md",
+            "reason": "baseline spec; add a delta to your current change's specs/<capability>/spec.md to capture this ripple"
+          }
+        ]
+      },
+      "sweep": {
+        "retired": [
+          "awaits the user's invocation)"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining-grants/specs/orbit-engine-gates/spec.md",
+            "text": "or a grant by the project's `chain` setting"
+          }
+        ],
+        "searched": [
+          "explicit user invocation",
+          "awaits the user"
+        ],
+        "scope": [
+          "orbit/specs/orbit-engine-gates/spec.md"
+        ],
+        "kept": [
+          {
+            "path": "orbit/specs/orbit-engine-gates/spec.md",
+            "why": "baseline spec; it changes only at the archive sync of this delta"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Archive's Step 0 tag-rule sentence would fail the tag test, and nothing says how to exempt it",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 67,
+      "classification": "trivial_fix",
+      "action": "option B, settled under R-crc-3: design Decision 4 and task 3.2 word the sentence without the parenthesized tag forms, so the scanner reads no site on that line",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/seam-chaining-grants/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "sentence: a `(chain: target)` prompt does not fire",
+          "routine takes its default and"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining-grants/design.md",
+            "text": "worded without the parenthesized tag forms"
+          },
+          {
+            "path": "orbit/changes/seam-chaining-grants/tasks.md",
+            "text": "worded without any parenthesized"
+          }
+        ],
+        "searched": [
+          "tag rules",
+          "states the tag",
+          "CHAIN_END_STEP"
+        ],
+        "scope": [
+          "test/core/templates/chain-prompt-tags.test.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The withdrawn-grant recovery (\"asks the user and records prompted\") is undefined for archive and contradicts chunk constancy for apply",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-lifecycle-consent/spec.md",
+      "line": 152,
+      "classification": "decision_required",
+      "action": "the named limit now writes the emit again with no consent field and names the withdrawn key in final_assessment, asking nothing; earlier emits stand; chunk constancy names the exception; a multi-chunk withdrawal scenario added; tasks 3.1, 3.2 and 4.2 carry the body line; ledger entry written",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "On the refusal, write the emit with no `consent` field and name the withdrawn grant in its `warnings` or assessment: the gate accepts an absent field, and the audit-drift tripwire then flags exactly this unconsented-looking transition. Restate the named limit and note the chunk-constancy exception."
+          },
+          {
+            "label": "B",
+            "body": "Keep the post-hoc ask, but define it: what is asked, that the writes stand whatever the answer, which value is recorded (and that it may differ from earlier chunk emits), and that no Abort is offered after the writes."
+          }
+        ],
+        "chosen": "A"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/seam-chaining-grants/specs/orbit-run-summary-emit/spec.md",
+          "orbit/changes/seam-chaining-grants/design.md",
+          "orbit/changes/seam-chaining-grants/tasks.md",
+          "orbit/changes/seam-chaining-grants/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the session then asks the user",
+          "and the session asks the user"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining-grants/specs/orbit-lifecycle-consent/spec.md",
+            "text": "A withdrawn grant writes the emit without consent"
+          },
+          {
+            "path": "orbit/changes/seam-chaining-grants/specs/orbit-run-summary-emit/spec.md",
+            "text": "except an emit written after a withdrawn grant"
+          },
+          {
+            "path": "orbit/changes/seam-chaining-grants/tasks.md",
+            "text": "names the withdrawn key in `final_assessment`, and asks nothing"
+          },
+          {
+            "path": "orbit/changes/seam-chaining-grants/proposal.md",
+            "text": "names the withdrawn key, so the tripwire flags it"
+          }
+        ],
+        "searched": [
+          "withdrawn",
+          "records `prompted`",
+          "constant across"
+        ],
+        "scope": [
+          "src/",
+          "docs/"
+        ],
+        "kept": [
+          {
+            "path": "orbit/changes/seam-chaining-grants/explore.md",
+            "why": "the exploration's D-sga-6 entry as it was decided; the walk supersedes its named limit at the spec owner"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The arrival table's \"exactly one row\" overlaps when chain.next names another command",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-lifecycle-consent/spec.md",
+      "line": 50,
+      "classification": "trivial_fix",
+      "action": "rows 3 and 4 qualified by chain.next being this command; row 5 reads whatever its why",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "| not typed; `why: not-granted`",
+          "| not typed; `why: open-stop` |"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining-grants/specs/orbit-lifecycle-consent/spec.md",
+            "text": "names another command (whatever its `why`)"
+          }
+        ],
+        "searched": [
+          "exactly one row",
+          "why: none"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/seam-chaining-grants/explore.md",
+            "why": "the exploration's Mechanism Case table as derived; the walk qualifies the rows at the spec owner"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The No-chaining contract says every chained command ends with the chain read, but a chained archive has no closing step",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 13,
+      "classification": "trivial_fix",
+      "action": "one clause added: a chained archive ends the chain at its completion readout and reads no object",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining-grants/specs/orbit-conventions/spec.md",
+            "text": "ends the chain at its completion readout and reads no object"
+          }
+        ],
+        "searched": [
+          "ends the same way",
+          "Chain end step"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The proposal's Impact omits docs/getting-started.md",
+      "marker_source": "internal-review",
+      "file": "proposal.md",
+      "line": 68,
+      "classification": "trivial_fix",
+      "action": "added docs/getting-started.md to the proposal Impact and the What Changes docs bullet",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "- Docs: `docs/customization.md`, `docs/workflow-engine.md`."
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining-grants/proposal.md",
+            "text": "`docs/getting-started.md`'s marker sentence"
+          }
+        ],
+        "searched": [
+          "getting-started"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The chain schema's describe string and comment will still list three keys and one reader",
+      "marker_source": "internal-review",
+      "file": "src/core/project-config.ts",
+      "line": 94,
+      "classification": "trivial_fix",
+      "action": "task 1.1 names the chain schema describe string and the comment above it",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/seam-chaining-grants/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining-grants/tasks.md",
+            "text": "the `chain` schema's `.describe(...)` string"
+          }
+        ],
+        "searched": [
+          "describe(",
+          "ON ITS OWN"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Ten of ten resolved. The four stale baseline sentences are carried whole (ratified 1A), taking the change to 16 requirements, declared over the ceiling of 12, and 109 delta scenarios, 55 undeclared for task 6.1. A withdrawn grant now writes the emit with no consent field and names the key (ratified 2A). The tag sentence is worded without tag forms (settled under R-crc-3).",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews seam-chaining-grants",
+  "ripple_misses": 0
+}

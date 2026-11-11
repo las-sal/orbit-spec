@@ -55,12 +55,12 @@ object reports at entry:
 |---|---|
 | typed by the user, whatever the `chain` setting grants | `user-invoked`, no consent prompt |
 | not typed; `chain.next` is this command and `may_run` is true | granted: `setting`, no consent prompt |
-| not typed; `why: not-granted` (the key absent or false, or no `chain` map) | the consent prompt fires: `prompted` on Proceed, no summary on Abort |
-| not typed; `why: open-stop` | the consent prompt fires; the stop's question was put by the closing step that stopped the chain |
-| not typed; `chain.next` names another command, or `why: none` | the consent prompt fires, then the gate inflection as without the setting |
+| not typed; `chain.next` is this command and `why: not-granted` (the key absent or false, or no `chain` map) | the consent prompt fires: `prompted` on Proceed, no summary on Abort |
+| not typed; `chain.next` is this command and `why: open-stop` | the consent prompt fires; the stop's question was put by the closing step that stopped the chain |
+| not typed; `chain.next` names another command (whatever its `why`), or `why: none` | the consent prompt fires, then the gate inflection as without the setting |
 | not typed; `why: needs-user` | cannot hold here: that row is tested for the `review-external` key only |
 | not typed; `why: no-progress` | cannot hold at entry: that row is tested only on a status call carrying `--chain-ran` |
-| the later chunks of one chunked apply | the entry's value, constant across the invocation's emits |
+| the later chunks of one chunked apply | the entry's value, constant across the invocation's emits, except an emit after a withdrawn grant (the named limit in `Consent recorded in consent-scoped lifecycle emits`) |
 | the sync inside archive | inherits archive's value and never prompts |
 | `/orbit:bulk-archive` | never granted: the engine never names it as a next command; it prompts per change as below |
 
@@ -149,9 +149,12 @@ command's own summary. An abort at the consent prompt writes NO summary (existin
 a summary that exists has exactly three consent stories. `user-invoked` and `prompted` are
 self-reported by the emitting session (honest-actor legibility, not enforcement — the enforcement
 layer is the prompt itself); `setting` is checked, because a grant is a file the gate can read.
-Named limit: a grant withdrawn between a command's entry and its emit refuses a true record; the
-refusal names the key, and the session then asks the user and records `prompted`. Emits predating
-this capability lack the field and are exempt.
+Named limit: a grant withdrawn between a command's entry and its emit refuses a true record. On that
+refusal the session writes the emit again with no `consent` field, and its `final_assessment` names the
+withdrawn key; it asks the user nothing, since the command's writes have already happened. The emits
+the invocation wrote before the withdrawal stand. The absent field is the audit-drift tripwire's
+condition (per `orbit-audit-drift`), so the transition is flagged rather than recorded under a consent
+nobody gave. Emits predating this capability lack the field and are exempt.
 
 #### Scenario: User-typed apply records user-invoked
 
@@ -187,8 +190,30 @@ this capability lack the field and are exempt.
   payload with `consent: "setting"`
 - **THEN** the emit is refused, no file is written, and the error names the `apply` key
 
+#### Scenario: A withdrawn grant writes the emit without consent
+
+- **WHEN** a granted apply's first chunk emit carries `consent: "setting"`, the user then removes `apply`
+  from the `chain` map, and the second chunk's emit is refused naming the `apply` key
+- **THEN** the session writes the second emit with no `consent` field and a `final_assessment` naming the
+  withdrawn `apply` key, asks the user nothing, and leaves the first emit as written
+
 #### Scenario: A value outside the three is refused
 
 - **WHEN** `orbit emit apply` receives a payload with `consent: "granted"`
 - **THEN** the emit is refused, no file is written, and the error names `user-invoked`, `prompted`
   and `setting`
+
+### Requirement: The engine never prompts for consent
+
+Consent prompting SHALL live exclusively in workflow bodies. The engine (CLI commands, gate
+computation, readouts) reports eligibility and surfaces the consent marker but SHALL NOT add
+interactive consent confirmation to CLI-direct invocations — a human typing `orbit archive` IS
+the consent. Engine changes for this capability are declaration parsing, display wording, and the write gate's check
+of the `consent` value (`Consent recorded in consent-scoped lifecycle emits`); the engine never adds an interactive
+prompt.
+
+#### Scenario: CLI-direct archive unchanged
+
+- **WHEN** a user runs `orbit archive <name>` directly in a terminal
+- **THEN** no consent prompt is added by the engine; upstream confirmations and the C2
+  fingerprint guard behave exactly as before

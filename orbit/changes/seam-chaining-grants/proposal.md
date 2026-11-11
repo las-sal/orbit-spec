@@ -20,15 +20,19 @@ was asked (see explore.md, Premise and D-sga-2).
 - **The consent value is one of three, and the write gate checks it.** `orbit emit apply` and `orbit emit archive`
   refuse `setting` when the project's `chain` map does not grant the emit's command, naming the key, and refuse any
   value outside `user-invoked`, `prompted` and `setting`. The two self-reported values stay self-reported; the field's
-  absence stays audit-drift's tripwire, unchanged (D-sga-6).
+  absence stays audit-drift's tripwire, unchanged (D-sga-6). A grant withdrawn between entry and emit writes the emit
+  with no `consent` field and names the withdrawn key, so the tripwire flags it; nothing is asked after the writes.
 - **The apply and archive bodies treat each prompt by its kind.** Their prompts join the list of
   `A chain treats each prompt by its kind` and carry a `(chain: …)` tag at their site; the tag test extends to the
   two bodies. The sync assessment takes its marked default; incomplete artifacts or tasks, unresolved `@review:`
   markers, and every anomaly prompt stop the chain (D-sc-12's apply and archive rows).
 - **A chained apply or archive records its grant in its `consent` value**, not in a `Chained:` sentence: the key and
   the command are one-to-one (D-sga-6).
-- **The docs say what the two keys grant**: `docs/customization.md`'s `chain` row and the `consent` explanations in
-  `docs/workflow-engine.md`.
+- **The baseline stops saying consent is only typed or prompted.** Four requirements whose sentences this change makes
+  false are restated: the shared summary format's two `consent` types, the PR tail's consent list, the engine's "display
+  wording only", and the gate vocabulary's "requires an explicit user invocation".
+- **The docs say what the two keys grant**: `docs/customization.md`'s `chain` row, the `consent` explanations in
+  `docs/workflow-engine.md`, and `docs/getting-started.md`'s marker sentence.
 
 Out of scope: committing before a chained external review (the third change, D-sga-1), and merging or returning to
 the default branch (the driver's, D-sc-17).
@@ -42,17 +46,21 @@ the default branch (the driver's, D-sc-17).
 ### Modified Capabilities
 
 - `orbit-lifecycle-consent`: the provenance rule and the consent prompt gain the granted arrival; the recorded value
-  becomes one of three, `setting` checked by the write gate (`Invocation-provenance rule`,
-  `Consent prompts at consent-marked seams`, `Consent recorded in consent-scoped lifecycle emits`).
+  becomes one of three, `setting` checked by the write gate, and the engine's changes include that check
+  (`Invocation-provenance rule`, `Consent prompts at consent-marked seams`, `Consent recorded in consent-scoped
+  lifecycle emits`, `The engine never prompts for consent`).
 - `orbit-engine-gates`: the key table gains the `apply` and `archive` rows, and the sentence saying no key grants
-  them is replaced (`The chain setting grants each command on its own key`).
+  them is replaced, and the consent vocabulary admits a grant (`The chain setting grants each command on its own key`,
+  `Gate declaration in schema YAML`).
 - `orbit-archive-modifications`: the archive summary's consent scenario, its schema reference's field list, and the
-  consent prompt's granted arrival (`Archive run summary written`, `Archive summary schema reference ships with the
-  skill`, `Consent prompt on AI-mediated archive entry`).
+  consent prompt's granted arrival, and the tail's outward writes ride a granted entry (`Archive run summary written`,
+  `Archive summary schema reference ships with the skill`, `Consent prompt on AI-mediated archive entry`, `PR-attached
+  archive tail`).
 - `orbit-run-summary-emit`: the apply emit's consent field takes the third value (`Consent field on the apply emit`).
 - `orbit-conventions`: the prompt list gains apply's and archive's prompts, the tag test reaches their bodies, and a
-  chained apply or archive records its grant in its consent value (`A chain treats each prompt by its kind`,
-  `Each chained prompt states its kind`, `No-chaining contract`).
+  chained apply or archive records its grant in its consent value, and the shared summary format types `consent` as
+  three values (`A chain treats each prompt by its kind`, `Each chained prompt states its kind`, `No-chaining
+  contract`, `Internal-run JSON summary format`).
 - `orbit-pr-lifecycle`: the single-session assumption no longer says every lifecycle command is user-invoked
   (`Single-session operating assumption and v1 limits`).
 
@@ -66,9 +74,12 @@ the default branch (the driver's, D-sc-17).
   payload notes, the archive summary schema reference, and the prompt tags.
 - Tests: `test/core/templates/chain-prompt-tags.test.ts` (the inventory and the scanned bodies), the chain object's
   and the config resolver's tests, and new write-gate cases.
-- Docs: `docs/customization.md`, `docs/workflow-engine.md`.
+- Docs: `docs/customization.md`, `docs/workflow-engine.md`, `docs/getting-started.md`.
 - No new dependency, no new payload field, no change to the human readout or to any gate.
 
 ## Size
 
 - capabilities: the consent value and the grants that write it are one feature (D-sga-1); four of the six capabilities carry only a restated consent value or sentence (Declare, chosen at propose 2026-11-10).
+- requirements: four of the sixteen are baseline requirements carried only to correct a sentence the grant makes false
+  (the summary format's consent types, the PR tail's consent list, the engine's scope, the gate vocabulary); fixed in
+  this change rather than left for audit-drift (Declare, chosen at the proposal walk 2026-11-10).

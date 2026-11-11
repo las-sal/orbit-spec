@@ -9,7 +9,8 @@ arrival was granted by the `apply` key of the project's `chain` map (the write g
 does not grant it).
 The field applies to every post-capability apply emit (all three emit rules: chunk completion,
 mid-chunk pause, no-chunking session end — the consent story is a property of the apply
-invocation, identical across its chunks' emits). Emits predating the consent capability lack the
+invocation, identical across its chunks' emits, except an emit written after a withdrawn grant, which carries no
+field per `orbit-lifecycle-consent`'s named limit). Emits predating the consent capability lack the
 field and are exempt from the audit-drift tripwire (per `orbit-audit-drift`). Downstream parsers
 SHALL ignore the field if unknown (forward-compat, matching `recommendation_options` precedent).
 The archive emit's consent field is specified in `orbit-archive-modifications`' `Archive run

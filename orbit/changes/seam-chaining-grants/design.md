@@ -66,9 +66,12 @@ naming the granting key (out: the key and the command are one-to-one, and a fiel
 
 **4. The archive body states the tag rules itself.** A chained archive's session holds the previous body's Chain end
 step, which says how a tagged prompt behaves, but the archive skill must not depend on another skill's text being in
-context. Its granted bullet says it in one sentence: a `(chain: target)` prompt does not fire, a
-`(chain: routine, default: <option>)` prompt takes that default and the run summary's `final_assessment` records
-`The chain took the default: <prompt> — <answer>.`, and a `(chain: decision)` prompt is asked as on a typed arrival.
+context. Its granted bullet says it in one sentence, worded without the parenthesized tag forms so the tag test reads
+no site on that line: a target prompt does not fire, a routine prompt takes the default its tag names and the run
+summary's `final_assessment` records `The chain took the default: <prompt> — <answer>.`, and a decision prompt is
+asked as on a typed arrival. Alternative: the sentence as a constant the test strips beside `CHAIN_END_STEP` (out: a
+second exemption in the scanner and in `Each chained prompt states its kind`, for one sentence; settled under R-crc-3
+at the proposal walk).
 Archive gains no Chain end step: the command after it is not a change command (D-sc-17), so its no-chaining bullet stays
 the standard one and the tag test's count of standard bullets is unchanged. Apply already carries the step.
 
@@ -86,7 +89,15 @@ or archive records it as `consent: "setting"` and writes no sentence (`orbit-con
 The Chain end step's sentence naming where the record goes gains that clause, so the five bodies carrying it stay
 byte-equal to one another.
 
-**7. Docs.** `docs/customization.md`'s `chain` row drops "No key grants apply or archive" and names the two keys and the
+**7. Four baseline sentences restated.** The grant makes four baseline sentences false, so their requirements are carried
+whole: `orbit-conventions`' `Internal-run JSON summary format` (its apply and archive `consent` types gain `setting`),
+`orbit-archive-modifications`' `PR-attached archive tail` (the tail's outward writes ride a granted entry too, whose row
+names them), `orbit-lifecycle-consent`'s `The engine never prompts for consent` (the engine's changes include the write
+gate's check) and `orbit-engine-gates`' `Gate declaration in schema YAML` (a marked phase is entered by a user
+invocation or a grant). The carry takes the change to sixteen requirements, declared over the ceiling of twelve; their
+baseline scenarios are declared by task 6.1 like every other carried scenario.
+
+**8. Docs.** `docs/customization.md`'s `chain` row drops "No key grants apply or archive" and names the two keys and the
 archive key's outward writes; its `consent` row and `docs/workflow-engine.md`'s consent paragraph say a step marked
 `user-invoked` is one you invoke yourself or grant with `chain`. `docs/getting-started.md`'s marker sentence gains the
 same clause.
@@ -94,8 +105,10 @@ same clause.
 ## Risks / Trade-offs
 
 - [A grant withdrawn between a command's entry and its emit refuses a true record] → the named limit in
-  `Consent recorded in consent-scoped lifecycle emits`: the refusal names the key, and the session asks the user and
-  records `prompted`.
+  `Consent recorded in consent-scoped lifecycle emits`: the session writes the emit again with no `consent` field and
+  names the withdrawn key in its `final_assessment`, asking nothing after the writes; earlier chunk emits stand, and
+  audit-drift's tripwire flags the absent field. Alternative: ask the user after the writes and record `prompted` (out:
+  a consent given after the act, which breaks chunk constancy and has no Abort for an archive already moved).
 - [A granted archive pushes and flips a PR with nobody asked] → the user's own grant, whose row names the push and the
   flip; a push rejection or a degraded tail skips with its note exactly as on a typed archive, and the merge stays the
   user's act.
@@ -106,14 +119,18 @@ same clause.
 - [Parity pins move] → every body carrying `CHAIN_END_STEP` changes, so `skill-templates-parity`'s function and content
   hashes for propose, ff, apply, review and address-reviews move, and archive's too; `rc03b-untouched-modules`' pin on
   `emit-composition.ts` moves. Re-pinned deliberately in tasks.
-- [Carried scenarios] → the twelve modified blocks carry 51 baseline scenarios; with the 16 new ones, 32 of the 67 are
-  undeclared at propose. Each is declared by a test tag or a ledger entry before the apply gate, when undeclared turns
+- [Carried scenarios] → the sixteen modified blocks carry 91 baseline scenarios; with the 18 new ones, 55 of the 109 are
+  undeclared after the proposal walk (32 of 67 at propose). Each is declared by a test tag or a ledger entry before the apply gate, when undeclared turns
   to ERROR.
 
 ## Migration Plan
 
 None: an absent `chain` key, or one without `apply` or `archive`, behaves as today. Emits already written carry
 `user-invoked` or nothing, both accepted. Rollback is a revert.
+
+At archive, `orbit-lifecycle-consent`'s Purpose is edited in place, since no delta carries `## Purpose`: consent is
+determined by invocation provenance or a grant by the project's `chain` setting, and the engine never prompts but
+checks a `setting` value at the write gate.
 
 ## Open Questions
 

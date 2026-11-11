@@ -1,25 +1,29 @@
 schema: spec-driven
 created: 2026-11-10
 schema_version: 5
+architecture:
+  doc: automate-dev-flow
+  stage: seam-chaining
 base_fingerprints:
   orbit-archive-modifications:
     Archive run summary written: sha256:b30412e15f4faf0b6fed96c1b533357b22992ba4529ed16f6f8545a1f7dc4297
     Archive summary schema reference ships with the skill: sha256:104ef778e46150e3a94323d019364aa7bf8f161df9485747ad1d3e679c4783d2
     Consent prompt on AI-mediated archive entry: sha256:34ac6595ac86274c440dbf6a5f8df47097286981c29c4420d01b0249952c7924
+    PR-attached archive tail: sha256:29a2633ed35131cc39600fe7b76c2d4a5e59d576fcbe883d4dd77350cd02e967
   orbit-conventions:
     No-chaining contract: sha256:463a9df1279f87ac3f689d6a7b886f41f7d7d5be923c7be5c402197d68da6c91
     A chain treats each prompt by its kind: sha256:753a8ef3c2f7c3d3e419a667fa6f270d9b049dc69aebbf84ad39c92103aa0723
     Each chained prompt states its kind: sha256:1e067de541543af8e98e9b2ebe4c403b9c3a9794a04a6a8e90a0c87d5e3e3ad8
+    Internal-run JSON summary format: sha256:bbeb5810ed6adc37e7cd6f3becaa5ccdfa74ddaaa298c7ffb4776ceecc20f0e7
   orbit-engine-gates:
     The chain setting grants each command on its own key: sha256:75b2b16495381ecf625960078637db10ee12c354c9578c4fde1e0101c874749a
+    Gate declaration in schema YAML: sha256:8634d1af17f1a4a301fdd9b48805dff43c516548a6cd624c2b28c5c1c982b6e8
   orbit-lifecycle-consent:
     Invocation-provenance rule: sha256:54fa400ca01d9437d68151cc3be02736a363298aacab045230eb64142e0c59eb
     Consent prompts at consent-marked seams: sha256:000773c3f0f091065f830019f4de1d5bc65e3718976eb3985cb1e3b53b172529
     Consent recorded in consent-scoped lifecycle emits: sha256:438137b7c991fa20c131b9fa2756cd95da0a759e8928f15d7ada8fbf921ac623
+    The engine never prompts for consent: sha256:d32ced3ce7382c56ce79fee062582027da37b982ace27b454da293980e0d2d9e
   orbit-pr-lifecycle:
     Single-session operating assumption and v1 limits: sha256:cda2a850aaad8c31ca8bf809ef8d851782083ecf61b563bbc19bd81e26e348d9
   orbit-run-summary-emit:
     Consent field on the apply emit: sha256:8317473fb30a7beb237c534270af6ece83330383a556cb7e8dab5c7b5a1dedef
-architecture:
-  doc: automate-dev-flow
-  stage: seam-chaining
