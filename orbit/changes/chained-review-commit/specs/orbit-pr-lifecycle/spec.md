@@ -3,7 +3,7 @@
 ### Requirement: The commit and push settings
 
 The system SHALL read two OPTIONAL top-level keys from `orbit/config.yaml`, `commit` and `push`, each granting ONE act
-of the commit step (`orbit-conventions`' `The commit step closes every body that writes to a change`): `commit` lets
+of the commit step (`orbit-conventions`' `The commit step closes each carrying body`): `commit` lets
 the step commit everything uncommitted on the change's attached branch, and `push` lets it push that branch to the
 resolved remote. A key is granted only by the literal `true`; any other value (`false`, a string, a number, a map, a
 list) or an absent key grants nothing, read silently with no warning, as the `chain` map is read. Neither key derives
@@ -55,35 +55,45 @@ first matching row deciding:
 | no attachment on the change's trail (the latest attachment-bearing propose or ff emit) | `off`, after no `git` call | — |
 | HEAD is detached | `skip` | `detached` |
 | HEAD is not the attachment's branch | `skip` | `head-mismatch`, `detail` naming HEAD's branch and the attachment's |
-| the attachment's branch is the branch `refs/remotes/<resolved-remote>/HEAD` names | `skip` | `default-branch` |
-| a merge or rebase is in progress: an unmerged porcelain entry (`DD`, `AU`, `UD`, `UA`, `DU`, `AA`, `UU`), `MERGE_HEAD`, or a rebase directory | `skip` | `merge-in-progress` |
+| `refs/remotes/<resolved-remote>/HEAD` exists and names the attachment's branch | `skip` | `default-branch` |
+| a merge, rebase, cherry-pick or revert is in progress: an unmerged porcelain entry (`DD`, `AU`, `UD`, `UA`, `DU`, `AA`, `UU`), `MERGE_HEAD`, `CHERRY_PICK_HEAD`, `REVERT_HEAD`, or a rebase directory | `skip` | `merge-in-progress` |
 | otherwise | `proceed` | `null`, or the resolution's code when the push is dropped |
 
-A commit takes EVERYTHING uncommitted that `.gitignore` does not exclude, the user's own edits included, by state as
+The attachment's branch cannot be named like the default branch at the propose that created it: `orbit pr select` refuses that name (`default-collision`). The `default-branch` row covers a default branch changed since, and it reads the remote's `HEAD` ref only, with no `gh` query. Named limit: when that ref is absent (a remote added by hand never sets it), the row is not tested, and a default branch renamed to the attachment's name since propose is not caught.
+
+A commit takes EVERYTHING uncommitted, the user's own edits included, except the untracked files `.gitignore` excludes, by state as
 `git status --porcelain -z --untracked-files=all` reports it (read by the parser `orbit pr publish` and `orbit pr tail`
 share):
 
 | uncommitted path | the stage |
 |---|---|
-| a modified or deleted tracked file, whoever changed it | staged |
+| a modified or deleted tracked file, whoever changed it, including one that matches a `.gitignore` rule (ignore rules never apply to tracked files) | staged |
 | an untracked file `.gitignore` does not exclude | staged, and listed in `observations.untracked` |
-| a file `.gitignore` excludes | never staged: porcelain does not report it |
+| an untracked file `.gitignore` excludes | never staged: porcelain does not report it |
 | a path already staged | committed with the rest |
 | an unmerged path | never reached: the gate's `merge-in-progress` row |
 | no uncommitted path at all | no stage and no commit are printed |
 
 `observations.untracked` lists each untracked path the stage would add, read from that one porcelain call, and the body
 names them in one line (the archive tail's naming of untracked files, R-adf-13, is the precedent). A `proceed` prints
-ONE segment, its inputs `<message-file>` when the commit is printed and none otherwise:
+ONE segment when at least one step is printed, its inputs `<message-file>` when the commit is printed and none
+otherwise, and NO segment when nothing is printed (a clean tree with nothing to push). The body writes `<message-file>`
+OUTSIDE the working tree (the OS temp directory), never inside it, because the stage is `git add -A` and would commit
+the message itself; it keeps the file until every printed step has run, so a failure line's recovery can name it.
 
 | step | `argv` | printed when |
 |---|---|---|
 | `stage` | `git add -A` | `commit` is granted and a path is uncommitted |
 | `commit` | `git commit -F <message-file>` | with the stage |
-| `push` | `git push <resolved-remote> <branch>` | `push` is granted and there is something to push: the printed commit, a commit `git rev-list @{u}..HEAD` counts, or a branch with no upstream |
+| `push` | `git push -u <resolved-remote> <branch>` | `push` is granted and there is something to push to that destination: the printed commit, a commit `git rev-list refs/remotes/<resolved-remote>/<branch>..HEAD` counts, or no such remote-tracking ref |
 
 The remote is resolved by `Remote and default-branch resolution` WITHOUT the default-branch query, so the subcommand
-never needs `gh` and has no `gh-absent` skip. When no remote resolves, the `default-branch` row is not tested, the push
+never needs `gh` and has no `gh-absent` skip: the shared resolver checks `gh`'s availability only on the path that
+queries the default branch, and the four subcommands that query it skip on `gh-absent` exactly as before. The push's
+destination is that resolved remote and the attachment's branch, never the branch's configured upstream, and what is
+unpushed is measured against that destination's remote-tracking ref. Named limit: the subcommand does not fetch, so a
+remote-tracking ref older than the remote counts commits as pushed that the remote has since lost; the push is then
+not printed until a later commit. When no remote resolves, the `default-branch` row is not tested, the push
 is dropped with `degraded: "pr"` and the resolution's reason code, and the stage and commit stand. `observations`
 carries the resolution, `branch`, `settings` (`{commit, push}`), `untracked` and `unpushed`. `human_acts` is always
 empty. Every `git` invocation it makes is in that requirement's allowlist.
@@ -97,7 +107,7 @@ empty. Every `git` invocation it makes is in that requirement's allowlist.
 
 #### Scenario: An ignored file is never committed
 
-- **WHEN** both settings are granted and a file `.gitignore` excludes is present beside a modified tracked file
+- **WHEN** both settings are granted and an untracked file `.gitignore` excludes is present beside a modified tracked file
 - **THEN** the printed segment's commit carries the tracked file only, and `observations.untracked` does not name the
   ignored file
 
@@ -108,13 +118,44 @@ empty. Every `git` invocation it makes is in that requirement's allowlist.
 
 #### Scenario: The default branch is never committed to
 
-- **WHEN** both settings are granted and the attachment's branch is the branch `refs/remotes/<resolved-remote>/HEAD`
-  names
+- **WHEN** both settings are granted and `refs/remotes/<resolved-remote>/HEAD` exists and names the attachment's branch
+  (the default branch was changed to that name after propose)
 - **THEN** it prints `action: "skip"` with reason code `default-branch`, and no segments
+
+#### Scenario: A missing remote HEAD ref leaves the default-branch row untested
+
+- **WHEN** both settings are granted on the attached branch, a file is modified, and `refs/remotes/<resolved-remote>/HEAD`
+  does not exist
+- **THEN** it prints `proceed` with the stage, the commit and the push; the `default-branch` row is not tested
+
+#### Scenario: A tracked file matching an ignore rule is committed
+
+- **WHEN** both settings are granted, a tracked file matches a `.gitignore` rule, and that file is modified
+- **THEN** the printed segment's stage and commit carry it, as `git add -A` does
+
+#### Scenario: The message file never lands in the commit
+
+- **WHEN** the body runs a printed segment that carries the commit
+- **THEN** `<message-file>` was written outside the working tree, the commit's tree holds no message file, and
+  `git status --porcelain` is empty after the segment
+
+#### Scenario: A clean tree with nothing to push prints no segment
+
+- **WHEN** both settings are granted on the attached branch, nothing is uncommitted, and the branch's remote-tracking ref
+  equals HEAD
+- **THEN** it prints `proceed` with no segments, and the body writes no message and runs nothing
+
+#### Scenario: The push goes to the resolved remote, set as upstream
+
+- **WHEN** only `push: true` is set, HEAD tracks a branch on another remote, and the attachment's branch on the resolved
+  remote lacks a commit HEAD has
+- **THEN** the printed push is `git push -u <resolved-remote> <branch>`, measured against
+  `refs/remotes/<resolved-remote>/<branch>`, not the configured upstream
 
 #### Scenario: A merge in progress prints nothing to run
 
-- **WHEN** both settings are granted and the working tree holds an unmerged path from an unfinished merge
+- **WHEN** both settings are granted and the working tree holds an unmerged path from an unfinished merge, or a
+  cherry-pick stopped with no conflicted path (`CHERRY_PICK_HEAD` present)
 - **THEN** it prints `action: "skip"` with reason code `merge-in-progress`, and no segments
 
 #### Scenario: No gh is needed to commit and push
@@ -215,7 +256,7 @@ A body SHALL CONSUME an `orbit pr` record by its fields alone, and SHALL NOT re-
 the record decided: it calls `select` at propose and ff phase 1, `publish` at phase 3,
 `preflight` before the archive's move (the change is still active; its record is carried
 forward to the archive emit and to `tail --outcome`), `tail` after the move and the emit, and
-`program` at the architect arc-done readout, and `commit` at the commit step that closes each carrying body (`orbit-conventions`' `The commit step closes every body that writes to a change`), and acts by this table, whose rows cover every shape the record type
+`program` at the architect arc-done readout, and `commit` at the commit step that closes each carrying body (`orbit-conventions`' `The commit step closes each carrying body`), and acts by this table, whose rows cover every shape the record type
 (`The \`orbit pr\` command observes and prints; it never writes`) can return:
 
 | the call returns | the body |

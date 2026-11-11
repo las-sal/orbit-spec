@@ -1,14 +1,18 @@
 ## ADDED Requirements
 
-### Requirement: The commit step closes every body that writes to a change
+### Requirement: The commit step closes each carrying body
 
-Every generated workflow body that writes to a change SHALL close with the commit step: one text composed once in code
-(`COMMIT_STEP`) and carried byte-equal. The step runs `orbit pr commit <change-name> --json` in the session the command
-was invoked in, after the command's run summary is written and before the chain end step (`No-chaining contract`),
-and acts on the record by `orbit-pr-lifecycle`'s consumption table (`PR actions are workflow-body choreography (zero
-engine git)`). On `off` it prints nothing and runs nothing. On `skip` it writes one line from the reason. On `proceed`
-it writes the commit message (one line naming the command, the change and what the session did), runs the printed
-steps in order, and names, in one line, each path `observations.untracked` lists. What it may commit, and to which
+Each CARRYING body, a generated workflow body the table below marks yes, SHALL close with the commit step: one text
+composed once in code (`COMMIT_STEP`) and carried byte-equal. The step runs `orbit pr commit <change-name> --json` in the session the command
+was invoked in, after the command's run summary is written and BEFORE the position readout, so its lines precede the
+readout and the eligibility line that end the turn, and the chain end step (`No-chaining contract`) still follows
+them. With no change target (an architecture-mode review, a `--doc` walk, a project-wide walk) the step does nothing
+and calls nothing, as the chain end step does. It acts on the record by `orbit-pr-lifecycle`'s consumption table
+(`PR actions are workflow-body choreography (zero engine git)`). On `off` it prints nothing and runs nothing. On `skip`
+it writes one line from the reason. On `proceed` it runs the printed segment, if any: when the segment's inputs name
+`<message-file>`, it first writes the commit message (one line naming the command, the change and what the session
+did) to a file OUTSIDE the working tree (the OS temp directory), which it keeps until every printed step has run; it
+runs the printed steps in order, and names, in one line, each path `observations.untracked` lists. What it may commit, and to which
 branch, is `orbit-pr-lifecycle`'s `` `orbit pr commit` computes the closing commit step ``; what grants it is that
 capability's `The commit and push settings`. A worker the session dispatched (a fresh reviewer, a blind pair's fresh
 half) persists its pass and returns, and never runs the step. The bodies, SOURCED from the workflow templates under
@@ -16,23 +20,24 @@ half) persists its pass and returns, and never runs the step. The bodies, SOURCE
 
 | body | carries the step |
 |---|---|
-| propose, ff | yes: after the completion emit and `publish`'s record segment, before the chain end step |
-| apply | yes: at the session's close, before the chain end step, not at each chunk boundary |
-| review | yes: in the invoking session, before the chain end step |
-| address-reviews | yes: before the chain end step |
-| verify | yes: at its close |
-| explore | yes: after each boundary emit; it resolves `off` for a staging exploration, which has no attachment |
+| propose, ff | yes: after the completion emit and `publish`'s record segment, before the position readout |
+| apply | yes: at the session's close, before the position readout, not at each chunk boundary |
+| review | yes: in the invoking session, before the position readout; with no change target it does nothing |
+| address-reviews | yes: before the position readout; with no change target it does nothing |
 | archive | yes: after the PR-attached tail and before the completion readout; the tail commits its enumerated scope, and under `commit: true` the step commits the rest in a second commit, so the tail's unrelated-paths guarantee (`orbit-archive-modifications`' `PR-attached archive tail`) holds for the tail's own commit |
 | new, continue | no: never attached (`orbit-pr-lifecycle`'s `PR entry points`) |
 | bulk-archive | no: it archives several changes and runs no tail; its writes ride the next carrying body's commit |
 | architect, audit-drift | no: no change target |
 | sync-specs | no: it writes no run record; its writes ride the next carrying body's commit |
+| verify | no: a system review's Pass 0 runs it inside the review's own session, where a commit would land mid-review; its run summary rides the next carrying body's commit |
+| explore | no: a staging exploration is never attached, and an exploration resumed in a change's directory leaves its writes to the next carrying body's commit |
 | onboard | no: it writes nothing |
 
 (`feedback` is not generated, and `pr-choreography` is text propose and ff share, not a body.) At the defaults (neither
 setting granted) the step's one act is that read-only call: the record is `off`, and the body prints nothing and runs
 nothing (G0, as R-adf-12 words it). Named limits: an apply session's work stays uncommitted until the session closes,
-however many chunks it completes; and bulk-archive's and sync-specs' writes wait for the next carrying body.
+however many chunks it completes; and the writes of bulk-archive, sync-specs, verify and explore wait for the next
+carrying body.
 
 #### Scenario: At the defaults the step prints nothing
 
@@ -55,6 +60,16 @@ however many chunks it completes; and bulk-archive's and sync-specs' writes wait
 - **WHEN** an attached change archives under `commit: true` with an unrelated tracked edit in the tree
 - **THEN** the tail's commit leaves the edit out, as `orbit-archive-modifications` promises, and the step after it
   commits the edit; without the setting the edit stays uncommitted, as today
+
+#### Scenario: A walk with no change target calls nothing
+
+- **WHEN** `/orbit:address-reviews --doc <doc>` closes under `commit: true`
+- **THEN** the step does nothing and `orbit pr commit` is not called
+
+#### Scenario: The step's lines precede the readout
+
+- **WHEN** a carrying body closes under `commit: true` and the step names an untracked file it committed
+- **THEN** that line prints before the position readout and the eligibility line
 
 #### Scenario: Every carrying body carries the step byte-equal
 
@@ -86,7 +101,7 @@ pass is written by a worker whose brief carries nothing from the session that di
 command reads the object at its end: a worker that session dispatched — a fresh reviewer, a blind pair's fresh half —
 persists its pass and returns, and never chains. A command with no change target — an architecture-mode review, a
 `--doc` walk, a project-wide walk — reads no object and ends at its readout. A chained external review or blind pair
-needs a committed tree. Where the commit step commits (`The commit step closes every body that writes to a change`: `commit: true`, an attached change, HEAD on its branch), it runs before this read, so the review arrives on a committed tree; anywhere else an uncommitted tree makes it write no run record, the object reports `no-progress`, and the AI
+needs a committed tree. Where the commit step commits (per `The commit step closes each carrying body`), it runs before this read, so the review arrives on a committed tree; anywhere else an uncommitted tree makes it write no run record, the object reports `no-progress`, and the AI
 says the tree is uncommitted — a named limit. With no `chain` setting the object never allows a command,
 and the contract holds exactly as without the setting. Blanket delegation
 ("follow the cadence", "take it through review") covers work WITHIN each explicitly requested

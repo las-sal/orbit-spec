@@ -127,7 +127,7 @@ stage; G1–G6 are graded at first-run, on that project's trail and transcripts.
   the work to it throughout, and the user gives the go-ahead for the merge at the end. Committing and pushing are each
   an opt-in setting, defaulting to today's behaviour (R-adf-1, R-adf-6); orbit never commits on its own to the default
   branch, and a commit takes everything uncommitted that `.gitignore` does not exclude, naming each untracked file it
-  adds (D-chrc-1 to D-chrc-6 in `orbit/explore/chained-review-commit/explore.md`). New projects get
+  adds (D-chrc-1 to D-chrc-6 in the `chained-review-commit` change's `explore.md`). New projects get
   `pr: per-architecture` from `orbit init` (D-chrc-7). Stated by Sal during that exploration as true of the entire
   program.
 

@@ -1,0 +1,529 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-11T19:52:08Z",
+  "change": "chained-review-commit",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/chained-review-commit/.orbit-runs/review-proposal-2026-11-11T18-55-13Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-11T18-55-13Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 5,
+    "suggestion": 8
+  },
+  "pushback_verification": "All thirteen verified against current state: resolve.ts:78 precedes the withDefault return; the explore, verify, position and segment claims read from the delta; none stale.",
+  "resolution_summary": {
+    "resolved": 13,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "resolve(run, {withDefault: false}) still requires gh: the 'never needs gh' premise is false against the code",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 47,
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/chained-review-commit/tasks.md",
+          "orbit/changes/chained-review-commit/proposal.md",
+          "orbit/changes/chained-review-commit/specs/orbit-pr-lifecycle/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "{withDefault: false})`, so it never needs"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/chained-review-commit/design.md",
+            "text": "The edit moves the `gh` check after that return"
+          },
+          {
+            "path": "orbit/changes/chained-review-commit/tasks.md",
+            "text": "Move `resolve.ts`'s `gh-absent` return after its `withDefault` early return"
+          }
+        ],
+        "searched": [
+          "withDefault",
+          "gh-absent",
+          "never needs `gh`"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/chained-review-commit/explore.md",
+            "why": "the exploration is the historical record of how the change took shape; propose keeps it unchanged"
+          }
+        ]
+      },
+      "classification": "trivial_fix",
+      "action": "design D2 now names the resolve.ts edit (the gh-absent return moves after the withDefault early return, so only the default-branch query needs gh); added to Touchpoints, proposal Impact and task 1.2; the commit requirement states that the four existing subcommands skip on gh-absent exactly as before",
+      "evidence": "src/core/pr/resolve.ts:78 returns gh-absent before the withDefault return at line 79"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Bodies with no resolvable change target hit orbit pr commit's usage error, not 'off', so G0 fails at the defaults",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 24,
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/chained-review-commit/design.md",
+          "orbit/changes/chained-review-commit/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "after each boundary emit"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/chained-review-commit/specs/orbit-conventions/spec.md",
+            "text": "With no change target (an architecture-mode review, a `--doc` walk, a project-wide walk) the step does nothing"
+          },
+          {
+            "path": "orbit/changes/chained-review-commit/specs/orbit-conventions/spec.md",
+            "text": "#### Scenario: A walk with no change target calls nothing"
+          }
+        ],
+        "searched": [
+          "no change target",
+          "staging exploration",
+          "usage error"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/chained-review-commit/explore.md",
+            "why": "the exploration is the historical record of how the change took shape; propose keeps it unchanged"
+          }
+        ]
+      },
+      "classification": "trivial_fix",
+      "action": "method call (option A, widened; the user directs method, R-crc-3): with no change target the step does nothing and calls nothing, as the chain end step does; explore no longer carries the step, so no staging exploration calls orbit pr commit; scenario added",
+      "evidence": "the commit requirement makes a name resolving to no change a usage error; a staging exploration is no change"
+    },
+    {
+      "severity": "WARNING",
+      "title": "git add -A stages the body's own <message-file> when it is written inside the work tree, and observations.untracked never names it",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-pr-lifecycle/spec.md",
+      "line": 75,
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/chained-review-commit/specs/orbit-conventions/spec.md",
+          "orbit/changes/chained-review-commit/design.md",
+          "orbit/changes/chained-review-commit/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/chained-review-commit/specs/orbit-pr-lifecycle/spec.md",
+            "text": "OUTSIDE the working tree (the OS temp directory), never inside it"
+          },
+          {
+            "path": "orbit/changes/chained-review-commit/specs/orbit-pr-lifecycle/spec.md",
+            "text": "#### Scenario: The message file never lands in the commit"
+          }
+        ],
+        "searched": [
+          "message-file",
+          "OS temp"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "classification": "trivial_fix",
+      "action": "the commit requirement and the step require <message-file> written outside the working tree (the OS temp directory) and kept until every printed step has run; design D3 says why; a scenario and task 2.4 assert no message file in the commit",
+      "evidence": "the stage is git add -A, and observations.untracked is read before the message file exists"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The verify row fires the step inside a system review: Pass 0 invokes /orbit:verify in the reviewing session",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 23,
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/chained-review-commit/design.md",
+          "orbit/changes/chained-review-commit/tasks.md",
+          "orbit/changes/chained-review-commit/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "| verify | yes: at its close |",
+          "interpolated into eight bodies"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/chained-review-commit/specs/orbit-conventions/spec.md",
+            "text": "| verify | no: a system review's Pass 0 runs it inside the review's own session"
+          }
+        ],
+        "searched": [
+          "verify",
+          "eight bodies",
+          "eight"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/chained-review-commit/explore.md",
+            "why": "the exploration is the historical record of how the change took shape; propose keeps it unchanged"
+          }
+        ]
+      },
+      "classification": "trivial_fix",
+      "action": "verify no longer carries the step (its row is no, naming the nested Pass 0); its run summary rides the next carrying body's commit; design D4 and the named limits say so",
+      "evidence": "references/passes-system.md Pass 0 runs /orbit:verify in the review's own session"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Explore's step position disagrees: spec says after each boundary emit, design D4 and task 2.2 say at its close",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 61,
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/chained-review-commit/specs/orbit-conventions/spec.md",
+          "orbit/changes/chained-review-commit/tasks.md",
+          "orbit/changes/chained-review-commit/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "Verify and explore carry it at their close"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/chained-review-commit/design.md",
+            "text": "Verify and explore\ncarry it no longer"
+          }
+        ],
+        "searched": [
+          "at their close",
+          "at its close",
+          "boundary emit"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/chained-review-commit/explore.md",
+            "why": "the exploration is the historical record of how the change took shape; propose keeps it unchanged"
+          }
+        ]
+      },
+      "classification": "trivial_fix",
+      "action": "explore no longer carries the step, so no position is left to disagree; spec, design D4 and task 2.2 now name the same six bodies and positions",
+      "evidence": "the spec said after each boundary emit, design and tasks said at its close"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "D7's 'a reader of either finds the other' is one-way: the tail's requirement is unchanged and names no step",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 78,
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "a reader of either finds the other"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/chained-review-commit/design.md",
+            "text": "the pointer is one-way, a named\nlimit"
+          }
+        ],
+        "searched": [
+          "finds the other",
+          "one-way"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "classification": "trivial_fix",
+      "action": "design D7 now says the pointer is one-way, a named limit: the tail's requirement names no step",
+      "evidence": "orbit-archive-modifications' tail requirement is unchanged by this change"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The step's lines land after the eligibility line, which the No-chaining contract says ends the turn",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 7,
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/chained-review-commit/design.md",
+          "orbit/changes/chained-review-commit/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "before the chain end step |"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/chained-review-commit/specs/orbit-conventions/spec.md",
+            "text": "#### Scenario: The step's lines precede the readout"
+          }
+        ],
+        "searched": [
+          "before the chain end step",
+          "position readout"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "classification": "trivial_fix",
+      "action": "the step runs after the run summary and before the position readout, so its lines precede the readout and eligibility line; the table's positions say before the position readout; scenario added",
+      "evidence": "task 2.2 had placed the step just before CHAIN_END_STEP, which follows the readout"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "A proceed with nothing to stage and nothing to push prints one empty segment; the step's 'on proceed it writes the commit message' over-reads it",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-pr-lifecycle/spec.md",
+      "line": 77,
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/chained-review-commit/specs/orbit-conventions/spec.md",
+          "orbit/changes/chained-review-commit/design.md",
+          "orbit/changes/chained-review-commit/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "ONE segment, its inputs"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/chained-review-commit/specs/orbit-pr-lifecycle/spec.md",
+            "text": "#### Scenario: A clean tree with nothing to push prints no segment"
+          }
+        ],
+        "searched": [
+          "ONE segment",
+          "empty segment"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "classification": "trivial_fix",
+      "action": "a proceed prints one segment when a step is printed and none otherwise; the step writes a message only when the inputs name <message-file>; scenario added",
+      "evidence": "the gate's otherwise row reached proceed with one empty segment on a clean tree"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The merge-in-progress row misses a cherry-pick or revert stopped without conflicts",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-pr-lifecycle/spec.md",
+      "line": 59,
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/chained-review-commit/design.md",
+          "orbit/changes/chained-review-commit/tasks.md",
+          "orbit/changes/chained-review-commit/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "| a merge or rebase is in progress"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/chained-review-commit/specs/orbit-pr-lifecycle/spec.md",
+            "text": "`CHERRY_PICK_HEAD`, `REVERT_HEAD`"
+          }
+        ],
+        "searched": [
+          "merge-in-progress",
+          "MERGE_HEAD"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "classification": "trivial_fix",
+      "action": "the in-progress row adds CHERRY_PICK_HEAD and REVERT_HEAD (both readable with rev-parse); its scenario covers a stopped cherry-pick",
+      "evidence": "the row named MERGE_HEAD, unmerged entries and a rebase directory only"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "A push with no upstream never sets one, so the push reprints at every close",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-pr-lifecycle/spec.md",
+      "line": 83,
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/chained-review-commit/design.md",
+          "orbit/changes/chained-review-commit/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "`git push <resolved-remote> <branch>`",
+          "a branch with no upstream"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/chained-review-commit/specs/orbit-pr-lifecycle/spec.md",
+            "text": "`git push -u <resolved-remote> <branch>`"
+          }
+        ],
+        "searched": [
+          "git push",
+          "upstream"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "classification": "trivial_fix",
+      "action": "the push is git push -u <resolved-remote> <branch>, as publish's push is, so an upstream is set",
+      "evidence": "src/core/pr/publish.ts prints git push -u; the commit requirement printed no -u"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The No-chaining sentence restates part of the step's gate",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 89,
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "an attached change, HEAD on its branch"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/chained-review-commit/specs/orbit-conventions/spec.md",
+            "text": "Where the commit step commits (per `The commit step closes each carrying body`)"
+          }
+        ],
+        "searched": [
+          "Where the commit step commits"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "classification": "trivial_fix",
+      "action": "the No-chaining sentence points at the step's requirement instead of restating three of its gate's conditions",
+      "evidence": "the MODIFIED sentence listed commit: true, an attached change and HEAD on its branch"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "R-adf-14 cites orbit/explore/chained-review-commit/explore.md, which propose moved",
+      "marker_source": "internal-review",
+      "file": "orbit/architecture/automate-dev-flow.md",
+      "line": 130,
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "orbit/explore/chained-review-commit/explore.md"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/architecture/automate-dev-flow.md",
+            "text": "in the `chained-review-commit` change's `explore.md`"
+          }
+        ],
+        "searched": [
+          "orbit/explore/chained-review-commit"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "classification": "trivial_fix",
+      "action": "R-adf-14's citation now names the chained-review-commit change's explore.md, a path repair that leaves the ruling's content unchanged",
+      "evidence": "orbit/architecture/automate-dev-flow.md:130 cited the staging path propose moved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "docs/commands.md's per-command text is not in the docs task",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 21,
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/chained-review-commit/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/chained-review-commit/tasks.md",
+            "text": "`docs/commands.md` (a sentence"
+          }
+        ],
+        "searched": [
+          "docs/commands.md"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "classification": "trivial_fix",
+      "action": "task 3.2 now updates docs/commands.md with the commit and push behaviour; proposal Impact names it",
+      "evidence": "docs/commands.md describes what each command commits under pr: and was not in the task"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "All thirteen findings of the fresh half resolved by repairs inside the change: the resolver edit is named and tasked, the step does nothing with no change target and runs before the readout, verify and explore no longer carry it (six carrying bodies), the message file lives outside the tree, the push sets its upstream, and the ADDED conventions requirement is renamed The commit step closes each carrying body, since its old title became false.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews chained-review-commit",
+  "ripple_misses": 0
+}

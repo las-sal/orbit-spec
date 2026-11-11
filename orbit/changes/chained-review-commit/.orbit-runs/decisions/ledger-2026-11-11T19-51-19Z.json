@@ -1,0 +1,24 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-11T19:51:19Z",
+  "change": "chained-review-commit",
+  "model": "claude-opus-5-5",
+  "area": "when-things-go-wrong",
+  "decided": "Orbit trusts the check made when the change was proposed, which refuses a pull request branch named like the main branch; at each later commit it re-checks only when the repository records which branch is the main one, and otherwise commits.",
+  "alternatives": [
+    "refuse to commit whenever the main branch cannot be confirmed, which would stop committing in every repository whose remote was added by hand"
+  ],
+  "why": "The branch was already checked against the main branch's name when it was made, so the only miss left is a main branch renamed to this branch's name since, which is rare and is stated as a known limit.",
+  "relies_on": [
+    {
+      "kind": "ruling",
+      "doc": "automate-dev-flow",
+      "id": "R-adf-14"
+    },
+    {
+      "kind": "requirement",
+      "capability": "orbit-pr-lifecycle",
+      "title": "`orbit pr select` computes propose's branch selection"
+    }
+  ]
+}
