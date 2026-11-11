@@ -1,0 +1,30 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-11T02:59:10Z",
+  "change": "seam-chaining-grants",
+  "model": "claude-opus-5-5",
+  "area": "docs",
+  "decided": "The configuration guide names the two new permissions and says that the archive permission also pushes the work, rewrites a per-change pull request's description or adds the change's entry to a program pull request, and marks only a per-change pull request ready for review, while merging stays the user's.",
+  "alternatives": [
+    "name only the two permissions and leave the outward writes to the specification",
+    "leave the guide's sentence saying neither step can be granted until a later release"
+  ],
+  "why": "A user deciding whether to grant the archive step reads the guide, and the archive step's outward writes are exactly what they need to know before granting it.",
+  "relies_on": [
+    {
+      "kind": "decision",
+      "id": "D-sga-4"
+    }
+  ],
+  "defines": [
+    {
+      "term": "per-change pull request",
+      "definition": "a pull request opened for one change alone"
+    },
+    {
+      "term": "program pull request",
+      "definition": "one pull request that all the changes of an architecture doc share, each change adding its own entry to it"
+    }
+  ],
+  "replaces": "ledger-2026-11-10T23-25-29Z.json"
+}
