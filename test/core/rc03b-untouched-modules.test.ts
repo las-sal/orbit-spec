@@ -131,6 +131,12 @@ import { fileURLToPath } from "node:url";
  * MOVED AGAIN at decision-layer's system walk (2026-11-07): `emit-composition.ts` only — the single-name rule is
  * `containment.ts`' `isSingleName` (fresh S2), the command row is read by own property (external W2's ripple), and a
  * decision record is published by an exclusive temporary file and a link, never overwriting (external W1, Sal: A).
+ * MOVED at seam-chaining-grants apply (2026-11-11) — PLANNED acts: TWO files. `emit-composition.ts` — the write
+ * gate's `validateConsent` runs after `validatePayload` for apply and archive: a `consent` value outside
+ * `user-invoked`, `prompted` and `setting` is refused naming the three, and `setting` is refused naming the key
+ * unless `resolveChainSetting` grants the emit's command (task 2.3, design D3). `gates.ts` — comment-only: the
+ * `consent` JSDoc says entry needs a user invocation or a grant by the project's `chain` setting (task 1.1, a pin
+ * the task plan did not name, recorded here as its own act). Every other hash here is unchanged.
  */
 const PINNED: Record<string, string> = {
   "schemas/spec-driven/schema.yaml": "ce8a5274855b9bd8a69220a4691e5a8ba93c4676e8e5b9551afa2d53f6316f6a",
@@ -138,7 +144,7 @@ const PINNED: Record<string, string> = {
   "schemas/spec-driven/templates/proposal.md": "fafaad1c77c8f65ae7411e5dfae9ecc59f7d50028364370f695ef0754c1cf456",
   "schemas/spec-driven/templates/spec.md": "e025078f238dc6e4df552a1e0a140cf9efce0bbdecbeb9f45837d45ed91dca01",
   "schemas/spec-driven/templates/tasks.md": "b2a6a4c08c15f347a1d8c3e2d43e0c8fb066dc5cc0feb795f47555f176f9c421",
-  "src/core/artifact-graph/gates.ts": "46a86a52955269e9ddfd759ac2aca321608fdb8a874fd8e397538e08287f0761",
+  "src/core/artifact-graph/gates.ts": "9459c15828c2dcfbfbbf294bc81be4a76864417c4dfbff5b24d281545e099ac0",
   "src/core/artifact-graph/graph.ts": "3193a3884bb59296dc4ddc177020d3135d99c694109298ac31c3f3a91c45a0ed",
   "src/core/artifact-graph/index.ts": "9dc35ba8e64105fbfd6af821cf99f1fbc5777b74b75311f09fdab279cf12d438",
   "src/core/artifact-graph/instruction-loader.ts": "6e79d8b17fe1140dc98287156253df5e41d4073d0fa5382d1b7fd07c8a02600c",
@@ -149,7 +155,7 @@ const PINNED: Record<string, string> = {
   "src/core/artifact-graph/state.ts": "f59f748b94cd94ca2fe022ec5aa66b3251dd1b2c00bddb9a17cbd9273a04d0f2",
   "src/core/artifact-graph/trail.ts": "39b5d110ef53b7e03f49ddf292e86db598a14f426a02e6d84142e16231e37d69",
   "src/core/artifact-graph/types.ts": "d83e0cc6d7fca7b80618ffbb7ce052ee68e35be79e7949a941e989b2e102392c",
-  "src/core/emit-composition.ts": "97af6fd537e70169a8052a7fcfbc940f3e1a89495ef89d04a58c89d624a79291",
+  "src/core/emit-composition.ts": "eadad0937fbe8547fa0e8fcd7a6a76171a713b812f6f09088d942e6445a61b55",
   "src/core/report-render.ts": "d759878995ed8b5e5c70fb1165d88d134f0aeb91acfce99d155654d1506b9f36",
 };
 

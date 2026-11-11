@@ -17,6 +17,7 @@ import {
   type Trail,
 } from './artifact-graph/trail.js';
 import { isIndependent } from './artifact-graph/gates.js';
+import { resolveChainSetting } from './project-config.js';
 import {
   computePassGenre,
   verificationLedger,
@@ -872,6 +873,33 @@ function resolveTarget(projectRoot: string, command: string, target: EmitTarget)
 // ---------------------------------------------------------------------------
 // Payload validation (the authoritative per-command table)
 // ---------------------------------------------------------------------------
+
+/** The three `consent` values (`orbit-lifecycle-consent`'s `Consent recorded in consent-scoped lifecycle emits`). */
+export const EMIT_CONSENT_VALUES = ['user-invoked', 'prompted', 'setting'] as const;
+
+/**
+ * seam-chaining-grants (D-sga-6): the `consent` value check, for apply and archive when the key is
+ * present. A value outside the three is refused naming them; `setting` is refused naming the key unless
+ * the project's `chain` map grants the emit's command, read through the SAME resolver the change status's
+ * `chain` object reads. No open stop is tested: a stop written during the command must not refuse that
+ * command's own summary. An absent field is not refused (the audit-drift tripwire's condition), and
+ * `consent` on any other command is already refused by `validatePayload` as an unknown key.
+ */
+function validateConsent(command: string, payload: Record<string, unknown>, projectRoot: string): void {
+  if (command !== 'apply' && command !== 'archive') return;
+  if (!Object.prototype.hasOwnProperty.call(payload, 'consent')) return;
+  const value = payload.consent;
+  if (typeof value !== 'string' || !(EMIT_CONSENT_VALUES as readonly string[]).includes(value)) {
+    throw new EmitError(
+      `payload field 'consent' must be one of ${EMIT_CONSENT_VALUES.map(v => `'${v}'`).join(', ')} — got ${JSON.stringify(value)}.`
+    );
+  }
+  if (value === 'setting' && !resolveChainSetting(projectRoot).grants[command]) {
+    throw new EmitError(
+      `payload field 'consent' is 'setting', but the project's \`chain\` map does not grant the '${command}' key (orbit/config.yaml: chain.${command} is absent or not true) — a granted arrival needs that key; when the grant was withdrawn after entry, write the emit with no 'consent' field and name the withdrawn key in its assessment.`
+    );
+  }
+}
 
 function validatePayload(command: string, payload: Record<string, unknown>): void {
   const spec = COMMANDS[command];
@@ -2144,6 +2172,7 @@ export function composeAndWriteEmit(
 
   const resolved = resolveTarget(projectRoot, command, target);
   validatePayload(command, payload);
+  validateConsent(command, payload, projectRoot);
   if (isDecisionCommand(command)) {
     return composeDecisionRecord(command, resolved, payload, projectRoot);
   }

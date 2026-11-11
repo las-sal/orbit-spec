@@ -705,6 +705,7 @@ describe('D6 PR lifecycle surface', () => {
     expect(archive.instructions).toContain('fires no second prompt');
   });
 
+  // @scenario text orbit-archive-modifications :: PR-attached archive tail :: Bulk-archive runs no tail and names what it left draft
   it('bulk-archive runs NO tail and names what it left draft', () => {
     expect(bulk.instructions).toContain('runs NO tail');
     expect(bulk.instructions).toMatch(/NAME the PR-attached changes it left DRAFT/i);
@@ -1125,5 +1126,163 @@ describe('rc08a task 4.2: the walk body and its schema reference carry the lifec
   // @scenario text orbit-address-reviews :: Resolution-log JSON shape extensions for walk-mode / decision-forks / cascade :: --no-cascade resolution log records all ripples as flagged_not_applied
   it('--no-cascade records every ripple under flagged_not_applied with the one suppression reason', () => {
     expect(body).toContain('ALL ripple-flagged files are recorded under `ripple_cascade.flagged_not_applied[]` with reason `--no-cascade suppressed`');
+  });
+});
+
+describe('seam-chaining-grants: the granted arrival in the apply and archive bodies (task 4.2)', () => {
+  const apply = getApplyChangeSkillTemplate().instructions;
+  const archive = getArchiveChangeSkillTemplate().instructions;
+  /** Step 0, from its heading to the next step (apply's Step 1; archive's sync-inheritance note). */
+  const step0 = (body: string): string => {
+    const start = body.indexOf('Consent at entry');
+    const end = body.indexOf(body === apply ? '1. **Select the change**' : '**Sync inheritance', start);
+    expect(start).toBeGreaterThanOrEqual(0);
+    expect(end).toBeGreaterThan(start);
+    return body.slice(start, end);
+  };
+  const granted = (body: string): string => {
+    const hits = body.split('\n').filter(l => l.includes('**Granted** (an AI-mediated arrival'));
+    expect(hits).toHaveLength(1);
+    return hits[0];
+  };
+
+  // @scenario text orbit-lifecycle-consent :: Invocation-provenance rule :: A granted arrival is read from the engine
+  it('both Step 0s carry the granted bullet, read from the chain object, never judged from the route', () => {
+    for (const [body, cmd] of [[apply, '/orbit:apply <name>'], [archive, '/orbit:archive <name>']] as const) {
+      const s = step0(body);
+      const line = granted(body);
+      expect(s).toContain(line);
+      expect(line).toContain('the `chain` object of `orbit status --change "<name>" --json`');
+      expect(line).toContain(`reports \`next\` as this command (\`${cmd}\`, with or without the \` — user-invoked\` marker) with \`may_run: true\``);
+      expect(line).toContain('fire no consent prompt, and stamp the consent era below as on the other two paths');
+      expect(line).toContain('never judged from how this command was reached: "continue" and a chain\'s closing step are the same arrival');
+      // The granted bullet asks nothing and carries no tag.
+      expect(line).not.toMatch(/AskUserQuestion|\(chain: /);
+      expect(s).toContain('or a granted arrival), read');
+    }
+    expect(granted(apply)).toContain('Record `setting`');
+    expect(granted(archive)).toContain('Record `consent: "setting"`');
+  });
+
+  // @scenario text orbit-lifecycle-consent :: Invocation-provenance rule :: Typed command is consent
+  // @scenario text orbit-lifecycle-consent :: Consent prompts at consent-marked seams :: User-typed entry runs prompt-free
+  // @scenario text orbit-archive-modifications :: Consent prompt on AI-mediated archive entry :: User-typed entry skips the consent prompt
+  it('a typed arrival is user-invoked and fires no consent prompt', () => {
+    expect(apply).toContain('the typed `/orbit:apply` command, or an unambiguous same-turn prose request naming the act ("apply it", "implement the change"). Proceed with ZERO added prompts');
+    expect(archive).toContain('the typed `/orbit:archive` command, or an unambiguous same-turn prose request naming the act ("archive it"). Proceed with ZERO added prompts (only the anomaly prompts may interrupt); the run summary records `consent: "user-invoked"`.');
+  });
+
+  // @scenario text orbit-lifecycle-consent :: Invocation-provenance rule :: Delegated arrival is AI-mediated
+  // @scenario text orbit-lifecycle-consent :: Consent prompts at consent-marked seams :: An ungranted chained arrival still prompts
+  // @scenario text orbit-lifecycle-consent :: Consent prompts at consent-marked seams :: AI-mediated archive entry prompts before any write
+  // @scenario text orbit-archive-modifications :: Consent prompt on AI-mediated archive entry :: AI-mediated entry prompts first
+  it('an arrival not typed and not granted fires the consent prompt before any write, and keeps "uncertain → AI-mediated"', () => {
+    for (const body of [apply, archive]) {
+      expect(body).toContain('a handoff document, a chain, or an eligibility readout pointing here. Unless the arrival is granted (next bullet), fire a consent **AskUserQuestion** (chain: not a prompt) BEFORE any');
+      expect(body).toContain('**When provenance is uncertain, treat the arrival as AI-mediated**');
+    }
+    expect(apply).toContain('On Abort: stop; no writes, no run summary.');
+    expect(apply).toContain('`prompted` (prompt fired, user proceeded)');
+    expect(archive).toContain('Proceed records `consent: "prompted"` in the run summary; **Abort leaves no baseline write, no sync, no move, and no run summary**.');
+    expect(archive).toContain('BEFORE any other step — before the Step 1.5 marker scan, the Step 3.4 gate prompt, and every write.');
+  });
+
+  // @scenario text orbit-lifecycle-consent :: Consent prompts at consent-marked seams :: Sync inside archive does not double-prompt
+  it('the sync inside archive inherits its consent', () => {
+    expect(archive).toContain('**Sync inheritance (no double-prompt)**: the sync-specs step this flow invokes (upstream Step 4) inherits THIS flow\'s consent — it never fires a separate consent prompt.');
+  });
+
+  // @scenario text orbit-lifecycle-consent :: Consent prompts at consent-marked seams :: A granted archive runs without the consent prompt
+  // @scenario text orbit-archive-modifications :: Consent prompt on AI-mediated archive entry :: A granted entry skips the consent prompt and runs the tail
+  // @scenario text orbit-archive-modifications :: Consent prompt on AI-mediated archive entry :: A granted entry on a program PR appends and leaves the flip
+  it("archive's granted bullet shows no preview, runs the tail as after a Proceed, and states the tag rules", () => {
+    const line = granted(archive);
+    expect(line).toContain("No preview is shown: the outward writes the tail rides on this entry are named in the `archive` key's row, which the user read before granting it, and the tail (Step 5.6) runs exactly as after a Proceed.");
+    expect(line).toContain('On a granted arrival each prompt below is met by the kind its tag names: a target prompt does not fire, because the next command names the change; a routine prompt takes the default its tag names');
+    expect(line).toContain('a decision prompt is asked exactly as on a typed arrival, and the chain does not continue after it. On every other arrival the tags change nothing.');
+    expect(granted(apply)).toContain('every anomaly prompt still fires as on a typed arrival');
+    // The tail Step 5.6 runs: commit, push, rewrite or append, and the flip for a per-change PR only.
+    expect(archive).toContain('commit → push → description rewrite or stage-entry append → the\nREADY flip for a per-change PR');
+    expect(archive).toContain("The tail's outward writes ride the archive's OWN entry consent — no second prompt.");
+  });
+
+  // @scenario text orbit-archive-modifications :: Consent prompt on AI-mediated archive entry :: Preview names the outward writes for an attached change
+  // @scenario text orbit-archive-modifications :: Consent prompt on AI-mediated archive entry :: Unattached change keeps the pre-capability preview
+  it("the prompted archive's preview names the outward writes for an attached change, and none for an unattached one", () => {
+    expect(archive).toContain('When the change is PR-ATTACHED (D6 — resolve this from the change\'s trail as part of the same read-only discovery), the preview ADDITIONALLY names the tail\'s OUTWARD writes: the branch the archive commit lands on, the PUSH to the resolved remote, and — for a per-proposal PR — the READY FLIP, or for a program PR the APPENDED stage entry.');
+    expect(archive).toContain('The outward line is OMITTED for unattached changes, so the pre-capability prompt is unchanged wherever no PR exists');
+  });
+
+  // @scenario text orbit-lifecycle-consent :: Consent recorded in consent-scoped lifecycle emits :: A withdrawn grant writes the emit without consent
+  it('both emit steps carry the withdrawn-grant line: write again with no consent field, name the key, ask nothing', () => {
+    expect(apply).toContain('**A withdrawn grant**: when the gate refuses `setting` naming the `apply` key — the grant was withdrawn between entry and this emit — write the emit again with NO `consent` field, and name the withdrawn `chain.apply` key in its `final_assessment` through `assessment_suffix`. Ask the user nothing');
+    expect(apply).toContain('The emits this invocation wrote before the withdrawal stand');
+    expect(archive).toContain('**A withdrawn grant**: the write gate checks `consent` (`references/archive-summary-schema.md`). When it refuses `setting` naming the `archive` key — the grant was withdrawn between entry and this emit — write the emit again with NO `consent` field, and name the withdrawn `chain.archive` key in its `final_assessment`. Ask the user nothing');
+  });
+
+  // @scenario text orbit-lifecycle-consent :: Consent recorded in consent-scoped lifecycle emits :: User-typed apply records user-invoked
+  // @scenario text orbit-lifecycle-consent :: Consent recorded in consent-scoped lifecycle emits :: Prompted proceed records prompted
+  // @scenario text orbit-run-summary-emit :: Consent field on the apply emit :: Apply emit carries consent
+  // @scenario text orbit-run-summary-emit :: Consent field on the apply emit :: Consent constant across one apply's chunk emits
+  // @scenario text orbit-run-summary-emit :: Consent field on the apply emit :: A granted apply records setting
+  it("apply's recorded story and payload note name the three values, constant across the invocation's emits", () => {
+    expect(apply).toContain('Record the consent story for this invocation: `user-invoked` (user-typed), `prompted` (prompt fired, user proceeded) or `setting` (granted by `chain.apply`, no prompt) — it lands in every apply emit this session writes.');
+    expect(apply).toContain('- `consent` — `"user-invoked" | "prompted" | "setting"` per Step 0\'s provenance classification (D1, `orbit-lifecycle-consent`); CONSTANT across one invocation\'s chunk emits, except an emit after a withdrawn grant (below)');
+    expect(apply).toContain('The write gate checks `setting`: it refuses it, naming the key, unless the project\'s `chain` map grants `apply`, and refuses any value outside the three.');
+  });
+
+  // @scenario text orbit-lifecycle-consent :: Consent recorded in consent-scoped lifecycle emits :: Abort writes nothing
+  it('a consent Abort writes no summary, in both bodies and the archive schema reference', () => {
+    expect(apply).toContain('a consent Abort writes NO summary');
+    const ref = (getArchiveChangeSkillTemplate().references ?? []).find(r => r.name === 'archive-summary-schema.md')!.content;
+    expect(ref).toContain('Exactly three values — a consent Abort writes NO summary.');
+    expect(ref).toContain('"consent": "user-invoked" | "prompted" | "setting",');
+    expect(ref).toContain('`setting` is refused, naming the `archive` key, unless the project\'s `chain` map grants `archive`');
+  });
+});
+
+describe('seam-chaining-grants: carried scenarios the bodies and the engine source hold (task 6.1)', () => {
+  const archiveTpl = getArchiveChangeSkillTemplate();
+  const archive = archiveTpl.instructions;
+  const tailRef = (archiveTpl.references ?? []).find(r => r.name === 'pr-archive-tail.md')!.content;
+  const step56 = archive.slice(archive.indexOf('## NEW Step 5.6'), archive.indexOf('## NEW Step 5.65'));
+
+  // @scenario text orbit-archive-modifications :: PR-attached archive tail :: Push failure degrades, archive stands
+  it('a failed push stops the segment in one line naming completed, failed and skipped steps, and the archive never rolls back', () => {
+    expect(step56).toContain("A failed\nstep stops the segment with ONE line naming the completed, the failed and the skipped steps, the\nfailed step's argv and then each skipped step's shown as the recovery. The archive itself (sync, move, emit) has already\nsucceeded and never rolls back.");
+    expect(tailRef).toContain("| a `publish` or `tail` step fails |");
+  });
+
+  // @scenario text orbit-archive-modifications :: PR-attached archive tail :: Stage entry falls back when no status log exists
+  it("a program PR's stage entry falls back to the emit's final_assessment, naming the source", () => {
+    expect(tailRef).toContain("The entry comes from the arc status-log entry written at this archive, else\n  from the emit's `final_assessment` plus the change name and date; name the source in one line.");
+  });
+
+  // @scenario text orbit-pr-lifecycle :: Single-session operating assumption and v1 limits :: A granted archive's rejected push skips like a typed one
+  it("a granted archive's tail runs as a typed one's: the same segment, the same failure line, no retry", () => {
+    const granted = archive.split('\n').find(l => l.includes('**Granted** (an AI-mediated arrival'))!;
+    expect(granted).toContain('the tail (Step 5.6) runs exactly as after a Proceed');
+    expect(step56).toContain("The tail's outward writes ride the archive's OWN entry consent — no second prompt.");
+    expect(step56).toContain('never rolls back');
+    expect(step56).not.toMatch(/retry|rebase/i);
+  });
+
+  // @scenario text orbit-lifecycle-consent :: Consent recorded in consent-scoped lifecycle emits :: User-typed bulk propagates to inner archive emits
+  it("a user-typed bulk archive's inner emits record user-invoked", () => {
+    const bulk = getBulkArchiveChangeSkillTemplate().instructions;
+    expect(bulk).toContain("the Step 7 batch confirmation IS the user's invocation for the confirmed set — no per-change consent prompt fires, and each inner archive's run summary records `consent: \"user-invoked\"`.");
+  });
+
+  // @scenario text orbit-lifecycle-consent :: The engine never prompts for consent :: CLI-direct archive unchanged
+  it("the archive CLI's interactive prompts are upstream's four, none of them a consent prompt", () => {
+    const src = fs.readFileSync(path.join(__dirname, '..', '..', '..', 'src', 'core', 'archive.ts'), 'utf-8');
+    const prompts = [...src.matchAll(/await (confirm|select)\(\{\s*message: ([^\n]+)/g)].map(m => `${m[1]}: ${m[2].trim()}`);
+    expect(prompts).toEqual([
+      "confirm: chalk.yellow('⚠️  WARNING: Skipping validation may archive invalid specs. Continue? (y/N)'),",
+      'confirm: `Warning: ${incompleteTasks} incomplete task(s) found. Continue?`,',
+      "confirm: 'Proceed with spec updates?',",
+      "select: 'Select a change to archive',",
+    ]);
+    expect(src).not.toMatch(/consent/i);
   });
 });

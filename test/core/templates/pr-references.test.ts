@@ -95,6 +95,12 @@ describe('the draft window and the archive close', () => {
     expect(tail).toContain('when its `case` is `absent` (no argv), say plainly that no\nswitch recovers the branch');
   });
 
+  // @scenario text orbit-archive-modifications :: PR-attached archive tail :: The moved archive tree stages whole; strays are named
+  it('the tail reference names the strays the move carried along, in one line (seam-chaining-grants)', () => {
+    const tail = section(PR_ARCHIVE_TAIL_REFERENCE, '## Tail, after the move and the emit');
+    expect(tail).toContain('Name `observations.carried_untracked` in one\nline when it is non-empty: files the move carried along that git never tracked in the change\ndirectory, staged with the archived tree as the change\'s own material.');
+  });
+
   // @scenario text orbit-pr-lifecycle :: PR actions are workflow-body choreography (zero engine git) :: A human act is shown, never run
   it("the archive close shows the tail's human acts verbatim as the user's, and runs none", () => {
     const close = section(PR_ARCHIVE_TAIL_REFERENCE, '## At the close');
@@ -124,6 +130,7 @@ describe('the archive reference reads reason.detail the way validatePrUrl writes
 });
 
 describe('the consumption table scopes a recovery to the steps that can attach', () => {
+  // @scenario text orbit-archive-modifications :: PR-attached archive tail :: Each partial state names its own completion command
   it('a failed publish or tail step shows its recovery; a failed select step shows none', () => {
     const rows = PR_CONSUMPTION_TABLE.split('\n');
     const failure = rows.find((r) => r.startsWith('| a `publish` or `tail` step fails |'));

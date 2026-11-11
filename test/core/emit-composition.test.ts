@@ -2643,3 +2643,117 @@ describe('archive deferred_validations (rc10)', () => {
     expect(listRuns(`${ARCHIVED}/.orbit-runs`)).toEqual([]);
   });
 });
+
+describe('seam-chaining-grants: the consent value at the apply and archive write gate', () => {
+  const ARCHIVED = 'orbit/changes/archive/2026-11-10-foo';
+  const chainConfig = (yaml: string) => write('orbit/config.yaml', `schema: spec-driven\n${yaml}`);
+  const apply = (consent: unknown) =>
+    composeAndWriteEmit('apply', { change: 'foo' }, { consent, model: null } as any, { projectRoot: root });
+  const archive = (consent: unknown) =>
+    composeAndWriteEmit(
+      'archive',
+      { change: 'foo' },
+      { final_assessment: 'Archived foo.', archive_path: `${ARCHIVED}/`, consent, model: null } as any,
+      { projectRoot: root }
+    );
+
+  beforeEach(() => {
+    makeChange('foo');
+    write(`${ARCHIVED}/tasks.md`, '# Tasks\n\n- [x] 1.1 done\n');
+    chainConfig('');
+  });
+
+  // @scenario behaviour orbit-lifecycle-consent :: Consent recorded in consent-scoped lifecycle emits :: A granted emit is accepted
+  it('a granted setting is written, for apply and for archive', () => {
+    chainConfig('chain:\n  archive: true\n');
+    const a = archive('setting');
+    expect(JSON.parse(fs.readFileSync(a.path, 'utf-8')).consent).toBe('setting');
+    chainConfig('chain:\n  apply: true\n');
+    const b = apply('setting');
+    expect(JSON.parse(fs.readFileSync(b.path, 'utf-8')).consent).toBe('setting');
+  });
+
+  // @scenario behaviour orbit-lifecycle-consent :: Consent recorded in consent-scoped lifecycle emits :: An ungranted setting is refused naming the key
+  it('an ungranted setting is refused naming the key, and no file is written', () => {
+    for (const yaml of ['', 'chain:\n  review: true\n', 'chain:\n  apply: false\n', 'chain:\n  archive: true\n', 'chain:\n  apply: "true"\n', 'chain: apply\n']) {
+      chainConfig(yaml);
+      expect(() => apply('setting'), yaml).toThrow(/does not grant the 'apply' key/);
+    }
+    for (const yaml of ['', 'chain:\n  apply: true\n', 'chain:\n  archive: false\n']) {
+      chainConfig(yaml);
+      expect(() => archive('setting'), yaml).toThrow(/does not grant the 'archive' key/);
+    }
+    expect(listRuns('orbit/changes/foo/.orbit-runs')).toEqual([]);
+    expect(listRuns(`${ARCHIVED}/.orbit-runs`)).toEqual([]);
+  });
+
+  // @scenario behaviour orbit-lifecycle-consent :: Consent recorded in consent-scoped lifecycle emits :: A value outside the three is refused
+  it('a value outside the three is refused naming them, strings and non-strings alike', () => {
+    chainConfig('chain:\n  apply: true\n  archive: true\n');
+    for (const v of ['granted', 'Setting', '', true, null, 1, ['setting'], { value: 'setting' }]) {
+      expect(() => apply(v), JSON.stringify(v)).toThrow(/'consent' must be one of 'user-invoked', 'prompted', 'setting'/);
+      expect(() => archive(v), JSON.stringify(v)).toThrow(/'consent' must be one of 'user-invoked', 'prompted', 'setting'/);
+    }
+    expect(listRuns('orbit/changes/foo/.orbit-runs')).toEqual([]);
+    expect(listRuns(`${ARCHIVED}/.orbit-runs`)).toEqual([]);
+  });
+
+  it('the two self-reported values are accepted whatever the chain map grants, and an absent field still is', () => {
+    for (const yaml of ['', 'chain:\n  apply: false\n']) {
+      chainConfig(yaml);
+      for (const v of ['user-invoked', 'prompted']) {
+        expect(JSON.parse(fs.readFileSync(apply(v).path, 'utf-8')).consent).toBe(v);
+      }
+    }
+    const absent = composeAndWriteEmit('apply', { change: 'foo' }, { model: null }, { projectRoot: root });
+    expect('consent' in JSON.parse(fs.readFileSync(absent.path, 'utf-8'))).toBe(false);
+    const absentArchive = composeAndWriteEmit(
+      'archive',
+      { change: 'foo' },
+      { final_assessment: 'Archived foo.', archive_path: `${ARCHIVED}/`, model: null },
+      { projectRoot: root }
+    );
+    expect('consent' in JSON.parse(fs.readFileSync(absentArchive.path, 'utf-8'))).toBe(false);
+  });
+
+  it('the gate tests no open stop: a stop written during the command does not refuse its summary', () => {
+    chainConfig('chain:\n  apply: true\n');
+    write(
+      'orbit/changes/foo/.orbit-runs/decisions/stop-2026-01-01T10-00-00Z.json',
+      JSON.stringify({ command: 'stop', change: 'foo', model: null, condition: 'outward-act', about: 'a', question: 'q?' })
+    );
+    expect(JSON.parse(fs.readFileSync(apply('setting').path, 'utf-8')).consent).toBe('setting');
+  });
+
+  it('a withdrawn grant: the refused emit is written again with no consent field, and the earlier emit stands', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-11-10T10:00:00Z'));
+    chainConfig('chain:\n  apply: true\n');
+    const first = apply('setting');
+    const firstBytes = fs.readFileSync(first.path, 'utf-8');
+    chainConfig('chain:\n  review: true\n');
+    vi.setSystemTime(new Date('2026-11-10T10:05:00Z'));
+    expect(() => apply('setting')).toThrow(/does not grant the 'apply' key/);
+    const second = composeAndWriteEmit(
+      'apply',
+      { change: 'foo' },
+      { assessment_suffix: 'The chain.apply grant was withdrawn after entry; this emit carries no consent field.', model: null },
+      { projectRoot: root }
+    );
+    const written = JSON.parse(fs.readFileSync(second.path, 'utf-8'));
+    expect('consent' in written).toBe(false);
+    expect(written.final_assessment).toContain('chain.apply grant was withdrawn');
+    expect(fs.readFileSync(first.path, 'utf-8')).toBe(firstBytes);
+    expect(listRuns('orbit/changes/foo/.orbit-runs')).toHaveLength(2);
+  });
+
+  it('consent on any other command is still refused as an unknown payload key', () => {
+    chainConfig('chain:\n  review: true\n  apply: true\n');
+    expect(() =>
+      composeAndWriteEmit('review', { change: 'foo' }, validReviewPayload({ consent: 'setting' }), { projectRoot: root })
+    ).toThrow(/unknown payload key 'consent' for 'review'/);
+    expect(() =>
+      composeAndWriteEmit('propose', { change: 'foo' }, { final_assessment: 'p', consent: 'user-invoked', model: null }, { projectRoot: root })
+    ).toThrow(/unknown payload key 'consent' for 'propose'/);
+  });
+});
