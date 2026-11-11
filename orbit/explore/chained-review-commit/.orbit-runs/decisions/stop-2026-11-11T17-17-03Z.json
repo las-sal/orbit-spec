@@ -1,0 +1,15 @@
+{
+  "command": "stop",
+  "timestamp": "2026-11-11T17:17:03Z",
+  "change": "chained-review-commit",
+  "model": "claude-opus-5-5",
+  "condition": "ruling-amendment",
+  "about": "The user asked whether orbit's default can become one program pull request per architecture doc. Today a project that sets nothing gets no pull requests at all, and G0 says a default install behaves exactly as it does now except where the user has ratified an exception.",
+  "question": "Which default do you mean: what orbit init writes into a new project's settings (existing projects unchanged), what a project that sets nothing gets (existing projects change on upgrade), or only your own projects' settings with no change to orbit?",
+  "defines": [
+    {
+      "term": "orbit init",
+      "definition": "the command that sets orbit up in a project and writes its settings file"
+    }
+  ]
+}

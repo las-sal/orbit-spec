@@ -1,0 +1,15 @@
+{
+  "command": "stop",
+  "timestamp": "2026-11-11T16:52:34Z",
+  "change": "chained-review-commit",
+  "model": "claude-opus-5-5",
+  "condition": "ruling-amendment",
+  "about": "The user wants orbit to commit its work to the program's pull request the whole time a program runs, with the pull request opened at the program's first architect session and merged by the user at the end. R-adf-1 says every setting defaults to today's behaviour, and today orbit commits only when a change is proposed and when it is archived.",
+  "question": "Should committing throughout the program be a setting that is off by default (R-adf-1 unchanged), or what orbit does by default (amending R-adf-1 and G0)?",
+  "defines": [
+    {
+      "term": "program branch",
+      "definition": "the one git branch a program's changes land on when the project sets pr: per-architecture; the program pull request merges it into the main branch"
+    }
+  ]
+}

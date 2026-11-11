@@ -1,0 +1,23 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-11T17:16:53Z",
+  "change": "chained-review-commit",
+  "model": "claude-opus-5-5",
+  "area": "permissions-and-sandboxing",
+  "decided": "Pushing each commit to the change's pull request branch is a setting of its own, separate from the setting that lets orbit commit, and a push never goes to the main branch.",
+  "alternatives": [
+    "one setting that both commits and pushes"
+  ],
+  "why": "A commit stays on the user's machine and a push publishes it; R-adf-6 makes each act that reaches outside the machine its own setting.",
+  "relies_on": [
+    {
+      "kind": "ruling",
+      "doc": "automate-dev-flow",
+      "id": "R-adf-6"
+    },
+    {
+      "kind": "decision",
+      "id": "D-chrc-4"
+    }
+  ]
+}

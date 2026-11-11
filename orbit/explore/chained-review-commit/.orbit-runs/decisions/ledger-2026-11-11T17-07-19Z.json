@@ -1,0 +1,18 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-11T17:07:19Z",
+  "change": "chained-review-commit",
+  "model": "claude-opus-5-5",
+  "area": "user-data",
+  "decided": "When orbit commits on its own, it commits everything uncommitted in the project, including edits the user made by hand, not only the files orbit wrote.",
+  "alternatives": [
+    "commit only the change's folder and the files the command says it wrote, leaving the user's other edits uncommitted"
+  ],
+  "why": "The commit lands on the pull request branch for this change, so the user's own edits there belong to it; leaving an edit behind, or missing a file the AI forgot to name, is the worse failure.",
+  "relies_on": [
+    {
+      "kind": "decision",
+      "id": "D-chrc-2"
+    }
+  ]
+}

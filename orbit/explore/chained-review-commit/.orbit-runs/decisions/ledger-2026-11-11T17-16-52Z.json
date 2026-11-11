@@ -1,0 +1,24 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-11T17:16:52Z",
+  "change": "chained-review-commit",
+  "model": "claude-opus-5-5",
+  "area": "defaults",
+  "decided": "Committing throughout a program is off unless a project turns it on.",
+  "alternatives": [
+    "every install commits throughout, with no setting"
+  ],
+  "why": "R-adf-1 says no install or upgrade becomes autonomous silently; the user turns it on once in each of their own projects.",
+  "relies_on": [
+    {
+      "kind": "ruling",
+      "doc": "automate-dev-flow",
+      "id": "R-adf-1"
+    },
+    {
+      "kind": "resolution",
+      "change": "chained-review-commit",
+      "token": "2026-11-11T17-16-51Z"
+    }
+  ]
+}

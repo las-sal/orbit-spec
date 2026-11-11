@@ -1,0 +1,5 @@
+schema: spec-driven
+created: 2026-11-11
+architecture:
+  doc: automate-dev-flow
+  stage: seam-chaining

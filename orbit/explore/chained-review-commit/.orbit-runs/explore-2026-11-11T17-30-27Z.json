@@ -1,0 +1,40 @@
+{
+  "command": "explore",
+  "timestamp": "2026-11-11T17:30:27Z",
+  "change": "chained-review-commit",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "The exploration widened from a commit before a chained external review to an opt-in commit at every command's end on the change's PR branch (D-chrc-1, D-chrc-3), from the user's statement of the whole program: PR born at the architect session, committed to throughout, merged by the user at the end. Settled with the user: commit everything, bounded by .gitignore, naming each untracked file added (D-chrc-2, D-chrc-5); push is its own setting (D-chrc-4); never on the default branch (D-chrc-6); the PR's birth at the architect session goes to the driver stage (D-chrc-1); orbit init writes pr: per-architecture for new projects as a separate small change (D-chrc-7). The AI settled the step's placement (D-chrc-8). Two stops raised and resolved; six ledger entries. Owed before propose: Mechanism entries for the five rules (D-chrc-2, 4, 5, 6, 8) and Q7/Q8.",
+  "decisions_captured": 8,
+  "open_questions_count": 2,
+  "open_questions_with_recommendation": "2 of 2",
+  "rules_total": 5,
+  "rules_open": [
+    {
+      "id": "D-chrc-2",
+      "state": "absent"
+    },
+    {
+      "id": "D-chrc-4",
+      "state": "absent"
+    },
+    {
+      "id": "D-chrc-5",
+      "state": "absent"
+    },
+    {
+      "id": "D-chrc-6",
+      "state": "absent"
+    },
+    {
+      "id": "D-chrc-8",
+      "state": "absent"
+    }
+  ],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:explore chained-review-commit — 8 decisions captured but 2 open questions remain; resolve open questions before formalizing · open domains: D-chrc-2, D-chrc-4, D-chrc-5 +2 more"
+}
