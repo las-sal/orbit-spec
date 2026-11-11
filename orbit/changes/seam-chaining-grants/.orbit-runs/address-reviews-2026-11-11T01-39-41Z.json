@@ -1,0 +1,188 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-11T01:39:41Z",
+  "change": "seam-chaining-grants",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/seam-chaining-grants/.orbit-runs/review-proposal-2026-11-11T01-38-18Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-11T01-38-18Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 3
+  },
+  "pushback_verification": "All four verified against current state; none stale.",
+  "resolution_summary": {
+    "resolved": 4,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Two sentences still say every summary carries a consent value, beside the new withdrawn-grant case that writes none",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-lifecycle-consent/spec.md",
+      "line": 149,
+      "classification": "trivial_fix",
+      "action": "restated both sentences: a summary records one of the three values or none after a withdrawn grant; the archive schema reference says present except one written after a withdrawn grant",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/seam-chaining-grants/specs/orbit-archive-modifications/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "exactly three consent stories"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining-grants/specs/orbit-lifecycle-consent/spec.md",
+            "text": "or none after a withdrawn grant (the named limit"
+          },
+          {
+            "path": "orbit/changes/seam-chaining-grants/specs/orbit-archive-modifications/spec.md",
+            "text": "archive emit except one written after a withdrawn grant"
+          }
+        ],
+        "searched": [
+          "every post-capability",
+          "consent stories",
+          "always carr"
+        ],
+        "scope": [
+          "orbit/changes/seam-chaining-grants/specs/orbit-run-summary-emit/spec.md"
+        ],
+        "kept": []
+      },
+      "ripple_miss_of": {
+        "walk": "2026-11-11T01-35-43Z",
+        "title": "The withdrawn-grant recovery (\"asks the user and records prompted\") is undefined for archive and contradicts chunk constancy for apply",
+        "file": "specs/orbit-lifecycle-consent/spec.md",
+        "kind": "query"
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The arrival table's needs-user and no-progress rows still overlap the another-command row",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-lifecycle-consent/spec.md",
+      "line": 61,
+      "classification": "trivial_fix",
+      "action": "qualified rows 6 and 7 by chain.next being this command, as rows 3 and 4",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "| not typed; `why:"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining-grants/specs/orbit-lifecycle-consent/spec.md",
+            "text": "is this command and `why: needs-user`"
+          }
+        ],
+        "searched": [
+          "not typed; `why:"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/seam-chaining-grants/explore.md",
+            "why": "the exploration's Mechanism Case table as derived; the walks qualify the rows at the spec owner"
+          }
+        ]
+      },
+      "ripple_miss_of": {
+        "walk": "2026-11-11T01-35-43Z",
+        "title": "The arrival table's \"exactly one row\" overlaps when chain.next names another command",
+        "file": "specs/orbit-lifecycle-consent/spec.md",
+        "kind": "query"
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The consent marker comment in gates.ts keeps the old definition the walk corrected in the spec",
+      "marker_source": "internal-review",
+      "file": "src/core/artifact-graph/gates.ts",
+      "line": 57,
+      "classification": "trivial_fix",
+      "action": "task 1.1 now names the consent JSDoc in src/core/artifact-graph/gates.ts; the comment itself is apply's edit",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/seam-chaining-grants/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining-grants/tasks.md",
+            "text": "the `consent` JSDoc in `src/core/artifact-graph/gates.ts`"
+          }
+        ],
+        "searched": [
+          "explicit user invocation"
+        ],
+        "scope": [
+          "src/"
+        ],
+        "kept": []
+      },
+      "ripple_miss_of": {
+        "walk": "2026-11-11T01-35-43Z",
+        "title": "The consent vocabulary still says a marked phase requires an explicit user invocation",
+        "file": "orbit/specs/orbit-engine-gates/spec.md",
+        "kind": "scope"
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The walk's fingerprint stamps in .openspec.yaml sit outside every entry's edit record",
+      "marker_source": "internal-review",
+      "file": ".openspec.yaml",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "recorded orbit/changes/seam-chaining-grants/.openspec.yaml in this entry's edit record; the stamps are correct, so no edit",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/seam-chaining-grants/.openspec.yaml"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [],
+        "searched": [
+          "base_fingerprints"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Four of four resolved: the closure sentences now admit the no-field summary, the last two arrival rows are qualified, task 1.1 names the gates.ts comment, and the fingerprint file is on the edit record. Three are ripple misses of the previous walk.",
+  "iteration": 3,
+  "next_recommended": "/orbit:apply seam-chaining-grants — user-invoked",
+  "ripple_misses": 3
+}

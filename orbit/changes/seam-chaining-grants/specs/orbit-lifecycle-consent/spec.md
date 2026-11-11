@@ -58,8 +58,8 @@ object reports at entry:
 | not typed; `chain.next` is this command and `why: not-granted` (the key absent or false, or no `chain` map) | the consent prompt fires: `prompted` on Proceed, no summary on Abort |
 | not typed; `chain.next` is this command and `why: open-stop` | the consent prompt fires; the stop's question was put by the closing step that stopped the chain |
 | not typed; `chain.next` names another command (whatever its `why`), or `why: none` | the consent prompt fires, then the gate inflection as without the setting |
-| not typed; `why: needs-user` | cannot hold here: that row is tested for the `review-external` key only |
-| not typed; `why: no-progress` | cannot hold at entry: that row is tested only on a status call carrying `--chain-ran` |
+| not typed; `chain.next` is this command and `why: needs-user` | cannot hold here: that row is tested for the `review-external` key only |
+| not typed; `chain.next` is this command and `why: no-progress` | cannot hold at entry: that row is tested only on a status call carrying `--chain-ran` |
 | the later chunks of one chunked apply | the entry's value, constant across the invocation's emits, except an emit after a withdrawn grant (the named limit in `Consent recorded in consent-scoped lifecycle emits`) |
 | the sync inside archive | inherits archive's value and never prompts |
 | `/orbit:bulk-archive` | never granted: the engine never names it as a next command; it prompts per change as below |
@@ -146,7 +146,8 @@ change status's `chain` object reads (`orbit-engine-gates`' `The chain setting g
 on its own key`), so a grant the entry read and a grant the gate checks have one definition; the
 gate does not test for an open stop, since a stop written during the command must not refuse that
 command's own summary. An abort at the consent prompt writes NO summary (existing convention), so
-a summary that exists has exactly three consent stories. `user-invoked` and `prompted` are
+a summary that exists records one of the three values, or none after a withdrawn grant (the named limit
+below). `user-invoked` and `prompted` are
 self-reported by the emitting session (honest-actor legibility, not enforcement — the enforcement
 layer is the prompt itself); `setting` is checked, because a grant is a file the gate can read.
 Named limit: a grant withdrawn between a command's entry and its emit refuses a true record. On that

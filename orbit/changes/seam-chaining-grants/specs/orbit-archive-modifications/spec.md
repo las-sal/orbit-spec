@@ -165,7 +165,7 @@ residue that path renaming alone does not fix — satisfying the deferral record
   and `fingerprints_unverified: [{capability, requirement}]`; present only when the corresponding
   fingerprint outcome occurred, per this capability's `Archive run summary written` requirement),
   plus the `consent` field (`"user-invoked" | "prompted" | "setting"`; present on every post-capability
-  archive emit, per `orbit-lifecycle-consent`'s emit-field requirement), plus the conditional
+  archive emit except one written after a withdrawn grant, per `orbit-lifecycle-consent`'s emit-field requirement), plus the conditional
   `deferred_validations` array (`[{task, why, when, where}]`; present only when an unchecked
   user-validation task was deferred, per this capability's `User-validation closure at the archive
   seam` requirement)
