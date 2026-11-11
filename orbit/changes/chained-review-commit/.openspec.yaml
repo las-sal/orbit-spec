@@ -1,0 +1,12 @@
+schema: spec-driven
+created: 2026-11-11
+schema_version: 5
+base_fingerprints:
+  orbit-conventions:
+    No-chaining contract: sha256:2dfee65cbe0118c5b8060ed9f9e01c4e52927db52fcdc08aa10151798884d0b0
+  orbit-pr-lifecycle:
+    The `orbit pr` command observes and prints; it never writes: sha256:886a02289dc1ed8cf100b69ae473ca57b1ab7f3a433841e010ef8022a3d7e4f5
+    PR actions are workflow-body choreography (zero engine git): sha256:4391efa4735fd1ece91c52d327d415464b88a7d487d4ae7cca697387325d2f22
+architecture:
+  doc: automate-dev-flow
+  stage: seam-chaining
