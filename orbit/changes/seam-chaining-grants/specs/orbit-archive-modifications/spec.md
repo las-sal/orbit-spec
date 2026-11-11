@@ -236,7 +236,11 @@ user-typed `/orbit:archive` runs with no consent prompt. Proceeding records
 fires no consent prompt and records `consent: "setting"`: no preview is shown, so the outward writes
 the tail rides on this entry are named instead in the `archive` key's row of `orbit-engine-gates`'
 `The chain setting grants each command on its own key`, which the user reads before granting it, and
-the tail runs exactly as it would after a Proceed. The bulk-archive
+the tail runs exactly as it would after a Proceed. Named limit: a granted archive whose HEAD is not on the
+attachment's branch is told so only by the one line the entry observation prints before Step 1, and nobody is
+asked; the sync, the move and the emit land in the working tree as on a typed archive, the tail's HEAD
+precondition skips the commit and the push, and its note names the recovery. Nothing is pushed to the wrong
+branch, but the archive's writes stay uncommitted until the user carries them to the attachment's branch. The bulk-archive
 workflow applies the same rule per change (a user-typed `/orbit:bulk-archive` whose flow confirms
 the batch is user-invoked for the confirmed set).
 
@@ -277,8 +281,8 @@ the batch is user-invoked for the confirmed set).
 - **WHEN** the archive of a change attached to a program PR is reached because the change status's
   `chain` object allowed it, granted by `chain.archive`, and the tail's preflight and push succeed
 - **THEN** no consent prompt fires, the run summary records `consent: "setting"`, and the tail commits,
-  pushes and appends the change's stage entry to the program PR, which stays a draft: its ready flip
-  remains the user's
+  pushes and appends the change's stage entry to the program PR and runs no ready flip: the PR keeps the
+  draft or ready state the preflight observed, and its flip remains the user's
 
 ### Requirement: PR-attached archive tail
 

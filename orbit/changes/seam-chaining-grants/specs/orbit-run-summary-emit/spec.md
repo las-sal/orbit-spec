@@ -26,10 +26,12 @@ summary written` requirement.
 
 - **WHEN** a single apply invocation emits at multiple chunk boundaries
 - **THEN** every emit of that invocation carries the same consent value (provenance is a property
-  of the invocation, not the chunk)
+  of the invocation, not the chunk), except an emit written after a withdrawn grant, which carries no `consent`
+  field (`orbit-lifecycle-consent`'s named limit)
 
 #### Scenario: A granted apply records setting
 
 - **WHEN** apply runs because the change status's `chain` object allowed it, granted by `chain.apply`, and writes its
   chunk-end emit
 - **THEN** the emit includes `consent: "setting"`, and every later emit of that invocation carries the same value
+  while the `apply` key still grants it; an emit after the grant is withdrawn carries no `consent` field

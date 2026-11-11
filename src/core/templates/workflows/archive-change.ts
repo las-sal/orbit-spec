@@ -319,8 +319,9 @@ attachment-bearing PROPOSE or FF emit on the change's trail (the same read the c
 preview in Step 0 uses on the AI-mediated path; Step 4.9's \`orbit pr preflight\` reads the same record). This
 step mutates nothing and runs on EVERY provenance path, user-typed included. When attached,
 compare HEAD's branch (\`git branch --show-current\`) with \`pr_attachment.branch\`. On mismatch,
-SAY SO NOW — in the consent preview when one fires, otherwise as one line before Step 1 —
-naming both branches and the case-specific switch (\`git switch <branch>\` locally; the
+SAY SO NOW — in the consent preview when one fires, otherwise as one line before Step 1 (on a
+granted arrival that line is the only notice and nobody is asked: the archive proceeds and the tail
+skips, a named limit of \`orbit-archive-modifications\`) — naming both branches and the case-specific switch (\`git switch <branch>\` locally; the
 tracking form when only the remote has it). The tail's HEAD precondition (in the reference)
 remains the GUARD that skips the PR half; this observation is the early warning that lets the
 user switch first instead of carrying uncommitted sync, move, and emit writes across a

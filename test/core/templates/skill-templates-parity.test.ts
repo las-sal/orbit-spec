@@ -176,7 +176,9 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // Moved again in the same apply (task 6.1, stop-2026-11-11T02-01-18Z, Sal: fix it here): the `pr-archive-tail.md`
   // reference names `observations.carried_untracked`, the strays the move carried along. Only this function hash moved:
   // the generated SKILL.md is unchanged by a reference edit.
-  getArchiveChangeSkillTemplate: '051bcf0f2704d232bfa59d90d38fa33dc22b64d0dd9b050ed8054ec079d4106a',
+  // Moved a THIRD time at the system walk (2026-11-11, fresh S1, Sal: B): Step 0.7 says its one mismatch line is a
+  // granted arrival's only notice, a named limit of `orbit-archive-modifications`. Both archive hashes moved.
+  getArchiveChangeSkillTemplate: '550dee4951327fe7185562a5db5b74ab18fb4fa88fc8be7894c6ceb6fd79dddd',
   getBulkArchiveChangeSkillTemplate: '21195e4c5505a19d0826fdce42a5f7c4729dec50260f427443375ec08b681598',
   getOrbitSyncCommandTemplate: 'b985d0a4d89b0e2cc3c6b6dec2521ef2a9d0df44a8ba9ec92a5495052c94a39c',
   // rc06b-map-readers (2026-10-05) — verify moved DELIBERATELY, the first named edit to an upstream
@@ -257,7 +259,7 @@ const EXPECTED_GENERATED_SKILL_CONTENT_HASHES: Record<string, string> = {
   'orbit-apply-change': '70b27923387ffb5fbff0967db2789f6ff23210f8f0d4864b5be7ee2c9290fdd8', // rc17a apply: the v4 clause (see the function-hash note above); then seam-chaining: the Chain end step and the epitome clause, at apply, the system walk and the verification walk; then seam-chaining-grants apply (see the function-hash note above)
   'orbit-ff-change': '80b57fe3217f52ddf304701292ec39181b4b975226f0c97ce7fc275e3b6ffa09', // seam-chaining: the Chain end step and the epitome clause, at apply, the system walk and the verification walk; then seam-chaining-grants apply: the end step's two key rows and consent clause
   'orbit-sync-specs': '09ebdddd32d976022699b1575f8cf5e85fabf57ea71f1aa1afce1c793f322c99',
-  'orbit-archive-change': '4ce8118d75cef84d72d6c4c20ce6daf446c7c06aa281e9fec8d793dab02898d3', // rc10-apply-closure task 2.8, then its system walk; then seam-chaining-grants apply (see the function-hash note above)
+  'orbit-archive-change': '7b4e7de975366c17e1aa6a46d72fc32c65cdb3ed1b6fbdc8b050f40a8efc8110', // rc10-apply-closure task 2.8, then its system walk; then seam-chaining-grants apply and its system walk (see the function-hash note above)
   'orbit-bulk-archive-change': 'ebbccd064bd5237d4ea18c08ac0e88114a24733588900fea32d67d44e36cf6b4', // rc10-apply-closure task 2.8, then its system walk (see the function-hash note above)
   'orbit-verify-change': '86d0fad7fe26e44c2df6e52bcac54c015a4911afd13bb288a825495773c99390', // rc06b-map-readers (2026-10-05): moved with the body's step 6 edit, then again at system walk 2's additions edit (see the function-hash note above)
   'orbit-onboard': 'e704c183201dc18a574de32da10a8722e8a53cc590e455fd66580317761d4698', // landing-page task 2.2 (see the function-hash note above); then seam-chaining system walk: the No-chaining line qualified by the chain setting
