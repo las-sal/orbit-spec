@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-11-11T18:02:44Z",
+  "change": "chained-review-commit",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Q8 settled by the AI as method (D-chrc-10): an orbit pr commit subcommand observes the commit and push settings, the attachment, HEAD and the porcelain status, and prints the stage, commit and push steps the body runs; the settings are two top-level booleans. Mechanism entries written for all six rules (D-chrc-2, 4, 5, 6, 8, 10), each SOURCED or DERIVED, with two cases: the archive tail's unrelated-paths guarantee meets commit everything (a second commit after the tail; the change states it beside the tail's requirement), and a merge or rebase in progress (nothing printed). Three claims corrected on reading: parsePorcelainZ lives in select.ts and keeps raw status codes; resolve's withDefault false skips gh; an attached branch can share the default branch's name only by the change's or doc's name. No open questions remain. Expected size: orbit-pr-lifecycle (the subcommand and the two keys) and orbit-conventions (the shared step; the no-progress limit narrowed to pr: never).",
+  "decisions_captured": 10,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 6,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose chained-review-commit — 6 live rules accounted; formalize when you are ready (or /orbit:explore chained-review-commit to keep refining)"
+}
