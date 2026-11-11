@@ -1,0 +1,31 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-11T02:59:09Z",
+  "change": "seam-chaining-grants",
+  "model": "claude-opus-5-5",
+  "area": "user-sees-or-does",
+  "decided": "When orbit reaches apply or archive without the user having typed the command, it asks for consent as it does today unless the change's status says that command may run unasked. In that one case it does not ask for consent, and records that consent came from the setting.",
+  "alternatives": [
+    "record consent from the setting only when a chain brought orbit to the command, and ask in every other case, even when the command is granted"
+  ],
+  "why": "The status already says whether the next command may run unasked, from the chain map and any unanswered stop record, so orbit reads a fact instead of judging how it arrived. With no chain map the status never says so, and the user is asked exactly as today.",
+  "relies_on": [
+    {
+      "kind": "ruling",
+      "doc": "automate-dev-flow",
+      "id": "R-adf-1"
+    },
+    {
+      "kind": "decision",
+      "id": "D-sga-5"
+    }
+  ],
+  "defines": [
+    {
+      "term": "consent",
+      "definition": "the user's agreement that orbit may start apply or archive; today it comes from the user typing the command or answering a prompt"
+    }
+  ],
+  "detail": "The predicate is the chain object of orbit status --change --json naming this command with may_run true (composeChainObject, src/core/chain.ts). Refines D-sc-7 of the first seam-chaining change. The AI's method call.",
+  "replaces": "ledger-2026-11-10T21-14-33Z.json"
+}

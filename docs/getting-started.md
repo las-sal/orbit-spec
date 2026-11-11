@@ -147,7 +147,7 @@ Ready when you are: /orbit:apply add-dark-mode — user-invoked
 ```
 
 `Ready when you are:` names what is eligible, never what you must do. The `— user-invoked` marker says the step is
-one you invoke yourself. A gate that is `blocked-by-gate` is waiting on an earlier one.
+one you invoke yourself, or grant with your project's `chain` setting. A gate that is `blocked-by-gate` is waiting on an earlier one.
 
 ## Where am I?
 

@@ -160,7 +160,9 @@ switch recovers the branch, naming \`observations.attachment\` as the record of 
 A per-change tail whose \`observations.pr_state\` is \`ready\` prints no \`ready\` step: report in
 one line that the PR was already READY and was not re-flipped. Name \`observations.unrelated_staged\`
 and \`observations.unrelated_unstaged\` in one line when either is non-empty: those paths stay as
-they were, staged or unstaged, and outside the commit.
+they were, staged or unstaged, and outside the commit. Name \`observations.carried_untracked\` in one
+line when it is non-empty: files the move carried along that git never tracked in the change
+directory, staged with the archived tree as the change's own material.
 
 ## At the close
 

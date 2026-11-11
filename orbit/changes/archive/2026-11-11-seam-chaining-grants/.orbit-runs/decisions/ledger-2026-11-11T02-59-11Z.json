@@ -1,0 +1,21 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-11T02:59:11Z",
+  "change": "seam-chaining-grants",
+  "model": "claude-opus-5-5",
+  "area": "user-sees-or-does",
+  "decided": "The status readout keeps marking implementation and archiving as steps the user invokes, even when the user's setting lets the AI run them unasked.",
+  "alternatives": [
+    "drop the marker when the setting grants the step",
+    "show a different marker for a granted step"
+  ],
+  "why": "The setting enters no gate, state, reason, position or next command, so the readout the user reads is the same with or without it; only the status's machine-readable output gains a part saying whether the next command may run unasked. The guide explains that the setting can grant a marked step.",
+  "relies_on": [
+    {
+      "kind": "requirement",
+      "capability": "orbit-engine-gates",
+      "title": "The chain setting grants each command on its own key"
+    }
+  ],
+  "replaces": "ledger-2026-11-10T23-25-31Z.json"
+}

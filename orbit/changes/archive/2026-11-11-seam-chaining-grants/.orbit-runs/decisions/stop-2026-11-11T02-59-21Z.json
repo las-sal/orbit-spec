@@ -1,0 +1,11 @@
+{
+  "command": "stop",
+  "timestamp": "2026-11-11T02:59:21Z",
+  "change": "seam-chaining-grants",
+  "model": "claude-opus-5-5",
+  "condition": "outward-act",
+  "about": "The proposal's draft pull request needs the exploration's two latest commits on the shared repository first; they exist only on this machine's main branch.",
+  "question": "Push main's two unpushed commits to the shared repository so propose can open its branch and draft pull request, or propose without a pull request on main?",
+  "detail": "orbit pr select returned skip, reason generation-input: orbit/explore/seam-chaining-grants differs between HEAD and origin/main (main is ahead 2: 064d35e4, 21dd013f).",
+  "replaces": "stop-2026-11-10T21-17-38Z.json"
+}

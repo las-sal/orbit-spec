@@ -1,0 +1,91 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-11T01:35:59Z",
+  "change": "seam-chaining-grants",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/seam-chaining-grants/.orbit-runs/external-proposal-2026-11-10T23-36-29Z.md",
+  "source_command": null,
+  "source_token": "2026-11-10T23-36-29Z",
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-6",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 3,
+    "suggestion": 0
+  },
+  "pushback_verification": "All three verified against current state; two converge with the fresh pass and take its log's dispositions, one is this pass's alone.",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale_suppressed": 2,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Shared summary format still excludes setting",
+      "marker_source": "external",
+      "file": "orbit/changes/seam-chaining-grants/specs/orbit-conventions/spec.md",
+      "line": 1,
+      "classification": "stale",
+      "action": "converged with the fresh pass's 'Internal-run JSON summary format still types consent as two values', walked in its log",
+      "evidence": "resolved in address-reviews-2026-11-11T01-35-43Z: the requirement is carried into the orbit-conventions delta with both consent types reading user-invoked | prompted | setting",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Grant withdrawal contradicts constant consent across chunk emits",
+      "marker_source": "external",
+      "file": "orbit/changes/seam-chaining-grants/specs/orbit-lifecycle-consent/spec.md",
+      "line": 152,
+      "classification": "stale",
+      "action": "converged with the fresh pass's withdrawn-grant finding, walked in its log, including this pass's multi-chunk scenario and body-instruction asks",
+      "evidence": "resolved in address-reviews-2026-11-11T01-35-43Z: the named limit writes the emit with no consent field and asks nothing after the writes; chunk constancy names the exception; scenario 'A withdrawn grant writes the emit without consent' added; tasks 3.1 and 3.2 carry the body line",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Granted archive scenario incorrectly grants program PR readiness",
+      "marker_source": "external",
+      "file": "orbit/changes/seam-chaining-grants/specs/orbit-archive-modifications/spec.md",
+      "line": 268,
+      "classification": "trivial_fix",
+      "action": "restricted the scenario to a per-change PR whose preflight and push succeed; added 'A granted entry on a program PR appends and leaves the flip'",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the archive of a PR-attached change is reached because"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining-grants/specs/orbit-archive-modifications/spec.md",
+            "text": "A granted entry on a program PR appends and leaves the flip"
+          }
+        ],
+        "searched": [
+          "program PR",
+          "flips the\n  PR to ready",
+          "ready flip"
+        ],
+        "scope": [
+          "orbit/changes/seam-chaining-grants/specs/orbit-engine-gates/spec.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Two stale as converged with the fresh half's log address-reviews-2026-11-11T01-35-43Z; one resolved: the granted-archive scenario now covers a per-change PR whose tail succeeds, and a new scenario keeps a program PR a draft with its stage entry appended.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal seam-chaining-grants",
+  "ripple_misses": 0
+}

@@ -86,12 +86,14 @@ export const ProjectConfigSchema = z.object({
 
   // Optional: the chain setting (seam-chaining, `orbit-engine-gates`' `The chain setting grants each
   // command on its own key`) — a map from a command key to a boolean. Typed here for documentation
-  // only: the change status reads it ON ITS OWN through `resolveChainSetting`, and it is NOT a
-  // gate-state input.
+  // only: the change status and the emit write gate's consent check (seam-chaining-grants) each read
+  // it ON THEIR OWN through `resolveChainSetting`, and it is NOT a gate-state input.
   chain: z
     .record(z.string(), z.boolean())
     .optional()
-    .describe('Chain setting: { review, review-external, address-reviews: true|false } — what the AI may run unasked'),
+    .describe(
+      'Chain setting: { review, review-external, address-reviews, apply, archive: true|false } — what the AI may run unasked'
+    ),
 });
 
 export type ProjectConfig = z.infer<typeof ProjectConfigSchema>;
@@ -288,7 +290,7 @@ export function resolveSizeCeiling(projectRoot: string): SizeCeiling | null {
 }
 
 /** The closed set of `chain` keys (`orbit-engine-gates`' `The chain setting grants each command on its own key`). */
-export const CHAIN_KEYS = ['review', 'review-external', 'address-reviews'] as const;
+export const CHAIN_KEYS = ['review', 'review-external', 'address-reviews', 'apply', 'archive'] as const;
 export type ChainKey = (typeof CHAIN_KEYS)[number];
 
 /** The resolved `chain` setting: whether a map is configured, and each key's grant. */
@@ -304,8 +306,8 @@ export interface ChainSetting {
  * a value that is not a map grant nothing (`configured: false`); in a map, a key is granted only when
  * it is one of `CHAIN_KEYS` and its value is the boolean `true` — an absent, false or non-boolean
  * entry grants nothing, and any other key is not a grant. No key derives another. Silent by design:
- * the setting is read on every `orbit status --change`, and a grant that is not exactly `true` is
- * simply today's behaviour.
+ * the setting is read on every `orbit status --change` and by the apply and archive emits' consent
+ * check (seam-chaining-grants), and a grant that is not exactly `true` is simply today's behaviour.
  */
 export function resolveChainSetting(projectRoot: string): ChainSetting {
   const grants = Object.fromEntries(CHAIN_KEYS.map(k => [k, false])) as Record<ChainKey, boolean>;

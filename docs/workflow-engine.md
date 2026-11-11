@@ -146,8 +146,8 @@ There are two kinds:
   describes the cadence.
 
 `requires` names what must be done before the gate can be evaluated; `before` names the step the gate stands in
-front of. `consent: user-invoked` marks that step as one you invoke yourself: an AI that arrives at it by any other
-route asks first. The shipped schema file also carries `budget` and `confirm` keys, which no gate reads.
+front of. `consent: user-invoked` marks that step as one you invoke yourself or grant with your project's `chain`
+setting ([Customization](customization.md)): an AI that arrives at it by any other route asks first. The shipped schema file also carries `budget` and `confirm` keys, which no gate reads.
 
 The position line strings the steps and gates together:
 

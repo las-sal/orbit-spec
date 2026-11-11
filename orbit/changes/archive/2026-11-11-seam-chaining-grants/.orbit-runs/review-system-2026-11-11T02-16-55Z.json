@@ -1,0 +1,97 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-11T02:16:55Z",
+  "change": "seam-chaining-grants",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "3",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "docs/commands.md",
+      "line": 8,
+      "title": "README and the commands page still say an AI-initiated apply or archive always asks first",
+      "recommendation": "Give both sentences the clause task 5.1 gave docs/customization.md, docs/workflow-engine.md, docs/getting-started.md and docs/concepts.md: docs/commands.md:8-9 becomes \"When the AI arrives at `apply`, `archive` or `bulk-archive` by any route other than your typing it or your `chain` setting granting it, it asks before writing anything; `bulk-archive` is never granted.\", and README.md:52-54's last clause becomes \"an AI-initiated apply or archive your `chain` setting does not grant asks first\". Then grep README.md and docs/ once more for \"asks first\" and \"asks before\".",
+      "reproduction": "With chain: {apply: true} in orbit/config.yaml, a walk whose next command is `/orbit:apply <change> — user-invoked` chains into apply, and apply's Step 0 granted bullet records consent \"setting\" and fires no consent prompt (src/core/templates/workflows/apply-change.ts, Step 0). docs/commands.md:8-9 tells the reader that apply reached 'by any route other than your typing it' asks before writing anything, and README.md:52-54 that 'an AI-initiated apply or archive asks first'; both are now false for a granted arrival. The change corrected the same claim in docs/concepts.md:260-261 and docs/customization.md:258 but not these two."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "src/core/templates/workflows/archive-change.ts",
+      "line": 322,
+      "title": "A granted archive meets a HEAD-vs-attachment mismatch as one printed line, with nobody asked",
+      "recommendation": "Decide how a granted archive meets Step 0.7's mismatch. Today the mismatch rides in the consent preview on a prompted arrival (where Abort is one click away) and is one line before Step 1 otherwise; a granted arrival therefore syncs, moves and emits on the wrong branch, and the tail then skips with its recovery note, leaving the archive's writes uncommitted on a branch that may be the default one. The behaviour equals a typed archive's, which the engine-gates row promises, but a typed archive has the user at the keyboard and a granted one may not.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "On a granted arrival, make a Step 0.7 mismatch a decision prompt (switch first, or proceed, or abort): add its row to orbit-conventions' `A chain treats each prompt by its kind` and tag the site `(chain: decision)`, so the chain stops before any archive write."
+        },
+        {
+          "label": "B",
+          "body": "Keep it, and name it as a limit in orbit-archive-modifications' `Consent prompt on AI-mediated archive entry`: a granted archive with HEAD off the attachment's branch writes locally and its tail skips, recoverable by the tail's note."
+        }
+      ]
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "docs/customization.md",
+      "line": 59,
+      "title": "The chain row's key list keeps an \"and\" from its three-key form",
+      "recommendation": "Read the list as five items: \"`review` (...), `review-external` (...), `address-reviews` (the walk), `apply` (...) and `archive` (...)\" — drop the \"and\" before `address-reviews` and put a comma there."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "The engine half is small and exact: two rows in CHAIN_KEY_TABLE, chainKeyFor collapsed onto chainTargetFor, and validateConsent placed beside validatePayload, reading the same resolveChainSetting the chain object reads, so the entry and the gate share one definition of granted. I checked the next_command producer in instruction-loader.ts: mid-apply the engine names `/orbit:apply <change> — user-invoked` again, so with chain.apply a chunked apply chains chunk to chunk as fresh granted invocations, each bounded by the no-progress row because every chunk writes an emit; that reads as intended. Both Step 0s classify a granted arrival from the engine's object and never from the route, the archive body states the tag rules itself without a parenthesised tag the scanner would read, and the prompt inventory in chain-prompt-tags.test.ts matches the table row for row. The unplanned src/core/pr/tail.ts change (observations.carried_untracked) implements a baseline scenario that was never true; I read its pre-move tracked set (HEAD tree plus index) against the tests for a staged and an unstaged move, and it holds, with the archive emit correctly excluded. One reading came from the live checkout, which equals HEAD here: the build, the full suite (187 files, 3992 tests, no FAIL), validate --strict, validate --sources and the scenario map (109 delta scenarios, 0 uncovered). The residue the change left is in prose, not code: two user-facing docs still promise a prompt the grant now removes.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3"
+  ],
+  "passes_skipped": [
+    "4: no perspectives defined; skip Pass 4 (orbit/lenses/ is absent)",
+    "5: no critical paths defined; skip Pass 5 (orbit/lenses/ is absent)",
+    "6: audit-drift was not invoked as a library by this fresh worker; a scoped residue sweep of the phrasings this change retires (two consent values, no key grants apply or archive, AI-initiated apply or archive always asks) ran across README.md, docs/, orbit/specs/, src/ and the generated skills instead, and its one hit is the Pass 3 docs finding"
+  ],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The grant does what the specs say, and the write gate holds the one value it can check. What remains is prose: two docs sentences that a reader setting chain.apply would find false, which a walk fixes in two edits. The HEAD-mismatch question is a design choice the user may settle either way, and it does not need to hold up the archive."
+  },
+  "final_assessment": "0 critical, 1 warning, 2 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews seam-chaining-grants"
+}

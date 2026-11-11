@@ -84,6 +84,7 @@ function author(repo: Repo) {
 }
 
 describe('tail — the gate is the attachment', () => {
+  // @scenario behaviour orbit-archive-modifications :: PR-attached archive tail :: An unattached change never reaches discovery
   it('no attachment on the archived trail is off whatever --outcome says, and probes nothing', () => {
     const repo = archived({ attachment: null, emit: {} });
     const { record, calls } = tail(repo, 'valid');
@@ -93,6 +94,8 @@ describe('tail — the gate is the attachment', () => {
 });
 
 describe('tail — the --outcome table', () => {
+  // @scenario behaviour orbit-archive-modifications :: PR-attached archive tail :: The tail completes the effort
+  // @scenario behaviour orbit-archive-modifications :: PR-attached archive tail :: Ordering invariant
   it('valid: proceed; commit, push, rewrite, ready; the segment runs and the human acts do not', () => {
     const repo = archived();
     const { record } = tail(repo, 'valid');
@@ -133,6 +136,7 @@ describe('tail — the --outcome table', () => {
     expect(repo.git('rev-parse', '--verify', '-q', 'refs/heads/later-program').status).not.toBe(0);
   });
 
+  // @scenario behaviour orbit-archive-modifications :: PR-attached archive tail :: Already-READY PR is reported, not re-flipped
   it('valid with pr_state ready prints no flip', () => {
     const repo = archived({ emit: { pr_url: URL7, pr_state: 'ready' } });
     const { record } = tail(repo, 'valid');
@@ -146,6 +150,7 @@ describe('tail — the --outcome table', () => {
   });
 
   // @scenario behaviour orbit-pr-lifecycle :: `orbit pr tail` computes the archive tail :: A positive invalidation still lands the archive
+  // @scenario behaviour orbit-archive-modifications :: PR-attached archive tail :: Stored URL pointing at a closed PR is caught before it is edited
   it.each(['closed', 'merged', 'retargeted', 'head-mismatch', 'repository-mismatch', 'not-found'])(
     '%s: proceed, degraded with the outcome as code; commit and push only, and they land',
     (outcome) => {
@@ -161,6 +166,7 @@ describe('tail — the --outcome table', () => {
   );
 
   // @scenario behaviour orbit-pr-lifecycle :: `orbit pr tail` computes the archive tail :: A URL-less attachment's fallback miss still lands the archive
+  // @scenario behaviour orbit-archive-modifications :: PR-attached archive tail :: PR discovery finds nothing
   it('none and unobserved over the SAME emit: none degrades the PR half, unobserved skips the tail', () => {
     const urlless = { attachment: { branch: 'add-thing', granularity: 'per-proposal' }, emit: {} };
     const repo = archived(urlless);
@@ -171,6 +177,7 @@ describe('tail — the --outcome table', () => {
     expect(unobserved).toMatchObject({ action: 'skip', reason: { code: 'unobserved' }, segments: [] });
   });
 
+  // @scenario behaviour orbit-archive-modifications :: PR-attached archive tail :: Ambiguous discovery skips rather than guesses
   it('several degrades; gh-absent skips', () => {
     const repo = archived({ attachment: { branch: 'add-thing', granularity: 'per-proposal' }, emit: {} });
     expect(tail(repo, 'several').record).toMatchObject({ action: 'proceed', degraded: 'pr', reason: { code: 'several' } });
@@ -178,6 +185,7 @@ describe('tail — the --outcome table', () => {
   });
 
   // @scenario behaviour orbit-pr-lifecycle :: The `orbit pr` command observes and prints; it never writes :: An absent gh is its own fact
+  // @scenario behaviour orbit-archive-modifications :: PR-attached archive tail :: gh absent at archive skips before staging
   it('gh absent at the tail, after a valid preflight, skips the whole tail before anything is staged', () => {
     const repo = archived({ gh: 'absent' });
     const { record } = tail(repo, 'valid');
@@ -199,6 +207,8 @@ describe('tail — the --outcome table', () => {
 
 describe('tail — the commit scope', () => {
   // @scenario behaviour orbit-pr-lifecycle :: `orbit pr tail` computes the archive tail :: The scope is what the sync reported, including a new capability
+  // @scenario behaviour orbit-archive-modifications :: PR-attached archive tail :: The move's deletion is staged with its addition
+  // @scenario behaviour orbit-archive-modifications :: PR-attached archive tail :: Unrelated dirty paths never ride the commit
   it('the scope is the synced specs (one ADDED, untracked), the pre-move deletions, the archived dir — never the unrelated spec edit', () => {
     const repo = archived();
     repo.git('add', 'orbit/specs/other/spec.md'); // the user had it staged, even
@@ -221,6 +231,7 @@ describe('tail — the commit scope', () => {
     expect(repo.git('status', '--porcelain', '--', 'orbit/changes').stdout.trim()).toBe('');
   });
 
+  // @scenario behaviour orbit-archive-modifications :: PR-attached archive tail :: Unrelated dirty paths never ride the commit
   it('an unrelated tracked edit left unstaged is named in unrelated_unstaged, stays out of the commit and stays unstaged', () => {
     const repo = archived();
     const { record } = tail(repo, 'valid');
@@ -248,6 +259,35 @@ describe('tail — the commit scope', () => {
     expect(repo.git('status', '--porcelain', '--', 'orbit/changes').stdout.trim()).toBe('');
   });
 
+  // @scenario behaviour orbit-archive-modifications :: PR-attached archive tail :: The moved archive tree stages whole; strays are named
+  it('a scratch file the move carried along is staged with the archived tree and named in carried_untracked; tracked files are not', () => {
+    const repo = archived();
+    repo.write(`${ARCHIVED}/scratch.txt`, 'left behind during the work\n');
+    repo.write(`${ARCHIVED}/notes/draft.md`, 'another\n');
+    const { record } = tail(repo, 'valid');
+    expect(record.observations.carried_untracked).toEqual([`${ARCHIVED}/notes/draft.md`, `${ARCHIVED}/scratch.txt`]);
+    const scope = record.observations.scope as string[];
+    expect(scope).toContain(ARCHIVED);
+    expect(scope.some((p) => p === 'orbit/specs' || p === 'orbit/specs/')).toBe(false);
+
+    runSegments(repo, record, author(repo));
+    const committed = repo.git('show', '--name-only', '--format=', 'HEAD').stdout;
+    expect(committed).toContain(`${ARCHIVED}/scratch.txt`);
+    expect(committed).toContain(`${ARCHIVED}/notes/draft.md`);
+    expect(committed).not.toMatch(/orbit\/specs\/other/);
+  });
+
+  it('no stray: every archived file was tracked at the pre-move path, so carried_untracked is empty — moved staged or not', () => {
+    const repo = archived();
+    expect(tail(repo, 'valid').record.observations.carried_untracked).toEqual([]);
+    repo.git('add', '-A', 'orbit/changes');
+    expect(tail(repo, 'valid').record.observations.carried_untracked).toEqual([]);
+    // A stray staged with the move is still a stray.
+    repo.write(`${ARCHIVED}/scratch.txt`, 'x\n');
+    repo.git('add', `${ARCHIVED}/scratch.txt`);
+    expect(tail(repo, 'valid').record.observations.carried_untracked).toEqual([`${ARCHIVED}/scratch.txt`]);
+  });
+
   it('--include adds the at-archive-note edits', () => {
     const repo = archived();
     repo.write('orbit/architecture/notes.md', 'at-archive note\n');
@@ -260,6 +300,7 @@ describe('tail — the commit scope', () => {
 
 describe('tail — the HEAD precondition', () => {
   // @scenario behaviour orbit-pr-lifecycle :: `orbit pr tail` computes the archive tail :: Archiving from the wrong branch prints no write
+  // @scenario behaviour orbit-archive-modifications :: PR-attached archive tail :: HEAD on the wrong branch skips before staging
   it('HEAD on the default, the branch only on the remote: skip head-mismatch, the fetch + tracking-switch recovery, no segments', () => {
     const repo = archived();
     repo.git('switch', '-q', 'main');
@@ -276,6 +317,7 @@ describe('tail — the HEAD precondition', () => {
     });
   });
 
+  // @scenario behaviour orbit-archive-modifications :: PR-attached archive tail :: HEAD on the wrong branch skips before staging
   it('the branch existing locally recovers by a plain switch', () => {
     const repo = archived();
     repo.git('switch', '-q', 'main');
@@ -283,6 +325,7 @@ describe('tail — the HEAD precondition', () => {
     expect((record.reason!.detail as { recovery: unknown }).recovery).toEqual({ case: 'local', argv: [['git', 'switch', 'add-thing']] });
   });
 
+  // @scenario behaviour orbit-archive-modifications :: PR-attached archive tail :: HEAD on the wrong branch skips before staging
   it('the branch absent everywhere: no switch recovers it', () => {
     const repo = archived();
     repo.git('switch', '-q', 'main');
@@ -296,6 +339,7 @@ describe('tail — the HEAD precondition', () => {
 describe('tail — the program granularity', () => {
   const program = { branch: 'my-program', granularity: 'per-architecture', doc: 'my-program', url: URL7, state: 'draft' };
 
+  // @scenario behaviour orbit-archive-modifications :: PR-attached archive tail :: Program-mode stage archive appends only
   it('appends to the current body (read, never re-observed state), and never flips; no human acts at a stage', () => {
     const current = '## Program intent\n\n### Stage one\n';
     const repo = archived({

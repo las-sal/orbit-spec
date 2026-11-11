@@ -1,0 +1,74 @@
+{
+  "command": "archive",
+  "timestamp": "2026-11-11T03:13:09Z",
+  "change": "seam-chaining-grants",
+  "kind": "lifecycle",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Archived seam-chaining-grants to orbit/changes/archive/2026-11-11-seam-chaining-grants/: the apply and archive chain keys, consent \"setting\" checked at the emit write gate, and prompt tags across the apply and archive bodies; 16 modified requirements synced across six capabilities.",
+  "archive_path": "orbit/changes/archive/2026-11-11-seam-chaining-grants/",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 10
+    },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": [
+      "orbit-archive-modifications",
+      "orbit-conventions",
+      "orbit-engine-gates",
+      "orbit-lifecycle-consent",
+      "orbit-pr-lifecycle",
+      "orbit-run-summary-emit"
+    ],
+    "added": 0,
+    "modified": 16,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
+  "user_decision": "proceeded_with_no_critical",
+  "consent": "user-invoked",
+  "warnings": [
+    "Touchpoints: src/core/pr/tail.ts and src/core/templates/workflows/pr-choreography.ts were edited outside design.md's predicted list, by the stray-files fix the user chose at apply (stop-2026-11-11T02-01-18Z, resolution-2026-11-11T02-03-03Z)",
+    "orbit-lifecycle-consent's Purpose was edited in place at archive, as the design's migration plan said, since no delta carries a Purpose"
+  ],
+  "judgements": [
+    {
+      "kind": "readiness",
+      "formed_against": [
+        "2026-11-10T23-36-05Z",
+        "2026-11-10T23-36-29Z",
+        "2026-11-11T02-16-55Z",
+        "2026-11-11T02-17-18Z"
+      ],
+      "disposition": "ready",
+      "reasoning": "Both blind pairs were walked; the system pair's five findings were repaired and the in-context verification graded every repair landed; the engine, the bodies and the specs agree, the full suite is green and every delta scenario is declared. What remains is wording in records no reader will see before archive, and two limits the user chose.",
+      "ratified_by": "ai",
+      "accepted": [
+        {
+          "claim": "The fifteen replacement decision records the last walk wrote reach no reader before archive",
+          "why": "D-dr-2's named limit; each replacement only narrows or defines wording the reader flagged, and every link field is carried unchanged"
+        },
+        {
+          "claim": "The system pair's external half ran no build or tests",
+          "why": "its checkout was read-only; the fresh half ran the full suite green on the same commit, and the suite was green again after the walks"
+        },
+        {
+          "claim": "A granted archive started off the attachment's branch is told only by one line, and its writes stay uncommitted until the user moves them",
+          "why": "the user chose this named limit over a new decision prompt at the walk of the fresh system pass; nothing is pushed to the wrong branch"
+        }
+      ]
+    }
+  ],
+  "pr_url": "https://github.com/las-sal/orbit-spec/pull/39",
+  "pr_state": "draft",
+  "next_recommended": "/orbit:architect automate-dev-flow — change archived; review stage seam-chaining and take up the program's next stage, or run /orbit:audit-drift for a project-wide drift check.",
+  "decision_records_unread": 14
+}

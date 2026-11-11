@@ -50,6 +50,7 @@ function preflight(repo: Repo, name = 'add-thing') {
 }
 
 describe('preflight — the gate is the attachment', () => {
+  // @scenario behaviour orbit-archive-modifications :: PR-attached archive tail :: Config flipped to never after propose does not abandon the PR
   it('an unattached change is off: no reason, and no git or gh call', () => {
     const repo = attached({}, null);
     const { record, calls } = preflight(repo);
@@ -58,6 +59,7 @@ describe('preflight — the gate is the attachment', () => {
     expect(calls).toEqual({ git: [], gh: [] });
   });
 
+  // @scenario behaviour orbit-archive-modifications :: PR-attached archive tail :: Config flipped to never after propose does not abandon the PR
   it('pr: never in the live config does not turn an attached change off', () => {
     const repo = attached({ prs: { [URL7]: open() } }, perChange());
     repo.write('orbit/config.yaml', 'schema: spec-driven\npr: never\n');
@@ -138,6 +140,7 @@ describe('preflight — a stored URL, validated live', () => {
 describe('preflight — a URL-less attachment: the four-axis fallback', () => {
   const noUrl = { branch: 'add-thing', granularity: 'per-proposal' };
 
+  // @scenario behaviour orbit-archive-modifications :: PR-attached archive tail :: Discovery fallback constrains on all four axes
   it('exactly one survivor (another base discarded) is discovered', () => {
     const repo = attached({ prList: [open({ isDraft: false }), open({ url: 'https://github.com/acme/widget/pull/8', baseRefName: 'release' })] }, noUrl);
     const { record, calls } = preflight(repo);
@@ -148,6 +151,8 @@ describe('preflight — a URL-less attachment: the four-axis fallback', () => {
     ]);
   });
 
+  // @scenario behaviour orbit-archive-modifications :: PR-attached archive tail :: PR discovery finds nothing
+  // @scenario behaviour orbit-archive-modifications :: PR-attached archive tail :: Ambiguous discovery skips rather than guesses
   it.each([
     ['none', [] as GhPr[]],
     ['several', [open(), open({ url: 'https://github.com/acme/widget/pull/8' })]],
@@ -159,6 +164,7 @@ describe('preflight — a URL-less attachment: the four-axis fallback', () => {
     if (outcome === 'several') expect((record.reason!.detail as { candidates: string[] }).candidates).toHaveLength(2);
   });
 
+  // @scenario behaviour orbit-archive-modifications :: PR-attached archive tail :: A failing gh query is degradation, not a miss
   it('a query error is unobserved: skip', () => {
     const repo = attached({ prList: null }, noUrl);
     const { record } = preflight(repo);

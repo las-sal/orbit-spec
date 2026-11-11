@@ -17,8 +17,9 @@ export { CHAIN_KEYS, type ChainKey };
 
 /**
  * The key table: each key and the next-command forms its row grants. `<mode>` is `proposal` or
- * `system`; `<change>` is the change name. `/orbit:apply` and `/orbit:archive` (with or without the
- * ` — user-invoked` marker) are named by no row: no key grants them in this change.
+ * `system`; `<change>` is the change name. `/orbit:apply` and `/orbit:archive` are granted with or
+ * without the ` — user-invoked` marker (seam-chaining-grants, D-sga-4); the `archive` key also grants
+ * the PR tail's outward writes, which `orbit-engine-gates`' row names.
  */
 export const CHAIN_KEY_TABLE: Readonly<Record<ChainKey, readonly string[]>> = Object.freeze({
   review: ['/orbit:review --as <mode> <change>', '/orbit:review --as <mode> --fresh <change>'],
@@ -27,15 +28,14 @@ export const CHAIN_KEY_TABLE: Readonly<Record<ChainKey, readonly string[]>> = Ob
     '/orbit:review --as <mode> --reviewer blind-pair <change>',
   ],
   'address-reviews': ['/orbit:address-reviews <change>'],
+  apply: ['/orbit:apply <change>', '/orbit:apply <change> — user-invoked'],
+  archive: ['/orbit:archive <change>', '/orbit:archive <change> — user-invoked'],
 });
-
-/** What a next-command string maps to: the key whose row covers it, apply, archive, or nothing known. */
-export type ChainTarget = ChainKey | 'apply' | 'archive' | null;
 
 const CONSENT_MARKER = ' — user-invoked';
 const MODE = '(?:proposal|system)';
 const NAME = '[^\\s]+';
-const ROWS: ReadonlyArray<[RegExp, ChainTarget]> = [
+const ROWS: ReadonlyArray<[RegExp, ChainKey]> = [
   [new RegExp(`^/orbit:review --as ${MODE} ${NAME}$`), 'review'],
   [new RegExp(`^/orbit:review --as ${MODE} --fresh ${NAME}$`), 'review'],
   [new RegExp(`^/orbit:review --as ${MODE} --reviewer (?:external|blind-pair) ${NAME}$`), 'review-external'],
@@ -45,11 +45,11 @@ const ROWS: ReadonlyArray<[RegExp, ChainTarget]> = [
 ];
 
 /**
- * Map a next-command string to the key whose row covers it; `apply` / `archive` for those two
- * commands (with or without the consent marker), which no key grants; `null` for anything else.
- * The consent marker is accepted only on apply and archive, the two consent-marked commands.
+ * Map a next-command string to the key whose row covers it — `apply` / `archive` for those two
+ * commands with or without the consent marker — and `null` for anything else. The consent marker is
+ * accepted only on apply and archive, the two consent-marked commands.
  */
-export function chainTargetFor(command: string): ChainTarget {
+export function chainTargetFor(command: string): ChainKey | null {
   const marked = command.endsWith(CONSENT_MARKER);
   const bare = marked ? command.slice(0, -CONSENT_MARKER.length) : command;
   for (const [re, target] of ROWS) {
@@ -62,8 +62,7 @@ export function chainTargetFor(command: string): ChainTarget {
 
 /** The key that grants a command, or `null` when no key's row covers it. */
 export function chainKeyFor(command: string): ChainKey | null {
-  const t = chainTargetFor(command);
-  return t === null || t === 'apply' || t === 'archive' ? null : t;
+  return chainTargetFor(command);
 }
 
 /** The refusal reasons, in the order the rows are tested. */

@@ -146,6 +146,28 @@ export function prTail(
   observations.unrelated_unstaged = moved.unrelated
     .filter((u) => u.status[0] !== '?' && u.status[1] !== ' ' && !inScope(u.path))
     .map((u) => u.path);
+  // The STRAYS the move carried along: files under the archived directory that git never tracked at
+  // the pre-move path (a scratch file the work left in the change directory). They are the change's
+  // own material and are staged with the archived tree, and the owner's note names them
+  // (`orbit-archive-modifications`' `PR-attached archive tail`, seam-chaining-grants). After a
+  // filesystem move EVERY archived file is untracked, so "tracked" is read at the pre-move path, from
+  // HEAD's tree and from the index, never from the archived file's own status.
+  const trackedPreMove = new Set<string>();
+  for (const listed of [
+    run.git('ls-tree', '-r', '-z', '--name-only', 'HEAD', '--', preMove),
+    run.git('ls-files', '-z', '--', preMove),
+  ]) {
+    if (listed.status !== 0) continue;
+    for (const p of listed.stdout.split('\0')) if (p.startsWith(preMove)) trackedPreMove.add(p.slice(preMove.length));
+  }
+  // The archive emit is written AFTER the move, into the archived trail: the archive's own write, not a stray.
+  const archivedPrefix = `${archivedRel}/`;
+  const emitDir = `${archivedPrefix}.orbit-runs/`;
+  observations.carried_untracked = entries
+    .map((e) => e.path)
+    .filter((p) => p.startsWith(archivedPrefix) && !trackedPreMove.has(p.slice(archivedPrefix.length)))
+    .filter((p) => !(p.startsWith(emitDir) && ARCHIVE_EMIT.test(p.slice(emitDir.length))))
+    .sort();
 
   const degraded = row !== 'pr-runs';
   const program = att.granularity === 'per-architecture';

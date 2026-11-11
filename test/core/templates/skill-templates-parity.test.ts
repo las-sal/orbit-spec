@@ -138,9 +138,11 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // stopped naming "spec-driven v4" and `blind-pair` as the post-apply slot — under v5 which review comes
   // next depends on the cadence and the review preference, so the body says it is read, not predicted.
   // seam-chaining (2026-11-09): the Chain end step and the no-chaining epitome clause, at apply (task 3.1), again at the system walk, and a third time at the verification walk (the dirty-tree clause).
-  getApplyChangeSkillTemplate: '2f7ab7db3212aba7c10ed2994caebb70444f591a42e86f37b78db5e6552e8e74',
+  // seam-chaining-grants apply (2026-11-11, task 6.2): the Chain end step gains the `apply` and `archive` key rows (interpolated from `CHAIN_KEY_TABLE`) and the clause that a chained apply or archive records its grant as `consent: "setting"` (task 3.5). Apply also moved by its own body: Step 0's granted bullet, the three-value consent story and payload note, the withdrawn-grant line, and the prompt tags (tasks 3.1, 3.4).
+  getApplyChangeSkillTemplate: '906e8675bc5e2445e94d8e5ccdd34ce25daf22d92ac017ff006fbd56d73671c6',
   // seam-chaining (2026-11-09): the Chain end step and the no-chaining epitome clause, at apply (task 3.1), again at the system walk, and a third time at the verification walk (the dirty-tree clause).
-  getFfChangeSkillTemplate: '0fb634af7e0dbf90db3f97bf438c14505c031bd294ed4328474baaeaf0ef8baa',
+  // seam-chaining-grants apply (2026-11-11, task 6.2): the Chain end step gains the `apply` and `archive` key rows (interpolated from `CHAIN_KEY_TABLE`) and the clause that a chained apply or archive records its grant as `consent: "setting"` (task 3.5). No ff template line moved.
+  getFfChangeSkillTemplate: 'e7c62a29776670ab9425d760c521ce25754dc5d1b4f14cef54d05027130f115f',
   getSyncSpecsSkillTemplate: 'a63e917c3d85e986634285b04f2a9662baab19639bd7225ae74ac1a99c79b97a',
   // rc08b-walk-routing (2026-10-05, task 3.3): the command-table row's retired "auto-discovers … when invoked
   // with a change name and no markers found" became the discovery sentence. One re-record, both onboard hashes.
@@ -168,7 +170,15 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // Step 3.2 reports cases 2, 3 and 8 and widens its DEFERRED rule to post-move state (fresh S2); bulk
   // archive briefs before each move and gains its per-change archive emit step (fresh W2, S1). The same
   // four hashes moved; no other pin did.
-  getArchiveChangeSkillTemplate: '7eba0fc803954b7418d2013222035e3444e887e48e0c3eb6011551afb571eff4',
+  // seam-chaining-grants apply (2026-11-11, task 6.2): archive moved by its own body — Step 0's granted bullet and its
+  // tag-rules sentence, the AI-mediated bullet's grant exception, the withdrawn-grant line at Step 5.5, the prompt tags
+  // (tasks 3.2, 3.4), and the schema reference's three-value `consent` (task 3.3). Archive carries no Chain end step.
+  // Moved again in the same apply (task 6.1, stop-2026-11-11T02-01-18Z, Sal: fix it here): the `pr-archive-tail.md`
+  // reference names `observations.carried_untracked`, the strays the move carried along. Only this function hash moved:
+  // the generated SKILL.md is unchanged by a reference edit.
+  // Moved a THIRD time at the system walk (2026-11-11, fresh S1, Sal: B): Step 0.7 says its one mismatch line is a
+  // granted arrival's only notice, a named limit of `orbit-archive-modifications`. Both archive hashes moved.
+  getArchiveChangeSkillTemplate: '550dee4951327fe7185562a5db5b74ab18fb4fa88fc8be7894c6ceb6fd79dddd',
   getBulkArchiveChangeSkillTemplate: '21195e4c5505a19d0826fdce42a5f7c4729dec50260f427443375ec08b681598',
   getOrbitSyncCommandTemplate: 'b985d0a4d89b0e2cc3c6b6dec2521ef2a9d0df44a8ba9ec92a5495052c94a39c',
   // rc06b-map-readers (2026-10-05) — verify moved DELIBERATELY, the first named edit to an upstream
@@ -209,7 +219,8 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // Split route's "the rest of the flow runs unchanged", "run" for "re-run" under Declare, and the heading
   // line's "exactly" dropped (the parser reads CommonMark indentation) — one re-record for the walk's edits.
   // seam-chaining (2026-11-09): the Chain end step and the no-chaining epitome clause, at apply (task 3.1), again at the system walk, and a third time at the verification walk (the dirty-tree clause).
-  getOrbitProposeSkillTemplate: '4877cd1e46ca052c1d02ecdda46cb47c36a65fb55e9d7efde21a8e13152da45a',
+  // seam-chaining-grants apply (2026-11-11, task 6.2): the Chain end step gains the `apply` and `archive` key rows (interpolated from `CHAIN_KEY_TABLE`) and the clause that a chained apply or archive records its grant as `consent: "setting"` (task 3.5). No propose template line moved.
+  getOrbitProposeSkillTemplate: 'd278c263a5ff95b31c5c1ea286f8296e0b2a9324218e46a1a93f2d320e485fd3',
   getOrbitProposeCommandTemplate: '33077b4185c425952edcdf14f4f16f2a0fa9d5961158f3c63534b58cee2576fb',
   getFeedbackSkillTemplate: 'ded61ad85c5050f7bf241870b14bfcdd929f0be68a028c1130fd30a66efbda3b',
   // rc15 (ended-stage-state, 2026-09-29): the orbit-architect body moved ONCE, deliberately — §5 (the
@@ -245,14 +256,14 @@ const EXPECTED_GENERATED_SKILL_CONTENT_HASHES: Record<string, string> = {
   'orbit-explore': '76dca5fd1d4695ed615200485340acbbd092f84307bdd46eb02e7d1fcd6c9127', // rc16-retirement-sweep: moved once with the body at apply, a second time at the system blind-pair walk (see the function-hash note above)
   'orbit-new-change': '7a474b86d0e0156a1b89516d97878e50c9e3a4e0fa6ef2d66a35670f46731806',
   'orbit-continue-change': 'd6e3515a1bd92815cedf4a6718d9d2c7374854dddddc16c16dc89db5bc479541',
-  'orbit-apply-change': 'ba569a17b47f08e8b92917264750912c14ebab85b0874dd84e5f47a6025fbe16', // rc17a apply: the v4 clause (see the function-hash note above); then seam-chaining: the Chain end step and the epitome clause, at apply, the system walk and the verification walk
-  'orbit-ff-change': '9d061093159f5f5ffb37ec7f8256e05b992f33f425225d6c1c48c105455fd34c', // seam-chaining: the Chain end step and the epitome clause, at apply, the system walk and the verification walk
+  'orbit-apply-change': '70b27923387ffb5fbff0967db2789f6ff23210f8f0d4864b5be7ee2c9290fdd8', // rc17a apply: the v4 clause (see the function-hash note above); then seam-chaining: the Chain end step and the epitome clause, at apply, the system walk and the verification walk; then seam-chaining-grants apply (see the function-hash note above)
+  'orbit-ff-change': '80b57fe3217f52ddf304701292ec39181b4b975226f0c97ce7fc275e3b6ffa09', // seam-chaining: the Chain end step and the epitome clause, at apply, the system walk and the verification walk; then seam-chaining-grants apply: the end step's two key rows and consent clause
   'orbit-sync-specs': '09ebdddd32d976022699b1575f8cf5e85fabf57ea71f1aa1afce1c793f322c99',
-  'orbit-archive-change': '224a3b96f64594ba9dada22c73e6b5df459e8511ed5f8f456f21440ac62298e0', // rc10-apply-closure task 2.8, then its system walk (see the function-hash note above)
+  'orbit-archive-change': '7b4e7de975366c17e1aa6a46d72fc32c65cdb3ed1b6fbdc8b050f40a8efc8110', // rc10-apply-closure task 2.8, then its system walk; then seam-chaining-grants apply and its system walk (see the function-hash note above)
   'orbit-bulk-archive-change': 'ebbccd064bd5237d4ea18c08ac0e88114a24733588900fea32d67d44e36cf6b4', // rc10-apply-closure task 2.8, then its system walk (see the function-hash note above)
   'orbit-verify-change': '86d0fad7fe26e44c2df6e52bcac54c015a4911afd13bb288a825495773c99390', // rc06b-map-readers (2026-10-05): moved with the body's step 6 edit, then again at system walk 2's additions edit (see the function-hash note above)
   'orbit-onboard': 'e704c183201dc18a574de32da10a8722e8a53cc590e455fd66580317761d4698', // landing-page task 2.2 (see the function-hash note above); then seam-chaining system walk: the No-chaining line qualified by the chain setting
-  'orbit-propose': '83a0534aeef622b2cd8c553753fa705a3be7b94e3102a0ad441cc90f6c0a168b', // rc13c, then rc03b, then rc05's system walk, then rc09a's size brief (task 5.3) and its system walk: moved with the body (see the function-hash notes above); then seam-chaining: the Chain end step and the epitome clause, at apply, the system walk and the verification walk
+  'orbit-propose': '5b9ce2b32e34e2443d0eade5c07073a9bdfce4ebf858748c70092248246a2b41', // rc13c, then rc03b, then rc05's system walk, then rc09a's size brief (task 5.3) and its system walk: moved with the body (see the function-hash notes above); then seam-chaining: the Chain end step and the epitome clause, at apply, the system walk and the verification walk; then seam-chaining-grants apply: the end step's two key rows and consent clause
   'orbit-architect': '3bc22ef12bdb7f4a63aefedaf699077ef6ad112ae331710400fb7cc21697f8b1', // rc15: moved twice with the body — apply, then the system walk; a third time at the post-archive audit walk; a fourth at rc05's apply, the scaffold's escaped backticks (see the function-hash note above)
 };
 

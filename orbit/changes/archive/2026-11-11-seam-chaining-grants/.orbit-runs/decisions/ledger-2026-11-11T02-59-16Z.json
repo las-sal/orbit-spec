@@ -1,0 +1,40 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-11T02:59:16Z",
+  "change": "seam-chaining-grants",
+  "model": "claude-opus-5-5",
+  "area": "when-things-go-wrong",
+  "decided": "If the user switches off the setting that let the AI implement or archive a change while that work is already running, the AI saves the command's run summary without a consent value and says which setting was switched off, instead of asking the user afterwards.",
+  "alternatives": [
+    "ask the user after the work has run and record that they agreed",
+    "stop without saving any record of the work"
+  ],
+  "why": "The work has already happened, so a question afterwards would record a consent given after the act; a run summary with no consent value is exactly what the drift check flags, so the user still sees it.",
+  "relies_on": [
+    {
+      "kind": "requirement",
+      "capability": "orbit-audit-drift",
+      "title": "Missing consent-record check in archive coherence"
+    },
+    {
+      "kind": "requirement",
+      "capability": "orbit-lifecycle-consent",
+      "title": "Consent recorded in consent-scoped lifecycle emits"
+    }
+  ],
+  "defines": [
+    {
+      "term": "consent",
+      "definition": "the user's agreement that orbit may start apply or archive; today it comes from the user typing the command or answering a prompt"
+    },
+    {
+      "term": "run summary",
+      "definition": "the record orbit writes at the end of a command, saying what the command did"
+    },
+    {
+      "term": "consent value",
+      "definition": "the part of a run summary that says where the consent came from"
+    }
+  ],
+  "replaces": "ledger-2026-11-11T01-34-25Z.json"
+}

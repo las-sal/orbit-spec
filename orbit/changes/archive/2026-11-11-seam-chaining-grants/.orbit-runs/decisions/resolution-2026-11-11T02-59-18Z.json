@@ -1,0 +1,11 @@
+{
+  "command": "resolution",
+  "timestamp": "2026-11-11T02:59:18Z",
+  "change": "seam-chaining-grants",
+  "model": "claude-opus-5-5",
+  "stop": "stop-2026-11-11T02-01-18Z.json",
+  "answer": "Fix it in this change.",
+  "effect": "The archive now names, in one line of its report on the pull request, every file it commits from the change's folder that git never tracked, so a stray file is never pushed without the user seeing it.",
+  "detail": "src/core/pr/tail.ts gains observations.carried_untracked (untracked paths under the archived directory); PR_ARCHIVE_TAIL_REFERENCE names it in the same note as unrelated_staged / unrelated_unstaged; a behaviour test in test/core/pr/tail.test.ts declares the scenario.",
+  "replaces": "resolution-2026-11-11T02-03-03Z.json"
+}

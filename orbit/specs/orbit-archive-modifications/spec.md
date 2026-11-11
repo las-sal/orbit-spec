@@ -134,7 +134,7 @@ relationship the lifecycle is built on.
 #### Scenario: Consent recorded in the summary
 
 - **WHEN** the archive completes (post-consent-capability)
-- **THEN** the archive run summary includes `consent: "user-invoked" | "prompted"` per `orbit-lifecycle-consent`'s emit-field requirement — `user-invoked` for a user-typed invocation, `prompted` when the AI-mediated-entry consent prompt fired and the user proceeded; there is no third value (a consent abort writes no summary). Distinct from `user_decision` (audit outcome), the `continuation` judgement entry (cadence decision), and the fingerprint fields (content guard).
+- **THEN** the archive run summary includes `consent`, one of `user-invoked`, `prompted` and `setting`, per `orbit-lifecycle-consent`'s emit-field requirement — `user-invoked` for a user-typed invocation, `prompted` when the AI-mediated-entry consent prompt fired and the user proceeded, `setting` when the arrival was granted by the `archive` key of the project's `chain` map (the write gate refuses `setting` when that key does not grant it); a consent abort writes no summary. Distinct from `user_decision` (audit outcome), the `continuation` judgement entry (cadence decision), and the fingerprint fields (content guard).
 
 #### Scenario: PR fields recorded at emit-time state
 
@@ -270,8 +270,8 @@ residue that path renaming alone does not fix — satisfying the deferral record
   fingerprint fields (`fingerprint_overridden: [{capability, requirement, base_hash, live_hash}]`
   and `fingerprints_unverified: [{capability, requirement}]`; present only when the corresponding
   fingerprint outcome occurred, per this capability's `Archive run summary written` requirement),
-  plus the `consent` field (`"user-invoked" | "prompted"`; present on every post-capability
-  archive emit, per `orbit-lifecycle-consent`'s emit-field requirement), plus the conditional
+  plus the `consent` field (`"user-invoked" | "prompted" | "setting"`; present on every post-capability
+  archive emit except one written after a withdrawn grant, per `orbit-lifecycle-consent`'s emit-field requirement), plus the conditional
   `deferred_validations` array (`[{task, why, when, where}]`; present only when an unchecked
   user-validation task was deferred, per this capability's `User-validation closure at the archive
   seam` requirement)
@@ -368,7 +368,8 @@ workflow SHALL run the same check and prompt per change before that change's syn
 
 The archive workflow SHALL apply `orbit-lifecycle-consent`'s provenance rule at command entry:
 provenance is CLASSIFIED at entry (a fact about the triggering turn), and on AI-mediated arrival
-the consent AskUserQuestion fires AFTER read-only discovery (change selection; the read-only look
+that is not granted (per that capability's `Invocation-provenance rule`: the change status's `chain`
+object names `/orbit:archive <change>` with `may_run: true`) the consent AskUserQuestion fires AFTER read-only discovery (change selection; the read-only look
 at the change's `specs/` that supplies the write preview) and BEFORE any of the command's writes
 or anomaly prompts (before the Step 3.4 gate prompt — consent asks "should we be here at all";
 the anomaly prompts ask "is the state sound"). The prompt content: position readout + what the
@@ -387,14 +388,22 @@ whatever each change's attachment state. The preview REPORTS what the tail
 will attempt; a tail that later degrades (no remote, `gh` failure, HEAD mismatch) still
 skips with its own note — the preview is not a promise that every step succeeds. A
 user-typed `/orbit:archive` runs with no consent prompt. Proceeding records
-`consent: "prompted"` in the archive run summary; an abort writes no summary. The bulk-archive
+`consent: "prompted"` in the archive run summary; an abort writes no summary. A granted arrival
+fires no consent prompt and records `consent: "setting"`: no preview is shown, so the outward writes
+the tail rides on this entry are named instead in the `archive` key's row of `orbit-engine-gates`'
+`The chain setting grants each command on its own key`, which the user reads before granting it, and
+the tail runs exactly as it would after a Proceed. Named limit: a granted archive whose HEAD is not on the
+attachment's branch is told so only by the one line the entry observation prints before Step 1, and nobody is
+asked; the sync, the move and the emit land in the working tree as on a typed archive, the tail's HEAD
+precondition skips the commit and the push, and its note names the recovery. Nothing is pushed to the wrong
+branch, but the archive's writes stay uncommitted until the user carries them to the attachment's branch. The bulk-archive
 workflow applies the same rule per change (a user-typed `/orbit:bulk-archive` whose flow confirms
 the batch is user-invoked for the confirmed set).
 
 #### Scenario: AI-mediated entry prompts first
 
 - **WHEN** the archive workflow is reached via delegation/inference (no same-turn user
-  invocation)
+  invocation) and the arrival is not granted
 - **THEN** the consent prompt fires before the gate, fingerprint, and audit steps; Abort leaves
   no writes and no summary
 
@@ -413,6 +422,23 @@ the batch is user-invoked for the confirmed set).
 
 - **WHEN** the consent prompt fires for a change with no PR attachment
 - **THEN** the preview is byte-identical to the pre-capability content (deltas synced, change moved) — no outward line appears
+
+#### Scenario: A granted entry skips the consent prompt and runs the tail
+
+- **WHEN** the archive of a change attached to a per-change PR is reached because the change status's
+  `chain` object allowed `/orbit:archive <change> — user-invoked`, granted by `chain.archive`, and the
+  tail's preflight and push succeed
+- **THEN** no consent prompt fires, the anomaly prompts fire as on a typed arrival, the run summary
+  records `consent: "setting"`, and the tail commits, pushes, rewrites the description and flips the
+  PR to ready with no prompt of its own
+
+#### Scenario: A granted entry on a program PR appends and leaves the flip
+
+- **WHEN** the archive of a change attached to a program PR is reached because the change status's
+  `chain` object allowed it, granted by `chain.archive`, and the tail's preflight and push succeed
+- **THEN** no consent prompt fires, the run summary records `consent: "setting"`, and the tail commits,
+  pushes and appends the change's stage entry to the program PR and runs no ready flip: the PR keeps the
+  draft or ready state the preflight observed, and its flip remains the user's
 
 ### Requirement: Stage line in the archive completion readout
 
@@ -692,7 +718,8 @@ stopping there:
 
 Each command is repository-qualified per `orbit-pr-lifecycle`'s resolution requirement, so
 text the user copies resolves the same repository the algorithm chose. The tail's outward writes ride the
-archive's OWN entry consent (user-typed or prompted-and-proceeded) — no second prompt
+archive's OWN entry consent (user-typed, prompted-and-proceeded, or granted by the `archive` key, whose row names
+these writes) — no second prompt
 inside the tail.
 
 #### Scenario: The tail completes the effort

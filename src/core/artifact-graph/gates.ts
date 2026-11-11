@@ -54,7 +54,8 @@ export interface GateStatus {
   before?: string;
   /**
    * D1: consent marker from the gate declaration — entry into the gate's `before:`
-   * phase requires an explicit user invocation. Surfaced only; the engine never
+   * phase requires an explicit user invocation, or a grant by the project's `chain`
+   * setting (seam-chaining-grants). Surfaced only; the engine never
    * prompts, and consent alters no gate-state computation.
    */
   consent?: ConsentValue;

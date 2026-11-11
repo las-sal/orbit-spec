@@ -276,6 +276,26 @@ that moved because they pin body text (R-adf-9): eleven skill function-hash pins
 reading step found the change's own ledger entry overstating what the baseline's carried-link row says; the walk fixed
 it by five chained replacements, which reach no reader before archive (D-dr-2's named limit).
 
+Shipped as, third change (2026-11-11; archived as `orbit/changes/archive/2026-11-11-seam-chaining-grants/`; the second
+of D-sga-1's three changes, so the stage stays open for the third, the commit before a chained external review): the
+`chain` map gains `apply` and `archive` keys, each granting its command marked or not, and `archive` also granting the
+PR tail's push, description rewrite or stage-entry append and per-change ready flip, which its row names; the merge and
+the return to the default branch stay the user's (D-sga-4). An arrival at apply or archive the user did not type is
+granted exactly when the change status's `chain` object allows that command: it fires no consent prompt and records
+`consent: "setting"`, every anomaly prompt still firing (D-sga-5). The emit write gate now checks `consent` on apply and
+archive: one of `user-invoked`, `prompted` and `setting`, and `setting` only when the map grants the command (D-sga-6);
+a grant withdrawn mid-run writes the emit with no `consent` field. Every prompt in the apply and archive bodies states
+its kind, held by the tag test; the sync assessment is the one routine prompt. Departures, each the user's call: the
+system walk named as a limit that a granted archive started off the attachment's branch writes locally and its tail
+skips (the user chose this over a new decision prompt); and task 6.1 found the PR tail's carried "strays are named"
+scenario never true, so `orbit pr tail` now reports `carried_untracked` and the archive names those files — the one
+change a default install shows (a line when an archive carries an untracked file), recorded as a stop and its
+resolution; whether G0 names it as an exception is the user's at the next architect session. Tests that moved
+(R-adf-9): the propose, ff and apply skill hash pins once and archive's three times, `rc03b`'s `emit-composition.ts`
+and `gates.ts` pins, `chain.test.ts`'s resolver and key-table assertions (the closed key set grew), and
+`chain-prompt-tags.test.ts`'s routine-tag count and inventory. The system review's reading step found fifteen records
+wanting; the walk replaced them, and those replacements reach no reader before archive (D-dr-2's named limit).
+
 ### Stage program-brief — the brief and the sign-off seam
 
 Depends-on: decision-layer

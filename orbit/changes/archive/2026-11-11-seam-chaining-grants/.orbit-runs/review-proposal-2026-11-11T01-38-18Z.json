@@ -1,0 +1,160 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-11T01:38:18Z",
+  "change": "seam-chaining-grants",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "specs/orbit-lifecycle-consent/spec.md",
+      "line": 149,
+      "title": "Two sentences still say every summary carries a consent value, beside the new withdrawn-grant case that writes none",
+      "recommendation": "The walk's named limit now writes the emit with no `consent` field after a withdrawn grant, but two sentences still deny that case. `Consent recorded in consent-scoped lifecycle emits` (line 148-149) says \"an abort at the consent prompt writes NO summary ..., so a summary that exists has exactly three consent stories\"; and `Archive summary schema reference ships with the skill` in specs/orbit-archive-modifications/spec.md:167-168 says the field is \"present on every post-capability archive emit\" - the sentence that ships into the archive skill's schema reference, which the archive body's emit step is written against. Restate both: \"a summary that exists has one of the three values, or, after a withdrawn grant, none (the named limit below)\" and \"present on every post-capability archive emit except one written after a withdrawn grant\".",
+      "walk_entry": {
+        "title": "The withdrawn-grant recovery (\"asks the user and records prompted\") is undefined for archive and contradicts chunk constancy for apply",
+        "file": "specs/orbit-lifecycle-consent/spec.md"
+      }
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "specs/orbit-lifecycle-consent/spec.md",
+      "line": 61,
+      "title": "The arrival table's needs-user and no-progress rows still overlap the another-command row",
+      "recommendation": "Row 5 now reads \"`chain.next` names another command (whatever its `why`)\", so an arrival at apply while `next` names an external review with `why: needs-user` matches row 5 and also row 6, whose \"cannot hold here\" is then false (it can hold, for another command). Qualify rows 6 and 7 as \"not typed; `chain.next` is this command and `why: needs-user`\" / \"... and `why: no-progress`\", as the walk did for rows 3 and 4; the claim \"exactly one row\" then holds.",
+      "walk_entry": {
+        "title": "The arrival table's \"exactly one row\" overlaps when chain.next names another command",
+        "file": "specs/orbit-lifecycle-consent/spec.md"
+      }
+    },
+    {
+      "pass": "7",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "src/core/artifact-graph/gates.ts",
+      "line": 57,
+      "title": "The consent marker comment in gates.ts keeps the old definition the walk corrected in the spec",
+      "recommendation": "The JSDoc on `consent` says entry into the gate's `before:` phase \"requires an explicit user invocation\" - the sentence the walk restated in `Gate declaration in schema YAML`. No task edits it. Add it to task 1.1's list of comments to update (\"... or a grant by the project's `chain` setting\")."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": ".openspec.yaml",
+      "line": 1,
+      "title": "The walk's fingerprint stamps in .openspec.yaml sit outside every entry's edit record",
+      "recommendation": "The walk ran `orbit fingerprint` for the four carried requirements, editing orbit/changes/seam-chaining-grants/.openspec.yaml, but no walk entry names the file in its `file` or `ripple_cascade.applied`. A record gap, not a defect: the stamps are correct and validate passes. A later walk that carries a block can list .openspec.yaml in the carrying entry's `ripple_cascade.applied`."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Both regressions are the same pattern: a fix that adds a case left the requirement's own closure sentences in place. The withdrawn-grant limit adds a fourth outcome (no field) to a requirement that says three outcomes exist, and to a schema reference that says the field is always present. Qualifying three arrival rows left two siblings unqualified. Probed: every baseline hit for the retired consent wording lies inside a carried block (archive-modifications 137/273/695, run-summary-emit 633, lifecycle-consent 107/110, engine-gates 49, conventions 238/240); the program-PR scenario matches the baseline tail (commit, push, append; flip for per-change PRs only); validate --strict passes with both breaches declared; no @review: marker remains (the four hits are prose about markers). The residual diff since the external pass lists nine files, eight inside the walks' edit records.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "verification": [
+    {
+      "title": "Internal-run JSON summary format still types consent as two values",
+      "file": "orbit/specs/orbit-conventions/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "PR-attached archive tail still names only two consent stories for the outward writes",
+      "file": "orbit/specs/orbit-archive-modifications/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "\"Engine changes for this capability are declaration parsing and display wording only\" becomes false",
+      "file": "orbit/specs/orbit-lifecycle-consent/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The consent vocabulary still says a marked phase requires an explicit user invocation",
+      "file": "orbit/specs/orbit-engine-gates/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Archive's Step 0 tag-rule sentence would fail the tag test, and nothing says how to exempt it",
+      "file": "design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The withdrawn-grant recovery (\"asks the user and records prompted\") is undefined for archive and contradicts chunk constancy for apply",
+      "file": "specs/orbit-lifecycle-consent/spec.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "The arrival table's \"exactly one row\" overlaps when chain.next names another command",
+      "file": "specs/orbit-lifecycle-consent/spec.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "The No-chaining contract says every chained command ends with the chain read, but a chained archive has no closing step",
+      "file": "specs/orbit-conventions/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The proposal's Impact omits docs/getting-started.md",
+      "file": "proposal.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The chain schema's describe string and comment will still list three keys and one reader",
+      "file": "src/core/project-config.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "Granted archive scenario incorrectly grants program PR readiness",
+      "file": "orbit/changes/seam-chaining-grants/specs/orbit-archive-modifications/spec.md",
+      "verdict": "landed"
+    }
+  ],
+  "final_assessment": "0 critical, 1 warning, 3 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-11-11T01-35-43Z",
+    "2026-11-11T01-35-59Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews seam-chaining-grants"
+}

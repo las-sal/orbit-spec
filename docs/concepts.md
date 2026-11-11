@@ -258,7 +258,8 @@ Carried by: `orbit-pr-lifecycle`
 You invoke each lifecycle step. A passed gate means a step is eligible, never that it runs: a workflow ends at its
 readout and recommends the next command, and never runs it for you unless your project's `chain` setting grants that
 command ([Customization](customization.md)). When an AI arrives at apply, archive or bulk
-archive on its own, rather than because you typed the command, the workflow asks before it writes anything.
+archive on its own, rather than because you typed the command or your `chain` setting granted it, the workflow asks
+before it writes anything. Bulk archive is never granted.
 
 Carried by: `orbit-lifecycle-consent`, `orbit-conventions`
 

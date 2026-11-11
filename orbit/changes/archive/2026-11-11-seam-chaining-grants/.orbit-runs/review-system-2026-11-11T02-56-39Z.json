@@ -1,0 +1,264 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-11T02:56:39Z",
+  "change": "seam-chaining-grants",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 5,
+      "suggestion": 10
+    }
+  },
+  "findings": [
+    {
+      "pass": "reading",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "title": "ledger-2026-11-10T21-14-32Z.json — row 4 (decided): says a granted archive marks any attached pull request ready",
+      "file": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/ledger-2026-11-10T21-14-32Z.json",
+      "line": 1,
+      "recommendation": "Write a replacement whose decided says the archive pushes, rewrites a per-change pull request's description or adds a program pull request's stage entry, and marks only a per-change pull request ready, as D-sga-4 says."
+    },
+    {
+      "pass": "reading",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "title": "ledger-2026-11-10T21-14-33Z.json — row 4 (decided): \"asks nothing\" reads as no question at all on a granted arrival",
+      "file": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/ledger-2026-11-10T21-14-33Z.json",
+      "line": 1,
+      "recommendation": "Write a replacement whose decided says it does not ask for consent, so the other questions a granted run still asks are not read as dropped."
+    },
+    {
+      "pass": "reading",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "title": "ledger-2026-11-10T23-25-29Z.json — row 4 (decided): drops per-change and the program pull request's stage entry from what the guide says",
+      "file": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/ledger-2026-11-10T23-25-29Z.json",
+      "line": 1,
+      "recommendation": "Write a replacement whose decided matches D-sga-4: the description is rewritten for a per-change pull request or a stage entry added to a program one, and only a per-change pull request is marked ready."
+    },
+    {
+      "pass": "reading",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "title": "ledger-2026-11-10T23-25-31Z.json — row 4 (why): says the setting is kept out of everything the readout shows",
+      "file": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/ledger-2026-11-10T23-25-31Z.json",
+      "line": 1,
+      "recommendation": "Write a replacement whose why says the setting enters no gate row, state, reason, position or next command, so the human readout reads the same, while the status JSON gains a chain object."
+    },
+    {
+      "pass": "reading",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "title": "ledger-2026-11-11T02-46-07Z.json — row 4 (why): says the note always names an exact recovery",
+      "file": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/ledger-2026-11-11T02-46-07Z.json",
+      "line": 1,
+      "recommendation": "Write a replacement whose why says the note names the recovery where one exists and says plainly when the branch is gone everywhere, so the writes are never pushed to the wrong branch."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "ledger-2026-11-10T21-14-32Z.json — row 3 (why): does not say which text names the push and the ready mark",
+      "file": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/ledger-2026-11-10T21-14-32Z.json",
+      "line": 1,
+      "recommendation": "Write a replacement naming the text: the archive key's row in the chain setting's requirement and the configuration guide."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "ledger-2026-11-10T21-14-34Z.json — row 3 (decided, why): \"a record\" reads as a decision record, and \"each key grants one command\" is too broad",
+      "file": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/ledger-2026-11-10T21-14-34Z.json",
+      "line": 1,
+      "recommendation": "Write a replacement saying the run summary of apply or archive, and that the apply and archive keys each grant one command."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "ledger-2026-11-10T23-25-28Z.json — row 1 (alternatives, decided): \"unresolved-marker questions\" and \"the marked answer\" are undefined",
+      "file": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/ledger-2026-11-10T23-25-28Z.json",
+      "line": 1,
+      "recommendation": "Write a replacement defining a review marker (a note left in a file for a reviewer's attention) and saying the marked answer is the default the question itself proposes."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "ledger-2026-11-11T01-34-25Z.json — row 3 (decided): \"its record of the work\" and \"consent value\" are unclear",
+      "file": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/ledger-2026-11-11T01-34-25Z.json",
+      "line": 1,
+      "recommendation": "Write a replacement saying the run summary, and defining consent as the other ledger entries do."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "ledger-2026-11-11T02-06-24Z.json — row 3 (decided): reads as two acts, a list and a line",
+      "file": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/ledger-2026-11-11T02-06-24Z.json",
+      "line": 1,
+      "recommendation": "Write a replacement saying the archive names each such file in its one-line note."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "resolution-2026-11-11T02-03-03Z.json — row 3 (effect): reads as two acts, a list and a line",
+      "file": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/resolution-2026-11-11T02-03-03Z.json",
+      "line": 1,
+      "recommendation": "Write a replacement whose effect says the archive names each such file in its one-line note."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "ledger-2026-11-11T02-06-40Z.json — row 1 (decided): \"bulk archive\" is undefined and \"the workflow\" reads as every workflow",
+      "file": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/ledger-2026-11-11T02-06-40Z.json",
+      "line": 1,
+      "recommendation": "Write a replacement defining bulk archive and saying apply or archive asks before writing, in the third person."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "resolution-2026-11-10T21-39-19Z.json — row 3 (effect): \"the branch plan is asked again\" and \"fast-forward\" are unclear",
+      "file": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/resolution-2026-11-10T21-39-19Z.json",
+      "line": 1,
+      "recommendation": "Write a replacement saying the step that picks the change's branch runs again, and that main is pushed without rewriting anyone's history."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "stop-2026-11-10T21-17-38Z.json — row 3 (question): \"origin\" and \"the shared repository\" read as two things",
+      "file": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/stop-2026-11-10T21-17-38Z.json",
+      "line": 1,
+      "recommendation": "Write a replacement whose question says the shared repository, as the about does."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "stop-2026-11-11T02-01-18Z.json — row 3 (about): \"the requirement this change carries\" reads as one the change relies on",
+      "file": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/stop-2026-11-11T02-01-18Z.json",
+      "line": 1,
+      "recommendation": "Write a replacement saying the requirement this change modifies."
+    },
+    {
+      "pass": "1",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "title": "A walk edit outside every entry's edit record: the archive parity pins",
+      "file": "test/core/templates/skill-templates-parity.test.ts",
+      "line": 171,
+      "recommendation": "Name the parity pin re-recording in the walk entry whose edit moved it (the HEAD-mismatch entry's ripple_cascade.applied), or accept the gap: the file moved because archive Step 0.7 changed, and its dated note says so."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Verified the two walks of the blind pair against their sweep scopes and the diff since the external pass's commit (97aaa54a). All five repairs are present, complete and clean: the commands page and README carry the grant clause, and a fresh grep of README.md and docs/ for 'asks first' and 'asks before' finds no unqualified claim; the HEAD-mismatch named limit sits in the carried requirement and in archive Step 0.7; the chain row lists five keys; both apply consent scenarios carry the withdrawn-grant exception; the program-PR scenario keeps the observed state. I probed the named limit's term 'entry observation', which no spec defines (Step 0.7 is body-only), and judged it clear in context, as the baseline already cites body steps by number. The residual diff holds one file outside every entry's edit record, the parity pin the Step 0.7 edit moved. The reading step read fifteen records; its findings are the plain-language debt of the change's earlier records, most of them restatements that narrow or widen what D-sga-4, a cited requirement or the pull-request tail says.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "reading"
+  ],
+  "passes_skipped": [
+    "0: a whole-change pass, not run on a VERIFICATION-genre pass",
+    "4: no perspectives defined (orbit/lenses/ absent)",
+    "5: no critical paths defined (orbit/lenses/ absent)",
+    "6: a whole-project pass, not run on a VERIFICATION-genre pass"
+  ],
+  "verification": [
+    {
+      "title": "README and the commands page still say an AI-initiated apply or archive always asks first",
+      "file": "docs/commands.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "A granted archive meets a HEAD-vs-attachment mismatch as one printed line, with nobody asked",
+      "file": "src/core/templates/workflows/archive-change.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "The chain row's key list keeps an \"and\" from its three-key form",
+      "file": "docs/customization.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Apply scenarios contradict the withdrawn-grant exception",
+      "file": "orbit/changes/seam-chaining-grants/specs/orbit-run-summary-emit/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Program-PR scenario assumes an initially draft PR",
+      "file": "orbit/changes/seam-chaining-grants/specs/orbit-archive-modifications/spec.md",
+      "verdict": "landed"
+    }
+  ],
+  "decision_records_read": [
+    "ledger-2026-11-10T21-14-32Z.json",
+    "ledger-2026-11-10T21-14-33Z.json",
+    "ledger-2026-11-10T21-14-34Z.json",
+    "ledger-2026-11-10T23-25-28Z.json",
+    "ledger-2026-11-10T23-25-29Z.json",
+    "ledger-2026-11-10T23-25-31Z.json",
+    "ledger-2026-11-11T01-34-25Z.json",
+    "ledger-2026-11-11T02-06-24Z.json",
+    "ledger-2026-11-11T02-06-40Z.json",
+    "ledger-2026-11-11T02-46-07Z.json",
+    "ledger-2026-11-11T02-46-08Z.json",
+    "resolution-2026-11-10T21-39-19Z.json",
+    "resolution-2026-11-11T02-03-03Z.json",
+    "stop-2026-11-10T21-17-38Z.json",
+    "stop-2026-11-11T02-01-18Z.json"
+  ],
+  "final_assessment": "0 critical, 5 warning, 11 suggestion.",
+  "decision_records_owed": [
+    "ledger-2026-11-10T21-14-32Z.json",
+    "ledger-2026-11-10T21-14-33Z.json",
+    "ledger-2026-11-10T21-14-34Z.json",
+    "ledger-2026-11-10T23-25-28Z.json",
+    "ledger-2026-11-10T23-25-29Z.json",
+    "ledger-2026-11-10T23-25-31Z.json",
+    "ledger-2026-11-11T01-34-25Z.json",
+    "ledger-2026-11-11T02-06-24Z.json",
+    "ledger-2026-11-11T02-06-40Z.json",
+    "ledger-2026-11-11T02-46-07Z.json",
+    "ledger-2026-11-11T02-46-08Z.json",
+    "resolution-2026-11-10T21-39-19Z.json",
+    "resolution-2026-11-11T02-03-03Z.json",
+    "stop-2026-11-10T21-17-38Z.json",
+    "stop-2026-11-11T02-01-18Z.json"
+  ],
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-11-11T02-45-50Z",
+    "2026-11-11T02-47-01Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews seam-chaining-grants"
+}

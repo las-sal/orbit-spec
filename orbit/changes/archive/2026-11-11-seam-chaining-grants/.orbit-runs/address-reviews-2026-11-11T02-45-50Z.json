@@ -1,0 +1,165 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-11T02:45:50Z",
+  "change": "seam-chaining-grants",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/seam-chaining-grants/.orbit-runs/review-system-2026-11-11T02-16-55Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-11T02-16-55Z",
+  "latest_apply_token": "2026-11-11T02-08-44Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 2
+  },
+  "pushback_verification": "All three verified against current state: docs/commands.md:8-9 and README.md:53-54 still carried the unqualified claim, archive Step 0.7 still prints one line on a granted arrival, and docs/customization.md:59 still carried the three-key 'and'; none stale.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "README and the commands page still say an AI-initiated apply or archive always asks first",
+      "marker_source": "internal-review",
+      "file": "docs/commands.md",
+      "line": 8,
+      "classification": "trivial_fix",
+      "action": "gave docs/commands.md:8-9 and README.md:53-54 the grant clause task 5.1 gave the other pages; bulk-archive named as never granted",
+      "ripple_cascade": {
+        "applied": [
+          "README.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "by any route other than your typing it, it asks",
+          "apply or archive asks first"
+        ],
+        "introduced": [
+          {
+            "path": "docs/commands.md",
+            "text": "or your `chain` setting granting it"
+          },
+          {
+            "path": "README.md",
+            "text": "apply or archive your `chain` setting does not grant asks first"
+          }
+        ],
+        "searched": [
+          "asks first",
+          "asks before",
+          "by any route other than"
+        ],
+        "scope": [
+          "docs",
+          "README.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "A granted archive meets a HEAD-vs-attachment mismatch as one printed line, with nobody asked",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/archive-change.ts",
+      "line": 322,
+      "classification": "decision_required",
+      "action": "applied the ratified direction B: the granted archive's HEAD-mismatch behaviour is named as a limit in orbit-archive-modifications' Consent prompt on AI-mediated archive entry, and archive Step 0.7 states that its one line is the only notice on a granted arrival",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "On a granted arrival, make a Step 0.7 mismatch a decision prompt (switch first, or proceed, or abort): add its row to orbit-conventions' `A chain treats each prompt by its kind` and tag the site `(chain: decision)`, so the chain stops before any archive write."
+          },
+          {
+            "label": "B",
+            "body": "Keep it, and name it as a limit in orbit-archive-modifications' `Consent prompt on AI-mediated archive entry`: a granted archive with HEAD off the attachment's branch writes locally and its tail skips, recoverable by the tail's note."
+          }
+        ],
+        "chosen": "B"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/seam-chaining-grants/specs/orbit-archive-modifications/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining-grants/specs/orbit-archive-modifications/spec.md",
+            "text": "Named limit: a granted archive whose HEAD is not on the"
+          },
+          {
+            "path": "src/core/templates/workflows/archive-change.ts",
+            "text": "granted arrival that line is the only notice and nobody is asked"
+          }
+        ],
+        "searched": [
+          "Step 0.7",
+          "HEAD's branch",
+          "On mismatch"
+        ],
+        "scope": [
+          "src/core/templates/workflows/pr-choreography.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The chain row's key list keeps an \"and\" from its three-key form",
+      "marker_source": "internal-review",
+      "file": "docs/customization.md",
+      "line": 59,
+      "classification": "trivial_fix",
+      "action": "replaced the 'and' before `address-reviews` with a comma",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "can cost money) and `address-reviews` (the walk)"
+        ],
+        "introduced": [
+          {
+            "path": "docs/customization.md",
+            "text": "can cost money), `address-reviews` (the walk), `apply`"
+          }
+        ],
+        "searched": [
+          "and `address-reviews`"
+        ],
+        "scope": [
+          "docs"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Three of three resolved: the two docs sentences now say a granted apply or archive asks nothing, the HEAD-mismatch case is named as a limit (Sal: B), and the chain row's key list reads as five items.",
+  "iteration": 4,
+  "next_recommended": "/orbit:address-reviews seam-chaining-grants",
+  "ripple_misses": 0
+}

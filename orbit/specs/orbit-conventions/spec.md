@@ -235,9 +235,9 @@ model            string|null  the emitting AI's model identity (provenance — D
 
 Per-kind extensions:
 
-- **`kind: "workflow"`** — emitted by `explore`, `propose`, `new`, `continue`, `ff`, `apply`, `verify`, `architect` (D-arc Stage D2; `architect` emits to the architecture trail with `change: null` plus a `doc` extension — shape owned by `orbit-architect`). Per-command extensions are defined in the `orbit-run-summary-emit` capability (e.g., `apply.chunk_complete`, `verify.verdict`, `explore.decisions_captured`). Consent-era `apply` emits additionally carry `consent: "user-invoked" | "prompted"` (per `orbit-lifecycle-consent`).
+- **`kind: "workflow"`** — emitted by `explore`, `propose`, `new`, `continue`, `ff`, `apply`, `verify`, `architect` (D-arc Stage D2; `architect` emits to the architecture trail with `change: null` plus a `doc` extension — shape owned by `orbit-architect`). Per-command extensions are defined in the `orbit-run-summary-emit` capability (e.g., `apply.chunk_complete`, `verify.verdict`, `explore.decisions_captured`). Consent-era `apply` emits additionally carry `consent: "user-invoked" | "prompted" | "setting"` (per `orbit-lifecycle-consent`).
 - **`kind: "editorial"`** — emitted by `review`, `address-reviews`, `audit-drift`, `review-external`. Per-command extensions include: `iteration` (when applicable to the command — e.g., review iter-N, address-reviews iter-N), `scorecard` (the 3-dimension × severity counts shape — Completeness/Correctness/Coherence, each with critical/warning/suggestion — on review completion emits; the renderer's required counts source per `orbit-report-rendering`; D-arc Stage D4), and full `findings[]` entries (each carrying its own `title` — no separate title array). The former `findings_summary` AND `finding_titles` fields are RETIRED for review emits (superseded by `scorecard`; live practice had already migrated) — readers SHALL tolerate both generations (a severity count is recoverable by counting `findings[]`, the existing trail-reader fallback; the report RENDERER's strict generation boundary is the named exception, per `orbit-report-rendering`); audit-drift's payload is owned by `orbit-run-summary-emit`'s `Audit-drift standalone recommendations`, and archive-audit emits keep their own `findings_summary` shape unchanged. Command-specific fields beyond these are documented in per-skill schema references (`references/run-summary-schema.md`, shipped alongside the generated skill — payload-field lists MIRRORING the engine's authoritative table per `orbit-emit-composition`, never defining it; the spine is engine-owned and documented HERE, not per skill).
-- **`kind: "lifecycle"`** — emitted by `archive` only. Per-command extensions include: `archive_path`, `audit`, `sync_specs` (reports what the archive flow's spec-sync step did, mirroring upstream's archive summary), `unresolved_markers`, `user_decision`, plus other fields defined in the archive skill. Consent-era emits (per `orbit-lifecycle-consent`) additionally carry the flat `consent: "user-invoked" | "prompted"` field.
+- **`kind: "lifecycle"`** — emitted by `archive` only. Per-command extensions include: `archive_path`, `audit`, `sync_specs` (reports what the archive flow's spec-sync step did, mirroring upstream's archive summary), `unresolved_markers`, `user_decision`, plus other fields defined in the archive skill. Consent-era emits (per `orbit-lifecycle-consent`) additionally carry the flat `consent: "user-invoked" | "prompted" | "setting"` field.
 
 **Canonical examples** (one per kind, illustrating spine + per-kind extensions; each is EXECUTED, per the paragraph after them):
 
@@ -949,12 +949,15 @@ per `orbit-engine-gates`); the AI SHALL NOT invoke the next orbit command — an
 workflow, review iterations included — unless the user's message requests it or the `chain` object reports
 `may_run: true` for it. When it does, the AI renders the position readout and the eligibility line, then one line naming
 the command it runs and the setting key that granted it, and runs that command as the next act of the same turn; the
-chained command ends the same way, so a chain continues until the object reports `may_run: false`, and the AI then
+chained command ends the same way, so a chain continues until the object reports `may_run: false` (a chained archive
+ends the chain at its completion readout and reads no object, because the command after it is not a change command), and the AI then
 states its `why` in one line whenever `configured` is true — on `open-stop`, naming the object's `stop` record and
 putting that stop's question to the user. A command run because the object allowed it records that as one sentence,
 `Chained: granted by chain.<key>.`, in the record its session writes: a walk in its run summary's `final_assessment`,
 an external review or a blind pair in its launch record's `final_assessment`, an in-context review in its pass's
-`commentary` (the review emit owns a pass's `final_assessment`); a chained fresh review records nothing, because its
+`commentary` (the review emit owns a pass's `final_assessment`); a chained apply or archive records it as its
+`consent: "setting"` value and writes no sentence, because the key and the command are one-to-one
+(`orbit-lifecycle-consent`'s `Consent recorded in consent-scoped lifecycle emits`); a chained fresh review records nothing, because its
 pass is written by a worker whose brief carries nothing from the session that dispatched it — a named limit. Only the session that invoked a
 command reads the object at its end: a worker that session dispatched — a fresh reviewer, a blind pair's fresh half —
 persists its pass and returns, and never chains. A command with no change target — an architecture-mode review, a
@@ -1017,6 +1020,12 @@ apply, review and address-reviews — carry the `chain` allowance in their echo 
   address its findings")
 - **THEN** exactly those named commands are run — the request defines the scope; nothing beyond
   it is invoked unless the `chain` object allows it
+
+#### Scenario: A chained apply records its grant in its consent value
+
+- **WHEN** a proposal walk ends, the `chain` object reports `may_run: true` for `/orbit:apply <change> — user-invoked`,
+  granted by `chain.apply`, and the walk's closing step runs apply
+- **THEN** apply's emits carry `consent: "setting"`, and no `Chained:` sentence is added to their assessment
 
 #### Scenario: Epitome echo is a compliant echo
 
@@ -1352,8 +1361,10 @@ ROUTINE confirmation — a prompt whose body marks a default and whose default s
 answered with that default, and the command's run summary records it as one sentence in its `final_assessment`:
 `The chain took the default: <prompt> — <answer>.`; every other prompt is a DECISION, which stops the chain: the AI asks
 it exactly as on an arrival the user typed, the chain does not continue after it, and the AI states in one line that the
-chain stopped at it. A prompt that would leave unfinished work behind is a decision whatever default it marks. The
-prompts of the two commands a chain can arrive at, `orbit-review` and `orbit-address-reviews`:
+chain stopped at it. A prompt that would leave unfinished work behind is a decision whatever default it marks, and so
+is every anomaly prompt (a gate inflection, a base-fingerprint check, a critical audit). The prompts of the four
+commands a chain can arrive at, `orbit-review`, `orbit-address-reviews`, `orbit-apply-change` and
+`orbit-archive-change`:
 
 | prompt | kind |
 |---|---|
@@ -1365,10 +1376,24 @@ prompts of the two commands a chain can arrive at, `orbit-review` and `orbit-add
 | address-reviews: a half-landed pair, stop or walk now | decision: stops |
 | address-reviews: a decision-lane finding (briefing, ratification, closure prompt) | decision: stops |
 | address-reviews: an unresolvable finding's alternatives to filing a task (convert to `@todo`, or escalate) | decision: stops |
+| apply: which change, when none is named or it is ambiguous | target: does not fire |
+| apply: the consent prompt | not a prompt on an arrival the `chain` object allowed: the arrival is granted, records `setting`, and the prompt does not fire (`orbit-lifecycle-consent`) |
+| apply: the gate inflection at a `blocked-by-gate` entry | decision: stops |
+| apply: a pause — an unclear task, a design issue the work reveals, an error or a blocker | decision: stops |
+| archive: which change, when none is named | target: does not fire |
+| archive: the consent prompt | not a prompt on an arrival the `chain` object allowed: the arrival is granted, records `setting`, and the prompt does not fire (`orbit-lifecycle-consent`) |
+| archive: unaddressed `@review:` markers (address now, convert to `@todo:`, or proceed) | decision: stops |
+| archive: incomplete artifacts | decision: stops |
+| archive: incomplete tasks | decision: stops |
+| archive: a user-validation task line the closure cannot dispose of (repair `tasks.md`, or abort) | decision: stops |
+| archive: the sync assessment (default: Sync now when deltas need syncing; Archive now when they are already synced) | routine: takes the marked default, recorded |
+| archive: the gate inflection | decision: stops |
+| archive: the base-fingerprint check, unverified or diverged | decision: stops |
+| archive: critical audit findings | decision: stops |
 
 On any arrival the user typed, every prompt fires exactly as without the `chain` setting. The list is a named limit —
 Residual kind: a question a chained body asks in prose that matches neither pattern of Case 1. Residual method: D-sc-13's
-test over the generated bodies, and a fixture chain run through each granted command, any turn that ends awaiting the
+test over the generated bodies, apply's and archive's among them, and a fixture chain run through each granted command, any turn that ends awaiting the
 user without a listed prompt being the missed member. (Case 1 and D-sc-13 are the stage exploration's, archived with
 this change: the two patterns are the `AskUserQuestion` sites and the prose asks of the pause pattern, and D-sc-13's
 test is `Each chained prompt states its kind`.)
@@ -1391,13 +1416,30 @@ test is `Each chained prompt states its kind`.)
 - **WHEN** the user types `/orbit:address-reviews <change>` under a `chain` setting that grants `address-reviews`
 - **THEN** triage scoping asks as it does today, and no default is taken
 
+#### Scenario: A chained archive takes the sync default
+
+- **WHEN** `/orbit:archive <change>` runs because the `chain` object allowed it and its deltas need syncing
+- **THEN** no sync prompt fires, the deltas are synced, and the archive's `final_assessment` carries
+  `The chain took the default: sync assessment — Sync now.`
+
+#### Scenario: A pause in a chained apply stops the chain
+
+- **WHEN** apply runs because the `chain` object allowed it and a task turns out unclear
+- **THEN** the AI asks as on a typed apply, and after apply ends it runs no next command, stating that the chain
+  stopped at a decision
+
+#### Scenario: Unaddressed markers stop a chained archive
+
+- **WHEN** a chained archive's marker scan finds `@review:` markers in the change
+- **THEN** the marker prompt is asked exactly as on a typed archive
+
 ### Requirement: Each chained prompt states its kind
 
 Each prompt that `A chain treats each prompt by its kind` lists SHALL carry, at its site in the generated body or
 reference, a tag naming its kind in the form `(chain: target)`, `(chain: routine, default: <option>)` or
 `(chain: decision)`; a line that names `AskUserQuestion` or the pause pattern without asking anything (a mention), and
-the list's not-a-prompt row, carry `(chain: not a prompt)`. A test over the generated `orbit-review` and
-`orbit-address-reviews` bodies and their references SHALL fail on an `AskUserQuestion` site, or a prose ask matching
+the list's not-a-prompt rows, carry `(chain: not a prompt)`. A test over the generated `orbit-review`,
+`orbit-address-reviews`, `orbit-apply-change` and `orbit-archive-change` bodies and their references SHALL fail on an `AskUserQuestion` site, or a prose ask matching
 the pause pattern (pause, wait for guidance, ask for clarification), that carries no tag, and on a tagged site whose
 prompt the requirement's list does not name. The tag is
 read only on an arrival the `chain` object allowed; on every other arrival it changes nothing the AI does (G0, as
@@ -1414,4 +1456,9 @@ without a tagged prompt is the missed member.
 
 - **WHEN** a review reference carries `(chain: routine, default: proceed)` at a prompt the requirement's list does not name
 - **THEN** the test fails naming the tag
+
+#### Scenario: The apply and archive bodies are scanned
+
+- **WHEN** a template edit adds an untagged `AskUserQuestion` to the archive body
+- **THEN** the test fails naming the site, as it does for the review and address-reviews bodies
 

@@ -1,0 +1,11 @@
+{
+  "command": "stop",
+  "timestamp": "2026-11-11T02:59:22Z",
+  "change": "seam-chaining-grants",
+  "model": "claude-opus-5-5",
+  "condition": "user-facing-uncovered",
+  "about": "When a change is archived with a pull request, a stray untracked file left in the change's folder is committed and pushed with the archive, but nothing tells the user it was. The requirement this change modifies says the archive names such a file in one line; it never has.",
+  "question": "Should this change make the archive name stray files it commits, or record the missing line as a known gap and leave the fix to a later change?",
+  "detail": "Scenario: orbit-archive-modifications :: PR-attached archive tail :: The moved archive tree stages whole; strays are named. src/core/pr/tail.ts stages the archived directory whole (scope includes archivedRel) but emits no observation of the untracked paths under it, and PR_ARCHIVE_TAIL_REFERENCE names only unrelated_staged / unrelated_unstaged. The block was carried at the proposal walk only to restate its consent sentence; its scenarios must be declared before the apply gate.",
+  "replaces": "stop-2026-11-11T02-01-18Z.json"
+}

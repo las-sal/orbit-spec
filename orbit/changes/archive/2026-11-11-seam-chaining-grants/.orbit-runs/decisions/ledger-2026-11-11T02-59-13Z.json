@@ -1,0 +1,36 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-11T02:59:13Z",
+  "change": "seam-chaining-grants",
+  "model": "claude-opus-5-5",
+  "area": "permissions-and-sandboxing",
+  "decided": "Granting the archive key in the chain map lets orbit run the whole archive unasked, including the steps that leave the machine when the change has a pull request: pushing the archive commit, then either rewriting a per-change pull request's description or adding the change's entry to a program pull request, and marking a per-change pull request ready for review. A program pull request is never marked ready. Granting the apply key lets orbit implement the change's tasks unasked. Neither key lets orbit merge the pull request or return to the default branch.",
+  "alternatives": [
+    "marking the pull request ready stops the chain, or needs a key of its own",
+    "a chained archive of a change with a pull request stops before any step that leaves the machine"
+  ],
+  "why": "These steps are already part of archive when the user types the command, and marking a pull request ready can be undone. The archive key's row in the chain setting's requirement and the configuration guide both name the push and the ready mark, so a user granting it sees exactly what it allows. The merge stays with the user until the driver stage adds its own settings.",
+  "relies_on": [
+    {
+      "kind": "ruling",
+      "doc": "automate-dev-flow",
+      "id": "R-adf-6"
+    },
+    {
+      "kind": "decision",
+      "id": "D-sga-4"
+    }
+  ],
+  "defines": [
+    {
+      "term": "per-change pull request",
+      "definition": "a pull request opened for one change alone"
+    },
+    {
+      "term": "program pull request",
+      "definition": "one pull request that all the changes of an architecture doc share, each change adding its own entry to it"
+    }
+  ],
+  "detail": "Option A of three, the user's word in chat 2026-11-10 ('a'). The steps are the stage, commit, push, rewrite or append, and ready steps of src/core/pr/tail.ts; D-sc-17 of the first seam-chaining change keeps the merge and the return out.",
+  "replaces": "ledger-2026-11-11T02-59-08Z.json"
+}

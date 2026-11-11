@@ -1,0 +1,570 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-11T02:59:31Z",
+  "change": "seam-chaining-grants",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/seam-chaining-grants/.orbit-runs/review-system-2026-11-11T02-56-39Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-11T02-56-39Z",
+  "latest_apply_token": "2026-11-11T02-08-44Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 5,
+    "suggestion": 11
+  },
+  "pushback_verification": "All sixteen verified against current state: each named record still carried the wording the reader flagged (no replacement existed before this walk), and the parity pin file is still outside every earlier walk entry's edit record; none stale.",
+  "resolution_summary": {
+    "resolved": 16,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "ledger-2026-11-10T21-14-32Z.json — row 4 (decided): says a granted archive marks any attached pull request ready",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/ledger-2026-11-10T21-14-32Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote replacement ledger-2026-11-11T02-59-08Z.json, which replaces ledger-2026-11-10T21-14-32Z.json with the finding's rewording and every link field carried unchanged",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/ledger-2026-11-11T02-59-08Z.json",
+            "text": "A program pull request is never marked ready"
+          }
+        ],
+        "searched": [
+          "ledger-2026-11-10T21-14-32Z.json"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/ledger-2026-11-10T21-14-32Z.json",
+            "why": "a replaced decision record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "ledger-2026-11-10T21-14-33Z.json — row 4 (decided): \"asks nothing\" reads as no question at all on a granted arrival",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/ledger-2026-11-10T21-14-33Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote replacement ledger-2026-11-11T02-59-09Z.json, which replaces ledger-2026-11-10T21-14-33Z.json with the finding's rewording and every link field carried unchanged",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/ledger-2026-11-11T02-59-09Z.json",
+            "text": "it does not ask for consent, and records"
+          }
+        ],
+        "searched": [
+          "ledger-2026-11-10T21-14-33Z.json"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/ledger-2026-11-10T21-14-33Z.json",
+            "why": "a replaced decision record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "ledger-2026-11-10T23-25-29Z.json — row 4 (decided): drops per-change and the program pull request's stage entry from what the guide says",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/ledger-2026-11-10T23-25-29Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote replacement ledger-2026-11-11T02-59-10Z.json, which replaces ledger-2026-11-10T23-25-29Z.json with the finding's rewording and every link field carried unchanged",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/ledger-2026-11-11T02-59-10Z.json",
+            "text": "marks only a per-change pull request ready for review"
+          }
+        ],
+        "searched": [
+          "ledger-2026-11-10T23-25-29Z.json"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/ledger-2026-11-10T23-25-29Z.json",
+            "why": "a replaced decision record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "ledger-2026-11-10T23-25-31Z.json — row 4 (why): says the setting is kept out of everything the readout shows",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/ledger-2026-11-10T23-25-31Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote replacement ledger-2026-11-11T02-59-11Z.json, which replaces ledger-2026-11-10T23-25-31Z.json with the finding's rewording and every link field carried unchanged",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/ledger-2026-11-11T02-59-11Z.json",
+            "text": "only the status's machine-readable output gains a part"
+          }
+        ],
+        "searched": [
+          "ledger-2026-11-10T23-25-31Z.json"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/ledger-2026-11-10T23-25-31Z.json",
+            "why": "a replaced decision record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "ledger-2026-11-11T02-46-07Z.json — row 4 (why): says the note always names an exact recovery",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/ledger-2026-11-11T02-46-07Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote replacement ledger-2026-11-11T02-59-12Z.json, which replaces ledger-2026-11-11T02-46-07Z.json with the finding's rewording and every link field carried unchanged",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/ledger-2026-11-11T02-59-12Z.json",
+            "text": "or says plainly that no switch can when the branch exists nowhere"
+          }
+        ],
+        "searched": [
+          "ledger-2026-11-11T02-46-07Z.json"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/ledger-2026-11-11T02-46-07Z.json",
+            "why": "a replaced decision record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "ledger-2026-11-10T21-14-32Z.json — row 3 (why): does not say which text names the push and the ready mark",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/ledger-2026-11-10T21-14-32Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote replacement ledger-2026-11-11T02-59-13Z.json, which replaces ledger-2026-11-11T02-59-08Z.json with the finding's rewording and every link field carried unchanged",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/ledger-2026-11-11T02-59-13Z.json",
+            "text": "and the configuration guide both name the push and the ready mark"
+          }
+        ],
+        "searched": [
+          "ledger-2026-11-11T02-59-08Z.json"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/ledger-2026-11-11T02-59-08Z.json",
+            "why": "a replaced decision record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "ledger-2026-11-10T21-14-34Z.json — row 3 (decided, why): \"a record\" reads as a decision record, and \"each key grants one command\" is too broad",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/ledger-2026-11-10T21-14-34Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote replacement ledger-2026-11-11T02-59-14Z.json, which replaces ledger-2026-11-10T21-14-34Z.json with the finding's rewording and every link field carried unchanged",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/ledger-2026-11-11T02-59-14Z.json",
+            "text": "The apply key and the archive key each grant one command"
+          }
+        ],
+        "searched": [
+          "ledger-2026-11-10T21-14-34Z.json"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/ledger-2026-11-10T21-14-34Z.json",
+            "why": "a replaced decision record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "ledger-2026-11-10T23-25-28Z.json — row 1 (alternatives, decided): \"unresolved-marker questions\" and \"the marked answer\" are undefined",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/ledger-2026-11-10T23-25-28Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote replacement ledger-2026-11-11T02-59-15Z.json, which replaces ledger-2026-11-10T23-25-28Z.json with the finding's rewording and every link field carried unchanged",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/ledger-2026-11-11T02-59-15Z.json",
+            "text": "taking the answer the question itself proposes as its default"
+          }
+        ],
+        "searched": [
+          "ledger-2026-11-10T23-25-28Z.json"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/ledger-2026-11-10T23-25-28Z.json",
+            "why": "a replaced decision record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "ledger-2026-11-11T01-34-25Z.json — row 3 (decided): \"its record of the work\" and \"consent value\" are unclear",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/ledger-2026-11-11T01-34-25Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote replacement ledger-2026-11-11T02-59-16Z.json, which replaces ledger-2026-11-11T01-34-25Z.json with the finding's rewording and every link field carried unchanged",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/ledger-2026-11-11T02-59-16Z.json",
+            "text": "saves the command's run summary without a consent value"
+          }
+        ],
+        "searched": [
+          "ledger-2026-11-11T01-34-25Z.json"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/ledger-2026-11-11T01-34-25Z.json",
+            "why": "a replaced decision record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "ledger-2026-11-11T02-06-24Z.json — row 3 (decided): reads as two acts, a list and a line",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/ledger-2026-11-11T02-06-24Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote replacement ledger-2026-11-11T02-59-17Z.json, which replaces ledger-2026-11-11T02-06-24Z.json with the finding's rewording and every link field carried unchanged",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/ledger-2026-11-11T02-59-17Z.json",
+            "text": "in one line of its report on the pull request, so the user sees it was pushed"
+          }
+        ],
+        "searched": [
+          "ledger-2026-11-11T02-06-24Z.json"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/ledger-2026-11-11T02-06-24Z.json",
+            "why": "a replaced decision record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "resolution-2026-11-11T02-03-03Z.json — row 3 (effect): reads as two acts, a list and a line",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/resolution-2026-11-11T02-03-03Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote replacement resolution-2026-11-11T02-59-18Z.json, which replaces resolution-2026-11-11T02-03-03Z.json with the finding's rewording and every link field carried unchanged",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/resolution-2026-11-11T02-59-18Z.json",
+            "text": "in one line of its report on the pull request, every file"
+          }
+        ],
+        "searched": [
+          "resolution-2026-11-11T02-03-03Z.json"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/resolution-2026-11-11T02-03-03Z.json",
+            "why": "a replaced decision record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "ledger-2026-11-11T02-06-40Z.json — row 1 (decided): \"bulk archive\" is undefined and \"the workflow\" reads as every workflow",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/ledger-2026-11-11T02-06-40Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote replacement ledger-2026-11-11T02-59-19Z.json, which replaces ledger-2026-11-11T02-06-40Z.json with the finding's rewording and every link field carried unchanged",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/ledger-2026-11-11T02-59-19Z.json",
+            "text": "says that apply or archive asks before writing unless the user typed"
+          }
+        ],
+        "searched": [
+          "ledger-2026-11-11T02-06-40Z.json"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/ledger-2026-11-11T02-06-40Z.json",
+            "why": "a replaced decision record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "resolution-2026-11-10T21-39-19Z.json — row 3 (effect): \"the branch plan is asked again\" and \"fast-forward\" are unclear",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/resolution-2026-11-10T21-39-19Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote replacement resolution-2026-11-11T02-59-20Z.json, which replaces resolution-2026-11-10T21-39-19Z.json with the finding's rewording and every link field carried unchanged",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/resolution-2026-11-11T02-59-20Z.json",
+            "text": "without rewriting anything already there"
+          }
+        ],
+        "searched": [
+          "resolution-2026-11-10T21-39-19Z.json"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/resolution-2026-11-10T21-39-19Z.json",
+            "why": "a replaced decision record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "stop-2026-11-10T21-17-38Z.json — row 3 (question): \"origin\" and \"the shared repository\" read as two things",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/stop-2026-11-10T21-17-38Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote replacement stop-2026-11-11T02-59-21Z.json, which replaces stop-2026-11-10T21-17-38Z.json with the finding's rewording and every link field carried unchanged",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/stop-2026-11-11T02-59-21Z.json",
+            "text": "unpushed commits to the shared repository so propose"
+          }
+        ],
+        "searched": [
+          "stop-2026-11-10T21-17-38Z.json"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/stop-2026-11-10T21-17-38Z.json",
+            "why": "a replaced decision record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "stop-2026-11-11T02-01-18Z.json — row 3 (about): \"the requirement this change carries\" reads as one the change relies on",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/stop-2026-11-11T02-01-18Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote replacement stop-2026-11-11T02-59-22Z.json, which replaces stop-2026-11-11T02-01-18Z.json with the finding's rewording and every link field carried unchanged",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/stop-2026-11-11T02-59-22Z.json",
+            "text": "The requirement this change modifies says"
+          }
+        ],
+        "searched": [
+          "stop-2026-11-11T02-01-18Z.json"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/seam-chaining-grants/.orbit-runs/decisions/stop-2026-11-11T02-01-18Z.json",
+            "why": "a replaced decision record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "A walk edit outside every entry's edit record: the archive parity pins",
+      "marker_source": "internal-review",
+      "file": "test/core/templates/skill-templates-parity.test.ts",
+      "line": 171,
+      "classification": "trivial_fix",
+      "action": "accepted the gap, the finding's second option: the parity pin moved because the HEAD-mismatch entry edited archive Step 0.7, and the pin's own dated note records that; the written walk log is not edited",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [],
+        "searched": [
+          "skill-templates-parity"
+        ],
+        "scope": [
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Sixteen of sixteen resolved: fifteen reading findings by fifteen replacement records (the one record with two findings by two, chained), and the parity-pin record gap accepted, its dated note standing.",
+  "iteration": 6,
+  "next_recommended": "/orbit:archive seam-chaining-grants — user-invoked",
+  "ripple_misses": 0
+}

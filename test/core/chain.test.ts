@@ -95,23 +95,26 @@ function chain(opts: { chainRan?: string; chainHead?: string; runner?: RunnerRes
 describe('The chain setting grants each command on its own key', () => {
   it('the resolver: absent, non-map, false, non-boolean and unknown keys grant nothing', () => {
     config('');
-    expect(resolveChainSetting(root)).toEqual({ configured: false, grants: { review: false, 'review-external': false, 'address-reviews': false } });
+    expect(resolveChainSetting(root)).toEqual({ configured: false, grants: { review: false, 'review-external': false, 'address-reviews': false, apply: false, archive: false } });
     for (const v of ['chain: true', 'chain: [review]', 'chain:', 'chain: review']) {
       config(`${v}\n`);
       expect(resolveChainSetting(root).configured, v).toBe(false);
       expect(Object.values(resolveChainSetting(root).grants).some(Boolean), v).toBe(false);
     }
-    config('chain:\n  review: false\n  review-external: "true"\n  address-reviews: 1\n  apply: true\n');
+    config('chain:\n  review: false\n  review-external: "true"\n  address-reviews: 1\n  apply: "yes"\n  archive: 0\n  merge: true\n');
     const s = resolveChainSetting(root);
     expect(s.configured).toBe(true);
-    expect(s.grants).toEqual({ review: false, 'review-external': false, 'address-reviews': false });
+    expect(s.grants).toEqual({ review: false, 'review-external': false, 'address-reviews': false, apply: false, archive: false });
     config('chain:\n  review: true\n');
-    expect(resolveChainSetting(root).grants).toEqual({ review: true, 'review-external': false, 'address-reviews': false });
+    expect(resolveChainSetting(root).grants).toEqual({ review: true, 'review-external': false, 'address-reviews': false, apply: false, archive: false });
+    // No key derives another: apply grants neither archive nor any review form.
+    config('chain:\n  apply: true\n');
+    expect(resolveChainSetting(root).grants).toEqual({ review: false, 'review-external': false, 'address-reviews': false, apply: true, archive: false });
     fs.rmSync(path.join(root, 'orbit', 'config.yaml'));
     expect(resolveChainSetting(root).configured).toBe(false);
   });
 
-  it('the key table maps each row form to its key, and apply/archive to no key', () => {
+  it('the key table maps each row form to its key, apply and archive with or without the marker', () => {
     for (const [key, forms] of Object.entries(CHAIN_KEY_TABLE)) {
       for (const form of forms) {
         for (const mode of ['proposal', 'system']) {
@@ -120,16 +123,20 @@ describe('The chain setting grants each command on its own key', () => {
         }
       }
     }
+    // seam-chaining-grants: the two consent-marked commands are their own keys, marked or not.
     for (const cmd of ['/orbit:apply x', '/orbit:apply x — user-invoked', '/orbit:archive x', '/orbit:archive x — user-invoked']) {
-      expect(chainKeyFor(cmd), cmd).toBeNull();
-      expect(chainTargetFor(cmd), cmd).toBe(cmd.startsWith('/orbit:apply') ? 'apply' : 'archive');
+      const key = cmd.startsWith('/orbit:apply') ? 'apply' : 'archive';
+      expect(chainKeyFor(cmd), cmd).toBe(key);
+      expect(chainTargetFor(cmd), cmd).toBe(key);
     }
+    expect(chainKeyFor('/orbit:bulk-archive')).toBeNull();
+    expect(chainKeyFor('/orbit:apply x — user-invoked — user-invoked')).toBeNull();
     // A review form never carries the consent marker; one that did would be no row's.
     expect(chainTargetFor('/orbit:review --as system --fresh x — user-invoked')).toBeNull();
     expect(chainTargetFor('/orbit:review --as system --reviewer pair x')).toBeNull();
   });
 
-  it('every command string the gate walk can return maps to a key, or to apply or archive', () => {
+  it('every command string the gate walk can return maps to a key, apply and archive included', () => {
     // Read the producers' own literals — commandForClass, canonicalNextForReviewed, nextAfterPass and the
     // walk's frontier line in gates.ts, the tracked-gate apply line in instruction-loader.ts — so a new
     // command form fails here before it reaches a chain unmapped.
@@ -160,7 +167,7 @@ describe('The chain setting grants each command on its own key', () => {
   it('an absent key grants nothing and changes no readout', () => {
     review(T(1), 'system', 'fresh', [['WARNING', 'w']]);
     const before = formatChangeStatus(loadChangeContext(root, 'x'));
-    config('chain:\n  review: true\n  review-external: true\n  address-reviews: true\n');
+    config('chain:\n  review: true\n  review-external: true\n  address-reviews: true\n  apply: true\n  archive: true\n');
     const granted = formatChangeStatus(loadChangeContext(root, 'x'));
     expect(JSON.stringify(granted.gates)).toBe(JSON.stringify(before.gates));
     expect(granted.position).toBe(before.position);
@@ -182,12 +189,70 @@ describe('The chain setting grants each command on its own key', () => {
 
   // @scenario behaviour orbit-engine-gates :: The chain setting grants each command on its own key :: A key no row names grants nothing
   it('a key no row names grants nothing', () => {
-    config('chain:\n  apply: true\n  review: "yes"\n');
-    for (const cmd of ['/orbit:apply x — user-invoked', '/orbit:review --as proposal --fresh x']) {
+    config('chain:\n  merge: true\n  review: "yes"\n');
+    for (const cmd of ['/orbit:archive x — user-invoked', '/orbit:review --as proposal --fresh x']) {
       expect(composeChainObject(root, dir, cmd, { runner: REACHABLE }), cmd).toMatchObject({ may_run: false, why: 'not-granted' });
     }
     config('chain:\n  review: true\n');
     expect(composeChainObject(root, dir, '/orbit:review --as proposal --fresh x', { runner: REACHABLE }).may_run).toBe(true);
+  });
+
+  // seam-chaining-grants: a fixture whose engine-computed next command is the marked apply (the proposal
+  // gate passed, tasks open) or the marked archive (both gates passed, tasks done).
+  function atApply(): void {
+    setTasks(false);
+    review(T(1), 'proposal', 'fresh');
+    review(T(2), 'proposal', 'in-context');
+  }
+  function atArchive(): void {
+    atApply();
+    setTasks(true);
+    review(T(3), 'system', 'fresh');
+    review(T(4), 'system', 'in-context');
+  }
+
+  // @scenario behaviour orbit-engine-gates :: The chain setting grants each command on its own key :: The apply key grants the marked apply command
+  it('the apply key grants the marked apply command', () => {
+    atApply();
+    expect(nextCommand()).toBe('/orbit:apply x — user-invoked');
+    config('');
+    expect(chain()).toMatchObject({ next: '/orbit:apply x — user-invoked', configured: false, may_run: false, why: 'not-granted' });
+    config('chain:\n  apply: true\n');
+    const c = chain();
+    expect(c).toEqual({ next: '/orbit:apply x — user-invoked', configured: true, head: T(2), may_run: true });
+    // The marker stays on the rendered next command whatever the setting grants.
+    expect(nextCommand()).toBe('/orbit:apply x — user-invoked');
+    config('chain:\n  apply: false\n');
+    expect(chain()).toMatchObject({ may_run: false, why: 'not-granted' });
+  });
+
+  // @scenario behaviour orbit-engine-gates :: The chain setting grants each command on its own key :: Granting apply does not grant archive
+  it('granting apply does not grant archive', () => {
+    atArchive();
+    expect(nextCommand()).toBe('/orbit:archive x — user-invoked');
+    config('chain:\n  apply: true\n  review: true\n  review-external: true\n  address-reviews: true\n');
+    expect(chain()).toMatchObject({ next: '/orbit:archive x — user-invoked', may_run: false, why: 'not-granted' });
+  });
+
+  it('the archive key grants the marked archive command, and not apply', () => {
+    atArchive();
+    config('chain:\n  archive: true\n');
+    expect(chain()).toEqual({ next: '/orbit:archive x — user-invoked', configured: true, head: T(4), may_run: true });
+    expect(composeChainObject(root, dir, '/orbit:apply x — user-invoked', { runner: REACHABLE })).toMatchObject({ may_run: false, why: 'not-granted' });
+  });
+
+  it('an open stop still halts a granted apply; its resolution lets it run', () => {
+    atApply();
+    config('chain:\n  apply: true\n');
+    decision(`stop-${T(3)}.json`, { command: 'stop', condition: 'outward-act', about: 'a', question: 'q?' });
+    expect(chain()).toMatchObject({
+      next: '/orbit:apply x — user-invoked',
+      may_run: false,
+      why: 'open-stop',
+      stop: `orbit/changes/x/.orbit-runs/decisions/stop-${T(3)}.json`,
+    });
+    decision(`resolution-${T(4)}.json`, { command: 'resolution', stop: `stop-${T(3)}.json`, answer: 'a', effect: 'e' });
+    expect(chain()).toMatchObject({ may_run: true });
   });
 });
 
@@ -323,7 +388,7 @@ describe('The change status says whether the next command may run unasked', () =
     };
     const plain = await capture({});
     const json = JSON.parse(await capture({ json: true }));
-    for (const setting of ['chain:\n  address-reviews: true\n', 'chain:\n  review: true\n  review-external: true\n', 'chain: nonsense\n']) {
+    for (const setting of ['chain:\n  address-reviews: true\n', 'chain:\n  review: true\n  review-external: true\n', 'chain:\n  apply: true\n  archive: true\n', 'chain: nonsense\n']) {
       config(setting);
       expect(await capture({}), setting).toBe(plain);
       const granted = JSON.parse(await capture({ json: true }));

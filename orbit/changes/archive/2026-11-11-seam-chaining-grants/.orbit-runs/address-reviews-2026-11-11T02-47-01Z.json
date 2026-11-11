@@ -1,0 +1,107 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-11T02:47:01Z",
+  "change": "seam-chaining-grants",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/seam-chaining-grants/.orbit-runs/external-system-2026-11-11T02-17-18Z.md",
+  "source_command": null,
+  "source_token": "2026-11-11T02-17-18Z",
+  "latest_apply_token": "2026-11-11T02-08-44Z",
+  "external_reviewer": "GPT-6",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 0
+  },
+  "pushback_verification": "Both verified against current state: the two orbit-run-summary-emit scenarios still promised the same value on every later emit, and the program-PR scenario still said the PR stays a draft; none stale.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Apply scenarios contradict the withdrawn-grant exception",
+      "marker_source": "external",
+      "file": "orbit/changes/seam-chaining-grants/specs/orbit-run-summary-emit/spec.md",
+      "line": 35,
+      "classification": "trivial_fix",
+      "action": "qualified both scenarios (Consent constant across one apply's chunk emits; A granted apply records setting) with the withdrawn-grant exception the requirement and orbit-lifecycle-consent already state",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining-grants/specs/orbit-run-summary-emit/spec.md",
+            "text": "except an emit written after a withdrawn grant, which carries no `consent`"
+          },
+          {
+            "path": "orbit/changes/seam-chaining-grants/specs/orbit-run-summary-emit/spec.md",
+            "text": "while the `apply` key still grants it; an emit after the grant is withdrawn carries no `consent` field"
+          }
+        ],
+        "searched": [
+          "constant across",
+          "same consent value",
+          "identical across",
+          "carries the same value"
+        ],
+        "scope": [
+          "src/core/templates/workflows/apply-change.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Program-PR scenario assumes an initially draft PR",
+      "marker_source": "external",
+      "file": "orbit/changes/seam-chaining-grants/specs/orbit-archive-modifications/spec.md",
+      "line": 280,
+      "classification": "trivial_fix",
+      "action": "the scenario now asserts that no ready flip runs and the PR keeps the draft or ready state the preflight observed",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "which stays a draft"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/seam-chaining-grants/specs/orbit-archive-modifications/spec.md",
+            "text": "draft or ready state the preflight observed, and its flip remains the user's"
+          }
+        ],
+        "searched": [
+          "stays a draft",
+          "stays draft"
+        ],
+        "scope": [
+          "src/core/templates/workflows",
+          "test/core/templates/orbit-content-fidelity.test.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Two of two resolved: both apply consent scenarios now carry the withdrawn-grant exception, and the granted program-PR scenario asserts no ready flip and the observed draft or ready state kept, not a draft.",
+  "iteration": 5,
+  "next_recommended": "/orbit:review --as system seam-chaining-grants",
+  "ripple_misses": 0
+}

@@ -1,0 +1,25 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-11T02:46:07Z",
+  "change": "seam-chaining-grants",
+  "model": "claude-opus-5-5",
+  "area": "when-things-go-wrong",
+  "decided": "An archive the chain setting grants while the user is on the wrong branch keeps going: it prints one line naming both branches, writes its changes where the user stands, and leaves them uncommitted with a note on how to move them. This is written down as a known limit.",
+  "alternatives": [
+    "stop and ask the user before any archive write when the branch is wrong on a granted archive"
+  ],
+  "why": "Nothing is pushed to the wrong branch and the note names the exact recovery, so the user loses nothing, while a new question would bring the user back for a case that rarely happens; the user chose this in the walk.",
+  "relies_on": [
+    {
+      "kind": "goal",
+      "doc": "automate-dev-flow",
+      "id": "G1"
+    },
+    {
+      "kind": "requirement",
+      "capability": "orbit-archive-modifications",
+      "title": "PR-attached archive tail"
+    }
+  ],
+  "detail": "Fresh system pass 2026-11-11T02-16-55Z, SUGGESTION at src/core/templates/workflows/archive-change.ts:322, option B, ratified in chat. Written into orbit-archive-modifications' Consent prompt on AI-mediated archive entry (delta) and archive Step 0.7."
+}

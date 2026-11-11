@@ -457,6 +457,7 @@ describe('select — step 6, remote-ahead (fast-forward when possible, skip on d
   });
 
   // @scenario behaviour orbit-pr-lifecycle :: `orbit pr select` computes propose's branch selection :: A diverged branch is a skip
+  // @scenario behaviour orbit-pr-lifecycle :: Single-session operating assumption and v1 limits :: Concurrency is out of scope, divergence is still detected
   it('a local branch DIVERGED from the remote tip is a skip with no segments', () => {
     const repo = orbitRepo('per-proposal');
     repo.git('switch', '-q', '-c', 'add-thing');
