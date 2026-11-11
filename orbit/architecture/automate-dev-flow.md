@@ -30,7 +30,9 @@ stage; G1–G6 are graded at first-run, on that project's trail and transcripts.
 
 - **G0 — Today's flow is untouched, and nothing is lost.** With every setting at its default, orbit behaves exactly
   as it does now, with the exceptions the user has ratified (R-adf-11): a system review of a change that has decision
-  records also has a clean reader check them, which adds review findings and the walk that fixes them. Otherwise
+  records also has a clean reader check them, which adds review findings and the walk that fixes them; and an archive
+  of a change with a pull request names, in one line, each file it commits from the change's folder that git never
+  tracked (R-adf-13). Otherwise
   the engine's readouts and gates are unchanged, and a generated body changes only by an addition
   that tells the AI to record something, or by text whose effect depends on a setting and which, with every setting
   at its default, leaves what the AI does unchanged (R-adf-12) — never by a change to what it does at a seam or
@@ -41,7 +43,7 @@ stage; G1–G6 are graded at first-run, on that project's trail and transcripts.
   behaves differently, if an existing test's assertion about today's behaviour is weakened, or if a first-run trail
   lacks a record type the supervised flow would have written; a default install behaving differently beyond a
   ratified exception fails it. (Reworded by Sal, 2026-11-07, R-adf-9; exceptions by Sal, 2026-11-09, R-adf-11; setting-dependent text by Sal,
-  2026-11-09, R-adf-12.)
+  2026-11-09, R-adf-12; the archive's untracked-file line by Sal, 2026-11-11, R-adf-13.)
 - **G1 — The user only shows up where the user adds value.** In first-run, every user turn after the opening architect session
   is one of: answering a stop record, a sign-off, or a voluntary interjection the user makes. Fails on a single turn where
   the user had to type the next command, clear context, or re-boot a session to keep the run moving.
@@ -113,6 +115,13 @@ stage; G1–G6 are graded at first-run, on that project's trail and transcripts.
   settings stage rewrites bodies that way, and its defaults test is what keeps it honest. R-adf-11 still governs
   behaviour that runs by default: each such behaviour needs its own named exception. Recorded as
   `stop-2026-11-09T17-52-07Z.json` and its resolution in this trail's `decisions/` folder.
+- **R-adf-13** (Sal, 2026-11-11) — G0 names a second default-on exception, under R-adf-11: an archive of a change with a
+  pull request names, in one line, each file it commits from the change's folder that git never tracked. The archive's
+  requirement (`orbit-archive-modifications`' `PR-attached archive tail`) always promised that line; it first printed
+  in seam-chaining-grants, on the user's answer at that change's apply. The user chose to name it (the AI's
+  recommendation) over reading the repair of an existing requirement's promise as outside G0, so G0 keeps no "bug fix"
+  reading later stages could lean on. Recorded as `stop-2026-11-11T03-17-05Z.json` and its resolution in this trail's
+  `decisions/` folder.
 
 ## Program stages
 
@@ -290,7 +299,7 @@ system walk named as a limit that a granted archive started off the attachment's
 skips (the user chose this over a new decision prompt); and task 6.1 found the PR tail's carried "strays are named"
 scenario never true, so `orbit pr tail` now reports `carried_untracked` and the archive names those files — the one
 change a default install shows (a line when an archive carries an untracked file), recorded as a stop and its
-resolution; whether G0 names it as an exception is the user's at the next architect session. Tests that moved
+resolution, and named as G0's second exception at the architect session after the archive (R-adf-13). Tests that moved
 (R-adf-9): the propose, ff and apply skill hash pins once and archive's three times, `rc03b`'s `emit-composition.ts`
 and `gates.ts` pins, `chain.test.ts`'s resolver and key-table assertions (the closed key set grew), and
 `chain-prompt-tags.test.ts`'s routine-tag count and inventory. The system review's reading step found fifteen records
@@ -482,3 +491,8 @@ Exit criteria:
   second Shipped-as paragraph). No ratification was offered: the exploration `seam-chaining-grants` is live, and two
   changes are still owed — the consent value with the apply and archive grants (a declared breach), then the commit
   before a chained external review. No ruling, goal or stage changed.
+- 2026-11-11 — Architect session after `seam-chaining-grants` was archived (merged as PR #39), the second of D-sga-1's
+  three changes: the apply and archive keys and `consent: "setting"` (the stage's third Shipped-as paragraph). Stage
+  seam-chaining left unratified (Sal: not yet; AI recommendation): the third change, the commit before a chained
+  external review, is still owed. G0 now names the archive's untracked-file line as its second ratified exception
+  (R-adf-13; Sal chose naming over a "bug fix" reading outside G0, AI recommendation).

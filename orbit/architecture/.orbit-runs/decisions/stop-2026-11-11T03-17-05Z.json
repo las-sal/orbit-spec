@@ -1,0 +1,11 @@
+{
+  "command": "stop",
+  "timestamp": "2026-11-11T03:17:05Z",
+  "change": null,
+  "doc": "automate-dev-flow",
+  "model": "claude-opus-5-5",
+  "condition": "ruling-amendment",
+  "about": "With every setting at its default, an archive of a change that has a pull request now prints one more line when it commits a file from the change's folder that git never tracked, naming that file. The archive's own requirement always said it would; it never did until the change seam-chaining-grants. G0 says a default install behaves exactly as before, except for behaviours the user names.",
+  "question": "Should G0 name the archive's line about untracked files as a second ratified exception, or record it as the repair of a promise the archive's requirement already made, outside what G0 governs?",
+  "detail": "src/core/pr/tail.ts observations.carried_untracked and the pr-archive-tail reference's naming line, landed in 2026-11-11-seam-chaining-grants on the user's answer to stop-2026-11-11T02-01-18Z (that change's trail). R-adf-11 names the first exception (the decision-reading reader)."
+}

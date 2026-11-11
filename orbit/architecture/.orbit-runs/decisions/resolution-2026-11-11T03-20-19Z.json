@@ -1,0 +1,10 @@
+{
+  "command": "resolution",
+  "timestamp": "2026-11-11T03:20:19Z",
+  "change": null,
+  "doc": "automate-dev-flow",
+  "model": "claude-opus-5-5",
+  "stop": "stop-2026-11-11T03-17-05Z.json",
+  "answer": "Name it: G0 gains the archive's line about untracked files as its second ratified exception.",
+  "effect": "G0 now lists that line beside the decision reader, and ruling R-adf-13 records the choice; any later default-on behaviour still needs its own named exception."
+}
