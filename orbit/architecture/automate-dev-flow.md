@@ -496,3 +496,6 @@ Exit criteria:
   seam-chaining left unratified (Sal: not yet; AI recommendation): the third change, the commit before a chained
   external review, is still owed. G0 now names the archive's untracked-file line as its second ratified exception
   (R-adf-13; Sal chose naming over a "bug fix" reading outside G0, AI recommendation).
+- 2026-11-11 — Architect session, nothing new since the last: stage seam-chaining offered again and left unratified
+  (Sal: not yet; AI recommendation). Its exit criteria are met, but D-sga-1's third change, the commit before a chained
+  external review, has no exploration or change yet. No ruling, goal or stage changed.
