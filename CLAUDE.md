@@ -122,6 +122,8 @@ body.
   writes no record. The full statement is the fifth epitome bullet in every workflow body with a disciplines
   epitome; what a record holds is each skill's `references/decision-records.md`. Until a release carrying decision records is installed, the
   installed `orbit` refuses these commands here: write records with `node bin/orbit.js emit stop|resolution|ledger …`.
+  Likewise the commit step's `orbit pr commit` (chained-review-commit): until a release carrying it is installed, run it
+  as `node bin/orbit.js pr commit "<name>" --json` (here it returns `off`: this repo sets neither `commit` nor `push`).
 - **Outward actions stay the human's** (D6, `orbit-conventions`) — merging any PR, publishing
   releases, and filing issues on external trackers are invoked outside orbit workflows, in
   non-orbit sessions on this repo as much as in orbit ones. Recommend them; never perform them.

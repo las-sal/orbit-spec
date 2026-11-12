@@ -354,6 +354,44 @@ describe('commit — what the stage takes (`orbit pr commit` computes the closin
     expect(porcelain(repo)).toBe('');
   });
 
+  // @scenario behaviour orbit-pr-lifecycle :: `orbit pr commit` computes the closing commit step :: A stage that would change nothing prints no commit
+  it('entries the stage returns to HEAD (MM restored, AD) print no commit; the owed push still prints and runs', () => {
+    const repo = attached({ settings: BOTH });
+    repo.write('local.txt', 'ahead\n');
+    repo.commitAll('an unpushed commit');
+    // MM: a staged edit whose working-tree file is restored to HEAD's content.
+    const original = repo.git('show', 'HEAD:README.md').stdout;
+    repo.write('README.md', '# staged then restored\n');
+    repo.git('add', 'README.md');
+    repo.write('README.md', original);
+    // AD: a file added to the index, then deleted from the working tree.
+    repo.write('gone.txt', 'gone\n');
+    repo.git('add', 'gone.txt');
+    fs.rmSync(path.join(repo.dir, 'gone.txt'));
+    expect(porcelain(repo).split('\n').filter(Boolean).sort()).toEqual(['AD gone.txt', 'MM README.md']);
+
+    const { record, calls } = commit(repo);
+    expect(record).toMatchObject({ action: 'proceed', reason: null, degraded: null });
+    expect(record.observations).toMatchObject({ untracked: [], unpushed: 1 });
+    expect(record.segments).toEqual([{ inputs: [], steps: [{ step: 'push', argv: ['git', 'push', '-u', 'origin', NAME] }] }]);
+    expect(calls.git.map((c) => c.args)).toContainEqual(['diff', '--quiet', 'HEAD', '--']);
+    runSegments(repo, record);
+    expect(rev(repo, `refs/remotes/origin/${NAME}`)).toBe(rev(repo, 'HEAD'));
+    // Contrast: what the old rule printed fails exactly so (`nothing to commit`), which is why it is not printed.
+    expect(repo.git('add', '-A').status).toBe(0);
+    expect(repo.git('commit', '-q', '-m', 'empty').status).toBe(1);
+  });
+
+  it('an untracked file alone still prints the commit (no tracked difference needed)', () => {
+    const repo = attached({ settings: 'commit: true\n' });
+    repo.write('notes/new.txt', 'new\n');
+    const { record } = commit(repo);
+    expect(steps(record)).toEqual(['stage', 'commit']);
+    runStep(repo, record);
+    expect(headTree(repo)).toContain('notes/new.txt');
+    expect(porcelain(repo)).toBe('');
+  });
+
   // @scenario behaviour orbit-pr-lifecycle :: `orbit pr commit` computes the closing commit step :: A clean tree with nothing to push prints no segment
   it('a clean tree with nothing to push: proceed, no segment', () => {
     const repo = attached({ settings: BOTH });

@@ -7,12 +7,17 @@ composed once in code (`COMMIT_STEP`) and carried byte-equal. The step runs `orb
 was invoked in, after the command's run summary is written and BEFORE the position readout, so its lines precede the
 readout and the eligibility line that end the turn, and the chain end step (`No-chaining contract`) still follows
 them. With no change target (an architecture-mode review, a `--doc` walk, a project-wide walk) the step does nothing
-and calls nothing, as the chain end step does. It acts on the record by `orbit-pr-lifecycle`'s consumption table
+and calls nothing, as the chain end step does. When the invocation's PR layer has already stopped (an earlier `orbit pr`
+call exited non-zero, or a step it printed failed: `select` or `publish` at propose or ff, the `tail` at archive), the
+step calls nothing and prints nothing, because the consumption table's failure row runs no later PR step, and that
+failure's line stays the recovery. It acts on the record by `orbit-pr-lifecycle`'s consumption table
 (`PR actions are workflow-body choreography (zero engine git)`). On `off` it prints nothing and runs nothing. On `skip`
 it writes one line from the reason. On `proceed` it runs the printed segment, if any: when the segment's inputs name
 `<message-file>`, it first writes the commit message (one line naming the command, the change and what the session
 did) to a file OUTSIDE the working tree (the OS temp directory), which it keeps until every printed step has run; it
-runs the printed steps in order, and names, in one line, each path `observations.untracked` lists. What it may commit, and to which
+runs the printed steps in order, and names, in one line, each path `observations.untracked` lists. With `degraded: "pr"`
+it writes one line saying the push was dropped, whether or not a segment printed. On a non-zero exit it reports the
+error verbatim and runs nothing. What it may commit, and to which
 branch, is `orbit-pr-lifecycle`'s `` `orbit pr commit` computes the closing commit step ``; what grants it is that
 capability's `The commit and push settings`. A worker the session dispatched (a fresh reviewer, a blind pair's fresh
 half) persists its pass and returns, and never runs the step. The bodies, SOURCED from the workflow templates under
@@ -20,11 +25,11 @@ half) persists its pass and returns, and never runs the step. The bodies, SOURCE
 
 | body | carries the step |
 |---|---|
-| propose, ff | yes: after the completion emit and `publish`'s record segment, before the position readout |
+| propose, ff | yes: after the completion emit and `publish`'s record segment, before the position readout; not after a failed `select` or `publish` step |
 | apply | yes: at the session's close, before the position readout, not at each chunk boundary |
 | review | yes: in the invoking session, before the position readout; with no change target it does nothing |
 | address-reviews | yes: before the position readout; with no change target it does nothing |
-| archive | yes: after the PR-attached tail and before the completion readout; the tail commits its enumerated scope, and under `commit: true` the step commits the rest in a second commit, so the tail's unrelated-paths guarantee (`orbit-archive-modifications`' `PR-attached archive tail`) holds for the tail's own commit |
+| archive | yes: after the PR-attached tail and before the completion readout, not after a failed `tail` step; the tail commits its enumerated scope, and under `commit: true` the step commits the rest in a second commit, so the tail's unrelated-paths guarantee (`orbit-archive-modifications`' `PR-attached archive tail`) holds for the tail's own commit |
 | new, continue | no: never attached (`orbit-pr-lifecycle`'s `PR entry points`) |
 | bulk-archive | no: it archives several changes and runs no tail; its writes ride the next carrying body's commit |
 | architect, audit-drift | no: no change target |
@@ -60,6 +65,12 @@ carrying body.
 - **WHEN** an attached change archives under `commit: true` with an unrelated tracked edit in the tree
 - **THEN** the tail's commit leaves the edit out, as `orbit-archive-modifications` promises, and the step after it
   commits the edit; without the setting the edit stays uncommitted, as today
+
+#### Scenario: A stopped PR layer runs no commit step
+
+- **WHEN** `commit: true` is set and propose's `publish` `open` step fails, or archive's `tail` step fails
+- **THEN** the step calls nothing and prints nothing, so the failure line's recovery (at propose, ending in the record
+  segment's `git commit --only`) runs as printed
 
 #### Scenario: A walk with no change target calls nothing
 

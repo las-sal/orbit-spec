@@ -1,0 +1,94 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-12T18:53:43Z",
+  "change": "chained-review-commit",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/chained-review-commit/.orbit-runs/external-system-2026-11-12T16-42-49Z.md",
+  "source_command": null,
+  "source_token": "2026-11-12T16-42-49Z",
+  "latest_apply_token": "2026-11-12T16-24-46Z",
+  "external_reviewer": "GPT-6",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 0
+  },
+  "pushback_verification": "Both findings verified against HEAD 5f45b7a0. The stopped-PR-layer finding converged with the fresh half's failed-publish finding (same claim) and takes that walk's disposition; the empty-commit finding was reproduced in a scratch repository (MM restored and AD each: git add -A then git commit exits 1, nothing to commit).",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale_suppressed": 1,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The closing step can restart a PR layer that already stopped",
+      "marker_source": "external",
+      "file": "src/core/disciplines.ts",
+      "line": 123,
+      "classification": "stale",
+      "action": "none here: converged with the fresh half's finding, walked in its log",
+      "evidence": "resolved in address-reviews-2026-11-12T18-53-26Z (the fresh half's failed-publish finding): COMMIT_STEP now calls nothing and prints nothing once the invocation's PR layer has stopped, a non-zero orbit pr exit or a failed select, publish or tail step, at propose, ff and archive alike",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "A nonempty porcelain status does not guarantee a commit after staging",
+      "marker_source": "external",
+      "file": "src/core/pr/commit.ts",
+      "line": 107,
+      "classification": "trivial_fix",
+      "action": "prCommit prints the stage and commit only when the stage would change something: an untracked path, or git diff --quiet HEAD -- exiting non-zero (an allowlisted read); the requirement's stage table gains the MM/AD row, the stage step's printed-when cell says so, a named limit covers git rm --cached with the unchanged file on disk (measured: diff HEAD exits 1 there), and a behaviour test runs MM and AD with an owed push, plus an untracked-only case; both mutation-checked",
+      "evidence": "scratch repo: MM (staged edit, file restored) and AD (staged add, file deleted) each list in porcelain, git diff --quiet HEAD exits 0, and git add -A && git commit exits 1 'nothing to commit, working tree clean'",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/chained-review-commit/specs/orbit-pr-lifecycle/spec.md",
+          "test/core/pr/commit.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "a path is uncommitted"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/pr/commit.ts",
+            "text": "(untracked.length > 0 || run.git('diff', '--quiet', 'HEAD', '--').status !== 0)"
+          },
+          {
+            "path": "orbit/changes/chained-review-commit/specs/orbit-pr-lifecycle/spec.md",
+            "text": "#### Scenario: A stage that would change nothing prints no commit"
+          },
+          {
+            "path": "test/core/pr/commit.test.ts",
+            "text": "entries the stage returns to HEAD (MM restored, AD) print no commit"
+          }
+        ],
+        "searched": [
+          "a path is uncommitted",
+          "entries.length > 0",
+          "uncommitted path"
+        ],
+        "scope": [
+          "docs",
+          "src/core/pr/run.ts",
+          "test/integration/cli-contracts/git-contract.json"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "One resolved, one stale: the empty-commit case was reproduced and the commit is now printed only when the stage would change something; the stopped-PR-layer finding converged with the fresh half's and was resolved in its walk.",
+  "iteration": 5,
+  "next_recommended": "/orbit:review --as system chained-review-commit",
+  "ripple_misses": 0
+}

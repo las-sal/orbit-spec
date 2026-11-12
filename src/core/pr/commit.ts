@@ -9,7 +9,7 @@
  * detached, HEAD off the attachment's branch, the attachment's branch named by the remote's `HEAD`
  * ref, and a merge, rebase, cherry-pick or revert in progress — each a `skip` with its code. A
  * `proceed` prints ONE segment when a step is printed and none otherwise: `stage` and `commit`
- * when `commit` is granted and a path is uncommitted, `push` when `push` is granted and the
+ * when `commit` is granted and the stage would change something HEAD lacks, `push` when `push` is granted and the
  * destination (the resolved remote and the attachment's branch, never the configured upstream)
  * lacks something. The remote is resolved WITHOUT the default-branch query, so no `gh` is needed.
  */
@@ -104,7 +104,14 @@ export function prCommit(ctx: PrContext, change: string): PrRecord {
   observations.unpushed = unpushed;
 
   const steps: PrStep[] = [];
-  const commits = settings.commit && entries.length > 0;
+  // An entry is not enough: `git add -A` can return the index to HEAD (`MM` with the file restored, `AD`), and the
+  // printed commit would then fail with nothing to commit. Commit only when the stage would change something: an
+  // untracked path, or a tracked path whose working-tree state differs from HEAD (`git diff --quiet HEAD` exits
+  // non-zero: 1 for a difference, anything else counted as one, so an unreadable diff never hides a commit).
+  const commits =
+    settings.commit &&
+    entries.length > 0 &&
+    (untracked.length > 0 || run.git('diff', '--quiet', 'HEAD', '--').status !== 0);
   if (commits) {
     steps.push({ step: 'stage', argv: ['git', 'add', '-A'] });
     steps.push({ step: 'commit', argv: ['git', 'commit', '-F', '<message-file>'] });

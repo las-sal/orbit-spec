@@ -98,6 +98,13 @@ describe('the commit step: carriage (chained-review-commit)', () => {
     expect(COMMIT_STEP).toContain("In apply it runs once, at the session's close, never at a chunk boundary.");
   });
 
+  // @scenario text orbit-conventions :: The commit step closes each carrying body :: A stopped PR layer runs no commit step
+  it('after the PR layer stopped (a non-zero exit, a failed select, publish or tail step) the step calls nothing', () => {
+    expect(COMMIT_STEP).toContain("When this invocation's PR layer has already stopped — an earlier `orbit pr` call exited non-zero, or a step it printed failed (`select` or `publish` at propose or ff, the `tail` at archive) — the step calls nothing and prints nothing: no later PR step runs, and that failure's line stays the recovery the user runs.");
+    // It is tested before the call: the clause precedes `Otherwise run`.
+    expect(COMMIT_STEP.indexOf('PR layer has already stopped')).toBeLessThan(COMMIT_STEP.indexOf('Otherwise run `orbit pr commit'));
+  });
+
   // @scenario text orbit-conventions :: The commit step closes each carrying body :: A walk with no change target calls nothing
   it('with no change target the step does nothing and calls nothing', () => {
     expect(COMMIT_STEP).toContain('With no change target — an architecture-mode review, a `--doc` walk, a project-wide walk — the step does nothing and calls nothing.');
@@ -117,12 +124,15 @@ describe('the commit step: carriage (chained-review-commit)', () => {
     expect(COMMIT_STEP).toContain('to a file OUTSIDE the working tree (the OS temp directory), never inside it: the stage is `git add -A` and would commit the message itself. Keep that file until every printed step has run.');
   });
 
-  it('it acts on every record shape: off, skip, proceed with and without a segment, degraded, a failed step', () => {
+  it('it acts on every record shape: a non-zero exit, off, skip, proceed with and without a segment, degraded with or without one, a failed step', () => {
+    expect(COMMIT_STEP).toContain('- **A non-zero exit** (a usage error, the only one) → report the error verbatim in ONE line and run nothing');
     expect(COMMIT_STEP).toContain('- **`action: off`** → print nothing and run nothing.');
     expect(COMMIT_STEP).toContain('- **`action: skip`** → write ONE line from `reason.code` and `reason.detail`');
-    expect(COMMIT_STEP).toContain('- **`action: proceed` with no segment** → nothing is uncommitted and nothing is unpushed: print nothing and run nothing.');
+    expect(COMMIT_STEP).toContain('- **`action: proceed` with no segment** → nothing is printed to run: run nothing.');
+    expect(COMMIT_STEP).not.toContain('nothing is uncommitted and nothing is unpushed');
     expect(COMMIT_STEP).toContain('Then name, in ONE line, each path `observations.untracked` lists');
-    expect(COMMIT_STEP).toContain('With `degraded: "pr"`, add ONE line saying the push was dropped');
+    // The degradation line is its own bullet, so a degraded proceed that printed no segment still says the push dropped.
+    expect(COMMIT_STEP).toContain('- **`action: proceed` with `degraded: "pr"`**, with a segment or none → add ONE line saying the push was dropped, from `reason.code`.');
     expect(COMMIT_STEP).toContain("- **A step fails** → stop at that step and write ONE line naming the completed, the failed and the skipped steps by their `step` names");
   });
 

@@ -72,6 +72,7 @@ share):
 | a path already staged | committed with the rest |
 | an unmerged path | never reached: the gate's `merge-in-progress` row |
 | no uncommitted path at all | no stage and no commit are printed |
+| entries the stage would return to HEAD (a staged edit whose file is restored, `MM`; a staged addition since deleted, `AD`) | no stage and no commit are printed: `git add -A` would leave nothing to commit |
 
 `observations.untracked` lists each untracked path the stage would add, read from that one porcelain call, and the body
 names them in one line (the archive tail's naming of untracked files, R-adf-13, is the precedent). A `proceed` prints
@@ -79,10 +80,13 @@ ONE segment when at least one step is printed, its inputs `<message-file>` when 
 otherwise, and NO segment when nothing is printed (a clean tree with nothing to push). The body writes `<message-file>`
 OUTSIDE the working tree (the OS temp directory), never inside it, because the stage is `git add -A` and would commit
 the message itself; it keeps the file until every printed step has run, so a failure line's recovery can name it.
+Named limit: a path removed from the index with `git rm --cached` while its unchanged file stays on disk reads as both
+staged-deleted and untracked, so the commit is printed and finds nothing to commit; the failure row then shows the
+recovery.
 
 | step | `argv` | printed when |
 |---|---|---|
-| `stage` | `git add -A` | `commit` is granted and a path is uncommitted |
+| `stage` | `git add -A` | `commit` is granted and the stage would change something: an untracked path, or a tracked path whose working-tree state differs from HEAD (`git diff --quiet HEAD --` exits non-zero) |
 | `commit` | `git commit -F <message-file>` | with the stage |
 | `push` | `git push -u <resolved-remote> <branch>` | `push` is granted and there is something to push to that destination: the printed commit, a commit `git rev-list refs/remotes/<resolved-remote>/<branch>..HEAD` counts, or no such remote-tracking ref |
 
@@ -137,6 +141,12 @@ empty. Every `git` invocation it makes is in that requirement's allowlist.
 - **WHEN** the body runs a printed segment that carries the commit
 - **THEN** `<message-file>` was written outside the working tree, the commit's tree holds no message file, and
   `git status --porcelain` is empty after the segment
+
+#### Scenario: A stage that would change nothing prints no commit
+
+- **WHEN** both settings are granted on the attached branch, the branch has an unpushed commit, and porcelain lists only a
+  staged edit whose file was restored to HEAD's content (`MM`) and a staged addition since deleted (`AD`)
+- **THEN** it prints the push alone, with no stage and no commit, and the push runs
 
 #### Scenario: A clean tree with nothing to push prints no segment
 

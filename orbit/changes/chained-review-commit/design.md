@@ -66,7 +66,10 @@ commit a message file written inside the tree. It is kept until every printed st
 recovery can name it. The body then runs the printed steps under the
 existing consumption table. Its failure row ("a `publish` or `tail` step fails") gains `commit`, at the seam
 "the session's close": the work stays uncommitted until the recovery lands, and the lifecycle's own steps stand.
-The body names the untracked files from `observations.untracked` in one line.
+The body names the untracked files from `observations.untracked` in one line. The same row's "no later PR step runs"
+reaches the step itself: after a failed `select`, `publish` or `tail` step (or a non-zero `orbit pr` exit) in the same
+invocation, the step calls nothing, so the earlier failure line's recovery (at propose, ending in the record segment's
+`git commit --only`) still runs as printed.
 
 **D4 — the step's text is one constant, `COMMIT_STEP` in `src/core/disciplines.ts`.** It is interpolated as
 `CHAIN_END_STEP` is, in six bodies. In propose, ff, apply, review and address-reviews it runs after the run summary
