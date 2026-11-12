@@ -1,0 +1,169 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-12T02:51:03Z",
+  "change": "chained-review-commit",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "The commit subcommand's requirement still points at the step's old title",
+      "file": "specs/orbit-pr-lifecycle/spec.md",
+      "line": 45,
+      "recommendation": "Replace `The commit step closes every body that writes to a change` (wrapped across lines 45-46) with `The commit step closes each carrying body`. The walk renamed the ADDED requirement; this pointer sits across a line wrap, so a one-line search for the old title missed it. At archive it would sync into the baseline as a pointer to no requirement."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "title": "The resolver sentence counts four default-querying subcommands; program is a fifth and does not skip",
+      "file": "specs/orbit-pr-lifecycle/spec.md",
+      "line": 92,
+      "recommendation": "src/core/pr/program.ts:68 calls resolve(run) with the default query too, and on gh-absent returns an `unverified` outcome (program.ts:71), not a skip. Reword to: \"and every subcommand that queries it meets `gh-absent` exactly as before\" (or name program's outcome beside the four skips). The resolve.ts edit itself is unaffected.",
+      "walk_entry": {
+        "title": "resolve(run, {withDefault: false}) still requires gh: the 'never needs gh' premise is false against the code",
+        "file": "design.md"
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "Touchpoints omit docs/commands.md, which task 3.2 now edits",
+      "file": "design.md",
+      "line": 129,
+      "recommendation": "Add `docs/commands.md` to the docs Touchpoint (`docs/customization.md` + `docs/cli.md` + `docs/commands.md`), so the predicted map matches task 3.2 before apply freezes it."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "A verification of the two proposal walks over the blind pair's 19 findings. Every resolved entry's edit was read at its sites in proposal, design, both delta specs and tasks, then the residual diff from the external return's commit was listed: six files, each inside some entry's edit record, so no record gap. The one regression is the resolver entry's new sentence about which subcommands meet gh-absent; it miscounts by forgetting program, which also queries the default branch. The dangling title is outside the walk record: the walk renamed the ADDED requirement in its own prose but no entry recorded the rename, so no sweep searched the wrapped form. Both are text repairs in one spec file. The carrier narrowing, the message file outside the tree, the push destination and the default-branch reliance on propose's collision check all read consistently across the five artifacts, and orbit validate passes.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "verification": [
+    {
+      "title": "resolve(run, {withDefault: false}) still requires gh: the 'never needs gh' premise is false against the code",
+      "file": "design.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "Bodies with no resolvable change target hit orbit pr commit's usage error, not 'off', so G0 fails at the defaults",
+      "file": "specs/orbit-conventions/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "git add -A stages the body's own <message-file> when it is written inside the work tree, and observations.untracked never names it",
+      "file": "specs/orbit-pr-lifecycle/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The verify row fires the step inside a system review: Pass 0 invokes /orbit:verify in the reviewing session",
+      "file": "specs/orbit-conventions/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Explore's step position disagrees: spec says after each boundary emit, design D4 and task 2.2 say at its close",
+      "file": "design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "D7's 'a reader of either finds the other' is one-way: the tail's requirement is unchanged and names no step",
+      "file": "design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The step's lines land after the eligibility line, which the No-chaining contract says ends the turn",
+      "file": "specs/orbit-conventions/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "A proceed with nothing to stage and nothing to push prints one empty segment; the step's 'on proceed it writes the commit message' over-reads it",
+      "file": "specs/orbit-pr-lifecycle/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The merge-in-progress row misses a cherry-pick or revert stopped without conflicts",
+      "file": "specs/orbit-pr-lifecycle/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "A push with no upstream never sets one, so the push reprints at every close",
+      "file": "specs/orbit-pr-lifecycle/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The No-chaining sentence restates part of the step's gate",
+      "file": "specs/orbit-conventions/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "R-adf-14 cites orbit/explore/chained-review-commit/explore.md, which propose moved",
+      "file": "orbit/architecture/automate-dev-flow.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "docs/commands.md's per-command text is not in the docs task",
+      "file": "tasks.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Default-branch protection has an undefined fail-open case",
+      "file": "orbit/changes/chained-review-commit/specs/orbit-pr-lifecycle/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Push eligibility compares against a potentially different destination",
+      "file": "orbit/changes/chained-review-commit/specs/orbit-pr-lifecycle/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Ignore rules are incorrectly described as excluding tracked files",
+      "file": "orbit/changes/chained-review-commit/specs/orbit-pr-lifecycle/spec.md",
+      "verdict": "landed"
+    }
+  ],
+  "final_assessment": "0 critical, 1 warning, 2 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-11-11T19-52-08Z",
+    "2026-11-11T19-52-39Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews chained-review-commit"
+}
