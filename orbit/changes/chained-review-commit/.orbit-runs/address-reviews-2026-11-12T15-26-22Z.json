@@ -1,0 +1,145 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-12T15:26:22Z",
+  "change": "chained-review-commit",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/chained-review-commit/.orbit-runs/review-proposal-2026-11-12T02-51-03Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-12T02-51-03Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 2
+  },
+  "pushback_verification": "All three verified against current state: the old title survives across the line break at spec.md:45-46; program.ts:68 is a fifth default-querying resolve caller; design.md:129 lacks docs/commands.md. None stale.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The commit subcommand's requirement still points at the step's old title",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-pr-lifecycle/spec.md",
+      "line": 45,
+      "remedy": "repair",
+      "outcome": "resolved",
+      "classification": "trivial_fix",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "The commit step closes every"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/chained-review-commit/specs/orbit-pr-lifecycle/spec.md",
+            "text": "SHALL compute the commit step that `orbit-conventions`' `The commit step closes each"
+          }
+        ],
+        "searched": [
+          "closes every body that writes (whitespace-normalized, every change file and automate-dev-flow.md)",
+          "The commit step closes every"
+        ],
+        "scope": [
+          "orbit/architecture/automate-dev-flow.md"
+        ],
+        "kept": []
+      },
+      "action": "the pointer names `The commit step closes each carrying body`; a whitespace-normalized search of every change file and the architecture doc finds no other copy of the old title",
+      "evidence": "specs/orbit-pr-lifecycle/spec.md:45-46 still read `The commit step closes every` / `body that writes to a change`, split across the line break"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The resolver sentence counts four default-querying subcommands; program is a fifth and does not skip",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-pr-lifecycle/spec.md",
+      "line": 92,
+      "remedy": "repair",
+      "outcome": "resolved",
+      "classification": "trivial_fix",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the four subcommands that query it skip on"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/chained-review-commit/specs/orbit-pr-lifecycle/spec.md",
+            "text": "every subcommand that queries it meets `gh-absent` exactly as before"
+          }
+        ],
+        "searched": [
+          "four subcommands",
+          "four current subcommands",
+          "four"
+        ],
+        "scope": [
+          "src/core/pr/program.ts",
+          "src/core/pr/resolve.ts"
+        ],
+        "kept": []
+      },
+      "action": "the sentence says every subcommand that queries the default branch meets gh-absent exactly as before, counting none and naming no skip, so program's unverified outcome is covered",
+      "evidence": "src/core/pr/program.ts:68 calls resolve(run) with the default query and on gh-absent returns unverified (line 71); five subcommands call resolve(run): select, publish, preflight, tail, program"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Touchpoints omit docs/commands.md, which task 3.2 now edits",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 129,
+      "remedy": "repair",
+      "outcome": "resolved",
+      "classification": "trivial_fix",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "`docs/customization.md` + `docs/cli.md` — the keys and the subcommand."
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/chained-review-commit/design.md",
+            "text": "`docs/customization.md` + `docs/cli.md` + `docs/commands.md`"
+          }
+        ],
+        "searched": [
+          "docs/commands.md",
+          "docs/"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "action": "the docs Touchpoint names docs/commands.md beside docs/customization.md and docs/cli.md, matching task 3.2",
+      "evidence": "design.md:129 listed docs/customization.md + docs/cli.md only, while tasks.md 3.2 edits docs/commands.md too",
+      "ripple_miss_of": {
+        "walk": "2026-11-11T19-52-08Z",
+        "title": "docs/commands.md's per-command text is not in the docs task",
+        "file": "tasks.md",
+        "kind": "query"
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "All three findings of the verification pass resolved by text repairs inside the change: the commit subcommand's pointer names the renamed step requirement, the resolver sentence covers every default-querying subcommand without a count, and the docs Touchpoint names docs/commands.md.",
+  "iteration": 3,
+  "next_recommended": "/orbit:apply chained-review-commit — user-invoked",
+  "ripple_misses": 1
+}

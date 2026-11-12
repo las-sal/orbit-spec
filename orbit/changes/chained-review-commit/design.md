@@ -126,7 +126,7 @@ the step's requirement instead, which keeps `orbit-archive-modifications` out of
 - `src/core/templates/workflows/*.ts` — the six carrying bodies, and `pr-choreography.ts`'s consumption-table mirror.
 - `test/core/pr/commit.test.ts` — the subcommand's cases, executed against real repositories (`Printed commands are proven by execution`).
 - `test/core/templates/` — the step's carriage and the pins that move.
-- `docs/customization.md` + `docs/cli.md` — the keys and the subcommand.
+- `docs/customization.md` + `docs/cli.md` + `docs/commands.md` — the keys, the subcommand, and what each command commits.
 
 ## Mechanism → artifacts
 

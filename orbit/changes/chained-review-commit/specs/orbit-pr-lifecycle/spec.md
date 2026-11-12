@@ -42,9 +42,8 @@ combination, DERIVED from two keys each granted or not:
 
 ### Requirement: `orbit pr commit` computes the closing commit step
 
-`orbit pr commit <change-name>` SHALL compute the commit step that `orbit-conventions`' `The commit step closes every
-body that writes to a change` runs, and print it in the record of `` The `orbit pr` command observes and prints; it
-never writes ``. It resolves the change as active, else as the latest archived change of that name (the step runs
+`orbit pr commit <change-name>` SHALL compute the commit step that `orbit-conventions`' `The commit step closes each
+carrying body` runs, and print it in the record of `` The `orbit pr` command observes and prints; it never writes ``. It resolves the change as active, else as the latest archived change of that name (the step runs
 after the archive's move); a name resolving to neither is the usage error. Its gate is tested in this order, the
 first matching row deciding:
 
@@ -89,7 +88,7 @@ the message itself; it keeps the file until every printed step has run, so a fai
 
 The remote is resolved by `Remote and default-branch resolution` WITHOUT the default-branch query, so the subcommand
 never needs `gh` and has no `gh-absent` skip: the shared resolver checks `gh`'s availability only on the path that
-queries the default branch, and the four subcommands that query it skip on `gh-absent` exactly as before. The push's
+queries the default branch, and every subcommand that queries it meets `gh-absent` exactly as before. The push's
 destination is that resolved remote and the attachment's branch, never the branch's configured upstream, and what is
 unpushed is measured against that destination's remote-tracking ref. Named limit: the subcommand does not fetch, so a
 remote-tracking ref older than the remote counts commits as pushed that the remote has since lost; the push is then
