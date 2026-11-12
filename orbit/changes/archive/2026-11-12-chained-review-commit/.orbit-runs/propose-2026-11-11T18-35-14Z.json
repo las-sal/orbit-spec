@@ -1,0 +1,15 @@
+{
+  "command": "propose",
+  "timestamp": "2026-11-11T18:35:14Z",
+  "change": "chained-review-commit",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Proposed in consume mode from the exploration (ten decisions, six live rules accounted, no open questions): two opt-in settings, commit and push; an orbit pr commit subcommand that observes and prints the step; a shared closing step carried by eight bodies before the chain end step; the No-chaining contract's dirty-tree limit narrowed. Two capabilities (orbit-pr-lifecycle, orbit-conventions), six requirements (three ADDED, three MODIFIED carrying 17 scenarios), 14 tasks; no size breach. Base fingerprints stamped for the three MODIFIED requirements. The design records the at-defaults read-only call as the AI's method call (D5), with a ledger entry.",
+  "pr_attachment": {
+    "branch": "chained-review-commit",
+    "granularity": "per-proposal",
+    "url": "https://github.com/las-sal/orbit-spec/pull/40",
+    "state": "draft"
+  },
+  "next_recommended": "/orbit:review chained-review-commit — proposal artifacts ready; review before apply"
+}

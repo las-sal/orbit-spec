@@ -1245,12 +1245,13 @@ describe('seam-chaining-grants: carried scenarios the bodies and the engine sour
   const archiveTpl = getArchiveChangeSkillTemplate();
   const archive = archiveTpl.instructions;
   const tailRef = (archiveTpl.references ?? []).find(r => r.name === 'pr-archive-tail.md')!.content;
-  const step56 = archive.slice(archive.indexOf('## NEW Step 5.6'), archive.indexOf('## NEW Step 5.65'));
+  // Step 5.6 ends at the next section: the commit step (chained-review-commit) now sits between it and Step 5.65.
+  const step56 = archive.slice(archive.indexOf('## NEW Step 5.6'), archive.indexOf('\n## ', archive.indexOf('## NEW Step 5.6')));
 
   // @scenario text orbit-archive-modifications :: PR-attached archive tail :: Push failure degrades, archive stands
   it('a failed push stops the segment in one line naming completed, failed and skipped steps, and the archive never rolls back', () => {
     expect(step56).toContain("A failed\nstep stops the segment with ONE line naming the completed, the failed and the skipped steps, the\nfailed step's argv and then each skipped step's shown as the recovery. The archive itself (sync, move, emit) has already\nsucceeded and never rolls back.");
-    expect(tailRef).toContain("| a `publish` or `tail` step fails |");
+    expect(tailRef).toContain("| a `publish`, `tail` or `commit` step fails |");
   });
 
   // @scenario text orbit-archive-modifications :: PR-attached archive tail :: Stage entry falls back when no status log exists

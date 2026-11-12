@@ -1,0 +1,290 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-12T19:01:52Z",
+  "change": "chained-review-commit",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 9,
+      "suggestion": 7
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "src/core/pr/commit.ts",
+      "line": 114,
+      "title": "The empty-commit check writes .git/index: `git diff --quiet HEAD --` refreshes the stat cache even under GIT_OPTIONAL_LOCKS=0",
+      "recommendation": "The walk's fix for the MM/AD empty commit compares the working tree with HEAD through `git diff --quiet HEAD --`. That worktree diff refreshes the index's stat cache and writes .git/index, and GIT_OPTIONAL_LOCKS=0 (which PrRunner sets precisely so `git status` does not do this, src/core/pr/run.ts:172) does not stop it. `orbit pr commit` therefore writes inside the repository, against `orbit-pr-lifecycle`'s `The orbit pr command observes and prints; it never writes`, and a user's concurrent git command can meet index.lock. select.ts's existing `diff --quiet HEAD <target> -- <path>` compares two commits and is unaffected. No test caught it: the harness checks the allowlist, not that the repository is unchanged. Whichever option is taken, make engine() assert .git/index is byte-identical (or mtime-identical) across every engine call, and show that check able to fail on the current code.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Replace the worktree diff with a read-only per-path comparison: for each non-`??` porcelain entry, compare the HEAD blob and mode (`git ls-tree HEAD -- <paths>`) with the working-tree file's content hash (`git hash-object -- <path>`, never `-w`) and its presence and executable bit; add `hash-object` without `-w`/`--stdin` writes to the allowlist row and run.ts's gitAllowed, recapture the git contract, and keep the MM/AD and untracked-only tests."
+        },
+        {
+          "label": "B",
+          "body": "Keep `git diff --quiet HEAD --` and amend the allowlist requirement to name the index stat-cache refresh as the one write `orbit pr commit` makes (content unchanged), with its index.lock interaction as a named limit."
+        },
+        {
+          "label": "C",
+          "body": "Revert to printing the commit on any porcelain entry and make the MM/AD case a named limit: the printed commit fails with nothing to commit and the step-failure row shows the recovery (re-opening the external finding as a limit)."
+        }
+      ],
+      "reproduction": "In a scratch repository (git 2.55.0): commit f, wait, `touch f`, wait, record .git/index's mtime; `GIT_OPTIONAL_LOCKS=0 git status --porcelain -z` leaves it unchanged; `GIT_OPTIONAL_LOCKS=0 git diff --quiet HEAD --` exits 0 and .git/index's mtime changes (WRITTEN).",
+      "walk_entry": {
+        "title": "A nonempty porcelain status does not guarantee a commit after staging",
+        "file": "src/core/pr/commit.ts"
+      }
+    },
+    {
+      "pass": "reading",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-11T17-16-54Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-11T17-16-54Z.json, row 3: decided says ignored files are never committed, which reads as covering tracked files too",
+      "recommendation": "Write a replacement whose decided says new (untracked) files the ignore list excludes are never committed, so it no longer contradicts ledger-2026-11-11T19-51-21Z, which commits a tracked file the ignore list names."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-11T17-29-54Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-11T17-29-54Z.json, row 3: decided reads as this change shipping the init default",
+      "recommendation": "Write a replacement whose decided says the default is decided here and shipped by a separate small change in stage release, as the cited resolution's effect says."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-11T18-34-45Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-11T18-34-45Z.json, row 3: decided and alternatives never name the two settings, the third part or the three workflows",
+      "recommendation": "Write a replacement naming the commit and push settings, the part of orbit the alternative would change (the change status report) and the workflows still needing their own check, and saying why one extra read-only command leaves what the AI does unchanged."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-11T18-34-45Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-11T18-34-45Z.json, row 2: why leans on the chain's end-of-workflow status read",
+      "recommendation": "In the same replacement, say plainly that workflows already read the change's status at their end to decide whether to run the next command, so one more read-only check is the same kind of addition."
+    },
+    {
+      "pass": "reading",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-11T19-51-18Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-11T19-51-18Z.json, row 3: decided's \"no longer commit\" reads as verify and explore committing today",
+      "recommendation": "Write a replacement saying checking a change's work and thinking a change through do not commit at their own end (they never have); what they write is committed at the next of the five commands."
+    },
+    {
+      "pass": "reading",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-11T19-51-19Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-11T19-51-19Z.json, row 4: decided attributes the default-branch-name refusal to a requirement whose shown text only delegates it",
+      "recommendation": "Write a replacement whose citation or wording carries the refusal where it is stated (the branch preconditions at propose), or that says the cited requirement applies those preconditions without restating the refusal as its own."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-11T19-51-19Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-11T19-51-19Z.json, row 2: decided leans on git's recorded default branch for the remote",
+      "recommendation": "In the same replacement, say in plain words when a repository knows its main branch (when it was cloned, not when the remote was added by hand)."
+    },
+    {
+      "pass": "reading",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-11T19-51-20Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-11T19-51-20Z.json, row 3: decided reads as pushing unconditionally, and why's \"it\" is ambiguous",
+      "recommendation": "Write a replacement saying that when pushing is turned on, orbit pushes to the change's own branch on the remote the project resolves, and that orbit itself does not re-check the remote, so a remote that lost commits is only noticed at the next commit."
+    },
+    {
+      "pass": "reading",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-12T16-24-39Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-12T16-24-39Z.json, row 3: decided's \"six commands\" never names them and meets another record's five",
+      "recommendation": "Write a replacement naming the six commands (propose, ff, apply, review, address-reviews, archive), so a reader counting against ledger-2026-11-11T19-51-18Z's five commit points sees ff counted apart from propose."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-12T16-24-39Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-12T16-24-39Z.json, row 1: decided uses \"a push never forces\" undefined",
+      "recommendation": "In the same replacement, say a push never overwrites commits already on the remote, or add force-push to defines."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-12T18-52-47Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-12T18-52-47Z.json, row 1: \"the closing commit\" and \"the record commit\" are undefined",
+      "recommendation": "Write a replacement defining the closing commit (the commit step at a command's end) and saying which record (the propose record orbit writes) the recovery commits."
+    },
+    {
+      "pass": "reading",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-12T18-52-47Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-12T18-52-47Z.json, row 4: why presents the commit as a step the cited baseline row already names",
+      "recommendation": "In the same replacement, say this change extends the failed-step rule to the closing commit (the cited baseline row names publish and tail only, and lets the lifecycle's own steps still run), rather than that the rule already covers it."
+    },
+    {
+      "pass": "reading",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-12T18-52-48Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-12T18-52-48Z.json, row 3: decided and why misname the named limit and read \"offered\" as asking the user",
+      "recommendation": "Write a replacement saying the command prints the commit for the session to run only when staging would change something, naming the cancelling cases (an edit staged then undone, a file added then deleted), and stating the limit correctly: a file taken out of git's tracking while left unchanged on disk. Define staging, or say \"adding the changes to the next commit\"."
+    },
+    {
+      "pass": "reading",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/chained-review-commit/.orbit-runs/decisions/stop-2026-11-11T16-52-34Z.json",
+      "line": 1,
+      "title": "stop-2026-11-11T16-52-34Z.json, row 3: about reads as orbit committing at propose and archive in every project",
+      "recommendation": "Write a replacement whose about says that today orbit commits only under a pull-request setting, at propose, at archive and when handing work to another reviewer, and that a project with no setting gets no commits."
+    },
+    {
+      "pass": "reading",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/chained-review-commit/.orbit-runs/decisions/resolution-2026-11-11T17-16-51Z.json",
+      "line": 1,
+      "title": "resolution-2026-11-11T17-16-51Z.json, row 3: effect repeats the stop's incomplete list of today's commits",
+      "recommendation": "Write a replacement whose effect restates today's commits as the stop's replacement does, naming the stop's latest record."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/chained-review-commit/.orbit-runs/decisions/resolution-2026-11-11T17-29-50Z.json",
+      "line": 1,
+      "title": "resolution-2026-11-11T17-29-50Z.json, row 3: answer reads as orbit init writing a pull request",
+      "recommendation": "Write a replacement whose answer says orbit init writes the setting that gives one program pull request per architecture doc."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "This pass verified the two walks of the blind pair. Three edits landed as claimed: the commit step's new bullets (non-zero exit, degraded with or without a segment), the stopped-PR-layer clause and its scenario, and their carriage into the requirement, design D3, docs/customization.md and CLAUDE.md. The residual check over 5f45b7a0..HEAD found no edited file outside the walks' edit records. The engine edit for the empty commit is right in what it decides — MM and AD print no commit, an owed push still prints, both mutation-checked — but how it decides breaks the subcommand's read-only promise: a worktree diff refreshes the index even with optional locks off. A scratch repository showed it; the harness's allowlist check could not, because the call is allowlisted. The reading step's findings cluster in two shapes: records that state how orbit commits today more broadly than it does (only under a pull-request setting, and also at review handoff), and two records this walk wrote whose wording outruns what they cite or names the limit wrongly.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "reading"
+  ],
+  "passes_skipped": [
+    "0: VERIFICATION genre — a whole-change pass is not run",
+    "4: no perspectives defined (orbit/lenses/ is absent)",
+    "5: no critical paths defined (orbit/lenses/ is absent)",
+    "6: VERIFICATION genre — a whole-project pass is not run"
+  ],
+  "verification": [
+    {
+      "title": "COMMIT_STEP's record-shape bullets miss two shapes the owner's consumption table covers: a degraded proceed with no segment, and a non-zero exit",
+      "file": "src/core/disciplines.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "After a failed publish step, the commit step commits the propose emit and breaks the recovery line propose just printed",
+      "file": "orbit/changes/chained-review-commit/specs/orbit-conventions/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "A nonempty porcelain status does not guarantee a commit after staging",
+      "file": "src/core/pr/commit.ts",
+      "verdict": "regressed"
+    }
+  ],
+  "decision_records_read": [
+    "ledger-2026-11-11T17-07-19Z.json",
+    "ledger-2026-11-11T17-16-52Z.json",
+    "ledger-2026-11-11T17-16-53Z.json",
+    "ledger-2026-11-11T17-16-54Z.json",
+    "ledger-2026-11-11T17-16-55Z.json",
+    "ledger-2026-11-11T17-29-54Z.json",
+    "ledger-2026-11-11T18-34-45Z.json",
+    "ledger-2026-11-11T19-51-18Z.json",
+    "ledger-2026-11-11T19-51-19Z.json",
+    "ledger-2026-11-11T19-51-20Z.json",
+    "ledger-2026-11-11T19-51-21Z.json",
+    "ledger-2026-11-12T16-24-39Z.json",
+    "ledger-2026-11-12T16-24-40Z.json",
+    "ledger-2026-11-12T18-52-47Z.json",
+    "ledger-2026-11-12T18-52-48Z.json",
+    "resolution-2026-11-11T17-16-51Z.json",
+    "resolution-2026-11-11T17-29-50Z.json",
+    "stop-2026-11-11T16-52-34Z.json",
+    "stop-2026-11-11T17-17-03Z.json"
+  ],
+  "final_assessment": "0 critical, 10 warning, 7 suggestion.",
+  "decision_records_owed": [
+    "ledger-2026-11-11T17-07-19Z.json",
+    "ledger-2026-11-11T17-16-52Z.json",
+    "ledger-2026-11-11T17-16-53Z.json",
+    "ledger-2026-11-11T17-16-54Z.json",
+    "ledger-2026-11-11T17-16-55Z.json",
+    "ledger-2026-11-11T17-29-54Z.json",
+    "ledger-2026-11-11T18-34-45Z.json",
+    "ledger-2026-11-11T19-51-18Z.json",
+    "ledger-2026-11-11T19-51-19Z.json",
+    "ledger-2026-11-11T19-51-20Z.json",
+    "ledger-2026-11-11T19-51-21Z.json",
+    "ledger-2026-11-12T16-24-39Z.json",
+    "ledger-2026-11-12T16-24-40Z.json",
+    "ledger-2026-11-12T18-52-47Z.json",
+    "ledger-2026-11-12T18-52-48Z.json",
+    "resolution-2026-11-11T17-16-51Z.json",
+    "resolution-2026-11-11T17-29-50Z.json",
+    "stop-2026-11-11T16-52-34Z.json",
+    "stop-2026-11-11T17-17-03Z.json"
+  ],
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-11-12T18-53-26Z",
+    "2026-11-12T18-53-43Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews chained-review-commit"
+}

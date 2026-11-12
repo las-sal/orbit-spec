@@ -1,0 +1,149 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-12T18:53:26Z",
+  "change": "chained-review-commit",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/chained-review-commit/.orbit-runs/review-system-2026-11-12T16-42-24Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-12T16-42-24Z",
+  "latest_apply_token": "2026-11-12T16-24-46Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 0
+  },
+  "pushback_verification": "Both findings verified against HEAD 5f45b7a0: COMMIT_STEP's no-segment bullet carried the false gloss and no non-zero-exit bullet; neither COMMIT_STEP nor its requirement said how the step meets a failed publish or tail. None stale.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "COMMIT_STEP's record-shape bullets miss two shapes the owner's consumption table covers: a degraded proceed with no segment, and a non-zero exit",
+      "marker_source": "internal-review",
+      "file": "src/core/disciplines.ts",
+      "line": 127,
+      "classification": "trivial_fix",
+      "action": "COMMIT_STEP gains a non-zero-exit bullet (report the error verbatim, run nothing), the degradation line becomes its own bullet for a degraded proceed with a segment or none, and the no-segment gloss reads 'nothing is printed to run'; the requirement says both; the template test pins the new shapes and the gloss's absence; CLAUDE.md names node bin/orbit.js pr commit until a release carries it",
+      "evidence": "src/core/disciplines.ts:127 read 'nothing is uncommitted and nothing is unpushed: print nothing and run nothing', and the degradation line sat inside the with-a-segment bullet; test/core/pr/commit.test.ts asserts a degraded proceed with no segment",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/chained-review-commit/specs/orbit-conventions/spec.md",
+          "test/core/templates/commit-step.test.ts",
+          "test/core/templates/skill-templates-parity.test.ts",
+          "CLAUDE.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "nothing is uncommitted and nothing is unpushed"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/disciplines.ts",
+            "text": "report the error verbatim in ONE line and run nothing"
+          },
+          {
+            "path": "src/core/disciplines.ts",
+            "text": "with a segment or none → add ONE line saying the push was dropped"
+          },
+          {
+            "path": "orbit/changes/chained-review-commit/specs/orbit-conventions/spec.md",
+            "text": "On a non-zero exit it reports the"
+          },
+          {
+            "path": "CLAUDE.md",
+            "text": "Likewise the commit step's `orbit pr commit`"
+          }
+        ],
+        "searched": [
+          "nothing is uncommitted and nothing is unpushed",
+          "nothing is uncommitted and",
+          "With `degraded: \\\"pr\\\"`, add ONE line"
+        ],
+        "scope": [
+          "docs",
+          "src/core/templates/workflows"
+        ],
+        "kept": [
+          {
+            "path": "test/core/templates/commit-step.test.ts",
+            "why": "asserts the retired gloss is absent from COMMIT_STEP"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "After a failed publish step, the commit step commits the propose emit and breaks the recovery line propose just printed",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/chained-review-commit/specs/orbit-conventions/spec.md",
+      "line": 23,
+      "classification": "trivial_fix",
+      "action": "option A, widened to every stopped PR layer: the owner's failure row already says no later PR step runs, and the commit step is a step that row names, so COMMIT_STEP and its requirement now say the step calls nothing and prints nothing after a non-zero orbit pr exit or a failed select, publish or tail step, the failure line staying the recovery; the propose/ff and archive table rows say so, a scenario and a text test carry it, design D3 and docs/customization.md's commit row follow. Option B would have contradicted that row",
+      "evidence": "orbit-pr-lifecycle's consumption-table failure row ends 'no later PR step runs'; COMMIT_STEP and The commit step closes each carrying body named no such case",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/disciplines.ts",
+          "orbit/changes/chained-review-commit/design.md",
+          "docs/customization.md",
+          "test/core/templates/commit-step.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "src/core/disciplines.ts",
+            "text": "When this invocation's PR layer has already stopped"
+          },
+          {
+            "path": "orbit/changes/chained-review-commit/specs/orbit-conventions/spec.md",
+            "text": "When the invocation's PR layer has already stopped"
+          },
+          {
+            "path": "orbit/changes/chained-review-commit/specs/orbit-conventions/spec.md",
+            "text": "#### Scenario: A stopped PR layer runs no commit step"
+          },
+          {
+            "path": "orbit/changes/chained-review-commit/design.md",
+            "text": "reaches the step itself"
+          },
+          {
+            "path": "docs/customization.md",
+            "text": "leaves you the recovery that failure printed"
+          }
+        ],
+        "searched": [
+          "no later PR step runs",
+          "publish` step fails",
+          "proceeds unattached until that recovery lands"
+        ],
+        "scope": [
+          "src/core/templates/workflows/pr-choreography.ts",
+          "orbit/changes/chained-review-commit/specs/orbit-pr-lifecycle/spec.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Two of two resolved as repairs: the commit step now handles a non-zero exit and a degraded proceed with no segment, and it runs nothing once the invocation's PR layer has stopped, the owner's failure row applied to the step itself.",
+  "iteration": 4,
+  "next_recommended": "/orbit:address-reviews chained-review-commit",
+  "ripple_misses": 0
+}

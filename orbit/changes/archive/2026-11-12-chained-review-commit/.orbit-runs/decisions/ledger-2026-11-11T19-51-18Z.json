@@ -1,0 +1,19 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-11T19:51:18Z",
+  "change": "chained-review-commit",
+  "model": "claude-opus-5-5",
+  "area": "user-sees-or-does",
+  "decided": "Orbit commits on its own only at the end of proposing a change, applying it, reviewing it, walking its review findings, and archiving it. Checking a change's work and thinking a change through no longer commit at their own end; what they write is committed at the next of those five. A review or walk that is not about a change commits nothing.",
+  "alternatives": [
+    "also commit at the end of checking a change's work and of thinking a change through, which would commit in the middle of a review that runs the check inside itself"
+  ],
+  "why": "The program wants the work committed throughout; committing inside a running review would split one review's work across two commits, and an exploration before its change exists has no pull request branch to commit to.",
+  "relies_on": [
+    {
+      "kind": "ruling",
+      "doc": "automate-dev-flow",
+      "id": "R-adf-14"
+    }
+  ]
+}

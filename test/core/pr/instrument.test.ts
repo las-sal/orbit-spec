@@ -13,6 +13,15 @@ import { prSelect } from '../../../src/core/pr/select.js';
 import { assertAllowlist, ctxFor, engine, runSegments } from '../../integration/pr-lifecycle/instrument.js';
 import { orbitRepo } from './fixtures.js';
 
+/** README.md rewritten with its committed content and an mtime ten seconds back: the index's stat for it is stale
+ * (not racily clean), so a worktree diff on the live index refreshes it, a write. */
+function staleStat(repo: ReturnType<typeof orbitRepo>): void {
+  const file = path.join(repo.dir, 'README.md');
+  fs.writeFileSync(file, fs.readFileSync(file));
+  const past = new Date(Date.now() - 10_000);
+  fs.utimesSync(file, past, past);
+}
+
 describe('the instrument can fail', () => {
   // @scenario behaviour orbit-pr-lifecycle :: Printed commands are proven by execution :: A printed step git refuses fails the suite
   it('a printed switch git refuses fails the segment runner, naming the step and git\'s message', () => {
@@ -95,6 +104,34 @@ describe('the instrument can fail', () => {
     const before = { bytes: fs.readFileSync(index), mtime: fs.statSync(index).mtimeMs };
     const { record } = engine(repo, (ctx) => prSelect(ctx, 'add-thing'));
     expect(record.action).toBe('proceed');
+    expect(fs.statSync(index).mtimeMs).toBe(before.mtime);
+    expect(fs.readFileSync(index).equals(before.bytes)).toBe(true);
+  });
+
+  // @scenario behaviour orbit-pr-lifecycle :: `orbit pr commit` computes the closing commit step :: The working-tree comparison never writes the index
+  it('an allowlisted read that writes .git/index fails the instrument: a worktree diff on the live index', () => {
+    const repo = orbitRepo('per-proposal');
+    staleStat(repo); // a stale stat cache the worktree diff refreshes
+    expect(() =>
+      engine(repo, (ctx) => {
+        // `diff --quiet` passes the allowlist; its effect on the index is what the instrument must still see.
+        new PrRunner(ctx).git('diff', '--quiet', 'HEAD', '--');
+        return { subcommand: 'commit', action: 'skip', reason: { code: 'x', detail: {} }, degraded: null, observations: {}, segments: [], human_acts: [] };
+      })
+    ).toThrow(/orbit pr commit wrote \.git\/index/);
+  });
+
+  // @scenario behaviour orbit-pr-lifecycle :: `orbit pr commit` computes the closing commit step :: The working-tree comparison never writes the index
+  it('diffWorktreeAgainstHead reads through a copy: the same stale stat cache leaves .git/index unchanged', () => {
+    const repo = orbitRepo('per-proposal');
+    staleStat(repo);
+    const index = path.join(repo.dir, '.git', 'index');
+    const before = { bytes: fs.readFileSync(index), mtime: fs.statSync(index).mtimeMs };
+    const { calls } = engine(repo, (ctx) => {
+      expect(new PrRunner(ctx).diffWorktreeAgainstHead().status).toBe(0);
+      return { subcommand: 'commit', action: 'skip', reason: { code: 'x', detail: {} }, degraded: null, observations: {}, segments: [], human_acts: [] };
+    });
+    expect(calls.git.map((c) => c.args)).toEqual([['rev-parse', '--git-path', 'index'], ['diff', '--quiet', 'HEAD', '--']]);
     expect(fs.statSync(index).mtimeMs).toBe(before.mtime);
     expect(fs.readFileSync(index).equals(before.bytes)).toBe(true);
   });

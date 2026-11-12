@@ -1,0 +1,200 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-11T18:55:13Z",
+  "change": "chained-review-commit",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 3,
+      "suggestion": 4
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 3
+    }
+  },
+  "findings": [
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "design.md",
+      "line": 47,
+      "title": "resolve(run, {withDefault: false}) still requires gh: the 'never needs gh' premise is false against the code",
+      "recommendation": "src/core/pr/resolve.ts returns the gh-absent failure at line 78, BEFORE the withDefault early return at line 79, and no caller passes withDefault: false today, so the path was never exercised. As written, task 1.2's call yields gh-absent with no gh on PATH, and the scenario 'No gh is needed to commit and push' (specs/orbit-pr-lifecycle/spec.md:120) cannot pass; an implementer must either change resolve.ts (named in no task and no Touchpoint) or read res.resolution.remote out of a failed outcome, and those two diverge. Name the change: add src/core/pr/resolve.ts to Touchpoints and task 1.2 (move the gh-absent return after the withDefault return, so only a default-branch query needs gh), and keep the existing select/publish/preflight/tail gh-absent tests green as the proof that the default path is unchanged. Correct the same misreading in explore.md's D-chrc-10 remote row.",
+      "reproduction": "Constructed case: an attached change, commit: true and push: true, a modified file, PATH without gh. orbit pr commit calls resolve(run, {withDefault: false}) per design D2 -> resolve.ts:78 returns {failure: {code: 'gh-absent'}} before line 79 is reached -> by the spec's 'when no remote resolves' sentence the push is dropped with degraded 'pr'. Expected (spec scenario at specs/orbit-pr-lifecycle/spec.md:120-123): proceed with the stage, the commit AND the push. Observed: no push."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 24,
+      "title": "Bodies with no resolvable change target hit orbit pr commit's usage error, not 'off', so G0 fails at the defaults",
+      "recommendation": "The explore row says the step 'resolves off for a staging exploration', but the commit requirement (specs/orbit-pr-lifecycle/spec.md:47-48) resolves the NAME first, as active else archived, and makes 'a name resolving to neither' the usage error, before its gate table runs; the consumption table's first row then reports that error verbatim. A staging exploration (orbit/explore/<name>/) is neither. The same gap covers the review row (an architecture-mode review has a doc, not a change) and the address-reviews row (a --doc walk, a project-wide walk): unlike CHAIN_END_STEP, the step has no 'with no change target, the step does nothing' clause. Either option closes it; explore.md's own D-chrc-8 row ('runs only when resumed in a change's directory') already leans to A.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Give COMMIT_STEP the chain end step's clause: with no change target (an architecture-mode review, a --doc or project-wide walk, a staging exploration) the step does nothing and calls nothing; reword the explore row to 'when the session is on a change' and add a scenario per kind."
+        },
+        {
+          "label": "B",
+          "body": "Make orbit pr commit test its settings row before resolving the name, and resolve an unknown name (or a staging exploration) to off with no git call; add a scenario for a staging exploration at the defaults. (Departs from the tail's usage-error precedent, so state why.)"
+        }
+      ],
+      "reproduction": "Constructed case: a project with neither commit nor push set (the default). The user runs a named exploration that has not been proposed (orbit/explore/new-idea/). At its boundary emit the explore body runs the step: orbit pr commit new-idea --json. By specs/orbit-pr-lifecycle/spec.md:47-48, 'new-idea' resolves to no active and no archived change -> usage error, non-zero exit -> by the consumption table's first row the body 'reports the error verbatim'. Expected (proposal Impact line 29, the spec's G0 sentence): the body prints nothing and ends as today. Observed: an error line at every boundary of every staging exploration."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-pr-lifecycle/spec.md",
+      "line": 75,
+      "title": "git add -A stages the body's own <message-file> when it is written inside the work tree, and observations.untracked never names it",
+      "recommendation": "publish and tail stage enumerated paths, so where the body writes <message-file> never mattered; here the segment's inputs are authored before the segment runs and its first step is git add -A, so a message file written anywhere in the work tree is committed and pushed. observations.untracked is read from the porcelain call BEFORE the file exists, so the one-line naming D-chrc-5 promises misses exactly this file. State, in the commit requirement and in COMMIT_STEP, that the body writes <message-file> outside the working tree (the OS temp directory, as pr-choreography's worked example does for the PR body), and add a test asserting the committed tree holds no message file."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 23,
+      "title": "The verify row fires the step inside a system review: Pass 0 invokes /orbit:verify in the reviewing session",
+      "recommendation": "orbit-review's passes-system.md Pass 0 invokes the orbit-verify-change skill via /orbit:verify <change-name> within the review's own session, so a verify body that carries the step 'at its close' commits (and, with push, pushes) mid-review, before the review's pass is written, and the review's own step then makes a second commit. The requirement's worker sentence does not reach it: this is the invoking session, not a dispatched worker. Say in the verify row (and in COMMIT_STEP) that verify runs the step only when it is the command the user invoked, never as a review's Pass 0, and test the nested case or name it as a limit."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "design.md",
+      "line": 61,
+      "title": "Explore's step position disagrees: spec says after each boundary emit, design D4 and task 2.2 say at its close",
+      "recommendation": "specs/orbit-conventions/spec.md:24 places the step 'after each boundary emit' (explore emits at begin and at each conversation boundary, so several times a session); design.md:61 ('Verify and explore carry it at their close') and tasks.md:11 ('at the close of verify and explore') place it once. An implementer of task 2.2 builds the design's version and the carriage test of task 2.4 cannot tell. Pick one in the spec and make design D4 and task 2.2 say the same."
+    },
+    {
+      "pass": "4",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "design.md",
+      "line": 78,
+      "title": "D7's 'a reader of either finds the other' is one-way: the tail's requirement is unchanged and names no step",
+      "recommendation": "orbit-archive-modifications' baseline scenario 'Unrelated dirty paths never ride the commit' (orbit/specs/orbit-archive-modifications/spec.md:796-799) says the unrelated paths 'remain in whatever state they were'; under commit: true the step commits them a moment later, and nothing in that capability points at the step. Either correct D7's sentence to name the pointer as one-way (a named limit), or carry the tail requirement as MODIFIED with one sentence naming the step (a third capability, inside the ceiling of 3)."
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 7,
+      "title": "The step's lines land after the eligibility line, which the No-chaining contract says ends the turn",
+      "recommendation": "Task 2.2 interpolates COMMIT_STEP immediately before CHAIN_END_STEP, which every carrying body places after its readout, so a skip line, the untracked-files line or a failure line with its recovery argv prints after the position readout and eligibility line (archive alone runs it before its readout). Say in the step's requirement where its output sits relative to the readout, and, if after, let the No-chaining text admit the commit step's lines beside the chain end step's own 'Chaining:' line."
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "specs/orbit-pr-lifecycle/spec.md",
+      "line": 77,
+      "title": "A proceed with nothing to stage and nothing to push prints one empty segment; the step's 'on proceed it writes the commit message' over-reads it",
+      "recommendation": "With commit granted and a clean tree (or push granted and nothing unpushed) the gate reaches 'otherwise -> proceed' and 'ONE segment' with no steps. State that case in the step table (one empty segment, no inputs), and reword the commit step's 'On proceed it writes the commit message' to 'when the segment's inputs name <message-file>', which is what the consumption table already says."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "specs/orbit-pr-lifecycle/spec.md",
+      "line": 59,
+      "title": "The merge-in-progress row misses a cherry-pick or revert stopped without conflicts",
+      "recommendation": "A stopped cherry-pick or revert with no conflicted path (CHERRY_PICK_HEAD or REVERT_HEAD present) shows no unmerged porcelain entry, no MERGE_HEAD and no rebase directory, so the gate proceeds and git commit concludes that operation under its message and authorship. Add CHERRY_PICK_HEAD and REVERT_HEAD to the row (both readable with rev-parse, already allowlisted), or name the sequencer states as a limit."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "specs/orbit-pr-lifecycle/spec.md",
+      "line": 83,
+      "title": "A push with no upstream never sets one, so the push reprints at every close",
+      "recommendation": "The push row prints for 'a branch with no upstream', but the argv git push <remote> <branch> sets none, so git rev-list @{u}..HEAD can never be read and every later close prints the push again. Print git push -u <remote> <branch> when no upstream is set, as publish's push does (src/core/pr/publish.ts:120)."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 89,
+      "title": "The No-chaining sentence restates part of the step's gate",
+      "recommendation": "'(commit: true, an attached change, HEAD on its branch)' lists three of the gate's conditions and leaves out the active pr: regime, the default-branch row and merge-in-progress; 'anywhere else' still covers them, but the partial restatement will drift from the owner. Point at the owner instead: 'Where the commit step commits (per The commit step closes every body that writes to a change), ...'."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/architecture/automate-dev-flow.md",
+      "line": 130,
+      "title": "R-adf-14 cites orbit/explore/chained-review-commit/explore.md, which propose moved",
+      "recommendation": "The file now lives at orbit/changes/chained-review-commit/explore.md (and will move again at archive). Re-point the citation, a path repair rather than an amendment of the ruling."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "tasks.md",
+      "line": 21,
+      "title": "docs/commands.md's per-command text is not in the docs task",
+      "recommendation": "Task 3.2 updates docs/customization.md and docs/cli.md only. docs/commands.md describes what each command commits under pr: (propose at line 67, archive at line 230); a sentence there saying commit: true and push: true commit and push at every carrying command's close would keep the command reference whole."
+    }
+  ],
+  "stale_suppressed": [
+    {
+      "pass": "6",
+      "title": "A non-GitHub remote (unparseable-url) drops the push",
+      "evidence": "No attachment can exist on such a remote: orbit pr select resolves with the default-branch query, which fails unparseable-url first (src/core/pr/resolve.ts:74), so select skips and no propose emit carries a pr_attachment; the commit gate's no-attachment row then yields off."
+    },
+    {
+      "pass": "2",
+      "title": "The conventions table's 'bulk-archive runs no tail' and 'feedback is not generated' are unverified",
+      "evidence": "src/core/templates/workflows/bulk-archive-change.ts contains no 'orbit pr' call; getFeedbackSkillTemplate is only re-exported by src/core/templates/skill-templates.ts:24 and used by no generator."
+    }
+  ],
+  "commentary": "The design's shape holds up: one read-only subcommand, two literal-true settings, a shared step interpolated like the chain end step, and an off record with no git call at the defaults all follow existing precedent (tail, resolveChainSetting, CHAIN_END_STEP). The findings sit where the new step meets things that already exist. The resolver premise was checked against src/core/pr/resolve.ts and is false as the code stands. The step's reach was checked body by body against the template listing, CHAIN_END_STEP's carriers, explore's emit timing and the system review's Pass 0. The git-level edges were checked against the allowlist in src/core/pr/run.ts and publish's push argv. The MODIFIED blocks were diffed against the baselines: each differs only where the proposal says, plus the failure row's new seam clause. Nothing here contradicts a ruling; the gaps are omissions the spec can close with sentences and a Touchpoint.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "direction": {
+    "disposition": "hold",
+    "reasoning": "Walk the findings before apply. Two would ship defects the change itself promises against. The resolver premise means the no-gh scenario cannot pass unless resolve.ts changes, and no task changes it. The missing no-change-target rule means a default install prints an error at every staging exploration's boundary, which breaks the G0 claim the proposal rests on.\nThe message-file, nested-verify and explore-position gaps are each one sentence in the spec plus a matching task. None of this reopens a decision Sal made. All of it is method, and the change can absorb it without growing past its ceiling."
+  },
+  "final_assessment": "0 critical, 5 warning, 8 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews chained-review-commit"
+}

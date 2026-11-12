@@ -1,0 +1,199 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-11T19:52:39Z",
+  "change": "chained-review-commit",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/chained-review-commit/.orbit-runs/external-proposal-2026-11-11T18-55-36Z.md",
+  "source_command": null,
+  "source_token": "2026-11-11T18-55-36Z",
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-6",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 6,
+    "suggestion": 0
+  },
+  "pushback_verification": "All six verified against current state: select.ts:67-69's default-collision check narrows the first; three converge with the fresh half and are stale against its log.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 3,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Default-branch protection has an undefined fail-open case",
+      "marker_source": "external",
+      "file": "orbit/changes/chained-review-commit/specs/orbit-pr-lifecycle/spec.md",
+      "line": 58,
+      "classification": "trivial_fix",
+      "action": "partly applied: orbit pr select's default-collision check already refuses a default-named branch at propose, so the requirement now says so; the default-branch row reads refs/remotes/<remote>/HEAD only when it exists, and its absence is a named limit (a default renamed to the attachment's name since propose); a missing-ref scenario added",
+      "evidence": "src/core/pr/select.ts:67-69 skips with default-collision when the branch equals the default branch resolved by gh or symbolic-ref",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/chained-review-commit/design.md",
+          "orbit/changes/chained-review-commit/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the attachment's branch is the branch `refs/remotes/<resolved-remote>/HEAD` names"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/chained-review-commit/specs/orbit-pr-lifecycle/spec.md",
+            "text": "#### Scenario: A missing remote HEAD ref leaves the default-branch row untested"
+          },
+          {
+            "path": "orbit/changes/chained-review-commit/specs/orbit-pr-lifecycle/spec.md",
+            "text": "`orbit pr select` refuses that name (`default-collision`)"
+          }
+        ],
+        "searched": [
+          "default-branch",
+          "default-collision",
+          "refs/remotes"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The prescribed resolver still requires gh",
+      "marker_source": "external",
+      "file": "orbit/changes/chained-review-commit/design.md",
+      "line": 49,
+      "classification": "stale",
+      "action": "converged with the fresh half; walked in log address-reviews-2026-11-11T19-52-08Z",
+      "evidence": "resolved in address-reviews-2026-11-11T19-52-08Z (the fresh half's resolver finding): design D2 names the resolve.ts edit moving the gh-absent return after the withDefault return, task 1.2 carries it, and existing gh-absent tests stay green as the regression proof",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Push eligibility compares against a potentially different destination",
+      "marker_source": "external",
+      "file": "orbit/changes/chained-review-commit/specs/orbit-pr-lifecycle/spec.md",
+      "line": 83,
+      "classification": "trivial_fix",
+      "action": "the push's destination is the resolved remote and the attachment's branch, never the configured upstream; what is unpushed is measured with git rev-list refs/remotes/<remote>/<branch>..HEAD, an absent ref printing the push; a stale ref is a named limit (no fetch); a scenario with an upstream on another remote added",
+      "evidence": "the push targeted <resolved-remote> <branch> while counting against @{u}",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/chained-review-commit/design.md",
+          "orbit/changes/chained-review-commit/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "rev-list @{u}"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/chained-review-commit/specs/orbit-pr-lifecycle/spec.md",
+            "text": "#### Scenario: The push goes to the resolved remote, set as upstream"
+          },
+          {
+            "path": "orbit/changes/chained-review-commit/specs/orbit-pr-lifecycle/spec.md",
+            "text": "never the branch's configured upstream"
+          }
+        ],
+        "searched": [
+          "@{u}",
+          "upstream",
+          "rev-list"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/chained-review-commit/explore.md",
+            "why": "the exploration is the historical record of how the change took shape; propose keeps it unchanged"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Staging explorations cannot produce the promised off record",
+      "marker_source": "external",
+      "file": "orbit/changes/chained-review-commit/specs/orbit-conventions/spec.md",
+      "line": 24,
+      "classification": "stale",
+      "action": "converged with the fresh half; walked in log address-reviews-2026-11-11T19-52-08Z",
+      "evidence": "resolved in address-reviews-2026-11-11T19-52-08Z (the fresh half's no-change-target finding): with no change target the step does nothing and calls nothing, and explore no longer carries the step, so no staging exploration calls orbit pr commit",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The commit-message file can be swept into the commit",
+      "marker_source": "external",
+      "file": "orbit/changes/chained-review-commit/specs/orbit-conventions/spec.md",
+      "line": 10,
+      "classification": "stale",
+      "action": "converged with the fresh half; walked in log address-reviews-2026-11-11T19-52-08Z",
+      "evidence": "resolved in address-reviews-2026-11-11T19-52-08Z (the fresh half's message-file finding): <message-file> is written outside the working tree and kept until every printed step has run, so a failure's recovery can name it; a scenario asserts the commit holds no message file and the tree is clean after the segment",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Ignore rules are incorrectly described as excluding tracked files",
+      "marker_source": "external",
+      "file": "orbit/changes/chained-review-commit/specs/orbit-pr-lifecycle/spec.md",
+      "line": 70,
+      "classification": "trivial_fix",
+      "action": "ignore rules now apply to untracked files only: a tracked file matching a .gitignore rule is staged like any tracked file, and the untracked-ignored row says untracked; the proposal says the same; a tracked-and-ignored scenario added",
+      "evidence": "git add -A stages modified tracked files whatever the ignore rules say; the table's row claimed otherwise",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/chained-review-commit/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "A commit takes EVERYTHING uncommitted that",
+          "| a file `.gitignore` excludes |"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/chained-review-commit/specs/orbit-pr-lifecycle/spec.md",
+            "text": "#### Scenario: A tracked file matching an ignore rule is committed"
+          },
+          {
+            "path": "orbit/changes/chained-review-commit/specs/orbit-pr-lifecycle/spec.md",
+            "text": "ignore rules never apply to tracked files"
+          }
+        ],
+        "searched": [
+          ".gitignore",
+          "ignore rule"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/chained-review-commit/explore.md",
+            "why": "the exploration is the historical record of how the change took shape; propose keeps it unchanged"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Six findings of the codex half: three resolved by repairs (the default-branch row's reliance on propose's collision check with the missing-ref limit, the push measured against its own destination, ignore rules scoped to untracked files) and three stale, converged with the fresh half and resolved in address-reviews-2026-11-11T19-52-08Z.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal chained-review-commit",
+  "ripple_misses": 0
+}

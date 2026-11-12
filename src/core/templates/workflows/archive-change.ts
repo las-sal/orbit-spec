@@ -6,7 +6,7 @@
  */
 import type { SkillTemplate, CommandTemplate } from '../types.js';
 import { PR_ARCHIVE_TAIL_REFERENCE } from './pr-choreography.js';
-import { DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../disciplines.js';
+import { COMMIT_STEP, DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../disciplines.js';
 
 
 // Reference: full schema for the Step 5.5 archive run summary. Migrated from the overlay
@@ -509,6 +509,8 @@ The tail's outward writes ride the archive's OWN entry consent — no second pro
 step stops the segment with ONE line naming the completed, the failed and the skipped steps, the
 failed step's argv and then each skipped step's shown as the recovery. The archive itself (sync, move, emit) has already
 succeeded and never rolls back.
+
+${COMMIT_STEP}
 
 ## NEW Step 5.65 — The readiness line in the completion readout (rc04a)
 

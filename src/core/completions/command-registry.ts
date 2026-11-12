@@ -652,6 +652,13 @@ export const COMMAND_REGISTRY: CommandDefinition[] = [
         acceptsPositional: true,
         flags: [COMMON_FLAGS.json],
       },
+      {
+        name: 'commit',
+        description: 'The commit step: the stage, commit and push a carrying body runs at its close',
+        acceptsPositional: true,
+        positionalType: 'change-id',
+        flags: [COMMON_FLAGS.json],
+      },
     ],
   },
   {

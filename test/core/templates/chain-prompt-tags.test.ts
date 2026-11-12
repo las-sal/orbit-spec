@@ -104,8 +104,8 @@ describe('No-chaining contract — the five bodies carry the end step and the cl
   it('the fresh-reviewer brief — standalone and as the blind pair\'s fresh half — tells the worker not to chain', () => {
     const body = skill('orbit-review').instructions;
     const brief = body.slice(body.indexOf('You are the fresh-context reviewer'), body.indexOf('```', body.indexOf('You are the fresh-context reviewer')));
-    expect(brief).toContain("Skip the skill's closing Chain end step too: once your pass is\npersisted, return — never run another orbit command, whatever the change status's chain object says.");
-    expect(body).toContain('So is the Chain end step: the worker skips it and returns once its pass is persisted');
+    expect(brief).toContain("Skip the skill's closing Commit step and Chain end step too:\nonce your pass is persisted, return — never commit, and never run another orbit command, whatever the\nchange status's chain object says.");
+    expect(body).toContain('So are the Commit step and the Chain end step: the worker skips both and returns once its pass is persisted');
     expect(CHAIN_END_STEP).toContain("A worker that session dispatched — a fresh reviewer, a blind pair's fresh half — never runs it");
     // The pair's fresh half is dispatched with that same brief, unchanged.
     expect(ref('orbit-review', 'blind-pair.md')).toContain("per the trunk's **Dispatching a fresh pass** — a clean-context subagent with that section's brief, unchanged");

@@ -94,9 +94,43 @@ export const CHAIN_END_STEP = [
   '- **`may_run: true`** → print `Chaining: <next> (granted by chain.<key>)` and run `<next>` as the next act of this turn. `<key>` is the row covering `<next>`:',
   KEY_ROWS,
   '',
-  "  The chained command runs as on a typed arrival except for its prompts, each tagged at its site: a `(chain: target)` prompt does not fire (the next command names the change and the mode); a `(chain: routine, default: <option>)` prompt takes that default, and the run summary's `final_assessment` records `The chain took the default: <prompt> — <answer>.`; a `(chain: decision)` prompt is asked exactly as on a typed arrival, and after a decision the chain does not continue — the command's own closing step states in one line that the chain stopped at a decision and runs nothing. The chained command records `Chained: granted by chain.<key>.` as one sentence in the record its session writes: a walk in its run summary's `final_assessment`; an external review or a blind pair in its launch record's `final_assessment`; an in-context review in its pass's `commentary` (the review emit owns a pass's `final_assessment`); a chained apply or archive records it as its `consent: \"setting\"` value and writes no sentence. A chained fresh review records nothing — its worker writes the pass, and its brief carries nothing from this session (a named limit). The chained command's closing step reads the status with `--chain-ran \"<next>\" --chain-head \"<head>\"` added — the `next` and `head` this read reported, a null `head` written as the word `null` — so a command that wrote no run record stops the chain on `no-progress`. A chained external review or blind pair needs a committed tree: on an uncommitted one the pair and a launched external review each refuse and write nothing, so no run record lands and the chain stops on `no-progress` — say then that the working tree has uncommitted changes (a named limit).",
+  "  The chained command runs as on a typed arrival except for its prompts, each tagged at its site: a `(chain: target)` prompt does not fire (the next command names the change and the mode); a `(chain: routine, default: <option>)` prompt takes that default, and the run summary's `final_assessment` records `The chain took the default: <prompt> — <answer>.`; a `(chain: decision)` prompt is asked exactly as on a typed arrival, and after a decision the chain does not continue — the command's own closing step states in one line that the chain stopped at a decision and runs nothing. The chained command records `Chained: granted by chain.<key>.` as one sentence in the record its session writes: a walk in its run summary's `final_assessment`; an external review or a blind pair in its launch record's `final_assessment`; an in-context review in its pass's `commentary` (the review emit owns a pass's `final_assessment`); a chained apply or archive records it as its `consent: \"setting\"` value and writes no sentence. A chained fresh review records nothing — its worker writes the pass, and its brief carries nothing from this session (a named limit). The chained command's closing step reads the status with `--chain-ran \"<next>\" --chain-head \"<head>\"` added — the `next` and `head` this read reported, a null `head` written as the word `null` — so a command that wrote no run record stops the chain on `no-progress`. A chained external review or blind pair needs a committed tree. Where the commit step commits (`commit: true` on the change's attached branch), it ran before this read, so the review arrives on a committed tree; anywhere else, on an uncommitted tree the pair and a launched external review each refuse and write nothing, so no run record lands and the chain stops on `no-progress` — say then that the working tree has uncommitted changes (a named limit).",
   '- **`may_run: false` with `configured: true`** → print `Chain stops: <why>` and end the turn. On `open-stop` print `Chain stops: open-stop — <stop>: <question>`, reading `question` from the stop record at the `stop` path, and put that question to the user; the resolution their answer writes lets the next read pass that row.',
   '- **`configured: false`** → print nothing more: the turn ends at the eligibility line exactly as without the setting.',
+].join('\n');
+
+// ---------------------------------------------------------------------------
+// The commit step (chained-review-commit, `orbit-conventions`' `The commit step closes each carrying body`)
+// ---------------------------------------------------------------------------
+
+/** The bodies that carry the commit step, by skill name: the requirement's table rows marked yes. */
+export const COMMIT_STEP_SKILLS = [
+  'orbit-propose',
+  'orbit-ff-change',
+  'orbit-apply-change',
+  'orbit-review',
+  'orbit-address-reviews',
+  'orbit-archive-change',
+] as const;
+
+/**
+ * The closing commit step, carried byte-equal by the six bodies. It restates the consumption-table rows the step
+ * meets, because an installed apply, review or walk skill carries no PR reference to point at.
+ */
+export const COMMIT_STEP = [
+  "## Commit step (the closing commit — `orbit-conventions`' `The commit step closes each carrying body`)",
+  '',
+  "This step runs in the session the command was invoked in, after the command's run summary is written (in archive, after the PR-attached tail) and BEFORE the position readout (in archive, the completion readout), so its lines precede the readout and the eligibility line, and the chain end step, in a body that carries one, still follows them. In apply it runs once, at the session's close, never at a chunk boundary. A worker that session dispatched — a fresh reviewer, a blind pair's fresh half — never runs it: it persists its pass and returns. With no change target — an architecture-mode review, a `--doc` walk, a project-wide walk — the step does nothing and calls nothing. When this invocation's PR layer has already stopped — an earlier `orbit pr` call exited non-zero, or a step it printed failed (`select` or `publish` at propose or ff, the `tail` at archive) — the step calls nothing and prints nothing: no later PR step runs, and that failure's line stays the recovery the user runs. Otherwise run `orbit pr commit \"<name>\" --json` (the change's name, active or just archived) and act on its record:",
+  '',
+  '- **A non-zero exit** (a usage error, the only one) → report the error verbatim in ONE line and run nothing; the session\'s writes stay as they are.',
+  '- **`action: off`** → print nothing and run nothing. Neither setting is granted, the `pr:` regime is `never`, or the change is unattached; at the defaults the step ends here and the turn ends exactly as before the step existed.',
+  '- **`action: skip`** → write ONE line from `reason.code` and `reason.detail` (`detached`; `head-mismatch`, naming HEAD\'s branch and the attachment\'s; `default-branch`; `merge-in-progress`) and run nothing.',
+  '- **`action: proceed` with no segment** → nothing is printed to run: run nothing.',
+  "- **`action: proceed` with a segment** → when its `inputs` name `<message-file>`, first write the commit message — one line naming the command, the change and what the session did — to a file OUTSIDE the working tree (the OS temp directory), never inside it: the stage is `git add -A` and would commit the message itself. Keep that file until every printed step has run. Run each step's `argv` exactly, in order, substituting only the element `<message-file>`, every element shell-quoted. Then name, in ONE line, each path `observations.untracked` lists (the untracked files the commit took).",
+  "- **`action: proceed` with `degraded: \"pr\"`**, with a segment or none → add ONE line saying the push was dropped, from `reason.code`.",
+  "- **A step fails** → stop at that step and write ONE line naming the completed, the failed and the skipped steps by their `step` names, showing the failed step's argv and then each skipped step's, verbatim with `<message-file>` filled, as the recovery the user runs in that order. The session's writes stay uncommitted or unpushed until that recovery lands, and nothing the session wrote is undone. Never retry with other flags and never force a push.",
+  '',
+  "What the step may commit, and to which branch, is `orbit-pr-lifecycle`'s `` `orbit pr commit` computes the closing commit step ``: everything uncommitted, the user's own edits included, except the untracked files `.gitignore` excludes, and only on the change's attached branch. What grants it is that capability's `The commit and push settings`: `commit: true` and `push: true` in `orbit/config.yaml`, each granted only by the literal `true`.",
 ].join('\n');
 
 // ---------------------------------------------------------------------------

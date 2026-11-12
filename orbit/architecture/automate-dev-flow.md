@@ -127,7 +127,7 @@ stage; G1–G6 are graded at first-run, on that project's trail and transcripts.
   the work to it throughout, and the user gives the go-ahead for the merge at the end. Committing and pushing are each
   an opt-in setting, defaulting to today's behaviour (R-adf-1, R-adf-6); orbit never commits on its own to the default
   branch, and a commit takes everything uncommitted that `.gitignore` does not exclude, naming each untracked file it
-  adds (D-chrc-1 to D-chrc-6 in `orbit/explore/chained-review-commit/explore.md`). New projects get
+  adds (D-chrc-1 to D-chrc-6 in the `chained-review-commit` change's `explore.md`). New projects get
   `pr: per-architecture` from `orbit init` (D-chrc-7). Stated by Sal during that exploration as true of the entire
   program.
 
@@ -312,6 +312,26 @@ resolution, and named as G0's second exception at the architect session after th
 and `gates.ts` pins, `chain.test.ts`'s resolver and key-table assertions (the closed key set grew), and
 `chain-prompt-tags.test.ts`'s routine-tag count and inventory. The system review's reading step found fifteen records
 wanting; the walk replaced them, and those replacements reach no reader before archive (D-dr-2's named limit).
+
+Shipped as, fourth change (2026-11-12; archived as `orbit/changes/archive/2026-11-12-chained-review-commit/`; the third
+and last of D-sga-1's three changes, which widened in its exploration to R-adf-14's commit throughout): two opt-in
+top-level settings, `commit: true` and `push: true` in `orbit/config.yaml`, each granted only by the literal `true`
+(D-chrc-4, D-chrc-10). `orbit pr commit <change>` computes a closing commit step and prints it, writing nothing: off
+under `pr: never`, with neither setting or on an unattached change; a skip when HEAD is detached, off the attachment's
+branch, on the default branch or mid-merge; otherwise the stage (`git add -A`, everything uncommitted that `.gitignore`
+does not exclude, each untracked file named), the commit and a push to the resolved remote (D-chrc-2, D-chrc-5,
+D-chrc-6). Six bodies (propose, ff, apply, review, address-reviews, archive) carry one `COMMIT_STEP` before the chain
+end step, so under `commit: true` a chained external review arrives on a committed tree, and the No-chaining
+contract's `no-progress` limit now holds only where the step does not commit (D-chrc-8). At the defaults the step is
+one read-only call that prints nothing (R-adf-12). The system cycle added: the step runs nothing once an earlier PR
+step of the same command failed, so that failure's recovery still works; it reports a non-zero exit and a dropped push
+with nothing else to run; it prints a commit only when staging would change something; and that comparison runs on a
+temporary copy of the index, after the verification pass found a working-tree diff rewriting `.git/index`, with the PR
+test harness now failing any `orbit pr` call that changes the index. Tests that moved (R-adf-9): the propose, ff, apply
+and archive skill hash pins (function and generated file), `chain-prompt-tags.test.ts`'s fresh-reviewer brief strings,
+`orbit-content-fidelity.test.ts`'s Step 5.6 slice and its consumption-row prefix with `pr-references.test.ts`'s, and the
+recaptured git contract (`add -A`). The system review's reading step found sixteen records wanting; the walk replaced
+them, and those replacements reach no reader before archive (D-dr-2's named limit).
 
 ### Stage program-brief — the brief and the sign-off seam
 

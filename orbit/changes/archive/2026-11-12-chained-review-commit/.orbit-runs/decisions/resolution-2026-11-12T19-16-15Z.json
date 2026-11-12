@@ -1,0 +1,10 @@
+{
+  "command": "resolution",
+  "timestamp": "2026-11-12T19:16:15Z",
+  "change": "chained-review-commit",
+  "model": "claude-opus-5-5",
+  "stop": "stop-2026-11-11T16-52-34Z.json",
+  "answer": "Opt-in: committing throughout is a setting a project turns on; R-adf-1 and G0 are not amended.",
+  "effect": "With no setting, orbit commits only as it does today: in a project that turns pull requests on, when a change is proposed, when it is archived and when work is handed to another reviewer, and in a project that sets nothing, never. The user turns committing throughout on in each of their own projects.",
+  "replaces": "resolution-2026-11-11T17-16-51Z.json"
+}

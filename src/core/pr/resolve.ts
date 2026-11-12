@@ -47,7 +47,7 @@ export function repoOfPrUrl(url: string): string | null {
 
 /**
  * Resolve the remote and canonical id, then (unless `withDefault` is false) `gh` availability and
- * the default branch. Sets `run.remote` once a remote is chosen, so the bounded fetch can name it.
+ * the default branch. `resolution.gh` is recorded either way, from the PATH lookup alone. Sets `run.remote` once a remote is chosen, so the bounded fetch can name it.
  */
 export function resolve(run: PrRunner, opts: { withDefault?: boolean } = {}): ResolveOutcome {
   const withDefault = opts.withDefault ?? true;
@@ -75,8 +75,11 @@ export function resolve(run: PrRunner, opts: { withDefault?: boolean } = {}): Re
   if (!repo) return fail({ code: 'unparseable-url', detail: { remote, url } });
   resolution.repo = repo;
 
-  if (gh === 'absent') return fail({ code: 'gh-absent', detail: {} });
+  // `gh` is needed only by the default-branch query, so a caller that skips the query never meets
+  // `gh-absent` (chained-review-commit: `orbit pr commit` resolves with `withDefault: false`). Every
+  // caller that queries the default branch meets it exactly as before.
   if (!withDefault) return { resolution, resolved: { remote, repo, defaultBranch: '' }, failure: null };
+  if (gh === 'absent') return fail({ code: 'gh-absent', detail: {} });
 
   let defaultBranch: string | null = null;
   const view = run.gh('repo', 'view', repo, '--json', 'defaultBranchRef');

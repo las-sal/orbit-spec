@@ -1,0 +1,27 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-12T16:24:39Z",
+  "change": "chained-review-commit",
+  "model": "claude-opus-5-5",
+  "area": "docs",
+  "decided": "The settings page describes the two new keys in two rows of their own. They say each key works only in a project that already uses pull requests and only for a change that has one, name the six commands that commit at their end, and say a push never forces. The commands page adds one paragraph after archive saying those six commands commit and push at their end, and that archive's commit comes after the one archive already makes.",
+  "alternatives": [
+    "describe the keys without saying they need a pull request, which would leave a user setting them in a project without one wondering why nothing happens",
+    "add a sentence to each of the six commands on the commands page, which would repeat one rule six times"
+  ],
+  "why": "A user who turns the keys on needs to know when they do nothing, and one paragraph beside the archive text, which already says what archive commits, keeps the rule in one place.",
+  "relies_on": [
+    {
+      "kind": "decision",
+      "id": "D-chrc-4"
+    },
+    {
+      "kind": "decision",
+      "id": "D-chrc-8"
+    },
+    {
+      "kind": "decision",
+      "id": "D-chrc-10"
+    }
+  ]
+}

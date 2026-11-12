@@ -139,10 +139,10 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // next depends on the cadence and the review preference, so the body says it is read, not predicted.
   // seam-chaining (2026-11-09): the Chain end step and the no-chaining epitome clause, at apply (task 3.1), again at the system walk, and a third time at the verification walk (the dirty-tree clause).
   // seam-chaining-grants apply (2026-11-11, task 6.2): the Chain end step gains the `apply` and `archive` key rows (interpolated from `CHAIN_KEY_TABLE`) and the clause that a chained apply or archive records its grant as `consent: "setting"` (task 3.5). Apply also moved by its own body: Step 0's granted bullet, the three-value consent story and payload note, the withdrawn-grant line, and the prompt tags (tasks 3.1, 3.4).
-  getApplyChangeSkillTemplate: '906e8675bc5e2445e94d8e5ccdd34ce25daf22d92ac017ff006fbd56d73671c6',
+  getApplyChangeSkillTemplate: 'a50bd24dfd98c57588093705a0b0f50a8e814e11ea451e516334fc249fa4b500',
   // seam-chaining (2026-11-09): the Chain end step and the no-chaining epitome clause, at apply (task 3.1), again at the system walk, and a third time at the verification walk (the dirty-tree clause).
   // seam-chaining-grants apply (2026-11-11, task 6.2): the Chain end step gains the `apply` and `archive` key rows (interpolated from `CHAIN_KEY_TABLE`) and the clause that a chained apply or archive records its grant as `consent: "setting"` (task 3.5). No ff template line moved.
-  getFfChangeSkillTemplate: 'e7c62a29776670ab9425d760c521ce25754dc5d1b4f14cef54d05027130f115f',
+  getFfChangeSkillTemplate: '1c8ca2d14ce269ae9c51abe870928ae04a602df9ff0c309642cf3bc928abfee7',
   getSyncSpecsSkillTemplate: 'a63e917c3d85e986634285b04f2a9662baab19639bd7225ae74ac1a99c79b97a',
   // rc08b-walk-routing (2026-10-05, task 3.3): the command-table row's retired "auto-discovers … when invoked
   // with a change name and no markers found" became the discovery sentence. One re-record, both onboard hashes.
@@ -178,7 +178,7 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // the generated SKILL.md is unchanged by a reference edit.
   // Moved a THIRD time at the system walk (2026-11-11, fresh S1, Sal: B): Step 0.7 says its one mismatch line is a
   // granted arrival's only notice, a named limit of `orbit-archive-modifications`. Both archive hashes moved.
-  getArchiveChangeSkillTemplate: '550dee4951327fe7185562a5db5b74ab18fb4fa88fc8be7894c6ceb6fd79dddd',
+  getArchiveChangeSkillTemplate: 'b19237baea4dc8f0a01d10dca3a3c039125ff0a72ef1939e9cd1f43e13691d26',
   getBulkArchiveChangeSkillTemplate: '21195e4c5505a19d0826fdce42a5f7c4729dec50260f427443375ec08b681598',
   getOrbitSyncCommandTemplate: 'b985d0a4d89b0e2cc3c6b6dec2521ef2a9d0df44a8ba9ec92a5495052c94a39c',
   // rc06b-map-readers (2026-10-05) — verify moved DELIBERATELY, the first named edit to an upstream
@@ -220,7 +220,7 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // line's "exactly" dropped (the parser reads CommonMark indentation) — one re-record for the walk's edits.
   // seam-chaining (2026-11-09): the Chain end step and the no-chaining epitome clause, at apply (task 3.1), again at the system walk, and a third time at the verification walk (the dirty-tree clause).
   // seam-chaining-grants apply (2026-11-11, task 6.2): the Chain end step gains the `apply` and `archive` key rows (interpolated from `CHAIN_KEY_TABLE`) and the clause that a chained apply or archive records its grant as `consent: "setting"` (task 3.5). No propose template line moved.
-  getOrbitProposeSkillTemplate: 'd278c263a5ff95b31c5c1ea286f8296e0b2a9324218e46a1a93f2d320e485fd3',
+  getOrbitProposeSkillTemplate: '4011cbf10c5ef6f75ebf4cb208bf05dfe7df3583376dcbd314ff3bbf8cfd8471',
   getOrbitProposeCommandTemplate: '33077b4185c425952edcdf14f4f16f2a0fa9d5961158f3c63534b58cee2576fb',
   getFeedbackSkillTemplate: 'ded61ad85c5050f7bf241870b14bfcdd929f0be68a028c1130fd30a66efbda3b',
   // rc15 (ended-stage-state, 2026-09-29): the orbit-architect body moved ONCE, deliberately — §5 (the
@@ -256,14 +256,14 @@ const EXPECTED_GENERATED_SKILL_CONTENT_HASHES: Record<string, string> = {
   'orbit-explore': '76dca5fd1d4695ed615200485340acbbd092f84307bdd46eb02e7d1fcd6c9127', // rc16-retirement-sweep: moved once with the body at apply, a second time at the system blind-pair walk (see the function-hash note above)
   'orbit-new-change': '7a474b86d0e0156a1b89516d97878e50c9e3a4e0fa6ef2d66a35670f46731806',
   'orbit-continue-change': 'd6e3515a1bd92815cedf4a6718d9d2c7374854dddddc16c16dc89db5bc479541',
-  'orbit-apply-change': '70b27923387ffb5fbff0967db2789f6ff23210f8f0d4864b5be7ee2c9290fdd8', // rc17a apply: the v4 clause (see the function-hash note above); then seam-chaining: the Chain end step and the epitome clause, at apply, the system walk and the verification walk; then seam-chaining-grants apply (see the function-hash note above)
-  'orbit-ff-change': '80b57fe3217f52ddf304701292ec39181b4b975226f0c97ce7fc275e3b6ffa09', // seam-chaining: the Chain end step and the epitome clause, at apply, the system walk and the verification walk; then seam-chaining-grants apply: the end step's two key rows and consent clause
+  'orbit-apply-change': '022bb8975855ec1ed2eff0fcb119bc96d9c8d7d8cb01e77012a0037691682c7a', // rc17a apply: the v4 clause (see the function-hash note above); then seam-chaining: the Chain end step and the epitome clause, at apply, the system walk and the verification walk; then seam-chaining-grants apply (see the function-hash note above)
+  'orbit-ff-change': '101fbd4b7ff9481d6f776c8d33ea5e53e9ddb85a5a07885b3be9d4d0f7d6cbbf', // seam-chaining: the Chain end step and the epitome clause, at apply, the system walk and the verification walk; then seam-chaining-grants apply: the end step's two key rows and consent clause
   'orbit-sync-specs': '09ebdddd32d976022699b1575f8cf5e85fabf57ea71f1aa1afce1c793f322c99',
-  'orbit-archive-change': '7b4e7de975366c17e1aa6a46d72fc32c65cdb3ed1b6fbdc8b050f40a8efc8110', // rc10-apply-closure task 2.8, then its system walk; then seam-chaining-grants apply and its system walk (see the function-hash note above)
+  'orbit-archive-change': '2754fcd2e36298c974873671ac88bb53dd0ea4ea59f89bb0ebf8777837aea184', // rc10-apply-closure task 2.8, then its system walk; then seam-chaining-grants apply and its system walk (see the function-hash note above)
   'orbit-bulk-archive-change': 'ebbccd064bd5237d4ea18c08ac0e88114a24733588900fea32d67d44e36cf6b4', // rc10-apply-closure task 2.8, then its system walk (see the function-hash note above)
   'orbit-verify-change': '86d0fad7fe26e44c2df6e52bcac54c015a4911afd13bb288a825495773c99390', // rc06b-map-readers (2026-10-05): moved with the body's step 6 edit, then again at system walk 2's additions edit (see the function-hash note above)
   'orbit-onboard': 'e704c183201dc18a574de32da10a8722e8a53cc590e455fd66580317761d4698', // landing-page task 2.2 (see the function-hash note above); then seam-chaining system walk: the No-chaining line qualified by the chain setting
-  'orbit-propose': '5b9ce2b32e34e2443d0eade5c07073a9bdfce4ebf858748c70092248246a2b41', // rc13c, then rc03b, then rc05's system walk, then rc09a's size brief (task 5.3) and its system walk: moved with the body (see the function-hash notes above); then seam-chaining: the Chain end step and the epitome clause, at apply, the system walk and the verification walk; then seam-chaining-grants apply: the end step's two key rows and consent clause
+  'orbit-propose': 'be0e434d434c3db13a49eb2057413384131c225a34901a1266030987c36e402b', // rc13c, then rc03b, then rc05's system walk, then rc09a's size brief (task 5.3) and its system walk: moved with the body (see the function-hash notes above); then seam-chaining: the Chain end step and the epitome clause, at apply, the system walk and the verification walk; then seam-chaining-grants apply: the end step's two key rows and consent clause
   'orbit-architect': '3bc22ef12bdb7f4a63aefedaf699077ef6ad112ae331710400fb7cc21697f8b1', // rc15: moved twice with the body — apply, then the system walk; a third time at the post-archive audit walk; a fourth at rc05's apply, the scaffold's escaped backticks (see the function-hash note above)
 };
 
