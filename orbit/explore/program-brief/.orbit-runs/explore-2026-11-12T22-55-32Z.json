@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-11-12T22:55:32Z",
+  "change": "program-brief",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "The last open question is settled as D-pb-6 at the user's word: orbit brief renders the brief read-only; each archive saves the change's brief and arc-done the program brief, in every mode; a signoff record cites the saved copy by name and hash, signed or declined, and a decline keeps the hold with the user's reason. Six decisions, five rules all accounted, no open questions. Before propose, R-adf-2's amendment (D-pb-1) belongs in the architecture doc, and propose will likely split the stage: the account record with the brief renderer, then the sign-off setting with its record and holds.",
+  "decisions_captured": 6,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 5,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose program-brief — 5 live rules accounted; formalize when you are ready (or /orbit:explore program-brief to keep refining)"
+}

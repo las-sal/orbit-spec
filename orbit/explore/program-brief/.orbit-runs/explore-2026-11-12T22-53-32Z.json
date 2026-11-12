@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-11-12T22:53:32Z",
+  "change": "program-brief",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Five decisions captured: sign-off frequency is its own setting, off by default, with change and program values (amends R-adf-2, stop and resolution recorded); a change-level brief covers one change; a program sign-off holds the program's completion in every pr mode and the program PR's READY flip under per-architecture; the engine computes the brief from the trail, with the AI writing what was built, new seams and deviations as one account record per change at apply's end; the reader takes the account only when sign-off is on, so G0 needs no new exception. One open question remains (where the brief is saved and what a sign-off records), with a standing recommendation. The stage likely exceeds the size ceiling at propose; a split between the account and brief renderer, and the sign-off setting with its holds, is the natural one.",
+  "decisions_captured": 5,
+  "open_questions_count": 1,
+  "open_questions_with_recommendation": "1 of 1",
+  "rules_total": 4,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose program-brief — 4 live rules accounted; formalize when you are ready (or /orbit:explore program-brief to keep refining)"
+}

@@ -1,0 +1,10 @@
+{
+  "command": "resolution",
+  "timestamp": "2026-11-12T23:22:01Z",
+  "change": null,
+  "doc": "automate-dev-flow",
+  "model": "claude-opus-5-5",
+  "stop": "stop-2026-11-12T23-22-00Z.json",
+  "answer": "Yes. The user directed it in the program-brief exploration: how often the user signs off is its own setting, either at every change's archive or once at the end of a program, and with the setting absent nothing waits for a sign-off.",
+  "effect": "R-adf-2 is reworded in the architecture doc, and stage program-brief's sign-off exit criterion follows it. A once-per-program sign-off holds the program's completion whatever the pull request setting, and also holds making the program's pull request ready when the program has one."
+}

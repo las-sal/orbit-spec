@@ -1,0 +1,15 @@
+{
+  "command": "stop",
+  "timestamp": "2026-11-12T21:21:45Z",
+  "change": "program-brief",
+  "model": "claude-opus-5-5",
+  "condition": "ruling-amendment",
+  "about": "Each change will now carry a record in which the AI says, in plain language, what it built. Today a separate reader checks the AI's records only on changes that have some; with this record on every change, that reader would run on every change's final review by default. G0 says each behaviour that runs by default is named as its own exception (R-adf-11).",
+  "question": "Should the reader check this record only when the user has turned sign-off on, so nothing changes by default, or on every change, naming that as a third exception in G0?",
+  "defines": [
+    {
+      "term": "separate reader",
+      "definition": "a fresh AI session given only the architecture doc and the records, which checks that each record can be understood without knowing the work"
+    }
+  ]
+}

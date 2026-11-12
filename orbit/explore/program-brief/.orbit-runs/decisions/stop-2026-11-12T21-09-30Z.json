@@ -1,0 +1,9 @@
+{
+  "command": "stop",
+  "timestamp": "2026-11-12T21:09:30Z",
+  "change": "program-brief",
+  "model": "claude-opus-5-5",
+  "condition": "ruling-amendment",
+  "about": "R-adf-2 says how often the user signs off follows the regime: once per program when autonomous, at each stage's archive when seam-chained. The user wants how often to be its own choice, so a project can sign off once at the end of a whole program, or at every change, whichever regime it runs in.",
+  "question": "Should how often the user signs off become its own setting, separate from the regime, which amends R-adf-2?"
+}

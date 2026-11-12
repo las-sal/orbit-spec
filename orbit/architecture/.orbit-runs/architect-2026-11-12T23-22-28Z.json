@@ -1,0 +1,37 @@
+{
+  "command": "architect",
+  "timestamp": "2026-11-12T23:22:28Z",
+  "change": null,
+  "doc": "automate-dev-flow",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "R-adf-2 amended at Sal's direction from the program-brief exploration (D-pb-1, D-pb-3): how often the user signs off is its own setting, per change at its archive or once per program, holding the program's completion under every pr mode and the program PR's READY flip under per-architecture; absent, nothing waits. Stage program-brief's sign-off exit criterion reworded to match; a stop and its resolution recorded in the architecture trail; status log entry appended. No stage awaited ratification; the doc validates.",
+  "stages_touched": [
+    "program-brief"
+  ],
+  "rulings_captured": [
+    "R-adf-2"
+  ],
+  "completions_ratified": [],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      {
+        "path": "orbit/explore/program-brief/explore.md",
+        "why": "six decisions, five rules accounted, no open questions: the input propose consumes"
+      },
+      {
+        "path": "orbit/architecture/automate-dev-flow.md",
+        "why": "R-adf-2 as amended and the program-brief charter with its reworded exit criterion"
+      },
+      {
+        "path": "CLAUDE.md",
+        "why": "repo orientation, disciplines, and the built-CLI stand-ins for commands the installed orbit lacks"
+      }
+    ],
+    "next_command": "/orbit:propose program-brief",
+    "model_hint": null,
+    "seam": "the exploration is settled and R-adf-2 matches it; propose will likely split the stage (the account and brief renderer, then the sign-off setting with its record and holds); commit the exploration and doc edits first"
+  },
+  "next_recommended": "/orbit:propose program-brief"
+}

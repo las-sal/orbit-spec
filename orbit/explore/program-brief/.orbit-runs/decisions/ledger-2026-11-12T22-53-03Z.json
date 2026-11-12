@@ -1,0 +1,29 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-12T22:53:03Z",
+  "change": "program-brief",
+  "model": "claude-opus-5-5",
+  "area": "defaults",
+  "decided": "With sign-off off, the AI's plain account of what a change built is still written, but no separate reader checks it, and the brief says it was not checked.",
+  "alternatives": [
+    "a separate reader checks the account on every change, named as a third exception in G0"
+  ],
+  "why": "Nothing changes by default, so G0 needs no new exception; the account is checked whenever a sign-off depends on it.",
+  "relies_on": [
+    {
+      "kind": "resolution",
+      "change": "program-brief",
+      "token": "2026-11-12T22-52-45Z"
+    },
+    {
+      "kind": "decision",
+      "id": "D-pb-5"
+    }
+  ],
+  "defines": [
+    {
+      "term": "separate reader",
+      "definition": "a fresh AI session given only the architecture doc and the records, which checks that each record can be understood without knowing the work"
+    }
+  ]
+}

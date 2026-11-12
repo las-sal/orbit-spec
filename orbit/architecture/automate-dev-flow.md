@@ -74,9 +74,13 @@ stage; G1–G6 are graded at first-run, on that project's trail and transcripts.
   setting defaults to today's behaviour, so no install or upgrade becomes autonomous silently. The sign-off before
   archive is a setting too, not a floor (Sal, overruling the AI's recommendation): a sensitive project, such as a
   home-control system with authentication, gates archive on it; a sandboxed app can let the AI run without one.
-- **R-adf-2** (Sal, 2026-11-07) — Sign-off granularity follows the regime. Autonomous: once per program, given over
-  the program brief before the program PR (`pr: per-architecture`) goes READY. Seam-chained: at each stage's
-  archive. Whether sign-off is required at all is a setting (R-adf-1).
+- **R-adf-2** (Sal, 2026-11-07; amended 2026-11-12) — How often the user signs off is its own setting, separate from
+  the regime (R-adf-6): at each change's archive, over that change's brief; or once per program, over the program
+  brief, holding the program's completion under every `pr:` mode and, under `pr: per-architecture`, the program PR's
+  READY flip too. With the setting absent nothing waits for a sign-off (R-adf-1). As first ratified, the frequency
+  followed the regime: autonomous once per program before the program PR goes READY, seam-chained at each stage's
+  archive. Amended by Sal in the program-brief exploration (D-pb-1, D-pb-3 in `orbit/explore/program-brief/explore.md`);
+  recorded as `stop-2026-11-12T23-22-00Z.json` and its resolution in this trail's `decisions/` folder.
 - **R-adf-3** (Sal, 2026-11-07) — An autonomous run stops only on a stop condition, and the set is closed:
   (1) a security-relevant choice with no precedent in specs or rulings; (2) an end-user-visible behaviour choice no
   ratified goal covers; (3) amending a ratified ruling or goal; (4) an outward or irreversible act the config has
@@ -345,8 +349,10 @@ stage adds: its own key, defaulting to today's behaviour (R-adf-1, R-adf-6).
 
 Exit criteria:
 - A golden test renders the brief for a fixture program, and a second for a program with ledger entries and stops.
-- The sign-off seam holds archive (seam-chained) or the program PR's READY flip (autonomous) when the setting
-  requires it, and does not when it does not, each tested.
+- The sign-off seam holds archive (sign-off per change), or the program's completion and, under
+  `pr: per-architecture`, the program PR's READY flip (sign-off once per program), when the setting requires it, and
+  does not when it does not, each tested. (Reworded 2026-11-12 to follow R-adf-2 as amended; it said "archive
+  (seam-chained) or the program PR's READY flip (autonomous)".)
 - The sign-off setting's owning requirement names it, and a test shows today's behaviour at its default.
 - G0 holds.
 
@@ -552,3 +558,10 @@ Exit criteria:
   holding with the commit step a read-only call that prints nothing at the defaults (R-adf-12; AI recommendation). No
   ruling, goal or other stage changed; program-brief and tripwires are each open to start, depending only on
   decision-layer.
+- 2026-11-12 — Architect session during the exploration `program-brief`: R-adf-2 amended at Sal's direction there
+  (D-pb-1, D-pb-3): how often the user signs off is its own setting — per change, at its archive, or once per program,
+  holding the program's completion under every `pr:` mode and the program PR's READY flip under
+  `pr: per-architecture` — no longer following the regime; absent, nothing waits. The program-brief stage's sign-off
+  exit criterion was reworded to match. Recorded as a stop and its resolution in this trail. The exploration also
+  settled that each change carries an account of what it built, read by the reader only when sign-off is on, so G0
+  needs no new exception (D-pb-4, D-pb-5); it will likely split the stage at propose. No stage awaited ratification.

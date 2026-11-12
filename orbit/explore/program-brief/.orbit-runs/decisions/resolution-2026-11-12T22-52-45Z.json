@@ -1,0 +1,9 @@
+{
+  "command": "resolution",
+  "timestamp": "2026-11-12T22:52:45Z",
+  "change": "program-brief",
+  "model": "claude-opus-5-5",
+  "stop": "stop-2026-11-12T21-21-45Z.json",
+  "answer": "The reader checks the change's account of what it built only when the user has turned sign-off on.",
+  "effect": "With sign-off off, the account is still written but no reader checks it, and the brief says so; G0 is not amended, and nothing changes by default."
+}

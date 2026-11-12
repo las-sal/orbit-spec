@@ -1,0 +1,9 @@
+{
+  "command": "resolution",
+  "timestamp": "2026-11-12T21:16:12Z",
+  "change": "program-brief",
+  "model": "claude-opus-5-5",
+  "stop": "stop-2026-11-12T21-09-30Z.json",
+  "answer": "Yes: how often the user signs off becomes its own setting, separate from the regime. The user wants two choices: sign off at every change's archive, over that change's brief, or once at the end of a whole program, before its pull request is made ready.",
+  "effect": "R-adf-2 is to be amended at the next architect session so that how often the user signs off is a setting. With the setting absent there is no sign-off, as today. This exploration designs the setting with those two choices."
+}
