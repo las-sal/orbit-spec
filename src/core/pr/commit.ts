@@ -106,12 +106,11 @@ export function prCommit(ctx: PrContext, change: string): PrRecord {
   const steps: PrStep[] = [];
   // An entry is not enough: `git add -A` can return the index to HEAD (`MM` with the file restored, `AD`), and the
   // printed commit would then fail with nothing to commit. Commit only when the stage would change something: an
-  // untracked path, or a tracked path whose working-tree state differs from HEAD (`git diff --quiet HEAD` exits
-  // non-zero: 1 for a difference, anything else counted as one, so an unreadable diff never hides a commit).
+  // untracked path, or a tracked path whose working-tree state differs from HEAD (`git diff --quiet HEAD --` exits
+  // non-zero: 1 for a difference, anything else counted as one, so an unreadable diff never hides a commit). The
+  // diff runs on a copy of the index, because a worktree diff writes the index it reads (`diffWorktreeAgainstHead`).
   const commits =
-    settings.commit &&
-    entries.length > 0 &&
-    (untracked.length > 0 || run.git('diff', '--quiet', 'HEAD', '--').status !== 0);
+    settings.commit && entries.length > 0 && (untracked.length > 0 || run.diffWorktreeAgainstHead().status !== 0);
   if (commits) {
     steps.push({ step: 'stage', argv: ['git', 'add', '-A'] });
     steps.push({ step: 'commit', argv: ['git', 'commit', '-F', '<message-file>'] });

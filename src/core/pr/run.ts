@@ -16,6 +16,7 @@
  */
 import { spawnSync } from 'node:child_process';
 import * as fs from 'node:fs';
+import * as os from 'node:os';
 import * as path from 'node:path';
 
 export interface PrContext {
@@ -164,13 +165,40 @@ export class PrRunner {
     return present;
   }
 
-  private spawn(cmd: string, args: string[]): RunResult {
+  /**
+   * `git diff --quiet HEAD --` (the working tree against HEAD) run on a COPY of the index in the OS temp directory.
+   * A worktree diff refreshes the index's stat cache, a write GIT_OPTIONAL_LOCKS=0 does not stop, so it runs on the
+   * copy, which is removed after, and the repository's own index is never written. Exit 0: the working tree matches
+   * HEAD; any other status, including an index that cannot be located or copied, is read by the caller as a difference.
+   */
+  diffWorktreeAgainstHead(): RunResult {
+    const args = ['diff', '--quiet', 'HEAD', '--'];
+    if (!gitAllowed(args, this.remote)) {
+      throw new PrRefusedError(`orbit pr refuses 'git ${args.join(' ')}': outside the read-only allowlist`);
+    }
+    const located = this.git('rev-parse', '--git-path', 'index');
+    if (located.status !== 0) return { status: 1, stdout: '', stderr: 'the index could not be located' };
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'orbit-pr-index-'));
+    try {
+      const copy = path.join(dir, 'index');
+      try {
+        fs.copyFileSync(path.resolve(this.ctx.projectRoot, located.stdout.trim()), copy);
+      } catch {
+        return { status: 1, stdout: '', stderr: 'the index could not be copied' };
+      }
+      return this.spawn('git', args, { GIT_INDEX_FILE: copy });
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  }
+
+  private spawn(cmd: string, args: string[], extraEnv: NodeJS.ProcessEnv = {}): RunResult {
     const res = spawnSync(cmd, args, {
       cwd: this.ctx.projectRoot,
       encoding: 'utf-8',
       // Never prompt: a read that needs credentials fails, and the failure is an observation.
       // GIT_OPTIONAL_LOCKS=0: `git status` would otherwise refresh `.git/index`'s stat cache, a write.
-      env: { ...this.ctx.env, GIT_TERMINAL_PROMPT: '0', GH_PROMPT_DISABLED: '1', GIT_OPTIONAL_LOCKS: '0' },
+      env: { ...this.ctx.env, GIT_TERMINAL_PROMPT: '0', GH_PROMPT_DISABLED: '1', GIT_OPTIONAL_LOCKS: '0', ...extraEnv },
       maxBuffer: 64 * 1024 * 1024,
     });
     if (res.error) {

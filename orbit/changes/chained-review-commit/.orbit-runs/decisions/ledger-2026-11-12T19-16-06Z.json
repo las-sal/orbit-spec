@@ -1,0 +1,25 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-12T19:16:06Z",
+  "change": "chained-review-commit",
+  "model": "claude-opus-5-5",
+  "area": "secrets",
+  "decided": "New files the project's ignore list excludes are never committed, and each new file a commit adds is named in one line as it lands. A file git already tracks is a different case, decided in its own entry.",
+  "alternatives": [
+    "commit every new file without naming it",
+    "commit only files git already tracks"
+  ],
+  "why": "Committing everything means a stray scratch or credentials file could be pushed; the ignore list is the project's own boundary, and naming each new file lets the user catch a stray at once.",
+  "relies_on": [
+    {
+      "kind": "ruling",
+      "doc": "automate-dev-flow",
+      "id": "R-adf-13"
+    },
+    {
+      "kind": "decision",
+      "id": "D-chrc-5"
+    }
+  ],
+  "replaces": "ledger-2026-11-11T17-16-54Z.json"
+}

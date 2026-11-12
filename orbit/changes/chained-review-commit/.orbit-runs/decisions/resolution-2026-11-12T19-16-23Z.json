@@ -1,0 +1,10 @@
+{
+  "command": "resolution",
+  "timestamp": "2026-11-12T19:16:23Z",
+  "change": "chained-review-commit",
+  "model": "claude-opus-5-5",
+  "stop": "stop-2026-11-11T17-17-03Z.json",
+  "answer": "orbit init writes, into each new project's settings, the setting that gives one program pull request per architecture doc; existing projects are unchanged.",
+  "effect": "A small change of its own, outside this one, makes orbit init write the line; G0 names it as a ratified exception at an architect session, as R-adf-11 and R-adf-13 did.",
+  "replaces": "resolution-2026-11-11T17-29-50Z.json"
+}

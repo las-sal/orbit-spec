@@ -6,6 +6,7 @@
  * engine's runner: an engine that widened its own allowlist must still fail this assertion.
  */
 import { spawnSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import type { PrRecord, SegmentInput } from '../../../src/core/pr/record.js';
@@ -73,6 +74,17 @@ export function assertAllowlist(calls: { git: Invocation[]; gh: Invocation[] }):
 /** Every `orbit pr` call a case makes, with the invocations it recorded. */
 export const ENGINE_CALLS: Array<{ subcommand: string; calls: { git: Invocation[]; gh: Invocation[] } }> = [];
 
+/** The repository's index as bytes and mtime, so a stat-cache refresh (bytes change, content does not) is seen. */
+function indexState(repo: Repo): string {
+  const file = path.join(repo.dir, '.git', 'index');
+  try {
+    const st = fs.statSync(file);
+    return `${createHash('sha1').update(fs.readFileSync(file)).digest('hex')}@${st.mtimeMs}`;
+  } catch {
+    return 'absent';
+  }
+}
+
 export function ctxFor(repo: Repo): PrContext {
   return { projectRoot: repo.dir, env: repo.env() };
 }
@@ -83,9 +95,16 @@ export function ctxFor(repo: Repo): PrContext {
  */
 export function engine(repo: Repo, call: (ctx: PrContext) => PrRecord): { record: PrRecord; calls: { git: Invocation[]; gh: Invocation[] } } {
   const mark = repo.mark();
+  const before = indexState(repo);
   const record = call(ctxFor(repo));
   const calls = repo.since(mark);
   assertAllowlist(calls);
+  // The allowlist names commands, not effects: an allowlisted read that writes `.git/index` (a worktree diff
+  // refreshing its stat cache, which GIT_OPTIONAL_LOCKS=0 does not stop) is caught here.
+  const after = indexState(repo);
+  if (before !== after) {
+    throw new Error(`orbit pr ${record.subcommand} wrote .git/index (before: ${before}; after: ${after})`);
+  }
   if (record.action === 'off' && (calls.git.length > 0 || calls.gh.length > 0)) {
     throw new Error(`an 'off' record ran ${calls.git.length} git and ${calls.gh.length} gh invocation(s)`);
   }

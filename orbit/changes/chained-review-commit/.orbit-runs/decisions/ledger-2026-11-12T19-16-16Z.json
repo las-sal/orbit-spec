@@ -1,0 +1,26 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-12T19:16:16Z",
+  "change": "chained-review-commit",
+  "model": "claude-opus-5-5",
+  "area": "defaults",
+  "decided": "A newly set-up project gets one program pull request per architecture doc, written as a visible line in its settings; projects already set up keep what they have. This change decides it; a separate small change in stage release ships it.",
+  "alternatives": [
+    "a project with no setting at all gets program pull requests, changing existing projects on upgrade",
+    "no change to orbit; the user sets it in each of their own projects"
+  ],
+  "why": "New projects get the flow the user works in, where they can see and change it, and no existing project starts opening pull requests silently after an upgrade (R-adf-1).",
+  "relies_on": [
+    {
+      "kind": "ruling",
+      "doc": "automate-dev-flow",
+      "id": "R-adf-1"
+    },
+    {
+      "kind": "resolution",
+      "change": "chained-review-commit",
+      "token": "2026-11-11T17-29-50Z"
+    }
+  ],
+  "replaces": "ledger-2026-11-11T17-29-54Z.json"
+}

@@ -1,0 +1,642 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-12T19:17:08Z",
+  "change": "chained-review-commit",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/chained-review-commit/.orbit-runs/review-system-2026-11-12T19-01-52Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-12T19-01-52Z",
+  "latest_apply_token": "2026-11-12T16-24-46Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 10,
+    "suggestion": 7
+  },
+  "pushback_verification": "All seventeen verified against HEAD 131875a3: the index write reproduced in a scratch repository, and each reading row checked against the record's text; none stale.",
+  "resolution_summary": {
+    "resolved": 17,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The empty-commit check writes .git/index: `git diff --quiet HEAD --` refreshes the stat cache even under GIT_OPTIONAL_LOCKS=0",
+      "marker_source": "internal-review",
+      "file": "src/core/pr/commit.ts",
+      "line": 114,
+      "classification": "decision_required",
+      "action": "applied A′, a variant of option A: commit.ts runs the working-tree diff through PrRunner.diffWorktreeAgainstHead, which runs `git diff --quiet HEAD --` with GIT_INDEX_FILE naming a copy of the index in the OS temp directory and removes it after, so the repository's index is never written; the harness's engine() now fails any call that changes .git/index's bytes or mtime, shown able to fail on the old code and by an injected live-index diff; the requirement states the copy and the check, with a new scenario",
+      "evidence": "scratch repository: GIT_OPTIONAL_LOCKS=0 git diff --quiet HEAD -- rewrote .git/index; the same diff with GIT_INDEX_FILE on a copy exits 0 for MM restored and 1 for a real change, leaving .git/index untouched; git hash-object on a symlink hashes the target (f2ad6c7) not the link blob (4d1ae35), the flaw in option A as written. Mutation: dropping GIT_INDEX_FILE fails two tests",
+      "ratified_via": "prompt",
+      "resolution": "A′: keep git diff --quiet HEAD -- but run it against a temporary copy of the index, and add a harness check that .git/index never changes across an engine call",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Replace the worktree diff with a read-only per-path comparison: for each non-`??` porcelain entry, compare the HEAD blob and mode (`git ls-tree HEAD -- <paths>`) with the working-tree file's content hash (`git hash-object -- <path>`, never `-w`) and its presence and executable bit; add `hash-object` without `-w`/`--stdin` writes to the allowlist row and run.ts's gitAllowed, recapture the git contract, and keep the MM/AD and untracked-only tests."
+          },
+          {
+            "label": "B",
+            "body": "Keep `git diff --quiet HEAD --` and amend the allowlist requirement to name the index stat-cache refresh as the one write `orbit pr commit` makes (content unchanged), with its index.lock interaction as a named limit."
+          },
+          {
+            "label": "C",
+            "body": "Revert to printing the commit on any porcelain entry and make the MM/AD case a named limit: the printed commit fails with nothing to commit and the step-failure row shows the recovery (re-opening the external finding as a limit)."
+          }
+        ],
+        "chosen": "off-menu"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "src/core/pr/run.ts",
+          "test/integration/pr-lifecycle/instrument.ts",
+          "test/core/pr/instrument.test.ts",
+          "orbit/changes/chained-review-commit/specs/orbit-pr-lifecycle/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "run.git('diff', '--quiet', 'HEAD', '--')"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/pr/commit.ts",
+            "text": "run.diffWorktreeAgainstHead().status !== 0"
+          },
+          {
+            "path": "src/core/pr/run.ts",
+            "text": "GIT_INDEX_FILE: copy"
+          },
+          {
+            "path": "test/integration/pr-lifecycle/instrument.ts",
+            "text": "wrote .git/index"
+          },
+          {
+            "path": "orbit/changes/chained-review-commit/specs/orbit-pr-lifecycle/spec.md",
+            "text": "naming a COPY of the index in the OS temp directory"
+          },
+          {
+            "path": "test/core/pr/instrument.test.ts",
+            "text": "an allowlisted read that writes .git/index fails the instrument"
+          }
+        ],
+        "searched": [
+          "'diff', '--quiet'",
+          "GIT_OPTIONAL_LOCKS",
+          "git diff --quiet HEAD"
+        ],
+        "scope": [
+          "src/core/pr",
+          "orbit/changes/chained-review-commit/design.md",
+          "docs"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "ledger-2026-11-11T17-16-54Z.json, row 3: decided says ignored files are never committed, which reads as covering tracked files too",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-11T17-16-54Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote the replacement ledger-2026-11-12T19-16-06Z.json (replaces ledger-2026-11-11T17-16-54Z.json), carrying every link field unchanged",
+      "evidence": "the reader's row holds against the record's text in the brief",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-12T19-16-06Z.json",
+            "text": "decided in its own entry"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-11T17-16-54Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "ledger-2026-11-11T17-29-54Z.json, row 3: decided reads as this change shipping the init default",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-11T17-29-54Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote the replacement ledger-2026-11-12T19-16-16Z.json (replaces ledger-2026-11-11T17-29-54Z.json), carrying every link field unchanged",
+      "evidence": "the reader's row holds against the record's text in the brief",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-12T19-16-16Z.json",
+            "text": "a separate small change in stage release ships it"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-11T17-29-54Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "ledger-2026-11-11T18-34-45Z.json, row 3: decided and alternatives never name the two settings, the third part or the three workflows",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-11T18-34-45Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote the replacement ledger-2026-11-12T19-16-17Z.json (replaces ledger-2026-11-11T18-34-45Z.json), carrying every link field unchanged",
+      "evidence": "the reader's row holds against the record's text in the brief",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-12T19-16-17Z.json",
+            "text": "would still need a check of its own"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-11T18-34-45Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "ledger-2026-11-11T18-34-45Z.json, row 2: why leans on the chain's end-of-workflow status read",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-11T18-34-45Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote the replacement ledger-2026-11-12T19-16-19Z.json (replaces ledger-2026-11-12T19-16-17Z.json), carrying every link field unchanged",
+      "evidence": "the reader's row holds against the record's text in the brief",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-12T19-16-19Z.json",
+            "text": "those workflows already read the change's status at their end"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-12T19-16-17Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "ledger-2026-11-11T19-51-18Z.json, row 3: decided's \"no longer commit\" reads as verify and explore committing today",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-11T19-51-18Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote the replacement ledger-2026-11-12T19-16-07Z.json (replaces ledger-2026-11-11T19-51-18Z.json), carrying every link field unchanged",
+      "evidence": "the reader's row holds against the record's text in the brief",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-12T19-16-07Z.json",
+            "text": "as they never have"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-11T19-51-18Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "ledger-2026-11-11T19-51-19Z.json, row 4: decided attributes the default-branch-name refusal to a requirement whose shown text only delegates it",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-11T19-51-19Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote the replacement ledger-2026-11-12T19-16-08Z.json (replaces ledger-2026-11-11T19-51-19Z.json), carrying every link field unchanged",
+      "evidence": "the reader's row holds against the record's text in the brief",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-12T19-16-08Z.json",
+            "text": "which the cited requirement applies"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-11T19-51-19Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "ledger-2026-11-11T19-51-19Z.json, row 2: decided leans on git's recorded default branch for the remote",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-11T19-51-19Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote the replacement ledger-2026-11-12T19-16-20Z.json (replaces ledger-2026-11-12T19-16-08Z.json), carrying every link field unchanged",
+      "evidence": "the reader's row holds against the record's text in the brief",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-12T19-16-20Z.json",
+            "text": "as a cloned repository does"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-12T19-16-08Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "ledger-2026-11-11T19-51-20Z.json, row 3: decided reads as pushing unconditionally, and why's \"it\" is ambiguous",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-11T19-51-20Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote the replacement ledger-2026-11-12T19-16-09Z.json (replaces ledger-2026-11-11T19-51-20Z.json), carrying every link field unchanged",
+      "evidence": "the reader's row holds against the record's text in the brief",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-12T19-16-09Z.json",
+            "text": "the remote the project's pull requests use"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-11T19-51-20Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "ledger-2026-11-12T16-24-39Z.json, row 3: decided's \"six commands\" never names them and meets another record's five",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-12T16-24-39Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote the replacement ledger-2026-11-12T19-16-10Z.json (replaces ledger-2026-11-12T16-24-39Z.json), carrying every link field unchanged",
+      "evidence": "the reader's row holds against the record's text in the brief",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-12T19-16-10Z.json",
+            "text": "counting the two ways to propose apart"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-12T16-24-39Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "ledger-2026-11-12T16-24-39Z.json, row 1: decided uses \"a push never forces\" undefined",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-12T16-24-39Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote the replacement ledger-2026-11-12T19-16-21Z.json (replaces ledger-2026-11-12T19-16-10Z.json), carrying every link field unchanged",
+      "evidence": "the reader's row holds against the record's text in the brief",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-12T19-16-21Z.json",
+            "text": "never overwrites commits already on the remote"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-12T19-16-10Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "ledger-2026-11-12T18-52-47Z.json, row 1: \"the closing commit\" and \"the record commit\" are undefined",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-12T18-52-47Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote the replacement ledger-2026-11-12T19-16-22Z.json (replaces ledger-2026-11-12T19-16-12Z.json), carrying every link field unchanged",
+      "evidence": "the reader's row holds against the record's text in the brief",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-12T19-16-22Z.json",
+            "text": "the commit of the propose record"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-12T19-16-12Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "ledger-2026-11-12T18-52-47Z.json, row 4: why presents the commit as a step the cited baseline row already names",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-12T18-52-47Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote the replacement ledger-2026-11-12T19-16-12Z.json (replaces ledger-2026-11-12T18-52-47Z.json), carrying every link field unchanged",
+      "evidence": "the reader's row holds against the record's text in the brief",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-12T19-16-12Z.json",
+            "text": "This change puts the closing commit under that rule"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-12T18-52-47Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "ledger-2026-11-12T18-52-48Z.json, row 3: decided and why misname the named limit and read \"offered\" as asking the user",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-12T18-52-48Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote the replacement ledger-2026-11-12T19-16-13Z.json (replaces ledger-2026-11-12T18-52-48Z.json), carrying every link field unchanged",
+      "evidence": "the reader's row holds against the record's text in the brief",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-12T19-16-13Z.json",
+            "text": "made on a copy of git's own record of staged files"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/chained-review-commit/.orbit-runs/decisions/ledger-2026-11-12T18-52-48Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "stop-2026-11-11T16-52-34Z.json, row 3: about reads as orbit committing at propose and archive in every project",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/chained-review-commit/.orbit-runs/decisions/stop-2026-11-11T16-52-34Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote the replacement stop-2026-11-12T19-16-14Z.json (replaces stop-2026-11-11T16-52-34Z.json), carrying every link field unchanged",
+      "evidence": "the reader's row holds against the record's text in the brief",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/chained-review-commit/.orbit-runs/decisions/stop-2026-11-12T19-16-14Z.json",
+            "text": "when work is handed to another reviewer; a project that sets nothing gets no commits from orbit"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/chained-review-commit/.orbit-runs/decisions/stop-2026-11-11T16-52-34Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "resolution-2026-11-11T17-16-51Z.json, row 3: effect repeats the stop's incomplete list of today's commits",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/chained-review-commit/.orbit-runs/decisions/resolution-2026-11-11T17-16-51Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote the replacement resolution-2026-11-12T19-16-15Z.json (replaces resolution-2026-11-11T17-16-51Z.json), carrying every link field unchanged",
+      "evidence": "the reader's row holds against the record's text in the brief",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/chained-review-commit/.orbit-runs/decisions/resolution-2026-11-12T19-16-15Z.json",
+            "text": "and in a project that sets nothing, never"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/chained-review-commit/.orbit-runs/decisions/resolution-2026-11-11T17-16-51Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "resolution-2026-11-11T17-29-50Z.json, row 3: answer reads as orbit init writing a pull request",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/chained-review-commit/.orbit-runs/decisions/resolution-2026-11-11T17-29-50Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote the replacement resolution-2026-11-12T19-16-23Z.json (replaces resolution-2026-11-11T17-29-50Z.json), carrying every link field unchanged",
+      "evidence": "the reader's row holds against the record's text in the brief",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/chained-review-commit/.orbit-runs/decisions/resolution-2026-11-12T19-16-23Z.json",
+            "text": "the setting that gives one program pull request per architecture doc"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/chained-review-commit/.orbit-runs/decisions/resolution-2026-11-11T17-29-50Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Seventeen of seventeen resolved. The empty-commit check now compares on a copy of the index, so orbit pr commit writes nothing in the repository, and the harness fails any engine call that changes .git/index; the sixteen reading findings are fixed by sixteen replacement records, four of them chained onto a first replacement of the same record.",
+  "iteration": 6,
+  "next_recommended": "/orbit:archive chained-review-commit — user-invoked",
+  "ripple_misses": 0
+}

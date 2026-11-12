@@ -99,7 +99,11 @@ remote-tracking ref older than the remote counts commits as pushed that the remo
 not printed until a later commit. When no remote resolves, the `default-branch` row is not tested, the push
 is dropped with `degraded: "pr"` and the resolution's reason code, and the stage and commit stand. `observations`
 carries the resolution, `branch`, `settings` (`{commit, push}`), `untracked` and `unpushed`. `human_acts` is always
-empty. Every `git` invocation it makes is in that requirement's allowlist.
+empty. Every `git` invocation it makes is in that requirement's allowlist. The `stage` row's `git diff --quiet HEAD --`
+compares the working tree, and a working-tree diff refreshes the index's stat cache, a write `GIT_OPTIONAL_LOCKS=0`
+does not stop; so it runs with `GIT_INDEX_FILE` naming a COPY of the index in the OS temp directory, removed after,
+and the repository's own index is never written. The suite checks that: every `orbit pr` call it makes leaves
+`.git/index`'s bytes and modification time unchanged.
 
 #### Scenario: A granted step on the attached branch commits and pushes everything
 
@@ -147,6 +151,13 @@ empty. Every `git` invocation it makes is in that requirement's allowlist.
 - **WHEN** both settings are granted on the attached branch, the branch has an unpushed commit, and porcelain lists only a
   staged edit whose file was restored to HEAD's content (`MM`) and a staged addition since deleted (`AD`)
 - **THEN** it prints the push alone, with no stage and no commit, and the push runs
+
+#### Scenario: The working-tree comparison never writes the index
+
+- **WHEN** a tracked file's content matches HEAD but its stat no longer matches the index's record of it, and
+  `orbit pr commit` compares the working tree with HEAD
+- **THEN** `.git/index`'s bytes and modification time are unchanged after the call, and the same diff run on the live
+  index is caught by the suite as a write
 
 #### Scenario: A clean tree with nothing to push prints no segment
 
