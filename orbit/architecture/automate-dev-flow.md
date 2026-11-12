@@ -251,7 +251,7 @@ fourth capability (a declared size breach).
 ### Stage seam-chaining — the granular settings and regime 2
 
 Depends-on: decision-layer
-Complete: [ ]
+Complete: [x] 2026-11-12 (Sal)
 
 Of the settings R-adf-1 and R-adf-6 name, the one a chain reads: chaining, its own explicit key defaulting to
 today's behaviour. D1's no-chaining contract is amended in its owning spec to hold conditionally on it. With
@@ -545,3 +545,10 @@ Exit criteria:
   since nothing merges between stages on one branch, and took the pull request's opening at the architect session
   (Sal; AI recommendation; a stop and its resolution in this trail). The release stage took the change that makes
   `orbit init` write `pr: per-architecture` (D-chrc-7; Sal; AI recommendation). No stage awaited ratification.
+- 2026-11-12 — Architect session after `chained-review-commit` was archived (merged as PR #40), the last of D-sga-1's
+  three changes: the `commit` and `push` settings, `orbit pr commit` and the closing commit step in six bodies (the
+  stage's fourth Shipped-as paragraph). Sal ratified stage seam-chaining complete: all four citing changes archived,
+  every setting it owns named with a test of its default, the chaining fixture tests from its first change, and G0
+  holding with the commit step a read-only call that prints nothing at the defaults (R-adf-12; AI recommendation). No
+  ruling, goal or other stage changed; program-brief and tripwires are each open to start, depending only on
+  decision-layer.
