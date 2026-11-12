@@ -7,7 +7,7 @@
  * definitions into lazy references (passes-{proposal,system,architecture}.md).
  */
 import type { SkillTemplate, CommandTemplate } from '../types.js';
-import { CHAIN_END_STEP, DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../disciplines.js';
+import { CHAIN_END_STEP, COMMIT_STEP, DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../disciplines.js';
 
 const REVIEW_RUN_SUMMARY_SCHEMA_REFERENCE = `# Reference: review run-summary schema
 
@@ -1250,7 +1250,7 @@ PATH — strip a trailing :<line> or :<line>:<column> (digits only, at the very 
 
 ### Dispatching a fresh pass (\`--reviewer fresh\`)
 
-A fresh pass is REVIEW pass genre. Spawn a clean-context subagent (the **Task tool**, general-purpose — never a fork of this conversation, which would carry its context) with the review contract, and hand it the brief below. What the brief may carry is \`orbit-conventions\`' \`Review mode decision framework\`'s rule, stated there once; the brief adds nothing beyond it and nothing from the trail. The subagent persists through \`orbit emit review\` with \`reviewer_class: "fresh"\` and its owed \`direction\` (Step 8); this conversation then renders the report from the engine (Step 10) and pastes it. Dispatch is the INVOKING session's act alone: a subagent holding this brief is the worker, skips this step, and never dispatches again. So is the Chain end step: the worker skips it and returns once its pass is persisted, so it never starts a walk or a review while the session that dispatched it is still running — assembling a pair, say.
+A fresh pass is REVIEW pass genre. Spawn a clean-context subagent (the **Task tool**, general-purpose — never a fork of this conversation, which would carry its context) with the review contract, and hand it the brief below. What the brief may carry is \`orbit-conventions\`' \`Review mode decision framework\`'s rule, stated there once; the brief adds nothing beyond it and nothing from the trail. The subagent persists through \`orbit emit review\` with \`reviewer_class: "fresh"\` and its owed \`direction\` (Step 8); this conversation then renders the report from the engine (Step 10) and pastes it. Dispatch is the INVOKING session's act alone: a subagent holding this brief is the worker, skips this step, and never dispatches again. So are the Commit step and the Chain end step: the worker skips both and returns once its pass is persisted, so it never commits the session's work — the invoking session's Commit step commits the pass — and never starts a walk or a review while the session that dispatched it is still running — assembling a pair, say.
 
 \`\`\`
 You are the fresh-context reviewer this session dispatched for /orbit:review --as <mode> --reviewer
@@ -1259,8 +1259,9 @@ its steps for that mode as a REVIEW-genre pass, SKIPPING its "Dispatching a fres
 is the invoking session's and is already done; you never dispatch again. Read what the skill's read list
 names for the mode — the change's artifacts, the baseline specs, the lens files and, in system mode, the
 commit range with the trail excluded by the pathspec it gives. Persist through orbit emit review with
-reviewer_class "fresh" and a direction. Skip the skill's closing Chain end step too: once your pass is
-persisted, return — never run another orbit command, whatever the change status's chain object says.
+reviewer_class "fresh" and a direction. Skip the skill's closing Commit step and Chain end step too:
+once your pass is persisted, return — never commit, and never run another orbit command, whatever the
+change status's chain object says.
 \`\`\`
 
 **A re-run of a blind pair's missing fresh half.** Before dispatching, read \`orbit status --change <name> --json\`. When the mode's reviewed gate row carries \`openPair: {missing: "fresh"}\`, the run is a RE-RUN: find the pair's open launch L — the latest \`review-external-<TS>.json\` of this mode carrying \`pair: true\`, reading only its \`mode\` and \`pair\` fields — and list the trail's \`apply-*.json\` tokens. With NO apply token later than L, BASE is \`git log --diff-filter=A --format=%H -- <L's T0 path> | tail -1\` (a hash-only read) and the REVIEWED COMMIT is \`git rev-parse <BASE>^1\`. With an apply token later than L, the landed external member was emitted after it and reviewed the post-apply state, and the engine counts this run as the pair's missing member: the REVIEWED COMMIT is \`git rev-parse <M>^1\`, M being \`git log --diff-filter=A --format=%H -- <member path> | tail -1\` for the earliest \`external-<mode>-*.md\` later than L (when M is empty, stop and say to commit that file alone first). Either way the brief gains these lines after its last: \`Review the repository as it stands at commit <REVIEWED COMMIT>, not the live checkout: read the change's files and, in system mode, the code and the commit range ending at that commit (git show <commit>:<path>; git diff <change-start>..<commit>). Where the skill's steps read state through the orbit CLI — orbit status, orbit instructions, the scenario map, Pass 0's structural check — that output describes the live checkout, not the reviewed commit: take the artifacts you review from the commit, use the CLI only for what the emit needs, and say in the pass which readings came from the live checkout. Run orbit emit review from the repository root as usual.\` The isolation is instructed, not physical — the rule and its named limit are \`orbit-review-external\`'s \`A pair's external half reads the pair's reviewed state\`. When the mode has no \`openPair\` and the latest launch's one landed member is STALE — read from the trail: exactly one landed member later than L (an earliest fresh \`review-<mode>-*.json\` or earliest \`external-<mode>-*.md\`, and none of the other class), no \`address-reviews-*.json\` naming it in its \`source_path\`, and an \`apply-*.json\` token later than it — never from the gate's reason — say \`The pair launched at <L> reviewed a superseded state (an apply landed after its <class> member); this run is an ordinary single on the current state.\` and dispatch the brief unchanged. The re-run test is this body's reading of the trail; the gate's computation is authoritative.
@@ -1400,6 +1401,8 @@ next, anything the structure can't say — never contradicting the tail's engine
 \`\`\`
 
 
+
+${COMMIT_STEP}
 
 ${CHAIN_END_STEP}
 `,

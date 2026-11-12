@@ -9,7 +9,7 @@
  * the body renders the one-line note (D-rc12-13).
  */
 
-export type PrSubcommand = 'select' | 'publish' | 'preflight' | 'tail' | 'program';
+export type PrSubcommand = 'select' | 'publish' | 'preflight' | 'tail' | 'program' | 'commit';
 export type PrAction = 'off' | 'skip' | 'proceed';
 
 /** The CLOSED set of body-authored inputs a printed argv may name, each an exact argv element. */

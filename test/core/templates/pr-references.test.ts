@@ -133,7 +133,7 @@ describe('the consumption table scopes a recovery to the steps that can attach',
   // @scenario text orbit-archive-modifications :: PR-attached archive tail :: Each partial state names its own completion command
   it('a failed publish or tail step shows its recovery; a failed select step shows none', () => {
     const rows = PR_CONSUMPTION_TABLE.split('\n');
-    const failure = rows.find((r) => r.startsWith('| a `publish` or `tail` step fails |'));
+    const failure = rows.find((r) => r.startsWith('| a `publish`, `tail` or `commit` step fails |'));
     expect(failure, 'the step-failure row').toBeDefined();
     expect(failure).toContain("showing the failed step's argv and then each skipped step's");
     expect(rows.some((r) => r.startsWith('| a step fails |'))).toBe(false);

@@ -94,6 +94,18 @@ export const ProjectConfigSchema = z.object({
     .describe(
       'Chain setting: { review, review-external, address-reviews, apply, archive: true|false } — what the AI may run unasked'
     ),
+
+  // Optional: the commit and push settings (chained-review-commit, `orbit-pr-lifecycle`'s `The commit and push
+  // settings`) — two top-level booleans, each granting one act of the commit step. Typed here for documentation
+  // only: `orbit pr commit` reads them ON ITS OWN through `resolveCommitPushSetting`, and nothing else reads them.
+  commit: z
+    .boolean()
+    .optional()
+    .describe('Commit setting: true lets the commit step commit everything uncommitted on the change\'s attached branch'),
+  push: z
+    .boolean()
+    .optional()
+    .describe('Push setting: true lets the commit step push the change\'s attached branch to the resolved remote'),
 });
 
 export type ProjectConfig = z.infer<typeof ProjectConfigSchema>;
@@ -332,6 +344,37 @@ export function resolveChainSetting(projectRoot: string): ChainSetting {
     if (Object.prototype.hasOwnProperty.call(map, key) && map[key] === true) grants[key] = true;
   }
   return { configured: true, grants };
+}
+
+/** The resolved `commit` and `push` settings: each act's grant. */
+export interface CommitPushSetting {
+  commit: boolean;
+  push: boolean;
+}
+
+/**
+ * Resolve the `commit` and `push` keys, reading ONLY those two keys from `orbit/config.yaml` (the
+ * `resolveChainSetting` pattern; `orbit-pr-lifecycle`'s `The commit and push settings`). Each key is read on its
+ * own: it is granted only by the literal boolean `true`, and any other value, an absent key, an absent file or an
+ * unparseable file grants nothing. Neither key derives the other, and neither touches the `chain` map. Silent by
+ * design: a value that is not exactly `true` is today's behaviour, never a warning.
+ */
+export function resolveCommitPushSetting(projectRoot: string): CommitPushSetting {
+  const none: CommitPushSetting = { commit: false, push: false };
+  let configPath = path.join(projectRoot, 'orbit', 'config.yaml');
+  if (!existsSync(configPath)) {
+    configPath = path.join(projectRoot, 'orbit', 'config.yml');
+    if (!existsSync(configPath)) return none;
+  }
+  let raw: unknown;
+  try {
+    raw = parseYaml(readFileSync(configPath, 'utf-8'));
+  } catch {
+    return none;
+  }
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return none;
+  const map = raw as Record<string, unknown>;
+  return { commit: map.commit === true, push: map.push === true };
 }
 
 const MAX_CONTEXT_SIZE = 50 * 1024; // 50KB hard limit

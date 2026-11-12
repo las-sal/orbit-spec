@@ -1,0 +1,22 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-12T16:24:40Z",
+  "change": "chained-review-commit",
+  "model": "claude-opus-5-5",
+  "area": "when-things-go-wrong",
+  "decided": "When the repository has no remote orbit can push to, the end of a command says the push was dropped only if pushing was turned on. If only committing was turned on, the commit happens and nothing is said about pushing.",
+  "alternatives": [
+    "say the push was dropped whenever no remote is found, even when pushing was never turned on"
+  ],
+  "why": "A note about a push the user never asked for would be noise, and the two settings are separate so that each act is reported only when it was granted.",
+  "relies_on": [
+    {
+      "kind": "decision",
+      "id": "D-chrc-4"
+    },
+    {
+      "kind": "decision",
+      "id": "D-chrc-10"
+    }
+  ]
+}

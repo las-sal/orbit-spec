@@ -9,6 +9,7 @@ import {
   resolvePrMode,
   PR_MODES,
   resolveScenarioMapConfig,
+  resolveCommitPushSetting,
 } from '../../src/core/project-config.js';
 
 describe('project-config', () => {
@@ -753,6 +754,61 @@ rules:
     it('reads ONLY its own key: a malformed pr: prints nothing (design D6)', () => {
       const root = writeConfig('schema: spec-driven\npr: sometimes\nrules: 3\n');
       expect(resolveScenarioMapConfig(root)).toEqual({ check: 'off', tests: [] });
+      expect(consoleWarnSpy).not.toHaveBeenCalled();
+    });
+  });
+
+  // chained-review-commit, task 1.1: `orbit-pr-lifecycle`'s `The commit and push settings`.
+  describe('commit and push settings (chained-review-commit)', () => {
+    function writeConfig(body: string): string {
+      const configDir = path.join(tempDir, 'orbit');
+      fs.mkdirSync(configDir, { recursive: true });
+      fs.writeFileSync(path.join(configDir, 'config.yaml'), body);
+      return tempDir;
+    }
+
+    it.each([
+      ['neither', '', { commit: false, push: false }],
+      ['commit only', 'commit: true\n', { commit: true, push: false }],
+      ['push only', 'push: true\n', { commit: false, push: true }],
+      ['both', 'commit: true\npush: true\n', { commit: true, push: true }],
+    ])('%s: each key grants its own act and derives nothing else', (_label, body, want) => {
+      const root = writeConfig(`schema: spec-driven\n${body}`);
+      expect(resolveCommitPushSetting(root)).toEqual(want);
+      expect(consoleWarnSpy).not.toHaveBeenCalled();
+    });
+
+    it.each([
+      ['false', 'false'],
+      ['a string', '"yes"'],
+      ['the string true', '"true"'],
+      ['a number', '1'],
+      ['a map', '\n  enabled: true'],
+      ['a list', '\n  - true'],
+      ['null', ''],
+    ])('a value that is %s grants nothing, silently', (_label, value) => {
+      const root = writeConfig(`schema: spec-driven\ncommit: ${value}\npush: ${value}\n`);
+      expect(resolveCommitPushSetting(root)).toEqual({ commit: false, push: false });
+      expect(consoleWarnSpy).not.toHaveBeenCalled();
+    });
+
+    it('no file, an unparseable file and a non-map document grant nothing', () => {
+      expect(resolveCommitPushSetting(tempDir)).toEqual({ commit: false, push: false });
+      writeConfig('commit: [true\n');
+      expect(resolveCommitPushSetting(tempDir)).toEqual({ commit: false, push: false });
+      writeConfig('- commit\n');
+      expect(resolveCommitPushSetting(tempDir)).toEqual({ commit: false, push: false });
+      expect(consoleWarnSpy).not.toHaveBeenCalled();
+    });
+
+    it('a chain map grants neither act, and neither act grants a chain key', () => {
+      const root = writeConfig('schema: spec-driven\nchain:\n  commit: true\n  push: true\n  apply: true\n');
+      expect(resolveCommitPushSetting(root)).toEqual({ commit: false, push: false });
+    });
+
+    it('readProjectConfig stays silent on both keys whatever their value', () => {
+      const root = writeConfig('schema: spec-driven\ncommit: "yes"\npush: 3\n');
+      readProjectConfig(root);
       expect(consoleWarnSpy).not.toHaveBeenCalled();
     });
   });

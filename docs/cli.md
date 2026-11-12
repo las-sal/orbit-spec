@@ -472,6 +472,7 @@ then performs; it never writes itself. Merging stays yours.
 | `orbit pr preflight` | `orbit pr preflight <change-name>` | Archive, before the move: checks the PR attachment and decides one outcome |
 | `orbit pr tail` | `orbit pr tail <change-name>` | Archive, after the move: the commit scope and the PR steps, from the preflight's outcome |
 | `orbit pr program` | `orbit pr program <doc>` | The architect's arc-done readout: the program's PR, its live state, and the acts left to you |
+| `orbit pr commit` | `orbit pr commit <change-name>` | The close of a command that works on a change: the stage, the commit and the push that `commit: true` and `push: true` grant, on the change's own branch |
 
 Each takes `--json`. `orbit pr tail` also takes `--outcome <code>` (the preflight's outcome, verbatim) and
 `--include <path>` (repeatable: an extra edit to add to the commit).

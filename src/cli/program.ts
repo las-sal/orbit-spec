@@ -380,12 +380,12 @@ export function buildProgram(options: ProgramOptions = {}): Command {
     .command('pr')
     .description('PR lifecycle: observe and print the writes for a seam (never performs a write)');
   const prSub = (
-    name: 'select' | 'publish' | 'preflight' | 'tail' | 'program',
+    name: 'select' | 'publish' | 'preflight' | 'tail' | 'program' | 'commit',
     arg: string,
     description: string
   ) => pr.command(`${name} ${arg}`).description(description).option('--json', 'Output as JSON');
   const runPr = async (
-    name: 'select' | 'publish' | 'preflight' | 'tail' | 'program',
+    name: 'select' | 'publish' | 'preflight' | 'tail' | 'program' | 'commit',
     target: string,
     options: { json?: boolean; outcome?: string; include?: string[] }
   ) => {
@@ -405,6 +405,8 @@ export function buildProgram(options: ProgramOptions = {}): Command {
     .action((name: string, options?: { json?: boolean; outcome?: string; include?: string[] }) => runPr('tail', name, options ?? {}));
   prSub('program', '<doc>', 'Architect arc-done readout: the program PR, its live state, and the human acts')
     .action((doc: string, options?: { json?: boolean }) => runPr('program', doc, options ?? {}));
+  prSub('commit', '<change-name>', 'The commit step: the stage, commit and push a carrying body runs at its close')
+    .action((name: string, options?: { json?: boolean }) => runPr('commit', name, options ?? {}));
 
   // Architecture tier (D-arc D2): computed program position over orbit/architecture/ docs
   const architecture = program

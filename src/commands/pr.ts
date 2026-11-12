@@ -1,11 +1,12 @@
 /**
- * `orbit pr select|publish|preflight|tail|program` (rc12-engine-owned-choreography,
+ * `orbit pr select|publish|preflight|tail|program|commit` (rc12-engine-owned-choreography,
  * `orbit-pr-lifecycle`'s `The \`orbit pr\` command observes and prints; it never writes`).
  *
  * Each subcommand prints ONE record, as JSON with `--json` and as text otherwise. It exits 0
  * whatever the action — the PR layer degrades and never blocks the lifecycle — and non-zero
  * only on a usage error.
  */
+import { prCommit } from '../core/pr/commit.js';
 import { prPreflight } from '../core/pr/preflight.js';
 import { prProgram } from '../core/pr/program.js';
 import { prPublish } from '../core/pr/publish.js';
@@ -14,7 +15,7 @@ import type { PrContext } from '../core/pr/run.js';
 import { prSelect } from '../core/pr/select.js';
 import { prTail } from '../core/pr/tail.js';
 
-export type PrSubcommandName = 'select' | 'publish' | 'preflight' | 'tail' | 'program';
+export type PrSubcommandName = 'select' | 'publish' | 'preflight' | 'tail' | 'program' | 'commit';
 
 export class PrCommand {
   execute(
@@ -55,6 +56,8 @@ export function runSubcommand(
       return prTail(ctx, target, { outcome: options.outcome, include: options.include });
     case 'program':
       return prProgram(ctx, target);
+    case 'commit':
+      return prCommit(ctx, target);
   }
 }
 

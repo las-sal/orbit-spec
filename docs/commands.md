@@ -230,6 +230,11 @@ Finish a change: merge its delta specs into `orbit/specs/` and move it to
 In a project whose `orbit/config.yaml` sets `pr:`, it then commits, pushes, and marks the change's pull request
 ready. Merging it stays yours.
 
+With `commit: true` and `push: true` also set, propose, ff, apply, review, address-reviews and archive each commit and
+push whatever is left uncommitted at their close, on the change's own branch, so the pull request carries the work as
+it goes. Archive's commit comes after the tail's own, which carries only the archive's paths. See
+[orbit's config keys](customization.md#orbits-config-keys).
+
 ### `/orbit:bulk-archive`
 
 Archive several finished changes in one go. It asks which, then, for each change in turn, settles the tasks left for
