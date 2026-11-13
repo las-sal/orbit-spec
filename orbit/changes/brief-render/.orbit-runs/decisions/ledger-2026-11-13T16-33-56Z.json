@@ -1,0 +1,24 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-13T16:33:56Z",
+  "change": "brief-render",
+  "model": "claude-opus-5-5",
+  "area": "user-sees-or-does",
+  "decided": "What the brief says about whether a change's requirements were synced, and about the archive's own warnings, follows only what the change's archive record says: the sync ran, the sync was skipped, or the change was archived with no record at all. A change not yet archived says no archive has recorded a sync yet. The list of records no reader checked is taken when the brief is made, so the copy saved at archive says where records written after it appear.",
+  "alternatives": [
+    "decide the label only by whether an archive record exists, which told old archived changes their requirements were not yet synced",
+    "work out the real state by comparing each requirement to the project's current specs"
+  ],
+  "why": "Each line is then true by construction, including for changes archived before orbit kept archive records and for an archive that skipped the sync; comparing against the current specs would mislead once a later change edits the same requirement. The user chose this at the proposal review.",
+  "relies_on": [
+    {
+      "kind": "decision",
+      "id": "D-br-6"
+    },
+    {
+      "kind": "goal",
+      "doc": "automate-dev-flow",
+      "id": "G5"
+    }
+  ]
+}

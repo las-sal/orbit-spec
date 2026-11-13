@@ -8,13 +8,12 @@ assessment (upstream Step 4), by running `orbit brief --change <name> --save` wh
 copy is written into the change's own history and moves with it. The step sits there because a sign-off given per
 change (stage program-brief's third change, D-pb-1 and D-pb-8 in `orbit/explore/program-brief/explore.md`) waits
 before anything is synced or moved, and must cite a copy that already exists; the copy is therefore rendered before the
-archive record exists (`orbit-program-brief`'s `A brief rendered before its change's archive record says what it
-cannot yet show`).
+archive record exists (`orbit-program-brief`'s `A brief says only what the archive recorded`).
 
 | the save | the archive |
 |---|---|
 | succeeds | says nothing about it and goes on |
-| exits non-zero (the brief cannot be rendered whole, or the name is taken) | composes ONE `warnings` entry naming the failure as the command reported it, for the Step 5.5 run summary, says nothing about it in chat, and goes on: a brief that cannot be saved never stops an archive |
+| exits non-zero (the brief cannot be rendered whole, or a racing writer took its name) | composes ONE `warnings` entry naming the failure as the command reported it, for the Step 5.5 run summary, says nothing about it in chat, and goes on: a brief that cannot be saved never stops an archive |
 | ran, and the archive then stops (an abort or a cancel at a later prompt) | the copy stays in the active change's history; the next archive saves a new one, and the latest is the change's brief |
 
 The rows are the save's two outcomes (written, or refused whole) and the one way an archive can end after it without
@@ -22,14 +21,15 @@ completing (it stops before the sync and the move).
 
 With every setting at its default, nothing the user sees or is asked changes: the save is a record (`automate-dev-flow`'s
 R-adf-9), the tail does not name it (`PR-attached archive tail`), and a failure is recorded, never shown. The bulk-archive
-workflow SHALL run the same step per change, before that change's sync, with the same table. Each body carries the
+workflow SHALL run the same step per change, after that change's base-fingerprint check and before its sync (its Step
+8a), with the same table. Each body carries the
 command and the table, so an installed skill needs no spec to run the step; a test holds each body carrying them.
 
 #### Scenario: A default archive saves the brief before the sync
 
 - **WHEN** `/orbit:archive foo` runs with every setting at its default, and `foo`'s delta spec adds a requirement
-- **THEN** the archived change's `.orbit-runs/brief/` holds one `brief-<TS>.md` whose requirements are marked as not yet
-  synced, and the completion readout is what it was before the save existed
+- **THEN** the archived change's `.orbit-runs/brief/` holds one `brief-<TS>.md` whose requirements section says no
+  archive has recorded a sync yet, and the completion readout is what it was before the save existed
 
 #### Scenario: A failed save is recorded, not shown, and the archive completes
 
@@ -225,7 +225,7 @@ exception: a `brief-<TS>.md` in the trail's `brief/` folder is the archive's OWN
 saved before the sync and so carried by the move (`The archive saves the change's brief before
 the sync`); like the archive emit, the archive's own write after the move, it is staged with the
 tree and NOT named, so a default archive's note names exactly the strays it named before the
-brief existed → push → rewrite the PR description to the ACHIEVEMENT landmark
+brief existed. After the commit: push → rewrite the PR description to the ACHIEVEMENT landmark
 (per-change PRs) or APPEND the stage entry (program PRs) → flip READY for PER-CHANGE PRs only.
 
 The program stage entry's SOURCE is ORDERED, never assumed: (1) the arc STATUS-LOG entry
@@ -372,7 +372,7 @@ inside the tail.
 #### Scenario: A saved brief is staged and not named as a stray
 
 - **WHEN** the tail commits a change whose trail holds the `brief/brief-<TS>.md` the archive saved before its sync, and
-  no other file git never tracked
+  no other untracked file
 - **THEN** the brief is staged with the archived tree, and the one-line note names no carried untracked file
 
 #### Scenario: Unrelated dirty paths never ride the commit

@@ -7,7 +7,7 @@ change of the stage gave each change its account (`change-account`); nothing yet
 later sign-off could cite. This change, the second of the stage's three (D-pb-7 and D-pb-9 in
 `orbit/explore/program-brief/explore.md`), renders the brief from the trail and saves each change's brief at its
 archive, before the sync, so the third change's per-change sign-off can wait on it while the change can still be fixed
-(see `explore.md`, D-br-1, D-br-3, D-br-4).
+(see `explore.md`, D-br-3, D-br-6, D-br-7).
 
 ## What Changes
 
@@ -19,8 +19,9 @@ archive, before the sync, so the third change's per-change sign-off can wait on 
   the requirements added or changed from its delta specs and, once archived, its archive record; new terms from the
   `defines` lists of its latest records; the ledger; the stops with their answers or marked open; a line saying
   tripwires are not installed; the archive's warnings and accepted risks with a declared size breach; and the records
-  no reader checked, the account included. A brief rendered before the archive record exists says what it cannot yet
-  show (D-br-4).
+  no reader checked, the account included. The sync and archive-signal lines say only what the change's archive record
+  says — the sync ran, was skipped, or no record exists — and an active change's say no archive has recorded a sync yet
+  (D-br-6); new terms show each definition with the records that wrote it (D-br-7).
 - `orbit brief --change <name> --save` saves an active change's brief as
   `orbit/changes/<name>/.orbit-runs/brief/brief-<TS>.md`, never overwriting, and prints the file and the SHA-256 of its
   text — the hash the third change's sign-off will cite.
@@ -39,7 +40,7 @@ program sign-off's hold that reads it), the sign-off setting and its holds, and 
 ### New Capabilities
 
 - `orbit-program-brief`: the brief of a change and of a program — its sections and where each comes from, what a brief
-  rendered before the archive record says, `orbit brief` (read-only render, whole or absent), and the saved copy
+  says of the change's archive record, `orbit brief` (read-only render, whole or absent), and the saved copy
   (`--save`, where it is kept, its hash, never overwritten).
 
 ### Modified Capabilities
@@ -63,7 +64,7 @@ program sign-off's hold that reads it), the sign-off setting and its holds, and 
   step.
 - At archive, the new capability's Purpose is written and `orbit-archive-modifications`' Purpose names the saved brief
   (design.md, At archive).
-- Tests: the brief's render, save and failure tests, golden renders of a fixture change and a fixture program; the
+- Tests: the brief's render, save and failure tests, golden renders of a fixture program and of a second whose changes carry ledger entries and stops (the stage's first exit criterion); the
   tail exclusion; the bodies' save step. Pins that move as closed sets this extends (R-adf-9), each named at archive:
   the archive and bulk-archive skill hash pins, `rc03b`'s `emit-composition.ts` pin.
 - G0 with no new exception: a new command, a record the archive writes, and a body step that tells the AI to record

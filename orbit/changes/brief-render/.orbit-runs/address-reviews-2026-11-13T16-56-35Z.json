@@ -1,0 +1,118 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-13T16:56:35Z",
+  "change": "brief-render",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/brief-render/.orbit-runs/review-proposal-2026-11-13T16-52-07Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-13T16-52-07Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 2
+  },
+  "pushback_verification": "Both verified against current state: the two D-br-4 pointers and the old capability wording were present; none stale.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "SUGGESTION",
+      "title": "Live rule D-br-3 still points at the superseded D-br-4",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/brief-render/explore.md",
+      "line": 69,
+      "classification": "trivial_fix",
+      "action": "re-pointed D-br-3's archive row and its COHERE move from D-br-4 to D-br-6",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "it is rendered as D-br-4 says",
+          "The cost is D-br-4"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/brief-render/explore.md",
+            "text": "it is rendered as D-br-6 says"
+          }
+        ],
+        "searched": [
+          "D-br-4",
+          "D-br-1"
+        ],
+        "scope": [
+          "orbit/changes/brief-render/design.md",
+          "orbit/changes/brief-render/proposal.md",
+          "orbit/changes/brief-render/tasks.md"
+        ],
+        "kept": []
+      },
+      "ripple_miss_of": {
+        "walk": "2026-11-13T16-34-59Z",
+        "title": "An archived change with no archive record gets the pre-archive rows, which then say false things",
+        "file": "specs/orbit-program-brief/spec.md",
+        "kind": "query"
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The new capability's description still names the retired requirement",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/brief-render/proposal.md",
+      "line": 43,
+      "classification": "trivial_fix",
+      "action": "reworded the capability line to what a brief says of the change's archive record",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "rendered before the archive record says"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/brief-render/proposal.md",
+            "text": "says of the change's archive record"
+          }
+        ],
+        "searched": [
+          "rendered before",
+          "cannot yet show"
+        ],
+        "scope": [
+          "orbit/changes/brief-render/specs/orbit-program-brief/spec.md",
+          "orbit/changes/brief-render/specs/orbit-archive-modifications/spec.md"
+        ],
+        "kept": []
+      },
+      "ripple_miss_of": {
+        "walk": "2026-11-13T16-34-59Z",
+        "title": "An archived change with no archive record gets the pre-archive rows, which then say false things",
+        "file": "specs/orbit-program-brief/spec.md",
+        "kind": "query"
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Both suggestions resolved as previewed obvious fixes (walk all): the live D-br-3 now points at D-br-6, and the proposal's capability line names the requirement as it now reads. Each is a ripple miss of the first walk's decision-A entry.",
+  "iteration": 3,
+  "next_recommended": "/orbit:apply brief-render — user-invoked",
+  "ripple_misses": 2
+}
