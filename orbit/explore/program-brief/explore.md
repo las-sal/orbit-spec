@@ -19,8 +19,8 @@ it holds under each regime, and what a sign-off leaves on the record.
 Since 2026-11-12 (D-pb-7, D-pb-9) this exploration carries the THIRD of the stage's three changes — the sign-off
 setting, the `signoff` record and the holds — and keeps the name `program-brief`. The first two opened as their own
 explorations, `orbit/explore/change-account/` and `orbit/explore/brief-render/`, carrying the rules D-pb-4 and D-pb-6
-held here; the first was archived on 2026-11-13, its exploration now at
-`orbit/changes/archive/2026-11-13-change-account/explore.md`. (R-adf-2 has since been amended to match D-pb-1, at the architect session of 2026-11-12.)
+held here; both were archived on 2026-11-13, their explorations now at
+`orbit/changes/archive/2026-11-13-change-account/explore.md` and `orbit/changes/archive/2026-11-13-brief-render/explore.md`. (R-adf-2 has since been amended to match D-pb-1, at the architect session of 2026-11-12.)
 
 ## Mechanism
 
@@ -178,7 +178,7 @@ Moves:
   writing the three fields into the archive record, which no reader would check before the user signs. The record's
   name is not yet locked.
   Kind: rule
-  Disposition: superseded D-ca-1 in `orbit/changes/archive/2026-11-13-change-account/explore.md` (the account) and D-br-1 in `orbit/explore/brief-render/explore.md` (the computed sections), per D-pb-9
+  Disposition: superseded D-ca-1 in `orbit/changes/archive/2026-11-13-change-account/explore.md` (the account) and D-br-1 in `orbit/changes/archive/2026-11-13-brief-render/explore.md` (the computed sections), per D-pb-9
 
 - **2026-11-12 — D-pb-5: the reader takes the account only when sign-off is on** The user (stop
   `stop-2026-11-12T21-21-45Z.json` and its resolution), taking the AI's recommendation: with sign-off off the account is
@@ -192,7 +192,7 @@ Moves:
   hash and says signed or declined; a decline keeps the hold, records the user's reason, and what happens next is the
   user's direction. The command's and record's names are not yet locked.
   Kind: rule
-  Disposition: superseded D-pb-8 (signing and declining) and D-br-2 in `orbit/explore/brief-render/explore.md` (rendering and saving), per D-pb-9
+  Disposition: superseded D-pb-8 (signing and declining) and D-br-2 in `orbit/changes/archive/2026-11-13-brief-render/explore.md` (rendering and saving), per D-pb-9
 - **2026-11-12 — D-pb-7: the stage lands as three changes, all citing stage program-brief** Estimated at the start of
   `/orbit:propose program-brief`, before anything was generated: proposed whole, the stage touches about five or six
   capabilities against a ceiling of three — `orbit-decision-records` (the account and `signoff` records, the reader's
@@ -221,7 +221,7 @@ Moves:
   pointing at nothing when the reading step renders them.
   Kind: scope
 - **2026-11-13 — D-pb-10: this change also builds the program brief's save at the architect session** From D-br-5 in
-  `orbit/explore/brief-render/explore.md`: the architect flow saves the program brief in the architecture trail, with its
+  `orbit/changes/archive/2026-11-13-brief-render/explore.md`: the architect flow saves the program brief in the architecture trail, with its
   hash, once every declared stage is finished, and again only when a fresh render's hash differs from the latest saved
   copy (D-br-3's program row, which owns the rule). It lands here beside the program sign-off's hold, which reads that
   copy (D-pb-3, D-pb-8); `brief-render` keeps the rendering and the archive's save.

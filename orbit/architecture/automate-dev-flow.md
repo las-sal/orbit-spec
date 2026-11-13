@@ -613,3 +613,11 @@ Exit criteria:
   `signoff` record and the holds (`program-brief`). G0 names no new exception: no reader takes the account yet (D-ca-2).
   The two explorations' pointers to `orbit/explore/change-account/` now point at the archived change, and brief-render's
   citation of the superseded D-ca-1 now names the requirement that owns that rule. No ruling, goal or stage changed.
+- 2026-11-13 — Architect session after `brief-render` was archived (merged as PR #42), the second of D-pb-9's three
+  changes: `orbit brief` renders a change's or a program's brief and the archive saves each change's brief before its
+  sync (the stage's second Shipped-as paragraph). No ratification was offered: the exploration `program-brief` is live,
+  and its change — the sign-off setting, the `signoff` record, the holds and the program brief's save (D-pb-10) — is
+  still owed. G0 names no new exception: the archive's save is a record it writes, shown nowhere, and the PR tail leaves
+  the saved copy out of its untracked-files line. The user's G5 read of the brief this archive saved (brief-render's
+  task 5.3) is pending. The program-brief exploration's pointers to `orbit/explore/brief-render/` now point at the
+  archived change. No ruling, goal or stage changed.

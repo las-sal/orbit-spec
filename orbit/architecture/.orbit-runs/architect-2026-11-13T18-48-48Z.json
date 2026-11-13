@@ -1,0 +1,43 @@
+{
+  "command": "architect",
+  "timestamp": "2026-11-13T18:48:48Z",
+  "change": null,
+  "doc": "automate-dev-flow",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Architect session after brief-render was archived (PR #42 merged): the stage program-brief keeps its two archived changes and the live exploration program-brief, so no ratification was offered. The status log records the archive, that G0 needs no new exception, and the pending G5 read of the saved brief; the program-brief exploration now points at the archived brief-render exploration.",
+  "stages_touched": [
+    "program-brief"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      {
+        "path": "orbit/explore/program-brief/explore.md",
+        "why": "the third change: D-pb-1, D-pb-3, D-pb-5, D-pb-8 and D-pb-10 (sign-off setting, signoff record, holds, program brief save), four live rules"
+      },
+      {
+        "path": "orbit/architecture/automate-dev-flow.md",
+        "why": "stage program-brief charter, exit criteria and its two Shipped-as paragraphs; R-adf-2 as amended"
+      },
+      {
+        "path": "orbit/specs/orbit-program-brief/spec.md",
+        "why": "the brief and its saved copy, which the sign-off will cite by name and hash"
+      },
+      {
+        "path": "orbit/changes/archive/2026-11-13-brief-render/.orbit-runs/brief/brief-2026-11-13T18-06-34Z.md",
+        "why": "the saved brief the user reads for brief-render task 5.3, an early read on G5"
+      },
+      {
+        "path": "CLAUDE.md",
+        "why": "repo orientation, disciplines, and the built-CLI stand-ins for commands the installed orbit lacks"
+      }
+    ],
+    "next_command": "/orbit:propose program-brief",
+    "model_hint": null,
+    "seam": "program-brief is settled (four live rules, no open questions); commit this session's doc and exploration edits before propose, since pr select skips on a dirty tree. The user's G5 read of brief-render's saved brief (its task 5.3) is still pending."
+  },
+  "next_recommended": "/orbit:propose program-brief"
+}
