@@ -27,7 +27,9 @@ change carries the per-change sign-off, and `program-signoff` the per-program on
   that no reading has listed, so `orbit decisions brief` renders it, the in-context system review owes it, the archive
   counts it unread while unread, and `orbit brief` lists it with the records no reader checked. Under every other value
   nothing changes.
-- **Docs**: `docs/customization.md`'s config-key table gains `signoff`.
+- **Docs**: `docs/customization.md`'s config-key table gains `signoff`; `docs/cli.md` gains `--hold` and the `signoff`
+  emit; `docs/concepts.md`'s Trail row gains `signoff/`; CLAUDE.md's note on running new commands through
+  `node bin/orbit.js` names them.
 
 At the defaults nothing the user sees or is asked changes: the archive's added step reads the hold, finds the setting
 off and says nothing, and the selection is unchanged (R-adf-12; G0 names no new exception).
@@ -50,19 +52,22 @@ None.
 - `orbit-archive-modifications`: the archive and bulk-archive hold for a per-change sign-off after the brief's save;
   the save's failure row stops the archive under `change`.
 - `orbit-conventions`: the chain's prompt table gains the archive's sign-off, a decision prompt.
+- `orbit-review`: the reading step's finding names the account's path when it reads an account, and `No records, no
+  reading` holds when the sign-off setting is not `change`.
 
 ## Impact
 
 - Code: `src/core/project-config.ts` (the setting's resolver), a new `src/core/signoff.ts` (the record's gate and the
   hold), `src/core/emit-composition.ts` (the `signoff` command; the selection's callers), `src/core/decision-records.ts`
-  (the selection and the account's rendering), `src/core/program-brief.ts` and `src/cli/program.ts` (`--hold`, the
-  unread section), the archive and bulk-archive templates, the shell completion registry.
-- Generated surface: the archive and bulk-archive skills change, so their hash pins move (R-adf-9); the chained-prompt
-  test (`Each chained prompt states its kind`) meets the new decision prompt.
+  (the selection and the account's rendering), `src/core/program-brief.ts`, `src/commands/brief.ts` and `src/cli/program.ts` (`--hold`, the
+  unread section), the archive, bulk-archive, review and address-reviews templates, the shell completion registry.
+- Generated surface: the archive, bulk-archive, review and address-reviews skills change, so their hash pins move
+  (R-adf-9); the chained-prompt test (`Each chained prompt states its kind`) meets the new decision prompt.
 - Tests that name `No reader takes the account yet` in their scenario tags are re-tagged to the new title.
-- Docs: `docs/customization.md`.
+- Docs: `docs/customization.md`, `docs/cli.md`, `docs/concepts.md`, CLAUDE.md.
 - No new dependency; no outward act.
 
 ## Size
 
-- capabilities: the per-change sign-off reaches five owners: the setting and record, the reader's selection (stated in two specs), the archive's hold, and one row in the chain's prompt table. This is already the smaller half of D-pb-11's split.
+- capabilities: the per-change sign-off reaches six owners: the setting and record, the reader's selection (stated in two specs), the archive's hold, one row in the chain's prompt table, and the reading step that now reads the account. This is already the smaller half of D-pb-11's split.
+- requirements: thirteen, one past the maximum: the proposal review added the reading step's requirement and the re-pointed save requirement; splitting the reader off again was passed over at the walk, as at D-pb-11.

@@ -1,0 +1,273 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-13T23:03:02Z",
+  "change": "program-brief",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/program-brief/.orbit-runs/review-proposal-2026-11-13T22-46-15Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-13T22-46-15Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 3,
+    "suggestion": 3
+  },
+  "pushback_verification": "All six verified against current state: review.ts's fold step and address-reviews.ts's reading-finding rule name decisions/ only; orbit-review's No records, no reading has no setting precondition; the archive table's hold-failure row precedes why off; the baseline and src/commands/brief.ts:38 say third change; none stale.",
+  "resolution_summary": {
+    "resolved": 6,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Under `change`, a reader finding against the account has no instructed fold or walk path",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/program-brief/specs/orbit-decision-records/spec.md",
+      "line": 134,
+      "outcome": "resolved",
+      "classification": "decision_required",
+      "remedy": "repair",
+      "action": "applied the user's decision A (declare the sixth capability and the thirteenth requirement); a reader finding against the account is folded with its account/ path and fixed by a replacement of the latest account, one per resolved finding, written in a walk that reopens tasks too (method settled by the AI); orbit-review's No records, no reading qualified to the setting not being change, with an account-alone scenario; task 3.4 edits the review fold step and the walk's reading-finding rule; Size declares capabilities 6 and requirements 13",
+      "ratified_via": "chat",
+      "resolution": "A — declare both breaches (capabilities 6, requirements 13); the account-finding route is a replacement of the latest account",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/program-brief/specs/orbit-review/spec.md",
+          "orbit/changes/program-brief/tasks.md",
+          "orbit/changes/program-brief/proposal.md",
+          "orbit/changes/program-brief/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "reaches five owners",
+          "the archive and bulk-archive skills change, so their hash pins move"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/program-brief/specs/orbit-decision-records/spec.md",
+            "text": "A reading finding against the account writes its own replacement"
+          },
+          {
+            "path": "orbit/changes/program-brief/specs/orbit-review/spec.md",
+            "text": "An account alone is read under `change`"
+          },
+          {
+            "path": "orbit/changes/program-brief/tasks.md",
+            "text": "The reading's fold and walk for an account"
+          },
+          {
+            "path": "orbit/changes/program-brief/design.md",
+            "text": "A reader's finding against the account is fixed by a replacement of the account"
+          }
+        ],
+        "searched": [
+          "No records, no reading",
+          "decisions/` folder",
+          "A reading finding",
+          "one replacement covers",
+          "five owners"
+        ],
+        "scope": [
+          "src/core/templates/workflows/review.ts",
+          "src/core/templates/workflows/address-reviews.ts",
+          "orbit/specs/orbit-review/spec.md"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "A failing hold command stops the archive under every setting, the defaults included",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/program-brief/specs/orbit-archive-modifications/spec.md",
+      "line": 12,
+      "outcome": "resolved",
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "action": "the hold reads the setting first and, under any value but change, reads no folder and reports why off with no copy and no sign-off, so a default archive reaches the hold-failure row only on a usage error; a scenario holds a default archive with an unlistable brief/ folder completing; design decision 4 says so",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/program-brief/specs/orbit-program-brief/spec.md",
+          "orbit/changes/program-brief/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/program-brief/specs/orbit-program-brief/spec.md",
+            "text": "The hold reads the setting FIRST"
+          },
+          {
+            "path": "orbit/changes/program-brief/specs/orbit-archive-modifications/spec.md",
+            "text": "A default archive is not stopped by an unreadable history"
+          },
+          {
+            "path": "orbit/changes/program-brief/design.md",
+            "text": "so a default archive cannot"
+          }
+        ],
+        "searched": [
+          "hold command exits non-zero",
+          "reads only the config"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "The program brief's save is still placed in stage program-brief's third change, which this change is and does not carry it",
+      "marker_source": "internal-review",
+      "file": "orbit/specs/orbit-program-brief/spec.md",
+      "line": 240,
+      "outcome": "resolved",
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "action": "added A change's brief is saved, never overwritten as MODIFIED in the change's orbit-program-brief delta, re-pointing the program brief's save to program-signoff (D-pb-15) with a scenario; task 2.5 fixes src/commands/brief.ts's usage error and its test; the baseline itself changes at archive",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/program-brief/specs/orbit-program-brief/spec.md",
+          "orbit/changes/program-brief/tasks.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/specs/orbit-program-brief/spec.md",
+            "reason": "baseline spec; add a delta to your current change's specs/<capability>/spec.md to capture this ripple"
+          }
+        ]
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/program-brief/specs/orbit-program-brief/spec.md",
+            "text": "Saving a program brief names the change that builds it"
+          },
+          {
+            "path": "orbit/changes/program-brief/tasks.md",
+            "text": "names `program-signoff` in place of"
+          }
+        ],
+        "searched": [
+          "third change",
+          "not built yet"
+        ],
+        "scope": [
+          "src/commands/brief.ts",
+          "test/core/program-brief.test.ts"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Proposal and design under-list what the tasks touch",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/program-brief/proposal.md",
+      "line": 63,
+      "outcome": "resolved",
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "action": "the proposal's Docs and Impact and the design's Touchpoints name docs/cli.md, docs/concepts.md, CLAUDE.md and src/commands/brief.ts, and the review and address-reviews templates",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/program-brief/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/program-brief/proposal.md",
+            "text": "the archive, bulk-archive, review and address-reviews templates"
+          },
+          {
+            "path": "orbit/changes/program-brief/design.md",
+            "text": "the `--hold` report and its usage errors"
+          }
+        ],
+        "searched": [
+          "docs/customization.md",
+          "src/commands/brief.ts"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The hold's `--json` keys are named only for `why` and `held`",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/program-brief/specs/orbit-program-brief/spec.md",
+      "line": 90,
+      "outcome": "resolved",
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "action": "the hold's --json object is named: change, setting, warning, copy {file, sha256} or null, signoff {file, answer} or null, why, held; copy and signoff are null with the setting off",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "prints them as one object with `held`"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/program-brief/specs/orbit-program-brief/spec.md",
+            "text": "prints one object with exactly these keys"
+          }
+        ],
+        "searched": [
+          "--json"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Two edited lines in the decision-records delta were not rewrapped",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/program-brief/specs/orbit-decision-records/spec.md",
+      "line": 50,
+      "outcome": "resolved",
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "action": "rewrapped the two paragraphs to the file width",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/program-brief/specs/orbit-decision-records/spec.md",
+            "text": "ran, stays selected until a reading lists it"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": []
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Walked the fresh half of the blind pair: six findings resolved. The user chose A at the one decision: the change declares a sixth capability (orbit-review) and a thirteenth requirement, and a reader's finding against the account is fixed by a replacement of the account. The hold reads the setting first, so a default archive cannot be stopped by it; the program brief's save points at program-signoff; the hold's JSON keys are named.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews program-brief",
+  "ripple_misses": 0
+}

@@ -17,3 +17,6 @@ base_fingerprints:
     The reading's selection is recorded at review and archive: sha256:15fd5ba2cb40f9fa489b3526fa1ade015f781652c2e8ea3d35d30645be75b8c8
   orbit-program-brief:
     A brief tells the user what a change or a program did, from the trail: sha256:6389a3bb84f51b9e4f925aab5cf55f90e6a0fb4554728beaca737c9bd60591a8
+    A change's brief is saved, never overwritten: sha256:a4f7bacfb96d0394fc8e6faeb3bc6232bd6d52a401e7bb4fc76f8fa5e1fedb61
+  orbit-review:
+    The reading step checks decision records in system review: sha256:c61d6d30e31fd3daa350ab2423cd833283e2c9a01050f05f969d44065e4f6ed8

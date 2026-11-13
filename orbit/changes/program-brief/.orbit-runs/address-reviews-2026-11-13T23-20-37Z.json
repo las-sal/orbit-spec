@@ -1,0 +1,124 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-13T23:20:37Z",
+  "change": "program-brief",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/program-brief/.orbit-runs/review-proposal-2026-11-13T23-06-43Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-13T23-06-43Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 3
+  },
+  "pushback_verification": "All three verified against current state: the usage-error sentence ended the Under change paragraph with no blank line; task 3.3 named neither added scenario; .openspec.yaml carried the two new stamps and appears in no earlier entry's edit record. None stale.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "SUGGESTION",
+      "title": "The hold's usage-error sentence now sits inside the paragraph that opens 'Under `change`'",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/program-brief/specs/orbit-program-brief/spec.md",
+      "line": 105,
+      "outcome": "resolved",
+      "remedy": "repair",
+      "classification": "trivial_fix",
+      "action": "a blank line before the usage-error sentence, which now opens 'Under every value', so it stands as its own paragraph after the damaged-history contract",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/program-brief/specs/orbit-program-brief/spec.md",
+            "text": "Under every value, `--hold` with a `<doc>`"
+          }
+        ],
+        "searched": [
+          "`--hold` with a `<doc>`"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Task 3.3's scenario list leaves out two scenarios the walk added",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/program-brief/tasks.md",
+      "line": 21,
+      "outcome": "resolved",
+      "remedy": "repair",
+      "classification": "trivial_fix",
+      "action": "task 3.3 names orbit-decision-records' A reading finding against the account writes its own replacement and orbit-program-brief's An account a reader checked is not listed as unchecked",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/program-brief/tasks.md",
+            "text": "and `An account a reader checked is not listed as unchecked`, each shown able to fail"
+          }
+        ],
+        "searched": [
+          "A reading finding against the account",
+          "An account a reader checked"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The change's metadata changed since the base pass, outside every walk entry's edit record",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/program-brief/.openspec.yaml",
+      "line": 1,
+      "outcome": "resolved",
+      "remedy": "repair",
+      "classification": "trivial_fix",
+      "action": "closed the record gap here: a walk log is never edited, so this entry lists .openspec.yaml in its scope; its two new base fingerprints (orbit-review's reading-step requirement and orbit-program-brief's save requirement) were checked present and need no edit",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/program-brief/.openspec.yaml",
+            "text": "The reading step checks decision records in system review"
+          }
+        ],
+        "searched": [
+          "base_fingerprints"
+        ],
+        "scope": [
+          "orbit/changes/program-brief/.openspec.yaml"
+        ],
+        "kept": []
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Walked the verification pass's three suggestions: the hold's usage-error sentence stands as its own paragraph under every value, task 3.3 names the two scenarios the earlier walk added, and the metadata's fingerprint stamps are recorded in this walk's scope.",
+  "iteration": 3,
+  "next_recommended": "/orbit:apply program-brief — user-invoked",
+  "ripple_misses": 0
+}

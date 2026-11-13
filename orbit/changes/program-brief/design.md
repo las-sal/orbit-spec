@@ -65,7 +65,8 @@ is not `change`, when `brief` is not the latest saved copy, and when a decline h
 
 **4. The hold is read by `orbit brief --change <name> --hold`, which renders no brief.** The archive needs the setting
 even when the save failed, so the hold reads only the config, `brief/` and `signoff/`, and answers when the brief cannot
-be rendered. Its `why` is the first of `off`, `no-copy`, `signed`, `unsigned` that matches; `signed` needs the latest
+be rendered. It reads the setting first and, under any value but `change`, no folder at all, so a default archive cannot
+be stopped by the state of the history (G0). Its `why` is the first of `off`, `no-copy`, `signed`, `unsigned` that matches; `signed` needs the latest
 sign-off's `sha256` to equal the latest copy's, so a re-save with the same text is not asked again (D-pb-14).
 *Alternatives:* a field of `orbit status --change --json` (a readout G0 keeps unchanged, and owned by another
 capability); folding it into `--save`'s output (no answer when the save fails, which is exactly when the archive must
@@ -85,8 +86,16 @@ projectRoot)` returns, under `change`, the decision records it returns today plu
 no in-context system review emit lists it. Every caller then agrees by construction — the brief, the owed list and the
 read-list check, the archive count, `orbit brief`'s unread section — which settles D-pb-5's open point. `buildDecisionBrief`
 renders an account as a record kind of its own (plain fields `built`, `seams`, `deviations`; no citations), and
-`orbit brief` names the account apart only when the selection did not take it. *Alternative:* a second selection for
+`orbit brief` names the account apart only when the setting is not `change` (under `change` a read account is not listed
+at all). *Alternative:* a second selection for
 accounts (the callers could disagree, which is the defect D-pb-5 named).
+
+**6a. A reader's finding against the account is fixed by a replacement of the account.** The fold step gives the finding
+the account's path under `account/`, and the walk writes a replacement of the latest account (`orbit emit account` with
+`replaces`) for each finding it resolves, as a decision record is replaced. A wording replacement states no new fact, so
+it is written in a walk that reopens tasks too, beside the rule that such a walk writes no account for its fact-changing
+fixes. `orbit-review`'s `No records, no reading` is qualified to the setting not being `change`. *Alternative:* recording
+such findings `deferred` (the account would reach the user's sign-off unclear, which is what D-pb-13 exists to prevent).
 
 **7. `No reader takes the account yet` is renamed, not removed.** The rule survives with a new condition, so a RENAMED +
 MODIFIED pair keeps its history and fingerprint (rehearsed through `buildUpdatedSpec` at propose: the merged spec holds
@@ -106,10 +115,15 @@ leaves alone).
 - `src/core/decision-records.ts` — `selectUnreadRecords` takes the account under `change`; the brief renders an account.
 - `src/core/program-brief.ts` — the unread section; the hold's report.
 - `src/cli/program.ts` — `--hold` on `orbit brief`; `signoff` on `orbit emit`.
+- `src/commands/brief.ts` — the `--hold` report and its usage errors; the `--save`-with-a-doc message.
 - `src/core/completions/command-registry.ts` — the new flag and emit command.
 - `src/core/templates/workflows/archive-change.ts` + `src/core/templates/workflows/bulk-archive-change.ts` — `SIGNOFF_HOLD_STEP` and its interpolation.
+- `src/core/templates/workflows/review.ts` — the reading fold step's path for an account.
+- `src/core/templates/workflows/address-reviews.ts` — the reading-finding rule and step 7 for an account.
 - `src/core/account.ts` — the account-folder helpers the selection reuses.
 - `docs/customization.md` — the `signoff` row of the config-key table.
+- `docs/cli.md` + `docs/concepts.md` — `--hold` and the `signoff` emit; `signoff/` in the Trail row.
+- `CLAUDE.md` — the note on running new commands through `node bin/orbit.js`.
 - `test/core/*.test.ts` — the setting, the gate, the hold, the selection, the bodies; re-tagged scenarios; moved pins.
 
 ## Mechanism → artifacts

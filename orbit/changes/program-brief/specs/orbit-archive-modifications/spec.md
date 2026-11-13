@@ -9,16 +9,15 @@ of this table that matches (D-pb-14 in this change's `explore.md`):
 
 | the save and the hold | the archive |
 |---|---|
-| the hold command exits non-zero | stops before the sync, naming the error as the command reported it; nothing is synced or moved |
+| the hold command exits non-zero | stops before the sync, naming the error as the command reported it; nothing is synced or moved. With the setting off the hold reads no history, so this row is reached only on a usage error, which an archive body and the `orbit` it was generated with never produce |
 | `why: "off"` | goes on, saying nothing about the hold; when the hold carries a warning, it states the warning in one line |
 | the save exited non-zero, or `why: "no-copy"` | stops before the sync, naming the save's failure as the command reported it, or that no copy is saved, and saying there is no copy to sign; nothing is synced or moved, and the change stays active |
 | `why: "signed"` | states in one line that the latest sign-off covers this copy's text, naming the record, and goes on |
-| `why: "unsigned"` | shows the latest saved copy whole, then asks the user (`AskUserQuestion`) to sign off or decline; writes the answer by `orbit emit signoff --change <name>` with the copy's filename as `brief`, `answer`, and, on a decline, the user's reason as `reason` (asked for when the answer did not give one); on `signed` it goes on; on `declined` it stops before the sync, says the change stays active and the user's reason is recorded, and asks nothing further: what happens next is the user's direction |
-| the `signoff` emit is refused | stops before the sync, naming the refusal |
+| `why: "unsigned"` | shows the latest saved copy whole, then asks the user (`AskUserQuestion`) to sign off or decline; writes the answer by `orbit emit signoff --change <name>` with the copy's filename as `brief`, `answer`, and, on a decline, the user's reason as `reason` (asked for when the answer did not give one); it acts on the answer only once that emit has written the record: on `signed` it goes on; on `declined` it stops before the sync, says the change stays active and the user's reason is recorded, and asks nothing further: what happens next is the user's direction. When the emit is refused or fails, whatever the answer, it stops before the sync, naming the refusal: a signature that is not recorded lifts no hold |
 
-The rows are the hold command's failure, the hold's four `why` values with the save's own failure joining `no-copy`
-(an earlier copy may still be saved, but it is not the text this archive would sync), and the write of the answer
-failing. An archive that stops at the hold writes no run summary, as an aborted archive writes none; the brief's saved
+The rows are the hold command's failure and the hold's four `why` values, the save's own failure joining `no-copy` (an
+earlier copy may still be saved, but it is not the text this archive would sync); the `unsigned` row carries the write of
+the answer, its success and its failure. An archive that stops at the hold writes no run summary, as an aborted archive writes none; the brief's saved
 copy and any sign-off stay in the active change's history.
 
 The question is a DECISION prompt (`orbit-conventions`' `A chain treats each prompt by its kind`): an archive the
@@ -40,6 +39,13 @@ holds each body carrying them.
 - **THEN** the hold reports `why: "off"`, no sign-off is asked for, nothing about the hold is shown, and the archive
   completes as it did before the step existed
 
+#### Scenario: A default archive is not stopped by an unreadable history
+
+- **WHEN** `/orbit:archive foo` runs with every setting at its default, and `foo`'s `.orbit-runs/brief/` folder exists and
+  cannot be listed
+- **THEN** the hold reports `why: "off"` without reading the folder, and the archive goes on exactly as it would without
+  the hold step
+
 #### Scenario: Under `change`, the archive shows the copy and asks
 
 - **WHEN** `/orbit:archive foo` runs under `signoff: change` and the hold reports `why: "unsigned"`
@@ -50,6 +56,11 @@ holds each body carrying them.
 - **WHEN** the user signs off at `foo`'s hold
 - **THEN** a `signoff` record saying `signed` and naming the copy is written, and the archive goes on to the sync
   assessment
+
+#### Scenario: A signature whose record is not written stops the archive
+
+- **WHEN** the user signs off at `foo`'s hold and `orbit emit signoff --change foo` is refused
+- **THEN** the archive stops before the sync naming the refusal, nothing is synced or moved, and `foo` stays active
 
 #### Scenario: A decline stops the archive and keeps the change active
 
@@ -110,7 +121,8 @@ command and the table, so an installed skill needs no spec to run the step; a te
 
 #### Scenario: A failed save is recorded, not shown, and the archive completes
 
-- **WHEN** the save step's `orbit brief --change foo --save` exits non-zero naming an unreadable record
+- **WHEN** with the sign-off setting not `change`, the save step's `orbit brief --change foo --save` exits non-zero naming
+  an unreadable record
 - **THEN** the archive syncs, moves and writes its run summary, whose `warnings` carries one entry naming the failure,
   and nothing about the brief is shown
 

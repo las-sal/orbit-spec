@@ -85,11 +85,25 @@ that matches:
 | its latest sign-off says `signed`, and that record's `sha256` equals the latest saved copy's | `signed` | no |
 | any other state: no sign-off, a `declined` latest one, or a signed one over different text | `unsigned` | yes |
 
-The first two rows decide by the setting and the folder; the last two split a change with a saved copy by whether a
-signature covers that copy's exact text, so a copy saved again with the same text is not asked again, and a signature
+The hold reads the setting FIRST: under any value but `change` it reads no folder of the change's history and reports
+`why: "off"` with no copy and no sign-off, so with the setting off it fails only on a usage error, never on the state of
+the history. The first two rows decide by the setting and the folder; the last two split a change with a saved copy by
+whether a signature covers that copy's exact text, so a copy saved again with the same text is not asked again, and a signature
 over an earlier text does not lift the hold. The command prints one line naming `why`, the copy and the latest sign-off;
-`--json` prints them as one object with `held`. It renders no brief, so it answers when the brief cannot be rendered.
-`--hold` with a `<doc>` (the program's sign-off is `program-signoff`'s), with `--save`, or for a change that is not
+`--json` prints one object with exactly these keys: `change`; `setting`, `off` or `change`; `warning`, the warning or
+`null`; `copy`, `{file, sha256}` for the latest saved copy or `null`; `signoff`, `{file, answer}` for the latest sign-off
+or `null`; `why`; and `held`. With the setting off, `copy` and `signoff` are `null`, since no folder is read. It renders
+no brief, so it answers when the brief cannot be rendered.
+
+Under `change` the hold reads the two folders by filename: a saved copy is a file named `brief-<TS>.md` in `brief/`, a
+sign-off a file named `signoff-<TS>.json` in `signoff/`, the latest of each the one with the greatest token, and any
+other name is ignored; an absent folder reads as empty. A folder that exists and cannot be listed, a latest saved copy
+that cannot be read, or a latest sign-off that cannot be read, is not valid JSON, or has a shape the write gate would
+refuse (`orbit-emit-composition`'s `The write gate checks the sign-off record`) makes the command exit non-zero naming
+it and print nothing to standard output. It never falls back to an earlier copy or an earlier sign-off: a damaged
+latest record would otherwise let an older signature lift a hold that a later decline keeps.
+
+Under every value, `--hold` with a `<doc>` (the program's sign-off is `program-signoff`'s), with `--save`, or for a change that is not
 active is a usage error: the command exits non-zero, names the reason and prints nothing to standard output.
 
 #### Scenario: A signature lifts the hold
@@ -118,6 +132,18 @@ active is a usage error: the command exits non-zero, names the reason and prints
 
 - **WHEN** under `signoff: change` change `foo`'s history holds no `brief/` folder
 - **THEN** the hold reports `why: "no-copy"` and `held: true`
+
+#### Scenario: A damaged latest sign-off fails the hold, never reviving an earlier one
+
+- **WHEN** under `signoff: change` change `foo`'s `signoff/` holds `signoff-A.json`, a `signed` record over the latest
+  copy, and a later `signoff-B.json` that is not valid JSON
+- **THEN** `orbit brief --change foo --hold` exits non-zero naming `signoff-B.json`, prints nothing to standard output,
+  and does not report `foo` signed
+
+#### Scenario: An unreadable history folder fails the hold under `change`
+
+- **WHEN** under `signoff: change` change `foo`'s `.orbit-runs/brief/` folder exists and cannot be listed
+- **THEN** the hold exits non-zero naming the folder and prints nothing to standard output
 
 #### Scenario: Today's readers do not see the sign-offs
 
@@ -158,7 +184,7 @@ A change brief carries these sections, in this order, each from the source named
 | stops | the latest stop record of each chain: its `about` and `question`, with the `answer` and `effect` of the latest resolution naming any record of its chain, or marked open |
 | tripwires | until stage tripwires of `automate-dev-flow` ships, one line saying tripwires are not installed, never that none fired |
 | deviations from the charter | the latest account's `deviations`, beside the signals orbit computes: the archive record's `warnings` and the `accepted` claims of its `readiness` judgement, as `A brief says only what the archive recorded` states, and each dimension a `## Size` section of the change's `proposal.md` declares breached |
-| records no reader checked | the records the selection returns (`orbit-decision-records`' `The reading step's brief is rendered by orbit`) when the brief is rendered, by filename, as `A brief says only what the archive recorded` states; the account, when one exists and the selection does not take it (under every sign-off setting but `change`, `orbit-decision-records`' `The reader takes the account only when sign-off is per change`), named apart as checked by no reader; under `change` an unread latest account is among the records the selection returns |
+| records no reader checked | the records the selection returns (`orbit-decision-records`' `The reading step's brief is rendered by orbit`) when the brief is rendered, by filename, as `A brief says only what the archive recorded` states; under every sign-off setting but `change`, the account, when one exists, named apart as checked by no reader; under `change` the latest account is among the records the selection returns while no reading has listed it, and is not named once a reading has (`orbit-decision-records`' `The reader takes the account only when sign-off is per change`) |
 
 The sections are the stage charter's list in `orbit/architecture/automate-dev-flow.md`, plus the records no reader
 checked that `orbit-review`'s named limit on the reading step assigns to the brief; a program brief carries, for the
@@ -226,3 +252,68 @@ is shown as its spec names it, under a heading that says it is the spec's title,
   reading has listed, and no decision record
 - **THEN** the records-no-reader-checked section lists `account-A` among the records the selection returns, and does not
   name it apart
+
+#### Scenario: An account a reader checked is not listed as unchecked
+
+- **WHEN** `orbit brief --change foo` runs under `signoff: change` and an in-context system review emit lists `foo`'s
+  latest account, `account-A`, in `decision_records_read`
+- **THEN** the records-no-reader-checked section names `account-A` neither among the selection's records nor apart
+
+### Requirement: A change's brief is saved, never overwritten
+
+`orbit brief --change <name> --save` SHALL save an ACTIVE change's brief as
+`orbit/changes/<name>/.orbit-runs/brief/brief-<TS>.md`, `<TS>` the trail's UTC token (`YYYY-MM-DDTHH-MM-SSZ`) drawn
+unique within `brief/` by the same collision bump the decision records' and the account's folders use. The file holds
+exactly the bytes `orbit brief --change <name>` prints, its final newline included, so the SHA-256 of that output equals
+the file's. The command prints two lines and not the brief: the saved file's path, then `sha256 <hex>`, the SHA-256 of
+the file's bytes in lower-case hex; with `--json`, the brief's data with a `saved` object carrying `path` and `sha256`.
+The save is the archive's step (`orbit-archive-modifications`' `The archive saves the change's brief before the sync`),
+and may be run by hand.
+
+The save never overwrites: the file is published by the same exclusive link the decision records use, so a writer that
+races another to the same name is refused naming it, and nothing is written. It writes nothing when the brief cannot be
+rendered whole, and it refuses an archived change, since orbit writes no record to an archived change's history. A
+change's saved briefs are kept in time order; the latest is the change's brief. The `brief/` folder moves with the change
+when it is archived, as the rest of its history does, and no reader of run summaries reads it: `orbit status`, the
+reviewed gates and the report render read only the files directly in `.orbit-runs/`.
+
+Saving the PROGRAM brief, at the architect session that finds a program finished, is stage program-brief's fourth
+change, `program-signoff` (D-pb-15 in `program-brief`'s `explore.md`; D-br-5 in `brief-render`'s first moved it out of
+`brief-render`); `--save` with a doc and no `--change` is a usage error saying so.
+
+#### Scenario: Saving a program brief names the change that builds it
+
+- **WHEN** `orbit brief prog --save` runs
+- **THEN** the command exits non-zero saying that saving a program brief is not built yet and is `program-signoff`'s, and
+  prints nothing to standard output
+
+#### Scenario: A saved brief is the printed brief, with its hash
+
+- **WHEN** `orbit brief --change foo --save` runs on active change `foo`
+- **THEN** `orbit/changes/foo/.orbit-runs/brief/brief-<TS>.md` holds exactly the bytes `orbit brief --change foo` prints,
+  the command prints that path and then `sha256 <hex>`, and `<hex>` is the SHA-256 of the file
+
+#### Scenario: A second save in the same second takes the next token
+
+- **WHEN** two saves of `foo`'s brief run within one second
+- **THEN** the second draws the next token, both files exist, and neither is overwritten
+
+#### Scenario: A racing writer is refused, not overwritten
+
+- **WHEN** another writer publishes `brief-<TS>.md` after a save drew `<TS>` and before it publishes
+- **THEN** the save exits non-zero naming the file, and the existing file is unchanged
+
+#### Scenario: An archived change's brief is not saved
+
+- **WHEN** `orbit brief --change foo --save` runs and `foo` exists only in the archive
+- **THEN** the command exits non-zero saying orbit writes nothing to an archived change's history, and no file is written
+
+#### Scenario: A brief that cannot be rendered saves nothing
+
+- **WHEN** `orbit brief --change foo --save` runs and a record in `foo`'s `decisions/` folder is not valid JSON
+- **THEN** the command exits non-zero naming the record, and no file is written under `brief/`
+
+#### Scenario: Today's readers do not see saved briefs
+
+- **WHEN** a change's history holds a `brief/` folder
+- **THEN** `orbit status`, the reviewed gates and the report render read the change exactly as they would without it
