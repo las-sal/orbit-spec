@@ -1,0 +1,141 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-13T17:31:56Z",
+  "change": "brief-render",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 3,
+      "suggestion": 2
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    }
+  },
+  "findings": [
+    {
+      "pass": "0",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "src/core/program-brief.ts",
+      "line": 325,
+      "title": "Archive records of earlier generations that do record their sync are refused, so four archived changes and a completed program can never be briefed",
+      "recommendation": "readArchive refuses any archive record without a boolean sync_specs.ran. In this repository four archived changes carry such records and every one of them records its sync in an earlier shape: 2026-07-17-d2-architect has specs_synced: true with a sync_summary, 2026-07-21-d3-orientation has sync.synced: true, and 2026-06-11-relocate-modified-upstream-workflows and 2026-07-06-c1-engine-gates have sync_specs with capabilities_updated and counts but no ran. The baseline's own archive-summary scenario (orbit-archive-modifications, the run summary's sync_specs: capabilities updated and counts) never names ran, and the archive body says readers keep accepting prior generations. So the refusal is permanent: orbit writes nothing to an archived history and records are never edited. orbit brief d-arc-arbitered-flow and the four change briefs can never render, although design.md's Risks expect an earlier program's brief to render, mostly as no-account lines. The spec's table also says its rows are every state an archived history can show, which this repository disproves. ledger-2026-11-13T17-19-29Z.json and the account's deviations describe these records as stating neither outcome, which is untrue for d2-architect and d3-orientation. Choose how the brief treats them, then correct the ledger entry and the account by replacement.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Add a fourth row to `A brief says only what the archive recorded`: an archive record that does not state the sync as sync_specs.ran renders the delta's titles with a line saying the record does not state the sync in the form orbit reads, plus its warnings when they are a list of strings. The brief renders and infers nothing. Add a test with a ran-less record, and replace the ledger entry and the account."
+        },
+        {
+          "label": "B",
+          "body": "Read the earlier shapes explicitly (specs_synced boolean, sync.synced boolean) as ran, and use option A's row for sync_specs without ran. Name each shape in the spec as a prior generation the brief accepts, and test each one."
+        },
+        {
+          "label": "C",
+          "body": "Keep the refusal, but write it into the spec as a named limit: such a change's brief, and its program's brief, is refused for good. Remove the table's claim that it covers every state, and correct the ledger entry's and the account's wording by replacement."
+        }
+      ],
+      "reproduction": "From the repository root, at 989ca694: node bin/orbit.js brief d-arc-arbitered-flow exits 1 with 'archive record orbit/changes/archive/2026-07-17-d2-architect/.orbit-runs/archive-2026-07-17T15-36-26Z.json does not say whether the sync ran'. That record carries specs_synced: true. node bin/orbit.js brief --change c1-engine-gates (and relocate-modified-upstream-workflows, d2-architect, d3-orientation) also exits 1. Expected: a brief that says what the record says."
+    },
+    {
+      "pass": "0",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "src/core/program-brief.ts",
+      "line": 386,
+      "title": "An invalid delta spec renders as a capability with no requirements instead of failing the brief",
+      "recommendation": "`orbit brief` renders a brief read-only says that when a delta spec cannot be read or is not valid, the brief fails, naming the spec. readCapabilities fails only on a read error. parseDeltaSpec returns empty lists for a spec whose operation headings are wrong, so the brief lists the capability under the requirements section with no titles and exits 0. A specs/<cap>/ folder without spec.md is skipped silently. The test at test/core/program-brief.test.ts:641 is titled 'an account, a delta spec or a record the write gate would refuse fails the brief too' but tests no delta spec. Either refuse such a spec, naming it, and add the missing test case, or narrow the spec sentence to 'cannot be read' and rename the test.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Refuse a delta spec that yields no delta operation (or a capability folder with no spec.md), naming it, and add that case to the test at test/core/program-brief.test.ts:641."
+        },
+        {
+          "label": "B",
+          "body": "Narrow the spec's failure list to a delta spec that cannot be read, and retitle the test to match what it checks."
+        }
+      ],
+      "reproduction": "In a scratch project, active change foo with specs/cap/spec.md whose heading reads '## ADDED Requirement' (singular) above one requirement: node bin/orbit.js brief --change foo exits 0 and lists '- `cap`' with no requirement under it. node bin/orbit.js validate foo rejects the same spec."
+    },
+    {
+      "pass": "0",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "src/core/program-brief.ts",
+      "line": 500,
+      "title": "Archived changes within a stage are ordered by archive date and then by name, not in the order they were archived",
+      "recommendation": "`A brief tells the user what a change or a program did, from the trail` says archived changes within a stage come in the order they were archived. The code sorts on the dated directory name, so two changes archived on the same day come out in name order. This happens in the live program: under stage seam-chaining of automate-dev-flow, replacement-liveness (archive record 2026-11-10T20-36-20Z) comes before seam-chaining (2026-11-10T15-32-55Z), which reverses the stage's story. design.md D9 says 'by archive date', so the design and the spec already disagree. Order by the archive record's token, falling back to the directory date when there is no record, and test two changes archived the same day. Or narrow the spec to 'by archive date, then by name'.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Order archived changes by their latest archive record's token (the directory date when there is no record), and add a test with two same-day archives in reverse name order."
+        },
+        {
+          "label": "B",
+          "body": "Narrow the spec sentence to match design D9: by archive date, then by name."
+        }
+      ],
+      "reproduction": "node bin/orbit.js brief automate-dev-flow | grep -n '^### Change' prints replacement-liveness (line 425) before seam-chaining (line 497). Their archive records are archive-2026-11-10T20-36-20Z.json and archive-2026-11-10T15-32-55Z.json."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "src/core/program-brief.ts",
+      "line": 183,
+      "title": "Unreadable change metadata silently drops a change from its program brief",
+      "recommendation": "readMeta treats a .openspec.yaml it cannot read or parse as citing no doc. A citing change with broken metadata therefore leaves its program brief without a word, and its change brief says it cites no architecture doc. The spec's failure list does not name the metadata, so this is not a divergence. Still, it is the one source the brief reads whose failure leaves a partial brief. Consider refusing a metadata file that is present but cannot be parsed, naming it, as every other source is refused."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "src/core/program-brief.ts",
+      "line": 531,
+      "title": "A program brief checks every doc's records on the shared architecture trail, so one bad record of another doc refuses it",
+      "recommendation": "buildProgramBrief runs readValidDecisions over the whole orbit/architecture/.orbit-runs/decisions/ folder before it filters by doc. A record of another doc that cannot be read or fails the shape check therefore refuses this doc's program brief, though this brief never shows that record. Consider validating only the records whose doc is this doc. Chain links that cross docs are not a concern for that filter, since a replacement belongs to the same work."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "What was probed: the whole commit range from ef17e429 to HEAD, with the trail left out. The new module and the command were read line by line. The tail exclusion was checked against the porcelain call (--untracked-files=all, so a wholly untracked brief/ folder is listed file by file and the pattern matches). The archive and bulk-archive bodies' save step was read, and so was the publish generalisation. Two parts of this check were done by hand: Pass 0 ran in this context (task arithmetic, validate --strict, and every delta scenario found tagged in the tests or the scenario ledger), and the full suite was run after a rebuild (green). orbit brief was then run against this repository's real trail: this change, change-account, every architecture doc, and the archived changes whose records predate sync_specs.ran.\n\nThe pattern: the brief is solid on the live program and on everything recorded since the archive emit settled. Its edges are where the trail is older or messier than the fixtures: archive records of earlier generations, same-day archives, and a delta spec that parses to nothing. Each of these departs from the whole-or-absent and order rules the spec states. The prior-generation refusal matters most, because it is permanent for a completed program, and the ledger entry recording that call rests on a premise the records themselves contradict.\n\nPasses 4 and 5 were skipped because orbit/lenses/ is absent (no perspectives or critical paths are defined). Pass 6 was skipped because this dispatched worker does not invoke audit-drift, which writes its own emit into the trail. A targeted check of docs/cli.md, docs/concepts.md and CLAUDE.md against the code found no residue. The reading step is the in-context pass's, not this one's.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3"
+  ],
+  "passes_skipped": [
+    "4",
+    "5",
+    "6"
+  ],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The brief works on the live program and on this change's own trail, the save and the tail exclusion behave as specified, and the bodies place the save before the sync. The archive can go ahead once the walk settles the edges. The first edge is a scope call for the user: whether a completed program whose archive records predate today's sync field gets a brief at all. As built it never can, and the ledger entry recording that choice misdescribes the records it is about. The other two edges, the delta spec that parses to nothing and the order of same-day archives, are small code or spec repairs. None of them touches the save path the archive depends on."
+  },
+  "final_assessment": "0 critical, 3 warning, 2 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews brief-render"
+}
