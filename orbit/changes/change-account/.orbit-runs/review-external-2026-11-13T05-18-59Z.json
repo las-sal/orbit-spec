@@ -1,0 +1,14 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-11-13T05:18:59Z",
+  "change": "change-account",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "prompt_path": "orbit/changes/change-account/.orbit-runs/external-prompt-system-2026-11-13T05-18-30Z.md",
+  "target": "codex",
+  "final_assessment": "External review prompt packaged for change-account (iter 1, mode system) as the external half of a launched blind pair; awaiting findings from codex.",
+  "pair": true,
+  "awaiting_findings": true,
+  "next_recommended": "Paste orbit/changes/change-account/.orbit-runs/external-prompt-system-2026-11-13T05-18-30Z.md into the target AI, and save the response as orbit/changes/change-account/.orbit-runs/external-system-<TS>.md"
+}
