@@ -14,7 +14,7 @@ something, which G0 allows (R-adf-9).
 
 ## Mechanism
 
-### D-ca-3 — each change carries one account, written when apply is complete
+### D-ca-4 — each change carries one account, written when apply is complete
 Domain: each lifecycle step that runs on a change, as it touches the account
 | member | covered by |
 |---|---|
@@ -23,7 +23,7 @@ Domain: each lifecycle step that runs on a change, as it touches the account
 | an apply session that ends with apply complete, on a change with no account | writes the account (`built`, `seams`, `deviations`, with `defines` and `detail` as the other records have them) before its run summary, or before its completion readout when it writes none — whether it checked the last task, resumed after a session that ended before writing, or arrived on a change completed before accounts existed |
 | an apply session that ends with apply complete, on a change that has an account (a walk reopened tasks) | writes a replacement of the latest account when the work done since that account was written changed what it says |
 | the system review | reads nothing new by this change (D-ca-2) |
-| a walk of an active change that has an account, when a resolved finding changes what was built, a seam, or a deviation | writes a replacement of the latest account; a finding resolved by reopening tasks writes none, the apply session that completes them replaces it |
+| a walk of an active change that has an account, when a resolved finding changes what was built, a seam, or a deviation | writes a replacement of the latest account; a walk that resolves any finding by reopening tasks writes none, not even for its other fixes: the apply session that completes them replaces it, covering those fixes too |
 | a walk of an archived change | no account: orbit writes no record to an archived change's trail |
 | archive | writes no account; the archived change keeps the latest one |
 | a change abandoned before apply is complete | no account; a brief over it says none was written (brief-render) |
@@ -80,6 +80,15 @@ Moves:
   done since that account was written changed what it says; a walk of an active change replaces it when a resolved
   finding changes what was built, a seam or a deviation, unless the finding was resolved by reopening tasks; a walk of an
   archived change writes none. The fields are D-ca-1's, named at propose.
+  Kind: rule
+  Disposition: superseded D-ca-4
+- **2026-11-13 — D-ca-4: each change carries one account, written when apply is complete** Supersedes D-ca-3 (the
+  system walk of 2026-11-13): D-ca-3's rule, except that the walk's exception is the walk, not the finding — a walk of
+  an active change replaces the account when a resolved finding changes what was built, a seam or a deviation, unless
+  the walk resolved any finding by reopening tasks; then it writes none, not even for its other fixes, and the apply
+  session that completes the reopened tasks replaces the account once, covering them. Read per finding, D-ca-3 had a
+  walk that both fixed and reopened replace the account at once and again at completion, the first describing
+  half-done work, against its own "replaces its latest account once".
   Kind: rule
 
 ## Open questions

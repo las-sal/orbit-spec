@@ -3,7 +3,7 @@
 Stage program-brief of `automate-dev-flow` lands as three changes (D-pb-7, D-pb-9 in
 `orbit/explore/program-brief/explore.md`); this is the first. The brief the second change renders needs three parts no
 record holds — what was built, new seams, deviations from the charter — so the AI writes them once per change, as the
-account (see `explore.md`, D-ca-3, which supersedes D-ca-1). The third change adds the sign-off setting, under which
+account (see `explore.md`, D-ca-4, which supersedes D-ca-3 and D-ca-1 before it). The third change adds the sign-off setting, under which
 a reader takes the account (D-pb-5); until then none does (D-ca-2).
 
 Today a change's history (`.orbit-runs/`) holds run summaries directly, and decision records in its `decisions/` child,
@@ -62,7 +62,7 @@ function, `selectUnreadRecords`, which reads only `decisions/`.
    account (the previous one ended before writing, or the change predates accounts) writes it. A reopened change
    replaces its account once, in the session that completes apply again (the walk's choice A, ratified by the user),
    when the work done since the latest account changed what it says — whichever session did that work — and the walk
-   that reopened the tasks writes none, so the account always describes finished work. Alternative: replace in any session whose work changes the account
+   that reopened the tasks writes none, not even for its other fixes (D-ca-4), so the account always describes finished work. Alternative: replace in any session whose work changes the account
    (B) — several replacements per reopening, some describing half-done work, and two rules instead of one.
 
 ## Alternatives considered
@@ -119,5 +119,5 @@ the proposing AI's reading of the file; no engine record
 
 | rule | closure | owner's state | destination |
 |---|---|---|---|
-| D-ca-3 | DERIVED | live rule | `orbit-decision-records`' `Each change carries one account, written when apply is complete` — a normative TABLE (the lifecycle steps), its justification the closing sentence naming the schema's phases |
+| D-ca-4 | DERIVED | live rule | `orbit-decision-records`' `Each change carries one account, written when apply is complete` — a normative TABLE (the lifecycle steps), its justification the closing sentence naming the schema's phases |
 | D-ca-2 | SOURCED | live rule | `orbit-decision-records`' `No reader takes the account yet` — a normative TABLE (the selection's readers), its source the sentence naming the one selection function and the `decisions/` folder it reads |

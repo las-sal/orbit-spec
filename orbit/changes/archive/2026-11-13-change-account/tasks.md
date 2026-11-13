@@ -14,7 +14,7 @@
 ## 3. The bodies
 
 - [x] 3.1 Add `ACCOUNT_STEP` to `src/core/disciplines.ts`, composed from the account's field list: an apply session that ends with apply complete (the apply gate passing, declared `(User-validation` handoffs included) writes the account when none exists, or replaces the latest when the work done since it was written changed what it says, before its run summary or its `all_done` completion readout; a session that ends with apply not complete writes none; the three fields in plain language, "none" in words; the `orbit emit account` invocation with `replaces`
-- [x] 3.2 Add `ACCOUNT_WALK_STEP`, composed the same way: a walk of an active change that has an account replaces the latest when a resolved finding changes what was built, a seam or a deviation, and writes none when it resolved the finding by reopening tasks; a walk of an archived change writes none; the fields and the invocation with `replaces`
+- [x] 3.2 Add `ACCOUNT_WALK_STEP`, composed the same way: a walk of an active change that has an account replaces the latest when a resolved finding changes what was built, a seam or a deviation, and writes none when it resolved any finding by reopening tasks, not even for its other fixes; a walk of an archived change writes none; the fields and the invocation with `replaces`
 - [x] 3.3 Carry `ACCOUNT_STEP` in the apply body (before the run-summary emit and in the `all_done` branch) and `ACCOUNT_WALK_STEP` in the address-reviews walk
 - [x] 3.4 A test holds both bodies carrying their step with every field and the invocation, and one that submits each step's example payload through `orbit emit account`
 - [x] 3.5 Re-record the skill hash pins that move (apply, and address-reviews if pinned), each recorded here

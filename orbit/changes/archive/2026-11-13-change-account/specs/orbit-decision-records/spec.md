@@ -33,7 +33,7 @@ a change's lifecycle touches the account by this table:
 | an apply session that ends with apply complete, on a change with no account | writes the account, before its run summary, or before its completion readout when it writes no run summary — whether it checked the last task, resumed after a session that ended before writing, or arrived on a change completed before accounts existed |
 | an apply session that ends with apply complete, on a change that has an account (a walk reopened tasks) | when the work done since the latest account was written changed what it says, writes a replacement of it, at the same point; otherwise none |
 | the system review | none: no reader takes the account (`No reader takes the account yet`) |
-| a walk of an active change that has an account, when a resolved finding changes what was built, a seam, or a deviation | writes a replacement of the latest account; a walk that resolves a finding by reopening tasks writes none: the apply session that completes them replaces it |
+| a walk of an active change that has an account, when a resolved finding changes what was built, a seam, or a deviation | writes a replacement of the latest account; a walk that resolves any finding by reopening tasks writes none, not even for its other fixes: the apply session that completes them replaces it, covering those fixes too |
 | a walk of an archived change | none: orbit writes no record to an archived change's trail, as for decision records |
 | archive | none: the archived change keeps its latest account |
 

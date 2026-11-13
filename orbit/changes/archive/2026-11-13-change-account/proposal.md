@@ -4,7 +4,7 @@ The program brief (stage program-brief of `automate-dev-flow`, R-adf-7, G5) must
 new places the user is asked something, and where the work left its stage's plan, and none of orbit's records holds
 those three. This change, the first of the stage's three (D-pb-7 and D-pb-9 in
 `orbit/explore/program-brief/explore.md`), adds the record that does: each change's ACCOUNT, written by the AI in plain
-language once apply is complete (see `explore.md`, D-ca-3). No reader takes the account until the stage's third change
+language once apply is complete (see `explore.md`, D-ca-4). No reader takes the account until the stage's third change
 adds the sign-off setting (D-ca-2), so with this change alone nothing the user sees or is asked changes.
 
 ## What Changes
@@ -21,8 +21,8 @@ adds the sign-off setting (D-ca-2), so with this change alone nothing the user s
 - The apply body writes the account in a session that ends with apply complete (the apply gate passing, declared
   user-validation handoffs included) when none exists, and replaces the latest one when the work done since it was
   written changed what it says; the address-reviews body replaces it when a resolved finding of a walk of an active
-  change changes what was built, a seam, or a deviation, except a finding resolved by reopening tasks, which waits for
-  the apply session that completes them.
+  change changes what was built, a seam, or a deviation, except a walk that resolves any finding by reopening tasks,
+  which writes none, not even for its other fixes: the apply session that completes them replaces it.
 - `docs/cli.md` and the `emit` command's description name the new command.
 - `orbit-decision-records`' plain-language rule binds the account's three fields, which reach the user through the
   program brief (the stage's second change).

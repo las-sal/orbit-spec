@@ -1,0 +1,30 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-13T14:28:03Z",
+  "change": "change-account",
+  "model": "claude-opus-5-5",
+  "area": "permissions-and-sandboxing",
+  "decided": "orbit writes a change's account only into the change's own account folder, and refuses when that folder is a link to somewhere else, inside or outside the change's trail. It checks this twice: once when the folder is made, and once just before writing.",
+  "alternatives": [
+    "write to the folder's path as given, following any link"
+  ],
+  "why": "The decision records' folder already has this protection; without it the account folder would be the one place a link could send orbit's writes outside the change's trail.",
+  "relies_on": [
+    {
+      "kind": "requirement",
+      "capability": "orbit-emit-composition",
+      "title": "Engine-owned spine composition and filename discipline"
+    }
+  ],
+  "defines": [
+    {
+      "term": "account",
+      "definition": "a change's plain-language record of what it built, each new place the user is asked something or where a setting now changes what happens, and where the work left its stage's charter"
+    },
+    {
+      "term": "account folder",
+      "definition": "the folder in a change's trail that holds the change's account"
+    }
+  ],
+  "replaces": "ledger-2026-11-13T14-28-02Z.json"
+}
