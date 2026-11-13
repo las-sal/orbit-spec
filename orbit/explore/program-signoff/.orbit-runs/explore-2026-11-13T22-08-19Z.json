@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-11-13T22:08:19Z",
+  "change": "program-signoff",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Opened from the program-brief exploration's division (D-pb-15, the user's choice of name and of the AI's plan), citing stage program-brief of automate-dev-flow. Back-filled with the carried rules: D-ps-1 (the sign-off setting's program value, from D-pb-1 and D-pb-5), D-ps-2 (the program hold, D-pb-3 whole), D-ps-3 (the program brief's save at the architect session, from D-pb-10 and D-br-3's program row), and D-ps-4 (scope). One open question with a standing recommendation: where the saved program brief and its signoff record are kept. Proposed after program-brief.",
+  "decisions_captured": 4,
+  "open_questions_count": 1,
+  "open_questions_with_recommendation": "1 of 1",
+  "rules_total": 3,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose program-signoff — 3 live rules accounted; formalize when you are ready (or /orbit:explore program-signoff to keep refining)"
+}

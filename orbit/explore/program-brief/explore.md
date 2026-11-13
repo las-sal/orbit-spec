@@ -16,8 +16,11 @@ What this exploration must settle: what the brief's unit and sources are, which 
 the trail and which need authored prose, where the brief is written and when, what the sign-off setting is and what
 it holds under each regime, and what a sign-off leaves on the record.
 
-Since 2026-11-12 (D-pb-7, D-pb-9) this exploration carries the THIRD of the stage's three changes — the sign-off
-setting, the `signoff` record and the holds — and keeps the name `program-brief`. The first two opened as their own
+Since 2026-11-13 (D-pb-11, D-pb-15) this exploration carries the PER-CHANGE sign-off — the setting's absent, `off` and
+`change` values, the reader taking the account under `change`, the `signoff` record and the archive's hold — and keeps
+the name `program-brief`; the per-program sign-off — the `program` value, the program brief's save at the architect
+session and the program hold — is `orbit/explore/program-signoff/`, proposed after it. Before that (D-pb-7, D-pb-9) it
+carried the third of the stage's three changes whole. The first two opened as their own
 explorations, `orbit/explore/change-account/` and `orbit/explore/brief-render/`, carrying the rules D-pb-4 and D-pb-6
 held here; both were archived on 2026-11-13, their explorations now at
 `orbit/changes/archive/2026-11-13-change-account/explore.md` and `orbit/changes/archive/2026-11-13-brief-render/explore.md`. (R-adf-2 has since been amended to match D-pb-1, at the architect session of 2026-11-12.)
@@ -152,6 +155,69 @@ Moves:
 - CONSUME: applied — the archive hold and the architect hold read the latest `signoff` record; the driver will later
 - INVOKE: applied — on the user's answer at a hold
 
+### D-pb-12 — this change ships the sign-off setting's absent, `off` and `change` values
+Domain: each value the sign-off setting can hold in this change, against each `pr:` mode
+| member | covered by |
+|---|---|
+| absent or `off`, any `pr:` mode | nothing waits on a sign-off — today's behaviour (R-adf-1); the archive still saves the brief (R-adf-7) |
+| any other value, `program` included until `program-signoff` ships, or a shape that is not one word, any `pr:` mode | read as absent, with one warning naming the value, as an unrecognized `pr:` value is read |
+| `change`, `pr: never` | the change's archive waits for a sign-off over that change's saved brief (D-pb-14) |
+| `change`, `pr: per-proposal` | the archive waits, and with it the per-change READY flip the archive tail performs |
+| `change`, `pr: per-architecture` | the archive waits; the program PR is untouched by stage archives already |
+Closure: DERIVED — the values this change reads (absent or `off`, `change`, and every other value) crossed with `PR_MODES`' three (`src/core/project-config.ts`), every cell listed
+Moves:
+- READ: applied — D-pb-1's rows for these values; `resolvePrMode` and `resolveScenarioMapConfig` in `src/core/project-config.ts` read an unrecognized value as off with one warning naming it; `PR_MODES` is `never`, `per-proposal`, `per-architecture`, absent meaning `never`
+- ENUMERATE: applied — this table; the unrecognized row is new beside D-pb-1, because `program` is not read until `program-signoff` ships (D-pb-15)
+- COHERE: applied — the hold sits inside the archive (D-pb-14), so the chain's grant of `archive` and the hold never meet in the chain resolver
+- EXECUTE: not applied — nothing is built yet
+- FALSIFY: applied — a `program` value written before `program-signoff` ships would otherwise hold nothing, silently; the warning says it is not read
+- CONFORM: applied — R-adf-1 (off by default), R-adf-6 (its own key), R-adf-2 as amended (per change, at its archive), R-adf-7
+- FEASIBILITY: not applied — one key read by one resolver
+- CONSUME: applied — the archive and bulk-archive bodies (the hold, D-pb-14) and the reading's selection (D-pb-13)
+- INVOKE: applied — read at each archive and at each system review's reading step
+
+### D-pb-13 — the reader takes the account when sign-off is `change`
+Domain: the sign-off setting's values in this change, for a change carrying an account
+| member | covered by |
+|---|---|
+| absent, `off` or unrecognized | the account is written and left out of the reading's selection; the brief names it apart as checked by no reader; a change with no other record has no reading, as today |
+| `change` | the latest account no reading listed is selected like any decision record: rendered by `orbit decisions brief`, owed and accepted by the in-context system review, counted in the archive's `decision_records_unread` while unread, and listed with the records no reader checked by `orbit brief` |
+Closure: DERIVED — D-pb-12's values, the unrecognized value read as absent
+Moves:
+- READ: applied — `orbit-decision-records`' `No reader takes the account yet` (its table's rows are every caller of the one selection function); `orbit-emit-composition`'s `The reading's selection is recorded at review and archive`, which states the selection as the `decisions/` folder's
+- ENUMERATE: applied — this table
+- COHERE: applied — D-pb-5's open point: the archive's count and the brief's unread section read the same selection, so under `change` both count an unread account and under the other values neither does
+- EXECUTE: not applied — nothing is built yet
+- FALSIFY: applied — a setting turned to `change` after a change's system review leaves that account unread; the archive's count and the brief both show it
+- CONFORM: applied — R-adf-11 and R-adf-12: at the defaults the selection is unchanged, so no new G0 exception
+- FEASIBILITY: not applied — one filter in the selection
+- CONSUME: applied — `orbit decisions brief`, the system review's `decision_records_owed` and read-list check, the archive's `decision_records_unread`, `orbit brief`'s unread section
+- INVOKE: applied — at every system review and archive of a change carrying an account
+
+### D-pb-14 — under `change`, the archive holds after its save and asks the sign-off itself
+Domain: each way an archive is entered under `change`, and each outcome at its hold
+| member | covered by |
+|---|---|
+| `/orbit:archive`, typed | after the brief is saved and before the sync, the archive shows the saved copy whole and asks the user to sign or decline; D-pb-8's record keeps the answer |
+| `/orbit:archive`, chained (the chain grants `archive`) | the same question, asked as a decision prompt: the consent prompt does not fire (the grant records `consent: "setting"`), the sign-off is asked exactly as typed, and the chain does not continue after it; the chain gains no refusal reason |
+| `/orbit:bulk-archive` | the same, per change, after that change's save; a decline leaves that change active and the others go on |
+| the user signs | the hold lifts, and the archive syncs and moves as it does today |
+| the user declines | the archive stops before the sync: nothing is synced or moved, and the change stays active (D-pb-8) |
+| the save failed (the brief cannot be rendered whole, or a racing writer took its name) | the archive stops before the sync, naming the failure, since there is no copy to sign; under the other values a failed save is still only recorded |
+| the latest signed record cites a copy whose hash equals the copy just saved | the hold lifts without asking again |
+| the archive stops at a later prompt after a signature | the signature stays on record; the next archive saves a new copy and asks again unless its hash matches, as above |
+Closure: DERIVED — the three ways an archive is entered (typed, chained, bulk), then the hold's outcomes: signed, declined, no copy to sign, already signed over the same text, and a stop after signing
+Moves:
+- READ: applied — `orbit-archive-modifications`' `The archive saves the change's brief before the sync` (after the audit sweep, before the sync; a failure never stops an archive at the defaults); `orbit-conventions`' chain end step (a decision prompt is asked as typed, and the chain stops after it); `CHAIN_WHY` in `src/core/chain.ts`
+- ENUMERATE: applied — this table
+- COHERE: applied — D-pb-1's COHERE line had the chain stop before the archive with a new refusal reason; with the hold inside the archive, after the save (D-br-3), that would add a turn in which the user types the archive before signing, against G1; superseded here
+- EXECUTE: not applied — nothing is built yet
+- FALSIFY: applied — a signature over an older copy could lift a hold over different text; the hash comparison lifts it only when the text is the same
+- CONFORM: applied — R-adf-2 as amended (per change, at its archive), R-adf-12 (text whose effect depends on a setting, leaving today's flow unchanged at the defaults), G1 (the user appears only to sign), G5 (the brief is shown whole)
+- FEASIBILITY: not applied — one question per change
+- CONSUME: applied — the archive's sync step; the PR tail, not reached on a decline, so the READY flip waits under `pr: per-proposal`; D-pb-8's record
+- INVOKE: applied — at each archive, and at each change of a bulk archive, under `change`
+
 ## Decisions
 
 - **2026-11-12 — D-pb-1: how often the user signs off is its own setting, off by default** The user (stop
@@ -160,6 +226,7 @@ Moves:
   pull request is made ready — and absent means no sign-off, as today. This amends R-adf-2 ("granularity follows the
   regime"); the amendment is recorded at the next architect session. The key's name and spelling are not yet locked.
   Kind: rule
+  Disposition: superseded D-pb-12 (the absent, `off` and `change` values) and D-ps-1 in `orbit/explore/program-signoff/explore.md` (the `program` value), per D-pb-15
 - **2026-11-12 — D-pb-2: "sign off at each explore" means each change's archive** The user's own reading: each
   exploration becomes one change, and the sign-off is over what that change built, before it archives — not an
   approval of the plan before apply. At `change` frequency the brief's unit is the one change.
@@ -170,6 +237,7 @@ Moves:
   READY flip. Under `per-proposal` and `never` the work has already landed, and the brief says so. Chosen over
   refusing `program` unless `pr: per-architecture`, which would make one setting depend on another.
   Kind: rule
+  Disposition: superseded D-ps-2 in `orbit/explore/program-signoff/explore.md`, per D-pb-15
 - **2026-11-12 — D-pb-4: the engine computes what the trail holds; the AI writes the rest as one record per change**
   Settled by the AI (method). Of the charter's sections, three cannot be computed — what was built, new seams,
   deviations from the charter — so each change carries one new record, its account, written when apply finishes,
@@ -185,6 +253,7 @@ Moves:
   written but left out of the reading, and the brief marks it unread, so G0 holds by R-adf-12 with no new exception.
   Chosen over reading it on every change and naming that as G0's third exception.
   Kind: rule
+  Disposition: superseded D-pb-13 (the `change` value) and D-ps-1 in `orbit/explore/program-signoff/explore.md` (the `program` value), per D-pb-15
 
 - **2026-11-12 — D-pb-6: the brief is rendered on demand, saved where it is final, and a sign-off cites the saved copy**
   The user took the AI's recommendation: `orbit brief` renders it read-only; each archive saves the change's brief and
@@ -226,6 +295,54 @@ Moves:
   copy (D-br-3's program row, which owns the rule). It lands here beside the program sign-off's hold, which reads that
   copy (D-pb-3, D-pb-8); `brief-render` keeps the rendering and the archive's save.
   Kind: scope
+  Disposition: superseded D-ps-3 and D-ps-4 in `orbit/explore/program-signoff/explore.md`, per D-pb-15
+- **2026-11-13 — D-pb-11: this change splits in two, the per-change sign-off here and the per-program sign-off in a new
+  exploration** Estimated at the start of `/orbit:propose program-brief`, before anything was generated: proposed whole,
+  this change touches about six capabilities against a ceiling of three — `orbit-program-brief` (the setting, the
+  `signoff` record, the program brief's save), `orbit-decision-records` and `orbit-emit-composition` (the reader taking
+  the account, whose selection both state as the `decisions/` folder alone), `orbit-archive-modifications` (the archive's
+  hold, in archive and bulk-archive), `orbit-architect` (the program brief's save and the program hold) and
+  `orbit-pr-lifecycle` (the arc-done readout that surfaces the program PR's READY flip). The estimate takes the
+  per-change hold to sit inside the archive, after its save, so that a chained archive asks the sign-off as a decision
+  prompt and the chain gains no refusal reason (D-pb-1's COHERE line), keeping `orbit-engine-gates` and
+  `orbit-lifecycle-consent` out; the exploration settles that. The user chose two changes (AI recommendation): this one,
+  keeping the name `program-brief` (D-pb-9), carries the per-change sign-off — the setting, the `signoff` record, the
+  archive's hold and the reader taking the account (D-pb-1's `change` rows, D-pb-5, D-pb-8), about four capabilities,
+  a declared breach likely; a new exploration, citing stage program-brief, carries the per-program sign-off — the
+  program brief's save at the architect session and the program hold (D-pb-1's `program` rows, D-pb-3, D-pb-10), about
+  three. How the rules are divided and the new exploration's name are settled in this exploration before the propose.
+  Chosen over one change with a declared breach, and over three changes (the reader taking the account on its own).
+  Kind: scope
+- **2026-11-13 — D-pb-12: this change ships the sign-off setting's absent, `off` and `change` values; `program` is read
+  as unrecognized until `program-signoff` ships** D-pb-1's rows for those values, carried here when D-pb-1 was divided
+  (D-pb-15): absent or `off`, nothing waits on a sign-off, as today; `change`, each change's archive waits for a sign-off
+  over that change's saved brief, under every `pr:` mode. Any other value — `program` included until the second change
+  adds it — is read as absent with one warning naming it, as an unrecognized `pr:` value is (`src/core/project-config.ts`),
+  so a project that writes `program` early is told it holds nothing yet. Settled by the AI (method). The key's name is
+  not yet locked.
+  Kind: rule
+- **2026-11-13 — D-pb-13: the reader takes the account when sign-off is `change`** D-pb-5's off and on rows for this
+  change's values, carried when D-pb-5 was divided (D-pb-15): absent, `off` or unrecognized, the account is written and
+  left out of the reading, as today; `change`, the latest account no reading listed is selected like any decision record,
+  read at the system review, counted in the archive's unread figure while unread, and listed by the brief with the
+  records no reader checked. Because the archive's count and the brief's unread section read the one selection, they
+  agree under every value (D-pb-5's open point, settled).
+  Kind: rule
+- **2026-11-13 — D-pb-14: under `change`, the archive holds after its save and asks the sign-off itself** Settled by the
+  AI (method), the assumption D-pb-11's estimate rested on: after the brief is saved and before the sync, the archive
+  shows the saved copy whole and asks the user to sign or decline; a chained archive asks the same question as a decision
+  prompt, so the chain gains no refusal reason (this supersedes D-pb-1's COHERE line, which had the chain stop before the
+  archive and would cost the user a second turn, against G1); bulk-archive asks per change, a decline leaving only that
+  change active. Under `change` a failed save stops the archive before the sync, since there is no copy to sign. The hold
+  lifts without asking again when the latest signed record cites a copy whose hash equals the one just saved.
+  Kind: rule
+- **2026-11-13 — D-pb-15: the second change is `program-signoff`, and the rules divide by unit** The user chose the
+  name (AI recommendation) and the AI's division: this exploration carries the per-change sign-off — D-pb-12, D-pb-13,
+  D-pb-14 and D-pb-8 — and keeps the name `program-brief` (D-pb-9); a new exploration,
+  `orbit/explore/program-signoff/`, citing stage program-brief, carries the per-program sign-off — the `program` value
+  with its reader row (D-ps-1, from D-pb-1 and D-pb-5), the program hold (D-ps-2, from D-pb-3) and the program brief's
+  save at the architect session (D-ps-3, from D-pb-10 and D-br-3's program row). It is proposed after this change.
+  Kind: scope
 
 ## Open questions
 
@@ -238,12 +355,20 @@ Moves:
   work's name, and a rename would break them.
 - **2026-11-12 — Refusing or warning on `program` unless `pr: per-architecture`:** out (D-pb-3). It would make one
   setting depend on another; holding completion works under every mode.
+- **2026-11-13 — The chain stopping before the archive with a new refusal reason, under `change`:** out (D-pb-14). The
+  user would type the archive and then sign, two turns where one does (G1), and the chain resolver, `orbit-engine-gates`
+  and `orbit-lifecycle-consent` would each change for it.
+- **2026-11-13 — One change with a declared breach of about six capabilities, or three changes:** out (D-pb-11).
 - **2026-11-12 — A sign-off on the plan before apply:** out. The user meant the sign-off on what a change built
   (D-pb-2); approving the plan at propose is a different seam nobody asked for.
 
 ## References
 
 - `orbit/architecture/automate-dev-flow.md` — R-adf-1, R-adf-2, R-adf-6, R-adf-7, R-adf-14; G5; stage program-brief.
+- `orbit/explore/program-signoff/explore.md` — the per-program sign-off, divided from this exploration (D-pb-15).
+- `orbit/specs/orbit-archive-modifications/spec.md` — `The archive saves the change's brief before the sync`, where the hold sits (D-pb-14).
+- `orbit/specs/orbit-emit-composition/spec.md` — `The reading's selection is recorded at review and archive`, which the reader taking the account changes (D-pb-13).
+- `src/core/project-config.ts` — `resolvePrMode`, the unrecognized-value rule D-pb-12 follows.
 - `orbit/specs/orbit-pr-lifecycle/spec.md` — `Generalized READY rule` and the arc-done readout (the program PR's flip is the user's act).
 - `orbit/specs/orbit-decision-records/spec.md` — `Decision records are written for a reader who knows only the architecture` (its table names the program brief as a reader of the ledger; its residual names a new surface rendering record prose).
 - `orbit/specs/orbit-review/spec.md` — the reading step's named limit: the program brief brings unread records to the user at sign-off.

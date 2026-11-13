@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-11-13T22:08:19Z",
+  "change": "program-brief",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Divided per D-pb-11 (the user's split at the start of propose): D-pb-15 records the user's choice of the name program-signoff and the AI's division by unit. This exploration keeps the per-change sign-off: D-pb-12 (the setting's absent, off and change values; any other value, program included, read as absent with one warning until program-signoff ships), D-pb-13 (the reader takes the account under change; the archive's unread count and the brief agree, settling D-pb-5's open point), D-pb-14 (the hold sits inside the archive after its save, asked as a decision prompt on a chained arrival so the chain gains no reason; a failed save stops the archive under change; a matching hash lifts the hold), and D-pb-8. D-pb-1, D-pb-3, D-pb-5 and D-pb-10 are superseded by these and by D-ps-1 to D-ps-4. Three ledger entries record the calls about what the user sees.",
+  "decisions_captured": 15,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 4,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose program-brief — 4 live rules accounted; formalize when you are ready (or /orbit:explore program-brief to keep refining)"
+}

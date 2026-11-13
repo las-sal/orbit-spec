@@ -1,0 +1,24 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-13T22:08:08Z",
+  "change": "program-brief",
+  "model": "claude-opus-5-5",
+  "area": "defaults",
+  "decided": "Until orbit can hold a program for one sign-off at its end, a project that sets sign-off to once per program is treated as if sign-off were off, and orbit says once that the value is not read yet. Any other value orbit does not know is treated the same way.",
+  "alternatives": [
+    "refuse to run until the value is changed",
+    "treat once per program as signing off at every change's archive"
+  ],
+  "why": "This is how orbit already treats a pull request setting it does not know: it falls back to today's behaviour and says so, so nothing waits on a sign-off that cannot happen and the user is told why.",
+  "relies_on": [
+    {
+      "kind": "decision",
+      "id": "D-pb-12"
+    },
+    {
+      "kind": "ruling",
+      "doc": "automate-dev-flow",
+      "id": "R-adf-1"
+    }
+  ]
+}

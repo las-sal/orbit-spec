@@ -1,0 +1,24 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-13T22:08:07Z",
+  "change": "program-brief",
+  "model": "claude-opus-5-5",
+  "area": "when-things-go-wrong",
+  "decided": "When a project signs off at every change's archive and the archive cannot keep its copy of the change's brief, the archive stops before anything is moved into the specs and says why, because there is nothing for the user to sign. With sign-off off, a copy that cannot be kept is still only noted in the archive's record and the archive goes on, as today.",
+  "alternatives": [
+    "go on with the archive and ask the user to sign off without a kept copy",
+    "go on with the archive without asking"
+  ],
+  "why": "A sign-off is recorded against the exact copy the user read; without a copy there is nothing to record it against, and archiving without the sign-off would skip the wait the project asked for.",
+  "relies_on": [
+    {
+      "kind": "decision",
+      "id": "D-pb-14"
+    },
+    {
+      "kind": "requirement",
+      "capability": "orbit-archive-modifications",
+      "title": "The archive saves the change's brief before the sync"
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-13T22:08:06Z",
+  "change": "program-brief",
+  "model": "claude-opus-5-5",
+  "area": "user-sees-or-does",
+  "decided": "When a project signs off at every change's archive, the archive keeps its copy of the change's brief, shows it whole, and asks the user to sign off or decline before anything is moved into the specs. When orbit started the archive on its own because the project allows it, the user is asked the same question in the same place, and orbit goes no further on its own after the answer. When several changes are archived together, the user is asked once for each change, and declining one leaves only that change waiting.",
+  "alternatives": [
+    "stop orbit before it starts the archive, so the user starts the archive by hand and then signs off",
+    "ask once for all the changes archived together"
+  ],
+  "why": "The copy the user signs must exist before anything is moved, and asking inside the archive means the user appears only to sign, not also to start the archive.",
+  "relies_on": [
+    {
+      "kind": "decision",
+      "id": "D-pb-14"
+    },
+    {
+      "kind": "ruling",
+      "doc": "automate-dev-flow",
+      "id": "R-adf-2"
+    },
+    {
+      "kind": "goal",
+      "doc": "automate-dev-flow",
+      "id": "G1"
+    }
+  ]
+}
