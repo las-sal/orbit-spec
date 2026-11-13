@@ -1,0 +1,135 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-13T22:46:15Z",
+  "change": "program-brief",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/program-brief/specs/orbit-decision-records/spec.md",
+      "line": 134,
+      "title": "Under `change`, a reader finding against the account has no instructed fold or walk path",
+      "recommendation": "The change makes the reading step read the account but leaves every instruction that handles a reading finding written for decision records only. (1) The review body's fold step (`src/core/templates/workflows/review.ts`, step 3 'Fold its findings') sets a reading finding's `file` to 'that filename in the change trail's `decisions/` folder' — an account lives in `account/`, so an account finding gets a path to a file that does not exist. (2) The walk body's reading-finding rule (`src/core/templates/workflows/address-reviews.ts`, generated as orbit-address-reviews SKILL.md 'A reading finding') says the finding's file is a decision record under `.orbit-runs/decisions/` and is fixed by `orbit emit <ledger|stop|resolution>`, one replacement per finding; the walk body's own step 7 replaces the account only when a fix 'changes what was built, a seam, or a deviation', one replacement per walk. A clarity finding on the account fits neither rule, and the two rules disagree on one-per-finding versus one-per-walk. (3) This change's MODIFIED account table (line 134) says the system review's reading step reads the account but its walk row (line 135) still keys a replacement on what was built changing. (4) `orbit-review`'s scenario `No records, no reading` ('a change with no `decisions/` folder → no reader is dispatched') becomes false under `change` for a change that holds only an account. No task touches review.ts or address-reviews.ts. Add the rule and the tasks, or narrow the claim.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Carry it inside the change's capabilities: amend the account table's walk row (already MODIFIED here) so a reading finding against the account is fixed by a replacement of the latest account through `orbit emit account` with `replaces`, one per resolved finding as `A record is fixed by a replacement, never edited` does for decision records; add tasks editing review.ts's fold step (the finding's `file` is the selected record's path, `account/` for an account) and address-reviews.ts's reading-finding rule, with their hash pins moving (R-adf-9); and either add an `orbit-review` delta qualifying `No records, no reading` to the setting absent (a sixth capability) or state in the renamed requirement that that scenario describes the defaults."
+        },
+        {
+          "label": "B",
+          "body": "Narrow it: state in `The reader takes the account only when sign-off is per change` that a reader finding against the account is resolved `deferred` and reaches the user in the brief at sign-off, and add only the two body edits that route such a finding to the right file and disposition."
+        }
+      ]
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/program-brief/specs/orbit-archive-modifications/spec.md",
+      "line": 12,
+      "title": "A failing hold command stops the archive under every setting, the defaults included",
+      "recommendation": "The archive table's first row ('the hold command exits non-zero → stops before the sync') matches before `why: \"off\"` can be read, so it applies with no `signoff` key at all — a new way for a default archive to stop, where the save's own failure is deliberately only a `warnings` entry. The hold reads the latest copy and latest sign-off under every value (orbit-program-brief delta, lines 76-79), and the hold's failure modes beyond usage errors (an unreadable `brief/` or `signoff/` folder, a sign-off record that is not valid JSON) are not specified anywhere. Reachable cases: an `orbit` on PATH that predates `--hold` (this repository's installed release has no `brief` command, which is why CLAUDE.md routes `orbit brief` through `node bin/orbit.js`; task 5.1 extends that sentence, a session discipline rather than a guarantee), or a `brief/` folder that exists and cannot be listed. G0/R-adf-12 require that at the defaults the AI does what it did; design.md's 'At the defaults nothing the user sees or is asked changes' does not hold on this path.",
+      "reproduction": "With `orbit/config.yaml` carrying no `signoff` key, run `/orbit:archive foo` where `orbit brief --change foo --hold --json` exits non-zero (an older `orbit` on PATH, or an unlistable `.orbit-runs/brief/`). Row 1 of `The archive holds for a per-change sign-off` stops the archive before the sync; today the same archive completes.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Make the hold resolve the setting first and, at any value but `change`, read no folder and report `why: \"off\"` (copy and sign-off null), so at the defaults it can fail only on a usage error; specify under `change` that an unreadable folder or record exits non-zero naming it; add a scenario that a default archive with an unreadable `brief/` still completes."
+        },
+        {
+          "label": "B",
+          "body": "Keep the reads and record the default-setting stop on hold failure as a G0 departure for the user to ratify as a named exception (R-adf-11), stated in the requirement and design.md's Risks."
+        }
+      ]
+    },
+    {
+      "pass": "7",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/specs/orbit-program-brief/spec.md",
+      "line": 240,
+      "title": "The program brief's save is still placed in stage program-brief's third change, which this change is and does not carry it",
+      "recommendation": "Baseline `A change's brief is saved, never overwritten` says 'Saving the PROGRAM brief ... is stage program-brief's third change (D-br-5 ...)', and `src/commands/brief.ts:38`'s usage error tells a user the same ('saving a program brief is not built yet (stage program-brief's third change)'). Per D-pb-15 the save moved to `program-signoff`, the fourth change, and this change's own new text already says so ('stage program-brief's fourth change, `program-signoff`'). After archive the baseline and the CLI message point at a change that shipped without it. Add `A change's brief is saved, never overwritten` as a MODIFIED requirement in `orbit-program-brief` (already in the change, so no new capability) re-pointing that sentence to `program-signoff` (D-pb-15), and a task updating the brief.ts message (and any test asserting it)."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "orbit/changes/program-brief/proposal.md",
+      "line": 63,
+      "title": "Proposal and design under-list what the tasks touch",
+      "recommendation": "The proposal's Docs bullet (line 30) and Impact (line 63) name only `docs/customization.md`, while task 5.1 also edits `docs/cli.md`, `docs/concepts.md` and CLAUDE.md; task 2.3 puts `--hold` in `src/commands/brief.ts`, which neither the proposal's Impact code list nor design.md's Touchpoints names (they name `src/core/program-brief.ts` and `src/cli/program.ts`). Add them so the scope a reader sees matches the plan."
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/program-brief/specs/orbit-program-brief/spec.md",
+      "line": 90,
+      "title": "The hold's `--json` keys are named only for `why` and `held`",
+      "recommendation": "The archive body reads the hold's JSON for the warning (to state it), the latest copy's filename (to show it whole and pass it as `brief`) and the latest sign-off's filename (to name it on `signed`), but the requirement names only `why` and `held`. Name the object's keys and their null cases (for example `setting`, `warning`, `copy: {file, sha256} | null`, `signoff: {file, answer} | null`, `why`, `held`) so the CLI, the body and the tests agree without inventing them."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/program-brief/specs/orbit-decision-records/spec.md",
+      "line": 50,
+      "title": "Two edited lines in the decision-records delta were not rewrapped",
+      "recommendation": "Line 19 leaves 'No ordering of timestamps' alone on a short line, and line 50 runs to 159 characters where the inserted clause ', and, under `signoff: change`, of the account' was spliced in. Rewrap both paragraphs to the file's width."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Probed the five deltas against their baselines by extracting each MODIFIED block and diffing it against the baseline requirement; every MODIFIED block carries its baseline scenarios and every baseline pointer to the renamed requirement is re-pointed. `orbit validate --strict` passes. The two `@review:` strings in the conventions delta are inline-code documentation, not markers. The core design holds together: one selection function, a hash-compared hold, a decision prompt inside the archive rather than a chain refusal. The gaps sit where the account starts reaching readers that were written for decision records only (the review fold, the walk's repair rule), and where a new archive step's failure path is not gated by the setting it exists for. Read from the live checkout at afa20f98; no prior pass or walk record was opened.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The design is sound and the plan is implementable: the setting, the record, the hold and the selection change agree with each other and with their baselines. What is missing is bounded and fits inside the change's existing capabilities: route a reader's finding about the account through the review and walk bodies, make the hold unable to stop a default archive, and re-point the stale third-change pointer. Walk these before apply; none needs a redesign."
+  },
+  "final_assessment": "0 critical, 3 warning, 3 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews program-brief"
+}
