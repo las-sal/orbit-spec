@@ -1,0 +1,161 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-13T01:41:23Z",
+  "change": "change-account",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 4,
+      "suggestion": 3
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-decision-records/spec.md",
+      "line": 30,
+      "title": "A change whose remaining tasks are (User-validation handoffs never gets an account",
+      "recommendation": "Tie the write to the apply session after which the apply gate computes passed (every unchecked task a declared, marked (User-validation handoff, per orbit-engine-gates' user-validation subset rule), not to checking the last checkbox. Reword the lifecycle table's rows 2 and 3, the closure sentence, design.md's multi-session risk (lines 70-71), task 3.1's wording and the first scenario to match, and add a scenario for a change ending with a (User-validation task unchecked.",
+      "reproduction": "Constructed case: tasks.md holds 1.1, 1.2 and '- [ ] 2.1 (User-validation handoff) live-test'. The apply session checks 1.1 and 1.2 and declares user_validation_tasks [\"2.1\"]; orbit-engine-gates' tracked-gate rule computes apply passed with 2.1 pending. By the table that session 'leaves a task unchecked' (row 2: none) and is not 'the apply session that checks the change's last task' (row 3 never fires). 2.1 is then checked by the user by hand, or deferred at archive (deferred_validations), and the archive row writes none. Result: the change archives with no account, though apply finished; the second change's brief shows it as never written."
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-decision-records/spec.md",
+      "line": 29,
+      "title": "The lifecycle table's apply rows overlap, so a session finishing reopened tasks gets two instructions",
+      "recommendation": "Qualify rows 2 and 3 with 'on a change with no account' (as the scenario at line 53 already does for row 2) so the four apply rows partition by (checks the last task?) x (account exists?), as the closure sentence at lines 36-39 claims. Say in row 4 whether an account-holding session that leaves tasks unchecked replaces now or waits for the session that finishes.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Row 4 fires only in the session that finishes apply again (replace once, at the end of the reopened work)."
+        },
+        {
+          "label": "B",
+          "body": "Row 4 fires in any apply session whose work changes what the account says, finished or not."
+        }
+      ]
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-decision-records/spec.md",
+      "line": 41,
+      "title": "The address-reviews body gets one sentence, but the spec says each body names the fields the write gate accepts",
+      "recommendation": "The ADDED requirement says both bodies name the write gate's fields 'so an installed skill needs no spec to write one'; design decision 4 (design.md:49-51) and task 3.2 (tasks.md:15) give address-reviews one sentence only, and an installed address-reviews skill ships without the apply body. Carry ACCOUNT_STEP (or its field list and the emit invocation with replaces) in the address-reviews body too, and make task 3.3's test hold the fields in both bodies."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-emit-composition/spec.md",
+      "line": 172,
+      "title": "The account/ folder inherits none of the decisions/ folder's write guarantees",
+      "recommendation": "Baseline 'Engine-owned spine composition and filename discipline' requires, for a decision record only, that the decisions/ child physically BE the trail's canonical child (checked twice) and that the collision bump run within that child; the code's assertCanonicalDecisionsDir hard-codes 'decisions' (src/core/emit-composition.ts:2015). The delta states the account's path only. Add to the ADDED requirement that the account/ child is held to the same canonical-child identity rule and that its token is unique within account/, with a scenario for an aliased account/ (a symlink) refused."
+    },
+    {
+      "pass": "4",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "specs/orbit-decision-records/spec.md",
+      "line": 112,
+      "title": "The plain-language rule now binds the account, but its holder requirement still claims a reader reaches every failure",
+      "recommendation": "Baseline 'The plain-language rule is held by structure and by a reader' (orbit/specs/orbit-decision-records/spec.md:106-121) says the write gate and the reading step 'between them reach every way a record can fail it'. With this change the account's fields are bound by the rule and no reader takes the account, so the four reader rows reach no account. Carry that requirement as MODIFIED with a named limit (accounts have no reader until the stage's third change), or state the limit in 'No reader takes the account yet'."
+    },
+    {
+      "pass": "3",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "docs/cli.md",
+      "line": 358,
+      "title": "docs/cli.md's orbit emit section will omit the account",
+      "recommendation": "docs/cli.md lists every emit command ('one of explore, ... ledger, stop or resolution') and says ledger, stop and resolution are the non-run-summary commands; no test holds the list, and the Impact section does not name the file. Add a task updating it, and the emit description in src/cli/program.ts:301 ('a decision record (ledger, stop, resolution)'), for orbit emit account."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/specs/orbit-emit-composition/spec.md",
+      "line": 5,
+      "title": "Both capabilities' Purpose lines name only the three decision records",
+      "recommendation": "orbit-emit-composition's Purpose (the surface writes 'the three DECISION RECORDS') and orbit-decision-records' Purpose (line 4) will not mention the account. No delta carries a Purpose; add an archive-time task editing both in place."
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "specs/orbit-emit-composition/spec.md",
+      "line": 220,
+      "title": "An exploration-only name has no 'not-found error' to reuse",
+      "recommendation": "resolveTarget (src/core/emit-composition.ts:842) resolves --change to the explore trail when only orbit/explore/<name>/ exists, so the account needs its own refusal after resolution; the existing not-found message ('not found — checked <changeDir> and <exploreDir>') would name a directory that exists. State the refusal's wording in the scope row (e.g. that an account needs an active change)."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "specs/orbit-decision-records/spec.md",
+      "line": 33,
+      "title": "The walk row does not exclude a walk of an archived change",
+      "recommendation": "Row 6 ('a walk on a change that has an account') also matches address-reviews' archived-change fallback, where the account gate refuses (active change only). Say an archived walk writes no account, as the decision-writing discipline says a walk of an archived change writes no record, and carry that in the address-reviews sentence."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "specs/orbit-emit-composition/spec.md",
+      "line": 184,
+      "title": "The one-account check has no named limit for a concurrent writer",
+      "recommendation": "The check reads the account/ folder and then writes, as the at-most-one-resolution check does; 'Three decision records, one job each' names that limit with a residual pointing at stage parallel-lanes. Name the same limit for the account's one-chain rule."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Two patterns sit behind the findings. First, the write trigger is defined by checkbox arithmetic ('checks the last task') while orbit's own definition of apply finishing is the apply gate, which already treats declared User-validation handoffs as done; the trigger and the lifecycle table built on it inherit that gap, and the table's apply rows are not split the way its closure sentence says. Second, design decision 1's move of the account into its own folder outside decisions/ keeps the decision-record statements true, but the baseline's guarantees attached to the decisions/ child by name (the canonical-child check, the token scope, the plain-language rule's reader) do not reach the new folder unless the delta restates them. Probed: resolveTarget and composeDecisionRecord in src/core/emit-composition.ts, selectUnreadRecords, chain.ts's trailHead (a directory is skipped, so account/ is safe there), the reading step's dispatch keyed on the selection (so D-ca-2 holds as designed), orbit-engine-gates' user-validation subset rule, the spine test's closed case list, and docs/cli.md. orbit validate --strict passes; no @review: markers.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "direction": {
+    "disposition": "hold",
+    "reasoning": "Walk these before apply. The write trigger misses every change that ends with a user-validation handoff, which is the moment the account exists for, and the apply rows of the lifecycle table give a reopened change two instructions. Both are spec edits inside the change, as is giving the account folder the write guarantees its sibling has and putting the field list in the address-reviews body. None needs a scope call; once they land the change is small and well bounded."
+  },
+  "final_assessment": "0 critical, 6 warning, 4 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews change-account"
+}
