@@ -35,12 +35,13 @@ describe('the account steps are carried by the apply and address-reviews bodies'
     });
   }
 
-  it('the apply body carries ACCOUNT_STEP once, before the run-summary emit and the commit step, and its all_done branch writes a missing account', () => {
+  it('the apply body carries ACCOUNT_STEP once, before the run-summary emit and the commit step, and its all_done branch runs the Account step whether or not an account exists', () => {
     const b = body('orbit-apply-change');
     expect(count(b, ACCOUNT_STEP)).toBe(1);
     expect(b.indexOf(ACCOUNT_STEP)).toBeLessThan(b.indexOf('## Run-summary emit'));
     expect(b.indexOf(ACCOUNT_STEP)).toBeLessThan(b.indexOf(COMMIT_STEP));
-    expect(b).toMatch(/If `state: "all_done"`: when the change has no account, write it first \(the Account step below\)/);
+    expect(b).toMatch(/If `state: "all_done"`: first run the Account step below — it writes a missing account, or replaces the latest one when the work done since it was written changed what it says, so read that account and the change's trail since it before deciding/);
+    expect(b).not.toMatch(/when the change has no account, write it first/);
     expect(b).not.toContain(ACCOUNT_WALK_STEP);
   });
 
@@ -66,7 +67,8 @@ describe('the account steps are carried by the apply and address-reviews bodies'
     expect(ACCOUNT_STEP).toMatch(/Apply is complete, and the change has an account\*\*.*write a replacement of it; otherwise write none/);
     expect(ACCOUNT_STEP).toContain('`(User-validation`');
     expect(ACCOUNT_WALK_STEP).toMatch(/A walk of an ACTIVE change that has an account\*\*.*write a replacement of the latest account/);
-    expect(ACCOUNT_WALK_STEP).toMatch(/A finding resolved by reopening tasks\*\*.*write no account/);
+    expect(ACCOUNT_WALK_STEP).toMatch(/A walk that resolves any finding by reopening tasks\*\*.*write no account, not even for its other fixes/);
+    expect(ACCOUNT_WALK_STEP).toMatch(/and no finding was resolved by reopening tasks\*\* → write a replacement/);
     expect(ACCOUNT_WALK_STEP).toMatch(/a walk of an archived change.*→ write no account/);
   });
 });

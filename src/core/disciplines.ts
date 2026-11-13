@@ -362,15 +362,15 @@ export const ACCOUNT_STEP = [
 
 /**
  * The address-reviews body's account step: a walk replaces the account when a resolved finding changes what
- * it says, except when it resolved the finding by reopening tasks.
+ * it says, unless the walk resolved any finding by reopening tasks.
  */
 export const ACCOUNT_WALK_STEP = [
   "### 7. Replace the account when a fix changed it (`orbit-decision-records`' `Each change carries one account, written when apply is complete`)",
   '',
   "A change's ACCOUNT says, in plain language, what the change built, the new places the user is asked something, and where the work left its plan; the apply session that completes the change writes it. After the logs are written, decide:",
   '',
-  `- **A walk of an ACTIVE change that has an account** (its \`.orbit-runs/${ACCOUNT_DIR}/\` holds one), **where a resolved finding changes what was built, a seam, or a deviation** → write a replacement of the latest account that describes the change as it now stands; one replacement covers every such finding of this walk.`,
-  "- **A finding resolved by reopening tasks** (appending or unchecking a task in the change's `tasks.md`) → write no account for it: the apply session that completes those tasks replaces the account, so it describes finished work.",
+  `- **A walk of an ACTIVE change that has an account** (its \`.orbit-runs/${ACCOUNT_DIR}/\` holds one), **where a resolved finding changes what was built, a seam, or a deviation, and no finding was resolved by reopening tasks** → write a replacement of the latest account that describes the change as it now stands; one replacement covers every such finding of this walk.`,
+  "- **A walk that resolves any finding by reopening tasks** (appending or unchecking a task in the change's `tasks.md`) → write no account, not even for its other fixes: the apply session that completes those tasks replaces the account, and that replacement covers this walk's other fixes too, so the account describes finished work.",
   '- **A change with no account yet, a walk of an archived change, or a walk with no change target** → write no account.',
   '',
   ...ACCOUNT_HOW(ACCOUNT_EXAMPLES.walk),
