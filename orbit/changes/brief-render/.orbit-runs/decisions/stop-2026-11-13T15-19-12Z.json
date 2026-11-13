@@ -1,0 +1,10 @@
+{
+  "command": "stop",
+  "timestamp": "2026-11-13T15:19:12Z",
+  "change": "brief-render",
+  "model": "claude-opus-5-5",
+  "condition": "outward-act",
+  "about": "Proposing this change on its own branch with a draft pull request needs the latest exploration to be on the shared copy of the main branch, and the commit carrying it has not been pushed there.",
+  "question": "Will you push the main branch now so the change gets its own branch and draft pull request, or should I propose it without a pull request?",
+  "detail": "orbit pr select brief-render returned skip, reason generation-input (staging_dir orbit/explore/brief-render, target origin/main); main is ahead of origin/main by 74471542."
+}

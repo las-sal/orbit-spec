@@ -1,0 +1,13 @@
+schema: spec-driven
+created: 2026-11-13
+schema_version: 5
+base_fingerprints:
+  orbit-archive-modifications:
+    PR-attached archive tail: sha256:a536d44a4f515874de2eedf6d26aeaf6c5826811baf574354df76de7a01675b7
+  orbit-decision-records:
+    Decision records are written for a reader who knows only the architecture: sha256:6587a7c526a311a31114a9465e443e36a837e13556f1a4eb33a85832a929ea7c
+    A record is fixed by a replacement, never edited: sha256:03f6a0fb3e5ebb04e65e2b21aacb79fa86e386c09caf14d5040fbf945ecd6e38
+    No reader takes the account yet: sha256:b0d64ebd67e196a0408af7e20f16c918f5bac581d2b4b8ca8b6f0a3884caff00
+architecture:
+  doc: automate-dev-flow
+  stage: program-brief
