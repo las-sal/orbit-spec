@@ -127,3 +127,36 @@ scenarios:
   - key: "orbit-decision-records :: The plain-language rule is held by structure and by a reader :: A shifted restatement is a reader's finding"
     kind: untestable
     why: "The reader reporting the entry under the fourth row is a clean subagent's judgement in a live review; no test runs one. The other half of the THEN, that the write gate accepted the entry, is held by test/core/decision-brief.test.ts."
+  # change-account (task 5.2) — the account's AI-conduct and prose scenarios. Each lifecycle THEN is what an AI does
+  # in a live apply or walk session; the instruction for it is held on both bodies by
+  # test/core/templates/account-step.test.ts, and the write gate's acceptance of what the act writes by
+  # test/core/account.test.ts. Whether a run followed it is read from its trail.
+  - key: "orbit-decision-records :: Each change carries one account, written when apply is complete :: A change ending on a user-validation handoff gets its account"
+    kind: untestable
+    why: "The THEN is the AI reading apply as complete with a declared user-validation task unchecked and writing the account before its run summary, an act in a live session; no test runs a session. The apply gate's user-validation subset rule is engine-tested in orbit-engine-gates."
+  - key: "orbit-decision-records :: Each change carries one account, written when apply is complete :: A resumed session writes a missing account"
+    kind: untestable
+    why: "The THEN is the AI arriving on a complete change with no account and writing it before its completion readout, an act in a live session; no test runs a session."
+  - key: "orbit-decision-records :: Each change carries one account, written when apply is complete :: An apply session that leaves work writes none"
+    kind: untestable
+    why: "The THEN is the AI withholding an account in a session that ends with work left; no test runs a session, and an unwritten account leaves nothing to inspect."
+  - key: "orbit-decision-records :: Each change carries one account, written when apply is complete :: A reopened change replaces its account once, when apply completes"
+    kind: untestable
+    why: "The THEN is the AI judging across two apply sessions which one completes apply and whether the work since the latest account changed it, acts in live sessions; no test runs a session. The replacement it writes is accepted by the gate as `A replacement of the latest account writes` tests."
+  - key: "orbit-decision-records :: Each change carries one account, written when apply is complete :: A walk that reopens tasks writes no account"
+    kind: untestable
+    why: "The THEN is the AI withholding an account in a walk that reopened a task, then replacing it in the apply session that completes the task, acts in live sessions; no test runs a session."
+  - key: "orbit-decision-records :: Each change carries one account, written when apply is complete :: A walk fix that changes what was built replaces the account"
+    kind: untestable
+    why: "The THEN is the AI judging that a walk's fix changed what the account says and writing a replacement that names it, an act and a judgement in a live session. The other half of the THEN — the replacement carries `replaces` and the original stays as it was — is held by test/core/account.test.ts (`A replacement of the latest account writes`)."
+  - key: "orbit-decision-records :: Each change carries one account, written when apply is complete :: An uncited change states deviations against its proposal"
+    kind: untestable
+    why: "Whether `deviations` states the work's departures from the proposal's scope is a reader's judgement on prose; the write gate checks only that the field is a non-blank string. The body's field form names the proposal's scope for a change citing no doc (account-step.test.ts holds the form's presence)."
+  - key: "orbit-decision-records :: Decision records are written for a reader who knows only the architecture :: An account's coined term is defined"
+    kind: untestable
+    why: "Whether a term is new to a reader of the architecture doc is a reader's judgement; the write gate checks that every listed term has a definition (test/core/account.test.ts, the `defines` refusals), never that every new term was listed."
+  # change-account (task 5.2) — observed by the apply session that completed the change itself. The archive re-points
+  # these paths to the archived change (the scenario-map reader checks only that a record is non-empty).
+  - key: "orbit-decision-records :: Each change carries one account, written when apply is complete :: The session that completes apply writes the account"
+    kind: observed
+    record: "orbit/changes/change-account/.orbit-runs/account/account-2026-11-13T05-02-13Z.json — written by the apply session that checked change-account's last task (5.2), carrying built, seams and deviations, before that session's run summary orbit/changes/change-account/.orbit-runs/apply-2026-11-13T05-02-19Z.json"

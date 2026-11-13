@@ -5,7 +5,7 @@
  * templates file into workflow-focused modules.
  */
 import type { SkillTemplate, CommandTemplate } from '../types.js';
-import { CHAIN_END_STEP, COMMIT_STEP, DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../disciplines.js';
+import { ACCOUNT_STEP, CHAIN_END_STEP, COMMIT_STEP, DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../disciplines.js';
 
 export function getApplyChangeSkillTemplate(): SkillTemplate {
   return {
@@ -63,7 +63,7 @@ export function getApplyChangeSkillTemplate(): SkillTemplate {
    **Handle states:**
    - If \`state: "blocked"\` (missing artifacts): show message, suggest using orbit-continue-change
    - If \`state: "blocked-by-gate"\` (C1 — the \`review-proposal\` gate is unpassed/stale at apply entry): fire the gate INFLECTION PROMPT via **AskUserQuestion** (chain: decision) — **Address the gate** (halt; run the \`next_command\` the CLI returned, e.g. \`/orbit:review --as proposal --fresh <name>\`) / **Proceed anyway** / **Abort**. The gate NEVER hard-blocks (apply-parity). On **Proceed anyway**, record the decision in this session's apply emit as a \`continuation\`/\`proceed\` judgement entry carrying the gate, its state and its reason (copied from the CLI's \`gate\` object at decision time — see the Run-summary emit section) and continue to implementation. On **Address**, stop and run the next command. On **Abort**, stop with no changes.
-   - If \`state: "all_done"\`: congratulate, then render the ENGINE-computed next step — read \`next_command\` (and \`position\`) from \`orbit status --change "<name>" --json\` and surface it verbatim. Do NOT hard-code the next command: the gate graph owns the lifecycle flow. Post-apply this resolves to the \`review-system\` gate's first step — which review that is depends on the schema's cadence and the project's review preference, so it is read rather than predicted — which runs verify as its Pass 0 — verify is NOT a separate lifecycle step (it is Pass 0 of system review; a standalone verify gate would double-count).
+   - If \`state: "all_done"\`: first run the Account step below — it writes a missing account, or replaces the latest one when the work done since it was written changed what it says, so read that account and the change's trail since it before deciding — then congratulate, then render the ENGINE-computed next step — read \`next_command\` (and \`position\`) from \`orbit status --change "<name>" --json\` and surface it verbatim. Do NOT hard-code the next command: the gate graph owns the lifecycle flow. Post-apply this resolves to the \`review-system\` gate's first step — which review that is depends on the schema's cadence and the project's review preference, so it is read rather than predicted — which runs verify as its Pass 0 — verify is NOT a separate lifecycle step (it is Pass 0 of system review; a standalone verify gate would double-count).
    - Otherwise (\`ready\`): proceed to implementation
 
 4. **Read context files**
@@ -189,6 +189,8 @@ The disciplines from \`orbit-conventions\`, embedded per body; detail lives wher
 - **Pushback (review-time)**: verify each flagged issue against current state before acting; suppress stale findings with evidence rather than re-fixing already-fixed state.
 - **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line, invoking no next command unless the change status's \`chain\` object allows it — blanket delegation covers work WITHIN the requested command, never the next one; gate \`passed\` means *eligible*, not *commanded*.
 ${DECISION_WRITING_DISCIPLINE}
+
+${ACCOUNT_STEP}
 
 ## Run-summary emit (chunk-aware — via the engine emit surface)
 

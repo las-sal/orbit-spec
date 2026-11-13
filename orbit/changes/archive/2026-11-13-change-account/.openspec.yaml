@@ -1,0 +1,9 @@
+schema: spec-driven
+created: 2026-11-13
+schema_version: 5
+architecture:
+  doc: automate-dev-flow
+  stage: program-brief
+base_fingerprints:
+  orbit-decision-records:
+    Decision records are written for a reader who knows only the architecture: sha256:c75195f2a6455fd2ee5f38cfc9b546efab632474c1408dddd7609c5c9e19e368

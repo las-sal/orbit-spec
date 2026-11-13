@@ -1,0 +1,164 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-13T14:24:23Z",
+  "change": "change-account",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 3,
+      "suggestion": 5
+    }
+  },
+  "findings": [
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "docs/concepts.md",
+      "line": 305,
+      "title": "The glossary's Carried by line omits orbit-decision-records, the owner of both folders the walked Trail row now names",
+      "recommendation": "Add `orbit-decision-records` to docs/concepts.md:305's Carried by line: it owns where decision records are kept (`decisions/`) and, with this change, the account's folder (`account/`), both claimed by the Trail row the walk extended. The `decisions/` half predates this change; the walk's edit added a second claim under the same missing owner.",
+      "walk_entry": {
+        "title": "The glossary's Trail entry lists the trail's contents without the new account/ folder",
+        "file": "docs/concepts.md"
+      }
+    },
+    {
+      "pass": "reading",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/change-account/.orbit-runs/decisions/ledger-2026-11-13T01-33-27Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-13T01-33-27Z.json — reader row 4: decided narrows the account's second and third parts from what D-ca-1 cites",
+      "recommendation": "Replace the record: name the second part's empty case as 'no new place the user is asked something and no setting that now changes what happens', and the third as 'kept to its stage's charter' (or the proposal's scope when no doc is cited), matching D-ca-1's fields."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/change-account/.orbit-runs/decisions/ledger-2026-11-13T01-33-27Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-13T01-33-27Z.json — reader row 1: 'account' and its 'three parts' are used without a defines list",
+      "recommendation": "In the replacement, define 'account' and name its three parts in `defines`."
+    },
+    {
+      "pass": "reading",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/change-account/.orbit-runs/decisions/ledger-2026-11-13T01-49-06Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-13T01-49-06Z.json — reader row 4: decided says the account is rewritten only when building work is complete, against D-ca-1's walk replacement",
+      "recommendation": "Replace the record so `decided` keeps D-ca-1's walk case: a walk of a complete change replaces the account when a fix changes what it says; only reopened work waits for apply to complete again."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/change-account/.orbit-runs/decisions/ledger-2026-11-13T01-49-06Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-13T01-49-06Z.json — reader row 3: 'building work', 'building work is complete' and 'building session' are undefined, and 'at the walk' names no walk",
+      "recommendation": "In the replacement, say 'apply is complete (every task done, or only declared user-validation handoffs left)' and 'the proposal walk'."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/change-account/.orbit-runs/decisions/ledger-2026-11-13T01-49-07Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-13T01-49-07Z.json — reader row 1: 'the change's history' and 'account folder' are used without a defines list",
+      "recommendation": "In the replacement, define both in `defines`, or say 'the change's trail' as the architecture doc does."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/change-account/.orbit-runs/decisions/ledger-2026-11-13T01-49-07Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-13T01-49-07Z.json — reader row 3: 'checking both when the folder is made and again just before writing' is hard to parse",
+      "recommendation": "In the replacement, say 'checked twice: once when the folder is made and once just before writing'."
+    },
+    {
+      "pass": "reading",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/change-account/.orbit-runs/decisions/ledger-2026-11-13T14-14-18Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-13T14-14-18Z.json — reader row 4: the defines entry for 'account' drops the setting half of the second part and says 'plan' for the stage's charter",
+      "recommendation": "Replace the record with an 'account' definition matching D-ca-1's fields: what it built, the new places the user is asked something or a setting now changes what happens, and where the work left its stage's charter."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Verified the two walks this same session wrote, so the reacting class grades its own repairs; the residual check (diff from 72898989, the commit that added the external return, plus untracked files) listed ten files, every one inside an entry's edit record. The all_done clause and the mixed-walk rule landed at every site they claim, including D-ca-4's supersession, whose rules probe parsed two live rules with no defects, and the delta's row, proposal, design, tasks and test; the converged external warning's stale call is right, and its context point rides the fresh half's repair. The glossary repair is present and true, but extends a Carried by line that never named the owner of the trail's decisions/ folder. docs/cli.md's one-line summary of when a walk replaces the account was read and left alone, a user-level simplification. The reading step: a first reader was dispatched pointing at a file instead of with the brief verbatim, and was stopped before it reported; the second received the brief verbatim. Its pattern: the account's fields are restated in three records more narrowly than D-ca-1 states them ('plan' for the stage's charter, the setting half dropped), the narrowing the account step's own one-line summary carries; and two records rest on D-ca-1 alone, now two supersessions back, which the reader flagged outside its four rows.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "reading"
+  ],
+  "passes_skipped": [
+    "0: verification genre — a whole-change pass, not run over the walks' sweep scope",
+    "4: no perspectives defined; skip Pass 4 (orbit/lenses/ is absent)",
+    "5: no critical paths defined; skip Pass 5 (orbit/lenses/ is absent)",
+    "6: verification genre — a whole-project pass, not run over the walks' sweep scope"
+  ],
+  "verification": [
+    {
+      "title": "The all_done branch routes to the Account step only when the change has no account, dropping the replace row for an arrival on a completed reopened change",
+      "file": "src/core/templates/workflows/apply-change.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "The glossary's Trail entry lists the trail's contents without the new account/ folder",
+      "file": "docs/concepts.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "Mixed review walks need an explicit account timing rule",
+      "file": "src/core/disciplines.ts",
+      "verdict": "landed"
+    }
+  ],
+  "decision_records_read": [
+    "ledger-2026-11-13T01-33-27Z.json",
+    "ledger-2026-11-13T01-49-06Z.json",
+    "ledger-2026-11-13T01-49-07Z.json",
+    "ledger-2026-11-13T14-14-18Z.json"
+  ],
+  "final_assessment": "0 critical, 3 warning, 5 suggestion.",
+  "decision_records_owed": [
+    "ledger-2026-11-13T01-33-27Z.json",
+    "ledger-2026-11-13T01-49-06Z.json",
+    "ledger-2026-11-13T01-49-07Z.json",
+    "ledger-2026-11-13T14-14-18Z.json"
+  ],
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-11-13T14-14-32Z",
+    "2026-11-13T14-17-47Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews change-account"
+}

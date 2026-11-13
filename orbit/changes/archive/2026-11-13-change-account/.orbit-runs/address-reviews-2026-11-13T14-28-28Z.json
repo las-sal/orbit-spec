@@ -1,0 +1,294 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-13T14:28:28Z",
+  "change": "change-account",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/change-account/.orbit-runs/review-system-2026-11-13T14-24-23Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-13T14-24-23Z",
+  "latest_apply_token": "2026-11-13T05-02-19Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 3,
+    "suggestion": 5
+  },
+  "pushback_verification": "All eight verified against current state: the Carried by line and each named record as written; none stale.",
+  "resolution_summary": {
+    "resolved": 8,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "SUGGESTION",
+      "title": "The glossary's Carried by line omits orbit-decision-records, the owner of both folders the walked Trail row now names",
+      "marker_source": "internal-review",
+      "file": "docs/concepts.md",
+      "line": 305,
+      "classification": "trivial_fix",
+      "action": "added orbit-decision-records to the glossary section's Carried by line, the owner of both folders the Trail row names; the user-docs suite (carried-by check included) passes",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "docs/concepts.md",
+            "text": "`orbit-address-reviews`, `orbit-decision-records`"
+          }
+        ],
+        "searched": [
+          "Carried by:",
+          "orbit-decision-records"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "ripple_miss_of": {
+        "walk": "2026-11-13T14-14-32Z",
+        "title": "The glossary's Trail entry lists the trail's contents without the new account/ folder",
+        "file": "docs/concepts.md",
+        "kind": "query"
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "ledger-2026-11-13T01-33-27Z.json — reader row 4: decided narrows the account's second and third parts from what D-ca-1 cites",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/change-account/.orbit-runs/decisions/ledger-2026-11-13T01-33-27Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "replaced the record: decided names both halves of the second part and the stage's charter for the third",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/change-account/.orbit-runs/decisions/ledger-2026-11-13T14-27-44Z.json",
+            "text": "no setting that now changes what happens, or kept to its stage's charter"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/change-account/.orbit-runs/decisions/ledger-2026-11-13T01-33-27Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "ledger-2026-11-13T01-33-27Z.json — reader row 1: 'account' and its 'three parts' are used without a defines list",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/change-account/.orbit-runs/decisions/ledger-2026-11-13T01-33-27Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "replaced the previous replacement: defines now names the account and its three parts",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/change-account/.orbit-runs/decisions/ledger-2026-11-13T14-27-45Z.json",
+            "text": "in three parts: what the change built"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/change-account/.orbit-runs/decisions/ledger-2026-11-13T14-27-44Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "ledger-2026-11-13T01-49-06Z.json — reader row 4: decided says the account is rewritten only when building work is complete, against D-ca-1's walk replacement",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/change-account/.orbit-runs/decisions/ledger-2026-11-13T01-49-06Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "replaced the record: decided keeps the walk rewrite D-ca-1 allows",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/change-account/.orbit-runs/decisions/ledger-2026-11-13T14-27-53Z.json",
+            "text": "a review walk of the finished change rewrites it when a fix changes what it says"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/change-account/.orbit-runs/decisions/ledger-2026-11-13T01-49-06Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "ledger-2026-11-13T01-49-06Z.json — reader row 3: 'building work', 'building work is complete' and 'building session' are undefined, and 'at the walk' names no walk",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/change-account/.orbit-runs/decisions/ledger-2026-11-13T01-49-06Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "replaced the previous replacement: building work becomes apply is complete, defined, and the walk is named",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/change-account/.orbit-runs/decisions/ledger-2026-11-13T14-27-54Z.json",
+            "text": "The user chose it at the change's proposal walk"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/change-account/.orbit-runs/decisions/ledger-2026-11-13T14-27-53Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "ledger-2026-11-13T01-49-07Z.json — reader row 1: 'the change's history' and 'account folder' are used without a defines list",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/change-account/.orbit-runs/decisions/ledger-2026-11-13T01-49-07Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "replaced the record: the trail as the architecture doc names it, and account and account folder defined",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/change-account/.orbit-runs/decisions/ledger-2026-11-13T14-28-02Z.json",
+            "text": "the folder in a change's trail that holds the change's account"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/change-account/.orbit-runs/decisions/ledger-2026-11-13T01-49-07Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "ledger-2026-11-13T01-49-07Z.json — reader row 3: 'checking both when the folder is made and again just before writing' is hard to parse",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/change-account/.orbit-runs/decisions/ledger-2026-11-13T01-49-07Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "replaced the previous replacement: the double check stated plainly",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/change-account/.orbit-runs/decisions/ledger-2026-11-13T14-28-03Z.json",
+            "text": "It checks this twice: once when the folder is made, and once just before writing."
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/change-account/.orbit-runs/decisions/ledger-2026-11-13T14-28-02Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "ledger-2026-11-13T14-14-18Z.json — reader row 4: the defines entry for 'account' drops the setting half of the second part and says 'plan' for the stage's charter",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/change-account/.orbit-runs/decisions/ledger-2026-11-13T14-14-18Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "replaced the record: the account definition matches D-ca-1's fields",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/change-account/.orbit-runs/decisions/ledger-2026-11-13T14-28-04Z.json",
+            "text": "each new place the user is asked something or where a setting now changes what happens, and where the work left its stage's charter"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/change-account/.orbit-runs/decisions/ledger-2026-11-13T14-14-18Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Eight of eight resolved by repairs: the glossary section names orbit-decision-records as an owner, and seven replacement records, one per reader finding and chained per record, restate the account's fields as D-ca-1 gives them and define the terms the reader lacked.",
+  "iteration": 6,
+  "next_recommended": "/orbit:archive change-account — user-invoked",
+  "ripple_misses": 1
+}

@@ -6,7 +6,7 @@
  * to the orbit-run-summary-emit baseline where the change's iter-1 review corrected it.
  */
 import type { SkillTemplate, CommandTemplate } from '../types.js';
-import { CHAIN_END_STEP, COMMIT_STEP, DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../disciplines.js';
+import { ACCOUNT_WALK_STEP, CHAIN_END_STEP, COMMIT_STEP, DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../disciplines.js';
 
 const ADDRESS_REVIEWS_EXTERNAL_FINDINGS_FORMAT_REFERENCE = `# Reference: external-findings file format (for \`--from-file\` markdown parsing)
 
@@ -1249,6 +1249,8 @@ orbit emit address-reviews --change <name> --payload <payload-file>
 \`\`\`
 
 Architecture-scoped ingest (the source was a \`review-architecture-*.json\` emit): \`--doc <doc-name>\` instead of \`--change\` — the log lands on \`orbit/architecture/.orbit-runs/\` with \`change: null\`, keeping the architecture evidence chain whole. Whole-repo / cross-change walks with no change anchor: invoke BARE — \`orbit emit address-reviews --payload <payload-file>\` — and the engine writes \`orbit/.orbit-runs/address-reviews-<TS>.json\` with \`change: null\`. An ARCHIVED change name resolves through the same \`--change <name>\` invocation (the engine falls back to the archived trail). Every walk persists through the emit surface — never hand-compose the JSON.
+
+${ACCOUNT_WALK_STEP}
 
 ## Marker syntax across file types
 

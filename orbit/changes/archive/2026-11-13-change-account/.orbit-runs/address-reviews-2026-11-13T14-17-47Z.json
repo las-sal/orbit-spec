@@ -1,0 +1,119 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-13T14:17:47Z",
+  "change": "change-account",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/change-account/.orbit-runs/external-system-2026-11-13T05-26-05Z.md",
+  "source_command": null,
+  "source_token": "2026-11-13T05-26-05Z",
+  "latest_apply_token": "2026-11-13T05-02-19Z",
+  "external_reviewer": "GPT-6",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 1
+  },
+  "pushback_verification": "Both findings verified against current state; one converged with the fresh half's warning and is recorded stale against that pass's log; the other holds at HEAD.",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale_suppressed": 1,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The all_done shortcut can leave an existing account stale",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/apply-change.ts",
+      "line": 66,
+      "classification": "stale",
+      "action": "converged with the fresh half's all_done warning (same site, same claim), walked in its log; that repair also carries this finding's context point (read the latest account and the trail since it before deciding)",
+      "evidence": "resolved in address-reviews-2026-11-13T14-14-32Z (the earlier pass's log)",
+      "outcome": "stale"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Mixed review walks need an explicit account timing rule",
+      "marker_source": "external",
+      "file": "src/core/disciplines.ts",
+      "line": 372,
+      "classification": "trivial_fix",
+      "action": "stated the combined case on the walk, matching the delta's walk row and design decision 6 (choice A, one replacement per reopening, the account describing finished work): a walk that resolves any finding by reopening tasks writes no account, not even for its other fixes, and the completing apply session's replacement covers them; the walk-replaces bullet now carries the matching condition. D-ca-4 supersedes D-ca-3, whose per-finding wording had such a walk replace twice; proposal, design, tasks and the account-step test follow",
+      "evidence": "ACCOUNT_WALK_STEP's two bullets read per finding ('write no account for it'), while the delta's walk row read 'a walk that resolves a finding by reopening tasks writes none' and design decision 6 'the walk that reopened the tasks writes none'",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/templates/account-step.test.ts",
+          "orbit/changes/change-account/specs/orbit-decision-records/spec.md",
+          "orbit/changes/change-account/explore.md",
+          "orbit/changes/change-account/proposal.md",
+          "orbit/changes/change-account/design.md",
+          "orbit/changes/change-account/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "write no account for it",
+          "A finding resolved by reopening tasks",
+          "except a finding resolved by reopening tasks",
+          "a finding resolved by reopening tasks writes none",
+          "when it resolved the finding by reopening tasks"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/disciplines.ts",
+            "text": "write no account, not even for its other fixes"
+          },
+          {
+            "path": "src/core/disciplines.ts",
+            "text": "and no finding was resolved by reopening tasks"
+          },
+          {
+            "path": "orbit/changes/change-account/specs/orbit-decision-records/spec.md",
+            "text": "writes none, not even for its other fixes: the apply session that completes them replaces it, covering those fixes too"
+          },
+          {
+            "path": "orbit/changes/change-account/explore.md",
+            "text": "D-ca-4: each change carries one account, written when apply is complete"
+          },
+          {
+            "path": "orbit/changes/change-account/explore.md",
+            "text": "Disposition: superseded D-ca-4"
+          },
+          {
+            "path": "orbit/changes/change-account/design.md",
+            "text": "| D-ca-4 | DERIVED | live rule |"
+          },
+          {
+            "path": "orbit/changes/change-account/proposal.md",
+            "text": "which writes none, not even for its other fixes"
+          }
+        ],
+        "searched": [
+          "reopening tasks",
+          "write no account for it",
+          "D-ca-3",
+          "for it: the apply session",
+          "(see `explore.md`, D-ca-"
+        ],
+        "scope": [
+          "docs",
+          "src/core/templates/workflows/address-reviews.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "One stale as converged with the fresh half's warning, walked in its log; one resolved by a repair: a walk that reopens any task writes no account, not even for its other fixes, so the apply session that completes the reopened tasks replaces the account once, covering them. D-ca-4 supersedes D-ca-3 to say so.",
+  "iteration": 5,
+  "next_recommended": "/orbit:review --as system change-account",
+  "ripple_misses": 0
+}

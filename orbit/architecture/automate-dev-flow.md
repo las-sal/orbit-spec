@@ -356,6 +356,26 @@ Exit criteria:
 - The sign-off setting's owning requirement names it, and a test shows today's behaviour at its default.
 - G0 holds.
 
+Shipped as, first of three changes (2026-11-13; archived as `orbit/changes/archive/2026-11-13-change-account/`; the
+stage lands as three changes, D-pb-7 and D-pb-9 in `orbit/explore/program-brief/explore.md`, so it stays open for the
+brief and the sign-off setting): each change now carries one ACCOUNT, the three parts no record held — what the change
+built, each new place the user is asked something or where a setting now changes what happens, and where the work left
+its stage's charter — written in plain language by `orbit emit account` to the change trail's `account/` folder.
+`orbit-decision-records` owns when it is written: by the apply session that ends with apply complete, whichever session
+that is, an arrival on a complete change included; replaced when the work since it changed what it says; replaced by a
+walk whose fix changes it, unless that walk reopens tasks, when the apply session that completes them replaces it once.
+`orbit-emit-composition` owns its write gate: three non-blank plain parts, one chain per change (a second account must
+name the latest in `replaces`), an active change only, and the decision folder's identity checks and no-overwrite
+publish, now shared. No reader takes the account yet (D-ca-2), so G0 holds with no new exception: the apply and walk
+bodies gain an instruction to record something, and nothing a user sees or is asked changes. The system cycle added the
+all_done arrival's replacement and the walk-level reading of the reopen rule (D-ca-4, superseding D-ca-3, which had
+superseded D-ca-1 at the proposal walk). Departures: the account's checks landed in a new module rather than the
+decision records', and the shell completion's help names the command. Tests that moved (R-adf-9): the every-command
+spine test in `emit-composition.test.ts` leaves out the account, `rc03b`'s `emit-composition.ts` pin, and the apply
+skill's hash pins (function and generated file), re-recorded at apply and at the system walk. The system review's
+reading step found seven reader rows across four records; the walk replaced them, and those replacements reach no
+reader before archive (D-dr-2's named limit).
+
 ### Stage tripwires — detecting that a run has gone sideways
 
 Depends-on: decision-layer

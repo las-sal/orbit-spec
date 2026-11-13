@@ -137,6 +137,12 @@ import { fileURLToPath } from "node:url";
  * unless `resolveChainSetting` grants the emit's command (task 2.3, design D3). `gates.ts` — comment-only: the
  * `consent` JSDoc says entry needs a user invocation or a grant by the project's `chain` setting (task 1.1, a pin
  * the task plan did not name, recorded here as its own act). Every other hash here is unchanged.
+ * MOVED at change-account apply (2026-11-12) — a PLANNED act (its task 1.4, design Risks/G0): `emit-composition.ts`
+ * only — the command table gains `account` (no kind, change scope, `final_assessment` engine-owned), the target
+ * resolver refuses an account outside an active change, the decisions identity check is generalized to any trail
+ * child (`assertCanonicalChildDir`, applied to `account/`), the no-overwrite publish is shared, and `composeAccount`
+ * writes the trail's `account/` child (`orbit-emit-composition`'s `The write gate checks the account`). Every other
+ * hash here is unchanged.
  */
 const PINNED: Record<string, string> = {
   "schemas/spec-driven/schema.yaml": "ce8a5274855b9bd8a69220a4691e5a8ba93c4676e8e5b9551afa2d53f6316f6a",
@@ -155,7 +161,7 @@ const PINNED: Record<string, string> = {
   "src/core/artifact-graph/state.ts": "f59f748b94cd94ca2fe022ec5aa66b3251dd1b2c00bddb9a17cbd9273a04d0f2",
   "src/core/artifact-graph/trail.ts": "39b5d110ef53b7e03f49ddf292e86db598a14f426a02e6d84142e16231e37d69",
   "src/core/artifact-graph/types.ts": "d83e0cc6d7fca7b80618ffbb7ce052ee68e35be79e7949a941e989b2e102392c",
-  "src/core/emit-composition.ts": "eadad0937fbe8547fa0e8fcd7a6a76171a713b812f6f09088d942e6445a61b55",
+  "src/core/emit-composition.ts": "3989ad5e48f03ea29443b55282ca958ebebbf3bd93951a75ce1646e22301573e",
   "src/core/report-render.ts": "d759878995ed8b5e5c70fb1165d88d134f0aeb91acfce99d155654d1506b9f36",
 };
 

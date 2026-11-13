@@ -164,7 +164,8 @@ function checkPlainFields(command: DecisionCommand, record: Record<string, unkno
   }
 }
 
-function checkDefines(record: Record<string, unknown>): void {
+/** The `defines` list check, shared with the account (`src/core/account.ts`). */
+export function checkDefines(record: Record<string, unknown>): void {
   if (!hasOwn(record, 'defines')) return;
   const defs = record.defines;
   if (!Array.isArray(defs)) {
@@ -184,7 +185,8 @@ function checkDefines(record: Record<string, unknown>): void {
   });
 }
 
-function checkDetail(record: Record<string, unknown>): void {
+/** The `detail` check, shared with the account. */
+export function checkDetail(record: Record<string, unknown>): void {
   if (hasOwn(record, 'detail') && typeof record.detail !== 'string') {
     refuse(`'detail' must be a string when present (got ${describe(record.detail)}).`);
   }

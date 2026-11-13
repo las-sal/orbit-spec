@@ -4,6 +4,7 @@ import * as os from 'node:os';
 import * as path from 'node:path';
 import { composeAndWriteEmit, EmitError } from '../../src/core/emit-composition.js';
 import { DECISION_COMMANDS } from '../../src/core/decision-records.js';
+import { ACCOUNT_COMMAND } from '../../src/core/account.js';
 import { normalizeInternalPass } from '../../src/core/report-render.js';
 import { loadChangeContext, formatChangeStatus } from '../../src/core/artifact-graph/instruction-loader.js';
 
@@ -137,13 +138,15 @@ describe('payload contract', () => {
     // The case list is held to the surface's own command set (its unknown-command error names it),
     // less the decision records (decision-layer): `ledger`, `stop` and `resolution` write no run
     // summary, so the run-summary spine is not theirs (test/core/decision-records.test.ts holds theirs).
+    // change-account (task 1.4): the ACCOUNT joins them — not a run summary either; test/core/account.test.ts
+    // holds its spine.
     let supported = '';
     try { composeAndWriteEmit('frobnicate', { change: 'foo' }, { model: null }, { projectRoot: root }); } catch (e) { supported = (e as Error).message; }
     const engineCommands = supported
       .replace(/^.*supported: /, '')
       .replace(/\.$/, '')
       .split(', ')
-      .filter(c => !(DECISION_COMMANDS as readonly string[]).includes(c))
+      .filter(c => !(DECISION_COMMANDS as readonly string[]).includes(c) && c !== ACCOUNT_COMMAND)
       .sort();
     expect(cases.map(c => c[0]).sort()).toEqual(engineCommands);
     const SPINE = ['command', 'timestamp', 'change', 'final_assessment', 'next_recommended', 'kind', 'model'];

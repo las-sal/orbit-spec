@@ -49,6 +49,14 @@ import {
   selectUnreadRecords,
   type DecisionCommand,
 } from './decision-records.js';
+import {
+  ACCOUNT_COMMAND,
+  ACCOUNT_DIR,
+  ACCOUNT_PAYLOAD_FIELDS,
+  AccountError,
+  accountScopeRefusal,
+  checkAccount,
+} from './account.js';
 
 /**
  * `orbit emit <command>` — the engine-owned emit-composition surface (D-arc Stage D5,
@@ -67,7 +75,7 @@ export class EmitError extends Error {}
 export type EmitKind = 'workflow' | 'editorial' | 'lifecycle';
 
 interface CommandSpec {
-  /** Null for a DECISION RECORD (`ledger`, `stop`, `resolution`): not a run summary, so no kind. */
+  /** Null for a DECISION RECORD (`ledger`, `stop`, `resolution`) and the ACCOUNT: not run summaries, so no kind. */
   kind: EmitKind | null;
   /** Scope capability per the target-resolution contract. */
   scopes: { change?: boolean; doc?: boolean; project?: boolean };
@@ -252,6 +260,10 @@ const COMMANDS: Record<string, CommandSpec> = {
   ledger: { kind: null, scopes: { change: true, doc: true }, payloadFields: DECISION_PAYLOAD_FIELDS.ledger },
   stop: { kind: null, scopes: { change: true, doc: true }, payloadFields: DECISION_PAYLOAD_FIELDS.stop },
   resolution: { kind: null, scopes: { change: true, doc: true }, payloadFields: DECISION_PAYLOAD_FIELDS.resolution },
+  // program-brief (change-account): a change's ACCOUNT (`orbit-decision-records`' `Each change carries one
+  // account, written when apply is complete`). Not a run summary and not a decision record: no kind, no
+  // recommendation, written to the trail's `account/` child; ACTIVE changes only (`resolveTarget`).
+  account: { kind: null, scopes: { change: true }, payloadFields: ACCOUNT_PAYLOAD_FIELDS },
 };
 
 /** Spine + deterministic facts + computed extensions per command — REJECTED in payloads. */
@@ -295,6 +307,7 @@ export const ENGINE_OWNED_EXTRA: Record<string, string[]> = {
   ledger: ['final_assessment'],
   stop: ['final_assessment'],
   resolution: ['final_assessment'],
+  account: ['final_assessment'],
 };
 
 /**
@@ -808,6 +821,22 @@ function resolveTarget(projectRoot: string, command: string, target: EmitTarget)
   const name = change as string;
   const changeDir = path.join(projectRoot, 'orbit', 'changes', name);
   const exploreDir = path.join(projectRoot, 'orbit', 'explore', name);
+
+  if (command === ACCOUNT_COMMAND) {
+    // An account is written while a change is built: an ACTIVE change only — never the exploration
+    // fallback below (its trail moves at propose), never an archive (`The write gate checks the account`).
+    if (name !== 'archive' && fs.existsSync(changeDir) && fs.statSync(changeDir).isDirectory()) {
+      assertContained(changeDir, path.join(projectRoot, 'orbit', 'changes'), `change '${name}'`);
+      return { scope: 'change', runsDir: path.join(changeDir, '.orbit-runs'), change: name, doc: null, changeDir };
+    }
+    const archived = findArchivedDir(projectRoot, name);
+    const foundAt = fs.existsSync(exploreDir)
+      ? `orbit/explore/${name}/`
+      : archived
+        ? `${path.relative(projectRoot, archived).split(path.sep).join('/')}/`
+        : null;
+    throw new EmitError(`write gate: ${accountScopeRefusal(name, foundAt)}`);
+  }
 
   if (command === 'archive') {
     // The ARCHIVED change's trail, post-move: lexically greatest archive/*-<name>/ match
@@ -2000,21 +2029,23 @@ function writeGate(emit: Record<string, unknown>, target: ResolvedTarget, filePa
 }
 
 /**
- * decision-layer: the `decisions/` child must physically BE the trail's canonical `decisions` child —
- * the same IDENTITY rule `assertCanonicalTrailDir` holds the trail to, one level down.
+ * decision-layer: a trail child (`decisions/`, and the account's `account/`) must physically BE the
+ * trail's canonical child of that name — the same IDENTITY rule `assertCanonicalTrailDir` holds the
+ * trail to, one level down. A symlink redirecting it outside the trail, or onto a sibling, is refused.
  */
-function assertCanonicalDecisionsDir(decisionsDir: string): void {
+function assertCanonicalChildDir(childDir: string): void {
+  const child = path.basename(childDir);
   let realDir: string;
   let realParent: string;
   try {
-    realDir = fs.realpathSync(decisionsDir);
-    realParent = fs.realpathSync(path.dirname(decisionsDir));
+    realDir = fs.realpathSync(childDir);
+    realParent = fs.realpathSync(path.dirname(childDir));
   } catch {
     return; // unresolvable paths fail at the write itself
   }
-  if (realDir !== path.join(realParent, 'decisions')) {
+  if (realDir !== path.join(realParent, child)) {
     throw new EmitError(
-      `decisions directory ${decisionsDir} does not physically resolve to its trail's canonical decisions child — aliased entries are never writable emit trails.`
+      `${child} directory ${childDir} does not physically resolve to its trail's canonical ${child} child — aliased entries are never writable emit trails.`
     );
   }
 }
@@ -2024,7 +2055,7 @@ function assertCanonicalDecisionsDir(decisionsDir: string): void {
  * `timestamp` and `model` present, and `change` a string, or null with a string `doc`. A decision
  * record carries no `kind`, `final_assessment` or `next_recommended`.
  */
-function decisionSpineCheck(emit: Record<string, unknown>, target: ResolvedTarget): void {
+function decisionSpineCheck(emit: Record<string, unknown>, target: ResolvedTarget, label = 'a decision record'): void {
   for (const f of ['command', 'timestamp']) {
     if (typeof emit[f] !== 'string' || (emit[f] as string).trim() === '') {
       throw new EmitError(`write gate: spine field '${f}' missing or empty.`);
@@ -2043,7 +2074,7 @@ function decisionSpineCheck(emit: Record<string, unknown>, target: ResolvedTarge
     throw new EmitError(`write gate: 'change' must be a string for change-scoped emits.`);
   }
   for (const f of ['kind', 'final_assessment', 'next_recommended']) {
-    if (f in emit) throw new EmitError(`write gate: a decision record carries no '${f}'.`);
+    if (f in emit) throw new EmitError(`write gate: ${label} carries no '${f}'.`);
   }
 }
 
@@ -2063,15 +2094,11 @@ function composeDecisionRecord(
   assertCanonicalTrailDir(resolved.runsDir);
   const decisionsDir = path.join(resolved.runsDir, 'decisions');
   fs.mkdirSync(decisionsDir, { recursive: true });
-  assertCanonicalDecisionsDir(decisionsDir);
+  assertCanonicalChildDir(decisionsDir);
 
   // The collision bump is scoped to the decisions folder: unique among decision records,
   // independent of the trail's own files.
-  const folderTokens = new Set(fs.readdirSync(decisionsDir).map(n => parseTsToken(n)).filter(t => t !== null));
-  let { token } = utcNow();
-  while (folderTokens.has(token)) {
-    token = bumpToken(token);
-  }
+  const token = drawChildToken(decisionsDir);
   const filename = `${command}-${token}.json`;
   const filePath = path.join(decisionsDir, filename);
 
@@ -2108,16 +2135,44 @@ function composeDecisionRecord(
     throw err;
   }
 
+  publishChildRecord(resolved.runsDir, decisionsDir, filename, token, materialized);
+  return { path: filePath, emit: materialized, warnings: [] };
+}
+
+/** A `<TS>` token unique within a trail child folder (the collision bump scoped to that folder). */
+function drawChildToken(childDir: string): string {
+  const folderTokens = new Set(fs.readdirSync(childDir).map(n => parseTsToken(n)).filter(t => t !== null));
+  let { token } = utcNow();
+  while (folderTokens.has(token)) {
+    token = bumpToken(token);
+  }
+  return token;
+}
+
+/**
+ * Publish a record into a trail child folder (`decisions/`, `account/`) WITHOUT overwriting, after
+ * re-checking the trail's and the child's identity. decision-layer system walk (external W1, Sal: A):
+ * the temporary file is created exclusively and LINKED to the final name, which fails when the name
+ * exists, so a second writer that drew the same token in the same second is refused naming the
+ * collision instead of replacing a record. (Two writers racing a folder-reading check — the
+ * one-resolution check, the one-account check — is a named limit, not closed here.)
+ */
+function publishChildRecord(
+  runsDir: string,
+  childDir: string,
+  filename: string,
+  token: string,
+  materialized: Record<string, unknown>
+): void {
   const serialized = JSON.stringify(materialized, null, 2) + '\n';
-  assertCanonicalTrailDir(resolved.runsDir);
-  assertCanonicalDecisionsDir(decisionsDir);
-  // decision-layer system walk (external W1, Sal: A): published WITHOUT overwriting. The temporary file
-  // is created exclusively and LINKED to the final name, which fails when the name exists, so a second
-  // writer that drew the same token in the same second is refused naming the collision instead of
-  // replacing a record. (Two writers racing the one-resolution check is a named limit, not closed here.)
-  const tmp = path.join(decisionsDir, `.${filename}.tmp`);
+  assertCanonicalTrailDir(runsDir);
+  assertCanonicalChildDir(childDir);
+  const filePath = path.join(childDir, filename);
+  const tmp = path.join(childDir, `.${filename}.tmp`);
   const collision = (what: string): EmitError =>
-    new EmitError(`write gate: ${what} already exists — another writer drew token ${token} in this decisions folder; nothing was written, so re-run the emit.`);
+    new EmitError(
+      `write gate: ${what} already exists — another writer drew token ${token} in this ${path.basename(childDir)} folder; nothing was written, so re-run the emit.`
+    );
   try {
     fs.writeFileSync(tmp, serialized, { encoding: 'utf-8', flag: 'wx' });
   } catch (err) {
@@ -2137,7 +2192,43 @@ function composeDecisionRecord(
       // best-effort cleanup; the original failure is the story
     }
   }
-  return { path: filePath, emit: materialized, warnings: [] };
+}
+
+/**
+ * program-brief (change-account): compose and write a change's ACCOUNT (`orbit-emit-composition`'s
+ * `The write gate checks the account`). The payload contract and target resolution ran already (an
+ * active change only); then the trail's `account/` child, held to the canonical-child identity rule
+ * after creation and again before publish, a token unique within it, the decision-record spine, the
+ * account's checks on the frozen record, and the no-overwrite publish.
+ */
+function composeAccount(resolved: ResolvedTarget, payload: Record<string, unknown>): ComposeResult {
+  fs.mkdirSync(resolved.runsDir, { recursive: true });
+  assertCanonicalTrailDir(resolved.runsDir);
+  const accountDir = path.join(resolved.runsDir, ACCOUNT_DIR);
+  fs.mkdirSync(accountDir, { recursive: true });
+  assertCanonicalChildDir(accountDir);
+
+  const token = drawChildToken(accountDir);
+  const filename = `${ACCOUNT_COMMAND}-${token}.json`;
+  const emit: Record<string, unknown> = {
+    command: ACCOUNT_COMMAND,
+    timestamp: tokenToTimestamp(token),
+    change: resolved.change,
+    model: payload.model ?? null,
+  };
+  for (const f of COMMANDS[ACCOUNT_COMMAND].payloadFields) {
+    if (f in payload) emit[f] = payload[f];
+  }
+  const materialized = JSON.parse(JSON.stringify(emit)) as Record<string, unknown>;
+  decisionSpineCheck(materialized, resolved, 'an account');
+  try {
+    checkAccount(materialized, accountDir);
+  } catch (err) {
+    if (err instanceof AccountError || err instanceof DecisionRecordError) throw new EmitError(`write gate: ${err.message}`);
+    throw err;
+  }
+  publishChildRecord(resolved.runsDir, accountDir, filename, token, materialized);
+  return { path: path.join(accountDir, filename), emit: materialized, warnings: [] };
 }
 
 // ---------------------------------------------------------------------------
@@ -2175,6 +2266,9 @@ export function composeAndWriteEmit(
   validateConsent(command, payload, projectRoot);
   if (isDecisionCommand(command)) {
     return composeDecisionRecord(command, resolved, payload, projectRoot);
+  }
+  if (command === ACCOUNT_COMMAND) {
+    return composeAccount(resolved, payload);
   }
 
   const warnings: string[] = [];

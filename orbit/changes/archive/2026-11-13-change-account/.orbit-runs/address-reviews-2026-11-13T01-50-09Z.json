@@ -1,0 +1,396 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-13T01:50:09Z",
+  "change": "change-account",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/change-account/.orbit-runs/review-proposal-2026-11-13T01-41-23Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-13T01-41-23Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 6,
+    "suggestion": 4
+  },
+  "pushback_verification": "All ten verified against current state (the apply gate user-validation rule, assertCanonicalDecisionsDir, docs/cli.md and program.ts, the archived-walk route); none stale. Three converge with the external pass and are walked here.",
+  "resolution_summary": {
+    "resolved": 10,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "A change whose remaining tasks are (User-validation handoffs never gets an account",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-decision-records/spec.md",
+      "line": 30,
+      "classification": "trivial_fix",
+      "action": "re-keyed the write on apply being complete (the apply gate passing, declared User-validation handoffs included) and no account existing; the lifecycle table, closure sentence, design decision 6 and risk, task 3.1 and the first scenario reworded, and a user-validation scenario added",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/change-account/design.md",
+          "orbit/changes/change-account/tasks.md",
+          "orbit/changes/change-account/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the apply session that checks the change's last task"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/change-account/specs/orbit-decision-records/spec.md",
+            "text": "A change ending on a user-validation handoff gets its account"
+          }
+        ],
+        "searched": [
+          "last task",
+          "apply finishes",
+          "checks the last"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/change-account/explore.md",
+            "why": "the exploration is the historical record of how the change took shape and keeps its first wording"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The lifecycle table's apply rows overlap, so a session finishing reopened tasks gets two instructions",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-decision-records/spec.md",
+      "line": 29,
+      "classification": "decision_required",
+      "action": "applied the ratified direction A: the apply rows split by apply complete at the session end times account exists, and a reopened change replaces its account once, in the session that completes apply again",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Row 4 fires only in the session that finishes apply again (replace once, at the end of the reopened work)."
+          },
+          {
+            "label": "B",
+            "body": "Row 4 fires in any apply session whose work changes what the account says, finished or not."
+          }
+        ],
+        "chosen": "A"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/change-account/design.md",
+          "orbit/changes/change-account/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "an apply session that leaves a task unchecked"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/change-account/specs/orbit-decision-records/spec.md",
+            "text": "A reopened change replaces its account once, when apply completes"
+          }
+        ],
+        "searched": [
+          "leaves a task unchecked",
+          "already has an account"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The address-reviews body gets one sentence, but the spec says each body names the fields the write gate accepts",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-decision-records/spec.md",
+      "line": 41,
+      "classification": "trivial_fix",
+      "action": "the address-reviews body carries its own ACCOUNT_WALK_STEP naming the fields and the orbit emit account invocation with replaces; the requirement says each body carries the fields and the invocation, and task 3.4 holds both",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/change-account/specs/orbit-decision-records/spec.md",
+          "orbit/changes/change-account/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "and one sentence by the"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/change-account/design.md",
+            "text": "ACCOUNT_WALK_STEP"
+          }
+        ],
+        "searched": [
+          "one sentence",
+          "address-reviews body"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The account/ folder inherits none of the decisions/ folder's write guarantees",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-emit-composition/spec.md",
+      "line": 172,
+      "classification": "trivial_fix",
+      "action": "the account/ child is held to the decisions/ child identity rule (physically the canonical child, checked after creation and before publish) with a token unique within account/, and a scenario for an aliased folder; design decision 2, task 1.2 and the proposal name it",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/change-account/design.md",
+          "orbit/changes/change-account/tasks.md",
+          "orbit/changes/change-account/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/change-account/specs/orbit-emit-composition/spec.md",
+            "text": "An aliased account folder is refused"
+          }
+        ],
+        "searched": [
+          "canonical",
+          "assertCanonicalDecisionsDir"
+        ],
+        "scope": [
+          "src/core/emit-composition.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The plain-language rule now binds the account, but its holder requirement still claims a reader reaches every failure",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-decision-records/spec.md",
+      "line": 112,
+      "classification": "trivial_fix",
+      "action": "a named limit in No reader takes the account yet: the plain-language holder reaches an account by the write gate alone until the third change; design names the alternative not taken",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/change-account/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/change-account/specs/orbit-decision-records/spec.md",
+            "text": "holds an account's plain fields by the"
+          }
+        ],
+        "searched": [
+          "reach every way a record can fail"
+        ],
+        "scope": [
+          "orbit/specs/orbit-decision-records/spec.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "docs/cli.md's orbit emit section will omit the account",
+      "marker_source": "internal-review",
+      "file": "docs/cli.md",
+      "line": 358,
+      "classification": "trivial_fix",
+      "action": "task 4.1 names orbit emit account in docs/cli.md and the emit description in src/cli/program.ts; the proposal Impact and the design Touchpoints name both",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/change-account/proposal.md",
+          "orbit/changes/change-account/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/change-account/tasks.md",
+            "text": "docs/cli.md`'s `orbit emit` section"
+          }
+        ],
+        "searched": [
+          "ledger, stop and resolution",
+          "decision record (ledger, stop, resolution)"
+        ],
+        "scope": [
+          "docs/cli.md",
+          "src/cli/program.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Both capabilities' Purpose lines name only the three decision records",
+      "marker_source": "internal-review",
+      "file": "orbit/specs/orbit-emit-composition/spec.md",
+      "line": 5,
+      "classification": "trivial_fix",
+      "action": "design.md gains an At archive section: both Purpose lines are edited in place at archive (not a task, since an unchecked at-archive task would hold the apply gate)",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/change-account/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/change-account/design.md",
+            "text": "## At archive"
+          }
+        ],
+        "searched": [
+          "Purpose"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "An exploration-only name has no 'not-found error' to reuse",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-emit-composition/spec.md",
+      "line": 220,
+      "classification": "trivial_fix",
+      "action": "the scope row says the refusal names that an account is written only for an active change and where the name was found; the scenario and design decision 5 match",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/change-account/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "refused with the not-found error"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/change-account/specs/orbit-emit-composition/spec.md",
+            "text": "an account is written only for an active change under"
+          }
+        ],
+        "searched": [
+          "not-found"
+        ],
+        "scope": [
+          "src/core/emit-composition.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The walk row does not exclude a walk of an archived change",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-decision-records/spec.md",
+      "line": 33,
+      "classification": "trivial_fix",
+      "action": "the walk row is split: a walk of an active change replaces, a walk of an archived change writes none, with a scenario; task 3.2 carries it into the walk step",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/change-account/tasks.md",
+          "orbit/changes/change-account/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/change-account/specs/orbit-decision-records/spec.md",
+            "text": "a walk of an archived change | none"
+          }
+        ],
+        "searched": [
+          "walk on a change that has an account"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The one-account check has no named limit for a concurrent writer",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-emit-composition/spec.md",
+      "line": 184,
+      "classification": "trivial_fix",
+      "action": "a named limit on the one-account check, with the one-resolution check residual pointing at stage parallel-lanes; the design risks name it",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/change-account/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/change-account/specs/orbit-emit-composition/spec.md",
+            "text": "the one-account check assumes one writer per"
+          }
+        ],
+        "searched": [
+          "one writer per"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "All ten resolved by repairs inside the change: the account is now written when apply is complete (the apply gate passing) rather than by the session that checks the last task, the apply rows split cleanly with a reopened change replacing its account once (the user ratified A), the account folder carries the decisions folder identity check, the walk body carries its own field list, and named limits cover the unread prose and two writers.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews change-account",
+  "ripple_misses": 0
+}

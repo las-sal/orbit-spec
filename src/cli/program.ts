@@ -298,7 +298,7 @@ export function buildProgram(options: ProgramOptions = {}): Command {
   // Generic emit surface (D5 context economy): engine-owned run-summary composition
   program
     .command('emit <emit-command>')
-    .description('Compose and write a run-summary emit or a decision record (ledger, stop, resolution) — the AI supplies the narrative payload; the engine owns the spine, deterministic facts, and computed extensions')
+    .description('Compose and write a run-summary emit, a decision record (ledger, stop, resolution) or a change\'s account — the AI supplies the narrative payload; the engine owns the spine, deterministic facts, and computed extensions')
     .option('--change <name>', 'Target workstream (a change, or the staging exploration for explore-trail emits)')
     .option('--doc <doc-name>', 'Target architecture doc (architecture-scoped commands)')
     .option('--payload <file>', 'Payload JSON file (when present, stdin is not consulted)')

@@ -14,30 +14,31 @@ something, which G0 allows (R-adf-9).
 
 ## Mechanism
 
-### D-ca-1 — each change carries one account, written when apply finishes
+### D-ca-4 — each change carries one account, written when apply is complete
 Domain: each lifecycle step that runs on a change, as it touches the account
 | member | covered by |
 |---|---|
-| propose, ff, the proposal review and its walk | nothing is built yet; no account |
-| an apply session that leaves tasks unchecked | no account; the next apply session carries on |
-| the apply session that checks the last task | writes the account (`built`, `seams`, `deviations`, with `defines` and `detail` as the other records have them) before its run summary |
-| an apply session after an account exists (a walk reopened tasks) | writes a replacement of the latest account when what it built changes the account |
+| explore, propose, ff, the proposal review and its walk | nothing is built yet; no account |
+| an apply session that ends with apply not complete | no account, whether or not one exists; the session that completes apply writes or replaces it |
+| an apply session that ends with apply complete, on a change with no account | writes the account (`built`, `seams`, `deviations`, with `defines` and `detail` as the other records have them) before its run summary, or before its completion readout when it writes none — whether it checked the last task, resumed after a session that ended before writing, or arrived on a change completed before accounts existed |
+| an apply session that ends with apply complete, on a change that has an account (a walk reopened tasks) | writes a replacement of the latest account when the work done since that account was written changed what it says |
 | the system review | reads nothing new by this change (D-ca-2) |
-| the system walk, when a fix changes what was built, a seam, or a deviation | writes a replacement of the latest account |
+| a walk of an active change that has an account, when a resolved finding changes what was built, a seam, or a deviation | writes a replacement of the latest account; a walk that resolves any finding by reopening tasks writes none, not even for its other fixes: the apply session that completes them replaces it, covering those fixes too |
+| a walk of an archived change | no account: orbit writes no record to an archived change's trail |
 | archive | writes no account; the archived change keeps the latest one |
-| a change abandoned before apply finishes | no account; a brief over it says none was written (brief-render) |
+| a change abandoned before apply is complete | no account; a brief over it says none was written (brief-render) |
 | a change citing no architecture doc | `deviations` is stated against the proposal's scope rather than a stage charter |
-Closure: DERIVED — the spec-driven schema's phases (propose, the proposal review, apply, the system review, archive) with the walks that follow each review, every phase listed, plus the two shapes a change can take outside them (abandoned, uncited)
+Closure: DERIVED — the spec-driven schema's phases (propose, the proposal review, apply, the system review, archive) with the walks that follow each review, every phase listed; apply split by whether apply is complete at the session's end and whether an account exists, a walk by whether the change is active or archived; plus the two shapes a change can take outside them (abandoned, uncited)
 Moves:
 - READ: applied — `orbit-decision-records`' `Three decision records, one job each`, `Where decision records are kept`, `Decision records are written in every mode` and `A record is fixed by a replacement, never edited`; the plain-language table in `Decision records are written for a reader who knows only the architecture`, whose residual names a new prose field
 - ENUMERATE: applied — this table
-- COHERE: applied — the account is written by the session that finishes apply, while the existing records are written at call time; the replacement rule (the latest of a chain is current) is the one the other records use, so the brief reads the latest account
+- COHERE: applied — the account is written by the session that ends with apply complete, while the existing records are written at call time; the replacement rule (the latest of a chain is current) is the one the other records use, so the brief reads the latest account
 - EXECUTE: not applied — nothing is built yet
-- FALSIFY: applied — an apply that finishes across a session boundary could leave no session that "finishes apply"; the session that checks the last task is a fact the tasks file shows, so one session always owns the write
+- FALSIFY: applied — keyed on checking the last task (D-ca-1), the write is lost when that session ends before writing, and never fires when the change ends on a declared user-validation handoff (the proposal walk of 2026-11-13); keyed on apply being complete (the apply gate passing) and no account existing, both facts the tasks file and the trail show, whichever session first ends with apply complete owns the write
 - CONFORM: applied — R-adf-7 (written in every mode), R-adf-9 (the apply body gains an instruction to record something), R-adf-10 ("the user"), the plain-language rule
 - FEASIBILITY: not applied — one record per change, a replacement now and then
 - CONSUME: applied — brief-render renders it (D-br-1); the third change's reader takes it when sign-off is on
-- INVOKE: applied — fires at the apply session that checks the last task, in every mode
+- INVOKE: applied — fires at the end of each apply session in which apply is complete, and at a walk of an active change whose resolved finding changes what the account says, in every mode
 
 ### D-ca-2 — no reader takes the account while sign-off cannot be on
 Domain: every consumer of the reading's selection, with an account in the change's records
@@ -67,9 +68,27 @@ Moves:
   left its stage's charter — written by the apply session that checks the last task, in every mode, and replaced by a
   later apply or the system walk when what it says changes. The record's and fields' names are settled at propose.
   Kind: rule
+  Disposition: superseded D-ca-3
 - **2026-11-12 — D-ca-2: no reader takes the account while sign-off cannot be on** From D-pb-5's off row (D-pb-9): the
   account is left out of the reading's selection, so it is neither read, owed nor counted as unread, and a change whose
   only record is its account dispatches no reader. The third change adds the rows where sign-off is on.
+  Kind: rule
+- **2026-11-13 — D-ca-3: each change carries one account, written when apply is complete** Supersedes D-ca-1 (the
+  proposal walk of 2026-11-13): the account is written by the apply session that ends with apply complete — the apply
+  gate passing, declared user-validation handoffs included — on a change that has none, in every mode, whichever session
+  that is. A reopened change replaces its latest account once, in the session that completes apply again, when the work
+  done since that account was written changed what it says; a walk of an active change replaces it when a resolved
+  finding changes what was built, a seam or a deviation, unless the finding was resolved by reopening tasks; a walk of an
+  archived change writes none. The fields are D-ca-1's, named at propose.
+  Kind: rule
+  Disposition: superseded D-ca-4
+- **2026-11-13 — D-ca-4: each change carries one account, written when apply is complete** Supersedes D-ca-3 (the
+  system walk of 2026-11-13): D-ca-3's rule, except that the walk's exception is the walk, not the finding — a walk of
+  an active change replaces the account when a resolved finding changes what was built, a seam or a deviation, unless
+  the walk resolved any finding by reopening tasks; then it writes none, not even for its other fixes, and the apply
+  session that completes the reopened tasks replaces the account once, covering them. Read per finding, D-ca-3 had a
+  walk that both fixed and reopened replace the account at once and again at completion, the first describing
+  half-done work, against its own "replaces its latest account once".
   Kind: rule
 
 ## Open questions

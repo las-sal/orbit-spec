@@ -1,0 +1,63 @@
+{
+  "command": "archive",
+  "timestamp": "2026-11-13T14:33:44Z",
+  "change": "change-account",
+  "kind": "lifecycle",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Archived change-account to orbit/changes/archive/2026-11-13-change-account/, the first of stage program-brief's three changes: each change now carries one account (what it built, its new seams, where it left its charter), written by the apply session that ends with apply complete and replaced by a walk whose fix changes it, unless that walk reopens tasks. The sync added 3 requirements and modified 1 across orbit-decision-records and orbit-emit-composition, every block byte-verified. The pre-archive audit found no critical drift; its two touchpoints warnings and one suggestion are logged below.",
+  "archive_path": "orbit/changes/archive/2026-11-13-change-account/",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 1
+    },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": [
+      "orbit-decision-records",
+      "orbit-emit-composition"
+    ],
+    "added": 3,
+    "modified": 1,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
+  "user_decision": "proceeded_with_no_critical",
+  "consent": "user-invoked",
+  "warnings": [
+    "Pre-archive audit (category 5, touchpoints): src/core/account.ts and src/core/completions/command-registry.ts are actual but unpredicted by the design's frozen Touchpoints (WARNING each): the account's checks landed in a new module rather than src/core/decision-records.ts, and the shell-completion help names the command, a deviation the account itself records. orbit/scenario-ledger.yaml rode along as test bookkeeping (SUGGESTION).",
+    "Closed-set tests moved (R-adf-9), each enumerating a set the change extends: test/core/emit-composition.test.ts's every-command spine test leaves out the account; test/core/rc03b-untouched-modules.test.ts's emit-composition.ts pin; test/core/templates/skill-templates-parity.test.ts's apply pins (function and generated file), re-recorded at apply and again at the system walk. New: test/core/account.test.ts, test/core/templates/account-step.test.ts.",
+    "The system review's reading step found seven reader rows across four records; the walk replaced them by seven chained replacements, which reach no reader before archive (D-dr-2's named limit). Two of the records still cite D-ca-1, superseded twice since, because a replacement carries its citations unchanged."
+  ],
+  "judgements": [
+    {
+      "kind": "readiness",
+      "formed_against": [
+        "2026-11-13T01-41-23Z",
+        "2026-11-13T01-42-14Z",
+        "2026-11-13T05-25-22Z",
+        "2026-11-13T05-26-05Z"
+      ],
+      "disposition": "ready",
+      "reasoning": "Both blind pairs' findings were walked: the proposal pair's into D-ca-3 and the reopened-change row, the system pair's convergent all_done warning and its mixed-walk suggestion into the apply clause and D-ca-4, and the in-context verification graded those repairs landed except the glossary's owner line, which the last walk repaired. The fresh system pass's direction was forward and the external's hold rested on the all_done edge now closed; the write gate, its identity checks and the no-reader guarantee held against the specs in every pass.",
+      "ratified_by": "ai",
+      "accepted": [
+        {
+          "claim": "A refused account leaves an empty .orbit-runs/account/ folder behind, as a refused decision record leaves decisions/.",
+          "why": "The fresh system pass probed it and read it as implied by the spec's after-creation identity check; no reader lists the folder, and an empty one changes nothing a reader sees."
+        }
+      ]
+    }
+  ],
+  "pr_url": "https://github.com/las-sal/orbit-spec/pull/41",
+  "pr_state": "draft",
+  "next_recommended": "/orbit:architect automate-dev-flow — change archived; review stage program-brief and take up the program's next stage, or run /orbit:audit-drift for a project-wide drift check.",
+  "decision_records_unread": 4
+}
