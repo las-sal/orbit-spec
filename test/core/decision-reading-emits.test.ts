@@ -78,7 +78,7 @@ function expectRefused(fn: () => unknown, pattern: RegExp, folder = RUNS('foo'))
   expect(ls(folder)).toEqual(before);
 }
 
-const selection = (c = 'foo') => selectUnreadRecords(path.join(root, 'orbit/changes', c));
+const selection = (c = 'foo') => selectUnreadRecords(path.join(root, 'orbit/changes', c), root);
 
 function archive(change = 'foo'): Record<string, unknown> {
   const dest = `orbit/changes/archive/2026-11-09-${change}`;
@@ -222,7 +222,7 @@ describe("orbit-emit-composition: The reading's selection is recorded at review 
       expectRefused(() => emit('review', systemPayload({ ...over, decision_records_read: [] })), /'decision_records_read' is admitted only on an in-context system review/);
     }
     expectRefused(() => emit('apply', { model: null, consent: 'user-invoked', decision_records_read: [] }), /unknown payload key 'decision_records_read'/);
-    expectRefused(() => emit('review', reading(['not-a-record.json'])), /must be an array of decision-record filenames/);
+    expectRefused(() => emit('review', reading(['not-a-record.json'])), /must be an array of record filenames/);
   });
 
   it("orbit status, orientation and the report render are byte-unchanged by the three fields", () => {

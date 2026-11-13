@@ -493,7 +493,7 @@ export const COMMAND_REGISTRY: CommandDefinition[] = [
   },
   {
     name: 'emit',
-    description: 'Compose and write a run-summary emit, a decision record or a change\'s account from a narrative payload',
+    description: 'Compose and write a run-summary emit, a decision record, a change\'s account or its sign-off from a narrative payload',
     acceptsPositional: true,
     flags: [
       {
@@ -602,6 +602,10 @@ export const COMMAND_REGISTRY: CommandDefinition[] = [
       {
         name: 'save',
         description: "Save the active change's brief into its history and print the file and its SHA-256",
+      },
+      {
+        name: 'hold',
+        description: "Report whether the active change's archive waits on the user's sign-off (read-only)",
       },
       COMMON_FLAGS.json,
     ],

@@ -126,7 +126,9 @@ body.
   as `node bin/orbit.js pr commit "<name>" --json` (here it returns `off`: this repo sets neither `commit` nor `push`).
   And the archive's brief save, `orbit brief` (brief-render): until a release carrying it is installed, run it as
   `node bin/orbit.js brief --change "<name>" --save` (the installed `orbit` has no `brief`, and its failure would go
-  silently into the archive's `warnings`).
+  silently into the archive's `warnings`). The archive's sign-off hold (program-brief) likewise: run
+  `node bin/orbit.js brief --change "<name>" --hold --json` and `node bin/orbit.js emit signoff …` until a release carrying
+  `orbit brief --hold` and `orbit emit signoff` is installed (this repo sets no `signoff` key, so the hold reads `off`).
 - **Outward actions stay the human's** (D6, `orbit-conventions`) — merging any PR, publishing
   releases, and filing issues on external trackers are invoked outside orbit workflows, in
   non-orbit sessions on this repo as much as in orbit ones. Recommend them; never perform them.

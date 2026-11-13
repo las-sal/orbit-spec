@@ -182,8 +182,13 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // brief-render apply (2026-11-13), a PLANNED move (its task 3.3): the archive body gains Step 3.6 and the bulk-archive
   // body its per-change brief save, each interpolating `BRIEF_SAVE_STEP` (the `orbit brief --change <name> --save`
   // command and `orbit-archive-modifications`' save table). Both function hashes and both generated SKILL.md hashes moved.
-  getArchiveChangeSkillTemplate: '444c61e4a04984bb66f1778728b206cb64ab7ece0b1f3cb74974d4cfd73ae283',
-  getBulkArchiveChangeSkillTemplate: '1329eb9c0a640a144691c871bd44ac855d056ca4205142c7334707d26d419cbf',
+  // program-brief apply (2026-11-13), a PLANNED move (its task 4.3, R-adf-9): the archive body gains Step 3.7 and the
+  // bulk-archive body its per-change sign-off hold, each interpolating `SIGNOFF_HOLD_STEP` (`orbit brief --change <name>
+  // --hold --json`, `orbit-archive-modifications`' hold table, the sign-off prompt and `orbit emit signoff`), and the
+  // save table's failure row goes on to the hold. Both function hashes and both generated SKILL.md hashes moved. The
+  // review and address-reviews edits of its task 3.4 move no pin here: neither skill is in this pinned set.
+  getArchiveChangeSkillTemplate: '612693e52fbf4525302071f1339ec6cdb88ca05ba75ea4ad0061126910c4e3d9',
+  getBulkArchiveChangeSkillTemplate: 'ad6986219a8cd1b6678c94610b12456fba5e5add3a4ece536b9702df58a0feea',
   getOrbitSyncCommandTemplate: 'b985d0a4d89b0e2cc3c6b6dec2521ef2a9d0df44a8ba9ec92a5495052c94a39c',
   // rc06b-map-readers (2026-10-05) — verify moved DELIBERATELY, the first named edit to an upstream
   // portion under `orbit-conventions`' narrowed `Generated-file disposition`: step 6's test-tracing
@@ -263,8 +268,8 @@ const EXPECTED_GENERATED_SKILL_CONTENT_HASHES: Record<string, string> = {
   'orbit-apply-change': 'd082434b59a4ebc8ea068d468d7152410a70cb13dd3a789e221b107e8f0191f6', // rc17a apply: the v4 clause (see the function-hash note above); then seam-chaining: the Chain end step and the epitome clause, at apply, the system walk and the verification walk; then seam-chaining-grants apply (see the function-hash note above); then change-account apply: the Account step, then its system walk: the all_done clause (see the function-hash note above)
   'orbit-ff-change': '101fbd4b7ff9481d6f776c8d33ea5e53e9ddb85a5a07885b3be9d4d0f7d6cbbf', // seam-chaining: the Chain end step and the epitome clause, at apply, the system walk and the verification walk; then seam-chaining-grants apply: the end step's two key rows and consent clause
   'orbit-sync-specs': '09ebdddd32d976022699b1575f8cf5e85fabf57ea71f1aa1afce1c793f322c99',
-  'orbit-archive-change': '8584be26e107486309a17f6a64fec5b6f77aefccc71095c6a7627e3b202a7276', // rc10-apply-closure task 2.8, then its system walk; then seam-chaining-grants apply and its system walk; then brief-render apply: Step 3.6 (see the function-hash note above)
-  'orbit-bulk-archive-change': 'cde32a57a485981bad2c430f0eec8fb564bb73b9f8e22eb01ccfd2e8f604e857', // rc10-apply-closure task 2.8, then its system walk; then brief-render apply: the per-change brief save (see the function-hash note above)
+  'orbit-archive-change': '1b7e13c644e62d93740de463df3a65b9e38921d6eb6ba72e0029d59156006ebb', // rc10-apply-closure task 2.8, then its system walk; then seam-chaining-grants apply and its system walk; then brief-render apply: Step 3.6; then program-brief apply: Step 3.7 (see the function-hash note above)
+  'orbit-bulk-archive-change': 'f5a51a4b6ecb0e0e3181ab45b5fbd8759b102e98c6b38d67d57cd001c7f0b7d9', // rc10-apply-closure task 2.8, then its system walk; then brief-render apply: the per-change brief save; then program-brief apply: the per-change sign-off hold (see the function-hash note above)
   'orbit-verify-change': '86d0fad7fe26e44c2df6e52bcac54c015a4911afd13bb288a825495773c99390', // rc06b-map-readers (2026-10-05): moved with the body's step 6 edit, then again at system walk 2's additions edit (see the function-hash note above)
   'orbit-onboard': 'e704c183201dc18a574de32da10a8722e8a53cc590e455fd66580317761d4698', // landing-page task 2.2 (see the function-hash note above); then seam-chaining system walk: the No-chaining line qualified by the chain setting
   'orbit-propose': 'be0e434d434c3db13a49eb2057413384131c225a34901a1266030987c36e402b', // rc13c, then rc03b, then rc05's system walk, then rc09a's size brief (task 5.3) and its system walk: moved with the body (see the function-hash notes above); then seam-chaining: the Chain end step and the epitome clause, at apply, the system walk and the verification walk; then seam-chaining-grants apply: the end step's two key rows and consent clause

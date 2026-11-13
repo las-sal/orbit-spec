@@ -78,7 +78,7 @@ Decision records no reader has checked:
 - stop-2026-11-01T10-00-03Z.json
 - resolution-2026-11-01T10-00-04Z.json
 
-The account account-2026-11-01T10-00-01Z.json was checked by no reader: no reading step reads accounts yet.
+The account account-2026-11-01T10-00-01Z.json was checked by no reader: a reading step reads the account only when the user signs off on each change.
 
 ## Stage `b` — the second stage
 

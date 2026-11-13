@@ -30,10 +30,48 @@ orbit brief --change "<name>" --save
 | the save | the archive |
 |---|---|
 | succeeds | says nothing about it and goes on |
-| exits non-zero (the brief cannot be rendered whole, or a racing writer took its name) | composes ONE \`warnings\` entry naming the failure as the command reported it, for the Step 5.5 run summary, says nothing about it in chat, and goes on: a brief that cannot be saved never stops an archive |
+| exits non-zero (the brief cannot be rendered whole, or a racing writer took its name) | composes ONE \`warnings\` entry naming the failure as the command reported it, for the Step 5.5 run summary, says nothing about it in chat, and goes on to the hold: under every sign-off setting but \`change\` a brief that cannot be saved never stops an archive; under \`change\` the hold stops it, since there is no copy to sign (\`The archive holds for a per-change sign-off\`) |
 | ran, and the archive then stops (an abort or a cancel at a later prompt) | the copy stays in the active change's history; the next archive saves a new one, and the latest is the change's brief |
 
 The rows are the save's two outcomes (written, or refused whole) and the one way an archive can end after it without completing (it stops before the sync and the move). On success the command prints the saved file's path and its \`sha256\`: show neither. The save runs under every setting, and with every setting at its default nothing the user sees or is asked changes: the PR-attached tail stages the copy with the archived tree and does not name it among the carried untracked files.`;
+
+/**
+ * program-brief: the sign-off hold, run directly after the save step in both archive bodies
+ * (`orbit-archive-modifications`' `The archive holds for a per-change sign-off`). Its table is a CHECKED MIRROR of the
+ * owner's, held verbatim by `test/core/templates/signoff-hold-step.test.ts`.
+ */
+export const SIGNOFF_HOLD_STEP = `Read the hold — it renders no brief and writes nothing:
+
+\`\`\`bash
+orbit brief --change "<name>" --hold --json
+\`\`\`
+
+It prints one object: \`setting\` (\`off\` or \`change\`), \`warning\` (a sentence, or \`null\`), \`copy\` (\`{file, sha256}\` of the latest saved copy, or \`null\`), \`signoff\` (\`{file, answer}\` of the latest sign-off, or \`null\`), \`why\` and \`held\`. Act by the first row of this table that matches, the save's outcome being the save step's just above:
+
+| the save and the hold | the archive |
+|---|---|
+| the hold command exits non-zero | stops before the sync, naming the error as the command reported it; nothing is synced or moved. With the setting off the hold reads no history, so this row is reached only on a usage error, which an archive body and the \`orbit\` it was generated with never produce |
+| \`why: "off"\` | goes on, saying nothing about the hold; when the hold carries a warning, it states the warning in one line |
+| the save exited non-zero, or \`why: "no-copy"\` | stops before the sync, naming the save's failure as the command reported it, or that no copy is saved, and saying there is no copy to sign; nothing is synced or moved, and the change stays active |
+| \`why: "signed"\` | states in one line that the latest sign-off covers this copy's text, naming the record, and goes on |
+| \`why: "unsigned"\` | shows the latest saved copy whole, then asks the user to sign off or decline; writes the answer by \`orbit emit signoff --change <name>\` with the copy's filename as \`brief\`, \`answer\`, and, on a decline, the user's reason as \`reason\` (asked for when the answer did not give one); it acts on the answer only once that emit has written the record: on \`signed\` it goes on; on \`declined\` it stops before the sync, says the change stays active and the user's reason is recorded, and asks nothing further: what happens next is the user's direction. When the emit is refused or fails, whatever the answer, it stops before the sync, naming the refusal: a signature that is not recorded lifts no hold |
+
+The rows are the hold command's failure and the hold's four \`why\` values, the save's own failure joining \`no-copy\` (an earlier copy may still be saved, but it is not the text this archive would sync); the \`unsigned\` row carries the write of the answer, its success and its failure. An archive that stops at the hold writes no run summary, as an aborted archive writes none; the brief's saved copy and any sign-off stay in the active change's history.
+
+**The \`unsigned\` row, step by step:**
+
+1. Read \`orbit/changes/<name>/.orbit-runs/brief/<copy.file>\` and show it to the user WHOLE, as it is — never a summary of it: the user decides from the brief alone.
+2. Ask with the **AskUserQuestion tool** (chain: decision) — a decision prompt: an archive the \`chain\` object allowed asks it exactly as an archive the user typed, and the chain does not continue after it. The question names the change and the copy's filename; exactly two options: **Sign off** (the change lands as the brief describes it) / **Decline** (the archive stops and the change stays active). On **Decline**, when the answer carried no reason, ask the user for it in their own words.
+3. Write the answer: put the payload as JSON in a temporary file OUTSIDE the working tree and run
+
+   \`\`\`bash
+   orbit emit signoff --change "<name>" --payload <file>
+   \`\`\`
+
+   The payload carries \`model\` (your model id, or \`null\`), \`brief\` (the copy's filename, \`copy.file\`), \`answer\` (\`signed\` or \`declined\`) and, on a decline, \`reason\` (the user's reason, in their words; optional on a signature), and optionally \`defines\` and \`detail\` as the decision records have them — nothing else: orbit adds \`sha256\`, the hash of the copy's bytes, and refuses it in the payload. A refusal names the field to fix, and nothing is written.
+4. Act by the row: on a written \`signed\`, go on; on a written \`declined\`, stop before the sync; on a refused or failed emit, stop before the sync naming the refusal.
+
+The consent prompt is unchanged: a granted arrival still records \`consent: "setting"\`, which a sign-off does not replace. With every setting at its default the hold reports \`why: "off"\` with no warning and the archive goes on silently: nothing the user sees or is asked changes.`;
 
 export const DEFERRAL_REFUSALS = `DEFERRAL REFUSALS — the archive write gate refuses each, naming the task or line, and Step 3.2 checks each before the move:
 1 an unchecked task carrying the (User-validation marker, with no deferral naming it
@@ -471,9 +509,17 @@ When \`/orbit:archive --skip-audit <name>\` is invoked, the entire Step 3.5 audi
 
 ## NEW Step 3.6 — Save the change's brief (BEFORE the sync)
 
-After the Step 3.5 audit sweep and its prompt resolve, and BEFORE upstream Step 4 (the sync assessment), in every mode, save the change's brief while the change is still active, so the copy is written into the change's own history and moves with it. A sign-off given per change (a later stage of the program) waits before anything is synced or moved and cites this copy, so it is rendered before the archive record exists — the copy says so itself.
+After the Step 3.5 audit sweep and its prompt resolve, and BEFORE upstream Step 4 (the sync assessment), in every mode, save the change's brief while the change is still active, so the copy is written into the change's own history and moves with it. A sign-off given per change (Step 3.7, next) waits before anything is synced or moved and cites this copy, so it is rendered before the archive record exists — the copy says so itself.
 
 ${BRIEF_SAVE_STEP}
+
+## NEW Step 3.7 — The sign-off hold (BEFORE the sync)
+
+(Per \`orbit-archive-modifications\`' \`The archive holds for a per-change sign-off\` requirement)
+
+Directly after Step 3.6's save, and BEFORE upstream Step 4 (the sync assessment), in every mode:
+
+${SIGNOFF_HOLD_STEP}
 
 ## NEW Step 4.9 — PR preflight (\`orbit pr preflight\`, READ-ONLY, BEFORE the move — D-arc Stage D6; moved before the move by rc12)
 

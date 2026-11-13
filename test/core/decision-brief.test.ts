@@ -146,7 +146,7 @@ describe("orbit-decision-records: The reading step's brief is rendered by orbit"
     // A fresh pass and a proposal pass listing B do not count as a reading.
     reviewEmit('foo', '2026-01-01T00-00-01Z', { reviewer_class: 'fresh', decision_records_read: [b] });
     write('orbit/changes/foo/.orbit-runs/review-proposal-2026-01-01T00-00-02Z.json', JSON.stringify({ command: 'review', mode: 'proposal', reviewer_class: 'in-context', decision_records_read: [b] }));
-    expect(selectUnreadRecords(path.join(root, 'orbit/changes/foo'))).toEqual([b]);
+    expect(selectUnreadRecords(path.join(root, 'orbit/changes/foo'), root)).toEqual([b]);
     const out = renderDecisionBrief(buildDecisionBrief(root, 'foo'));
     expect(out).toContain(`### ${b}`);
     expect(out).not.toContain(`### ${a}`);
@@ -163,7 +163,7 @@ describe("orbit-decision-records: The reading step's brief is rendered by orbit"
     expect(out).not.toContain(`### ${a}`);
     // A replacement is new, so a record read before it was replaced is read again through it.
     reviewEmit('foo', '2026-01-01T00-00-00Z', { decision_records_read: [a] });
-    expect(selectUnreadRecords(path.join(root, 'orbit/changes/foo'))).toEqual([c]);
+    expect(selectUnreadRecords(path.join(root, 'orbit/changes/foo'), root)).toEqual([c]);
   });
 
   // @scenario behaviour orbit-decision-records :: The reading step's brief is rendered by orbit :: A cited path is quoted whole
