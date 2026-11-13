@@ -1,0 +1,152 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-13T15:38:58Z",
+  "change": "brief-render",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 2
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "specs/orbit-program-brief/spec.md",
+      "line": 86,
+      "title": "The saved brief and the archive's unread count agree only if the archive writes no record after the save",
+      "recommendation": "The row (and the scenario at line 103, and D-br-4's COHERE move) claims the saved copy's unread list and the archive record's decision_records_unread cannot disagree because they share one selection. They share a function, not an instant: the save runs before upstream Step 4, and the archive body's Decision-writing epitome has the archiving session write ledger entries (and stops) for calls it makes while the change is still active, at the sync (Step 4: merging deltas into baselines is a things-others-build-on / docs call) and through Step 4.9, before the move. Each such record lands in decisions/ after the copy was rendered, so Step 5.5's count exceeds what the copy lists, and the copy the third change's per-change sign-off will cite omits those ledger judgements (G5: every ledger judgement). orbit-review's named limit on the reading step already promises the brief brings unread records to the user at sign-off. Narrow the claim to records written before the save, and name the window as a limit with its residual: records the archive session writes between the save and the move reach the user only in the archived change's brief and the program brief, and the saved copy says so in its records-no-reader-checked line, as the deviations row already does for the archive's warnings. Restate the scenario so it seeds no record after the save, and add one that seeds a ledger entry after the save and asserts the copy's line rather than equality.",
+      "reproduction": "Archive a change with two unread records. The save writes brief-T.md listing both. At Step 4 the AI resolves a delta merge conflict and, per the Decision-writing epitome, runs orbit emit ledger --change foo (the change is still active). Step 5.5's archive emit computes selectUnreadRecords over the moved directory: decision_records_unread: 3. The saved copy lists two, and the sync's ledger judgement is not in the copy the sign-off cites."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-program-brief/spec.md",
+      "line": 78,
+      "title": "An archived change with no archive record gets the pre-archive rows, which then say false things",
+      "recommendation": "The table applies 'whenever no archive record exists for the change', which also holds for an ARCHIVED change that has none: three in this repo (orbit/changes/archive/2026-06-08-rename-followups/ and two others from 2026-06-08) and every archived change an adopter brings over from OpenSpec, which has no .orbit-runs/ at all. For those the rows mark the requirements 'not yet synced' and say the archive records its warnings 'after this brief', both false of a change synced and moved long ago. Scope this table to an active change (the on-demand render and the archive's own save), and state what an archived change without an archive record shows: its delta specs' requirement titles under a line saying the change was archived without an archive record, and a deviations line saying no archive warnings or accepted risks were recorded. Add a scenario for it (e.g. orbit brief --change on an archived change whose history holds no archive-*.json), and let the program brief's sections for such changes use the same lines.",
+      "reproduction": "orbit brief --change rename-followups in this repository: the change exists only as orbit/changes/archive/2026-06-08-rename-followups/, whose history holds no archive-*.json. By spec line 78 the brief renders the pre-archive table: its requirements are marked not yet synced, and the deviations section says the archive records its warnings after this brief and that they appear in the brief of the archived change, which is this brief."
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "design.md",
+      "line": 118,
+      "title": "Two saves in one second are bumped by the shared publish, not refused, so the design and the spec's refusal case disagree with the code they reuse",
+      "recommendation": "Decision 4 routes the save through the decision records' publish. That path draws its token with drawChildToken (src/core/emit-composition.ts), which bumps the token forward past any taken in the child folder, as orbit-emit-composition's collision bump and the account's 'unique within account/' rule state; publishChildRecord's exclusive link only refuses the race between that draw and the link. So a second save in the same second gets the next token and succeeds; it is not 'refused naming the file' with a warnings entry, as this Risks line says. The spec's 'a name already taken refuses the save' (spec line 155) and its scenario at line 171 leave open whether <TS> is drawn with the bump (then the scenario is reachable only by a race, and a test must inject one) or taken raw from the clock (then sequential same-second saves are refused). Say in the spec that <TS> is drawn unique within brief/ with the collision bump, as decisions/ and account/ draw theirs, that the refusal is the concurrent-writer case, and reword this Risks bullet to match."
+    },
+    {
+      "pass": "3",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "CLAUDE.md",
+      "line": 30,
+      "title": "The marked capability figure goes stale when orbit-program-brief syncs, and At archive does not name it",
+      "recommendation": "CLAUDE.md marks <!-- src:capabilities -->32<!-- /src:capabilities -->, checked by orbit validate --sources against specs.capability-count. This change adds a new capability, so the count becomes 33 at the sync. The design's At archive section (design.md:121) names only the two Purpose edits. Add the figure's move (32 to 33) to At archive, as rc06b's tasks recorded its own move 22 to 23, and run orbit validate --sources after the sync."
+    },
+    {
+      "pass": "3",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "docs/concepts.md",
+      "line": 302,
+      "title": "The glossary's Trail row enumerates the trail's folders and will lack brief/",
+      "recommendation": "The Trail row lists what a change's .orbit-runs/ holds, folder by folder: its runs, decisions/ and account/. After this change the trail also holds brief/, the copy the archive saves, so the enumeration becomes incomplete. Task 4.1 touches only docs/cli.md. Extend task 4.1 to add brief/ to this row and orbit-program-brief to the section's Carried by line (305); the Archive section (266-278), which says what archiving does, can also say it saves the change's brief first."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "tasks.md",
+      "line": 29,
+      "title": "This change's own archive cannot save its brief with the installed CLI, and the failure is silent by design",
+      "recommendation": "The installed orbit here is 2.0.2, which has no brief command. The archive body will say to run orbit brief --change brief-render --save. That exits non-zero, and by the save table it becomes one warnings entry with nothing said in chat, so task 5.3 (the user reads the brief that archive saved) finds no copy, and nobody is told why. CLAUDE.md's Decision-writing bullet carries the until-a-release-is-installed convention (node bin/orbit.js) only for emit and pr commit. Name it for this archive: an at-archive note, or a clause in 5.3, saying the save runs as node bin/orbit.js brief --change brief-render --save until a release carrying orbit brief is installed. Add orbit brief to CLAUDE.md's convention sentence too."
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "specs/orbit-program-brief/spec.md",
+      "line": 151,
+      "title": "Output details that golden tests will pin are left to the implementer",
+      "recommendation": "Some choices the first implementer will make and the golden renders will then fix. Settle them in the spec or design so the third change inherits a decision, not an accident. (a) What --save prints without --json: only the path and hash, or the brief as well, and in what line form. (b) Whether the file is the stdout bytes including the trailing newline, so that orbit brief --change foo | sha256sum matches the printed hash. (c) The order of entries inside the ledger, stops and terms sections. (d) For a term, the tie-break when a decisions/ record and the account share a timestamp: tokens are unique only within each folder. (e) What a program brief does for a doc that resolves LEGACY or MALFORMED, or a citing change with no architecture.stage."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "specs/orbit-archive-modifications/spec.md",
+      "line": 25,
+      "title": "Bulk archive's save is placed before the sync but not relative to its fingerprint prompt",
+      "recommendation": "The single archive saves after every anomaly prompt, so a copy is written only when the archive is about to sync (design decision 5). Bulk archive's one per-change anomaly prompt is the base-fingerprint check, which runs immediately before its Step 8a sync. 'Before that change's sync' allows the save either side of it. Say 'after its base-fingerprint check and before its Step 8a sync' so the two bodies place the step on the same rule."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "specs/orbit-archive-modifications/spec.md",
+      "line": 228,
+      "title": "The inserted brief exception now carries the tail's step arrows",
+      "recommendation": "In the baseline, the tail's step sequence continued from the strays sentence ('rather than silent → push → rewrite ...'). The inserted exception now ends '...the strays it named before the brief existed → push → rewrite the PR description ...', so the commit-push-rewrite-flip sequence reads as following from the brief clause. End the exception with a period and restart the sequence, e.g. 'After the commit: push → rewrite ...'. In the new scenario at line 374, 'no other file git never tracked' reads more plainly as 'no other untracked file'."
+    },
+    {
+      "pass": "7",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/specs/orbit-decision-records/spec.md",
+      "line": 557,
+      "title": "The account requirement still calls the brief 'the program brief' where the delta now says 'the brief'",
+      "recommendation": "The delta renames the account's reader from 'the program brief' to 'the brief' (orbit-program-brief) in the field table and the No-reader table, because a change brief now shows the account too. Each change carries one account, which this change does not modify, still says the account holds 'the three parts of the program brief'. The statement stays true, since a program brief includes each change's brief, but it is now the one place the old name remains. Leave it, with a note in the archive's sweep, or carry the requirement as MODIFIED: that is 10 of the ceiling's 12 requirements and moves no capability."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "The design is careful about the archive seam: the save goes before the sync, the failure is recorded and never shown, and the tail exclusion is by name. Each of those claims checks out against the archive body's step order and tail.ts's carried_untracked filter. The pattern behind the substantive findings is timing. The pre-archive rows treat 'no archive record' and 'before the archive' as the same state, and the agreement claim treats 'one selection' as 'one moment'. Neither equivalence holds: old archived changes have no record, and the archiving session can write records after the save. Both matter more to the third change than to this one, because the per-change sign-off will cite this copy as the whole account of the change's judgements. Probed: the four modified blocks against baseline (all scenarios carried), drawChildToken and publishChildRecord, selectUnreadRecords' callers, the archive and bulk-archive step order, the installed CLI, the marked figures, and the archived changes lacking archive-*.json. orbit validate --strict passes (scenario-map INFO lines only).",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "direction": {
+    "disposition": "hold",
+    "reasoning": "Walk before apply. Two of the issues change what the brief promises: which changes get the pre-archive wording, and whether the saved copy can be said to agree with the archive's count. If the brief is implemented and golden-tested first, the wording gets pinned and has to be re-recorded later. The rest are small edits to the design, the tasks and the docs. The design itself (one new capability, a pre-sync save that fails silently into warnings, a tail exclusion by name) is sound, and nothing found argues for reshaping it."
+  },
+  "final_assessment": "0 critical, 6 warning, 4 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews brief-render"
+}
