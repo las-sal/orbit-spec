@@ -1,0 +1,177 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-13T03:02:02Z",
+  "change": "change-account",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/change-account/explore.md",
+      "line": 17,
+      "title": "explore.md's D-ca-1 still has the account written by the session that checks the last task",
+      "recommendation": "The walk changed the trigger to 'apply is complete, and no account exists' in the spec, design, tasks and proposal, but left the change's own explore.md stating the old rule. The proposal (line 7) and design (line 6) cite it with '(see explore.md, D-ca-1)' for the new rule, and design's Mechanism → artifacts row names D-ca-1 a live rule mapped to the renamed requirement. Two spots are stale. First, the D-ca-1 Decision (line 64), which says 'written by the apply session that checks the last task' and 'when apply finishes'. Second, its Mechanism entry (lines 17–27): the heading, and a domain table that still has the three pre-walk apply rows and lacks the split apply rows and the archived-walk row. Amend D-ca-1 in place to state the walked rule (apply complete = the apply gate passes; the reopened change replaces once; an archived walk writes none), and make its domain table match the spec's eight rows.",
+      "walk_entry": {
+        "title": "A change whose remaining tasks are (User-validation handoffs never gets an account",
+        "file": "specs/orbit-decision-records/spec.md"
+      }
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "orbit/changes/change-account/explore.md",
+      "line": 33,
+      "title": "D-ca-1's FALSIFY move still says the session that checks the last task always owns the write",
+      "recommendation": "The FALSIFY line answers the cross-session case with 'the session that checks the last task is a fact the tasks file shows, so one session always owns the write'. E1 showed that this is false: the session can end before writing. Its resolution keys the write on apply being complete and no account existing. Rewrite the line to record the falsifier the walk found (an interruption after the last checkbox; a User-validation ending) and the rule that answers it. The INVOKE line (line 37), 'fires at the apply session that checks the last task', needs the same change. This edit goes with the D-ca-1 amendment above.",
+      "walk_entry": {
+        "title": "Apply has no recovery rule when the last checkbox predates the account",
+        "file": "orbit/changes/change-account/specs/orbit-decision-records/spec.md"
+      }
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/change-account/specs/orbit-decision-records/spec.md",
+      "line": 34,
+      "title": "The reopened-change row replaces only when the completing session's own work changed the account",
+      "recommendation": "Row 34 says a session that ends with apply complete on a change with an account replaces it 'when its work changed what the account says; otherwise none'. In the scenario 'A reopened change replaces its account once, when apply completes', the first session made the change in what foo does and the second only finishes the remaining task. By the row's words, the second session's own work did not change the account, so it writes none. The scenario says it writes the replacement. ACCOUNT_STEP is composed from this rule (task 3.1 'when its work changed what it says'; proposal line 22 'when such a session's work changed what it says'), so an implementer following the row drops the replacement choice A was meant to guarantee. Key the condition on the work since the latest account, e.g. 'when the work done since the latest account was written changed what it says'. Apply the same wording in task 3.1 and proposal line 22.",
+      "walk_entry": {
+        "title": "The lifecycle table's apply rows overlap, so a session finishing reopened tasks gets two instructions",
+        "file": "specs/orbit-decision-records/spec.md"
+      }
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/change-account/specs/orbit-decision-records/spec.md",
+      "line": 36,
+      "title": "The walk row does not say a walk that resolves a finding by reopening tasks writes none",
+      "recommendation": "Row 36 has a walk replace the account when a resolved finding 'changes what was built, a seam, or a deviation'. Row 34's '(a walk reopened tasks)' has the apply session that completes the reopened tasks replace it. A walk whose resolution reopens tasks, so the behaviour is planned but not built, could be read as firing row 36 with an account describing unbuilt work, and row 34 would then replace it a second time. Decision 6 rejected that (several replacements per reopening, some describing half-done work). Add to row 36: 'a walk that resolves a finding by reopening tasks writes none: the apply session that completes them replaces it'. Carry it into task 3.2's ACCOUNT_WALK_STEP.",
+      "walk_entry": {
+        "title": "The lifecycle table's apply rows overlap, so a session finishing reopened tasks gets two instructions",
+        "file": "specs/orbit-decision-records/spec.md"
+      }
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/change-account/.openspec.yaml",
+      "line": 1,
+      "title": ".openspec.yaml changed since the pass but sits in no walk entry's edit record",
+      "recommendation": "A record gap, not a defect. The file differs from c822d044 only by its two keys reordering, from the walk's fingerprint stamp, and the fingerprint value is unchanged. No walk entry lists it in file or ripple_cascade.applied. Nothing to fix in the artifact. Commit it with the walks' edits."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "This pass verifies the two walks of the blind pair (01-50-09Z, the fresh pass; 01-50-37Z, codex's return). I graded the eleven resolved entries over their sweep scopes, ran all nine proposal passes over the change directory, and ran the residual diff from c822d044. Eight edits landed cleanly: the separate walk step, the folder identity, the named limits, docs, Purpose, the refusal wording, the archived walk and the concurrency limit. The trigger rewrite (F1, E1) stopped at the spec, design, tasks and proposal. It never reached the change's own explore.md, which those artifacts cite as the rule's source, and whose sentences use different words from the retired phrase the sweep searched for. Choice A's row has a smaller problem: its condition reads the session's own work, while the scenario it was written for needs the work since the last account. Both fixes are wording edits inside the change. validate --strict passes; the scenario tags are task 5.2's.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "verification": [
+    {
+      "title": "A change whose remaining tasks are (User-validation handoffs never gets an account",
+      "file": "specs/orbit-decision-records/spec.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "The lifecycle table's apply rows overlap, so a session finishing reopened tasks gets two instructions",
+      "file": "specs/orbit-decision-records/spec.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "The address-reviews body gets one sentence, but the spec says each body names the fields the write gate accepts",
+      "file": "specs/orbit-decision-records/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The account/ folder inherits none of the decisions/ folder's write guarantees",
+      "file": "specs/orbit-emit-composition/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The plain-language rule now binds the account, but its holder requirement still claims a reader reaches every failure",
+      "file": "specs/orbit-decision-records/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "docs/cli.md's orbit emit section will omit the account",
+      "file": "docs/cli.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Both capabilities' Purpose lines name only the three decision records",
+      "file": "orbit/specs/orbit-emit-composition/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "An exploration-only name has no 'not-found error' to reuse",
+      "file": "specs/orbit-emit-composition/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The walk row does not exclude a walk of an archived change",
+      "file": "specs/orbit-decision-records/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The one-account check has no named limit for a concurrent writer",
+      "file": "specs/orbit-emit-composition/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Apply has no recovery rule when the last checkbox predates the account",
+      "file": "orbit/changes/change-account/specs/orbit-decision-records/spec.md",
+      "verdict": "regressed"
+    }
+  ],
+  "final_assessment": "0 critical, 2 warning, 3 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-11-13T01-50-09Z",
+    "2026-11-13T01-50-37Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews change-account"
+}

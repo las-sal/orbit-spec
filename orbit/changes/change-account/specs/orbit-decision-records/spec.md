@@ -1,6 +1,6 @@
 ## ADDED Requirements
 
-### Requirement: Each change carries one account, written when apply finishes
+### Requirement: Each change carries one account, written when apply is complete
 
 Each change SHALL carry one ACCOUNT: a record, written by the AI in plain language, of what the change built, the new
 places the user is asked something, and where the work left its plan — the three parts of the program brief (stage
@@ -21,36 +21,74 @@ outside it, and moves with the change when it is archived. Its accounts form one
 is the change's current account; a replacement may change any field, since an account records no link to another
 record. The account is written under every setting, and writing it changes nothing the user sees or is asked.
 
-Each step of a change's lifecycle touches the account by this table:
+APPLY IS COMPLETE when the change's apply gate passes: every task is checked, or every unchecked one is a declared,
+marked `(User-validation` handoff (`orbit-engine-gates`' user-validation subset rule). An apply session writes or
+replaces the account only when apply is complete at its end, so the account always describes finished work. Each step of
+a change's lifecycle touches the account by this table:
 
 | step | the account |
 |---|---|
 | explore, propose, ff, the proposal review and its walk | none: nothing is built yet |
-| an apply session that leaves a task unchecked | none: a later apply session carries on |
-| the apply session that checks the change's last task | writes the account, before its run summary |
-| an apply session on a change that already has an account (a walk reopened tasks) | when what it built changes what the account says, writes a replacement of the latest account |
+| an apply session that ends with apply not complete | none, whether or not an account exists: the session that completes apply writes or replaces it |
+| an apply session that ends with apply complete, on a change with no account | writes the account, before its run summary, or before its completion readout when it writes no run summary — whether it checked the last task, resumed after a session that ended before writing, or arrived on a change completed before accounts existed |
+| an apply session that ends with apply complete, on a change that has an account (a walk reopened tasks) | when the work done since the latest account was written changed what it says, writes a replacement of it, at the same point; otherwise none |
 | the system review | none: no reader takes the account (`No reader takes the account yet`) |
-| a walk on a change that has an account, when a resolved finding changes what was built, a seam, or a deviation | writes a replacement of the latest account |
+| a walk of an active change that has an account, when a resolved finding changes what was built, a seam, or a deviation | writes a replacement of the latest account; a walk that resolves a finding by reopening tasks writes none: the apply session that completes them replaces it |
+| a walk of an archived change | none: orbit writes no record to an archived change's trail, as for decision records |
 | archive | none: the archived change keeps its latest account |
 
-A change abandoned before its last task is checked carries no account. The table is closed by derivation: its rows are
-the spec-driven schema's phases (explore and propose, the proposal review, apply, the system review, archive) with the
-walk that follows each review, and apply split by whether the session checks the last task and whether an account
-already exists.
+A change abandoned before apply is complete carries no account, and so does a change archived before its first
+complete apply session ran after this requirement shipped. The table is closed by derivation: its rows are the
+spec-driven schema's phases (explore and propose, the proposal review, apply, the system review, archive) with the walk
+that follows each review, apply split by whether apply is complete at the session's end and whether an account already
+exists, and a walk split by whether the change is active or archived.
 
-The apply and address-reviews workflow bodies carry the instruction to write and replace it, each naming the fields the
-write gate accepts (`orbit-emit-composition`'s `The write gate checks the account`), so an installed skill needs no
-spec to write one; a test holds each body carrying it.
+The apply and address-reviews workflow bodies each carry the instruction for their rows of the table, each naming the
+fields the write gate accepts (`orbit-emit-composition`'s `The write gate checks the account`) and how to invoke
+`orbit emit account`, `replaces` included, so an installed skill of either needs no spec and no other skill to write
+one; a test holds each body carrying the fields and the invocation.
 
-#### Scenario: The session that checks the last task writes the account
+#### Scenario: The session that completes apply writes the account
 
-- **WHEN** an apply session checks the last unchecked task of change `foo`
+- **WHEN** an apply session checks the last unchecked task of change `foo`, which has no account
 - **THEN** it writes `orbit/changes/foo/.orbit-runs/account/account-<TS>.json` with `built`, `seams` and `deviations`
   before its run summary
+
+#### Scenario: A change ending on a user-validation handoff gets its account
+
+- **WHEN** change `foo`'s `tasks.md` holds 1.1 and 1.2 and `- [ ] 2.1 (User-validation handoff) live-test`, and an apply
+  session checks 1.1 and 1.2 and declares `user_validation_tasks: ["2.1"]`
+- **THEN** apply is complete with 2.1 unchecked, and the session writes the account before its run summary
+
+#### Scenario: A resumed session writes a missing account
+
+- **WHEN** every task of change `foo` is checked, `foo` has no account (the session that checked the last task ended
+  before writing it), and an apply session arrives on it
+- **THEN** that session writes the account before its completion readout
 
 #### Scenario: An apply session that leaves work writes none
 
 - **WHEN** an apply session ends with a task of change `foo` still unchecked, and `foo` has no account
+- **THEN** no account is written
+
+#### Scenario: A reopened change replaces its account once, when apply completes
+
+- **WHEN** a walk reopens two tasks of change `foo`, which has `account-A`; one apply session finishes the first and
+  changes what `foo` does, and a second finishes the other
+- **THEN** the first session writes no account, and the second, whose own task changed nothing the account says, writes
+  one replacing `account-A` that describes the finished work
+
+#### Scenario: A walk that reopens tasks writes no account
+
+- **WHEN** a system walk of change `foo`, which has `account-A`, resolves a finding by reopening a task that adds a
+  behaviour
+- **THEN** the walk writes no account, and the apply session that completes the reopened task writes one replacing
+  `account-A`
+
+#### Scenario: A walk of an archived change writes no account
+
+- **WHEN** `/orbit:address-reviews` walks an archived change that has an account, and a resolved finding changes what
+  the account says
 - **THEN** no account is written
 
 #### Scenario: A walk fix that changes what was built replaces the account
@@ -89,6 +127,14 @@ shows the account as not checked by a reader.
 
 No reader of run summaries reads the `account/` folder: `orbit status`, the reviewed gates and the report render read
 only the files directly in `.orbit-runs/`, as they do for `decisions/` (`Where decision records are kept`).
+
+Named limit — `The plain-language rule is held by structure and by a reader` holds an account's plain fields by the
+write gate alone until a reading step takes the account: the reader rows of its table reach no account before stage
+program-brief's third change.
+
+Residual kind: an account whose prose is unclear, leans on implementation detail, restates what it cites with its meaning shifted, or uses a term it leaves undefined
+
+Residual method: the third change's reading step, when sign-off is on; until then the user reads the account in the brief, and a finding against it is fixed by a replacement
 
 #### Scenario: The brief does not render the account
 

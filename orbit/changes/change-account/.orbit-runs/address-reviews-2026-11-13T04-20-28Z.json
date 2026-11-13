@@ -1,0 +1,235 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-13T04:20:28Z",
+  "change": "change-account",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/change-account/.orbit-runs/review-proposal-2026-11-13T03-02-02Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-13T03-02-02Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 3
+  },
+  "pushback_verification": "All five verified against current state; none stale. Pushback corrected one cause: the first walk's F1 entry listed explore.md under kept as the exploration's historical record, a judgement rather than a missed search, so the repair supersedes D-ca-1 instead of editing it, keeping the wording the two ledger entries cite.",
+  "resolution_summary": {
+    "resolved": 5,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "explore.md's D-ca-1 still has the account written by the session that checks the last task",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/change-account/explore.md",
+      "line": 17,
+      "classification": "trivial_fix",
+      "action": "superseded D-ca-1 with D-ca-3 in explore.md rather than editing it in place, so the decision's first wording (which two ledger entries cite) stands as written; D-ca-3 states the walked rule, its Mechanism entry replaces D-ca-1's with a domain table matching the spec's rows, and the proposal, design context and Mechanism → artifacts row now cite D-ca-3",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/change-account/design.md",
+          "orbit/changes/change-account/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "D-ca-1 — each change carries one account",
+          "| D-ca-1 | DERIVED |"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/change-account/explore.md",
+            "text": "D-ca-3 — each change carries one account, written when apply is complete"
+          },
+          {
+            "path": "orbit/changes/change-account/explore.md",
+            "text": "Disposition: superseded D-ca-3"
+          },
+          {
+            "path": "orbit/changes/change-account/design.md",
+            "text": "| D-ca-3 | DERIVED | live rule |"
+          }
+        ],
+        "searched": [
+          "checks the last task",
+          "apply finishes",
+          "D-ca-1"
+        ],
+        "scope": [
+          "orbit/explore/program-brief/explore.md",
+          "orbit/explore/brief-render/explore.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_miss_of": {
+        "walk": "2026-11-13T01-50-09Z",
+        "title": "A change whose remaining tasks are (User-validation handoffs never gets an account",
+        "file": "specs/orbit-decision-records/spec.md",
+        "kind": "judgement"
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "D-ca-1's FALSIFY move still says the session that checks the last task always owns the write",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/change-account/explore.md",
+      "line": 33,
+      "classification": "trivial_fix",
+      "action": "rewrote the FALSIFY move in D-ca-3's Mechanism entry to record the falsifier the walk found (the session ending before it writes; a user-validation ending) and the rule that answers it, and the INVOKE move to fire at the end of each apply session in which apply is complete and at a walk of an active change",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "fires at the apply session that checks the last task",
+          "so one session always owns the write"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/change-account/explore.md",
+            "text": "whichever session first ends with apply complete owns the write"
+          }
+        ],
+        "searched": [
+          "owns the write",
+          "INVOKE"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_miss_of": {
+        "walk": "2026-11-13T01-50-37Z",
+        "title": "Apply has no recovery rule when the last checkbox predates the account",
+        "file": "orbit/changes/change-account/specs/orbit-decision-records/spec.md",
+        "kind": "query"
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "The reopened-change row replaces only when the completing session's own work changed the account",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/change-account/specs/orbit-decision-records/spec.md",
+      "line": 34,
+      "classification": "trivial_fix",
+      "action": "keyed the reopened-change row on the work done since the latest account was written, not the session's own work; the reopened scenario now says the second session's own task changed nothing, and task 3.1, the proposal and design decision 6 carry the same wording",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/change-account/tasks.md",
+          "orbit/changes/change-account/proposal.md",
+          "orbit/changes/change-account/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "when its work changed what",
+          "when such a session's work changed"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/change-account/specs/orbit-decision-records/spec.md",
+            "text": "when the work done since the latest account was written changed what it says"
+          },
+          {
+            "path": "orbit/changes/change-account/tasks.md",
+            "text": "when the work done since it was written changed what it says"
+          },
+          {
+            "path": "orbit/changes/change-account/specs/orbit-decision-records/spec.md",
+            "text": "whose own task changed nothing the account says"
+          }
+        ],
+        "searched": [
+          "work changed",
+          "its work"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The walk row does not say a walk that resolves a finding by reopening tasks writes none",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/change-account/specs/orbit-decision-records/spec.md",
+      "line": 36,
+      "classification": "trivial_fix",
+      "action": "the active-walk row now says a walk that resolves a finding by reopening tasks writes none, the apply session that completes them replacing the account; a scenario holds it, and task 3.2, the proposal and design decision 6 carry it",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/change-account/tasks.md",
+          "orbit/changes/change-account/proposal.md",
+          "orbit/changes/change-account/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/change-account/specs/orbit-decision-records/spec.md",
+            "text": "A walk that reopens tasks writes no account"
+          },
+          {
+            "path": "orbit/changes/change-account/tasks.md",
+            "text": "writes none when it resolved the finding by reopening tasks"
+          },
+          {
+            "path": "orbit/changes/change-account/proposal.md",
+            "text": "except a finding resolved by reopening tasks"
+          }
+        ],
+        "searched": [
+          "reopen"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": ".openspec.yaml changed since the pass but sits in no walk entry's edit record",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/change-account/.openspec.yaml",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "no artifact edit: the file's only change is the fingerprint stamp's key reorder, its value unchanged; this entry names the file so it sits in an edit record, and it is committed with the walks' edits",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [],
+        "searched": [],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "All five resolved by repairs inside the change: D-ca-3 supersedes D-ca-1 with the walked rule and its Mechanism entry, the reopened-change row keys on the work since the latest account, and a walk that reopens tasks writes no account; the .openspec.yaml record gap is named here.",
+  "iteration": 3,
+  "next_recommended": "/orbit:apply change-account — user-invoked",
+  "ripple_misses": 2
+}
