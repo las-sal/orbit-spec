@@ -1,0 +1,74 @@
+{
+  "command": "archive",
+  "timestamp": "2026-11-13T18:14:18Z",
+  "change": "brief-render",
+  "kind": "lifecycle",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Archived brief-render to orbit/changes/archive/2026-11-13-brief-render/: orbit brief renders a change's or a program's brief read-only and saves an active change's brief with its SHA-256; the archive and bulk-archive save the brief before the sync, and the PR tail leaves it out of its untracked-files line. The sync created orbit-program-brief (4 requirements) and updated orbit-archive-modifications and orbit-decision-records; every delta block was byte-verified. The brief was saved before the sync, as this archive's own Step 3.6.",
+  "archive_path": "orbit/changes/archive/2026-11-13-brief-render/",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 5
+    },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": [
+      "orbit-archive-modifications",
+      "orbit-decision-records",
+      "orbit-program-brief"
+    ],
+    "added": 5,
+    "modified": 4,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
+  "user_decision": "proceeded_with_no_critical",
+  "consent": "user-invoked",
+  "warnings": [
+    "Pre-archive audit (category 5, touchpoints): CLAUDE.md, docs/concepts.md, orbit/scenario-ledger.yaml and the two golden fixtures under test/fixtures/brief-golden/ are actual but unpredicted by the design's frozen Touchpoints (SUGGESTION each): docs and test bookkeeping riding along; the design named test/core/ for the goldens.",
+    "Closed-set tests moved (R-adf-9), each enumerating a set the change extends: test/core/rc03b-untouched-modules.test.ts's emit-composition.ts pin (the publish takes serialized text); test/core/templates/skill-templates-parity.test.ts's archive and bulk-archive pins (function and generated file). The completion registry gained brief, held by registry-parity. New: test/core/program-brief.test.ts, test/core/templates/brief-save-step.test.ts, test/fixtures/brief-golden/.",
+    "At-archive edits, in flow: orbit-program-brief's Purpose written in place of the engine's TBD; orbit-archive-modifications' Purpose names the saved brief; CLAUDE.md's src:capabilities figure 32 -> 33 (validate --sources clean); docs/concepts.md's glossary Carried by line gains orbit-program-brief (the carried-by check resolves only baseline specs).",
+    "The save step ran as node bin/orbit.js brief --change brief-render --save (the installed orbit has no brief command); it succeeded before the sync.",
+    "The in-context system pass's reading step found fourteen reader rows across ten records; the walk replaced them by fourteen chained replacements, which reach no reader before archive (D-dr-2's named limit)."
+  ],
+  "judgements": [
+    {
+      "kind": "readiness",
+      "formed_against": [
+        "2026-11-13T15-38-58Z",
+        "2026-11-13T15-39-18Z",
+        "2026-11-13T17-31-56Z",
+        "2026-11-13T17-32-17Z"
+      ],
+      "disposition": "ready",
+      "reasoning": "Both blind pairs were walked: the proposal pair's findings into D-br-6 and D-br-7, the system pair's into D-br-8 (the user's decision B, reading every shape an archive record states its sync in) and four obvious repairs, and the in-context verification graded all six walked fixes landed. Its reading step's fourteen findings were fixed by replacement. The fresh system pass's direction was forward; codex's hold rested on unvalidated delta specs and swallowed directory errors, both now refused by name, the first by a narrower rule than it asked for.",
+      "ratified_by": "ai",
+      "accepted": [
+        {
+          "claim": "The brief refuses a delta spec that states no requirement operation, not every delta spec the full change validator would reject.",
+          "why": "The full validator holds today's rules and rejects 19 of the 66 archived changes, whose briefs it would refuse for good, since an archived change is never edited; the narrower rule rejects none of them and still never shows an unread spec as a change with no requirements."
+        }
+      ]
+    }
+  ],
+  "pr_url": "https://github.com/las-sal/orbit-spec/pull/42",
+  "pr_state": "draft",
+  "deferred_validations": [
+    {
+      "task": "5.3",
+      "why": "Its assertion is about state that exists only after this archive: the brief the archive saved into the archived change's history, which the user has not yet read.",
+      "when": "after this archive, when the user reads the saved brief",
+      "where": "orbit/changes/archive/2026-11-13-brief-render/.orbit-runs/brief/ in this repository"
+    }
+  ],
+  "next_recommended": "/orbit:architect automate-dev-flow — change archived; review stage program-brief and take up the program's next stage, or run /orbit:audit-drift for a project-wide drift check.",
+  "decision_records_unread": 10
+}

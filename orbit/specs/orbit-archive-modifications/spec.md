@@ -1,7 +1,7 @@
 # orbit-archive-modifications Specification
 
 ## Purpose
-Orbit's additions to upstream's archive flow, which is otherwise preserved: consent at entry, the pre-archive audit-drift sweep (informational, never a gate), the unresolved-marker warning, the base-fingerprint divergence prompt, the archive run summary and its schema reference, the trail moving with the change, the stage line in the completion readout, and the PR-attached archive tail.
+Orbit's additions to upstream's archive flow, which is otherwise preserved: consent at entry, the pre-archive audit-drift sweep (informational, never a gate), the unresolved-marker warning, the base-fingerprint divergence prompt, the archive run summary and its schema reference, the change's brief saved before the sync, the trail moving with the change, the stage line in the completion readout, and the PR-attached archive tail.
 ## Requirements
 ### Requirement: Upstream archive behavior preserved
 
@@ -649,7 +649,12 @@ moment earlier. There is no other change's work it could sweep, which is the haz
 enumerated-list rule exists to prevent. UNTRACKED content the move carried along (a scratch
 file left in the change directory during the work) IS staged, because it is that change's own
 material being archived alongside it, and it is NAMED in the same one-line note so a stray
-file is visible in the record rather than silent → push → rewrite the PR description to the ACHIEVEMENT landmark
+file is visible in the record rather than silent. The change's SAVED BRIEFS are the one
+exception: a `brief-<TS>.md` in the trail's `brief/` folder is the archive's OWN WRITE,
+saved before the sync and so carried by the move (`The archive saves the change's brief before
+the sync`); like the archive emit, the archive's own write after the move, it is staged with the
+tree and NOT named, so a default archive's note names exactly the strays it named before the
+brief existed. After the commit: push → rewrite the PR description to the ACHIEVEMENT landmark
 (per-change PRs) or APPEND the stage entry (program PRs) → flip READY for PER-CHANGE PRs only.
 
 The program stage entry's SOURCE is ORDERED, never assumed: (1) the arc STATUS-LOG entry
@@ -792,6 +797,12 @@ inside the tail.
 
 - **WHEN** the change directory being archived contained an untracked scratch file the change's work left there
 - **THEN** the moved `orbit/changes/archive/<YYYY-MM-DD>-<name>/` is staged as a unit (it is orbit-created in this invocation and holds one change's material by construction), the carried-along file is staged with it, and the one-line note NAMES it — while `orbit/specs/` is still never staged as a prefix
+
+#### Scenario: A saved brief is staged and not named as a stray
+
+- **WHEN** the tail commits a change whose trail holds the `brief/brief-<TS>.md` the archive saved before its sync, and
+  no other untracked file
+- **THEN** the brief is staged with the archived tree, and the one-line note names no carried untracked file
 
 #### Scenario: Unrelated dirty paths never ride the commit
 
@@ -948,4 +959,52 @@ are its only surfaces.
 - **THEN** the change is not classed incomplete for that task, its Step 3.2 runs before its sync
   and move, its dispositions appear in the batch summary, and its archive emit carries its
   deferrals
+
+### Requirement: The archive saves the change's brief before the sync
+
+The archive workflow SHALL save the change's brief (`orbit-program-brief`'s `A change's brief is saved, never
+overwritten`) under every setting, at a step after the pre-archive audit sweep and its prompt and BEFORE the sync
+assessment (upstream Step 4), by running `orbit brief --change <name> --save` while the change is still active, so the
+copy is written into the change's own history and moves with it. The step sits there because a sign-off given per
+change (stage program-brief's third change, D-pb-1 and D-pb-8 in `orbit/explore/program-brief/explore.md`) waits
+before anything is synced or moved, and must cite a copy that already exists; the copy is therefore rendered before the
+archive record exists (`orbit-program-brief`'s `A brief says only what the archive recorded`).
+
+| the save | the archive |
+|---|---|
+| succeeds | says nothing about it and goes on |
+| exits non-zero (the brief cannot be rendered whole, or a racing writer took its name) | composes ONE `warnings` entry naming the failure as the command reported it, for the Step 5.5 run summary, says nothing about it in chat, and goes on: a brief that cannot be saved never stops an archive |
+| ran, and the archive then stops (an abort or a cancel at a later prompt) | the copy stays in the active change's history; the next archive saves a new one, and the latest is the change's brief |
+
+The rows are the save's two outcomes (written, or refused whole) and the one way an archive can end after it without
+completing (it stops before the sync and the move).
+
+With every setting at its default, nothing the user sees or is asked changes: the save is a record (`automate-dev-flow`'s
+R-adf-9), the tail does not name it (`PR-attached archive tail`), and a failure is recorded, never shown. The bulk-archive
+workflow SHALL run the same step per change, after that change's base-fingerprint check and before its sync (its Step
+8a), with the same table. Each body carries the
+command and the table, so an installed skill needs no spec to run the step; a test holds each body carrying them.
+
+#### Scenario: A default archive saves the brief before the sync
+
+- **WHEN** `/orbit:archive foo` runs with every setting at its default, and `foo`'s delta spec adds a requirement
+- **THEN** the archived change's `.orbit-runs/brief/` holds one `brief-<TS>.md` whose requirements section says no
+  archive has recorded a sync yet, and the completion readout is what it was before the save existed
+
+#### Scenario: A failed save is recorded, not shown, and the archive completes
+
+- **WHEN** the save step's `orbit brief --change foo --save` exits non-zero naming an unreadable record
+- **THEN** the archive syncs, moves and writes its run summary, whose `warnings` carries one entry naming the failure,
+  and nothing about the brief is shown
+
+#### Scenario: A stopped archive leaves its copy, and the next saves another
+
+- **WHEN** the brief is saved and the user then cancels at the sync prompt, and later archives `foo` again
+- **THEN** the first copy stays in `foo`'s history, the second archive saves a second copy, and the latest is `foo`'s
+  brief
+
+#### Scenario: Bulk archive saves each change's brief
+
+- **WHEN** `/orbit:bulk-archive` archives `foo` and `bar`
+- **THEN** each change's brief is saved before that change's sync, and each archived history holds its own copy
 

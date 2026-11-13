@@ -304,7 +304,7 @@ Carried by: fork-and-orbify D12, fork-and-orbify D15
 | **Trail** | A change's `.orbit-runs/` directory: every review and run summary, and in `decisions/` its decision records, in `account/` its account, and in `brief/` its saved briefs |
 | **Walk** | Resolving a review's findings one at a time, with pushback |
 
-Carried by: the 1.3.1 baseline, `orbit-engine-gates`, `orbit-conventions`, `orbit-address-reviews`, `orbit-decision-records`
+Carried by: the 1.3.1 baseline, `orbit-engine-gates`, `orbit-conventions`, `orbit-address-reviews`, `orbit-decision-records`, `orbit-program-brief`
 
 ## Next steps
 
