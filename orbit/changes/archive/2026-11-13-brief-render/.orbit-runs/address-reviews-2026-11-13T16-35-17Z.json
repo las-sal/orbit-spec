@@ -1,0 +1,161 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-13T16:35:17Z",
+  "change": "brief-render",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/brief-render/.orbit-runs/external-proposal-2026-11-13T15-39-18Z.md",
+  "source_command": null,
+  "source_token": "2026-11-13T15-39-18Z",
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-6",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 3,
+    "suggestion": 1
+  },
+  "pushback_verification": "All four verified against current state; one converged with the fresh pass and recorded stale against its log.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 1,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Requirement listings do not distinguish proposed changes from completed syncs",
+      "marker_source": "external",
+      "file": "orbit/changes/brief-render/specs/orbit-program-brief/spec.md",
+      "line": 17,
+      "classification": "decision_required",
+      "action": "applied the user's decision A, ratified with the fresh pass's archived-without-record finding: separate lines for what the change proposes and what the archive recorded, covering a skipped sync and an already-synced active change, each with a scenario",
+      "ratified_via": "chat",
+      "resolution": "A — label by what was recorded: an active change says no archive has recorded a sync yet; an archived change follows its record (the sync ran, or was skipped with its reason) or says it has none",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/brief-render/design.md",
+          "orbit/changes/brief-render/explore.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/brief-render/specs/orbit-program-brief/spec.md",
+            "text": "with a line saying the archive recorded no sync"
+          },
+          {
+            "path": "orbit/changes/brief-render/specs/orbit-program-brief/spec.md",
+            "text": "An archive that skipped the sync says so"
+          }
+        ],
+        "searched": [
+          "sync_specs.ran",
+          "skipped_reason",
+          "already synced"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Saved unread records cannot unconditionally equal the later archive count",
+      "marker_source": "external",
+      "file": "orbit/changes/brief-render/specs/orbit-program-brief/spec.md",
+      "line": 86,
+      "classification": "stale",
+      "action": "converged with the fresh pass's finding on the same claim, walked in its log",
+      "evidence": "resolved in address-reviews-2026-11-13T16-34-59Z (the earlier pass's log): the unread list is a snapshot, the agreement claim holds only with no record written after the save, and a scenario writes a ledger entry after the save; that fix also covers this finding's ask to test a record written after saving",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Deduplicating terms across independent records can misinterpret their prose",
+      "marker_source": "external",
+      "file": "orbit/changes/brief-render/design.md",
+      "line": 80,
+      "classification": "decision_required",
+      "action": "applied the user's decision B: each distinct term and definition shown once naming the records that define it, a term defined two ways shown once per definition, ordered by term then earliest record; D-br-7 supersedes D-br-1",
+      "ratified_via": "chat",
+      "resolution": "A — show each distinct definition once, naming the records that define it; a term defined two ways appears twice",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/brief-render/specs/orbit-program-brief/spec.md",
+          "orbit/changes/brief-render/explore.md",
+          "orbit/changes/brief-render/tasks.md",
+          "orbit/changes/brief-render/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "each term once (the definition of the latest record defining it)",
+          "the latest definition winning"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/brief-render/specs/orbit-program-brief/spec.md",
+            "text": "a term defined two ways appears once per definition"
+          },
+          {
+            "path": "orbit/changes/brief-render/design.md",
+            "text": "Each definition of a term is shown with the records that wrote it"
+          }
+        ],
+        "searched": [
+          "defines",
+          "each term once",
+          "latest"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Golden-render fixture descriptions disagree",
+      "marker_source": "external",
+      "file": "orbit/changes/brief-render/proposal.md",
+      "line": 66,
+      "classification": "trivial_fix",
+      "action": "the proposal's Impact line now matches task 1.3 and the stage's first exit criterion",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "golden renders of a fixture change and a fixture program"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/brief-render/proposal.md",
+            "text": "golden renders of a fixture program and of a second whose changes carry ledger entries and stops"
+          }
+        ],
+        "searched": [
+          "golden"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Three resolved, one stale as converged with the fresh pass's log: the sync labels by the user's decision A (with the fresh pass's archived-without-record finding), the terms by decision B, and the proposal's golden fixtures aligned with task 1.3.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal brief-render",
+  "ripple_misses": 0
+}

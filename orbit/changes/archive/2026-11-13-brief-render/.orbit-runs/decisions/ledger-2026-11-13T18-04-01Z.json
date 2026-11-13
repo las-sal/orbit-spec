@@ -1,0 +1,22 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-13T18:04:01Z",
+  "change": "brief-render",
+  "model": "claude-opus-5-5",
+  "area": "docs",
+  "decided": "The concepts page's glossary names the capability that owns the brief, `orbit-program-brief`, only at this change's archive, once the capability is in the project's specs; the page's other edits for this change, the saved briefs in its entry for a change's history and the archive saving the brief first, were made now.",
+  "alternatives": [
+    "name it now, leaving the check on the concepts page failing until the archive",
+    "leave it off the line for good"
+  ],
+  "why": "The concepts page's check accepts only a capability the project's specs already hold, and the new capability joins them only when the archive syncs it; leaving it off for good would let the glossary's line about saved briefs rest on no named capability.",
+  "relies_on": [
+    {
+      "kind": "requirement",
+      "capability": "orbit-user-docs",
+      "title": "Every H2 section of four concept pages declares its owner on a checked Carried by line"
+    }
+  ],
+  "detail": "docs/concepts.md's glossary Carried by line gains `orbit-program-brief` after the sync; design.md's At archive section and task 4.1 say so. test/helpers/user-docs.ts capabilityExists reads only orbit/specs/<name>/spec.md.",
+  "replaces": "ledger-2026-11-13T17-19-30Z.json"
+}

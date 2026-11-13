@@ -1,0 +1,24 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-13T17:44:13Z",
+  "change": "brief-render",
+  "model": "claude-opus-5-5",
+  "area": "when-things-go-wrong",
+  "decided": "The brief refuses, naming it, a change's requirement file that states no added, changed, removed or renamed requirement, a capability folder without that file, change settings it cannot read, and a folder it cannot open; it does not run the full check orbit runs before a change is applied.",
+  "alternatives": [
+    "run the full check on every requirement file, which would refuse 19 of the 66 changes archived in this repository",
+    "refuse only a file that cannot be read at all"
+  ],
+  "why": "A brief is shown whole or not at all, so it must not show a file it could not read, or one it read nothing from, as a change with no requirements; the full check holds today's rules, which many earlier archived changes were never written to, and would leave their briefs refused for good.",
+  "relies_on": [
+    {
+      "kind": "decision",
+      "id": "D-br-3"
+    },
+    {
+      "kind": "decision",
+      "id": "D-br-8"
+    }
+  ],
+  "detail": "program-brief.ts: readCapabilities refuses a spec.md whose parseDeltaSpec plan is empty and a specs/<cap>/ with no spec.md; listDir refuses any readdir error but ENOENT; readMeta refuses an unparseable .openspec.yaml. Measured: Validator.validateChangeDeltaSpecs rejects 19 of 66 archived changes; no archived delta spec yields an empty plan; no .openspec.yaml fails to parse."
+}

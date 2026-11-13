@@ -27,7 +27,7 @@ surgical cherry-picks only — there is no auto-ingest. A version bump is its ow
   update's smart detection may skip) so your local surface doesn't lag the source.
 - **Releases** are cut by `npm run release:tree` (the `orbit-release` capability), the only release path; pushing the
   tag is the maintainer's act.
-- `orbit/specs/` holds <!-- src:capabilities -->32<!-- /src:capabilities --> baseline capabilities. Every marked
+- `orbit/specs/` holds <!-- src:capabilities -->33<!-- /src:capabilities --> baseline capabilities. Every marked
   figure in this file is checked against `orbit/sources.yaml` by `orbit validate --sources`; an UNMARKED figure is
   invisible to that check.
 
@@ -124,6 +124,9 @@ body.
   installed `orbit` refuses these commands here: write records with `node bin/orbit.js emit stop|resolution|ledger …`.
   Likewise the commit step's `orbit pr commit` (chained-review-commit): until a release carrying it is installed, run it
   as `node bin/orbit.js pr commit "<name>" --json` (here it returns `off`: this repo sets neither `commit` nor `push`).
+  And the archive's brief save, `orbit brief` (brief-render): until a release carrying it is installed, run it as
+  `node bin/orbit.js brief --change "<name>" --save` (the installed `orbit` has no `brief`, and its failure would go
+  silently into the archive's `warnings`).
 - **Outward actions stay the human's** (D6, `orbit-conventions`) — merging any PR, publishing
   releases, and filing issues on external trackers are invoked outside orbit workflows, in
   non-orbit sessions on this repo as much as in orbit ones. Recommend them; never perform them.

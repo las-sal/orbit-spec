@@ -1,0 +1,20 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-13T17:19:29Z",
+  "change": "brief-render",
+  "model": "claude-opus-5-5",
+  "area": "when-things-go-wrong",
+  "decided": "When an archived change's archive record does not say whether its requirements were synced into the specs, orbit refuses to render that change's brief, and any program brief containing it, naming the record, instead of guessing.",
+  "alternatives": [
+    "treat a record that says nothing either way as one whose sync ran",
+    "show such a change as archived without an archive record"
+  ],
+  "why": "A brief says only what the archive recorded and never infers a sync; a record that states neither outcome fits none of the states the brief can describe, and a brief is shown whole or not at all. Two changes archived early in an older program have such records, so that program's brief is refused, naming the first of them.",
+  "relies_on": [
+    {
+      "kind": "decision",
+      "id": "D-br-6"
+    }
+  ],
+  "detail": "src/core/program-brief.ts readArchive: an archive-<TS>.json whose sync_specs is not an object with a boolean ran fails the brief. Measured over this repo's 66 archive records at apply: 2026-07-17-d2-architect and 2026-07-21-d3-orientation carry no sync_specs (both cite d-arc-arbitered-flow, whose program brief is refused); 2026-06-11-relocate-modified-upstream-workflows and 2026-07-06-c1-engine-gates carry sync_specs without ran (they cite no doc; their change briefs are refused)."
+}

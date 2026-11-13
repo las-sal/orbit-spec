@@ -1,0 +1,15 @@
+{
+  "command": "propose",
+  "timestamp": "2026-11-13T15:28:33Z",
+  "change": "brief-render",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Proposed brief-render from its exploration (consume mode), the second of stage program-brief's three changes. A new capability, orbit-program-brief: the brief of a change and of a program from the trail (D-br-1 as a table), what a brief rendered before the archive record says (D-br-4), orbit brief read-only and whole or absent, and --save writing .orbit-runs/brief/brief-<TS>.md never overwritten with its SHA-256 printed. orbit-archive-modifications: the archive and bulk-archive save the brief after the anomaly prompts and before the sync, a failure recorded in warnings and never shown (D-br-3), and the PR tail stages the saved brief without naming it as a stray (MODIFIED, 21 scenarios carried). orbit-decision-records: three MODIFIED blocks name the brief as a reader. Size 3 capabilities, 9 requirements, 15 tasks: no breach. Departure from D-br-4 in wording only: one 'not yet synced' label, since the save cannot tell who runs it. Three ledger entries written at propose; the push stop and its resolution (the user pushed main) travel in the trail. Draft PR #42.",
+  "pr_attachment": {
+    "branch": "brief-render",
+    "granularity": "per-proposal",
+    "url": "https://github.com/las-sal/orbit-spec/pull/42",
+    "state": "draft"
+  },
+  "next_recommended": "/orbit:review brief-render — proposal artifacts ready; review before apply"
+}

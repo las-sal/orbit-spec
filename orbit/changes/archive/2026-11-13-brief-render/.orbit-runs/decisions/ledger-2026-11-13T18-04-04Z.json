@@ -1,0 +1,21 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-13T18:04:04Z",
+  "change": "brief-render",
+  "model": "claude-opus-5-5",
+  "area": "when-things-go-wrong",
+  "decided": "The brief reads an archive's run record however it states the sync, in each of the ways those records have been written over time, and gives a record that states it in none of them a line saying it does not say whether the requirements were synced, instead of refusing the brief.",
+  "alternatives": [
+    "refuse such records and name the limit in the spec, leaving their changes and their program with no brief for good",
+    "read only the current shape and give every older record the line saying it does not say"
+  ],
+  "why": "An archived record is never edited, so a refusal could never be repaired, and a finished program would have no brief at all; each older way of writing it states the sync as plainly as today's, so reading it infers nothing. The user chose this at the system walk.",
+  "relies_on": [
+    {
+      "kind": "decision",
+      "id": "D-br-8"
+    }
+  ],
+  "detail": "readArchive: sync_specs.ran, else specs_synced, else sync.synced, else a sync_specs listing at least one capability in capabilities_updated (ran), else the 'unstated' state. Test: 'an archive record of an earlier shape is read as it states the sync'.",
+  "replaces": "ledger-2026-11-13T17-44-12Z.json"
+}

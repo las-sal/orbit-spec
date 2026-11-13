@@ -376,6 +376,27 @@ skill's hash pins (function and generated file), re-recorded at apply and at the
 reading step found seven reader rows across four records; the walk replaced them, and those replacements reach no
 reader before archive (D-dr-2's named limit).
 
+Shipped as, second of three changes (2026-11-13; archived as `orbit/changes/archive/2026-11-13-brief-render/`; the stage
+stays open for the third, the sign-off setting, its record and holds, and the program brief's save): the BRIEF itself, a
+new capability `orbit-program-brief`. `orbit brief --change <name>` renders a change's brief and `orbit brief <doc>` a
+program's — every change citing the doc, grouped by stage in the doc's order, then the architecture trail's records for
+it — read-only, whole or absent, as markdown or `--json`. A change brief carries the charter's sections in order: what
+was built, new seams and deviations from the change's latest account; the requirements added or changed from its delta
+specs; new terms, each definition with the records that wrote it (D-br-7); the ledger and the stops, each the latest of
+its chain; a line saying tripwires are not installed, never that none fired; and, beyond the charter's list, the records
+no reader checked, the account named apart. Its sync and archive-signal lines say only what the change's archive run
+record states, in every shape such records have been written in (D-br-8, the user's decision B at the system walk, so an
+earlier program's brief renders rather than being refused for good). `--save` keeps an active change's brief in
+`.orbit-runs/brief/`, never overwritten, and prints its SHA-256 for the third change's sign-off to cite; the archive and
+bulk-archive save it before the sync under every setting (D-br-3), a failure going only into the run record's
+`warnings`, and the PR tail leaves the saved copy out of its untracked-files line, so G0 holds with no new exception.
+Departures: the program brief's save moved to the third change (D-br-5), and the brief refuses a delta spec stating no
+requirement rather than running the full change validator, which would refuse 19 of this repository's 66 archived
+changes. Tests that moved (R-adf-9): `rc03b`'s `emit-composition.ts` pin (the no-overwrite publish now takes serialized
+text, shared with the save) and the archive and bulk-archive skill hash pins (function and generated file). The system
+review's reading step found fourteen reader rows across ten records; the walk replaced them, and those replacements reach
+no reader before archive (D-dr-2's named limit).
+
 ### Stage tripwires — detecting that a run has gone sideways
 
 Depends-on: decision-layer

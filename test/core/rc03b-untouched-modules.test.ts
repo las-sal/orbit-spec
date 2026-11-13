@@ -143,6 +143,11 @@ import { fileURLToPath } from "node:url";
  * child (`assertCanonicalChildDir`, applied to `account/`), the no-overwrite publish is shared, and `composeAccount`
  * writes the trail's `account/` child (`orbit-emit-composition`'s `The write gate checks the account`). Every other
  * hash here is unchanged.
+ * MOVED at brief-render apply (2026-11-13) — a PLANNED act (its task 2.4, design D4): `emit-composition.ts` only —
+ * the no-overwrite publish (`publishChildRecord`) takes the serialized text instead of the record, and the new
+ * exported `publishTrailChildText` saves a change's brief into the trail's `brief/` child through it
+ * (`orbit-program-brief`'s `A change's brief is saved, never overwritten`). No emit changes; every other hash here
+ * is unchanged.
  */
 const PINNED: Record<string, string> = {
   "schemas/spec-driven/schema.yaml": "ce8a5274855b9bd8a69220a4691e5a8ba93c4676e8e5b9551afa2d53f6316f6a",
@@ -161,7 +166,7 @@ const PINNED: Record<string, string> = {
   "src/core/artifact-graph/state.ts": "f59f748b94cd94ca2fe022ec5aa66b3251dd1b2c00bddb9a17cbd9273a04d0f2",
   "src/core/artifact-graph/trail.ts": "39b5d110ef53b7e03f49ddf292e86db598a14f426a02e6d84142e16231e37d69",
   "src/core/artifact-graph/types.ts": "d83e0cc6d7fca7b80618ffbb7ce052ee68e35be79e7949a941e989b2e102392c",
-  "src/core/emit-composition.ts": "3989ad5e48f03ea29443b55282ca958ebebbf3bd93951a75ce1646e22301573e",
+  "src/core/emit-composition.ts": "4a1b7c2a862885005a58df5bf5fa337429e56d9b01a29b06f0758a95433fc865",
   "src/core/report-render.ts": "d759878995ed8b5e5c70fb1165d88d134f0aeb91acfce99d155654d1506b9f36",
 };
 

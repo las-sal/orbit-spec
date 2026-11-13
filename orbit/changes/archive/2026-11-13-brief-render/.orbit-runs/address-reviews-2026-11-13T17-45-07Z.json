@@ -1,0 +1,90 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-13T17:45:07Z",
+  "change": "brief-render",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/brief-render/.orbit-runs/external-system-2026-11-13T17-32-17Z.md",
+  "source_command": null,
+  "source_token": "2026-11-13T17-32-17Z",
+  "latest_apply_token": "2026-11-13T17-20-03Z",
+  "external_reviewer": "GPT-6 Codex",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 0
+  },
+  "pushback_verification": "Both verified against current state: readCapabilities rendered an empty parse without refusal, and every folder read swallowed any listing error as empty. The first converged with the fresh pass's delta-spec warning, resolved in walk 2026-11-13T17-44-52Z.",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale_suppressed": 1,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Invalid delta specs are rendered without validation",
+      "marker_source": "external",
+      "file": "src/core/program-brief.ts",
+      "line": 386,
+      "classification": "stale",
+      "action": "found by both halves: walked in the fresh pass's log, walk 2026-11-13T17-44-52Z, entry 'An invalid delta spec renders as a capability with no requirements instead of failing the brief' (resolved). The brief now refuses a delta spec stating no requirement operation and a capability folder with no spec.md; full validation was measured and not used, since it rejects 19 of the 66 archived changes, whose briefs it would refuse for good.",
+      "evidence": "walk 2026-11-13T17-44-52Z resolved the converged finding; src/core/program-brief.ts readCapabilities now fails on an empty delta plan",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Directory read failures silently become missing history",
+      "marker_source": "external",
+      "file": "src/core/program-brief.ts",
+      "line": 373,
+      "classification": "trivial_fix",
+      "action": "a new listDir reads every folder the brief reads (the delta specs, the change's history, the decision records and account folders, the program's change scan): an absent folder is empty, any other listing failure fails the brief naming the folder and its error code; the spec says so; a test with an unreadable folder added",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/program-brief.test.ts",
+          "orbit/changes/brief-render/specs/orbit-program-brief/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "src/core/program-brief.ts",
+            "text": "function listDir("
+          },
+          {
+            "path": "orbit/changes/brief-render/specs/orbit-program-brief/spec.md",
+            "text": "one that exists and cannot be listed is refused, naming it"
+          },
+          {
+            "path": "test/core/program-brief.test.ts",
+            "text": "a folder the brief reads that cannot be listed fails it, naming the folder, and an absent one reads as none"
+          }
+        ],
+        "searched": [
+          "readdirSync",
+          "catch {",
+          "ENOENT"
+        ],
+        "scope": [
+          "src/core/decision-records.ts",
+          "src/core/account.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "One resolved, one stale (walk all): unlistable folders now fail the brief by name while absent ones read as none; the delta-spec warning was found by both halves and resolved in the fresh pass's walk 2026-11-13T17-44-52Z.",
+  "iteration": 5,
+  "next_recommended": "/orbit:review --as system brief-render",
+  "ripple_misses": 0
+}

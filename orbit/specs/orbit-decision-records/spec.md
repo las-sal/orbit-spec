@@ -74,13 +74,14 @@ fields the rule binds:
 
 | field | record | reaches the reader as |
 |---|---|---|
-| `decided`, `alternatives`, `why` | ledger entry | the ledger, and the program brief built from it |
-| `about`, `question` | stop record | the question put to the user at the stop |
-| `answer`, `effect` | resolution | the answer as recorded, and the precedent later entries cite |
-| `built`, `seams`, `deviations` | account | the program brief's what was built, new seams and deviations from the charter |
+| `decided`, `alternatives`, `why` | ledger entry | the ledger, and the brief built from it (`orbit-program-brief`) |
+| `about`, `question` | stop record | the question put to the user at the stop, and the brief's stops |
+| `answer`, `effect` | resolution | the answer as recorded, the precedent later entries cite, and the brief's stops |
+| `built`, `seams`, `deviations` | account | the brief's what was built, new seams and deviations from the charter |
 | `detail` | every record | not bound: may be technical, never the only statement |
 
-Named limit — the fields are the ones this change defines.
+Named limit — the fields are the ones the decision records and the account define; the brief (`orbit-program-brief`)
+shows each of them as written, and its `defines` lists as its new terms.
 
 Residual kind: a prose field a later stage adds to a record, or a new surface that renders record prose to the user
 
@@ -101,6 +102,12 @@ Residual method: when a field or surface is added, ask whether its text reaches 
 - **WHEN** a ledger entry relying on R-adf-3 says its call stops on "an outward act", and R-adf-3's condition is "an
   outward or irreversible act the config has not granted"
 - **THEN** the entry fails this requirement: the restatement widens the condition it cites
+
+#### Scenario: A stop's question reaches the user in the brief too
+
+- **WHEN** a change brief (`orbit-program-brief`) is rendered for a change holding a stop record
+- **THEN** the stop's `about` and `question` are shown as written, so the rule binds them for that reader as for the
+  user at the stop
 
 #### Scenario: An account's coined term is defined
 
@@ -412,8 +419,9 @@ How each link between records follows a chain:
 | a link a replacement carries unchanged | staying as its original wrote it, even when its target has since been replaced: the replacement rewords, and the link is not new, so it is read like any link written before its target was replaced |
 | a link written before its target was replaced | staying as written (the history is never rewritten); a reader follows the chain forward from it |
 
-Named limit — the readers of `decisions/` this change knows are the write gate's link checks, the brief, the review
-emit's selection and read-list check and the archive emit's count; each takes the latest in every chain.
+Named limit — the readers of `decisions/` this capability and `orbit-program-brief` know are the write gate's link
+checks, the reading step's brief, the review emit's selection and read-list check, the archive emit's count, and the
+brief `orbit brief` renders; each takes the latest in every chain.
 
 Residual kind: a reader of `decisions/` that a later stage adds and that reads a replaced record as current
 
@@ -672,9 +680,9 @@ every reader of the selection is unchanged by construction:
 | the in-context system review's `decision_records_owed` and its read-list check | neither owes nor accepts an account |
 | the archive emit's `decision_records_unread` | does not count the account |
 | whether the reading step runs | unchanged: a change whose only record is its account has nothing selected, so no reader is dispatched |
+| `orbit brief` (`orbit-program-brief`) | lists the records the selection returns as checked by no reader, and names the account apart, as checked by no reader too |
 
-The rows are every caller of the one selection function; a reader the stage's second change adds (the program brief)
-shows the account as not checked by a reader.
+The rows are every caller of the one selection function.
 
 No reader of run summaries reads the `account/` folder: `orbit status`, the reviewed gates and the report render read
 only the files directly in `.orbit-runs/`, as they do for `decisions/` (`Where decision records are kept`).
@@ -696,6 +704,11 @@ Residual method: the third change's reading step, when sign-off is on; until the
 
 - **WHEN** a change whose history holds `account-A` and one decision record no reading listed is archived
 - **THEN** the archive emit carries `decision_records_unread: 1`
+
+#### Scenario: The brief shows the account as checked by no reader
+
+- **WHEN** `orbit brief --change foo` runs on a change whose history holds `account-A` and no decision record
+- **THEN** its records-no-reader-checked section names no decision record and names the account as checked by no reader
 
 #### Scenario: Today's readers do not see the account
 

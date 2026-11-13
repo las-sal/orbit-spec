@@ -1,0 +1,400 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-13T16:34:59Z",
+  "change": "brief-render",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/brief-render/.orbit-runs/review-proposal-2026-11-13T15-38-58Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-13T15-38-58Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 6,
+    "suggestion": 4
+  },
+  "pushback_verification": "All ten verified against current state; the token-bump claim checked against drawChildToken in src/core/emit-composition.ts; none stale.",
+  "resolution_summary": {
+    "resolved": 10,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The saved brief and the archive's unread count agree only if the archive writes no record after the save",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-program-brief/spec.md",
+      "line": 86,
+      "remedy": "repair",
+      "outcome": "resolved",
+      "classification": "trivial_fix",
+      "action": "the records-no-reader-checked list is a snapshot when rendered; the agreement claim narrowed to no record written after the save; the copy's section says where later records appear; scenario restated and a new one for a record written after the save; D-br-6 in explore.md supersedes D-br-4's agreement claim",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/brief-render/design.md",
+          "orbit/changes/brief-render/explore.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the same selection the archive's count uses, so the brief and the archive record agree"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/brief-render/specs/orbit-program-brief/spec.md",
+            "text": "The records no reader checked are those the selection returns when the brief is rendered: a SNAPSHOT"
+          }
+        ],
+        "searched": [
+          "agree",
+          "decision_records_unread",
+          "same selection"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "An archived change with no archive record gets the pre-archive rows, which then say false things",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-program-brief/spec.md",
+      "line": 78,
+      "remedy": "repair",
+      "outcome": "resolved",
+      "classification": "decision_required",
+      "action": "applied the user's decision A: the sync and archive-signal lines follow what the archive record says (sync ran, skipped, or no record), and an active change says no archive has recorded a sync yet; the requirement is now A brief says only what the archive recorded; D-br-6 supersedes D-br-4",
+      "ratified_via": "chat",
+      "resolution": "A — label by what was recorded: an active change says no archive has recorded a sync yet; an archived change follows its record (the sync ran, or was skipped) or says it has none",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/brief-render/design.md",
+          "orbit/changes/brief-render/proposal.md",
+          "orbit/changes/brief-render/tasks.md",
+          "orbit/changes/brief-render/explore.md",
+          "orbit/changes/brief-render/specs/orbit-archive-modifications/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "marked as not yet synced when the brief was rendered",
+          "A brief rendered before its change's archive record says what it cannot yet show"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/brief-render/specs/orbit-program-brief/spec.md",
+            "text": "### Requirement: A brief says only what the archive recorded"
+          }
+        ],
+        "searched": [
+          "not yet synced",
+          "A brief rendered before",
+          "no archive record"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "Two saves in one second are bumped by the shared publish, not refused, so the design and the spec's refusal case disagree with the code they reuse",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 118,
+      "remedy": "repair",
+      "outcome": "resolved",
+      "classification": "trivial_fix",
+      "action": "the spec says the token is drawn unique within brief/ by the collision bump and only a racing writer is refused; the taken-name scenario split into a next-token one and a racing-writer one; the design's risk line reworded",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/brief-render/specs/orbit-program-brief/spec.md",
+          "orbit/changes/brief-render/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the second is refused naming the file"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/brief-render/design.md",
+            "text": "the second draws the next token, as decision records do"
+          },
+          {
+            "path": "orbit/changes/brief-render/specs/orbit-program-brief/spec.md",
+            "text": "A racing writer is refused, not overwritten"
+          }
+        ],
+        "searched": [
+          "refused",
+          "drawChildToken",
+          "already taken"
+        ],
+        "scope": [
+          "src/core/emit-composition.ts"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "The marked capability figure goes stale when orbit-program-brief syncs, and At archive does not name it",
+      "marker_source": "internal-review",
+      "file": "CLAUDE.md",
+      "line": 30,
+      "remedy": "repair",
+      "outcome": "resolved",
+      "classification": "trivial_fix",
+      "action": "design's At archive names the capability figure moving from 32 to 33 and the validate --sources check after the sync",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/brief-render/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/brief-render/design.md",
+            "text": "moves CLAUDE.md's marked capability figure from 32 to 33"
+          }
+        ],
+        "searched": [
+          "src:capabilities",
+          "At archive"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "The glossary's Trail row enumerates the trail's folders and will lack brief/",
+      "marker_source": "internal-review",
+      "file": "docs/concepts.md",
+      "line": 302,
+      "remedy": "repair",
+      "outcome": "resolved",
+      "classification": "trivial_fix",
+      "action": "task 4.1 extended to docs/concepts.md: brief/ in the Trail row, orbit-program-brief on its Carried-by line, the Archive section saying the archive saves the brief first",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/brief-render/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/brief-render/tasks.md",
+            "text": "`brief/` in the glossary's Trail row"
+          }
+        ],
+        "searched": [
+          "Trail",
+          "Carried by",
+          "account/"
+        ],
+        "scope": [
+          "docs/concepts.md"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "This change's own archive cannot save its brief with the installed CLI, and the failure is silent by design",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 29,
+      "remedy": "repair",
+      "outcome": "resolved",
+      "classification": "trivial_fix",
+      "action": "design's At archive and task 5.3 say this archive runs the save as node bin/orbit.js until a release carrying orbit brief is installed; task 4.1 adds orbit brief to CLAUDE.md's convention sentence",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/brief-render/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/brief-render/tasks.md",
+            "text": "whose save step runs as `node bin/orbit.js brief --change brief-render --save`"
+          },
+          {
+            "path": "orbit/changes/brief-render/design.md",
+            "text": "this archive's save step runs as"
+          }
+        ],
+        "searched": [
+          "installed",
+          "node bin/orbit.js"
+        ],
+        "scope": [
+          "CLAUDE.md"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Output details that golden tests will pin are left to the implementer",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-program-brief/spec.md",
+      "line": 151,
+      "remedy": "repair",
+      "outcome": "resolved",
+      "classification": "trivial_fix",
+      "action": "the spec settles the output details: --save prints the path then sha256 <hex>; the file is the render's exact bytes with the final newline; entries oldest first; a MALFORMED doc refused, a LEGACY doc grouped by cited stage id, a change naming no stage last; the term tie-break went with decision B",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/brief-render/design.md",
+          "orbit/changes/brief-render/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "It prints the saved file's path and the SHA-256 of its bytes"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/brief-render/specs/orbit-program-brief/spec.md",
+            "text": "The command prints two lines and not the brief"
+          },
+          {
+            "path": "orbit/changes/brief-render/specs/orbit-program-brief/spec.md",
+            "text": "A malformed doc fails the program brief"
+          }
+        ],
+        "searched": [
+          "prints",
+          "LEGACY",
+          "MALFORMED",
+          "oldest first"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Bulk archive's save is placed before the sync but not relative to its fingerprint prompt",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-archive-modifications/spec.md",
+      "line": 25,
+      "remedy": "repair",
+      "outcome": "resolved",
+      "classification": "trivial_fix",
+      "action": "bulk-archive's save placed after that change's base-fingerprint check and before its sync (Step 8a)",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/brief-render/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/brief-render/specs/orbit-archive-modifications/spec.md",
+            "text": "after that change's base-fingerprint check and before its sync"
+          }
+        ],
+        "searched": [
+          "bulk-archive",
+          "Step 8a"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The inserted brief exception now carries the tail's step arrows",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-archive-modifications/spec.md",
+      "line": 228,
+      "remedy": "repair",
+      "outcome": "resolved",
+      "classification": "trivial_fix",
+      "action": "the inserted exception ends with a full stop and the tail's sequence restarts with After the commit; the new scenario says no other untracked file",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "brief existed → push",
+          "no other file git never tracked"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/brief-render/specs/orbit-archive-modifications/spec.md",
+            "text": "brief existed. After the commit: push"
+          }
+        ],
+        "searched": [
+          "→ push"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The account requirement still calls the brief 'the program brief' where the delta now says 'the brief'",
+      "marker_source": "internal-review",
+      "file": "orbit/specs/orbit-decision-records/spec.md",
+      "line": 557,
+      "remedy": "repair",
+      "outcome": "resolved",
+      "classification": "trivial_fix",
+      "action": "the baseline sentence is left as it is, true since a program brief carries each change's brief; design decision 11 records why",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/brief-render/design.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/specs/orbit-decision-records/spec.md",
+            "reason": "baseline spec; add a delta to your current change's specs/orbit-decision-records/spec.md to capture this ripple"
+          }
+        ]
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/brief-render/design.md",
+            "text": "One baseline sentence is left as it is"
+          }
+        ],
+        "searched": [
+          "the program brief"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Ten of ten resolved. Two by the user's decisions at triage (A: the sync lines follow what the archive recorded, D-br-6; the term decision B landed in the external pass's log), eight as previewed obvious fixes; walk all.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews brief-render",
+  "ripple_misses": 0
+}

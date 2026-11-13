@@ -1,0 +1,21 @@
+{
+  "command": "account",
+  "timestamp": "2026-11-13T17:45:17Z",
+  "change": "brief-render",
+  "model": "claude-opus-5-5",
+  "built": "A new command, orbit brief, prints the brief of one change or of a whole program in plain language: what was built, the requirements added or changed, the new terms and seams, every ledger entry, every stop with its answer or marked open, a line saying tripwires are not installed, the deviations from the charter, and the records no reader has checked. It writes nothing unless asked to save, and prints nothing at all when any part cannot be read, naming what it could not read. It reads every way past archives have recorded whether their requirements were synced, so finished programs get a brief too. Asked to save, it keeps a change's brief in the change's own history, never overwriting an earlier copy, and prints a fingerprint of the saved text that a later sign-off can cite. Every archive now saves the change's brief before the sync, so the copy moves with the change.",
+  "seams": "None. The archive saves the brief without asking or showing anything, and a brief it cannot save is noted only in the archive's own record; the brief command runs only when someone types it.",
+  "deviations": "The charter lists the tripwires that fired; the brief says tripwires are not installed, since that stage has not shipped. The brief adds one section the charter does not list, the records no reader has checked, as the review stage asked. An archive record that states its sync in no form orbit reads gets a line saying so rather than a refusal; the system review found that refusing such records left an earlier program with no brief, and the user chose to read the older forms instead. The concepts page names the new capability only at this change's archive, once the project's specs hold it. The proposal's size section is shown by the limits it declares breached, without their reasons.",
+  "defines": [
+    {
+      "term": "sync",
+      "definition": "the archive's step that copies a change's requirement changes into the project's specs"
+    },
+    {
+      "term": "fingerprint",
+      "definition": "a short code computed from a file's exact contents, which changes if any character of the file changes"
+    }
+  ],
+  "detail": "src/core/program-brief.ts (model, render, save), src/commands/brief.ts, `brief` registered in src/cli/program.ts and the completion registry; emit-composition's publishChildRecord takes serialized text and publishTrailChildText is exported (rc03b pin moved); pr/tail.ts leaves .orbit-runs/brief/brief-<TS>.md out of carried_untracked; the archive body's Step 3.6 and the bulk body's per-change save interpolate BRIEF_SAVE_STEP (both skill pins moved). Goldens: test/fixtures/brief-golden/. The fingerprint is the SHA-256 of the saved file's bytes. readArchive reads sync_specs.ran, then specs_synced, then sync.synced, then a sync_specs listing capabilities; otherwise the 'unstated' line (system walk decision B, D-br-8; ledger-2026-11-13T17-44-12Z.json). Invalid delta specs, unparseable metadata and unlistable folders are refused by name (ledger-2026-11-13T17-44-13Z.json).",
+  "replaces": "account-2026-11-13T17-19-54Z.json"
+}

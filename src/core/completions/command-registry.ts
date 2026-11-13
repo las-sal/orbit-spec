@@ -590,6 +590,23 @@ export const COMMAND_REGISTRY: CommandDefinition[] = [
     ],
   },
   {
+    name: 'brief',
+    description: "Render the brief of a program (a doc) or of a change (--change), read-only; --save keeps a change's",
+    acceptsPositional: true,
+    flags: [
+      {
+        name: 'change',
+        description: 'Render the brief of this change (active, else its newest archive)',
+        takesValue: true,
+      },
+      {
+        name: 'save',
+        description: "Save the active change's brief into its history and print the file and its SHA-256",
+      },
+      COMMON_FLAGS.json,
+    ],
+  },
+  {
     name: 'pr',
     description: 'PR lifecycle: observe and print the writes for a seam (never performs a write)',
     flags: [],

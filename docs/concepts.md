@@ -273,7 +273,9 @@ orbit guards the merge. When a change is proposed, it fingerprints each baseline
 remove or rename (`orbit fingerprint <change>`). If another change has edited one of those requirements since,
 archiving refuses to overwrite it and asks you to reconcile, rather than silently losing the other change's edit;
 `orbit archive --override-fingerprints` proceeds deliberately. Before archiving, the workflow also runs a drift audit,
-which reports and never blocks, and asks about any gate that has not passed.
+which reports and never blocks, and asks about any gate that has not passed. Then, before it merges anything, it saves
+the change's brief (`orbit brief --change <name> --save`) into the change's history, so the copy moves with it; a
+brief that cannot be saved is noted in the archive's record and never stops the archive.
 
 Carried by: the 1.3.1 baseline, `orbit-base-fingerprints`, `orbit-archive-modifications`
 
@@ -299,10 +301,10 @@ Carried by: fork-and-orbify D12, fork-and-orbify D15
 | **Scenario** | A concrete, checkable example of a requirement |
 | **Schema** | The definition of a change's artifacts, their dependencies and its gates |
 | **Spec** | A capability's requirements and scenarios, the source of truth for its behaviour |
-| **Trail** | A change's `.orbit-runs/` directory: every review and run summary, and in `decisions/` its decision records, and in `account/` its account |
+| **Trail** | A change's `.orbit-runs/` directory: every review and run summary, and in `decisions/` its decision records, in `account/` its account, and in `brief/` its saved briefs |
 | **Walk** | Resolving a review's findings one at a time, with pushback |
 
-Carried by: the 1.3.1 baseline, `orbit-engine-gates`, `orbit-conventions`, `orbit-address-reviews`, `orbit-decision-records`
+Carried by: the 1.3.1 baseline, `orbit-engine-gates`, `orbit-conventions`, `orbit-address-reviews`, `orbit-decision-records`, `orbit-program-brief`
 
 ## Next steps
 

@@ -13,7 +13,7 @@ This page documents every command and subcommand. Each command's flags are as `o
 | [Validation](#validation) | `orbit validate` |
 | [Lifecycle](#lifecycle) | `orbit archive` |
 | [Workflow support](#workflow-support) | `orbit status`, `orbit instructions`, `orbit templates`, `orbit schemas`, `orbit new change` |
-| [Engine surfaces](#engine-surfaces) | `orbit emit`, `orbit decisions`, `orbit fingerprint`, `orbit external`, `orbit pr`, `orbit architecture` |
+| [Engine surfaces](#engine-surfaces) | `orbit emit`, `orbit decisions`, `orbit brief`, `orbit fingerprint`, `orbit external`, `orbit pr`, `orbit architecture` |
 | [Schemas](#schemas) | `orbit schema` |
 | [Configuration](#configuration) | `orbit config` |
 | [Utility](#utility) | `orbit feedback`, `orbit completion` |
@@ -411,6 +411,40 @@ Usage: `orbit decisions brief <change-name>`.
 
 ```bash
 orbit decisions brief add-dark-mode
+```
+
+### `orbit brief`
+
+Print the brief of a program or of one change: what it did, in plain language, from what its history already holds.
+A change's brief carries, in order, what was built, the capabilities and requirements it added or changed (their titles
+as the specs name them), the new terms, the new seams, the ledger, the stops with their answers or marked open, a line
+saying tripwires are not installed, the deviations from the charter (with the archive's warnings and accepted risks and
+any size limit the proposal declares breached), and the records no reader has checked, the account included. What was
+built, the seams and the deviations come from the change's account; the sync lines say only what the change's archive
+record says. A program's brief carries each change that cites the doc, grouped by stage in the doc's order, then the
+decisions recorded while the doc itself was worked on.
+
+It writes nothing, unless `--save` is given. A brief is whole or absent: when the change or the doc is not found, the
+doc breaks the stage grammar (`orbit architecture validate <doc>` shows where), a record, the account, the archive
+record, the change's metadata or a delta spec cannot be read or is not valid (a delta spec stating no requirement, or a
+capability folder with no `spec.md`), or a folder it reads exists and cannot be listed, it exits non-zero naming it and
+prints nothing. An absent folder reads as empty.
+
+Usage: `orbit brief <doc>` for a program, or `orbit brief --change <name>` for a change (active, else its newest
+archive). Naming both, or neither, is a usage error.
+
+| Option | Description |
+|---|---|
+| `--change <name>` | Print the brief of this change instead of a program's |
+| `--save` | Save the active change's brief as `.orbit-runs/brief/brief-<TS>.md` in its history, never overwriting one, and print the file's path, then `sha256 <hex>`, the SHA-256 of its bytes. Takes `--change`; an archived change is refused |
+| `--json` | Output the same content as JSON, with the brief's text under `markdown` (and `saved: {path, sha256}` with `--save`) |
+
+The saved file holds exactly the bytes `orbit brief --change <name>` prints, so piping that output to `sha256sum` gives
+the printed hash. The archive saves each change's brief this way before it syncs the change's specs.
+
+```bash
+orbit brief --change add-dark-mode
+orbit brief automate-dev-flow
 ```
 
 ### `orbit fingerprint`
