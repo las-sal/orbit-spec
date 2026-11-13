@@ -1,0 +1,19 @@
+schema: spec-driven
+created: 2026-11-13
+schema_version: 5
+architecture:
+  doc: automate-dev-flow
+  stage: program-brief
+base_fingerprints:
+  orbit-archive-modifications:
+    The archive saves the change's brief before the sync: sha256:f04e482f3a76da770797a46030e59e8da7dc7532783c3f0ff68fbb3350fc4276
+  orbit-conventions:
+    A chain treats each prompt by its kind: sha256:6d04eb3edf3e654af35dae49b1b17e90915c9ce324c2fcccec9ea3c8ec7f4157
+  orbit-decision-records:
+    No reader takes the account yet: sha256:970d56c17b4a603c8ec0d83f74129c4f13e1aa17936e47a04b9d61be3664d10a
+    The reading step's brief is rendered by orbit: sha256:31a1144bfdf98ae0f3cc4840502d391cee3806881ebeba89bc2f9b3c9e207780
+    Each change carries one account, written when apply is complete: sha256:f2e3b4aad862a0eac0a2451abccf00e6067e617c081256b0536c8cfabe40e563
+  orbit-emit-composition:
+    The reading's selection is recorded at review and archive: sha256:15fd5ba2cb40f9fa489b3526fa1ade015f781652c2e8ea3d35d30645be75b8c8
+  orbit-program-brief:
+    A brief tells the user what a change or a program did, from the trail: sha256:6389a3bb84f51b9e4f925aab5cf55f90e6a0fb4554728beaca737c9bd60591a8

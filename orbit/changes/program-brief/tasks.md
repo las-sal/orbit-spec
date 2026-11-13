@@ -1,0 +1,32 @@
+## 1. The setting
+
+- [ ] 1.1 `resolveSignoffSetting(projectRoot)` in `src/core/project-config.ts`, reading only the `signoff` key as `resolveChainSetting` reads `chain`: absent, `off`, an absent file and an unparseable file are off with no warning; `change` is `change`; any other value or shape is off with one warning string naming the value and saying nothing waits on a sign-off (`orbit-program-brief`'s `The sign-off setting holds each change's archive for the user's sign-off`)
+
+## 2. The sign-off record and the hold
+
+- [ ] 2.1 `src/core/signoff.ts`: the `signoff` record's shape and gate — scope (active change only; `--doc` a usage error naming `program-signoff`), setting (not `change` refused, naming the value), `brief` (a saved copy's filename in `brief/`, and the latest), `answer` (`signed` / `declined`), `reason` (required on a decline, a non-blank string when present), `defines`, `detail` — and the engine-written `sha256` of the named copy's bytes
+- [ ] 2.2 Register `orbit emit signoff` in `src/core/emit-composition.ts` on the account's path: the narrative-only payload contract (`sha256`, `kind`, `next_recommended`, `final_assessment` refused as engine-owned), the decision-record spine checks, `.orbit-runs/signoff/signoff-<TS>.json` with the canonical child check twice, the token's collision bump within `signoff/`, and the exclusive-link publish; add it to `src/cli/program.ts` and `src/core/completions/command-registry.ts`
+- [ ] 2.3 The hold: `orbit brief --change <name> --hold` (and `--json`) in `src/commands/brief.ts`, `src/cli/program.ts` and the completion registry — read-only, rendering no brief: the setting and its warning, the latest saved copy with the SHA-256 of its bytes, the latest sign-off with its answer, and `why` / `held` by the first matching row (`off`, `no-copy`, `signed` when the latest sign-off is `signed` with a hash equal to the latest copy's, else `unsigned`); `--hold` with a doc, with `--save`, or on a change that is not active is a usage error printing nothing to standard output
+- [ ] 2.4 Tests for every scenario of `The sign-off setting holds each change's archive for the user's sign-off`, `A sign-off is recorded against the saved copy, and the hold reads it` and `orbit-emit-composition`'s `The write gate checks the sign-off record`, each refusal and each `why` row shown able to fail; the default (no `signoff` key) tested as today's behaviour, as the stage's exit criterion asks; `orbit status`, the reviewed gates and the report render read a change with a `signoff/` folder as without it
+- [ ] 2.5 Move the closed-set pins this extends — `rc03b-untouched-modules.test.ts`'s `emit-composition.ts` hash, the every-command spine test in `emit-composition.test.ts`, and any command or flag enumeration the new emit command and `--hold` enter — each recorded here
+
+## 3. The reader takes the account
+
+- [ ] 3.1 `selectUnreadRecords(changeDir, projectRoot)` in `src/core/decision-records.ts`: under `signoff: change`, the decision records it selects today plus the latest record of the `account/` chain when no in-context system review emit lists it in `decision_records_read`; every other value unchanged; pass the project root from each caller (`buildDecisionBrief`, the review emit's owed list and read-list check and the archive's unread count in `src/core/emit-composition.ts`, `buildChangeBriefAt` in `src/core/program-brief.ts`)
+- [ ] 3.2 `buildDecisionBrief` and `renderDecisionBrief` render a selected account as a record of its own kind (its filename, `built`, `seams`, `deviations`, `defines`, `detail` marked as not bound; no citations); `orbit brief`'s records-no-reader-checked section names the account apart only when the selection did not take it
+- [ ] 3.3 Tests for every scenario of `orbit-decision-records`' `The reading step's brief is rendered by orbit` (the new one), `The reader takes the account only when sign-off is per change` (all seven), `orbit-emit-composition`'s `The reading's selection is recorded at review and archive` (the two new ones) and `orbit-program-brief`'s `An account the reader takes is listed with the records`, each shown able to fail; re-tag the `@scenario` tags in `test/core/account.test.ts` and `test/core/program-brief.test.ts` that name `No reader takes the account yet` to the new title
+
+## 4. The archive's hold
+
+- [ ] 4.1 `SIGNOFF_HOLD_STEP` beside `BRIEF_SAVE_STEP` in `src/core/templates/workflows/archive-change.ts`: `orbit brief --change "<name>" --hold --json`, the table of `orbit-archive-modifications`' `The archive holds for a per-change sign-off`, the copy shown whole, the `AskUserQuestion` sign-off prompt tagged `(chain: decision)`, and `orbit emit signoff --change "<name>"` with `brief`, `answer` and `reason`; interpolate it into the archive body directly after the save step and before upstream Step 4, and into the bulk-archive body per change after that change's save and before its sync (a stopped change not archived, reported among the changes not archived with the reason)
+- [ ] 4.2 `BRIEF_SAVE_STEP`'s failure row: the archive goes on to the hold, and under `change` the hold stops it (`The archive saves the change's brief before the sync`, as modified)
+- [ ] 4.3 Tests: both bodies carry the hold's command, its table and the `orbit emit signoff` invocation with its fields, and the save step's new failure row, each shown able to fail; `Each chained prompt states its kind` passes with the new prompt; re-record the archive and bulk-archive skill hash pins that move (function and generated file), each recorded here
+
+## 5. Docs
+
+- [ ] 5.1 `docs/customization.md`: the `signoff` row of the config-key table, the key count, the example, and `orbit-program-brief` on the section's Carried-by line; `docs/cli.md`: `--hold` in the `orbit brief` section and `signoff` among the emit commands; `docs/concepts.md`: `signoff/` in the glossary's Trail row; CLAUDE.md's sentence on running `node bin/orbit.js` until a release is installed names `orbit emit signoff` and `orbit brief --hold`
+
+## 6. Close
+
+- [ ] 6.1 `npm run build && node bin/orbit.js update --force`, then full `npm test` green
+- [ ] 6.2 Scenario tags or ledger entries for every delta scenario, and `node bin/orbit.js validate program-brief --strict`
