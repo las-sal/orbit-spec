@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-11-13T15:15:54Z",
+  "change": "program-brief",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Entry written from the brief-render exploration's session: D-pb-10 (scope) records that this third change also builds the program brief's save at the architect session (brief-render's D-br-5, the user's choice), beside the program sign-off's hold that reads the saved copy. No other change to this exploration.",
+  "decisions_captured": 10,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 4,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose program-brief — 4 live rules accounted; formalize when you are ready (or /orbit:explore program-brief to keep refining)"
+}

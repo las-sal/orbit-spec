@@ -1,0 +1,29 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-13T15:13:54Z",
+  "change": "brief-render",
+  "model": "claude-opus-5-5",
+  "area": "when-things-go-wrong",
+  "decided": "When orbit cannot produce a change's brief at its archive, the archive still completes, notes the failure in its own record, and shows nothing about it at the default settings.",
+  "alternatives": [
+    "show a one-line notice whenever it fails, which would need its own named exception to G0",
+    "stop the archive until the brief can be produced"
+  ],
+  "why": "At the default settings nothing waits on the brief, so a notice would change what a default archive shows for a copy no one is reading; when a sign-off is on, it cannot go ahead without a saved copy, so the failure reaches the user there. Stopping the archive would let a missing brief block work, which a default install never did.",
+  "relies_on": [
+    {
+      "kind": "goal",
+      "doc": "automate-dev-flow",
+      "id": "G0"
+    },
+    {
+      "kind": "ruling",
+      "doc": "automate-dev-flow",
+      "id": "R-adf-11"
+    },
+    {
+      "kind": "decision",
+      "id": "D-br-3"
+    }
+  ]
+}

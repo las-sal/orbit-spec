@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-11-13T15:15:54Z",
+  "change": "brief-render",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Resumed after change-account shipped and re-measured the 2026-11-12 rules against it. D-br-3 supersedes D-br-2: the archive saves the change's brief BEFORE the sync and move (a per-change sign-off holds the archive, D-pb-1/D-pb-8, so a decline must leave the change unarchived), the copy moves with the change, the PR tail leaves it out of its untracked-files line as it does the archive emit (src/core/pr/tail.ts), and a render failure is recorded in the archive run record and printed nowhere at the defaults, so G0 needs no new exception. D-br-4: a brief rendered before the archive record exists lists the delta specs as what the archive syncs, computes unread records from the archive's own selection, and says the archive's warnings and accepted risks appear in the program brief. D-br-5 (the user, option a): the program brief's save at the architect session moves to the third change, keeping this change near the three-capability ceiling. Three ledger entries written. Three live rules, all accounted; no open questions.",
+  "decisions_captured": 5,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 3,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose brief-render — 3 live rules accounted; formalize when you are ready (or /orbit:explore brief-render to keep refining)"
+}

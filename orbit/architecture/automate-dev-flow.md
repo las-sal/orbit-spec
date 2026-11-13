@@ -585,3 +585,10 @@ Exit criteria:
   exit criterion was reworded to match. Recorded as a stop and its resolution in this trail. The exploration also
   settled that each change carries an account of what it built, read by the reader only when sign-off is on, so G0
   needs no new exception (D-pb-4, D-pb-5); it will likely split the stage at propose. No stage awaited ratification.
+- 2026-11-13 — Architect session after `change-account` was archived (merged as PR #41), the first of D-pb-9's three
+  changes: each change carries one account of what it built, its seams and its deviations (the stage's first Shipped-as
+  paragraph). No ratification was offered: the explorations `brief-render` and `program-brief` are live, and two changes
+  are still owed — the brief's sections with its rendering and saving (`brief-render`), then the sign-off setting, the
+  `signoff` record and the holds (`program-brief`). G0 names no new exception: no reader takes the account yet (D-ca-2).
+  The two explorations' pointers to `orbit/explore/change-account/` now point at the archived change, and brief-render's
+  citation of the superseded D-ca-1 now names the requirement that owns that rule. No ruling, goal or stage changed.
