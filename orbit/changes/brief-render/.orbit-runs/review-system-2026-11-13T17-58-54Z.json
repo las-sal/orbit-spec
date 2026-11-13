@@ -1,0 +1,258 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-13T17:58:54Z",
+  "change": "brief-render",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 4,
+      "suggestion": 11
+    }
+  },
+  "findings": [
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "docs/cli.md",
+      "line": 427,
+      "title": "docs/cli.md's whole-or-absent list omits the change's metadata and an unlistable folder, which the walk made refusals",
+      "recommendation": "Add them to docs/cli.md:427's refusal list, as the delta spec now states it: the change's metadata that cannot be read, a delta spec stating no requirement operation or a capability folder with no spec.md, and a folder that exists and cannot be listed (an absent one reads as none)."
+    },
+    {
+      "pass": "reading",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/brief-render/.orbit-runs/decisions/ledger-2026-11-13T15-13-53Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-13T15-13-53Z.json — reader row 4 (a restatement that shifts what it cites): why says G0 does not allow naming the saved brief, while R-adf-13 ratifies naming each never-tracked file the archive commits",
+      "recommendation": "Replace the record: say the line would appear on every archive with a pull request, including ones that would otherwise show none, which is more than R-adf-13 ratified for strays the work left behind; do not say G0 forbids what R-adf-13 allows."
+    },
+    {
+      "pass": "reading",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/brief-render/.orbit-runs/decisions/ledger-2026-11-13T15-27-46Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-13T15-27-46Z.json — reader row 4 (a restatement that shifts what it cites): decided says the command never writes unless asked to save a change's brief, while D-br-3 says the program save carries over",
+      "recommendation": "Replace the record: say this change's command saves only a change's brief, and that saving the program brief is the stage's third change (D-br-5), so it does not read as contradicting D-br-3."
+    },
+    {
+      "pass": "reading",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/brief-render/.orbit-runs/decisions/ledger-2026-11-13T15-27-48Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-13T15-27-48Z.json — reader row 4 (a restatement that shifts what it cites): decided and an alternative describe a not-yet-synced label and reject the option D-br-4 chose; the label was later removed",
+      "recommendation": "Replace the record: restate D-br-4 as it decided (the copy lists the requirements as what the archive syncs) and say the later walk replaced the label (D-br-6, then D-br-8), so a reader does not take a discarded label as the brief's behaviour."
+    },
+    {
+      "pass": "reading",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/brief-render/.orbit-runs/decisions/ledger-2026-11-13T17-44-11Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-13T17-44-11Z.json — reader row 3 (correct and still unclear): why says two of the refused records state their sync, implying the other two still state nothing",
+      "recommendation": "Replace the record: say four records were refused, all four state their sync in an older shape, and the walk now reads all four."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/brief-render/.orbit-runs/decisions/ledger-2026-11-13T15-13-52Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-13T15-13-52Z.json — reader row 3 (correct and still unclear): why's last sentence does not say what the archive records after the move",
+      "recommendation": "Replace the record: name the archive's warnings and its readiness judgement, and say the program brief shows them because it is rendered from the archived change."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/brief-render/.orbit-runs/decisions/ledger-2026-11-13T15-13-54Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-13T15-13-54Z.json — reader row 3 (correct and still unclear): decided's 'its own record' could be read as a decision record",
+      "recommendation": "Replace the record: say the archive's run record."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/brief-render/.orbit-runs/decisions/ledger-2026-11-13T15-13-53Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-13T15-13-53Z.json — reader row 3 (correct and still unclear): decided's 'the archive's own record' could be read as a decision record",
+      "recommendation": "Replace the record: say the archive's run record."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/brief-render/.orbit-runs/decisions/ledger-2026-11-13T16-33-56Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-13T16-33-56Z.json — reader row 1 (a new term left off defines): decided uses 'archive record' without defining it",
+      "recommendation": "Replace the record: say the archive's run record, or define 'archive record' in defines."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/brief-render/.orbit-runs/decisions/ledger-2026-11-13T16-33-56Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-13T16-33-56Z.json — reader row 3 (correct and still unclear): decided does not say where records written after the saved copy appear",
+      "recommendation": "Replace the record: say they appear in the archived change's brief and in the program brief."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/brief-render/.orbit-runs/decisions/ledger-2026-11-13T17-19-30Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-13T17-19-30Z.json — reader row 3 (correct and still unclear): decided does not name the capability or the rest of the page's change",
+      "recommendation": "Replace the record: name the brief's capability in words and say what the page's other edits were (the saved briefs in the glossary's Trail entry, the Archive section's save)."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/brief-render/.orbit-runs/decisions/ledger-2026-11-13T17-19-30Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-13T17-19-30Z.json — reader row 4 (a restatement that shifts what it cites): decided reads 'capabilities it relies on' where the cited requirement says each item names the owner of the section's claims",
+      "recommendation": "Replace the record: say the line names the capabilities that own the section's claims."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/brief-render/.orbit-runs/decisions/ledger-2026-11-13T17-44-11Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-13T17-44-11Z.json — reader row 2 (relies on implementation detail): decided's 'the field orbit reads today' leans on the record's file layout",
+      "recommendation": "Replace the record: say 'in the form orbit reads today'."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/brief-render/.orbit-runs/decisions/ledger-2026-11-13T17-44-12Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-13T17-44-12Z.json — reader row 1 (a new term left off defines): decided and why use 'shape' of a record without defining it",
+      "recommendation": "Replace the record: define 'shape' in defines (the way an archive's run record was written at the time), or reword."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/brief-render/.orbit-runs/decisions/ledger-2026-11-13T17-44-13Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-13T17-44-13Z.json — reader row 3 (correct and still unclear): decided's 'change settings it cannot read' reads as the project's settings",
+      "recommendation": "Replace the record: say the change's own description file (the one naming its program and stage), not settings."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Every walked edit was re-read at HEAD: readArchive's precedence (sync_specs.ran, specs_synced, sync.synced, a sync_specs listing capabilities) matches the order the delta spec now states; listDir refuses everything but an absent folder and is called before each folder the brief reads; readMeta, the empty-plan and missing-spec.md refusals, the archive-record ordering and the architecture trail's doc filter each read as their entries claim, and each was shown able to fail by the walk's mutations. The residual check found nothing outside the edit records. The one gap is the CLI page, which still lists the earlier set of refusals. The reading step read the 14 selected records: the pattern is restatement drift in the earliest records, written before the walks moved D-br-4 to D-br-6 to D-br-8, and file-layout words (archive record, shape, field, settings) in the newest ones.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "reading"
+  ],
+  "passes_skipped": [
+    "0: verification genre — a whole-change pass, not run over the walks' sweep scope",
+    "4: no perspectives defined; skip Pass 4 (orbit/lenses/ is absent)",
+    "5: no critical paths defined; skip Pass 5 (orbit/lenses/ is absent)",
+    "6: verification genre — a whole-project pass, not run over the walks' sweep scope"
+  ],
+  "verification": [
+    {
+      "title": "Archive records of earlier generations that do record their sync are refused, so four archived changes and a completed program can never be briefed",
+      "file": "src/core/program-brief.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "An invalid delta spec renders as a capability with no requirements instead of failing the brief",
+      "file": "src/core/program-brief.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "Archived changes within a stage are ordered by archive date and then by name, not in the order they were archived",
+      "file": "src/core/program-brief.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "Unreadable change metadata silently drops a change from its program brief",
+      "file": "src/core/program-brief.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "A program brief checks every doc's records on the shared architecture trail, so one bad record of another doc refuses it",
+      "file": "src/core/program-brief.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "Directory read failures silently become missing history",
+      "file": "src/core/program-brief.ts",
+      "verdict": "landed"
+    }
+  ],
+  "decision_records_read": [
+    "ledger-2026-11-13T15-13-52Z.json",
+    "ledger-2026-11-13T15-13-53Z.json",
+    "ledger-2026-11-13T15-13-54Z.json",
+    "ledger-2026-11-13T15-27-46Z.json",
+    "ledger-2026-11-13T15-27-47Z.json",
+    "ledger-2026-11-13T15-27-48Z.json",
+    "ledger-2026-11-13T16-33-56Z.json",
+    "ledger-2026-11-13T16-33-57Z.json",
+    "ledger-2026-11-13T17-19-30Z.json",
+    "ledger-2026-11-13T17-44-11Z.json",
+    "ledger-2026-11-13T17-44-12Z.json",
+    "ledger-2026-11-13T17-44-13Z.json",
+    "resolution-2026-11-13T15-20-10Z.json",
+    "stop-2026-11-13T15-19-12Z.json"
+  ],
+  "final_assessment": "0 critical, 4 warning, 11 suggestion.",
+  "decision_records_owed": [
+    "ledger-2026-11-13T15-13-52Z.json",
+    "ledger-2026-11-13T15-13-53Z.json",
+    "ledger-2026-11-13T15-13-54Z.json",
+    "ledger-2026-11-13T15-27-46Z.json",
+    "ledger-2026-11-13T15-27-47Z.json",
+    "ledger-2026-11-13T15-27-48Z.json",
+    "ledger-2026-11-13T16-33-56Z.json",
+    "ledger-2026-11-13T16-33-57Z.json",
+    "ledger-2026-11-13T17-19-30Z.json",
+    "ledger-2026-11-13T17-44-11Z.json",
+    "ledger-2026-11-13T17-44-12Z.json",
+    "ledger-2026-11-13T17-44-13Z.json",
+    "resolution-2026-11-13T15-20-10Z.json",
+    "stop-2026-11-13T15-19-12Z.json"
+  ],
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-11-13T17-44-52Z",
+    "2026-11-13T17-45-07Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews brief-render"
+}
