@@ -160,3 +160,18 @@ scenarios:
   - key: "orbit-decision-records :: Each change carries one account, written when apply is complete :: The session that completes apply writes the account"
     kind: observed
     record: "orbit/changes/change-account/.orbit-runs/account/account-2026-11-13T05-02-13Z.json — written by the apply session that checked change-account's last task (5.2), carrying built, seams and deviations, before that session's run summary orbit/changes/change-account/.orbit-runs/apply-2026-11-13T05-02-19Z.json"
+  # brief-render (task 5.2) — the archive's save step: choreography an AI follows in a session. The body carriage
+  # (command, table, placement) is held by test/core/templates/brief-save-step.test.ts; the save's own refusals and
+  # bytes by test/core/program-brief.test.ts; the tail's exclusion by test/core/pr/tail.test.ts.
+  - key: "orbit-archive-modifications :: The archive saves the change's brief before the sync :: A default archive saves the brief before the sync"
+    kind: untestable
+    why: "The THEN is what an AI-run /orbit:archive leaves behind and shows; no test runs an archive session. The save the step runs, its active-change lines and the body placing it before the sync are each tested; this change's own archive is the first observation."
+  - key: "orbit-archive-modifications :: The archive saves the change's brief before the sync :: A failed save is recorded, not shown, and the archive completes"
+    kind: untestable
+    why: "The THEN is an AI-run archive composing one warnings entry and saying nothing in chat; no test runs an archive session. The non-zero exit naming the record is tested, and the body carrying the table row that directs the warnings entry is tested."
+  - key: "orbit-archive-modifications :: The archive saves the change's brief before the sync :: A stopped archive leaves its copy, and the next saves another"
+    kind: untestable
+    why: "The THEN spans two AI-run archive sessions and a cancel at the sync prompt; no test runs them. A second save drawing a new file and never overwriting the first is tested."
+  - key: "orbit-archive-modifications :: The archive saves the change's brief before the sync :: Bulk archive saves each change's brief"
+    kind: untestable
+    why: "The THEN is an AI-run /orbit:bulk-archive over two changes; no test runs a bulk session. The bulk body carrying the step per change, after the fingerprint check and before the Step 8a sync, is tested."

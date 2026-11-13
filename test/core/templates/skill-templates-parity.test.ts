@@ -179,8 +179,11 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // the generated SKILL.md is unchanged by a reference edit.
   // Moved a THIRD time at the system walk (2026-11-11, fresh S1, Sal: B): Step 0.7 says its one mismatch line is a
   // granted arrival's only notice, a named limit of `orbit-archive-modifications`. Both archive hashes moved.
-  getArchiveChangeSkillTemplate: 'b19237baea4dc8f0a01d10dca3a3c039125ff0a72ef1939e9cd1f43e13691d26',
-  getBulkArchiveChangeSkillTemplate: '21195e4c5505a19d0826fdce42a5f7c4729dec50260f427443375ec08b681598',
+  // brief-render apply (2026-11-13), a PLANNED move (its task 3.3): the archive body gains Step 3.6 and the bulk-archive
+  // body its per-change brief save, each interpolating `BRIEF_SAVE_STEP` (the `orbit brief --change <name> --save`
+  // command and `orbit-archive-modifications`' save table). Both function hashes and both generated SKILL.md hashes moved.
+  getArchiveChangeSkillTemplate: '444c61e4a04984bb66f1778728b206cb64ab7ece0b1f3cb74974d4cfd73ae283',
+  getBulkArchiveChangeSkillTemplate: '1329eb9c0a640a144691c871bd44ac855d056ca4205142c7334707d26d419cbf',
   getOrbitSyncCommandTemplate: 'b985d0a4d89b0e2cc3c6b6dec2521ef2a9d0df44a8ba9ec92a5495052c94a39c',
   // rc06b-map-readers (2026-10-05) — verify moved DELIBERATELY, the first named edit to an upstream
   // portion under `orbit-conventions`' narrowed `Generated-file disposition`: step 6's test-tracing
@@ -260,8 +263,8 @@ const EXPECTED_GENERATED_SKILL_CONTENT_HASHES: Record<string, string> = {
   'orbit-apply-change': 'd082434b59a4ebc8ea068d468d7152410a70cb13dd3a789e221b107e8f0191f6', // rc17a apply: the v4 clause (see the function-hash note above); then seam-chaining: the Chain end step and the epitome clause, at apply, the system walk and the verification walk; then seam-chaining-grants apply (see the function-hash note above); then change-account apply: the Account step, then its system walk: the all_done clause (see the function-hash note above)
   'orbit-ff-change': '101fbd4b7ff9481d6f776c8d33ea5e53e9ddb85a5a07885b3be9d4d0f7d6cbbf', // seam-chaining: the Chain end step and the epitome clause, at apply, the system walk and the verification walk; then seam-chaining-grants apply: the end step's two key rows and consent clause
   'orbit-sync-specs': '09ebdddd32d976022699b1575f8cf5e85fabf57ea71f1aa1afce1c793f322c99',
-  'orbit-archive-change': '2754fcd2e36298c974873671ac88bb53dd0ea4ea59f89bb0ebf8777837aea184', // rc10-apply-closure task 2.8, then its system walk; then seam-chaining-grants apply and its system walk (see the function-hash note above)
-  'orbit-bulk-archive-change': 'ebbccd064bd5237d4ea18c08ac0e88114a24733588900fea32d67d44e36cf6b4', // rc10-apply-closure task 2.8, then its system walk (see the function-hash note above)
+  'orbit-archive-change': '8584be26e107486309a17f6a64fec5b6f77aefccc71095c6a7627e3b202a7276', // rc10-apply-closure task 2.8, then its system walk; then seam-chaining-grants apply and its system walk; then brief-render apply: Step 3.6 (see the function-hash note above)
+  'orbit-bulk-archive-change': 'cde32a57a485981bad2c430f0eec8fb564bb73b9f8e22eb01ccfd2e8f604e857', // rc10-apply-closure task 2.8, then its system walk; then brief-render apply: the per-change brief save (see the function-hash note above)
   'orbit-verify-change': '86d0fad7fe26e44c2df6e52bcac54c015a4911afd13bb288a825495773c99390', // rc06b-map-readers (2026-10-05): moved with the body's step 6 edit, then again at system walk 2's additions edit (see the function-hash note above)
   'orbit-onboard': 'e704c183201dc18a574de32da10a8722e8a53cc590e455fd66580317761d4698', // landing-page task 2.2 (see the function-hash note above); then seam-chaining system walk: the No-chaining line qualified by the chain setting
   'orbit-propose': 'be0e434d434c3db13a49eb2057413384131c225a34901a1266030987c36e402b', // rc13c, then rc03b, then rc05's system walk, then rc09a's size brief (task 5.3) and its system walk: moved with the body (see the function-hash notes above); then seam-chaining: the Chain end step and the epitome clause, at apply, the system walk and the verification walk; then seam-chaining-grants apply: the end step's two key rows and consent clause

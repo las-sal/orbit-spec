@@ -46,6 +46,8 @@ const ROW_FIELDS: Record<Row, { url: boolean; state: boolean; text: string }> = 
 };
 
 const ARCHIVE_EMIT = /^archive-(\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}Z)\.json$/;
+/** A saved brief (`orbit-program-brief`), relative to the trail: the archive's own write, saved before the sync. */
+const SAVED_BRIEF = /^brief\/brief-\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}Z\.md$/;
 
 export function prTail(
   ctx: PrContext,
@@ -160,13 +162,15 @@ export function prTail(
     if (listed.status !== 0) continue;
     for (const p of listed.stdout.split('\0')) if (p.startsWith(preMove)) trackedPreMove.add(p.slice(preMove.length));
   }
-  // The archive emit is written AFTER the move, into the archived trail: the archive's own write, not a stray.
+  // The archive emit is written AFTER the move, into the archived trail, and the saved brief BEFORE the sync,
+  // into the trail's `brief/` (brief-render, design D12): each is the archive's own write, not a stray.
   const archivedPrefix = `${archivedRel}/`;
   const emitDir = `${archivedPrefix}.orbit-runs/`;
+  const archiveOwn = (inTrail: string): boolean => ARCHIVE_EMIT.test(inTrail) || SAVED_BRIEF.test(inTrail);
   observations.carried_untracked = entries
     .map((e) => e.path)
     .filter((p) => p.startsWith(archivedPrefix) && !trackedPreMove.has(p.slice(archivedPrefix.length)))
-    .filter((p) => !(p.startsWith(emitDir) && ARCHIVE_EMIT.test(p.slice(emitDir.length))))
+    .filter((p) => !(p.startsWith(emitDir) && archiveOwn(p.slice(emitDir.length))))
     .sort();
 
   const degraded = row !== 'pr-runs';

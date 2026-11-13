@@ -2135,7 +2135,7 @@ function composeDecisionRecord(
     throw err;
   }
 
-  publishChildRecord(resolved.runsDir, decisionsDir, filename, token, materialized);
+  publishChildRecord(resolved.runsDir, decisionsDir, filename, token, JSON.stringify(materialized, null, 2) + '\n');
   return { path: filePath, emit: materialized, warnings: [] };
 }
 
@@ -2150,28 +2150,29 @@ function drawChildToken(childDir: string): string {
 }
 
 /**
- * Publish a record into a trail child folder (`decisions/`, `account/`) WITHOUT overwriting, after
+ * Publish a file into a trail child folder (`decisions/`, `account/`, `brief/`) WITHOUT overwriting, after
  * re-checking the trail's and the child's identity. decision-layer system walk (external W1, Sal: A):
  * the temporary file is created exclusively and LINKED to the final name, which fails when the name
  * exists, so a second writer that drew the same token in the same second is refused naming the
  * collision instead of replacing a record. (Two writers racing a folder-reading check — the
- * one-resolution check, the one-account check — is a named limit, not closed here.)
+ * one-resolution check, the one-account check — is a named limit, not closed here.) brief-render
+ * (design D4): it takes the serialized text, so a record's JSON and a saved brief's markdown share it.
  */
 function publishChildRecord(
   runsDir: string,
   childDir: string,
   filename: string,
   token: string,
-  materialized: Record<string, unknown>
+  serialized: string,
+  rerun = 're-run the emit'
 ): void {
-  const serialized = JSON.stringify(materialized, null, 2) + '\n';
   assertCanonicalTrailDir(runsDir);
   assertCanonicalChildDir(childDir);
   const filePath = path.join(childDir, filename);
   const tmp = path.join(childDir, `.${filename}.tmp`);
   const collision = (what: string): EmitError =>
     new EmitError(
-      `write gate: ${what} already exists — another writer drew token ${token} in this ${path.basename(childDir)} folder; nothing was written, so re-run the emit.`
+      `write gate: ${what} already exists — another writer drew token ${token} in this ${path.basename(childDir)} folder; nothing was written, so ${rerun}.`
     );
   try {
     fs.writeFileSync(tmp, serialized, { encoding: 'utf-8', flag: 'wx' });
@@ -2192,6 +2193,31 @@ function publishChildRecord(
       // best-effort cleanup; the original failure is the story
     }
   }
+}
+
+/**
+ * brief-render: save TEXT into the trail child `child` of `runsDir` as `<prefix>-<TS><ext>` — the trail and
+ * the child created and held to their canonical identity, a token unique within the child by the collision
+ * bump, and the no-overwrite publish (`orbit-program-brief`'s `A change's brief is saved, never
+ * overwritten`). Returns the written path. A refusal is an `EmitError` naming the file; nothing is written.
+ */
+export function publishTrailChildText(
+  runsDir: string,
+  child: string,
+  prefix: string,
+  ext: string,
+  text: string,
+  rerun: string
+): string {
+  fs.mkdirSync(runsDir, { recursive: true });
+  assertCanonicalTrailDir(runsDir);
+  const childDir = path.join(runsDir, child);
+  fs.mkdirSync(childDir, { recursive: true });
+  assertCanonicalChildDir(childDir);
+  const token = drawChildToken(childDir);
+  const filename = `${prefix}-${token}${ext}`;
+  publishChildRecord(runsDir, childDir, filename, token, text, rerun);
+  return path.join(childDir, filename);
 }
 
 /**
@@ -2227,7 +2253,7 @@ function composeAccount(resolved: ResolvedTarget, payload: Record<string, unknow
     if (err instanceof AccountError || err instanceof DecisionRecordError) throw new EmitError(`write gate: ${err.message}`);
     throw err;
   }
-  publishChildRecord(resolved.runsDir, accountDir, filename, token, materialized);
+  publishChildRecord(resolved.runsDir, accountDir, filename, token, JSON.stringify(materialized, null, 2) + '\n');
   return { path: path.join(accountDir, filename), emit: materialized, warnings: [] };
 }
 

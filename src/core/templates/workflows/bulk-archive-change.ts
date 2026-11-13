@@ -5,7 +5,7 @@
  * templates file into workflow-focused modules.
  */
 import type { SkillTemplate, CommandTemplate } from '../types.js';
-import { DEFERRAL_REFUSALS } from './archive-change.js';
+import { BRIEF_SAVE_STEP, DEFERRAL_REFUSALS } from './archive-change.js';
 import { DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../disciplines.js';
 
 export function getBulkArchiveChangeSkillTemplate(): SkillTemplate {
@@ -348,6 +348,16 @@ requirement, the FIRST one's sync changes the baseline, so the SECOND one's chec
 \`diverged\` by design — that per-change prompt (showing exactly what the second sync would
 overwrite) supersedes Step 5c's "newer overwrites" heuristic. Do not proceed past it without the
 user's explicit choice, and record the per-change outcome in the Step 9 summary table.
+
+## Per-change brief save (NEW step inside upstream Step 8)
+
+(Per \`orbit-archive-modifications\`' \`The archive saves the change's brief before the sync\` requirement)
+
+For EACH confirmed change, after its base-fingerprint check above and immediately before its Step 8a sync, save that change's brief while it is still active, exactly as \`orbit-archive-change\`'s Step 3.6 does, so each archived history holds its own copy:
+
+${BRIEF_SAVE_STEP}
+
+A failure goes into THAT change's own archive run summary's \`warnings\`; the batch goes on.
 
 ## Scope: does NOT emit run-summary JSON
 

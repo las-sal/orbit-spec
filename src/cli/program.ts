@@ -375,6 +375,19 @@ export function buildProgram(options: ProgramOptions = {}): Command {
       if (exitCode !== 0) process.exit(exitCode);
     });
 
+  // brief-render: the brief of a change or a program, rendered read-only (or a change's saved)
+  program
+    .command('brief [doc]')
+    .description("Render the brief of a program (a doc) or of a change (--change), read-only; --save keeps a change's")
+    .option('--change <name>', 'Render the brief of this change (active, else its newest archive)')
+    .option('--save', "Save the active change's brief into its history and print the file and its SHA-256")
+    .option('--json', 'Output as JSON')
+    .action(async (doc: string | undefined, options?: { change?: string; save?: boolean; json?: boolean }) => {
+      const { BriefCommand } = await import('../commands/brief.js');
+      const exitCode = new BriefCommand().run(doc, options ?? {});
+      if (exitCode !== 0) process.exit(exitCode);
+    });
+
   // PR lifecycle (rc12): observe and print — the read-only queries a seam needs, every write as argv
   const pr = program
     .command('pr')

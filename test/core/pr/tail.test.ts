@@ -277,6 +277,21 @@ describe('tail — the commit scope', () => {
     expect(committed).not.toMatch(/orbit\/specs\/other/);
   });
 
+  // @scenario behaviour orbit-archive-modifications :: PR-attached archive tail :: A saved brief is staged and not named as a stray
+  it('a saved brief in the trail is staged with the archived tree and not named in carried_untracked', () => {
+    const repo = archived();
+    const brief = `${ARCHIVED}/.orbit-runs/brief/brief-2026-11-13T10-00-00Z.md`;
+    repo.write(brief, '# Brief: change add-thing\n');
+    const { record } = tail(repo, 'valid');
+    expect(record.observations.carried_untracked).toEqual([]);
+    runSegments(repo, record, author(repo));
+    expect(repo.git('show', '--name-only', '--format=', 'HEAD').stdout).toContain(brief);
+    // Only the saved-brief name is the archive's own: another file in brief/ is still a stray.
+    const repo2 = archived();
+    repo2.write(`${ARCHIVED}/.orbit-runs/brief/notes.md`, 'x\n');
+    expect(tail(repo2, 'valid').record.observations.carried_untracked).toEqual([`${ARCHIVED}/.orbit-runs/brief/notes.md`]);
+  });
+
   it('no stray: every archived file was tracked at the pre-move path, so carried_untracked is empty — moved staged or not', () => {
     const repo = archived();
     expect(tail(repo, 'valid').record.observations.carried_untracked).toEqual([]);

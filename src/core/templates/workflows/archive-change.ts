@@ -18,6 +18,23 @@ import { COMMIT_STEP, DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } 
 // `orbit-archive-modifications`' `User-validation closure at the archive seam` (held byte-equal by
 // test/core/deferral-refusals-parity.test.ts). The owner is the spec; no engine surface runs the
 // write gate before the move, so Step 3.2 carries the production rather than a prose list.
+/**
+ * brief-render: the save step's command and its table (`orbit-archive-modifications`' `The archive saves the
+ * change's brief before the sync`), one constant both archive bodies interpolate, so an installed skill
+ * carries what the step does with no spec to read.
+ */
+export const BRIEF_SAVE_STEP = `\`\`\`bash
+orbit brief --change "<name>" --save
+\`\`\`
+
+| the save | the archive |
+|---|---|
+| succeeds | says nothing about it and goes on |
+| exits non-zero (the brief cannot be rendered whole, or a racing writer took its name) | composes ONE \`warnings\` entry naming the failure as the command reported it, for the Step 5.5 run summary, says nothing about it in chat, and goes on: a brief that cannot be saved never stops an archive |
+| ran, and the archive then stops (an abort or a cancel at a later prompt) | the copy stays in the active change's history; the next archive saves a new one, and the latest is the change's brief |
+
+The rows are the save's two outcomes (written, or refused whole) and the one way an archive can end after it without completing (it stops before the sync and the move). On success the command prints the saved file's path and its \`sha256\`: show neither. The save runs under every setting, and with every setting at its default nothing the user sees or is asked changes: the PR-attached tail stages the copy with the archived tree and does not name it among the carried untracked files.`;
+
 export const DEFERRAL_REFUSALS = `DEFERRAL REFUSALS — the archive write gate refuses each, naming the task or line, and Step 3.2 checks each before the move:
 1 an unchecked task carrying the (User-validation marker, with no deferral naming it
 2 a marked unchecked task with no task id, which no deferral can key
@@ -451,6 +468,12 @@ After upstream Step 3 (task-completion check) but before Step 4 (sync-specs):
 ### \`--skip-audit\` flag
 
 When \`/orbit:archive --skip-audit <name>\` is invoked, the entire Step 3.5 audit is skipped. The archive run summary records \`audit_skipped_via_flag: true\`. Use case: the user has just run \`/orbit:audit-drift\` manually and doesn't need to repeat it.
+
+## NEW Step 3.6 — Save the change's brief (BEFORE the sync)
+
+After the Step 3.5 audit sweep and its prompt resolve, and BEFORE upstream Step 4 (the sync assessment), in every mode, save the change's brief while the change is still active, so the copy is written into the change's own history and moves with it. A sign-off given per change (a later stage of the program) waits before anything is synced or moved and cites this copy, so it is rendered before the archive record exists — the copy says so itself.
+
+${BRIEF_SAVE_STEP}
 
 ## NEW Step 4.9 — PR preflight (\`orbit pr preflight\`, READ-ONLY, BEFORE the move — D-arc Stage D6; moved before the move by rc12)
 

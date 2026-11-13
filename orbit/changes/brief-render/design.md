@@ -148,7 +148,11 @@ with the records that wrote it (D-br-7, superseding D-br-1).
 of a program, `orbit brief`, the saved copy). `orbit-archive-modifications`' Purpose lists orbit's additions to the
 archive flow and gains the saved brief. No delta carries `## Purpose`, so both are edited in place after the sync.
 
-The new capability moves CLAUDE.md's marked capability figure from 32 to 33 (`<!-- src:capabilities -->`); after the sync,
+`docs/concepts.md`'s glossary section names `orbit-program-brief` on its `Carried by:` line after the sync too: the
+carried-by check resolves an item only against a baseline spec, so the name cannot be added before the capability
+exists (task 4.1 adds the rest of that section's change at apply).
+
+The new capability moves CLAUDE.md's marked capability figure from 32 to 33 (its `src:capabilities` marker); after the sync,
 `node bin/orbit.js validate --sources` checks it.
 
 Until a release carrying `orbit brief` is installed, this archive's save step runs as
