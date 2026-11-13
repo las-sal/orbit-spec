@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-11-13T01:24:21Z",
+  "change": "change-account",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Named exploration change-account opened as the first of stage program-brief's three changes (D-pb-7, D-pb-9 in the program-brief exploration), citing the stage. Back-filled from D-pb-4's account rows and D-pb-5's off row: D-ca-1 (each change carries one account, written by the apply session that checks the last task, replaced when what it says changes) and D-ca-2 (no reader takes it while sign-off cannot be on; the reading's dispatch must key on the selection, checked at propose).",
+  "decisions_captured": 2,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 2,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:explore change-account — continue thinking, or /orbit:propose change-account if ready to formalize"
+}

@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-11-13T01:24:21Z",
+  "change": "brief-render",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Named exploration brief-render opened as the second of stage program-brief's three changes (D-pb-7, D-pb-9 in the program-brief exploration), citing the stage. Back-filled from D-pb-2, D-pb-4's computed rows and D-pb-6's render and save rows: D-br-1 (the brief's sections from the trail, three from the account; a change brief and a program brief) and D-br-2 (orbit brief renders read-only; each archive and the finished program save a copy with its hash, in every mode).",
+  "decisions_captured": 2,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 2,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:explore brief-render — continue thinking, or /orbit:propose brief-render if ready to formalize"
+}

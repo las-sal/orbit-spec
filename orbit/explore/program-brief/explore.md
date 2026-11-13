@@ -16,6 +16,11 @@ What this exploration must settle: what the brief's unit and sources are, which 
 the trail and which need authored prose, where the brief is written and when, what the sign-off setting is and what
 it holds under each regime, and what a sign-off leaves on the record.
 
+Since 2026-11-12 (D-pb-7, D-pb-9) this exploration carries the THIRD of the stage's three changes — the sign-off
+setting, the `signoff` record and the holds — and keeps the name `program-brief`. The first two open as their own
+explorations, `orbit/explore/change-account/` and `orbit/explore/brief-render/`, carrying the rules D-pb-4 and D-pb-6
+held here. (R-adf-2 has since been amended to match D-pb-1, at the architect session of 2026-11-12.)
+
 ## Mechanism
 
 ### D-pb-1 — how often the user signs off is its own setting, off by default
@@ -126,6 +131,26 @@ Moves:
 - CONSUME: applied — the archive hold and the architect hold read the `signoff` record; the driver will later; first-run's closing review grades G5 from the saved briefs
 - INVOKE: applied — at each archive, at arc-done, and on the user's answer
 
+### D-pb-8 — a sign-off cites the saved brief, and a decline keeps the hold
+Domain: each answer the user gives to a sign-off the setting asks for, and the setting's off value
+| member | covered by |
+|---|---|
+| the user signs | a `signoff` record cites the saved brief by filename and hash and says `signed`; the hold lifts |
+| the user declines | the `signoff` record says `declined` with the user's reason in plain words; the hold stays, and what happens next is the user's direction, as with a stop's answer |
+| the brief changes after a decline (the work is fixed) | a new saved copy with a new hash; the next sign-off cites it |
+| sign-off off | no `signoff` record is asked for or written |
+Closure: DERIVED — the two answers a sign-off admits, the re-render that follows a decline, and the setting's off value
+Moves:
+- READ: applied — D-pb-6's sign and decline rows, which this entry carries; the saved copy and its hash are brief-render's (D-br-2)
+- ENUMERATE: applied — this table
+- COHERE: applied — under `change` the archive saves the brief (brief-render) before it waits for the sign-off (this change), so the record always has a copy to cite
+- EXECUTE: not applied — nothing is built yet
+- FALSIFY: applied — a sign-off citing only a brief's name could be over different text than the user read; the hash ties the record to the exact copy
+- CONFORM: applied — `orbit-decision-records`' plain-language rule binds the decline's reason; R-adf-1 (off by default)
+- FEASIBILITY: not applied — one record per sign-off
+- CONSUME: applied — the archive hold and the architect hold read the latest `signoff` record; the driver will later
+- INVOKE: applied — on the user's answer at a hold
+
 ## Decisions
 
 - **2026-11-12 — D-pb-1: how often the user signs off is its own setting, off by default** The user (stop
@@ -152,6 +177,7 @@ Moves:
   writing the three fields into the archive record, which no reader would check before the user signs. The record's
   name is not yet locked.
   Kind: rule
+  Disposition: superseded D-ca-1 in `orbit/explore/change-account/explore.md` (the account) and D-br-1 in `orbit/explore/brief-render/explore.md` (the computed sections), per D-pb-9
 
 - **2026-11-12 — D-pb-5: the reader takes the account only when sign-off is on** The user (stop
   `stop-2026-11-12T21-21-45Z.json` and its resolution), taking the AI's recommendation: with sign-off off the account is
@@ -165,6 +191,34 @@ Moves:
   hash and says signed or declined; a decline keeps the hold, records the user's reason, and what happens next is the
   user's direction. The command's and record's names are not yet locked.
   Kind: rule
+  Disposition: superseded D-pb-8 (signing and declining) and D-br-2 in `orbit/explore/brief-render/explore.md` (rendering and saving), per D-pb-9
+- **2026-11-12 — D-pb-7: the stage lands as three changes, all citing stage program-brief** Estimated at the start of
+  `/orbit:propose program-brief`, before anything was generated: proposed whole, the stage touches about five or six
+  capabilities against a ceiling of three — `orbit-decision-records` (the account and `signoff` records, the reader's
+  filter), a new `orbit-program-brief` (the renderer, its sections, the setting), `orbit-archive-modifications` (the
+  save and the hold), `orbit-architect` (the save at arc-done and the program hold) and `orbit-conventions` (the
+  chain's new stop reason). The user chose three changes (AI recommendation), proposed in order: (1) the account
+  record, written when apply finishes and left out of the reading while no sign-off can be on (D-pb-4's account rows,
+  D-pb-5's off row); (2) `orbit brief` and saving the brief at each archive and at arc-done (D-pb-2, D-pb-4's computed
+  rows, D-pb-6's render and save rows); (3) the sign-off setting, the `signoff` record and the holds (D-pb-1, D-pb-3,
+  D-pb-5's on rows, D-pb-6's sign and decline rows), re-measured at its propose, where a declared breach may remain.
+  How this exploration is divided among the three, and the changes' names, are settled in the exploration before the
+  first propose. The same pattern as `seam-chaining-grants`' D-sga-1.
+  Kind: scope
+- **2026-11-12 — D-pb-8: a sign-off cites the saved brief, and a decline keeps the hold** D-pb-6's sign and decline
+  rows, carried here when D-pb-6 was divided (D-pb-9): a `signoff` record cites the saved brief by filename and hash
+  and says signed or declined; a decline keeps the hold, records the user's reason, and what happens next is the
+  user's direction. The record's name is not yet locked.
+  Kind: rule
+- **2026-11-12 — D-pb-9: the three changes are `change-account`, `brief-render` and `program-brief`** The user chose
+  the AI's plan for dividing this exploration: two new explorations, `orbit/explore/change-account/` (change 1: the
+  account record, D-ca-1, and its exclusion from the reading, D-ca-2) and `orbit/explore/brief-render/` (change 2: the
+  brief's sections, D-br-1, and rendering and saving it, D-br-2), each citing stage program-brief; this exploration
+  carries change 3 (D-pb-1, D-pb-3, D-pb-5, D-pb-8). The plan renamed this one to `sign-off`; it keeps its name
+  instead, because two of its ledger entries cite their resolutions as belonging to `program-brief`, and the engine
+  finds a resolution by the work's name (`src/core/decision-records.ts`), so a rename would leave both citations
+  pointing at nothing when the reading step renders them.
+  Kind: scope
 
 ## Open questions
 
@@ -173,6 +227,8 @@ Moves:
 - **2026-11-12 — Sign-off once per stage (at stage ratification, or at the stage's last change's archive):** out. The
   user chose every change and once per program; a stage's end is known to the engine only at ratification, and
   neither chosen value needs it. A third value could add it later.
+- **2026-11-12 — Renaming this exploration to `sign-off`:** out (D-pb-9). Its ledger entries cite resolutions by the
+  work's name, and a rename would break them.
 - **2026-11-12 — Refusing or warning on `program` unless `pr: per-architecture`:** out (D-pb-3). It would make one
   setting depend on another; holding completion works under every mode.
 - **2026-11-12 — A sign-off on the plan before apply:** out. The user meant the sign-off on what a change built

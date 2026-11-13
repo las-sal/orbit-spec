@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-11-13T01:24:21Z",
+  "change": "program-brief",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "The exploration is divided among the stage's three changes (D-pb-9, the user's choice of the AI's plan): change-account and brief-render open as their own explorations, and this one carries change 3, the sign-off setting, the signoff record and the holds (D-pb-1, D-pb-3, D-pb-5, and D-pb-8, which takes D-pb-6's sign and decline rows). D-pb-4 and D-pb-6 are superseded, pointing at the children's rules. The plan renamed this exploration to sign-off; it keeps program-brief because two ledger entries cite resolutions by the work's name, and a rename would leave those citations resolving to nothing.",
+  "decisions_captured": 9,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 4,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose program-brief — 4 live rules accounted; formalize when you are ready (or /orbit:explore program-brief to keep refining)"
+}
