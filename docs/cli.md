@@ -425,8 +425,10 @@ record says. A program's brief carries each change that cites the doc, grouped b
 decisions recorded while the doc itself was worked on.
 
 It writes nothing, unless `--save` is given. A brief is whole or absent: when the change or the doc is not found, the
-doc breaks the stage grammar (`orbit architecture validate <doc>` shows where), or a record, the account, the archive
-record or a delta spec cannot be read or is not valid, it exits non-zero naming it and prints nothing.
+doc breaks the stage grammar (`orbit architecture validate <doc>` shows where), a record, the account, the archive
+record, the change's metadata or a delta spec cannot be read or is not valid (a delta spec stating no requirement, or a
+capability folder with no `spec.md`), or a folder it reads exists and cannot be listed, it exits non-zero naming it and
+prints nothing. An absent folder reads as empty.
 
 Usage: `orbit brief <doc>` for a program, or `orbit brief --change <name>` for a change (active, else its newest
 archive). Naming both, or neither, is a usage error.

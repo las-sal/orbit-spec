@@ -1,0 +1,30 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-13T18:03:56Z",
+  "change": "brief-render",
+  "model": "claude-opus-5-5",
+  "area": "user-sees-or-does",
+  "decided": "A change's brief is saved when its archive begins, before the change's requirements are synced and before the change is moved, so a sign-off over it can be given or refused while the change can still be fixed.",
+  "alternatives": [
+    "save it at the end of the archive, after the sync, where it could show what was actually synced",
+    "save it twice, once before the sync and once at the end"
+  ],
+  "why": "A per-change sign-off holds the archive itself (R-adf-2), so a refusal must leave the change where it was; a copy saved after the move would be signed over work that can no longer be held back. What the archive itself records after the move, its warnings and the risks it accepted, reaches the user instead in the archived change's brief and the program brief, which are made from the archived change.",
+  "relies_on": [
+    {
+      "kind": "ruling",
+      "doc": "automate-dev-flow",
+      "id": "R-adf-2"
+    },
+    {
+      "kind": "goal",
+      "doc": "automate-dev-flow",
+      "id": "G5"
+    },
+    {
+      "kind": "decision",
+      "id": "D-br-3"
+    }
+  ],
+  "replaces": "ledger-2026-11-13T15-13-52Z.json"
+}
