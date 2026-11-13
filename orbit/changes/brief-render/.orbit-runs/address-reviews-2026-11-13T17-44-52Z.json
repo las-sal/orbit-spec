@@ -1,0 +1,316 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-13T17:44:52Z",
+  "change": "brief-render",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/brief-render/.orbit-runs/review-system-2026-11-13T17-31-56Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-13T17-31-56Z",
+  "latest_apply_token": "2026-11-13T17-20-03Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 3,
+    "suggestion": 2
+  },
+  "pushback_verification": "All five verified against current state: the four older archive records and their shapes were read; parseDeltaSpec returns empty plans with no refusal; replacement-liveness printed before seam-chaining; readMeta and readValidDecisions read as described. None stale. The delta-spec warning converged with the codex return's first warning and is walked here.",
+  "resolution_summary": {
+    "resolved": 5,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Archive records of earlier generations that do record their sync are refused, so four archived changes and a completed program can never be briefed",
+      "marker_source": "internal-review",
+      "file": "src/core/program-brief.ts",
+      "line": 325,
+      "classification": "decision_required",
+      "action": "decision B: readArchive reads an archive record's sync in the current shape and in each earlier shape (specs_synced, sync.synced, a sync_specs listing capabilities without ran), and a record stating none of them renders a fourth line instead of refusing the brief; the delta spec's table, its rows sentence and a new scenario say so; D-br-8 supersedes D-br-6; the apply-time ledger entry is replaced and a ledger entry records B",
+      "ratified_via": "chat",
+      "resolution": "B",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Add a fourth row to `A brief says only what the archive recorded`: an archive record that does not state the sync as sync_specs.ran renders the delta's titles with a line saying the record does not state the sync in the form orbit reads, plus its warnings when they are a list of strings. The brief renders and infers nothing. Add a test with a ran-less record, and replace the ledger entry and the account."
+          },
+          {
+            "label": "B",
+            "body": "Read the earlier shapes explicitly (specs_synced boolean, sync.synced boolean) as ran, and use option A's row for sync_specs without ran. Name each shape in the spec as a prior generation the brief accepts, and test each one."
+          },
+          {
+            "label": "C",
+            "body": "Keep the refusal, but write it into the spec as a named limit: such a change's brief, and its program's brief, is refused for good. Remove the table's claim that it covers every state, and correct the ledger entry's and the account's wording by replacement."
+          }
+        ],
+        "chosen": "B"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "test/core/program-brief.test.ts",
+          "orbit/changes/brief-render/specs/orbit-program-brief/spec.md",
+          "orbit/changes/brief-render/design.md",
+          "orbit/changes/brief-render/explore.md",
+          "orbit/changes/brief-render/proposal.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/changes/brief-render/.orbit-runs/decisions/ledger-2026-11-13T17-19-29Z.json",
+            "reason": "audit-trail file; cascade skipped by policy"
+          }
+        ]
+      },
+      "sweep": {
+        "retired": [
+          "does not say whether the sync ran",
+          "The rows are the three states",
+          "naming the three archived states",
+          "the three states an archived change",
+          "it is rendered as D-br-6 says",
+          "The cost is D-br-6",
+          "labelled by D-br-6.",
+          "(see `explore.md`, D-br-3, D-br-6, D-br-7)"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/program-brief.ts",
+            "text": "unstatedSync"
+          },
+          {
+            "path": "orbit/changes/brief-render/specs/orbit-program-brief/spec.md",
+            "text": "An archive record of an earlier shape is read as it states the sync"
+          },
+          {
+            "path": "orbit/changes/brief-render/explore.md",
+            "text": "D-br-8: a brief says only what the archive recorded, in every shape a record states it"
+          },
+          {
+            "path": "orbit/changes/brief-render/design.md",
+            "text": "| D-br-8 | DERIVED | live rule |"
+          },
+          {
+            "path": "test/core/program-brief.test.ts",
+            "text": "an archive record of an earlier shape is read as it states the sync"
+          },
+          {
+            "path": "orbit/changes/brief-render/.orbit-runs/decisions/ledger-2026-11-13T17-44-11Z.json",
+            "text": "did not state its sync in the field orbit reads today"
+          },
+          {
+            "path": "orbit/changes/brief-render/.orbit-runs/decisions/ledger-2026-11-13T17-44-12Z.json",
+            "text": "in each shape archive records have been written in"
+          }
+        ],
+        "searched": [
+          "sync_specs.ran",
+          "three states",
+          "D-br-6",
+          "state neither outcome",
+          "specs_synced",
+          "sync.synced"
+        ],
+        "scope": [
+          "docs/cli.md",
+          "CLAUDE.md",
+          "orbit/changes/brief-render/.orbit-runs/decisions/ledger-2026-11-13T17-44-11Z.json",
+          "orbit/changes/brief-render/.orbit-runs/decisions/ledger-2026-11-13T17-44-12Z.json"
+        ],
+        "kept": [
+          {
+            "path": "orbit/changes/brief-render/.orbit-runs/decisions/ledger-2026-11-13T17-19-29Z.json",
+            "why": "a replaced decision record is never edited; ledger-2026-11-13T17-44-11Z.json replaces it"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "An invalid delta spec renders as a capability with no requirements instead of failing the brief",
+      "marker_source": "internal-review",
+      "file": "src/core/program-brief.ts",
+      "line": 386,
+      "classification": "trivial_fix",
+      "action": "option A: readCapabilities refuses a delta spec whose parse states no ADDED, MODIFIED, REMOVED or RENAMED requirement, and a capability folder with no spec.md, naming each; the spec's failure list defines an invalid delta spec; the mis-titled test is retitled and a delta-spec test added; full validation was measured and not used (it rejects 19 of 66 archived changes)",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/program-brief.test.ts",
+          "orbit/changes/brief-render/specs/orbit-program-brief/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "an account, a delta spec or a record the write gate would refuse fails the brief too"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/program-brief.ts",
+            "text": "states no requirement under an ADDED, MODIFIED, REMOVED or RENAMED Requirements heading"
+          },
+          {
+            "path": "src/core/program-brief.ts",
+            "text": "has no spec.md"
+          },
+          {
+            "path": "orbit/changes/brief-render/specs/orbit-program-brief/spec.md",
+            "text": "A delta spec is not valid when it"
+          },
+          {
+            "path": "test/core/program-brief.test.ts",
+            "text": "a delta spec stating no requirement operation, or a capability folder with no spec.md, fails the brief naming it"
+          },
+          {
+            "path": "orbit/changes/brief-render/.orbit-runs/decisions/ledger-2026-11-13T17-44-13Z.json",
+            "text": "which would refuse 19 of the 66 changes archived in this repository"
+          }
+        ],
+        "searched": [
+          "parseDeltaSpec",
+          "existsSync(specPath)",
+          "delta spec"
+        ],
+        "scope": [
+          "orbit/changes/brief-render/.orbit-runs/decisions/ledger-2026-11-13T17-44-13Z.json"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Archived changes within a stage are ordered by archive date and then by name, not in the order they were archived",
+      "marker_source": "internal-review",
+      "file": "src/core/program-brief.ts",
+      "line": 500,
+      "classification": "trivial_fix",
+      "action": "option A: archived changes within a stage are ordered by their latest archive record's token, falling back to the directory's date; spec and design D9 say so; a same-day test added",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/program-brief.test.ts",
+          "orbit/changes/brief-render/specs/orbit-program-brief/spec.md",
+          "orbit/changes/brief-render/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "archived changes by archive date"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/program-brief.ts",
+            "text": "function archivedAt("
+          },
+          {
+            "path": "orbit/changes/brief-render/specs/orbit-program-brief/spec.md",
+            "text": "the timestamp of each one's latest"
+          },
+          {
+            "path": "test/core/program-brief.test.ts",
+            "text": "archived changes of the same day come in the order their archive records were written"
+          }
+        ],
+        "searched": [
+          "archive date",
+          "order they were archived",
+          "key: `0:"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Unreadable change metadata silently drops a change from its program brief",
+      "marker_source": "internal-review",
+      "file": "src/core/program-brief.ts",
+      "line": 183,
+      "classification": "trivial_fix",
+      "action": "readMeta refuses a present .openspec.yaml that cannot be parsed, naming it, in both units (measured: none of this repository fails to parse); the spec failure list names the metadata; a test added",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/program-brief.test.ts",
+          "orbit/changes/brief-render/specs/orbit-program-brief/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "src/core/program-brief.ts",
+            "text": "cannot be read as YAML"
+          },
+          {
+            "path": "orbit/changes/brief-render/specs/orbit-program-brief/spec.md",
+            "text": "the change's metadata or a delta spec"
+          }
+        ],
+        "searched": [
+          "readMeta",
+          "parseYaml"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "A program brief checks every doc's records on the shared architecture trail, so one bad record of another doc refuses it",
+      "marker_source": "internal-review",
+      "file": "src/core/program-brief.ts",
+      "line": 531,
+      "classification": "trivial_fix",
+      "action": "the program brief checks only its own doc's records on the shared architecture trail, plus any record that cannot be read at all (its doc is unknown); the spec says so; a test added",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/program-brief.test.ts",
+          "orbit/changes/brief-render/specs/orbit-program-brief/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "src/core/program-brief.ts",
+            "text": "readValidDecisions(projectRoot, archDir, ofDoc)"
+          },
+          {
+            "path": "orbit/changes/brief-render/specs/orbit-program-brief/spec.md",
+            "text": "whose doc cannot be known"
+          }
+        ],
+        "searched": [
+          "readValidDecisions",
+          "ofDoc"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Five resolved (walk all). The archive-record finding was the user's decision B: the brief reads each shape a record states its sync in, and a record stating none gets a fourth line, so the earlier program now has a brief; D-br-8 supersedes D-br-6. The four obvious fixes: an invalid delta spec, unreadable metadata and an unlistable folder are refused by name; same-day archives follow their records; the program brief checks only its own doc's records.",
+  "iteration": 4,
+  "next_recommended": "/orbit:address-reviews brief-render",
+  "ripple_misses": 0
+}

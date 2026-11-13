@@ -7,7 +7,7 @@ change of the stage gave each change its account (`change-account`); nothing yet
 later sign-off could cite. This change, the second of the stage's three (D-pb-7 and D-pb-9 in
 `orbit/explore/program-brief/explore.md`), renders the brief from the trail and saves each change's brief at its
 archive, before the sync, so the third change's per-change sign-off can wait on it while the change can still be fixed
-(see `explore.md`, D-br-3, D-br-6, D-br-7).
+(see `explore.md`, D-br-3, D-br-7, D-br-8).
 
 ## What Changes
 
@@ -21,7 +21,7 @@ archive, before the sync, so the third change's per-change sign-off can wait on 
   tripwires are not installed; the archive's warnings and accepted risks with a declared size breach; and the records
   no reader checked, the account included. The sync and archive-signal lines say only what the change's archive record
   says — the sync ran, was skipped, or no record exists — and an active change's say no archive has recorded a sync yet
-  (D-br-6); new terms show each definition with the records that wrote it (D-br-7).
+  (D-br-8); new terms show each definition with the records that wrote it (D-br-7).
 - `orbit brief --change <name> --save` saves an active change's brief as
   `orbit/changes/<name>/.orbit-runs/brief/brief-<TS>.md`, never overwriting, and prints the file and the SHA-256 of its
   text — the hash the third change's sign-off will cite.

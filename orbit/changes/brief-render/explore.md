@@ -66,7 +66,7 @@ Domain: each moment the brief is produced, and each surface the saved copy reach
 | member | covered by |
 |---|---|
 | asked for at any time | `orbit brief` (its name settled at propose) prints the brief of a program or of one change to standard output and writes nothing, as `orbit decisions brief` does; `--json` gives the same content as data with the text as `markdown` |
-| a change archives, any setting | the archive saves the change's brief, with the hash of its text, in the change's own trail BEFORE the sync and the move, so the copy moves with the change; it is rendered as D-br-6 says |
+| a change archives, any setting | the archive saves the change's brief, with the hash of its text, in the change's own trail BEFORE the sync and the move, so the copy moves with the change; it is rendered as D-br-8 says |
 | an archive that stops after the save (a refused sync, the user stopping it) | the copy stays in the active change's trail; the next archive saves a new one, and the latest is the change's brief |
 | the PR-attached archive tail | the saved brief is the archive's own write: staged with the archived tree and left out of the untracked-files line, as the archive emit already is |
 | every declared stage of a program is finished (complete, ended, or all its citing changes archived), any setting | the architect flow saves the program brief in the architecture trail with its hash, and saves again only when a fresh render's hash differs from the latest saved copy; built by the third change, `program-brief`, not this one (D-br-5) |
@@ -75,7 +75,7 @@ Closure: DERIVED — the two units (a change, a program) crossed with rendering 
 Moves:
 - READ: applied — D-pb-1's `change` rows ("the change's archive waits for a sign-off") and D-pb-8's COHERE move (the archive saves the brief before it waits) in `orbit/explore/program-brief/explore.md`; the archive body's order (Step 5 moves, Step 5.5 emits, Step 5.6 runs the tail); `src/core/pr/tail.ts`'s `carried_untracked`, which leaves out only the archive emit
 - ENUMERATE: applied — this table; the stopped-archive and tail rows are new against D-br-2
-- COHERE: applied — D-br-2 saved after the sync and the move, so a per-change sign-off (the third change) could be declined only after the change was synced and moved; saving first lets a decline leave the change where it was. The cost is D-br-6
+- COHERE: applied — D-br-2 saved after the sync and the move, so a per-change sign-off (the third change) could be declined only after the change was synced and moved; saving first lets a decline leave the change where it was. The cost is D-br-8
 - EXECUTE: not applied — nothing is built yet
 - FALSIFY: applied — a copy saved first could describe work the archive then fails to land; the stopped-archive row makes the next attempt's copy the latest, and the archive record still states what was synced
 - CONFORM: applied — R-adf-7 (every mode); G0 with no new exception: the save is a record (R-adf-9), the tail's line is unchanged by the exclusion (R-adf-13's line names strays, and the brief is not one), and the failure prints nothing at the defaults (R-adf-11); R-adf-2 as amended
@@ -102,21 +102,22 @@ Moves:
 - CONSUME: applied — a user signing one change (the third change) reads the saved copy; the program brief and an archived change's brief carry the archive's signals
 - INVOKE: applied — whenever a change's brief is rendered with no archive record: the archive's save, and `orbit brief` on an active change
 
-### D-br-6 — a brief says only what the archive recorded, and its unread list is a snapshot
+### D-br-8 — a brief says only what the archive recorded, in every shape a record states it, and its unread list is a snapshot
 Domain: each state of a change's archive record, crossed with the sections that read it
 | member | covered by |
 |---|---|
 | an active change (on demand, and the copy the archive saves before its sync) | requirements: the delta's titles as what the change proposes, with a line that no archive has recorded a sync yet; the archive's warnings and accepted risks: a line that its archive records them after this brief, and where they appear |
-| an archived change whose record says the sync ran | requirements: the capabilities and counts `sync_specs` reports, with the delta's titles; warnings and accepted risks: the record's |
-| an archived change whose record says the sync was skipped | requirements: the delta's titles, with a line that the archive recorded no sync and its skipped reason; warnings and accepted risks: the record's |
+| an archived change whose record says the sync ran (in `sync_specs.ran`, or in an earlier shape: `specs_synced`, `sync.synced`, or a `sync_specs` without `ran` listing its capabilities) | requirements: the capabilities and counts `sync_specs` reports when it reports them, with the delta's titles; warnings and accepted risks: the record's |
+| an archived change whose record says the sync was skipped (in any of those shapes) | requirements: the delta's titles, with a line that the archive recorded no sync and its skipped reason; warnings and accepted risks: the record's |
+| an archived change whose record states the sync in none of those shapes | requirements: the delta's titles, with a line that the record does not say, in a form orbit reads, whether they were synced; warnings and accepted risks: the record's |
 | an archived change with no archive record (archived before orbit recorded archives, or brought from OpenSpec) | requirements: the delta's titles, with a line that whether they were synced is not recorded; warnings and accepted risks: a line that no archive record holds any |
 | records no reader checked, in every state | the selection's records when the brief is rendered: a snapshot; the copy the archive saves says records written after it appear in the archived change's brief and the program brief |
-Closure: DERIVED — the three states an archived change's history can show of its archive (a record whose sync ran, one whose sync was skipped, none) plus the active change, which has none yet; and the one section whose source can change between the save and the archive record
+Closure: DERIVED — the four states an archived change's history can show of its archive (a record stating its sync ran, one stating it was skipped, one stating neither in a shape the brief reads, none) plus the active change, which has none yet; and the one section whose source can change between the save and the archive record
 Moves:
 - READ: applied — `sync_specs.ran` and `skipped_reason` in the archive record of `2026-11-12-chained-review-commit`; three archived changes here with no `archive-*.json` (e.g. `2026-06-08-rename-followups`); the archive body's Step 4 (an already-synced change, "Archive without syncing")
-- ENUMERATE: applied — this table; the skipped and no-record rows came from the proposal review (the fresh half and codex)
+- ENUMERATE: applied — this table; the skipped and no-record rows came from the proposal review (the fresh half and codex); the earlier shapes and the fourth archived row came from the system review's fresh half, measured over this repository's 66 archive records (`2026-07-17-d2-architect` writes `specs_synced`, `2026-07-21-d3-orientation` writes `sync.synced`, `2026-06-11-relocate-modified-upstream-workflows` and `2026-07-06-c1-engine-gates` write `sync_specs` without `ran`)
 - COHERE: applied — D-br-4 keyed the label on whether an archive record exists, which made an archived change without one "not yet synced"; keying on what the record says gives each state one true line. "No archive has recorded a sync yet" is true even of an active change synced by `/orbit:sync`
-- EXECUTE: not applied — nothing is built yet
+- EXECUTE: applied — `orbit brief d-arc-arbitered-flow` renders after the system walk, where refusing those records had made it fail for good
 - FALSIFY: applied — one selection function does not make one moment: the archiving session can write a ledger entry at the sync, after the save, which the archive counts and the copy lacks; the copy says so rather than claiming agreement
 - CONFORM: applied — G5 (a record written after the save still reaches the user, in the archived change's brief and the program brief); the plain-language rule for the brief's own lines
 - FEASIBILITY: not applied — the same reads as D-br-7
@@ -128,14 +129,14 @@ Domain: each section the stage charter names, plus the unread records `orbit-rev
 | member | covered by |
 |---|---|
 | what was built | the latest account's `built`; a change with no account says none was written; the program brief lists each change's, grouped by stage |
-| capabilities and requirements added or changed | the delta specs' requirement titles, labelled by what the archive recorded of the sync (D-br-6) |
+| capabilities and requirements added or changed | the delta specs' requirement titles, labelled by what the archive recorded of the sync (D-br-8) |
 | new terms | every distinct term and definition in the `defines` lists of the change's latest records, the account's included, once each, naming the records that define it; a term defined two ways appears once per definition; the program brief adds the architecture trail's records |
 | new seams | the latest account's `seams` |
 | the ledger | the latest ledger entry of each chain: `decided`, `alternatives`, `why`, and what it relies on |
 | stops fired | each stop's `about` and `question`, with its latest resolution's `answer` and `effect`, or marked open; the program brief adds the architecture trail's stops |
 | tripwires fired | until stage tripwires ships, a line saying tripwires are not installed, never "none fired" |
-| deviations from the charter | the latest account's `deviations`, beside the computed signals (D-br-6 says which the archive state allows) and a declared size breach |
-| records no reader checked | the records the selection returns (a snapshot, D-br-6), and the account when no reader took it (D-ca-2) |
+| deviations from the charter | the latest account's `deviations`, beside the computed signals (D-br-8 says which the archive state allows) and a declared size breach |
+| records no reader checked | the records the selection returns (a snapshot, D-br-8), and the account when no reader took it (D-ca-2) |
 | a change citing no architecture doc | the same sections; deviations are stated against the proposal (`orbit-decision-records`' `Each change carries one account, written when apply is complete`), and no program brief includes it |
 Closure: SOURCED — the stage charter's list in `orbit/architecture/automate-dev-flow.md`, plus `orbit-review`'s named limit, each for the two units D-pb-2 and D-pb-3 set
 Moves:
@@ -143,7 +144,7 @@ Moves:
 - ENUMERATE: applied — this table
 - COHERE: applied — D-br-1 merged terms with no rule, and the proposal chose the latest definition; codex's review showed that attaches one record's meaning to another's prose, so each distinct definition stays with its records
 - EXECUTE: not applied — nothing is built yet
-- FALSIFY: applied — an account can leave a deviation out; the computed signals sit beside it so an omission shows against them, where the archive state has them (D-br-6). The renderer cannot make a requirement title plain; it shows titles as the spec names them, under a heading that says so
+- FALSIFY: applied — an account can leave a deviation out; the computed signals sit beside it so an omission shows against them, where the archive state has them (D-br-8). The renderer cannot make a requirement title plain; it shows titles as the spec names them, under a heading that says so
 - CONFORM: applied — R-adf-7, G5, the plain-language rule (its residual: a new surface rendering record prose joins its table), R-adf-10
 - FEASIBILITY: not applied — one read over one change's or one program's trail
 - CONSUME: applied — the user reads it; the third change's sign-off cites the saved copy (D-br-3); first-run's closing review grades G5 from saved copies
@@ -194,11 +195,19 @@ Moves:
   active change already synced. The records no reader checked are a snapshot at rendering, so the copy the archive saves
   says that records written after it appear in the archived change's brief and the program brief.
   Kind: rule
+  Disposition: superseded D-br-8
 - **2026-11-13 — D-br-7: the brief's sections come from the trail, three from the account, and each definition of a term
   is shown with its records** Supersedes D-br-1 (the user, at the proposal walk, decision B): a term's definition belongs
   to the record that wrote it, so the new-terms section shows each distinct term and definition once with the records
   that define it, and a term defined two ways appears twice; the other sections are D-br-1's, the requirements line
-  labelled by D-br-6.
+  labelled by D-br-8.
+  Kind: rule
+- **2026-11-13 — D-br-8: a brief says only what the archive recorded, in every shape a record states it, and its unread
+  list is a snapshot** Supersedes D-br-6 (the user, at the system walk, decision B): an archive record states its sync in
+  the current shape or in an earlier one (`specs_synced`, `sync.synced`, or a `sync_specs` without `ran` listing its
+  capabilities), and the brief reads each as it states it; a record stating it in none of them gets a line saying it does
+  not say, in a form orbit reads, whether the requirements were synced, and is never refused, since an archived record
+  is never edited and a refusal would leave its change and its program with no brief for good. The rest is D-br-6's.
   Kind: rule
 
 ## Open questions

@@ -112,6 +112,8 @@ export type BriefArchive =
       accepted: { claim: string; why: string }[];
     }
   | { state: 'not-synced'; record: string; skipped_reason: string | null; warnings: string[]; accepted: { claim: string; why: string }[] }
+  /** A record that states the sync in none of the shapes the brief reads: it says what it says of the rest. */
+  | { state: 'unstated'; record: string; warnings: string[]; accepted: { claim: string; why: string }[] }
   | { state: 'no-record' };
 
 export interface BriefCapability {
@@ -180,27 +182,50 @@ function byToken(a: string, b: string): number {
   return ta < tb ? -1 : ta > tb ? 1 : a < b ? -1 : a > b ? 1 : 0;
 }
 
-function readMeta(dir: string): { doc: string; stage: string | null } | null {
+/**
+ * A directory's entries; an ABSENT directory is an empty one, and any other failure to list it (a permission or
+ * I/O error, a file where a folder belongs) fails the brief naming it, so unreadable history is never shown as none.
+ */
+function listDir(projectRoot: string, dir: string, what: string): fs.Dirent[] {
   try {
-    const raw = fs.readFileSync(path.join(dir, '.openspec.yaml'), 'utf-8');
-    const meta = parseYaml(raw) as { architecture?: { doc?: unknown; stage?: unknown } } | null;
-    const arch = meta?.architecture;
-    if (!arch || typeof arch.doc !== 'string' || arch.doc.trim() === '') return null;
-    return { doc: arch.doc, stage: typeof arch.stage === 'string' && arch.stage.trim() !== '' ? arch.stage : null };
-  } catch {
-    return null;
+    return fs.readdirSync(dir, { withFileTypes: true });
+  } catch (e) {
+    if ((e as NodeJS.ErrnoException).code === 'ENOENT') return [];
+    fail(`${what} ${rel(projectRoot, dir)} cannot be listed (${(e as NodeJS.ErrnoException).code ?? 'error'}).`);
   }
+}
+
+/** A change's citation. Absent metadata cites nothing; metadata present but unreadable fails the brief naming it. */
+function readMeta(projectRoot: string, dir: string): { doc: string; stage: string | null } | null {
+  const metaPath = path.join(dir, '.openspec.yaml');
+  if (!fs.existsSync(metaPath)) return null;
+  let meta: { architecture?: { doc?: unknown; stage?: unknown } } | null;
+  try {
+    meta = parseYaml(fs.readFileSync(metaPath, 'utf-8')) as typeof meta;
+  } catch {
+    fail(`change metadata ${rel(projectRoot, metaPath)} cannot be read as YAML.`);
+  }
+  const arch = meta !== null && typeof meta === 'object' ? meta.architecture : undefined;
+  if (!arch || typeof arch.doc !== 'string' || arch.doc.trim() === '') return null;
+  return { doc: arch.doc, stage: typeof arch.stage === 'string' && arch.stage.trim() !== '' ? arch.stage : null };
 }
 
 /**
  * A `decisions/` folder, every record held to the write gate's shape: a record that cannot be read, whose
  * `command` is not its filename's kind, or that the gate would refuse fails the brief naming it.
  */
-function readValidDecisions(projectRoot: string, dir: string): DecisionFolder {
+function readValidDecisions(
+  projectRoot: string,
+  dir: string,
+  keep: (r: Record<string, unknown>) => boolean = () => true
+): DecisionFolder {
+  listDir(projectRoot, dir, 'decision records folder');
   const folder = readDecisionFolder(dir);
   for (const [name, record] of folder.records) {
     const where = `${rel(projectRoot, path.join(dir, name))}`;
+    // An unreadable record's work cannot be known, so it fails every brief that reads this folder.
     if (record === null) fail(`record ${where} cannot be read as a JSON object.`);
+    if (!keep(record)) continue;
     const kind = name.slice(0, name.indexOf('-'));
     if (record.command !== kind || !isDecisionCommand(kind)) fail(`record ${where} carries command ${JSON.stringify(record.command)}, not its filename's kind.`);
     try {
@@ -304,12 +329,10 @@ function count(v: unknown): number | null {
 /** The latest archive record of an archived change's history, read by `A brief says only what the archive recorded`. */
 function readArchive(projectRoot: string, changeDir: string): BriefArchive {
   const runsDir = path.join(changeDir, '.orbit-runs');
-  let names: string[] = [];
-  try {
-    names = fs.readdirSync(runsDir).filter(f => ARCHIVE_RECORD.test(f)).sort();
-  } catch {
-    names = [];
-  }
+  const names = listDir(projectRoot, runsDir, "change's history")
+    .map(e => e.name)
+    .filter(f => ARCHIVE_RECORD.test(f))
+    .sort();
   if (names.length === 0) return { state: 'no-record' };
   const name = names[names.length - 1];
   const where = `archive record ${rel(projectRoot, path.join(runsDir, name))}`;
@@ -321,11 +344,6 @@ function readArchive(projectRoot: string, changeDir: string): BriefArchive {
   }
   if (r === null || typeof r !== 'object' || Array.isArray(r)) fail(`${where} is not a JSON object.`);
   const record = r as Record<string, unknown>;
-  const sync = record.sync_specs;
-  if (sync === null || typeof sync !== 'object' || typeof (sync as Record<string, unknown>).ran !== 'boolean') {
-    fail(`${where} does not say whether the sync ran: it carries no sync_specs.ran true or false.`);
-  }
-  const s = sync as Record<string, unknown>;
   const warnings = stringArray(record.warnings, `${where}'s warnings`);
   const accepted: { claim: string; why: string }[] = [];
   if (record.judgements !== undefined) {
@@ -341,13 +359,30 @@ function readArchive(projectRoot: string, changeDir: string): BriefArchive {
       }
     }
   }
-  if (s.ran === true) {
-    const caps = s.capabilities_updated;
+  const isObject = (v: unknown): v is Record<string, unknown> => v !== null && typeof v === 'object' && !Array.isArray(v);
+  const s = isObject(record.sync_specs) ? record.sync_specs : null;
+  const caps = s?.capabilities_updated;
+  const listsCaps = Array.isArray(caps) && caps.length > 0 && caps.every(c => typeof c === 'string');
+  // What the record states of the sync, in the current shape (`sync_specs.ran`) or an earlier one: `specs_synced`,
+  // `sync.synced`, or a `sync_specs` without `ran` that lists the capabilities it updated. A record stating it in
+  // none of these says nothing the brief can read of the sync, and never reads as synced or not synced.
+  const ran: boolean | null =
+    s !== null && typeof s.ran === 'boolean'
+      ? s.ran
+      : typeof record.specs_synced === 'boolean'
+        ? record.specs_synced
+        : isObject(record.sync) && typeof record.sync.synced === 'boolean'
+          ? record.sync.synced
+          : s !== null && listsCaps
+            ? true
+            : null;
+  if (ran === null) return { state: 'unstated', record: name, warnings, accepted };
+  if (ran) {
     return {
       state: 'synced',
       record: name,
-      capabilities_updated: Array.isArray(caps) && caps.every(c => typeof c === 'string') ? (caps as string[]) : null,
-      counts: { added: count(s.added), modified: count(s.modified), removed: count(s.removed), renamed: count(s.renamed) },
+      capabilities_updated: listsCaps ? (caps as string[]) : null,
+      counts: { added: count(s?.added), modified: count(s?.modified), removed: count(s?.removed), renamed: count(s?.renamed) },
       warnings,
       accepted,
     };
@@ -355,7 +390,7 @@ function readArchive(projectRoot: string, changeDir: string): BriefArchive {
   return {
     state: 'not-synced',
     record: name,
-    skipped_reason: typeof s.skipped_reason === 'string' && s.skipped_reason.trim() !== '' ? s.skipped_reason : null,
+    skipped_reason: typeof s?.skipped_reason === 'string' && s.skipped_reason.trim() !== '' ? s.skipped_reason : null,
     warnings,
     accepted,
   };
@@ -363,20 +398,14 @@ function readArchive(projectRoot: string, changeDir: string): BriefArchive {
 
 function readCapabilities(projectRoot: string, changeDir: string): BriefCapability[] {
   const specsDir = path.join(changeDir, 'specs');
-  let caps: string[] = [];
-  try {
-    caps = fs
-      .readdirSync(specsDir, { withFileTypes: true })
-      .filter(e => e.isDirectory())
-      .map(e => e.name)
-      .sort();
-  } catch {
-    return [];
-  }
+  const caps = listDir(projectRoot, specsDir, 'delta specs folder')
+    .filter(e => e.isDirectory())
+    .map(e => e.name)
+    .sort();
   const out: BriefCapability[] = [];
   for (const capability of caps) {
     const specPath = path.join(specsDir, capability, 'spec.md');
-    if (!fs.existsSync(specPath)) continue;
+    if (!fs.existsSync(specPath)) fail(`capability folder ${rel(projectRoot, path.dirname(specPath))} has no spec.md.`);
     let content: string;
     try {
       content = fs.readFileSync(specPath, 'utf-8');
@@ -384,6 +413,11 @@ function readCapabilities(projectRoot: string, changeDir: string): BriefCapabili
       fail(`delta spec ${rel(projectRoot, specPath)} cannot be read.`);
     }
     const plan = parseDeltaSpec(content);
+    if (plan.added.length + plan.modified.length + plan.removed.length + plan.renamed.length === 0) {
+      fail(
+        `delta spec ${rel(projectRoot, specPath)} states no requirement under an ADDED, MODIFIED, REMOVED or RENAMED Requirements heading.`
+      );
+    }
     out.push({
       capability,
       added: plan.added.map(b => b.name),
@@ -420,6 +454,7 @@ export function buildChangeBriefAt(projectRoot: string, changeDir: string, statu
   const decisions = readValidDecisions(projectRoot, path.join(runsDir, 'decisions'));
   const { ledger, stops, heads: latest } = readDecisions(decisions, () => true);
 
+  listDir(projectRoot, path.join(runsDir, ACCOUNT_DIR), 'account folder');
   const accountFolder = readAccountFolder(path.join(runsDir, ACCOUNT_DIR));
   for (const [name, r] of accountFolder.records) {
     const where = rel(projectRoot, path.join(runsDir, ACCOUNT_DIR, name));
@@ -448,7 +483,7 @@ export function buildChangeBriefAt(projectRoot: string, changeDir: string, statu
     change,
     status,
     path: rel(projectRoot, changeDir),
-    program: readMeta(changeDir),
+    program: readMeta(projectRoot, changeDir),
     account: accountName,
     built: account === null ? null : String(account.built),
     capabilities: readCapabilities(projectRoot, changeDir),
@@ -471,15 +506,20 @@ export function buildChangeBrief(projectRoot: string, name: string): ChangeBrief
   return buildChangeBriefAt(projectRoot, found.dir, found.status);
 }
 
-function subdirs(dir: string): string[] {
-  try {
-    return fs
-      .readdirSync(dir)
-      .filter(f => !f.startsWith('.') && isDir(path.join(dir, f)))
-      .sort();
-  } catch {
-    return [];
-  }
+function subdirs(projectRoot: string, dir: string): string[] {
+  return listDir(projectRoot, dir, 'changes folder')
+    .map(e => e.name)
+    .filter(f => !f.startsWith('.') && isDir(path.join(dir, f)))
+    .sort();
+}
+
+/** When an archived change was archived: its latest archive record's token, else its directory's date. */
+function archivedAt(projectRoot: string, dir: string): string {
+  const records = listDir(projectRoot, path.join(dir, '.orbit-runs'), "change's history")
+    .map(e => e.name)
+    .filter(f => ARCHIVE_RECORD.test(f))
+    .sort();
+  return records.length > 0 ? tokenOf(records[records.length - 1]) : `${path.basename(dir).slice(0, 10)}T00-00-00Z`;
 }
 
 /** `orbit brief <doc>`: every change citing the doc, grouped by stage, then the architecture trail's records. */
@@ -491,18 +531,19 @@ export function buildProgramBrief(projectRoot: string, doc: string): ProgramBrie
     fail(`architecture doc '${doc}' breaks the stage grammar; run \`orbit architecture validate ${doc}\` to see where.`);
   }
 
-  // Citing changes, archived first in the order archived, then active by name (the order key).
+  // Citing changes, archived first in the order they were archived (their latest archive record's time, else the
+  // directory's date), then active by name (the order key).
   const citing: { key: string; stage: string | null; dir: string; status: 'active' | 'archived' }[] = [];
   const changesDir = path.join(projectRoot, 'orbit', 'changes');
-  for (const name of subdirs(path.join(changesDir, 'archive'))) {
+  for (const name of subdirs(projectRoot, path.join(changesDir, 'archive'))) {
     const dir = path.join(changesDir, 'archive', name);
-    const meta = readMeta(dir);
-    if (meta?.doc === doc) citing.push({ key: `0:${name}`, stage: meta.stage, dir, status: 'archived' });
+    const meta = readMeta(projectRoot, dir);
+    if (meta?.doc === doc) citing.push({ key: `0:${archivedAt(projectRoot, dir)}:${name}`, stage: meta.stage, dir, status: 'archived' });
   }
-  for (const name of subdirs(changesDir)) {
+  for (const name of subdirs(projectRoot, changesDir)) {
     if (name === 'archive') continue;
     const dir = path.join(changesDir, name);
-    const meta = readMeta(dir);
+    const meta = readMeta(projectRoot, dir);
     if (meta?.doc === doc) citing.push({ key: `1:${name}`, stage: meta.stage, dir, status: 'active' });
   }
   citing.sort((a, b) => (a.key < b.key ? -1 : a.key > b.key ? 1 : 0));
@@ -528,8 +569,8 @@ export function buildProgramBrief(projectRoot: string, doc: string): ProgramBrie
   groups.sort((a, b) => order(a) - order(b));
 
   const archDir = path.join(projectRoot, 'orbit', 'architecture', '.orbit-runs', 'decisions');
-  const folder = readValidDecisions(projectRoot, archDir);
   const ofDoc = (r: Record<string, unknown>): boolean => r.doc === doc;
+  const folder = readValidDecisions(projectRoot, archDir, ofDoc);
   const { ledger, stops, heads: latest } = readDecisions(folder, ofDoc);
   const terms = collectTerms(latest.map(n => ({ record: n, defines: (folder.records.get(n) as Record<string, unknown>).defines })));
 
@@ -551,6 +592,8 @@ const TEXT = {
     'No archive has recorded a sync of these yet: they are what the change proposes to add or change in the specs.',
   noRecordSync:
     'This change was archived without an archive record, so whether these were synced into the specs is not recorded.',
+  unstatedSync:
+    "This change's archive record does not say, in a form orbit reads, whether these were synced into the specs.",
   noTerms: 'No record of this work defines a new term.',
   noLedger: 'No ledger entry was written for this work.',
   noStops: 'No stop was recorded for this work.',
@@ -640,6 +683,8 @@ function syncLine(a: BriefArchive): string | null {
       return TEXT.activeSync;
     case 'no-record':
       return TEXT.noRecordSync;
+    case 'unstated':
+      return TEXT.unstatedSync;
     case 'not-synced':
       return `The archive recorded no sync of these into the specs${a.skipped_reason !== null ? `: ${a.skipped_reason}` : '.'}`;
     case 'synced': {

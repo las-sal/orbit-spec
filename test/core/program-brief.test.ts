@@ -400,6 +400,34 @@ describe('a brief tells the user what a change or a program did, from the trail'
     expect(text.indexOf('## Stage `p`')).toBeLessThan(text.indexOf('## Stage `q`'));
   });
 
+  it('archived changes of the same day come in the order their archive records were written', () => {
+    makeDoc();
+    makeChange('orbit/changes/archive/2026-11-10-alpha', { stage: 'a' });
+    archiveRecord('orbit/changes/archive/2026-11-10-alpha', 30, SYNCED);
+    makeChange('orbit/changes/archive/2026-11-10-beta', { stage: 'a' });
+    archiveRecord('orbit/changes/archive/2026-11-10-beta', 5, SYNCED);
+    const text = renderProgramBrief(buildProgramBrief(root, 'prog'));
+    expect(text.indexOf('### Change beta')).toBeGreaterThan(-1);
+    expect(text.indexOf('### Change beta')).toBeLessThan(text.indexOf('### Change alpha'));
+  });
+
+  it("a program brief checks only its own doc's records on the shared architecture trail, and an unreadable one fails it", () => {
+    makeDoc();
+    json(`orbit/architecture/.orbit-runs/decisions/ledger-${T(1)}.json`, {
+      command: 'ledger', timestamp: iso(T(1)), change: null, doc: 'other', model: 'm', area: 'nowhere',
+      decided: 'Another doc.', alternatives: ['x'], why: 'y', relies_on: [],
+    });
+    expect(() => buildProgramBrief(root, 'prog')).not.toThrow();
+    json(`orbit/architecture/.orbit-runs/decisions/ledger-${T(2)}.json`, {
+      command: 'ledger', timestamp: iso(T(2)), change: null, doc: 'prog', model: 'm', area: 'nowhere',
+      decided: 'This doc.', alternatives: ['x'], why: 'y', relies_on: [],
+    });
+    expect(() => buildProgramBrief(root, 'prog')).toThrow(/ledger-2026-11-01T10-00-02Z\.json is not a valid ledger record/);
+    fs.rmSync(path.join(root, `orbit/architecture/.orbit-runs/decisions/ledger-${T(2)}.json`));
+    write(`orbit/architecture/.orbit-runs/decisions/ledger-${T(3)}.json`, '{ not json');
+    expect(() => buildProgramBrief(root, 'prog')).toThrow(/ledger-2026-11-01T10-00-03Z\.json cannot be read as a JSON object/);
+  });
+
   it('within a stage, archived changes come first in the order archived, then active changes by name', () => {
     makeDoc();
     makeChange('orbit/changes/b-active', { stage: 'a' });
@@ -498,12 +526,66 @@ describe('a brief says only what the archive recorded', () => {
     );
   });
 
-  it('an archive record that does not say whether the sync ran fails the brief, naming it', () => {
-    makeChange(ARCHIVED_X);
-    json(`${ARCHIVED_X}/.orbit-runs/archive-${T(1)}.json`, { command: 'archive', specs_synced: true });
-    expect(() => buildChangeBrief(root, 'x')).toThrow(/archive record .*archive-2026-11-01T10-00-01Z\.json does not say whether the sync ran/);
-    json(`${ARCHIVED_X}/.orbit-runs/archive-${T(2)}.json`, { command: 'archive', sync_specs: { capabilities_updated: ['cap'] } });
-    expect(() => buildChangeBrief(root, 'x')).toThrow(/archive-2026-11-01T10-00-02Z\.json does not say whether the sync ran/);
+  // @scenario behaviour orbit-program-brief :: A brief says only what the archive recorded :: An archive record of an earlier shape is read as it states the sync
+  it('an archive record of an earlier shape is read as it states the sync, and one stating none of them says so', () => {
+    const caps = (dir: string): string => section(change(changeOf(dir)), 'Capabilities and requirements added or changed');
+    const cases: [string, Record<string, unknown>, RegExp][] = [
+      ['2026-07-17-a', { specs_synced: true }, /The archive synced these into the specs\./],
+      ['2026-07-21-b', { sync: { synced: true } }, /The archive synced these into the specs\./],
+      ['2026-07-06-c', { sync_specs: { capabilities_updated: ['cap'], added: 1 } }, /The archive synced these into the specs — 1 capability updated \(`cap`\); requirements: 1 added\./],
+      ['2026-07-08-d', { specs_synced: false }, /The archive recorded no sync of these into the specs\./],
+      ['2026-07-09-e', { sync_specs: { capabilities_updated: [] } }, /does not say, in a form orbit reads, whether these were synced/],
+      ['2026-07-10-f', { archived_to: 'somewhere' }, /does not say, in a form orbit reads, whether these were synced/],
+    ];
+    for (const [d, body, expected] of cases) {
+      const dir = `orbit/changes/archive/${d}`;
+      makeChange(dir, { doc: null });
+      json(`${dir}/.orbit-runs/archive-${T(1)}.json`, { command: 'archive', warnings: ['Warned.'], ...body });
+      const c = caps(dir);
+      expect(c, d).toMatch(expected);
+      expect(c, d).toContain('    - R');
+      expect(section(change(changeOf(dir)), 'Deviations from the charter'), d).toContain('- Warned.');
+    }
+    // The fourth state never reads as synced or not synced.
+    expect(caps('orbit/changes/archive/2026-07-10-f')).not.toMatch(/The archive synced|recorded no sync|archived without/);
+  });
+
+  it('a delta spec stating no requirement operation, or a capability folder with no spec.md, fails the brief naming it', () => {
+    makeChange('orbit/changes/foo', { specs: { cap: '## ADDED Requirement\n\n### Requirement: R\n\nThe system SHALL r.\n' } });
+    expect(() => buildChangeBrief(root, 'foo')).toThrow(/delta spec orbit\/changes\/foo\/specs\/cap\/spec\.md states no requirement/);
+    fs.rmSync(path.join(root, 'orbit/changes/foo/specs/cap'), { recursive: true });
+    fs.mkdirSync(path.join(root, 'orbit/changes/foo/specs/empty'), { recursive: true });
+    expect(() => buildChangeBrief(root, 'foo')).toThrow(/capability folder orbit\/changes\/foo\/specs\/empty has no spec\.md/);
+  });
+
+  it.skipIf(process.getuid?.() === 0)('a folder the brief reads that cannot be listed fails it, naming the folder, and an absent one reads as none', () => {
+    makeChange('orbit/changes/foo');
+    fs.rmSync(path.join(root, 'orbit/changes/foo/specs'), { recursive: true });
+    expect(section(change('foo'), 'Capabilities and requirements added or changed')).toContain('This change has no delta specs');
+    makeChange('orbit/changes/foo');
+    const specs = path.join(root, 'orbit/changes/foo/specs');
+    fs.chmodSync(specs, 0o000);
+    try {
+      expect(() => buildChangeBrief(root, 'foo')).toThrow(/delta specs folder orbit\/changes\/foo\/specs cannot be listed \(EACCES\)/);
+    } finally {
+      fs.chmodSync(specs, 0o755);
+    }
+    const decisions = path.join(root, 'orbit/changes/foo/.orbit-runs/decisions');
+    fs.mkdirSync(decisions, { recursive: true });
+    fs.chmodSync(decisions, 0o000);
+    try {
+      expect(() => buildChangeBrief(root, 'foo')).toThrow(/decision records folder .*decisions cannot be listed/);
+    } finally {
+      fs.chmodSync(decisions, 0o755);
+    }
+  });
+
+  it("change metadata that cannot be parsed fails the brief naming it, in a change brief and a program brief", () => {
+    makeDoc();
+    makeChange('orbit/changes/foo');
+    write('orbit/changes/foo/.openspec.yaml', 'schema: [unclosed\n');
+    expect(() => buildChangeBrief(root, 'foo')).toThrow(/change metadata orbit\/changes\/foo\/\.openspec\.yaml cannot be read as YAML/);
+    expect(() => buildProgramBrief(root, 'prog')).toThrow(/change metadata orbit\/changes\/foo\/\.openspec\.yaml cannot be read as YAML/);
   });
 });
 
@@ -638,7 +720,7 @@ describe('`orbit brief` renders a brief read-only', () => {
     expect(r.stderr).toContain(`ledger-${T(1)}.json cannot be read as a JSON object`);
   });
 
-  it('an account, a delta spec or a record the write gate would refuse fails the brief too', () => {
+  it('an account or a record the write gate would refuse, or a record that cannot be read, fails the brief', () => {
     makeChange('orbit/changes/foo');
     account('orbit/changes/foo', 1, { built: '' });
     expect(() => buildChangeBrief(root, 'foo')).toThrow(ProgramBriefError);

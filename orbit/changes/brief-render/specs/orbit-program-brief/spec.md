@@ -8,7 +8,8 @@ G5). A CHANGE BRIEF covers one change; a PROGRAM BRIEF covers every change whose
 (`architecture.doc`), active or archived, grouped by the stage each cites in the order the doc declares its stages (a
 cited stage the doc does not declare comes after them, under its id; a citing change whose metadata names no stage comes
 last, under a heading saying it names no stage), followed by the architecture trail's decision records whose `doc` is
-that doc. Within a stage, archived changes come first in the order they were archived, then active changes by name. A
+that doc. Within a stage, archived changes come first in the order they were archived (the timestamp of each one's latest
+archive record, or its archive directory's date when it has none), then active changes by name. A
 doc that declares no stages (one the architecture parser reads as LEGACY) groups its citing changes by the stage ids they
 cite, each group in the order of its earliest change. A change citing no doc has a change brief and is in no program
 brief.
@@ -95,14 +96,22 @@ table, and never infer a sync or a judgement no record states:
 | the change | capabilities and requirements added or changed | the archive's warnings and accepted risks |
 |---|---|---|
 | active — on demand, and the copy the archive saves before its sync (`orbit-archive-modifications`' `The archive saves the change's brief before the sync`) | the delta's titles as what the change proposes, with a line saying no archive has recorded a sync yet | a line saying its archive records them after this brief, and that they appear in the archived change's brief and the program brief |
-| archived, its record's `sync_specs.ran` true | the capabilities updated and the counts `sync_specs` reports, with the delta's titles | the record's `warnings` and the `accepted` claims of its `readiness` judgement |
-| archived, its record's `sync_specs.ran` false | the delta's titles, with a line saying the archive recorded no sync, and its `skipped_reason` when it has one | the record's `warnings` and the `accepted` claims of its `readiness` judgement |
+| archived, its record stating the sync ran | the capabilities updated and the counts `sync_specs` reports, when it reports them, with the delta's titles | the record's `warnings` and the `accepted` claims of its `readiness` judgement |
+| archived, its record stating the sync did not run | the delta's titles, with a line saying the archive recorded no sync, and its `skipped_reason` when it has one | the record's `warnings` and the `accepted` claims of its `readiness` judgement |
+| archived, its record stating the sync in none of the shapes below | the delta's titles, with a line saying the record does not say, in a form orbit reads, whether they were synced | the record's `warnings` and the `accepted` claims of its `readiness` judgement |
 | archived, with no archive record (archived before orbit recorded archives, or brought from OpenSpec) | the delta's titles, with a line saying the change was archived without an archive record, so whether they were synced is not recorded | a line saying no archive record holds any |
 
-The rows are the three states an archived change's history can show of its archive (a record whose sync ran, one whose
-sync was skipped, none) and the active change, which has none yet; the columns are the archive record's keys the change
-brief reads, `sync_specs`, and `warnings` with `judgements[].accepted`. An active change already synced by
-`/orbit:sync` reads as active: no archive has recorded its sync.
+The rows are the four states an archived change's history can show of its archive (a record stating the sync ran, one
+stating it did not, one stating neither in a shape the brief reads, none) and the active change, which has none yet; the
+columns are the archive record's keys the change brief reads, the sync's statement, and `warnings` with
+`judgements[].accepted`. An active change already synced by `/orbit:sync` reads as active: no archive has recorded its
+sync.
+
+A record states the sync in the current shape, `sync_specs.ran` true or false, or in one of the earlier shapes archive
+records were written in, which the brief reads as they state it: `specs_synced` true or false; `sync.synced` true or
+false; and a `sync_specs` without `ran` that lists at least one capability in `capabilities_updated`, which states the
+sync ran. The first of these present decides. A record stating it in none of them is the fourth archived row, never read
+as synced or as not synced.
 
 The records no reader checked are those the selection returns when the brief is rendered: a SNAPSHOT. The copy the
 archive saves before its sync therefore lists the records written before the save. A record the archiving session writes
@@ -128,6 +137,13 @@ brief. When no record is written after the save, the copy and the archive record
 - **WHEN** archived change `foo`'s archive record carries `sync_specs.ran: false` and its delta adds requirement `R`
 - **THEN** the capabilities section lists `R` with a line saying the archive recorded no sync, and does not show `R` as
   synced
+
+#### Scenario: An archive record of an earlier shape is read as it states the sync
+
+- **WHEN** archived change `foo`'s archive record carries `specs_synced: true` and no `sync_specs`, and archived change
+  `bar`'s carries none of the shapes the brief reads
+- **THEN** `foo`'s capabilities section says the archive synced them, and `bar`'s says its record does not say, in a form
+  orbit reads, whether they were synced, and neither brief is refused
 
 #### Scenario: A change archived without an archive record says so
 
@@ -161,8 +177,13 @@ Giving both `<doc>` and `--change`, or neither, is a usage error.
 
 A brief is whole or absent, never partial, as `orbit decisions brief`'s is: when the change or the doc is not found, the
 doc is one the architecture parser reads as MALFORMED (the refusal names `orbit architecture validate <doc>`), or a
-record, the account, the archive record or a delta spec the brief reads cannot be read or is not valid, the command exits
-non-zero naming it and prints nothing to standard output.
+record, the account, the archive record, the change's metadata or a delta spec the brief reads cannot be read or is not
+valid, the command exits non-zero naming it and prints nothing to standard output. A delta spec is not valid when it
+states no requirement under an ADDED, MODIFIED, REMOVED or RENAMED Requirements heading, and a capability folder under
+`specs/` with no `spec.md` is refused as one; a record is not valid when the write gate would refuse its shape. A folder
+the brief reads that is absent reads as empty; one that exists and cannot be listed is refused, naming it. A program
+brief reads only the architecture trail's records whose `doc` is its doc, and any record there that cannot be read at
+all, whose doc cannot be known.
 
 #### Scenario: A change brief is printed and nothing is written
 
