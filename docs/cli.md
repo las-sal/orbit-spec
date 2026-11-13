@@ -361,7 +361,7 @@ what is next) and refuses a payload that fails its checks.
 
 Usage: `orbit emit <emit-command>`, where `<emit-command>` is one of `explore`, `propose`, `new`, `continue`, `ff`,
 `apply`, `verify`, `architect`, `review`, `address-reviews`, `audit-drift`, `review-external`, `archive`, `ledger`,
-`stop` or `resolution`.
+`stop`, `resolution` or `account`.
 
 `ledger`, `stop` and `resolution` are not run summaries. They write decision records — a call the AI made that affects
 the user or security, a moment a run needed you, and your answer to it — to `.orbit-runs/decisions/<command>-<TS>.json`
@@ -370,6 +370,13 @@ never edited: one is fixed by a new record of the same kind whose `replaces` nam
 links (the stop it names, what it relies on) are unchanged. The
 decision-writing discipline in every workflow skill with a disciplines epitome tells the AI when to write them, under
 every setting and without changing what you are asked, so a trail's `decisions/` folder fills as the work runs; a walk of an archived change writes none.
+
+`account` is not a run summary or a decision record either. It writes a change's account — in plain words, what the
+change built, the new places you are asked something, and where the work left its plan — to
+`.orbit-runs/account/account-<TS>.json` of an active change; it takes `--change` only and carries no next step. A
+change carries one account: a second must name the latest in `replaces`, and may change every field. The apply skill
+writes it when apply is complete, and a review walk replaces it when a fix changes what it says. Nothing reads it yet:
+it changes nothing you see or are asked.
 
 | Option | Description |
 |---|---|

@@ -11,6 +11,7 @@ import {
   type DecisionCommand,
 } from './decision-records.js';
 import { CHAIN_KEY_TABLE, CHAIN_KEYS } from './chain.js';
+import { ACCOUNT_COMMAND, ACCOUNT_DIR, ACCOUNT_PAYLOAD_FIELDS, ACCOUNT_PLAIN_FIELDS } from './account.js';
 
 /**
  * The fifth execution discipline, DECISION-WRITING (stage `decision-writing` of `automate-dev-flow`),
@@ -279,4 +280,98 @@ export const DECISION_RECORDS_REFERENCE = [
   "A record is never edited or deleted once written. To fix one — because a reading found it wanting, or because you did — write a NEW record of the same kind whose `replaces` names the old record's filename; the latest record in a chain is the current one. A replacement rewords and never changes what happened, so it carries the old record's link fields unchanged (a ledger entry's `area`, `relies_on` and `raised_stop`; a stop's `condition`; a resolution's `stop`), and orbit refuses one that differs, naming the field. Replace the LATEST record of a chain: when a second fix lands on a record already replaced, the new record replaces that replacement. A new link (a `raised_stop`, a resolution's `stop`, or a `resolution` citation) names the LATEST record of its chain; orbit refuses one naming a replaced record, naming the record to cite instead.",
   '',
   ...REFERENCE_RECORD_ORDER.flatMap(c => [recordSection(c), '']),
+].join('\n');
+
+// ---------------------------------------------------------------------------
+// The account (stage program-brief, change-account: `orbit-decision-records`' `Each change carries one
+// account, written when apply is complete`)
+// ---------------------------------------------------------------------------
+
+/**
+ * The form the write gate accepts for each account field (`orbit-emit-composition`'s `The write gate checks
+ * the account`). Keyed by the gate's own field list, so a field the gate gains without a form here fails at load.
+ */
+const ACCOUNT_FIELD_FORM: Record<string, string> = {
+  built: 'plain; a non-blank string — what the change built, as its user would describe it',
+  seams: 'plain; a non-blank string — each new place the user is asked something, or where a setting now changes what happens; when there is none, say so in words ("None.")',
+  deviations: "plain; a non-blank string — where the work left its stage's charter in the architecture doc the change cites, or, for a change citing none, the proposal's scope; when there is none, say so in words (\"None.\")",
+  defines: DEFINES_FORM,
+  detail: DETAIL_FORM,
+  replaces: `optional; the filename (\`${ACCOUNT_COMMAND}-<TS>.json\`) of the LATEST account in the change's \`.orbit-runs/${ACCOUNT_DIR}/\` folder, the one this one replaces — required once the change has an account (a change carries one account chain; orbit refuses a second account without it, and a replacement of an already-replaced account, naming the latest); a replacement may change every field`,
+};
+
+function accountFieldLines(): string {
+  return ACCOUNT_PAYLOAD_FIELDS.map(f => {
+    const form = ACCOUNT_FIELD_FORM[f];
+    if (form === undefined) throw new Error(`disciplines: no form for account.${f}`);
+    return `- ${code(f)} — ${form}`;
+  }).join('\n');
+}
+
+/** One example payload per step; a test submits each, unchanged, through `orbit emit account`. */
+export const ACCOUNT_EXAMPLES = {
+  apply: {
+    model: 'claude-opus-5-5',
+    built: "A weekly export of the user's data to a file they can download; the user can turn it off.",
+    seams: 'The first run asks the user whether to keep the weekly default.',
+    deviations: 'None.',
+  },
+  walk: {
+    model: 'claude-opus-5-5',
+    built: "A weekly export of the user's data to a file they can download; the user can turn it off, and a failed export is retried once.",
+    seams: 'The first run asks the user whether to keep the weekly default.',
+    deviations: 'The retry was added by a review fix; the charter did not ask for it.',
+    replaces: 'account-2026-11-12T10-00-00Z.json',
+  },
+} as const;
+
+const PLAIN_ACCOUNT_FIELDS = ACCOUNT_PLAIN_FIELDS.map(code).join(', ');
+
+/** How an account is written, shared by both steps: an installed skill of either ships it whole. */
+const ACCOUNT_HOW = (example: Record<string, unknown>): string[] => [
+  `Write the payload as JSON to a temporary file and run \`orbit emit ${ACCOUNT_COMMAND} --change <name> --payload <file>\` (an active change only; \`--doc\`, an exploration and an archived change are refused). The payload carries \`model\` (your model id, or \`null\`) and these fields, and nothing else; orbit adds the record, the time and the change, and writes it to the change's \`.orbit-runs/${ACCOUNT_DIR}/\` folder as \`${ACCOUNT_COMMAND}-<TS>.json\`. A refused account names the field to fix, and nothing is written. An account is never edited: to change one, write a replacement whose \`replaces\` names the latest account's filename (list \`.orbit-runs/${ACCOUNT_DIR}/\` to find it).`,
+  '',
+  'Fields:',
+  '',
+  accountFieldLines(),
+  '',
+  `The plain fields — ${PLAIN_ACCOUNT_FIELDS} — follow the plain-language rule of \`references/decision-records.md\`: written for a reader who knows only the program's architecture doc (its Premise, Goals, Rulings and stage charters), every other term defined in \`defines\` or not used, implementation detail only in \`detail\` and never the only statement. They reach the user as the program brief's what was built, new seams and deviations from the charter. Writing an account changes nothing the user sees or is asked, and is done under every setting.`,
+  '',
+  'Example:',
+  '',
+  '```json',
+  JSON.stringify(example, null, 2),
+  '```',
+];
+
+/**
+ * The apply body's account step: written by the session that ends with apply complete, before its run
+ * summary (or its `all_done` completion readout when it writes none).
+ */
+export const ACCOUNT_STEP = [
+  "## Account step (before the run summary — `orbit-decision-records`' `Each change carries one account, written when apply is complete`)",
+  '',
+  "The change's ACCOUNT says, in plain language, what the change built, the new places the user is asked something, and where the work left its plan. It is not a decision record and not a run summary. APPLY IS COMPLETE when the change's apply gate passes: every task is checked, or every unchecked one is a declared, marked `(User-validation` handoff (named in this session's `user_validation_tasks`). Decide at the session's end, BEFORE the run-summary emit — or, when the session writes no run summary (it arrived on `all_done`), before the completion readout:",
+  '',
+  '- **Apply is not complete at the end of the session** → write no account, whether or not one exists: the session that completes apply writes or replaces it.',
+  '- **Apply is complete, and the change has no account** → write it — whether this session checked the last task, resumed after a session that ended before writing it, or arrived on a change completed before accounts existed.',
+  "- **Apply is complete, and the change has an account** (a walk reopened tasks) → when the work done since the latest account was written — by this session or an earlier one — changed what it says, write a replacement of it; otherwise write none. The account always describes the finished work.",
+  '',
+  ...ACCOUNT_HOW(ACCOUNT_EXAMPLES.apply),
+].join('\n');
+
+/**
+ * The address-reviews body's account step: a walk replaces the account when a resolved finding changes what
+ * it says, except when it resolved the finding by reopening tasks.
+ */
+export const ACCOUNT_WALK_STEP = [
+  "### 7. Replace the account when a fix changed it (`orbit-decision-records`' `Each change carries one account, written when apply is complete`)",
+  '',
+  "A change's ACCOUNT says, in plain language, what the change built, the new places the user is asked something, and where the work left its plan; the apply session that completes the change writes it. After the logs are written, decide:",
+  '',
+  `- **A walk of an ACTIVE change that has an account** (its \`.orbit-runs/${ACCOUNT_DIR}/\` holds one), **where a resolved finding changes what was built, a seam, or a deviation** → write a replacement of the latest account that describes the change as it now stands; one replacement covers every such finding of this walk.`,
+  "- **A finding resolved by reopening tasks** (appending or unchecking a task in the change's `tasks.md`) → write no account for it: the apply session that completes those tasks replaces the account, so it describes finished work.",
+  '- **A change with no account yet, a walk of an archived change, or a walk with no change target** → write no account.',
+  '',
+  ...ACCOUNT_HOW(ACCOUNT_EXAMPLES.walk),
 ].join('\n');

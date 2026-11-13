@@ -1,0 +1,16 @@
+{
+  "command": "account",
+  "timestamp": "2026-11-13T05:02:13Z",
+  "change": "change-account",
+  "model": "claude-opus-5-5",
+  "built": "Each change now keeps an account: a short record, written by the AI in plain words once all of the change's tasks are done, of what the change built, the new places the user is asked something, and where the work left its stage's plan. orbit refuses an account that leaves any of those three parts empty, a second account that does not say which one it replaces, and an account for anything other than a change still being built. The instructions the AI follows while building a change, and while fixing review findings, now say when to write the account and when to replace it.",
+  "seams": "None. Writing an account asks the user nothing and changes nothing the user sees; no part of orbit reads an account yet.",
+  "deviations": "None from stage program-brief's charter: this is the first of the stage's three changes, and the brief and the sign-off setting belong to the second and the third. One small addition beyond the proposal: the short help a shell shows when completing the emit command also names the account, as the command's own help already does.",
+  "defines": [
+    {
+      "term": "account",
+      "definition": "a change's plain-language record of what it built, the new places the user is asked something, and where the work left its plan; the program brief will show it"
+    }
+  ],
+  "detail": "New: src/core/account.ts (the account's checks), the `account` row and composeAccount in src/core/emit-composition.ts (path .orbit-runs/account/account-<TS>.json, the canonical-child identity check generalized as assertCanonicalChildDir, the no-overwrite publish shared as publishChildRecord), ACCOUNT_STEP and ACCOUNT_WALK_STEP in src/core/disciplines.ts carried by the apply and address-reviews bodies, docs/cli.md, the emit description in src/cli/program.ts and src/core/completions/command-registry.ts. Tests: test/core/account.test.ts, test/core/templates/account-step.test.ts; pins moved in emit-composition.test.ts, rc03b-untouched-modules.test.ts and skill-templates-parity.test.ts."
+}

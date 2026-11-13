@@ -493,7 +493,7 @@ export const COMMAND_REGISTRY: CommandDefinition[] = [
   },
   {
     name: 'emit',
-    description: 'Compose and write a run-summary emit or a decision record from a narrative payload',
+    description: 'Compose and write a run-summary emit, a decision record or a change\'s account from a narrative payload',
     acceptsPositional: true,
     flags: [
       {
