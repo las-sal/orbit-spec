@@ -1,0 +1,15 @@
+{
+  "command": "propose",
+  "timestamp": "2026-11-13T22:19:38Z",
+  "change": "program-brief",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Consumed orbit/explore/program-brief/ (4 live rules: D-pb-8, D-pb-12, D-pb-13, D-pb-14, each DERIVED and carried as a normative table; D-pb-1, D-pb-3, D-pb-4, D-pb-5 and D-pb-6 superseded, not carried) into proposal, design, five delta specs and tasks: the signoff setting (absent/off, change; other values off with a warning), the signoff record through orbit emit signoff with an engine-written sha256, orbit brief --hold, the archive and bulk-archive hold after the brief's save (a decision prompt; the chain gains no reason), and the reader's selection taking the latest account under change. 11 requirements, one RENAMED (No reader takes the account yet), rehearsed through buildUpdatedSpec. Capabilities 5 > 3 declared at the user's choice (the fifth is orbit-conventions' chainable-prompt table). Strict validation passes; base fingerprints stamped for seven requirements.",
+  "pr_attachment": {
+    "branch": "program-brief",
+    "granularity": "per-proposal",
+    "url": "https://github.com/las-sal/orbit-spec/pull/43",
+    "state": "draft"
+  },
+  "next_recommended": "/orbit:review program-brief — proposal artifacts ready; review before apply"
+}
