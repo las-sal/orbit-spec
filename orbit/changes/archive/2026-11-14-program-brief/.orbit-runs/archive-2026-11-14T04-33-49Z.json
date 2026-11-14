@@ -1,0 +1,71 @@
+{
+  "command": "archive",
+  "timestamp": "2026-11-14T04:33:49Z",
+  "change": "program-brief",
+  "kind": "lifecycle",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Archived program-brief to orbit/changes/archive/2026-11-14-program-brief/, the third of stage program-brief's changes: the signoff setting (off or change), orbit emit signoff recording the user's answer against the saved brief's SHA-256, orbit brief --hold, the archive and bulk-archive holding for that sign-off after the brief's save, and, under change, the reader taking the latest account. The sync added 4 requirements, modified 9 and renamed 1 across six capabilities, every block byte-verified. The pre-archive audit found no critical drift; its one touchpoints warning and two suggestions are logged below. The stage stays open for program-signoff.",
+  "archive_path": "orbit/changes/archive/2026-11-14-program-brief/",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 2
+    },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": [
+      "orbit-archive-modifications",
+      "orbit-conventions",
+      "orbit-decision-records",
+      "orbit-emit-composition",
+      "orbit-program-brief",
+      "orbit-review"
+    ],
+    "added": 4,
+    "modified": 9,
+    "removed": 0,
+    "renamed": 1
+  },
+  "unresolved_markers": [],
+  "user_decision": "proceeded_with_no_critical",
+  "consent": "user-invoked",
+  "warnings": [
+    "Pre-archive audit (category 5, touchpoints): src/core/disciplines.ts is actual but unpredicted by the design's frozen Touchpoints (WARNING): the account walk step gained the sentence that a reading finding against the account is fixed by replacing it. docs/commands.md rode along as docs (SUGGESTION), and the tests under test/core/templates/ plus the two brief goldens sit outside the test/core/*.test.ts glob (SUGGESTION). Categories 1, 3, 4 and 6 found nothing; the lenses are absent, so category 2 was skipped.",
+    "The marker scan matched only `@review:` written as inline code in the orbit-conventions delta and prose in a review pass record, none a marker; nothing was prompted.",
+    "Closed-set tests moved (R-adf-9), each enumerating a set the change extends: test/core/emit-composition.test.ts's every-command spine test leaves out the sign-off; test/core/rc03b-untouched-modules.test.ts's emit-composition.ts pin; test/core/templates/skill-templates-parity.test.ts's archive and bulk-archive pins; the chain-prompt tag inventory; the brief goldens. New: test/core/signoff.test.ts, test/core/account-reader.test.ts, test/core/templates/signoff-hold-step.test.ts, test/core/templates/account-reading-walk.test.ts.",
+    "The system review's reading step found fifteen reader rows across thirteen records; the walk fixed them by fifteen replacements (two chained), which reach no reader before archive (D-dr-2's named limit), nor does the ledger entry the second system walk wrote: fourteen records in all, as this record's unread count says.",
+    "Two refusal texts changed wording at the default: the reading gate's now says \"owes a reading of N record(s)\" (it said \"decision record(s)\"), and orbit brief <doc> --save now names the fourth change, program-signoff. Behaviour at the default is unchanged; the stage's Shipped-as paragraph names both for the G0 reading.",
+    "Baseline Purpose sections edited in place: orbit-program-brief's gained the signoff setting and the hold, orbit-archive-modifications' the hold after the save. The stage's Shipped-as paragraph was written in flow.",
+    "The brief was saved before the sync as brief-2026-11-14T04-29-27Z.md; the hold read off (this repository sets no signoff key), so nothing was asked."
+  ],
+  "judgements": [
+    {
+      "kind": "readiness",
+      "formed_against": [
+        "2026-11-13T22-46-15Z",
+        "2026-11-13T22-46-37Z",
+        "2026-11-14T00-00-33Z",
+        "2026-11-14T00-00-55Z"
+      ],
+      "disposition": "ready",
+      "ratified_by": "ai",
+      "reasoning": "Both blind pairs were walked whole. The proposal pair's ten findings were resolved; the in-context verification graded nine of those repairs landed and one regressed, and its three suggestions, that regression among them, were walked. Of the system pair, the fresh pass's six were resolved, and the external pass's hold rested on two gaps, a malformed sign-off lifting the hold and an undiscoverable account leaving the reading, both closed at the first system walk. The in-context verification graded six repairs landed and one regressed, the folder-listing check reaching the default path, which the user resolved by narrowing it to signoff: change. At the default nothing is read and nothing is asked, which tests show.",
+      "accepted": [
+        {
+          "claim": "Under every sign-off setting but change, a decisions or account folder that cannot be listed still reads as empty to the reading's selection, the brief and the archive count.",
+          "why": "The external system pass asked for an unlistable folder to fail the reading; the user chose to fail it only under change, so G0 holds, and at the default the account reaches no reader at all."
+        }
+      ]
+    }
+  ],
+  "pr_url": "https://github.com/las-sal/orbit-spec/pull/43",
+  "pr_state": "draft",
+  "next_recommended": "/orbit:architect automate-dev-flow — change archived; review stage program-brief and take up the program's next stage, or run /orbit:audit-drift for a project-wide drift check.",
+  "decision_records_unread": 14
+}
