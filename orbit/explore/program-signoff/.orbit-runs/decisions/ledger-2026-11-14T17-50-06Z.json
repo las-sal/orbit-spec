@@ -1,0 +1,29 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-14T17:50:06Z",
+  "change": "program-signoff",
+  "model": "claude-opus-5-5",
+  "area": "user-sees-or-does",
+  "decided": "Once a program is signed off, a newer saved brief asks the user to sign again only while the program's one pull request is still a draft, or its state cannot be read, since the step marking it ready is still held. With a pull request per change, with none, or once the program's pull request is no longer a draft, a newer brief is saved and asks nothing, and the program stays done. A decline keeps the program held until the user signs.",
+  "alternatives": [
+    "ask again whenever a newer brief is saved, in every mode",
+    "never ask again once the program has been signed off"
+  ],
+  "why": "A second signature is asked only where it still holds something; after the pull request is ready or merged, or when work landed change by change, asking again would hold nothing and only interrupt.",
+  "relies_on": [
+    {
+      "kind": "ruling",
+      "doc": "automate-dev-flow",
+      "id": "R-adf-2"
+    },
+    {
+      "kind": "requirement",
+      "capability": "orbit-pr-lifecycle",
+      "title": "`orbit pr program` computes the architect readout's PR facts"
+    },
+    {
+      "kind": "decision",
+      "id": "D-ps-7"
+    }
+  ]
+}

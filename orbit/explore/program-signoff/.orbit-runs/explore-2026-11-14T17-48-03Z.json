@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-11-14T17:48:03Z",
+  "change": "program-signoff",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Resumed after program-brief shipped and checked the file against what it built. The order a program finishes in, last archive then ratification then the closing architecture review then arc-done, showed D-ps-2's hold at the last stage's ratification would have the user sign before the closing review and, under per-architecture, twice. The user chose B: D-ps-5 makes the sign-off part of arc-done under program, superseding D-ps-2, with its Mechanism entry, two rejected options and a ledger entry. The location question's leaning moved to per-doc folders for both copies and records, and a new open question asks whether a copy saved after the sign-off asks again. Paths to program-brief's exploration now point at its archive.",
+  "decisions_captured": 5,
+  "open_questions_count": 2,
+  "open_questions_with_recommendation": "2 of 2",
+  "rules_total": 3,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:explore program-signoff — 5 decisions captured but 2 open questions remain; resolve open questions before formalizing"
+}

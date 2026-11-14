@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-11-14T17:50:22Z",
+  "change": "program-signoff",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "The user took both standing recommendations, closing the exploration's open questions. D-ps-6 keeps a program's saved briefs and sign-offs in per-doc folders of the architecture trail, brief/<doc>/ and signoff/<doc>/, so the shipped latest-copy and latest-sign-off reads run unchanged; D-ps-7 re-asks after a sign-off only while the program PR is a draft or its state is unverified. Each has its Mechanism entry and a ledger entry; five live rules parse with none open, and no open question remains.",
+  "decisions_captured": 7,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 5,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose program-signoff — 5 live rules accounted; formalize when you are ready (or /orbit:explore program-signoff to keep refining)"
+}
