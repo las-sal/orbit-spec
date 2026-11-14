@@ -1,0 +1,155 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-14T19:16:37Z",
+  "change": "program-signoff",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 3,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/program-signoff/specs/orbit-program-brief/spec.md",
+      "line": 99,
+      "title": "The hold's 'signed before the current closing review' clause asks again where ratified D-ps-7 says ask nothing",
+      "recommendation": "D-ps-7 (explore.md:127-137, 189-193) says that under pr: per-proposal and never, and under per-architecture once the program PR is no longer a draft, a copy saved after a signature is saved, asks nothing, and arc-done stays observed. Its FALSIFY move names the failure it prevents: a merged program asking for a sign-off at every later session whose records changed its brief. The hold table's last row puts 'a signed one given before the current closing review over different text' under `unsigned`/held, and the architect table's `unsigned` row asks without reading the PR state. Lines 105-106 and the scenario 'A new closing review asks afresh' (164-168) say the same. So any later `--as architecture` review of a finished, signed program — a re-review, not only a reopened program — plus a walk record makes the program ask again under every pr: mode, even after the program PR is merged, and withholds the arc-done readout. Design Decision 4 adds this as a method choice, but it changes what the user is asked under a ratified rule, and no explore decision records it. Settle which behaviour is intended before apply.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Keep the behaviour and record it: add an explore decision (D-ps-8) saying a signature given under an earlier closing review does not carry to a later arc-done, ratified by the user as an amendment of D-ps-7, and re-point the Mechanism -> artifacts row."
+        },
+        {
+          "label": "B",
+          "body": "Narrow 'afresh' to a reopened program: key the third clause on a citing change archived after the signature's closing_review (the program went not-done and came back), so a plain re-review falls under `re-sign` and follows D-ps-7's per-mode rows."
+        },
+        {
+          "label": "C",
+          "body": "Drop the third clause: every signed latest record over different text is `re-sign`, and closing_review stays a recorded fact the user can read."
+        }
+      ]
+    },
+    {
+      "pass": "4",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/program-signoff/specs/orbit-pr-lifecycle/spec.md",
+      "line": 59,
+      "title": "arc-done's stage condition goes from 'every declared stage archived' to FINISHED, which also counts stages with no archive",
+      "recommendation": "The carried block (line 14) and R-d-3 (d-arc-arbitered-flow.md:55) define arc-done as every declared stage ARCHIVED, and the architect body's Step 5.5 checks 'every stage archived'. The new paragraph says 'The hold reads the two conditions above from the trail: every declared stage finished'. But FINISHED (orbit-program-brief delta lines 7-10) also counts `ended` stages (a premised stage the user withdrew) and `ended-from-explore` stages, and neither has an archived change. Under `program` such a program reaches arc-done; under every other value Step 5.5's literal 'archived' check may not. The two settings would then observe different arc-done states for the same doc. Either say in the pr-lifecycle paragraph and Step 5.5 that arc-done's first condition is FINISHED under every value, or keep 'archived' and narrow FINISHED to match. Don't call the two the same condition."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/program-signoff/specs/orbit-architect/spec.md",
+      "line": 32,
+      "title": "The re-sign row's 'otherwise' asks nothing when `orbit pr program` reports several candidate PRs, where the READY flip may still be to come",
+      "recommendation": "Under `pr: per-architecture`, the re-sign/held row asks again only when `pr.state` is `draft` or `unverified`. Everything else, 'the program PR already ready, or none found', asks nothing. But `orbit pr program`'s outcomes (orbit-pr-lifecycle's `orbit pr program computes the architect readout's PR facts`) include `several`, which surfaces candidates and carries no `pr` state and no human_acts. D-ps-7's closure did not enumerate it. Several open program PRs means the flip has not happened, and nothing is known of which PR it is, which is D-ps-7's reason to ask again on `unverified`. Name each outcome in the row (`valid` with draft/ready, `unverified`, `none`/`not-found`, `several`, `off`) with what the body does. The recommended reading is that `several` asks again like `unverified`."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/program-signoff/tasks.md",
+      "line": 42,
+      "title": "Task 4.1 adds Step 5.4 but leaves Step 5.5's 'unconditional, never suppressed' arc-done check untouched",
+      "recommendation": "Step 5.5 of src/core/templates/workflows/architect.ts says 'On EVERY invocation — unconditional and IDEMPOTENT — check whether the doc is ARC-DONE' and that the readout is 'NEVER SUPPRESSED'. Step 5.4's table says 'shows no arc-done readout' on not-done, no-copy, unsigned, a decline and a failed hold or save. If 4.1 is built as written, the body carries two contradicting instructions. Add to 4.1 that Step 5.5 shows the readout only when Step 5.4's row allows it under `program`, and runs as today otherwise. Have the template test assert that condition."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/program-signoff/tasks.md",
+      "line": 65,
+      "title": "Task 6.2 needs no undeclared delta scenario, but no task declares the five carried orbit-pr-lifecycle scenarios",
+      "recommendation": "`node bin/orbit.js validate program-signoff --strict` lists every scenario of the carried `Program PR (Shape A) semantics` block as undeclared. Besides the new one, these are: 'A closed recorded PR falls through to the query...', 'Arc-done observed with no ratifiable stage remaining', 'Arc-done surfaces the human acts, orbit flips nothing', 'Stage archive appends, never flips' and 'Mid-flight adoption'. No test and no orbit/scenario-ledger.yaml entry names them today (grep finds none). Task 4.1 covers only 'the `orbit-pr-lifecycle` one', so 6.2 cannot pass as written. Add those five to 4.1's tag-or-ledger step, with a ledger entry saying why when no test can run them."
+    },
+    {
+      "pass": "3",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/program-signoff/tasks.md",
+      "line": 54,
+      "title": "Task 5.2 leaves docs/cli.md's three 'with signoff: change' reading-step sentences stale",
+      "recommendation": "docs/cli.md:379 says the reading step reads the account 'with `signoff: change`'. docs/cli.md:408 says the decisions brief carries the account 'With `signoff: change`'. docs/cli.md:411 says an unlistable folder fails it 'with `signoff: change`'. After apply, `program` reads the account too (D-ps-1), so each sentence becomes false by omission. Task 5.2 names only the new command forms for docs/cli.md. Add these three sentences, and docs/customization.md:62's 'With `change`, the system review's reading step also reads the change's account', to 5.2."
+    },
+    {
+      "pass": "3",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/specs/orbit-program-brief/spec.md",
+      "line": 4,
+      "title": "orbit-program-brief's Purpose goes stale and no task edits it in place",
+      "recommendation": "The baseline Purpose says '`--save` keeps an active change's brief in its own history' and 'The `signoff` setting (`off`, the default, or `change`) holds each change's archive...'. After this change, `--save` also saves a program's brief into the architecture trail, the setting reads `program`, and `orbit brief <doc> --hold` reads a program's hold. No delta carries `## Purpose`, so the edit happens in place at archive or apply. Add a task (in group 5) rewording the Purpose to name the program save, the `program` value and the program hold."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/program-signoff/specs/orbit-program-brief/spec.md",
+      "line": 8,
+      "title": "FINISHED checks only declared stages, so an active change citing the doc under an undeclared stage, or no stage, does not stop the program being done",
+      "recommendation": "The program brief renders citing changes whose stage the doc does not declare, and those naming no stage. computeStageStates maps only doc.stages, so an ACTIVE change of either kind leaves every declared stage finished. The program can then be signed and called done while that change is still open. Also, with no archived citing change at all (every stage ended), 'later than each archive' is vacuous, and any earlier architecture review of the doc counts as the closing review. Say whether either case blocks FINISHED, or name both as limits."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/program-signoff/specs/orbit-architect/spec.md",
+      "line": 36,
+      "title": "'The question is a DECISION prompt' names a prompt kind without pointing at its owner",
+      "recommendation": "The archive's sibling sentence cites `orbit-conventions`' `A chain treats each prompt by its kind`. The architect sentence uses the same capitalised term with no pointer, and that requirement's list does not name the architect sign-off. Cite the owner, and say the architect is not a chained body, so the list and its tag test do not cover it. Otherwise drop 'DECISION' and keep 'asked on the user's invocation, never as an interruption'."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "The engine-side design is careful: the save and hold are decided in the engine, the per-doc folders get a two-level identity check, closing_review is recorded instead of ordered by token, and every carried block differs from its baseline only where `program` or a renamed title makes it false (diffed block by block; the RENAMED FROM titles exist, and every baseline pointer to the old titles sits in a carried block). Where it is weak is at the boundary between the engine and the body. The closing_review extension goes one step past what D-ps-7 ratified, arc-done's definition is quietly widened from archived to finished, and the body's existing Step 5.5 and the carried pr-lifecycle scenarios were not swept along with the new step. Probed: each `why` row against D-ps-5/D-ps-7's tables; the hold's rows against `orbit pr program`'s outcome set; the named functions (computeStageStates, archivedAt, latestSavedCopy, computeHold, publishTrailChildText, assertCanonicalChildDir, resolvePrMode, the signoff COMMANDS entry and ENGINE_OWNED_EXTRA) against src; the re-tag list in task 1.2 against a grep of src and test (complete); docs and specs for change-only wording outside the carried blocks.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "direction": {
+    "disposition": "hold",
+    "reasoning": "Walk these before apply. The first finding is the user's call, since it changes when the program asks the user again under a ratified rule. The second decides what arc-done means across settings. The rest are task and wording gaps that a walk closes in a few edits. The design underneath is sound and needs no redesign."
+  },
+  "final_assessment": "0 critical, 7 warning, 2 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews program-signoff"
+}
