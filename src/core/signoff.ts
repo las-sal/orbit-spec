@@ -134,9 +134,27 @@ export function checkSignoffShape(record: Record<string, unknown>): void {
   checkAnswerFields(record);
 }
 
-/** A stored sign-off's shape: the payload's, plus the engine's `command` and `sha256`. */
-function checkStoredSignoff(record: Record<string, unknown>): void {
+/** Every key a written sign-off carries: the engine's spine and `sha256`, and the payload table. */
+const STORED_SIGNOFF_KEYS = new Set(['command', 'timestamp', 'change', 'model', 'sha256', ...SIGNOFF_PAYLOAD_FIELDS]);
+
+/**
+ * A stored sign-off's shape: every check the write gate makes on a record it writes — the decision-record spine
+ * (`command`, `timestamp` and `model` present, `change` the change's name, no `kind`, `final_assessment` or
+ * `next_recommended`), no key the gate never writes, the engine's `sha256`, and the payload fields — so a record
+ * the gate would refuse never lifts a hold.
+ */
+function checkStoredSignoff(record: Record<string, unknown>, change: string): void {
   if (record.command !== SIGNOFF_COMMAND) refuse(`it carries command ${describe(record.command)}, not ${SIGNOFF_COMMAND}.`);
+  if (!nonBlank(record.timestamp)) refuse(`its 'timestamp' is missing or empty (got ${describe(record.timestamp)}).`);
+  if (!hasOwn(record, 'model')) refuse(`its 'model' is missing (nullable, never absent).`);
+  if (record.model !== null && typeof record.model !== 'string') refuse(`its 'model' is not a string or null (got ${describe(record.model)}).`);
+  if (record.change !== change) refuse(`its 'change' is ${describe(record.change)}, not '${change}'.`);
+  for (const f of ['kind', 'final_assessment', 'next_recommended']) {
+    if (hasOwn(record, f)) refuse(`it carries '${f}', which a sign-off never carries.`);
+  }
+  for (const k of Object.keys(record)) {
+    if (!STORED_SIGNOFF_KEYS.has(k)) refuse(`it carries '${k}', a key the write gate never writes.`);
+  }
   if (typeof record.sha256 !== 'string' || !SHA256_HEX.test(record.sha256)) {
     refuse(`its 'sha256' is not a SHA-256 in lower-case hex (got ${describe(record.sha256)}).`);
   }
@@ -243,7 +261,7 @@ export function computeHold(projectRoot: string, change: string, changeDir: stri
       refuse(`the latest sign-off ${where} is not a JSON object.`);
     }
     try {
-      checkStoredSignoff(record as Record<string, unknown>);
+      checkStoredSignoff(record as Record<string, unknown>, change);
     } catch (err) {
       if (err instanceof SignoffError || err instanceof DecisionRecordError) {
         refuse(`the latest sign-off ${where} is not a valid sign-off: ${(err as Error).message}`);

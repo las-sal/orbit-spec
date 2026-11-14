@@ -1,0 +1,108 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-14T00:35:57Z",
+  "change": "program-brief",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/program-brief/.orbit-runs/external-system-2026-11-14T00-00-55Z.md",
+  "source_command": null,
+  "source_token": "2026-11-14T00-00-55Z",
+  "latest_apply_token": "2026-11-13T23-50-33Z",
+  "external_reviewer": "GPT-6",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 1
+  },
+  "pushback_verification": "All three verified against current state; two converged with the fresh half and are stale as walked in its log, one repaired. No disagreement between the halves.",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale_suppressed": 2,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The hold accepts stored sign-offs that fail the required spine checks",
+      "marker_source": "external",
+      "file": "src/core/signoff.ts",
+      "line": 138,
+      "classification": "stale",
+      "action": "converged with the fresh half's finding (The hold's check on a stored sign-off is narrower than 'a shape the write gate would refuse'), walked in its log",
+      "evidence": "resolved in address-reviews-2026-11-14T00-34-25Z (the earlier pass's log), where the fresh half's converging finding was walked",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Account-folder read failures silently remove the account from the reading",
+      "marker_source": "external",
+      "file": "src/core/decision-records.ts",
+      "line": 724,
+      "outcome": "resolved",
+      "remedy": "repair",
+      "classification": "trivial_fix",
+      "action": "selectUnreadRecords now checks that each folder it reads can be listed: an absent folder is empty, any other listing failure throws a DecisionBriefError naming the folder. Fixed once in the selection for decisions/ (the same pre-existing behaviour) and for account/ under signoff: change, as previewed at triage and walked as previewed. The review emit's owed list and the archive count read it through selectionAtGate, which refuses the emit naming the folder; orbit brief turns it into its own error. Tests cover the account folder under change (selection, decisions brief, CLI, review gate), the account folder unread with the setting off, and decisions/ at the selection, the change brief and the archive count; three clean mutations, all caught.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/emit-composition.ts",
+          "src/core/program-brief.ts",
+          "test/core/account-reader.test.ts",
+          "test/core/rc03b-untouched-modules.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "src/core/decision-records.ts",
+            "text": "so a failure is never read as an empty selection (an absent folder is empty)"
+          },
+          {
+            "path": "src/core/emit-composition.ts",
+            "text": "function selectionAtGate("
+          },
+          {
+            "path": "src/core/program-brief.ts",
+            "text": "function selectedOrFail("
+          },
+          {
+            "path": "test/core/account-reader.test.ts",
+            "text": "a folder the selection cannot list fails it, never reading as empty"
+          },
+          {
+            "path": "test/core/rc03b-untouched-modules.test.ts",
+            "text": "instead of reading as empty (external W2)"
+          }
+        ],
+        "searched": [
+          "selectUnreadRecords(",
+          "readAccountFolder",
+          "readDecisionFolder"
+        ],
+        "scope": [
+          "src/core/account.ts"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The account module still says the selection never takes accounts",
+      "marker_source": "external",
+      "file": "src/core/account.ts",
+      "line": 13,
+      "classification": "stale",
+      "action": "converged with the fresh half's finding (account.ts's header still says the selection never takes the account), walked in its log",
+      "evidence": "resolved in address-reviews-2026-11-14T00-34-25Z (the earlier pass's log), where the fresh half's converging finding was walked",
+      "outcome": "stale"
+    }
+  ],
+  "final_assessment": "Walked the external half of the system blind pair: the stored sign-off check and the account.ts header converged with the fresh half and were walked in its log; an unlistable decisions or account folder now fails the reading's selection, naming the folder, instead of reading as empty.",
+  "iteration": 5,
+  "next_recommended": "/orbit:review --as system program-brief",
+  "ripple_misses": 0
+}

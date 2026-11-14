@@ -274,10 +274,13 @@ remove or rename (`orbit fingerprint <change>`). If another change has edited on
 archiving refuses to overwrite it and asks you to reconcile, rather than silently losing the other change's edit;
 `orbit archive --override-fingerprints` proceeds deliberately. Before archiving, the workflow also runs a drift audit,
 which reports and never blocks, and asks about any gate that has not passed. Then, before it merges anything, it saves
-the change's brief (`orbit brief --change <name> --save`) into the change's history, so the copy moves with it; a
-brief that cannot be saved is noted in the archive's record and never stops the archive.
+the change's brief (`orbit brief --change <name> --save`) into the change's history, so the copy moves with it. When
+`orbit/config.yaml` sets `signoff: change`, the archive then shows you that saved brief whole and waits for you to sign
+off or decline before anything is merged; a decline stops it with your reason recorded, and so does a brief that cannot
+be saved, since there is nothing to sign. Under every other value a brief that cannot be saved is noted in the
+archive's record and never stops the archive.
 
-Carried by: the 1.3.1 baseline, `orbit-base-fingerprints`, `orbit-archive-modifications`
+Carried by: the 1.3.1 baseline, `orbit-base-fingerprints`, `orbit-archive-modifications`, `orbit-program-brief`
 
 ## What orbit removed
 

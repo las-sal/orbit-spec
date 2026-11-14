@@ -88,7 +88,7 @@ describe('orbit-decision-records: The reader takes the account only when sign-of
     expect(selection()).toEqual([a]);
     expect(buildDecisionBrief(root, 'foo').selected).toEqual([a]);
     // Silent about the reading → refused: the account is owed.
-    expect(() => systemPass(null)).toThrow(/owes a reading of 1 decision record\(s\) \(account-/);
+    expect(() => systemPass(null)).toThrow(/owes a reading of 1 record\(s\) \(account-/);
     const pass = systemPass([a]);
     expect(pass.emit.decision_records_owed).toEqual([a]);
     expect(pass.emit.decision_records_read).toEqual([a]);
@@ -166,6 +166,54 @@ describe("orbit-decision-records: The reading step's brief is rendered by orbit"
     write('orbit/changes/foo/.orbit-runs/account/account-2026-11-13T10-00-00Z.json', '{ broken');
     expect(selection()).toEqual(['account-2026-11-13T10-00-00Z.json']);
     expect(() => buildDecisionBrief(root, 'foo')).toThrow(/account-2026-11-13T10-00-00Z\.json cannot be read/);
+  });
+});
+
+describe('a folder the selection cannot list fails it, never reading as empty', () => {
+  it.skipIf(process.getuid?.() === 0)('under change, an unlistable account folder fails the selection, the brief and the review gate, naming it', async () => {
+    setting('change');
+    account();
+    const dir = path.join(CHANGE(), '.orbit-runs/account');
+    fs.chmodSync(dir, 0o000);
+    try {
+      expect(() => selection()).toThrow(/\.orbit-runs\/account cannot be listed/);
+      expect(() => buildDecisionBrief(root, 'foo')).toThrow(/\.orbit-runs\/account cannot be listed/);
+      expect(() => systemPass(null)).toThrow(EmitError);
+      expect(() => systemPass(null)).toThrow(/write gate: the folder .*\.orbit-runs\/account cannot be listed/);
+      const r = await runCLI(['decisions', 'brief', 'foo'], { cwd: root });
+      expect(r.exitCode).not.toBe(0);
+      expect(r.stdout).toBe('');
+      expect(r.stderr).toContain('.orbit-runs/account');
+      // With the setting off the account folder is not read, so its state cannot fail the selection.
+      setting(null);
+      expect(selection()).toEqual([]);
+    } finally {
+      fs.chmodSync(dir, 0o755);
+    }
+  });
+
+  it.skipIf(process.getuid?.() === 0)('an unlistable decisions folder fails the selection under every value, and the archive count names it', () => {
+    setting(null);
+    ledger();
+    const dir = path.join(CHANGE(), '.orbit-runs/decisions');
+    fs.chmodSync(dir, 0o000);
+    try {
+      expect(() => selection()).toThrow(/\.orbit-runs\/decisions cannot be listed/);
+      expect(() => buildChangeBrief(root, 'foo')).toThrow(/decisions/);
+    } finally {
+      fs.chmodSync(dir, 0o755);
+    }
+    // At archive: the count is the selection's, so an unlistable folder refuses the emit instead of counting 0.
+    fs.mkdirSync(path.join(root, 'orbit/changes/archive'), { recursive: true });
+    fs.renameSync(CHANGE(), path.join(root, 'orbit/changes/archive/2026-11-13-foo'));
+    const archived = path.join(root, 'orbit/changes/archive/2026-11-13-foo/.orbit-runs/decisions');
+    fs.chmodSync(archived, 0o000);
+    try {
+      expect(() => composeAndWriteEmit('archive', { change: 'foo' }, { final_assessment: 'archived', model: null }, { projectRoot: root }))
+        .toThrow(/write gate: the folder .*decisions cannot be listed/);
+    } finally {
+      fs.chmodSync(archived, 0o755);
+    }
   });
 });
 

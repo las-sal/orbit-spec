@@ -238,17 +238,37 @@ describe('orbit-program-brief: A sign-off is recorded against the saved copy, an
     expect(r.exitCode).not.toBe(0);
     expect(r.stdout).toBe('');
     expect(r.stderr).toContain(damaged);
-    // A latest sign-off of a shape the write gate would refuse fails it too.
-    for (const bad of [
-      { command: 'signoff', brief: A, sha256: sha('text'), answer: 'maybe' },
-      { command: 'signoff', brief: A, sha256: sha('text'), answer: 'declined' },
-      { command: 'signoff', brief: A, sha256: 'abc', answer: 'signed' },
-      { command: 'account', brief: A, sha256: sha('text'), answer: 'signed' },
-      { command: 'signoff', brief: 'x.md', sha256: sha('text'), answer: 'signed' },
-      [1],
-    ]) {
+    // A latest sign-off of a shape the write gate would refuse fails it too: every check the gate makes on the
+    // record it writes, the spine included, so a hand-made record never lifts a hold.
+    const ok = { command: 'signoff', timestamp: '2099-01-01T00:00:00Z', change: 'foo', model: null, brief: A, sha256: sha('text'), answer: 'signed' };
+    write(`${RUNS()}/signoff/${damaged}`, JSON.stringify(ok));
+    expect(hold().why).toBe('signed'); // the well-formed control
+    const { timestamp: _t, ...noTimestamp } = ok;
+    const { model: _m, ...noModel } = ok;
+    const { change: _c, ...noChange } = ok;
+    // Each bad record is refused by the check that names it, so no check hides behind another.
+    const cases: Array<[unknown, RegExp]> = [
+      [{ ...ok, answer: 'maybe' }, /'answer' must be signed or declined/],
+      [{ ...ok, answer: 'declined' }, /'reason' is required/],
+      [{ ...ok, sha256: 'abc' }, /'sha256' is not a SHA-256/],
+      [{ ...ok, command: 'account' }, /carries command "account"/],
+      [{ ...ok, brief: 'x.md' }, /'brief' must name a saved copy/],
+      [noTimestamp, /'timestamp' is missing or empty/],
+      [{ ...ok, timestamp: ' ' }, /'timestamp' is missing or empty/],
+      [noModel, /'model' is missing/],
+      [{ ...ok, model: 3 }, /'model' is not a string or null/],
+      [noChange, /'change' is undefined, not 'foo'/],
+      [{ ...ok, change: 'bar' }, /'change' is "bar", not 'foo'/],
+      [{ ...ok, kind: 'editorial' }, /carries 'kind', which a sign-off never carries/],
+      [{ ...ok, final_assessment: 'x' }, /carries 'final_assessment', which a sign-off never carries/],
+      [{ ...ok, next_recommended: 'x' }, /carries 'next_recommended', which a sign-off never carries/],
+      [{ ...ok, colour: 'red' }, /carries 'colour', a key the write gate never writes/],
+      [[1], /is not a JSON object/],
+    ];
+    for (const [bad, why] of cases) {
       write(`${RUNS()}/signoff/${damaged}`, JSON.stringify(bad));
       expect(() => hold(), JSON.stringify(bad)).toThrow(new RegExp(damaged));
+      expect(() => hold(), JSON.stringify(bad)).toThrow(why);
     }
   });
 
@@ -338,6 +358,11 @@ describe('orbit-program-brief: A sign-off is recorded against the saved copy, an
     expect(withSave.exitCode).not.toBe(0);
     expect(withSave.stdout).toBe('');
     expect(withSave.stderr).toContain('--hold');
+    const bare = await runCLI(['brief', '--hold'], { cwd: root });
+    expect(bare.exitCode).not.toBe(0);
+    expect(bare.stdout).toBe('');
+    expect(bare.stderr).toContain('--hold takes --change <name>');
+    expect(bare.stderr).not.toContain('undefined');
     const unknown = await runCLI(['brief', '--change', 'nope', '--hold'], { cwd: root });
     expect(unknown.exitCode).not.toBe(0);
     expect(unknown.stdout).toBe('');

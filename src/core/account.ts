@@ -11,7 +11,9 @@ import { checkDefines, checkDetail, latestInChain, type DecisionFolder } from '.
  * It judges FORM and EXISTENCE only (R-crc-10): whether the account is true, complete or clear is a reader's.
  *
  * The account is NOT a decision record: it records no call and no stop, and it is kept in `.orbit-runs/account/`,
- * outside `decisions/`, so no reader of the decision-record selection (`selectUnreadRecords`) takes it.
+ * outside `decisions/`, so the decision-record chains never include it. The reading's selection
+ * (`selectUnreadRecords`) takes the latest account only under `signoff: change` (`orbit-decision-records`' `The
+ * reader takes the account only when sign-off is per change`).
  */
 
 export class AccountError extends Error {}

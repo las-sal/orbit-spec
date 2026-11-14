@@ -22,6 +22,7 @@ import { isSingleName } from './containment.js';
 import { findArchivedDir } from './archived-change.js';
 import {
   AREA_ROWS,
+  DecisionBriefError,
   DecisionRecordError,
   RECORD_FILENAME,
   chainOf,
@@ -447,6 +448,16 @@ function isDir(p: string): boolean {
   }
 }
 
+/** The reading's selection; a folder it cannot list fails the brief, naming it (the brief is whole or absent). */
+function selectedOrFail(changeDir: string, projectRoot: string): string[] {
+  try {
+    return selectUnreadRecords(changeDir, projectRoot);
+  } catch (e) {
+    if (e instanceof DecisionBriefError) fail(e.message);
+    throw e;
+  }
+}
+
 /** The change brief of the change at `changeDir`. Whole or absent. */
 export function buildChangeBriefAt(projectRoot: string, changeDir: string, status: 'active' | 'archived'): ChangeBrief {
   const base = path.basename(changeDir);
@@ -500,7 +511,7 @@ export function buildChangeBriefAt(projectRoot: string, changeDir: string, statu
     // nowhere; under every other value the account is named apart as checked by no reader
     // (`orbit-decision-records`' `The reader takes the account only when sign-off is per change`).
     unread: {
-      records: selectUnreadRecords(changeDir, projectRoot).sort(byToken),
+      records: selectedOrFail(changeDir, projectRoot).sort(byToken),
       account: resolveSignoffSetting(projectRoot).value === 'change' ? null : accountName,
     },
   };

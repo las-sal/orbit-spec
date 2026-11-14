@@ -708,10 +708,12 @@ function inContextSystemReviews(runsDir: string): Record<string, unknown>[] {
  * the project at `projectRoot` is `change` (`The reader takes the account only when sign-off is per
  * change`) — the latest record of the change's `account/` chain when no such emit lists it. No timestamp
  * is compared. A record that cannot be read is selected (its chain cannot be known), so the brief fails
- * naming it rather than hiding it.
+ * naming it rather than hiding it; and a folder the selection reads that exists and cannot be listed throws a
+ * `DecisionBriefError` naming it, so a failure is never read as an empty selection (an absent folder is empty).
  */
 export function selectUnreadRecords(changeDir: string, projectRoot: string): string[] {
   const runsDir = path.join(changeDir, '.orbit-runs');
+  assertListable(path.join(runsDir, 'decisions'));
   const folder = readDecisionFolder(path.join(runsDir, 'decisions'));
   const read = new Set<string>();
   for (const r of inContextSystemReviews(runsDir)) {
@@ -721,10 +723,22 @@ export function selectUnreadRecords(changeDir: string, projectRoot: string): str
   }
   const selected = [...folder.records.keys()].filter(f => !folder.replacedBy.has(f) && !read.has(f));
   if (resolveSignoffSetting(projectRoot).value === 'change') {
+    assertListable(path.join(runsDir, ACCOUNT_DIR));
     const account = latestAccount(readAccountFolder(path.join(runsDir, ACCOUNT_DIR)));
     if (account !== null && !read.has(account)) selected.push(account);
   }
   return selected;
+}
+
+/** An absent folder reads as empty; one that exists and cannot be listed fails the selection, naming it. */
+function assertListable(dir: string): void {
+  try {
+    fs.readdirSync(dir);
+  } catch (err) {
+    const code = (err as NodeJS.ErrnoException).code;
+    if (code === 'ENOENT') return;
+    throw new DecisionBriefError(`the folder ${dir} cannot be listed (${code ?? (err as Error).message}), so the records it holds cannot be selected.`);
+  }
 }
 
 /** A filename the selection can hold: a decision record's, or (under `signoff: change`) an account's. */

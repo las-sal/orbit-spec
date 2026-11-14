@@ -83,7 +83,8 @@ export class BriefCommand {
       return usage("--hold reads a change's hold and takes --change; the program's sign-off is not built yet (stage program-brief's fourth change, program-signoff).");
     }
     if (options.save) return usage('--hold reads the hold and writes nothing; run --save and --hold separately.');
-    const name = options.change as string;
+    if (options.change === undefined) return usage('--hold takes --change <name>: `orbit brief --change <name> --hold`.');
+    const name = options.change;
     if (!isSingleName(name)) return usage(`'${name}' is not a single change name.`);
     const found = findChange(projectRoot, name);
     if (found === null || found.status !== 'active') {

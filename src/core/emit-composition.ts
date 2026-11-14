@@ -42,6 +42,7 @@ import {
 } from './parsers/apply-state.js';
 import {
   DECISION_PAYLOAD_FIELDS,
+  DecisionBriefError,
   DecisionRecordError,
   checkDecisionRecord,
   isDecisionCommand,
@@ -1039,14 +1040,24 @@ function passIds(v: unknown): Set<string> {
  * written; returns that selection, the emit's `decision_records_owed`. Checks the pass DECLARES the
  * reading, never that a reader ran or read well (R-crc-10).
  */
+/** The selection at the write gate: a folder it cannot list refuses the emit, naming the folder. */
+function selectionAtGate(changeDir: string, projectRoot: string): string[] {
+  try {
+    return selectUnreadRecords(changeDir, projectRoot);
+  } catch (err) {
+    if (err instanceof DecisionBriefError) throw new EmitError(`write gate: ${err.message}`);
+    throw err;
+  }
+}
+
 function decisionReadingCheck(changeDir: string, payload: Record<string, unknown>, projectRoot: string): string[] {
-  const owed = selectUnreadRecords(changeDir, projectRoot);
+  const owed = selectionAtGate(changeDir, projectRoot);
   const run = passIds(payload.passes_run);
   const skipped = passIds(payload.passes_skipped);
   const read = Array.isArray(payload.decision_records_read) ? (payload.decision_records_read as string[]) : [];
   if (owed.length > 0 && !run.has('reading') && !skipped.has('reading')) {
     throw new EmitError(
-      `write gate: this pass owes a reading of ${owed.length} decision record(s) (${owed.join(', ')}) and lists 'reading' in neither passes_run nor passes_skipped — run the reading step, or list it as skipped with the reason in commentary.`
+      `write gate: this pass owes a reading of ${owed.length} record(s) (${owed.join(', ')}) and lists 'reading' in neither passes_run nor passes_skipped — run the reading step, or list it as skipped with the reason in commentary.`
     );
   }
   if (run.has('reading') && read.length === 0) {
@@ -2611,7 +2622,7 @@ export function composeAndWriteEmit(
         delete (emit as any).deferred_validations;
       }
       emit.next_recommended = archiveNextRecommended(projectRoot, resolved.changeDir as string);
-      emit.decision_records_unread = selectUnreadRecords(resolved.changeDir as string, projectRoot).length;
+      emit.decision_records_unread = selectionAtGate(resolved.changeDir as string, projectRoot).length;
       break;
     }
     case 'architect': {
