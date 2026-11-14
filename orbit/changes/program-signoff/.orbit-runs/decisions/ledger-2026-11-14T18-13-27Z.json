@@ -1,0 +1,24 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-14T18:13:27Z",
+  "change": "program-signoff",
+  "model": "claude-opus-5-5",
+  "area": "user-sees-or-does",
+  "decided": "A program counts as finished when every stage its doc declares is complete, ended, or has all its work archived and waits for its completion to be confirmed; it counts as done, so that the user is asked to sign, once it is finished and an architecture review of the doc has been recorded after the last of its changes was archived. Each sign-off records which closing review it was given under, so a newer closing review is asked about afresh.",
+  "alternatives": [
+    "let the architect session judge both conditions itself, as it judges the program PR's readiness today",
+    "order a sign-off against the closing review by the time each was written"
+  ],
+  "why": "Orbit, not the session, then decides when the user is asked, so a test can hold it; recording the closing review in the sign-off avoids comparing the times of files that are named independently.",
+  "relies_on": [
+    {
+      "kind": "requirement",
+      "capability": "orbit-pr-lifecycle",
+      "title": "Program PR (Shape A) semantics"
+    },
+    {
+      "kind": "decision",
+      "id": "D-ps-5"
+    }
+  ]
+}
