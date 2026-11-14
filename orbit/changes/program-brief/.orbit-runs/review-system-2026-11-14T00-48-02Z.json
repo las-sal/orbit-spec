@@ -1,0 +1,292 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-14T00:48:02Z",
+  "change": "program-brief",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {},
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 14
+    }
+  },
+  "findings": [
+    {
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "title": "The walk's folder-listing refusal reaches default behaviour and is stated in no spec",
+      "file": "src/core/decision-records.ts",
+      "line": 704,
+      "walk_entry": {
+        "title": "Account-folder read failures silently remove the account from the reading",
+        "file": "src/core/decision-records.ts"
+      },
+      "recommendation": "The X2 repair makes selectUnreadRecords fail on an unlistable decisions/ folder under every sign-off setting, so on that error path a default install now refuses an in-context system review emit and the archive emit (after the move) where it read the folder as empty. G0 says a default install behaves exactly as today except the named exceptions, and the walk's ledger entry records no G0 reasoning. Nor does any artifact carry the behaviour: orbit-emit-composition's refusal table for an in-context system payload has no unlistable-folder row, its archive row says the field is a count, and orbit-decision-records' whole-or-absent paragraph and docs/cli.md's decisions-brief paragraph do not name a folder that cannot be listed. Recommend A: narrow both listing checks to signoff: change, so the default path is byte-for-byte as before, and state the refusal in the delta specs and docs/cli.md for that value.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Run the listing checks only when the sign-off setting is change (both folders), leaving every other value as before; add the refusal to orbit-emit-composition's delta (an unlistable-folder row in the in-context refusal table and on the archive count), to orbit-decision-records' whole-or-absent paragraph, and to docs/cli.md's decisions-brief paragraph; move the decisions/ test under change and add a default-value test that reads an unlistable decisions/ folder as before."
+        },
+        {
+          "label": "B",
+          "body": "Keep the checks under every value, state them in the same specs and docs, and take G0 to the architect session as a question (a ruling amendment: an error path that now fails loudly by default), recording a stop before asking."
+        }
+      ]
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "pass": "reading",
+      "title": "ledger-2026-11-13T22-08-06Z.json — reader row 3: \"orbit goes no further on its own after the answer\" reads as the archive halting after a signature",
+      "file": "orbit/changes/program-brief/.orbit-runs/decisions/ledger-2026-11-13T22-08-06Z.json",
+      "line": 1,
+      "recommendation": "Write a replacement of this record (replaces naming it, link fields unchanged) whose wording says the chain runs no next command after the archive, and that a signature lets the archive go on in the same run, as D-pb-14 has it."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "pass": "reading",
+      "title": "ledger-2026-11-12T21-21-44Z.json — reader row 4: the definition of separate reader and the seams restatement narrow what they cite",
+      "file": "orbit/changes/program-brief/.orbit-runs/decisions/ledger-2026-11-12T21-21-44Z.json",
+      "line": 1,
+      "recommendation": "Write a replacement of this record (replaces naming it, link fields unchanged) whose wording defines the reader as given the architecture doc, each record with what it points at, and a fixed task; and restates seams as new places the user is asked something or where a setting now changes what happens."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "pass": "reading",
+      "title": "ledger-2026-11-12T21-21-44Z.json — reader row 3: the why says the reader always checks the three parts",
+      "file": "orbit/changes/program-brief/.orbit-runs/decisions/ledger-2026-11-12T21-21-44Z.json",
+      "line": 1,
+      "recommendation": "Write a replacement of this record (replaces naming it, link fields unchanged) whose wording says the reader checks them when the user signs off on each change, as the doc's status log and ledger-2026-11-12T22-53-03Z say."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "pass": "reading",
+      "title": "ledger-2026-11-12T22-53-03Z.json — reader row 4: the definition of separate reader keeps the doc's superseded only",
+      "file": "orbit/changes/program-brief/.orbit-runs/decisions/ledger-2026-11-12T22-53-03Z.json",
+      "line": 1,
+      "recommendation": "Write a replacement of this record (replaces naming it, link fields unchanged) whose wording defines the reader as given the architecture doc, each record with what it points at, and a fixed task."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "pass": "reading",
+      "title": "stop-2026-11-12T21-21-45Z.json — reader row 4: the definition of separate reader keeps the doc's superseded only",
+      "file": "orbit/changes/program-brief/.orbit-runs/decisions/stop-2026-11-12T21-21-45Z.json",
+      "line": 1,
+      "recommendation": "Write a replacement of this record (replaces naming it, link fields unchanged) whose wording defines the reader as given the architecture doc, each record with what it points at, and a fixed task."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "pass": "reading",
+      "title": "ledger-2026-11-12T21-17-03Z.json — reader row 3: the why treats running the archive as signing off, and ignores the archive chain key",
+      "file": "orbit/changes/program-brief/.orbit-runs/decisions/ledger-2026-11-12T21-17-03Z.json",
+      "line": 1,
+      "recommendation": "Write a replacement of this record (replaces naming it, link fields unchanged) whose wording says that today nothing asks the user to sign off at all, with every setting at its default."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "pass": "reading",
+      "title": "ledger-2026-11-12T22-55-26Z.json — reader row 4: when the program's last change is archived restates D-pb-6's arc-done",
+      "file": "orbit/changes/program-brief/.orbit-runs/decisions/ledger-2026-11-12T22-55-26Z.json",
+      "line": 1,
+      "recommendation": "Write a replacement of this record (replaces naming it, link fields unchanged) whose wording says the program brief is kept when the program is finished (all its stages' changes archived), the moment D-pb-6 calls arc-done."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "pass": "reading",
+      "title": "ledger-2026-11-13T22-08-08Z.json — reader row 3: says once and not read yet, where each read warns and an unknown value is never read",
+      "file": "orbit/changes/program-brief/.orbit-runs/decisions/ledger-2026-11-13T22-08-08Z.json",
+      "line": 1,
+      "recommendation": "Write a replacement of this record (replaces naming it, link fields unchanged) whose wording says orbit warns each time it reads such a value, and that once per program is not read until a later change adds it while other values never are."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "pass": "reading",
+      "title": "ledger-2026-11-13T23-04-41Z.json — reader row 3: even when the same review sends work back to be redone is vague and unreconciled with the reopen rule",
+      "file": "orbit/changes/program-brief/.orbit-runs/decisions/ledger-2026-11-13T23-04-41Z.json",
+      "line": 1,
+      "recommendation": "Write a replacement of this record (replaces naming it, link fields unchanged) whose wording says a review fix that reopens tasks, and that a wording fix to the account is the one exception to the rule that such a walk leaves the account to the next apply session."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "pass": "reading",
+      "title": "ledger-2026-11-13T23-04-42Z.json — reader row 3: the archive's new check and what the change has kept are unexplained",
+      "file": "orbit/changes/program-brief/.orbit-runs/decisions/ledger-2026-11-13T23-04-42Z.json",
+      "line": 1,
+      "recommendation": "Write a replacement of this record (replaces naming it, link fields unchanged) whose wording names them: the step that checks whether the change waits for a sign-off, and the change's saved brief and its sign-off records."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "pass": "reading",
+      "title": "ledger-2026-11-13T23-04-43Z.json — reader row 1: signature is a new term left undefined",
+      "file": "orbit/changes/program-brief/.orbit-runs/decisions/ledger-2026-11-13T23-04-43Z.json",
+      "line": 1,
+      "recommendation": "Write a replacement of this record (replaces naming it, link fields unchanged) whose wording says sign-off record, or defines signature as the user's recorded sign-off."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "pass": "reading",
+      "title": "ledger-2026-11-13T23-04-43Z.json — reader row 3: says which is unclear",
+      "file": "orbit/changes/program-brief/.orbit-runs/decisions/ledger-2026-11-13T23-04-43Z.json",
+      "line": 1,
+      "recommendation": "Write a replacement of this record (replaces naming it, link fields unchanged) whose wording says the archive stops naming the record and whether it could not be read or was damaged."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "pass": "reading",
+      "title": "ledger-2026-11-13T23-50-00Z.json — reader row 3: where it said reads as a place",
+      "file": "orbit/changes/program-brief/.orbit-runs/decisions/ledger-2026-11-13T23-50-00Z.json",
+      "line": 1,
+      "recommendation": "Write a replacement of this record (replaces naming it, link fields unchanged) whose wording says it replaces the sentence that said no reading step reads accounts yet."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "pass": "reading",
+      "title": "ledger-2026-11-13T23-50-02Z.json — reader row 2: leans on command plumbing and uses hold in three senses",
+      "file": "orbit/changes/program-brief/.orbit-runs/decisions/ledger-2026-11-13T23-50-02Z.json",
+      "line": 1,
+      "recommendation": "Write a replacement of this record (replaces naming it, link fields unchanged) whose wording says, in plain terms, that the check of whether a change waits for a sign-off prints its one-line answer alone and shows the warning about an unknown value separately, so a person still sees it."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "pass": "reading",
+      "title": "ledger-2026-11-13T23-50-03Z.json — reader row 3: the value change is unmarked and the table is never introduced",
+      "file": "orbit/changes/program-brief/.orbit-runs/decisions/ledger-2026-11-13T23-50-03Z.json",
+      "line": 1,
+      "recommendation": "Write a replacement of this record (replaces naming it, link fields unchanged) whose wording marks the value as the setting's value change and says the table of settings in the configuration guide."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Verified the two system walks against the tree at their commit. Six of the seven repairs hold as claimed: the archive narrative in concepts.md and commands.md now matches the hold's table, the two docs claims are narrowed, the account.ts header is true, --hold without --change is refused by name, and the hold's stored-record check now matches the write gate, each new refusal shown able to fail. The seventh, the folder-listing check, is right in what it does under signoff: change, but it reaches the default path too and was carried into no spec; the reader of this pass's decision records flagged the same G0 gap from the ledger side. The residual diff since the external return holds no file outside the walks' edit records. The reading read 21 records, mostly from the exploration; its findings are rewordings, the one warning a sentence that could be read as the archive halting after a signature.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "reading"
+  ],
+  "passes_skipped": [
+    "0: a whole-change pass, not run on a verification pass",
+    "4: no perspectives defined",
+    "5: no critical paths defined",
+    "6: a whole-project pass, not run on a verification pass"
+  ],
+  "verification": [
+    {
+      "title": "concepts.md's Archive section still says a failed brief save never stops the archive, and never mentions the sign-off",
+      "file": "docs/concepts.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Two docs sentences overstate what the reader checks under `signoff: change`",
+      "file": "docs/customization.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "account.ts's header still says the selection never takes the account",
+      "file": "src/core/account.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "`orbit brief --hold` with no --change says \"'undefined' is not a single change name\"",
+      "file": "src/commands/brief.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "The hold's check on a stored sign-off is narrower than 'a shape the write gate would refuse'",
+      "file": "src/core/signoff.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "The silent-reading refusal calls an owed account a 'decision record'",
+      "file": "src/core/emit-composition.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "Account-folder read failures silently remove the account from the reading",
+      "file": "src/core/decision-records.ts",
+      "verdict": "regressed"
+    }
+  ],
+  "decision_records_read": [
+    "ledger-2026-11-12T21-17-03Z.json",
+    "ledger-2026-11-12T21-20-36Z.json",
+    "ledger-2026-11-12T21-21-44Z.json",
+    "ledger-2026-11-12T22-53-03Z.json",
+    "ledger-2026-11-12T22-55-26Z.json",
+    "ledger-2026-11-13T22-08-06Z.json",
+    "ledger-2026-11-13T22-08-07Z.json",
+    "ledger-2026-11-13T22-08-08Z.json",
+    "ledger-2026-11-13T22-19-58Z.json",
+    "ledger-2026-11-13T23-04-41Z.json",
+    "ledger-2026-11-13T23-04-42Z.json",
+    "ledger-2026-11-13T23-04-43Z.json",
+    "ledger-2026-11-13T23-50-00Z.json",
+    "ledger-2026-11-13T23-50-01Z.json",
+    "ledger-2026-11-13T23-50-02Z.json",
+    "ledger-2026-11-13T23-50-03Z.json",
+    "ledger-2026-11-14T00-37-34Z.json",
+    "resolution-2026-11-12T21-16-12Z.json",
+    "resolution-2026-11-12T22-52-45Z.json",
+    "stop-2026-11-12T21-09-30Z.json",
+    "stop-2026-11-12T21-21-45Z.json"
+  ],
+  "final_assessment": "0 critical, 2 warning, 14 suggestion.",
+  "decision_records_owed": [
+    "ledger-2026-11-12T21-17-03Z.json",
+    "ledger-2026-11-12T21-20-36Z.json",
+    "ledger-2026-11-12T21-21-44Z.json",
+    "ledger-2026-11-12T22-53-03Z.json",
+    "ledger-2026-11-12T22-55-26Z.json",
+    "ledger-2026-11-13T22-08-06Z.json",
+    "ledger-2026-11-13T22-08-07Z.json",
+    "ledger-2026-11-13T22-08-08Z.json",
+    "ledger-2026-11-13T22-19-58Z.json",
+    "ledger-2026-11-13T23-04-41Z.json",
+    "ledger-2026-11-13T23-04-42Z.json",
+    "ledger-2026-11-13T23-04-43Z.json",
+    "ledger-2026-11-13T23-50-00Z.json",
+    "ledger-2026-11-13T23-50-01Z.json",
+    "ledger-2026-11-13T23-50-02Z.json",
+    "ledger-2026-11-13T23-50-03Z.json",
+    "ledger-2026-11-14T00-37-34Z.json",
+    "resolution-2026-11-12T21-16-12Z.json",
+    "resolution-2026-11-12T22-52-45Z.json",
+    "stop-2026-11-12T21-09-30Z.json",
+    "stop-2026-11-12T21-21-45Z.json"
+  ],
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-11-14T00-34-25Z",
+    "2026-11-14T00-35-57Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews program-brief"
+}
