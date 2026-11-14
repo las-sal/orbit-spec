@@ -47,7 +47,7 @@ Carried by: the 1.3.1 baseline
 
 ## orbit's config keys
 
-orbit reads eight more optional keys from `orbit/config.yaml`. Each is off, or at its default, when absent.
+orbit reads nine more optional keys from `orbit/config.yaml`. Each is off, or at its default, when absent.
 
 | Key | What it does |
 |---|---|
@@ -59,6 +59,7 @@ orbit reads eight more optional keys from `orbit/config.yaml`. Each is off, or a
 | `chain` | What the AI may run unasked when a workflow ends on it as the change's next command: `review` (an in-context or fresh review), `review-external` (an external review or a blind pair, which send the change to an outside service and can cost money), `address-reviews` (the walk), `apply` (implementing the change's tasks) and `archive` (syncing the specs and moving the change to the archive, and, for a change with a pull request, the archive's outward writes: the push to the PR's branch, the rewrite of a per-change PR's description or the append of a program PR's stage entry, and a per-change PR's ready flip), each `true` to grant it. Absent, or any key not `true`, grants nothing: every workflow ends at its `Ready when you are:` line, as without the key. No key derives another: granting `review` never grants `review-external`, and granting `apply` never grants `archive`. A granted apply or archive asks no consent question and records that your setting granted it. Merging the pull request and returning to the default branch stay yours: no key grants them. The AI still stops at every real decision, at an unanswered stop, when an external review would need pasting, and when the command it just ran wrote nothing. An external review or a blind pair needs your work committed: with `commit: true` the command before it commits its work at its close, and otherwise, after an apply or a walk, which then commit nothing, the chain stops there until you commit. |
 | `commit` | `true` lets orbit commit at the close of each command that works on a change with a pull request (propose, ff, apply, review, address-reviews and archive): everything uncommitted, your own edits included, except untracked files `.gitignore` excludes, and only on the change's own branch, never the default branch. The command names, in one line, each untracked file it committed. When an earlier pull-request step of the same command failed, it commits nothing and leaves you the recovery that failure printed. Absent, or any value but `true`, commits nothing beyond what `pr:` already commits. It needs `pr:` set and the change attached to a pull request. |
 | `push` | `true` lets orbit push the change's branch to the remote at the same close, setting it as the branch's upstream. It never force-pushes. Absent, or any value but `true`, pushes nothing beyond what `pr:` already pushes. Without `commit`, it pushes only commits you made yourself. |
+| `signoff` | `change` makes each change's archive wait for your sign-off: after it saves the change's brief, the archive shows you that brief whole and asks you to sign off or decline before anything is synced or moved. A decline stops the archive with your reason recorded and leaves the change active; a copy you already signed with the same text is not asked again. With `change`, the system review's reading step also reads the change's account, so the account in the brief you sign has been checked by a reader, unless a later fix replaced it. Absent or `off`, nothing waits, as without the key; any other value is read as absent, and the archive says so in one line. |
 
 A complete example:
 
@@ -81,9 +82,10 @@ chain:
   address-reviews: true
 commit: true
 push: true
+signoff: change
 ```
 
-Carried by: `orbit-engine-gates`, `orbit-pr-lifecycle`, `orbit-scenario-map`, `orbit-change-size`
+Carried by: `orbit-engine-gates`, `orbit-pr-lifecycle`, `orbit-scenario-map`, `orbit-change-size`, `orbit-program-brief`
 
 ## Custom schemas
 

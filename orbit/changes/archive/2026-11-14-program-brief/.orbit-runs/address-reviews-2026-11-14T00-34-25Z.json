@@ -1,0 +1,269 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-14T00:34:25Z",
+  "change": "program-brief",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/program-brief/.orbit-runs/review-system-2026-11-14T00-00-33Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-14T00-00-33Z",
+  "latest_apply_token": "2026-11-13T23-50-33Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 5
+  },
+  "pushback_verification": "All six verified against current state before any edit: concepts.md still said a failed save never stops the archive and commands.md listed neither step; the two docs sentences, the account.ts header, the --hold message and the refusal wording read as the finding said; checkStoredSignoff checked neither the spine nor unknown keys. None stale. Two converge with the codex return of the same pair (the stored sign-off check and the account.ts header) and are walked here, in the earlier pass's log.",
+  "resolution_summary": {
+    "resolved": 6,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "concepts.md's Archive section still says a failed brief save never stops the archive, and never mentions the sign-off",
+      "marker_source": "internal-review",
+      "file": "docs/concepts.md",
+      "line": 276,
+      "outcome": "resolved",
+      "remedy": "repair",
+      "classification": "trivial_fix",
+      "action": "concepts.md's Archive paragraph now says that under signoff: change the archive shows the saved brief and waits for a sign-off, a decline or a failed save stopping it, and that only under every other value a failed save is merely recorded; orbit-program-brief joins its Carried-by line. commands.md's /orbit:archive list gains the save-and-sign-off step, and its bulk-archive paragraph the per-change sign-off.",
+      "ripple_cascade": {
+        "applied": [
+          "docs/commands.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "so the copy moves with it; a"
+        ],
+        "introduced": [
+          {
+            "path": "docs/concepts.md",
+            "text": "waits for you to sign"
+          },
+          {
+            "path": "docs/commands.md",
+            "text": "saves the change's brief into its history and, when"
+          },
+          {
+            "path": "docs/commands.md",
+            "text": "saves the change's brief — under `signoff: change`, asking for your"
+          }
+        ],
+        "searched": [
+          "never stops the archive",
+          "never stops an archive",
+          "saves the change's brief",
+          "brief --change",
+          "sign-off"
+        ],
+        "scope": [
+          "docs/",
+          "README.md"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Two docs sentences overstate what the reader checks under `signoff: change`",
+      "marker_source": "internal-review",
+      "file": "docs/customization.md",
+      "line": 62,
+      "outcome": "resolved",
+      "remedy": "repair",
+      "classification": "trivial_fix",
+      "action": "customization.md says the account in the brief you sign has been checked by a reader, unless a later fix replaced it; cli.md says the brief lists the account while no reader has checked it.",
+      "ripple_cascade": {
+        "applied": [
+          "docs/cli.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "so the brief you sign has been checked by a reader",
+          "the records no reader has checked, the account included."
+        ],
+        "introduced": [
+          {
+            "path": "docs/customization.md",
+            "text": "unless a later fix replaced it"
+          },
+          {
+            "path": "docs/cli.md",
+            "text": "the account included while no"
+          }
+        ],
+        "searched": [
+          "checked by a reader",
+          "the account included"
+        ],
+        "scope": [
+          "docs/"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "account.ts's header still says the selection never takes the account",
+      "marker_source": "internal-review",
+      "file": "src/core/account.ts",
+      "line": 13,
+      "outcome": "resolved",
+      "remedy": "repair",
+      "classification": "trivial_fix",
+      "action": "the module comment says the decision-record chains never include the account, and that the selection takes the latest account only under signoff: change, naming the requirement.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "so no reader of the decision-record selection"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/account.ts",
+            "text": "so the decision-record chains never include it"
+          }
+        ],
+        "searched": [
+          "selectUnreadRecords",
+          "no reader of the decision-record selection",
+          "No reader takes the account"
+        ],
+        "scope": [
+          "src/core/"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "`orbit brief --hold` with no --change says \"'undefined' is not a single change name\"",
+      "marker_source": "internal-review",
+      "file": "src/commands/brief.ts",
+      "line": 86,
+      "outcome": "resolved",
+      "remedy": "repair",
+      "classification": "trivial_fix",
+      "action": "BriefCommand.hold refuses a missing --change first, with the same form --save uses; the usage-error test runs `orbit brief --hold` alone and asserts the message and that it never says undefined.",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/signoff.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "src/commands/brief.ts",
+            "text": "--hold takes --change <name>: `orbit brief --change <name> --hold`."
+          },
+          {
+            "path": "test/core/signoff.test.ts",
+            "text": "const bare = await runCLI(['brief', '--hold']"
+          }
+        ],
+        "searched": [
+          "is not a single change name",
+          "options.change as string"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The hold's check on a stored sign-off is narrower than 'a shape the write gate would refuse'",
+      "marker_source": "internal-review",
+      "file": "src/core/signoff.ts",
+      "line": 138,
+      "outcome": "resolved",
+      "remedy": "repair",
+      "classification": "trivial_fix",
+      "action": "option A, the direction of both halves (codex's matching warning is closed by this entry): checkStoredSignoff now makes every check the write gate makes on the record it writes — timestamp present, model present and a string or null, change equal to the change, no kind, final_assessment or next_recommended, and no key the gate never writes — beside command, sha256 and the payload fields. The hold test holds a well-formed control signed, then each bad record refused by the check that names it; each new refusal was shown able to fail by a clean mutation (six, all caught). Option B, narrowing the spec to the code, would have left the hold lifting on a hand-made record.",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/signoff.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "src/core/signoff.ts",
+            "text": "STORED_SIGNOFF_KEYS"
+          },
+          {
+            "path": "test/core/signoff.test.ts",
+            "text": "so no check hides behind another"
+          }
+        ],
+        "searched": [
+          "checkStoredSignoff",
+          "a shape the write gate would refuse"
+        ],
+        "scope": [
+          "orbit/changes/program-brief/specs/orbit-program-brief/spec.md"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The silent-reading refusal calls an owed account a 'decision record'",
+      "marker_source": "internal-review",
+      "file": "src/core/emit-composition.ts",
+      "line": 1048,
+      "outcome": "resolved",
+      "remedy": "repair",
+      "classification": "trivial_fix",
+      "action": "the silent-reading refusal says record(s); the account-reader test asserts the new wording, and rc03b's emit-composition pin moves with a note.",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/account-reader.test.ts",
+          "test/core/rc03b-untouched-modules.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "owes a reading of ${owed.length} decision record(s)",
+          "owes a reading of 1 decision record"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/emit-composition.ts",
+            "text": "owes a reading of ${owed.length} record(s)"
+          },
+          {
+            "path": "test/core/rc03b-untouched-modules.test.ts",
+            "text": "MOVED AGAIN at program-brief's system walk"
+          }
+        ],
+        "searched": [
+          "decision record(s)"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    }
+  ],
+  "final_assessment": "Walked the fresh half of the system blind pair: six findings resolved by repair — the archive narrative in concepts.md and commands.md now carries the sign-off, two docs overclaims narrowed, the account.ts header restated, --hold without --change refused by name, the hold checks a stored sign-off as the write gate does, and the owed-reading refusal says record(s).",
+  "iteration": 4,
+  "next_recommended": "/orbit:address-reviews program-brief",
+  "ripple_misses": 0
+}

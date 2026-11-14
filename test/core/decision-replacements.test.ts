@@ -173,7 +173,7 @@ describe('orbit-decision-records: several fixes to one record (the system walk)'
     const folder = readDecisionFolder(path.join(root, DEC('foo')));
     expect(chainOf(folder, a)).toEqual([a, r1, r2, r3]);
     expect(latestInChain(folder, a)).toBe(r3);
-    expect(selectUnreadRecords(path.join(root, 'orbit/changes/foo'))).toEqual([r3]);
+    expect(selectUnreadRecords(path.join(root, 'orbit/changes/foo'), root)).toEqual([r3]);
     // The link checks: a replacement of anything but the latest is refused, naming the latest.
     expectRefused(() => emit('ledger', ledgerPayload({ replaces: r1, decided: 'Late.' })), [/'replaces'/, esc(r3)]);
   });

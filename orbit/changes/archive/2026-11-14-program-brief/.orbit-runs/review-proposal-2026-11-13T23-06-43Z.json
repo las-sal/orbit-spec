@@ -1,0 +1,141 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-13T23:06:43Z",
+  "change": "program-brief",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/program-brief/specs/orbit-program-brief/spec.md",
+      "line": 105,
+      "title": "The hold's usage-error sentence now sits inside the paragraph that opens 'Under `change`'",
+      "recommendation": "The walk inserted the damaged-history paragraph directly before the sentence beginning '`--hold` with a `<doc>`', with no blank line after it, so that sentence now ends the paragraph that opens 'Under `change` the hold reads the two folders by filename' and reads as if the usage errors hold only under `change`. They hold under every value (the scenario 'The hold names a change, never a doc' has no setting). Put a blank line before that sentence so it stands as its own paragraph, or move it above the damaged-history paragraph.",
+      "walk_entry": {
+        "title": "The hold has no contract for unreadable or malformed history",
+        "file": "orbit/changes/program-brief/specs/orbit-program-brief/spec.md"
+      }
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "orbit/changes/program-brief/tasks.md",
+      "line": 21,
+      "title": "Task 3.3's scenario list leaves out two scenarios the walk added",
+      "recommendation": "Task 3.3 names, scenario by scenario, what its tests cover, but not two scenarios the walk added: `orbit-program-brief`'s 'An account a reader checked is not listed as unchecked' and `orbit-decision-records`' 'A reading finding against the account writes its own replacement' (under `Each change carries one account, written when apply is complete`). Task 6.2's catch-all would still demand a tag for each, so nothing is lost, but an implementer working from task 3.3 alone would miss them. Add both to task 3.3 (the second fits task 3.4's body tests too)."
+    },
+    {
+      "pass": "1",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/program-brief/.openspec.yaml",
+      "line": 1,
+      "title": "The change's metadata changed since the base pass, outside every walk entry's edit record",
+      "recommendation": "`orbit fingerprint` stamped two new base fingerprints during the walk (`orbit-review`'s `The reading step checks decision records in system review` and `orbit-program-brief`'s `A change's brief is saved, never overwritten`), as the propose body requires after delta specs change. The stamps are right; the walk entries that added those deltas (the fresh pass's account-reading finding and its third-change finding) did not list `.openspec.yaml` in their ripple. A record gap only; nothing to fix in the file."
+    }
+  ],
+  "commentary": "Verified the two walks of the blind pair over their sweep scopes: the six fresh-pass entries and the four external ones. Each claimed site was re-read in the live files: the archive table's rows and its new scenarios, the hold paragraph and its JSON keys, the damaged-history contract, the account table's new walk row and the renamed requirement's fold-and-replace paragraph, the orbit-review delta, the re-pointed save requirement, the proposal's Size and capability lines, the design's decisions and Touchpoints, and the tasks. orbit validate --strict passes; the RENAMED pair and every MODIFIED block still merge; no @review: markers outside inline code. The one regression is placement, not meaning: the damaged-history paragraph swallowed the usage-error sentence after it. Long lines over the file width remain in a few edited paragraphs; the baselines carry such lines too, so they are not graded. The residual check found one changed file outside the edit records, the change's metadata, whose fingerprint stamps are correct.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "verification": [
+    {
+      "title": "Under `change`, a reader finding against the account has no instructed fold or walk path",
+      "file": "orbit/changes/program-brief/specs/orbit-decision-records/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "A failing hold command stops the archive under every setting, the defaults included",
+      "file": "orbit/changes/program-brief/specs/orbit-archive-modifications/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The program brief's save is still placed in stage program-brief's third change, which this change is and does not carry it",
+      "file": "orbit/specs/orbit-program-brief/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Proposal and design under-list what the tasks touch",
+      "file": "orbit/changes/program-brief/proposal.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The hold's `--json` keys are named only for `why` and `held`",
+      "file": "orbit/changes/program-brief/specs/orbit-program-brief/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Two edited lines in the decision-records delta were not rewrapped",
+      "file": "orbit/changes/program-brief/specs/orbit-decision-records/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Retained scenarios contradict the new conditional behavior",
+      "file": "orbit/changes/program-brief/specs/orbit-archive-modifications/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The task can label an already-read account as unchecked",
+      "file": "orbit/changes/program-brief/tasks.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Sign-off write failure is placed after the first matching archive branch",
+      "file": "orbit/changes/program-brief/specs/orbit-archive-modifications/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The hold has no contract for unreadable or malformed history",
+      "file": "orbit/changes/program-brief/specs/orbit-program-brief/spec.md",
+      "verdict": "regressed"
+    }
+  ],
+  "final_assessment": "0 critical, 0 warning, 3 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-11-13T23-03-02Z",
+    "2026-11-13T23-04-26Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews program-brief"
+}

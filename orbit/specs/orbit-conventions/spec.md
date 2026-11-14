@@ -1393,6 +1393,7 @@ commands a chain can arrive at, `orbit-review`, `orbit-address-reviews`, `orbit-
 | archive: incomplete artifacts | decision: stops |
 | archive: incomplete tasks | decision: stops |
 | archive: a user-validation task line the closure cannot dispose of (repair `tasks.md`, or abort) | decision: stops |
+| archive: the sign-off over the saved brief, under `signoff: change` (sign off, or decline) | decision: stops |
 | archive: the sync assessment (default: Sync now when deltas need syncing; Archive now when they are already synced) | routine: takes the marked default, recorded |
 | archive: the gate inflection | decision: stops |
 | archive: the base-fingerprint check, unverified or diverged | decision: stops |
@@ -1439,6 +1440,13 @@ test is `Each chained prompt states its kind`.)
 
 - **WHEN** a chained archive's marker scan finds `@review:` markers in the change
 - **THEN** the marker prompt is asked exactly as on a typed archive
+
+#### Scenario: The sign-off stops a chained archive
+
+- **WHEN** `/orbit:archive <change>` runs because the `chain` object allowed it, under `signoff: change`, and the hold
+  reports the change unsigned
+- **THEN** the saved brief is shown and the sign-off is asked exactly as on a typed archive, and after the archive ends
+  the AI runs no next command, stating that the chain stopped at a decision
 
 ### Requirement: Each chained prompt states its kind
 

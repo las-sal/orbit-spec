@@ -298,7 +298,7 @@ export function buildProgram(options: ProgramOptions = {}): Command {
   // Generic emit surface (D5 context economy): engine-owned run-summary composition
   program
     .command('emit <emit-command>')
-    .description('Compose and write a run-summary emit, a decision record (ledger, stop, resolution) or a change\'s account — the AI supplies the narrative payload; the engine owns the spine, deterministic facts, and computed extensions')
+    .description('Compose and write a run-summary emit, a decision record (ledger, stop, resolution), a change\'s account or its sign-off — the AI supplies the narrative payload; the engine owns the spine, deterministic facts, and computed extensions')
     .option('--change <name>', 'Target workstream (a change, or the staging exploration for explore-trail emits)')
     .option('--doc <doc-name>', 'Target architecture doc (architecture-scoped commands)')
     .option('--payload <file>', 'Payload JSON file (when present, stdin is not consulted)')
@@ -381,8 +381,9 @@ export function buildProgram(options: ProgramOptions = {}): Command {
     .description("Render the brief of a program (a doc) or of a change (--change), read-only; --save keeps a change's")
     .option('--change <name>', 'Render the brief of this change (active, else its newest archive)')
     .option('--save', "Save the active change's brief into its history and print the file and its SHA-256")
+    .option('--hold', "Report whether the active change's archive waits on the user's sign-off (read-only; renders no brief)")
     .option('--json', 'Output as JSON')
-    .action(async (doc: string | undefined, options?: { change?: string; save?: boolean; json?: boolean }) => {
+    .action(async (doc: string | undefined, options?: { change?: string; save?: boolean; hold?: boolean; json?: boolean }) => {
       const { BriefCommand } = await import('../commands/brief.js');
       const exitCode = new BriefCommand().run(doc, options ?? {});
       if (exitCode !== 0) process.exit(exitCode);

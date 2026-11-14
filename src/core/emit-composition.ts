@@ -17,7 +17,7 @@ import {
   type Trail,
 } from './artifact-graph/trail.js';
 import { isIndependent } from './artifact-graph/gates.js';
-import { resolveChainSetting } from './project-config.js';
+import { resolveChainSetting, resolveSignoffSetting } from './project-config.js';
 import {
   computePassGenre,
   verificationLedger,
@@ -42,10 +42,11 @@ import {
 } from './parsers/apply-state.js';
 import {
   DECISION_PAYLOAD_FIELDS,
+  DecisionBriefError,
   DecisionRecordError,
-  RECORD_FILENAME,
   checkDecisionRecord,
   isDecisionCommand,
+  isSelectableFilename,
   selectUnreadRecords,
   type DecisionCommand,
 } from './decision-records.js';
@@ -57,6 +58,17 @@ import {
   accountScopeRefusal,
   checkAccount,
 } from './account.js';
+import {
+  SAVED_BRIEF_DIR,
+  SIGNOFF_COMMAND,
+  SIGNOFF_DIR,
+  SIGNOFF_DOC_REFUSAL,
+  SIGNOFF_PAYLOAD_FIELDS,
+  SignoffError,
+  checkSignoff,
+  signoffScopeRefusal,
+  signoffSettingRefusal,
+} from './signoff.js';
 
 /**
  * `orbit emit <command>` — the engine-owned emit-composition surface (D-arc Stage D5,
@@ -264,6 +276,10 @@ const COMMANDS: Record<string, CommandSpec> = {
   // account, written when apply is complete`). Not a run summary and not a decision record: no kind, no
   // recommendation, written to the trail's `account/` child; ACTIVE changes only (`resolveTarget`).
   account: { kind: null, scopes: { change: true }, payloadFields: ACCOUNT_PAYLOAD_FIELDS },
+  // program-brief: a change's SIGN-OFF (`orbit-program-brief`'s `A sign-off is recorded against the saved copy,
+  // and the hold reads it`). Not a run summary and not a decision record: no kind, no recommendation, written to
+  // the trail's `signoff/` child with the engine's `sha256` of the named copy; ACTIVE changes only.
+  signoff: { kind: null, scopes: { change: true }, payloadFields: SIGNOFF_PAYLOAD_FIELDS },
 };
 
 /** Spine + deterministic facts + computed extensions per command — REJECTED in payloads. */
@@ -308,6 +324,7 @@ export const ENGINE_OWNED_EXTRA: Record<string, string[]> = {
   stop: ['final_assessment'],
   resolution: ['final_assessment'],
   account: ['final_assessment'],
+  signoff: ['final_assessment', 'sha256'],
 };
 
 /**
@@ -786,6 +803,9 @@ function resolveTarget(projectRoot: string, command: string, target: EmitTarget)
       `--doc '${doc}' is not a canonical doc name (single filename stem, no separators, no traversal).`
     );
   }
+  if (doc !== undefined && command === SIGNOFF_COMMAND) {
+    throw new EmitError(`--doc is not a valid target for '${command}': ${SIGNOFF_DOC_REFUSAL}`);
+  }
   if (doc !== undefined && !spec.scopes.doc) {
     throw new EmitError(`--doc is not a valid target for '${command}' (change-scoped command).`);
   }
@@ -822,7 +842,7 @@ function resolveTarget(projectRoot: string, command: string, target: EmitTarget)
   const changeDir = path.join(projectRoot, 'orbit', 'changes', name);
   const exploreDir = path.join(projectRoot, 'orbit', 'explore', name);
 
-  if (command === ACCOUNT_COMMAND) {
+  if (command === ACCOUNT_COMMAND || command === SIGNOFF_COMMAND) {
     // An account is written while a change is built: an ACTIVE change only — never the exploration
     // fallback below (its trail moves at propose), never an archive (`The write gate checks the account`).
     if (name !== 'archive' && fs.existsSync(changeDir) && fs.statSync(changeDir).isDirectory()) {
@@ -835,7 +855,9 @@ function resolveTarget(projectRoot: string, command: string, target: EmitTarget)
       : archived
         ? `${path.relative(projectRoot, archived).split(path.sep).join('/')}/`
         : null;
-    throw new EmitError(`write gate: ${accountScopeRefusal(name, foundAt)}`);
+    throw new EmitError(
+      `write gate: ${command === SIGNOFF_COMMAND ? signoffScopeRefusal(name, foundAt) : accountScopeRefusal(name, foundAt)}`
+    );
   }
 
   if (command === 'archive') {
@@ -997,9 +1019,9 @@ function validateDecisionRecordsReadShape(command: string, payload: Record<strin
     );
   }
   const list = payload.decision_records_read;
-  if (!Array.isArray(list) || list.some(f => typeof f !== 'string' || !RECORD_FILENAME.test(f))) {
+  if (!Array.isArray(list) || list.some(f => typeof f !== 'string' || !isSelectableFilename(f))) {
     throw new EmitError(
-      `'decision_records_read' must be an array of decision-record filenames (<ledger|stop|resolution>-<TS>.json), got ${JSON.stringify(list)}.`
+      `'decision_records_read' must be an array of record filenames (<ledger|stop|resolution>-<TS>.json, or account-<TS>.json under signoff: change), got ${JSON.stringify(list)}.`
     );
   }
 }
@@ -1018,14 +1040,24 @@ function passIds(v: unknown): Set<string> {
  * written; returns that selection, the emit's `decision_records_owed`. Checks the pass DECLARES the
  * reading, never that a reader ran or read well (R-crc-10).
  */
-function decisionReadingCheck(changeDir: string, payload: Record<string, unknown>): string[] {
-  const owed = selectUnreadRecords(changeDir);
+/** The selection at the write gate: a folder it cannot list refuses the emit, naming the folder. */
+function selectionAtGate(changeDir: string, projectRoot: string): string[] {
+  try {
+    return selectUnreadRecords(changeDir, projectRoot);
+  } catch (err) {
+    if (err instanceof DecisionBriefError) throw new EmitError(`write gate: ${err.message}`);
+    throw err;
+  }
+}
+
+function decisionReadingCheck(changeDir: string, payload: Record<string, unknown>, projectRoot: string): string[] {
+  const owed = selectionAtGate(changeDir, projectRoot);
   const run = passIds(payload.passes_run);
   const skipped = passIds(payload.passes_skipped);
   const read = Array.isArray(payload.decision_records_read) ? (payload.decision_records_read as string[]) : [];
   if (owed.length > 0 && !run.has('reading') && !skipped.has('reading')) {
     throw new EmitError(
-      `write gate: this pass owes a reading of ${owed.length} decision record(s) (${owed.join(', ')}) and lists 'reading' in neither passes_run nor passes_skipped — run the reading step, or list it as skipped with the reason in commentary.`
+      `write gate: this pass owes a reading of ${owed.length} record(s) (${owed.join(', ')}) and lists 'reading' in neither passes_run nor passes_skipped — run the reading step, or list it as skipped with the reason in commentary.`
     );
   }
   if (run.has('reading') && read.length === 0) {
@@ -2257,6 +2289,50 @@ function composeAccount(resolved: ResolvedTarget, payload: Record<string, unknow
   return { path: path.join(accountDir, filename), emit: materialized, warnings: [] };
 }
 
+/**
+ * program-brief: compose and write a change's SIGN-OFF (`orbit-emit-composition`'s `The write gate checks the
+ * sign-off record`). The payload contract and target resolution ran already (an active change only); then the
+ * setting (refused unless `change`), the sign-off's checks — `brief` the latest saved copy, whose bytes' SHA-256
+ * the engine writes beside it — the trail's `signoff/` child held to the canonical-child identity rule after
+ * creation and again before publish, a token unique within it, the decision-record spine, and the no-overwrite
+ * publish. Every refusal precedes the first write.
+ */
+function composeSignoff(resolved: ResolvedTarget, payload: Record<string, unknown>, projectRoot: string): ComposeResult {
+  const setting = resolveSignoffSetting(projectRoot);
+  if (setting.value !== 'change') throw new EmitError(`write gate: ${signoffSettingRefusal(setting)}`);
+  let sha: string;
+  try {
+    sha = checkSignoff(payload, path.join(resolved.runsDir, SAVED_BRIEF_DIR));
+  } catch (err) {
+    if (err instanceof SignoffError || err instanceof DecisionRecordError) throw new EmitError(`write gate: ${err.message}`);
+    throw err;
+  }
+
+  fs.mkdirSync(resolved.runsDir, { recursive: true });
+  assertCanonicalTrailDir(resolved.runsDir);
+  const signoffDir = path.join(resolved.runsDir, SIGNOFF_DIR);
+  fs.mkdirSync(signoffDir, { recursive: true });
+  assertCanonicalChildDir(signoffDir);
+
+  const token = drawChildToken(signoffDir);
+  const filename = `${SIGNOFF_COMMAND}-${token}.json`;
+  const emit: Record<string, unknown> = {
+    command: SIGNOFF_COMMAND,
+    timestamp: tokenToTimestamp(token),
+    change: resolved.change,
+    model: payload.model ?? null,
+    brief: payload.brief,
+    sha256: sha,
+  };
+  for (const f of COMMANDS[SIGNOFF_COMMAND].payloadFields) {
+    if (f in payload && !(f in emit)) emit[f] = payload[f];
+  }
+  const materialized = JSON.parse(JSON.stringify(emit)) as Record<string, unknown>;
+  decisionSpineCheck(materialized, resolved, 'a sign-off');
+  publishChildRecord(resolved.runsDir, signoffDir, filename, token, JSON.stringify(materialized, null, 2) + '\n');
+  return { path: path.join(signoffDir, filename), emit: materialized, warnings: [] };
+}
+
 // ---------------------------------------------------------------------------
 // Composition
 // ---------------------------------------------------------------------------
@@ -2295,6 +2371,9 @@ export function composeAndWriteEmit(
   }
   if (command === ACCOUNT_COMMAND) {
     return composeAccount(resolved, payload);
+  }
+  if (command === SIGNOFF_COMMAND) {
+    return composeSignoff(resolved, payload, projectRoot);
   }
 
   const warnings: string[] = [];
@@ -2402,7 +2481,7 @@ export function composeAndWriteEmit(
       const genre = computePassGenre(trail, (payload as any).reviewer_class, mode, token);
       verificationOwedCheck(payload, genre, resolved.changeDir);
       if (mode === 'system' && (payload as any).reviewer_class === 'in-context') {
-        emit.decision_records_owed = decisionReadingCheck(resolved.changeDir as string, payload);
+        emit.decision_records_owed = decisionReadingCheck(resolved.changeDir as string, payload, projectRoot);
       }
       emit.pass_genre = genre.passGenre;
       emit.verified_walks = genre.verifiedWalks;
@@ -2543,7 +2622,7 @@ export function composeAndWriteEmit(
         delete (emit as any).deferred_validations;
       }
       emit.next_recommended = archiveNextRecommended(projectRoot, resolved.changeDir as string);
-      emit.decision_records_unread = selectUnreadRecords(resolved.changeDir as string).length;
+      emit.decision_records_unread = selectionAtGate(resolved.changeDir as string, projectRoot).length;
       break;
     }
     case 'architect': {

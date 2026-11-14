@@ -683,7 +683,9 @@ is not part of Pass 4: it runs whether or not `orbit/lenses/perspectives.md` exi
 trigger is the selected records. Its findings carry `pass: "reading"`, are scored under Coherence, and are graded by
 `orbit-conventions`' Severity ladder by consequence: a record a reader would misread, or whose restatement shifts what
 it cites, is a WARNING; one that only slows a reader is a SUGGESTION; the brief states this rule to the reader. The
-reader names each record by its filename; the session sets the finding's `file` to that record's path, and its title
+reader names each record by its filename; the session sets the finding's `file` to that record's path — under
+`decisions/` for a decision record, under `account/` for an account the selection took under `signoff: change`
+(`orbit-decision-records`' `The reader takes the account only when sign-off is per change`) — and its title
 names the record and the reader row. On a VERIFICATION-genre pass a reading finding carries no `walk_entry`, so
 it renders `[outside the walk record]`, as `Verification-genre passes grade the walk record` marks any unlinked
 finding.
@@ -711,8 +713,16 @@ Residual method: when a stage adds a step that writes records, its proposal plac
 
 #### Scenario: No records, no reading
 
-- **WHEN** an in-context system review runs on a change with no `decisions/` folder
+- **WHEN** an in-context system review runs, with the sign-off setting not `change`, on a change with no `decisions/`
+  folder
 - **THEN** no reader is dispatched and the emit is written without `reading` in `passes_run`
+
+#### Scenario: An account alone is read under `change`
+
+- **WHEN** an in-context system review runs under `signoff: change` on a change with no `decisions/` folder whose latest
+  account no reading has listed
+- **THEN** the reader is dispatched with the brief rendering that account, the pass lists `reading` in `passes_run` and the
+  account's filename in `decision_records_read`, and a finding against it carries the account's path as its `file`
 
 #### Scenario: The reader's brief carries no path
 

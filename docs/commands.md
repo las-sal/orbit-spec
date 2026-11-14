@@ -221,7 +221,10 @@ Finish a change: merge its delta specs into `orbit/specs/` and move it to
 - settles any task left for you to validate, as observed or deferred;
 - checks the fingerprints, so it never silently overwrites a requirement another change edited since this one was
   proposed;
-- runs `/orbit:audit-drift` on the change (`--skip-audit` skips it, when you have just run one).
+- runs `/orbit:audit-drift` on the change (`--skip-audit` skips it, when you have just run one);
+- saves the change's brief into its history and, when `orbit/config.yaml` sets `signoff: change`, shows you that brief
+  whole and waits for you to sign off or decline: a decline, or a brief that cannot be saved, stops the archive and
+  leaves the change active.
 
 ```text
 /orbit:archive add-dark-mode
@@ -238,7 +241,9 @@ it goes. Archive's commit comes after the tail's own, which carries only the arc
 ### `/orbit:bulk-archive`
 
 Archive several finished changes in one go. It asks which, then, for each change in turn, settles the tasks left for
-you to validate and checks the fingerprints before it merges the specs and moves the change. When two changes touch
+you to validate, checks the fingerprints, and saves the change's brief — under `signoff: change`, asking for your
+sign-off on it, so a change you decline is not archived and the others go on — before it merges the specs and moves
+the change. When two changes touch
 the same spec, it applies them in the order they were created.
 
 It does less than `/orbit:archive` run once per change: it does not report unpassed reviewed gates, does not run

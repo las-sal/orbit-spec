@@ -60,7 +60,7 @@ The proposal's Size section declares no size limit breached.
 
 No decision record of this change is waiting for a reader.
 
-The account account-2026-11-01T10-00-01Z.json was checked by no reader: no reading step reads accounts yet.
+The account account-2026-11-01T10-00-01Z.json was checked by no reader: a reading step reads the account only when the user signs off on each change.
 
 ## Stage `b` — the second stage
 
@@ -115,7 +115,7 @@ The proposal's Size section declares these size limits breached: `tasks`.
 
 No decision record of this change is waiting for a reader.
 
-The account account-2026-11-01T10-00-03Z.json was checked by no reader: no reading step reads accounts yet.
+The account account-2026-11-01T10-00-03Z.json was checked by no reader: a reading step reads the account only when the user signs off on each change.
 
 This list is as of when this brief was rendered; records written after it appear in the archived change's brief and the program brief.
 

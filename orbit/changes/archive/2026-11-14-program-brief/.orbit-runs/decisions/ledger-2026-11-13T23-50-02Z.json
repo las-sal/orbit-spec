@@ -1,0 +1,20 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-13T23:50:02Z",
+  "change": "program-brief",
+  "model": "claude-opus-5-5",
+  "area": "user-sees-or-does",
+  "decided": "When the sign-off setting holds a value orbit does not read, the hold's one-line report stays alone on its normal output and the warning goes to the error output; the structured form carries the warning as a field.",
+  "alternatives": [
+    "Print the warning as a second line of the normal output.",
+    "Leave the warning out of the one-line form."
+  ],
+  "why": "The hold is specified to print one line, and a person running it still needs to see that their value was ignored; the archive reads the structured form, where the warning is a field it states in one line.",
+  "relies_on": [
+    {
+      "kind": "decision",
+      "id": "D-pb-12"
+    }
+  ],
+  "detail": "BriefCommand.hold in src/commands/brief.ts: console.error for the warning in text mode; --json carries warning."
+}

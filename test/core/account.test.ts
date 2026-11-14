@@ -1,7 +1,8 @@
 /**
  * program-brief (change-account): a change's ACCOUNT — the write gate (`orbit-emit-composition`'s `The write
- * gate checks the account`) and that no reader takes it yet (`orbit-decision-records`' `No reader takes the
- * account yet`).
+ * gate checks the account`) and that, with the sign-off setting absent, no reader takes it
+ * (`orbit-decision-records`' `The reader takes the account only when sign-off is per change`; the `change` value's
+ * rows are in `account-reader.test.ts`).
  *
  * The same-token race is simulated as `decision-records-race.test.ts` does: `node:fs`'s `readdirSync` is
  * wrapped to return an empty listing for an `account` folder while `race.on` is set.
@@ -309,15 +310,15 @@ describe('orbit-emit-composition: The write gate checks the account', () => {
 });
 
 // ---------------------------------------------------------------------------
-// orbit-decision-records: No reader takes the account yet
+// orbit-decision-records: The reader takes the account only when sign-off is per change
 // ---------------------------------------------------------------------------
 
-describe('orbit-decision-records: No reader takes the account yet', () => {
-  // @scenario behaviour orbit-decision-records :: No reader takes the account yet :: The brief does not render the account
+describe('orbit-decision-records: The reader takes the account only when sign-off is per change', () => {
+  // @scenario behaviour orbit-decision-records :: The reader takes the account only when sign-off is per change :: The brief does not render the account
   it('orbit decisions brief says there is nothing to read when the history holds only an account, and exits zero', async () => {
     makeChange('foo');
     emit({ change: 'foo' }, accountPayload());
-    expect(selectUnreadRecords(path.join(root, 'orbit/changes/foo'))).toEqual([]);
+    expect(selectUnreadRecords(path.join(root, 'orbit/changes/foo'), root)).toEqual([]);
     const r = await runCLI(['decisions', 'brief', 'foo'], { cwd: root });
     expect(r.exitCode).toBe(0);
     expect(r.stdout).toMatch(/Nothing to read/);
@@ -326,7 +327,7 @@ describe('orbit-decision-records: No reader takes the account yet', () => {
     expect(JSON.parse(j.stdout).selected).toEqual([]);
   });
 
-  // @scenario behaviour orbit-decision-records :: No reader takes the account yet :: The account is not counted unread at archive
+  // @scenario behaviour orbit-decision-records :: The reader takes the account only when sign-off is per change :: The account is not counted unread at archive
   // @scenario behaviour orbit-decision-records :: Each change carries one account, written when apply is complete :: Archive writes no account
   it('the archive emit counts one unread decision record beside an account chain, the in-context system pass owes only it, and the archive writes no account', () => {
     makeChange('foo', '- [x] 1.1 do a thing\n');
@@ -342,7 +343,7 @@ describe('orbit-decision-records: No reader takes the account yet', () => {
       scorecard: { completeness: clean, correctness: clean, coherence: clean }, findings: [], stale_suppressed: [], model: 'm',
     }, { projectRoot: root });
     expect(pass.emit.decision_records_owed).toEqual([path.basename(ledger.path)]);
-    // A read list naming the account is refused: it is not a decision record, so not in the selection.
+    // A read list naming the account is refused with the setting absent: the account is not in the selection.
     const accounts = ls(ACC('foo'));
     expect(accounts).toHaveLength(2);
     const account = accounts[0];
@@ -350,7 +351,7 @@ describe('orbit-decision-records: No reader takes the account yet', () => {
       mode: 'system', reviewer_class: 'in-context', depth: 'full', passes_run: ['0', '1', 'reading'], passes_skipped: [],
       decision_records_read: [account],
       scorecard: { completeness: clean, correctness: clean, coherence: clean }, findings: [], stale_suppressed: [], model: 'm',
-    }, { projectRoot: root })).toThrow(/'decision_records_read' must be an array of decision-record filenames/);
+    }, { projectRoot: root })).toThrow(/'decision_records_read' names account-.*which is not in the selection/);
     fs.mkdirSync(path.join(root, 'orbit/changes/archive'), { recursive: true });
     fs.renameSync(path.join(root, 'orbit/changes/foo'), path.join(root, 'orbit/changes/archive/2026-11-09-foo'));
     const arch = composeAndWriteEmit('archive', { change: 'foo' }, { final_assessment: 'archived', model: null }, { projectRoot: root });
@@ -359,7 +360,7 @@ describe('orbit-decision-records: No reader takes the account yet', () => {
     expect(ls('orbit/changes/archive/2026-11-09-foo/.orbit-runs/account')).toEqual(accounts);
   });
 
-  // @scenario behaviour orbit-decision-records :: No reader takes the account yet :: Today's readers do not see the account
+  // @scenario behaviour orbit-decision-records :: The reader takes the account only when sign-off is per change :: Today's readers do not see the account
   it('status, the reviewed gates, the trail, orientation and the report render read the change as without the account folder', () => {
     makeChange('foo');
     composeAndWriteEmit('review', { change: 'foo' }, {

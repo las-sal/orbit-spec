@@ -1,0 +1,26 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-14T01:37:37Z",
+  "change": "program-brief",
+  "model": "claude-opus-5-5",
+  "area": "user-sees-or-does",
+  "decided": "A change's brief now says, of an account no reader checked, that a reading step reads the account only when the user signs off on each change, replacing the sentence that said no reading step reads accounts yet.",
+  "alternatives": [
+    "Keep the old sentence, so the default brief stays word for word as before.",
+    "Drop the reason and say only that no reader checked the account."
+  ],
+  "why": "Once this change lands, a reader does take the account when the user signs off on each change, so the old sentence would be false; the new one tells the user why this account went unread and how to have it read.",
+  "relies_on": [
+    {
+      "kind": "decision",
+      "id": "D-pb-13"
+    },
+    {
+      "kind": "requirement",
+      "capability": "orbit-program-brief",
+      "title": "A brief tells the user what a change or a program did, from the trail"
+    }
+  ],
+  "detail": "TEXT.accountUnread in src/core/program-brief.ts; the two brief goldens under test/fixtures/brief-golden/ move by that line only.",
+  "replaces": "ledger-2026-11-13T23-50-00Z.json"
+}

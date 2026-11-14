@@ -484,9 +484,10 @@ brief's text as `markdown`, so one run gives the reading step both the text it d
 
 It SELECTS the records to read: the latest record in each replacement chain of the change's `decisions/` folder that no
 in-context system review emit on the change's history lists in its `decision_records_read`
-(`orbit-emit-composition`'s `The reading's selection is recorded at review and archive`). No ordering of timestamps
-decides it: a record a skipped reading did not read, or one written while a pass ran, stays selected until a reading
-lists it. A selection that is empty renders a brief saying there is nothing to read.
+(`orbit-emit-composition`'s `The reading's selection is recorded at review and archive`), and, when the sign-off setting
+is `change`, the change's latest account that no such emit lists (`The reader takes the account only when sign-off is
+per change`). No ordering of timestamps decides it: a record a skipped reading did not read, or one written while a pass
+ran, stays selected until a reading lists it. A selection that is empty renders a brief saying there is nothing to read.
 
 For the selected records it renders, in this order:
 
@@ -494,6 +495,7 @@ For the selected records it renders, in this order:
 |---|---|
 | the architecture doc | the full text of the doc the change cites (`architecture.doc` in its metadata), and of any other doc a selected record cites; with none, the brief says the reader knows no architecture doc |
 | each record | under its bare filename, the name the reader reports it by: its plain fields, its `defines` list, and its `detail` marked as not bound |
+| an account, when selected | as each record: its plain fields `built`, `seams` and `deviations`, its `defines` list and its `detail` marked as not bound; it cites nothing |
 | a `requirement` citation | the requirement's text from the baseline spec, from its heading to its first scenario, under its capability and title |
 | a `ruling` or `goal` citation | its id, which the reader finds in the architecture doc above |
 | a `resolution` citation | the cited resolution's `answer` and `effect`, the latest in its chain |
@@ -510,12 +512,15 @@ the doc) is rendered whole, a path inside it included, since the reader reads it
 review-genre reviewer, and knows only what the brief carries.
 
 A brief is whole or absent, never partial: when a selected record cannot be read or is not valid JSON, or a source the
-brief renders (the architecture doc, a cited requirement, resolution or Decisions entry) no longer resolves, the command
-exits non-zero naming it and prints nothing to standard output, so a failure is never read as an empty selection.
+brief renders (the architecture doc, a cited requirement, resolution or Decisions entry) no longer resolves, or, when the
+sign-off setting is `change`, a folder the selection reads (the change's `decisions/` or `account/`) exists and cannot be
+listed, the command exits non-zero naming it and prints nothing to standard output, so a failure is never read as an
+empty selection. Under every other value the selection reads its folders as it did before the setting existed, a
+folder that cannot be listed reading as empty (`automate-dev-flow`'s G0).
 
 The brief and the fields of `orbit-emit-composition`'s `The reading's selection is recorded at review and archive` are
-the readers of `decisions/` this capability adds; no reader of run summaries reads the folder, as `Where decision
-records are kept` states.
+the readers of `decisions/` this capability adds, and, under `signoff: change`, of the account; no reader of run
+summaries reads the folder, as `Where decision records are kept` states.
 
 Named limit — a cited requirement is rendered from the BASELINE spec, which the write gate checked the citation
 against; a delta in the change that modifies that requirement is not shown.
@@ -556,8 +561,23 @@ Residual method: the reader is told, in the brief, that cited requirement text i
 
 #### Scenario: A change with no records renders nothing to read
 
-- **WHEN** `orbit decisions brief foo` runs on a change whose `decisions/` folder is absent or empty
+- **WHEN** `orbit decisions brief foo` runs on a change whose `decisions/` folder is absent or empty and whose selection
+  holds no account (the sign-off setting is not `change`, or a reading has listed the latest account)
 - **THEN** the output says there is nothing to read, and the command exits zero
+
+#### Scenario: Under `change`, an unlistable folder fails the brief
+
+- **WHEN** `orbit decisions brief foo` runs under `signoff: change` and `foo`'s `.orbit-runs/decisions/` folder exists and
+  cannot be listed
+- **THEN** the command exits non-zero naming the folder and prints nothing to standard output; with the setting absent
+  the folder reads as empty, as before
+
+#### Scenario: An account is selected under `change`
+
+- **WHEN** `orbit decisions brief foo` runs under `signoff: change` on a change whose history holds `account-A`, which no
+  reading has listed, and no decision record
+- **THEN** the brief renders `account-A` under its filename with its `built`, `seams` and `deviations`, followed by the
+  reader's task
 
 ### Requirement: Each change carries one account, written when apply is complete
 
@@ -591,8 +611,9 @@ a change's lifecycle touches the account by this table:
 | an apply session that ends with apply not complete | none, whether or not an account exists: the session that completes apply writes or replaces it |
 | an apply session that ends with apply complete, on a change with no account | writes the account, before its run summary, or before its completion readout when it writes no run summary — whether it checked the last task, resumed after a session that ended before writing, or arrived on a change completed before accounts existed |
 | an apply session that ends with apply complete, on a change that has an account (a walk reopened tasks) | when the work done since the latest account was written changed what it says, writes a replacement of it, at the same point; otherwise none |
-| the system review | none: no reader takes the account (`No reader takes the account yet`) |
+| the system review | none: the review writes no account; under `signoff: change` its reading step reads the latest one (`The reader takes the account only when sign-off is per change`) |
 | a walk of an active change that has an account, when a resolved finding changes what was built, a seam, or a deviation | writes a replacement of the latest account; a walk that resolves any finding by reopening tasks writes none, not even for its other fixes: the apply session that completes them replaces it, covering those fixes too |
+| a walk of an active change that resolves a reading finding against its account (under `signoff: change`, `The reader takes the account only when sign-off is per change`) | writes a replacement of the latest account for each such finding resolved, as `A record is fixed by a replacement, never edited` does for a decision record; the replacement rewords and states no new fact, so it is written in a walk that reopens tasks too |
 | a walk of an archived change | none: orbit writes no record to an archived change's trail, as for decision records |
 | archive | none: the archived change keeps its latest account |
 
@@ -600,7 +621,8 @@ A change abandoned before apply is complete carries no account, and so does a ch
 complete apply session ran after this requirement shipped. The table is closed by derivation: its rows are the
 spec-driven schema's phases (explore and propose, the proposal review, apply, the system review, archive) with the walk
 that follows each review, apply split by whether apply is complete at the session's end and whether an account already
-exists, and a walk split by whether the change is active or archived.
+exists, and a walk split by whether the change is active or archived and, for an active change, by whether a resolved
+finding changes the account's facts or rewords it after a reading.
 
 The apply and address-reviews workflow bodies each carry the instruction for their rows of the table, each naming the
 fields the write gate accepts (`orbit-emit-composition`'s `The write gate checks the account`) and how to invoke
@@ -650,6 +672,13 @@ one; a test holds each body carrying the fields and the invocation.
   the account says
 - **THEN** no account is written
 
+#### Scenario: A reading finding against the account writes its own replacement
+
+- **WHEN** under `signoff: change` a system walk of change `foo`, which has `account-A`, resolves two reading findings
+  against `account-A`'s wording, one after the other
+- **THEN** the first writes `account-B` replacing `account-A` and the second writes `account-C` replacing `account-B`,
+  each changing only the wording its finding named
+
 #### Scenario: A walk fix that changes what was built replaces the account
 
 - **WHEN** a system walk of change `foo`, which has `account-A`, resolves a finding by adding a behaviour the account
@@ -667,48 +696,76 @@ one; a test holds each body carrying the fields and the invocation.
 - **WHEN** change `foo`, holding `account-A` and its replacement `account-B`, is archived
 - **THEN** the archived change's `.orbit-runs/account/` holds both, and no account is written by the archive
 
-### Requirement: No reader takes the account yet
+### Requirement: The reader takes the account only when sign-off is per change
 
-No reading step SHALL read a change's account until a later stage adds the setting under which one does (stage
-program-brief's third change, D-pb-5 in `orbit/explore/program-brief/explore.md`). Because the account is kept outside
-the `decisions/` folder, and the selection (`The reading step's brief is rendered by orbit`) reads only that folder,
-every reader of the selection is unchanged by construction:
+A reading step SHALL take a change's account only when the sign-off setting (`orbit-program-brief`'s `The sign-off
+setting holds each change's archive for the user's sign-off`) is `change` (D-pb-13 in this change's `explore.md`): then
+the selection (`The reading step's brief is rendered by orbit`) holds the change's latest account — the latest record of
+its `account/` chain — until an in-context system review emit lists it in `decision_records_read`, as it holds a decision
+record. Under every other value the account is kept out of the selection, which reads only the `decisions/` folder, and
+every reader of the selection is as it was before the setting existed:
 
-| reader of the selection | with an account in the change's history |
-|---|---|
-| `orbit decisions brief` | renders no account |
-| the in-context system review's `decision_records_owed` and its read-list check | neither owes nor accepts an account |
-| the archive emit's `decision_records_unread` | does not count the account |
-| whether the reading step runs | unchanged: a change whose only record is its account has nothing selected, so no reader is dispatched |
-| `orbit brief` (`orbit-program-brief`) | lists the records the selection returns as checked by no reader, and names the account apart, as checked by no reader too |
+| reader of the selection | the setting is `change` | any other value |
+|---|---|---|
+| `orbit decisions brief` | renders the latest unread account as a record | renders no account |
+| the in-context system review's `decision_records_owed` and its read-list check | owes and accepts the latest unread account | neither owes nor accepts an account |
+| the archive emit's `decision_records_unread` | counts the latest account while it is unread | does not count the account |
+| whether the reading step runs | it runs when the latest account is unread, even when no decision record is selected | unchanged: a change whose only record is its account has nothing selected, so no reader is dispatched |
+| `orbit brief` (`orbit-program-brief`) | lists the latest unread account among the records the selection returns | lists the records the selection returns, and names the account apart as checked by no reader |
 
-The rows are every caller of the one selection function.
+The rows are every caller of the one selection function; the columns are the setting's two readings, an unrecognized
+value read as absent. A replaced account is not selected: only the latest of its chain is, as for a decision record.
+
+A reader's finding against the account is folded into the pass like any reading finding, its `file` the account's path
+under `account/` (`orbit-review`'s `The reading step checks decision records in system review`). The walk resolves it by a
+replacement of the latest account, one per resolved finding (`Each change carries one account, written when apply is
+complete`), a replacement rewording the account and changing no fact it states; a finding that is a gap in the brief is
+recorded `deferred` against `The reading step's brief is rendered by orbit`, as for a decision record.
 
 No reader of run summaries reads the `account/` folder: `orbit status`, the reviewed gates and the report render read
 only the files directly in `.orbit-runs/`, as they do for `decisions/` (`Where decision records are kept`).
 
-Named limit — `The plain-language rule is held by structure and by a reader` holds an account's plain fields by the
-write gate alone until a reading step takes the account: the reader rows of its table reach no account before stage
-program-brief's third change.
+Named limit — under every value but `change`, `The plain-language rule is held by structure and by a reader` holds an
+account's plain fields by the write gate alone: the reader rows of its table reach no account.
 
-Residual kind: an account whose prose is unclear, leans on implementation detail, restates what it cites with its meaning shifted, or uses a term it leaves undefined
+Residual kind: an account whose prose is unclear, leans on implementation detail, restates what it cites with its meaning shifted, or uses a term it leaves undefined, in a project whose sign-off setting is not `change`
 
-Residual method: the third change's reading step, when sign-off is on; until then the user reads the account in the brief, and a finding against it is fixed by a replacement
+Residual method: the user reads the account in the brief, where it is named as checked by no reader; a finding against it is fixed by a replacement
 
 #### Scenario: The brief does not render the account
 
-- **WHEN** `orbit decisions brief foo` runs on a change whose history holds `account-A` and no decision record
+- **WHEN** `orbit decisions brief foo` runs with the sign-off setting absent, on a change whose history holds `account-A`
+  and no decision record
 - **THEN** the output says there is nothing to read, and the command exits zero
 
 #### Scenario: The account is not counted unread at archive
 
-- **WHEN** a change whose history holds `account-A` and one decision record no reading listed is archived
+- **WHEN** with the sign-off setting absent, a change whose history holds `account-A` and one decision record no reading
+  listed is archived
 - **THEN** the archive emit carries `decision_records_unread: 1`
 
 #### Scenario: The brief shows the account as checked by no reader
 
-- **WHEN** `orbit brief --change foo` runs on a change whose history holds `account-A` and no decision record
+- **WHEN** `orbit brief --change foo` runs with the sign-off setting absent, on a change whose history holds `account-A`
+  and no decision record
 - **THEN** its records-no-reader-checked section names no decision record and names the account as checked by no reader
+
+#### Scenario: Under `change`, the reading runs on an account alone
+
+- **WHEN** an in-context system review runs under `signoff: change` on a change whose only record is `account-A`, which
+  no reading has listed
+- **THEN** `orbit decisions brief` selects `account-A`, and the review owes it in `decision_records_owed`
+
+#### Scenario: Only the latest account is selected
+
+- **WHEN** under `signoff: change` a change holds `account-A` and `account-B`, which replaces it, and no reading has
+  listed either
+- **THEN** the selection holds `account-B` and not `account-A`
+
+#### Scenario: An unrecognized value reads the account as at the defaults
+
+- **WHEN** `orbit decisions brief foo` runs under `signoff: program` on a change whose only record is `account-A`
+- **THEN** the output says there is nothing to read, as with the setting absent
 
 #### Scenario: Today's readers do not see the account
 

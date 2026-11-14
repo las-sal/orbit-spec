@@ -1,0 +1,25 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-14T01:37:42Z",
+  "change": "program-brief",
+  "model": "claude-opus-5-5",
+  "area": "when-things-go-wrong",
+  "decided": "Only when the user signs off on each change does orbit stop with an error naming a folder of decision records, or the folder holding the change account, that exists but cannot be opened, wherever it works out which records still need a reader. With any other sign-off value it treats such a folder as empty, exactly as before. This narrows the rule recorded earlier the same night, which applied under every setting.",
+  "alternatives": [
+    "Stop on such a folder under every sign-off setting, which changes what a default install does on that error and would need G0 to name a new exception.",
+    "Keep reading an unopenable folder as empty under every setting, leaving the records unread without saying so even when the user signs off on what was read."
+  ],
+  "why": "When the user signs off on each change, a folder read as empty would let the user sign believing nothing is unread, so it must fail loudly; with sign-off off nothing is signed, and G0 keeps a default install exactly as today. The user chose this narrower rule at the review walk.",
+  "relies_on": [
+    {
+      "kind": "goal",
+      "doc": "automate-dev-flow",
+      "id": "G0"
+    },
+    {
+      "kind": "decision",
+      "id": "D-pb-13"
+    }
+  ],
+  "detail": "selectUnreadRecords runs assertListable on decisions/ and account/ only when resolveSignoffSetting is change (src/core/decision-records.ts); orbit-emit-composition and orbit-decision-records deltas and docs/cli.md state the refusal for that value."
+}

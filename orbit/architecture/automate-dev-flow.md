@@ -397,6 +397,29 @@ text, shared with the save) and the archive and bulk-archive skill hash pins (fu
 review's reading step found fourteen reader rows across ten records; the walk replaced them, and those replacements reach
 no reader before archive (D-dr-2's named limit).
 
+Shipped as, third change (2026-11-14; archived as `orbit/changes/archive/2026-11-14-program-brief/`; the stage stays open
+for a fourth, `program-signoff`, the sign-off once per program, divided off as D-ps-4 in
+`orbit/explore/program-signoff/explore.md`): the sign-off per change. A new `signoff` key in `orbit/config.yaml`, `off`
+(the default) or `change`, read by its own resolver; any other value reads as `off` and the hold says so in one line
+(D-pb-12). `orbit emit signoff` writes the user's answer, `signed` or `declined` with a reason, to the change trail's
+`signoff/` folder, in time order and never replaced; it must name the latest saved brief, and orbit adds the SHA-256 of
+that copy's bytes (D-pb-8). `orbit brief --change <name> --hold` reports whether the change waits: under `change` the
+archive and bulk-archive hold after the brief's save and before the sync, show the latest copy whole and ask the user to
+sign off or decline, a decision prompt no chain passes; a sign-off whose hash equals the latest copy's lifts the hold, a
+missing copy or a damaged latest record keeps it (D-pb-14). Under `change` the reading step's selection also takes the
+change's latest account, so the account in the brief the user signs has been checked by a reader unless a later fix
+replaced it (D-pb-13); the requirement "No reader takes the account yet" was renamed to "The reader takes the account only
+when sign-off is per change". The system walk narrowed one rule to `change` (the user's decision A): a decision or account
+folder that cannot be listed fails the selection only there, and at the default reads as empty, as before. So G0 holds
+with no new exception in behaviour; two refusal texts changed wording at the default, the reading gate's ("owes a reading
+of N record(s)", once "decision record(s)") and `orbit brief <doc> --save`'s, which now names the fourth change.
+Departures: the program sign-off moved to the fourth change (D-ps-4), and the account walk step in
+`src/core/disciplines.ts` gained its exception sentence outside the design's Touchpoints. Tests that moved (R-adf-9):
+`rc03b`'s `emit-composition.ts` pin, the archive and bulk-archive skill hash pins, the every-command spine test (which
+leaves out the sign-off), the chain-prompt tag inventory and the brief goldens. The system review's reading step found
+fifteen reader rows across thirteen records; the walk replaced them, and those replacements reach no reader before
+archive (D-dr-2's named limit).
+
 ### Stage tripwires — detecting that a run has gone sideways
 
 Depends-on: decision-layer

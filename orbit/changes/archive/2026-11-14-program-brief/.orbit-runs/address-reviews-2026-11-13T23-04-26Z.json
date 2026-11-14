@@ -1,0 +1,199 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-13T23:04:26Z",
+  "change": "program-brief",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/program-brief/.orbit-runs/external-proposal-2026-11-13T22-46-37Z.md",
+  "source_command": null,
+  "source_token": "2026-11-13T22-46-37Z",
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-6 (Codex)",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 4,
+    "suggestion": 0
+  },
+  "pushback_verification": "All four verified against current state: the retained scenarios had no setting precondition; the unread row's parenthetical and task 3.2 disagreed on a read account; the refusal row followed the unsigned row under first-match; the hold paragraph named only normal states and usage errors; none stale. The first finding's orbit-review part converges with the fresh pass's account-reading finding, resolved in that pass's log.",
+  "resolution_summary": {
+    "resolved": 4,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Retained scenarios contradict the new conditional behavior",
+      "marker_source": "external",
+      "file": "orbit/changes/program-brief/specs/orbit-archive-modifications/spec.md",
+      "line": 111,
+      "outcome": "resolved",
+      "remedy": "repair",
+      "classification": "trivial_fix",
+      "action": "A failed save is recorded, not shown, and the archive completes now holds with the sign-off setting not change; A change with no records renders nothing to read now holds when the selection takes no account; orbit-review's No records, no reading is carried by the orbit-review delta the fresh pass's walk added (2026-11-13T23-03-02Z), qualified to the setting not being change, with an account-alone scenario, and the proposal's capability list names it",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/program-brief/specs/orbit-decision-records/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/program-brief/specs/orbit-archive-modifications/spec.md",
+            "text": "with the sign-off setting not `change`, the save step"
+          },
+          {
+            "path": "orbit/changes/program-brief/specs/orbit-decision-records/spec.md",
+            "text": "holds no account (the sign-off setting is not `change`, or a reading has listed the latest account)"
+          },
+          {
+            "path": "orbit/changes/program-brief/specs/orbit-review/spec.md",
+            "text": "with the sign-off setting not `change`, on a change with no `decisions/`"
+          }
+        ],
+        "searched": [
+          "nothing to read",
+          "archive completes",
+          "No records, no reading"
+        ],
+        "scope": [
+          "orbit/specs/orbit-review/spec.md"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "The task can label an already-read account as unchecked",
+      "marker_source": "external",
+      "file": "orbit/changes/program-brief/tasks.md",
+      "line": 16,
+      "outcome": "resolved",
+      "remedy": "repair",
+      "classification": "trivial_fix",
+      "action": "the program-brief delta's unread row, task 3.2 and design decision 6 name the account apart only when the sign-off setting is not change; under change the latest account is listed while unread and named nowhere once a reading has listed it; a scenario covers a read account",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/program-brief/specs/orbit-program-brief/spec.md",
+          "orbit/changes/program-brief/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the selection did not take it",
+          "when one exists and the selection does not take it"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/program-brief/specs/orbit-program-brief/spec.md",
+            "text": "An account a reader checked is not listed as unchecked"
+          },
+          {
+            "path": "orbit/changes/program-brief/tasks.md",
+            "text": "names it nowhere once a reading has listed it"
+          },
+          {
+            "path": "orbit/changes/program-brief/design.md",
+            "text": "under `change` a read account is not listed"
+          }
+        ],
+        "searched": [
+          "names the account apart",
+          "named apart",
+          "checked by no reader"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "Sign-off write failure is placed after the first matching archive branch",
+      "marker_source": "external",
+      "file": "orbit/changes/program-brief/specs/orbit-archive-modifications/spec.md",
+      "line": 16,
+      "outcome": "resolved",
+      "remedy": "repair",
+      "classification": "trivial_fix",
+      "action": "the unsigned row acts on the answer only once orbit emit signoff has written the record, and stops before the sync naming the refusal when it is refused or fails, whatever the answer; the separate refusal row is removed and the rows sentence restated; a scenario covers a signature whose record is not written",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "| the `signoff` emit is refused | stops before the sync, naming the refusal |"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/program-brief/specs/orbit-archive-modifications/spec.md",
+            "text": "a signature that is not recorded lifts no hold"
+          },
+          {
+            "path": "orbit/changes/program-brief/specs/orbit-archive-modifications/spec.md",
+            "text": "A signature whose record is not written stops the archive"
+          }
+        ],
+        "searched": [
+          "emit is refused",
+          "first row of this table that matches"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "The hold has no contract for unreadable or malformed history",
+      "marker_source": "external",
+      "file": "orbit/changes/program-brief/specs/orbit-program-brief/spec.md",
+      "line": 76,
+      "outcome": "resolved",
+      "remedy": "repair",
+      "classification": "trivial_fix",
+      "action": "under change the hold reads brief/ and signoff/ by filename (brief-<TS>.md, signoff-<TS>.json, latest by token, other names ignored, an absent folder empty); an unlistable folder, an unreadable latest copy, or a latest sign-off that is unreadable, not valid JSON or of a refused shape exits non-zero naming it with nothing on standard output and never falls back to an earlier record; scenarios for a damaged latest sign-off and an unlistable folder; task 2.3 carries it; under any other value no folder is read (the fresh pass's walk)",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/program-brief/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/program-brief/specs/orbit-program-brief/spec.md",
+            "text": "It never falls back to an earlier copy or an earlier sign-off"
+          },
+          {
+            "path": "orbit/changes/program-brief/specs/orbit-program-brief/spec.md",
+            "text": "A damaged latest sign-off fails the hold, never reviving an earlier one"
+          },
+          {
+            "path": "orbit/changes/program-brief/tasks.md",
+            "text": "never falls back to an earlier record"
+          }
+        ],
+        "searched": [
+          "cannot be listed",
+          "not valid JSON",
+          "latest sign-off"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Walked the external half of the blind pair: four warnings resolved as repairs. Retained scenarios carry the setting condition; a read account is never listed as unchecked; the archive acts on a sign-off only once its record is written; under change the hold names damaged history and never revives an earlier signature.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal program-brief",
+  "ripple_misses": 0
+}

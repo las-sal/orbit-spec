@@ -5,6 +5,9 @@ import { liveDecisionIds, decisionEntryText } from './parsers/explore-rules.js';
 import { parse as parseYaml } from 'yaml';
 import { createFenceTracker } from './markdown-fence.js';
 import { isSingleName } from './containment.js';
+import { resolveSignoffSetting } from './project-config.js';
+// A call-time cycle (account.ts reads this module's shape checks): nothing here is read at module load.
+import { ACCOUNT_DIR, ACCOUNT_FILENAME, latestAccount, readAccountFolder } from './account.js';
 
 /**
  * The three DECISION RECORDS (stage `decision-layer`, capability `orbit-decision-records`) — the
@@ -669,10 +672,16 @@ export const READER_ROWS: readonly string[] = [
 export const READER_SEVERITY_RULE =
   'A record a reader would misread, or whose restatement shifts what it cites, is a WARNING; one that only slows a reader is a SUGGESTION.';
 
-const RECORD_KIND_NAME: Record<DecisionCommand, string> = { ledger: 'ledger entry', stop: 'stop record', resolution: 'resolution' };
+const RECORD_KIND_NAME: Record<DecisionCommand | 'account', string> = {
+  ledger: 'ledger entry',
+  stop: 'stop record',
+  resolution: 'resolution',
+  account: "the change's account: what it built, its new seams, and where the work left its plan",
+};
 
 /** The plain fields the brief renders per record, in the order it renders them. */
-const BRIEF_PLAIN_FIELDS: Record<DecisionCommand, string[]> = {
+const BRIEF_PLAIN_FIELDS: Record<DecisionCommand | 'account', string[]> = {
+  account: ['built', 'seams', 'deviations'],
   ledger: ['decided', 'alternatives', 'why'],
   stop: ['about', 'question'],
   resolution: ['answer', 'effect'],
@@ -693,13 +702,21 @@ function inContextSystemReviews(runsDir: string): Record<string, unknown>[] {
 
 /**
  * THE SELECTION — the one function the brief, the review emit's `decision_records_owed` and read-list
- * check, and the archive emit's `decision_records_unread` call: the latest record in each replacement
- * chain of the change's `decisions/` folder that no in-context system review emit of the change's
- * history lists in `decision_records_read`. No timestamp is compared. A record that cannot be read is
- * selected (its chain cannot be known), so the brief fails naming it rather than hiding it.
+ * check, the archive emit's `decision_records_unread` and `orbit brief`'s unread section call: the latest
+ * record in each replacement chain of the change's `decisions/` folder that no in-context system review
+ * emit of the change's history lists in `decision_records_read`, and — only when the sign-off setting of
+ * the project at `projectRoot` is `change` (`The reader takes the account only when sign-off is per
+ * change`) — the latest record of the change's `account/` chain when no such emit lists it. No timestamp
+ * is compared. A record that cannot be read is selected (its chain cannot be known), so the brief fails
+ * naming it rather than hiding it. Under `signoff: change` — where the user signs over what was read — a folder
+ * the selection reads that exists and cannot be listed throws a `DecisionBriefError` naming it, so a failure is never
+ * read as an empty selection (an absent folder is empty); under every other value the selection reads as it did before
+ * the setting existed, an unlistable folder reading as empty (G0).
  */
-export function selectUnreadRecords(changeDir: string): string[] {
+export function selectUnreadRecords(changeDir: string, projectRoot: string): string[] {
   const runsDir = path.join(changeDir, '.orbit-runs');
+  const perChange = resolveSignoffSetting(projectRoot).value === 'change';
+  if (perChange) assertListable(path.join(runsDir, 'decisions'));
   const folder = readDecisionFolder(path.join(runsDir, 'decisions'));
   const read = new Set<string>();
   for (const r of inContextSystemReviews(runsDir)) {
@@ -707,7 +724,29 @@ export function selectUnreadRecords(changeDir: string): string[] {
       for (const f of r.decision_records_read) if (typeof f === 'string') read.add(f);
     }
   }
-  return [...folder.records.keys()].filter(f => !folder.replacedBy.has(f) && !read.has(f));
+  const selected = [...folder.records.keys()].filter(f => !folder.replacedBy.has(f) && !read.has(f));
+  if (perChange) {
+    assertListable(path.join(runsDir, ACCOUNT_DIR));
+    const account = latestAccount(readAccountFolder(path.join(runsDir, ACCOUNT_DIR)));
+    if (account !== null && !read.has(account)) selected.push(account);
+  }
+  return selected;
+}
+
+/** An absent folder reads as empty; one that exists and cannot be listed fails the selection, naming it. */
+function assertListable(dir: string): void {
+  try {
+    fs.readdirSync(dir);
+  } catch (err) {
+    const code = (err as NodeJS.ErrnoException).code;
+    if (code === 'ENOENT') return;
+    throw new DecisionBriefError(`the folder ${dir} cannot be listed (${code ?? (err as Error).message}), so the records it holds cannot be selected.`);
+  }
+}
+
+/** A filename the selection can hold: a decision record's, or (under `signoff: change`) an account's. */
+export function isSelectableFilename(f: string): boolean {
+  return RECORD_FILENAME.test(f) || ACCOUNT_FILENAME.test(f);
 }
 
 export class DecisionBriefError extends Error {}
@@ -725,7 +764,8 @@ export type BriefCitation =
 
 export interface BriefRecord {
   filename: string;
-  record: DecisionCommand;
+  /** The record's kind: a decision record's command, or `account` for an account the selection took. */
+  record: DecisionCommand | 'account';
   timestamp: string;
   work: string;
   fields: Record<string, unknown>;
@@ -794,7 +834,8 @@ export function buildDecisionBrief(projectRoot: string, change: string): Decisio
   const changeDir = path.join(projectRoot, 'orbit', 'changes', change);
   if (!fs.existsSync(changeDir)) briefFail(`change '${change}' not found at orbit/changes/${change}.`);
   const folder = readDecisionFolder(path.join(changeDir, '.orbit-runs', 'decisions'));
-  const selected = selectUnreadRecords(changeDir);
+  const accounts = readAccountFolder(path.join(changeDir, '.orbit-runs', ACCOUNT_DIR));
+  const selected = selectUnreadRecords(changeDir, projectRoot);
   const task = { rows: READER_ROWS, severity: READER_SEVERITY_RULE, baseline: BASELINE_NOTE, returns: RETURN_SHAPE };
   if (selected.length === 0) return { change, selected, docs: [], records: [], task };
 
@@ -807,8 +848,28 @@ export function buildDecisionBrief(projectRoot: string, change: string): Decisio
 
   const records: BriefRecord[] = [];
   for (const filename of selected) {
-    const r = folder.records.get(filename);
+    const isAccount = ACCOUNT_FILENAME.test(filename);
+    const r = isAccount ? accounts.records.get(filename) : folder.records.get(filename);
     if (r === null || r === undefined) briefFail(`record ${filename} cannot be read as a JSON object.`);
+    if (isAccount) {
+      // An account is a record of its own kind: its plain fields, its terms and its detail; it cites nothing.
+      if (r.command !== 'account') briefFail(`record ${filename} carries command ${describe(r.command)}, not account.`);
+      const fields: Record<string, unknown> = {};
+      for (const f of BRIEF_PLAIN_FIELDS.account) fields[f] = r[f];
+      records.push({
+        filename,
+        record: 'account',
+        timestamp: String(r.timestamp ?? ''),
+        work: `change ${String(r.change ?? change)}`,
+        fields,
+        defines: Array.isArray(r.defines)
+          ? (r.defines as Record<string, unknown>[]).map(d => ({ term: String(d.term), definition: String(d.definition) }))
+          : [],
+        detail: typeof r.detail === 'string' ? r.detail : null,
+        cites: [],
+      });
+      continue;
+    }
     const command = r.command;
     if (typeof command !== 'string' || !isDecisionCommand(command) || !filename.startsWith(`${command}-`)) {
       briefFail(`record ${filename} carries command ${describe(command)}, not its filename's kind.`);
@@ -925,6 +986,12 @@ export function renderDecisionBrief(brief: DecisionBrief): string {
     "You are reading the decision records an AI wrote while working on this change. Each record is written for a reader who knows the program's architecture doc and nothing else, together with what the record points at, which is shown under it. You know only what this brief carries; it points you at no file to open. Judge whether each record makes sense to that reader. Your task is at the end.",
     ''
   );
+  if (brief.records.some(r => r.record === 'account')) {
+    out.push(
+      "One of them is the change's account, which the user reads before signing off on the change: what the change built, the new places the user is asked something, and where the work left its plan. It cites nothing; read it by the same rules.",
+      ''
+    );
+  }
   if (brief.docs.length === 0) {
     out.push('## The architecture doc', '', 'This change cites no architecture doc, so you know none: judge each record against what it carries alone.', '');
   }

@@ -504,7 +504,7 @@ describe('a brief says only what the archive recorded', () => {
     const saved = saveChangeBrief(root, brief, renderChangeBrief(brief));
     const copy = fs.readFileSync(path.join(root, saved.path), 'utf-8');
     // The archive emit's `decision_records_unread` is the selection's length (`selectUnreadRecords`).
-    const unread = selectUnreadRecords(path.join(root, 'orbit/changes/foo'));
+    const unread = selectUnreadRecords(path.join(root, 'orbit/changes/foo'), root);
     expect(unread).toHaveLength(2);
     const listed = section(copy, 'Records no reader checked').split('\n').filter(l => l.startsWith('- ')).map(l => l.slice(2));
     expect(listed).toEqual([a, b]);
@@ -518,7 +518,7 @@ describe('a brief says only what the archive recorded', () => {
     const brief = buildChangeBrief(root, 'foo');
     const saved = saveChangeBrief(root, brief, renderChangeBrief(brief));
     ledger('orbit/changes/foo', 3);
-    expect(selectUnreadRecords(path.join(root, 'orbit/changes/foo'))).toHaveLength(3);
+    expect(selectUnreadRecords(path.join(root, 'orbit/changes/foo'), root)).toHaveLength(3);
     const unreadSection = section(fs.readFileSync(path.join(root, saved.path), 'utf-8'), 'Records no reader checked');
     expect(unreadSection.split('\n').filter(l => l.startsWith('- '))).toHaveLength(2);
     expect(unreadSection).toContain(
@@ -605,14 +605,14 @@ describe("orbit-decision-records: the brief as a reader", () => {
     expect(s).toContain(`- Question: ${question}`);
   });
 
-  // @scenario behaviour orbit-decision-records :: No reader takes the account yet :: The brief shows the account as checked by no reader
+  // @scenario behaviour orbit-decision-records :: The reader takes the account only when sign-off is per change :: The brief shows the account as checked by no reader
   it('a change holding only an account: no decision record is named unread, and the account is named apart', () => {
     makeChange('orbit/changes/foo');
     const a = account('orbit/changes/foo', 1);
     const u = section(change('foo'), 'Records no reader checked');
     expect(u).toContain('No decision record of this change is waiting for a reader.');
     expect(u).not.toContain('Decision records no reader has checked:');
-    expect(u).toContain(`The account ${a} was checked by no reader: no reading step reads accounts yet.`);
+    expect(u).toContain(`The account ${a} was checked by no reader: a reading step reads the account only when the user signs off on each change.`);
   });
 });
 
@@ -856,12 +856,15 @@ describe("a change's brief is saved, never overwritten", () => {
     expect(fs.existsSync(path.join(root, 'orbit/changes/foo/.orbit-runs/brief'))).toBe(false);
   });
 
-  it('--save with a doc, or with nothing, is a usage error', async () => {
+  // @scenario behaviour orbit-program-brief :: A change's brief is saved, never overwritten :: Saving a program brief names the change that builds it
+  it('--save with a doc, or with nothing, is a usage error; with a doc it names program-signoff', async () => {
     makeDoc();
     const withDoc = await runCLI(['brief', 'prog', '--save'], { cwd: root });
     expect(withDoc.exitCode).not.toBe(0);
     expect(withDoc.stdout).toBe('');
     expect(withDoc.stderr).toContain('saving a program brief is not built yet');
+    expect(withDoc.stderr).toContain('program-signoff');
+    expect(withDoc.stderr).not.toContain('third change');
     const bare = await runCLI(['brief', '--save'], { cwd: root });
     expect(bare.exitCode).not.toBe(0);
     expect(bare.stderr).toContain('--save takes --change');

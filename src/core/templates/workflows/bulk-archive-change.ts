@@ -5,7 +5,7 @@
  * templates file into workflow-focused modules.
  */
 import type { SkillTemplate, CommandTemplate } from '../types.js';
-import { BRIEF_SAVE_STEP, DEFERRAL_REFUSALS } from './archive-change.js';
+import { BRIEF_SAVE_STEP, DEFERRAL_REFUSALS, SIGNOFF_HOLD_STEP } from './archive-change.js';
 import { DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../disciplines.js';
 
 export function getBulkArchiveChangeSkillTemplate(): SkillTemplate {
@@ -358,6 +358,16 @@ For EACH confirmed change, after its base-fingerprint check above and immediatel
 ${BRIEF_SAVE_STEP}
 
 A failure goes into THAT change's own archive run summary's \`warnings\`; the batch goes on.
+
+## Per-change sign-off hold (NEW step inside upstream Step 8)
+
+(Per \`orbit-archive-modifications\`' \`The archive holds for a per-change sign-off\` requirement)
+
+For EACH confirmed change, directly after its brief save above and before its Step 8a sync, run the same hold step as \`orbit-archive-change\`'s Step 3.7, with the same table, for THAT change:
+
+${SIGNOFF_HOLD_STEP}
+
+A change whose hold stops is not archived and stays active, and the batch goes on with the others; the Step 9 summary reports it among the changes not archived (record it as Skipped), with the reason (the user's reason for a decline, or the failure the row names).
 
 ## Scope: does NOT emit run-summary JSON
 

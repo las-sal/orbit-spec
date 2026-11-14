@@ -195,6 +195,8 @@ const INVENTORY: Entry[] = [
   { file: 'orbit-archive-change/SKILL.md', anchor: '| `unverified` present, none `diverged` | Prompt via `AskUserQuestion` (chain: decision)', tags: ['(chain: decision)'], row: 'archive: the base-fingerprint check' },
   { file: 'orbit-archive-change/SKILL.md', anchor: '### Divergence inflection prompt (`AskUserQuestion`) (chain: decision)', tags: ['(chain: decision)'], row: 'archive: the base-fingerprint check' },
   { file: 'orbit-archive-change/SKILL.md', anchor: '| **≥1 CRITICAL findings** | Prompt user via `AskUserQuestion` (chain: decision)', tags: ['(chain: decision)'], row: 'archive: critical audit findings' },
+  // program-brief: the sign-off hold (Step 3.7).
+  { file: 'orbit-archive-change/SKILL.md', anchor: '2. Ask with the **AskUserQuestion tool** (chain: decision) — a decision prompt', tags: ['(chain: decision)'], row: 'archive: the sign-off over the saved brief' },
 ];
 
 /** Every failure of the tag rule over one text: an untagged site, a tag no kind names, or a tagged site the inventory does not list. */
@@ -397,6 +399,16 @@ describe('A chain treats each prompt by its kind — each listed prompt is tagge
     expect(lineExact(archive, 'Prompt via `AskUserQuestion` (chain: decision):')).toContain('(chain: decision)');
     const step = archive.slice(archive.indexOf('## NEW Step 1.5'), archive.indexOf('## NEW Step 3.2'));
     expect(step).toContain('Prompt via `AskUserQuestion` (chain: decision):\n\n- **Address now**');
+    expect(lineWith(archive, '- **Granted** (an AI-mediated arrival')).toContain('a decision prompt is asked exactly as on a typed arrival, and the chain does not continue after it');
+  });
+
+  // @scenario text orbit-conventions :: A chain treats each prompt by its kind :: The sign-off stops a chained archive
+  it('the sign-off in a chained archive is a decision: the copy shown and asked as on a typed archive, and the chain stops after it', () => {
+    const step = archive.slice(archive.indexOf('## NEW Step 3.7'), archive.indexOf('## NEW Step 4.9'));
+    expect(step).toContain('show it to the user WHOLE');
+    expect(lineWith(step, '2. Ask with the **AskUserQuestion tool**')).toContain(
+      '(chain: decision) — a decision prompt: an archive the `chain` object allowed asks it exactly as an archive the user typed, and the chain does not continue after it'
+    );
     expect(lineWith(archive, '- **Granted** (an AI-mediated arrival')).toContain('a decision prompt is asked exactly as on a typed arrival, and the chain does not continue after it');
   });
 

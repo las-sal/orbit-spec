@@ -22,6 +22,7 @@ import { isSingleName } from './containment.js';
 import { findArchivedDir } from './archived-change.js';
 import {
   AREA_ROWS,
+  DecisionBriefError,
   DecisionRecordError,
   RECORD_FILENAME,
   chainOf,
@@ -34,6 +35,7 @@ import {
   type DecisionFolder,
 } from './decision-records.js';
 import { ACCOUNT_DIR, AccountError, checkAccountShape, latestAccount, readAccountFolder } from './account.js';
+import { resolveSignoffSetting } from './project-config.js';
 import { parseDeltaSpec } from './parsers/requirement-blocks.js';
 import { readSizeDeclaration, type SizeDimension } from './change-size.js';
 import { loadArchitectureDoc, isValidDocName } from './architecture/parser.js';
@@ -142,6 +144,7 @@ export interface ChangeBrief {
   stops: BriefStop[];
   tripwires: 'not-installed';
   deviations: { account: string | null; size_breached: SizeDimension[] };
+  /** `records`: the selection; `account`: the latest account named apart, only when the reader does not take it. */
   unread: { records: string[]; account: string | null };
 }
 
@@ -445,6 +448,16 @@ function isDir(p: string): boolean {
   }
 }
 
+/** The reading's selection; a folder it cannot list fails the brief, naming it (the brief is whole or absent). */
+function selectedOrFail(changeDir: string, projectRoot: string): string[] {
+  try {
+    return selectUnreadRecords(changeDir, projectRoot);
+  } catch (e) {
+    if (e instanceof DecisionBriefError) fail(e.message);
+    throw e;
+  }
+}
+
 /** The change brief of the change at `changeDir`. Whole or absent. */
 export function buildChangeBriefAt(projectRoot: string, changeDir: string, status: 'active' | 'archived'): ChangeBrief {
   const base = path.basename(changeDir);
@@ -494,7 +507,13 @@ export function buildChangeBriefAt(projectRoot: string, changeDir: string, statu
     stops,
     tripwires: 'not-installed',
     deviations: { account: account === null ? null : String(account.deviations), size_breached: size.declaration.declared },
-    unread: { records: selectUnreadRecords(changeDir).sort(byToken), account: accountName },
+    // Under `signoff: change` the selection takes the latest account while it is unread, and a read one is named
+    // nowhere; under every other value the account is named apart as checked by no reader
+    // (`orbit-decision-records`' `The reader takes the account only when sign-off is per change`).
+    unread: {
+      records: selectedOrFail(changeDir, projectRoot).sort(byToken),
+      account: resolveSignoffSetting(projectRoot).value === 'change' ? null : accountName,
+    },
   };
 }
 
@@ -604,7 +623,9 @@ const TEXT = {
   noSize: "The proposal's Size section declares no size limit breached.",
   allRead: 'No decision record of this change is waiting for a reader.',
   unreadNote: 'Decision records no reader has checked:',
-  accountUnread: (n: string) => `The account ${n} was checked by no reader: no reading step reads accounts yet.`,
+  unreadWithAccountNote: "Records no reader has checked (decision records, and the change's account):",
+  accountUnread: (n: string) =>
+    `The account ${n} was checked by no reader: a reading step reads the account only when the user signs off on each change.`,
   snapshot:
     "This list is as of when this brief was rendered; records written after it appear in the archived change's brief and the program brief.",
   open: 'Open: no answer to this stop has been recorded.',
@@ -770,7 +791,7 @@ function renderChange(out: string[], b: ChangeBrief, level: number): void {
   out.push(`${h} Records no reader checked`, '');
   if (b.unread.records.length === 0) out.push(TEXT.allRead, '');
   else {
-    out.push(TEXT.unreadNote, '');
+    out.push(b.unread.records.some(r => r.startsWith('account-')) ? TEXT.unreadWithAccountNote : TEXT.unreadNote, '');
     for (const r of b.unread.records) out.push(`- ${r}`);
     out.push('');
   }

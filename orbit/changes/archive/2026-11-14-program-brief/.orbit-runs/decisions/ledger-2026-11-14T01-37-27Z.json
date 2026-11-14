@@ -1,0 +1,31 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-14T01:37:27Z",
+  "change": "program-brief",
+  "model": "claude-opus-5-5",
+  "area": "user-sees-or-does",
+  "decided": "Three parts of the program brief cannot be worked out from what orbit already records: what was built, the new places the user is asked something or where a setting now changes what happens, and where the work left its stage's plan. The AI writes those three, in plain language, once for each change when it finishes building it; orbit puts together the rest of the brief from what it already records.",
+  "alternatives": [
+    "the AI writes the three parts when the change is archived, after the last point a separate reader checks the AI's writing",
+    "orbit puts together the whole brief from what it records, leaving those three parts out"
+  ],
+  "why": "G5 asks that the user can sign off from the brief alone, which needs those three parts; written when building finishes, they are checked by the same reader that checks the AI's other records before the user sees them, when the user signs off on each change.",
+  "relies_on": [
+    {
+      "kind": "decision",
+      "id": "D-pb-4"
+    },
+    {
+      "kind": "goal",
+      "doc": "automate-dev-flow",
+      "id": "G5"
+    }
+  ],
+  "defines": [
+    {
+      "term": "separate reader",
+      "definition": "a fresh AI session given the architecture doc, each record with what it points at, and a fixed task, which checks that each record can be understood without knowing the work"
+    }
+  ],
+  "replaces": "ledger-2026-11-14T01-37-26Z.json"
+}
