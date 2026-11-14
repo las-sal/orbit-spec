@@ -408,8 +408,8 @@ cited requirement, resolution or explore decision, its area, its stop's conditio
 it was written), and the reader's task last. With `signoff: change` in `orbit/config.yaml`, the change's latest account
 no reading has listed is among the records, rendered with what it built, its seams and its deviations. It writes
 nothing. When every record has been read it says there is
-nothing to read and exits zero; when a record or a source it renders cannot be read, it exits non-zero naming it and
-prints nothing.
+nothing to read and exits zero; when a record or a source it renders cannot be read — or, with `signoff: change`, a
+folder of records exists and cannot be listed — it exits non-zero naming it and prints nothing.
 
 Usage: `orbit decisions brief <change-name>`.
 

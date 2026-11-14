@@ -192,18 +192,21 @@ describe('a folder the selection cannot list fails it, never reading as empty', 
     }
   });
 
-  it.skipIf(process.getuid?.() === 0)('an unlistable decisions folder fails the selection under every value, and the archive count names it', () => {
-    setting(null);
+  // @scenario behaviour orbit-emit-composition :: The reading's selection is recorded at review and archive :: Under `change`, an unlistable folder refuses the emit
+  // @scenario behaviour orbit-decision-records :: The reading step's brief is rendered by orbit :: Under `change`, an unlistable folder fails the brief
+  it.skipIf(process.getuid?.() === 0)('under change, an unlistable decisions folder fails the selection and the brief, and the archive count names it', () => {
+    setting('change');
     ledger();
     const dir = path.join(CHANGE(), '.orbit-runs/decisions');
     fs.chmodSync(dir, 0o000);
     try {
       expect(() => selection()).toThrow(/\.orbit-runs\/decisions cannot be listed/);
+      expect(() => buildDecisionBrief(root, 'foo')).toThrow(/\.orbit-runs\/decisions cannot be listed/);
       expect(() => buildChangeBrief(root, 'foo')).toThrow(/decisions/);
+      expect(() => systemPass(null)).toThrow(/write gate: the folder .*decisions cannot be listed/);
     } finally {
       fs.chmodSync(dir, 0o755);
     }
-    // At archive: the count is the selection's, so an unlistable folder refuses the emit instead of counting 0.
     fs.mkdirSync(path.join(root, 'orbit/changes/archive'), { recursive: true });
     fs.renameSync(CHANGE(), path.join(root, 'orbit/changes/archive/2026-11-13-foo'));
     const archived = path.join(root, 'orbit/changes/archive/2026-11-13-foo/.orbit-runs/decisions');
@@ -211,6 +214,29 @@ describe('a folder the selection cannot list fails it, never reading as empty', 
     try {
       expect(() => composeAndWriteEmit('archive', { change: 'foo' }, { final_assessment: 'archived', model: null }, { projectRoot: root }))
         .toThrow(/write gate: the folder .*decisions cannot be listed/);
+    } finally {
+      fs.chmodSync(archived, 0o755);
+    }
+  });
+
+  it.skipIf(process.getuid?.() === 0)('with the setting absent, an unlistable decisions folder reads as empty, as before the setting existed', () => {
+    setting(null);
+    ledger();
+    const dir = path.join(CHANGE(), '.orbit-runs/decisions');
+    fs.chmodSync(dir, 0o000);
+    try {
+      expect(selection()).toEqual([]);
+      expect(buildDecisionBrief(root, 'foo').selected).toEqual([]);
+      expect(systemPass(null).emit.decision_records_owed).toEqual([]);
+    } finally {
+      fs.chmodSync(dir, 0o755);
+    }
+    fs.mkdirSync(path.join(root, 'orbit/changes/archive'), { recursive: true });
+    fs.renameSync(CHANGE(), path.join(root, 'orbit/changes/archive/2026-11-13-foo'));
+    const archived = path.join(root, 'orbit/changes/archive/2026-11-13-foo/.orbit-runs/decisions');
+    fs.chmodSync(archived, 0o000);
+    try {
+      expect(composeAndWriteEmit('archive', { change: 'foo' }, { final_assessment: 'archived', model: null }, { projectRoot: root }).emit.decision_records_unread).toBe(0);
     } finally {
       fs.chmodSync(archived, 0o755);
     }

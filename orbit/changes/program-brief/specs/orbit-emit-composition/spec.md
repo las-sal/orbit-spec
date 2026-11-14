@@ -102,6 +102,12 @@ An in-context system review payload SHALL be refused, writing nothing, when:
 | read without a list | `reading` is in `passes_run` and `decision_records_read` is absent or empty |
 | list without a read | `decision_records_read` is not empty and `reading` is not in `passes_run` |
 | outside the selection | a filename in `decision_records_read` is not in the selection when the emit is written; the refusal names it |
+| unlistable | the sign-off setting is `change` and a folder the selection reads (the change's `decisions/` or `account/`) exists and cannot be listed; the refusal names the folder |
+
+Under `signoff: change` the archive emit is refused on the same condition, naming the folder, rather than counting an
+unlistable folder as holding no record; it is written after the move, so the archive stands, and the emit is written
+again once the folder can be listed. Under every other value the selection reads an unlistable folder as empty, as it
+did before the setting existed (`automate-dev-flow`'s G0).
 
 The two engine-computed fields are engine-owned: a payload supplying either is refused naming it. Fresh and external
 review emits, proposal-mode emits and every other command carry none of the three; a payload of one supplying
@@ -165,6 +171,13 @@ Residual method: the reader's findings name records of the selection; a run list
 - **WHEN** under `signoff: change` a change holds `account-A` and `ledger-A`, neither listed as read, and is archived with
   no in-context system review emit
 - **THEN** the archive emit carries `decision_records_unread: 2`; with the setting absent it would carry `1`
+
+#### Scenario: Under `change`, an unlistable folder refuses the emit
+
+- **WHEN** under `signoff: change` change `foo`'s `.orbit-runs/decisions/` folder exists and cannot be listed, and an
+  in-context system review emit or `foo`'s archive emit is written
+- **THEN** the emit is refused naming the folder and nothing is written; with the setting absent the folder reads as
+  empty and each emit is written as before
 
 #### Scenario: Under `change`, a read account leaves the selection
 

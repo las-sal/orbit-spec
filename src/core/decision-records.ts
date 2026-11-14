@@ -708,12 +708,15 @@ function inContextSystemReviews(runsDir: string): Record<string, unknown>[] {
  * the project at `projectRoot` is `change` (`The reader takes the account only when sign-off is per
  * change`) — the latest record of the change's `account/` chain when no such emit lists it. No timestamp
  * is compared. A record that cannot be read is selected (its chain cannot be known), so the brief fails
- * naming it rather than hiding it; and a folder the selection reads that exists and cannot be listed throws a
- * `DecisionBriefError` naming it, so a failure is never read as an empty selection (an absent folder is empty).
+ * naming it rather than hiding it. Under `signoff: change` — where the user signs over what was read — a folder
+ * the selection reads that exists and cannot be listed throws a `DecisionBriefError` naming it, so a failure is never
+ * read as an empty selection (an absent folder is empty); under every other value the selection reads as it did before
+ * the setting existed, an unlistable folder reading as empty (G0).
  */
 export function selectUnreadRecords(changeDir: string, projectRoot: string): string[] {
   const runsDir = path.join(changeDir, '.orbit-runs');
-  assertListable(path.join(runsDir, 'decisions'));
+  const perChange = resolveSignoffSetting(projectRoot).value === 'change';
+  if (perChange) assertListable(path.join(runsDir, 'decisions'));
   const folder = readDecisionFolder(path.join(runsDir, 'decisions'));
   const read = new Set<string>();
   for (const r of inContextSystemReviews(runsDir)) {
@@ -722,7 +725,7 @@ export function selectUnreadRecords(changeDir: string, projectRoot: string): str
     }
   }
   const selected = [...folder.records.keys()].filter(f => !folder.replacedBy.has(f) && !read.has(f));
-  if (resolveSignoffSetting(projectRoot).value === 'change') {
+  if (perChange) {
     assertListable(path.join(runsDir, ACCOUNT_DIR));
     const account = latestAccount(readAccountFolder(path.join(runsDir, ACCOUNT_DIR)));
     if (account !== null && !read.has(account)) selected.push(account);

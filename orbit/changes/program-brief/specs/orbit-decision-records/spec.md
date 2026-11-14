@@ -42,8 +42,11 @@ the doc) is rendered whole, a path inside it included, since the reader reads it
 review-genre reviewer, and knows only what the brief carries.
 
 A brief is whole or absent, never partial: when a selected record cannot be read or is not valid JSON, or a source the
-brief renders (the architecture doc, a cited requirement, resolution or Decisions entry) no longer resolves, the command
-exits non-zero naming it and prints nothing to standard output, so a failure is never read as an empty selection.
+brief renders (the architecture doc, a cited requirement, resolution or Decisions entry) no longer resolves, or, when the
+sign-off setting is `change`, a folder the selection reads (the change's `decisions/` or `account/`) exists and cannot be
+listed, the command exits non-zero naming it and prints nothing to standard output, so a failure is never read as an
+empty selection. Under every other value the selection reads its folders as it did before the setting existed, a
+folder that cannot be listed reading as empty (`automate-dev-flow`'s G0).
 
 The brief and the fields of `orbit-emit-composition`'s `The reading's selection is recorded at review and archive` are
 the readers of `decisions/` this capability adds, and, under `signoff: change`, of the account; no reader of run
@@ -91,6 +94,13 @@ Residual method: the reader is told, in the brief, that cited requirement text i
 - **WHEN** `orbit decisions brief foo` runs on a change whose `decisions/` folder is absent or empty and whose selection
   holds no account (the sign-off setting is not `change`, or a reading has listed the latest account)
 - **THEN** the output says there is nothing to read, and the command exits zero
+
+#### Scenario: Under `change`, an unlistable folder fails the brief
+
+- **WHEN** `orbit decisions brief foo` runs under `signoff: change` and `foo`'s `.orbit-runs/decisions/` folder exists and
+  cannot be listed
+- **THEN** the command exits non-zero naming the folder and prints nothing to standard output; with the setting absent
+  the folder reads as empty, as before
 
 #### Scenario: An account is selected under `change`
 

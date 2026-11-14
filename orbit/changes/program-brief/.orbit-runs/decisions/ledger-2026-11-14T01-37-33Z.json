@@ -1,0 +1,24 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-14T01:37:33Z",
+  "change": "program-brief",
+  "model": "claude-opus-5-5",
+  "area": "user-sees-or-does",
+  "decided": "When a project signs off at every change's archive and the reader finds the AI's account of a change unclear, the account is rewritten to fix that wording before the user signs, one rewrite for each problem found. This holds even when the same review's fixes send building work back to be redone: such a fix normally leaves rewriting the account to whoever finishes that work, but a rewording states nothing new, so it is written at once.",
+  "alternatives": [
+    "leave the unclear wording for the user to meet at sign-off"
+  ],
+  "why": "The reader takes the account so that the user signs over plain words a clean reader has checked; leaving its problems for the user would undo that.",
+  "relies_on": [
+    {
+      "kind": "decision",
+      "id": "D-pb-13"
+    },
+    {
+      "kind": "goal",
+      "doc": "automate-dev-flow",
+      "id": "G5"
+    }
+  ],
+  "replaces": "ledger-2026-11-13T23-04-41Z.json"
+}
