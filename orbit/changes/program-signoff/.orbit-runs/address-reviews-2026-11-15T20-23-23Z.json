@@ -1,0 +1,128 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-15T20:23:23Z",
+  "change": "program-signoff",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/program-signoff/.orbit-runs/external-proposal-2026-11-14T19-17-03Z.md",
+  "source_command": null,
+  "source_token": "2026-11-14T19-17-03Z",
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-6 (Codex)",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 1
+  },
+  "pushback_verification": "All three verified against current state: the re-sign row skipped unobserved, gh-absent with no recorded URL and several (src/core/pr/program.ts); the program row claimed landed work the archive does not establish and promised a brief line nothing writes; the baseline Purpose names off and change only. None stale at HEAD. The PR-state and Purpose findings converge with the fresh pass's, walked in its log; the fix covers each sub-point (branches on pr, outcome and action; conservative on failed and ambiguous observations; scenarios for gh-absent and several).",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale_suppressed": 2,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "An unavailable PR state can bypass the required re-sign",
+      "marker_source": "external",
+      "file": "orbit/changes/program-signoff/specs/orbit-architect/spec.md",
+      "line": 32,
+      "classification": "stale",
+      "action": "converged with the fresh half's finding (The re-sign row's 'otherwise' asks nothing when `orbit pr program` reports several candidate PRs, where the READY flip may still be to come), walked in its log",
+      "evidence": "resolved in address-reviews-2026-11-15T20-23-18Z (the earlier pass's log), where the fresh half's converging finding was walked",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Archive completion does not establish that changes have merged",
+      "marker_source": "external",
+      "file": "orbit/changes/program-signoff/specs/orbit-program-brief/spec.md",
+      "line": 353,
+      "outcome": "resolved",
+      "remedy": "repair",
+      "classification": "decision_required",
+      "ratified_via": "chat",
+      "resolution": "A — drop the claim and state only what the archive establishes; the brief gains no line; D-ps-9 supersedes D-ps-1",
+      "action": "the setting's program row says under per-proposal each change has passed its archive (its PR marked ready there, its merge left to the user) and under never its work is archived on its branch, nothing waits on either, and the brief writes no line about it; a scenario holds a done program unsigned whatever its change PRs' state; the 'once the work has landed' scenario is renamed; explore.md gains D-ps-9 (D-ps-1 superseded, its Mechanism entry renamed and corrected, D-ps-5's rows corrected); the proposal, design and decision-records citations move to D-ps-9",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/program-signoff/explore.md",
+          "orbit/changes/program-signoff/design.md",
+          "orbit/changes/program-signoff/proposal.md",
+          "orbit/changes/program-signoff/specs/orbit-decision-records/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "every change has already landed when the user is asked, and the brief says so",
+          "A later copy asks nothing once the work has landed",
+          "the brief says each change has already merged",
+          "the brief says every change has already merged",
+          "D-ps-1 and D-ps-5 in",
+          "nothing waits at any change's archive (D-ps-1)",
+          "D-ps-1 in"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/program-signoff/specs/orbit-program-brief/spec.md",
+            "text": "nothing waits on either, and the brief writes no line about it"
+          },
+          {
+            "path": "orbit/changes/program-signoff/specs/orbit-program-brief/spec.md",
+            "text": "open change PRs do not change the program's hold"
+          },
+          {
+            "path": "orbit/changes/program-signoff/explore.md",
+            "text": "D-ps-9: the sign-off setting's `program` value, stating only what the archive establishes"
+          },
+          {
+            "path": "orbit/changes/program-signoff/design.md",
+            "text": "| D-ps-9 | DERIVED | live rule |"
+          },
+          {
+            "path": "orbit/changes/program-signoff/proposal.md",
+            "text": "nothing waits at any change's archive (D-ps-9)"
+          },
+          {
+            "path": "orbit/changes/program-signoff/specs/orbit-decision-records/spec.md",
+            "text": "D-ps-9 in"
+          }
+        ],
+        "searched": [
+          "landed",
+          "merged",
+          "the brief says",
+          "D-ps-1"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/program-signoff/explore.md",
+            "why": "the exploration's historical record: superseded D-ps-1 and D-ps-2 keep their wording"
+          }
+        ]
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The archived capability purpose will retain the old sign-off contract",
+      "marker_source": "external",
+      "file": "orbit/specs/orbit-program-brief/spec.md",
+      "line": 4,
+      "classification": "stale",
+      "action": "converged with the fresh half's finding (orbit-program-brief's Purpose goes stale and no task edits it in place), walked in its log",
+      "evidence": "resolved in address-reviews-2026-11-15T20-23-18Z (the earlier pass's log), where the fresh half's converging finding was walked",
+      "outcome": "stale"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Walked the external half of the blind pair: the unsupported landed-work claim is resolved by the user's decision A (state only what the archive establishes; D-ps-9 supersedes D-ps-1), and the two converged findings are recorded stale against the fresh half's log.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal program-signoff",
+  "ripple_misses": 0
+}

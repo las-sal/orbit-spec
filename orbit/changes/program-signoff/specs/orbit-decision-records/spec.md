@@ -223,7 +223,7 @@ one; a test holds each body carrying the fields and the invocation.
 ### Requirement: The reader takes the account when the user signs off
 
 A reading step SHALL take a change's account only when the sign-off setting (`orbit-program-brief`'s `The sign-off setting holds a change's archive or a program's completion for the user's sign-off`) is `change` or `program`, the two values under which the
-user signs off (D-pb-13 in `program-brief`'s `explore.md`, D-ps-1 in `program-signoff`'s): then
+user signs off (D-pb-13 in `program-brief`'s `explore.md`, D-ps-9 in `program-signoff`'s): then
 the selection (`The reading step's brief is rendered by orbit`) holds the change's latest account — the latest record of
 its `account/` chain — until an in-context system review emit lists it in `decision_records_read`, as it holds a decision
 record. Under every other value the account is kept out of the selection, which reads only the `decisions/` folder, and

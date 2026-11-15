@@ -9,17 +9,17 @@ brief (`buildProgramBrief` in `src/core/program-brief.ts`) renders the citing ch
 `decisions/` records from the architecture trail, and no stage state. The architect body's Step 5.5 observes arc-done
 itself (every stage archived and the closing `--as architecture` review recorded) and runs `orbit pr program`.
 
-This change is the decisions D-ps-1, D-ps-3 and D-ps-5 to D-ps-7 of `explore.md` made real; the decisions below are how.
+This change is the decisions D-ps-3, D-ps-5, D-ps-6, D-ps-8 and D-ps-9 of `explore.md` made real; the decisions below are how.
 The size breach (seven capabilities, fifteen requirements) is declared in the proposal: the user chose that over a split.
 
 ## Goals / Non-Goals
 
 **Goals:**
 
-- `signoff: program` read, and the account read by the reader under it as under `change` (D-ps-1).
+- `signoff: program` read, and the account read by the reader under it as under `change` (D-ps-9).
 - The program brief saved for a finished program, under every setting, only when its text changed (D-ps-3, D-ps-6).
 - The program hold computed by the engine, the sign-off written for a doc, and the architect session asking for it
-  before the READY flip (D-ps-5, D-ps-6, D-ps-7).
+  before the READY flip (D-ps-5, D-ps-6, D-ps-8).
 - Nothing the user sees or is asked changes at the defaults (G0, R-adf-1).
 
 **Non-Goals:**
@@ -37,7 +37,8 @@ so the five readers cannot disagree). The change brief's unread-account line is 
 
 **2. The program save is a sibling of the change save, decided by the engine.** `saveProgramBrief(projectRoot, doc)`
 in `src/core/program-brief.ts` computes FINISHED from `computeStageStates` (every declared stage rendering
-`quiescent-awaiting-ratification`, `complete`, `ended` or `ended-from-explore`), compares the fresh render's bytes with
+`quiescent-awaiting-ratification`, `complete`, `ended` or `ended-from-explore`, and no active change citing the doc,
+whatever stage it names), compares the fresh render's bytes with
 the latest `brief/<doc>/brief-<TS>.md`, and publishes only when they differ. It returns `{save, saved}` with `save` one of
 `saved`, `unchanged`, `not-finished`. Deciding "finished" and "unchanged" in the engine, not the architect body, makes
 D-ps-3's table testable and keeps the body to one call. Chosen over a body-side check, which no test can hold.
@@ -51,16 +52,20 @@ before the link, so an aliased `brief/` or `<doc>` folder is refused as an alias
 **4. The closing review is a filename the record carries, not a token comparison at read time.** The hold finds the
 closing review once — the latest `review-architecture-<TS>.json` whose `doc` is the doc and whose token is later than
 every citing change's archive time (`archivedAt`, the program brief's own rule) — and a doc sign-off records it as the
-engine-owned `closing_review`. The `re-sign` row then compares filenames: a signature belongs to the current arc-done
-exactly when its `closing_review` is the current one. Chosen over ordering a sign-off's token against the review's,
-which the reading step's requirement already names as unorderable across folders. The one token comparison left,
-review against archive, is a named limit in the requirement.
+engine-owned `closing_review`. A signature then STILL STANDS exactly when the review its `closing_review` names is
+later than every citing change's archive, the same rule that finds the closing review: a closing review run again
+leaves it standing (its next copy is a `re-sign`), and a change citing the doc archived after it reopens the program,
+so the signature covers none of that change's work and the copy is `unsigned` under every mode (D-ps-8). Chosen over
+ordering a sign-off's token against the review's, which the reading step's requirement already names as unorderable
+across folders. The one token comparison left, review against archive, is a named limit in the requirement.
 
 **5. One hold module, two units.** `computeProgramHold(projectRoot, doc)` joins `computeHold` in `src/core/signoff.ts`,
 sharing `latestSavedCopy`, the stored-record checks (a doc record checked for `change: null` and its `doc`) and the
 read-the-setting-first rule. The `re-sign` row's `held` reads `resolvePrMode` from the same config. Whether the program
 PR is still a draft is NOT read here: `orbit pr program` already observes it live at the arc-done readout, so the
-architect body combines the two (D-ps-7), and the engine stays out of `gh`.
+architect body combines the two (D-ps-8), and the engine stays out of `gh`. The body asks nothing only when that call
+positively settles that no flip remains (the PR ready, none open, or none recorded); a state it cannot read, or
+several candidates, asks again.
 
 **6. The gate splits by target.** `composeSignoff` takes `--change` under `change` and `--doc` under `program`, each
 refusal naming the value read and which sign-off it asks for; `SIGNOFF_DOC_REFUSAL` and the brief command's two
@@ -70,12 +75,16 @@ refusal naming the value read and which sign-off it asks for; `SIGNOFF_DOC_REFUS
 invocation, under every setting, and acts by the table the `orbit-architect` delta owns. At the defaults the save is
 silent and its failure goes only into the session's `final_assessment`: the architect emit has no `warnings` field, and
 adding one would touch `orbit-run-summary-emit` for a sentence the narrative already carries. The sign-off question is
-the body's third prompt; the Step 5 header that names "the completion flow's one AskUserQuestion" is reworded. This
+the body's third prompt; the Step 5 header that names "the completion flow's one AskUserQuestion" is reworded, and
+Step 5.5's "unconditional" arc-done check shows its readout under `program` only when Step 5.4's row does. This
 moves the architect skill's function and generated-skill pins in `skill-templates-parity.test.ts`.
 
 **8. arc-done under `program` is defined where arc-done is defined.** `orbit-pr-lifecycle`'s `Program PR (Shape A)
 semantics` gains the sign-off condition, so the readout's "SHALL surface" and the hold cannot contradict each other;
-`Generalized READY rule` and `orbit pr program` read arc-done by name and are unchanged.
+`Generalized READY rule` and `orbit pr program` read arc-done by name and are unchanged. Under `program` the first
+condition is read as FINISHED, which counts a stage the user ended without archiving a change; the reading at the
+defaults is left as it stands, a named limit there, since changing it would change what the user sees at the defaults
+(G0) and is the next architect session's to rule on.
 
 **9. The two renamed requirements take their pointers with them.** `The reader takes the account when the user signs
 off` and `The sign-off setting holds a change's archive or a program's completion for the user's sign-off`: every
@@ -104,18 +113,20 @@ the proposing AI's reading of the file; no engine record
 
 | rule | closure / state | owner's state | destination |
 |---|---|---|---|
-| D-ps-1 | DERIVED | live rule | `orbit-program-brief`'s `The sign-off setting holds a change's archive or a program's completion for the user's sign-off` (a normative table: the `program` row) and `orbit-decision-records`' `The reader takes the account when the user signs off` (its reader table's `change` or `program` column) |
+| D-ps-1 | — | superseded by D-ps-9 | not carried |
+| D-ps-9 | DERIVED | live rule | `orbit-program-brief`'s `The sign-off setting holds a change's archive or a program's completion for the user's sign-off` (a normative table: the `program` row) and `orbit-decision-records`' `The reader takes the account when the user signs off` (its reader table's `change` or `program` column) |
 | D-ps-2 | — | superseded by D-ps-5 | not carried |
 | D-ps-3 | DERIVED | live rule | `orbit-program-brief`'s `A program's brief is saved once the program is finished` (a normative table) |
 | D-ps-4 | — | scope | not carried |
 | D-ps-5 | DERIVED | live rule | `orbit-program-brief`'s `A program's sign-off is recorded against its saved copy, and the hold reads arc-done` (a normative table), `orbit-architect`'s `The architect session saves the program brief and asks for the program's sign-off` (a normative table) and `orbit-pr-lifecycle`'s `Program PR (Shape A) semantics` (a sentence naming the hold as the source) |
 | D-ps-6 | SOURCED | live rule | `orbit-program-brief`'s `A program's brief is saved once the program is finished` and `A program's sign-off is recorded against its saved copy, and the hold reads arc-done` (a sentence naming the folders), `orbit-emit-composition`'s `The write gate checks the sign-off record` (the path sentence) |
-| D-ps-7 | DERIVED | live rule | the `re-sign` row of `orbit-program-brief`'s `A program's sign-off is recorded against its saved copy, and the hold reads arc-done` and the `re-sign` rows of `orbit-architect`'s requirement (normative tables) |
+| D-ps-7 | — | superseded by D-ps-8 | not carried |
+| D-ps-8 | DERIVED | live rule | the `re-sign` and `unsigned` rows of `orbit-program-brief`'s `A program's sign-off is recorded against its saved copy, and the hold reads arc-done` and the `re-sign` rows of `orbit-architect`'s requirement (normative tables) |
 
 ## Risks / Trade-offs
 
 - [The architect body asks a third question] → it fires only under `signoff: program`, only on a done program, and only
-  in a session the user opened on that doc; a decline is asked again at the next such session, as D-ps-7 records.
+  in a session the user opened on that doc; a decline is asked again at the next such session, as D-ps-8 records.
 - [A failed save under `program` leaves an older copy that a hold could read as signed] → the body asks nothing and
   shows no arc-done readout in a session whose save failed, so an older copy never stands in for the current text.
 - [The closing review is ordered against archives by token] → named in the hold's requirement as a limit with its

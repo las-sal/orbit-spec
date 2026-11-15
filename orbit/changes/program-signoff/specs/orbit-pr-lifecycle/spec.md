@@ -56,10 +56,15 @@ Under the sign-off setting's `program` value (`orbit-program-brief`'s `The sign-
 brief (D-ps-5 in `program-signoff`'s `explore.md`): an architect invocation observes it only once
 `orbit brief <doc> --hold` reports the program signed — `why: "signed"`, or a `re-sign` the session asks nothing about
 (`orbit-architect`'s `The architect session saves the program brief and asks for the program's sign-off`) — and until then the session asks for
-the sign-off and surfaces no READY flip. The hold reads the two conditions above from the trail: every declared stage
-finished, and the doc's closing review recorded after the last citing change's archive (`orbit-program-brief`'s
-`A program's sign-off is recorded against its saved copy, and the hold reads arc-done`). Under every other value arc-done is the two
-conditions alone, observed as before.
+the sign-off and surfaces no READY flip. Under `program` the hold reads the two conditions above from the trail, the
+first as the program FINISHED (`orbit-program-brief`'s `A program's brief is saved once the program is finished`) rather
+than every declared stage archived: a stage the user ended (`ended` or `ended-from-explore`) counts as done whether or not
+it archived a change, and no active change may cite the doc; the second as the doc's closing review recorded after the
+last citing change's archive (`orbit-program-brief`'s `A program's sign-off is recorded against its saved copy, and the
+hold reads arc-done`). Under every other value arc-done is the two conditions alone, observed as before, the first read
+as worded. Named limit — the two readings differ on a stage the user ended without archiving a change: `program` counts
+it done, and whether the reading at the defaults does is left as it stands, the program's next architect session's to
+rule on, since changing it would change what the user sees at the defaults.
 
 The fall-through is deliberately the OPPOSITE of the archive tail's rule, where a positively
 invalid record is ANSWERED rather than retried. The seams differ in risk, not in vocabulary:

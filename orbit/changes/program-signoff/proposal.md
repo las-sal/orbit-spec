@@ -10,11 +10,11 @@ first-run stage's closing review grades G5 from saved copies.
 ## What Changes
 
 - **The setting's `program` value.** `signoff: program` makes the user sign off once per program, over the program
-  brief; nothing waits at any change's archive (D-ps-1). The reading step takes each change's account under `program`
-  as it does under `change`, so the accounts in the brief the user signs have been checked by a reader (D-ps-1's
+  brief; nothing waits at any change's archive (D-ps-9). The reading step takes each change's account under `program`
+  as it does under `change`, so the accounts in the brief the user signs have been checked by a reader (D-ps-9's
   account row). `program` stops being read as unrecognized; any other value still is.
 - **The program brief is saved.** `orbit brief <doc> --save` saves a program's brief once every stage the doc declares
-  is finished, and again only when a fresh render differs from the latest saved copy, to
+  is finished and no active change cites the doc, and again only when a fresh render differs from the latest saved copy, to
   `orbit/architecture/.orbit-runs/brief/<doc>/brief-<TS>.md` (D-ps-3, D-ps-6). The architect session runs it under
   every setting and, at the defaults, shows nothing about it.
 - **A program sign-off.** `orbit emit signoff --doc <doc>` records the user's answer over the latest saved program
@@ -23,7 +23,8 @@ first-run stage's closing review grades G5 from saved copies.
 - **The program hold.** `orbit brief <doc> --hold` reports whether the program waits: under `program`, the program is
   done only when every declared stage is finished, the closing architecture review is recorded after the last archive,
   and the user has signed the latest copy (D-ps-5). A copy saved after a signature asks again only under
-  `pr: per-architecture` while the program PR is still a draft or its state cannot be read (D-ps-7).
+  `pr: per-architecture` while the program PR is still a draft or its state cannot be read or settled, or under every
+  mode once a change citing the doc has been archived after the signature's closing review (D-ps-8).
 - **The architect session holds arc-done.** Under `program`, the architect session that finds the program otherwise
   done shows the latest copy whole and asks the user to sign off or decline; the program PR's READY flip is surfaced
   only once it is signed. No stage's ratification waits (D-ps-5, superseding D-ps-2).

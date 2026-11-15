@@ -6,8 +6,9 @@
 `orbit/architecture/.orbit-runs/brief/<doc>/brief-<TS>.md`, under every sign-off setting (`automate-dev-flow`'s R-adf-7;
 D-ps-3 and D-ps-6 in `program-signoff`'s `explore.md`). A program is FINISHED when its doc declares at least one stage
 and every stage it declares renders `quiescent-awaiting-ratification`, `complete`, `ended` or `ended-from-explore`
-(`orbit-architecture-engine`'s `Computed stage state with completion-as-ratification`): no stage is in a change, being
-explored, premised or inconsistent. A doc the architecture parser reads as LEGACY declares no stage, so it is never
+(`orbit-architecture-engine`'s `Computed stage state with completion-as-ratification`), and no active change cites the
+doc, whatever stage it names or none: no stage is in a change, being explored, premised or inconsistent, and no work
+citing the doc is still open under a stage the doc does not declare. A doc the architecture parser reads as LEGACY declares no stage, so it is never
 finished. The save acts by the first row of this table that matches:
 
 | the program | the save |
@@ -46,6 +47,12 @@ The architect session runs the save (`orbit-architect`'s `The architect session 
 - **WHEN** a stage of `prog` renders `in-change` and `orbit brief prog --save` runs
 - **THEN** no file is written, the command says the program is not finished, and it exits zero
 
+#### Scenario: An active change under an undeclared stage keeps the program unfinished
+
+- **WHEN** every stage `prog` declares renders `complete`, and an active change cites `prog` under a stage it does not
+  declare
+- **THEN** `orbit brief prog --save --json` writes nothing and reports `save: "not-finished"`
+
 #### Scenario: An unchanged brief is not saved again
 
 - **WHEN** `prog` is finished and its latest saved copy holds exactly the bytes `orbit brief prog` prints
@@ -70,7 +77,7 @@ The architect session runs the save (`orbit-architect`'s `The architect session 
 ### Requirement: A program's sign-off is recorded against its saved copy, and the hold reads arc-done
 
 A PROGRAM'S SIGN-OFF SHALL be the user's answer, under `signoff: program`, to the question the architect session asks
-over a program's latest saved brief once the program is otherwise done (D-ps-5, D-ps-6 and D-ps-7 in `program-signoff`'s
+over a program's latest saved brief once the program is otherwise done (D-ps-5, D-ps-6 and D-ps-8 in `program-signoff`'s
 `explore.md`): a `signoff` record at `orbit/architecture/.orbit-runs/signoff/<doc>/signoff-<TS>.json`, written by
 `orbit emit signoff --doc <doc>` (`orbit-emit-composition`'s `The write gate checks the sign-off record`). It carries the
 fields a change's sign-off carries (`A sign-off is recorded against the saved copy, and the hold reads it`), its `brief`
@@ -84,7 +91,12 @@ The program's CLOSING REVIEW is R-d-3's closing `/orbit:review --as architecture
 `review-architecture-<TS>.json` in `orbit/architecture/.orbit-runs/` whose `doc` is the doc and whose token is later than
 the time each archived change citing the doc was archived (its latest archive record's token, or its archive directory's
 date when it has none, as the program brief orders them). The program is DONE, for the sign-off, when it is finished
-(`A program's brief is saved once the program is finished`) and its closing review is recorded.
+(`A program's brief is saved once the program is finished`) and its closing review is recorded. A program whose stages
+all ended with no citing change archived has no archive to order against, so any `review-architecture` record of the
+doc counts as its closing review, one written before the stages ended included: a named limit, since the hold reads no
+time at which a stage was ended. A signature STILL STANDS while the review its `closing_review` names is later than
+every citing change's archive, by the same ordering; once a change citing the doc is archived after that review, the
+program was REOPENED after the signature.
 
 `orbit brief <doc> --hold` SHALL report, read-only and writing no file, whether a program waits on a sign-off, by the
 first row of this table that matches:
@@ -95,15 +107,17 @@ first row of this table that matches:
 | not finished, or finished with no closing review recorded | `not-done` | no |
 | no saved copy in `brief/<doc>/` | `no-copy` | yes |
 | its latest sign-off says `signed`, and that record's `sha256` equals the latest saved copy's | `signed` | no |
-| its latest sign-off says `signed`, names the current closing review as its `closing_review`, and covers different text | `re-sign` | yes under `pr: per-architecture`; no under `per-proposal` and `never` |
-| any other state: no sign-off, a `declined` latest one, or a signed one given before the current closing review over different text | `unsigned` | yes |
+| its latest sign-off says `signed`, still stands, and covers different text | `re-sign` | yes under `pr: per-architecture`; no under `per-proposal` and `never` |
+| any other state: no sign-off, a `declined` latest one, or a signed one over different text that no longer stands, the program reopened after it, or that names no closing review | `unsigned` | yes |
 
 The rows are the setting, whether the program is done, whether a copy is saved, and, for a done program with a copy,
-the latest sign-off's answer, whether it covers that copy's text and whether it was given under the current closing
-review. The `re-sign` row is D-ps-7: once a done program is signed, a copy saved after it holds only where a step it
-holds is still to come, the program PR's READY flip under `pr: per-architecture`; whether that flip is still to come is
-the architect session's to observe (`orbit-architect`'s `The architect session saves the program brief and asks for the program's sign-off`). A signature given before a later closing review covers a program that has
-since been reviewed again, so a copy differing from it is asked about afresh.
+the latest sign-off's answer, whether it covers that copy's text and whether it still stands. The `re-sign` row is
+D-ps-8: once a done program is signed, a copy saved after it holds only where a step it holds is still to come, the
+program PR's READY flip under `pr: per-architecture`; whether that flip is still to come is the architect session's to
+observe (`orbit-architect`'s `The architect session saves the program brief and asks for the program's sign-off`). A
+closing review run again with no citing archive after the signature's leaves the signature standing, so its copy is a
+later copy like any other. A signature the program was reopened after covers none of the reopening change's work, so a
+copy differing from it is asked about afresh under every mode.
 
 The hold reads the setting FIRST: under any value but `program` it reads nothing else and reports `why: "off"`, so with
 the setting off it fails only on a usage error. Under `program` it reads the doc's stage states, the architecture
@@ -151,21 +165,27 @@ Residual method: the closing review runs in a session after the last archive, so
 
 #### Scenario: A later copy asks again while the program PR can still be flipped
 
-- **WHEN** under `signoff: program` and `pr: per-architecture` `prog` was signed over `brief-A.md` under its current
-  closing review, and a later save writes `brief-B.md` with different bytes
+- **WHEN** under `signoff: program` and `pr: per-architecture` `prog` was signed over `brief-A.md`, the signature still
+  stands, and a later save writes `brief-B.md` with different bytes
 - **THEN** the hold reports `why: "re-sign"` and `held: true`
 
-#### Scenario: A later copy asks nothing once the work has landed
+#### Scenario: A later copy asks nothing under `per-proposal`
 
-- **WHEN** under `signoff: program` and `pr: per-proposal` `prog` was signed over `brief-A.md` under its current closing
-  review, and a later save writes `brief-B.md` with different bytes
+- **WHEN** under `signoff: program` and `pr: per-proposal` `prog` was signed over `brief-A.md`, the signature still
+  stands, and a later save writes `brief-B.md` with different bytes
 - **THEN** the hold reports `why: "re-sign"` and `held: false`
 
-#### Scenario: A new closing review asks afresh
+#### Scenario: A reopened program asks afresh
 
-- **WHEN** under `signoff: program` `prog` was signed under one closing review, a later closing review is recorded, and
-  the latest copy's bytes differ from the signed one's
+- **WHEN** under `signoff: program` and `pr: per-proposal` `prog` was signed under one closing review, a change citing
+  `prog` is then archived, a later closing review is recorded, and the latest copy's bytes differ from the signed one's
 - **THEN** the hold reports `why: "unsigned"` and `held: true`
+
+#### Scenario: A closing review run again leaves the signature standing
+
+- **WHEN** under `signoff: program` and `pr: per-proposal` `prog` was signed under one closing review, a later closing
+  review is recorded with no citing change archived since, and the latest copy's bytes differ from the signed one's
+- **THEN** the hold reports `why: "re-sign"` and `held: false`
 
 #### Scenario: With the setting off the program's hold reads nothing
 
@@ -344,13 +364,13 @@ A PROGRAM's brief is saved by `orbit brief <doc> --save` into the architecture t
 
 orbit SHALL read a SIGN-OFF SETTING, the `signoff` key of `orbit/config.yaml`, saying whether the user signs off on each
 change before it lands, or once on a program before it is done (`automate-dev-flow`'s R-adf-2 as amended, R-adf-1,
-R-adf-6; D-pb-12 in `program-brief`'s `explore.md`, D-ps-1 and D-ps-5 in `program-signoff`'s). It is read from that key alone, by each reader below, and no other setting derives it:
+R-adf-6; D-pb-12 in `program-brief`'s `explore.md`, D-ps-5 and D-ps-9 in `program-signoff`'s). It is read from that key alone, by each reader below, and no other setting derives it:
 
 | the key's value | under every `pr:` mode |
 |---|---|
 | absent or `off`, or `orbit/config.yaml` absent or unreadable | nothing waits on a sign-off: today's behaviour; the archive still saves each change's brief (`orbit-archive-modifications`' `The archive saves the change's brief before the sync`) |
 | `change` | each change's archive waits for the user's sign-off over that change's saved brief (`orbit-archive-modifications`' `The archive holds for a per-change sign-off`); under `pr: per-proposal` the per-change READY flip the archive tail performs waits with it; under `pr: per-architecture` the program PR, which stage archives never flip, is untouched |
-| `program` | nothing waits at any change's archive; the program's completion waits for the user's sign-off over the program's saved brief (`A program's sign-off is recorded against its saved copy, and the hold reads arc-done`), and under `pr: per-architecture` the program PR's READY flip waits with it (`orbit-pr-lifecycle`'s `Program PR (Shape A) semantics`); under `pr: per-proposal` and `never` every change has already landed when the user is asked, and the brief says so |
+| `program` | nothing waits at any change's archive; the program's completion waits for the user's sign-off over the program's saved brief (`A program's sign-off is recorded against its saved copy, and the hold reads arc-done`), and under `pr: per-architecture` the program PR's READY flip waits with it (`orbit-pr-lifecycle`'s `Program PR (Shape A) semantics`); under `pr: per-proposal` each change has passed its archive when the user is asked, its PR marked ready there and its merge left to the user, and under `never` its work is archived on its branch: nothing waits on either, and the brief writes no line about it |
 | any other value, or a shape that is not a single word | read as absent; the hold (`A sign-off is recorded against the saved copy, and the hold reads it`) carries one warning naming the value and saying that nothing waits on a sign-off |
 
 The rows are the values this capability reads (absent or `off`, `change` and `program`) and every other value, each under the
@@ -395,6 +415,12 @@ or recommendation reads it: `orbit status` and the reviewed gates render the sam
 - **WHEN** `orbit/config.yaml` carries `signoff: program`, every stage of `prog` is finished, its closing review is
   recorded, and its brief has been saved with no sign-off
 - **THEN** `orbit brief prog --hold` reports `prog` held, its `why` `unsigned`
+
+#### Scenario: Under `per-proposal`, open change PRs do not change the program's hold
+
+- **WHEN** under `signoff: program` and `pr: per-proposal` `prog` is done, its brief has been saved with no sign-off,
+  and the PRs of its archived changes are ready and not merged
+- **THEN** `orbit brief prog --hold` reports `prog` held, its `why` `unsigned`, reading no PR
 
 ### Requirement: A sign-off is recorded against the saved copy, and the hold reads it
 

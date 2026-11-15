@@ -29,12 +29,14 @@ is acted on by the first row of this table that matches:
 | the save exited non-zero, or `why: "no-copy"` | says there is no copy to sign, naming the save's failure when it failed; asks nothing, and shows no arc-done readout |
 | `why: "signed"` | states in one line that the latest sign-off covers this copy's text, naming the record, then shows the arc-done readout |
 | `why: "re-sign"`, `held: false` | asks nothing and shows the arc-done readout |
-| `why: "re-sign"`, `held: true` | runs `orbit pr program <doc> --json`, the arc-done readout's own call: when its `pr.state` is `draft` or `unverified` it acts as on `unsigned`; otherwise — the program PR already ready, or none found — it asks nothing and shows the arc-done readout |
+| `why: "re-sign"`, `held: true` | runs `orbit pr program <doc> --json`, the arc-done readout's own call, and asks nothing and shows the arc-done readout only when the call positively settles that no READY flip remains: `observations.pr.state` is `ready`; or `observations.pr` is `null` with `outcome` `none`, `not-found` or a positive invalidation (the recorded PR merged or closed with no open replacement); or the call reports `action: "off"`, no program PR recorded. On every other result it acts as on `unsigned`: `pr.state` `draft` or `unverified`, `pr` `null` with `outcome` `unobserved`, `gh-absent` or `several`, or the call exiting non-zero |
 | `why: "unsigned"` | shows the latest saved copy whole, then asks the user to sign off or decline; writes the answer by `orbit emit signoff --doc <doc>` with the copy's filename as `brief`, `answer`, and, on a decline, the user's reason as `reason` (asked for when the answer did not give one); acts on the answer only once that emit has written the record: on `signed` it shows the arc-done readout; on `declined` it says the program is not done and the user's reason is recorded, shows no arc-done readout, and asks nothing further: what happens next is the user's direction. When the emit is refused or fails, it names the refusal and shows no arc-done readout: a signature that is not recorded lifts no hold |
 
 The rows are the hold command's failure, the hold's six `why` values (`re-sign` split by `held`), and the save's own
-failure, which joins `no-copy` under `program`. The question is a DECISION prompt: the body asks it on the user's
-invocation of the session and never as an interruption elsewhere, and it is the architect body's third prompt, beside
+failure, which joins `no-copy` under `program`. The question is a DECISION prompt in `orbit-conventions`' sense (`A
+chain treats each prompt by its kind`: neither a target nor a routine confirmation); the architect body is not a
+command a chain arrives at, so that requirement's table and its tag test do not reach it, and the body asks it on the
+user's invocation of the session and never as an interruption elsewhere. It is the architect body's third prompt, beside
 the doc selector and the completion ratification. No stage's ratification waits for it (D-ps-5): the completion
 ratification is offered as `Completion-ratification flow` states, before or after a sign-off.
 
@@ -76,6 +78,24 @@ invocation with its fields, so an installed skill needs no spec to run the step;
 
 - **WHEN** under `signoff: program` and `pr: per-architecture` the hold reports `why: "re-sign"` and `held: true`, and
   `orbit pr program` reports the PR's state `ready`
+- **THEN** no sign-off is asked for, and the arc-done readout appears
+
+#### Scenario: A later copy with the program PR's state unread asks again
+
+- **WHEN** under `signoff: program` and `pr: per-architecture` the hold reports `why: "re-sign"` and `held: true`, and
+  `orbit pr program` reports `pr: null` with `outcome: "gh-absent"`
+- **THEN** the session shows the latest copy whole and asks the user to sign off or decline
+
+#### Scenario: A later copy with several candidate program PRs asks again
+
+- **WHEN** under `signoff: program` and `pr: per-architecture` the hold reports `why: "re-sign"` and `held: true`, and
+  `orbit pr program` reports `outcome: "several"`
+- **THEN** the session shows the latest copy whole and asks the user to sign off or decline
+
+#### Scenario: A later copy with no open program PR asks nothing
+
+- **WHEN** under `signoff: program` and `pr: per-architecture` the hold reports `why: "re-sign"` and `held: true`, and
+  `orbit pr program` reports `pr: null` with `outcome: "none"`
 - **THEN** no sign-off is asked for, and the arc-done readout appears
 
 #### Scenario: Under `program`, a failed save asks no sign-off
