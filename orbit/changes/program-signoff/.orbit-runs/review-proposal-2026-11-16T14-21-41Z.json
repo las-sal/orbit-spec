@@ -1,0 +1,147 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-16T14:21:41Z",
+  "change": "program-signoff",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    }
+  },
+  "findings": [
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/program-signoff/specs/orbit-architect/spec.md",
+      "line": 32,
+      "title": "The re-sign row's 'positive invalidation' is glossed as merged or closed, leaving three of the five invalidations unassigned",
+      "recommendation": "The held:true re-sign row asks nothing when `pr` is null with outcome `none`, `not-found` or \"a positive invalidation (the recorded PR merged or closed with no open replacement)\". `POSITIVE_INVALIDATIONS` in `src/core/pr/record.ts` has five members: `closed`, `merged`, `retargeted`, `head-mismatch` and `repository-mismatch`. `runProgram` in `src/core/pr/program.ts` reports whichever one it found as `outcome` when the four-axis query finds no survivor. One implementer reads the parenthetical as the definition and treats a `retargeted` outcome as 'every other result', so the session asks again. Another reads it as examples and asks nothing. D-ps-8's Mechanism row in explore.md (line 135) lists the same two, so its DERIVED closure misses three outcomes the program.ts call can return. Fix: name all five in the architect row ('`outcome` `none`, `not-found`, or any of `POSITIVE_INVALIDATIONS` — `closed`, `merged`, `retargeted`, `head-mismatch`, `repository-mismatch` — with no open replacement found') and in D-ps-8's 'no open program PR' member row. All five mean the four-axis query found no open program PR, so there is no flip to hold.",
+      "walk_entry": {
+        "title": "The re-sign row's 'otherwise' asks nothing when `orbit pr program` reports several candidate PRs, where the READY flip may still be to come",
+        "file": "orbit/changes/program-signoff/specs/orbit-architect/spec.md"
+      }
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/program-signoff/specs/orbit-program-brief/spec.md",
+      "line": 10,
+      "title": "FINISHED's lead says 'no active change cites the doc' and its gloss says 'no work citing the doc is still open', which splits on an exploration",
+      "recommendation": "The definition opens with 'no active change cites the doc, whatever stage it names or none' and glosses it as 'no work citing the doc is still open under a stage the doc does not declare'. `scanCitations` in `src/core/architecture/state.ts`, the reader `computeStageStates` uses, collects citing artifacts from `orbit/explore/*` as well as `orbit/changes/*`. On a declared stage, an exploration already makes the stage render `exploring`, so the program is not finished. On an undeclared stage, an exploration counts under the gloss ('work') but not under the lead ('active change'), so two implementers of `saveProgramBrief` differ. Design Decision 2, task 2.1, the proposal and orbit-pr-lifecycle's paragraph all say 'active change'. Choose one reading and state it in the requirement, with the 'undeclared stage' scenario's twin for an exploration. While there, rewrap line 11 and tasks.md lines 18 and 21: the walk left each well past the files' width.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Active changes only: replace the gloss's 'no work citing the doc is still open under a stage the doc does not declare' with 'no active change cites it under a stage the doc does not declare; an exploration citing such a stage does not count'. That is one sentence in orbit-program-brief and matches design, tasks, proposal and orbit-pr-lifecycle as they stand."
+        },
+        {
+          "label": "B",
+          "body": "Every live citing artifact: FINISHED also fails while an exploration cites the doc under an undeclared stage, the same way a declared stage renders `exploring`. Say 'no active change or live exploration cites the doc' in the requirement, design Decision 2, task 2.1, the proposal and orbit-pr-lifecycle's paragraph, and add a scenario for the exploration."
+        }
+      ],
+      "walk_entry": {
+        "title": "FINISHED checks only declared stages, so an active change citing the doc under an undeclared stage, or no stage, does not stop the program being done",
+        "file": "orbit/changes/program-signoff/specs/orbit-program-brief/spec.md"
+      }
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "This pass verified the blind pair's two walks. The reopen rule (F1) holds together across the program-brief rows, the explanatory paragraph, the three scenarios, D-ps-8, design Decision 4, task 3.2 and the proposal. The re-sign and unsigned rows partition the signed-over-different-text case by STILL STANDS, and no row contradicts another. The X2 rewrite says only what the archive establishes, and its new per-proposal scenario tests exactly that independence. Both regressions are enumeration gaps, found against the source the edits cite: the architect row was enumerated from program.ts but stopped at the invalidations' gloss, and FINISHED's new clause was written from the active-change list while the stage-state reader it sits beside also reads explorations. The stale calls on X1 and X3 are correct convergences. Every file in the walk commit is in some entry's edit record, so nothing changed outside the record. One residual I checked and set aside: a hand-run `--hold` with no save before it can read a pre-reopen copy as `signed`. The architect body always saves first, and design's failed-save risk line covers the session where that save fails.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "verification": [
+    {
+      "title": "The hold's 'signed before the current closing review' clause asks again where ratified D-ps-7 says ask nothing",
+      "file": "orbit/changes/program-signoff/specs/orbit-program-brief/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "arc-done's stage condition goes from 'every declared stage archived' to FINISHED, which also counts stages with no archive",
+      "file": "orbit/changes/program-signoff/specs/orbit-pr-lifecycle/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The re-sign row's 'otherwise' asks nothing when `orbit pr program` reports several candidate PRs, where the READY flip may still be to come",
+      "file": "orbit/changes/program-signoff/specs/orbit-architect/spec.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "Task 4.1 adds Step 5.4 but leaves Step 5.5's 'unconditional, never suppressed' arc-done check untouched",
+      "file": "orbit/changes/program-signoff/tasks.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Task 6.2 needs no undeclared delta scenario, but no task declares the five carried orbit-pr-lifecycle scenarios",
+      "file": "orbit/changes/program-signoff/tasks.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Task 5.2 leaves docs/cli.md's three 'with signoff: change' reading-step sentences stale",
+      "file": "orbit/changes/program-signoff/tasks.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "orbit-program-brief's Purpose goes stale and no task edits it in place",
+      "file": "orbit/specs/orbit-program-brief/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "FINISHED checks only declared stages, so an active change citing the doc under an undeclared stage, or no stage, does not stop the program being done",
+      "file": "orbit/changes/program-signoff/specs/orbit-program-brief/spec.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "'The question is a DECISION prompt' names a prompt kind without pointing at its owner",
+      "file": "orbit/changes/program-signoff/specs/orbit-architect/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Archive completion does not establish that changes have merged",
+      "file": "orbit/changes/program-signoff/specs/orbit-program-brief/spec.md",
+      "verdict": "landed"
+    }
+  ],
+  "final_assessment": "0 critical, 2 warning, 0 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-11-15T20-23-18Z",
+    "2026-11-15T20-23-23Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews program-signoff"
+}
