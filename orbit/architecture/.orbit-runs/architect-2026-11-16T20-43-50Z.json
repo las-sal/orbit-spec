@@ -1,0 +1,39 @@
+{
+  "command": "architect",
+  "timestamp": "2026-11-16T20:43:50Z",
+  "change": null,
+  "doc": "automate-dev-flow",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Architect session during the exploration tripwires: the stage's charter now reads as D-tw-1 to D-tw-17 settled it — sensors behind one contract that further sensors plug into, a circling review loop in place of convergence and the walk budget, the steward as an independent single-question review at each cited change's archive in place of architecture-mode review aimed at one stage, project-declared sensors run only after per-machine approval, and a stop only under a halt setting. Exit criteria gained the steward's stubbed fixture and a defaults test for each sensor's setting. A skill-size reduction stage went to Considered & out (D-tw-2). No ruling or goal changed; no stage awaited ratification; the program brief was not saved (the program is not finished) and the sign-off hold reads off.",
+  "stages_touched": [
+    "tripwires"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      {
+        "path": "orbit/explore/tripwires/explore.md",
+        "why": "the exploration propose consumes: D-tw-1 to D-tw-17, their Mechanism entries, the one open question (how the stage divides into changes)"
+      },
+      {
+        "path": "orbit/architecture/automate-dev-flow.md",
+        "why": "stage tripwires charter and exit criteria as reworded this session; G0, G3, G6; R-adf-3, R-adf-6, R-adf-12"
+      },
+      {
+        "path": "orbit/explore/tripwires/.orbit-runs/decisions/",
+        "why": "the exploration's ledger entries, and the security-unprecedented stop with its resolution (project sensors)"
+      },
+      {
+        "path": "CLAUDE.md",
+        "why": "repo orientation, disciplines, and the built-CLI stand-ins for commands the installed orbit lacks"
+      }
+    ],
+    "next_command": "/orbit:propose tripwires",
+    "model_hint": null,
+    "seam": "Commit this session's doc edit before propose (pr select skips on a dirty path). Propose's first act is the size estimate: the settled decisions reach well past the three-capability ceiling, and the exploration recommends three changes (mechanical sensors; circling and the steward; project sensors)."
+  },
+  "next_recommended": "/orbit:propose tripwires"
+}

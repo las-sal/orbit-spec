@@ -449,14 +449,20 @@ fourteen reader rows across eleven records; the walk replaced them, and those re
 Depends-on: decision-layer
 Complete: [ ]
 
-Signals that write stop records: a diff that leaves the change's frozen `## Touchpoints` or touches an undeclared
-capability; review iterations that stop converging; size or walk budgets exceeded; an edit to a ratified ruling or
-goal; and a steward pass at each stage boundary (`/orbit:review --as architecture` aimed at one stage) asking
-whether the work is still the declared stage. In supervised mode each reports without stopping.
+Sensors behind one contract, into which further sensors plug: a diff that leaves the change's frozen `## Touchpoints`
+or touches an undeclared capability; a review loop that circles (one finding regressed in two verifications); size or
+byte budgets exceeded; an edit to a ratified ruling or goal; a steward at each cited change's archive (an independent,
+single-question review: is this change still its declared stage?); and sensors a project declares itself, such as a
+linter, run only once the user has approved them on that machine. Each sensor fires on a deviation from a reference
+fixed before the run that the plan did not declare. Every firing is recorded; a stop record is written only where that
+sensor's setting says to halt, so in supervised mode each reports without stopping. (Settled in the exploration
+`tripwires`, D-tw-1 to D-tw-17; the steward first named architecture-mode review aimed at one stage, whose passes judge
+the doc and never the work.)
 
 Exit criteria:
 - G6's first half: each tripwire fires on a fixture trail that should trip it and not on a clean one, each test
-  shown able to fail.
+  shown able to fail; the steward's fixture stubs the reviewer's verdict, so its judgement is graded at first-run.
+- Each sensor's setting is named in its owning requirement, and a test shows today's behaviour at its default.
 - G0 holds.
 
 ### Stage driver — regime 3, one fresh session per phase
@@ -543,6 +549,9 @@ Exit criteria:
 - **2026-11-09 — Naming each setting-dependent body change as its own G0 exception:** out (Sal, R-adf-12, over the
   AI's recommendation for seam-chaining). Every settings stage rewrites bodies to depend on a setting, and the
   defaults test each stage owes already makes that falsifiable.
+- **2026-11-16 — A skill-size reduction stage before `driver`:** out (Sal, in the exploration `tripwires`, D-tw-2).
+  Shrinking the generated skills edits every body and collides with G0's body clause; it is its own architect work.
+  The tripwires stage holds skill size by a budget sensor instead.
 
 ## Status log
 
@@ -676,3 +685,11 @@ Exit criteria:
   requirement with its default tested; and G0 holding with no new exception (AI recommendation). The user's G5 read of a
   saved brief stays pending, graded at first-run. No ruling or goal changed. Tripwires is the one stage open to start: it
   depends only on decision-layer, and the driver waits on it.
+- 2026-11-16 — Architect session during the exploration `tripwires` (D-tw-1 to D-tw-17): the stage's charter now
+  reads as the exploration settled it — sensors behind one contract that further sensors plug into (Sal's direction),
+  the review signal as a circling loop rather than convergence (the walk budget dropped), the steward as an
+  independent single-question review at each cited change's archive rather than architecture-mode review aimed at one
+  stage (Sal's choices), project-declared sensors run only after per-machine approval (Sal's answer to a stop in the
+  exploration's trail), and each firing recorded with a stop only under a halt setting. Exit criteria gained the
+  steward's stubbed fixture and a defaults test for each sensor's setting. A skill-size reduction stage went to
+  Considered & out (D-tw-2). No ruling or goal changed; no stage awaited ratification.
