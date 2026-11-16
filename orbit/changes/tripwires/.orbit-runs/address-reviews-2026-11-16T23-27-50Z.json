@@ -1,0 +1,109 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-16T23:27:50Z",
+  "change": "tripwires",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/tripwires/.orbit-runs/review-system-2026-11-16T23-25-05Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-16T23-25-05Z",
+  "latest_apply_token": "2026-11-16T23-00-43Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "walk_mode_source": "flag",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 0
+  },
+  "pushback_verification": "Verified at HEAD 4651cdbb: tripwires.ts:152 still matched the archive move with the glob *-<name>; a new test reproducing the foo-n coincidence failed against it before the fix.",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The archive-move match takes any archived folder ending in -<name>, so another change's archive can reset this change's birth",
+      "marker_source": "internal-review",
+      "file": "src/core/tripwires.ts",
+      "line": 152,
+      "classification": "trivial_fix",
+      "action": "the archive-move pathspec now matches the folder exactly as <date>-<name> ([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]-<name>), as findArchivedDir reads it; a test archives foo-n in the commit that drops n's metadata and holds n's fixed point, shown failing before the fix. The spec already words the folder as <date>-<name>, so no artifact changed",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/tripwires.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "orbit/changes/archive/*-${name}"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/tripwires.ts",
+            "text": "[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]-${name}"
+          },
+          {
+            "path": "test/core/tripwires.test.ts",
+            "text": "archiving foo-n while dropping n"
+          }
+        ],
+        "searched": [
+          "archive/*-",
+          "*-${name}",
+          "findArchivedDir"
+        ],
+        "scope": [
+          "orbit/changes/tripwires/specs/orbit-tripwires/spec.md",
+          "orbit/changes/tripwires/design.md",
+          "src/core/archived-change.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "The one finding resolved: the archive move is matched as <date>-<name> exactly, so another change's archive can no longer reset this change's birth.",
+  "iteration": 6,
+  "next_recommended": "/orbit:archive tripwires — user-invoked",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "53b16bface3508c3df54f5b8ced9e03111ab9abe",
+      "frozen": true,
+      "evidence": {
+        "files": [],
+        "share": 0,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ],
+  "ripple_misses": 0
+}

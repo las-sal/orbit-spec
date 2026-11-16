@@ -149,7 +149,8 @@ export function changeCommits(projectRoot: string, name: string): ChangeCommits 
   // A deletion that is not an archive move (a run removing and restoring the file) starts no new change, and when
   // the metadata's latest event is an archive move, the change of this name now has nothing committed.
   const events = metadataEvents(projectRoot, `${rel}/.openspec.yaml`);
-  const archiveMoves = added(`:(glob)orbit/changes/archive/*-${name}/.openspec.yaml`);
+  // The archive folder is exactly `<date>-<name>` (as `findArchivedDir` reads it), never another change ending in `-<name>`.
+  const archiveMoves = added(`:(glob)orbit/changes/archive/[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]-${name}/.openspec.yaml`);
   if (events === null || archiveMoves === null) return { kind: 'no-git' };
   const moved = new Set(archiveMoves);
   let birth: string | null = null;

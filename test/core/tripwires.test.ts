@@ -137,6 +137,21 @@ describe('changeCommits: the four results', () => {
     expect(changeCommits(root, 'n')).toEqual({ kind: 'frozen', first: p, firstApply: a, fixedPoint: walk, head });
   });
 
+  it('another change\'s archive is not this change\'s: archiving foo-n while dropping n\'s metadata keeps n\'s fixed point', () => {
+    const root = repo();
+    write(root, 'orbit/changes/foo-n/.openspec.yaml', 'schema: spec-driven\n');
+    const p = propose(root, 'n', ['`src/a.ts`']);
+    const a = applyCommit(root, 'n', { 'src/a.ts': 'x\n' });
+    fs.mkdirSync(path.join(root, 'orbit/changes/archive'), { recursive: true });
+    git(root, ['mv', 'orbit/changes/foo-n', 'orbit/changes/archive/2026-01-02-foo-n']);
+    remove(root, 'orbit/changes/n/.openspec.yaml');
+    commit(root, 'archive foo-n and drop n\'s metadata');
+    write(root, 'orbit/changes/n/.openspec.yaml', 'schema: spec-driven\n');
+    write(root, 'orbit/changes/n/design.md', '## Touchpoints\n\n- `src/`\n');
+    const head = commit(root, 'restore n with a widened plan');
+    expect(changeCommits(root, 'n')).toEqual({ kind: 'frozen', first: p, firstApply: a, fixedPoint: p, head });
+  });
+
   it('a git failure reads as no-git', () => {
     const root = repo();
     propose(root, 'n', ['`src/a.ts`']);
