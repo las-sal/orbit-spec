@@ -1,0 +1,101 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-16T22:27:54Z",
+  "change": "tripwires",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/tripwires/.orbit-runs/external-proposal-2026-11-16T22-20-28Z.md",
+  "source_command": null,
+  "source_token": "2026-11-16T22-20-28Z",
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-6 (Codex)",
+  "walk_mode": "per_finding",
+  "walk_mode_source": "flag",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 5,
+    "suggestion": 1
+  },
+  "pushback_verification": "Each finding checked against the artifacts as the fresh pass's walk left them; each is closed by that walk's edit.",
+  "resolution_summary": {
+    "resolved": 0,
+    "stale_suppressed": 6,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The fixed-point search skips implementation in the change’s first commit",
+      "marker_source": "external",
+      "file": "orbit/changes/tripwires/specs/orbit-tripwires/spec.md",
+      "line": 55,
+      "classification": "stale",
+      "action": "converged with a finding of the earlier fresh pass, walked and resolved there; recorded stale here",
+      "evidence": "resolved in address-reviews-2026-11-16T22-27-39Z: its F1 entry (option B) measures from the change's first commit's parent, so work committed with the proposal is measured; scenario `Work committed with the proposal is measured`",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Fixed-point failure is not distinguished from work that has not started",
+      "marker_source": "external",
+      "file": "orbit/changes/tripwires/tasks.md",
+      "line": 5,
+      "classification": "stale",
+      "action": "converged with a finding of the earlier fresh pass, walked and resolved there; recorded stale here",
+      "evidence": "resolved in address-reviews-2026-11-16T22-27-39Z: its F3 entry orders the cases (no-git, uncommitted, not begun, frozen) and task 1.1 returns four distinct results, never a bare null",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Comma-joined paths do not uniquely identify a deviation",
+      "marker_source": "external",
+      "file": "orbit/changes/tripwires/design.md",
+      "line": 77,
+      "classification": "stale",
+      "action": "converged with a finding of the earlier fresh pass, walked and resolved there; recorded stale here",
+      "evidence": "resolved in address-reviews-2026-11-16T22-27-39Z: its F9 entry (option A) makes a reading carry one key per deviation in an array, so no joined string exists to collide",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Rename handling is left to git’s presentation format",
+      "marker_source": "external",
+      "file": "orbit/changes/tripwires/specs/orbit-tripwires/spec.md",
+      "line": 227,
+      "classification": "stale",
+      "action": "converged with a finding of the earlier fresh pass, walked and resolved there; recorded stale here",
+      "evidence": "resolved in address-reviews-2026-11-16T22-27-39Z: its F4 entry fixes the invocation as git diff --numstat --no-renames -z, a rename being a deletion plus an addition, with a rename scenario",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Binary files have no defined contribution to the share calculation",
+      "marker_source": "external",
+      "file": "orbit/changes/tripwires/specs/orbit-tripwires/spec.md",
+      "line": 230,
+      "classification": "stale",
+      "action": "converged with a finding of the earlier fresh pass, walked and resolved there; recorded stale here",
+      "evidence": "resolved in address-reviews-2026-11-16T22-27-39Z: its F4 entry keeps a binary path out of both sides of the share, never firing it with no source lines, with a mixed binary and text scenario",
+      "outcome": "stale"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Historical measurement needs a bounded endpoint",
+      "marker_source": "external",
+      "file": "orbit/changes/tripwires/tasks.md",
+      "line": 92,
+      "classification": "stale",
+      "action": "converged with a finding of the earlier fresh pass, walked and resolved there; recorded stale here",
+      "evidence": "resolved in address-reviews-2026-11-16T22-27-39Z: its F13 entry measures each archived change in a worktree at its own archive commit",
+      "outcome": "stale"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Six of six converged with findings of the fresh pass, walked and resolved in its log; recorded stale here, each naming that log.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal tripwires",
+  "ripple_misses": 0
+}

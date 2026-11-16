@@ -1,10 +1,16 @@
 ## 1. The contract and the setting
 
-- [ ] 1.1 `src/core/tripwires.ts`: the reading type (`sensor`, `outcome`, `key`, `reference`, `evidence`, optional
-  `stop` and `answered_by`), the sensor list (one entry, `touchpoints`, ordered by id), and `fixedPoint(projectRoot,
-  name)` per design M1, returning `null` before the first apply commit. Tests for `A reading carries the contract's
-  fields`, `A quiet reading has no key` and `No apply commit yet is quiet`. Each test is tagged `// @scenario` to its
-  scenario.
+- [ ] 1.1 `src/core/tripwires.ts`:
+  - the reading type: `sensor`, `outcome`, `deviations`, `reference`, `frozen`, `evidence`, and the optional `stops`
+    and `answered_by` lists;
+  - the sensor list: one entry, `touchpoints`, ordered by id;
+  - `changeCommits(projectRoot, name)` per design M1, reading first-parent history from the change's birth. It returns
+    one of four distinct results, never a bare `null`: `no-git`, `uncommitted`, `not-begun` (with the first commit), or
+    `frozen` (with the first commit and the fixed point).
+
+  Tests, in a disposable git repository, for each of the four results, a git failure, a merge into the branch that
+  never qualifies, and a reused name (`A reused change name reads only the new change`). The contract is tested with a stub sensor; the scenarios that run the real sensor are task 2.1's.
+  Each test is tagged `// @scenario` to its scenario.
 - [ ] 1.2 `resolveTripwiresSetting` in `src/core/project-config.ts` (design M9): reads the `tripwires` key on its own,
   from the working tree or from a config text taken at a commit. Fields:
   - `on_fire`, `exempt`, `per_file_lines`, `share_percent`;
@@ -17,17 +23,18 @@
 ## 2. The Touchpoints sensor
 
 - [ ] 2.1 `src/core/tripwire-touchpoints.ts`:
-  - reads `design.md` and `orbit/config.yaml` at the fixed point by `git show`;
-  - measures `git diff --numstat <fp>..HEAD`;
+  - reads `design.md` and `orbit/config.yaml` by `git show` at the sensor's reference: the fixed point, or `HEAD` before
+    apply begins;
   - classifies paths as own, predicted (`isPredicted`), exempt (design M7) or unpredicted source;
-  - applies both tolerances, with a binary path counted past the per-file one (M8);
-  - builds the key (M6) and evidence listing firing files, lines, the share, files within both tolerances, malformed
-    lines, notes, and paths only the current section predicts (declared late).
+  - measures with `git diff --numstat --no-renames -z` from the first commit's parent (M1, M8);
+  - applies both tolerances; a binary path fires on the per-file check and stays out of the share (M8);
+  - builds one key per deviation (M6), and the evidence fields the requirement names (`files`, `share`,
+    `share_fired`, `malformed`, `settings`, `notes`, or `reason`).
 
   Tests, in a disposable git repository, for every scenario of `The Touchpoints sensor fires on unpredicted source past
-  a tolerance`, plus:
-  - `An edit to the plan after apply begins moves nothing`;
-  - `A reference that cannot be read reads as cannot-read`;
+  a tolerance` (the rename and binary scenarios among them), plus:
+  - `A reading carries the contract's fields` and `A quiet reading has no deviations`;
+  - every scenario of `A sensor compares against a reference fixed before the run`;
   - `A late Touchpoints entry does not quiet the sensor`;
   - `A widened exempt set after apply begins escapes nothing`.
 - [ ] 2.2 Show the oracle able to fail: for each tolerance, the exempt matcher and the fixed-point read, mutate the
@@ -38,13 +45,13 @@
 
 - [ ] 3.1 `src/core/emit-composition.ts`: compute `tripwires` on the four seam emits named by `Every seam emit
   carries the readings`, and on no other. Add it to `ENGINE_OWNED_EXTRA` for `apply`, `review`, `address-reviews` and
-  `archive`, and add it to the engine-owned list in `test/core/emit-schema-parity.test.ts`. Tests for `A quiet run is
-  recorded`, `Only the seam emits carry the field`, `The field is engine-owned` and `A firing at the defaults writes no
-  stop`.
+  `archive`, and to `ENGINE_OWNED_PER_COMMAND` in `test/helpers/schema-references.ts`, which
+  `test/core/emit-schema-parity.test.ts` reads. Tests for `A quiet run is recorded`, `Only the seam emits carry the
+  field`, `The field is engine-owned` and `A firing at the defaults writes no stop`.
 - [ ] 3.2 The halting stop (design M3, M4, M5):
-  - `on_fire` is read from both configs;
-  - one stop per key not already named by a `tripwire` stop's chain;
-  - `answered_by` comes from a resolution naming that chain;
+  - `on_fire` is read at `HEAD` and, once a fixed point exists, at the fixed point;
+  - one stop per halting reading, naming only the keys no `tripwire` stop covers (M4, M6). Coverage reads the latest
+    record of each stop chain, and `answered_by` the latest of each resolution chain;
   - no stop at archive;
   - the stop's plain `about` and `question` are composed by the sensor, with `model: null` and the `tripwire`
     object;
@@ -55,6 +62,7 @@
   Tests for:
   - every scenario of `A halting reading writes a tripwire stop`;
   - `The user's answer declares the key`;
+  - `Only a new deviation is asked about`;
   - `A halting reading adds its stop`;
   - `A refused emit writes no stop`;
   - `Exactly one file`;
@@ -75,7 +83,8 @@
   - the program brief's closing section says readings are shown under each change.
 
   Regenerate `test/fixtures/brief-golden/` and check the diff touches only the Tripwires text. Tests for `Tripwires are
-  never reported as quiet`, `A fired reading is listed once with its stop` and `A change brief carries every section`.
+  never reported as quiet`, `A fired reading is listed once with its stop`, `A program brief points at each change's
+  readings` and `A change brief carries every section`.
 
 ## 5. Docs
 
@@ -83,8 +92,10 @@
   - "nine more optional keys" becomes ten;
   - a `tripwires` row saying what the Touchpoints sensor watches, that readings are recorded and shown only in the
     brief, and that `on_fire: halt` writes a stop a granted chain stops on;
-  - the example gains the key;
-  - `orbit-tripwires` joins the section's `Carried by:` line.
+  - the example gains the key.
+
+  The section's `Carried by:` line gains `orbit-tripwires` only after the sync (design `## At archive`): the
+  carried-by check resolves a name only against a baseline spec.
 
   `docs/cli.md`'s `orbit brief` paragraph replaces "a line saying tripwires are not installed" with the readings. Run
   the user-docs tests.
@@ -92,7 +103,11 @@
 ## 6. Close
 
 - [ ] 6.1 Run the built sensor over the 14 latest merged changes, as D-tw-17's measurement did, and compare with its
-  1 of 14 (change-account). Record any difference in the apply emit's assessment, and name its cause.
+  1 of 14 (change-account). Measure each change in a worktree at its own archive commit, so `HEAD` is where that change
+  ended and no later change is counted. The archive sync's spec edits fall under the exempt `orbit/`.
+  - D-tw-17 read the archived `design.md`, but the sensor reads it at the fixed point. So a difference is expected
+    wherever a walk edited `## Touchpoints` after apply began.
+  - Record each difference in the apply emit's assessment, with its cause.
 - [ ] 6.2 `npm run build`, then the full `npm test`, then `node bin/orbit.js validate tripwires --strict`, which
   reports no undeclared scenario. Run `node bin/orbit.js update --force`, then `git status`, to confirm no generated
   body changed.

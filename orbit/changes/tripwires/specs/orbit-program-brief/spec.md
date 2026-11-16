@@ -24,13 +24,14 @@ A change brief carries these sections, in this order, each from the source named
 | new seams | the latest account's `seams` |
 | the ledger | the latest ledger entry of each chain: its `decided`, `alternatives` and `why`, and what it relies on (each citation by kind and name) or the stop it raised |
 | stops | the latest stop record of each chain: its `about` and `question`, with the `answer` and `effect` of the latest resolution naming any record of its chain, or marked open |
-| tripwires | the readings on the change's seam emits (`orbit-tripwires`' `Every seam emit carries the readings`): each key a reading fired on (`cannot-read` included), once, with its sensor, the evidence of the latest reading carrying it, the seam emit that first carried it, a path its evidence marks declared late, and the stop naming it with that stop's answer, or marked open; then each sensor's latest outcome; for a change none of whose emits carries the field, one line saying tripwires were not installed when it ran, never that none fired |
+| tripwires | the readings on the change's seam emits (`orbit-tripwires`' `Every seam emit carries the readings`): each key a reading fired on (`cannot-read` included), once, with its sensor, the evidence of the latest reading carrying it, the seam emit that first carried it, whether its evidence marks it declared late, and the stop covering it with that stop's answer, or marked open; then each sensor's latest outcome; for a change none of whose emits carries the field, one line saying tripwires were not installed when it ran, never that none fired |
 | deviations from the charter | the latest account's `deviations`, beside the signals orbit computes: the archive record's `warnings` and the `accepted` claims of its `readiness` judgement, as `A brief says only what the archive recorded` states, and each dimension a `## Size` section of the change's `proposal.md` declares breached |
 | records no reader checked | the records the selection returns (`orbit-decision-records`' `The reading step's brief is rendered by orbit`) when the brief is rendered, by filename, as `A brief says only what the archive recorded` states; under every sign-off setting but `change` and `program`, the account, when one exists, named apart as checked by no reader; under `change` or `program` the latest account is among the records the selection returns while no reading has listed it, and is not named once a reading has (`orbit-decision-records`' `The reader takes the account when the user signs off`) |
 
 The sections are the stage charter's list in `orbit/architecture/automate-dev-flow.md`, plus the records no reader
 checked that `orbit-review`'s named limit on the reading step assigns to the brief; a program brief carries, for the
-architecture trail's records, the new terms, the ledger and the stops sections.
+architecture trail's records, the new terms, the ledger and the stops sections, and closes with a Tripwires section
+saying that each change's readings are shown under that change, since an architecture session writes no seam emit.
 
 Within a section, entries are in the order of their records' timestamps, oldest first; new terms are in the order of the
 term, then of the earliest record defining it. A term's definition belongs to the record that wrote it, so a term two
@@ -77,6 +78,12 @@ is shown as its spec names it, under a heading that says it is the spec's title,
   `tripwire` stop naming `K` has a resolution
 - **THEN** the tripwires section lists `K` once, with the review emit's evidence, the apply emit as the seam that first
   carried it, and the resolution's answer, then the sensor's latest outcome
+
+#### Scenario: A program brief points at each change's readings
+
+- **WHEN** a program brief is rendered for a doc two changes cite
+- **THEN** each change's section carries its own tripwires section, and the brief closes with a Tripwires section saying
+  the readings are shown under each change, never that none fired
 
 #### Scenario: One definition from two records is shown once
 

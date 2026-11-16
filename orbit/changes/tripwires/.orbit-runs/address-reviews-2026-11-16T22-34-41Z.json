@@ -1,0 +1,271 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-16T22:34:41Z",
+  "change": "tripwires",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/tripwires/.orbit-runs/review-proposal-2026-11-16T22-30-58Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-16T22-30-58Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "walk_mode_source": "flag",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 3,
+    "suggestion": 5
+  },
+  "pushback_verification": "All eight verified against current state: the stale bullet read at tasks.md:26-27; name reuse confirmed in src/utils/change-utils.ts (only the active directory is checked) and absent from the archive today; the two record gaps confirmed against the previous walk log.",
+  "resolution_summary": {
+    "resolved": 6,
+    "stale_suppressed": 2,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Task 2.1 still measures from the fixed point and reads the plan only there, contradicting the split the walk made",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/tripwires/tasks.md",
+      "line": 27,
+      "classification": "trivial_fix",
+      "action": "replaced task 2.1's two propose-time bullets with one reading design.md and the config at the sensor's reference (the fixed point, or HEAD before apply); the remaining bullet already measures from the first commit's parent with --no-renames -z",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "measures `git diff --numstat <fp>..HEAD`"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/tripwires/tasks.md",
+            "text": "at the sensor's reference: the fixed point, or `HEAD` before"
+          }
+        ],
+        "searched": [
+          "numstat",
+          "<fp>",
+          "at the fixed point"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "ripple_miss_of": {
+        "walk": "2026-11-16T22-27-39Z",
+        "title": "The fixed-point rule takes any commit outside the change's paths as the first apply commit, so a proposal-review walk that edits an architecture doc becomes the fixed point",
+        "file": "orbit/changes/tripwires/specs/orbit-tripwires/spec.md",
+        "kind": "judgement"
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Task 2.1 keeps a numstat invocation without --no-renames beside the one the walk added",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/tripwires/tasks.md",
+      "line": 27,
+      "classification": "trivial_fix",
+      "action": "closed by the same deletion: task 2.1 now names only the --no-renames -z invocation",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "measures `git diff --numstat <fp>..HEAD`"
+        ],
+        "introduced": [],
+        "searched": [
+          "numstat",
+          "no-renames"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "ripple_miss_of": {
+        "walk": "2026-11-16T22-27-39Z",
+        "title": "The measure does not say how a renamed path or a binary path enters the arithmetic",
+        "file": "orbit/changes/tripwires/specs/orbit-tripwires/spec.md",
+        "kind": "judgement"
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "A reused change name makes the first commit and the first apply commit an earlier change's",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/tripwires/specs/orbit-tripwires/spec.md",
+      "line": 62,
+      "classification": "trivial_fix",
+      "action": "both searches start at the change's birth, the latest first-parent commit adding orbit/changes/<name>/.openspec.yaml; scenario `A reused change name reads only the new change`; design M1 and task 1.1 follow",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/tripwires/design.md",
+          "orbit/changes/tripwires/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/tripwires/specs/orbit-tripwires/spec.md",
+            "text": "#### Scenario: A reused change name reads only the new change"
+          },
+          {
+            "path": "orbit/changes/tripwires/design.md",
+            "text": "Both searches start at the change's BIRTH"
+          },
+          {
+            "path": "orbit/changes/tripwires/tasks.md",
+            "text": "A reused change name reads only the new change"
+          }
+        ],
+        "searched": [
+          "earliest commit",
+          "first commit touching",
+          ".openspec.yaml"
+        ],
+        "scope": [
+          "src/utils/change-utils.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Work committed before the first apply emit's commit can still edit the plan it is compared with",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/tripwires/specs/orbit-tripwires/spec.md",
+      "line": 64,
+      "classification": "trivial_fix",
+      "action": "named the limit in the fixed-point requirement and in design Risks, with why a second anchor was not taken",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/tripwires/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/tripwires/specs/orbit-tripwires/spec.md",
+            "text": "Named limit — apply begins at the commit adding its first apply emit"
+          },
+          {
+            "path": "orbit/changes/tripwires/design.md",
+            "text": "Apply work committed before the first apply emit (M1)"
+          }
+        ],
+        "searched": [
+          "apply begins",
+          "first apply emit"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Design M1 names the function fixedPoint, task 1.1 names it changeCommits",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/tripwires/design.md",
+      "line": 63,
+      "classification": "trivial_fix",
+      "action": "design M1 names changeCommits, as task 1.1 does",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "`fixedPoint` returns a result"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/tripwires/design.md",
+            "text": "`changeCommits` returns a result distinguishing these"
+          }
+        ],
+        "searched": [
+          "fixedPoint",
+          "changeCommits"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "\"The CURRENT section\" does not say whether it is read from HEAD or the working tree",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/tripwires/specs/orbit-tripwires/spec.md",
+      "line": 224,
+      "classification": "trivial_fix",
+      "action": "the late-declaration requirement says the current section is design.md at HEAD, read with git like the reference",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/tripwires/specs/orbit-tripwires/spec.md",
+            "text": "read with git like the reference"
+          }
+        ],
+        "searched": [
+          "CURRENT section",
+          "declared late"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The walk re-stamped the change's fingerprints, and no walk entry records the edit",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/tripwires/.openspec.yaml",
+      "line": 1,
+      "classification": "stale",
+      "action": "record gap only; nothing to edit",
+      "evidence": "orbit fingerprint tripwires stamped the new MODIFIED requirement add-missing-only and kept both earlier stamps; .openspec.yaml base_fingerprints holds three entries, each matching its baseline block",
+      "outcome": "stale"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The emit-composition delta's second MODIFIED block is in no walk entry's edit record",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/tripwires/specs/orbit-emit-composition/spec.md",
+      "line": 1,
+      "classification": "stale",
+      "action": "record gap only; nothing to edit",
+      "evidence": "the block is the baseline requirement `The write gate checks decision records` copied whole with one sentence qualified; orbit validate tripwires passes and the delta resolves to its baseline (fingerprint stamped)",
+      "outcome": "stale"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Six of eight resolved by obvious fixes (the stale task 2.1 bullet, attributed as a judgement miss of the previous walk's F1 and F4 entries; the reused-name bound; the named limit; two wording fixes); two record gaps recorded stale.",
+  "iteration": 3,
+  "next_recommended": "/orbit:apply tripwires — user-invoked",
+  "ripple_misses": 2
+}

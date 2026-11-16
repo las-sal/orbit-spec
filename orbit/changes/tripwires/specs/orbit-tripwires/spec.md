@@ -11,11 +11,15 @@ orbit's sensor list and adds no stop condition. A reading carries:
 |---|---|
 | `sensor` | the sensor's id |
 | `outcome` | exactly one of `fired`, `quiet`, `cannot-read` |
-| `key` | a string naming the deviation, the same at every seam while the deviation is the same; `null` when `quiet` |
-| `reference` | the commit the sensor's reference was read at (`A sensor compares against a reference fixed before the run`), or `null` when none exists yet |
+| `deviations` | an array of KEYS, sorted, each a string naming ONE deviation and the same at every seam while that deviation stands; empty when `quiet` |
+| `reference` | the commit the sensor read its reference at (`A sensor compares against a reference fixed before the run`), or `null` when it read none |
+| `frozen` | `true` when `reference` is the change's fixed point; `false` before apply begins, when the plan as it stands is read |
 | `evidence` | an object the sensor defines, naming what it found against what it compared |
-| `stop` | present only when a `tripwire` stop names the reading's key: that stop's filename (`A halting reading writes a tripwire stop`) |
-| `answered_by` | present only when a resolution answers that stop: the resolution's filename |
+| `stops` | present only when a `tripwire` stop covers one of the reading's keys: the covering stops' filenames (`A halting reading writes a tripwire stop`) |
+| `answered_by` | present only when a resolution answers one of those stops: the resolutions' filenames |
+
+One key per deviation lets a stop, and the user's answer to it, name exactly the deviations it asks about: a deviation
+that appears later is a new key, asked about on its own.
 
 The contract admits four kinds of sensor, by what each reads:
 
@@ -38,13 +42,13 @@ Residual method: classifying each drift that G6's first-run closing review finds
 #### Scenario: A reading carries the contract's fields
 
 - **WHEN** the `touchpoints` sensor runs on a change whose committed work fires it
-- **THEN** its reading carries `sensor: "touchpoints"`, `outcome: "fired"`, a non-null `key`, the fixed point's commit
-  as `reference`, and `evidence` naming the files
+- **THEN** its reading carries `sensor: "touchpoints"`, `outcome: "fired"`, one key per firing file in `deviations`,
+  the fixed point's commit as `reference` with `frozen: true`, and `evidence` naming the files
 
-#### Scenario: A quiet reading has no key
+#### Scenario: A quiet reading has no deviations
 
 - **WHEN** the `touchpoints` sensor runs on a change whose committed work matches its plan
-- **THEN** its reading carries `outcome: "quiet"` and `key: null`
+- **THEN** its reading carries `outcome: "quiet"` and `deviations: []`
 
 ### Requirement: A sensor compares against a reference fixed before the run
 
@@ -52,19 +56,40 @@ Every sensor SHALL fire on an undeclared deviation from a reference fixed before
 something now, compares it with that reference, and fires when they differ and the plan did not declare the difference.
 Watching deviation rather than level keeps firings rare (G3), and fixing the reference keeps the run from moving it.
 
-The FIXED POINT of a change is the parent of its FIRST APPLY COMMIT: the earliest commit in the history of `HEAD`, after
-the change's first commit (the earliest commit touching `orbit/changes/<name>/`), that changes a path outside the
-change's own paths (`orbit/changes/<name>/`, `orbit/explore/<name>/` and its archive folder). A sensor reads its
-reference, and its settings (`The tripwires setting`), from the fixed point with git, never from the working tree, so an
-edit the run makes to either after apply begins changes nothing the sensor compares. Before the first apply commit
-exists, no committed work can deviate, and a sensor whose reference is read at the fixed point returns `quiet` with
-`reference: null`. Each sensor states its measure, its reference and its declared escape in its own requirement.
+Two commits are read from the first-parent history of `HEAD` (`git rev-list --first-parent`), so a merge into the
+change's branch never stands for the change's own work, and only from the change's BIRTH on: the latest such commit that
+adds `orbit/changes/<name>/.openspec.yaml`, so a name reused after an earlier change of that name was archived never
+reaches into the earlier change's history:
+
+- the change's FIRST COMMIT, the earliest commit from its birth touching `orbit/changes/<name>/`; the MEASURE runs from
+  its parent (the empty tree when it has none) to `HEAD`, so work committed with the proposal, or before apply begins,
+  is measured;
+- the change's FIRST APPLY COMMIT, the earliest commit from its birth adding a file
+  `orbit/changes/<name>/.orbit-runs/apply-*.json` (the apply emit, which marks apply as begun); its parent is the
+  change's FIXED POINT.
+
+A sensor reads its reference, and its settings (`The tripwires setting`), from the fixed point with git, never from the
+working tree, so an edit the run makes to either after apply begins changes nothing the sensor compares, while an edit
+made at a proposal-review walk, before apply, is part of the plan. The cases, tested in this order:
+
+| the change's history | the reading |
+|---|---|
+| not a git repository, or a git command fails | `cannot-read`, reason `no-git` |
+| no commit touches `orbit/changes/<name>/` | `cannot-read`, reason `uncommitted`: nothing about the change is committed to measure |
+| a first commit, and no first apply commit | measured, the reference and settings read at `HEAD` with `frozen: false`: the plan is not frozen until apply begins |
+| a first apply commit | measured, the reference and settings read at the fixed point with `frozen: true` |
+
+Each sensor states its measure, its reference and its declared escape in its own requirement.
 
 A sensor that cannot read its reference returns `cannot-read`, and `cannot-read` is treated as `fired` wherever a
 firing is acted on or shown (`Every seam emit carries the readings`, `A halting reading writes a tripwire stop`), so
 silence is never a pass.
 
 Named limit — sensors plug in (`A tripwire is a sensor that returns a reading`), so the set of sensors is open by design.
+
+Named limit — apply begins at the commit adding its first apply emit, so apply work committed before that commit is
+measured but can still edit the plan read at the fixed point. orbit's apply flow writes the emit before the commit that
+carries the chunk's work, so the two land together; a commit made by hand ahead of the first emit is the case left open.
 
 Residual kind: a sensor whose reference cannot be read at its fixed point (no `## Touchpoints` section, a project sensor with no reading at propose, a baseline file missing)
 
@@ -76,10 +101,29 @@ Residual method: each sensor states how it reads its reference; a sensor that ca
   and edits `src/x.ts`
 - **THEN** the `touchpoints` reading compares against `design.md` as at `C`'s parent, so `src/x.ts` is unpredicted
 
-#### Scenario: No apply commit yet is quiet
+#### Scenario: A proposal-review walk's edit is part of the plan
 
-- **WHEN** a change's history holds only its propose commit, and the `touchpoints` sensor runs
-- **THEN** its reading is `quiet` with `reference: null`
+- **WHEN** after the propose commit, a walk commit adds `src/y.ts` to `## Touchpoints` and edits an architecture doc,
+  and the first apply commit `C` then changes `src/y.ts` by 30 lines
+- **THEN** the reference is `design.md` at `C`'s parent, which lists `src/y.ts`, so it is predicted
+
+#### Scenario: Work committed with the proposal is measured
+
+- **WHEN** the propose commit adds the change's artifacts and 100 unpredicted lines of `src/z.ts`, and no apply emit
+  is committed yet
+- **THEN** the `touchpoints` reading measures from the propose commit's parent, compares against `design.md` at `HEAD`
+  with `frozen: false`, and fires on `src/z.ts`
+
+#### Scenario: A reused change name reads only the new change
+
+- **WHEN** a change `n` was proposed, applied and archived, and a new change `n` is then created and proposed
+- **THEN** the new change's first commit, first apply commit and fixed point all come from commits after the one adding
+  the new `orbit/changes/n/.openspec.yaml`
+
+#### Scenario: An uncommitted change cannot be read
+
+- **WHEN** a seam emit is written for a change no commit touches yet
+- **THEN** the `touchpoints` reading is `cannot-read` with reason `uncommitted`, never `quiet`
 
 #### Scenario: A reference that cannot be read reads as cannot-read
 
@@ -130,39 +174,46 @@ stop is the setting's: one setting per sensor decides (R-adf-6).
 ### Requirement: A halting reading writes a tripwire stop
 
 The emit surface SHALL write a STOP RECORD of condition `tripwire` (`orbit-decision-records`' `Three decision records,
-one job each`) to the change's `decisions/` folder when a seam emit's reading is `fired` or `cannot-read` and its
-sensor's `on_fire` setting is `halt`, unless a `tripwire` stop already names the reading's key there. The setting halts
-when it reads `halt` in the current `orbit/config.yaml` or in the config at the fixed point, so a run cannot turn a halt
-off and the user can turn one on mid-change. The `archive` emit writes no stop: the archive has landed, so nothing is
-left to halt, and its readings are recorded only.
+one job each`) to the change's `decisions/` folder when a seam emit's reading is `fired` or `cannot-read`, its sensor's
+`on_fire` setting is `halt`, and one or more of its keys is covered by no `tripwire` stop there; the stop names exactly
+those uncovered keys. The setting halts when it reads `halt` in the config at `HEAD` or, once the change has a fixed
+point, in the config at the fixed point, so a run cannot turn a halt off and the user can turn one on mid-change. The
+`archive` emit writes no stop: the archive has landed, so nothing is left to halt, and its readings are recorded only.
 
 orbit composes the record, since no payload may raise `tripwire`: `command: "stop"`, the timestamp, `change`,
 `model: null`, `condition: "tripwire"`, an `about` and a `question` written by orbit in plain language by the rule of
 `orbit-decision-records`' `Decision records are written for a reader who knows only the architecture` (what the sensor
 found, against what, and whether the work should go on as it is), a `detail` naming the reading's evidence, and a
-`tripwire` object `{sensor, key, emit}` naming the sensor, the key and the seam emit's filename. A stop NAMES a key when
-the latest record of its replacement chain carries that key in its `tripwire` object. The surface prints one line on
-standard error naming each stop it wrote. The chain's `open-stop` row (`orbit-engine-gates`) reads it as any other open
-stop.
+`tripwire` object `{sensor, deviations, emit}` naming the sensor, the keys the stop asks about and the seam emit's
+filename. The surface prints one line on standard error naming each stop it wrote. The chain's `open-stop` row
+(`orbit-engine-gates`) reads it as any other open stop.
 
-A reading whose key a stop names carries that stop's filename in `stop`; a reading whose key a resolution has answered
-carries the resolution's filename in `answered_by`, and the fired outcome is not asked again.
+A key is COVERED by a stop when the LATEST record of that stop's replacement chain carries the key in its `tripwire`
+object, and ANSWERED when the latest record of a resolution chain names that stop chain. This lookup is a reader of
+`decisions/` that takes the latest record of every chain, as `orbit-decision-records`' `A record is fixed by a
+replacement, never edited` requires of one. A reading names, in `stops`, each stop covering one of its keys, and, in
+`answered_by`, each resolution answering one of those stops; a covered key is never asked again.
+
+An orbit-written stop is never reworded by a replacement, since a payload may not carry `condition: "tripwire"`: a
+reader's finding against its wording is a finding against this requirement's composition, which only orbit's code can
+fix, and the walk records it `deferred` naming this requirement, as it records a gap in the reading step's brief.
 
 #### Scenario: A halting firing writes one stop
 
-- **WHEN** `tripwires: {touchpoints: {on_fire: halt}}` is set, and a review emit's `touchpoints` reading fires with key
-  `K` that no stop names
-- **THEN** the change's `decisions/` folder gains `stop-<TS>.json` with `condition: "tripwire"`, `model: null` and
-  `tripwire.key: "K"`, and the reading carries `stop` naming it
+- **WHEN** `tripwires: {touchpoints: {on_fire: halt}}` is set, and a review emit's `touchpoints` reading fires with keys
+  `K1` and `K2`, which no stop covers
+- **THEN** the change's `decisions/` folder gains one `stop-<TS>.json` with `condition: "tripwire"`, `model: null` and
+  `tripwire.deviations: ["K1", "K2"]`, and the reading's `stops` names it
 
-#### Scenario: The same key is not asked twice
+#### Scenario: Only a new deviation is asked about
 
-- **WHEN** a stop naming key `K` exists, open or answered, and the next seam emit's reading fires with key `K`
-- **THEN** no stop is written, and the reading names the existing stop (and, when answered, its resolution)
+- **WHEN** a stop covers `K1`, open or answered, and the next seam emit's reading fires with keys `K1` and `K3`
+- **THEN** one stop is written naming `K3` alone, and the reading's `stops` names both stops (and, where answered,
+  `answered_by` the resolution)
 
 #### Scenario: A halt the run removed still halts
 
-- **WHEN** `on_fire: halt` is set in the config at the fixed point, and the current config sets `on_fire: record`
+- **WHEN** `on_fire: halt` is set in the config at the fixed point, and the config at `HEAD` sets `on_fire: record`
 - **THEN** a firing at the next seam emit writes the stop
 
 #### Scenario: The archive records and halts nothing
@@ -179,13 +230,13 @@ sensor:
 | member | covered by |
 |---|---|
 | present at the reference's fixed point | the deviation it names is declared: no firing |
-| written later, sensor set to halt | fires; the `tripwire` stop names the reading's key, the user's answer is its resolution, and later readings with that key read as declared |
+| written later, sensor set to halt | fires; the `tripwire` stop names the reading's keys, the user's answer is its resolution, and later readings with those keys read as declared |
 | written later, sensor record-only (the default) | the reading stays fired; the brief shows it beside the late declaration |
 
 A declaration is in place at the fixed point or written after it; the setting is halt or not. "Declared" has one
-source after the fixed point: the resolution names the stop, and the stop names the reading's key. For the
-`touchpoints` sensor the declaration is a `## Touchpoints` entry, and a firing path that only the CURRENT section
-predicts is marked in the evidence as declared late.
+source after the fixed point: the resolution names the stop, and the stop names the reading's keys. For the
+`touchpoints` sensor the declaration is a `## Touchpoints` entry, and a firing path that only the CURRENT section (the
+section in `design.md` at `HEAD`, read with git like the reference) predicts is marked in the evidence as declared late.
 
 #### Scenario: A late Touchpoints entry does not quiet the sensor
 
@@ -195,8 +246,8 @@ predicts is marked in the evidence as declared late.
 
 #### Scenario: The user's answer declares the key
 
-- **WHEN** under `on_fire: halt` a stop names key `K` and a resolution answers it
-- **THEN** a later reading with key `K` carries `answered_by` naming that resolution, and no new stop is written
+- **WHEN** under `on_fire: halt` a stop covers key `K` and a resolution answers it
+- **THEN** a later reading carrying `K` names that resolution in `answered_by`, and no new stop is written for `K`
 
 ### Requirement: At the defaults a reading is shown nowhere but the brief
 
@@ -205,7 +256,7 @@ surface it could reach:
 
 | member | covered by |
 |---|---|
-| the human readouts (`orbit status` bare, `--full`, `--boot`; `orbit architecture status`) | unchanged: none renders a reading |
+| the human readouts (`orbit status` bare, `--full`, `--boot`, `--report`; `orbit architecture status`) | unchanged: none renders a reading |
 | the gates | unchanged: no gate reads a reading |
 | the chain object | unchanged: no stop is written at the defaults (`Every seam emit carries the readings`), so no `open-stop` row can match |
 | the reading step (default-on, R-adf-11) | unchanged: no stop is written to `decisions/` at the defaults, so its selection holds nothing new |
@@ -219,16 +270,20 @@ the two default-reaching consumers earlier stages added.
 #### Scenario: A firing changes no readout
 
 - **WHEN** a change's latest review emit carries a `fired` reading and every setting is at its default
-- **THEN** `orbit status --change <name>`, its `--json`, its `--boot` render and the change's gates are exactly what
-  they would be without the reading
+- **THEN** `orbit status --change <name>`, its `--json`, its `--boot` render, its `--report` render of that review
+  and the change's gates are exactly what they would be without the reading
 
 ### Requirement: The Touchpoints sensor fires on unpredicted source past a tolerance
 
-The `touchpoints` sensor SHALL compare the paths the change's committed work changed, from the fixed point to `HEAD`
-(`git diff --numstat`), with `design.md`'s `## Touchpoints` section at the fixed point, read by the entry grammar
-`orbit-propose-modifications` owns (the same parse and matching as `orbit-audit-drift`' `Touchpoints divergence
-check`). A path's changed lines are its added plus its deleted lines; a binary path, whose lines git does not count,
-is counted as past the per-file tolerance. SOURCE is every changed path that is neither the change's own nor exempt.
+The `touchpoints` sensor SHALL compare the paths the change's committed work changed over its MEASURE (`A sensor
+compares against a reference fixed before the run`), read by `git diff --numstat --no-renames -z`, with `design.md`'s
+`## Touchpoints` section at its reference, read by the entry grammar `orbit-propose-modifications` owns (the same parse
+and matching as `orbit-audit-drift`' `Touchpoints divergence check`). With renames off, a renamed file is a deletion of
+its old path and an addition of its new one, each classified on its own. A path's changed lines are its added plus its
+deleted lines. A binary path, whose lines git does not count, fires as past the per-file tolerance when it is
+unpredicted source, and counts in neither side of the share. SOURCE is every changed path that is neither the change's
+own nor exempt; the SHARE is the unpredicted source lines over all source lines, and never fires when there are no
+source lines.
 
 | member | covered by |
 |---|---|
@@ -238,21 +293,29 @@ is counted as past the per-file tolerance. SOURCE is every changed path that is 
 | an unpredicted source file with more than the per-file tolerance changed (default 40 lines) | fires, naming the file and its lines |
 | unpredicted source above the share tolerance of the change's source lines (default 20%) | fires, naming the files and the share |
 | unpredicted source within both tolerances | no firing; the reading lists the files |
-| a malformed Touchpoints entry | excluded from the arithmetic; the reading names the line beside any path it meant to predict |
+| a malformed Touchpoints entry | excluded from the arithmetic; the reading lists its line beside the firing paths, since a path it meant to predict cannot be known |
 | no Touchpoints section | "cannot read" (the residual of `A sensor compares against a reference fixed before the run`) |
 
 A path is in the change's folder, predicted, exempt or unpredicted source; unpredicted source is past a tolerance or
 within both; the section is present or absent, and its entries parse or do not. An exempt pattern holding no `/`
 matches a path's last segment; one holding a `/` matches the whole path by the Touchpoints target forms (exact, directory
-prefix, glob). The sensor also returns `cannot-read` when `design.md` is absent at the fixed point or git cannot
-answer. Its key is `touchpoints:` followed by the firing paths, sorted and joined by commas (every unpredicted source
-path when the share fires); a `cannot-read` key is `touchpoints:cannot-read:` followed by the reason.
+prefix, glob). The sensor returns `cannot-read` with exactly one of four reasons: `no-git` and `uncommitted` (`A sensor
+compares against a reference fixed before the run`), `no-design` when `design.md` is absent at its reference, and
+`no-section` when it has no `## Touchpoints` section. Each firing path is one key, `touchpoints:` followed by the path
+(every unpredicted source path when the share fires); a `cannot-read` reading's one key is `touchpoints:cannot-read:`
+followed by its reason.
+
+Its `evidence` carries `files` (each unpredicted source path with its `lines`, `binary` when git counted none, `over`
+when it is past the per-file tolerance, and `declared_late` when only the current section predicts it), `share` (the
+percentage, or `null` with no source lines), `share_fired`, `malformed` (each malformed entry's line and text),
+`settings` (the four values used) and `notes` (each setting value it could not use); a `cannot-read` reading's evidence
+carries its `reason`.
 
 #### Scenario: One large unpredicted file fires
 
 - **WHEN** a change's committed work changes `src/a.ts` by 138 lines, its Touchpoints at the fixed point predict
   nothing under `src/a.ts`, and the defaults apply
-- **THEN** the reading fires with key `touchpoints:src/a.ts`, its evidence naming `src/a.ts` and 138 lines
+- **THEN** the reading fires with `deviations: ["touchpoints:src/a.ts"]`, its evidence naming `src/a.ts` and 138 lines
 
 #### Scenario: Small ripple within both tolerances is quiet
 
@@ -262,17 +325,28 @@ path when the share fires); a `cannot-read` key is `touchpoints:cannot-read:` fo
 #### Scenario: The share tolerance catches spread drift
 
 - **WHEN** ten unpredicted source files change by 10 lines each, out of 300 source lines
-- **THEN** the reading fires on the share (33%), its key naming all ten files
+- **THEN** the reading fires on the share (33%), one key per file for all ten
 
 #### Scenario: Exempt paths never count
 
 - **WHEN** the only unpredicted paths are `test/core/x.test.ts`, `docs/cli.md` and `src/util/x.spec.ts`
 - **THEN** the reading is `quiet`
 
-#### Scenario: A malformed entry is named beside the path
+#### Scenario: A malformed entry is listed with the firing paths
 
 - **WHEN** a Touchpoints entry at line 12 is malformed, and `src/c.ts`, which it meant to predict, changes by 50 lines
-- **THEN** the reading fires naming `src/c.ts` and the malformed line 12
+- **THEN** the reading fires naming `src/c.ts`, and its evidence lists the malformed line 12
+
+#### Scenario: A rename is a deletion and an addition
+
+- **WHEN** `src/old.ts`, which `## Touchpoints` predicts, is renamed to `src/new.ts`, which it does not, with 80 lines
+- **THEN** `src/old.ts` is predicted, and `src/new.ts` is unpredicted source with its 80 added lines, and fires
+
+#### Scenario: A binary file fires alone and stays out of the share
+
+- **WHEN** the unpredicted source is `src/a.ts` (10 lines) and `assets/logo.png` (binary), out of 40 text source lines
+- **THEN** the reading fires on `assets/logo.png` as past the per-file tolerance, and the share is 25% of the text
+  lines, firing too
 
 ### Requirement: The tripwires setting
 
@@ -291,9 +365,9 @@ tripwires:
 Each field is optional and takes its default when absent. `exempt`, when given, replaces the default set. A field whose
 value is of the wrong shape takes its default, and the reading's evidence notes it; an absent or unparseable config file
 reads as every default. A key naming no sensor in orbit's sensor list is ignored. Every field but `on_fire` is read only
-at the fixed point (`A sensor compares against a reference fixed before the run`); `on_fire` is read as `A halting
-reading writes a tripwire stop` states. Absent, the key changes nothing the user sees (`At the defaults a reading is
-shown nowhere but the brief`).
+where the sensor reads its reference: at the fixed point, or at `HEAD` before apply begins (`A sensor compares against
+a reference fixed before the run`); `on_fire` is read as `A halting reading writes a tripwire stop` states. Absent, the
+key changes nothing the user sees (`At the defaults a reading is shown nowhere but the brief`).
 
 #### Scenario: A widened exempt set after apply begins escapes nothing
 
