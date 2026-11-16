@@ -1,0 +1,80 @@
+{
+  "command": "apply",
+  "timestamp": "2026-11-16T23:00:43Z",
+  "change": "tripwires",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "consent": "user-invoked",
+  "tasks_completed": 13,
+  "tasks_remaining": 0,
+  "user_validation_remaining": 0,
+  "chunk": null,
+  "chunk_name": null,
+  "chunk_complete": true,
+  "tasks_completed_this_session": 13,
+  "files_touched": [
+    "docs/cli.md",
+    "docs/customization.md",
+    "orbit/changes/tripwires/.openspec.yaml",
+    "orbit/changes/tripwires/.orbit-runs/address-reviews-2026-11-16T22-27-39Z.json",
+    "orbit/changes/tripwires/.orbit-runs/address-reviews-2026-11-16T22-27-54Z.json",
+    "orbit/changes/tripwires/.orbit-runs/address-reviews-2026-11-16T22-34-41Z.json",
+    "orbit/changes/tripwires/.orbit-runs/decisions/ledger-2026-11-16T22-26-38Z.json",
+    "orbit/changes/tripwires/.orbit-runs/decisions/ledger-2026-11-16T22-26-39Z.json",
+    "orbit/changes/tripwires/.orbit-runs/external-prompt-proposal-2026-11-16T22-11-38Z.md",
+    "orbit/changes/tripwires/.orbit-runs/external-proposal-2026-11-16T22-20-28Z.md",
+    "orbit/changes/tripwires/.orbit-runs/propose-2026-11-16T22-10-54Z.json",
+    "orbit/changes/tripwires/.orbit-runs/review-external-2026-11-16T22-11-54Z.json",
+    "orbit/changes/tripwires/.orbit-runs/review-proposal-2026-11-16T22-20-08Z.json",
+    "orbit/changes/tripwires/.orbit-runs/review-proposal-2026-11-16T22-30-58Z.json",
+    "orbit/changes/tripwires/design.md",
+    "orbit/changes/tripwires/proposal.md",
+    "orbit/changes/tripwires/specs/orbit-emit-composition/spec.md",
+    "orbit/changes/tripwires/specs/orbit-program-brief/spec.md",
+    "orbit/changes/tripwires/specs/orbit-tripwires/spec.md",
+    "orbit/changes/tripwires/tasks.md",
+    "src/core/emit-composition.ts",
+    "src/core/program-brief.ts",
+    "src/core/project-config.ts",
+    "test/commands/emit.test.ts",
+    "test/core/program-brief.test.ts",
+    "test/core/rc03b-untouched-modules.test.ts",
+    "test/fixtures/brief-golden/program-decisions.golden.md",
+    "test/fixtures/brief-golden/program.golden.md",
+    "test/helpers/schema-references.ts"
+  ],
+  "diff_base": "a98616bbe0f004b7e7063dd4695d51c66d494004",
+  "final_assessment": "13 of 13 tasks done. Oracle shown able to fail (2.2), each mutation reverted: the per-file comparison > to >= failed 'exactly at both tolerances is within'; the share comparison > to >= failed the same test; the exempt matcher matching the whole path for a slash-free pattern failed 'exempt paths never count' and the matcher test; reading the reference at HEAD instead of the fixed point failed five tests (the contract's fields, an edit to the plan after apply begins, a proposal-review walk's edit, a late Touchpoints entry, a widened exempt set). Measurement (6.1), each change at its own archive commit in a detached worktree: 1 of 14 fires, change-account (src/core/account.ts 138 lines, share 35.3%), matching D-tw-17's 1 of 14; it carries two keys, not one, because a share firing keys every unpredicted source path (src/core/completions/command-registry.ts, 2 lines); no walk-edited plan changed a result and no path read as declared late. Found at 3.1 and carried by the user's choice: orbit-conventions' canonical examples must show the new field, a fourth capability declared in the proposal's Size (ledger-2026-11-16T22-51-37Z.json); and the brief held orbit-written stops to the payload shape, which refuses the tripwire condition, now checked by their own shape. Suite: 203 files, 4293 tests green (baseline 200 files, 4236).",
+  "next_recommended": "/orbit:review --as system --reviewer blind-pair tripwires",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "53b16bface3508c3df54f5b8ced9e03111ab9abe",
+      "frozen": false,
+      "evidence": {
+        "files": [],
+        "share": null,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ]
+}

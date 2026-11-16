@@ -1,0 +1,129 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-16T23:08:59Z",
+  "change": "tripwires",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "0",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "src/core/tripwires.ts",
+      "line": 151,
+      "title": "A reused name whose new change is not yet committed is measured as the archived change, not read as uncommitted",
+      "recommendation": "In changeCommits, a birth that a later first-parent commit deleted (the earlier change's archive move removes orbit/changes/<name>/.openspec.yaml) belongs to the earlier change: when the latest deletion of that file is newer than its latest addition, return { kind: 'uncommitted' } (the archive emit, written before its move is committed, still finds its own birth). Extend the test 'a reused change name reads only the new change' (test/core/tripwires.test.ts:163) with the window between the archive commit and the new propose commit, expecting 'uncommitted'.",
+      "reproduction": "The spec's case table (orbit-tripwires spec.md:78) says a change no commit touches reads cannot-read, reason uncommitted, and the design's risk (design.md:240) relies on it. Probe against dist in a disposable repo: propose change n (Touchpoints src/a.ts), commit an apply emit with src/a.ts, git mv the folder to orbit/changes/archive/2026-01-02-n and commit, commit 200 lines of unrelated src/other.ts, then create a NEW uncommitted orbit/changes/n/ (.openspec.yaml, design.md predicting src/b.ts). computeReadings(root, 'n', ...) returns kind 'frozen' with first/firstApply/fixedPoint all from the ARCHIVED change, and the reading fires: deviations ['touchpoints:src/other.ts'], 200 lines, share 87%. Expected: cannot-read, touchpoints:cannot-read:uncommitted. The cause: births (tripwires.ts:148) finds only the old addition, and sinceBirth then admits the old change's commits. A seam emit on that change (an in-context proposal review before the propose commit under pr: never) records the unrelated work as fired, the brief lists it, and under on_fire: halt a stop asks about paths the new change never touched."
+    },
+    {
+      "pass": "0",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "src/core/tripwire-touchpoints.ts",
+      "line": 136,
+      "title": "Merging the default branch into the change's branch makes the measure count the merged work as the change's",
+      "recommendation": "Either make the measure exclude merged-in work, or name the case as a limit where the spec now claims the opposite. Today the spec (orbit-tripwires spec.md:59-60, 'so a merge into the change's branch never stands for the change's own work') and the design's risk (design.md:232-234, 'Under pr: per-proposal the branch holds only the change') both say the case cannot arise, while the measure is one two-tree diff from the first commit's parent to HEAD, which carries everything a merge brought in.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Measure only the change's own commits: sum git diff --numstat --no-renames -z <c>^ <c> over the first-parent, non-merge commits from the first commit to HEAD (the list changeCommits already reads), so a merge commit's second-parent content never enters. Name what that trades: a line edited in two commits counts twice, and a conflict resolution made inside a merge commit is not measured. Add a scenario (merge main into the branch after apply) and its test."
+        },
+        {
+          "label": "B",
+          "body": "Keep the two-tree measure and state the case as a named limit: in the requirement 'A sensor compares against a reference fixed before the run', narrow the first-parent sentence to the commits it picks (the first commit, the first apply commit), and add a named limit saying work a merge brings into the branch after the first commit is measured as the change's; correct the design's pr: per-proposal sentence to match."
+        }
+      ],
+      "reproduction": "Probe against dist in a disposable repo: base commit on main; branch n; propose commit (design.md Touchpoints src/a.ts); apply commit (apply emit + 30 lines of src/a.ts); on main commit 300 lines of src/mainwork.ts; on n run git merge main (a merge commit whose first parent is n). computeReadings(root, 'n', ...) returns outcome 'fired', deviations ['touchpoints:src/mainwork.ts'], files [{path: 'src/mainwork.ts', lines: 300, over: true}]. The commit selection is first-parent as specified, but the measure at tripwire-touchpoints.ts:136 diffs the trees <first>^..HEAD, which includes the merged file."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "src/core/tripwire-touchpoints.ts",
+      "line": 101,
+      "title": "The reading's evidence shows the on_fire setting at the reference, which is not always the value that decided the halt",
+      "recommendation": "The evidence's settings.on_fire is read where the reference is read (the fixed point, or HEAD before apply begins), but sensorHalts (tripwires.ts:193-206) halts when HEAD or the fixed point says halt. A user who commits on_fire: halt mid-change gets a stop whose reading's evidence says on_fire: record. Either record the effective value (halt when either config says halt), or drop on_fire from settings since the requirement calls them 'the four values used' (orbit-tripwires spec.md:311) and the measure uses only three."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "What was probed: every new and changed source file read in full (tripwires.ts, tripwire-touchpoints.ts, the emit-composition, project-config and program-brief diffs); the tests' scenario tags checked against each scenario of the four deltas (all tagged); the full suite run on a fresh build; validate --strict run; the sensor computed live on this change (frozen at 53b16bfa, quiet, share 0); every program brief in orbit/architecture/ rendered (all succeed) and every archived seam emit parsed (882, none unparseable), so the brief's new strict read of seam emits breaks no existing brief. The orbit-conventions delta was diffed against its baseline block: only the three examples and their lead-in sentences change.\n\nThe pattern behind the two warnings: the commit SELECTION is careful (first-parent, bounded at birth, merges excluded), but two inputs around it assume more than the history guarantees. The birth search assumes the latest addition of .openspec.yaml belongs to the current change, which fails between an archive and the next propose commit. The measure assumes the range first^..HEAD holds only the change's commits, which a merge from the default branch breaks. Both are reproduced against dist in disposable repositories and neither shows at the defaults beyond a wrong record in the emit and the brief; under on_fire: halt each writes a stop about work the change did not do.\n\nPass 0 ran inline rather than through the verify skill: task state, scenario coverage, the suite and validate --strict were checked directly, and no verify emit was written. Passes 4 and 5 were skipped because orbit/lenses/ does not exist. Pass 6 was not run as the audit-drift library pass, because it writes its own record into the trail; a targeted sweep for the retired wording ('tripwires are not installed', 'nine more optional keys', the tripwires line) found only the change's own artifacts, the baseline that the sync replaces, and the program-brief stage's historical Shipped-as paragraph in automate-dev-flow.md, which is a record and not drift. The At archive edits the design lists (the new capability's Purpose, orbit-program-brief's Purpose, the Carried by line, CLAUDE.md's capability figure) are still owed, as planned.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3"
+  ],
+  "passes_skipped": [
+    "4",
+    "5",
+    "6"
+  ],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The contract, the emit wiring, the halt write order and the brief are built as specified, and at the defaults nothing the user sees changes. The two warnings are bounded edge cases in which history the Touchpoints sensor reads: one is a small fix in changeCommits; the other is a real choice between measuring only the change's own commits and naming the merge case as a limit. Both belong in the walk before archive, and neither needs the design reopened beyond that choice. Settle them in the walk, then archive."
+  },
+  "final_assessment": "0 critical, 2 warning, 1 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews tripwires",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "53b16bface3508c3df54f5b8ced9e03111ab9abe",
+      "frozen": true,
+      "evidence": {
+        "files": [],
+        "share": 0,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ]
+}

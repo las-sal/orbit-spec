@@ -1,0 +1,25 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-16T22:51:37Z",
+  "change": "tripwires",
+  "model": "claude-opus-5-5",
+  "area": "things-others-build-on",
+  "decided": "orbit's three worked examples of the record each step writes (one for building, one for a review, one for the archive) now show the tripwire readings that every such record carries, and this change grows from three capabilities to four to say so, with the overage declared.",
+  "alternatives": [
+    "stop building and plan the change again, for example by splitting it",
+    "leave the worked examples as they were and stop holding them equal to the records orbit writes"
+  ],
+  "why": "The worked examples are checked against the records orbit really writes, so once every step's record carries the readings the examples must carry them too, in the same change. The user chose to carry the extra capability and declare it rather than re-plan.",
+  "relies_on": [
+    {
+      "kind": "requirement",
+      "capability": "orbit-conventions",
+      "title": "Internal-run JSON summary format"
+    },
+    {
+      "kind": "decision",
+      "id": "D-tw-6"
+    }
+  ],
+  "detail": "Found at task 3.1: test/core/canonical-examples.test.ts executes the three json fences after **Canonical examples** and holds their top-level keys equal to the written emit (the requirement's own scenario at orbit/specs/orbit-conventions/spec.md:372 predicts the failure). The review example's engine-composed values are compared, so its tripwires value is the cannot-read no-git reading of the test's non-git temp project. Size measured: capabilities 4 (ceiling 3, declared in proposal.md ## Size), requirements 12 (ceiling 12), changed_bytes 30838 (ceiling 40960)."
+}

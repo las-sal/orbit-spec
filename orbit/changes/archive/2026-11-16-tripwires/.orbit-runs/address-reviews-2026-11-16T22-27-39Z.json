@@ -1,0 +1,610 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-16T22:27:39Z",
+  "change": "tripwires",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/tripwires/.orbit-runs/review-proposal-2026-11-16T22-20-08Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-16T22-20-08Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "walk_mode_source": "flag",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 6,
+    "suggestion": 8
+  },
+  "pushback_verification": "All fourteen verified against current state before editing; none stale. F1 re-derived against the 14 archived changes the reviewer named (3efc8abb, a0a0436a, dd707609 are walk commits); F11 confirmed by grep (ENGINE_OWNED_PER_COMMAND in test/helpers/schema-references.ts); F5 confirmed by brief-render's At archive precedent.",
+  "resolution_summary": {
+    "resolved": 14,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The fixed-point rule takes any commit outside the change's paths as the first apply commit, so a proposal-review walk that edits an architecture doc becomes the fixed point",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/tripwires/specs/orbit-tripwires/spec.md",
+      "line": 55,
+      "classification": "decision_required",
+      "action": "applied the ratified direction: the plan is read at the parent of the commit adding the first apply emit, the measure runs from the change's first commit, the plan as it stands is read before apply, all on first-parent history; the cases are ordered in a table and four scenarios cover them; design M1 and M2 rewritten",
+      "ratified_via": "chat",
+      "resolution": "B — split the two jobs: plan read just before the commit adding the first apply record; measure from the change's first commit; before apply, compare against the plan as it stands; first-parent history",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Fixed point = parent of the commit that adds the change's earliest apply-*.json emit (first-parent history); before one exists, quiet with reference null. Matches every apply commit on the record."
+          },
+          {
+            "label": "B",
+            "body": "Keep the path rule but exclude orbit/ (and the configured exempt set) from what qualifies, and walk first-parent only. Simpler, but a docs-first apply or a non-orbit fix landed mid-review still sets it early."
+          }
+        ],
+        "chosen": "off-menu"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/tripwires/design.md",
+          "orbit/changes/tripwires/tasks.md",
+          "orbit/changes/tripwires/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "The FIXED POINT of a change is the parent of its FIRST APPLY COMMIT",
+          "#### Scenario: No apply commit yet is quiet",
+          "The fixed point is the parent of the first apply commit."
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/tripwires/specs/orbit-tripwires/spec.md",
+            "text": "#### Scenario: Work committed with the proposal is measured"
+          },
+          {
+            "path": "orbit/changes/tripwires/specs/orbit-tripwires/spec.md",
+            "text": "#### Scenario: A proposal-review walk's edit is part of the plan"
+          },
+          {
+            "path": "orbit/changes/tripwires/design.md",
+            "text": "Two commits: where the plan is read, and where the measure starts"
+          }
+        ],
+        "searched": [
+          "first apply commit",
+          "fixed point",
+          "firstCommitTouching",
+          "reference: null"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "An orbit-written tripwire stop can never be fixed by a replacement, and the change adds a reader of decisions/ without the check the decision records require",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/tripwires/specs/orbit-tripwires/spec.md",
+      "line": 139,
+      "classification": "trivial_fix",
+      "action": "the halting requirement now says a wording finding on an orbit-written stop is recorded deferred against orbit's composition, and that the coverage lookup takes the latest record of each stop and resolution chain; design M4 records the reader check the decision records ask for",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/tripwires/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "One stop per key: a key a stop already names is never asked again"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/tripwires/specs/orbit-tripwires/spec.md",
+            "text": "An orbit-written stop is never reworded by a replacement"
+          },
+          {
+            "path": "orbit/changes/tripwires/design.md",
+            "text": "The coverage lookup is a new reader of"
+          }
+        ],
+        "searched": [
+          "replacement",
+          "checkDecisionShape",
+          "reader of `decisions/`"
+        ],
+        "scope": [
+          "orbit/specs/orbit-decision-records/spec.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "A null fixed point is read as quiet, yet a missing git, a never-committed change folder and uncommitted apply work all produce one",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/tripwires/specs/orbit-tripwires/spec.md",
+      "line": 59,
+      "classification": "trivial_fix",
+      "action": "the fixed-point requirement orders the cases in a table (no-git, uncommitted, not begun, frozen); the four cannot-read reasons are a closed set in the sensor requirement; task 1.1 returns four distinct results, never a bare null",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/tripwires/tasks.md",
+          "orbit/changes/tripwires/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "no committed work can deviate",
+          "returning `null` before the first apply commit"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/tripwires/specs/orbit-tripwires/spec.md",
+            "text": "#### Scenario: An uncommitted change cannot be read"
+          },
+          {
+            "path": "orbit/changes/tripwires/tasks.md",
+            "text": "never a bare `null`"
+          }
+        ],
+        "searched": [
+          "null",
+          "cannot-read",
+          "no-git"
+        ],
+        "scope": [
+          "src/core/parsers/apply-state.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The measure does not say how a renamed path or a binary path enters the arithmetic",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/tripwires/specs/orbit-tripwires/spec.md",
+      "line": 227,
+      "classification": "trivial_fix",
+      "action": "the sensor measures with git diff --numstat --no-renames -z, a rename being a deletion plus an addition; a binary path fires on the per-file check and counts in neither side of the share; no source lines never fires the share; rename and binary scenarios added; design M8 rewritten",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/tripwires/design.md",
+          "orbit/changes/tripwires/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "is counted as past the per-file tolerance",
+          "A binary path counts as past the per-file tolerance"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/tripwires/specs/orbit-tripwires/spec.md",
+            "text": "git diff --numstat --no-renames -z"
+          },
+          {
+            "path": "orbit/changes/tripwires/specs/orbit-tripwires/spec.md",
+            "text": "#### Scenario: A rename is a deletion and an addition"
+          },
+          {
+            "path": "orbit/changes/tripwires/specs/orbit-tripwires/spec.md",
+            "text": "#### Scenario: A binary file fires alone and stays out of the share"
+          }
+        ],
+        "searched": [
+          "numstat",
+          "binary",
+          "rename"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Task 5.1 names orbit-tripwires on a Carried by line before the capability exists, and no step plans the archive-time edits a new capability needs",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/tripwires/tasks.md",
+      "line": 87,
+      "classification": "trivial_fix",
+      "action": "task 5.1 leaves the Carried by name for after the sync; design gains an At archive section naming that edit, CLAUDE.md's capability marker 33 to 34, and the Purpose edits",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/tripwires/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "joins the section's `Carried by:` line"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/tripwires/design.md",
+            "text": "## At archive"
+          },
+          {
+            "path": "orbit/changes/tripwires/tasks.md",
+            "text": "only after the sync"
+          }
+        ],
+        "searched": [
+          "Carried by",
+          "src:capabilities",
+          "Purpose"
+        ],
+        "scope": [
+          "orbit/changes/archive/2026-11-13-brief-render/design.md",
+          "CLAUDE.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The delta narrows the never-quiet scenario from any brief to a change brief, leaving the program brief's Tripwires section with no requirement text",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/tripwires/specs/orbit-program-brief/spec.md",
+      "line": 69,
+      "classification": "trivial_fix",
+      "action": "the modified requirement says a program brief closes with a Tripwires section pointing at each change's readings, with a scenario; the baseline Purpose edit is in design's At archive; task 4.1 tests the scenario",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/tripwires/design.md",
+          "orbit/changes/tripwires/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/tripwires/specs/orbit-program-brief/spec.md",
+            "text": "#### Scenario: A program brief points at each change's readings"
+          },
+          {
+            "path": "orbit/changes/tripwires/design.md",
+            "text": "says \"the tripwires line\""
+          }
+        ],
+        "searched": [
+          "program brief",
+          "tripwires line"
+        ],
+        "scope": [
+          "orbit/specs/orbit-program-brief/spec.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "M11 reads an only-closure as scoped although modifying it would cost no capability",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/tripwires/design.md",
+      "line": 116,
+      "classification": "trivial_fix",
+      "action": "qualified the only-sentence in a second MODIFIED block of orbit-emit-composition (11 of 12 requirements, still 3 capabilities); design M11 and the proposal's capability list rewritten",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/tripwires/design.md",
+          "orbit/changes/tripwires/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "It is read as scoped to the decision records' addition"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/tripwires/specs/orbit-emit-composition/spec.md",
+            "text": "The decision records change the run-summary commands only as"
+          },
+          {
+            "path": "orbit/changes/tripwires/design.md",
+            "text": "The propose-time reading that the sentence was scoped was wrong"
+          }
+        ],
+        "searched": [
+          "change only as",
+          "scoped"
+        ],
+        "scope": [
+          "orbit/specs/orbit-emit-composition/spec.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The G0 table and its scenario omit the review report render",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/tripwires/specs/orbit-tripwires/spec.md",
+      "line": 208,
+      "classification": "trivial_fix",
+      "action": "added --report to the human-readouts row and to the scenario's THEN",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/tripwires/specs/orbit-tripwires/spec.md",
+            "text": "its `--report` render of that review"
+          }
+        ],
+        "searched": [
+          "--boot",
+          "readouts"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Set-valued keys re-ask the user about paths already answered",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/tripwires/design.md",
+      "line": 76,
+      "classification": "decision_required",
+      "action": "applied the ratified direction A: a reading carries one key per deviation in `deviations`; a halting reading's stop names only keys no earlier stop covers; `stops` and `answered_by` are lists; design M4 and M6 rewritten",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Build the key from the firing paths no answered key already names, so an answered path stays declared and only the new path is asked."
+          },
+          {
+            "label": "B",
+            "body": "Keep set keys and add the re-asking to Risks as a named limit."
+          }
+        ],
+        "chosen": "A"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/tripwires/specs/orbit-tripwires/spec.md",
+          "orbit/changes/tripwires/tasks.md",
+          "orbit/changes/tripwires/proposal.md",
+          "orbit/changes/tripwires/specs/orbit-program-brief/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "sorted and joined by commas",
+          "`{sensor, key, emit}`",
+          "#### Scenario: The same key is not asked twice",
+          "#### Scenario: A quiet reading has no key"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/tripwires/specs/orbit-tripwires/spec.md",
+            "text": "#### Scenario: Only a new deviation is asked about"
+          },
+          {
+            "path": "orbit/changes/tripwires/design.md",
+            "text": "One key per deviation"
+          }
+        ],
+        "searched": [
+          "key",
+          "answered_by",
+          "stop naming"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "A malformed entry cannot be placed beside the path it meant to predict, and the evidence shape the brief renders is unstated",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/tripwires/specs/orbit-tripwires/spec.md",
+      "line": 241,
+      "classification": "trivial_fix",
+      "action": "the sensor requirement names its evidence fields; a malformed entry's line is listed beside the firing paths, not matched to a path; the scenario is renamed to match",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/tripwires/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the reading names the line beside any path it meant to predict",
+          "#### Scenario: A malformed entry is named beside the path"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/tripwires/specs/orbit-tripwires/spec.md",
+            "text": "`share_fired`, `malformed`"
+          }
+        ],
+        "searched": [
+          "malformed",
+          "evidence"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/tripwires/explore.md",
+            "why": "the exploration is the historical record: its D-tw-4 and D-tw-17 Mechanism tables quote the rule as explored"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Task 3.1 and design M12 place the engine-owned list in the wrong file",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/tripwires/tasks.md",
+      "line": 41,
+      "classification": "trivial_fix",
+      "action": "task 3.1 and design M12 name ENGINE_OWNED_PER_COMMAND in test/helpers/schema-references.ts",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/tripwires/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "add it to the engine-owned list in `test/core/emit-schema-parity.test.ts`"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/tripwires/tasks.md",
+            "text": "`ENGINE_OWNED_PER_COMMAND` in `test/helpers/schema-references.ts`"
+          }
+        ],
+        "searched": [
+          "engine-owned list",
+          "ENGINE_OWNED_PER_COMMAND"
+        ],
+        "scope": [
+          "test/helpers/schema-references.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Task 1.1 tests two scenarios whose WHEN runs the touchpoints sensor, which task 2.1 builds",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/tripwires/tasks.md",
+      "line": 3,
+      "classification": "trivial_fix",
+      "action": "task 1.1 tests the contract with a stub sensor; the scenarios that run the real sensor move to task 2.1",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/tripwires/tasks.md",
+            "text": "The contract is tested with a stub sensor"
+          }
+        ],
+        "searched": [
+          "task 1.1",
+          "@scenario"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Task 6.1 compares against a different reference and does not say what HEAD each run uses",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/tripwires/tasks.md",
+      "line": 94,
+      "classification": "trivial_fix",
+      "action": "task 6.1 measures each change in a worktree at its own archive commit and expects differences where a walk edited Touchpoints after apply began",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/tripwires/tasks.md",
+            "text": "in a worktree at its own archive commit"
+          }
+        ],
+        "searched": [
+          "6.1",
+          "HEAD"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Nothing to migrate overlooks that every past brief's text changes",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/tripwires/design.md",
+      "line": 186,
+      "classification": "trivial_fix",
+      "action": "the Migration Plan names that every brief's Tripwires text changes, so a finished program re-saves and, under signoff: program, asks again",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "Nothing to migrate:"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/tripwires/design.md",
+            "text": "Every brief's Tripwires text changes."
+          }
+        ],
+        "searched": [
+          "Migration",
+          "re-sign"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Fourteen of fourteen resolved: two decision-lane findings by the user's directions (F1: B, a split between where the plan is read and where the measure starts; F9: A, one key per deviation), twelve by obvious fixes. The emit-composition delta gains a second requirement (11 of 12; 3 capabilities).",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews tripwires",
+  "ripple_misses": 0
+}

@@ -1,0 +1,29 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-16T22:10:25Z",
+  "change": "tripwires",
+  "model": "claude-opus-5-5",
+  "area": "things-others-build-on",
+  "decided": "Projects set each sensor under one tripwires entry in their settings file, by the sensor's name. For the sensor watching the change's planned files: whether a firing halts (record, the default, or halt), the paths never counted, the most lines one unlisted file may change (40), and the largest share of the change's code unlisted files may hold (20 percent). A value of the wrong kind falls back to its default and is noted in the reading; a sensor name orbit does not know is ignored.",
+  "alternatives": [
+    "One flat list of settings shared by every sensor.",
+    "Refuse a settings file whose tripwires entry has a value of the wrong kind."
+  ],
+  "why": "Each sensor owns its own settings, as R-adf-6 asks for every permission, so the sensors the stage adds later each get their own entry; and a wrong value falling back to its default with a note never leaves the project with no sensor at all.",
+  "relies_on": [
+    {
+      "kind": "ruling",
+      "doc": "automate-dev-flow",
+      "id": "R-adf-6"
+    },
+    {
+      "kind": "decision",
+      "id": "D-tw-17"
+    },
+    {
+      "kind": "decision",
+      "id": "D-tw-6"
+    }
+  ],
+  "detail": "tripwires.touchpoints.{on_fire, exempt, per_file_lines, share_percent}; resolveTripwiresSetting in src/core/project-config.ts after the resolveSignoffSetting pattern (design M9)."
+}

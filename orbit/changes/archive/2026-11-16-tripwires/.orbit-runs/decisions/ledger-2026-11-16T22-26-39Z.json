@@ -1,0 +1,27 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-16T22:26:39Z",
+  "change": "tripwires",
+  "model": "claude-opus-5-5",
+  "area": "user-sees-or-does",
+  "decided": "Each thing a sensor finds wrong is named on its own, one file at a time for the sensor that watches the planned files. When a sensor set to halt fires, the stop asks only about the things no earlier stop asked about, so an answer the user gave about one file stands when another file is found later, and only the new file is asked about.",
+  "alternatives": [
+    "Name everything a sensor found in one combined label, so any newly found file makes a new question that asks again about the files already answered."
+  ],
+  "why": "The user's answer to a stop is what declares a deviation after building began, so asking again about files already answered would make that answer count for nothing; and one combined label could stand for two different sets of files, since a file's name may contain the character that separates them.",
+  "relies_on": [
+    {
+      "kind": "decision",
+      "id": "D-tw-14"
+    },
+    {
+      "kind": "decision",
+      "id": "D-tw-1"
+    },
+    {
+      "kind": "decision",
+      "id": "D-tw-6"
+    }
+  ],
+  "detail": "Readings carry deviations: a sorted array of keys (touchpoints:<path>, touchpoints:cannot-read:<reason>); a tripwire stop's tripwire.deviations names only keys no earlier stop covers; stops and answered_by are lists (design M4, M6; the proposal walk's option A for F9, ratified by the user)."
+}

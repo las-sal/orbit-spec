@@ -744,7 +744,9 @@ path — persist-first and run-and-paste collapse into one invocation. For archi
 review emits `--render` is a no-op with a one-line stderr note (the report render is a
 change-scoped surface; no architecture report surface exists — D4's architecture exemption). The surface writes EXACTLY one file (the emit,
 atomically, for every class) and modifies nothing else — no artifact,
-no metadata, no baseline.
+no metadata, no baseline — with one exception: a seam emit whose reading halts also writes each `tripwire` stop record
+`orbit-tripwires`' `A halting reading writes a tripwire stop` requires, into the change's `decisions/` folder, only
+after the emit has passed its write gate and before the emit itself is written.
 
 #### Scenario: Render in the same breath
 
@@ -758,8 +760,18 @@ no metadata, no baseline.
 
 #### Scenario: Exactly one file
 
-- **WHEN** any `orbit emit` invocation succeeds
+- **WHEN** any `orbit emit` invocation succeeds and no reading on it halts
 - **THEN** the trail gains exactly one new file and no other file in the project changed
+
+#### Scenario: A halting reading adds its stop
+
+- **WHEN** `orbit emit review --change foo` succeeds and its `touchpoints` reading halts on a key no stop covers
+- **THEN** the trail gains the review emit and one `tripwire` stop record in `decisions/`, and no other file changed
+
+#### Scenario: A refused emit writes no stop
+
+- **WHEN** a review payload that would halt a reading is refused at the write gate
+- **THEN** no file is written, the stop included
 
 ### Requirement: Payload tables agree with their schema references
 
@@ -1256,9 +1268,10 @@ A stop or resolution is NAMED by its record's filename (`stop-<TS>.json`), read 
 `orbit-decision-records`' lookup, so it survives the moves at propose and at archive. `replaces` names a record by its
 filename in the same `decisions/` folder. The gate judges FORM and EXISTENCE only (R-crc-10):
 whether a call belongs in an area, whether a citation covers the decision, and whether prose is clear are judgements
-outside it. The run-summary commands change only as `The reading's selection is recorded at review and archive` states:
-the in-context system review emit gains a payload field and its checks, and the review and archive emits each gain an
-engine-computed field.
+outside it. The decision records change the run-summary commands only as `The reading's selection is recorded at review
+and archive` states: the in-context system review emit gains a payload field and its checks, and the review and archive
+emits each gain an engine-computed field. The seam emits' `tripwires` field is `orbit-tripwires`' own (`Every seam emit
+carries the readings`), and so is the `tripwire` stop orbit writes, which no payload may raise.
 
 A decision record is published WITHOUT OVERWRITING: its temporary file is created exclusively and linked to its final
 name, so a second writer that drew the same token in the same `decisions/` folder is refused naming the collision,

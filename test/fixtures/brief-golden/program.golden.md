@@ -44,7 +44,7 @@ No stop was recorded for this work.
 
 #### Tripwires
 
-Tripwires are not installed yet, so this brief cannot say whether any would have fired.
+Tripwires were not installed when this change ran, so this brief cannot say whether any would have fired.
 
 #### Deviations from the charter
 
@@ -101,7 +101,7 @@ No stop was recorded for this work.
 
 #### Tripwires
 
-Tripwires are not installed yet, so this brief cannot say whether any would have fired.
+Tripwires were not installed when this change ran, so this brief cannot say whether any would have fired.
 
 #### Deviations from the charter
 
@@ -137,4 +137,4 @@ No stop was recorded for this work.
 
 ## Tripwires
 
-Tripwires are not installed yet, so this brief cannot say whether any would have fired.
+Each change's tripwire readings are shown in that change's own Tripwires section above; the architecture sessions record none.

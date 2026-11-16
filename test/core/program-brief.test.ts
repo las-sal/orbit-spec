@@ -318,15 +318,98 @@ describe('a brief tells the user what a change or a program did, from the trail'
   });
 
   // @scenario behaviour orbit-program-brief :: A brief tells the user what a change or a program did, from the trail :: Tripwires are never reported as quiet
-  it('every brief says tripwires are not installed, never that none fired', () => {
+  it('a change none of whose emits carries readings says tripwires were not installed when it ran, never that none fired', () => {
     makeDoc();
     makeChange('orbit/changes/foo');
-    const line = 'Tripwires are not installed yet, so this brief cannot say whether any would have fired.';
+    // A seam emit written before tripwires: no field.
+    json(`orbit/changes/foo/.orbit-runs/apply-${T(1)}.json`, { command: 'apply', timestamp: iso(T(1)), change: 'foo' });
+    const line = 'Tripwires were not installed when this change ran, so this brief cannot say whether any would have fired.';
     const c = change('foo');
-    const p = renderProgramBrief(buildProgramBrief(root, 'prog'));
     expect(section(c, 'Tripwires')).toContain(line);
-    expect(p).toContain(`## Tripwires\n\n${line}\n`);
-    expect(c + p).not.toMatch(/no tripwire fired|none fired/i);
+    expect(c).not.toMatch(/no tripwire fired|none fired/i);
+  });
+
+  const reading = (outcome: string, deviations: string[], files: unknown[] = []) => ({
+    sensor: 'touchpoints',
+    outcome,
+    deviations,
+    reference: 'abc',
+    frozen: true,
+    evidence: { files, share: 5, share_fired: false, malformed: [], settings: { on_fire: 'halt', exempt: [], per_file_lines: 40, share_percent: 20 }, notes: [] },
+  });
+
+  // @scenario behaviour orbit-program-brief :: A brief tells the user what a change or a program did, from the trail :: A fired reading is listed once with its stop
+  it('a fired key is listed once, with the latest evidence, the first emit carrying it and its stop\'s answer', () => {
+    makeDoc();
+    makeChange('orbit/changes/foo');
+    const K = 'touchpoints:src/a.ts';
+    json(`orbit/changes/foo/.orbit-runs/apply-${T(1)}.json`, {
+      command: 'apply', timestamp: iso(T(1)), change: 'foo',
+      tripwires: [reading('fired', [K], [{ path: 'src/a.ts', lines: 50, over: true }])],
+    });
+    const st = stop('orbit/changes/foo', 2, {
+      model: null, condition: 'tripwire', about: 'The change edited src/a.ts.', question: 'Go on?', detail: 'd',
+      tripwire: { sensor: 'touchpoints', deviations: [K], emit: `apply-${T(1)}.json` },
+    });
+    resolution('orbit/changes/foo', 3, st, { answer: 'Yes, a.ts is planned.' });
+    json(`orbit/changes/foo/.orbit-runs/review-proposal-${T(4)}.json`, {
+      command: 'review', timestamp: iso(T(4)), change: 'foo', mode: 'proposal',
+      tripwires: [reading('fired', [K], [{ path: 'src/a.ts', lines: 90, over: true, declared_late: true }])],
+    });
+    const t = section(change('foo'), 'Tripwires');
+    expect(t.split(`\`${K}\``).length - 1).toBe(1);
+    expect(t).toContain('the plan did not name src/a.ts, 90 changed lines; more than the per-file limit of 40.');
+    expect(t).toContain(`First recorded at apply-${T(1)}.json; the evidence is from review-proposal-${T(4)}.json.`);
+    expect(t).toContain('The plan named it only after building began');
+    expect(t).toContain(`Stop ${st}, answered: Yes, a.ts is planned.`);
+    expect(t).toContain(`- \`touchpoints\`: fired (review-proposal-${T(4)}.json)`);
+    // The orbit-written stop also reads in the stops section.
+    expect(section(change('foo'), 'Stops')).toContain('The change edited src/a.ts.');
+  });
+
+  it('an installed change with no firing says so, with each sensor\'s latest reading', () => {
+    makeDoc();
+    makeChange('orbit/changes/foo');
+    json(`orbit/changes/foo/.orbit-runs/apply-${T(1)}.json`, { command: 'apply', timestamp: iso(T(1)), change: 'foo', tripwires: [reading('quiet', [])] });
+    const t = section(change('foo'), 'Tripwires');
+    expect(t).toContain('No tripwire fired on this change');
+    expect(t).toContain(`- \`touchpoints\`: quiet: it found nothing past its limits (apply-${T(1)}.json)`);
+  });
+
+  it('a seam emit whose readings field is malformed fails the brief naming it', () => {
+    makeDoc();
+    makeChange('orbit/changes/foo');
+    json(`orbit/changes/foo/.orbit-runs/apply-${T(1)}.json`, { command: 'apply', change: 'foo', tripwires: 'fired' });
+    expect(() => change('foo')).toThrow(/apply-.*not a list of readings/);
+  });
+
+  it('a contradictory reading fails the brief rather than reading as clean', () => {
+    const bad: Array<[string, Record<string, unknown>]> = [
+      ['a fired reading naming no key', reading('fired', [])],
+      ['a quiet reading naming a key', reading('quiet', ['touchpoints:src/a.ts'])],
+      ['a reading with no frozen flag', (({ frozen, ...r }) => r)(reading('quiet', []))],
+      ['a reading with no reference', (({ reference, ...r }) => r)(reading('quiet', []))],
+    ];
+    for (const [what, r] of bad) {
+      makeDoc();
+      makeChange('orbit/changes/foo');
+      json(`orbit/changes/foo/.orbit-runs/apply-${T(1)}.json`, { command: 'apply', change: 'foo', tripwires: [r] });
+      expect(() => change('foo'), what).toThrow(/not a list of readings/);
+    }
+  });
+
+  // @scenario behaviour orbit-program-brief :: A brief tells the user what a change or a program did, from the trail :: A program brief points at each change's readings
+  it('a program brief carries each change\'s tripwires section and closes pointing at them', () => {
+    makeDoc();
+    makeChange(ARCHIVED_X, { stage: 'a' });
+    makeChange('orbit/changes/y', { stage: 'b' });
+    json(`orbit/changes/y/.orbit-runs/apply-${T(1)}.json`, { command: 'apply', change: 'y', tripwires: [reading('quiet', [])] });
+    const p = renderProgramBrief(buildProgramBrief(root, 'prog'));
+    expect(p.match(/^#### Tripwires$/gm)).toHaveLength(2);
+    expect(p).toContain('Tripwires were not installed when this change ran');
+    expect(p).toContain('No tripwire fired on this change');
+    expect(p).toMatch(/## Tripwires\n\nEach change's tripwire readings are shown in that change's own Tripwires section above/);
+    expect(p).not.toMatch(/none fired/i);
   });
 
   // @scenario behaviour orbit-program-brief :: A brief tells the user what a change or a program did, from the trail :: One definition from two records is shown once

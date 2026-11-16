@@ -1,0 +1,29 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-16T22:10:24Z",
+  "change": "tripwires",
+  "model": "claude-opus-5-5",
+  "area": "when-things-go-wrong",
+  "decided": "A sensor set to halt stops the run when either the current settings or the settings as they stood when building began say halt. Every other setting of a sensor is read only as it stood when building began.",
+  "alternatives": [
+    "Read whether to halt only from the settings as they stood when building began.",
+    "Read whether to halt only from the current settings."
+  ],
+  "why": "The run being watched cannot then switch a halt off, and the user can still switch one on part-way through a change; reading only the old settings would lock out the user, and reading only the current ones would let the run escape.",
+  "relies_on": [
+    {
+      "kind": "decision",
+      "id": "D-tw-6"
+    },
+    {
+      "kind": "decision",
+      "id": "D-tw-3"
+    },
+    {
+      "kind": "ruling",
+      "doc": "automate-dev-flow",
+      "id": "R-adf-6"
+    }
+  ],
+  "detail": "on_fire is read from orbit/config.yaml in the working tree and at the fixed point; halt wins. exempt, per_file_lines and share_percent are read at the fixed point only (design M3, M9)."
+}

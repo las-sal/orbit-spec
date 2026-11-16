@@ -115,6 +115,16 @@ export const ProjectConfigSchema = z.object({
     .string()
     .optional()
     .describe('Sign-off setting: off (default) | change | program — change makes each archive wait for the user\'s sign-off over the change\'s saved brief; program makes the program\'s completion wait for one sign-off over the program\'s saved brief'),
+
+  // Optional: the tripwires setting (tripwires, `orbit-tripwires`' `The tripwires setting`) — a map from a sensor id
+  // to that sensor's settings. Typed here for documentation only: the sensors read it ON THEIR OWN through
+  // `resolveTripwiresSetting`, from the config as committed at their reference (and, for `on_fire`, at `HEAD`).
+  tripwires: z
+    .record(z.string(), z.record(z.string(), z.unknown()))
+    .optional()
+    .describe(
+      'Tripwires setting: { touchpoints: { on_fire: record | halt, exempt: [<pattern>, ...], per_file_lines: <n>, share_percent: <0-100> } } — what each sensor watches and whether a firing writes a stop'
+    ),
 });
 
 export type ProjectConfig = z.infer<typeof ProjectConfigSchema>;
@@ -434,6 +444,104 @@ export function resolveSignoffSetting(projectRoot: string): SignoffSetting {
  */
 export function takesAccount(setting: SignoffSetting): boolean {
   return setting.value === 'change' || setting.value === 'program';
+}
+
+/** The two `on_fire` values (`orbit-tripwires`' `The tripwires setting`). */
+export const TRIPWIRE_ON_FIRE = ['record', 'halt'] as const;
+export type TripwireOnFire = (typeof TRIPWIRE_ON_FIRE)[number];
+
+/** The Touchpoints sensor's defaults (`orbit-tripwires`' `The Touchpoints sensor fires on unpredicted source past a tolerance`). */
+export const TOUCHPOINTS_DEFAULTS = {
+  on_fire: 'record' as TripwireOnFire,
+  exempt: ['orbit/', 'test/', 'tests/', '__tests__/', '*.test.*', '*.spec.*', 'docs/', '*.md'] as readonly string[],
+  per_file_lines: 40,
+  share_percent: 20,
+};
+
+/** One sensor's resolved settings, and a note for each value it could not use. */
+export interface TouchpointsSetting {
+  on_fire: TripwireOnFire;
+  exempt: string[];
+  per_file_lines: number;
+  share_percent: number;
+  /** One sentence per configured value of the wrong shape, which took its default. */
+  notes: string[];
+}
+
+/** The resolved `tripwires` setting: one entry per sensor in orbit's sensor list. */
+export interface TripwiresSetting {
+  touchpoints: TouchpointsSetting;
+}
+
+function touchpointsDefaults(): TouchpointsSetting {
+  return { ...TOUCHPOINTS_DEFAULTS, exempt: [...TOUCHPOINTS_DEFAULTS.exempt], notes: [] };
+}
+
+/** The config text at a source: the working tree's `orbit/config.yaml` (or `.yml`), or a text taken at a commit. */
+export type TripwiresConfigSource = { projectRoot: string } | { text: string | null };
+
+/**
+ * Resolve the `tripwires` key (`orbit-tripwires`' `The tripwires setting`), reading ONLY that key (the
+ * `resolveSignoffSetting` pattern) from the working tree's config or from a config text a sensor took at a commit
+ * with git (`git show <commit>:orbit/config.yaml`), with one body for both. An absent or unparseable config, an
+ * absent key and a value that is not a map read as every default. A key naming no sensor in orbit's sensor list is
+ * ignored. A field of the wrong shape takes its default and adds one note naming the value; the reading's evidence
+ * carries the notes. It never prints.
+ */
+export function resolveTripwiresSetting(source: TripwiresConfigSource): TripwiresSetting {
+  const result: TripwiresSetting = { touchpoints: touchpointsDefaults() };
+  let text: string | null;
+  if ('projectRoot' in source) {
+    let configPath = path.join(source.projectRoot, 'orbit', 'config.yaml');
+    if (!existsSync(configPath)) configPath = path.join(source.projectRoot, 'orbit', 'config.yml');
+    try {
+      text = existsSync(configPath) ? readFileSync(configPath, 'utf-8') : null;
+    } catch {
+      text = null;
+    }
+  } else {
+    text = source.text;
+  }
+  if (text === null) return result;
+  let raw: unknown;
+  try {
+    raw = parseYaml(text);
+  } catch {
+    return result;
+  }
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return result;
+  if (!Object.prototype.hasOwnProperty.call(raw, 'tripwires')) return result;
+  const map = (raw as Record<string, unknown>).tripwires;
+  if (map === null || typeof map !== 'object' || Array.isArray(map)) return result;
+  if (!Object.prototype.hasOwnProperty.call(map, 'touchpoints')) return result;
+  const tp = (map as Record<string, unknown>).touchpoints;
+  const out = result.touchpoints;
+  if (tp === null || typeof tp !== 'object' || Array.isArray(tp)) {
+    out.notes.push(`'tripwires.touchpoints' is ${describeInertValue(tp)}, not a map; every default is used`);
+    return result;
+  }
+  const s = tp as Record<string, unknown>;
+  const has = (k: string): boolean => Object.prototype.hasOwnProperty.call(s, k);
+  if (has('on_fire')) {
+    if ((TRIPWIRE_ON_FIRE as readonly unknown[]).includes(s.on_fire)) out.on_fire = s.on_fire as TripwireOnFire;
+    else out.notes.push(`'on_fire' ${describeInertValue(s.on_fire)} is not record or halt; record is used`);
+  }
+  if (has('exempt')) {
+    const v = s.exempt;
+    if (Array.isArray(v) && v.every(p => typeof p === 'string' && p.trim() !== '')) out.exempt = (v as string[]).map(p => p.trim());
+    else out.notes.push(`'exempt' ${describeInertValue(v)} is not a list of patterns; the default set is used`);
+  }
+  if (has('per_file_lines')) {
+    const v = s.per_file_lines;
+    if (typeof v === 'number' && Number.isInteger(v) && v > 0) out.per_file_lines = v;
+    else out.notes.push(`'per_file_lines' ${describeInertValue(v)} is not a positive integer; ${TOUCHPOINTS_DEFAULTS.per_file_lines} is used`);
+  }
+  if (has('share_percent')) {
+    const v = s.share_percent;
+    if (typeof v === 'number' && Number.isInteger(v) && v >= 0 && v <= 100) out.share_percent = v;
+    else out.notes.push(`'share_percent' ${describeInertValue(v)} is not an integer from 0 to 100; ${TOUCHPOINTS_DEFAULTS.share_percent} is used`);
+  }
+  return result;
 }
 
 const MAX_CONTEXT_SIZE = 50 * 1024; // 50KB hard limit

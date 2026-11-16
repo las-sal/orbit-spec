@@ -42,6 +42,7 @@ import { parseDeltaSpec } from './parsers/requirement-blocks.js';
 import { readSizeDeclaration, type SizeDimension } from './change-size.js';
 import { loadArchitectureDoc, isValidDocName } from './architecture/parser.js';
 import { EmitError, publishTrailChildText } from './emit-composition.js';
+import { actsAsFired, isReadingList, tripwireSensors, tripwireStopProblem, type TripwireOutcome, type TripwireReading } from './tripwires.js';
 import { SignoffError, architectureTrail, latestSavedCopy, programBriefDir, programFinished, sha256OfBytes } from './signoff.js';
 
 export class ProgramBriefError extends Error {}
@@ -129,6 +130,27 @@ export interface BriefCapability {
   renamed: { from: string; to: string }[];
 }
 
+/** One key a reading fired on (`cannot-read` included), once (`orbit-program-brief`'s tripwires row). */
+export interface BriefTripwireKey {
+  key: string;
+  sensor: string;
+  /** The seam emit that first carried the key. */
+  first_emit: string;
+  /** The latest seam emit carrying it, whose reading's evidence is described. */
+  latest_emit: string;
+  /** The sensor's plain sentence on that evidence. */
+  evidence: string;
+  /** Whether that evidence marks the key declared late (written to the plan after the fixed point). */
+  declared_late: boolean;
+  /** The `tripwire` stops covering the key: each with its answer, or `null` while open. */
+  stops: { record: string; answer: string | null }[];
+}
+
+/** The change's readings; `not-installed` when none of its emits carries the field. */
+export type BriefTripwires =
+  | { state: 'not-installed' }
+  | { state: 'installed'; keys: BriefTripwireKey[]; latest: { sensor: string; outcome: TripwireOutcome; emit: string }[] };
+
 export interface ChangeBrief {
   unit: 'change';
   change: string;
@@ -145,7 +167,7 @@ export interface ChangeBrief {
   seams: string | null;
   ledger: BriefLedgerEntry[];
   stops: BriefStop[];
-  tripwires: 'not-installed';
+  tripwires: BriefTripwires;
   deviations: { account: string | null; size_breached: SizeDimension[] };
   /** `records`: the selection; `account`: the latest account named apart, only when the reader does not take it. */
   unread: { records: string[]; account: string | null };
@@ -165,7 +187,8 @@ export interface ProgramBrief {
   doc: string;
   groups: ProgramStageGroup[];
   architecture: BriefDecisions;
-  tripwires: 'not-installed';
+  /** Each change's readings are shown under that change; the architecture sessions write no seam emit. */
+  tripwires: 'per-change';
 }
 
 // ---------------------------------------------------------------------------
@@ -234,6 +257,13 @@ function readValidDecisions(
     if (!keep(record)) continue;
     const kind = name.slice(0, name.indexOf('-'));
     if (record.command !== kind || !isDecisionCommand(kind)) fail(`record ${where} carries command ${JSON.stringify(record.command)}, not its filename's kind.`);
+    // An orbit-written `tripwire` stop is held to orbit's own composition (`orbit-tripwires`' `A halting reading
+    // writes a tripwire stop`); the payload shape refuses its condition.
+    if (kind === 'stop' && record.condition === 'tripwire') {
+      const problem = tripwireStopProblem(record);
+      if (problem !== null) fail(`record ${where} is not a valid tripwire stop: ${problem}.`);
+      continue;
+    }
     try {
       checkDecisionShape(kind, record);
     } catch (e) {
@@ -461,6 +491,78 @@ function selectedOrFail(changeDir: string, projectRoot: string): string[] {
   }
 }
 
+/** The seam emits' filenames (`orbit-tripwires`' `Every seam emit carries the readings`). */
+const SEAM_EMIT = /^(apply|review-proposal|review-system|address-reviews|archive)-\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}Z\.json$/;
+
+/**
+ * The change's tripwires section (`orbit-program-brief`'s tripwires row): every key a reading on its seam emits acted
+ * on as fired, once, from the first emit carrying it and with the evidence of the latest; the stops covering it, from
+ * the latest record of each `tripwire` stop chain; then each sensor's latest outcome. A seam emit that cannot be read,
+ * or whose field is not a list of readings, fails the brief naming it.
+ */
+function readTripwires(projectRoot: string, runsDir: string, folder: DecisionFolder, stops: BriefStop[]): BriefTripwires {
+  const names = listDir(projectRoot, runsDir, 'trail folder')
+    .filter(e => e.isFile() && SEAM_EMIT.test(e.name))
+    .map(e => e.name)
+    .sort(byToken);
+  const keys = new Map<string, { sensor: string; first: string; latest: string; reading: TripwireReading }>();
+  const latest = new Map<string, { outcome: TripwireOutcome; emit: string }>();
+  let installed = false;
+  for (const n of names) {
+    const where = rel(projectRoot, path.join(runsDir, n));
+    let j: unknown;
+    try {
+      j = JSON.parse(fs.readFileSync(path.join(runsDir, n), 'utf-8'));
+    } catch {
+      fail(`seam emit ${where} cannot be read as JSON.`);
+    }
+    if (j === null || typeof j !== 'object' || !('tripwires' in (j as object))) continue;
+    const readings = (j as Record<string, unknown>).tripwires;
+    if (!isReadingList(readings)) fail(`seam emit ${where} carries a 'tripwires' field that is not a list of readings.`);
+    installed = true;
+    for (const r of readings) {
+      latest.set(r.sensor, { outcome: r.outcome, emit: n });
+      if (!actsAsFired(r)) continue;
+      for (const k of r.deviations) {
+        const prior = keys.get(k);
+        keys.set(k, { sensor: r.sensor, first: prior?.first ?? n, latest: n, reading: r });
+      }
+    }
+  }
+  if (!installed) return { state: 'not-installed' };
+  const sensors = new Map(tripwireSensors().map(s => [s.id, s]));
+  const byRecord = new Map(stops.map(s => [s.record, s]));
+  const covering = (k: string): { record: string; answer: string | null }[] =>
+    stops
+      .filter(s => s.condition === 'tripwire')
+      .filter(s => {
+        const tw = (folder.records.get(s.record) as Record<string, unknown>).tripwire as { deviations: string[] };
+        return tw.deviations.includes(k);
+      })
+      .map(s => ({ record: s.record, answer: (byRecord.get(s.record) as BriefStop).resolution?.answer ?? null }));
+  const out: BriefTripwireKey[] = [...keys.entries()]
+    .sort((a, b) => byToken(a[1].first, b[1].first) || (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0))
+    .map(([key, v]) => {
+      const sensor = sensors.get(v.sensor);
+      const files = Array.isArray(v.reading.evidence.files) ? (v.reading.evidence.files as { path?: unknown; declared_late?: unknown }[]) : [];
+      const p = key.slice(v.sensor.length + 1);
+      return {
+        key,
+        sensor: v.sensor,
+        first_emit: v.first,
+        latest_emit: v.latest,
+        evidence: sensor ? sensor.describe(v.reading, key) : `evidence ${JSON.stringify(v.reading.evidence)}`,
+        declared_late: files.some(f => f.path === p && f.declared_late === true),
+        stops: covering(key),
+      };
+    });
+  return {
+    state: 'installed',
+    keys: out,
+    latest: [...latest.entries()].sort((a, b) => (a[0] < b[0] ? -1 : 1)).map(([sensor, v]) => ({ sensor, ...v })),
+  };
+}
+
 /** The change brief of the change at `changeDir`. Whole or absent. */
 export function buildChangeBriefAt(projectRoot: string, changeDir: string, status: 'active' | 'archived'): ChangeBrief {
   const base = path.basename(changeDir);
@@ -508,7 +610,7 @@ export function buildChangeBriefAt(projectRoot: string, changeDir: string, statu
     seams: account === null ? null : String(account.seams),
     ledger,
     stops,
-    tripwires: 'not-installed',
+    tripwires: readTripwires(projectRoot, runsDir, decisions, stops),
     deviations: { account: account === null ? null : String(account.deviations), size_breached: size.declaration.declared },
     // Under `signoff: change` or `program` the selection takes the latest account while it is unread, and a read one
     // is named nowhere; under every other value the account is named apart as checked by no reader
@@ -596,7 +698,7 @@ export function buildProgramBrief(projectRoot: string, doc: string): ProgramBrie
   const { ledger, stops, heads: latest } = readDecisions(folder, ofDoc);
   const terms = collectTerms(latest.map(n => ({ record: n, defines: (folder.records.get(n) as Record<string, unknown>).defines })));
 
-  return { unit: 'program', doc, groups, architecture: { terms, ledger, stops }, tripwires: 'not-installed' };
+  return { unit: 'program', doc, groups, architecture: { terms, ledger, stops }, tripwires: 'per-change' };
 }
 
 // ---------------------------------------------------------------------------
@@ -619,7 +721,16 @@ const TEXT = {
   noTerms: 'No record of this work defines a new term.',
   noLedger: 'No ledger entry was written for this work.',
   noStops: 'No stop was recorded for this work.',
-  tripwires: 'Tripwires are not installed yet, so this brief cannot say whether any would have fired.',
+  tripwiresNotInstalled: 'Tripwires were not installed when this change ran, so this brief cannot say whether any would have fired.',
+  tripwiresNoneFired:
+    "No tripwire fired on this change's committed work, and each sensor could read what it compares against; work never committed is not measured.",
+  tripwiresFound: 'What the tripwires found, each listed once:',
+  tripwiresLatest: "Each sensor's latest reading:",
+  tripwiresDeclaredLate:
+    'The plan named it only after building began, so it counts as part of the plan only through an answer to a stop.',
+  tripwiresNoStop: 'No stop asked about it: the sensor recorded the finding and did not halt the work.',
+  tripwiresProgram:
+    "Each change's tripwire readings are shown in that change's own Tripwires section above; the architecture sessions record none.",
   activeArchiveSignals:
     "The archive records its warnings and accepted risks after this brief was rendered; they appear in the archived change's brief and the program brief.",
   noRecordSignals: 'No archive record holds warnings or accepted risks for this change.',
@@ -701,6 +812,35 @@ function renderStops(out: string[], h: string, stops: BriefStop[]): void {
   }
 }
 
+const OUTCOME_TEXT: Record<TripwireOutcome, string> = {
+  fired: 'fired',
+  quiet: 'quiet: it found nothing past its limits',
+  'cannot-read': 'could not read what it compares against',
+};
+
+function renderTripwires(out: string[], h: string, t: BriefTripwires): void {
+  out.push(`${h} Tripwires`, '');
+  if (t.state === 'not-installed') {
+    out.push(TEXT.tripwiresNotInstalled, '');
+    return;
+  }
+  if (t.keys.length === 0) out.push(TEXT.tripwiresNoneFired, '');
+  else {
+    out.push(TEXT.tripwiresFound, '');
+    for (const k of t.keys) {
+      out.push(`- ${q(k.key)} (sensor ${q(k.sensor)}): ${k.evidence}.`);
+      out.push(`  - First recorded at ${k.first_emit}; the evidence is from ${k.latest_emit}.`);
+      if (k.declared_late) out.push(`  - ${TEXT.tripwiresDeclaredLate}`);
+      if (k.stops.length === 0) out.push(`  - ${TEXT.tripwiresNoStop}`);
+      for (const s of k.stops) out.push(s.answer === null ? `  - Stop ${s.record}: ${TEXT.open}` : `  - Stop ${s.record}, answered: ${s.answer}`);
+    }
+    out.push('');
+  }
+  out.push(TEXT.tripwiresLatest, '');
+  for (const l of t.latest) out.push(`- ${q(l.sensor)}: ${OUTCOME_TEXT[l.outcome]} (${l.emit})`);
+  out.push('');
+}
+
 function syncLine(a: BriefArchive): string | null {
   switch (a.state) {
     case 'active':
@@ -764,7 +904,7 @@ function renderChange(out: string[], b: ChangeBrief, level: number): void {
   renderLedger(out, h, b.ledger);
   renderStops(out, h, b.stops);
 
-  out.push(`${h} Tripwires`, '', TEXT.tripwires, '');
+  renderTripwires(out, h, b.tripwires);
 
   out.push(`${h} Deviations from the charter`, '', b.deviations.account ?? TEXT.noAccount, '');
   const a = b.archive;
@@ -835,7 +975,7 @@ export function renderProgramBrief(b: ProgramBrief): string {
   renderDecisions(out, '###', b.architecture);
   renderLedger(out, '###', b.architecture.ledger);
   renderStops(out, '###', b.architecture.stops);
-  out.push('## Tripwires', '', TEXT.tripwires, '');
+  out.push('## Tripwires', '', TEXT.tripwiresProgram, '');
   return out.join('\n').replace(/\n+$/, '\n');
 }
 

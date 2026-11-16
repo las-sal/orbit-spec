@@ -1,0 +1,233 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-16T23:19:51Z",
+  "change": "tripwires",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/tripwires/.orbit-runs/review-system-2026-11-16T23-08-59Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-16T23-08-59Z",
+  "latest_apply_token": "2026-11-16T23-00-43Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "walk_mode_source": "flag",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 1
+  },
+  "pushback_verification": "All three verified against current state (HEAD afcb0782): the birth search takes the latest addition of the metadata whatever followed it (tripwires.ts:148-151); the measure is one tree diff from the first commit's parent to HEAD (tripwire-touchpoints.ts:136); the evidence's settings come from the reference's config while the halt reads HEAD too.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "A reused name whose new change is not yet committed is measured as the archived change, not read as uncommitted",
+      "marker_source": "internal-review",
+      "file": "src/core/tripwires.ts",
+      "line": 151,
+      "classification": "trivial_fix",
+      "action": "the birth is now the first addition of the metadata after the latest commit that moved it into the archive; when that archive move is the file's latest event, changeCommits returns uncommitted. The spec's birth sentence and case table say so, with a new scenario (A reused name not yet committed cannot be read) and its test, shown able to fail by removing the rule",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/tripwires/specs/orbit-tripwires/spec.md",
+          "orbit/changes/tripwires/design.md",
+          "test/core/tripwires.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the latest such commit that adds"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/tripwires.ts",
+            "text": "the change of this name now has nothing committed"
+          },
+          {
+            "path": "orbit/changes/tripwires/specs/orbit-tripwires/spec.md",
+            "text": "A reused name not yet committed cannot be read"
+          },
+          {
+            "path": "orbit/changes/tripwires/specs/orbit-tripwires/spec.md",
+            "text": "or the change of this name was last archived"
+          },
+          {
+            "path": "test/core/tripwires.test.ts",
+            "text": "between an archive and the next change of the name"
+          }
+        ],
+        "searched": [
+          "births",
+          "latest such commit",
+          "BIRTH"
+        ],
+        "scope": [
+          "src/core/tripwire-touchpoints.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Merging the default branch into the change's branch makes the measure count the merged work as the change's",
+      "marker_source": "internal-review",
+      "file": "src/core/tripwire-touchpoints.ts",
+      "line": 136,
+      "classification": "decision_required",
+      "action": "option C: the measure counts only the change's own paths, those its first-parent, non-merge commits from the first commit to HEAD changed, each over the one tree diff; a path only a merge brought in drops out. Spec: the measure sentence, a named limit (a path both changed counts the merge's lines), the scenario A merge from the default branch is not measured and its test, shown able to fail by removing the filter. Design M1, M2 and the pr: never risk corrected",
+      "ratified_via": "chat",
+      "resolution": "C — the change's own commits pick the files, one diff counts the lines",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Measure only the change's own commits by summing each first-parent, non-merge commit's diff"
+          },
+          {
+            "label": "B",
+            "body": "Keep the two-tree measure and state the merge case as a named limit"
+          }
+        ],
+        "chosen": "off-menu"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/tripwires/specs/orbit-tripwires/spec.md",
+          "orbit/changes/tripwires/design.md",
+          "test/core/tripwire-touchpoints.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "never stands for the change's own work",
+          "the branch holds only the"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/tripwire-touchpoints.ts",
+            "text": "path only a merge brought into the branch is not measured"
+          },
+          {
+            "path": "orbit/changes/tripwires/specs/orbit-tripwires/spec.md",
+            "text": "A merge from the default branch is not measured"
+          },
+          {
+            "path": "orbit/changes/tripwires/design.md",
+            "text": "The measure counts only the change's OWN PATHS"
+          },
+          {
+            "path": "test/core/tripwire-touchpoints.test.ts",
+            "text": "a merge from the default branch is not measured"
+          }
+        ],
+        "searched": [
+          "first-parent",
+          "merge",
+          "pr: per-proposal",
+          "holds only"
+        ],
+        "scope": [
+          "src/core/tripwires.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The reading's evidence shows the on_fire setting at the reference, which is not always the value that decided the halt",
+      "marker_source": "internal-review",
+      "file": "src/core/tripwire-touchpoints.ts",
+      "line": 101,
+      "classification": "trivial_fix",
+      "action": "the evidence now records the effective on_fire (halt when the config at the fixed point or at HEAD says halt), computed by the same sensorHalts the stop uses; the spec's evidence sentence and design M3 say so, with a test for a halt committed after the fixed point",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/tripwires/specs/orbit-tripwires/spec.md",
+          "orbit/changes/tripwires/design.md",
+          "test/core/tripwire-touchpoints.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "(the four values used) and"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/tripwire-touchpoints.ts",
+            "text": "The `on_fire` the halt decision reads"
+          },
+          {
+            "path": "orbit/changes/tripwires/design.md",
+            "text": "records `on_fire` as this decision reads it"
+          },
+          {
+            "path": "test/core/tripwire-touchpoints.test.ts",
+            "text": "the evidence records the on_fire the halt decision reads"
+          }
+        ],
+        "searched": [
+          "on_fire",
+          "settings"
+        ],
+        "scope": [
+          "src/core/tripwires.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "All three resolved: the reused-name window now reads uncommitted; a merge from the default branch is no longer measured as the change's work (option C, ratified in chat); the evidence records the on_fire the halt decision reads.",
+  "iteration": 4,
+  "next_recommended": "/orbit:address-reviews tripwires",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "53b16bface3508c3df54f5b8ced9e03111ab9abe",
+      "frozen": true,
+      "evidence": {
+        "files": [],
+        "share": 0,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ],
+  "ripple_misses": 0
+}

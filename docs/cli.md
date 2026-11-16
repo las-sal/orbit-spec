@@ -428,8 +428,9 @@ orbit decisions brief add-dark-mode
 
 Print the brief of a program or of one change: what it did, in plain language, from what its history already holds.
 A change's brief carries, in order, what was built, the capabilities and requirements it added or changed (their titles
-as the specs name them), the new terms, the new seams, the ledger, the stops with their answers or marked open, a line
-saying tripwires are not installed, the deviations from the charter (with the archive's warnings and accepted risks and
+as the specs name them), the new terms, the new seams, the ledger, the stops with their answers or marked open, the tripwire readings (each
+finding once, with its evidence and the stop that asked about it, then each sensor's latest reading, or a line saying
+tripwires were not installed when the change ran), the deviations from the charter (with the archive's warnings and accepted risks and
 any size limit the proposal declares breached), and the records no reader has checked, the account included while no
 reader has checked it. What was
 built, the seams and the deviations come from the change's account; the sync lines say only what the change's archive

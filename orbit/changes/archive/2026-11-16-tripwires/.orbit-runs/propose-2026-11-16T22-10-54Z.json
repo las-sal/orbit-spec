@@ -1,0 +1,15 @@
+{
+  "command": "propose",
+  "timestamp": "2026-11-16T22:10:54Z",
+  "change": "tripwires",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Proposed tripwires from its exploration in consume mode: 6 live rules (D-tw-1, D-tw-3, D-tw-5, D-tw-6, D-tw-14, D-tw-17), all accounted, carried into 7 ADDED requirements of the new orbit-tripwires plus one MODIFIED requirement each in orbit-program-brief (the tripwires row) and orbit-emit-composition (exactly one file, except a halting stop); the two BOUNDED residuals (D-tw-1, D-tw-3) are stated verbatim; size 3 capabilities, 10 requirements, 21553 changed bytes, 12 tasks, no breach. One more capability than D-tw-19 estimated: a halting stop makes the emit surface's exactly-one-file contract false (design M11). Method settled at propose and recorded in four ledger entries: the fixed point is the parent of the first apply commit, read from git; on_fire halts if either the current or the fixed-point config says halt; the tripwires config key's shape; halt prints one stderr line and asks nothing outside a granted chain. main was pushed first (outward-act stop answered: push) so the branch carries the exploration.",
+  "pr_attachment": {
+    "branch": "tripwires",
+    "granularity": "per-proposal",
+    "url": "https://github.com/las-sal/orbit-spec/pull/45",
+    "state": "draft"
+  },
+  "next_recommended": "/orbit:review tripwires — proposal artifacts ready; review before apply"
+}
