@@ -1,0 +1,34 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-16T20:03:58Z",
+  "change": "tripwires",
+  "model": "claude-opus-5-5",
+  "area": "when-things-go-wrong",
+  "decided": "The sensor watching the change's planned files fires only on a changed file the plan did not list that is also outside a configured set of exempt paths, by default tests and docs; the exempt set is fixed together with the plan before the run.",
+  "alternatives": [
+    "fire only when a changed file lies outside every directory the plan names",
+    "fire on any changed file the plan did not list, and let the trial judge whether that stops too often"
+  ],
+  "why": "Tests and docs added beside the work are routine, so firing on them would make most of these stops unwarranted; a coarser directory check would let a source file beside a planned one pass unseen.",
+  "relies_on": [
+    {
+      "kind": "goal",
+      "doc": "automate-dev-flow",
+      "id": "G3"
+    },
+    {
+      "kind": "decision",
+      "id": "D-tw-3"
+    },
+    {
+      "kind": "decision",
+      "id": "D-tw-4"
+    }
+  ],
+  "defines": [
+    {
+      "term": "sensor",
+      "definition": "A check orbit runs over the code, the change and its history that reports whether a run has gone off course; when it fires, orbit writes a stop record of the tripwire kind."
+    }
+  ]
+}

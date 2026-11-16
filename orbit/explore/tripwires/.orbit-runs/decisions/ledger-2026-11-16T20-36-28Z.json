@@ -1,0 +1,32 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-16T20:36:28Z",
+  "change": "tripwires",
+  "model": "claude-opus-5-5",
+  "area": "when-things-go-wrong",
+  "decided": "A note in the plan that excuses a difference counts only if it was there when building began; one added later excuses nothing on its own, and counts only as the user's answer when that sensor is set to stop and the user answers its stop.",
+  "alternatives": [
+    "let any note in the plan excuse a difference, whenever it was written"
+  ],
+  "why": "Otherwise a run could excuse its way past any sensor by writing the excuse after the fact.",
+  "relies_on": [
+    {
+      "kind": "decision",
+      "id": "D-tw-3"
+    },
+    {
+      "kind": "decision",
+      "id": "D-tw-14"
+    }
+  ],
+  "defines": [
+    {
+      "term": "sensor",
+      "definition": "A check orbit runs over the code, the change and its history that reports whether a run has gone off course."
+    },
+    {
+      "term": "fixed point",
+      "definition": "The moment a change's building begins, after which its plan no longer changes; a sensor compares against the plan and settings as they stood then."
+    }
+  ]
+}

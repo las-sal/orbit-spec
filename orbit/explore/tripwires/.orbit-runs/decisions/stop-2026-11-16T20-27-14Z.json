@@ -1,0 +1,19 @@
+{
+  "command": "stop",
+  "timestamp": "2026-11-16T20:27:14Z",
+  "change": "tripwires",
+  "model": "claude-opus-5-5",
+  "condition": "security-unprecedented",
+  "about": "Project sensors would have orbit itself run commands that a project names in its committed settings file, each time a step of the flow finishes. Orbit has never run a command named in settings: the one command a user can name today, for an outside reviewer, is kept in the user's own per-machine settings and is run by the AI session at the user's request, never by orbit. A project someone clones could then run any program on their machine as soon as they use orbit in it, and the AI being watched could change the commands meant to watch it.",
+  "question": "Where may project sensors be declared, and what must happen before orbit runs one: declared in the project's settings and run only after the user approves that exact set of commands on this machine, with any change needing approval again (recommended); declared only in the user's own per-machine settings, never in the project; or run by the AI session rather than by orbit?",
+  "defines": [
+    {
+      "term": "sensor",
+      "definition": "A check orbit runs over the code, the change and its history that reports whether a run has gone off course."
+    },
+    {
+      "term": "project sensor",
+      "definition": "A sensor a project adds itself, by naming a command (such as a linter) whose output orbit reads."
+    }
+  ]
+}

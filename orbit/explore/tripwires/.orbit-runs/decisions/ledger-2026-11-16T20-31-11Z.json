@@ -1,0 +1,37 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-16T20:31:11Z",
+  "change": "tripwires",
+  "model": "claude-opus-5-5",
+  "area": "things-others-build-on",
+  "decided": "A project sensor's command prints one number, or a small structured result holding the number and a list of what it found, and orbit reads that whatever the command's exit status. The number is compared with the same sensor's number taken when the change was proposed, and the sensor fires when it has gone up. Output orbit cannot read, a command that takes too long, or a missing earlier number counts as firing.",
+  "alternatives": [
+    "treat a command that reports failure as unreadable",
+    "compare with the same command run against the code as it was before the change"
+  ],
+  "why": "Linters report failure whenever they find problems, so treating that as unreadable would make every run with findings unreadable; running the tool against the earlier code needs a copy of the project whose dependencies are usually not installed.",
+  "relies_on": [
+    {
+      "kind": "decision",
+      "id": "D-tw-3"
+    },
+    {
+      "kind": "decision",
+      "id": "D-tw-11"
+    },
+    {
+      "kind": "decision",
+      "id": "D-tw-12"
+    }
+  ],
+  "defines": [
+    {
+      "term": "sensor",
+      "definition": "A check orbit runs over the code, the change and its history that reports whether a run has gone off course."
+    },
+    {
+      "term": "project sensor",
+      "definition": "A sensor a project adds itself, by naming a command (such as a linter) whose output orbit reads."
+    }
+  ]
+}

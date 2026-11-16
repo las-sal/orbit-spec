@@ -1,0 +1,38 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-16T20:36:27Z",
+  "change": "tripwires",
+  "model": "claude-opus-5-5",
+  "area": "when-things-go-wrong",
+  "decided": "A size sensor lets a project set a maximum number of bytes for files it chooses, and fires when a change makes such a file larger than its maximum and larger than it was when building began. orbit's own generated skills are not stored in the project, so orbit-spec holds them under a recorded maximum, set to today's sizes, with a test instead.",
+  "alternatives": [
+    "fire on every file already over its maximum",
+    "measure only the generated skills, which other projects do not have"
+  ],
+  "why": "Firing on files that were already too big would stop every change that touches one; a sensor other projects can use must read files they keep, and orbit's own skills are produced on each machine, so only a test can measure them.",
+  "relies_on": [
+    {
+      "kind": "goal",
+      "doc": "automate-dev-flow",
+      "id": "G3"
+    },
+    {
+      "kind": "decision",
+      "id": "D-tw-2"
+    },
+    {
+      "kind": "decision",
+      "id": "D-tw-13"
+    }
+  ],
+  "defines": [
+    {
+      "term": "sensor",
+      "definition": "A check orbit runs over the code, the change and its history that reports whether a run has gone off course."
+    },
+    {
+      "term": "fixed point",
+      "definition": "The moment a change's building begins, after which its plan no longer changes; a sensor compares against the plan and settings as they stood then."
+    }
+  ]
+}

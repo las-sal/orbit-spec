@@ -1,0 +1,19 @@
+{
+  "command": "resolution",
+  "timestamp": "2026-11-16T20:30:17Z",
+  "change": "tripwires",
+  "model": "claude-opus-5-5",
+  "stop": "stop-2026-11-16T20-27-14Z.json",
+  "answer": "Project sensors are declared in the project's settings, and orbit runs them only after the user approves that exact set of commands on this machine; any change to them needs approval again.",
+  "effect": "Until the user approves the current set on a machine, orbit runs none of them there and records each as unable to read, which counts as firing; a cloned project runs nothing until its user approves, and an AI editing a sensor trips the wire instead of silencing it. Orbit records when each approval was given, so an approval given while a change is under way is noted.",
+  "defines": [
+    {
+      "term": "sensor",
+      "definition": "A check orbit runs over the code, the change and its history that reports whether a run has gone off course."
+    },
+    {
+      "term": "project sensor",
+      "definition": "A sensor a project adds itself, by naming a command (such as a linter) whose output orbit reads."
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-16T20:12:59Z",
+  "change": "tripwires",
+  "model": "claude-opus-5-5",
+  "area": "when-things-go-wrong",
+  "decided": "The check on reviews fires when the fix-and-recheck loop goes round twice on one problem: a problem the reviewer raised was fixed, a later check found the fix did not hold, it was fixed again, and a second check found that fix did not hold either. It never looks at how many problems a review found or how many reviews were run.",
+  "alternatives": [
+    "fire when a review finds no fewer serious problems than the one before",
+    "fire when a review step has used more review rounds than it expected and still has problems open"
+  ],
+  "why": "Across the 68 finished changes with reviews, later reviews routinely found more problems than earlier ones and one failed fix was normal, so either count would stop almost every change; the same problem failing twice never happened, so this fires only when the work is genuinely going in circles.",
+  "relies_on": [
+    {
+      "kind": "requirement",
+      "capability": "orbit-engine-gates",
+      "title": "Reviewed-gate pass condition — the computed convergence criterion"
+    },
+    {
+      "kind": "requirement",
+      "capability": "orbit-emit-composition",
+      "title": "A VERIFICATION-genre payload carries its verdicts and its findings link to the walk record"
+    },
+    {
+      "kind": "goal",
+      "doc": "automate-dev-flow",
+      "id": "G3"
+    },
+    {
+      "kind": "decision",
+      "id": "D-tw-7"
+    }
+  ],
+  "defines": [
+    {
+      "term": "sensor",
+      "definition": "A check orbit runs over the code, the change and its history that reports whether a run has gone off course."
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-16T20:17:30Z",
+  "change": "tripwires",
+  "model": "claude-opus-5-5",
+  "area": "when-things-go-wrong",
+  "decided": "Whether a change is still the stage it belongs to is judged by a steward: a new review with one question, given the stage's description as it stood when the stage's first change was proposed, the change's proposal, what it changed and its account. It answers on the stage, drifted, or cannot tell, and both drifted and cannot tell count as the sensor firing.",
+  "alternatives": [
+    "the existing review of an architecture doc, aimed at one stage, as the stage description first said"
+  ],
+  "why": "That review judges the doc itself and never the work, and nothing independent compares a change with its stage today; reading the stage description as it stood at the start stops a run from rewording it to fit what it built.",
+  "relies_on": [
+    {
+      "kind": "goal",
+      "doc": "automate-dev-flow",
+      "id": "G6"
+    },
+    {
+      "kind": "requirement",
+      "capability": "orbit-decision-records",
+      "title": "Each change carries one account, written when apply is complete"
+    },
+    {
+      "kind": "decision",
+      "id": "D-tw-8"
+    }
+  ],
+  "defines": [
+    {
+      "term": "sensor",
+      "definition": "A check orbit runs over the code, the change and its history that reports whether a run has gone off course."
+    },
+    {
+      "term": "steward",
+      "definition": "An independent reviewer, never the session that did the work, asked one question about a finished change: is it still the stage of the architecture doc it says it belongs to?"
+    },
+    {
+      "term": "account",
+      "definition": "The AI's own plain-language record, written when a change's building is finished, of what it built and where it left its stage's plan."
+    }
+  ]
+}
