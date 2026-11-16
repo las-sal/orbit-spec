@@ -19,6 +19,17 @@ import {
 import { isIndependent } from './artifact-graph/gates.js';
 import { resolveChainSetting, resolveSignoffSetting } from './project-config.js';
 import {
+  actsAsFired,
+  annotateCoverage,
+  composeTripwireStop,
+  computeReadings,
+  readCoverage,
+  sensorHalts,
+  tripwireSensors,
+  uncoveredKeys,
+  type TripwireReading,
+} from './tripwires.js';
+import {
   computePassGenre,
   verificationLedger,
   normalizeKey,
@@ -290,7 +301,8 @@ export const SPINE_FIELDS = ['command', 'timestamp', 'change', 'kind', 'next_rec
 export const ENGINE_OWNED_EXTRA: Record<string, string[]> = {
   // rc03c: `pass_genre` / `verified_walks` are computed at write beside `iteration`.
   // decision-reading: `decision_records_owed` is the selection when an in-context system pass is written.
-  review: ['final_assessment', 'iteration', 'pass_genre', 'verified_walks', 'decision_records_owed'],
+  // tripwires (`orbit-tripwires`' `Every seam emit carries the readings`): `tripwires` on the four seam emits.
+  review: ['final_assessment', 'iteration', 'pass_genre', 'verified_walks', 'decision_records_owed', 'tripwires'],
   apply: [
     'final_assessment',
     'tasks_completed',
@@ -302,6 +314,7 @@ export const ENGINE_OWNED_EXTRA: Record<string, string[]> = {
     'tasks_completed_this_session',
     'files_touched',
     'diff_base',
+    'tripwires',
   ],
   explore: [
     'decisions_captured',
@@ -314,10 +327,10 @@ export const ENGINE_OWNED_EXTRA: Record<string, string[]> = {
     'residuals',
     'status',
   ],
-  'address-reviews': ['iteration'],
+  'address-reviews': ['iteration', 'tripwires'],
   'review-external': ['awaiting_findings'],
   // decision-reading: the number of records no reading saw, counted at archive (run record only).
-  archive: ['decision_records_unread'],
+  archive: ['decision_records_unread', 'tripwires'],
   // rc07b (`orbit-emit-composition`'s `Audit-drift counts are engine-computed`): a supplied count
   // was a second voice on `findings.length` — and the only input the clean branch read.
   'audit-drift': ['findings_total', 'findings_by_category'],
@@ -2387,6 +2400,76 @@ export interface ComposeResult extends ComposedEmit {
   warnings: string[];
 }
 
+// ---------------------------------------------------------------------------
+// Tripwires: the readings on the seam emits (`orbit-tripwires`)
+// ---------------------------------------------------------------------------
+
+/** A `tripwire` stop composed for a halting reading, written after the emit's gate. */
+interface PlannedStop {
+  dir: string;
+  filename: string;
+  token: string;
+  record: Record<string, unknown>;
+}
+
+/**
+ * A SEAM EMIT (`Every seam emit carries the readings`): an `apply` emit, a `review` emit of mode `proposal` or
+ * `system`, an `address-reviews` emit on an active change, and an `archive` emit. No other emit carries readings.
+ */
+function isSeamEmit(command: string, resolved: ResolvedTarget, emit: Record<string, unknown>): boolean {
+  if (command === 'apply' || command === 'address-reviews') return resolved.scope === 'change';
+  if (command === 'review') return resolved.scope === 'change' && (emit.mode === 'proposal' || emit.mode === 'system');
+  if (command === 'archive') return resolved.scope === 'archived';
+  return false;
+}
+
+/**
+ * Every sensor's reading for the seam emit `emitFilename`, each naming the stops covering its keys and the
+ * resolutions answering them; and, for a reading acted on as fired whose sensor halts and some of whose keys no
+ * `tripwire` stop covers, one stop naming exactly those keys (`A halting reading writes a tripwire stop`). The archive
+ * writes no stop: it has landed.
+ */
+function composeSeamReadings(
+  command: string,
+  resolved: ResolvedTarget,
+  emitFilename: string,
+  projectRoot: string
+): { readings: TripwireReading[]; stops: PlannedStop[] } {
+  const name = resolved.change as string;
+  const { commits, readings } = computeReadings(projectRoot, name, resolved.changeDir);
+  const decisionsDir = path.join(resolved.runsDir, 'decisions');
+  const coverage = readCoverage(decisionsDir, name);
+  const sensors = new Map(tripwireSensors().map(s => [s.id, s]));
+  // The folder is listed only when a stop is drawn: at the defaults no stop is, and the emit reads nothing more.
+  let taken: Set<string> | null = null;
+  const stops: PlannedStop[] = [];
+  const out = readings.map(r => {
+    const sensor = sensors.get(r.sensor);
+    const extra: string[] = [];
+    if (command !== 'archive' && sensor && actsAsFired(r)) {
+      const keys = uncoveredKeys(r, coverage);
+      if (keys.length > 0 && sensorHalts(projectRoot, commits, sensor)) {
+        taken ??= new Set<string>(
+          (fs.existsSync(decisionsDir) ? fs.readdirSync(decisionsDir) : []).map(n => parseTsToken(n)).filter((t): t is string => t !== null)
+        );
+        let { token } = utcNow();
+        while (taken.has(token)) token = bumpToken(token);
+        taken.add(token);
+        const filename = `stop-${token}.json`;
+        stops.push({
+          dir: decisionsDir,
+          filename,
+          token,
+          record: composeTripwireStop({ timestamp: tokenToTimestamp(token), change: name, sensor, reading: r, keys, emit: emitFilename }),
+        });
+        extra.push(filename);
+      }
+    }
+    return annotateCoverage(r, coverage, extra);
+  });
+  return { readings: out, stops };
+}
+
 export function composeAndWriteEmit(
   command: string,
   target: EmitTarget,
@@ -2809,6 +2892,16 @@ export function composeAndWriteEmit(
     emit.next_recommended = next;
   }
 
+  // tripwires (`orbit-tripwires`' `Every seam emit carries the readings`): every sensor's reading, computed from
+  // committed state; a halting reading's stop is composed here and named on the reading, and written only after
+  // the emit passes its write gate (design M5).
+  let plannedStops: PlannedStop[] = [];
+  if (isSeamEmit(command, resolved, emit)) {
+    const seam = composeSeamReadings(command, resolved, filename, projectRoot);
+    emit.tripwires = seam.readings;
+    plannedStops = seam.stops;
+  }
+
   // MATERIALIZE first: this stringify is the LAST point caller-supplied code
   // (property getters, nested toJSON hooks) can run; the parse yields an INERT
   // plain-data record. The write gate then validates the frozen data, the bytes
@@ -2837,6 +2930,16 @@ export function composeAndWriteEmit(
   // ever sees a provisional record; the unlink covers every failure the process
   // survives (a hard kill can still strand the inert dot-tmp — noise, never a record).
   writeGate(materialized, resolved, filePath);
+  // A halting reading's stops, after the gate and before the emit (design M5): a refused emit writes no stop, and
+  // each stop is published without overwriting (the decision records' exclusive publish).
+  for (const stop of plannedStops) {
+    decisionSpineCheck(stop.record, resolved, 'a tripwire stop');
+    fs.mkdirSync(stop.dir, { recursive: true });
+    publishChildRecord(resolved.runsDir, stop.dir, stop.filename, stop.token, JSON.stringify(stop.record, null, 2) + '\n');
+    warnings.push(
+      `tripwire: the ${String((stop.record.tripwire as any).sensor)} sensor halts — wrote ${path.relative(projectRoot, path.join(stop.dir, stop.filename))}, a stop the chain stops on until it is answered.`
+    );
+  }
   const serialized = JSON.stringify(materialized, null, 2) + '\n';
   assertCanonicalTrailDir(resolved.runsDir);
   const tmp = path.join(resolved.runsDir, `.${filename}.tmp`);

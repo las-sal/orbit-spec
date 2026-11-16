@@ -47,7 +47,7 @@ Carried by: the 1.3.1 baseline
 
 ## orbit's config keys
 
-orbit reads nine more optional keys from `orbit/config.yaml`. Each is off, or at its default, when absent.
+orbit reads ten more optional keys from `orbit/config.yaml`. Each is off, or at its default, when absent.
 
 | Key | What it does |
 |---|---|
@@ -60,6 +60,7 @@ orbit reads nine more optional keys from `orbit/config.yaml`. Each is off, or at
 | `commit` | `true` lets orbit commit at the close of each command that works on a change with a pull request (propose, ff, apply, review, address-reviews and archive): everything uncommitted, your own edits included, except untracked files `.gitignore` excludes, and only on the change's own branch, never the default branch. The command names, in one line, each untracked file it committed. When an earlier pull-request step of the same command failed, it commits nothing and leaves you the recovery that failure printed. Absent, or any value but `true`, commits nothing beyond what `pr:` already commits. It needs `pr:` set and the change attached to a pull request. |
 | `push` | `true` lets orbit push the change's branch to the remote at the same close, setting it as the branch's upstream. It never force-pushes. Absent, or any value but `true`, pushes nothing beyond what `pr:` already pushes. Without `commit`, it pushes only commits you made yourself. |
 | `signoff` | `change` makes each change's archive wait for your sign-off: after it saves the change's brief, the archive shows you that brief whole and asks you to sign off or decline before anything is synced or moved. A decline stops the archive with your reason recorded and leaves the change active; a copy you already signed with the same text is not asked again. `program` makes you sign off once per program instead, over the program's brief: nothing waits at any change's archive, and the architect session that finds the program otherwise done (every stage finished and the closing architecture review recorded) shows you the program's latest saved brief whole and asks you to sign off or decline; under `pr: per-architecture` the program PR's ready flip is offered only once you have signed. A decline keeps the program not done, and the next architect session asks again. With `change` or `program`, the system review's reading step also reads each change's account, so the accounts in the brief you sign have been checked by a reader, unless a later fix replaced one. Absent or `off`, nothing waits, as without the key; any other value is read as absent, and the archive says so in one line. |
+| `tripwires` | Settings for the sensors that notice when a change's work drifts from its plan. Today there is one, `touchpoints`: it compares the code a change's committed work edits with the files its design's `## Touchpoints` section names, as that plan stood when building began, and fires on an unnamed source file with more than `per_file_lines` changed lines (default 40) or when unnamed files make up more than `share_percent` of the changed source lines (default 20). Paths matching `exempt` never count; the default set is `orbit/`, `test/`, `tests/`, `__tests__/`, `*.test.*`, `*.spec.*`, `docs/` and `*.md`, and a value you give replaces it. Each reading is recorded on the change's review, apply, walk and archive records, and shown only in `orbit brief`. `on_fire: halt` makes a firing write a stop to the change's decision records, which a granted `chain` stops on until you answer it; the default, `record`, writes none. The settings are read as committed when building began, so a run cannot loosen what watches it; a `halt` you commit later is honoured too. |
 
 A complete example:
 
@@ -83,6 +84,10 @@ chain:
 commit: true
 push: true
 signoff: change
+tripwires:
+  touchpoints:
+    on_fire: halt
+    per_file_lines: 60
 ```
 
 Carried by: `orbit-engine-gates`, `orbit-pr-lifecycle`, `orbit-scenario-map`, `orbit-change-size`, `orbit-program-brief`

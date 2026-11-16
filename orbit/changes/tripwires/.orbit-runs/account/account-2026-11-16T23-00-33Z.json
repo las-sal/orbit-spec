@@ -1,0 +1,20 @@
+{
+  "command": "account",
+  "timestamp": "2026-11-16T23:00:33Z",
+  "change": "tripwires",
+  "model": "claude-opus-5-5",
+  "built": "orbit now has tripwires, built as sensors behind one contract, and its first sensor: it notices when a change edits code its plan did not name, past a limit (more than 40 changed lines in one such file, or more than a fifth of the change's changed lines of code in such files). The plan it compares against is the one that stood when building began, so the work cannot move it. Every review, building step, walk and archive records each sensor's reading, quiet ones included, and the change's brief lists every finding once, with its evidence and any stop that asked about it. With nothing configured, nothing else the user sees or is asked changes.",
+  "seams": "One new setting, `tripwires`, in the project's config. Set a sensor to halt and a finding writes a stop for the user to answer, which a granted chain stops at; a supervised session still ends as before, and the stop waits in the brief. Once the user answers a stop, the same finding is not asked about again.",
+  "deviations": "The change touched four capabilities, one over the size limit of three. The worked examples of each step's record in orbit's conventions had to show the new readings, because they are checked against what orbit writes. The user chose to carry the extra capability and declare the overage. Nothing else left the stage's first change as chartered.",
+  "defines": [
+    {
+      "term": "plan",
+      "definition": "the list of files a change's design says it will edit, written before building begins"
+    },
+    {
+      "term": "finding",
+      "definition": "one thing a sensor reports past its limit, such as one file the plan did not name"
+    }
+  ],
+  "detail": "New src/core/tripwires.ts (contract, sensor list, changeCommits fixed point from first-parent history bounded at the change's birth, coverage reader, stop composition) and src/core/tripwire-touchpoints.ts; emit-composition computes `tripwires` on apply, proposal/system review, active address-reviews and archive emits, refuses it in payloads, and publishes a halting reading's stop after the write gate and before the emit; project-config gains resolveTripwiresSetting; program-brief renders the readings and holds orbit-written stops to their own shape; orbit-conventions' canonical examples gained the field (ledger-2026-11-16T22-51-37Z.json)."
+}

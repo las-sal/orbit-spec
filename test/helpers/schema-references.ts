@@ -39,7 +39,8 @@ export const ENGINE_OWNED = ['command', 'timestamp', 'change', 'doc', 'kind', 'm
 export const ENGINE_OWNED_PER_COMMAND: Record<string, string[]> = {
   // review: the counts sentence is engine-composed from the scorecard (D4).
   // decision-reading: the reading's selection on an in-context system pass.
-  review: ['final_assessment', 'pass_genre', 'verified_walks', 'decision_records_owed'],
+  // tripwires (`orbit-tripwires`' `Every seam emit carries the readings`): `tripwires` on the four seam emits.
+  review: ['final_assessment', 'pass_genre', 'verified_walks', 'decision_records_owed', 'tripwires'],
   // review-external: the T0 handoff flag is composed by the engine, never supplied.
   'review-external': ['awaiting_findings'],
   // rc07b-reference-roundtrip (`orbit-emit-composition`'s `Audit-drift counts are engine-computed`):
@@ -47,10 +48,11 @@ export const ENGINE_OWNED_PER_COMMAND: Record<string, string[]> = {
   'audit-drift': ['findings_total', 'findings_by_category'],
   // rc08a-sweep-evidence (`orbit-emit-composition`'s `A ripple-miss pointer resolves and is counted`):
   // the count of the walk's attributions, computed at write and refused in the payload.
-  'address-reviews': ['ripple_misses'],
+  'address-reviews': ['ripple_misses', 'tripwires'],
   // decision-reading (`orbit-emit-composition`'s `The reading's selection is recorded at review and
   // archive`): the count of records no reading saw, computed at archive and refused in the payload.
-  archive: ['decision_records_unread'],
+  archive: ['decision_records_unread', 'tripwires'],
+  apply: ['tripwires'],
 };
 
 /** The full engine-owned set for one command — the field-set test's subtraction. */

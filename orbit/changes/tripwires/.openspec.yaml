@@ -10,3 +10,5 @@ base_fingerprints:
     The write gate checks decision records: sha256:9dfbb220b7a60d3fd1a4a75edfd8840c471e9f0df29ee5a97f6bf8e393483822
   orbit-program-brief:
     A brief tells the user what a change or a program did, from the trail: sha256:0d5da06ce6ef7d3aa7a1f207f6576af2de9d5d9186e725bfefc7a769d0bd530b
+  orbit-conventions:
+    Internal-run JSON summary format: sha256:6da646776d9c61e7c261e4ebba8eb2f89ba8ef7a6d3acaa5735f3628161713e3

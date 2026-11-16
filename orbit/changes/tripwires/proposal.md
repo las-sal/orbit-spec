@@ -58,6 +58,9 @@ At the defaults nothing the user sees or is asked changes (G0, D-tw-5):
     halting reading's `tripwire` stop, written beside the emit;
   - `The write gate checks decision records`: its "change only as" sentence is qualified to the decision records' own
     addition, naming the `tripwires` field and the orbit-written stop as `orbit-tripwires`' own.
+- `orbit-conventions`: `Internal-run JSON summary format`. Its three canonical example emits (apply, review, archive)
+  gain the `tripwires` field, because a test holds each example's keys equal to the emit the engine writes (found at
+  apply; see `## Size`).
 
 ## Impact
 
@@ -73,7 +76,16 @@ At the defaults nothing the user sees or is asked changes (G0, D-tw-5):
   - new tests for the contract, the sensor and the emit field;
   - the brief's golden files change, because they carry the "not installed" line.
 - **Docs:** `docs/customization.md`, `docs/cli.md`.
+- **Spec examples:** `orbit-conventions`' canonical example emits carry the new field.
 - **No generated workflow body or skill reference changes** (D-tw-5: no text whose effect at the defaults changes what
   the AI does).
 - The other three changes of the stage (`tripwire-sensors`, `tripwire-steward`, `tripwire-project-sensors`) build on
   this contract and are proposed after it lands.
+
+## Size
+
+- capabilities: four, against a ceiling of three. Found at apply (task 3.1): the new `tripwires` field on the seam emits
+  makes the three canonical example emits of `orbit-conventions`' `Internal-run JSON summary format` differ from what
+  the engine writes, and that requirement's own test holds them equal. The examples must carry the field in this change,
+  so the fourth capability cannot be split off; the user chose to carry it and declare the breach. Requirements stay at
+  12 (the ceiling) and changed bytes well under theirs.

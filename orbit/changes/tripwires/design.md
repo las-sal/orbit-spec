@@ -151,7 +151,7 @@ the propose-time rule, which used one commit for both).
 - The program brief's own closing `## Tripwires` line says the readings are shown under each change; architecture
   sessions have no seam emits.
 
-**M11 — Three capabilities, not D-tw-19's two.**
+**M11 — Four capabilities, not D-tw-19's two.**
 - `orbit-emit-composition` is modified twice:
   - `Output contract and read-only guarantee beyond the emit` says the surface writes exactly one file, which a halting
     stop makes false;
@@ -162,7 +162,13 @@ the propose-time rule, which used one commit for both).
   The propose-time reading that the sentence was scoped was wrong: as written it denies the new field.
 - `Deterministic facts are engine-composed per command` was read and left alone, because it admits fields "where a
   capability defines an emit field".
-- Three capabilities and 11 requirements, within the ceiling of 3 and 12.
+- `orbit-conventions`' `Internal-run JSON summary format` is modified too, found at apply (task 3.1): its three
+  canonical example emits (apply, review, archive) must carry the new `tripwires` field, because the requirement's own
+  test executes each example through the write gate and holds its keys equal to the written emit's. The review
+  example's values are compared too, so it shows the `cannot-read: no-git` reading of the disposable project the test
+  runs it in. The propose-time count missed this reader of the emit shape.
+- Four capabilities and 12 requirements: the capabilities ceiling of 3 is breached, declared in the proposal's
+  `## Size`; requirements are at their ceiling of 12.
 
 **M12 — No schema reference text.**
 - The run-summary schema references (`references/*schema*.md`) are not edited. Two reasons:

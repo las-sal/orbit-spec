@@ -54,6 +54,49 @@ describe('EmitCommand (CLI surface)', () => {
     expect(parsed.emit.command).toBe('verify');
   });
 
+  const zeroReview = () => {
+    const zero = { critical: 0, warning: 0, suggestion: 0 };
+    return {
+      mode: 'proposal',
+      reviewer_class: 'in-context',
+      depth: 'full',
+      passes_run: ['1'],
+      passes_skipped: [],
+      scorecard: { completeness: { ...zero }, correctness: { ...zero }, coherence: { ...zero } },
+      findings: [],
+      model: null,
+    };
+  };
+
+  // @scenario behaviour orbit-emit-composition :: Output contract and read-only guarantee beyond the emit :: Render in the same breath
+  it('--render prints the written path, then the engine-rendered report for the pass', async () => {
+    write('payload.json', JSON.stringify(zeroReview()));
+    const logs: string[] = [];
+    vi.spyOn(console, 'log').mockImplementation((m: any) => logs.push(String(m)));
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    const code = await new EmitCommand().execute('review', { payload: 'payload.json', change: 'foo', render: true });
+    expect(code).toBe(0);
+    const out = logs.join('\n');
+    const first = out.split('\n')[0];
+    expect(first).toMatch(/review-proposal-\d{4}.*\.json$/);
+    expect(fs.existsSync(first)).toBe(true);
+    expect(out.slice(first.length)).toContain('Gate review-proposal:');
+  });
+
+  // @scenario behaviour orbit-emit-composition :: Output contract and read-only guarantee beyond the emit :: --json is one machine-readable object
+  it('--json --render makes stdout exactly one {path, emit, render} object', async () => {
+    write('payload.json', JSON.stringify(zeroReview()));
+    const logs: string[] = [];
+    vi.spyOn(console, 'log').mockImplementation((m: any) => logs.push(String(m)));
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    const code = await new EmitCommand().execute('review', { payload: 'payload.json', change: 'foo', json: true, render: true });
+    expect(code).toBe(0);
+    expect(logs).toHaveLength(1);
+    const parsed = JSON.parse(logs[0]);
+    expect(Object.keys(parsed).sort()).toEqual(['emit', 'path', 'render']);
+    expect(parsed.render).toContain('Gate review-proposal:');
+  });
+
   it('an unreadable --payload file fails cleanly with empty stdout', async () => {
     const logs: string[] = [];
     vi.spyOn(console, 'log').mockImplementation((m: any) => logs.push(String(m)));
