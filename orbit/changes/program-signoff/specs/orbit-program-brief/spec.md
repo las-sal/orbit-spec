@@ -6,10 +6,12 @@
 `orbit/architecture/.orbit-runs/brief/<doc>/brief-<TS>.md`, under every sign-off setting (`automate-dev-flow`'s R-adf-7;
 D-ps-3 and D-ps-6 in `program-signoff`'s `explore.md`). A program is FINISHED when its doc declares at least one stage
 and every stage it declares renders `quiescent-awaiting-ratification`, `complete`, `ended` or `ended-from-explore`
-(`orbit-architecture-engine`'s `Computed stage state with completion-as-ratification`), and no active change cites the
-doc, whatever stage it names or none: no stage is in a change, being explored, premised or inconsistent, and no work
-citing the doc is still open under a stage the doc does not declare. A doc the architecture parser reads as LEGACY declares no stage, so it is never
-finished. The save acts by the first row of this table that matches:
+(`orbit-architecture-engine`'s `Computed stage state with completion-as-ratification`), and no LIVE work cites the doc,
+whatever stage it names or none. Live work is what those stage states count as live: an active change under
+`orbit/changes/`, or an exploration under `orbit/explore/` whose `explore.md` is not concluded. On a declared stage,
+live work already keeps the stage from rendering finished; this clause adds live work that cites a stage the doc does
+not declare, or no stage. A doc the architecture parser reads as LEGACY declares no stage, so it is never finished. The
+save acts by the first row of this table that matches:
 
 | the program | the save |
 |---|---|
@@ -52,6 +54,18 @@ The architect session runs the save (`orbit-architect`'s `The architect session 
 - **WHEN** every stage `prog` declares renders `complete`, and an active change cites `prog` under a stage it does not
   declare
 - **THEN** `orbit brief prog --save --json` writes nothing and reports `save: "not-finished"`
+
+#### Scenario: A live exploration under an undeclared stage keeps the program unfinished
+
+- **WHEN** every stage `prog` declares renders `complete`, and an exploration under `orbit/explore/` whose `explore.md`
+  is not concluded cites `prog` under a stage it does not declare
+- **THEN** `orbit brief prog --save --json` writes nothing and reports `save: "not-finished"`
+
+#### Scenario: A concluded exploration under an undeclared stage leaves the program finished
+
+- **WHEN** every stage `prog` declares renders `complete`, no copy is saved, and the only work citing `prog` under a
+  stage it does not declare is an exploration whose `explore.md` is concluded
+- **THEN** `orbit brief prog --save --json` saves a copy and reports `save: "saved"`
 
 #### Scenario: An unchanged brief is not saved again
 

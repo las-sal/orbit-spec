@@ -15,10 +15,12 @@
 ## 2. The program save
 
 - [ ] 2.1 `saveProgramBrief` in `src/core/program-brief.ts` (design Decision 2): FINISHED from `computeStageStates` and
-  the active changes citing the doc, the fresh render compared byte for byte with the latest `brief/<doc>/` copy, the publish through the two-level identity
-  check (Decision 3); `orbit brief <doc> --save` prints the path and `sha256`, or one line for `unchanged` and
+  the live work citing the doc (active changes and explorations not concluded, from `scanCitations`), the fresh render
+  compared byte for byte with the latest `brief/<doc>/` copy, the publish through the two-level identity check
+  (Decision 3); `orbit brief <doc> --save` prints the path and `sha256`, or one line for `unchanged` and
   `not-finished`, and `--json` carries `save` and `saved`. Tests for each scenario of `A program's brief is saved once
-  the program is finished`, the racing writer, the aliased `<doc>` folder and the active change under an undeclared stage included.
+  the program is finished`, the racing writer, the aliased `<doc>` folder and the live and concluded work under an
+  undeclared stage included.
 
 ## 3. The program sign-off and hold
 
@@ -58,9 +60,9 @@
 - [ ] 5.2 Docs: `docs/customization.md`'s `signoff` row gains `program`, and its "With `change`, the system review's
   reading step also reads" sentence (line 62, measured at the proposal's walk) says `change` or `program`;
   `docs/cli.md` gains `orbit brief <doc> --save`, `--hold` with a doc and `orbit emit signoff --doc`, and its three
-  "with `signoff: change`" reading-step sentences (lines 379, 408 and 411) say `change` or `program`; `docs/commands.md`'s architect section and `docs/concepts.md`
-  name the program sign-off, with the owning capabilities on each section's Carried-by line; CLAUDE.md's note on the
-  sign-off commands names the doc forms.
+  "with `signoff: change`" reading-step sentences (lines 379, 408 and 411) say `change` or `program`;
+  `docs/commands.md`'s architect section and `docs/concepts.md` name the program sign-off, with the owning capabilities
+  on each section's Carried-by line; CLAUDE.md's note on the sign-off commands names the doc forms.
 - [ ] 5.3 Refresh the generated surface: `npm run build && node bin/orbit.js update --force`.
 
 ## 6. Verification

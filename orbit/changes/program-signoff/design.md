@@ -9,7 +9,8 @@ brief (`buildProgramBrief` in `src/core/program-brief.ts`) renders the citing ch
 `decisions/` records from the architecture trail, and no stage state. The architect body's Step 5.5 observes arc-done
 itself (every stage archived and the closing `--as architecture` review recorded) and runs `orbit pr program`.
 
-This change is the decisions D-ps-3, D-ps-5, D-ps-6, D-ps-8 and D-ps-9 of `explore.md` made real; the decisions below are how.
+This change is the decisions D-ps-3, D-ps-5, D-ps-6, D-ps-8 and D-ps-9 of `explore.md` made real; the decisions below
+are how.
 The size breach (seven capabilities, fifteen requirements) is declared in the proposal: the user chose that over a split.
 
 ## Goals / Non-Goals
@@ -37,9 +38,10 @@ so the five readers cannot disagree). The change brief's unread-account line is 
 
 **2. The program save is a sibling of the change save, decided by the engine.** `saveProgramBrief(projectRoot, doc)`
 in `src/core/program-brief.ts` computes FINISHED from `computeStageStates` (every declared stage rendering
-`quiescent-awaiting-ratification`, `complete`, `ended` or `ended-from-explore`, and no active change citing the doc,
-whatever stage it names), compares the fresh render's bytes with
-the latest `brief/<doc>/brief-<TS>.md`, and publishes only when they differ. It returns `{save, saved}` with `save` one of
+`quiescent-awaiting-ratification`, `complete`, `ended` or `ended-from-explore`, and no live work citing the doc,
+whatever stage it names or none: an active change, or an exploration not concluded, the live citers `scanCitations`
+reports), compares the fresh render's bytes with the latest `brief/<doc>/brief-<TS>.md`, and publishes only when they
+differ. It returns `{save, saved}` with `save` one of
 `saved`, `unchanged`, `not-finished`. Deciding "finished" and "unchanged" in the engine, not the architect body, makes
 D-ps-3's table testable and keeps the body to one call. Chosen over a body-side check, which no test can hold.
 

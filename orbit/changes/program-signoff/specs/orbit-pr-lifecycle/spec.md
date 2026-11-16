@@ -59,7 +59,7 @@ brief (D-ps-5 in `program-signoff`'s `explore.md`): an architect invocation obse
 the sign-off and surfaces no READY flip. Under `program` the hold reads the two conditions above from the trail, the
 first as the program FINISHED (`orbit-program-brief`'s `A program's brief is saved once the program is finished`) rather
 than every declared stage archived: a stage the user ended (`ended` or `ended-from-explore`) counts as done whether or not
-it archived a change, and no active change may cite the doc; the second as the doc's closing review recorded after the
+it archived a change, and no live work (an active change, or an exploration not concluded) may cite the doc; the second as the doc's closing review recorded after the
 last citing change's archive (`orbit-program-brief`'s `A program's sign-off is recorded against its saved copy, and the
 hold reads arc-done`). Under every other value arc-done is the two conditions alone, observed as before, the first read
 as worded. Named limit — the two readings differ on a stage the user ended without archiving a change: `program` counts

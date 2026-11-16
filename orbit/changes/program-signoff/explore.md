@@ -69,6 +69,7 @@ Domain: each architect session on a doc, by the program's state and its saved co
 | every declared stage finished, a fresh render's hash equal to the latest saved copy's | saves nothing |
 | every declared stage finished, a fresh render's hash different (a change archived or a record written since) | saves a new copy; the latest is the program's brief |
 | a declared stage not finished | saves nothing |
+| live work (an active change, or an exploration not concluded) citing the doc under a stage it does not declare, or none | saves nothing: the program is not finished |
 | the program brief cannot be rendered whole | saves nothing; at the defaults the failure is recorded and not shown; under `program` the session says so, and the hold stays with nothing to sign |
 Closure: DERIVED — whether the program is finished, crossed with whether a saved copy exists and whether its hash matches a fresh render, plus the render's failure
 Moves:
@@ -132,7 +133,7 @@ Domain: a copy saved after the latest sign-off, by `pr:` mode, the program PR's 
 | `pr: per-architecture`, the PR's state unverified, or not read at all (`unobserved`, `gh-absent`) | asks again, since nothing is known of the flip |
 | `pr: per-architecture`, several candidate PRs (`several`) | asks again, since which PR is the program's, and whether it is still a draft, is not settled |
 | `pr: per-architecture`, the PR ready | saved; asks nothing; arc-done stays observed |
-| `pr: per-architecture`, no open program PR (`none`, `not-found`, a recorded PR merged or closed with no open replacement, or no attachment recorded) | saved; asks nothing: there is no flip to hold |
+| `pr: per-architecture`, no open program PR (`none`, `not-found`, a positive invalidation of the recorded PR, `closed`, `merged`, `retargeted`, `head-mismatch` or `repository-mismatch`, with no open replacement, or no attachment recorded) | saved; asks nothing: there is no flip to hold |
 | `pr: per-proposal` | saved; asks nothing; arc-done stays observed |
 | `pr: never` | saved; asks nothing; arc-done stays observed |
 | the program reopened: a change citing the doc archived after the review the signature names as its closing review | not a later copy of the signed program: asked afresh under every mode, since the signature covers none of that change's work |

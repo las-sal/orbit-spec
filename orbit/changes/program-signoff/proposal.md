@@ -14,9 +14,9 @@ first-run stage's closing review grades G5 from saved copies.
   as it does under `change`, so the accounts in the brief the user signs have been checked by a reader (D-ps-9's
   account row). `program` stops being read as unrecognized; any other value still is.
 - **The program brief is saved.** `orbit brief <doc> --save` saves a program's brief once every stage the doc declares
-  is finished and no active change cites the doc, and again only when a fresh render differs from the latest saved copy, to
-  `orbit/architecture/.orbit-runs/brief/<doc>/brief-<TS>.md` (D-ps-3, D-ps-6). The architect session runs it under
-  every setting and, at the defaults, shows nothing about it.
+  is finished and no active change or open exploration cites the doc, and again only when a fresh render differs from
+  the latest saved copy, to `orbit/architecture/.orbit-runs/brief/<doc>/brief-<TS>.md` (D-ps-3, D-ps-6). The architect
+  session runs it under every setting and, at the defaults, shows nothing about it.
 - **A program sign-off.** `orbit emit signoff --doc <doc>` records the user's answer over the latest saved program
   brief, in `orbit/architecture/.orbit-runs/signoff/<doc>/`, with orbit adding the copy's SHA-256, as the change record
   does (D-ps-6). A sign-off for a change is refused under `program`, and one for a doc under any value but `program`.
