@@ -1,0 +1,245 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-16T17:22:22Z",
+  "change": "program-signoff",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {},
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 5,
+      "suggestion": 9
+    }
+  },
+  "findings": [
+    {
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "pass": "reading",
+      "title": "ledger-2026-11-14T17-50-06Z.json — reader row 3: \"when work landed change by change\" reads as each change's work merged",
+      "file": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-14T17-50-06Z.json",
+      "line": 1,
+      "recommendation": "Write a replacement whose why says that under one pull request per change each change's pull request is marked ready at its archive and its merge left to the user, and under none its work is archived on its branch (D-ps-9), never that it landed."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "pass": "reading",
+      "title": "ledger-2026-11-14T18-13-27Z.json — reader row 4: \"finished\" widens D-ps-5's every stage archived without saying so, uses \"ended\" undefined, and \"a newer closing review is asked about afresh\" contradicts D-ps-8",
+      "file": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-14T18-13-27Z.json",
+      "line": 1,
+      "recommendation": "Write a replacement whose decided says the widened finished test (an ended stage counting) applies under the program sign-off, defines an ended stage, and says a signature still stands across a closing review run again unless a change citing the doc was archived after it (D-ps-8)."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "pass": "reading",
+      "title": "ledger-2026-11-15T20-21-05Z.json — reader row 3: alternatives' \"read every stage archived as finished under every setting\" misstates the alternative",
+      "file": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-15T20-21-05Z.json",
+      "line": 1,
+      "recommendation": "Write a replacement whose alternative says: use the program sign-off's finished test, an ended stage counting, for the end-of-program readout under every setting, which changes what users see with no setting changed."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "pass": "reading",
+      "title": "ledger-2026-11-16T14-25-16Z.json — reader row 3: \"none was ever recorded\" reads as covering a failed check with no recorded link, which asks again",
+      "file": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-16T14-25-16Z.json",
+      "line": 1,
+      "recommendation": "Write a replacement whose decided separates no program pull request record at all (asks nothing) from a record with no link whose check fails (asks again), says \"under one pull request per program\" for the circular clause, and says \"architect session\"."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "pass": "reading",
+      "title": "ledger-2026-11-16T15-35-43Z.json — reader row 1: \"settings file\" reads as the project config, not the change's own metadata",
+      "file": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-16T15-35-43Z.json",
+      "line": 1,
+      "recommendation": "Write a replacement that names the file as the change's or exploration's own record of which doc and stage it belongs to, in decided and alternatives, or defines the term."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "pass": "reading",
+      "title": "ledger-2026-11-14T17-47-45Z.json — reader row 3: \"ask them twice\" does not say why a second request would come",
+      "file": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-14T17-47-45Z.json",
+      "line": 1,
+      "recommendation": "Write a replacement whose why says a copy saved after an earlier signature asks again while the program pull request is still a draft."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "pass": "reading",
+      "title": "ledger-2026-11-14T17-50-05Z.json — reader row 3: \"the reading that already finds\" collides with the reading step; \"architecture history\" for the architecture trail",
+      "file": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-14T17-50-05Z.json",
+      "line": 1,
+      "recommendation": "Write a replacement whose why says the hold's read, and whose decided says the architecture trail."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "pass": "reading",
+      "title": "ledger-2026-11-14T18-13-27Z.json — reader row 2: \"comparing the times of files that are named independently\" leans on filename timestamps",
+      "file": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-14T18-13-27Z.json",
+      "line": 1,
+      "recommendation": "Write a replacement whose why says the sign-off and the review are recorded in separate places whose times cannot be reliably compared, without naming filenames."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "pass": "reading",
+      "title": "ledger-2026-11-15T20-21-04Z.json — reader row 3: decided first reads as reopening being the only reason to ask again",
+      "file": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-15T20-21-04Z.json",
+      "line": 1,
+      "recommendation": "Write a replacement whose decided opens with the draft case, then adds reopening as the one case asked in every mode."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "pass": "reading",
+      "title": "ledger-2026-11-15T20-21-05Z.json — reader row 3: decided's readout sentence is hard to parse, and its list runs two items together",
+      "file": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-15T20-21-05Z.json",
+      "line": 1,
+      "recommendation": "Write a replacement whose decided says the readout's condition stays every stage archived, and lists the four finished states plainly."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "pass": "reading",
+      "title": "ledger-2026-11-15T20-21-07Z.json — reader row 3: \"the promised line\" points at a promise the reader is not shown",
+      "file": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-15T20-21-07Z.json",
+      "line": 1,
+      "recommendation": "Write a replacement whose why says the earlier rule promised a line in the brief saying each change had merged, and no part of the brief wrote it."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "pass": "reading",
+      "title": "ledger-2026-11-16T16-26-31Z.json — reader row 3: \"a signature recorded by hand\" reads as editing the file",
+      "file": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-16T16-26-31Z.json",
+      "line": 1,
+      "recommendation": "Write a replacement whose decided says a sign-off written with the sign-off command outside the architect session's question, and that such a signature names no closing review."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "pass": "reading",
+      "title": "ledger-2026-11-16T16-26-32Z.json — reader row 3: \"asks only whether the save worked\" uses asks, which elsewhere means asking the user",
+      "file": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-16T16-26-32Z.json",
+      "line": 1,
+      "recommendation": "Write a replacement whose decided says the session reads only whether the save worked."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "pass": "reading",
+      "title": "ledger-2026-11-16T15-35-45Z.json — reader row 3: \"the command reference\" and \"the commands page\" cannot be told apart",
+      "file": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-16T15-35-45Z.json",
+      "line": 1,
+      "recommendation": "Write a replacement whose decided names them as the page of orbit's terminal commands and the page of its workflow commands."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Verified the two system walks over their sweep scopes. The save now runs without --json in Step 5.4, the orbit-architect delta's command block and the CLAUDE.md note, and the template test asserts the body carries no `--save --json`; the three account clauses (review, address-reviews, disciplines) and the walk test say change or program, and the generated surface carries no residue; Step 5.5's two definitions leave its not-ratification-gated and repeat-until-ready paragraph true under both; renderHold branches on the setting with a CLI test; the hold requirement's new named limit matches computeProgramHold, which still returns signed on an equal hash before signatureStands. The residual check found every file changed since the external return's commit inside some entry's edit record. The reading step read all eighteen ledger entries of the change: its findings are wording, chiefly older records restating rules that later decisions refined (finished widened to ended stages, a signature standing across a re-run closing review), so the records read against today's decisions shift what they cite. Records written by this walk's own fixes reach no reader before archive (D-dr-2's named limit).",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "reading"
+  ],
+  "passes_skipped": [
+    "0: a whole-change pass, not run on a verification pass",
+    "4: no perspectives defined",
+    "5: no critical paths defined",
+    "6: a whole-project pass, not run on a verification pass"
+  ],
+  "verification": [
+    {
+      "title": "Step 5.4 pipes the whole program brief into every architect session, at the defaults too",
+      "file": "src/core/templates/workflows/architect.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "Three generated bodies still say the account is read only under `signoff: change`",
+      "file": "src/core/templates/workflows/review.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "Step 5.5 still defines arc-done as 'every stage archived' under `signoff: program`",
+      "file": "src/core/templates/workflows/architect.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "Under `signoff: program` the change hold's line says the setting is off",
+      "file": "src/core/signoff.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "Matching bytes bypass the signature’s closing-review validity",
+      "file": "src/core/signoff.ts",
+      "verdict": "landed"
+    }
+  ],
+  "decision_records_read": [
+    "ledger-2026-11-14T17-47-45Z.json",
+    "ledger-2026-11-14T17-50-05Z.json",
+    "ledger-2026-11-14T17-50-06Z.json",
+    "ledger-2026-11-14T18-13-26Z.json",
+    "ledger-2026-11-14T18-13-27Z.json",
+    "ledger-2026-11-14T18-13-28Z.json",
+    "ledger-2026-11-14T18-13-29Z.json",
+    "ledger-2026-11-15T20-21-04Z.json",
+    "ledger-2026-11-15T20-21-05Z.json",
+    "ledger-2026-11-15T20-21-07Z.json",
+    "ledger-2026-11-16T14-25-16Z.json",
+    "ledger-2026-11-16T14-25-17Z.json",
+    "ledger-2026-11-16T15-35-42Z.json",
+    "ledger-2026-11-16T15-35-43Z.json",
+    "ledger-2026-11-16T15-35-44Z.json",
+    "ledger-2026-11-16T15-35-45Z.json",
+    "ledger-2026-11-16T16-26-31Z.json",
+    "ledger-2026-11-16T16-26-32Z.json"
+  ],
+  "final_assessment": "0 critical, 5 warning, 9 suggestion.",
+  "decision_records_owed": [
+    "ledger-2026-11-14T17-47-45Z.json",
+    "ledger-2026-11-14T17-50-05Z.json",
+    "ledger-2026-11-14T17-50-06Z.json",
+    "ledger-2026-11-14T18-13-26Z.json",
+    "ledger-2026-11-14T18-13-27Z.json",
+    "ledger-2026-11-14T18-13-28Z.json",
+    "ledger-2026-11-14T18-13-29Z.json",
+    "ledger-2026-11-15T20-21-04Z.json",
+    "ledger-2026-11-15T20-21-05Z.json",
+    "ledger-2026-11-15T20-21-07Z.json",
+    "ledger-2026-11-16T14-25-16Z.json",
+    "ledger-2026-11-16T14-25-17Z.json",
+    "ledger-2026-11-16T15-35-42Z.json",
+    "ledger-2026-11-16T15-35-43Z.json",
+    "ledger-2026-11-16T15-35-44Z.json",
+    "ledger-2026-11-16T15-35-45Z.json",
+    "ledger-2026-11-16T16-26-31Z.json",
+    "ledger-2026-11-16T16-26-32Z.json"
+  ],
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-11-16T16-26-04Z",
+    "2026-11-16T16-26-18Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews program-signoff"
+}
