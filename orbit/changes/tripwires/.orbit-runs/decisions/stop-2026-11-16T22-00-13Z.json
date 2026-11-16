@@ -1,0 +1,9 @@
+{
+  "command": "stop",
+  "timestamp": "2026-11-16T22:00:13Z",
+  "change": "tripwires",
+  "model": "claude-opus-5-5",
+  "condition": "outward-act",
+  "about": "The proposal's branch is cut from the copy of main on GitHub, which does not yet hold the three committed explore and architect commits; without them the branch would lack the exploration the proposal is written from, so orbit declined to cut it. Sending main's three commits to GitHub fixes that; no setting grants sending main.",
+  "question": "Send main's three unsent commits to GitHub so the proposal gets its own branch and draft pull request, or write the proposal on main with no branch and no pull request?"
+}

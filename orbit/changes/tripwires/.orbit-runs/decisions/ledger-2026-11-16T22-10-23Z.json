@@ -1,0 +1,25 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-16T22:10:23Z",
+  "change": "tripwires",
+  "model": "claude-opus-5-5",
+  "area": "when-things-go-wrong",
+  "decided": "A sensor reads the plan it compares against, and its own settings, as they stood just before the first commit of building work, and reads both from the saved history rather than from the files as they are now. Before any building work is committed, nothing has changed, and the sensor reports nothing found.",
+  "alternatives": [
+    "Read the plan as it stands in the first commit of building work itself.",
+    "Read the plan and the settings from the files as they are now."
+  ],
+  "why": "A commit that edits the plan and the code together would move the plan in the very commit the sensor watches, and files as they are now can be changed by the run being watched without leaving any saved trace.",
+  "relies_on": [
+    {
+      "kind": "decision",
+      "id": "D-tw-3"
+    },
+    {
+      "kind": "goal",
+      "doc": "automate-dev-flow",
+      "id": "G6"
+    }
+  ],
+  "detail": "The fixed point is the parent of the first apply commit: the earliest commit after the change's first commit that changes a path outside orbit/changes/<name>/, orbit/explore/<name>/ and its archive folder. Reads use git show and git diff --numstat <fp>..HEAD (design M1, M2)."
+}
