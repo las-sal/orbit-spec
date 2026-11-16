@@ -241,7 +241,7 @@ Per-kind extensions:
 
 **Canonical examples** (one per kind, illustrating spine + per-kind extensions; each is EXECUTED, per the paragraph after them):
 
-Workflow-kind example — an `apply` emit written at chunk 2 completion of a chunked apply (the `final_assessment` shown is the ENGINE-composed chunk/counts core per `orbit-emit-composition`'s deterministic-facts requirement — the payload may only append an optional `assessment_suffix`, never author the counts; the `next_recommended` shown is the engine's canonical next_command extended by the ENGINE-composed next-chunk suffix from the preamble — every character engine-owned; `diff_base` is the tree the next apply's `files_touched` diffs from):
+Workflow-kind example — an `apply` emit written at chunk 2 completion of a chunked apply (the `final_assessment` shown is the ENGINE-composed chunk/counts core per `orbit-emit-composition`'s deterministic-facts requirement — the payload may only append an optional `assessment_suffix`, never author the counts; the `next_recommended` shown is the engine's canonical next_command extended by the ENGINE-composed next-chunk suffix from the preamble — every character engine-owned; `diff_base` is the tree the next apply's `files_touched` diffs from; `tripwires` holds each sensor's engine-computed reading, per `orbit-tripwires`' `Every seam emit carries the readings`):
 
 ```json
 {
@@ -261,11 +261,12 @@ Workflow-kind example — an `apply` emit written at chunk 2 completion of a chu
   "chunk_complete": true,
   "tasks_completed_this_session": 16,
   "files_touched": ["src/core/parsers/preamble.ts", "test/core/preamble.test.ts"],
-  "diff_base": "fd6f2826ece1c27853a35ca6a7ed37efccb28218"
+  "diff_base": "fd6f2826ece1c27853a35ca6a7ed37efccb28218",
+  "tripwires": [{ "sensor": "touchpoints", "outcome": "quiet", "deviations": [], "reference": "9c1e4d2a7b3f6e8d0a5c2b1f4e7d9a3c6b8e0f2d", "frozen": true, "evidence": { "files": [], "share": 0, "share_fired": false, "malformed": [], "settings": { "on_fire": "record", "exempt": ["orbit/"], "per_file_lines": 40, "share_percent": 20 }, "notes": [] } }]
 }
 ```
 
-Editorial-kind example — a `review` emit written by a `/orbit:review --as proposal --reviewer fresh` iter-1 pass with findings (`next_recommended` is the change-scoped walk per `orbit-emit-composition`'s `Deterministic facts are engine-composed per command`; `pass_genre`, `verified_walks` and `iteration` are engine-computed; `direction` is owed by an independent class):
+Editorial-kind example — a `review` emit written by a `/orbit:review --as proposal --reviewer fresh` iter-1 pass with findings (`next_recommended` is the change-scoped walk per `orbit-emit-composition`'s `Deterministic facts are engine-composed per command`; `pass_genre`, `verified_walks` and `iteration` are engine-computed; `direction` is owed by an independent class; `tripwires` is engine-computed too, and shows the `cannot-read` reading a project with no git gets, since the example is executed in one):
 
 ```json
 {
@@ -295,11 +296,12 @@ Editorial-kind example — a `review` emit written by a `/orbit:review --as prop
   "pass_genre": "REVIEW",
   "verified_walks": [],
   "iteration": 1,
-  "next_recommended": "/orbit:address-reviews emit-run-summary-jsons-from-workflow-commands"
+  "next_recommended": "/orbit:address-reviews emit-run-summary-jsons-from-workflow-commands",
+  "tripwires": [{ "sensor": "touchpoints", "outcome": "cannot-read", "deviations": ["touchpoints:cannot-read:no-git"], "reference": null, "frozen": false, "evidence": { "reason": "no-git" } }]
 }
 ```
 
-Lifecycle-kind example — an `archive` emit written after `/orbit:archive bootstrap-orbit-status-cli` (the `judgements` array carries the readiness record per `orbit-emit-composition`, its `formed_against` naming the independent passes it was formed against):
+Lifecycle-kind example — an `archive` emit written after `/orbit:archive bootstrap-orbit-status-cli` (the `judgements` array carries the readiness record per `orbit-emit-composition`, its `formed_against` naming the independent passes it was formed against; `tripwires` holds each sensor's engine-computed reading):
 
 ```json
 {
@@ -320,7 +322,8 @@ Lifecycle-kind example — an `archive` emit written after `/orbit:archive boots
   "judgements": [
     { "kind": "readiness", "formed_against": ["2026-05-19T22-10-04Z"], "disposition": "ready", "reasoning": "The system gate passed and the one independent pass's findings are all resolved.", "ratified_by": "user", "accepted": [{ "claim": "no independent pass read the final tree", "why": "the walk's edits were single-line repairs the verification graded landed" }] }
   ],
-  "next_recommended": "/orbit:architect <name> — change archived; plan the next piece of work, or run /orbit:audit-drift for a project-wide drift check."
+  "next_recommended": "/orbit:architect <name> — change archived; plan the next piece of work, or run /orbit:audit-drift for a project-wide drift check.",
+  "tripwires": [{ "sensor": "touchpoints", "outcome": "quiet", "deviations": [], "reference": "9c1e4d2a7b3f6e8d0a5c2b1f4e7d9a3c6b8e0f2d", "frozen": true, "evidence": { "files": [], "share": 0, "share_fired": false, "malformed": [], "settings": { "on_fire": "record", "exempt": ["orbit/"], "per_file_lines": 40, "share_percent": 20 }, "notes": [] } }]
 }
 ```
 

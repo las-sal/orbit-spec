@@ -465,6 +465,25 @@ Exit criteria:
 - Each sensor's setting is named in its owning requirement, and a test shows today's behaviour at its default.
 - G0 holds.
 
+Shipped as, first of four changes (2026-11-16; archived as `orbit/changes/archive/2026-11-16-tripwires/`; the stage lands as four
+changes, D-tw-19 in the exploration `tripwires`, so it stays open for `tripwire-sensors`, `tripwire-steward` and
+`tripwire-project-sensors`): the SENSOR CONTRACT and its first sensor. `orbit-tripwires` owns the contract (a reading is
+fired, quiet or cannot-read, one key per deviation, cannot-read counting as fired), the change's fixed point (the plan
+and settings read just before the commit adding the first apply emit; the measure from the change's first commit,
+bounded at its birth, which the system walk made follow the latest archive move so a reused name not yet committed
+reads uncommitted and deleting and restoring the metadata resets nothing), the `tripwires` field every seam emit
+carries, the `tripwires` setting, the halt setting's orbit-written `tripwire` stop (asking only about deviations no
+earlier stop covers), and the Touchpoints sensor (unpredicted source past 40 lines in a file or a 20% share, outside an
+exempt set; the system walk, Sal: C, counts only the paths the change's own commits changed, so a merge of the default
+branch is not measured). At the defaults a reading is recorded and shown only in the brief, so G0 holds with no new
+exception; the brief's Tripwires section lists each fired key once with its evidence and stop, or says tripwires were
+not installed when a change ran. Measured on the 14 latest archived changes: 1 fires (change-account), as D-tw-17 found.
+Departures: a fourth capability, `orbit-conventions` (its canonical example emits carry the field; declared in the
+proposal's Size), and the brief holds orbit-written stops and the readings to their own shape. Tests that moved
+(R-adf-9): `rc03b`'s `emit-composition.ts` pin, the parity test's engine-owned list, the canonical examples and the
+brief's golden renders. The system review's reading step did not run: the brief orbit renders for the change's 26
+records is too large to hand a reader verbatim, so those records archive unread (counted in the archive record).
+
 ### Stage driver — regime 3, one fresh session per phase
 
 Depends-on: decision-writing, decision-reading, seam-chaining, program-brief, tripwires

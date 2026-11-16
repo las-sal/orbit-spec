@@ -90,7 +90,7 @@ tripwires:
     per_file_lines: 60
 ```
 
-Carried by: `orbit-engine-gates`, `orbit-pr-lifecycle`, `orbit-scenario-map`, `orbit-change-size`, `orbit-program-brief`
+Carried by: `orbit-engine-gates`, `orbit-pr-lifecycle`, `orbit-scenario-map`, `orbit-change-size`, `orbit-program-brief`, `orbit-tripwires`
 
 ## Custom schemas
 
