@@ -175,3 +175,7 @@ scenarios:
   - key: "orbit-archive-modifications :: The archive saves the change's brief before the sync :: Bulk archive saves each change's brief"
     kind: untestable
     why: "The THEN is an AI-run /orbit:bulk-archive over two changes; no test runs a bulk session. The bulk body carrying the step per change, after the fingerprint check and before the Step 8a sync, is tested."
+  # program-signoff (task 4.1) — a Shape A scenario carried with its MODIFIED block (the arc-done sign-off clause).
+  - key: "orbit-pr-lifecycle :: Program PR (Shape A) semantics :: Mid-flight adoption"
+    kind: untestable
+    why: "The THEN spans sessions: the program PR's appended history starting at the stage current when `pr:` was first enabled, with no back-fill, is the PR body the archive tails compose stage by stage. The first touch's create-as-draft path is behaviour-tested in test/core/pr/publish.test.ts ('zero survivors: the program PR is created'); no test enables the setting on a repo that already carries archived stages and reads the PR's later bodies."

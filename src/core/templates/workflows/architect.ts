@@ -14,6 +14,52 @@ import { COMPLETE_SLOT_PRODUCTIONS } from '../../architecture/parser.js';
 import { PR_RESOLUTION_REFERENCE } from './pr-choreography.js';
 import { DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../disciplines.js';
 
+/**
+ * program-signoff: Step 5.4 — the program's save and its sign-off at arc-done (`orbit-architect`'s `The architect
+ * session saves the program brief and asks for the program's sign-off`). Its table and the paragraph naming its rows
+ * are a CHECKED MIRROR of the owner's, held verbatim by `test/core/templates/program-signoff-step.test.ts`.
+ */
+export const PROGRAM_SIGNOFF_STEP = `Run the save, then read the hold — on EVERY invocation on a doc, under every sign-off setting, after the doc's state is rendered and BEFORE the arc-done readout of Step 5.5, so a sign-off owed under \`signoff: program\` is asked before the program PR's READY flip is surfaced:
+
+\`\`\`bash
+orbit brief <doc> --save --json
+orbit brief <doc> --hold --json
+\`\`\`
+
+The save writes a copy of the program's brief into \`orbit/architecture/.orbit-runs/brief/<doc>/\` only for a FINISHED program (every declared stage done, no live work citing the doc) whose brief changed since its latest copy; its \`--json\` carries \`save\` (\`saved\`, \`unchanged\` or \`not-finished\`) and \`saved\` (\`{path, sha256}\`, or \`null\`). Say nothing about the save in chat under any setting but \`program\`; when it exits non-zero, record the failure, as the command reported it, in this session's run-summary \`final_assessment\`. Under \`program\` a failed save is stated in one line, and no sign-off is asked in this session, since the latest copy may not be the program's current text.
+
+The hold renders no brief and writes nothing. It prints one object: \`doc\`; \`setting\` (\`off\`, \`change\` or \`program\`); \`warning\` (a sentence, or \`null\`); \`finished\`; \`closing_review\` (\`{file}\`, or \`null\`); \`copy\` (\`{file, sha256}\` of the latest saved copy, or \`null\`); \`signoff\` (\`{file, answer}\` of the latest sign-off, or \`null\`); \`why\` and \`held\`. Act by the first row of this table that matches, the save's outcome being the command just above:
+
+| the save and the hold | the architect body |
+|---|---|
+| the hold command exits non-zero | states the error in one line, asks no sign-off, and shows no arc-done readout: the program is not observed done |
+| \`why: "off"\` | says nothing about the hold and observes arc-done as it did before this requirement; when the hold carries a warning, states it in one line |
+| \`why: "not-done"\` | says nothing about the sign-off and shows no arc-done readout |
+| the save exited non-zero, or \`why: "no-copy"\` | says there is no copy to sign, naming the save's failure when it failed; asks nothing, and shows no arc-done readout |
+| \`why: "signed"\` | states in one line that the latest sign-off covers this copy's text, naming the record, then shows the arc-done readout |
+| \`why: "re-sign"\`, \`held: false\` | asks nothing and shows the arc-done readout |
+| \`why: "re-sign"\`, \`held: true\` | runs \`orbit pr program <doc> --json\`, the arc-done readout's own call, and asks nothing and shows the arc-done readout only when the call positively settles that no READY flip remains: \`observations.pr.state\` is \`ready\`; or \`observations.pr\` is \`null\` with \`outcome\` \`none\`, \`not-found\` or one of the five positive invalidations, \`closed\`, \`merged\`, \`retargeted\`, \`head-mismatch\` or \`repository-mismatch\` (the recorded PR is no longer the program's open PR, and no open replacement was found); or the call reports \`action: "off"\`, no program PR recorded. On every other result it acts as on \`unsigned\`: \`pr.state\` \`draft\` or \`unverified\`, \`pr\` \`null\` with \`outcome\` \`unobserved\`, \`gh-absent\` or \`several\`, or the call exiting non-zero |
+| \`why: "unsigned"\` | shows the latest saved copy whole, then asks the user to sign off or decline; writes the answer by \`orbit emit signoff --doc <doc>\` with the copy's filename as \`brief\`, \`answer\`, and, on a decline, the user's reason as \`reason\` (asked for when the answer did not give one); acts on the answer only once that emit has written the record: on \`signed\` it shows the arc-done readout; on \`declined\` it says the program is not done and the user's reason is recorded, shows no arc-done readout, and asks nothing further: what happens next is the user's direction. When the emit is refused or fails, it names the refusal and shows no arc-done readout: a signature that is not recorded lifts no hold |
+
+The rows are the hold command's failure, the hold's six \`why\` values (\`re-sign\` split by \`held\`), and the save's own failure, which joins \`no-copy\` under \`program\`. The question is a DECISION prompt in \`orbit-conventions\`' sense (\`A chain treats each prompt by its kind\`: neither a target nor a routine confirmation); the architect body is not a command a chain arrives at, so that requirement's table and its tag test do not reach it, and the body asks it on the user's invocation of the session and never as an interruption elsewhere. It is the architect body's third prompt, beside the doc selector and the completion ratification. No stage's ratification waits for it (D-ps-5): the completion ratification is offered as \`Completion-ratification flow\` states, before or after a sign-off.
+
+**The \`re-sign\` row with \`held: true\`, read from \`orbit pr program <doc> --json\`** (the arc-done readout's own call): ask nothing and go to the arc-done readout ONLY when that call positively settles that no READY flip remains — its \`observations.pr.state\` is \`ready\`; or its \`observations.pr\` is \`null\` with \`outcome\` \`none\`, \`not-found\`, \`closed\`, \`merged\`, \`retargeted\`, \`head-mismatch\` or \`repository-mismatch\`; or it reports \`action: "off"\`. Every other result — \`pr.state\` \`draft\` or \`unverified\`, \`pr\` \`null\` with \`outcome\` \`unobserved\`, \`gh-absent\` or \`several\`, or the call exiting non-zero — is acted on as \`unsigned\`.
+
+**The \`unsigned\` row, step by step:**
+
+1. Read \`orbit/architecture/.orbit-runs/brief/<doc>/<copy.file>\` and show it to the user WHOLE, as it is — never a summary of it: the user decides from the brief alone.
+2. Ask with the **AskUserQuestion tool** (chain: decision) — a decision prompt, the body's third beside the doc selector and the completion ratification, asked on the user's invocation of this session and never as an interruption elsewhere. The question names the doc and the copy's filename; exactly two options: **Sign off** (the program is done as the brief describes it) / **Decline** (the program is not done). On **Decline**, when the answer carried no reason, ask the user for it in their own words.
+3. Write the answer: put the payload as JSON in a temporary file OUTSIDE the working tree and run
+
+   \`\`\`bash
+   orbit emit signoff --doc <doc> --payload <file>
+   \`\`\`
+
+   The payload carries \`model\` (your model id, or \`null\`), \`brief\` (the copy's filename, \`copy.file\`), \`answer\` (\`signed\` or \`declined\`) and, on a decline, \`reason\` (the user's reason, in their words; optional on a signature), and optionally \`defines\` and \`detail\` as the decision records have them — nothing else: orbit adds \`sha256\`, the hash of the copy's bytes, and \`closing_review\`, the program's closing review, and refuses either in the payload. A refusal names the field to fix, and nothing is written.
+4. Act by the row: on a written \`signed\`, show the arc-done readout; on a written \`declined\`, say the program is not done and the user's reason is recorded, show no arc-done readout, and ask nothing further; on a refused or failed emit, name the refusal and show no arc-done readout.
+
+No stage's ratification waits for the sign-off: the Step 5 offer is made as Step 5 states, before or after it. With every setting at its default the save writes a copy only for a finished program and says nothing, the hold reports \`why: "off"\` with no warning, and the arc-done readout is as before: nothing the user sees or is asked changes.`;
+
 export function getArchitectSkillTemplate(): SkillTemplate {
   return {
     name: 'orbit-architect',
@@ -99,7 +145,7 @@ During the session, capture program-level material into the doc as it is ratifie
 
 **R-d-8 residency sweep at every conversation boundary**: pending recommendations, leanings, and open items discussed but not yet ratified must be file-resident BEFORE the emit writes — written into the owning section (e.g. an open question's standing-recommendation slot). Chat is never the store of record.
 
-### 5. Completion-ratification flow (the completion flow's one AskUserQuestion — the doc selector in Step 1 is the body's other prompt)
+### 5. Completion-ratification flow (the completion flow's one AskUserQuestion — the doc selector in Step 1 and Step 5.4's program sign-off are the body's other two prompts)
 
 When \`orbit architecture status\` shows a stage quiescent-awaiting-ratification (all citing work archived, \`Complete:\` slot unratified), SURFACE it and ask via **AskUserQuestion** — **ratify** / **not yet** / **ended**. The offer's text states what ended means: the stage's exit criteria will not be met, the stage renders \`ended\`, and the mark is a slot edit that can be reversed by hand.
 
@@ -116,11 +162,18 @@ The offer fires on the awaiting state ONLY: a stage rendering \`ended\`, \`ended
 
 The body NEVER checks or ends a stage on its own judgment, and never nags: the offer fires when the user opens the doc's architect session — not as an interruption elsewhere. (A mark on an observation the engine's composition rule refuses is an inconsistency the status render and audit-drift surface; this flow only ever writes marks the engine's observation supports — and the ended mark is supported wherever no live work contradicts it, \`premised\` included. The composition table is owned by \`orbit-architecture-engine\`'s \`Computed stage state with completion-as-ratification\` requirement; this body names it and restates none of it.)
 
+### 5.4. The program's saved brief and its sign-off (program-signoff)
+
+${PROGRAM_SIGNOFF_STEP}
+
 ### 5.5. Arc-done readout: the program PR's human acts (D-arc Stage D6)
 
-On EVERY invocation — unconditional and IDEMPOTENT — check whether the doc is ARC-DONE:
+On EVERY invocation — IDEMPOTENT — check whether the doc is ARC-DONE:
 every stage archived AND the closing \`--as architecture\` review recorded (from
-\`orbit architecture status --json\` plus the architecture trail). This check is deliberately
+\`orbit architecture status --json\` plus the architecture trail). Under every sign-off setting but
+\`program\` the check is unconditional, as before Step 5.4 existed; under \`signoff: program\` the
+readout is shown only when Step 5.4's row shows it, the program's sign-off being part of arc-done
+there, and never in a session whose Step 5.4 row shows no readout. This check is deliberately
 NOT gated on the ratification interaction above: the natural ordering is final-stage archive
 → final-stage ratification → closing review, so arc-done becomes true at the LAST step, after
 that interaction has already passed. A ratification-gated readout would never fire.

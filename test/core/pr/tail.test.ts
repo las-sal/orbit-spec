@@ -355,6 +355,7 @@ describe('tail — the program granularity', () => {
   const program = { branch: 'my-program', granularity: 'per-architecture', doc: 'my-program', url: URL7, state: 'draft' };
 
   // @scenario behaviour orbit-archive-modifications :: PR-attached archive tail :: Program-mode stage archive appends only
+  // @scenario behaviour orbit-pr-lifecycle :: Program PR (Shape A) semantics :: Stage archive appends, never flips
   it('appends to the current body (read, never re-observed state), and never flips; no human acts at a stage', () => {
     const current = '## Program intent\n\n### Stage one\n';
     const repo = archived({

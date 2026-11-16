@@ -1,7 +1,7 @@
 /**
  * program-brief (change-account): a change's ACCOUNT — the write gate (`orbit-emit-composition`'s `The write
  * gate checks the account`) and that, with the sign-off setting absent, no reader takes it
- * (`orbit-decision-records`' `The reader takes the account only when sign-off is per change`; the `change` value's
+ * (`orbit-decision-records`' `The reader takes the account when the user signs off`; the `change` value's
  * rows are in `account-reader.test.ts`).
  *
  * The same-token race is simulated as `decision-records-race.test.ts` does: `node:fs`'s `readdirSync` is
@@ -310,11 +310,11 @@ describe('orbit-emit-composition: The write gate checks the account', () => {
 });
 
 // ---------------------------------------------------------------------------
-// orbit-decision-records: The reader takes the account only when sign-off is per change
+// orbit-decision-records: The reader takes the account when the user signs off
 // ---------------------------------------------------------------------------
 
-describe('orbit-decision-records: The reader takes the account only when sign-off is per change', () => {
-  // @scenario behaviour orbit-decision-records :: The reader takes the account only when sign-off is per change :: The brief does not render the account
+describe('orbit-decision-records: The reader takes the account when the user signs off', () => {
+  // @scenario behaviour orbit-decision-records :: The reader takes the account when the user signs off :: The brief does not render the account
   it('orbit decisions brief says there is nothing to read when the history holds only an account, and exits zero', async () => {
     makeChange('foo');
     emit({ change: 'foo' }, accountPayload());
@@ -327,7 +327,7 @@ describe('orbit-decision-records: The reader takes the account only when sign-of
     expect(JSON.parse(j.stdout).selected).toEqual([]);
   });
 
-  // @scenario behaviour orbit-decision-records :: The reader takes the account only when sign-off is per change :: The account is not counted unread at archive
+  // @scenario behaviour orbit-decision-records :: The reader takes the account when the user signs off :: The account is not counted unread at archive
   // @scenario behaviour orbit-decision-records :: Each change carries one account, written when apply is complete :: Archive writes no account
   it('the archive emit counts one unread decision record beside an account chain, the in-context system pass owes only it, and the archive writes no account', () => {
     makeChange('foo', '- [x] 1.1 do a thing\n');
@@ -360,7 +360,7 @@ describe('orbit-decision-records: The reader takes the account only when sign-of
     expect(ls('orbit/changes/archive/2026-11-09-foo/.orbit-runs/account')).toEqual(accounts);
   });
 
-  // @scenario behaviour orbit-decision-records :: The reader takes the account only when sign-off is per change :: Today's readers do not see the account
+  // @scenario behaviour orbit-decision-records :: The reader takes the account when the user signs off :: Today's readers do not see the account
   it('status, the reviewed gates, the trail, orientation and the report render read the change as without the account folder', () => {
     makeChange('foo');
     composeAndWriteEmit('review', { change: 'foo' }, {

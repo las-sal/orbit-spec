@@ -159,6 +159,14 @@ import { fileURLToPath } from "node:url";
  * says `record(s)`, since under `signoff: change` the owed list can hold an account (fresh S6); and the owed list and
  * the archive count read the selection through `selectionAtGate`, so a folder it cannot list refuses the emit naming it
  * instead of reading as empty (external W2). Every other hash here is unchanged.
+ * MOVED at program-signoff apply (2026-11-16) — a PLANNED act (its task 5.1, design Decisions 3 and 6):
+ * `emit-composition.ts` only — `signoff` takes `--doc` too (the `SIGNOFF_DOC_REFUSAL` retired; `closing_review`
+ * engine-owned beside `sha256`), `composeSignoff` refuses a `--change` sign-off unless `change` and a `--doc` one
+ * unless `program`, naming the value read, and writes a program's record into `signoff/<doc>/` with `change: null`,
+ * `doc` and the engine's `closing_review`; a per-doc folder (`brief/<doc>/`, `signoff/<doc>/`) is held to the
+ * canonical-child identity rule at both levels (`assertCanonicalDocDir`), which `publishTrailChildText` applies for a
+ * program's saved brief; and the read list's refusal names `signoff: change or program`. Every other hash here is
+ * unchanged.
  */
 const PINNED: Record<string, string> = {
   "schemas/spec-driven/schema.yaml": "ce8a5274855b9bd8a69220a4691e5a8ba93c4676e8e5b9551afa2d53f6316f6a",
@@ -177,7 +185,7 @@ const PINNED: Record<string, string> = {
   "src/core/artifact-graph/state.ts": "f59f748b94cd94ca2fe022ec5aa66b3251dd1b2c00bddb9a17cbd9273a04d0f2",
   "src/core/artifact-graph/trail.ts": "39b5d110ef53b7e03f49ddf292e86db598a14f426a02e6d84142e16231e37d69",
   "src/core/artifact-graph/types.ts": "d83e0cc6d7fca7b80618ffbb7ce052ee68e35be79e7949a941e989b2e102392c",
-  "src/core/emit-composition.ts": "46ad272d2f2fe95025ff66b18c7225ec5b7d27f5e22cb7375571a8dc4a6015b5",
+  "src/core/emit-composition.ts": "58735ca0bd6e1dd7b6d5621146ab446ac66839c477e475fda23a95ea188afd7c",
   "src/core/report-render.ts": "d759878995ed8b5e5c70fb1165d88d134f0aeb91acfce99d155654d1506b9f36",
 };
 

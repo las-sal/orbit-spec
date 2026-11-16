@@ -187,8 +187,13 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // --hold --json`, `orbit-archive-modifications`' hold table, the sign-off prompt and `orbit emit signoff`), and the
   // save table's failure row goes on to the hold. Both function hashes and both generated SKILL.md hashes moved. The
   // review and address-reviews edits of its task 3.4 move no pin here: neither skill is in this pinned set.
-  getArchiveChangeSkillTemplate: '612693e52fbf4525302071f1339ec6cdb88ca05ba75ea4ad0061126910c4e3d9',
-  getBulkArchiveChangeSkillTemplate: 'ad6986219a8cd1b6678c94610b12456fba5e5add3a4ece536b9702df58a0feea',
+  // program-signoff apply (2026-11-16), an UNPLANNED move found at its task 5.1 count (the proposal measured only the
+  // architect pins): `SIGNOFF_HOLD_STEP`'s sentence naming the hold's `setting` values now says `off`, `change` or
+  // `program`, since under `signoff: program` the change hold reports `program`. That one clause; both function
+  // hashes and both generated SKILL.md hashes moved. The review body's fold-step clause (its task 4.2) moves no pin
+  // here: the review skill is not in this pinned set.
+  getArchiveChangeSkillTemplate: 'c34f80c915a4816727220f5310aaa91c476a7d259a238eb2ec145f636b37b0d8',
+  getBulkArchiveChangeSkillTemplate: 'f180838d4e4cf84ee93005304ca2b44b520accf8eba8babedb4366176cf3900c',
   getOrbitSyncCommandTemplate: 'b985d0a4d89b0e2cc3c6b6dec2521ef2a9d0df44a8ba9ec92a5495052c94a39c',
   // rc06b-map-readers (2026-10-05) — verify moved DELIBERATELY, the first named edit to an upstream
   // portion under `orbit-conventions`' narrowed `Generated-file disposition`: step 6's test-tracing
@@ -250,7 +255,12 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // escaped each backtick around `orbit architecture status` twice inside the template literal, so the
   // generated doc scaffold carried a literal backslash before each one; it now carries plain backticks.
   // That one line, nothing else; held from here by test/core/cli-grammar/escaped-backticks.test.ts.
-  getArchitectSkillTemplate: '5a35d5a960814ac1aefb1b692f8a4bf094af8ce6515e7d5d96e2dbfafa395891',
+  // program-signoff apply (2026-11-16) moved it a FIFTH time, a PLANNED move (its task 4.1, design Decision 7, R-adf-9):
+  // the body gains Step 5.4, interpolating `PROGRAM_SIGNOFF_STEP` (`orbit brief <doc> --save --json` and `--hold
+  // --json`, `orbit-architect`'s new requirement's table as a checked mirror, the sign-off prompt and `orbit emit
+  // signoff --doc`); the Step 5 heading names the sign-off as the body's third prompt; Step 5.5's arc-done check is
+  // unconditional only off `signoff: program`. The function hash and the generated SKILL.md hash moved.
+  getArchitectSkillTemplate: '5ec3fc9b0f3a43035377c827f00cdcbb5aef80936c1247e75b5a44a46332ea35',
   getOrbitArchitectCommandTemplate: 'b65b8cca6431bb45aa8587d3bfc1e9458981e2e1bc925ae45cd57414143cb3db',
 };
 
@@ -268,12 +278,12 @@ const EXPECTED_GENERATED_SKILL_CONTENT_HASHES: Record<string, string> = {
   'orbit-apply-change': 'd082434b59a4ebc8ea068d468d7152410a70cb13dd3a789e221b107e8f0191f6', // rc17a apply: the v4 clause (see the function-hash note above); then seam-chaining: the Chain end step and the epitome clause, at apply, the system walk and the verification walk; then seam-chaining-grants apply (see the function-hash note above); then change-account apply: the Account step, then its system walk: the all_done clause (see the function-hash note above)
   'orbit-ff-change': '101fbd4b7ff9481d6f776c8d33ea5e53e9ddb85a5a07885b3be9d4d0f7d6cbbf', // seam-chaining: the Chain end step and the epitome clause, at apply, the system walk and the verification walk; then seam-chaining-grants apply: the end step's two key rows and consent clause
   'orbit-sync-specs': '09ebdddd32d976022699b1575f8cf5e85fabf57ea71f1aa1afce1c793f322c99',
-  'orbit-archive-change': '1b7e13c644e62d93740de463df3a65b9e38921d6eb6ba72e0029d59156006ebb', // rc10-apply-closure task 2.8, then its system walk; then seam-chaining-grants apply and its system walk; then brief-render apply: Step 3.6; then program-brief apply: Step 3.7 (see the function-hash note above)
-  'orbit-bulk-archive-change': 'f5a51a4b6ecb0e0e3181ab45b5fbd8759b102e98c6b38d67d57cd001c7f0b7d9', // rc10-apply-closure task 2.8, then its system walk; then brief-render apply: the per-change brief save; then program-brief apply: the per-change sign-off hold (see the function-hash note above)
+  'orbit-archive-change': 'e90a321a4e2b33317b3a7325da95debfaa2c901ce51c8d14cc3ce0791bc9de7e', // rc10-apply-closure task 2.8, then its system walk; then seam-chaining-grants apply and its system walk; then brief-render apply: Step 3.6; then program-brief apply: Step 3.7; then program-signoff apply: the hold's setting values (see the function-hash note above)
+  'orbit-bulk-archive-change': '79728529ce5653f125e5cf4b4e3cfd8525b8d337181c015b9c49bce6bb92d8e3', // rc10-apply-closure task 2.8, then its system walk; then brief-render apply: the per-change brief save; then program-brief apply: the per-change sign-off hold; then program-signoff apply: the hold's setting values (see the function-hash note above)
   'orbit-verify-change': '86d0fad7fe26e44c2df6e52bcac54c015a4911afd13bb288a825495773c99390', // rc06b-map-readers (2026-10-05): moved with the body's step 6 edit, then again at system walk 2's additions edit (see the function-hash note above)
   'orbit-onboard': 'e704c183201dc18a574de32da10a8722e8a53cc590e455fd66580317761d4698', // landing-page task 2.2 (see the function-hash note above); then seam-chaining system walk: the No-chaining line qualified by the chain setting
   'orbit-propose': 'be0e434d434c3db13a49eb2057413384131c225a34901a1266030987c36e402b', // rc13c, then rc03b, then rc05's system walk, then rc09a's size brief (task 5.3) and its system walk: moved with the body (see the function-hash notes above); then seam-chaining: the Chain end step and the epitome clause, at apply, the system walk and the verification walk; then seam-chaining-grants apply: the end step's two key rows and consent clause
-  'orbit-architect': '3bc22ef12bdb7f4a63aefedaf699077ef6ad112ae331710400fb7cc21697f8b1', // rc15: moved twice with the body — apply, then the system walk; a third time at the post-archive audit walk; a fourth at rc05's apply, the scaffold's escaped backticks (see the function-hash note above)
+  'orbit-architect': '561c3088222f133f20c58507d2ca3eb96e0997520e2a43a0683d68e45f84b2fc', // rc15: moved twice with the body — apply, then the system walk; a third time at the post-archive audit walk; a fourth at rc05's apply, the scaffold's escaped backticks; a fifth at program-signoff apply, Step 5.4 (see the function-hash note above)
 };
 
 function stableStringify(value: unknown): string {

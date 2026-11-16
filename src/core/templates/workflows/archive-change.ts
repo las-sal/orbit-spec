@@ -46,7 +46,7 @@ export const SIGNOFF_HOLD_STEP = `Read the hold — it renders no brief and writ
 orbit brief --change "<name>" --hold --json
 \`\`\`
 
-It prints one object: \`setting\` (\`off\` or \`change\`), \`warning\` (a sentence, or \`null\`), \`copy\` (\`{file, sha256}\` of the latest saved copy, or \`null\`), \`signoff\` (\`{file, answer}\` of the latest sign-off, or \`null\`), \`why\` and \`held\`. Act by the first row of this table that matches, the save's outcome being the save step's just above:
+It prints one object: \`setting\` (\`off\`, \`change\` or \`program\`), \`warning\` (a sentence, or \`null\`), \`copy\` (\`{file, sha256}\` of the latest saved copy, or \`null\`), \`signoff\` (\`{file, answer}\` of the latest sign-off, or \`null\`), \`why\` and \`held\`. Act by the first row of this table that matches, the save's outcome being the save step's just above:
 
 | the save and the hold | the archive |
 |---|---|

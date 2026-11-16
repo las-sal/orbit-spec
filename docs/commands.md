@@ -295,6 +295,13 @@ stage once its change is archived.
 With no name, it lists the docs and offers to create one. It is never a required step: a single change needs no
 architecture doc.
 
+On every session it saves the program's brief once the program is finished, when its text changed, saying nothing about
+it at the defaults. When `orbit/config.yaml` sets `signoff: program`, the session that finds the program otherwise done
+(every stage finished and the closing architecture review recorded) shows you the program's latest saved brief whole and
+asks you to sign off or decline before it names the program pull request's ready and merge commands. A decline keeps
+the program not done, with your reason recorded, and the next session asks again. Ratifying a stage never waits for
+it.
+
 ### `/orbit:onboard`
 
 A one-page orientation to orbit: the workflow, the commands, and where things live. It creates nothing.

@@ -1,6 +1,6 @@
 /**
- * program-brief: the per-change SIGN-OFF — the setting (`orbit-program-brief`'s `The sign-off setting holds each
- * change's archive for the user's sign-off`), the record and the hold (`A sign-off is recorded against the saved
+ * program-brief: the per-change SIGN-OFF — the setting (`orbit-program-brief`'s `The sign-off setting holds a
+ * change's archive or a program's completion for the user's sign-off`), the record and the hold (`A sign-off is recorded against the saved
  * copy, and the hold reads it`), and the write gate (`orbit-emit-composition`'s `The write gate checks the sign-off
  * record`).
  */
@@ -88,11 +88,11 @@ afterEach(() => {
 });
 
 // ---------------------------------------------------------------------------
-// orbit-program-brief: The sign-off setting holds each change's archive for the user's sign-off
+// orbit-program-brief: The sign-off setting holds a change's archive or a program's completion for the user's sign-off
 // ---------------------------------------------------------------------------
 
-describe("orbit-program-brief: The sign-off setting holds each change's archive for the user's sign-off", () => {
-  it('the resolver reads only the signoff key: absent, off, absent file and unparseable file are off silently; change is change; anything else warns', () => {
+describe("orbit-program-brief: The sign-off setting holds a change's archive or a program's completion for the user's sign-off", () => {
+  it('the resolver reads only the signoff key: absent, off, absent file and unparseable file are off silently; change is change; program is program; anything else warns', () => {
     const warn = vi.spyOn(console, 'warn');
     expect(resolveSignoffSetting(root)).toEqual({ value: 'off', warning: null }); // no config file
     setting(null);
@@ -101,20 +101,23 @@ describe("orbit-program-brief: The sign-off setting holds each change's archive 
     expect(resolveSignoffSetting(root)).toEqual({ value: 'off', warning: null });
     setting('change');
     expect(resolveSignoffSetting(root)).toEqual({ value: 'change', warning: null });
+    setting('program');
+    expect(resolveSignoffSetting(root)).toEqual({ value: 'program', warning: null });
     write('orbit/config.yaml', 'signoff: [change\n');
     expect(resolveSignoffSetting(root)).toEqual({ value: 'off', warning: null });
-    for (const [value, named] of [['program', "'program'"], ['[change]', 'a list'], ['{a: 1}', 'a map'], ['3', "'3'"], ['', 'an empty value']]) {
+    for (const [value, named] of [['weekly', "'weekly'"], ['Program', "'Program'"], ['[program]', 'a list'], ['[change]', 'a list'], ['{a: 1}', 'a map'], ['3', "'3'"], ['', 'an empty value']]) {
       setting(value);
       const r = resolveSignoffSetting(root);
       expect(r.value, value).toBe('off');
       expect(r.warning, value).toContain(named);
       expect(r.warning, value).toContain('nothing waits on a sign-off');
+      expect(r.warning, value).toContain('expected off | change | program');
     }
     // It never prints: the hold carries the warning.
     expect(warn).not.toHaveBeenCalled();
   });
 
-  // @scenario behaviour orbit-program-brief :: The sign-off setting holds each change's archive for the user's sign-off :: With the setting absent, nothing waits
+  // @scenario behaviour orbit-program-brief :: The sign-off setting holds a change's archive or a program's completion for the user's sign-off :: With the setting absent, nothing waits
   // @scenario behaviour orbit-archive-modifications :: The archive holds for a per-change sign-off :: A default archive reads the hold and asks nothing
   it('with the setting absent, the hold reports off and not held, with no warning, over a saved brief', async () => {
     setting(null);
@@ -127,14 +130,14 @@ describe("orbit-program-brief: The sign-off setting holds each change's archive 
     expect(JSON.parse(r.stdout)).toMatchObject({ setting: 'off', why: 'off', held: false, warning: null });
   });
 
-  // @scenario behaviour orbit-program-brief :: The sign-off setting holds each change's archive for the user's sign-off :: `off` reads as absent
+  // @scenario behaviour orbit-program-brief :: The sign-off setting holds a change's archive or a program's completion for the user's sign-off :: `off` reads as absent
   it('off reads as absent', () => {
     setting('off');
     saveCopy(A, 'text');
     expect(hold()).toMatchObject({ setting: 'off', warning: null, why: 'off', held: false });
   });
 
-  // @scenario behaviour orbit-program-brief :: The sign-off setting holds each change's archive for the user's sign-off :: `change` holds a change with a saved copy and no sign-off
+  // @scenario behaviour orbit-program-brief :: The sign-off setting holds a change's archive or a program's completion for the user's sign-off :: `change` holds a change with a saved copy and no sign-off
   it('change holds a change with a saved copy and no sign-off: unsigned', () => {
     setting('change');
     saveCopy(A, 'text');
@@ -143,13 +146,13 @@ describe("orbit-program-brief: The sign-off setting holds each change's archive 
     });
   });
 
-  // @scenario behaviour orbit-program-brief :: The sign-off setting holds each change's archive for the user's sign-off :: An unrecognized value is read as absent, with a warning
+  // @scenario behaviour orbit-program-brief :: The sign-off setting holds a change's archive or a program's completion for the user's sign-off :: An unrecognized value is read as absent, with a warning
   it('an unrecognized value is read as absent, the hold carrying one warning naming it', async () => {
-    setting('program');
+    setting('weekly');
     saveCopy(A, 'text');
     const h = hold();
     expect(h).toMatchObject({ setting: 'off', why: 'off', held: false });
-    expect(h.warning).toContain("'program'");
+    expect(h.warning).toContain("'weekly'");
     expect(h.warning).toContain('nothing waits on a sign-off');
     const j = await runCLI(['brief', '--change', 'foo', '--hold', '--json'], { cwd: root });
     expect(JSON.parse(j.stdout).warning).toBe(h.warning);
@@ -158,7 +161,19 @@ describe("orbit-program-brief: The sign-off setting holds each change's archive 
     expect(t.exitCode).toBe(0);
     expect(t.stdout.trimEnd().split('\n')).toHaveLength(1);
     expect(t.stdout).toContain('not held (off)');
-    expect(t.stderr).toContain("'program'");
+    expect(t.stderr).toContain("'weekly'");
+  });
+
+  // @scenario behaviour orbit-program-brief :: The sign-off setting holds a change's archive or a program's completion for the user's sign-off :: `program` holds no change's archive
+  // @scenario behaviour orbit-archive-modifications :: The archive holds for a per-change sign-off :: A program sign-off holds no archive
+  it("program holds no change's archive: the change hold reports setting program, why off, not held, no warning", async () => {
+    setting('program');
+    saveCopy(A, 'text');
+    expect(hold()).toEqual({ change: 'foo', setting: 'program', warning: null, copy: null, signoff: null, why: 'off', held: false });
+    const r = await runCLI(['brief', '--change', 'foo', '--hold', '--json'], { cwd: root });
+    expect(r.exitCode).toBe(0);
+    expect(r.stderr).toBe('');
+    expect(JSON.parse(r.stdout)).toEqual({ change: 'foo', setting: 'program', warning: null, copy: null, signoff: null, why: 'off', held: false });
   });
 });
 
@@ -344,16 +359,33 @@ describe('orbit-program-brief: A sign-off is recorded against the saved copy, an
     expect(JSON.stringify(snapshot())).toBe(before);
   });
 
-  // @scenario behaviour orbit-program-brief :: A sign-off is recorded against the saved copy, and the hold reads it :: The hold names a change, never a doc
-  it('--hold with a doc, with --save, on an archived or unknown change, or with nothing is a usage error printing nothing to standard output', async () => {
+  // @scenario behaviour orbit-program-brief :: A sign-off is recorded against the saved copy, and the hold reads it :: Under `program`, a change's hold reads no history
+  it.skipIf(process.getuid?.() === 0)("under program, a change's hold reads no history: an unlistable brief/ folder answers off", async () => {
+    setting('program');
+    saveCopy(A, 'text');
+    const briefDir = path.join(root, RUNS(), 'brief');
+    fs.chmodSync(briefDir, 0o000);
+    try {
+      const r = await runCLI(['brief', '--change', 'foo', '--hold', '--json'], { cwd: root });
+      expect(r.exitCode).toBe(0);
+      expect(r.stderr).toBe('');
+      expect(JSON.parse(r.stdout)).toMatchObject({ setting: 'program', warning: null, why: 'off', held: false });
+    } finally {
+      fs.chmodSync(briefDir, 0o755);
+    }
+  });
+
+  it('--hold with --save, on an archived or unknown change, or with nothing is a usage error printing nothing to standard output', async () => {
     write('orbit/architecture/prog.md', '# prog\n');
     saveCopy(A, 'text');
     const before = allFiles();
-    const withDoc = await runCLI(['brief', 'prog', '--hold'], { cwd: root });
-    expect(withDoc.exitCode).not.toBe(0);
-    expect(withDoc.stdout).toBe('');
-    expect(withDoc.stderr).toContain("the program's sign-off is not built yet");
-    expect(withDoc.stderr).toContain('program-signoff');
+    // With a doc it reads the program's hold (`orbit-program-brief`'s program hold): under change, off.
+    const withDoc = await runCLI(['brief', 'prog', '--hold', '--json'], { cwd: root });
+    expect(withDoc.exitCode).toBe(0);
+    expect(JSON.parse(withDoc.stdout)).toMatchObject({ doc: 'prog', setting: 'change', why: 'off', held: false });
+    const withDocSave = await runCLI(['brief', 'prog', '--hold', '--save'], { cwd: root });
+    expect(withDocSave.exitCode).not.toBe(0);
+    expect(withDocSave.stdout).toBe('');
     const withSave = await runCLI(['brief', '--change', 'foo', '--hold', '--save'], { cwd: root });
     expect(withSave.exitCode).not.toBe(0);
     expect(withSave.stdout).toBe('');
@@ -361,7 +393,7 @@ describe('orbit-program-brief: A sign-off is recorded against the saved copy, an
     const bare = await runCLI(['brief', '--hold'], { cwd: root });
     expect(bare.exitCode).not.toBe(0);
     expect(bare.stdout).toBe('');
-    expect(bare.stderr).toContain('--hold takes --change <name>');
+    expect(bare.stderr).toContain('--hold takes a doc or --change <name>');
     expect(bare.stderr).not.toContain('undefined');
     const unknown = await runCLI(['brief', '--change', 'nope', '--hold'], { cwd: root });
     expect(unknown.exitCode).not.toBe(0);
@@ -409,8 +441,10 @@ describe('orbit-emit-composition: The write gate checks the sign-off record', ()
     expectRefused(() => emit(payload()), /sign-off setting.*is off.*nothing waits on a sign-off/);
     setting('off');
     expectRefused(() => emit(payload()), /is off/);
+    setting('weekly');
+    expectRefused(() => emit(payload()), /'weekly'.*nothing waits on a sign-off/);
     setting('program');
-    expectRefused(() => emit(payload()), /'program'.*nothing waits on a sign-off/);
+    expectRefused(() => emit(payload()), /is 'program': it asks for one program's sign-off.*--doc.*written under signoff: change/);
   });
 
   // @scenario behaviour orbit-emit-composition :: The write gate checks the sign-off record :: A sign-off naming an earlier copy is refused
@@ -464,14 +498,13 @@ describe('orbit-emit-composition: The write gate checks the sign-off record', ()
   });
 
   // @scenario behaviour orbit-emit-composition :: The write gate checks the sign-off record :: An archived change takes no sign-off
-  it('refuses an archived-only, exploration-only or unknown name with the active-change wording, and --doc naming program-signoff', () => {
+  it('refuses an archived-only, exploration-only or unknown name with the active-change wording, and a --doc naming no doc', () => {
     expectRefused(() => emit(payload(), { change: 'nope' }), /written only for an active change.*'nope' was found nowhere/);
     write('orbit/explore/bar/explore.md', '# x\n');
     expectRefused(() => emit(payload(), { change: 'bar' }), /'bar' was found only at orbit\/explore\/bar\//);
     write('orbit/changes/archive/2026-11-01-baz/proposal.md', '# x\n');
     expectRefused(() => emit(payload(), { change: 'baz' }), /'baz' was found only at orbit\/changes\/archive\/2026-11-01-baz\//);
-    write('orbit/architecture/prog.md', '# prog\n');
-    expectRefused(() => emit(payload(), { doc: 'prog' }), /--doc is not a valid target for 'signoff'.*program-signoff/);
+    expectRefused(() => emit(payload(), { doc: 'nodoc' }), /written only for an architecture doc at orbit\/architecture\/<doc>\.md — 'nodoc' names none/);
   });
 
   it('through the CLI: a refusal exits non-zero with empty stdout', async () => {

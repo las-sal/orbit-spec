@@ -107,13 +107,14 @@ export const ProjectConfigSchema = z.object({
     .optional()
     .describe('Push setting: true lets the commit step push the change\'s attached branch to the resolved remote'),
 
-  // Optional: the sign-off setting (program-brief, `orbit-program-brief`'s `The sign-off setting holds each change's
-  // archive for the user's sign-off`) — a single word. Typed here for documentation only: the hold, the `signoff`
-  // record's write gate and the reading's selection each read it ON THEIR OWN through `resolveSignoffSetting`.
+  // Optional: the sign-off setting (program-brief, `orbit-program-brief`'s `The sign-off setting holds a change's
+  // archive or a program's completion for the user's sign-off`) — a single word. Typed here for documentation only:
+  // the two holds, the `signoff` record's write gate and the reading's selection each read it ON THEIR OWN through
+  // `resolveSignoffSetting`.
   signoff: z
     .string()
     .optional()
-    .describe('Sign-off setting: off (default) | change — change makes each archive wait for the user\'s sign-off over the saved brief'),
+    .describe('Sign-off setting: off (default) | change | program — change makes each archive wait for the user\'s sign-off over the change\'s saved brief; program makes the program\'s completion wait for one sign-off over the program\'s saved brief'),
 });
 
 export type ProjectConfig = z.infer<typeof ProjectConfigSchema>;
@@ -387,17 +388,18 @@ export function resolveCommitPushSetting(projectRoot: string): CommitPushSetting
 
 /** The resolved sign-off setting: its value, and the warning an unrecognized value carries. */
 export interface SignoffSetting {
-  value: 'off' | 'change';
+  value: 'off' | 'change' | 'program';
   /** One sentence naming an unrecognized value and saying nothing waits on a sign-off; `null` otherwise. */
   warning: string | null;
 }
 
 /**
  * Resolve the `signoff` key, reading ONLY that key from `orbit/config.yaml` (the `resolveChainSetting` pattern;
- * `orbit-program-brief`'s `The sign-off setting holds each change's archive for the user's sign-off`). Absent key,
- * `off`, an absent file and an unparseable file are off with no warning; `change` is `change`; any other value or
- * shape is off with ONE warning string naming the value. It never prints: the hold puts the warning in its output,
- * and the write gate and the reading's selection read the value silently.
+ * `orbit-program-brief`'s `The sign-off setting holds a change's archive or a program's completion for the user's
+ * sign-off`). Absent key, `off`, an absent file and an unparseable file are off with no warning; `change` is
+ * `change` and `program` is `program`; any other value or shape is off with ONE warning string naming the value. It
+ * never prints: the holds put the warning in their output, and the write gate and the reading's selection read the
+ * value silently.
  */
 export function resolveSignoffSetting(projectRoot: string): SignoffSetting {
   const off: SignoffSetting = { value: 'off', warning: null };
@@ -417,10 +419,21 @@ export function resolveSignoffSetting(projectRoot: string): SignoffSetting {
   const value = (raw as Record<string, unknown>).signoff;
   if (value === 'off') return off;
   if (value === 'change') return { value: 'change', warning: null };
+  if (value === 'program') return { value: 'program', warning: null };
   return {
     value: 'off',
-    warning: `Unrecognized 'signoff' value in config: ${describeInertValue(value)} (expected off | change); nothing waits on a sign-off`,
+    warning: `Unrecognized 'signoff' value in config: ${describeInertValue(value)} (expected off | change | program); nothing waits on a sign-off`,
   };
+}
+
+/**
+ * Whether the reading's selection takes a change's account: under `change` or `program`, the two values under which
+ * the user signs off (`orbit-decision-records`' `The reader takes the account when the user signs off`). The ONE
+ * helper every reader of the selection keys on, so the selection, the review and archive emits' checks and the
+ * brief's unread section cannot disagree.
+ */
+export function takesAccount(setting: SignoffSetting): boolean {
+  return setting.value === 'change' || setting.value === 'program';
 }
 
 const MAX_CONTEXT_SIZE = 50 * 1024; // 50KB hard limit
