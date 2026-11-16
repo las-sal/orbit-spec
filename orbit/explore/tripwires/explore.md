@@ -21,6 +21,10 @@ What this exploration must settle: what a tripwire is mechanically (who computes
 written, who resolves it); each signal's exact predicate; what the user sees at the defaults (G0); and how each detector
 reads committed state so the run it watches cannot quietly evade it.
 
+Since D-tw-19 this exploration carries the first of the stage's four changes: the reading contract, its record and halt
+setting, and the Touchpoints sensor. The other sensors' decisions are restated in `orbit/explore/tripwire-sensors/`,
+`orbit/explore/tripwire-steward/` and `orbit/explore/tripwire-project-sensors/`, and their entries here are superseded.
+
 ## Mechanism
 
 ### D-tw-1 — a tripwire is a sensor behind one contract, and sensors plug in
@@ -434,6 +438,7 @@ Moves:
   converging" is read as the walk-and-verify loop going round twice on one finding. Measured over 68 archives: count
   trends would fire on most changes, one regression is routine, and a second regression of one key never happened.
   Kind: rule
+  Disposition: superseded D-tsn-1 in `orbit/explore/tripwire-sensors/explore.md`, per D-tw-19
 
 - **2026-11-16 — D-tw-8: the steward is a single-question review by an independent reviewer: is this change still its
   stage?** Confirmed by the user, over architecture mode with a stage filter: that mode's passes judge the doc, never the
@@ -441,14 +446,17 @@ Moves:
   first citing propose; its verdict is `on-stage`, `drifted` or `cannot-tell`. The charter's parenthetical
   ("`/orbit:review --as architecture` aimed at one stage") is reworded at the next architect session.
   Kind: rule
+  Disposition: superseded D-tst-1 in `orbit/explore/tripwire-steward/explore.md`, per D-tw-19
 - **2026-11-16 — D-tw-9: the steward runs at each cited change's archive, and is off at the defaults** The user's choice
   (2a, over also running at propose, or only at stage completion; off at the defaults confirmed). It runs under its own
   setting or when the user invokes it: the one sensor not computed at the defaults, by cost (G0).
   Kind: rule
+  Disposition: superseded D-tst-2 in `orbit/explore/tripwire-steward/explore.md`, per D-tw-19
 - **2026-11-16 — D-tw-10: the steward fires on drift whether or not the account declared it** The user's choice. The
   reading marks declared or undeclared, so a halt setting may halt on undeclared drift only; an after-the-fact account
   is not a declaration in the plan.
   Kind: rule
+  Disposition: superseded D-tst-3 in `orbit/explore/tripwire-steward/explore.md`, per D-tw-19
 
 - **2026-11-16 — D-tw-11: project sensors are declared in the project and run only after the user approves that exact
   set on this machine** The user's answer (A) to the `security-unprecedented` stop `stop-2026-11-16T20-27-14Z.json`, over
@@ -456,34 +464,55 @@ Moves:
   the declaration and the repo files its argv names, kept in the user's own config; any edit needs approval again, and
   until then the sensor reads "cannot read". The approval is also D-tw-3's freeze.
   Kind: rule
+  Disposition: superseded D-tps-1 in `orbit/explore/tripwire-project-sensors/explore.md`, per D-tw-19
 - **2026-11-16 — D-tw-12: a project sensor reports one count on stdout, compared with its reading when the change was
   proposed** Method, settled by the AI with the user not objecting. The count is read whatever the exit code, because
   linters exit non-zero when they find problems; the reference is taken at propose in the working tree.
   Kind: rule
+  Disposition: superseded D-tps-2 in `orbit/explore/tripwire-project-sensors/explore.md`, per D-tw-19
 
 - **2026-11-16 — D-tw-13: the budget sensor caps committed files' bytes; orbit-spec's generated skills are capped by a
   test** Method, settled by the AI. Refines D-tw-2's mechanism within its scope: a sensor adopters point at their own
   committed files, firing on growth over a maximum; orbit-spec's generated skills are not committed, so a test renders
   them and holds them under a committed table set to today's sizes.
   Kind: rule
+  Disposition: superseded D-tsn-2 in `orbit/explore/tripwire-sensors/explore.md`, per D-tw-19
 - **2026-11-16 — D-tw-14: a declaration written after the fixed point counts only as the user's answer to the stop it
   raised** Method, settled by the AI.
   Kind: rule
 - **2026-11-16 — D-tw-15: the capability sensor fires on a delta-spec folder the proposal's capability list does not name**
   Method, settled by the AI. Measured over 40 archives: no firing.
   Kind: rule
+  Disposition: superseded D-tsn-3 in `orbit/explore/tripwire-sensors/explore.md`, per D-tw-19
 - **2026-11-16 — D-tw-16: the ruling sensor fires when a Goals or Rulings-index item changes with no answered
   ruling-amendment stop** Method, settled by the AI. Added items are watched as edits are.
   Kind: rule
+  Disposition: superseded D-tsn-4 in `orbit/explore/tripwire-sensors/explore.md`, per D-tw-19
+- **2026-11-16 — D-tw-18: the stage is split before any change is proposed, and the three-way division is not fine
+  enough** The user's choice at `/orbit:propose tripwires` (over proposing the first group with a declared breach, or the
+  whole stage as one declared change), made before any branch or artifact. Measured at that propose against the
+  ceiling of three capabilities, counting every spec a decision makes false: the whole stage touches about 9 to 12; the
+  reading contract with the mechanical sensors about 4 to 6 (a new `orbit-tripwires`, `orbit-emit-composition`,
+  `orbit-decision-records`, `orbit-program-brief`, probably `orbit-review` and `orbit-engine-gates`); circling with the
+  steward about 4 to 5 (`orbit-tripwires`, `orbit-review`, `orbit-archive-modifications`, `orbit-emit-composition`,
+  likely `orbit-conventions`); project sensors about 2 to 3. The division is settled in this exploration, by a capability
+  map per change, and committed on main before the first child is proposed.
+  Kind: scope
+- **2026-11-16 — D-tw-19: the stage ships as four changes, and this exploration is the first, `tripwires`** The user's
+  choice, from a capability map measured that day (a spec counts only where a decision makes its text false). (1)
+  `tripwires`, this exploration: the reading contract, the readings field, the fixed point and "cannot read", the halt
+  setting and the orbit-written stop, late declarations and the Touchpoints sensor (D-tw-1, D-tw-3, D-tw-5, D-tw-6,
+  D-tw-14, D-tw-17) — `orbit-tripwires` (new) and `orbit-program-brief`. (2) `tripwire-sensors`: circling, budget,
+  capability, ruling and size (D-tsn-1 to D-tsn-5 in `orbit/explore/tripwire-sensors/explore.md`) — `orbit-tripwires` and
+  `orbit-skill-generation`. (3) `tripwire-steward` (D-tst-1 to D-tst-3 in `orbit/explore/tripwire-steward/explore.md`) —
+  `orbit-tripwires`, `orbit-archive-modifications` and up to two more by its route. (4) `tripwire-project-sensors`
+  (D-tps-1, D-tps-2 in `orbit/explore/tripwire-project-sensors/explore.md`) — `orbit-tripwires`. The first lands first;
+  the other three depend only on it. The estimate given at the first propose (D-tw-18) counted `orbit-emit-composition`
+  and `orbit-review` for the readings field; neither lists computed extensions, so a field owned by `orbit-tripwires`
+  makes no text there false.
+  Kind: scope
 
 ## Open questions
-
-- **How the stage divides into changes.** Settled decisions reach at least the emit write gate, the decision records,
-  review, archive, the brief, the project config, Touchpoints and change size, past the three-capability ceiling.
-  Standing recommendation: three changes — (1) the reading contract, its field on the seam emits, the per-sensor
-  setting and the mechanical sensors (Touchpoints, capability, size, ruling, budget); (2) the judgement sensors
-  (circling and the steward); (3) project sensors (approval, protocol); the split is propose's to settle against the
-  measured size
 
 ## Considered & out
 
@@ -527,6 +556,8 @@ Moves:
 
 ## References
 
+- `orbit/explore/tripwire-sensors/explore.md`, `orbit/explore/tripwire-steward/explore.md`,
+  `orbit/explore/tripwire-project-sensors/explore.md` — the stage's other three changes (D-tw-19)
 - `orbit/architecture/automate-dev-flow.md` — stage `tripwires`, G0, G6, R-adf-3 (condition 5), R-adf-11/12
 - `src/core/decision-records.ts` — `STOP_CONDITIONS` with `tripwire`; `PAYLOAD_STOP_CONDITIONS` excludes it
 - `orbit/specs/orbit-conventions/spec.md` — the decision-writing table's `tripwire` row (orbit raises it)

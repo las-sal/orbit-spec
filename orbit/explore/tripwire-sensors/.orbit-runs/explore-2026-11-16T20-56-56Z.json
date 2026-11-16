@@ -1,0 +1,25 @@
+{
+  "command": "explore",
+  "timestamp": "2026-11-16T20:56:56Z",
+  "change": "tripwire-sensors",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Named exploration tripwire-sensors opened at the division of stage tripwires (D-tw-19 in orbit/explore/tripwires/explore.md), cited to that stage: the remaining computed sensors, circling, budget, capability and ruling restated from D-tw-7, D-tw-13, D-tw-15 and D-tw-16 as D-tsn-1 to D-tsn-4, and the size sensor made a rule of its own (D-tsn-5). No open question.",
+  "decisions_captured": 5,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 5,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [
+    {
+      "id": "D-tsn-1",
+      "kind": "a loop circling on one problem that the key cannot see — a finding re-titled between passes; a walk record unreadable to the gate, which owes no verdict; fixes repeated without an in-context verification between them",
+      "method": "first-run's closing review reading each change's walks for one file fixed in two or more walks of one gate"
+    }
+  ],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose tripwire-sensors — 5 live rules accounted, 1 bounded residual named (D-tsn-1); formalize when you are ready (or /orbit:explore tripwire-sensors to keep refining)"
+}

@@ -1,0 +1,25 @@
+{
+  "command": "explore",
+  "timestamp": "2026-11-16T20:56:57Z",
+  "change": "tripwire-project-sensors",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Named exploration tripwire-project-sensors opened at the division of stage tripwires (D-tw-19 in orbit/explore/tripwires/explore.md), cited to that stage: project sensors restated from D-tw-11 and D-tw-12 as D-tps-1 and D-tps-2. One open question: the approval command and what the user config keeps.",
+  "decisions_captured": 2,
+  "open_questions_count": 1,
+  "open_questions_with_recommendation": "1 of 1",
+  "rules_total": 2,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [
+    {
+      "id": "D-tps-1",
+      "kind": "what a sensor's command reads beyond its declaration and the files its argv names — a script those call, the tool's own configuration (a linter's rule file)",
+      "method": "the Touchpoints sensor fires on an edit to such a file the plan did not predict only past its tolerances (D-tw-17), so a small edit passes; first-run's closing review reads each change's edits to files its sensors read"
+    }
+  ],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:explore tripwire-project-sensors — continue thinking, or /orbit:propose tripwire-project-sensors if ready to formalize"
+}

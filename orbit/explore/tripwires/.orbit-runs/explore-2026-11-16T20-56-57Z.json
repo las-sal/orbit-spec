@@ -1,0 +1,30 @@
+{
+  "command": "explore",
+  "timestamp": "2026-11-16T20:56:57Z",
+  "change": "tripwires",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Session boundary for the tripwires exploration: the user chose a four-way division of the stage (D-tw-19) from a capability map measured that day. This exploration is now the first change, tripwires: the reading contract, the readings field, the fixed point and cannot read, the halt setting and orbit-written stop, late declarations and the Touchpoints sensor (D-tw-1, D-tw-3, D-tw-5, D-tw-6, D-tw-14, D-tw-17), about two capabilities (orbit-tripwires, orbit-program-brief). The other sensors were restated in tripwire-sensors, tripwire-steward and tripwire-project-sensors, and their entries here superseded. D-tw-18 records the split chosen at the first propose; its higher estimate counted two specs the readings field does not make false.",
+  "decisions_captured": 19,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 6,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [
+    {
+      "id": "D-tw-1",
+      "kind": "a sensor needing state that is neither committed, on the trail, nor producible by a command (a live session's transcript, its token spend)",
+      "method": "classifying each drift that G6's first-run closing review finds no sensor caught against these four kinds"
+    },
+    {
+      "id": "D-tw-3",
+      "kind": "a sensor whose reference cannot be read at its fixed point (no `## Touchpoints` section, a project sensor with no reading at propose, a baseline file missing)",
+      "method": "each sensor states how it reads its reference; a sensor that cannot read it returns a reading saying so, which is recorded like a firing — silence is never a pass"
+    }
+  ],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose tripwires — 6 live rules accounted, 2 bounded residuals named (D-tw-1, D-tw-3); formalize when you are ready (or /orbit:explore tripwires to keep refining)"
+}
