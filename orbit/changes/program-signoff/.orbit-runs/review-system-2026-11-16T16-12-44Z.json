@@ -1,0 +1,107 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-16T16:12:44Z",
+  "change": "program-signoff",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "src/core/templates/workflows/architect.ts",
+      "line": 25,
+      "title": "Step 5.4 pipes the whole program brief into every architect session, at the defaults too",
+      "recommendation": "The architect body runs `orbit brief <doc> --save --json` on EVERY invocation under every setting, and a doc's `--save --json` prints `{...brief, markdown, save, saved}` (src/commands/brief.ts:69, as the orbit-program-brief delta's save requirement words it: 'the brief's data with save'). For the live program that is the full structured brief plus its markdown, with the two keys the body needs at the very end. Measured: `node bin/orbit.js brief automate-dev-flow --json | wc -c` gives 390741 bytes (markdown alone 156910), and it grows with every citing change. That is a new, large tool output in every default architect session on a big program, against the change's 'nothing the user sees changes at the defaults' (G0). A tool that cuts off long output also hides the trailing `save`/`saved` keys. The body needs only the exit status and `save`/`saved`.",
+      "reproduction": "node bin/orbit.js brief automate-dev-flow --json | wc -c   # 390741 on HEAD; --save --json prints the same object plus save/saved at its end",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Keep the engine as it is and change only the body: run `orbit brief <doc> --save` without `--json`, act on its exit status and its one or two lines (path + sha256, the unchanged line, or the not-finished line). Update the PROGRAM_SIGNOFF_STEP text, the orbit-architect delta's command block, and the template test that holds them."
+        },
+        {
+          "label": "B",
+          "body": "Narrow the doc save's `--json` to `{save, saved}` (no brief data or markdown). Amend the orbit-program-brief delta's sentence 'With --json it prints the brief's data with save…' and brief.ts:69, and keep the body's command as it is."
+        }
+      ]
+    },
+    {
+      "pass": "3",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 378,
+      "title": "Three generated bodies still say the account is read only under `signoff: change`",
+      "recommendation": "The change widened the account's reading to `change` or `program`: `takesAccount`, and the orbit-decision-records delta's account-lifecycle row for a walk resolving an account reading finding, 'under `signoff: change` or `program`'. But three body sentences still close it to `change`. (1) review.ts:378, the reading step's opening sentence: 'when the project's `signoff` setting is `change`, its latest account'. Step 3 of the same step was updated by task 4.2. (2) address-reviews.ts:1174: 'which a reading takes only when the project's `signoff` setting is `change`'. (3) disciplines.ts:374, the account-replacement bullet: 'read when the project's `signoff` setting is `change`'. A reviewer or walker under `signoff: program` reads a rule the engine no longer follows. Reword each to 'is `change` or `program`', rebuild, run `update --force`, and expect disciplines.ts pin moves. Then grep the generated surface for 'setting is `change`'."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "src/core/templates/workflows/architect.ts",
+      "line": 172,
+      "title": "Step 5.5 still defines arc-done as 'every stage archived' under `signoff: program`",
+      "recommendation": "The orbit-pr-lifecycle delta says that under `program` arc-done's first condition is read as FINISHED, so a stage the user ended without archiving a change counts as done. Step 5.5's opening still defines the check as 'every stage archived AND the closing review recorded'. Its new sentence only says the readout is shown 'only when Step 5.4's row shows it', which is a necessary condition, not a replacement. On a program with an `ended` stage, an AI applying the first sentence could show no readout after a recorded signature. State in 5.5 that under `signoff: program` the check is Step 5.4's row (FINISHED, the closing review, the signature) and not 'every stage archived'."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "src/core/signoff.ts",
+      "line": 333,
+      "title": "Under `signoff: program` the change hold's line says the setting is off",
+      "recommendation": "`renderHold` prints 'the sign-off setting is off, so nothing waits on a sign-off' for every `why: \"off\"`. Under `program`, `computeHold` reports `setting: \"program\"`, `why: \"off\"`, so the line misstates the user's config and says nothing waits when the program does. Branch on `h.setting`: under `program`, say the setting holds the program's completion and no change's archive.",
+      "reproduction": "In a temp project with `signoff: program` in orbit/config.yaml and an active change foo: `orbit brief --change foo --hold` prints 'foo: not held (off) — the sign-off setting is off, so nothing waits on a sign-off.'"
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Probed: the program hold's six rows against the code (computeProgramHold, signatureStands, closingReviewOf's early exit on the sorted tokens, archiveTimeOf against the program brief's archivedAt), FINISHED against computeStageStates and scanCitations (liveWorkCiting adds the stage-less and undeclared-stage citers the stage states cannot see, as the delta intends), the two-level folder identity check, the gate's value split, and the re-sign row's `orbit pr program` vocabulary against PREFLIGHT_OUTCOMES and prProgram's finish/offRecord paths. All of these hold. The pattern behind the findings is that the engine work is tight, and the misses sit where the change's propose-time sweep did not look: generated body prose outside the five specs it counted, and the cost of an output format the spec fixed for a different caller. A design observation, not a finding: under `program` the unsigned row shows the latest copy 'whole'. For automate-dev-flow that is about 157 KB of markdown, so the first real use of the program sign-off will put a very long read in front of the user. Pass 0 ran inline rather than as a delegated /orbit:verify: all 14 tasks are checked, `orbit validate program-signoff --strict` passes (size breaches declared), the full suite is green (200 files, 4236 tests), and no old requirement title is left in src/, test/, docs/ or the generated skills. Passes 4 and 5 were skipped because orbit/lenses/ does not exist. Pass 6 was skipped because the fresh worker does not invoke audit-drift, which writes its own trail emit. Its residue sweep ran by hand under Pass 3 instead. The orbit CLI readings (status, instructions, validate, tests) come from the live checkout, whose working tree was clean at HEAD 02e8e1e3.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3"
+  ],
+  "passes_skipped": [
+    "4",
+    "5",
+    "6"
+  ],
+  "direction": {
+    "disposition": "hold",
+    "reasoning": "The implementation matches its specs and is well tested, and nothing here blocks the design. Two things should be walked before archive. First, the default architect session now takes in the whole program brief on every invocation. On the live program that is hundreds of kilobytes, and it contradicts the change's own promise that nothing changes at the defaults. Second, three generated bodies still tell reviewers and walkers that the account is read only under `change`. Both are small, local edits. The two wording suggestions can ride along."
+  },
+  "final_assessment": "0 critical, 2 warning, 2 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews program-signoff"
+}
