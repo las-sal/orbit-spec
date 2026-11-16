@@ -298,9 +298,9 @@ export function buildProgram(options: ProgramOptions = {}): Command {
   // Generic emit surface (D5 context economy): engine-owned run-summary composition
   program
     .command('emit <emit-command>')
-    .description('Compose and write a run-summary emit, a decision record (ledger, stop, resolution), a change\'s account or its sign-off — the AI supplies the narrative payload; the engine owns the spine, deterministic facts, and computed extensions')
+    .description('Compose and write a run-summary emit, a decision record (ledger, stop, resolution), a change\'s account, or a change\'s (--change) or a program\'s (--doc) sign-off — the AI supplies the narrative payload; the engine owns the spine, deterministic facts, and computed extensions')
     .option('--change <name>', 'Target workstream (a change, or the staging exploration for explore-trail emits)')
-    .option('--doc <doc-name>', 'Target architecture doc (architecture-scoped commands)')
+    .option('--doc <doc-name>', 'Target architecture doc (architecture-scoped commands, and a program\'s sign-off)')
     .option('--payload <file>', 'Payload JSON file (when present, stdin is not consulted)')
     .option('--json', 'Stdout becomes exactly one {path, emit, render?} object')
     .option('--render', 'Proposal/system review emits: print the engine report render after the write')
@@ -375,13 +375,13 @@ export function buildProgram(options: ProgramOptions = {}): Command {
       if (exitCode !== 0) process.exit(exitCode);
     });
 
-  // brief-render: the brief of a change or a program, rendered read-only (or a change's saved)
+  // brief-render: the brief of a change or a program, rendered read-only (or saved; program-signoff: a program's too)
   program
     .command('brief [doc]')
-    .description("Render the brief of a program (a doc) or of a change (--change), read-only; --save keeps a change's")
+    .description("Render the brief of a program (a doc) or of a change (--change), read-only; --save keeps it")
     .option('--change <name>', 'Render the brief of this change (active, else its newest archive)')
-    .option('--save', "Save the active change's brief into its history and print the file and its SHA-256")
-    .option('--hold', "Report whether the active change's archive waits on the user's sign-off (read-only; renders no brief)")
+    .option('--save', "Save the active change's brief into its history, or a finished program's into the architecture trail, and print the file and its SHA-256")
+    .option('--hold', "Report whether the active change's archive, or the program's completion, waits on the user's sign-off (read-only; renders no brief)")
     .option('--json', 'Output as JSON')
     .action(async (doc: string | undefined, options?: { change?: string; save?: boolean; hold?: boolean; json?: boolean }) => {
       const { BriefCommand } = await import('../commands/brief.js');

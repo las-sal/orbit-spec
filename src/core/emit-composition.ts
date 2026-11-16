@@ -62,10 +62,11 @@ import {
   SAVED_BRIEF_DIR,
   SIGNOFF_COMMAND,
   SIGNOFF_DIR,
-  SIGNOFF_DOC_REFUSAL,
   SIGNOFF_PAYLOAD_FIELDS,
   SignoffError,
   checkSignoff,
+  currentClosingReview,
+  signoffDocScopeRefusal,
   signoffScopeRefusal,
   signoffSettingRefusal,
 } from './signoff.js';
@@ -278,8 +279,10 @@ const COMMANDS: Record<string, CommandSpec> = {
   account: { kind: null, scopes: { change: true }, payloadFields: ACCOUNT_PAYLOAD_FIELDS },
   // program-brief: a change's SIGN-OFF (`orbit-program-brief`'s `A sign-off is recorded against the saved copy,
   // and the hold reads it`). Not a run summary and not a decision record: no kind, no recommendation, written to
-  // the trail's `signoff/` child with the engine's `sha256` of the named copy; ACTIVE changes only.
-  signoff: { kind: null, scopes: { change: true }, payloadFields: SIGNOFF_PAYLOAD_FIELDS },
+  // the trail's `signoff/` child with the engine's `sha256` of the named copy; ACTIVE changes only. program-signoff:
+  // a PROGRAM's sign-off with `--doc` (`A program's sign-off is recorded against its saved copy, and the hold reads
+  // arc-done`), written to the architecture trail's `signoff/<doc>/` with the engine's `closing_review` too.
+  signoff: { kind: null, scopes: { change: true, doc: true }, payloadFields: SIGNOFF_PAYLOAD_FIELDS },
 };
 
 /** Spine + deterministic facts + computed extensions per command — REJECTED in payloads. */
@@ -324,7 +327,7 @@ export const ENGINE_OWNED_EXTRA: Record<string, string[]> = {
   stop: ['final_assessment'],
   resolution: ['final_assessment'],
   account: ['final_assessment'],
-  signoff: ['final_assessment', 'sha256'],
+  signoff: ['final_assessment', 'sha256', 'closing_review'],
 };
 
 /**
@@ -803,9 +806,6 @@ function resolveTarget(projectRoot: string, command: string, target: EmitTarget)
       `--doc '${doc}' is not a canonical doc name (single filename stem, no separators, no traversal).`
     );
   }
-  if (doc !== undefined && command === SIGNOFF_COMMAND) {
-    throw new EmitError(`--doc is not a valid target for '${command}': ${SIGNOFF_DOC_REFUSAL}`);
-  }
   if (doc !== undefined && !spec.scopes.doc) {
     throw new EmitError(`--doc is not a valid target for '${command}' (change-scoped command).`);
   }
@@ -826,6 +826,7 @@ function resolveTarget(projectRoot: string, command: string, target: EmitTarget)
   if (doc !== undefined) {
     const docPath = path.join(projectRoot, 'orbit', 'architecture', `${doc}.md`);
     if (!fs.existsSync(docPath)) {
+      if (command === SIGNOFF_COMMAND) throw new EmitError(`write gate: ${signoffDocScopeRefusal(doc)}`);
       throw new EmitError(`architecture doc not found: ${docPath}`);
     }
     return {
@@ -1021,7 +1022,7 @@ function validateDecisionRecordsReadShape(command: string, payload: Record<strin
   const list = payload.decision_records_read;
   if (!Array.isArray(list) || list.some(f => typeof f !== 'string' || !isSelectableFilename(f))) {
     throw new EmitError(
-      `'decision_records_read' must be an array of record filenames (<ledger|stop|resolution>-<TS>.json, or account-<TS>.json under signoff: change), got ${JSON.stringify(list)}.`
+      `'decision_records_read' must be an array of record filenames (<ledger|stop|resolution>-<TS>.json, or account-<TS>.json under signoff: change or program), got ${JSON.stringify(list)}.`
     );
   }
 }
@@ -2064,6 +2065,8 @@ function writeGate(emit: Record<string, unknown>, target: ResolvedTarget, filePa
  * decision-layer: a trail child (`decisions/`, and the account's `account/`) must physically BE the
  * trail's canonical child of that name — the same IDENTITY rule `assertCanonicalTrailDir` holds the
  * trail to, one level down. A symlink redirecting it outside the trail, or onto a sibling, is refused.
+ * program-signoff (design Decision 3): a per-doc folder (`brief/<doc>/`, `signoff/<doc>/`) is held at
+ * both levels by `assertCanonicalDocDir`.
  */
 function assertCanonicalChildDir(childDir: string): void {
   const child = path.basename(childDir);
@@ -2080,6 +2083,16 @@ function assertCanonicalChildDir(childDir: string): void {
       `${child} directory ${childDir} does not physically resolve to its trail's canonical ${child} child — aliased entries are never writable emit trails.`
     );
   }
+}
+
+/**
+ * program-signoff (design Decision 3): a per-doc folder `<trail>/<child>/<doc>/` is checked at BOTH levels — the
+ * child under the trail, then `<doc>` under the child — so an aliased `brief/` or `signoff/`, or an aliased `<doc>`
+ * folder, is refused as an aliased `decisions/` is.
+ */
+function assertCanonicalDocDir(docDir: string): void {
+  assertCanonicalChildDir(path.dirname(docDir));
+  assertCanonicalChildDir(docDir);
 }
 
 /**
@@ -2196,10 +2209,12 @@ function publishChildRecord(
   filename: string,
   token: string,
   serialized: string,
-  rerun = 're-run the emit'
+  rerun = 're-run the emit',
+  perDoc = false
 ): void {
   assertCanonicalTrailDir(runsDir);
-  assertCanonicalChildDir(childDir);
+  if (perDoc) assertCanonicalDocDir(childDir);
+  else assertCanonicalChildDir(childDir);
   const filePath = path.join(childDir, filename);
   const tmp = path.join(childDir, `.${filename}.tmp`);
   const collision = (what: string): EmitError =>
@@ -2239,17 +2254,26 @@ export function publishTrailChildText(
   prefix: string,
   ext: string,
   text: string,
-  rerun: string
+  rerun: string,
+  doc: string | null = null
 ): string {
   fs.mkdirSync(runsDir, { recursive: true });
   assertCanonicalTrailDir(runsDir);
   const childDir = path.join(runsDir, child);
   fs.mkdirSync(childDir, { recursive: true });
   assertCanonicalChildDir(childDir);
-  const token = drawChildToken(childDir);
+  // program-signoff: a program's copies go one level down, into the doc's own folder (`brief/<doc>/`).
+  let targetDir = childDir;
+  if (doc !== null) {
+    if (!isSingleName(doc)) throw new EmitError(`write gate: '${doc}' is not a single doc name.`);
+    targetDir = path.join(childDir, doc);
+    fs.mkdirSync(targetDir, { recursive: true });
+    assertCanonicalDocDir(targetDir);
+  }
+  const token = drawChildToken(targetDir);
   const filename = `${prefix}-${token}${ext}`;
-  publishChildRecord(runsDir, childDir, filename, token, text, rerun);
-  return path.join(childDir, filename);
+  publishChildRecord(runsDir, targetDir, filename, token, text, rerun, doc !== null);
+  return path.join(targetDir, filename);
 }
 
 /**
@@ -2290,19 +2314,29 @@ function composeAccount(resolved: ResolvedTarget, payload: Record<string, unknow
 }
 
 /**
- * program-brief: compose and write a change's SIGN-OFF (`orbit-emit-composition`'s `The write gate checks the
- * sign-off record`). The payload contract and target resolution ran already (an active change only); then the
- * setting (refused unless `change`), the sign-off's checks — `brief` the latest saved copy, whose bytes' SHA-256
- * the engine writes beside it — the trail's `signoff/` child held to the canonical-child identity rule after
- * creation and again before publish, a token unique within it, the decision-record spine, and the no-overwrite
- * publish. Every refusal precedes the first write.
+ * program-brief: compose and write a SIGN-OFF (`orbit-emit-composition`'s `The write gate checks the sign-off
+ * record`). The payload contract and target resolution ran already (an active change, or an architecture doc);
+ * then the setting (a `--change` sign-off refused unless `change`, a `--doc` one unless `program`, naming the value
+ * read), the sign-off's checks — `brief` the latest saved copy (the change's `brief/`, or the architecture trail's
+ * `brief/<doc>/`), whose bytes' SHA-256 the engine writes beside it — and, for a program, the engine's
+ * `closing_review`; then the `signoff/` child (for a program, its `<doc>` folder too, checked at both levels) held to
+ * the canonical-child identity rule after creation and again before publish, a token unique within the folder the
+ * record is written to, the decision-record spine, and the no-overwrite publish. Every refusal precedes the first
+ * write.
  */
 function composeSignoff(resolved: ResolvedTarget, payload: Record<string, unknown>, projectRoot: string): ComposeResult {
+  const program = resolved.scope === 'doc';
   const setting = resolveSignoffSetting(projectRoot);
-  if (setting.value !== 'change') throw new EmitError(`write gate: ${signoffSettingRefusal(setting)}`);
+  if (setting.value !== (program ? 'program' : 'change')) {
+    throw new EmitError(`write gate: ${signoffSettingRefusal(setting, program ? 'program' : 'change')}`);
+  }
+  const doc = resolved.doc as string;
+  const briefDir = program ? path.join(resolved.runsDir, SAVED_BRIEF_DIR, doc) : path.join(resolved.runsDir, SAVED_BRIEF_DIR);
   let sha: string;
+  let closingReview: string | null = null;
   try {
-    sha = checkSignoff(payload, path.join(resolved.runsDir, SAVED_BRIEF_DIR));
+    sha = checkSignoff(payload, briefDir);
+    if (program) closingReview = currentClosingReview(projectRoot, doc);
   } catch (err) {
     if (err instanceof SignoffError || err instanceof DecisionRecordError) throw new EmitError(`write gate: ${err.message}`);
     throw err;
@@ -2310,9 +2344,14 @@ function composeSignoff(resolved: ResolvedTarget, payload: Record<string, unknow
 
   fs.mkdirSync(resolved.runsDir, { recursive: true });
   assertCanonicalTrailDir(resolved.runsDir);
-  const signoffDir = path.join(resolved.runsDir, SIGNOFF_DIR);
-  fs.mkdirSync(signoffDir, { recursive: true });
-  assertCanonicalChildDir(signoffDir);
+  const signoffChild = path.join(resolved.runsDir, SIGNOFF_DIR);
+  fs.mkdirSync(signoffChild, { recursive: true });
+  assertCanonicalChildDir(signoffChild);
+  const signoffDir = program ? path.join(signoffChild, doc) : signoffChild;
+  if (program) {
+    fs.mkdirSync(signoffDir, { recursive: true });
+    assertCanonicalDocDir(signoffDir);
+  }
 
   const token = drawChildToken(signoffDir);
   const filename = `${SIGNOFF_COMMAND}-${token}.json`;
@@ -2320,16 +2359,18 @@ function composeSignoff(resolved: ResolvedTarget, payload: Record<string, unknow
     command: SIGNOFF_COMMAND,
     timestamp: tokenToTimestamp(token),
     change: resolved.change,
+    ...(program ? { doc } : {}),
     model: payload.model ?? null,
     brief: payload.brief,
     sha256: sha,
+    ...(program ? { closing_review: closingReview } : {}),
   };
   for (const f of COMMANDS[SIGNOFF_COMMAND].payloadFields) {
     if (f in payload && !(f in emit)) emit[f] = payload[f];
   }
   const materialized = JSON.parse(JSON.stringify(emit)) as Record<string, unknown>;
   decisionSpineCheck(materialized, resolved, 'a sign-off');
-  publishChildRecord(resolved.runsDir, signoffDir, filename, token, JSON.stringify(materialized, null, 2) + '\n');
+  publishChildRecord(resolved.runsDir, signoffDir, filename, token, JSON.stringify(materialized, null, 2) + '\n', 're-run the emit', program);
   return { path: path.join(signoffDir, filename), emit: materialized, warnings: [] };
 }
 

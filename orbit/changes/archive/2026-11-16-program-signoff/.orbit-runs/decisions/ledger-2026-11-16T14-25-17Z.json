@@ -1,0 +1,24 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-16T14:25:17Z",
+  "change": "program-signoff",
+  "model": "claude-opus-5-5",
+  "area": "user-sees-or-does",
+  "decided": "A program is not finished, and its brief is not saved or offered for sign-off, while any open work still belongs to it: an active change, or an exploration that has not been concluded, even one filed under a stage the program does not declare or under no stage. A concluded exploration does not hold it.",
+  "alternatives": [
+    "count only active changes, so an open exploration filed under a stage the program does not declare would not stop the program from being called finished",
+    "look only at the declared stages, so open work filed elsewhere would not stop the program from being called finished"
+  ],
+  "why": "The user should sign a program only when none of its work is still open, and an open exploration says more work is coming; a declared stage already counts an open exploration as unfinished, so open work under an undeclared stage is treated the same way.",
+  "relies_on": [
+    {
+      "kind": "decision",
+      "id": "D-ps-5"
+    },
+    {
+      "kind": "decision",
+      "id": "D-ps-3"
+    }
+  ],
+  "replaces": "ledger-2026-11-15T20-21-09Z.json"
+}

@@ -21,13 +21,13 @@ reads them; what the architect session shows at the defaults (G0) and under `pro
 
 ## Mechanism
 
-### D-ps-1 — the sign-off setting's `program` value
+### D-ps-9 — the sign-off setting's `program` value, stating only what the archive establishes
 Domain: the `program` value against each `pr:` mode, and the per-change surfaces it touches
 | member | covered by |
 |---|---|
 | `program`, `pr: per-architecture` | the program's completion and the program PR's READY flip wait for a sign-off over the program brief (D-ps-5) |
-| `program`, `pr: per-proposal` | the program's completion waits (D-ps-5); the brief says each change has already merged |
-| `program`, `pr: never` | the program's completion waits (D-ps-5); the brief says the work has already landed, with no PR |
+| `program`, `pr: per-proposal` | the program's completion waits (D-ps-5); each change has passed its archive, its PR marked ready there and its merge left to the user; nothing waits on either, and the brief writes no line about it |
+| `program`, `pr: never` | the program's completion waits (D-ps-5); each change's work is archived on its branch, with no PR; the brief writes no line about it |
 | `program`, a change carrying an account | the account is selected and read at the system review, as under `change` (D-pb-13 in `orbit/changes/archive/2026-11-14-program-brief/explore.md`) |
 | `program`, a change's archive | nothing waits at the archive; the change's brief is saved as under every value |
 Closure: DERIVED — `PR_MODES`' three (`src/core/project-config.ts`), plus the two per-change surfaces the value reaches (the reading and the archive)
@@ -36,7 +36,7 @@ Moves:
 - ENUMERATE: applied — this table; the archive row is new beside D-pb-1, stating that a program sign-off holds no change's archive
 - COHERE: applied — `program-brief` reads `program` as unrecognized (D-pb-12); this change makes it read, so the warning for it goes
 - EXECUTE: not applied — nothing is built yet
-- FALSIFY: applied — under `pr: per-proposal` and `never` every change has landed before the sign-off, so the brief says so rather than implying a gate it is not
+- FALSIFY: applied — the archive marks a change's PR ready and leaves its merge to the user, so at the program's sign-off a change is known archived, not merged; the rule states only that, and no line of the brief claims it (D-ps-1 claimed both)
 - CONFORM: applied — R-adf-1 (off by default), R-adf-2 as amended, R-adf-6, R-adf-7, R-adf-12
 - FEASIBILITY: not applied — one more value of one key
 - CONSUME: applied — the architect flow's hold (D-ps-5), the reading's selection (D-pb-13's filter gains the value)
@@ -69,6 +69,7 @@ Domain: each architect session on a doc, by the program's state and its saved co
 | every declared stage finished, a fresh render's hash equal to the latest saved copy's | saves nothing |
 | every declared stage finished, a fresh render's hash different (a change archived or a record written since) | saves a new copy; the latest is the program's brief |
 | a declared stage not finished | saves nothing |
+| live work (an active change, or an exploration not concluded) citing the doc under a stage it does not declare, or none | saves nothing: the program is not finished |
 | the program brief cannot be rendered whole | saves nothing; at the defaults the failure is recorded and not shown; under `program` the session says so, and the hold stays with nothing to sign |
 Closure: DERIVED — whether the program is finished, crossed with whether a saved copy exists and whether its hash matches a fresh render, plus the render's failure
 Moves:
@@ -87,8 +88,8 @@ Domain: each `pr:` mode under a `program` sign-off, and each act before arc-done
 | member | covered by |
 |---|---|
 | `pr: per-architecture` | arc-done waits for the sign-off; the arc-done readout asks for it first and surfaces the READY flip only once it is signed |
-| `pr: per-proposal` | arc-done waits for the sign-off; the brief says every change has already merged |
-| `pr: never` | arc-done waits for the sign-off; the brief says the work has already landed, with no PR |
+| `pr: per-proposal` | arc-done waits for the sign-off; each change has passed its archive, its PR marked ready there and its merge left to the user (D-ps-9) |
+| `pr: never` | arc-done waits for the sign-off; each change's work is archived on its branch, with no PR (D-ps-9) |
 | the last stage's ratification | offered as today: a sign-off holds no ratification |
 | the closing architecture review and its walk | run before the sign-off, so the records they write are in the copy the user signs |
 Closure: DERIVED — `PR_MODES`' three (`src/core/project-config.ts`), crossed with the acts that come before arc-done: the ratification the architect flow offers, and the closing review arc-done requires (R-d-3)
@@ -97,7 +98,7 @@ Moves:
 - ENUMERATE: applied — this table; the ratification row is where D-ps-2 held, and the closing-review row is why it moves
 - COHERE: applied — the save (D-ps-3) runs in the same invocation before the hold reads the latest copy; the per-change hold's rule carries over, a sign-off covering the copy whose hash it records
 - EXECUTE: not applied — nothing is built yet
-- FALSIFY: applied — a sign-off before the closing review would cover a copy its walk's records make stale, asking the user twice under `per-architecture`; a copy saved after the sign-off asks again only while the program PR is a draft (D-ps-7)
+- FALSIFY: applied — a sign-off before the closing review would cover a copy its walk's records make stale, asking the user twice under `per-architecture`; a copy saved after the sign-off asks again only while the program PR is a draft, or once the program is reopened (D-ps-8)
 - CONFORM: applied — R-adf-2 as amended ("holding the program's completion"), R-adf-1 (nothing waits with the setting absent), R-d-3, R-adf-14
 - FEASIBILITY: not applied — one more condition on an observed state
 - CONSUME: applied — the architect flow's arc-done readout and `orbit pr program`'s human acts, the READY flip staying a human act; the driver will stop on it later
@@ -121,31 +122,34 @@ Moves:
 - FALSIFY: applied — a doc that is renamed leaves its copies and records under the old name, and the renamed doc has none, so the next session that finds it finished saves a copy and asks; a doc name is a single name, so `<doc>` cannot reach outside the trail
 - CONFORM: applied — `orbit-architecture-engine`'s `Architecture trail location`; the change trail's layout shipped by `program-brief`
 - FEASIBILITY: not applied — two folders per doc
-- CONSUME: applied — D-ps-5's hold and D-ps-7's re-ask read the latest of each folder; first-run's closing review grades G5 from the saved copies
+- CONSUME: applied — D-ps-5's hold and D-ps-8's re-ask read the latest of each folder; first-run's closing review grades G5 from the saved copies
 - INVOKE: applied — at each save and each sign-off on a doc
 
-### D-ps-7 — a copy saved after the sign-off asks again only while the program PR is a draft
-Domain: a copy saved after the latest sign-off, by `pr:` mode and the program PR's observed state
+### D-ps-8 — a copy saved after the sign-off asks again only while the program PR is a draft, or once the program is reopened
+Domain: a copy saved after the latest sign-off, by `pr:` mode, the program PR's observed state, and whether a change citing the doc was archived after the signature's closing review
 | member | covered by |
 |---|---|
 | `pr: per-architecture`, the program PR a draft | asks again; the READY flip is surfaced only once the new copy is signed |
-| `pr: per-architecture`, the PR's state unverified | asks again, since nothing is known of the flip |
-| `pr: per-architecture`, the PR ready, merged or closed | saved; asks nothing; arc-done stays observed |
-| `pr: per-architecture`, no program PR found | saved; asks nothing: there is no flip to hold |
+| `pr: per-architecture`, the PR's state unverified, or not read at all (`unobserved`, `gh-absent`) | asks again, since nothing is known of the flip |
+| `pr: per-architecture`, several candidate PRs (`several`) | asks again, since which PR is the program's, and whether it is still a draft, is not settled |
+| `pr: per-architecture`, the PR ready | saved; asks nothing; arc-done stays observed |
+| `pr: per-architecture`, no open program PR (`none`, `not-found`, a positive invalidation of the recorded PR, `closed`, `merged`, `retargeted`, `head-mismatch` or `repository-mismatch`, with no open replacement, or no attachment recorded) | saved; asks nothing: there is no flip to hold |
 | `pr: per-proposal` | saved; asks nothing; arc-done stays observed |
 | `pr: never` | saved; asks nothing; arc-done stays observed |
+| the program reopened: a change citing the doc archived after the review the signature names as its closing review | not a later copy of the signed program: asked afresh under every mode, since the signature covers none of that change's work |
+| a later closing review with no citing archive after the signature's | a later copy like any other: the rows above |
 | the latest sign-off a decline | not a later copy: the program is held, and the next session asks again |
-Closure: DERIVED — `PR_MODES`' three, crossed under `per-architecture` with the state `orbit pr program` reports (`draft`, `ready`, `unverified`, or no PR found, a merged or closed PR reading as no longer draft), plus the decline edge the per-change hold already has
+Closure: DERIVED — `PR_MODES`' three, crossed under `per-architecture` with what `orbit pr program` reports (`src/core/pr/program.ts`: `pr.state` `draft`, `ready` or `unverified`; with no `pr`, the outcome `several`, `unobserved`, `gh-absent`, `none`, `not-found` or a positive invalidation; `off` with no attachment), plus whether a citing archive follows the signature's closing review, plus the decline edge the per-change hold already has
 Moves:
-- READ: applied — `orbit-pr-lifecycle`'s `` `orbit pr program` computes the architect readout's PR facts `` (`pr.state` is `draft`, `ready` or `unverified`; the readout is never suppressed); `computeHold` in `src/core/signoff.ts` counts only a latest `signed` record whose hash equals the latest copy's
+- READ: applied — `orbit-pr-lifecycle`'s `` `orbit pr program` computes the architect readout's PR facts `` (`pr.state` is `draft`, `ready` or `unverified`; `pr` is null on `several`, on `unobserved` and `gh-absent` with no recorded URL, and when no open PR is found; the readout is never suppressed); `computeHold` in `src/core/signoff.ts` counts only a latest `signed` record whose hash equals the latest copy's
 - ENUMERATE: applied — this table
 - COHERE: applied — the re-ask holds exactly what D-ps-5 holds and nothing more: under `per-architecture` the flip, elsewhere nothing outward remains once signed
 - EXECUTE: not applied — nothing is built yet
-- FALSIFY: applied — without the rule, a merged program would ask for a sign-off at every later session whose records changed its brief, holding nothing
+- FALSIFY: applied — without the rule, a merged program would ask for a sign-off at every later session whose records changed its brief, holding nothing; without the reopen row, a program reopened by a new change under `per-proposal` would never be asked about that change's work; and an "otherwise asks nothing" over `pr.state` alone would skip the ask on `several` and on an unread state, where D-ps-7 asked
 - CONFORM: applied — R-adf-2 as amended, R-adf-1, and orbit's report-and-record stance (one prompt where it holds something, never a nag)
 - FEASIBILITY: not applied — one read of a state the readout already observes
 - CONSUME: applied — the architect flow's arc-done readout; `orbit pr program`'s human acts
-- INVOKE: applied — at each architect invocation on a doc whose program is done and whose brief has a copy newer than its latest sign-off
+- INVOKE: applied — at each architect invocation on a doc whose program is done and whose brief has a copy newer than its latest sign-off, and at each hold, which reads whether the program was reopened
 
 ## Decisions
 
@@ -154,6 +158,7 @@ Moves:
   program, over the program brief, holding the program's completion under every `pr:` mode (D-ps-5); under `program` the
   account is read like any record, as under `change`; no change's archive waits.
   Kind: rule
+  Disposition: superseded D-ps-9
 - **2026-11-13 — D-ps-2: a `program` sign-off holds the program's completion in every `pr:` mode** D-pb-3, carried whole
   (D-pb-15): once every declared stage's changes are archived, the architect flow offers no ratification of the last
   stage until the program brief is signed; under `pr: per-architecture` it also holds the program PR's READY flip. Under
@@ -191,6 +196,24 @@ Moves:
   read, a later copy asks again, since the READY flip it holds has not happened; under `per-proposal` and `never`, and
   once the program PR is no longer a draft, a later copy is saved, asks nothing, and arc-done stays observed. As in the
   per-change hold, only a latest record of `signed` whose hash equals the latest copy's counts as signed; a decline holds.
+  Kind: rule
+  Disposition: superseded D-ps-8
+- **2026-11-15 — D-ps-8: a copy saved after the sign-off asks again only while the program PR is a draft, or once the
+  program is reopened** The user chose B at the proposal's review walk. D-ps-7 stands for a copy saved after a signature:
+  under `pr: per-architecture` it asks again while the program PR is a draft, or while its state cannot be read or is
+  not settled (`orbit pr program` reporting `unverified`, `unobserved`, `gh-absent` or `several`); once the PR is ready,
+  or no open program PR exists, and under `per-proposal` and `never`, it is saved, asks nothing, and arc-done stays
+  observed. One case is added: when a change citing the doc has been archived after the review the signature names as
+  its closing review, the program was reopened, and the signature covers none of that change's work, so it is asked
+  afresh under every mode. A closing review run again with no such archive is a later copy like any other. Only a latest
+  record of `signed` whose hash equals the latest copy's counts as signed; a decline holds.
+  Kind: rule
+- **2026-11-15 — D-ps-9: the sign-off setting's `program` value, stating only what the archive establishes** D-ps-1,
+  with its claims about landed work corrected (the user chose A at the proposal's review walk): once per program, over
+  the program brief, holding the program's completion under every `pr:` mode (D-ps-5); under `program` the account is
+  read like any record, as under `change`; no change's archive waits. Under `pr: per-proposal` each change has passed
+  its archive when the user is asked, its PR marked ready there and its merge left to the user; under `never` its work
+  is archived on its branch. Nothing waits on either, and the brief writes no line about it.
   Kind: rule
 
 ## Open questions

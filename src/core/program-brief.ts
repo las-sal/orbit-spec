@@ -11,7 +11,9 @@
  * change's archive record, never an inference.
  *
  * The save (`A change's brief is saved, never overwritten`) writes the render's exact bytes into the active
- * change's `.orbit-runs/brief/` through the emit surface's no-overwrite publish.
+ * change's `.orbit-runs/brief/` through the emit surface's no-overwrite publish. A program's save (`A program's
+ * brief is saved once the program is finished`) writes into the architecture trail's `brief/<doc>/`, only for a
+ * finished program whose render differs from its latest copy.
  */
 
 import * as fs from 'node:fs';
@@ -35,11 +37,12 @@ import {
   type DecisionFolder,
 } from './decision-records.js';
 import { ACCOUNT_DIR, AccountError, checkAccountShape, latestAccount, readAccountFolder } from './account.js';
-import { resolveSignoffSetting } from './project-config.js';
+import { resolveSignoffSetting, takesAccount } from './project-config.js';
 import { parseDeltaSpec } from './parsers/requirement-blocks.js';
 import { readSizeDeclaration, type SizeDimension } from './change-size.js';
 import { loadArchitectureDoc, isValidDocName } from './architecture/parser.js';
 import { EmitError, publishTrailChildText } from './emit-composition.js';
+import { SignoffError, architectureTrail, latestSavedCopy, programBriefDir, programFinished, sha256OfBytes } from './signoff.js';
 
 export class ProgramBriefError extends Error {}
 
@@ -507,12 +510,12 @@ export function buildChangeBriefAt(projectRoot: string, changeDir: string, statu
     stops,
     tripwires: 'not-installed',
     deviations: { account: account === null ? null : String(account.deviations), size_breached: size.declaration.declared },
-    // Under `signoff: change` the selection takes the latest account while it is unread, and a read one is named
-    // nowhere; under every other value the account is named apart as checked by no reader
-    // (`orbit-decision-records`' `The reader takes the account only when sign-off is per change`).
+    // Under `signoff: change` or `program` the selection takes the latest account while it is unread, and a read one
+    // is named nowhere; under every other value the account is named apart as checked by no reader
+    // (`orbit-decision-records`' `The reader takes the account when the user signs off`).
     unread: {
       records: selectedOrFail(changeDir, projectRoot).sort(byToken),
-      account: resolveSignoffSetting(projectRoot).value === 'change' ? null : accountName,
+      account: takesAccount(resolveSignoffSetting(projectRoot)) ? null : accountName,
     },
   };
 }
@@ -625,7 +628,7 @@ const TEXT = {
   unreadNote: 'Decision records no reader has checked:',
   unreadWithAccountNote: "Records no reader has checked (decision records, and the change's account):",
   accountUnread: (n: string) =>
-    `The account ${n} was checked by no reader: a reading step reads the account only when the user signs off on each change.`,
+    `The account ${n} was checked by no reader: a reading step reads the account only when the user signs off.`,
   snapshot:
     "This list is as of when this brief was rendered; records written after it appear in the archived change's brief and the program brief.",
   open: 'Open: no answer to this stop has been recorded.',
@@ -867,6 +870,57 @@ export function saveChangeBrief(projectRoot: string, brief: ChangeBrief, markdow
     throw e;
   }
   return { path: rel(projectRoot, written), sha256: sha256(fs.readFileSync(written, 'utf-8')) };
+}
+
+/** What `orbit brief <doc> --save` did: `saved`, `unchanged` or `not-finished`. */
+export type ProgramSaveOutcome = 'saved' | 'unchanged' | 'not-finished';
+
+export interface ProgramSave {
+  save: ProgramSaveOutcome;
+  /** The copy written, or, when unchanged, the latest copy; null when the program is not finished. */
+  saved: SavedBrief | null;
+}
+
+/**
+ * Save a PROGRAM's rendered brief (`A program's brief is saved once the program is finished`), by the first row
+ * that matches: the caller renders first, so a doc not found or MALFORMED, or a brief that cannot be rendered whole,
+ * has already thrown; a program that is not FINISHED (`programFinished`, the hold's own rule) writes nothing; one
+ * whose latest copy in `brief/<doc>/` holds exactly the render's bytes writes nothing and names that copy; any other
+ * writes a new copy through the per-doc no-overwrite publish (both folder levels held to their canonical identity).
+ */
+export function saveProgramBrief(projectRoot: string, brief: ProgramBrief, markdown: string): ProgramSave {
+  const parsed = loadArchitectureDoc(projectRoot, brief.doc);
+  if (parsed === null) fail(`architecture doc '${brief.doc}' not found at orbit/architecture/${brief.doc}.md.`);
+  if (!programFinished(projectRoot, parsed)) return { save: 'not-finished', saved: null };
+
+  const dir = programBriefDir(projectRoot, brief.doc);
+  const bytes = Buffer.from(markdown, 'utf-8');
+  let latest: string | null;
+  try {
+    latest = latestSavedCopy(dir);
+  } catch (e) {
+    if (e instanceof SignoffError) fail(e.message);
+    throw e;
+  }
+  if (latest !== null) {
+    let held: Buffer;
+    try {
+      held = fs.readFileSync(path.join(dir, latest));
+    } catch (e) {
+      fail(`the latest saved copy ${rel(projectRoot, path.join(dir, latest))} cannot be read (${(e as NodeJS.ErrnoException).code ?? 'error'}).`);
+    }
+    if (held.equals(bytes)) {
+      return { save: 'unchanged', saved: { path: rel(projectRoot, path.join(dir, latest)), sha256: sha256OfBytes(held) } };
+    }
+  }
+  let written: string;
+  try {
+    written = publishTrailChildText(architectureTrail(projectRoot), BRIEF_DIR, 'brief', '.md', markdown, 'run the save again', brief.doc);
+  } catch (e) {
+    if (e instanceof EmitError) fail(e.message.replace(/^write gate: /, ''));
+    throw e;
+  }
+  return { save: 'saved', saved: { path: rel(projectRoot, written), sha256: sha256(fs.readFileSync(written, 'utf-8')) } };
 }
 
 /** Exported for tests and readers: the record filename rule the brief reads `decisions/` by. */

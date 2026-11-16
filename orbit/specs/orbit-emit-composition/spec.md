@@ -1324,13 +1324,12 @@ already-resolved stop names EVERY resolution that names it.
 
 ### Requirement: The reading's selection is recorded at review and archive
 
-The emit surface SHALL record which decision records — and, under `signoff: change`, which account — a reading covered,
+The emit surface SHALL record which decision records — and, under `signoff: change` or `program`, which account — a reading covered,
 and which it owes, on a change's in-context system review emits and its archive emit. A record is READ once an
 in-context `review --mode system` emit lists its filename in `decision_records_read`; the SELECTION is the latest record
 in each replacement chain of the change's `decisions/` folder that is not read, and, when the sign-off setting
-(`orbit-program-brief`'s `The sign-off setting holds each change's archive for the user's sign-off`) is `change`, the
-latest record of the change's `account/` chain when it is not read (`orbit-decision-records`' `The reader takes the
-account only when sign-off is per change`); `orbit-decision-records`' `The reading step's brief is rendered by orbit`
+(`orbit-program-brief`'s `The sign-off setting holds a change's archive or a program's completion for the user's sign-off`) is `change` or
+`program`, the latest record of the change's `account/` chain when it is not read (`orbit-decision-records`' `The reader takes the account when the user signs off`); `orbit-decision-records`' `The reading step's brief is rendered by orbit`
 renders it. No ordering of timestamps decides either: the tokens of `decisions/`, of `account/` and of `.orbit-runs/`
 are allocated independently, so a record's token cannot be ordered against a review emit's.
 
@@ -1348,9 +1347,9 @@ An in-context system review payload SHALL be refused, writing nothing, when:
 | read without a list | `reading` is in `passes_run` and `decision_records_read` is absent or empty |
 | list without a read | `decision_records_read` is not empty and `reading` is not in `passes_run` |
 | outside the selection | a filename in `decision_records_read` is not in the selection when the emit is written; the refusal names it |
-| unlistable | the sign-off setting is `change` and a folder the selection reads (the change's `decisions/` or `account/`) exists and cannot be listed; the refusal names the folder |
+| unlistable | the sign-off setting is `change` or `program` and a folder the selection reads (the change's `decisions/` or `account/`) exists and cannot be listed; the refusal names the folder |
 
-Under `signoff: change` the archive emit is refused on the same condition, naming the folder, rather than counting an
+Under `signoff: change` or `program` the archive emit is refused on the same condition, naming the folder, rather than counting an
 unlistable folder as holding no record; it is written after the move, so the archive stands, and the emit is written
 again once the folder can be listed. Under every other value the selection reads an unlistable folder as empty, as it
 did before the setting existed (`automate-dev-flow`'s G0).
@@ -1424,6 +1423,12 @@ Residual method: the reader's findings name records of the selection; a run list
   in-context system review emit or `foo`'s archive emit is written
 - **THEN** the emit is refused naming the folder and nothing is written; with the setting absent the folder reads as
   empty and each emit is written as before
+
+#### Scenario: Under `program`, an unread account is counted at archive
+
+- **WHEN** under `signoff: program` a change holds `account-A` and `ledger-A`, neither listed as read, and is archived
+  with no in-context system review emit
+- **THEN** the archive emit carries `decision_records_unread: 2`
 
 #### Scenario: Under `change`, a read account leaves the selection
 
@@ -1520,19 +1525,24 @@ Residual method: a later account without `replaces` is refused naming the latest
 ### Requirement: The write gate checks the sign-off record
 
 `orbit emit signoff --change <name>` SHALL compose and write a change's sign-off (`orbit-program-brief`'s `A sign-off is
-recorded against the saved copy, and the hold reads it`), through the same narrative-only payload contract as every
+recorded against the saved copy, and the hold reads it`), and `orbit emit signoff --doc <doc>` a program's
+(`orbit-program-brief`'s `A program's sign-off is recorded against its saved copy, and the hold reads arc-done`), through the same narrative-only payload contract as every
 other command (an engine-owned field or an unknown key is refused naming it; `model` is required). The engine composes
 `command`, `timestamp`, `change` and `sha256` — the SHA-256 of the named copy's bytes, in lower-case hex, read when the
-record is written. The payload fields are `brief`, `answer`, `reason` (required when `answer` is `declined`, optional
+record is written — and, for a program, `change: null`, `doc` and `closing_review`, the filename of the doc's closing
+review when the record is written, or `null` when none is recorded. The payload fields are `brief`, `answer`, `reason` (required when `answer` is `declined`, optional
 otherwise), `defines` (optional) and `detail` (optional).
 
 Like the account, a sign-off is not a run summary: it carries no `kind`, and neither `next_recommended` nor
-`final_assessment` — a payload supplying either, or `sha256`, is refused as engine-owned — and it passes the
+`final_assessment` — a payload supplying either, `sha256` or `closing_review`, is refused as engine-owned — and it passes the
 decision-record spine checks of `Write-gate validation via the shared normalizers` (`command`, `timestamp` and `model`
-present, `change` a string). Its path is `orbit/changes/<name>/.orbit-runs/signoff/signoff-<TS>.json`. The `signoff/`
-child is held to the identity rule the account's `account/` child is held to (`The write gate checks the account`):
-it must physically BE the trail's canonical `signoff` child, checked after creation and again immediately before the
-record is published; the filename token, with its collision bump, is unique within `signoff/`; and it is published
+present, `change` a string, or `null` with `doc` the doc's name for a program). Its path is
+`orbit/changes/<name>/.orbit-runs/signoff/signoff-<TS>.json` for a change and
+`orbit/architecture/.orbit-runs/signoff/<doc>/signoff-<TS>.json` for a program. The `signoff/` child, and for a program
+its `<doc>` folder, are held to the identity rule the account's `account/` child is held to (`The write gate checks the account`):
+each must physically BE the trail's canonical child of that name, checked after creation and again immediately before
+the record is published; the filename token, with its collision bump, is unique within the folder the record is written
+to; and it is published
 without overwriting, its temporary file created exclusively and linked to its final name.
 
 Before ANY write the gate SHALL refuse, writing no file, with a non-zero exit, empty stdout and the field, flag or
@@ -1540,9 +1550,9 @@ setting named:
 
 | check | refused when |
 |---|---|
-| scope | `--doc` is given (a usage error: the program's sign-off is stage program-brief's fourth change, `program-signoff`), or `--change` names no active change; the refusal says that a sign-off is written only for an active change under `orbit/changes/`, naming where the name was found, if anywhere |
-| setting | the sign-off setting (`orbit-program-brief`'s `The sign-off setting holds each change's archive for the user's sign-off`) is not `change`; the refusal names the value read and says that nothing waits on a sign-off |
-| brief | `brief` is absent, not a string, not the filename of a saved copy in the change's `brief/` folder, or not the latest one there; the refusal names the latest copy, or says that none is saved |
+| scope | `--change` names no active change — the refusal says that a sign-off is written only for an active change under `orbit/changes/`, naming where the name was found, if anywhere — or `--doc` names no architecture doc at `orbit/architecture/<doc>.md` |
+| setting | the sign-off setting (`orbit-program-brief`'s `The sign-off setting holds a change's archive or a program's completion for the user's sign-off`) is not `change` for a `--change` sign-off, or not `program` for a `--doc` one; the refusal names the value read and says which sign-off, if any, the value asks for |
+| brief | `brief` is absent, not a string, not the filename of a saved copy in the change's `brief/` folder (for a program, the trail's `brief/<doc>/`), or not the latest one there; the refusal names the latest copy, or says that none is saved |
 | answer | `answer` is absent or neither `signed` nor `declined` |
 | reason | `answer` is `declined` and `reason` is absent, not a string or blank after trimming; or `reason` is present and not a non-blank string |
 | defines | `defines` is present and not an array of objects `{term, definition}`, both non-blank strings, no other key, no term twice |
@@ -1552,7 +1562,7 @@ The gate judges FORM and EXISTENCE only (R-crc-10): whether the user read the co
 not the gate's to judge. No other command changes: the sign-off adds no field to any run summary, and no readout, gate or
 recommendation reads it; the hold `orbit brief --hold` is its one reader.
 
-Named limit — the latest-copy check assumes one writer per change history at a time: it reads `brief/`, then writes, and
+Named limit — the latest-copy check assumes one writer per change history, or per doc's folders, at a time: it reads `brief/`, then writes, and
 a copy saved between the two leaves the record naming the copy before it.
 
 Residual kind: a sign-off naming a copy that a concurrent save made no longer the latest
@@ -1585,6 +1595,21 @@ Residual method: the hold compares the record's `sha256` with the latest copy's,
 
 - **WHEN** a payload supplies `sha256`
 - **THEN** the emit is refused naming `sha256` as engine-owned; no file is written
+
+#### Scenario: A program's sign-off writes with the copy's hash and the closing review
+
+- **WHEN** under `signoff: program` `orbit emit signoff --doc prog` receives `{model, brief: "brief-A.md", answer:
+  "signed"}`, `brief-A.md` is the latest copy in the architecture trail's `brief/prog/`, and `prog`'s closing review is
+  `review-architecture-R.json`
+- **THEN** the record is written to `orbit/architecture/.orbit-runs/signoff/prog/signoff-<TS>.json` carrying the
+  payload's fields, `change: null`, `doc: "prog"`, `closing_review: "review-architecture-R.json"` and `sha256` equal to
+  the SHA-256 of `brief-A.md`'s bytes
+
+#### Scenario: Each sign-off needs its own value
+
+- **WHEN** under `signoff: change` `orbit emit signoff --doc prog` runs, or under `signoff: program` `orbit emit signoff
+  --change foo` runs, each with a well-formed payload
+- **THEN** each emit is refused naming the setting and the value read; no file is written
 
 #### Scenario: An archived change takes no sign-off
 

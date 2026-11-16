@@ -1,0 +1,22 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-15T20:21:09Z",
+  "change": "program-signoff",
+  "model": "claude-opus-5-5",
+  "area": "user-sees-or-does",
+  "decided": "A program is not finished, and its brief is not saved or offered for sign-off, while any active change still belongs to it, even a change filed under a stage the program does not declare or under no stage.",
+  "alternatives": [
+    "look only at the declared stages, so open work filed elsewhere would not stop the program from being called finished"
+  ],
+  "why": "The user should sign a program only when none of its work is still open; the program brief already lists such changes, so a signature given then would cover unfinished work.",
+  "relies_on": [
+    {
+      "kind": "decision",
+      "id": "D-ps-5"
+    },
+    {
+      "kind": "decision",
+      "id": "D-ps-3"
+    }
+  ]
+}

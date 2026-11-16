@@ -1,0 +1,24 @@
+{
+  "command": "account",
+  "timestamp": "2026-11-16T15:37:43Z",
+  "change": "program-signoff",
+  "model": "claude-opus-5-5",
+  "built": "The user can now choose to sign off once per program rather than once per change. With the sign-off setting set to program, no change's archive waits; instead, once every stage of a program is finished and its closing review is recorded, the architect session shows the user the program's saved brief whole and asks them to sign off or decline. The program is done only once they sign, and when the changes of a program share one pull request, its ready step is offered only then. A decline is recorded with the user's reason, and the next architect session asks again. A copy of the program's brief is now saved whenever the program is finished and its brief has changed, under every setting, and it can be saved and its hold read by hand. Under the program setting, each change's account is checked by a reader at review, as under the change setting.",
+  "seams": "Under the program sign-off setting, the architect session asks a new question: sign off on the program's brief, or decline, giving a reason. It is asked again in a later session when a newer copy of the brief differs from the signed one and the program's pull request can still be marked ready, or when a change of the program was archived after the signature. The setting now accepts program beside change; at the default nothing new is asked.",
+  "deviations": "None from the stage's charter. Two things differ from the proposal's plan: the archive's instructions also changed, by one clause naming the program value the hold can now report, so their recorded fingerprints moved too; and one carried scenario, a program pull request opened partway through a program, is declared as one no test can run.",
+  "defines": [
+    {
+      "term": "closing review",
+      "definition": "the architecture review of the program recorded after the last of its changes was archived"
+    },
+    {
+      "term": "finished",
+      "definition": "every stage the program declares is complete, awaiting ratification or ended, and no open change or exploration belongs to the program"
+    },
+    {
+      "term": "hold",
+      "definition": "a wait for the user's sign-off before the work counts as done"
+    }
+  ],
+  "detail": "Engine: resolveSignoffSetting reads program; takesAccount keys the selection and the brief's unread section; saveProgramBrief and computeProgramHold (signoff.ts: programFinished, readProgramDone, the closing review by token against citing archive times); composeSignoff splits --change under change and --doc under program, writing closing_review; assertCanonicalDocDir checks per-doc folders at both levels. Architect body Step 5.4 (PROGRAM_SIGNOFF_STEP, a checked mirror of the orbit-architect table). Pins moved: rc03b emit-composition.ts; parity getArchitectSkillTemplate/orbit-architect (planned) and the archive and bulk-archive pairs (unplanned: SIGNOFF_HOLD_STEP's setting list). Mid-flight adoption declared untestable in orbit/scenario-ledger.yaml."
+}

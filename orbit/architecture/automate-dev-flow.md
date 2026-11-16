@@ -420,6 +420,30 @@ leaves out the sign-off), the chain-prompt tag inventory and the brief goldens. 
 fifteen reader rows across thirteen records; the walk replaced them, and those replacements reach no reader before
 archive (D-dr-2's named limit).
 
+Shipped as, fourth change (2026-11-16; archived as `orbit/changes/archive/2026-11-16-program-signoff/`; the last of the
+stage's four, so every change citing it is archived): the sign-off once per program. The `signoff` key gains `program`
+(D-ps-9): no change's archive waits, the reading step takes each change's account as under `change`, and the program's
+completion waits for the user's signature over the program brief. `orbit brief <doc> --save` saves the program brief to
+the architecture trail's `brief/<doc>/` once the program is FINISHED (every declared stage complete, awaiting
+ratification or ended, and no active change or open exploration citing the doc, whatever stage it names) and again only
+when its text changes (D-ps-3, D-ps-6). `orbit brief <doc> --hold` reads the program hold: done needs the closing
+architecture review recorded after the last citing archive, and a signature stands until a citing change is archived
+after the review it names, so a later copy re-asks only while the program PR can still be marked ready (D-ps-5, D-ps-8).
+`orbit emit signoff --doc` writes the answer to `signoff/<doc>/` with the copy's hash and that closing review, each
+sign-off form refused under the other value. The architect body's Step 5.4 runs the save (without `--json`) and the hold
+on every session and, under `program`, shows the latest copy whole and asks before the arc-done readout, which under
+`program` is that step's row rather than every stage archived; no ratification waits on it. G0 holds with no new
+exception: at the defaults the save writes a copy for a finished program and says nothing, and the hold reads `off`.
+Departures: the archive and bulk-archive bodies' hold step changed by one clause naming the `program` value, outside the
+Touchpoints with the completion registry and the walk's account clauses; a signature written with `orbit emit signoff
+--doc` before the closing review reads `signed` over unchanged text, a named limit the user chose (A) at the system walk;
+and the Shape A scenario `Mid-flight adoption` is declared untestable. Tests that moved (R-adf-9): `rc03b`'s
+`emit-composition.ts` pin, the architect, archive and bulk-archive skill hash pins (function and generated file), the
+unrecognized-value tests (from `program` to `weekly`), the hold-step test's no-other-body check (the architect carries the
+doc forms), the account-walk assertions and the brief goldens' unread-account line. The system review's reading step found
+fourteen reader rows across eleven records; the walk replaced them, and those replacements reach no reader before archive
+(D-dr-2's named limit).
+
 ### Stage tripwires — detecting that a run has gone sideways
 
 Depends-on: decision-layer

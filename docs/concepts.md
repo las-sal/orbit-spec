@@ -235,7 +235,14 @@ without a change, and `premised` before anything starts. A stage is `complete` o
 have ratified it, and you can declare a stage ended without meeting its criteria. `orbit architecture status` shows where a program stands, and `orbit architecture show <doc> <stage>`
 prints one stage.
 
-Carried by: `orbit-architect`, `orbit-architecture-engine`
+Each architect session saves the program's brief (`orbit brief <doc> --save`) once every stage is finished and no
+active change or open exploration cites the doc, and again whenever its text changes. When `orbit/config.yaml` sets
+`signoff: program`, a program is done only once you sign off on that brief: the architect session that finds every
+stage finished and the closing architecture review recorded shows you the latest saved brief whole and asks you to sign
+off or decline, and under `pr: per-architecture` the program pull request's ready flip waits for your signature. Nothing
+waits at any change's archive under `program`.
+
+Carried by: `orbit-architect`, `orbit-architecture-engine`, `orbit-program-brief`, `orbit-pr-lifecycle`
 
 ## Pull requests
 

@@ -1,0 +1,24 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-16T18:15:57Z",
+  "change": "program-signoff",
+  "model": "claude-opus-5-5",
+  "area": "when-things-go-wrong",
+  "decided": "Under one pull request per program, when a signed program has a newer brief, the architect session skips the new question only when the pull request check positively shows nothing is left to mark ready: the pull request is ready; or no program pull request was ever recorded for the doc at all; or none is open; or the recorded one is no longer the program's open pull request (closed, merged, pointed at another branch, or from another repository) and no open replacement exists. When a pull request was recorded without its link and the check fails, when the check cannot reach GitHub or finds several candidate pull requests, or when it reports a draft, the user is asked again.",
+  "alternatives": [
+    "ask again only on a draft or unverified state, which skips the question when the check fails with no recorded link or finds several candidates"
+  ],
+  "why": "A question that holds the ready step should never be skipped because the state could not be read; skipping it is only safe when the state is known.",
+  "relies_on": [
+    {
+      "kind": "decision",
+      "id": "D-ps-8"
+    },
+    {
+      "kind": "requirement",
+      "capability": "orbit-pr-lifecycle",
+      "title": "`orbit pr program` computes the architect readout's PR facts"
+    }
+  ],
+  "replaces": "ledger-2026-11-16T14-25-16Z.json"
+}

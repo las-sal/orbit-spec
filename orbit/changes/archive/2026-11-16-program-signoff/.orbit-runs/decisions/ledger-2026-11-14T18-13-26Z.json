@@ -1,0 +1,27 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-14T18:13:26Z",
+  "change": "program-signoff",
+  "model": "claude-opus-5-5",
+  "area": "things-others-build-on",
+  "decided": "The command that reports whether a program is waiting for the user's sign-off gives, in its machine-readable form, the same keys a change's report gives plus three about the program: whether every stage is finished, which closing review it found, and the doc. Its reason for waiting is one of six words, two of them new for a program: not done yet, and asked again after a newer copy. Saving a program's brief reports whether it saved a copy, found it unchanged, or found the program not finished.",
+  "alternatives": [
+    "give the program its own report shape, sharing no keys with a change's"
+  ],
+  "why": "Anything that already reads a change's report, the architect session among them, reads a program's the same way; the two new reasons are the only states a change cannot be in.",
+  "relies_on": [
+    {
+      "kind": "requirement",
+      "capability": "orbit-program-brief",
+      "title": "A sign-off is recorded against the saved copy, and the hold reads it"
+    },
+    {
+      "kind": "decision",
+      "id": "D-ps-5"
+    },
+    {
+      "kind": "decision",
+      "id": "D-ps-7"
+    }
+  ]
+}

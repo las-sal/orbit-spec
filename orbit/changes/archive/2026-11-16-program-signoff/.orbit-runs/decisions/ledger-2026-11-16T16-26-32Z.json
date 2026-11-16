@@ -1,0 +1,23 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-16T16:26:32Z",
+  "change": "program-signoff",
+  "model": "claude-opus-5-5",
+  "area": "cost",
+  "decided": "When the architect session saves the program's brief, it asks only whether the save worked, not for the brief's whole text, so a session on a large program does not spend its working memory reading the brief each time it opens.",
+  "alternatives": [
+    "change the save so that its machine-readable answer carries only whether a copy was saved and which"
+  ],
+  "why": "The session acts only on whether the save failed, and the brief of a large program is hundreds of thousands of characters; leaving the save's own answer as the specs describe it avoids changing a second spec for a reader that does not need it.",
+  "relies_on": [
+    {
+      "kind": "decision",
+      "id": "D-ps-3"
+    },
+    {
+      "kind": "goal",
+      "doc": "automate-dev-flow",
+      "id": "G0"
+    }
+  ]
+}

@@ -88,11 +88,19 @@ describe('the archive bodies carry the sign-off hold', () => {
     );
   });
 
-  it('no other body carries the hold', () => {
+  it("no other body carries the change's hold; the architect body carries only the program's (program-signoff)", () => {
     for (const s of skills) {
       if (s.dirName === 'orbit-archive-change' || s.dirName === 'orbit-bulk-archive-change') continue;
-      expect(s.template.instructions.includes('--hold'), s.dirName).toBe(false);
-      expect(s.template.instructions.includes('orbit emit signoff'), s.dirName).toBe(false);
+      const b = s.template.instructions;
+      if (s.dirName === 'orbit-architect') {
+        expect(b.includes('--change "<name>" --hold'), s.dirName).toBe(false);
+        expect(b.includes('orbit emit signoff --change'), s.dirName).toBe(false);
+        expect(b).toContain('orbit brief <doc> --hold --json');
+        expect(b).toContain('orbit emit signoff --doc <doc>');
+        continue;
+      }
+      expect(b.includes('--hold'), s.dirName).toBe(false);
+      expect(b.includes('orbit emit signoff'), s.dirName).toBe(false);
     }
   });
 });

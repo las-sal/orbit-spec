@@ -1,6 +1,6 @@
 /**
- * program-brief: the reader takes the account under `signoff: change` (`orbit-decision-records`' `The reader takes
- * the account only when sign-off is per change` and `The reading step's brief is rendered by orbit`;
+ * program-brief: the reader takes the account under `signoff: change`, and program-signoff: under `program` too (`orbit-decision-records`' `The reader takes
+ * the account when the user signs off` and `The reading step's brief is rendered by orbit`;
  * `orbit-emit-composition`'s `The reading's selection is recorded at review and archive`; `orbit-review`'s `The
  * reading step checks decision records in system review`; `orbit-program-brief`'s `A brief tells the user what a
  * change or a program did, from the trail`). The rows with the setting absent are in `account.test.ts`.
@@ -79,8 +79,8 @@ afterEach(() => {
   fs.rmSync(root, { recursive: true, force: true });
 });
 
-describe('orbit-decision-records: The reader takes the account only when sign-off is per change', () => {
-  // @scenario behaviour orbit-decision-records :: The reader takes the account only when sign-off is per change :: Under `change`, the reading runs on an account alone
+describe('orbit-decision-records: The reader takes the account when the user signs off', () => {
+  // @scenario behaviour orbit-decision-records :: The reader takes the account when the user signs off :: Under `change`, the reading runs on an account alone
   // @scenario behaviour orbit-review :: The reading step checks decision records in system review :: An account alone is read under `change`
   it('under change, a change whose only record is its unread account selects it, and an in-context system pass owes it', () => {
     setting('change');
@@ -94,7 +94,7 @@ describe('orbit-decision-records: The reader takes the account only when sign-of
     expect(pass.emit.decision_records_read).toEqual([a]);
   });
 
-  // @scenario behaviour orbit-decision-records :: The reader takes the account only when sign-off is per change :: Only the latest account is selected
+  // @scenario behaviour orbit-decision-records :: The reader takes the account when the user signs off :: Only the latest account is selected
   it('under change, only the latest account of the chain is selected', () => {
     setting('change');
     const a = account();
@@ -102,9 +102,9 @@ describe('orbit-decision-records: The reader takes the account only when sign-of
     expect(selection()).toEqual([b]);
   });
 
-  // @scenario behaviour orbit-decision-records :: The reader takes the account only when sign-off is per change :: An unrecognized value reads the account as at the defaults
+  // @scenario behaviour orbit-decision-records :: The reader takes the account when the user signs off :: An unrecognized value reads the account as at the defaults
   it('an unrecognized value reads the account as at the defaults: nothing to read', async () => {
-    setting('program');
+    setting('weekly');
     account();
     expect(selection()).toEqual([]);
     const r = await runCLI(['decisions', 'brief', 'foo'], { cwd: root });
@@ -113,6 +113,35 @@ describe('orbit-decision-records: The reader takes the account only when sign-of
     // With the setting off, a read list naming the account is outside the selection.
     const a = fs.readdirSync(path.join(CHANGE(), '.orbit-runs/account'))[0];
     expect(() => systemPass([a])).toThrow(/names account-.*which is not in the selection/);
+  });
+
+  // @scenario behaviour orbit-decision-records :: The reader takes the account when the user signs off :: Under `program`, the account is selected as under `change`
+  it('under program, the account is selected as under change: the brief renders it with its plain fields', async () => {
+    setting('program');
+    const a = account();
+    expect(selection()).toEqual([a]);
+    const r = await runCLI(['decisions', 'brief', 'foo'], { cwd: root });
+    expect(r.exitCode).toBe(0);
+    expect(r.stdout).toContain(a);
+    expect(r.stdout).toContain("A weekly export of the user's data, which the user can turn off.");
+    expect(r.stdout).toContain('The first run asks whether to keep the weekly default.');
+    expect(r.stdout).not.toMatch(/Nothing to read/);
+    // The in-context system pass owes it, as under change.
+    expect(() => systemPass(null)).toThrow(/owes a reading of 1 record\(s\) \(account-/);
+    expect(systemPass([a]).emit.decision_records_owed).toEqual([a]);
+    expect(selection()).toEqual([]);
+  });
+
+  // @scenario behaviour orbit-review :: The reading step checks decision records in system review :: No records, no reading
+  it('with the setting neither change nor program, a change whose only record is its account owes no reading', () => {
+    for (const value of [null, 'off', 'weekly']) {
+      setting(value);
+      account();
+      const pass = systemPass(null);
+      expect(pass.emit.passes_run, String(value)).not.toContain('reading');
+      expect(pass.emit.decision_records_owed, String(value)).toEqual([]);
+      fs.rmSync(path.join(CHANGE(), '.orbit-runs'), { recursive: true, force: true });
+    }
   });
 
   it('a replacement after a reading listed the account is selected again, as for a decision record', () => {
@@ -244,6 +273,14 @@ describe('a folder the selection cannot list fails it, never reading as empty', 
 });
 
 describe("orbit-emit-composition: The reading's selection is recorded at review and archive", () => {
+  // @scenario behaviour orbit-emit-composition :: The reading's selection is recorded at review and archive :: Under `program`, an unread account is counted at archive
+  it('under program, an archive with an unread account and an unread ledger entry counts 2', () => {
+    setting('program');
+    account();
+    ledger();
+    expect(archive().emit.decision_records_unread).toBe(2);
+  });
+
   // @scenario behaviour orbit-emit-composition :: The reading's selection is recorded at review and archive :: Under `change`, an unread account is owed and counted
   it('under change, an archive with an unread account and an unread ledger entry counts 2; with the setting absent, 1', () => {
     setting('change');
@@ -309,6 +346,17 @@ describe("orbit-program-brief: the brief's records-no-reader-checked section", (
     const u = unreadSection(renderChangeBrief(b));
     expect(u).not.toContain(a);
     expect(u).toContain('No decision record of this change is waiting for a reader.');
+  });
+
+  // @scenario behaviour orbit-program-brief :: A brief tells the user what a change or a program did, from the trail :: Under `program`, an unread account is listed with the records
+  it('under program, an unread account is listed among the selection, and not named apart', () => {
+    setting('program');
+    const a = account();
+    const b = buildChangeBrief(root, 'foo');
+    expect(b.unread).toEqual({ records: [a], account: null });
+    const u = unreadSection(renderChangeBrief(b));
+    expect(u).toContain(`- ${a}`);
+    expect(u).not.toContain('was checked by no reader');
   });
 
   it('with the setting absent, the account is named apart and not among the records', () => {

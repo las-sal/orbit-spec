@@ -5,7 +5,7 @@ import { liveDecisionIds, decisionEntryText } from './parsers/explore-rules.js';
 import { parse as parseYaml } from 'yaml';
 import { createFenceTracker } from './markdown-fence.js';
 import { isSingleName } from './containment.js';
-import { resolveSignoffSetting } from './project-config.js';
+import { resolveSignoffSetting, takesAccount } from './project-config.js';
 // A call-time cycle (account.ts reads this module's shape checks): nothing here is read at module load.
 import { ACCOUNT_DIR, ACCOUNT_FILENAME, latestAccount, readAccountFolder } from './account.js';
 
@@ -705,18 +705,18 @@ function inContextSystemReviews(runsDir: string): Record<string, unknown>[] {
  * check, the archive emit's `decision_records_unread` and `orbit brief`'s unread section call: the latest
  * record in each replacement chain of the change's `decisions/` folder that no in-context system review
  * emit of the change's history lists in `decision_records_read`, and — only when the sign-off setting of
- * the project at `projectRoot` is `change` (`The reader takes the account only when sign-off is per
- * change`) — the latest record of the change's `account/` chain when no such emit lists it. No timestamp
+ * the project at `projectRoot` is `change` or `program` (`takesAccount`; `The reader takes the account when the
+ * user signs off`) — the latest record of the change's `account/` chain when no such emit lists it. No timestamp
  * is compared. A record that cannot be read is selected (its chain cannot be known), so the brief fails
- * naming it rather than hiding it. Under `signoff: change` — where the user signs over what was read — a folder
+ * naming it rather than hiding it. Under `signoff: change` or `program` — where the user signs over what was read — a folder
  * the selection reads that exists and cannot be listed throws a `DecisionBriefError` naming it, so a failure is never
  * read as an empty selection (an absent folder is empty); under every other value the selection reads as it did before
  * the setting existed, an unlistable folder reading as empty (G0).
  */
 export function selectUnreadRecords(changeDir: string, projectRoot: string): string[] {
   const runsDir = path.join(changeDir, '.orbit-runs');
-  const perChange = resolveSignoffSetting(projectRoot).value === 'change';
-  if (perChange) assertListable(path.join(runsDir, 'decisions'));
+  const signsOff = takesAccount(resolveSignoffSetting(projectRoot));
+  if (signsOff) assertListable(path.join(runsDir, 'decisions'));
   const folder = readDecisionFolder(path.join(runsDir, 'decisions'));
   const read = new Set<string>();
   for (const r of inContextSystemReviews(runsDir)) {
@@ -725,7 +725,7 @@ export function selectUnreadRecords(changeDir: string, projectRoot: string): str
     }
   }
   const selected = [...folder.records.keys()].filter(f => !folder.replacedBy.has(f) && !read.has(f));
-  if (perChange) {
+  if (signsOff) {
     assertListable(path.join(runsDir, ACCOUNT_DIR));
     const account = latestAccount(readAccountFolder(path.join(runsDir, ACCOUNT_DIR)));
     if (account !== null && !read.has(account)) selected.push(account);
@@ -744,7 +744,7 @@ function assertListable(dir: string): void {
   }
 }
 
-/** A filename the selection can hold: a decision record's, or (under `signoff: change`) an account's. */
+/** A filename the selection can hold: a decision record's, or (under `signoff: change` or `program`) an account's. */
 export function isSelectableFilename(f: string): boolean {
   return RECORD_FILENAME.test(f) || ACCOUNT_FILENAME.test(f);
 }

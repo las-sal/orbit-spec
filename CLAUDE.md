@@ -129,6 +129,9 @@ body.
   silently into the archive's `warnings`). The archive's sign-off hold (program-brief) likewise: run
   `node bin/orbit.js brief --change "<name>" --hold --json` and `node bin/orbit.js emit signoff …` until a release carrying
   `orbit brief --hold` and `orbit emit signoff` is installed (this repo sets no `signoff` key, so the hold reads `off`).
+  The architect session's program save and hold (program-signoff) likewise: run `node bin/orbit.js brief <doc> --save`,
+  `node bin/orbit.js brief <doc> --hold --json` and `node bin/orbit.js emit signoff --doc <doc> …` until a release carrying
+  the doc forms is installed (the hold reads `off` here too).
 - **Outward actions stay the human's** (D6, `orbit-conventions`) — merging any PR, publishing
   releases, and filing issues on external trackers are invoked outside orbit workflows, in
   non-orbit sessions on this repo as much as in orbit ones. Recommend them; never perform them.

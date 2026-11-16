@@ -1,0 +1,25 @@
+schema: spec-driven
+created: 2026-11-14
+schema_version: 5
+base_fingerprints:
+  orbit-archive-modifications:
+    The archive holds for a per-change sign-off: sha256:89229d3aa28cacdcafff7fbf3e23afc051981a888583c0136de947affd9bf1f5
+  orbit-decision-records:
+    The reader takes the account only when sign-off is per change: sha256:bc3a3ac58fadaccfcaa770a0e186a09aecf9aff23a07dbfe023ca079983ad9ce
+    The reading step's brief is rendered by orbit: sha256:bab0030ff918925c6be73106aa46e21c4ecb59fee31badbd17ec886fc8c53506
+    Each change carries one account, written when apply is complete: sha256:682da311d6a487f92bf0787adcd13bd3a3fd4525dee9314a144a32c5a5351485
+  orbit-emit-composition:
+    The write gate checks the sign-off record: sha256:50dec70ae940ec5217af71f0bfdf0ebfee78dd93e404b7e110b6ff42630b7ace
+    The reading's selection is recorded at review and archive: sha256:d03fa199f98677b57e22866c6dd9c11ff8f5c7764f612fe9d81d2876236d387d
+  orbit-pr-lifecycle:
+    Program PR (Shape A) semantics: sha256:be7f4c11e230a50aa195cfbcb26c286846cf4726f7a5df79e9ad0c624cfe1e0e
+  orbit-program-brief:
+    The sign-off setting holds each change's archive for the user's sign-off: sha256:0101c252a00b52727b75a1af7a3c3186acde266560bad63df8d857641a78e73d
+    A brief tells the user what a change or a program did, from the trail: sha256:e03f7664d3bc20b0d39e5eb26a3b6e7ebfbb98dd340039cb5bcdc593372c3bd1
+    A change's brief is saved, never overwritten: sha256:c781866d9f6597f1eb9b52b201e278d673dc98f328d9fcd3149b5beaec37113a
+    A sign-off is recorded against the saved copy, and the hold reads it: sha256:6cde2dda544a9801d805ad7ac589ab227defa7113ee23ff5e16d3f55bc4d6236
+  orbit-review:
+    The reading step checks decision records in system review: sha256:b5db4a9de2870cac45e946faf347d73c8fde6f79b8eabfafac42c0ad3cc7b8d6
+architecture:
+  doc: automate-dev-flow
+  stage: program-brief

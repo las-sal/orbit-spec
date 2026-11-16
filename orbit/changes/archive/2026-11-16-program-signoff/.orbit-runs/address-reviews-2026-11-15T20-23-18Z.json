@@ -1,0 +1,439 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-15T20:23:18Z",
+  "change": "program-signoff",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/program-signoff/.orbit-runs/review-proposal-2026-11-14T19-16-37Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-14T19-16-37Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 7,
+    "suggestion": 2
+  },
+  "pushback_verification": "All nine verified against current state: the unsigned row and the 'new closing review' scenario asked afresh in every mode where D-ps-7 asked nothing; the pr-lifecycle paragraph read FINISHED where arc-done says archived; the re-sign row's otherwise covered several (src/core/pr/program.ts returns pr null with candidates); task 4.1 left Step 5.5's unconditional check; no task tagged the five carried pr-lifecycle scenarios; docs/cli.md:379, 408, 411 and docs/customization.md:62 say change only; the baseline Purpose names off and change only; FINISHED read declared stages only; the DECISION prompt cited no owner. None stale. The re-sign finding and the Purpose finding converge with the external pass's, and are walked here.",
+  "resolution_summary": {
+    "resolved": 9,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The hold's 'signed before the current closing review' clause asks again where ratified D-ps-7 says ask nothing",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/program-signoff/specs/orbit-program-brief/spec.md",
+      "line": 99,
+      "outcome": "resolved",
+      "remedy": "repair",
+      "classification": "decision_required",
+      "ratified_via": "chat",
+      "resolution": "B — ask afresh only when the program was reopened (a citing change archived after the closing review the signature names); a closing review run again is a later copy under the re-sign row; recorded as D-ps-8 superseding D-ps-7",
+      "action": "the hold's re-sign row reads a signature that still stands (the review its closing_review names is later than every citing archive) and unsigned takes one the program was reopened after or naming no closing review; the closing-review paragraph defines STILL STANDS and REOPENED; the 'new closing review' scenario becomes 'A reopened program asks afresh', with 'A closing review run again leaves the signature standing' beside it; explore.md gains D-ps-8 (D-ps-7 superseded, its Mechanism entry renamed with the reopen rows); design Decision 4, task 3.2, the proposal and the Mechanism → artifacts table follow",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/program-signoff/explore.md",
+          "orbit/changes/program-signoff/design.md",
+          "orbit/changes/program-signoff/proposal.md",
+          "orbit/changes/program-signoff/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "names the current closing review as its",
+          "A new closing review asks afresh",
+          "given before the current closing review",
+          "D-ps-5 to D-ps-7",
+          "D-ps-7's re-ask",
+          "as D-ps-7 records"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/program-signoff/specs/orbit-program-brief/spec.md",
+            "text": "A reopened program asks afresh"
+          },
+          {
+            "path": "orbit/changes/program-signoff/specs/orbit-program-brief/spec.md",
+            "text": "A closing review run again leaves the signature standing"
+          },
+          {
+            "path": "orbit/changes/program-signoff/specs/orbit-program-brief/spec.md",
+            "text": "program was REOPENED after the signature"
+          },
+          {
+            "path": "orbit/changes/program-signoff/explore.md",
+            "text": "D-ps-8: a copy saved after the sign-off asks again only while the program PR is a draft, or once the"
+          },
+          {
+            "path": "orbit/changes/program-signoff/design.md",
+            "text": "A signature then STILL STANDS exactly when the review its"
+          },
+          {
+            "path": "orbit/changes/program-signoff/tasks.md",
+            "text": "whether the latest signature still stands"
+          }
+        ],
+        "searched": [
+          "current closing review",
+          "D-ps-7",
+          "closing_review",
+          "asks afresh",
+          "re-sign"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/program-signoff/explore.md",
+            "why": "the exploration's historical record: superseded D-ps-7 keeps its wording"
+          }
+        ]
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "arc-done's stage condition goes from 'every declared stage archived' to FINISHED, which also counts stages with no archive",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/program-signoff/specs/orbit-pr-lifecycle/spec.md",
+      "line": 59,
+      "outcome": "resolved",
+      "remedy": "repair",
+      "classification": "decision_required",
+      "ratified_via": "chat",
+      "resolution": "B — keep the default reading of arc-done untouched; under program the first condition is FINISHED, stated plainly, and the difference for a stage ended without an archive is a named limit for the next architect session",
+      "action": "the orbit-pr-lifecycle paragraph says that under program the hold reads the first condition as FINISHED (an ended stage counts, no active citing change), that every other value reads it as worded, and names the difference as a limit left to the program's next architect session; design Decision 8 says so",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/program-signoff/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "The hold reads the two conditions above from the trail: every declared stage"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/program-signoff/specs/orbit-pr-lifecycle/spec.md",
+            "text": "Named limit — the two readings differ on a stage the user ended without archiving a change"
+          },
+          {
+            "path": "orbit/changes/program-signoff/design.md",
+            "text": "condition is read as FINISHED, which counts a stage the user ended without archiving a change"
+          }
+        ],
+        "searched": [
+          "every declared stage archived",
+          "every stage archived",
+          "FINISHED",
+          "arc-done"
+        ],
+        "scope": [
+          "src/core/templates/workflows/architect.ts"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "The re-sign row's 'otherwise' asks nothing when `orbit pr program` reports several candidate PRs, where the READY flip may still be to come",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/program-signoff/specs/orbit-architect/spec.md",
+      "line": 32,
+      "outcome": "resolved",
+      "remedy": "repair",
+      "classification": "trivial_fix",
+      "action": "the re-sign held:true row asks nothing only when orbit pr program positively settles that no READY flip remains (pr.state ready; pr null with outcome none, not-found or a positive invalidation; action off) and acts as on unsigned on every other result (draft, unverified, unobserved, gh-absent, several, or the call failing); scenarios for gh-absent, several and none join the draft and ready ones; D-ps-8's Mechanism entry enumerates the outcomes from src/core/pr/program.ts; design Decision 5 and task 4.1 follow",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/program-signoff/explore.md",
+          "orbit/changes/program-signoff/design.md",
+          "orbit/changes/program-signoff/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "otherwise — the program PR already ready, or none found — it asks nothing",
+          "the PR ready, merged or closed |",
+          "no program PR found |"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/program-signoff/specs/orbit-architect/spec.md",
+            "text": "positively settles that no READY flip remains"
+          },
+          {
+            "path": "orbit/changes/program-signoff/specs/orbit-architect/spec.md",
+            "text": "A later copy with the program PR's state unread asks again"
+          },
+          {
+            "path": "orbit/changes/program-signoff/specs/orbit-architect/spec.md",
+            "text": "A later copy with several candidate program PRs asks again"
+          },
+          {
+            "path": "orbit/changes/program-signoff/specs/orbit-architect/spec.md",
+            "text": "A later copy with no open program PR asks nothing"
+          },
+          {
+            "path": "orbit/changes/program-signoff/design.md",
+            "text": "positively settles that no flip remains"
+          },
+          {
+            "path": "orbit/changes/program-signoff/explore.md",
+            "text": "several candidate PRs (`several`)"
+          }
+        ],
+        "searched": [
+          "unverified",
+          "several",
+          "gh-absent",
+          "unobserved",
+          "none found"
+        ],
+        "scope": [
+          "src/core/pr/program.ts",
+          "src/core/pr/record.ts"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "Task 4.1 adds Step 5.4 but leaves Step 5.5's 'unconditional, never suppressed' arc-done check untouched",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/program-signoff/tasks.md",
+      "line": 42,
+      "outcome": "resolved",
+      "remedy": "repair",
+      "classification": "trivial_fix",
+      "action": "task 4.1 makes Step 5.5's 'unconditional' arc-done readout show under program only when Step 5.4's row shows it, unchanged under every other value, with the template test asserting it; design Decision 7 says so",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/program-signoff/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/program-signoff/tasks.md",
+            "text": "only when Step 5.4's row shows it and unchanged under every"
+          },
+          {
+            "path": "orbit/changes/program-signoff/design.md",
+            "text": "arc-done check shows its readout under"
+          }
+        ],
+        "searched": [
+          "unconditional",
+          "Step 5.5",
+          "never suppressed"
+        ],
+        "scope": [
+          "src/core/templates/workflows/architect.ts"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "Task 6.2 needs no undeclared delta scenario, but no task declares the five carried orbit-pr-lifecycle scenarios",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/program-signoff/tasks.md",
+      "line": 65,
+      "outcome": "resolved",
+      "remedy": "repair",
+      "classification": "trivial_fix",
+      "action": "task 4.1's tag-or-ledger step names all six orbit-pr-lifecycle scenarios of Program PR (Shape A) semantics, the five carried and the one added",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "one describe what the AI body does"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/program-signoff/tasks.md",
+            "text": "(the five it carries and the one it adds)"
+          }
+        ],
+        "searched": [
+          "orbit-pr-lifecycle",
+          "scenario-ledger"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "Task 5.2 leaves docs/cli.md's three 'with signoff: change' reading-step sentences stale",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/program-signoff/tasks.md",
+      "line": 54,
+      "outcome": "resolved",
+      "remedy": "repair",
+      "classification": "trivial_fix",
+      "action": "task 5.2 names docs/cli.md's three 'with signoff: change' reading-step sentences (lines 379, 408, 411) and docs/customization.md:62's 'With change, the system review's reading step also reads' sentence, each to say change or program",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/program-signoff/tasks.md",
+            "text": "reading-step sentences (lines 379, 408 and 411)"
+          },
+          {
+            "path": "orbit/changes/program-signoff/tasks.md",
+            "text": "(line 62, measured at the proposal's walk)"
+          }
+        ],
+        "searched": [
+          "signoff: change",
+          "With `change`"
+        ],
+        "scope": [
+          "docs/cli.md",
+          "docs/customization.md"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "orbit-program-brief's Purpose goes stale and no task edits it in place",
+      "marker_source": "internal-review",
+      "file": "orbit/specs/orbit-program-brief/spec.md",
+      "line": 4,
+      "outcome": "resolved",
+      "remedy": "repair",
+      "classification": "trivial_fix",
+      "action": "tasks.md gains AT-ARCHIVE NOTE 6.3: the archive edits orbit-program-brief's Purpose in place to name program, the program's saved briefs and the program hold (a note, not a checkbox, so the apply gate counts only executable tasks)",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/program-signoff/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/program-signoff/tasks.md",
+            "text": "AT-ARCHIVE NOTE 6.3"
+          }
+        ],
+        "searched": [
+          "Purpose"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "FINISHED checks only declared stages, so an active change citing the doc under an undeclared stage, or no stage, does not stop the program being done",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/program-signoff/specs/orbit-program-brief/spec.md",
+      "line": 8,
+      "outcome": "resolved",
+      "remedy": "repair",
+      "classification": "trivial_fix",
+      "action": "FINISHED also requires that no active change cites the doc, whatever stage it names or none, with a scenario; the closing-review paragraph names the vacuous case (a program whose stages all ended with nothing archived counts any review of the doc) as a limit; design Decision 2, task 2.1 and the proposal follow",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/program-signoff/design.md",
+          "orbit/changes/program-signoff/proposal.md",
+          "orbit/changes/program-signoff/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "premised or inconsistent. A doc"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/program-signoff/specs/orbit-program-brief/spec.md",
+            "text": "An active change under an undeclared stage keeps the program unfinished"
+          },
+          {
+            "path": "orbit/changes/program-signoff/specs/orbit-program-brief/spec.md",
+            "text": "counts as its closing review, one written before the stages ended included"
+          },
+          {
+            "path": "orbit/changes/program-signoff/design.md",
+            "text": "and no active change citing the doc,"
+          },
+          {
+            "path": "orbit/changes/program-signoff/proposal.md",
+            "text": "is finished and no active change cites the doc"
+          },
+          {
+            "path": "orbit/changes/program-signoff/tasks.md",
+            "text": "the active changes citing the doc"
+          }
+        ],
+        "searched": [
+          "FINISHED",
+          "finished",
+          "undeclared stage"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "'The question is a DECISION prompt' names a prompt kind without pointing at its owner",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/program-signoff/specs/orbit-architect/spec.md",
+      "line": 36,
+      "outcome": "resolved",
+      "remedy": "repair",
+      "classification": "trivial_fix",
+      "action": "the sentence cites orbit-conventions' A chain treats each prompt by its kind and says the architect body is not a command a chain arrives at, so that requirement's table and tag test do not reach it",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "The question is a DECISION prompt: the body asks it"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/program-signoff/specs/orbit-architect/spec.md",
+            "text": "chain treats each prompt by its kind"
+          }
+        ],
+        "searched": [
+          "DECISION prompt"
+        ],
+        "scope": [
+          "orbit/specs/orbit-conventions/spec.md"
+        ],
+        "kept": []
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Walked the fresh half of the blind pair: nine findings resolved as repairs, two by the user's decisions. A signed program is asked afresh only once it is reopened by a newly archived change (D-ps-8 supersedes D-ps-7); arc-done's default reading stays as worded, the program setting's FINISHED reading stated with the difference named as a limit; the sign-again row asks unless the PR check positively settles no flip remains; the tasks, docs lines and at-archive Purpose note are filled in; FINISHED needs no active citing change.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews program-signoff",
+  "ripple_misses": 0
+}

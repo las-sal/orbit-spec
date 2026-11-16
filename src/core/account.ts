@@ -12,8 +12,8 @@ import { checkDefines, checkDetail, latestInChain, type DecisionFolder } from '.
  *
  * The account is NOT a decision record: it records no call and no stop, and it is kept in `.orbit-runs/account/`,
  * outside `decisions/`, so the decision-record chains never include it. The reading's selection
- * (`selectUnreadRecords`) takes the latest account only under `signoff: change` (`orbit-decision-records`' `The
- * reader takes the account only when sign-off is per change`).
+ * (`selectUnreadRecords`) takes the latest account only when the user signs off, under `signoff: change` or
+ * `program` (`orbit-decision-records`' `The reader takes the account when the user signs off`).
  */
 
 export class AccountError extends Error {}

@@ -493,7 +493,7 @@ export const COMMAND_REGISTRY: CommandDefinition[] = [
   },
   {
     name: 'emit',
-    description: 'Compose and write a run-summary emit, a decision record, a change\'s account or its sign-off from a narrative payload',
+    description: 'Compose and write a run-summary emit, a decision record, a change\'s account, or a change\'s or a program\'s sign-off from a narrative payload',
     acceptsPositional: true,
     flags: [
       {
@@ -503,7 +503,7 @@ export const COMMAND_REGISTRY: CommandDefinition[] = [
       },
       {
         name: 'doc',
-        description: 'Target architecture doc (architecture-scoped commands)',
+        description: 'Target architecture doc (architecture-scoped commands, and a program\'s sign-off)',
         takesValue: true,
       },
       {
@@ -591,7 +591,7 @@ export const COMMAND_REGISTRY: CommandDefinition[] = [
   },
   {
     name: 'brief',
-    description: "Render the brief of a program (a doc) or of a change (--change), read-only; --save keeps a change's",
+    description: "Render the brief of a program (a doc) or of a change (--change), read-only; --save keeps it",
     acceptsPositional: true,
     flags: [
       {
@@ -601,11 +601,11 @@ export const COMMAND_REGISTRY: CommandDefinition[] = [
       },
       {
         name: 'save',
-        description: "Save the active change's brief into its history and print the file and its SHA-256",
+        description: "Save the active change's brief into its history, or a finished program's into the architecture trail, and print the file and its SHA-256",
       },
       {
         name: 'hold',
-        description: "Report whether the active change's archive waits on the user's sign-off (read-only)",
+        description: "Report whether the active change's archive, or the program's completion, waits on the user's sign-off (read-only)",
       },
       COMMON_FLAGS.json,
     ],

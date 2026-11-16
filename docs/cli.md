@@ -376,13 +376,16 @@ change built, the new places you are asked something, and where the work left it
 `.orbit-runs/account/account-<TS>.json` of an active change; it takes `--change` only and carries no next step. A
 change carries one account: a second must name the latest in `replaces`, and may change every field. The apply skill
 writes it when apply is complete, and a review walk replaces it when a fix changes what it says. Writing it changes
-nothing you see or are asked; with `signoff: change` in `orbit/config.yaml`, the system review's reading step reads it.
+nothing you see or are asked; with `signoff: change` or `signoff: program` in `orbit/config.yaml`, the system review's reading step reads it.
 
-`signoff` is neither a run summary nor a decision record. It writes your answer at the archive's sign-off, under
-`signoff: change` — `signed`, or `declined` with your reason — to `.orbit-runs/signoff/signoff-<TS>.json` of an active
-change, naming the saved copy of the brief you read (`brief`, which must be the latest) beside the SHA-256 of its
-bytes, which orbit computes. It takes `--change` only and carries no next step; it is refused when the setting is not
-`change`. Sign-offs are kept in time order, and the latest is the change's current one.
+`signoff` is neither a run summary nor a decision record. With `--change`, it writes your answer at the archive's
+sign-off, under `signoff: change` — `signed`, or `declined` with your reason — to `.orbit-runs/signoff/signoff-<TS>.json`
+of an active change, naming the saved copy of the brief you read (`brief`, which must be the latest) beside the SHA-256
+of its bytes, which orbit computes. With `--doc`, it writes your answer at the architect session's program sign-off,
+under `signoff: program`, to `orbit/architecture/.orbit-runs/signoff/<doc>/signoff-<TS>.json`, naming the latest saved
+copy of the program's brief, with the SHA-256 and the program's closing architecture review (`closing_review`) beside
+it, both computed by orbit. It carries no next step; a `--change` sign-off is refused when the setting is not `change`,
+and a `--doc` one when it is not `program`. Sign-offs are kept in time order, and the latest is the current one.
 
 | Option | Description |
 |---|---|
@@ -405,10 +408,10 @@ Decision records, read back.
 Print the brief that a system review's reading step gives its reader: the change's architecture doc, each decision
 record no reading has yet read (the latest version of each, by filename), what each record points at (the text of a
 cited requirement, resolution or explore decision, its area, its stop's condition and question, when and in what work
-it was written), and the reader's task last. With `signoff: change` in `orbit/config.yaml`, the change's latest account
+it was written), and the reader's task last. With `signoff: change` or `signoff: program` in `orbit/config.yaml`, the change's latest account
 no reading has listed is among the records, rendered with what it built, its seams and its deviations. It writes
 nothing. When every record has been read it says there is
-nothing to read and exits zero; when a record or a source it renders cannot be read — or, with `signoff: change`, a
+nothing to read and exits zero; when a record or a source it renders cannot be read — or, with `signoff: change` or `program`, a
 folder of records exists and cannot be listed — it exits non-zero naming it and prints nothing.
 
 Usage: `orbit decisions brief <change-name>`.
@@ -445,17 +448,19 @@ archive). Naming both, or neither, is a usage error.
 | Option | Description |
 |---|---|
 | `--change <name>` | Print the brief of this change instead of a program's |
-| `--save` | Save the active change's brief as `.orbit-runs/brief/brief-<TS>.md` in its history, never overwriting one, and print the file's path, then `sha256 <hex>`, the SHA-256 of its bytes. Takes `--change`; an archived change is refused |
-| `--hold` | Report whether the active change's archive waits on your sign-off, rendering no brief and writing nothing: the `signoff` setting (and its warning, for a value orbit does not read), the latest saved copy with its SHA-256, the latest sign-off with its answer, and `why` — `off`, `no-copy`, `signed` (the latest sign-off signs text identical to the latest copy) or `unsigned` — with `held`. With the setting off it reads no history. Takes `--change`; with a doc, with `--save`, or on a change that is not active it is a usage error |
-| `--json` | Output the same content as JSON, with the brief's text under `markdown` (and `saved: {path, sha256}` with `--save`; with `--hold`, one object: `change`, `setting`, `warning`, `copy`, `signoff`, `why`, `held`) |
+| `--save` | With `--change`: save the active change's brief as `.orbit-runs/brief/brief-<TS>.md` in its history, never overwriting one, and print the file's path, then `sha256 <hex>`, the SHA-256 of its bytes; an archived change is refused. With a doc: save the program's brief as `orbit/architecture/.orbit-runs/brief/<doc>/brief-<TS>.md` once the program is finished (every stage the doc declares done, and no active change or open exploration citing the doc), and only when its text differs from the latest saved copy; otherwise it writes nothing and prints one line saying the program is not finished, or naming the latest copy as unchanged |
+| `--hold` | With `--change`: report whether the active change's archive waits on your sign-off, rendering no brief and writing nothing: the `signoff` setting (and its warning, for a value orbit does not read), the latest saved copy with its SHA-256, the latest sign-off with its answer, and `why` — `off`, `no-copy`, `signed` (the latest sign-off signs text identical to the latest copy) or `unsigned` — with `held`. With a doc: report whether the program waits on your sign-off, under `signoff: program` — `why` is `off`, `not-done` (not finished, or no closing architecture review recorded after its last archive), `no-copy`, `signed`, `re-sign` (a later copy over a signature that still stands; held only under `pr: per-architecture`) or `unsigned`. With the setting off either reads nothing more. With `--save`, or on a change that is not active, it is a usage error |
+| `--json` | Output the same content as JSON, with the brief's text under `markdown` (and, with `--save`, `saved: {path, sha256}`, a doc's save adding `save`: `saved`, `unchanged` or `not-finished`; with `--hold`, one object: `change`, `setting`, `warning`, `copy`, `signoff`, `why`, `held` for a change, and `doc`, `setting`, `warning`, `finished`, `closing_review`, `copy`, `signoff`, `why`, `held` for a doc) |
 
 The saved file holds exactly the bytes `orbit brief --change <name>` prints, so piping that output to `sha256sum` gives
-the printed hash. The archive saves each change's brief this way before it syncs the change's specs.
+the printed hash. The archive saves each change's brief this way before it syncs the change's specs, and the architect
+session saves a program's brief, and reads its hold, on every invocation.
 
 ```bash
 orbit brief --change add-dark-mode
 orbit brief --change add-dark-mode --hold
 orbit brief automate-dev-flow
+orbit brief automate-dev-flow --hold
 ```
 
 ### `orbit fingerprint`

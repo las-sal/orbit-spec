@@ -56,6 +56,7 @@ describe('program — the record rule', () => {
   });
 
   // @scenario behaviour orbit-pr-lifecycle :: `orbit pr program` computes the architect readout's PR facts :: A newer URL-less record does not mask an older URL
+  // @scenario behaviour orbit-pr-lifecycle :: Program PR (Shape A) semantics :: Arc-done surfaces the human acts, orbit flips nothing
   it('a newer URL-less record does not mask an older URL: the older one is validated, and is valid', () => {
     const repo = programRepo({ prs: { [URL3]: pr(URL3) } }, [
       ['archive/2026-10-01-stage-one', '2026-10-01T10-00-00Z', URL3],
@@ -92,6 +93,7 @@ describe('program — the record rule', () => {
 describe('program — fall-through on a positive invalidation (never suppressed)', () => {
   const closed = { [URL3]: pr(URL3, { state: 'CLOSED' as const }) };
 
+  // @scenario behaviour orbit-pr-lifecycle :: Program PR (Shape A) semantics :: A closed recorded PR falls through to the query, never suppressing the readout
   it('a closed record falls through; one open replacement is discovered', () => {
     const repo = programRepo({ prs: closed, prList: [pr(URL4)] }, [['stage-one', '2026-10-01T10-00-00Z', URL3]]);
     const { record } = program(repo);
@@ -99,6 +101,7 @@ describe('program — fall-through on a positive invalidation (never suppressed)
     expect(record.observations).toMatchObject({ invalidated: 'closed', invalidated_detail: { observed: 'CLOSED' }, outcome: 'discovered', pr: { url: URL4 } });
   });
 
+  // @scenario behaviour orbit-pr-lifecycle :: Program PR (Shape A) semantics :: A closed recorded PR falls through to the query, never suppressing the readout
   it('nothing open: still proceeds, the outcome is the recorded PR\'s reason, and no PR is handed over', () => {
     const repo = programRepo({ prs: closed, prList: [] }, [['stage-one', '2026-10-01T10-00-00Z', URL3]]);
     const { record } = program(repo);

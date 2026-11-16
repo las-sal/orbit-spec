@@ -1,0 +1,187 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-16T14:25:40Z",
+  "change": "program-signoff",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/program-signoff/.orbit-runs/review-proposal-2026-11-16T14-21-41Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-16T14-21-41Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 0
+  },
+  "pushback_verification": "Both verified against current state. The architect row's parenthetical named only merged and closed, while POSITIVE_INVALIDATIONS in src/core/pr/record.ts has five members and runProgram in src/core/pr/program.ts reports the found one as outcome when no survivor remains; explore.md:135 named the same two. FINISHED's lead said no active change, its gloss said no work still open, and scanCitations in src/core/architecture/state.ts reads orbit/explore/ too, with isLiveExplore excluding concluded explorations. Neither stale.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The re-sign row's 'positive invalidation' is glossed as merged or closed, leaving three of the five invalidations unassigned",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/program-signoff/specs/orbit-architect/spec.md",
+      "line": 32,
+      "outcome": "resolved",
+      "remedy": "repair",
+      "classification": "trivial_fix",
+      "action": "the re-sign held:true row names the five positive invalidations (closed, merged, retargeted, head-mismatch, repository-mismatch) with no open replacement found, beside none and not-found, as asking nothing; D-ps-8's 'no open program PR' Mechanism row names the same five; the when-things-go-wrong ledger entry is replaced to say so",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/program-signoff/explore.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "a positive invalidation (the recorded PR merged or closed with no open replacement)",
+          "a recorded PR merged or closed with no open replacement"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/program-signoff/specs/orbit-architect/spec.md",
+            "text": "one of the five positive invalidations, `closed`, `merged`, `retargeted`, `head-mismatch` or `repository-mismatch`"
+          },
+          {
+            "path": "orbit/changes/program-signoff/explore.md",
+            "text": "a positive invalidation of the recorded PR, `closed`, `merged`, `retargeted`, `head-mismatch` or `repository-mismatch`, with no open replacement"
+          },
+          {
+            "path": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-16T14-25-16Z.json",
+            "text": "pointed at another branch, or from another repository"
+          }
+        ],
+        "searched": [
+          "positive invalidation",
+          "merged or closed",
+          "retargeted",
+          "POSITIVE_INVALIDATIONS"
+        ],
+        "scope": [
+          "src/core/pr/record.ts",
+          "src/core/pr/program.ts"
+        ],
+        "kept": [
+          {
+            "path": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-15T20-21-08Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "FINISHED's lead says 'no active change cites the doc' and its gloss says 'no work citing the doc is still open', which splits on an exploration",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/program-signoff/specs/orbit-program-brief/spec.md",
+      "line": 10,
+      "outcome": "resolved",
+      "remedy": "repair",
+      "classification": "decision_required",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "source": "structured",
+        "options": [
+          {
+            "label": "A",
+            "body": "Active changes only: replace the gloss's 'no work citing the doc is still open under a stage the doc does not declare' with 'no active change cites it under a stage the doc does not declare; an exploration citing such a stage does not count'. That is one sentence in orbit-program-brief and matches design, tasks, proposal and orbit-pr-lifecycle as they stand."
+          },
+          {
+            "label": "B",
+            "body": "Every live citing artifact: FINISHED also fails while an exploration cites the doc under an undeclared stage, the same way a declared stage renders `exploring`. Say 'no active change or live exploration cites the doc' in the requirement, design Decision 2, task 2.1, the proposal and orbit-pr-lifecycle's paragraph, and add a scenario for the exploration."
+          }
+        ],
+        "selected": "B"
+      },
+      "resolution": "B — FINISHED counts every live citer: no active change and no exploration that is not concluded cites the doc, whatever stage it names or none",
+      "action": "FINISHED says no LIVE work cites the doc, live meaning an active change or an exploration whose explore.md is not concluded, as the stage states count it; scenarios for a live exploration (not finished) and a concluded one (saved) under an undeclared stage; D-ps-3's Mechanism gains the live-work row; design Decision 2, task 2.1, the proposal and orbit-pr-lifecycle's paragraph say live work; the long lines the earlier walk left are rewrapped; the user-sees-or-does ledger entry is replaced",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/program-signoff/explore.md",
+          "orbit/changes/program-signoff/design.md",
+          "orbit/changes/program-signoff/tasks.md",
+          "orbit/changes/program-signoff/proposal.md",
+          "orbit/changes/program-signoff/specs/orbit-pr-lifecycle/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "no work citing the doc is still open",
+          "no active change may cite the doc",
+          "and no active change citing the doc,",
+          "the active changes citing the doc",
+          "is finished and no active change cites the doc"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/program-signoff/specs/orbit-program-brief/spec.md",
+            "text": "no LIVE work cites the doc"
+          },
+          {
+            "path": "orbit/changes/program-signoff/specs/orbit-program-brief/spec.md",
+            "text": "A live exploration under an undeclared stage keeps the program unfinished"
+          },
+          {
+            "path": "orbit/changes/program-signoff/specs/orbit-program-brief/spec.md",
+            "text": "A concluded exploration under an undeclared stage leaves the program finished"
+          },
+          {
+            "path": "orbit/changes/program-signoff/explore.md",
+            "text": "| live work (an active change, or an exploration not concluded) citing the doc under a stage it does not declare, or none |"
+          },
+          {
+            "path": "orbit/changes/program-signoff/design.md",
+            "text": "the live citers `scanCitations`"
+          },
+          {
+            "path": "orbit/changes/program-signoff/tasks.md",
+            "text": "explorations not concluded, from `scanCitations`"
+          },
+          {
+            "path": "orbit/changes/program-signoff/proposal.md",
+            "text": "no active change or open exploration cites the doc"
+          },
+          {
+            "path": "orbit/changes/program-signoff/specs/orbit-pr-lifecycle/spec.md",
+            "text": "no live work (an active change, or an exploration not concluded) may cite the doc"
+          },
+          {
+            "path": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-16T14-25-17Z.json",
+            "text": "or an exploration that has not been concluded"
+          }
+        ],
+        "searched": [
+          "active change",
+          "still open",
+          "open work",
+          "undeclared stage",
+          "finished"
+        ],
+        "scope": [
+          "src/core/architecture/state.ts"
+        ],
+        "kept": [
+          {
+            "path": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-15T20-21-09Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Walked the verification pass: two findings resolved as repairs, one by the user's decision. The re-sign row and D-ps-8's Mechanism row now name all five positive invalidations; FINISHED counts live work (an active change, or an exploration not concluded) under any stage, with a scenario each for a live and a concluded exploration (B), and D-ps-3's Mechanism, design Decision 2, task 2.1, the proposal and orbit-pr-lifecycle follow. Both ledger entries the fixes refine are replaced.",
+  "iteration": 3,
+  "next_recommended": "/orbit:apply program-signoff — user-invoked",
+  "ripple_misses": 0
+}
