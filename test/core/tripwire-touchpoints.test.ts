@@ -146,6 +146,33 @@ describe('the Touchpoints sensor: the reference fixed before the run', () => {
     expect((r.evidence.settings as any).exempt).not.toContain('src/');
   });
 
+  // @scenario behaviour orbit-tripwires :: A sensor compares against a reference fixed before the run :: A merge from the default branch is not measured
+  it('a merge from the default branch is not measured', () => {
+    const root = repo();
+    git(root, ['checkout', '-q', '-b', 'n-branch']);
+    propose(root, 'n', ['`src/a.ts`']);
+    applyCommit(root, 'n', { 'src/a.ts': textLines(30), 'src/shared.ts': textLines(5, 'mine') });
+    git(root, ['checkout', '-q', 'main']);
+    write(root, 'src/mainwork.ts', textLines(300));
+    commit(root, 'work on main');
+    git(root, ['checkout', '-q', 'n-branch']);
+    git(root, ['merge', '-q', '--no-ff', '--no-edit', 'main']);
+    const r = reading(root);
+    // Only the change's own unplanned path is listed (5 of 35 source lines, within both limits); main's are not measured.
+    expect(files(r)).toEqual([{ path: 'src/shared.ts', lines: 5 }]);
+    expect(r.outcome).toBe('quiet');
+    expect(JSON.stringify(r.evidence)).not.toContain('mainwork');
+  });
+
+  it('the evidence records the on_fire the halt decision reads: a halt committed after the fixed point', () => {
+    const root = repo();
+    propose(root, 'n', ['`src/main.ts`']);
+    applyCommit(root, 'n', { 'src/main.ts': textLines(10) });
+    write(root, 'orbit/config.yaml', 'tripwires:\n  touchpoints:\n    on_fire: halt\n');
+    commit(root, 'halt mid-change');
+    expect((reading(root).evidence.settings as any).on_fire).toBe('halt');
+  });
+
   it('settings committed at the fixed point apply', () => {
     const root = repo();
     propose(root, 'n', ['`src/main.ts`'], { 'orbit/config.yaml': 'tripwires:\n  touchpoints:\n    per_file_lines: 100\n    share_percent: 50\n' });

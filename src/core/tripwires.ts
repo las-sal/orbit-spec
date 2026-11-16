@@ -145,10 +145,20 @@ export function changeCommits(projectRoot: string, name: string): ChangeCommits 
     return out === null ? null : lines(out).filter(c => order.has(c));
   };
 
-  const births = added(`${rel}/.openspec.yaml`);
-  if (births === null) return { kind: 'no-git' };
-  // `git log` lists newest first: the latest birth is the first.
-  const birthIndex = births.length > 0 ? (order.get(births[0]) as number) : Number.POSITIVE_INFINITY;
+  // The BIRTH: the first addition of the metadata after the latest commit that moved the change into the archive.
+  // A deletion that is not an archive move (a run removing and restoring the file) starts no new change, and when
+  // the metadata's latest event is an archive move, the change of this name now has nothing committed.
+  const events = metadataEvents(projectRoot, `${rel}/.openspec.yaml`);
+  const archiveMoves = added(`:(glob)orbit/changes/archive/*-${name}/.openspec.yaml`);
+  if (events === null || archiveMoves === null) return { kind: 'no-git' };
+  const moved = new Set(archiveMoves);
+  let birth: string | null = null;
+  for (const e of events.filter(x => order.has(x.commit))) {
+    if (e.status === 'A' && birth === null) birth = e.commit;
+    else if (e.status === 'D' && moved.has(e.commit)) birth = null;
+  }
+  if (birth === null && events.some(x => order.has(x.commit))) return { kind: 'uncommitted' };
+  const birthIndex = birth !== null ? (order.get(birth) as number) : Number.POSITIVE_INFINITY;
   const sinceBirth = (cs: string[]): string[] => cs.filter(c => (order.get(c) as number) <= birthIndex);
   const earliest = (cs: string[]): string | null =>
     cs.length === 0 ? null : cs.reduce((a, b) => ((order.get(a) as number) >= (order.get(b) as number) ? a : b));
@@ -165,6 +175,31 @@ export function changeCommits(projectRoot: string, name: string): ChangeCommits 
 
   const parent = gitOut(projectRoot, ['rev-parse', '--verify', '--quiet', `${firstApply}^`]);
   return { kind: 'frozen', first, firstApply, fixedPoint: parent === null ? null : parent.trim(), head };
+}
+
+/** The additions and deletions of one path along first-parent, non-merge history, oldest first; null on failure. */
+function metadataEvents(projectRoot: string, relPath: string): { commit: string; status: 'A' | 'D' }[] | null {
+  const out = gitOut(projectRoot, [
+    'log',
+    '--first-parent',
+    '--no-merges',
+    '--no-renames',
+    '--diff-filter=AD',
+    '--name-status',
+    '--format=%x00%H',
+    'HEAD',
+    '--',
+    relPath,
+  ]);
+  if (out === null) return null;
+  const events: { commit: string; status: 'A' | 'D' }[] = [];
+  for (const block of out.split('\0')) {
+    const ls = block.split('\n').map(l => l.trim()).filter(l => l !== '');
+    if (ls.length < 2) continue;
+    const st = ls[1].charAt(0);
+    if (st === 'A' || st === 'D') events.push({ commit: ls[0], status: st });
+  }
+  return events.reverse();
 }
 
 /** The commit a sensor reads its reference and settings at: the fixed point, or HEAD before apply begins. */
@@ -348,20 +383,29 @@ export function tripwireStopProblem(record: Record<string, unknown>): string | n
   return null;
 }
 
-/** Whether `v` reads as a list of readings of the contract's shape (the brief holds a seam emit's field to it). */
+/**
+ * Whether `v` reads as a list of readings of the contract's shape (the brief holds a seam emit's field to it): every
+ * field of `A tripwire is a sensor that returns a reading` of its type, and the outcome agreeing with the keys — a
+ * `quiet` reading names none, and a `fired` or `cannot-read` one names at least one — so a contradictory reading is
+ * refused rather than rendered as a clean statement.
+ */
 export function isReadingList(v: unknown): v is TripwireReading[] {
+  const strings = (x: unknown): boolean => Array.isArray(x) && x.every(k => typeof k === 'string' && k !== '');
   return (
     Array.isArray(v) &&
-    v.every(
-      r =>
-        r !== null &&
-        typeof r === 'object' &&
-        typeof (r as TripwireReading).sensor === 'string' &&
-        (TRIPWIRE_OUTCOMES as readonly unknown[]).includes((r as TripwireReading).outcome) &&
-        Array.isArray((r as TripwireReading).deviations) &&
-        (r as TripwireReading).deviations.every(k => typeof k === 'string') &&
-        typeof (r as TripwireReading).evidence === 'object' &&
-        (r as TripwireReading).evidence !== null
-    )
+    v.every(raw => {
+      if (raw === null || typeof raw !== 'object' || Array.isArray(raw)) return false;
+      const r = raw as Record<string, unknown>;
+      if (typeof r.sensor !== 'string' || r.sensor === '') return false;
+      if (!(TRIPWIRE_OUTCOMES as readonly unknown[]).includes(r.outcome)) return false;
+      if (!strings(r.deviations)) return false;
+      if (r.reference !== null && typeof r.reference !== 'string') return false;
+      if (typeof r.frozen !== 'boolean') return false;
+      if (r.evidence === null || typeof r.evidence !== 'object' || Array.isArray(r.evidence)) return false;
+      if ('stops' in r && !strings(r.stops)) return false;
+      if ('answered_by' in r && !strings(r.answered_by)) return false;
+      const keys = (r.deviations as string[]).length;
+      return r.outcome === 'quiet' ? keys === 0 : keys > 0;
+    })
   );
 }

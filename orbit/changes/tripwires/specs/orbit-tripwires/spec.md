@@ -56,14 +56,18 @@ Every sensor SHALL fire on an undeclared deviation from a reference fixed before
 something now, compares it with that reference, and fires when they differ and the plan did not declare the difference.
 Watching deviation rather than level keeps firings rare (G3), and fixing the reference keeps the run from moving it.
 
-Two commits are read from the first-parent history of `HEAD` (`git rev-list --first-parent`), so a merge into the
-change's branch never stands for the change's own work, and only from the change's BIRTH on: the latest such commit that
-adds `orbit/changes/<name>/.openspec.yaml`, so a name reused after an earlier change of that name was archived never
-reaches into the earlier change's history:
+Two commits are read from the first-parent, non-merge history of `HEAD` (`git rev-list --first-parent --no-merges`),
+so a merge commit never stands for either, and only from the change's BIRTH on: the first such commit adding
+`orbit/changes/<name>/.openspec.yaml` after the latest one that moved that file into the archive
+(`orbit/changes/archive/<date>-<name>/`), or the first ever when none did. So a name reused after an earlier change of
+that name was archived never reaches into the earlier change's history, and deleting and restoring the file without
+archiving starts no new change. When the file's latest addition or deletion in that history is an archive move, nothing
+about the change of this name is committed yet:
 
 - the change's FIRST COMMIT, the earliest commit from its birth touching `orbit/changes/<name>/`; the MEASURE runs from
-  its parent (the empty tree when it has none) to `HEAD`, so work committed with the proposal, or before apply begins,
-  is measured;
+  its parent (the empty tree when it has none) to `HEAD` over the change's OWN PATHS, those its first-parent, non-merge
+  commits in that range changed, so work committed with the proposal, or before apply begins, is measured, and a path
+  only a merge brought into the branch is not;
 - the change's FIRST APPLY COMMIT, the earliest commit from its birth adding a file
   `orbit/changes/<name>/.orbit-runs/apply-*.json` (the apply emit, which marks apply as begun); its parent is the
   change's FIXED POINT.
@@ -75,7 +79,7 @@ made at a proposal-review walk, before apply, is part of the plan. The cases, te
 | the change's history | the reading |
 |---|---|
 | not a git repository, or a git command fails | `cannot-read`, reason `no-git` |
-| no commit touches `orbit/changes/<name>/` | `cannot-read`, reason `uncommitted`: nothing about the change is committed to measure |
+| no commit from the change's birth touches `orbit/changes/<name>/`, or the change of this name was last archived | `cannot-read`, reason `uncommitted`: nothing about the change is committed to measure |
 | a first commit, and no first apply commit | measured, the reference and settings read at `HEAD` with `frozen: false`: the plan is not frozen until apply begins |
 | a first apply commit | measured, the reference and settings read at the fixed point with `frozen: true` |
 
@@ -86,6 +90,13 @@ firing is acted on or shown (`Every seam emit carries the readings`, `A halting 
 silence is never a pass.
 
 Named limit — sensors plug in (`A tripwire is a sensor that returns a reading`), so the set of sensors is open by design.
+
+Named limit — a path both the change's own commits and a merge into its branch changed is measured over the whole
+range, so the merge's lines in that path count as the change's.
+
+Named limit — a sensor reads committed work only, so work not yet committed when a seam emit is written is not measured
+there; work left uncommitted through the archive (with the `commit` setting off) is never measured, and the change's
+readings say nothing of it.
 
 Named limit — apply begins at the commit adding its first apply emit, so apply work committed before that commit is
 measured but can still edit the plan read at the fixed point. orbit's apply flow writes the emit before the commit that
@@ -119,6 +130,25 @@ Residual method: each sensor states how it reads its reference; a sensor that ca
 - **WHEN** a change `n` was proposed, applied and archived, and a new change `n` is then created and proposed
 - **THEN** the new change's first commit, first apply commit and fixed point all come from commits after the one adding
   the new `orbit/changes/n/.openspec.yaml`
+
+#### Scenario: A reused name not yet committed cannot be read
+
+- **WHEN** a change `n` was archived by a commit moving its folder to `orbit/changes/archive/`, and a new `n` is written
+  but not committed
+- **THEN** the new change's `touchpoints` reading is `cannot-read` with reason `uncommitted`
+
+#### Scenario: Restoring deleted metadata keeps the fixed point
+
+- **WHEN** after the first apply commit, a commit deletes `orbit/changes/n/.openspec.yaml` and a later one restores it
+  with a widened `## Touchpoints`
+- **THEN** the change's birth, first apply commit and fixed point are unchanged, and the reference is the plan at the
+  original fixed point
+
+#### Scenario: A merge from the default branch is not measured
+
+- **WHEN** after apply begins, the default branch, holding a new 300-line `src/mainwork.ts`, is merged into the change's
+  branch
+- **THEN** the `touchpoints` reading neither lists nor fires on `src/mainwork.ts`
 
 #### Scenario: An uncommitted change cannot be read
 
@@ -308,7 +338,8 @@ followed by its reason.
 Its `evidence` carries `files` (each unpredicted source path with its `lines`, `binary` when git counted none, `over`
 when it is past the per-file tolerance, and `declared_late` when only the current section predicts it), `share` (the
 percentage, or `null` with no source lines), `share_fired`, `malformed` (each malformed entry's line and text),
-`settings` (the four values used) and `notes` (each setting value it could not use); a `cannot-read` reading's evidence
+`settings` (the four values used, `on_fire` as the halt decision reads it: `halt` when the config at the fixed
+point or at `HEAD` says so) and `notes` (each setting value it could not use); a `cannot-read` reading's evidence
 carries its `reason`.
 
 #### Scenario: One large unpredicted file fires

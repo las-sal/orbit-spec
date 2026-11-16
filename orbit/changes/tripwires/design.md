@@ -39,18 +39,22 @@ below are the method settled at propose.
 
 **M1 — Two commits: where the plan is read, and where the measure starts** (the walk's ratified option B; it replaces
 the propose-time rule, which used one commit for both).
-- Both searches start at the change's BIRTH, the latest first-parent commit adding `orbit/changes/<name>/.openspec.yaml`.
-  `orbit new change` refuses only an active change of the same name, so a name can be reused after archive, and an
-  unbounded search would reach the earlier change's commits.
+- Both searches start at the change's BIRTH: the first first-parent commit adding `orbit/changes/<name>/.openspec.yaml`
+  after the latest commit that moved that file into the archive, or the first ever when none did. `orbit new change`
+  refuses only an active change of the same name, so a name can be reused after archive, and an unbounded search would
+  reach the earlier change's commits. The system walk settled two cases of the rule: when the file's latest event is an
+  archive move, the new change of the name is not committed yet (`uncommitted`), never measured as the archived one; and
+  a deletion that is not an archive move starts no new change, so deleting and restoring the file cannot reset the
+  fixed point.
 - The FIRST APPLY COMMIT is the earliest commit adding `orbit/changes/<name>/.orbit-runs/apply-*.json`: the apply
   emit, which is what marks apply as begun. Its parent is the FIXED POINT, where the plan (`## Touchpoints`) and the
   settings are read.
 - The MEASURE runs from the parent of the change's FIRST COMMIT (the earliest touching `orbit/changes/<name>/`) to
-  `HEAD`, so code committed with the proposal, or before the first apply emit, is measured.
+  `HEAD`, over the change's own paths (M2), so code committed with the proposal, or before the first apply emit, is
+  measured.
 - Before the first apply commit, the plan and settings are read at `HEAD` with `frozen: false`: the plan is still
   revisable, so nothing is silenced.
-- Both commits come from `git rev-list --first-parent`, so a merge of the default branch into the change's branch never
-  stands for the change's work.
+- Both commits come from `git rev-list --first-parent --no-merges`, so a merge commit never stands for either.
 - Why the rule changed: the propose-time rule took the first commit touching a path outside the change's folders. Over
   the 14 latest archived changes it picked a proposal-review walk three times (read-obligation 3efc8abb,
   decision-writing a0a0436a, chained-review-commit dd707609). Two of those walks added Touchpoints entries the old rule
@@ -70,6 +74,11 @@ the propose-time rule, which used one commit for both).
 - Both the reference and the measure come from git (`git show <fp>:<path>`,
   `git diff --numstat --no-renames -z <first>^..HEAD`), never from the working tree. That way the run cannot edit what
   watches it without leaving a commit.
+- The measure counts only the change's OWN PATHS: those its first-parent, non-merge commits from the first commit to
+  `HEAD` changed (`git log --first-parent --no-merges --name-only`). A path only a merge of the default branch brought in
+  is not measured; a path both changed is measured over the whole range, so the merge's lines in it count (a named
+  limit). The system walk chose this over summing each commit's own diff, which counts a file edited in several commits
+  once per commit and so misfires on ordinary churn, and over keeping the plain range with the merge case named.
 - An apply emit written before its chunk's commit therefore sees the previous chunk's state. The firing surfaces at the
   next seam (see Risks).
 
@@ -80,6 +89,8 @@ the propose-time rule, which used one commit for both).
   `halt`.
   A run cannot turn a halt off, and the user can turn one on mid-change.
 - This refines D-tw-6, which did not say where the halt setting is read.
+- The reading's evidence records `on_fire` as this decision reads it, so a stop is never written beside evidence saying
+  `record`.
 
 **M4 — The stop orbit writes.**
 - Fields: `condition: "tripwire"`, `model: null`, plain `about` and `question` composed per sensor, `detail` with the
@@ -218,9 +229,10 @@ The proposing AI's reading of the file; no engine record.
   reading`.
 - **D-tw-3 (BOUNDED)** → the named limit and its residual are stated in `A sensor compares against a reference fixed
   before the run`.
-- **A reading lags one seam when the work is uncommitted (M2)** → the apply emit is written before the commit step, so
-  a chunk's own firing first shows at the next seam (the review, or the next chunk's apply). The system review reads
-  committed work, so the last seam before archive sees everything.
+- **A reading sees committed work only (M2)** → the apply emit is written before the commit step, so a chunk's own
+  firing first shows at the next seam that follows a commit. With the `commit` setting off, work can stay uncommitted
+  through every seam, the archive's included (whose reading precedes the archive tail's commit), and then no reading
+  ever measures it. The spec names this limit, and the brief says a change's clean readings cover its committed work.
 - **Halt with no chain asks nothing** → under `on_fire: halt` the stop is written, and the reading names it. The emit
   prints one stderr line naming it. Only a granted chain stops on it (`open-stop`), which prints its question. A
   supervised session ends at its eligibility line as today, so the user meets the open stop in the brief or at the
@@ -230,8 +242,9 @@ The proposing AI's reading of the file; no engine record.
 - **Drift within both tolerances passes (D-tw-17's named limit)** → many small edits to unpredicted source beneath the
   share tolerance are not seen. First-run's closing review reads the readings' "within" lists.
 - **`pr: never` on a busy default branch** → the measure from the change's first commit to `HEAD` includes others'
-  commits on the same branch. orbit is single-user (a named limit). Under `pr: per-proposal` the branch holds only the
-  change.
+  commits on the same branch, which are first-parent commits like the change's own. orbit is single-user (a named limit).
+  Under `pr: per-proposal`, a merge of the default branch into the change's branch adds no path of its own to the
+  measure (M2).
 - **Apply work committed before the first apply emit (M1)** → it is measured, but its commit can still edit the plan
   the fixed point reads. In orbit's flow the emit is written before the commit that carries the chunk, so they land
   together; a commit made by hand ahead of the first emit is the open case, stated as a named limit in `A sensor

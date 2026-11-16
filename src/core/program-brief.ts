@@ -722,7 +722,8 @@ const TEXT = {
   noLedger: 'No ledger entry was written for this work.',
   noStops: 'No stop was recorded for this work.',
   tripwiresNotInstalled: 'Tripwires were not installed when this change ran, so this brief cannot say whether any would have fired.',
-  tripwiresNoneFired: 'No tripwire fired on this change, and each sensor could read what it compares against.',
+  tripwiresNoneFired:
+    "No tripwire fired on this change's committed work, and each sensor could read what it compares against; work never committed is not measured.",
   tripwiresFound: 'What the tripwires found, each listed once:',
   tripwiresLatest: "Each sensor's latest reading:",
   tripwiresDeclaredLate:

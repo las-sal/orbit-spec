@@ -1,0 +1,215 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-16T23:20:48Z",
+  "change": "tripwires",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/tripwires/.orbit-runs/external-system-2026-11-16T23-09-24Z.md",
+  "source_command": null,
+  "source_token": "2026-11-16T23-09-24Z",
+  "latest_apply_token": "2026-11-16T23-00-43Z",
+  "external_reviewer": "GPT-6 (Codex)",
+  "walk_mode": "per_finding",
+  "walk_mode_source": "flag",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 3,
+    "suggestion": 1
+  },
+  "pushback_verification": "All four verified against current state (HEAD afcb0782) before the fresh pass's walk: the birth search took the latest addition whatever preceded it, so a deletion and restore reset it (tripwires.ts:148); the reused-name window is the fresh pass's first finding, walked there; isReadingList checked neither reference, frozen nor the outcome against the keys; the design's risk claimed the last seam before archive sees everything.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 1,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Recreating metadata resets the frozen reference",
+      "marker_source": "external",
+      "file": "src/core/tripwires.ts",
+      "line": 148,
+      "classification": "trivial_fix",
+      "action": "a deletion of the metadata that is not an archive move (the same commit adding orbit/changes/archive/<date>-<name>/.openspec.yaml) starts no new change: the birth stays the first addition after the latest archive move, so deleting and restoring the file keeps the first apply commit and the fixed point. Spec birth sentence, the scenario Restoring deleted metadata keeps the fixed point and its test (shown able to fail by treating any deletion as an archive), design M1",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/tripwires/specs/orbit-tripwires/spec.md",
+          "orbit/changes/tripwires/design.md",
+          "test/core/tripwires.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "src/core/tripwires.ts",
+            "text": "A deletion that is not an archive move"
+          },
+          {
+            "path": "orbit/changes/tripwires/specs/orbit-tripwires/spec.md",
+            "text": "Restoring deleted metadata keeps the fixed point"
+          },
+          {
+            "path": "orbit/changes/tripwires/specs/orbit-tripwires/spec.md",
+            "text": "deleting and restoring the file without"
+          },
+          {
+            "path": "orbit/changes/tripwires/design.md",
+            "text": "a deletion that is not an archive move starts no new change"
+          },
+          {
+            "path": "test/core/tripwires.test.ts",
+            "text": "deleting and restoring the metadata mid-change starts no new change"
+          }
+        ],
+        "searched": [
+          "births",
+          ".openspec.yaml",
+          "archive move"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "An uncommitted reused name inherits the archived change’s history",
+      "marker_source": "external",
+      "file": "src/core/tripwires.ts",
+      "line": 151,
+      "classification": "stale",
+      "action": "converged with the fresh pass's finding at the same site; walked there",
+      "evidence": "Walked in the fresh pass's log address-reviews-2026-11-16T23-19-51Z (resolved): changeCommits returns uncommitted when the metadata's latest event is an archive move, held by the test between an archive and the next change of the name.",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Malformed readings can produce a false clean statement",
+      "marker_source": "external",
+      "file": "src/core/tripwires.ts",
+      "line": 352,
+      "classification": "trivial_fix",
+      "action": "isReadingList now checks every contract field by type (reference a string or null, frozen a boolean, stops and answered_by lists of filenames) and that the outcome agrees with the keys: quiet names none, fired or cannot-read at least one, so a contradictory reading fails the brief naming its seam emit instead of rendering as clean; a test for four contradictory readings, shown able to fail by dropping the agreement check",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/program-brief.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "src/core/tripwires.ts",
+            "text": "r.outcome === 'quiet' ? keys === 0 : keys > 0"
+          },
+          {
+            "path": "test/core/program-brief.test.ts",
+            "text": "a contradictory reading fails the brief rather than reading as clean"
+          }
+        ],
+        "searched": [
+          "isReadingList",
+          "tripwiresNoneFired"
+        ],
+        "scope": [
+          "src/core/program-brief.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Document that uncommitted work can remain invisible through archive",
+      "marker_source": "external",
+      "file": "orbit/changes/tripwires/design.md",
+      "line": 221,
+      "classification": "trivial_fix",
+      "action": "the design risk now says a reading sees committed work only and that, with the commit setting off, work can stay unmeasured through the archive; the spec gains that named limit under A sensor compares against a reference fixed before the run; the brief's clean line says it covers the change's committed work",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/tripwires/specs/orbit-tripwires/spec.md",
+          "src/core/program-brief.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the last seam before archive sees everything",
+          "No tripwire fired on this change, and"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/tripwires/design.md",
+            "text": "A reading sees committed work only (M2)"
+          },
+          {
+            "path": "orbit/changes/tripwires/specs/orbit-tripwires/spec.md",
+            "text": "a sensor reads committed work only"
+          },
+          {
+            "path": "src/core/program-brief.ts",
+            "text": "No tripwire fired on this change's committed work"
+          }
+        ],
+        "searched": [
+          "lag",
+          "committed",
+          "sees everything",
+          "No tripwire fired"
+        ],
+        "scope": [
+          "docs/customization.md",
+          "docs/cli.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Three resolved and one recorded stale: restoring deleted metadata no longer resets the fixed point; contradictory readings fail the brief instead of reading as clean; the committed-only limit is named and the brief's clean line qualified. The reused-name window converged with the fresh pass's finding and was walked in its log.",
+  "iteration": 5,
+  "next_recommended": "/orbit:review --as system tripwires",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "53b16bface3508c3df54f5b8ced9e03111ab9abe",
+      "frozen": true,
+      "evidence": {
+        "files": [],
+        "share": 0,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ],
+  "ripple_misses": 0
+}

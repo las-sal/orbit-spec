@@ -5,6 +5,7 @@ import {
   emptyTree,
   gitOut,
   referenceOf,
+  sensorHalts,
   settingAt,
   showAt,
   type Sensor,
@@ -135,6 +136,21 @@ function runTouchpoints(ctx: SensorContext): TripwireReading {
   if (base === null) return cannotRead(id, 'no-git', ref.rev, ref.frozen);
   const out = gitOut(projectRoot, ['diff', '--numstat', '--no-renames', '-z', '--relative', base, commits.head]);
   if (out === null) return cannotRead(id, 'no-git', ref.rev, ref.frozen);
+  // The change's OWN paths: those its first-parent, non-merge commits from the first commit to HEAD changed, so a
+  // path only a merge brought into the branch is not measured (a path both changed counts the whole range's lines).
+  const own = gitOut(projectRoot, [
+    'log',
+    '--first-parent',
+    '--no-merges',
+    '--no-renames',
+    '--relative',
+    '--name-only',
+    '-z',
+    '--format=',
+    parent !== null ? `${parent.trim()}..${commits.head}` : commits.head,
+  ]);
+  if (own === null) return cannotRead(id, 'no-git', ref.rev, ref.frozen);
+  const ownPaths = new Set(own.split('\0').filter(x => x !== ''));
 
   // The CURRENT section (design.md at HEAD, read with git like the reference) marks a late declaration.
   let current: TouchpointsParse | null = null;
@@ -146,12 +162,14 @@ function runTouchpoints(ctx: SensorContext): TripwireReading {
     }
   }
 
+  // The `on_fire` the halt decision reads: `halt` when the config at the fixed point or at HEAD says so.
+  const effective = { ...setting, on_fire: sensorHalts(projectRoot, commits, touchpointsSensor) ? ('halt' as const) : ('record' as const) };
   const { deviations, evidence } = touchpointsArithmetic({
-    measured: parseNumstatZ(out),
+    measured: parseNumstatZ(out).filter(m => ownPaths.has(m.path)),
     plan,
     current,
     ownDirs: ctx.ownDirs,
-    setting,
+    setting: effective,
   });
   return {
     sensor: id,

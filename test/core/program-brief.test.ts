@@ -383,6 +383,21 @@ describe('a brief tells the user what a change or a program did, from the trail'
     expect(() => change('foo')).toThrow(/apply-.*not a list of readings/);
   });
 
+  it('a contradictory reading fails the brief rather than reading as clean', () => {
+    const bad: Array<[string, Record<string, unknown>]> = [
+      ['a fired reading naming no key', reading('fired', [])],
+      ['a quiet reading naming a key', reading('quiet', ['touchpoints:src/a.ts'])],
+      ['a reading with no frozen flag', (({ frozen, ...r }) => r)(reading('quiet', []))],
+      ['a reading with no reference', (({ reference, ...r }) => r)(reading('quiet', []))],
+    ];
+    for (const [what, r] of bad) {
+      makeDoc();
+      makeChange('orbit/changes/foo');
+      json(`orbit/changes/foo/.orbit-runs/apply-${T(1)}.json`, { command: 'apply', change: 'foo', tripwires: [r] });
+      expect(() => change('foo'), what).toThrow(/not a list of readings/);
+    }
+  });
+
   // @scenario behaviour orbit-program-brief :: A brief tells the user what a change or a program did, from the trail :: A program brief points at each change's readings
   it('a program brief carries each change\'s tripwires section and closes pointing at them', () => {
     makeDoc();

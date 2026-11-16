@@ -6,6 +6,7 @@ import {
   annotateCoverage,
   cannotRead,
   changeCommits,
+  computeReadings,
   composeTripwireStop,
   readCoverage,
   tripwireSensors,
@@ -175,6 +176,39 @@ describe('changeCommits: the four results', () => {
     const a2 = applyCommit(root, 'n', { 'src/b.ts': 'y\n' });
     const r = changeCommits(root, 'n');
     expect(r).toEqual({ kind: 'frozen', first: birth, firstApply: a2, fixedPoint: walk, head: a2 });
+  });
+
+  // @scenario behaviour orbit-tripwires :: A sensor compares against a reference fixed before the run :: A reused name not yet committed cannot be read
+  it('between an archive and the next change of the name, nothing about the change is committed', () => {
+    const root = repo();
+    propose(root, 'n', ['`src/a.ts`']);
+    applyCommit(root, 'n', { 'src/a.ts': 'x\n' });
+    fs.mkdirSync(path.join(root, 'orbit/changes/archive'), { recursive: true });
+    git(root, ['mv', 'orbit/changes/n', 'orbit/changes/archive/2026-01-01-n']);
+    commit(root, 'archive n');
+    write(root, 'src/other.ts', 'unrelated\n');
+    commit(root, 'later work');
+    // A new change of the name, written but not committed.
+    write(root, 'orbit/changes/n/.openspec.yaml', 'schema: spec-driven\n');
+    expect(changeCommits(root, 'n')).toEqual({ kind: 'uncommitted' });
+  });
+
+  // @scenario behaviour orbit-tripwires :: A sensor compares against a reference fixed before the run :: Restoring deleted metadata keeps the fixed point
+  it('deleting and restoring the metadata mid-change starts no new change: the fixed point stands', () => {
+    const root = repo();
+    const p = propose(root, 'n', ['`src/a.ts`']);
+    const fp = commit(root, 'walk');
+    const a = applyCommit(root, 'n', { 'src/a.ts': 'x\n' });
+    remove(root, 'orbit/changes/n/.openspec.yaml');
+    commit(root, 'drop the metadata');
+    write(root, 'orbit/changes/n/.openspec.yaml', 'schema: spec-driven\n');
+    write(root, 'orbit/changes/n/design.md', '## Touchpoints\n\n- `src/`\n');
+    const head = commit(root, 'restore it with a widened plan');
+    expect(changeCommits(root, 'n')).toEqual({ kind: 'frozen', first: p, firstApply: a, fixedPoint: fp, head });
+    // The reference is the plan at the original fixed point, not the widened one.
+    const r = computeReadings(root, 'n', null).readings[0];
+    expect(r.reference).toBe(fp);
+    expect(r.frozen).toBe(true);
   });
 });
 
