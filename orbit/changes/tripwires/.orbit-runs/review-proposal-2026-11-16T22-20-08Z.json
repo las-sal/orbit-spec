@@ -1,0 +1,207 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-16T22:20:08Z",
+  "change": "tripwires",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 3,
+      "suggestion": 2
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 3
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 3
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/tripwires/specs/orbit-tripwires/spec.md",
+      "line": 55,
+      "title": "The fixed-point rule takes any commit outside the change's paths as the first apply commit, so a proposal-review walk that edits an architecture doc becomes the fixed point",
+      "recommendation": "Identify the FIRST APPLY COMMIT by what makes it one, not by the paths it touches, and say which history is walked. Every apply commit of the 14 latest changes carries that change's first apply-*.json emit (checked: e2dcd50c, c6e8522b, d310a2e8, ad3cfc1c each add one), so the commit that adds the change's earliest apply emit is a precise anchor; its parent is the pre-apply state D-tw-3 means. Whichever rule is kept, state that the walk is first-parent (git rev-list --first-parent), so a merge of the default branch into the change's branch never qualifies, and update design M1 and the scenario `An edit to the plan after apply begins moves nothing` to the same wording.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Fixed point = parent of the commit that adds the change's earliest apply-*.json emit (first-parent history); before one exists, quiet with reference null. Matches every apply commit on the record."
+        },
+        {
+          "label": "B",
+          "body": "Keep the path rule but exclude orbit/ (and the configured exempt set) from what qualifies, and walk first-parent only. Simpler, but a docs-first apply or a non-orbit fix landed mid-review still sets it early."
+        }
+      ],
+      "reproduction": "Constructed from the record. Rule: the earliest commit after the change's first commit that changes a path outside orbit/changes/<name>/, orbit/explore/<name>/ and its archive folder. Applied to the 14 latest archived changes, it picks a proposal-review walk, not an apply commit, for three: read-obligation (3efc8abb edits orbit/architecture/propose-reads-specs.md), decision-writing (a0a0436a edits orbit/architecture/automate-dev-flow.md) and chained-review-commit (dd707609, same doc). Those walks also edited design.md's ## Touchpoints: at a0a0436a^ the section does not list src/core/decision-records.ts, which the walk added and apply then changed by 18 lines; at dd707609^ it does not list src/core/pr/resolve.ts (7 lines). Expected: both are planned before apply. Observed under M1: both are unpredicted at the fixed point and marked declared late, and they enter the share arithmetic as unpredicted source."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/tripwires/specs/orbit-tripwires/spec.md",
+      "line": 139,
+      "title": "An orbit-written tripwire stop can never be fixed by a replacement, and the change adds a reader of decisions/ without the check the decision records require",
+      "recommendation": "A tripwire stop is selected by the reading step (selectUnreadRecords takes every unreplaced record in decisions/), so its orbit-composed about and question will be judged by a reader. A wording finding on it has no repair: a replacement must carry condition unchanged, and checkDecisionShape refuses condition tripwire on every stop payload, replacement included. Say in `A halting reading writes a tripwire stop` that a finding against an orbit-written stop's wording is a finding against orbit's composition, recorded deferred like the brief-gap row of `A record is fixed by a replacement, never edited`, never a replacement. Separately, that requirement's residual method asks a stage adding a reader of decisions/ to check it against the chain table in its proposal: the emit surface's stop-by-key and answered_by lookups are such a reader; record the check in design M4 (the spec already follows the latest record of each chain; the answered_by rule should say it names the latest record of the resolution's chain)."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/tripwires/specs/orbit-tripwires/spec.md",
+      "line": 59,
+      "title": "A null fixed point is read as quiet, yet a missing git, a never-committed change folder and uncommitted apply work all produce one",
+      "recommendation": "The spec gives two answers for overlapping states: before the first apply commit exists the reading is quiet with reference null, and when git cannot answer it is cannot-read. firstCommitTouching (src/core/parsers/apply-state.ts) returns null both outside a git repository and when the change folder was never committed, so an implementer reusing it returns quiet in both: silence as a pass, which D-tw-3 forbids. Order the cases in the requirement: no git repository -> cannot-read with reason no-git; change folder never committed -> state which; git answers and no commit qualifies -> quiet with reference null. Also move the closed set of cannot-read reasons (no-design, no-section, no-git, design M6) into the spec's key sentence, which now says only followed by the reason."
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/tripwires/specs/orbit-tripwires/spec.md",
+      "line": 227,
+      "title": "The measure does not say how a renamed path or a binary path enters the arithmetic",
+      "recommendation": "git diff --numstat detects renames by default and prints them as src/{a => b}.ts, a string no Touchpoints entry or exempt pattern matches, so one implementer counts it as unpredicted source and another passes --no-renames and classifies two paths. Name the invocation (git diff --numstat --no-renames <fp>..HEAD, a rename being a deletion plus an addition) or state how a rename's paths are classified. For a binary path (numstat prints -), the spec says it counts past the per-file tolerance but not what it contributes to the share's numerator and denominator; a NaN there makes the share comparison false and silently disables the share firing. State the number it counts as in both."
+    },
+    {
+      "pass": "3",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/tripwires/tasks.md",
+      "line": 87,
+      "title": "Task 5.1 names orbit-tripwires on a Carried by line before the capability exists, and no step plans the archive-time edits a new capability needs",
+      "recommendation": "The carried-by check reads docs/customization.md (CONCEPT_PAGES in test/helpers/user-docs.ts) and resolves a capability only if orbit/specs/<name>/spec.md exists (capabilityExists), so adding orbit-tripwires at apply fails the user-docs tests task 5.1 runs. brief-render met the same case and moved that one name to an At archive section. Add an At archive section to design.md naming: the Carried by item after the sync; CLAUDE.md's src:capabilities marker from 33 to 34 (orbit validate --sources fails otherwise); and orbit-tripwires' ## Purpose written in place after the sync."
+    },
+    {
+      "pass": "4",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/tripwires/specs/orbit-program-brief/spec.md",
+      "line": 69,
+      "title": "The delta narrows the never-quiet scenario from any brief to a change brief, leaving the program brief's Tripwires section with no requirement text",
+      "recommendation": "The baseline scenario covers any brief; the delta's covers only a change brief, and the program brief's closing ## Tripwires line, which design M10 and task 4.1 rewrite (readings are shown under each change), is stated nowhere in the spec after archive. Add one sentence to the modified requirement saying what a program brief carries for tripwires (each change's section under that change, then the closing line), with a scenario, and plan an in-place edit of the baseline Purpose, which still says the tripwires line."
+    },
+    {
+      "pass": "7",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/tripwires/design.md",
+      "line": 116,
+      "title": "M11 reads an only-closure as scoped although modifying it would cost no capability",
+      "recommendation": "`The write gate checks decision records` says the run-summary commands change only as `The reading's selection is recorded at review and archive` states; after this change four run-summary commands gain an engine-computed tripwires field, which the sentence as written denies. M11 keeps it to stay at the capability ceiling, but the requirement is in orbit-emit-composition, already modified here: carrying it moves the requirement count from 10 to 11 of 12 and adds no capability. Either qualify the sentence (as of the decision records) in a second MODIFIED block, or keep M11 and say the cost was not the reason."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/tripwires/specs/orbit-tripwires/spec.md",
+      "line": 208,
+      "title": "The G0 table and its scenario omit the review report render",
+      "recommendation": "orbit status --change <name> --report renders the review emit and is pasted after every review; it is the readout a new review-emit field could most plausibly reach. Task 3.3 already runs it. Add it to the human-readouts row and to the THEN of `A firing changes no readout`."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "orbit/changes/tripwires/design.md",
+      "line": 76,
+      "title": "Set-valued keys re-ask the user about paths already answered",
+      "recommendation": "A key is every firing path joined, so answering touchpoints:src/a.ts declares nothing once src/b.ts joins: the new key touchpoints:src/a.ts,src/b.ts raises a new stop whose evidence asks about src/a.ts again, and the brief lists both keys. D-tw-14 says the user's answer is the declaration.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Build the key from the firing paths no answered key already names, so an answered path stays declared and only the new path is asked."
+        },
+        {
+          "label": "B",
+          "body": "Keep set keys and add the re-asking to Risks as a named limit."
+        }
+      ]
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/tripwires/specs/orbit-tripwires/spec.md",
+      "line": 241,
+      "title": "A malformed entry cannot be placed beside the path it meant to predict, and the evidence shape the brief renders is unstated",
+      "recommendation": "parseTouchpoints reports a malformed entry as {line, text}; nothing says which path it meant to predict. Say the evidence lists each malformed line beside the firing paths, which is what the scenario at line 272 checks. Name the touchpoints evidence fields (task 2.1 lists their content) in the requirement, since the brief and the stop's detail both render them."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "orbit/changes/tripwires/tasks.md",
+      "line": 41,
+      "title": "Task 3.1 and design M12 place the engine-owned list in the wrong file",
+      "recommendation": "The explicit engine-owned list is ENGINE_OWNED_PER_COMMAND in test/helpers/schema-references.ts, which test/core/emit-schema-parity.test.ts imports; name that file in task 3.1 and in M12."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "orbit/changes/tripwires/tasks.md",
+      "line": 3,
+      "title": "Task 1.1 tests two scenarios whose WHEN runs the touchpoints sensor, which task 2.1 builds",
+      "recommendation": "`A reading carries the contract's fields` and `No apply commit yet is quiet` both run the touchpoints sensor; move their tests to task 2.1, or say task 1.1 tests the contract with a stub sensor."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/tripwires/tasks.md",
+      "line": 94,
+      "title": "Task 6.1 compares against a different reference and does not say what HEAD each run uses",
+      "recommendation": "The sensor measures fixed point..HEAD; run over historical changes, HEAD must be each change's archive commit (a worktree there, or a ref parameter), or every later commit is counted. D-tw-17 also read the archived design.md, not design.md at the fixed point, so a difference is expected wherever a walk edited Touchpoints; say so in the task so the recorded cause names it."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/tripwires/design.md",
+      "line": 186,
+      "title": "Nothing to migrate overlooks that every past brief's text changes",
+      "recommendation": "Every change rendered after this ships says tripwires were not installed when it ran instead of the old line, so a finished program's brief re-renders differently and the next architect save writes a new copy that differs from any signed one (the re-sign row under signoff: program). Name it in the Migration Plan."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "The contract, the readings field and the halt split are sound and well bounded; the weak point is where the change meets git. I probed the fixed-point rule against the record rather than reading it: run over the latest archived changes, it lands on a proposal-review walk wherever a walk touched an architecture doc, which is common in this repository. The rest of the git surface (rename detection, binary counts, a missing repository) has the same texture: each case is one sentence away from an implementation choice that reads silence as a pass. The decision-records side was checked in the code: the resolution path does accept an orbit-written stop, but nothing can reword one. Passes 3 and 4 had no project.md, convention files or lenses to read; CLAUDE.md and the baseline specs were read. orbit validate --strict passes, with every new scenario not yet declared, as expected before apply. No @review: markers.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "direction": {
+    "disposition": "hold",
+    "reasoning": "Walk before apply. The fixed point is the reference every later sensor of the stage plugs into, and as written it is wrong on real history in this repository; fixing it is a one-paragraph change to the requirement and M1, and much cheaper now than after three more changes build on it.\nThe git-arithmetic gaps (renames, binary, a null fixed point) and the archive-time steps are each small, but each splits implementations or fails the apply's own test run. The rest can ride along in the same walk."
+  },
+  "final_assessment": "0 critical, 6 warning, 8 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews tripwires"
+}
