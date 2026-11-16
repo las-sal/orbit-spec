@@ -330,7 +330,11 @@ function readLatestSignoff(signoffDir: string, owner: SignoffOwner): { file: str
 export function renderHold(h: HoldReport): string {
   const copy = h.copy === null ? 'no saved copy' : `copy ${h.copy.file} (sha256 ${h.copy.sha256})`;
   const signoff = h.signoff === null ? 'no sign-off' : `latest sign-off ${h.signoff.file} (${h.signoff.answer})`;
-  if (h.why === 'off') return `${h.change}: not held (off) — the sign-off setting is off, so nothing waits on a sign-off.`;
+  if (h.why === 'off') {
+    return h.setting === 'program'
+      ? `${h.change}: not held (off) — the sign-off setting is program, which holds the program's completion and no change's archive.`
+      : `${h.change}: not held (off) — the sign-off setting is off, so nothing waits on a sign-off.`;
+  }
   return `${h.change}: ${h.held ? 'held' : 'not held'} (${h.why}) — ${copy}; ${signoff}.`;
 }
 

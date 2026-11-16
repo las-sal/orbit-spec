@@ -54,7 +54,7 @@ describe('the walk resolves a reading finding against the account by a replaceme
     expect(walk).toContain(ACCOUNT_WALK_STEP);
     expect(ACCOUNT_WALK_STEP).toContain('The one exception is a reading finding against the account, below: its replacement rewords and states no new fact.');
     expect(ACCOUNT_WALK_STEP).toContain(
-      '- **A reading finding against the account resolved** (its `file` under the change\'s account folder, read when the project\'s `signoff` setting is `change`) → write a replacement of the latest account for EACH such finding, at its resolution'
+      '- **A reading finding against the account resolved** (its `file` under the change\'s account folder, read when the project\'s `signoff` setting is `change` or `program`) → write a replacement of the latest account for EACH such finding, at its resolution'
     );
     expect(ACCOUNT_WALK_STEP).toContain('the replacement for that comes after them and replaces the latest');
   });

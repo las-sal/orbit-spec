@@ -44,7 +44,10 @@ describe("the architect body carries the program's save and sign-off (Step 5.4)"
     const rowsParagraph = block.split('\n\n').find((p) => p.startsWith('The rows are'));
     expect(rowsParagraph).toBeDefined();
     expect(PROGRAM_SIGNOFF_STEP).toContain((rowsParagraph as string).replace(/\n/g, ' '));
-    expect(PROGRAM_SIGNOFF_STEP).toContain('orbit brief <doc> --save --json\norbit brief <doc> --hold --json');
+    expect(PROGRAM_SIGNOFF_STEP).toContain('orbit brief <doc> --save\norbit brief <doc> --hold --json');
+    // The save runs without --json, which would print the whole program brief (fresh system W1).
+    expect(PROGRAM_SIGNOFF_STEP).not.toContain('--save --json');
+    expect(PROGRAM_SIGNOFF_STEP).toContain('Run it WITHOUT `--json`, which would print the whole program brief: act on its exit status alone');
   });
 
   it('the step carries the emit invocation with its fields and the decision prompt', () => {
@@ -70,7 +73,10 @@ describe("the architect body carries the program's save and sign-off (Step 5.4)"
     expect([...at].sort((x, y) => x - y)).toEqual(at);
     // The prompt count names the third prompt; Step 5.5 is unconditional only off `program`.
     expect(b).toContain("the doc selector in Step 1 and Step 5.4's program sign-off are the body's other two prompts");
-    expect(b).toContain('Under every sign-off setting but\n`program` the check is unconditional');
+    expect(b).toContain("- **Under every value but `program`** — unconditional, as before Step 5.4 existed");
+    // Under program the readout is Step 5.4's row, never re-testing every stage archived (fresh S1, external W1).
+    expect(b).toContain("- **Under `signoff: program`** — Step 5.4's row IS the check, and replaces the one above");
+    expect(b).toContain('never re-test "every stage archived" here');
   });
 
   // @scenario text orbit-architect :: The architect session saves the program brief and asks for the program's sign-off :: A default session saves silently and asks nothing
@@ -86,7 +92,7 @@ describe("the architect body carries the program's save and sign-off (Step 5.4)"
     expect(row('`why: "unsigned"`')).toContain('shows the latest saved copy whole, then asks the user to sign off or decline');
     expect(PROGRAM_SIGNOFF_STEP).toContain('show it to the user WHOLE');
     expect(PROGRAM_SIGNOFF_STEP).toContain('BEFORE the arc-done readout of Step 5.5');
-    expect(body('orbit-architect')).toContain('under `signoff: program` the\nreadout is shown only when Step 5.4\'s row shows it');
+    expect(body('orbit-architect')).toContain("Show the readout exactly when Step 5.4's row shows it, and never in a session whose row shows\n  none");
   });
 
   // @scenario text orbit-architect :: The architect session saves the program brief and asks for the program's sign-off :: A signature lets the arc-done readout appear

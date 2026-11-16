@@ -148,6 +148,14 @@ keys: `doc`; `setting`, `off`, `change` or `program`; `warning`, the setting's w
 or `false`, `null` when the setting is not `program`; `closing_review`, `{file}` or `null`; `copy`, `{file, sha256}` or
 `null`; `signoff`, `{file, answer}` or `null`; `why`; and `held`. A key the hold did not read is `null`.
 
+Named limit — the `signed` row reads only the hash: a signature over the latest copy's exact text lifts the hold
+whatever closing review it names. One recorded by hand with `orbit emit signoff --doc` before the closing review, its
+`closing_review` `null`, reads `signed` once that review is recorded, when the review left the brief's text unchanged.
+
+Residual kind: a program signature given before its closing review, over text the closing review did not change
+
+Residual method: the architect session asks only once the program is done, so the signatures it records name a closing review; the record's `closing_review` shows the user which review a signature was given under, and its hash proves the text they signed is the text the hold reads
+
 Named limit — the closing review and each archive are ordered by their tokens, which are UTC times to the second: a
 closing review is taken to follow an archive when its token is later.
 

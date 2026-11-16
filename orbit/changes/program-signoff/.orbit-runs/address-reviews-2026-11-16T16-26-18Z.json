@@ -1,0 +1,86 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-16T16:26:18Z",
+  "change": "program-signoff",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/program-signoff/.orbit-runs/external-system-2026-11-16T16-13-04Z.md",
+  "source_command": null,
+  "source_token": "2026-11-16T16-13-04Z",
+  "latest_apply_token": "2026-11-16T15-37-50Z",
+  "external_reviewer": "GPT-6",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 0
+  },
+  "pushback_verification": "Both verified at HEAD 47797124. The arc-done finding is the fresh half's Step 5.5 finding (same site, same claim), walked in that pass's log. computeProgramHold returns signed on an equal hash before signatureStands is called, and the gate writes a program sign-off whatever the program's state, so a hand-run signature with closing_review null over text the closing review leaves unchanged reads signed; the delta's signed row says exactly that, so the code follows the spec and the question was the spec's.",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale_suppressed": 1,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Arc-done instructions retain the superseded archived-stage condition",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/architect.ts",
+      "line": 171,
+      "outcome": "stale",
+      "classification": "stale",
+      "action": "converged with the fresh half's finding at the same site, walked in its log",
+      "evidence": "resolved in address-reviews-2026-11-16T16-26-04Z (the earlier pass's log): Step 5.5 now states two definitions, Step 5.4's row being the check under signoff: program"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Matching bytes bypass the signature’s closing-review validity",
+      "marker_source": "external",
+      "file": "src/core/signoff.ts",
+      "line": 581,
+      "outcome": "resolved",
+      "remedy": "repair",
+      "classification": "decision_required",
+      "ratified_via": "chat",
+      "resolution": "A: keep the signed row as specified (an equal hash lifts the hold whatever closing review the signature names) and name a signature recorded by hand before the closing review as a limit in the hold requirement",
+      "action": "the orbit-program-brief delta's hold requirement gains a named limit with its residual kind and method: the signed row reads only the hash, so a hand-run signature with closing_review null reads signed once the closing review is recorded, when that review left the brief's text unchanged; the code is unchanged",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/program-signoff/specs/orbit-program-brief/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/program-signoff/specs/orbit-program-brief/spec.md",
+            "text": "the `signed` row reads only the hash"
+          },
+          {
+            "path": "orbit/changes/program-signoff/specs/orbit-program-brief/spec.md",
+            "text": "Residual kind: a program signature given before its closing review"
+          }
+        ],
+        "searched": [
+          "signatureStands",
+          "closing_review: null",
+          "Named limit"
+        ],
+        "scope": [
+          "src/core/emit-composition.ts"
+        ],
+        "kept": []
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Walked the external half: the arc-done finding converged with the fresh half's and was resolved in its log; the matching-bytes finding was decided by the user (A): the signed row keeps reading only the hash, and the hold requirement now names a signature given by hand before the closing review as a limit.",
+  "iteration": 5,
+  "next_recommended": "/orbit:review --as system program-signoff",
+  "ripple_misses": 0
+}

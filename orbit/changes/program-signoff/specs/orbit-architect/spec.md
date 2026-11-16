@@ -8,12 +8,13 @@ read the program's hold, after it renders the doc's state and BEFORE the arc-don
 flip is surfaced (D-ps-3 and D-ps-5 in `program-signoff`'s `explore.md`). It runs:
 
 ```bash
-orbit brief <doc> --save --json
+orbit brief <doc> --save
 orbit brief <doc> --hold --json
 ```
 
 The save (`orbit-program-brief`'s `A program's brief is saved once the program is finished`) writes a copy only for a
-finished program whose brief changed since its latest copy. The body says nothing about the save in chat under any
+finished program whose brief changed since its latest copy. The body runs it without `--json`, which would print the
+whole program brief, and acts on its exit status alone. The body says nothing about the save in chat under any
 setting but `program`; when it exits non-zero, the body records the failure, as the command reported it, in the
 session's run-summary `final_assessment`. Under `program` a failed save is stated in one line, and the body asks no
 sign-off in that session, since the latest copy may not be the program's current text.

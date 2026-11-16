@@ -174,6 +174,10 @@ describe("orbit-program-brief: The sign-off setting holds a change's archive or 
     expect(r.exitCode).toBe(0);
     expect(r.stderr).toBe('');
     expect(JSON.parse(r.stdout)).toEqual({ change: 'foo', setting: 'program', warning: null, copy: null, signoff: null, why: 'off', held: false });
+    // The one line names the program setting, never calling it off (fresh system S2).
+    const t = await runCLI(['brief', '--change', 'foo', '--hold'], { cwd: root });
+    expect(t.stdout).toContain("the sign-off setting is program, which holds the program's completion and no change's archive");
+    expect(t.stdout).not.toContain('the sign-off setting is off');
   });
 });
 

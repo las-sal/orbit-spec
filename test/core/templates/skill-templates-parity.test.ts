@@ -260,7 +260,11 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // --json`, `orbit-architect`'s new requirement's table as a checked mirror, the sign-off prompt and `orbit emit
   // signoff --doc`); the Step 5 heading names the sign-off as the body's third prompt; Step 5.5's arc-done check is
   // unconditional only off `signoff: program`. The function hash and the generated SKILL.md hash moved.
-  getArchitectSkillTemplate: '5ec3fc9b0f3a43035377c827f00cdcbb5aef80936c1247e75b5a44a46332ea35',
+  // Moved a SIXTH time at program-signoff's system walk (2026-11-16): Step 5.4 runs the save without `--json`, which
+  // would print the whole program brief, acting on its exit status alone (fresh W1, option A); Step 5.5 states its two
+  // arc-done definitions, Step 5.4's row being the check under `signoff: program` (fresh S1, external W1). The other
+  // two body edits of that walk (the review and address-reviews account clauses) move no pin here.
+  getArchitectSkillTemplate: 'c689d70505e5944c8a1c6095392bcf7cc5c7ccec429d386db9350774264dbedf',
   getOrbitArchitectCommandTemplate: 'b65b8cca6431bb45aa8587d3bfc1e9458981e2e1bc925ae45cd57414143cb3db',
 };
 
@@ -283,7 +287,7 @@ const EXPECTED_GENERATED_SKILL_CONTENT_HASHES: Record<string, string> = {
   'orbit-verify-change': '86d0fad7fe26e44c2df6e52bcac54c015a4911afd13bb288a825495773c99390', // rc06b-map-readers (2026-10-05): moved with the body's step 6 edit, then again at system walk 2's additions edit (see the function-hash note above)
   'orbit-onboard': 'e704c183201dc18a574de32da10a8722e8a53cc590e455fd66580317761d4698', // landing-page task 2.2 (see the function-hash note above); then seam-chaining system walk: the No-chaining line qualified by the chain setting
   'orbit-propose': 'be0e434d434c3db13a49eb2057413384131c225a34901a1266030987c36e402b', // rc13c, then rc03b, then rc05's system walk, then rc09a's size brief (task 5.3) and its system walk: moved with the body (see the function-hash notes above); then seam-chaining: the Chain end step and the epitome clause, at apply, the system walk and the verification walk; then seam-chaining-grants apply: the end step's two key rows and consent clause
-  'orbit-architect': '561c3088222f133f20c58507d2ca3eb96e0997520e2a43a0683d68e45f84b2fc', // rc15: moved twice with the body — apply, then the system walk; a third time at the post-archive audit walk; a fourth at rc05's apply, the scaffold's escaped backticks; a fifth at program-signoff apply, Step 5.4 (see the function-hash note above)
+  'orbit-architect': 'ac823324b963e15aa64c45aa33a6eef065e11d92ff6b5142bc15a976502564f5', // rc15: moved twice with the body — apply, then the system walk; a third time at the post-archive audit walk; a fourth at rc05's apply, the scaffold's escaped backticks; a fifth at program-signoff apply, Step 5.4; a sixth at its system walk (see the function-hash note above)
 };
 
 function stableStringify(value: unknown): string {

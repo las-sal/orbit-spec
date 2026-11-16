@@ -22,11 +22,11 @@ import { DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../d
 export const PROGRAM_SIGNOFF_STEP = `Run the save, then read the hold — on EVERY invocation on a doc, under every sign-off setting, after the doc's state is rendered and BEFORE the arc-done readout of Step 5.5, so a sign-off owed under \`signoff: program\` is asked before the program PR's READY flip is surfaced:
 
 \`\`\`bash
-orbit brief <doc> --save --json
+orbit brief <doc> --save
 orbit brief <doc> --hold --json
 \`\`\`
 
-The save writes a copy of the program's brief into \`orbit/architecture/.orbit-runs/brief/<doc>/\` only for a FINISHED program (every declared stage done, no live work citing the doc) whose brief changed since its latest copy; its \`--json\` carries \`save\` (\`saved\`, \`unchanged\` or \`not-finished\`) and \`saved\` (\`{path, sha256}\`, or \`null\`). Say nothing about the save in chat under any setting but \`program\`; when it exits non-zero, record the failure, as the command reported it, in this session's run-summary \`final_assessment\`. Under \`program\` a failed save is stated in one line, and no sign-off is asked in this session, since the latest copy may not be the program's current text.
+The save writes a copy of the program's brief into \`orbit/architecture/.orbit-runs/brief/<doc>/\` only for a FINISHED program (every declared stage done, no live work citing the doc) whose brief changed since its latest copy. Run it WITHOUT \`--json\`, which would print the whole program brief: act on its exit status alone — it prints one or two lines (the saved copy's path and \`sha256 <hex>\`, or one line saying the copy is unchanged or the program is not finished), and no row below reads them. Say nothing about the save in chat under any setting but \`program\`; when it exits non-zero, record the failure, as the command reported it, in this session's run-summary \`final_assessment\`. Under \`program\` a failed save is stated in one line, and no sign-off is asked in this session, since the latest copy may not be the program's current text.
 
 The hold renders no brief and writes nothing. It prints one object: \`doc\`; \`setting\` (\`off\`, \`change\` or \`program\`); \`warning\` (a sentence, or \`null\`); \`finished\`; \`closing_review\` (\`{file}\`, or \`null\`); \`copy\` (\`{file, sha256}\` of the latest saved copy, or \`null\`); \`signoff\` (\`{file, answer}\` of the latest sign-off, or \`null\`); \`why\` and \`held\`. Act by the first row of this table that matches, the save's outcome being the command just above:
 
@@ -168,12 +168,19 @@ ${PROGRAM_SIGNOFF_STEP}
 
 ### 5.5. Arc-done readout: the program PR's human acts (D-arc Stage D6)
 
-On EVERY invocation — IDEMPOTENT — check whether the doc is ARC-DONE:
-every stage archived AND the closing \`--as architecture\` review recorded (from
-\`orbit architecture status --json\` plus the architecture trail). Under every sign-off setting but
-\`program\` the check is unconditional, as before Step 5.4 existed; under \`signoff: program\` the
-readout is shown only when Step 5.4's row shows it, the program's sign-off being part of arc-done
-there, and never in a session whose Step 5.4 row shows no readout. This check is deliberately
+On EVERY invocation — IDEMPOTENT — check whether the doc is ARC-DONE. The check has two
+definitions, by the sign-off setting:
+
+- **Under every value but \`program\`** — unconditional, as before Step 5.4 existed: every stage
+  archived AND the closing \`--as architecture\` review recorded (from \`orbit architecture status
+  --json\` plus the architecture trail).
+- **Under \`signoff: program\`** — Step 5.4's row IS the check, and replaces the one above: the
+  program FINISHED (a stage the user ended counts as done, whether or not it archived a change, and no
+  live work cites the doc), its closing review recorded, and the program signed, as the hold reports
+  them. Show the readout exactly when Step 5.4's row shows it, and never in a session whose row shows
+  none; never re-test "every stage archived" here.
+
+This check is deliberately
 NOT gated on the ratification interaction above: the natural ordering is final-stage archive
 → final-stage ratification → closing review, so arc-done becomes true at the LAST step, after
 that interaction has already passed. A ratification-gated readout would never fire.
