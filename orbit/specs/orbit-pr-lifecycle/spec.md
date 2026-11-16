@@ -268,6 +268,20 @@ program and a silent readout is indistinguishable from a program that is not fin
   the tail's ambiguity skip exists to avoid writing to the wrong PR, and there is no write
   to misdirect.
 
+Under the sign-off setting's `program` value (`orbit-program-brief`'s `The sign-off setting holds a change's archive or a program's completion for the user's sign-off`), ARC-DONE further requires the user's sign-off over the program's latest saved
+brief (D-ps-5 in `program-signoff`'s `explore.md`): an architect invocation observes it only once
+`orbit brief <doc> --hold` reports the program signed — `why: "signed"`, or a `re-sign` the session asks nothing about
+(`orbit-architect`'s `The architect session saves the program brief and asks for the program's sign-off`) — and until then the session asks for
+the sign-off and surfaces no READY flip. Under `program` the hold reads the two conditions above from the trail, the
+first as the program FINISHED (`orbit-program-brief`'s `A program's brief is saved once the program is finished`) rather
+than every declared stage archived: a stage the user ended (`ended` or `ended-from-explore`) counts as done whether or not
+it archived a change, and no live work (an active change, or an exploration not concluded) may cite the doc; the second as the doc's closing review recorded after the
+last citing change's archive (`orbit-program-brief`'s `A program's sign-off is recorded against its saved copy, and the
+hold reads arc-done`). Under every other value arc-done is the two conditions alone, observed as before, the first read
+as worded. Named limit — the two readings differ on a stage the user ended without archiving a change: `program` counts
+it done, and whether the reading at the defaults does is left as it stands, the program's next architect session's to
+rule on, since changing it would change what the user sees at the defaults.
+
 The fall-through is deliberately the OPPOSITE of the archive tail's rule, where a positively
 invalid record is ANSWERED rather than retried. The seams differ in risk, not in vocabulary:
 the tail WRITES, so a second chance there could rewrite and flip the wrong pull request,
@@ -301,6 +315,13 @@ rewrite is OPTIONAL polish available on request, never a required transition ste
 
 - **WHEN** the architect flow ratifies the final stage complete and `orbit architecture status` plus the architecture trail show every stage archived and the closing review recorded
 - **THEN** the readout names the program PR's URL, its DRAFT state, and the `gh pr ready` / `gh pr merge` commands as the user's — and no orbit surface invokes either
+
+#### Scenario: Under `program`, an unsigned program surfaces no READY flip
+
+- **WHEN** under `signoff: program` every declared stage is archived, the closing review is recorded, and the program
+  brief's latest saved copy carries no signature
+- **THEN** the architect invocation asks the user to sign off or decline, and surfaces no `gh pr ready` until a
+  `signoff` record says `signed`
 
 #### Scenario: Stage archive appends, never flips
 

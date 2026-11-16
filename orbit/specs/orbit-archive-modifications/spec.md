@@ -1021,7 +1021,7 @@ command and the table, so an installed skill needs no spec to run the step; a te
 The archive workflow SHALL, at a step directly after the brief's save (`The archive saves the change's brief before the
 sync`) and BEFORE the sync assessment, read the hold by running `orbit brief --change <name> --hold --json`
 (`orbit-program-brief`'s `A sign-off is recorded against the saved copy, and the hold reads it`) and act by the first row
-of this table that matches (D-pb-14 in this change's `explore.md`):
+of this table that matches (D-pb-14 in `program-brief`'s `explore.md`):
 
 | the save and the hold | the archive |
 |---|---|
@@ -1092,8 +1092,14 @@ holds each body carrying them.
 
 #### Scenario: An unrecognized value warns and goes on
 
-- **WHEN** `/orbit:archive foo` runs under `signoff: program`
+- **WHEN** `/orbit:archive foo` runs under `signoff: weekly`
 - **THEN** the archive states the hold's warning in one line, asks no sign-off, and completes
+
+#### Scenario: A program sign-off holds no archive
+
+- **WHEN** `/orbit:archive foo` runs under `signoff: program`
+- **THEN** the hold reports `why: "off"` with no warning, no sign-off is asked for, nothing about the hold is shown, and
+  the archive completes
 
 #### Scenario: Bulk archive asks per change
 

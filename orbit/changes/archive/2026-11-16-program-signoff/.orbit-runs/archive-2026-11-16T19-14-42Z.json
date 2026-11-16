@@ -1,0 +1,71 @@
+{
+  "command": "archive",
+  "timestamp": "2026-11-16T19:14:42Z",
+  "change": "program-signoff",
+  "kind": "lifecycle",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Archived program-signoff to orbit/changes/archive/2026-11-16-program-signoff/: the per-program sign-off (signoff: program, orbit brief <doc> --save and --hold, orbit emit signoff --doc, the architect session's Step 5.4); 7 capabilities synced (3 added, 12 modified, 2 renamed), every block byte-verified against its delta.",
+  "archive_path": "orbit/changes/archive/2026-11-16-program-signoff/",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": {
+      "critical": 0,
+      "warning": 4,
+      "suggestion": 6
+    },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": [
+      "orbit-architect",
+      "orbit-archive-modifications",
+      "orbit-decision-records",
+      "orbit-emit-composition",
+      "orbit-pr-lifecycle",
+      "orbit-program-brief",
+      "orbit-review"
+    ],
+    "added": 3,
+    "modified": 12,
+    "removed": 0,
+    "renamed": 2
+  },
+  "unresolved_markers": [],
+  "user_decision": "proceeded_with_no_critical",
+  "consent": "user-invoked",
+  "warnings": [
+    "Touchpoints drift (audit Category 5): src/core/completions/command-registry.ts, src/core/disciplines.ts, src/core/templates/workflows/address-reviews.ts and src/core/templates/workflows/archive-change.ts lay outside design.md's predicted Touchpoints; CLAUDE.md, orbit/scenario-ledger.yaml, two PR tests and two brief goldens rode along",
+    "orbit-program-brief's ## Purpose was edited in place at archive (task 6.3's at-archive note) to name program, the program's saved briefs and the program hold"
+  ],
+  "judgements": [
+    {
+      "kind": "readiness",
+      "formed_against": [
+        "2026-11-14T19-16-37Z",
+        "2026-11-14T19-17-03Z",
+        "2026-11-16T16-12-44Z",
+        "2026-11-16T16-13-04Z"
+      ],
+      "disposition": "ready",
+      "reasoning": "Both blind pairs were walked and verified; the system pair's four engine-facing findings landed, its one design question was settled by the user, and the full suite and every synced block hold.",
+      "ratified_by": "ai",
+      "accepted": [
+        {
+          "claim": "A program signature written with orbit emit signoff --doc before the closing review reads signed once that review is recorded, when the review left the brief's text unchanged",
+          "why": "The user chose it (A) at the system walk; it is a named limit of the hold requirement, and the architect session only asks after the closing review"
+        },
+        {
+          "claim": "Under signoff: program the sign-off shows the program's latest brief whole, about 157 KB for automate-dev-flow",
+          "why": "G5 has the user decide from the brief alone; whether the brief needs trimming is graded at stage first-run, on a real program"
+        }
+      ]
+    }
+  ],
+  "pr_url": "https://github.com/las-sal/orbit-spec/pull/44",
+  "pr_state": "draft",
+  "next_recommended": "/orbit:architect automate-dev-flow — change archived; review stage program-brief and take up the program's next stage, or run /orbit:audit-drift for a project-wide drift check.",
+  "decision_records_unread": 12
+}
