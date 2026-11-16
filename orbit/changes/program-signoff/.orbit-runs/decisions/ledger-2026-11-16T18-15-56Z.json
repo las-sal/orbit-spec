@@ -1,0 +1,24 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-16T18:15:56Z",
+  "change": "program-signoff",
+  "model": "claude-opus-5-5",
+  "area": "defaults",
+  "decided": "Under the program sign-off, a program counts as finished when every stage is archived, waiting for ratification, complete, or ended by the user, so a stage the user ended without archiving any change does not stop it. With the setting at its default, the existing end-of-program readout keeps reading every stage archived exactly as it is worded today; the difference between the two readings for an ended stage is written down as a known limit for the program's next architecture session to settle.",
+  "alternatives": [
+    "use the program sign-off's wider test of finished, which counts an ended stage, for the end-of-program readout under every setting, which would change what users see with no setting changed"
+  ],
+  "why": "Nothing the user sees may change with every setting at its default, and a program that withdrew a stage must still be able to finish under the program sign-off.",
+  "relies_on": [
+    {
+      "kind": "goal",
+      "doc": "automate-dev-flow",
+      "id": "G0"
+    },
+    {
+      "kind": "decision",
+      "id": "D-ps-5"
+    }
+  ],
+  "replaces": "ledger-2026-11-15T20-21-05Z.json"
+}

@@ -1,0 +1,510 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-16T18:16:12Z",
+  "change": "program-signoff",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/program-signoff/.orbit-runs/review-system-2026-11-16T17-22-22Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-16T17-22-22Z",
+  "latest_apply_token": "2026-11-16T15-37-50Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 5,
+    "suggestion": 9
+  },
+  "pushback_verification": "All fourteen verified: each phrase the reader quoted is in its record, and each record was the latest of its chain. None stale.",
+  "resolution_summary": {
+    "resolved": 14,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "ledger-2026-11-14T17-50-06Z.json — reader row 3: \"when work landed change by change\" reads as each change's work merged",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-14T17-50-06Z.json",
+      "line": 1,
+      "outcome": "resolved",
+      "remedy": "repair",
+      "classification": "trivial_fix",
+      "action": "wrote ledger-2026-11-16T18-15-54Z.json replacing ledger-2026-11-14T17-50-06Z.json, its area and citations unchanged, rewording only what the reader named",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-16T18-15-54Z.json",
+            "text": "its merge left to the user, and with no pull requests"
+          }
+        ],
+        "searched": [
+          "ledger-2026-11-14T17-50-06Z.json"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-14T17-50-06Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "ledger-2026-11-14T18-13-27Z.json — reader row 4: \"finished\" widens D-ps-5's every stage archived without saying so, uses \"ended\" undefined, and \"a newer closing review is asked about afresh\" contradicts D-ps-8",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-14T18-13-27Z.json",
+      "line": 1,
+      "outcome": "resolved",
+      "remedy": "repair",
+      "classification": "trivial_fix",
+      "action": "wrote ledger-2026-11-16T18-15-55Z.json replacing ledger-2026-11-14T18-13-27Z.json, its area and citations unchanged, rewording only what the reader named",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-16T18-15-55Z.json",
+            "text": "only by counting an ended stage, and only under the program sign-off"
+          }
+        ],
+        "searched": [
+          "ledger-2026-11-14T18-13-27Z.json"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-14T18-13-27Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "ledger-2026-11-15T20-21-05Z.json — reader row 3: alternatives' \"read every stage archived as finished under every setting\" misstates the alternative",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-15T20-21-05Z.json",
+      "line": 1,
+      "outcome": "resolved",
+      "remedy": "repair",
+      "classification": "trivial_fix",
+      "action": "wrote ledger-2026-11-16T18-15-56Z.json replacing ledger-2026-11-15T20-21-05Z.json, its area and citations unchanged, rewording only what the reader named",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-16T18-15-56Z.json",
+            "text": "which counts an ended stage, for the end-of-program readout under every setting"
+          }
+        ],
+        "searched": [
+          "ledger-2026-11-15T20-21-05Z.json"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-15T20-21-05Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "ledger-2026-11-16T14-25-16Z.json — reader row 3: \"none was ever recorded\" reads as covering a failed check with no recorded link, which asks again",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-16T14-25-16Z.json",
+      "line": 1,
+      "outcome": "resolved",
+      "remedy": "repair",
+      "classification": "trivial_fix",
+      "action": "wrote ledger-2026-11-16T18-15-57Z.json replacing ledger-2026-11-16T14-25-16Z.json, its area and citations unchanged, rewording only what the reader named",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-16T18-15-57Z.json",
+            "text": "no program pull request was ever recorded for the doc at all"
+          }
+        ],
+        "searched": [
+          "ledger-2026-11-16T14-25-16Z.json"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-16T14-25-16Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "ledger-2026-11-16T15-35-43Z.json — reader row 1: \"settings file\" reads as the project config, not the change's own metadata",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-16T15-35-43Z.json",
+      "line": 1,
+      "outcome": "resolved",
+      "remedy": "repair",
+      "classification": "trivial_fix",
+      "action": "wrote ledger-2026-11-16T18-15-58Z.json replacing ledger-2026-11-16T15-35-43Z.json, its area and citations unchanged, rewording only what the reader named",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-16T18-15-58Z.json",
+            "text": "own record of the doc and stage it belongs to cannot be read"
+          }
+        ],
+        "searched": [
+          "ledger-2026-11-16T15-35-43Z.json"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-16T15-35-43Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "ledger-2026-11-14T17-47-45Z.json — reader row 3: \"ask them twice\" does not say why a second request would come",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-14T17-47-45Z.json",
+      "line": 1,
+      "outcome": "resolved",
+      "remedy": "repair",
+      "classification": "trivial_fix",
+      "action": "wrote ledger-2026-11-16T18-15-59Z.json replacing ledger-2026-11-14T17-47-45Z.json, its area and citations unchanged, rewording only what the reader named",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-16T18-15-59Z.json",
+            "text": "since a copy of the brief saved after a signature asks again"
+          }
+        ],
+        "searched": [
+          "ledger-2026-11-14T17-47-45Z.json"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-14T17-47-45Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "ledger-2026-11-14T17-50-05Z.json — reader row 3: \"the reading that already finds\" collides with the reading step; \"architecture history\" for the architecture trail",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-14T17-50-05Z.json",
+      "line": 1,
+      "outcome": "resolved",
+      "remedy": "repair",
+      "classification": "trivial_fix",
+      "action": "wrote ledger-2026-11-16T18-16-00Z.json replacing ledger-2026-11-14T17-50-05Z.json, its area and citations unchanged, rewording only what the reader named",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-16T18-16-00Z.json",
+            "text": "lets the hold, which already finds"
+          }
+        ],
+        "searched": [
+          "ledger-2026-11-14T17-50-05Z.json"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-14T17-50-05Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "ledger-2026-11-14T18-13-27Z.json — reader row 2: \"comparing the times of files that are named independently\" leans on filename timestamps",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-14T18-13-27Z.json",
+      "line": 1,
+      "outcome": "resolved",
+      "remedy": "repair",
+      "classification": "trivial_fix",
+      "action": "wrote ledger-2026-11-16T18-16-01Z.json replacing ledger-2026-11-16T18-15-55Z.json, its area and citations unchanged, rewording only what the reader named",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-16T18-16-01Z.json",
+            "text": "recorded in separate places whose times cannot be reliably compared"
+          }
+        ],
+        "searched": [
+          "ledger-2026-11-14T18-13-27Z.json"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-16T18-15-55Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "ledger-2026-11-15T20-21-04Z.json — reader row 3: decided first reads as reopening being the only reason to ask again",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-15T20-21-04Z.json",
+      "line": 1,
+      "outcome": "resolved",
+      "remedy": "repair",
+      "classification": "trivial_fix",
+      "action": "wrote ledger-2026-11-16T18-16-02Z.json replacing ledger-2026-11-15T20-21-04Z.json, its area and citations unchanged, rewording only what the reader named",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-16T18-16-02Z.json",
+            "text": "In one case they are asked again in every pull-request mode"
+          }
+        ],
+        "searched": [
+          "ledger-2026-11-15T20-21-04Z.json"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-15T20-21-04Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "ledger-2026-11-15T20-21-05Z.json — reader row 3: decided's readout sentence is hard to parse, and its list runs two items together",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-15T20-21-05Z.json",
+      "line": 1,
+      "outcome": "resolved",
+      "remedy": "repair",
+      "classification": "trivial_fix",
+      "action": "wrote ledger-2026-11-16T18-16-03Z.json replacing ledger-2026-11-16T18-15-56Z.json, its area and citations unchanged, rewording only what the reader named",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-16T18-16-03Z.json",
+            "text": "is in one of four states"
+          }
+        ],
+        "searched": [
+          "ledger-2026-11-15T20-21-05Z.json"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-16T18-15-56Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "ledger-2026-11-15T20-21-07Z.json — reader row 3: \"the promised line\" points at a promise the reader is not shown",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-15T20-21-07Z.json",
+      "line": 1,
+      "outcome": "resolved",
+      "remedy": "repair",
+      "classification": "trivial_fix",
+      "action": "wrote ledger-2026-11-16T18-16-04Z.json replacing ledger-2026-11-15T20-21-07Z.json, its area and citations unchanged, rewording only what the reader named",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-16T18-16-04Z.json",
+            "text": "The earlier rule promised a line in the brief saying each change had merged"
+          }
+        ],
+        "searched": [
+          "ledger-2026-11-15T20-21-07Z.json"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-15T20-21-07Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "ledger-2026-11-16T16-26-31Z.json — reader row 3: \"a signature recorded by hand\" reads as editing the file",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-16T16-26-31Z.json",
+      "line": 1,
+      "outcome": "resolved",
+      "remedy": "repair",
+      "classification": "trivial_fix",
+      "action": "wrote ledger-2026-11-16T18-16-05Z.json replacing ledger-2026-11-16T16-26-31Z.json, its area and citations unchanged, rewording only what the reader named",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-16T18-16-05Z.json",
+            "text": "written with the sign-off command outside the architect session"
+          }
+        ],
+        "searched": [
+          "ledger-2026-11-16T16-26-31Z.json"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-16T16-26-31Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "ledger-2026-11-16T16-26-32Z.json — reader row 3: \"asks only whether the save worked\" uses asks, which elsewhere means asking the user",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-16T16-26-32Z.json",
+      "line": 1,
+      "outcome": "resolved",
+      "remedy": "repair",
+      "classification": "trivial_fix",
+      "action": "wrote ledger-2026-11-16T18-16-06Z.json replacing ledger-2026-11-16T16-26-32Z.json, its area and citations unchanged, rewording only what the reader named",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-16T18-16-06Z.json",
+            "text": "it reads only whether the save worked"
+          }
+        ],
+        "searched": [
+          "ledger-2026-11-16T16-26-32Z.json"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-16T16-26-32Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "ledger-2026-11-16T15-35-45Z.json — reader row 3: \"the command reference\" and \"the commands page\" cannot be told apart",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-16T15-35-45Z.json",
+      "line": 1,
+      "outcome": "resolved",
+      "remedy": "repair",
+      "classification": "trivial_fix",
+      "action": "wrote ledger-2026-11-16T18-16-07Z.json replacing ledger-2026-11-16T15-35-45Z.json, its area and citations unchanged, rewording only what the reader named",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-16T18-16-07Z.json",
+            "text": "the page of orbit's terminal commands, the page of its workflow commands"
+          }
+        ],
+        "searched": [
+          "ledger-2026-11-16T15-35-45Z.json"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/program-signoff/.orbit-runs/decisions/ledger-2026-11-16T15-35-45Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Walked the verification pass's reading findings: fourteen resolved by replacement records, one per finding, each carrying its record's area and citations unchanged; the two records with two findings each were replaced twice, chained. The user said walk all at triage.",
+  "iteration": 6,
+  "next_recommended": "/orbit:archive program-signoff — user-invoked",
+  "ripple_misses": 0
+}
