@@ -1,0 +1,41 @@
+{
+  "command": "architect",
+  "timestamp": "2026-11-16T19:31:21Z",
+  "change": null,
+  "doc": "automate-dev-flow",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Architect session after program-signoff's archive (merged as PR #44): stage program-brief ratified complete, its four exit criteria met across its four changes; the program brief's save reported the program not finished and the hold read off (no signoff key), so no sign-off was asked and no arc-done readout fired. Tripwires is the one stage open to start.",
+  "stages_touched": [
+    "program-brief"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [
+    "program-brief"
+  ],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      {
+        "path": "orbit/architecture/automate-dev-flow.md",
+        "why": "stage tripwires charter and exit criteria (G6's first half); R-adf-3's six stop conditions, condition (5) being a tripwire firing"
+      },
+      {
+        "path": "orbit/specs/orbit-decision-records/spec.md",
+        "why": "the stop record a tripwire writes, its conditions and its write gate"
+      },
+      {
+        "path": "orbit/changes/archive/2026-11-16-program-signoff/design.md",
+        "why": "a recent design's frozen Touchpoints section, the input of the touchpoints tripwire"
+      },
+      {
+        "path": "CLAUDE.md",
+        "why": "repo orientation, disciplines, and the built-CLI stand-ins for commands the installed orbit lacks"
+      }
+    ],
+    "next_command": "/orbit:explore tripwires",
+    "model_hint": null,
+    "seam": "program-brief is ratified; tripwires depends only on decision-layer and the driver waits on it. Commit this session's doc edit before exploring. The user's G5 read of a saved brief stays pending, graded at first-run."
+  },
+  "next_recommended": "/orbit:explore tripwires"
+}

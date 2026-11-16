@@ -340,7 +340,7 @@ them, and those replacements reach no reader before archive (D-dr-2's named limi
 ### Stage program-brief — the brief and the sign-off seam
 
 Depends-on: decision-layer
-Complete: [ ]
+Complete: [x] 2026-11-16 (Sal)
 
 The engine composes the program brief from the trail: what was built, the capabilities and requirements added or
 changed, new terms and seams, the ledger, stops and tripwires fired, and deviations from the charter — in plain
@@ -668,3 +668,11 @@ Exit criteria:
   the saved copy out of its untracked-files line. The user's G5 read of the brief this archive saved (brief-render's
   task 5.3) is pending. The program-brief exploration's pointers to `orbit/explore/brief-render/` now point at the
   archived change. No ruling, goal or stage changed.
+- 2026-11-16 — Architect session after `program-signoff` was archived (merged as PR #44), the last of the stage's four
+  changes: the sign-off once per program (the stage's fourth Shipped-as paragraph). Sal ratified stage program-brief
+  complete: golden renders of a fixture program and of one with ledger entries and stops (brief-render); the sign-off seam
+  holding each change's archive under `change` and the program's completion, with the program PR's READY flip under
+  `pr: per-architecture`, under `program`, and nothing otherwise, each tested; the `signoff` key named in its owning
+  requirement with its default tested; and G0 holding with no new exception (AI recommendation). The user's G5 read of a
+  saved brief stays pending, graded at first-run. No ruling or goal changed. Tripwires is the one stage open to start: it
+  depends only on decision-layer, and the driver waits on it.
