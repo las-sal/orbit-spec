@@ -1,0 +1,25 @@
+{
+  "command": "explore",
+  "timestamp": "2026-11-17T17:44:00Z",
+  "change": "once-per-session-detail",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "All four open questions settled with Sal. The account step keys its reference read on the apply gate reading passed, with no engine change (D-opsd-3). Seven bodies' run-summary emit sections (apply, archive, architect, review, verify, propose, address-reviews) keep when the emit fires and its command and read their schema reference before the session's first emit (D-opsd-4, D-opsd-5). This change's own apply ends in a fresh session on the regenerated bodies to show the account is written (D-opsd-6). Two findings frame it: the write gate never notices an owed field left out (D-opsd-1), and the apply gate never reads the account folder (D-opsd-2). Propose still measures which scenario text tags pin the moving wording (D-opsd-7).",
+  "decisions_captured": 7,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 2,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [
+    {
+      "id": "D-opsd-4",
+      "kind": "a paragraph of an emit section that is neither when, command, payload detail nor chat behaviour",
+      "method": "classify each paragraph of every moving section against this table at propose, before any text moves"
+    }
+  ],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose once-per-session-detail — 2 live rules accounted, 1 bounded residual named (D-opsd-4); formalize when you are ready (or /orbit:explore once-per-session-detail to keep refining)"
+}
