@@ -1,0 +1,126 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-17T15:37:41Z",
+  "change": "conditional-steps",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "0",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/conditional-steps/design.md",
+      "line": 275,
+      "title": "Design's Risks line still says RG1's projection is about 600 over; its own Size section and the measured bodies put it at about 2,700",
+      "recommendation": "Correct the Risks bullet to the figure the Size section states (design.md:220: about 352,700 after stage C, about 2,700 over RG1's 350,000), and carry that figure into the stage's Shipped-as paragraph so the next stage's propose plans against 2,700, not the 600 D-cs-11 was decided on. Measured now: npm run size:report gives bodies 389,374 characters; less the brief's B (about 21,700) and C (about 15,000) estimates that is about 352,700."
+    },
+    {
+      "pass": "1",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "src/core/templates/workflows/archive-change.ts",
+      "line": 537,
+      "title": "Archive Step 3.7's pointer hands over only the hold's result, while the moved table's third row reads the save's outcome",
+      "recommendation": "The reference's table (signoff-hold.md) acts on 'the save exited non-zero, or why: no-copy', and its locator for the save ('the save step's just above') points nowhere inside signoff-hold.md (named in design's Risks). Architect 5.4's analogous pointer says 'follow it from the save's outcome and the result you already have'; archive Step 3.7's says only 'from the result you already have'. Under signoff: change with a failed Step 3.6 save and an earlier copy on the trail, an agent that misses the save's outcome would show the older copy and ask for a sign-off instead of stopping. Consider giving Step 3.7's basic content the same wording as architect 5.4 (design §3 and the archive delta both name the Step 3.7 pointer, so they would move together), or leave it for stage C with the other positional pointers."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "src/core/templates/workflows/pr-choreography.ts",
+      "line": 222,
+      "title": "The moved arc-done act points at its own file and calls itself 'this body'; design's list of accepted positional pointers omits it",
+      "recommendation": "ARC_DONE_ACT now opens references/pr-resolution.md and says 'surface the program PR and its human acts per `references/pr-resolution.md` ... this body makes no outward write', a self-reference inside that very file. Likewise GATE_INFLECTION_STEP in gate-inflection.md says 'which this body points at rather than restates'. Both are byte-equal moves and true of the step read whole, which is the design's accepted trade-off, but design.md:263 names four such pointers (the save paragraph's 'no row below', SIGNOFF_HOLD_STEP's 'just above', the size brief's '(below)', the Position labels) and not these. Add them to that Risks bullet so stage C, which the bullet says will find them by that list, finds them too."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "src/core/templates/workflows/pr-choreography.ts",
+      "line": 75,
+      "title": "pr-choreography.md now runs past 100 lines with no table of contents (a new RG2 instance)",
+      "recommendation": "The `## Where each phase runs` section took the shared reference from 83 lines (at 84ccb682) to about 107. RG2 requires a table of contents on every reference file over 100 lines and places that fix in stage tighten-bodies, so nothing fails today; name this file in the stage's Shipped-as paragraph or tighten-bodies' scope so the instance this stage created is counted there."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "What I probed hardest was the stage's central claim, that every moved block is byte-equal to today's text. moved-blocks.test.ts holds each block to a recorded sha256, but a recorded hash could have been taken after the edit. So I extracted the pre-apply source at 84ccb682 into a scratch directory and recomputed all ten hashes from the OLD generated bodies, cutting each block at the boundaries the test's header states. All ten match the RECORDED table exactly, and at 84ccb682 every one of the six commit-carrying bodies held COMMIT_STEP whole. The byte-equality is real, not circular.\n\nI then traced each basic content's handled result against the moved table's first-row-match order. Commit `off`, chain `configured: false`, hold `why: off` (which comes before the save-failure row, so a failed save under `off` still goes on, as before), gates passed or superseded, fingerprints all `verified`, and size `ceiling` null or `breaches` empty each match the row the full step would have taken. Every other result, a non-zero exit included, goes to the reference. I found no result at which a basic content acts differently from the whole step. The one soft spot is the archive hold's handoff (the Step 3.7 SUGGESTION).\n\nThe suite ran green on the HEAD tree (206 files, 4331 tests after npm run build). The scenario map reports 50 delta scenarios with 0 uncovered, 0 orphans and 0 malformed. orbit validate --strict passes with the capabilities breach declared, and validate --sources is clean. The size report lands the bodies at 389,374 characters, as design's table predicted. No baseline requirement outside the four deltas pins text that moved: the fingerprint-divergence, gate and user-validation requirements describe behaviour, which the references carry unchanged.\n\nPass 0 ran verify-change's checks inline (tasks, scenario map, requirement mapping, design adherence) without writing a separate verify emit, keeping this worker's trail footprint to its one pass. Pass 6 was a scoped residue sweep (the retired term 'stub', the old carriage wording, the docs' reference-directory count, validate --sources, positional pointers in the moved text), not the full four-category audit-drift. These readings came from the live checkout at ca5688da, which is the reviewed state.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "6"
+  ],
+  "passes_skipped": [
+    "4: no perspectives defined (orbit/lenses/ absent); skip Pass 4",
+    "5: no critical paths defined (orbit/lenses/ absent); skip Pass 5"
+  ],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The stage does what it set out to do without changing behaviour. I recomputed the pre-change hashes independently, so the byte-equal move is proven, not asserted. Every basic content handles exactly the row the whole step would have taken and hands every other result to its reference. The suite, the scenario map and the budget and size instruments all hold.\nWhat remains is bookkeeping: one stale figure in design's Risks (the RG1 gap is about 2,700, not 600, which matters for how the next stage plans), and three small notes for stage C. None needs a redesign, and all can be settled in the walk or carried into the Shipped-as paragraph."
+  },
+  "final_assessment": "0 critical, 1 warning, 3 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews conditional-steps",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "84ccb68254585f560169ebca2475c6fbff56b0fa",
+      "frozen": true,
+      "evidence": {
+        "files": [],
+        "share": 0,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ]
+}
