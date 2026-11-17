@@ -190,6 +190,25 @@ Exit criteria:
 - The budget test's ceilings are lowered to the new sizes.
 - RG0 holds.
 
+Shipped as (2026-11-17; archived as `orbit/changes/archive/2026-11-17-once-per-session-detail/`; the charter above
+stays as declared): every emit step in scope, eleven bodies (apply, archive, architect, review, verify, propose,
+address-reviews, ff, continue, new, audit-drift), keeps when its emit fires, its command and its chat behaviour, and
+tells the agent to read `references/run-summary-emit.md` before the session's first run-summary emit; that reference
+holds the emit section whole, byte-equal. Apply's and the walk's account steps keep their basic content and read
+`account-step.md` and `account-walk-step.md` every time their moment comes. Explore's and bulk-archive's emit steps are
+unchanged. `skill_body_convention.md` gains the rule for a block acted on once. The bodies total 369,392 characters
+(apply 18,887), and eleven ceilings in `skill-body-budget.test.ts` came down to their new sizes plus 5%. A fresh apply
+session on the regenerated bodies followed both cues and wrote the change's account, meeting the second exit criterion.
+Three departures from the charter, ratified at exploration and propose and recorded in the change's account: the
+payload detail went to a new small `run-summary-emit.md` in each skill, not to the existing schema references (15,000
+to 31,000 characters each, which every session would have read whole before its first run summary); the triggers of
+the owed fields (apply's and archive's `judgements`, archive's `deferred_validations`, propose's and ff's
+`pr_attachment`) moved to the reference with the rest of the detail, so the bodies keep the emit's trigger but not
+theirs (D-opsd-4); and the account step moved whole, its conditions included, so the body carries no condition
+(D-opsd-8). The charter's check found that the apply gate cannot report a missing account without an engine change, so
+none was made; that report joins `evaluation`'s list beside R-rop-4's. Carried forward: the stage saved 19,982
+characters against the brief's 21,700, so RG1's projection after `tighten-bodies` is about 354,400, about 4,400 over.
+
 ### Stage tighten-bodies — tighten what stays, and Anthropic's structural rules
 
 Depends-on: once-per-session-detail

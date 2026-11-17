@@ -623,10 +623,33 @@ that follows each review, apply split by whether apply is complete at the sessio
 exists, and a walk split by whether the change is active or archived and, for an active change, by whether a resolved
 finding changes the account's facts or rewords it after a reading.
 
-The apply and address-reviews workflow bodies each carry the instruction for their rows of the table, each naming the
-fields the write gate accepts (`orbit-emit-composition`'s `The write gate checks the account`) and how to invoke
-`orbit emit account`, `replaces` included, so an installed skill of either needs no spec and no other skill to write
-one; a test holds each body carrying the fields and the invocation.
+The apply and address-reviews workflow bodies each carry their step's BASIC CONTENT, and the skill's reference file
+beside the body its full instruction. Apply's basic content sends the agent, at the session's end and before the run
+summary (or the completion readout when the session writes none), to `references/account-step.md`; the walk's sends the
+agent, after its logs, to `references/account-walk-step.md`. Each reads its reference every time its moment comes and
+carries no condition of its own, so every branch of the two steps, their source, is decided where the step is stated
+whole: the reference decides whether to write the account, a replacement of it, or none. Each reference carries its
+step's instruction for its rows of the table, naming the fields the write gate accepts (`orbit-emit-composition`'s `The
+write gate checks the account`) and how to invoke `orbit emit account`, `replaces` included, so an installed skill of
+either needs no spec and no other skill to write one; a test holds each body carrying its basic content and each
+reference the fields and the invocation.
+
+Named limit — a session that does not read the reference writes no account, and nothing in orbit reports a change whose
+apply is complete and which has none: the apply gate counts tasks and never reads the `account/` folder.
+
+#### Scenario: The apply body sends the agent to the account reference at the session's end
+
+- **WHEN** the apply skill is generated
+- **THEN** its body carries the account step's heading and basic content (at the session's end, before the run-summary
+  emit or the completion readout, read `references/account-step.md` and follow it) with no condition of its own, and
+  the skill ships `references/account-step.md` holding the full step with the fields and the `orbit emit account`
+  invocation
+
+#### Scenario: The walk sends the agent to its reference after its logs
+
+- **WHEN** the address-reviews skill is generated
+- **THEN** its step 7 carries the basic content naming `references/account-walk-step.md` after the logs are written,
+  with no condition of its own, and the skill ships that reference holding the full walk step
 
 #### Scenario: The session that completes apply writes the account
 
