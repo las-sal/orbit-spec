@@ -877,7 +877,7 @@ The README's installation, update, and uninstall sections SHALL describe the act
 
 ### Requirement: Review mode decision framework
 
-The system SHALL define orbit's three reviewer classes (in-context, fresh, external — the `--reviewer` axis on the merged `/orbit:review` surface, D-arc Stage D5; "mode" belongs to `--as proposal|system|architecture`) and its two PASS GENRES — REVIEW and VERIFICATION — and SHALL state ONCE, here, how a pass's genre is determined and what a REVIEW-genre brief may carry. Every other surface (the external prompt, the renderer, the other specs) names this requirement and points; the ONE exception is the review body, which carries the pass-genre table below as a CHECKED MIRROR — it says so, names this owner, and a parity test holds it byte-equal to the fence (R-crc-14's mirror corollary); nothing else restates it. "Pass genre" is a DIFFERENT AXIS from the RENDER genre — internal versus external, the SOURCE of a pass's record — that `orbit-report-rendering`'s `One grammar for internal and external passes` and `orbit-review`'s `Iteration note when prior runs exist` already name; every use here is qualified "pass genre", and a field that ever stores the word is named `pass_genre`. The framework exists because empirical evidence (notably `bootstrap-orbit-status-cli`'s 3-of-3 finding — in-context system review missed all 3 real implementation bugs that external review caught; and the D-arc's ~25 in-context passes yielding one CRITICAL) demonstrates that reviewer class materially affects what a pass finds. WHICH CLASS RUNS NEXT is not a per-change judgement this requirement makes: it is the schema's cadence (per `orbit-engine-gates`' reviewed-gate model), surfaced as the engine's canonical next command and never hard-blocking.
+The system SHALL define orbit's three reviewer classes (in-context, fresh, external — the `--reviewer` axis on the merged `/orbit:review` surface, D-arc Stage D5; "mode" belongs to `--as proposal|system|architecture`) and its two PASS GENRES — REVIEW and VERIFICATION — and SHALL state ONCE, here, how a pass's genre is determined and what a REVIEW-genre brief may carry. Every other surface (the external prompt, the renderer, the other specs) names this requirement and points; the ONE exception is the review body, which carries the pass-genre table below as a CHECKED MIRROR — a parity test holds it byte-equal to the fence (R-crc-14's mirror corollary, as `reduce-orbit-phase1`'s R-rop-14 amends it: the body's copy carries no note saying it is a mirror or naming this owner); nothing else restates it. "Pass genre" is a DIFFERENT AXIS from the RENDER genre — internal versus external, the SOURCE of a pass's record — that `orbit-report-rendering`'s `One grammar for internal and external passes` and `orbit-review`'s `Iteration note when prior runs exist` already name; every use here is qualified "pass genre", and a field that ever stores the word is named `pass_genre`. The framework exists because empirical evidence (notably `bootstrap-orbit-status-cli`'s 3-of-3 finding — in-context system review missed all 3 real implementation bugs that external review caught; and the D-arc's ~25 in-context passes yielding one CRITICAL) demonstrates that reviewer class materially affects what a pass finds. WHICH CLASS RUNS NEXT is not a per-change judgement this requirement makes: it is the schema's cadence (per `orbit-engine-gates`' reviewed-gate model), surfaced as the engine's canonical next command and never hard-blocking.
 
 The three classes:
 
@@ -930,7 +930,7 @@ The pass genre is a RECORD and a header word, never a gate input: the reviewed g
 #### Scenario: The review body carries the table as a checked mirror
 
 - **WHEN** the review skill is generated
-- **THEN** its body carries the fenced pass-genre table byte-equal to this requirement's fence under a heading that names this owner and says it is a mirror; a parity test anchored on the fence's header row (`| reviewer class | mode | trail position | pass genre |`) holds the two equal, and no other surface restates the table
+- **THEN** its body carries the fenced pass-genre table byte-equal to this requirement's fence, with no note saying it is a mirror or naming this owner; a parity test anchored on the fence's header row (`| reviewer class | mode | trail position | pass genre |`) holds the two equal, and no other surface restates the table
 
 #### Scenario: A user doc stating the framework is held to this requirement
 
@@ -1236,10 +1236,17 @@ Both land BEFORE the final boundary emit, so the emit's engine-computed recommen
 
 The system SHALL tell the AI when to write each decision record (`orbit-decision-records`) by a fifth execution
 discipline, DECISION-WRITING, stated once in this fence and carried byte-equal by every generated workflow body's
-disciplines epitome:
+disciplines epitome, as one bullet whose label line is followed by five labelled sub-bullets (before asking,
+acting without asking, after a call, not a stop, where records go) — the restructure `tighten-bodies`
+(`reduce-orbit-phase1`, R-rop-7) gave it, every clause, gloss and area name of the one-paragraph form kept:
 
 ```
-- **Decision-writing (call-time)**: under every setting, keep a record of each call and each stop without changing what the user sees or is asked. BEFORE asking the user a question that a stop condition describes — `security-unprecedented` (a security-relevant call with nothing approved to rely on), `user-facing-uncovered` (an end-user-visible call no ratified goal covers), `ruling-amendment` (amending a ratified ruling or goal), `outward-act` (an outward or irreversible act the settings do not grant), `unresolvable-critical` (a CRITICAL review finding no edit inside the change resolves) — write a stop record (`orbit emit stop`), then ask exactly as you would have; with the user's answer, write a resolution naming that stop (`orbit emit resolution`); when `ruling-amendment`, `outward-act` or `unresolvable-critical` describes an act you take without asking — the user directed it (they told you to amend a ruling), or no flow asks — write its stop record before the act, then, when the user directed it, a resolution naming that stop whose answer is their direction, and otherwise leave the stop open; AFTER any call that falls in a ledger area — however you reached it: without asking, after a question no condition describes, or with the user's answer to a stop — `user-sees-or-does`, `defaults`, `when-things-go-wrong`, `user-data`, `things-others-build-on`, `docs`, `who-can-get-in`, `secrets`, `network-exposure`, `trusting-input`, `new-dependencies`, `permissions-and-sandboxing`, `encryption`, `personal-data-and-privacy`, `cost`, `licensing`, `accessibility`, `performance-user-feels` — write a ledger entry (`orbit emit ledger`) citing what it relies on; when `security-unprecedented` or `user-facing-uncovered` describes the call, by its own gloss above, the entry cites nothing and names that stop: the one you asked at, or, where you would not have asked, one you write first — ask nothing and leave that stop open. A designed prompt — a consent prompt, an inflection prompt (at a gate, or at a base-fingerprint divergence), a walk's closure prompt — is a seam, not a stop, and writes nothing, unless a stop condition also describes it: then write the stop record first and fire the prompt as designed. A question no condition describes writes nothing, nor does a call in no area. A record names the work it belongs to (`--change <name>` for a change or a named exploration, or `--doc <doc>` in an architect session); in a session with neither (a project-wide run, an unnamed exploration), or on an archived change (orbit writes no record to its trail), write no record, never attaching it to other work. What each record carries — its fields, its citations and the plain-language rule, with an example of each — is in `references/decision-records.md`, beside this skill; a refused record names the field to fix.
+- **Decision-writing (call-time)**: under every setting, keep a record of each call and each stop without changing what the user sees or is asked. What each record carries — its fields, its citations and the plain-language rule, with an example of each — is in `references/decision-records.md`, beside this skill; a refused record names the field to fix.
+  - *Before asking*: BEFORE asking the user a question that a stop condition describes — `security-unprecedented` (a security-relevant call with nothing approved to rely on), `user-facing-uncovered` (an end-user-visible call no ratified goal covers), `ruling-amendment` (amending a ratified ruling or goal), `outward-act` (an outward or irreversible act the settings do not grant), `unresolvable-critical` (a CRITICAL review finding no edit inside the change resolves) — write a stop record (`orbit emit stop`), then ask exactly as you would have; with the user's answer, write a resolution naming that stop (`orbit emit resolution`).
+  - *Acting without asking*: when `ruling-amendment`, `outward-act` or `unresolvable-critical` describes an act you take without asking — the user directed it (they told you to amend a ruling), or no flow asks — write its stop record before the act, then, when the user directed it, a resolution naming that stop whose answer is their direction, and otherwise leave the stop open.
+  - *After a call*: AFTER any call that falls in a ledger area — however you reached it: without asking, after a question no condition describes, or with the user's answer to a stop — `user-sees-or-does`, `defaults`, `when-things-go-wrong`, `user-data`, `things-others-build-on`, `docs`, `who-can-get-in`, `secrets`, `network-exposure`, `trusting-input`, `new-dependencies`, `permissions-and-sandboxing`, `encryption`, `personal-data-and-privacy`, `cost`, `licensing`, `accessibility`, `performance-user-feels` — write a ledger entry (`orbit emit ledger`) citing what it relies on; when `security-unprecedented` or `user-facing-uncovered` describes the call, by its own gloss above, the entry cites nothing and names that stop: the one you asked at, or, where you would not have asked, one you write first — ask nothing and leave that stop open.
+  - *Not a stop*: a designed prompt — a consent prompt, an inflection prompt (at a gate, or at a base-fingerprint divergence), a walk's closure prompt — is a seam, not a stop, and writes nothing, unless a stop condition also describes it: then write the stop record first and fire the prompt as designed. A question no condition describes writes nothing, nor does a call in no area.
+  - *Where records go*: a record names the work it belongs to (`--change <name>` for a change or a named exploration, or `--doc <doc>` in an architect session); in a session with neither (a project-wide run, an unnamed exploration), or on an archived change (orbit writes no record to its trail), write no record, never attaching it to other work.
 ```
 
 The fence is the owner. A generated body cannot read this spec, so the statement it carries names the stop conditions
@@ -1280,7 +1287,8 @@ when it is written, never that a record was owed.
 #### Scenario: Every workflow body carries the statement
 
 - **WHEN** each generated workflow skill that carries a disciplines epitome is generated
-- **THEN** its epitome carries the statement byte-equal to this fence, as its fifth bullet after no-chaining
+- **THEN** its epitome carries the statement byte-equal to this fence, as its fifth bullet after no-chaining, the five
+  labelled sub-bullets nested under it
 
 #### Scenario: The statement is composed from the write gate's lists
 
@@ -1343,6 +1351,12 @@ when it is written, never that a record was owed.
   resolves
 - **THEN** the AI writes a stop record of condition `unresolvable-critical`, fires the prompt exactly as designed,
   and on the user's answer writes a resolution naming that stop
+
+#### Scenario: The labelled form keeps every clause
+
+- **WHEN** the statement is compared with its one-paragraph form before `tighten-bodies`
+- **THEN** every stop condition with its gloss, every ledger area, every command and every clause of the earlier form
+  is in it; only the connecting words and the place of the reference pointer differ, and a test holds each clause
 
 ### Requirement: Decision-record reference ships beside the statement
 
@@ -1602,4 +1616,204 @@ carrying body.
 - **WHEN** a carrying body is generated
 - **THEN** its commit step's basic content handles the `off` record itself, printing nothing and running nothing, and names
   `references/commit-step.md` only for the other results
+
+### Requirement: Restated Guardrails lines are removed from orbit-modified bodies
+
+The system SHALL remove from an orbit-modified body's upstream `**Guardrails**` list each line that a step line of the
+same body states with nothing added — no timing, scope or case of its own — and SHALL keep every other line; the
+heading goes when no line is left. This requirement is the named edit `Generated-file disposition` asks of a change to
+an upstream portion: each removed line is named below with the step that states it, and a test holds the step line
+present. The lines it covers, from the bodies generated at `a5ba0f0c`:
+
+| member | covered by |
+|---|---|
+| apply-change: "Keep going through tasks until done or blocked" | removed — step 6, "Implement tasks (loop until done or blocked)", and "Continue to next task" |
+| apply-change: "Always read context files before starting (from the apply instructions output)" | removed — step 4, "Read every file path listed under `contextFiles` from the apply instructions output" |
+| apply-change: "If task is ambiguous, pause and ask before implementing (chain: decision)" | kept — adds "before implementing" |
+| apply-change: "If implementation reveals issues, pause and suggest artifact updates (chain: decision)" | removed — step 6's pause list, "Implementation reveals a design issue → suggest updating artifacts", under its `(chain: decision)` tag |
+| apply-change: "Keep code changes minimal and scoped to each task" | kept — adds "scoped to each task" |
+| apply-change: "Update task checkbox immediately after completing each task" | removed — step 6, "Mark task complete in the tasks file" before "Continue to next task" |
+| apply-change: "Pause on errors, blockers, or unclear requirements - don't guess (chain: decision)" | removed — step 6, "Task is unclear → ask for clarification (chain: decision)" and "Error or blocker encountered → report and wait for guidance (chain: decision)" |
+| apply-change: "Use contextFiles from CLI output, don't assume specific file names" | removed — step 4, "Other schemas: follow the contextFiles from CLI output" |
+| archive-change: all seven lines, and the heading | removed — steps 1 (selection), 2 (completion by `orbit status --change <name> --json`), 2 and 3 (warn, confirm, proceed), 5 (the whole directory moves), 6 (the summary), and 4 (sync through `orbit-sync-specs`; "Show a combined summary before prompting") |
+| continue-change: "Create ONE artifact per invocation" | removed — step 3, "STOP after creating ONE artifact" |
+| continue-change: "Always read dependency artifacts before creating a new one" | removed — step 3, "Read any completed dependency files for context" |
+| continue-change: "Never skip artifacts or create out of order" | removed — step 3, "Pick the FIRST artifact with `status: "ready"`" |
+| continue-change: "Use the schema's artifact sequence, don't assume specific artifact names" | removed — Artifact Creation Guidelines, "The artifact types and their purpose depend on the schema" |
+| continue-change: the unclear-context, file-verification and `context`/`rules` lines | kept — no step asks outside the proposal, verifies the file, or names the `<context>`, `<rules>`, `<project_context>` blocks |
+| ff-change and propose: "Create ALL artifacts needed for implementation (as defined by schema's `apply.requires`)" | removed — step 4b, until every `applyRequires` artifact is done |
+| ff-change and propose: "Always read dependency artifacts before creating a new one" | removed — step 4a, "Read any completed dependency files for context", and the Artifact Creation Guidelines |
+| ff-change and propose: the momentum, existing-name and file-verification lines | kept — no step states them |
+| new-change: "Do NOT create any artifacts yet - just show the instructions" | kept — a prohibition no step states; steps 5 and 6 show the instructions and stop, but none says not to create an artifact |
+| new-change: "Do NOT advance beyond showing the first artifact template" | removed — step 6, "STOP and wait for user direction", after step 5 shows the first artifact's template |
+| new-change: "Pass --schema if using a non-default workflow" | removed — step 3, "Add `--schema <name>` only if the user requested a specific workflow" |
+| new-change: the invalid-name and existing-name lines | kept — no step states them |
+| sync-specs: all five lines | kept — `Generated-file disposition` classes sync-specs as upstream-verbatim, its upstream body unchanged |
+
+The table is sourced from the `**Guardrails**` blocks of the seven bodies that carry one among the twelve
+`tighten-bodies` tightens (explore's and bulk-archive's are untouched until `reduce-orbit-phase1`'s evaluation): 42
+lines, 23 removed.
+
+#### Scenario: A line a step states goes
+
+- **WHEN** apply's body is generated
+- **THEN** it carries no "Pause on errors, blockers, or unclear requirements" Guardrails line, and its step 6 still
+  carries "Error or blocker encountered → report and wait for guidance (chain: decision)"
+
+#### Scenario: A line that adds to the steps stays
+
+- **WHEN** apply's body is generated
+- **THEN** its Guardrails list still carries "If task is ambiguous, pause and ask before implementing (chain: decision)"
+  and "Keep code changes minimal and scoped to each task"
+
+#### Scenario: Archive's Guardrails heading goes with its lines
+
+- **WHEN** archive's body is generated
+- **THEN** it carries no `**Guardrails**` heading
+
+#### Scenario: Sync-specs keeps its upstream body
+
+- **WHEN** sync-specs' body is generated
+- **THEN** its upstream portion, the `**Guardrails**` list included, is unchanged
+
+### Requirement: Tightened bodies carry no provenance
+
+The system SHALL keep provenance — text that records where an instruction came from rather than what to do — out of
+the twelve bodies `tighten-bodies` tightens: new-change, continue-change, apply-change, ff-change, sync-specs,
+archive-change, verify-change, propose, review, address-reviews, audit-drift and architect. The instruction it was attached to SHALL stay,
+and text only template authors need goes to a comment beside the template literal, which is not emitted:
+
+| member | covered by |
+|---|---|
+| stage tags (`D-arc Stage D2` to `D6`, `C1`, `C2`, `rc04a`, `rc10`, `rc12`) | removed with the connectors that join them; a bracket goes only when nothing else is left in it; a step's number stays |
+| the `NEW` before an orbit step's number, and "(orbit named edit, per …)" | removed; the number stays, so "Step 3.2" still resolves |
+| ruling and decision ids (`R-d-8`, `R-crc-6`, `D-c1-2`, `D-d2-6`, `D1`) | removed; where an id is part of a name ("R-d-8 residency sweep", "R-crc-6's three lanes"), the name stays without it, the same at every use in the body |
+| mirror notes (thirteen: archive 1, verify 1, propose 5, review 3, address-reviews 2, architect 1) | removed: the sentences or clauses that say the text is a copy, name its owner, say why the copy exists, or tell authors not to edit it; every other sentence or clause of the paragraph stays, and the copied text stays byte-equal, held by its parity test |
+| owning-spec citations in headings | removed; the heading's own words and number stay |
+| spec citations in prose | removed when the sentence gives the same instruction without it; kept where the citation names something the agent acts on, or where a requirement asks the body to name it (`Severity ladder`'s "SHALL NAME this ladder"; `Review mode decision framework`'s "the bodies that compose briefs name it") |
+
+**The removal unit.** A removal takes only provenance and the connectors that join it to its sentence; every other
+word of the paragraph or bracket stays. A span is COVERED by these patterns when, after the mirror-note spans it holds
+are taken out whole, every remaining character is a match of a token pattern or a connector:
+
+```
+CONNECTORS             whitespace, the marks — – - , ; : ( ) and the emphasis marks * and **, and the words per, see, by,
+                       since, from, in, at, of, the, its, and
+stage tag              D-arc(?:'s)?(?: Stage D[0-9])?  |  Stage D[0-9]  |  \bC[0-9]\b  |  \brc[0-9]{2}[a-z]?\b
+NEW marker             \bNEW(?= Step )  |  orbit named edit
+ruling or decision id  \bR-[a-z0-9]+-[0-9]+(?:'s)?\b  |  \bD-[a-z0-9]+-[0-9]+(?:'s)?\b  |  \bD[0-9]{1,2}\b
+spec citation          `orbit-[a-z-]+`(?:'s?)?(?: (?:`[^`]+`|"[^"]+"|\*\*[^*]+\*\*)(?: requirement)?)?
+mirror note            the span from the clause holding a marker to the end of its sentence, or of the bracket the
+                       marker sits in; a marker is, in any case: checked mirror, mirror of, parity test, installed
+                       skill, has no specs, cannot open, never edit it here, the grammar module supplies it; clauses
+                       split at , ; — and brackets outside backtick spans, so a note's owner clause (", its owner",
+                       "— the owner of …") goes with the marker clause it follows, and a clause before it stays; the
+                       sentence's closing mark stays when text before the span remains (a colon introducing a fence)
+```
+
+The patterns decide FORM: a span they cover may still name something the agent acts on, which the prose-citation row
+above keeps by judgement and a grep of the specs before each removal. The kinds were found by pattern over the
+generated bodies at `a5ba0f0c` and by reading the hits; the set is BOUNDED,
+and its named limit is this:
+
+Residual kind: a provenance form outside the six above (a coined tag, an archive name, a pointer to orbit's own history), or a member of the six whose removal would take characters none of the patterns covers (an id or tag with a suffix or prefix: `R-crc-11(f)`, `rc04a's`, `D1's`, `pre-D2`)
+Residual method: reading each tightened body whole after its edits, recording each find in the change's account and leaving it in place for the evaluation, and the removal test, which lists every removed span with its kind
+
+Explore, onboard and bulk-archive keep their own text until `reduce-orbit-phase1`'s evaluation, and so does the
+disciplines epitome's opening line, which explore and bulk-archive share; specs keep their own tags. Provenance in text
+a body shares with a block `moved-blocks.test.ts` pins leaves the body's copy only: that copy is split from the block's
+constant, and the block stays byte-equal to its record. At `a5ba0f0c` the shared texts carrying provenance are four step
+headings (the commit step's, the chain end step's and the two account steps') and three paragraphs a body shares with
+its run-summary reference: apply's completion-prompt override, and architect's "(Per `orbit-run-summary-emit` …)"
+note and "No emit without sweep" paragraph.
+
+#### Scenario: A stage tag leaves a heading and its number stays
+
+- **WHEN** archive's body is generated
+- **THEN** its user-validation closure heading reads "Step 3.2 — User-validation closure", with no `NEW` and no
+  `(rc10)`
+
+#### Scenario: A mirror note goes and the copy stays
+
+- **WHEN** review's body is generated
+- **THEN** no sentence before its pass-genre table says it is a CHECKED MIRROR, and the table is byte-equal to
+  `Review mode decision framework`'s fence
+
+#### Scenario: A citation a requirement asks for stays
+
+- **WHEN** review's body assigns a severity
+- **THEN** it still names `orbit-conventions`' Severity ladder, as that requirement asks
+
+#### Scenario: An instruction beside a mirror note stays
+
+- **WHEN** review's body is generated
+- **THEN** the mirror note before its pass-genre table is gone, and "The pass genre is a record and a header word; the
+  gate reads nothing of it." still stands there
+
+#### Scenario: An id that names a thing drops at every use
+
+- **WHEN** architect's body is generated
+- **THEN** it says "residency sweep" wherever it said "R-d-8 residency sweep", and carries no `R-d-8`
+
+### Requirement: An edit ledger holds every tightened body to its recorded text
+
+The system SHALL hold every edit `tighten-bodies` makes to a body's instructions — in the twelve bodies it tightens,
+and in explore and bulk-archive for the shared decision-writing bullet — in an edit-ledger test: the sha256 of each
+edited body's `instructions` is recorded before the first edit, and the test lists every edit as a (before, after)
+pair of one kind, checks each kind, and undoes every pair on today's body to compare with the recorded hash:
+
+| member | covered by |
+|---|---|
+| a Guardrails line removed as restated | a pair of kind `restated`, naming the step line that states it; the test asserts that line is still in the body |
+| a provenance span removed | a pair of kind `provenance`; the test asserts the removed span is COVERED by the patterns in `Tightened bodies carry no provenance` — every character a token match or a connector once its mirror-note spans are taken out — so no instruction is filed as provenance |
+| an id dropped from a name | a pair of kind `provenance` at each use; the test asserts the id-bearing name occurs nowhere in the body |
+| a mirror note removed | a pair of kind `provenance`; the copied text after it is held unchanged by its parity test |
+| the decision-writing bullet restructured | one pair of kind `restructured`, shared by the fourteen bodies; the test asserts each clause of the one-paragraph form (the five conditions with their glosses, the eighteen areas, the three commands (`orbit emit stop`, `orbit emit resolution`, `orbit emit ledger`), the seam sentence, the record-routing sentence, the reference pointer) is in the new one |
+| review's flag row naming its two prompt references | a pair of kind `link` |
+| any edit the list misses | the undo of every pair no longer matches the recorded hash, and the test fails |
+
+The closure is DERIVED: the reconstruction equals the recorded hash only when the pairs account for every changed
+byte. Each check carries a mutation shown to make it fail. An existing test SHALL change only to follow its
+instruction to the text that remains, or a requirement this change modifies, and each such edit is named in the
+change's archive (RG0):
+
+| member | covered by |
+|---|---|
+| `chain-prompt-tags.test.ts`' rows for apply's Guardrails lines 4 and 7 | removed: the step 6 lines that state them already have their own rows, so the instruction's home stays asserted; the row for the kept line 3 is unchanged |
+| an assertion that includes a provenance string (`NEW Step`, `(rc04a)`, `D-arc Stage`, a spec citation in a heading) | keeps its instruction and drops the provenance |
+| a parity test anchored on a `CHECKED MIRROR` note | takes a new anchor on the copied text itself (a heading or the fence's first line); its byte-equality assertion is unchanged |
+| a test tagged to a scenario this change modifies | follows the modified scenario |
+| the decision-writing parity test | follows the restructured form, the constant still held byte-equal in fourteen bodies |
+| `skill-templates-parity.test.ts`' per-body hashes | re-recorded, as for any template edit |
+| `skill-body-budget.test.ts`' ceilings | each lowered to its body's new size plus 5% as a named edit, or kept where that would exceed it; explore's line ceiling and the assertion holding it at 664 follow `reduce-orbit-phase1`'s R-rop-8 and RG3 as amended to 669, the one rise |
+| an assertion pinning removed text that fits none of the rows above | stops the edit: it is raised, not edited to pass |
+
+The second table is sourced from a grep of `test/` for each removed string, the strings taken from the ledger's pairs.
+
+#### Scenario: An unlisted edit fails the ledger
+
+- **WHEN** a word is removed from a tightened body and no pair lists it
+- **THEN** the undo of every pair does not match the recorded hash, and the test fails naming the body
+
+#### Scenario: An instruction filed as provenance fails
+
+- **WHEN** a pair of kind `provenance` removes a span the patterns do not cover — a mirror note together with the
+  instruction after it, "The pass genre is a record and a header word; the gate reads nothing of it."
+- **THEN** the test fails naming the pair and the words left uncovered
+
+#### Scenario: A sentence that only names an owner is not a note
+
+- **WHEN** a pair of kind `provenance` removes review's instruction "The owner's ONE exemption: architecture mode keeps
+  its hand-computed per-doc iteration note …", which carries no mirror-note marker
+- **THEN** the test fails naming the pair and the words left uncovered
+
+#### Scenario: A restated line needs its step line
+
+- **WHEN** a pair of kind `restated` names a step line the body no longer carries
+- **THEN** the test fails naming the pair
+
+#### Scenario: A clause dropped from the bullet fails
+
+- **WHEN** the decision-writing bullet loses a clause of its one-paragraph form
+- **THEN** the test fails naming the clause
 

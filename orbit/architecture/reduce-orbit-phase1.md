@@ -247,6 +247,24 @@ Exit criteria:
 - The budget test's ceilings are lowered to the new sizes.
 - RG0 holds.
 
+Shipped as (2026-11-17; archived as `orbit/changes/archive/2026-11-17-tighten-bodies/`; the charter above stays as
+declared): the decision-writing bullet reads as a label line and five labelled sub-bullets, every clause of the
+one-paragraph form kept (R-rop-7); 23 of the 42 Guardrails lines that only restated a step left six bodies (archive's
+whole block; sync-specs, upstream-verbatim, keeps its five); stage tags, `NEW` before step numbers, ruling and decision
+ids, the thirteen mirror notes and owning-spec citations in headings left the twelve tightened bodies (R-rop-14), the
+text only authors need moving to comments beside the template literals. Every frontmatter value is written YAML-safe;
+address-reviews' description went from 1,140 characters to 415, and architect's and onboard's say when to use them. The
+eleven references over 100 lines open with a contents list, and review's body names its two prompt references, so
+every reference is one level deep (RG2). `tightened-bodies.test.ts` lists each of the 123 edits as a classed pair and
+undoes them to every edited body's recorded hash. The bodies total 363,848 characters (apply 18,238), inside RG1 as
+amended; nine ceilings came down to their new sizes plus 5%, and six stayed where that would have raised them, explore's
+line ceiling rising once to 669 (R-rop-8 as amended). Two departures from the charter's wording: provenance the stage's
+patterns cannot remove stays in place, 115 forms in the twelve bodies (outside the six kinds, or in-kind members such as
+`rc04a's` and `pre-D2` whose removal would take characters no pattern covers, the requirement's named limit widened at
+the system walk), recorded in the change's account for `evaluation`; and one spec citation the plan would have removed
+stays, because the review body's verification branch says each step names the owner it points at. Carried forward: the
+residual forms and whether to widen the patterns, and the explore, onboard and bulk-archive bodies, go to `evaluation`.
+
 ### Stage evaluation — measure phase 1 and decide what follows
 
 Depends-on: tighten-bodies
