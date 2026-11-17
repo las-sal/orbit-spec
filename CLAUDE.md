@@ -44,6 +44,9 @@ Three decisions were ratified during C1 remediation:
 - **D11 refinement — Claude primacy**: never trade Claude efficacy for cross-tool neutrality; upstream's
   named-tool idiom (`AskUserQuestion`, `Task tool`) stays in bodies by design.
 
+A new or grown step follows **`skill_body_convention.md`**: a step whose procedure an orbit command's result calls for
+keeps its basic content in the body and moves its procedure to a reference file; `skill-body-budget.test.ts` holds each body's size.
+
 ## Programs: one live
 
 **`orbit/architecture/reduce-orbit-phase1.md`** (from 2026-11-17) is live: it restructures the skill bodies to be

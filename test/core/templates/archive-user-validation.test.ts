@@ -29,7 +29,14 @@ const step3 = () => {
   return b.slice(b.indexOf('3. **Check task completion status**'), b.indexOf('4. **Assess delta spec sync state**'));
 };
 const step32 = () => section(body(), '## NEW Step 3.2 — User-validation closure');
-const step34 = () => section(body(), '## NEW Step 3.4 — Gate inflection prompt');
+/** Step 3.4's full text: since conditional-steps it is the archive skill's `references/gate-inflection.md`. */
+const step34 = () => {
+  const r = (getArchiveChangeSkillTemplate().references ?? []).find(x => x.name === 'gate-inflection.md');
+  expect(r, 'the archive skill ships references/gate-inflection.md').toBeDefined();
+  return (r as { content: string }).content;
+};
+/** Step 3.4's basic content in the body: the heading kept, the usual result handled, the reference named. */
+const step34Basic = () => section(body(), '## NEW Step 3.4 — Gate inflection prompt');
 
 describe('archive body: Step 3 named edit (task 2.1)', () => {
   // @scenario text orbit-archive-modifications :: User-validation closure at the archive seam :: Step 3 no longer asks about validation tasks
@@ -107,6 +114,10 @@ describe('archive body: Step 3.4 widened (task 2.3)', () => {
   // @scenario text orbit-engine-gates :: Inflection-prompt override contract :: A superseded gate stays silent at archive
   it('fires no prompt when no gate is listed', () => {
     expect(step34()).toContain('When no gate is listed (every reviewed gate passed or superseded, or the schema declares none), proceed without prompting');
+    // The body's basic content handles that result itself and reads the reference only otherwise.
+    const basic = step34Basic();
+    expect(basic).toContain('When each is `passed` or `superseded: true` (or there are none), go on without prompting.');
+    expect(basic).toContain('Otherwise, or on a non-zero exit, read `references/gate-inflection.md` and follow it from the result you already have');
   });
 
   // @scenario text orbit-archive-modifications :: Archive run summary written :: Two gates proceeded past, two entries

@@ -19,16 +19,17 @@ import { DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../d
  * session saves the program brief and asks for the program's sign-off`). Its table and the paragraph naming its rows
  * are a CHECKED MIRROR of the owner's, held verbatim by `test/core/templates/program-signoff-step.test.ts`.
  */
-export const PROGRAM_SIGNOFF_STEP = `Run the save, then read the hold — on EVERY invocation on a doc, under every sign-off setting, after the doc's state is rendered and BEFORE the arc-done readout of Step 5.5, so a sign-off owed under \`signoff: program\` is asked before the program PR's READY flip is surfaced:
+export const PROGRAM_SIGNOFF_SAVE = `Run the save, then read the hold — on EVERY invocation on a doc, under every sign-off setting, after the doc's state is rendered and BEFORE the arc-done readout of Step 5.5, so a sign-off owed under \`signoff: program\` is asked before the program PR's READY flip is surfaced:
 
 \`\`\`bash
 orbit brief <doc> --save
 orbit brief <doc> --hold --json
 \`\`\`
 
-The save writes a copy of the program's brief into \`orbit/architecture/.orbit-runs/brief/<doc>/\` only for a FINISHED program (every declared stage done, no live work citing the doc) whose brief changed since its latest copy. Run it WITHOUT \`--json\`, which would print the whole program brief: act on its exit status alone — it prints one or two lines (the saved copy's path and \`sha256 <hex>\`, or one line saying the copy is unchanged or the program is not finished), and no row below reads them. Say nothing about the save in chat under any setting but \`program\`; when it exits non-zero, record the failure, as the command reported it, in this session's run-summary \`final_assessment\`. Under \`program\` a failed save is stated in one line, and no sign-off is asked in this session, since the latest copy may not be the program's current text.
+The save writes a copy of the program's brief into \`orbit/architecture/.orbit-runs/brief/<doc>/\` only for a FINISHED program (every declared stage done, no live work citing the doc) whose brief changed since its latest copy. Run it WITHOUT \`--json\`, which would print the whole program brief: act on its exit status alone — it prints one or two lines (the saved copy's path and \`sha256 <hex>\`, or one line saying the copy is unchanged or the program is not finished), and no row below reads them. Say nothing about the save in chat under any setting but \`program\`; when it exits non-zero, record the failure, as the command reported it, in this session's run-summary \`final_assessment\`. Under \`program\` a failed save is stated in one line, and no sign-off is asked in this session, since the latest copy may not be the program's current text.`;
 
-The hold renders no brief and writes nothing. It prints one object: \`doc\`; \`setting\` (\`off\`, \`change\` or \`program\`); \`warning\` (a sentence, or \`null\`); \`finished\`; \`closing_review\` (\`{file}\`, or \`null\`); \`copy\` (\`{file, sha256}\` of the latest saved copy, or \`null\`); \`signoff\` (\`{file, answer}\` of the latest sign-off, or \`null\`); \`why\` and \`held\`. Act by the first row of this table that matches, the save's outcome being the command just above:
+/** Step 5.4's hold part: the table and the sign-off, carried whole only in `references/program-signoff.md`. */
+const PROGRAM_SIGNOFF_HOLD = `The hold renders no brief and writes nothing. It prints one object: \`doc\`; \`setting\` (\`off\`, \`change\` or \`program\`); \`warning\` (a sentence, or \`null\`); \`finished\`; \`closing_review\` (\`{file}\`, or \`null\`); \`copy\` (\`{file, sha256}\` of the latest saved copy, or \`null\`); \`signoff\` (\`{file, answer}\` of the latest sign-off, or \`null\`); \`why\` and \`held\`. Act by the first row of this table that matches, the save's outcome being the command just above:
 
 | the save and the hold | the architect body |
 |---|---|
@@ -59,6 +60,18 @@ The rows are the hold command's failure, the hold's six \`why\` values (\`re-sig
 4. Act by the row: on a written \`signed\`, show the arc-done readout; on a written \`declined\`, say the program is not done and the user's reason is recorded, show no arc-done readout, and ask nothing further; on a refused or failed emit, name the refusal and show no arc-done readout.
 
 No stage's ratification waits for the sign-off: the Step 5 offer is made as Step 5 states, before or after it. With every setting at its default the save writes a copy only for a finished program and says nothing, the hold reports \`why: "off"\` with no warning, and the arc-done readout is as before: nothing the user sees or is asked changes.`;
+
+/** The whole step, its bytes unchanged by the split (conditional-steps): the save part, then the hold part. */
+export const PROGRAM_SIGNOFF_STEP = `${PROGRAM_SIGNOFF_SAVE}\n\n${PROGRAM_SIGNOFF_HOLD}`;
+
+export const PROGRAM_SIGNOFF_REFERENCE_NAME = 'program-signoff.md';
+const PROGRAM_SIGNOFF_REFERENCE = `# Reference: the program's save and sign-off (architect Step 5.4)\n\n${PROGRAM_SIGNOFF_STEP}\n`;
+
+/**
+ * The hold's basic content (R-rop-3): the body carries the save part and this; every result but `why: "off"` reads the
+ * reference, from the save's outcome and the hold's result the session already has (R-rop-4).
+ */
+export const PROGRAM_SIGNOFF_HOLD_BASIC = `The hold renders no brief and writes nothing. On \`why: "off"\`, say nothing about it and observe arc-done as Step 5.5 states, stating any warning in one line. On any other result or a non-zero exit, read \`references/${PROGRAM_SIGNOFF_REFERENCE_NAME}\` and follow it from the save's outcome and the result you already have, before Step 5.5.`;
 
 export function getArchitectSkillTemplate(): SkillTemplate {
   return {
@@ -164,7 +177,9 @@ The body NEVER checks or ends a stage on its own judgment, and never nags: the o
 
 ### 5.4. The program's saved brief and its sign-off (program-signoff)
 
-${PROGRAM_SIGNOFF_STEP}
+${PROGRAM_SIGNOFF_SAVE}
+
+${PROGRAM_SIGNOFF_HOLD_BASIC}
 
 ### 5.5. Arc-done readout: the program PR's human acts (D-arc Stage D6)
 
@@ -185,15 +200,7 @@ NOT gated on the ratification interaction above: the natural ordering is final-s
 → final-stage ratification → closing review, so arc-done becomes true at the LAST step, after
 that interaction has already passed. A ratification-gated readout would never fire.
 
-When arc-done, run \`orbit pr program <doc> --json\` and surface the program PR and its human
-acts per \`references/pr-resolution.md\` — recommend, NEVER invoke; this body makes no outward
-write. The engine locates the PR (the latest URL-bearing record, else the constrained query),
-validates it LIVE and falls through on a positive invalidation; the readout is NEVER SUPPRESSED
-by any outcome, since a silent readout is indistinguishable from an unfinished program. The
-acts (\`human_acts\`: ready, then merge) are the user's; orbit flips nothing here and merges
-nothing anywhere. The readout repeats on every later invocation until the PR is no longer
-draft. A whole-program body rewrite is OPTIONAL polish available on request, never a required
-transition step.
+When arc-done, read \`references/pr-resolution.md\` and follow its arc-done readout: it runs \`orbit pr program <doc> --json\` and surfaces the program PR and its human acts — recommend, NEVER invoke; the readout is never suppressed and repeats on every later invocation until the PR is no longer draft.
 
 ### 6. Out of scope (deliberately — D-d2-6 rungs 6–8)
 
@@ -221,6 +228,7 @@ Render the doc's computed position from \`orbit architecture status\` verbatim, 
         name: 'pr-resolution.md',
         content: PR_RESOLUTION_REFERENCE,
       },
+      { name: PROGRAM_SIGNOFF_REFERENCE_NAME, content: PROGRAM_SIGNOFF_REFERENCE },
       { name: 'decision-records.md', content: DECISION_RECORDS_REFERENCE },
     ],
     license: 'MIT',

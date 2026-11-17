@@ -84,8 +84,15 @@ export const CHAIN_END_STEP_SKILLS = [
 const KEY_ROWS = CHAIN_KEYS.map(k => `  - \`${k}\` — ${CHAIN_KEY_TABLE[k].map(code).join(', ')}`).join('\n');
 
 /**
- * The closing step, carried byte-equal by the five bodies. The key table is interpolated from the
- * engine's own (`CHAIN_KEY_TABLE`), so an adopter's generated skill ships the mapping it relies on.
+ * conditional-steps: what the prompt tags mean and what a chained command records (R-rop-6) — one text that both
+ * `CHAIN_END_STEP` (indented, as before) and its basic content `CHAIN_END_STEP_BASIC` carry, so the halves cannot diverge.
+ */
+export const CHAIN_TAG_MEANING =
+  "The chained command runs as on a typed arrival except for its prompts, each tagged at its site: a `(chain: target)` prompt does not fire (the next command names the change and the mode); a `(chain: routine, default: <option>)` prompt takes that default, and the run summary's `final_assessment` records `The chain took the default: <prompt> — <answer>.`; a `(chain: decision)` prompt is asked exactly as on a typed arrival, and after a decision the chain does not continue — the command's own closing step states in one line that the chain stopped at a decision and runs nothing. The chained command records `Chained: granted by chain.<key>.` as one sentence in the record its session writes: a walk in its run summary's `final_assessment`; an external review or a blind pair in its launch record's `final_assessment`; an in-context review in its pass's `commentary` (the review emit owns a pass's `final_assessment`); a chained apply or archive records it as its `consent: \"setting\"` value and writes no sentence. A chained fresh review records nothing — its worker writes the pass, and its brief carries nothing from this session (a named limit).";
+
+/**
+ * The closing step, carried byte-equal in each of the five skills' `references/chain-end-step.md`. The key table is
+ * interpolated from the engine's own (`CHAIN_KEY_TABLE`), so an adopter's generated skill ships the mapping it relies on.
  */
 export const CHAIN_END_STEP = [
   "## Chain end step (the closing step — `orbit-conventions`' `No-chaining contract`)",
@@ -95,7 +102,7 @@ export const CHAIN_END_STEP = [
   '- **`may_run: true`** → print `Chaining: <next> (granted by chain.<key>)` and run `<next>` as the next act of this turn. `<key>` is the row covering `<next>`:',
   KEY_ROWS,
   '',
-  "  The chained command runs as on a typed arrival except for its prompts, each tagged at its site: a `(chain: target)` prompt does not fire (the next command names the change and the mode); a `(chain: routine, default: <option>)` prompt takes that default, and the run summary's `final_assessment` records `The chain took the default: <prompt> — <answer>.`; a `(chain: decision)` prompt is asked exactly as on a typed arrival, and after a decision the chain does not continue — the command's own closing step states in one line that the chain stopped at a decision and runs nothing. The chained command records `Chained: granted by chain.<key>.` as one sentence in the record its session writes: a walk in its run summary's `final_assessment`; an external review or a blind pair in its launch record's `final_assessment`; an in-context review in its pass's `commentary` (the review emit owns a pass's `final_assessment`); a chained apply or archive records it as its `consent: \"setting\"` value and writes no sentence. A chained fresh review records nothing — its worker writes the pass, and its brief carries nothing from this session (a named limit). The chained command's closing step reads the status with `--chain-ran \"<next>\" --chain-head \"<head>\"` added — the `next` and `head` this read reported, a null `head` written as the word `null` — so a command that wrote no run record stops the chain on `no-progress`. A chained external review or blind pair needs a committed tree. Where the commit step commits (`commit: true` on the change's attached branch), it ran before this read, so the review arrives on a committed tree; anywhere else, on an uncommitted tree the pair and a launched external review each refuse and write nothing, so no run record lands and the chain stops on `no-progress` — say then that the working tree has uncommitted changes (a named limit).",
+  `  ${CHAIN_TAG_MEANING}` + " The chained command's closing step reads the status with `--chain-ran \"<next>\" --chain-head \"<head>\"` added — the `next` and `head` this read reported, a null `head` written as the word `null` — so a command that wrote no run record stops the chain on `no-progress`. A chained external review or blind pair needs a committed tree. Where the commit step commits (`commit: true` on the change's attached branch), it ran before this read, so the review arrives on a committed tree; anywhere else, on an uncommitted tree the pair and a launched external review each refuse and write nothing, so no run record lands and the chain stops on `no-progress` — say then that the working tree has uncommitted changes (a named limit).",
   '- **`may_run: false` with `configured: true`** → print `Chain stops: <why>` and end the turn. On `open-stop` print `Chain stops: open-stop — <stop>: <question>`, reading `question` from the stop record at the `stop` path, and put that question to the user; the resolution their answer writes lets the next read pass that row.',
   '- **`configured: false`** → print nothing more: the turn ends at the eligibility line exactly as without the setting.',
 ].join('\n');
@@ -115,7 +122,7 @@ export const COMMIT_STEP_SKILLS = [
 ] as const;
 
 /**
- * The closing commit step, carried byte-equal by the six bodies. It restates the consumption-table rows the step
+ * The closing commit step, carried byte-equal in each of the six skills' `references/commit-step.md`. It restates the consumption-table rows the step
  * meets, because an installed apply, review or walk skill carries no PR reference to point at.
  */
 export const COMMIT_STEP = [
@@ -132,6 +139,42 @@ export const COMMIT_STEP = [
   "- **A step fails** → stop at that step and write ONE line naming the completed, the failed and the skipped steps by their `step` names, showing the failed step's argv and then each skipped step's, verbatim with `<message-file>` filled, as the recovery the user runs in that order. The session's writes stay uncommitted or unpushed until that recovery lands, and nothing the session wrote is undone. Never retry with other flags and never force a push.",
   '',
   "What the step may commit, and to which branch, is `orbit-pr-lifecycle`'s `` `orbit pr commit` computes the closing commit step ``: everything uncommitted, the user's own edits included, except the untracked files `.gitignore` excludes, and only on the change's attached branch. What grants it is that capability's `The commit and push settings`: `commit: true` and `push: true` in `orbit/config.yaml`, each granted only by the literal `true`.",
+].join('\n');
+
+// ---------------------------------------------------------------------------
+// conditional-steps (reduce-orbit-phase1, R-rop-3/R-rop-4): each closing step's BASIC CONTENT — when it runs, the
+// command, the usual result, and the link to its reference file — carried byte-equal by each carrying body; the full
+// step moves, byte-equal, to a reference file the basic content points at for every other result.
+// ---------------------------------------------------------------------------
+
+/** The reference file each commit-carrying skill ships, holding `COMMIT_STEP` byte-equal. */
+export const COMMIT_STEP_REFERENCE_NAME = 'commit-step.md';
+/** The reference file each chaining skill ships, holding `CHAIN_END_STEP` byte-equal. */
+export const CHAIN_END_STEP_REFERENCE_NAME = 'chain-end-step.md';
+
+/** `references/commit-step.md`: a one-line title, then the full step. */
+export const COMMIT_STEP_REFERENCE = `# Reference: the commit step\n\n${COMMIT_STEP}\n`;
+/** `references/chain-end-step.md`: a one-line title, then the full step. */
+export const CHAIN_END_STEP_REFERENCE = `# Reference: the chain end step\n\n${CHAIN_END_STEP}\n`;
+
+/** The commit step's basic content, carried byte-equal by the six bodies of `COMMIT_STEP_SKILLS`. */
+export const COMMIT_STEP_BASIC = [
+  "## Commit step (the closing commit — `orbit-conventions`' `The commit step closes each carrying body`)",
+  '',
+  `Runs in the invoking session only, never in a dispatched worker, after the run summary (in archive, after the PR-attached tail) and before the position readout (in archive, the completion readout); in apply, once at the session's close. Skip it with no change target, or when this invocation's PR layer has already stopped. Otherwise run \`orbit pr commit "<name>" --json\`. On \`action: off\`, print nothing and go on. On any other result, or a non-zero exit, read \`references/${COMMIT_STEP_REFERENCE_NAME}\` and follow it from the result you already have, before the readout.`,
+].join('\n');
+
+/**
+ * The chain end step's basic content, carried byte-equal by the five bodies of `CHAIN_END_STEP_SKILLS`: the `chain`
+ * read with the flags a chained command adds to it (the read comes before the reference is opened), the
+ * `configured: false` result, and `CHAIN_TAG_MEANING` (R-rop-6).
+ */
+export const CHAIN_END_STEP_BASIC = [
+  "## Chain end step (the closing step — `orbit-conventions`' `No-chaining contract`)",
+  '',
+  `The LAST act of the invoking session, after the position readout and the eligibility line; never in a dispatched worker, and nothing with no change target. Read the \`chain\` object from \`orbit status --change "<name>" --json\` (the call that supplied the eligibility line, or one right after it); a command a chain ran adds \`--chain-ran "<next>" --chain-head "<head>"\` to that read, the \`next\` and \`head\` the previous read reported, a null \`head\` written as \`null\`. On \`configured: false\`, print nothing more. On any other result, or a non-zero exit, read \`references/${CHAIN_END_STEP_REFERENCE_NAME}\` and follow it from the result you already have.`,
+  '',
+  CHAIN_TAG_MEANING,
 ].join('\n');
 
 // ---------------------------------------------------------------------------

@@ -6,7 +6,7 @@
  */
 import type { SkillTemplate, CommandTemplate } from '../types.js';
 import { PR_CHOREOGRAPHY_REFERENCE } from './pr-choreography.js';
-import { CHAIN_END_STEP, COMMIT_STEP, DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../disciplines.js';
+import { CHAIN_END_STEP_BASIC, CHAIN_END_STEP_REFERENCE, CHAIN_END_STEP_REFERENCE_NAME, COMMIT_STEP_BASIC, COMMIT_STEP_REFERENCE, COMMIT_STEP_REFERENCE_NAME, DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../disciplines.js';
 
 export function getFfChangeSkillTemplate(): SkillTemplate {
   return {
@@ -141,13 +141,7 @@ means the delta references a nonexistent requirement (fix the delta; validation 
 \`ff\` is propose-in-one-breath, so it carries the IDENTICAL choreography — a change is never
 treated differently for how it was started.
 
-**Position (this section is placed last for reading, not for running).** Phase 1
-(\`orbit pr select\`, then running its switch) runs BEFORE Step 2 (\`orbit new change\`): that
-step writes \`orbit/changes/<name>/.openspec.yaml\`, a path a compatible branch already TRACKS,
-so a switch attempted after it is exactly the \`git switch\` refusal the ordering exists to
-prevent. Phase 2 (generation + validation, ON that branch) IS Steps 2–4; phase 3 (the no-CI
-note, then \`orbit pr publish\`: its land-and-open segment, the emit, then its record segment)
-runs after Step 5's final status.
+**Position.** Read the regime BEFORE Step 2 (\`orbit new change\`); on an active mode, read \`references/pr-choreography.md\` now and run its Phase 1 here; its \`Where each phase runs\` section, under \`### In /orbit:ff\`, says where phases 2 and 3 run.
 
 Read the RESOLVED regime from the engine FIRST
 — \`orbit status --json\`, field \`pr\` (never parse \`orbit/config.yaml\` yourself: the value
@@ -182,15 +176,17 @@ failure line names the recovery.
 
 **Completion-prompt override (chat)**: where the upstream steps above prompt "Run \`/orbit:apply\` or ask me to implement", instead prompt: "Run \`/orbit:review <name>\` — review the artifacts before implementation."
 
-${COMMIT_STEP}
+${COMMIT_STEP_BASIC}
 
-${CHAIN_END_STEP}
+${CHAIN_END_STEP_BASIC}
 `,
     references: [
       {
         name: 'pr-choreography.md',
         content: PR_CHOREOGRAPHY_REFERENCE,
       },
+      { name: COMMIT_STEP_REFERENCE_NAME, content: COMMIT_STEP_REFERENCE },
+      { name: CHAIN_END_STEP_REFERENCE_NAME, content: CHAIN_END_STEP_REFERENCE },
       { name: 'decision-records.md', content: DECISION_RECORDS_REFERENCE },
     ],
     license: 'MIT',

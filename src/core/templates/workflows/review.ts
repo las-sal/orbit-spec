@@ -7,7 +7,7 @@
  * definitions into lazy references (passes-{proposal,system,architecture}.md).
  */
 import type { SkillTemplate, CommandTemplate } from '../types.js';
-import { CHAIN_END_STEP, COMMIT_STEP, DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../disciplines.js';
+import { CHAIN_END_STEP_BASIC, CHAIN_END_STEP_REFERENCE, CHAIN_END_STEP_REFERENCE_NAME, COMMIT_STEP_BASIC, COMMIT_STEP_REFERENCE, COMMIT_STEP_REFERENCE_NAME, DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../disciplines.js';
 
 const REVIEW_RUN_SUMMARY_SCHEMA_REFERENCE = `# Reference: review run-summary schema
 
@@ -1402,9 +1402,9 @@ next, anything the structure can't say — never contradicting the tail's engine
 
 
 
-${COMMIT_STEP}
+${COMMIT_STEP_BASIC}
 
-${CHAIN_END_STEP}
+${CHAIN_END_STEP_BASIC}
 `,
     references: [
       {
@@ -1443,6 +1443,8 @@ ${CHAIN_END_STEP}
         name: 'flags-detail.md',
         content: REVIEW_FLAGS_DETAIL_REFERENCE,
       },
+      { name: COMMIT_STEP_REFERENCE_NAME, content: COMMIT_STEP_REFERENCE },
+      { name: CHAIN_END_STEP_REFERENCE_NAME, content: CHAIN_END_STEP_REFERENCE },
       { name: 'decision-records.md', content: DECISION_RECORDS_REFERENCE },
     ],
     license: 'MIT',

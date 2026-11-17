@@ -8,10 +8,10 @@ one's files go.
 ## What init installs for a tool
 
 For each tool you name, `orbit init` writes every workflow, 15 of them: a skill directory per workflow, holding a
-`SKILL.md` and, for eight workflows, a `references/` directory the skill reads; and, where the tool has a command
-adapter, a command file per workflow that launches the skill. No profile narrows the set: every install carries all
-15 workflows, whatever profile is stored. The global delivery setting (`orbit config profile`) is honored: it can
-install skills only, commands only, or both, the default.
+`SKILL.md` and, for fourteen workflows (every one but onboard), a `references/` directory the skill reads; and, where
+the tool has a command adapter, a command file per workflow that launches the skill. No profile narrows the set: every
+install carries all 15 workflows, whatever profile is stored. The global delivery setting (`orbit config profile`) is
+honored: it can install skills only, commands only, or both, the default.
 
 `orbit update` rewrites the same files from the installed CLI. The skill and command files are generated, so edit
 orbit's templates rather than the files.

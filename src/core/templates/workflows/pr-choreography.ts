@@ -35,6 +35,30 @@ export const PR_CONSUMPTION_TABLE = `| the call returns | the body |
  */
 export const PR_TITLE_RULE = `\`<change-name>: <summary>\` for per-change PRs, where \`<summary>\` is ONE line the agent writes from proposal.md's Why (the proposal template carries no title line, so the summary is judgment, written once), and \`<doc stem>: <doc title line>\` for program PRs (every architecture doc opens with a \`# \` line) — and no seam rewrites it`;
 
+/**
+ * conditional-steps: propose's and ff's PR Position paragraphs, moved byte-equal into this reference's
+ * `## Where each phase runs` section (one text is shipped to both skills); each body keeps a one-line pointer.
+ */
+export const PROPOSE_PR_POSITION = `**Position (NEW Step 0.5 — this section is placed last for reading, not for running).**
+Phase 1 (\`orbit pr select\`, then running its switch) runs AFTER Step 0's mode detection and
+BEFORE Step 0a / upstream Step 1: generation must land on the target branch, and \`select\` reads
+\`orbit/explore/<name>/\` while it is still in place. Phase 2 (generation +
+validation, ON that branch) IS upstream Step 1 onward / the consume-mode flow, run exactly as
+without the PR layer. Phase 3 (the no-CI note, then \`orbit pr publish\`: its land-and-open
+segment, the emit, then its record segment) runs AFTER Step 0d's move, whose moved material and
+staging-directory deletions \`publish\` enumerates.`;
+
+export const FF_PR_POSITION = `**Position (this section is placed last for reading, not for running).** Phase 1
+(\`orbit pr select\`, then running its switch) runs BEFORE Step 2 (\`orbit new change\`): that
+step writes \`orbit/changes/<name>/.openspec.yaml\`, a path a compatible branch already TRACKS,
+so a switch attempted after it is exactly the \`git switch\` refusal the ordering exists to
+prevent. Phase 2 (generation + validation, ON that branch) IS Steps 2–4; phase 3 (the no-CI
+note, then \`orbit pr publish\`: its land-and-open segment, the emit, then its record segment)
+runs after Step 5's final status.`;
+
+/** The line that opens \`## Where each phase runs\`: the reference is one text shipped to two workflows. */
+export const WHERE_EACH_PHASE_RUNS_SELECTION = 'Follow only the subsection of the workflow you are running.';
+
 /** The reference emitted into the propose and ff skills. */
 export const PR_CHOREOGRAPHY_REFERENCE = `# Reference: the PR lifecycle at propose and ff
 
@@ -47,6 +71,18 @@ The engine computes every PR step and performs none: \`orbit pr\` observes throu
 the table below, and author only the judgment: the title, the intent body, the commit messages
 and the wording of each one-line note. Never re-derive a step the record decided. There is no
 hand-run fallback; a body carrying both would run both.
+
+## Where each phase runs
+
+${WHERE_EACH_PHASE_RUNS_SELECTION}
+
+### In /orbit:propose
+
+${PROPOSE_PR_POSITION}
+
+### In /orbit:ff
+
+${FF_PR_POSITION}
 
 ## Phase 1 — select, before any artifact is written
 
@@ -179,8 +215,24 @@ parity test holds it byte-equal. Every shape an \`orbit pr\` call returns has a 
 ${PR_CONSUMPTION_TABLE}
 `;
 
+/**
+ * conditional-steps: the architect body's Step 5.5 arc-done act, moved here byte-equal; the body keeps the arc-done
+ * check and a one-line pointer to this reference.
+ */
+export const ARC_DONE_ACT = `When arc-done, run \`orbit pr program <doc> --json\` and surface the program PR and its human
+acts per \`references/pr-resolution.md\` — recommend, NEVER invoke; this body makes no outward
+write. The engine locates the PR (the latest URL-bearing record, else the constrained query),
+validates it LIVE and falls through on a positive invalidation; the readout is NEVER SUPPRESSED
+by any outcome, since a silent readout is indistinguishable from an unfinished program. The
+acts (\`human_acts\`: ready, then merge) are the user's; orbit flips nothing here and merges
+nothing anywhere. The readout repeats on every later invocation until the PR is no longer
+draft. A whole-program body rewrite is OPTIONAL polish available on request, never a required
+transition step.`;
+
 /** The reference emitted into the architect skill (the arc-done readout). */
 export const PR_RESOLUTION_REFERENCE = `# Reference: the program PR at arc-done
+
+${ARC_DONE_ACT}
 
 \`\`\`bash
 orbit pr program <doc> --json

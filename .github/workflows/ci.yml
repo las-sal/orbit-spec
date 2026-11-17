@@ -61,6 +61,12 @@ jobs:
       - name: Run tests
         run: npm test
 
+      - name: Skill size report
+        # Reports each skill body's size and estimated tokens (reduce-orbit-phase1, R-rop-12); never fails the build.
+        if: matrix.os == 'ubuntu-latest'
+        continue-on-error: true
+        run: npm run size:report
+
       - name: Upload test coverage
         if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@v4

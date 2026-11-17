@@ -1,12 +1,20 @@
 import { describe, expect, it } from 'vitest';
 import { getSkillTemplates } from '../../../src/core/shared/skill-generation.js';
-import { CHAIN_END_STEP, COMMIT_STEP, COMMIT_STEP_SKILLS } from '../../../src/core/disciplines.js';
+import {
+  CHAIN_END_STEP,
+  CHAIN_END_STEP_BASIC,
+  COMMIT_STEP,
+  COMMIT_STEP_BASIC,
+  COMMIT_STEP_REFERENCE_NAME,
+  COMMIT_STEP_SKILLS,
+} from '../../../src/core/disciplines.js';
 import { ownerText } from '../../helpers/owner-text.js';
 
 /**
  * chained-review-commit, task 2.4 — the commit step's carriage (`orbit-conventions`' `The commit step closes each
- * carrying body`): the carrying set is the owner's table, read row by row; each carrying body holds `COMMIT_STEP`
- * byte-equal exactly once, at the position its row names; no other body holds it.
+ * carrying body`): the carrying set is the owner's table, read row by row; each carrying body holds the step's basic
+ * content `COMMIT_STEP_BASIC` byte-equal exactly once, at the position its row names, and its skill ships
+ * `references/commit-step.md` holding `COMMIT_STEP` (conditional-steps); no other body or skill holds either.
  */
 
 const skills = getSkillTemplates();
@@ -15,6 +23,8 @@ const body = (dir: string): string => {
   if (!s) throw new Error(`no skill ${dir}`);
   return s.template.instructions;
 };
+const reference = (dir: string, name: string): string | undefined =>
+  (skills.find((x) => x.dirName === dir)?.template.references ?? []).find((r) => r.name === name)?.content;
 
 /** The table's body names, as the skill directories they generate. */
 const DIR_OF: Record<string, string> = {
@@ -62,15 +72,20 @@ describe('the commit step: carriage (chained-review-commit)', () => {
   });
 
   // @scenario text orbit-conventions :: The commit step closes each carrying body :: Every carrying body carries the step byte-equal
-  it('each carrying body holds COMMIT_STEP byte-equal exactly once; no other body holds it (verify and explore among them)', () => {
+  it('each carrying body holds COMMIT_STEP_BASIC byte-equal exactly once and ships COMMIT_STEP in references/commit-step.md; no other body or skill holds either (verify and explore among them)', () => {
     const carrying = new Set<string>(COMMIT_STEP_SKILLS);
     for (const s of skills) {
       const text = s.template.instructions;
+      const ref = reference(s.dirName, COMMIT_STEP_REFERENCE_NAME);
       if (carrying.has(s.dirName)) {
-        expect(text.split(COMMIT_STEP).length - 1, s.dirName).toBe(1);
+        expect(text.split(COMMIT_STEP_BASIC).length - 1, s.dirName).toBe(1);
+        expect(text, s.dirName).not.toContain(COMMIT_STEP);
+        expect(ref, s.dirName).toBeDefined();
+        expect((ref as string).split(COMMIT_STEP).length - 1, s.dirName).toBe(1);
       } else {
         expect(text, s.dirName).not.toContain('## Commit step');
         expect(text, s.dirName).not.toContain('orbit pr commit');
+        expect(ref, s.dirName).toBeUndefined();
       }
     }
     expect(carrying.has('orbit-verify-change')).toBe(false);
@@ -82,13 +97,15 @@ describe('the commit step: carriage (chained-review-commit)', () => {
     expect(COMMIT_STEP).toContain("after the command's run summary is written (in archive, after the PR-attached tail) and BEFORE the position readout (in archive, the completion readout), so its lines precede the readout and the eligibility line, and the chain end step, in a body that carries one, still follows them.");
     for (const dir of ['orbit-propose', 'orbit-ff-change', 'orbit-apply-change', 'orbit-review', 'orbit-address-reviews']) {
       const text = body(dir);
-      expect(text, dir).toContain(`${COMMIT_STEP}\n\n${CHAIN_END_STEP}`);
+      expect(text, dir).toContain(`${COMMIT_STEP_BASIC}\n\n${CHAIN_END_STEP_BASIC}`);
       const summary = Math.max(text.lastIndexOf('## Run-summary emit'), text.lastIndexOf('Persist the run summary'), text.lastIndexOf('### 9. Persist via the emit surface'));
       expect(summary, dir).toBeGreaterThan(-1);
-      expect(text.indexOf(COMMIT_STEP), dir).toBeGreaterThan(summary);
+      expect(text.indexOf(COMMIT_STEP_BASIC), dir).toBeGreaterThan(summary);
     }
+    // The basic content keeps the step's position: after the run summary and before the readout.
+    expect(COMMIT_STEP_BASIC).toContain('after the run summary (in archive, after the PR-attached tail) and before the position readout (in archive, the completion readout)');
     const archive = body('orbit-archive-change');
-    const at = archive.indexOf(COMMIT_STEP);
+    const at = archive.indexOf(COMMIT_STEP_BASIC);
     expect(at).toBeGreaterThan(archive.indexOf('## NEW Step 5.6 — The PR-attached tail'));
     expect(at).toBeLessThan(archive.indexOf('## NEW Step 5.65'));
     expect(archive).not.toContain('## Chain end step');
@@ -96,6 +113,17 @@ describe('the commit step: carriage (chained-review-commit)', () => {
 
   it('apply runs it once at the session close, never at a chunk boundary', () => {
     expect(COMMIT_STEP).toContain("In apply it runs once, at the session's close, never at a chunk boundary.");
+    expect(COMMIT_STEP_BASIC).toContain("in apply, once at the session's close.");
+  });
+
+  // @scenario text orbit-conventions :: The commit step closes each carrying body :: At the defaults the basic content handles the record
+  it("the basic content handles `off` itself and names the reference only for the other results and a non-zero exit", () => {
+    const off = COMMIT_STEP_BASIC.indexOf('On `action: off`, print nothing and go on.');
+    const other = COMMIT_STEP_BASIC.indexOf('On any other result, or a non-zero exit, read `references/commit-step.md` and follow it from the result you already have, before the readout.');
+    expect(off).toBeGreaterThan(-1);
+    expect(other).toBeGreaterThan(off);
+    expect(COMMIT_STEP_BASIC.split('references/commit-step.md').length - 1).toBe(1);
+    expect(COMMIT_STEP_BASIC).toContain('Otherwise run `orbit pr commit "<name>" --json`.');
   });
 
   // @scenario text orbit-conventions :: The commit step closes each carrying body :: A stopped PR layer runs no commit step
@@ -103,16 +131,19 @@ describe('the commit step: carriage (chained-review-commit)', () => {
     expect(COMMIT_STEP).toContain("When this invocation's PR layer has already stopped — an earlier `orbit pr` call exited non-zero, or a step it printed failed (`select` or `publish` at propose or ff, the `tail` at archive) — the step calls nothing and prints nothing: no later PR step runs, and that failure's line stays the recovery the user runs.");
     // It is tested before the call: the clause precedes `Otherwise run`.
     expect(COMMIT_STEP.indexOf('PR layer has already stopped')).toBeLessThan(COMMIT_STEP.indexOf('Otherwise run `orbit pr commit'));
+    expect(COMMIT_STEP_BASIC.indexOf("when this invocation's PR layer has already stopped")).toBeLessThan(COMMIT_STEP_BASIC.indexOf('Otherwise run `orbit pr commit'));
   });
 
   // @scenario text orbit-conventions :: The commit step closes each carrying body :: A walk with no change target calls nothing
   it('with no change target the step does nothing and calls nothing', () => {
     expect(COMMIT_STEP).toContain('With no change target — an architecture-mode review, a `--doc` walk, a project-wide walk — the step does nothing and calls nothing.');
+    expect(COMMIT_STEP_BASIC).toContain('Skip it with no change target');
   });
 
   // @scenario text orbit-conventions :: The commit step closes each carrying body :: A dispatched worker never commits
   it('a dispatched worker never runs it: the step says so, and the fresh-reviewer brief tells the worker to skip it', () => {
     expect(COMMIT_STEP).toContain("A worker that session dispatched — a fresh reviewer, a blind pair's fresh half — never runs it: it persists its pass and returns.");
+    expect(COMMIT_STEP_BASIC).toContain('Runs in the invoking session only, never in a dispatched worker');
     const review = body('orbit-review');
     const start = review.indexOf('You are the fresh-context reviewer');
     const brief = review.slice(start, review.indexOf('```', start));

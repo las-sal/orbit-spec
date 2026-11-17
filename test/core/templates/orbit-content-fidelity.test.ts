@@ -78,7 +78,7 @@ const RELOCATED: Array<[string, () => SkillTemplate, string[]]> = [
   ['ff-change', getFfChangeSkillTemplate, ['Execution disciplines', 'Run-summary emit', 'Completion-prompt override']],
   ['bulk-archive-change', getBulkArchiveChangeSkillTemplate, ['# Orbit additions', 'Execution disciplines', 'Per-change consent', 'consent_era_from', 'Per-change user-validation closure']],
   ['verify-change', getVerifyChangeSkillTemplate, ['Execution disciplines', 'Run-summary emit']],
-  ['archive-change', getArchiveChangeSkillTemplate, ['Execution disciplines', 'run summary', 'Gate inflection prompt', 'User-validation closure', 'DEFERRAL REFUSALS', 'continuation', 'formed_against: []', 'ACCEPTED as a pass', 'Consent at entry', 'consent_era_from', 'Sync inheritance']],
+  ['archive-change', getArchiveChangeSkillTemplate, ['Execution disciplines', 'run summary', 'Gate inflection prompt', 'User-validation closure', 'DEFERRAL REFUSALS', 'continuation', 'ACCEPTED as a pass', 'Consent at entry', 'consent_era_from', 'Sync inheritance']],
   ['onboard', getOnboardSkillTemplate, ['Execution disciplines', 'self-contained', '**Execution disciplines** codified in']],
   ['sync-specs', getSyncSpecsSkillTemplate, ['Execution disciplines', 'Consent inheritance']],
   // B3 editorial workflows (net-new relocation; parity proof per D-b3-4)
@@ -110,8 +110,8 @@ const ALL_SURFACE_SKILLS: Array<[string, () => SkillTemplate]> = [
 
 // dirName -> exact reference declarations for the B3 multi-file editorial skills
 const B3_REFERENCES: Array<[string, () => SkillTemplate, string[]]> = [
-  ['review', getReviewSkillTemplate, ['run-summary-schema.md', 'passes-proposal.md', 'passes-system.md', 'passes-architecture.md', 'external-handoff.md', 'blind-pair.md', 'mode-sections.md', 'prompt-template.md', 'flags-detail.md', 'decision-records.md']],
-  ['address-reviews', getAddressReviewsSkillTemplate, ['external-findings-format.md', 'internal-findings-format.md', 'resolution-detail.md', 'run-summary-schema.md', 'decision-records.md']],
+  ['review', getReviewSkillTemplate, ['run-summary-schema.md', 'passes-proposal.md', 'passes-system.md', 'passes-architecture.md', 'external-handoff.md', 'blind-pair.md', 'mode-sections.md', 'prompt-template.md', 'flags-detail.md', 'commit-step.md', 'chain-end-step.md', 'decision-records.md']],
+  ['address-reviews', getAddressReviewsSkillTemplate, ['external-findings-format.md', 'internal-findings-format.md', 'resolution-detail.md', 'run-summary-schema.md', 'commit-step.md', 'chain-end-step.md', 'decision-records.md']],
   ['audit-drift', getAuditDriftSkillTemplate, ['run-summary-schema.md', 'worked-example.md', 'decision-records.md']],
 ];
 
@@ -440,16 +440,43 @@ describe('orbit content fidelity (B1 relocation)', () => {
   });
 
   describe('references declarations (orbit-skill-generation, D-b2-4 lean scope)', () => {
-    it('archive-change declares its exact reference set (D6 added the PR tail)', () => {
+    it('archive-change declares its exact reference set (D6 added the PR tail; conditional-steps the three conditional steps and the commit step)', () => {
       const refs = getArchiveChangeSkillTemplate().references ?? [];
-      expect(refs.map((r) => r.name)).toEqual(['archive-summary-schema.md', 'pr-archive-tail.md', 'decision-records.md']);
+      expect(refs.map((r) => r.name)).toEqual([
+        'archive-summary-schema.md',
+        'pr-archive-tail.md',
+        'gate-inflection.md',
+        'fingerprint-divergence.md',
+        'signoff-hold.md',
+        'commit-step.md',
+        'decision-records.md',
+      ]);
+      // Step 3.4's empty-citation rule moved with the step's text (conditional-steps).
+      expect(refs.find((r) => r.name === 'gate-inflection.md')!.content).toContain('formed_against: []');
     });
 
-    it('propose and ff declare exactly the shared PR choreography (D6)', () => {
-      for (const getTemplate of [getOrbitProposeSkillTemplate, getFfChangeSkillTemplate]) {
-        const refs = getTemplate().references ?? [];
-        expect(refs.map((r) => r.name)).toEqual(['pr-choreography.md', 'decision-records.md']);
-      }
+    it('propose and ff declare exactly the shared PR choreography (D6), their closing steps and, in propose, the size brief (conditional-steps)', () => {
+      expect((getOrbitProposeSkillTemplate().references ?? []).map((r) => r.name)).toEqual([
+        'pr-choreography.md',
+        'size-brief.md',
+        'commit-step.md',
+        'chain-end-step.md',
+        'decision-records.md',
+      ]);
+      expect((getFfChangeSkillTemplate().references ?? []).map((r) => r.name)).toEqual([
+        'pr-choreography.md',
+        'commit-step.md',
+        'chain-end-step.md',
+        'decision-records.md',
+      ]);
+    });
+
+    it('apply declares its closing steps and the shared decision-record reference (conditional-steps)', () => {
+      expect((getApplyChangeSkillTemplate().references ?? []).map((r) => r.name)).toEqual([
+        'commit-step.md',
+        'chain-end-step.md',
+        'decision-records.md',
+      ]);
     });
 
     it('explore declares exactly capture-formats.md (D5 body-economy move)', () => {
@@ -466,6 +493,7 @@ describe('orbit content fidelity (B1 relocation)', () => {
         'propose',
         'ff-change',
         'architect', // D6 (external iter 1): the arc-done readout carries the shared resolution
+        'apply-change', // conditional-steps: the commit step and the chain end step
         ...B3_REFERENCES.map(([n]) => n),
       ]);
       for (const [name, getTemplate] of RELOCATED) {
@@ -650,8 +678,10 @@ describe('D6 PR lifecycle surface', () => {
   });
 
   it('the Position paragraphs use the reference\'s phase numbering (phase 2 = generate + validate; phase 3 carries the no-CI note)', () => {
-    for (const tpl of [propose, ff]) {
-      const position = tpl.instructions.slice(tpl.instructions.indexOf('**Position'));
+    // conditional-steps: the paragraphs moved to the reference's `Where each phase runs` section, one subsection per workflow.
+    const choreography = reference(propose, 'pr-choreography.md');
+    for (const sub of ['### In /orbit:propose', '### In /orbit:ff']) {
+      const position = choreography.slice(choreography.indexOf(sub), choreography.indexOf('\n## Phase 1'));
       expect(position).toMatch(/Phase 2 \(generation \+\s+validation, ON that branch\)/);
       expect(position).toMatch(/[Pp]hase 3 \(the no-CI\s+note/);
       expect(position).not.toMatch(/Phase 2 \(the no-CI/);

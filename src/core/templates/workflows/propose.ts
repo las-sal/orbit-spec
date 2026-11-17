@@ -8,7 +8,56 @@ import type { SkillTemplate, CommandTemplate } from '../types.js';
 import { PR_CHOREOGRAPHY_REFERENCE } from './pr-choreography.js';
 import { EXPLORE_DECISION_ENTRY_PRODUCTION, EXPLORE_MECHANISM_ENTRY_PRODUCTION } from '../../explore-grammar.js';
 import { SIZE_DECLARATION_PRODUCTION } from '../../change-size.js';
-import { CHAIN_END_STEP, COMMIT_STEP, DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../disciplines.js';
+import { CHAIN_END_STEP_BASIC, CHAIN_END_STEP_REFERENCE, CHAIN_END_STEP_REFERENCE_NAME, COMMIT_STEP_BASIC, COMMIT_STEP_REFERENCE, COMMIT_STEP_REFERENCE_NAME, DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../disciplines.js';
+
+/**
+ * conditional-steps (reduce-orbit-phase1): the size brief's full text, moved byte-equal to `references/size-brief.md`;
+ * the body keeps its basic content (the `size` read and its two silent rows). It carries the declaration's production
+ * as a CHECKED MIRROR of `orbit-change-size`'s fence (`test/core/size-declaration-parity.test.ts`).
+ */
+export const SIZE_BRIEF_STEP = `(Per \`orbit-propose-modifications\`' \`Size brief after generation\`; the figures are \`orbit-change-size\`'s.)
+
+**Position**: after every artifact is generated and \`orbit validate "<name>"\` passes NON-STRICT — size never fails
+non-strict validation, so a breach never stops the flow before this brief, which handles it — in consume mode and
+standalone mode alike —
+BEFORE Step 0d's move, BEFORE the PR choreography's Phase 3 (commit, push, draft PR) and BEFORE the
+completion emit, so a declaration written here lands in the proposal Phase 3 commits.
+
+Read the \`size\` object from \`orbit status --change "<name>" --json\` (never compute a figure yourself) and act
+by this table:
+
+| \`size\` | the body |
+|---|---|
+| \`ceiling\` is \`null\` (the check is OFF) | says nothing about size |
+| \`breaches\` is empty | says nothing about size |
+| every breach \`declared\` | states each declared breach in one line, at the completion summary |
+| any breach not \`declared\` | BRIEFS the user before the completion emit: each undeclared dimension with its figure and maximum, and the two routes below |
+
+For an undeclared breach, ask with **AskUserQuestion** — the user's answer decides; never choose for them:
+
+- **Split** — the change is split before review (R-crc-9). Do not split it here: say which dimensions are over and
+  recommend returning to \`/orbit:explore <name>\` or the architecture doc. Leave every artifact in place and write no
+  \`## Size\` section. The split recommendation REPLACES the completion prompt to review (below). The rest of the
+  flow runs unchanged — Step 0d's move, the PR choreography's Phase 3 and the completion emit — so only the closing
+  chat line differs: say that the emit's pointer names the review only because the artifacts are complete, and that
+  \`orbit validate "<name>" --strict\` keeps failing on the undeclared breach until the change is split.
+- **Declare** — write a \`## Size\` section into \`proposal.md\` (or add to an existing one), one item per undeclared
+  dimension, carrying the user's reason in the user's words. Then run \`orbit validate "<name>" --strict\`.
+
+The declaration's production — a CHECKED MIRROR of \`orbit-change-size\`'s \`A breach is declared in the proposal's
+Size section\`, carried here because an installed skill has neither the owner's spec nor its parser (a parity test
+holds it byte-equal to the owner's fence):
+
+\`\`\`
+${SIZE_DECLARATION_PRODUCTION}
+\`\`\`
+
+Only \`-\` items declare; the heading is \`## Size\`, case-sensitive; the reason begins on the item's first line. The engine
+reads WHICH dimensions are declared, never what a reason says. The brief REPORTS: it blocks nothing, and the
+change's artifacts are complete whichever route is taken.`;
+
+export const SIZE_BRIEF_REFERENCE_NAME = 'size-brief.md';
+const SIZE_BRIEF_REFERENCE = `# Reference: the size brief after generation\n\n${SIZE_BRIEF_STEP}\n`;
 
 export function getOrbitProposeSkillTemplate(): SkillTemplate {
   return {
@@ -314,57 +363,11 @@ detect a parallel change landing on the same requirements (no silent spec data-l
 
 ## Size brief after generation (NEW step — both modes)
 
-(Per \`orbit-propose-modifications\`' \`Size brief after generation\`; the figures are \`orbit-change-size\`'s.)
-
-**Position**: after every artifact is generated and \`orbit validate "<name>"\` passes NON-STRICT — size never fails
-non-strict validation, so a breach never stops the flow before this brief, which handles it — in consume mode and
-standalone mode alike —
-BEFORE Step 0d's move, BEFORE the PR choreography's Phase 3 (commit, push, draft PR) and BEFORE the
-completion emit, so a declaration written here lands in the proposal Phase 3 commits.
-
-Read the \`size\` object from \`orbit status --change "<name>" --json\` (never compute a figure yourself) and act
-by this table:
-
-| \`size\` | the body |
-|---|---|
-| \`ceiling\` is \`null\` (the check is OFF) | says nothing about size |
-| \`breaches\` is empty | says nothing about size |
-| every breach \`declared\` | states each declared breach in one line, at the completion summary |
-| any breach not \`declared\` | BRIEFS the user before the completion emit: each undeclared dimension with its figure and maximum, and the two routes below |
-
-For an undeclared breach, ask with **AskUserQuestion** — the user's answer decides; never choose for them:
-
-- **Split** — the change is split before review (R-crc-9). Do not split it here: say which dimensions are over and
-  recommend returning to \`/orbit:explore <name>\` or the architecture doc. Leave every artifact in place and write no
-  \`## Size\` section. The split recommendation REPLACES the completion prompt to review (below). The rest of the
-  flow runs unchanged — Step 0d's move, the PR choreography's Phase 3 and the completion emit — so only the closing
-  chat line differs: say that the emit's pointer names the review only because the artifacts are complete, and that
-  \`orbit validate "<name>" --strict\` keeps failing on the undeclared breach until the change is split.
-- **Declare** — write a \`## Size\` section into \`proposal.md\` (or add to an existing one), one item per undeclared
-  dimension, carrying the user's reason in the user's words. Then run \`orbit validate "<name>" --strict\`.
-
-The declaration's production — a CHECKED MIRROR of \`orbit-change-size\`'s \`A breach is declared in the proposal's
-Size section\`, carried here because an installed skill has neither the owner's spec nor its parser (a parity test
-holds it byte-equal to the owner's fence):
-
-\`\`\`
-${SIZE_DECLARATION_PRODUCTION}
-\`\`\`
-
-Only \`-\` items declare; the heading is \`## Size\`, case-sensitive; the reason begins on the item's first line. The engine
-reads WHICH dimensions are declared, never what a reason says. The brief REPORTS: it blocks nothing, and the
-change's artifacts are complete whichever route is taken.
+After every artifact is generated and \`orbit validate "<name>"\` passes non-strict, BEFORE Step 0d's move, Phase 3 and the completion emit, read \`size\` from \`orbit status --change "<name>" --json\`. When \`ceiling\` is \`null\` or \`breaches\` is empty, say nothing about size. Otherwise, or on a non-zero exit, read \`references/${SIZE_BRIEF_REFERENCE_NAME}\` and follow it from the result you already have.
 
 ## PR lifecycle (config-gated — D-arc Stage D6)
 
-**Position (NEW Step 0.5 — this section is placed last for reading, not for running).**
-Phase 1 (\`orbit pr select\`, then running its switch) runs AFTER Step 0's mode detection and
-BEFORE Step 0a / upstream Step 1: generation must land on the target branch, and \`select\` reads
-\`orbit/explore/<name>/\` while it is still in place. Phase 2 (generation +
-validation, ON that branch) IS upstream Step 1 onward / the consume-mode flow, run exactly as
-without the PR layer. Phase 3 (the no-CI note, then \`orbit pr publish\`: its land-and-open
-segment, the emit, then its record segment) runs AFTER Step 0d's move, whose moved material and
-staging-directory deletions \`publish\` enumerates.
+**Position (NEW Step 0.5).** Read the regime right after Step 0's mode detection and BEFORE Step 0a; on an active mode, read \`references/pr-choreography.md\` now and run its Phase 1 here, before any artifact is written; its \`Where each phase runs\` section, under \`### In /orbit:propose\`, says where phases 2 and 3 run.
 
 Read the RESOLVED regime from the engine FIRST — \`orbit status --json\`, field \`pr\` (never parse \`orbit/config.yaml\` yourself: the value set is closed and every inert path already resolves to \`never\` with the reader's warning). When it is \`never\`, absent, or an inert
 value/shape, RETURN IMMEDIATELY from this section: probe nothing (no \`orbit pr\` call, no
@@ -402,15 +405,18 @@ failure line names the recovery.
 
 **Completion-prompt override (chat)**: where the upstream steps above prompt "Run \`/orbit:apply\` or ask me to implement", instead prompt: "Run \`/orbit:review <name>\` — review the artifacts before implementation." The upstream text above is kept verbatim; this override is the operative instruction — except after the size brief's **Split** route, whose split recommendation is the closing chat line instead.
 
-${COMMIT_STEP}
+${COMMIT_STEP_BASIC}
 
-${CHAIN_END_STEP}
+${CHAIN_END_STEP_BASIC}
 `,
     references: [
       {
         name: 'pr-choreography.md',
         content: PR_CHOREOGRAPHY_REFERENCE,
       },
+      { name: SIZE_BRIEF_REFERENCE_NAME, content: SIZE_BRIEF_REFERENCE },
+      { name: COMMIT_STEP_REFERENCE_NAME, content: COMMIT_STEP_REFERENCE },
+      { name: CHAIN_END_STEP_REFERENCE_NAME, content: CHAIN_END_STEP_REFERENCE },
       { name: 'decision-records.md', content: DECISION_RECORDS_REFERENCE },
     ],
     license: 'MIT',

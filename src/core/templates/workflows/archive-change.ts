@@ -6,7 +6,7 @@
  */
 import type { SkillTemplate, CommandTemplate } from '../types.js';
 import { PR_ARCHIVE_TAIL_REFERENCE } from './pr-choreography.js';
-import { COMMIT_STEP, DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../disciplines.js';
+import { COMMIT_STEP_BASIC, COMMIT_STEP_REFERENCE, COMMIT_STEP_REFERENCE_NAME, DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../disciplines.js';
 
 
 // Reference: full schema for the Step 5.5 archive run summary. Migrated from the overlay
@@ -72,6 +72,72 @@ The rows are the hold command's failure and the hold's four \`why\` values, the 
 4. Act by the row: on a written \`signed\`, go on; on a written \`declined\`, stop before the sync; on a refused or failed emit, stop before the sync naming the refusal.
 
 The consent prompt is unchanged: a granted arrival still records \`consent: "setting"\`, which a sign-off does not replace. With every setting at its default the hold reports \`why: "off"\` with no warning and the archive goes on silently: nothing the user sees or is asked changes.`;
+
+/**
+ * conditional-steps (reduce-orbit-phase1): Step 3.4's and Step 3.45's full text, moved byte-equal to the reference files
+ * the body's basic contents point at on any result they do not handle themselves (R-rop-3, R-rop-4). The sign-off hold
+ * (`SIGNOFF_HOLD_STEP`) ships the same way; bulk-archive keeps interpolating it whole (D-cs-3).
+ */
+export const GATE_INFLECTION_STEP = `After Step 3.2 but before the audit sweep (Step 3.5) — the gate prompt fires FIRST among the anomaly prompts per the gated-phase contract:
+
+Query \`orbit status --change "<change-name>" --json\` (there is NO \`orbit instructions archive\` phase — the archive workflow sources gate state from \`status\`) and read EVERY \`gates[]\` row whose \`kind\` is \`reviewed\`. LIST each one whose \`state\` is not \`passed\` and whose \`superseded\` field is not \`true\` — the gate set at archive is \`orbit-engine-gates\`' \`Inflection-prompt override contract\`'s, which this body points at rather than restates. When at least one gate is listed, fire ONE inflection prompt via **AskUserQuestion** (chain: decision) showing each listed gate with its \`state\` and \`reason\` (its \`independentSpend\` MAY be shown; it never decides whether a gate is listed) and the top-level \`next_command\`:
+
+- **Address the gate** — halt; run the canonical \`next_command\` the CLI returned — its CLASS depends on the schema's cadence, so it is read rather than predicted.
+- **Proceed anyway** — continue the archive; record the decision in the archive run summary as the \`continuation\` entries described below (captured at decision time), ONE PER LISTED GATE.
+  **THE CONTINUATION RECORD (rc04a; the SOLE record as of rc04c).** This seam — not apply's — is where the proceed-anyway decision is most often taken. For EACH listed gate, compose a \`judgements\` entry \`{kind: "continuation", disposition: "proceed", gate: <id>, gate_state: <state>, gate_reason: <reason>}\` carrying that gate's state and reason AS THE CLI REPORTED THEM at decision time, with \`formed_against\` naming the independent pass tokens the decision was taken knowing about and \`reasoning\` saying why proceeding was right anyway. **CAPTURE THE TOKENS NOW, HERE, BEFORE THE MOVE** — carry them forward to Step 5.5, where the change directory no longer exists under its active path. **If the trail carries NO independent pass earlier than this emit, the entry IS STILL WRITTEN, with \`formed_against: []\`.** The emptiness is legal precisely when it is true of the trail — the write gate reads the trail and REFUSES an empty citation, naming the latest preceding pass, when one exists — so the decision is recorded rather than lost, and inventing a token is refused. The token source is the TRAIL ITSELF, not \`orbit status\`: the change-tier status payload reports gate spend COUNTS and reason strings, never pass tokens. List \`orbit/changes/<change-name>/.orbit-runs/\` and take the \`<TS>\` of each \`review-<mode>-<TS>.json\` whose \`reviewer_class\` is \`fresh\` or \`external\`, plus each \`external-<mode>-<TS>.md\` the trail reader ACCEPTED as a pass — a return the gate's \`reason\` names as REJECTED is not citable, and enumerating filenames alone over-counts by exactly those. Which passes count is \`orbit-run-summary-emit\`'s rule (the trail reader's pass set); this body names it and does not restate it — the write gate enforces it and names the pass it refuses on.
+- **Abort** — cancel the archive; no move, no sync-specs, no summary.
+
+The gate NEVER hard-blocks (apply-parity): the engine reports, the skill prompts, the user decides, the trail records. When no gate is listed (every reviewed gate passed or superseded, or the schema declares none), proceed without prompting. This gate prompt is DISTINCT from the Step 0 consent prompt (consent asks "should we be here at all"; this asks "is the state sound"), the fingerprint prompt (Step 3.45), and the audit-drift prompt (Step 3.5); a single invocation MAY fire consent first and the anomaly prompts after (gate, then fingerprints, then audit).`;
+
+export const FINGERPRINT_DIVERGENCE_STEP = `After the Step 3.4 gate prompt resolves but before the Step 3.5 audit sweep. **This check is the
+workflow path's ONLY guard layer**: this flow applies deltas agent-driven (sync-specs at Step 4)
+and moves with \`mv\` (Step 5), so the engine guard inside the \`orbit archive\` CLI never runs
+here (per \`orbit-base-fingerprints\`' two-layer coverage model).
+
+Run:
+
+\`\`\`bash
+orbit fingerprint "<change-name>" --check --json
+\`\`\`
+
+and branch on the per-requirement \`status\` values:
+
+| Check state | Action |
+|---|---|
+| any \`diverged\` | Fire the divergence inflection prompt (below). |
+| \`unverified\` present, none \`diverged\` | Prompt via \`AskUserQuestion\` (chain: decision): proceed / abort — "can't verify — no base recorded" (hand-authored or pre-C2 delta). Proceeding records \`fingerprints_unverified: [{capability, requirement}]\` in the run summary. |
+| all \`verified\` (or the change touches no existing requirements) | Proceed silently; no prompt, no summary fields. |
+| any \`missing\` | The touched requirement no longer exists in baseline (a sibling renamed/removed it). Include it in the divergence prompt if one fires; otherwise halt and show the check output — the sync would fail on it regardless. |
+
+### Divergence inflection prompt (\`AskUserQuestion\`) (chain: decision)
+
+Present each diverged requirement (capability / requirement / \`base_hash\` → \`live_hash\`) plus
+the divergence detail: read the LIVE requirement block from \`orbit/specs/<capability>/spec.md\`
+and the delta's MODIFIED block, and show what the sync would overwrite — content present live but
+absent from the delta is exactly what would be destroyed. When \`unverified\` requirements exist
+alongside diverged ones, list them too (proceeding records both summary fields). Exactly three
+options:
+
+- **Reconcile** — halt the archive. Print the guided-manual instructions IN THIS ORDER: (1)
+  hand-edit the delta spec(s) under \`orbit/changes/<name>/specs/\` to incorporate the divergent
+  live content shown; (2) re-stamp via \`orbit fingerprint <name> --refresh\`. Then re-invoke
+  \`/orbit:archive\`. (A refresh WITHOUT the edit re-opens the loss hole — an accepted,
+  deliberate-only Phase-0 footgun; the Phase-1 3-way merge removes it.)
+- **Proceed anyway** — continue the archive flow past the check (no CLI flag is involved on this
+  agent-driven path; \`--override-fingerprints\` is the equivalent for CLI-direct \`orbit archive\`
+  runs). Record \`fingerprint_overridden: [{capability, requirement, base_hash, live_hash}]\` in
+  the archive run summary, captured at decision time.
+- **Abort** — cancel the archive; no move, no sync-specs, no summary.
+
+This prompt is DISTINCT from the Step 3.4 gate prompt and the Step 3.5 audit prompt.`;
+
+export const GATE_INFLECTION_REFERENCE_NAME = 'gate-inflection.md';
+export const FINGERPRINT_DIVERGENCE_REFERENCE_NAME = 'fingerprint-divergence.md';
+export const SIGNOFF_HOLD_REFERENCE_NAME = 'signoff-hold.md';
+
+const GATE_INFLECTION_REFERENCE = `# Reference: the gate inflection prompt (archive Step 3.4)\n\n${GATE_INFLECTION_STEP}\n`;
+const FINGERPRINT_DIVERGENCE_REFERENCE = `# Reference: the base-fingerprint divergence check (archive Step 3.45)\n\n${FINGERPRINT_DIVERGENCE_STEP}\n`;
+const SIGNOFF_HOLD_REFERENCE = `# Reference: the sign-off hold (archive Step 3.7)\n\n${SIGNOFF_HOLD_STEP}\n`;
 
 export const DEFERRAL_REFUSALS = `DEFERRAL REFUSALS — the archive write gate refuses each, naming the task or line, and Step 3.2 checks each before the move:
 1 an unchecked task carrying the (User-validation marker, with no deferral naming it
@@ -427,60 +493,11 @@ ${DEFERRAL_REFUSALS}
 
 ## NEW Step 3.4 — Gate inflection prompt (C1; every reviewed gate since rc10)
 
-After Step 3.2 but before the audit sweep (Step 3.5) — the gate prompt fires FIRST among the anomaly prompts per the gated-phase contract:
-
-Query \`orbit status --change "<change-name>" --json\` (there is NO \`orbit instructions archive\` phase — the archive workflow sources gate state from \`status\`) and read EVERY \`gates[]\` row whose \`kind\` is \`reviewed\`. LIST each one whose \`state\` is not \`passed\` and whose \`superseded\` field is not \`true\` — the gate set at archive is \`orbit-engine-gates\`' \`Inflection-prompt override contract\`'s, which this body points at rather than restates. When at least one gate is listed, fire ONE inflection prompt via **AskUserQuestion** (chain: decision) showing each listed gate with its \`state\` and \`reason\` (its \`independentSpend\` MAY be shown; it never decides whether a gate is listed) and the top-level \`next_command\`:
-
-- **Address the gate** — halt; run the canonical \`next_command\` the CLI returned — its CLASS depends on the schema's cadence, so it is read rather than predicted.
-- **Proceed anyway** — continue the archive; record the decision in the archive run summary as the \`continuation\` entries described below (captured at decision time), ONE PER LISTED GATE.
-  **THE CONTINUATION RECORD (rc04a; the SOLE record as of rc04c).** This seam — not apply's — is where the proceed-anyway decision is most often taken. For EACH listed gate, compose a \`judgements\` entry \`{kind: "continuation", disposition: "proceed", gate: <id>, gate_state: <state>, gate_reason: <reason>}\` carrying that gate's state and reason AS THE CLI REPORTED THEM at decision time, with \`formed_against\` naming the independent pass tokens the decision was taken knowing about and \`reasoning\` saying why proceeding was right anyway. **CAPTURE THE TOKENS NOW, HERE, BEFORE THE MOVE** — carry them forward to Step 5.5, where the change directory no longer exists under its active path. **If the trail carries NO independent pass earlier than this emit, the entry IS STILL WRITTEN, with \`formed_against: []\`.** The emptiness is legal precisely when it is true of the trail — the write gate reads the trail and REFUSES an empty citation, naming the latest preceding pass, when one exists — so the decision is recorded rather than lost, and inventing a token is refused. The token source is the TRAIL ITSELF, not \`orbit status\`: the change-tier status payload reports gate spend COUNTS and reason strings, never pass tokens. List \`orbit/changes/<change-name>/.orbit-runs/\` and take the \`<TS>\` of each \`review-<mode>-<TS>.json\` whose \`reviewer_class\` is \`fresh\` or \`external\`, plus each \`external-<mode>-<TS>.md\` the trail reader ACCEPTED as a pass — a return the gate's \`reason\` names as REJECTED is not citable, and enumerating filenames alone over-counts by exactly those. Which passes count is \`orbit-run-summary-emit\`'s rule (the trail reader's pass set); this body names it and does not restate it — the write gate enforces it and names the pass it refuses on.
-- **Abort** — cancel the archive; no move, no sync-specs, no summary.
-
-The gate NEVER hard-blocks (apply-parity): the engine reports, the skill prompts, the user decides, the trail records. When no gate is listed (every reviewed gate passed or superseded, or the schema declares none), proceed without prompting. This gate prompt is DISTINCT from the Step 0 consent prompt (consent asks "should we be here at all"; this asks "is the state sound"), the fingerprint prompt (Step 3.45), and the audit-drift prompt (Step 3.5); a single invocation MAY fire consent first and the anomaly prompts after (gate, then fingerprints, then audit).
+After Step 3.2, before the audit sweep (Step 3.5): read every \`gates[]\` row of kind \`reviewed\` from \`orbit status --change "<change-name>" --json\`. When each is \`passed\` or \`superseded: true\` (or there are none), go on without prompting. Otherwise, or on a non-zero exit, read \`references/${GATE_INFLECTION_REFERENCE_NAME}\` and follow it from the result you already have: it prompts once over the listed gates and, on **Proceed anyway**, composes Step 5.5's \`continuation\` entries before the move.
 
 ## NEW Step 3.45 — Base-fingerprint divergence check (C2)
 
-After the Step 3.4 gate prompt resolves but before the Step 3.5 audit sweep. **This check is the
-workflow path's ONLY guard layer**: this flow applies deltas agent-driven (sync-specs at Step 4)
-and moves with \`mv\` (Step 5), so the engine guard inside the \`orbit archive\` CLI never runs
-here (per \`orbit-base-fingerprints\`' two-layer coverage model).
-
-Run:
-
-\`\`\`bash
-orbit fingerprint "<change-name>" --check --json
-\`\`\`
-
-and branch on the per-requirement \`status\` values:
-
-| Check state | Action |
-|---|---|
-| any \`diverged\` | Fire the divergence inflection prompt (below). |
-| \`unverified\` present, none \`diverged\` | Prompt via \`AskUserQuestion\` (chain: decision): proceed / abort — "can't verify — no base recorded" (hand-authored or pre-C2 delta). Proceeding records \`fingerprints_unverified: [{capability, requirement}]\` in the run summary. |
-| all \`verified\` (or the change touches no existing requirements) | Proceed silently; no prompt, no summary fields. |
-| any \`missing\` | The touched requirement no longer exists in baseline (a sibling renamed/removed it). Include it in the divergence prompt if one fires; otherwise halt and show the check output — the sync would fail on it regardless. |
-
-### Divergence inflection prompt (\`AskUserQuestion\`) (chain: decision)
-
-Present each diverged requirement (capability / requirement / \`base_hash\` → \`live_hash\`) plus
-the divergence detail: read the LIVE requirement block from \`orbit/specs/<capability>/spec.md\`
-and the delta's MODIFIED block, and show what the sync would overwrite — content present live but
-absent from the delta is exactly what would be destroyed. When \`unverified\` requirements exist
-alongside diverged ones, list them too (proceeding records both summary fields). Exactly three
-options:
-
-- **Reconcile** — halt the archive. Print the guided-manual instructions IN THIS ORDER: (1)
-  hand-edit the delta spec(s) under \`orbit/changes/<name>/specs/\` to incorporate the divergent
-  live content shown; (2) re-stamp via \`orbit fingerprint <name> --refresh\`. Then re-invoke
-  \`/orbit:archive\`. (A refresh WITHOUT the edit re-opens the loss hole — an accepted,
-  deliberate-only Phase-0 footgun; the Phase-1 3-way merge removes it.)
-- **Proceed anyway** — continue the archive flow past the check (no CLI flag is involved on this
-  agent-driven path; \`--override-fingerprints\` is the equivalent for CLI-direct \`orbit archive\`
-  runs). Record \`fingerprint_overridden: [{capability, requirement, base_hash, live_hash}]\` in
-  the archive run summary, captured at decision time.
-- **Abort** — cancel the archive; no move, no sync-specs, no summary.
-
-This prompt is DISTINCT from the Step 3.4 gate prompt and the Step 3.5 audit prompt.
+After Step 3.4, before the Step 3.5 audit sweep, run \`orbit fingerprint "<change-name>" --check --json\` — this path's ONLY guard against a parallel change's spec loss. When every requirement is \`verified\` (or none is touched), go on silently. On \`diverged\`, \`unverified\` or \`missing\`, or a non-zero exit, read \`references/${FINGERPRINT_DIVERGENCE_REFERENCE_NAME}\` and follow it from the result you already have.
 
 ## NEW Step 3.5 — Pre-archive audit-drift sweep
 
@@ -517,9 +534,7 @@ ${BRIEF_SAVE_STEP}
 
 (Per \`orbit-archive-modifications\`' \`The archive holds for a per-change sign-off\` requirement)
 
-Directly after Step 3.6's save, and BEFORE upstream Step 4 (the sync assessment), in every mode:
-
-${SIGNOFF_HOLD_STEP}
+Directly after Step 3.6's save, BEFORE upstream Step 4, in every mode, run \`orbit brief --change "<name>" --hold --json\` (it renders and writes nothing). On \`why: "off"\`, go on silently, stating any warning in one line. On any other result or a non-zero exit, read \`references/${SIGNOFF_HOLD_REFERENCE_NAME}\` and follow it from the result you already have, before the sync.
 
 ## NEW Step 4.9 — PR preflight (\`orbit pr preflight\`, READ-ONLY, BEFORE the move — D-arc Stage D6; moved before the move by rc12)
 
@@ -579,7 +594,7 @@ step stops the segment with ONE line naming the completed, the failed and the sk
 failed step's argv and then each skipped step's shown as the recovery. The archive itself (sync, move, emit) has already
 succeeded and never rolls back.
 
-${COMMIT_STEP}
+${COMMIT_STEP_BASIC}
 
 ## NEW Step 5.65 — The readiness line in the completion readout (rc04a)
 
@@ -643,6 +658,10 @@ This is a deliberate choice (per \`orbit-archive-modifications\`' \`Audit inform
         name: 'pr-archive-tail.md',
         content: PR_ARCHIVE_TAIL_REFERENCE,
       },
+      { name: GATE_INFLECTION_REFERENCE_NAME, content: GATE_INFLECTION_REFERENCE },
+      { name: FINGERPRINT_DIVERGENCE_REFERENCE_NAME, content: FINGERPRINT_DIVERGENCE_REFERENCE },
+      { name: SIGNOFF_HOLD_REFERENCE_NAME, content: SIGNOFF_HOLD_REFERENCE },
+      { name: COMMIT_STEP_REFERENCE_NAME, content: COMMIT_STEP_REFERENCE },
       { name: 'decision-records.md', content: DECISION_RECORDS_REFERENCE },
     ],
     license: 'MIT',

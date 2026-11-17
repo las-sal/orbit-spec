@@ -103,8 +103,8 @@ orbit init --tools claude
 | `/orbit:audit-drift` | `.claude/commands/orbit/audit-drift.md` | `.claude/skills/orbit-audit-drift/` |
 | `/orbit:onboard` | `.claude/commands/orbit/onboard.md` | `.claude/skills/orbit-onboard/` |
 
-Each skill directory holds a `SKILL.md`. The skills of eight commands (`address-reviews`, `architect`, `archive`,
-`audit-drift`, `explore`, `ff`, `propose` and `review`) also hold a `references/` directory the skill reads.
+Each skill directory holds a `SKILL.md`. The skills of fourteen commands, every one but `onboard`, also hold a
+`references/` directory the skill reads.
 
 ### Your first change
 

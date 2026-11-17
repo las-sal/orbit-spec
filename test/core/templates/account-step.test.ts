@@ -3,7 +3,7 @@ import * as fs from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
 import { getSkillTemplates } from '../../../src/core/shared/skill-generation.js';
-import { ACCOUNT_EXAMPLES, ACCOUNT_STEP, ACCOUNT_WALK_STEP, COMMIT_STEP } from '../../../src/core/disciplines.js';
+import { ACCOUNT_EXAMPLES, ACCOUNT_STEP, ACCOUNT_WALK_STEP, COMMIT_STEP_BASIC } from '../../../src/core/disciplines.js';
 import { ACCOUNT_PAYLOAD_FIELDS } from '../../../src/core/account.js';
 import { composeAndWriteEmit } from '../../../src/core/emit-composition.js';
 
@@ -39,7 +39,7 @@ describe('the account steps are carried by the apply and address-reviews bodies'
     const b = body('orbit-apply-change');
     expect(count(b, ACCOUNT_STEP)).toBe(1);
     expect(b.indexOf(ACCOUNT_STEP)).toBeLessThan(b.indexOf('## Run-summary emit'));
-    expect(b.indexOf(ACCOUNT_STEP)).toBeLessThan(b.indexOf(COMMIT_STEP));
+    expect(b.indexOf(ACCOUNT_STEP)).toBeLessThan(b.indexOf(COMMIT_STEP_BASIC));
     expect(b).toMatch(/If `state: "all_done"`: first run the Account step below — it writes a missing account, or replaces the latest one when the work done since it was written changed what it says, so read that account and the change's trail since it before deciding/);
     expect(b).not.toMatch(/when the change has no account, write it first/);
     expect(b).not.toContain(ACCOUNT_WALK_STEP);
@@ -49,7 +49,7 @@ describe('the account steps are carried by the apply and address-reviews bodies'
     const b = body('orbit-address-reviews');
     expect(count(b, ACCOUNT_WALK_STEP)).toBe(1);
     expect(b.indexOf(ACCOUNT_WALK_STEP)).toBeGreaterThan(b.indexOf('### 6. Persist the run summary'));
-    expect(b.indexOf(ACCOUNT_WALK_STEP)).toBeLessThan(b.indexOf(COMMIT_STEP));
+    expect(b.indexOf(ACCOUNT_WALK_STEP)).toBeLessThan(b.indexOf(COMMIT_STEP_BASIC));
     expect(b).not.toContain(ACCOUNT_STEP);
   });
 
