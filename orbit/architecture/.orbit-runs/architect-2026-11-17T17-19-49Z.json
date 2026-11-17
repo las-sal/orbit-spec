@@ -1,0 +1,37 @@
+{
+  "command": "architect",
+  "timestamp": "2026-11-17T17:19:49Z",
+  "change": null,
+  "doc": "reduce-orbit-phase1",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Ratified stage conditional-steps (Complete: [x] 2026-11-17 (Sal)) after grading its exit criteria: six met, the compaction observation met in part with its remainder deferred to evaluation. Status log updated. The program brief save and hold ran (hold off). macOS CI fails one zsh completion test on main and on this branch alike, before and after the stage; it is outside the program.",
+  "stages_touched": [
+    "conditional-steps"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [
+    "conditional-steps"
+  ],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      {
+        "path": "orbit/architecture/reduce-orbit-phase1.md",
+        "why": "the program: rulings, goals, the once-per-session-detail charter, and conditional-steps' Shipped-as paragraph"
+      },
+      {
+        "path": "orbit/architecture/reduce-orbit-phase1-brief.md",
+        "why": "the brief's stage B, the source of once-per-session-detail"
+      },
+      {
+        "path": "skill_body_convention.md",
+        "why": "the rule the next stage's moves follow"
+      }
+    ],
+    "next_command": "/orbit:explore once-per-session-detail",
+    "model_hint": null,
+    "seam": "Stage conditional-steps is ratified; once-per-session-detail is premised and opens with its named exploration, on the branch reduce-orbit-phase1 (R-rop-13)."
+  },
+  "next_recommended": "/orbit:explore once-per-session-detail"
+}

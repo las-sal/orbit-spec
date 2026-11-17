@@ -129,7 +129,7 @@ One change per stage, in this order (R-rop-2). The brief's stage D is not declar
 ### Stage conditional-steps — steps whose procedure an orbit command's result calls for move to reference files
 
 Depends-on: (none)
-Complete: [ ]
+Complete: [x] 2026-11-17 (Sal)
 
 The brief's stage A, with three steps from its stage D, and without bulk-archive (R-rop-2 as amended). The commit step,
 the chain end step's procedure, the sign-off hold and the PR lifecycle sections, which do nothing at the defaults, and
@@ -274,3 +274,5 @@ Exit criteria:
   real-run checks of each unusual result leave its exit criteria, replaced by a named limit.
 - 2026-11-17 — From the proposal walk of `conditional-steps`: R-rop-6's closing sentence amended to what is true (the
   five chaining bodies explain the three prompt tags; archive is a named limit, as before this program).
+- 2026-11-17 — Stage `conditional-steps` archived and ratified by Sal: six exit criteria met, the compaction observation
+  met in part (the apply and review sessions did not compact) and its remainder deferred to `evaluation` (its task 6.4).
