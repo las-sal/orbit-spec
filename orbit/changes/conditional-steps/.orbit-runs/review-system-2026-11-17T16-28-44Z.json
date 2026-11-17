@@ -1,0 +1,245 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-17T16:28:44Z",
+  "change": "conditional-steps",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 11
+    }
+  },
+  "findings": [
+    {
+      "pass": "reading",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/conditional-steps/.orbit-runs/decisions/ledger-2026-11-17T14-53-33Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-17T14-53-33Z.json — reader row 4 (why): 'has installed a reference file of its own' shifts the cited requirement's one shared file into a distinct file per workflow",
+      "recommendation": "Replace the ledger entry with a `why` saying every workflow but onboard has shipped the shared decision-records reference, as the cited requirement states (one constant shared by every such skill)."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/conditional-steps/.orbit-runs/decisions/ledger-2026-11-17T14-53-33Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-17T14-53-33Z.json — reader row 3 (decided, why): neither field says why onboard is the one exception",
+      "recommendation": "Say onboard carries no decision-writing statement, which is why it ships no reference; a reader of the Premise would otherwise expect explore excluded too."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/conditional-steps/.orbit-runs/decisions/ledger-2026-11-17T14-53-33Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-17T14-53-33Z.json — reader row 1 (decided): 'the supported-tools page' is a docs page the architecture doc never names",
+      "recommendation": "Name it as the docs page listing the tools orbit installs for, or define it in `defines`."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/conditional-steps/.orbit-runs/decisions/resolution-2026-11-17T02-49-57Z.json",
+      "line": 1,
+      "title": "resolution-2026-11-17T02-49-57Z.json — reader row 3 (effect): 'R-rop-2 stands unamended' reads as contradicting the doc, where R-rop-2 was amended twice",
+      "recommendation": "Say R-rop-2's one change per stage stands."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/conditional-steps/.orbit-runs/decisions/resolution-2026-11-17T02-49-57Z.json",
+      "line": 1,
+      "title": "resolution-2026-11-17T02-49-57Z.json — reader row 1 (answer, effect): 'Size section' and 'capability breach' are not in the architecture doc",
+      "recommendation": "Define the per-change capability limit and the proposal's Size section in `defines`."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/conditional-steps/.orbit-runs/decisions/stop-2026-11-17T02-48-26Z.json",
+      "line": 1,
+      "title": "stop-2026-11-17T02-48-26Z.json — reader row 1 (about): 'capabilities' and 'this project's limit of three per change' rely on a ceiling the architecture doc never introduces",
+      "recommendation": "Define capability and the per-change capability limit in `defines`."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/conditional-steps/.orbit-runs/decisions/stop-2026-11-17T03-00-00Z.json",
+      "line": 1,
+      "title": "stop-2026-11-17T03-00-00Z.json — reader row 4 (about): says R-rop-2 as amended names bulk-archive, which the doc does only in the amendment that removes it; the parenthetical reads as a list of bodies",
+      "recommendation": "Say the stage as first ratified (through the brief's stage A) included bulk-archive's divergence check, sign-off hold and PR section."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/conditional-steps/.orbit-runs/decisions/resolution-2026-11-17T03-52-33Z.json",
+      "line": 1,
+      "title": "resolution-2026-11-17T03-52-33Z.json — reader row 3 (answer): 'until chaining is dealt with' is vague",
+      "recommendation": "Say until chaining is first used in earnest, in automate-dev-flow's first-run stage."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/conditional-steps/.orbit-runs/decisions/resolution-2026-11-17T03-52-33Z.json",
+      "line": 1,
+      "title": "resolution-2026-11-17T03-52-33Z.json — reader row 1 (effect): 'the trial' is undefined, and 'leaves stage conditional-steps and the evaluation' implies the evaluation held the measurement",
+      "recommendation": "Use the doc's own phrase: the measurement leaves phase 1 and is answered where chaining is first used in earnest."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/conditional-steps/.orbit-runs/decisions/resolution-2026-11-17T14-16-54Z.json",
+      "line": 1,
+      "title": "resolution-2026-11-17T14-16-54Z.json — reader row 3 (answer): 'A:' names a lettered option the stop's question never lettered",
+      "recommendation": "Drop the letter; the rest of the answer states the choice."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/conditional-steps/.orbit-runs/decisions/resolution-2026-11-17T14-16-54Z.json",
+      "line": 1,
+      "title": "resolution-2026-11-17T14-16-54Z.json — reader row 2 (effect): 'The change's No-chaining contract delta' is spec-file vocabulary the architecture doc does not carry",
+      "recommendation": "Say the change's revised rule on chaining."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/conditional-steps/.orbit-runs/decisions/stop-2026-11-17T14-14-43Z.json",
+      "line": 1,
+      "title": "stop-2026-11-17T14-14-43Z.json — reader row 1 (about): 'the change's spec delta', 'the kept tag paragraph' and 'nine decision tags' are undefined; 'decision tags' can be confused with decision records",
+      "recommendation": "Say the change's revised rule, the paragraph explaining the prompt tags that R-rop-6 keeps, and nine prompts tagged as decisions."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "This pass verified the system walk of the fresh pass's four findings. Each entry's edit is present at every site it claims: the RG1 gap in design's Risks; archive Step 3.7's pointer across the body, design section 3, the archive delta and the sign-off hold test, now worded as architect 5.4's is; the further positional phrases quoted exactly as the moved text has them; and pr-choreography.md's new RG2 instance at its measured 108 lines. The residual diff since the pair's external return touches only files inside those entries' edit records. Passes 1 to 3 over the walk's scope found nothing new: the archive and architect deltas now say the same handoff, and the moved-blocks check accepts it. The reading step ran a clean reader over the eleven selected decision records; its findings concern the plain fields of records written during the exploration, the proposal walk and apply, most of them terms the architecture doc never introduces.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "reading"
+  ],
+  "passes_skipped": [
+    "0: whole-change pass, not run on a verification pass",
+    "4: no perspectives defined (orbit/lenses/ absent); skip Pass 4",
+    "5: no critical paths defined (orbit/lenses/ absent); skip Pass 5",
+    "6: whole-project pass, not run on a verification pass"
+  ],
+  "verification": [
+    {
+      "title": "Design's Risks line still says RG1's projection is about 600 over; its own Size section and the measured bodies put it at about 2,700",
+      "file": "orbit/changes/conditional-steps/design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Archive Step 3.7's pointer hands over only the hold's result, while the moved table's third row reads the save's outcome",
+      "file": "src/core/templates/workflows/archive-change.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "The moved arc-done act points at its own file and calls itself 'this body'; design's list of accepted positional pointers omits it",
+      "file": "src/core/templates/workflows/pr-choreography.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "pr-choreography.md now runs past 100 lines with no table of contents (a new RG2 instance)",
+      "file": "src/core/templates/workflows/pr-choreography.ts",
+      "verdict": "landed"
+    }
+  ],
+  "decision_records_read": [
+    "ledger-2026-11-17T14-53-33Z.json",
+    "resolution-2026-11-17T02-49-57Z.json",
+    "resolution-2026-11-17T03-00-27Z.json",
+    "resolution-2026-11-17T03-52-33Z.json",
+    "resolution-2026-11-17T13-57-17Z.json",
+    "resolution-2026-11-17T14-16-54Z.json",
+    "stop-2026-11-17T02-48-26Z.json",
+    "stop-2026-11-17T03-00-00Z.json",
+    "stop-2026-11-17T03-52-04Z.json",
+    "stop-2026-11-17T13-56-01Z.json",
+    "stop-2026-11-17T14-14-43Z.json"
+  ],
+  "final_assessment": "0 critical, 1 warning, 11 suggestion.",
+  "decision_records_owed": [
+    "ledger-2026-11-17T14-53-33Z.json",
+    "resolution-2026-11-17T02-49-57Z.json",
+    "resolution-2026-11-17T03-00-27Z.json",
+    "resolution-2026-11-17T03-52-33Z.json",
+    "resolution-2026-11-17T13-57-17Z.json",
+    "resolution-2026-11-17T14-16-54Z.json",
+    "stop-2026-11-17T02-48-26Z.json",
+    "stop-2026-11-17T03-00-00Z.json",
+    "stop-2026-11-17T03-52-04Z.json",
+    "stop-2026-11-17T13-56-01Z.json",
+    "stop-2026-11-17T14-14-43Z.json"
+  ],
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-11-17T15-46-31Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews conditional-steps",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "84ccb68254585f560169ebca2475c6fbff56b0fa",
+      "frozen": true,
+      "evidence": {
+        "files": [],
+        "share": 0,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ]
+}
