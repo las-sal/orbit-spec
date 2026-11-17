@@ -140,11 +140,6 @@ function handoffPointers(): Array<[string, string]> {
   ];
 }
 
-/**
- * Named exception to "one level deep", predating conditional-steps: the review skill's external-review prompt references
- * are read from `references/external-handoff.md`, which the body names, not from the body itself. Stage
- * `tighten-bodies` owns RG2's one-level fix and removes this entry.
- */
 describe('moved blocks: each reference file holds its block, byte-equal to the recorded text (task 3.5)', () => {
   for (const m of MOVES) {
     it(`${m.key} hashes to its recorded sha256 and every carrying reference holds it`, () => {

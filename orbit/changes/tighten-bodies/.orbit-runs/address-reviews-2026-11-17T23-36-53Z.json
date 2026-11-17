@@ -1,0 +1,206 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-17T23:36:53Z",
+  "change": "tighten-bodies",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/tighten-bodies/.orbit-runs/review-system-2026-11-17T23-19-32Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-17T23-19-32Z",
+  "latest_apply_token": "2026-11-17T22-35-26Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "walk_mode_source": null,
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 2
+  },
+  "pushback_verification": "All three verified against HEAD before acting: the six in-kind sites are in the generated review, propose and address-reviews bodies (grep of the generated text), the requirement's Residual kind names only forms outside the six kinds, the TWO_LEVEL JSDoc sits at moved-blocks.test.ts:143-147 above an unrelated describe, and proposal.md:25 and design.md:90 say about 360 while the description is 415 characters.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Members of the named provenance kinds stay in three tightened bodies, though the requirement says those kinds are removed",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/tighten-bodies/specs/orbit-conventions/spec.md",
+      "line": 268,
+      "classification": "decision_required",
+      "lane": "decision",
+      "outcome": "resolved",
+      "remedy": "repair",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Amend the requirement's named limit (spec.md:297-298) to name the second class the account already uses: a member of the six kinds whose removal span the patterns do not cover is recorded in the account and left in place for the evaluation. No body changes."
+          },
+          {
+            "label": "B",
+            "body": "Widen the patterns (`'s` on stage tags and bare D-ids, an optional `\\([a-z]\\)` clause suffix on ruling ids) in the requirement and in tightened-bodies.test.ts' TOKENS, then remove the review sites as provenance pairs; `pre-D2`/`pre-D4` name a generation of files, so reword them or record them as an id that names a thing."
+          }
+        ],
+        "chosen": "A"
+      },
+      "action": "Option A, ratified by Sal's 'walk all': the requirement's Residual kind also names a member of the six kinds whose removal would take characters none of the patterns covers, with the six sites' forms as its examples; explore.md's D-tb-6 Mechanism residual carries the same line verbatim and a new decision D-tb-18 records the narrowing (D-tb-6's own wording untouched, as D-tb-16 did); design.md's Risks entry and its Mechanism → artifacts row name the widening. No body and no pattern changes; the account already lists the six.",
+      "evidence": "The six sites grep in the generated bodies (review 164, 210; propose 259, 266; address-reviews 121); parseExploreRules over the edited explore.md reports 6 rules, none open, no key defects, D-tb-6 the one residual; the spec and explore residual lines diff equal; orbit validate passes and npm test passes 4,410.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/tighten-bodies/explore.md",
+          "orbit/changes/tighten-bodies/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/tighten-bodies/specs/orbit-conventions/spec.md",
+            "text": "or a member of the six whose removal would take characters none of the patterns covers"
+          },
+          {
+            "path": "orbit/changes/tighten-bodies/explore.md",
+            "text": "D-tb-18: a member of the six kinds the patterns cannot remove is recorded, like a form outside them"
+          },
+          {
+            "path": "orbit/changes/tighten-bodies/design.md",
+            "text": "widened by D-tb-18 at the system walk"
+          }
+        ],
+        "searched": [
+          "Residual kind",
+          "D-tb-6",
+          "named limit",
+          "D-tb-6's residual"
+        ],
+        "scope": [
+          "orbit/changes/tighten-bodies/proposal.md"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Orphaned comment for the removed TWO_LEVEL exception in moved-blocks.test.ts",
+      "marker_source": "internal-review",
+      "file": "test/core/templates/moved-blocks.test.ts",
+      "line": 143,
+      "classification": "trivial_fix",
+      "lane": "obvious",
+      "outcome": "resolved",
+      "remedy": "repair",
+      "action": "Deleted the five-line JSDoc that described the removed TWO_LEVEL exception.",
+      "evidence": "No TWO_LEVEL, two-level-chain or \"one level deep\" exception text remains in test/ or skill_body_convention.md; moved-blocks.test.ts passes.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "Named exception to \"one level deep\""
+        ],
+        "introduced": [],
+        "searched": [
+          "TWO_LEVEL",
+          "two-level",
+          "one level deep"
+        ],
+        "scope": [
+          "skill_body_convention.md",
+          "test/core/templates/"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Address-reviews' description figure in the proposal and design (about 360) does not match what landed (415)",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/tighten-bodies/proposal.md",
+      "line": 25,
+      "classification": "trivial_fix",
+      "lane": "obvious",
+      "outcome": "resolved",
+      "remedy": "repair",
+      "action": "proposal.md and design.md now give the landed figure, about 415; design Decision 4 names the clause added when the draft was finalized at apply. explore.md and tasks.md keep the planned figure as the exploration and the task as planned.",
+      "evidence": "The generated address-reviews description is 415 characters.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/tighten-bodies/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "cut from 1,140 characters to about 360",
+          "(1,140 characters to about 360)"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/tighten-bodies/proposal.md",
+            "text": "cut from 1,140 characters to about 415"
+          },
+          {
+            "path": "orbit/changes/tighten-bodies/design.md",
+            "text": "to about 415, as finalized at apply"
+          }
+        ],
+        "searched": [
+          "about 360",
+          "360 characters"
+        ],
+        "scope": [
+          "orbit/changes/tighten-bodies/explore.md",
+          "orbit/changes/tighten-bodies/tasks.md"
+        ],
+        "kept": []
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "The fresh system pass is walked: the provenance requirement's named limit now names the in-kind members the patterns cannot remove (option A, D-tb-18), and the two suggestions are fixed. The external half carried no findings, so it has no log.",
+  "iteration": 5,
+  "next_recommended": "/orbit:review --as system tighten-bodies",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "ef55ee46c8966ac09dca3147330a976ab0136458",
+      "frozen": true,
+      "evidence": {
+        "files": [],
+        "share": 0,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ],
+  "ripple_misses": 0
+}

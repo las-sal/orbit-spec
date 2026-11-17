@@ -22,7 +22,7 @@ table of contents, and review reaches two of its reference files only through a 
   longer asks a copy to say it is one (D-tb-7, R-rop-14); the copies stay byte-equal under their parity tests.
 - **Every frontmatter value is written YAML-safe.** The generator quotes `name`, `description`, `license` and
   `compatibility` as it already quotes metadata, so the three descriptions that fail a strict YAML parse are fixed at
-  the source. Address-reviews' description is cut from 1,140 characters to about 360, and architect's and onboard's
+  the source. Address-reviews' description is cut from 1,140 characters to about 415, and architect's and onboard's
   gain a when-clause (D-tb-9).
 - **Reference files**: each of the eleven over 100 lines opens with a written table of contents (D-tb-10), and
   review's body names `prompt-template.md` and `mode-sections.md` itself, so every reference is linked from its

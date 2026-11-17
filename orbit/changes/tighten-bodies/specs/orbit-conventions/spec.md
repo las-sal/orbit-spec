@@ -294,7 +294,7 @@ above keeps by judgement and a grep of the specs before each removal. The kinds 
 generated bodies at `a5ba0f0c` and by reading the hits; the set is BOUNDED,
 and its named limit is this:
 
-Residual kind: a provenance form outside the six above (a coined tag, an archive name, a pointer to orbit's own history)
+Residual kind: a provenance form outside the six above (a coined tag, an archive name, a pointer to orbit's own history), or a member of the six whose removal would take characters none of the patterns covers (an id or tag with a suffix or prefix: `R-crc-11(f)`, `rc04a's`, `D1's`, `pre-D2`)
 Residual method: reading each tightened body whole after its edits, recording each find in the change's account and leaving it in place for the evaluation, and the removal test, which lists every removed span with its kind
 
 Explore, onboard and bulk-archive keep their own text until `reduce-orbit-phase1`'s evaluation, and so does the

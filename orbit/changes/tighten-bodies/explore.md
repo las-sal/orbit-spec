@@ -68,7 +68,7 @@ Domain: every kind of provenance in the twelve bodies the stage tightens (D-tb-4
 | owning-spec citations in headings (17 in 8 bodies) | removed; the heading's own words and number stay |
 | spec citations in prose | removed when the sentence gives the same instruction without it; kept where the citation names something the agent acts on, or where a requirement asks the body to name it (`Severity ladder`'s "SHALL NAME this ladder"; `Review mode decision framework`'s "the bodies that compose briefs name it"; D-tb-16) |
 Closure: BOUNDED — the kinds were found by pattern over the generated bodies and by reading the hits; a form no pattern matched may remain
-Residual kind: a provenance form outside the six above (a coined tag, an archive name, a pointer to orbit's own history)
+Residual kind: a provenance form outside the six above (a coined tag, an archive name, a pointer to orbit's own history), or a member of the six whose removal would take characters none of the patterns covers (an id or tag with a suffix or prefix: `R-crc-11(f)`, `rc04a's`, `D1's`, `pre-D2`)
 Residual method: reading each tightened body whole after its edits, recording each find in the change's account and leaving it in place for the evaluation, and the removal test, which lists every removed span with its kind
 Moves:
 - READ: applied — each kind read in the generated bodies; R-crc-14's corollary read in `clean-up-review-cycle.md`; the requirements that mention a checked mirror read, two of which ask for the note (D-tb-12)
@@ -298,6 +298,14 @@ Moves:
   `resolution-2026-11-17T20-35-45Z.json`, written at propose): keep R-rop-7's sub-bullets and raise explore's line
   ceiling to 669 for those lines only, amending R-rop-8 and RG3. Chosen over writing the five labels inline in one
   paragraph (amending R-rop-7's form) and over trimming five lines of explore's own text (amending the Premise).
+  Kind: scope
+- **2026-11-17 — D-tb-18: a member of the six kinds the patterns cannot remove is recorded, like a form outside them**
+  The fresh system review found six in-kind sites left in three bodies (`R-crc-11(f)`, `rc04a's` and `D1's` in review;
+  `pre-D2` twice in propose; `pre-D4` in address-reviews): each removal would take characters no pattern covers, so
+  the edit ledger refused it, and the account recorded the six with the other residual finds. Sal's direction at the
+  system walk ("walk all", option A): D-tb-6's named limit also names such a member, recorded in the account and left
+  for the evaluation; no pattern is widened and no body changes. Chosen over widening the patterns (`'s`, a clause
+  suffix) and removing the review sites, which would still leave `pre-D2` and `pre-D4` to reword. Narrows D-tb-6.
   Kind: scope
 
 ## Open questions

@@ -87,7 +87,8 @@ fence "as a CHECKED MIRROR held byte-equal by a parity test", which stays true w
 does metadata values. A plain value (a kebab-case name, `MIT`) stays bare; a description with a comma or `: ` is
 JSON-quoted. Three descriptions are reworded, drafted here and finalized at apply:
 
-- address-reviews (1,140 characters to about 360): "Walk review findings and `@review:` markers to resolution, one
+- address-reviews (1,140 characters to about 415, as finalized at apply with the clause "every outstanding pass a
+  change's gates report"): "Walk review findings and `@review:` markers to resolution, one
   by one: pushback against current state, classify, fix the obvious ones, brief each decision for the user to
   ratify, cascade ripple edits, and record the walk. Use after `/orbit:review` or `/orbit:audit-drift` writes
   findings, after an external review returns, or when `@review:` markers have built up."
@@ -123,9 +124,11 @@ sit under both figures.
 
 ## Risks / Trade-offs
 
-- [D-tb-6's residual] A provenance form none of the six kinds names may remain in a body. The named limit and how a
+- [D-tb-6's residual] A provenance form none of the six kinds names, or a member of the six whose removal would take
+  characters the patterns do not cover, may remain in a body. The named limit and how a
   member is found are stated in `Tightened bodies carry no provenance`; this entry points there and restates nothing.
-  Such a form is recorded and left in place, never removed in this stage (walk of the fresh proposal pass, F2).
+  Such a form is recorded and left in place, never removed in this stage (walk of the fresh proposal pass, F2; the
+  in-kind members added at the system walk, D-tb-18).
 - [An instruction mistaken for provenance] A spec citation the agent acts on could be cut. → The edit ledger's
   `provenance` kind check refuses a removed span that matches none of the six patterns, and the prose-citation rule
   keeps a citation the sentence needs.
@@ -144,7 +147,7 @@ the proposing AI's reading of the file; no engine record
 | rule | closure / state | owner's state | destination |
 |---|---|---|---|
 | D-tb-3 | SOURCED | live rule | `orbit-conventions`: `Restated Guardrails lines are removed from orbit-modified bodies` (TABLE) |
-| D-tb-6 | BOUNDED | live rule | `orbit-conventions`: `Tightened bodies carry no provenance` (TABLE; residual as its named limit; Risks points) |
+| D-tb-6 | BOUNDED | live rule | `orbit-conventions`: `Tightened bodies carry no provenance` (TABLE; residual as its named limit, widened by D-tb-18 at the system walk; Risks points) |
 | D-tb-9 | SOURCED | live rule | `orbit-skill-generation`: `Frontmatter metadata pass-through` (TABLE) |
 | D-tb-10 | SOURCED | live rule | `orbit-skill-generation`: `Reference files are linked from their skill and long ones open with contents` (TABLE) |
 | D-tb-14 | DERIVED | live rule | `orbit-conventions`: `An edit ledger holds every tightened body to its recorded text` (TABLE) |
