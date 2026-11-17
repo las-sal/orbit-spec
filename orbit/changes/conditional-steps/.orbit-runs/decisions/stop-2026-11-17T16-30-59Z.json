@@ -1,0 +1,21 @@
+{
+  "command": "stop",
+  "timestamp": "2026-11-17T16:30:59Z",
+  "change": "conditional-steps",
+  "model": "claude-opus-5-5",
+  "condition": "ruling-amendment",
+  "about": "Stage conditional-steps likely touches six to eight capabilities, against this project's limit of three per change, while R-rop-2 says one change per stage.",
+  "question": "Should stage conditional-steps be one change that declares its capability breach, as R-rop-2 has it, or be split into a few changes under the one stage (the shared commit and chain steps with the budget test, the archive-side steps, the propose-side steps)?",
+  "defines": [
+    {
+      "term": "capability",
+      "definition": "a named area of orbit's behaviour with its own spec; how many capabilities a change touches is one measure of its size"
+    },
+    {
+      "term": "this project's limit of three per change",
+      "definition": "the size setting that flags a change touching more than three capabilities, unless its proposal declares the breach"
+    }
+  ],
+  "detail": "Requirements found pinning the moved text: orbit-conventions (No-chaining contract; The commit step closes each carrying body), orbit-archive-modifications (Fingerprint-divergence inflection prompt; brief save; per-change sign-off hold), orbit-propose-modifications (PR choreography at propose; Size brief after generation), orbit-change-size (A breach is declared in the proposal's Size section, mirrored in the propose body), orbit-architect (program brief save and sign-off), orbit-program-brief (hold requirements), orbit-pr-lifecycle (workflow-body choreography), orbit-engine-gates (Inflection-prompt override contract). Which of these need a MODIFIED delta is counted at propose. size_ceiling.capabilities is 3 in orbit/config.yaml. Precedent: automate-dev-flow's seam-chaining and program-brief stages each cite four archived changes.",
+  "replaces": "stop-2026-11-17T02-48-26Z.json"
+}

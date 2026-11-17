@@ -1,0 +1,24 @@
+{
+  "command": "resolution",
+  "timestamp": "2026-11-17T16:30:58Z",
+  "change": "conditional-steps",
+  "model": "claude-opus-5-5",
+  "stop": "stop-2026-11-17T02-48-26Z.json",
+  "answer": "One change for the whole stage, declaring the capability breach.",
+  "effect": "R-rop-2's one change per stage stands: stage conditional-steps is one change, and its proposal declares the capability breach in its Size section.",
+  "defines": [
+    {
+      "term": "capability",
+      "definition": "a named area of orbit's behaviour with its own spec; how many capabilities a change touches is one measure of its size"
+    },
+    {
+      "term": "capability breach",
+      "definition": "a change touching more capabilities than this project's limit of three per change"
+    },
+    {
+      "term": "Size section",
+      "definition": "the section of a change's proposal where a breach of the size limit is declared, with the reason it is accepted"
+    }
+  ],
+  "replaces": "resolution-2026-11-17T16-30-57Z.json"
+}

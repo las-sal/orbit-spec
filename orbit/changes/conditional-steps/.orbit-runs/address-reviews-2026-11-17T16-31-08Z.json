@@ -1,0 +1,449 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-17T16:31:08Z",
+  "change": "conditional-steps",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/conditional-steps/.orbit-runs/review-system-2026-11-17T16-28-44Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-17T16-28-44Z",
+  "latest_apply_token": "2026-11-17T14-57-38Z",
+  "walk_mode": "per_finding",
+  "walk_mode_source": null,
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 11
+  },
+  "pushback_verification": "Verified each reading finding against the record's text as the brief rendered it: every quoted phrase is in the field named, and no record carried a defines list.",
+  "resolution_summary": {
+    "resolved": 12,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "ledger-2026-11-17T14-53-33Z.json — reader row 4 (why): 'has installed a reference file of its own' shifts the cited requirement's one shared file into a distinct file per workflow",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/conditional-steps/.orbit-runs/decisions/ledger-2026-11-17T14-53-33Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote ledger-2026-11-17T16-30-54Z.json, a replacement of ledger-2026-11-17T14-53-33Z.json rewording the field the reader named; its links unchanged",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/conditional-steps/.orbit-runs/decisions/ledger-2026-11-17T16-30-54Z.json",
+            "text": "has shipped the shared decision-records reference"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/conditional-steps/.orbit-runs/decisions/ledger-2026-11-17T14-53-33Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "ledger-2026-11-17T14-53-33Z.json — reader row 3 (decided, why): neither field says why onboard is the one exception",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/conditional-steps/.orbit-runs/decisions/ledger-2026-11-17T14-53-33Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote ledger-2026-11-17T16-30-55Z.json, a replacement of ledger-2026-11-17T16-30-54Z.json rewording the field the reader named; its links unchanged",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/conditional-steps/.orbit-runs/decisions/ledger-2026-11-17T16-30-55Z.json",
+            "text": "onboard carries no decision-writing statement, so it ships none"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/conditional-steps/.orbit-runs/decisions/ledger-2026-11-17T16-30-54Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "ledger-2026-11-17T14-53-33Z.json — reader row 1 (decided): 'the supported-tools page' is a docs page the architecture doc never names",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/conditional-steps/.orbit-runs/decisions/ledger-2026-11-17T14-53-33Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote ledger-2026-11-17T16-30-56Z.json, a replacement of ledger-2026-11-17T16-30-55Z.json rewording the field the reader named; its links unchanged",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/conditional-steps/.orbit-runs/decisions/ledger-2026-11-17T16-30-56Z.json",
+            "text": "the docs page listing the tools orbit installs for"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/conditional-steps/.orbit-runs/decisions/ledger-2026-11-17T16-30-55Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "resolution-2026-11-17T02-49-57Z.json — reader row 3 (effect): 'R-rop-2 stands unamended' reads as contradicting the doc, where R-rop-2 was amended twice",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/conditional-steps/.orbit-runs/decisions/resolution-2026-11-17T02-49-57Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote resolution-2026-11-17T16-30-57Z.json, a replacement of resolution-2026-11-17T02-49-57Z.json rewording the field the reader named; its links unchanged",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/conditional-steps/.orbit-runs/decisions/resolution-2026-11-17T16-30-57Z.json",
+            "text": "R-rop-2's one change per stage stands"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/conditional-steps/.orbit-runs/decisions/resolution-2026-11-17T02-49-57Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "resolution-2026-11-17T02-49-57Z.json — reader row 1 (answer, effect): 'Size section' and 'capability breach' are not in the architecture doc",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/conditional-steps/.orbit-runs/decisions/resolution-2026-11-17T02-49-57Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote resolution-2026-11-17T16-30-58Z.json, a replacement of resolution-2026-11-17T16-30-57Z.json rewording the field the reader named; its links unchanged",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/conditional-steps/.orbit-runs/decisions/resolution-2026-11-17T16-30-58Z.json",
+            "text": "the section of a change"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/conditional-steps/.orbit-runs/decisions/resolution-2026-11-17T16-30-57Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "stop-2026-11-17T02-48-26Z.json — reader row 1 (about): 'capabilities' and 'this project's limit of three per change' rely on a ceiling the architecture doc never introduces",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/conditional-steps/.orbit-runs/decisions/stop-2026-11-17T02-48-26Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote stop-2026-11-17T16-30-59Z.json, a replacement of stop-2026-11-17T02-48-26Z.json rewording the field the reader named; its links unchanged",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/conditional-steps/.orbit-runs/decisions/stop-2026-11-17T16-30-59Z.json",
+            "text": "the size setting that flags a change touching more than three capabilities"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/conditional-steps/.orbit-runs/decisions/stop-2026-11-17T02-48-26Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "stop-2026-11-17T03-00-00Z.json — reader row 4 (about): says R-rop-2 as amended names bulk-archive, which the doc does only in the amendment that removes it; the parenthetical reads as a list of bodies",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/conditional-steps/.orbit-runs/decisions/stop-2026-11-17T03-00-00Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote stop-2026-11-17T16-31-00Z.json, a replacement of stop-2026-11-17T03-00-00Z.json rewording the field the reader named; its links unchanged",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/conditional-steps/.orbit-runs/decisions/stop-2026-11-17T16-31-00Z.json",
+            "text": "as first ratified through the brief's stage A"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/conditional-steps/.orbit-runs/decisions/stop-2026-11-17T03-00-00Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "resolution-2026-11-17T03-52-33Z.json — reader row 3 (answer): 'until chaining is dealt with' is vague",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/conditional-steps/.orbit-runs/decisions/resolution-2026-11-17T03-52-33Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote resolution-2026-11-17T16-31-01Z.json, a replacement of resolution-2026-11-17T03-52-33Z.json rewording the field the reader named; its links unchanged",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/conditional-steps/.orbit-runs/decisions/resolution-2026-11-17T16-31-01Z.json",
+            "text": "until chaining is first used in earnest"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/conditional-steps/.orbit-runs/decisions/resolution-2026-11-17T03-52-33Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "resolution-2026-11-17T03-52-33Z.json — reader row 1 (effect): 'the trial' is undefined, and 'leaves stage conditional-steps and the evaluation' implies the evaluation held the measurement",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/conditional-steps/.orbit-runs/decisions/resolution-2026-11-17T03-52-33Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote resolution-2026-11-17T16-31-02Z.json, a replacement of resolution-2026-11-17T16-31-01Z.json rewording the field the reader named; its links unchanged",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/conditional-steps/.orbit-runs/decisions/resolution-2026-11-17T16-31-02Z.json",
+            "text": "R-rop-10's measurement leaves phase 1"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/conditional-steps/.orbit-runs/decisions/resolution-2026-11-17T16-31-01Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "resolution-2026-11-17T14-16-54Z.json — reader row 3 (answer): 'A:' names a lettered option the stop's question never lettered",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/conditional-steps/.orbit-runs/decisions/resolution-2026-11-17T14-16-54Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote resolution-2026-11-17T16-31-03Z.json, a replacement of resolution-2026-11-17T14-16-54Z.json rewording the field the reader named; its links unchanged",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/conditional-steps/.orbit-runs/decisions/resolution-2026-11-17T16-31-03Z.json",
+            "text": "Narrow the claim to what is true"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/conditional-steps/.orbit-runs/decisions/resolution-2026-11-17T14-16-54Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "resolution-2026-11-17T14-16-54Z.json — reader row 2 (effect): 'The change's No-chaining contract delta' is spec-file vocabulary the architecture doc does not carry",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/conditional-steps/.orbit-runs/decisions/resolution-2026-11-17T14-16-54Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote resolution-2026-11-17T16-31-04Z.json, a replacement of resolution-2026-11-17T16-31-03Z.json rewording the field the reader named; its links unchanged",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/conditional-steps/.orbit-runs/decisions/resolution-2026-11-17T16-31-04Z.json",
+            "text": "The change's revised rule on chaining"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/conditional-steps/.orbit-runs/decisions/resolution-2026-11-17T16-31-03Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "stop-2026-11-17T14-14-43Z.json — reader row 1 (about): 'the change's spec delta', 'the kept tag paragraph' and 'nine decision tags' are undefined; 'decision tags' can be confused with decision records",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/conditional-steps/.orbit-runs/decisions/stop-2026-11-17T14-14-43Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote stop-2026-11-17T16-31-05Z.json, a replacement of stop-2026-11-17T14-14-43Z.json rewording the field the reader named; its links unchanged",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/conditional-steps/.orbit-runs/decisions/stop-2026-11-17T16-31-05Z.json",
+            "text": "nine prompts tagged as decisions"
+          }
+        ],
+        "searched": [],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/conditional-steps/.orbit-runs/decisions/stop-2026-11-17T14-14-43Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Twelve of twelve resolved, each by a replacement record that rewords the field the reader named and keeps its links: the docs ledger entry now says the decision-records reference is shared and why onboard is the exception; the earlier stops and resolutions define capability and the size terms, and say the deferred measurement leaves phase 1, in the architecture doc's words.",
+  "iteration": 5,
+  "next_recommended": "/orbit:archive conditional-steps — user-invoked",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "84ccb68254585f560169ebca2475c6fbff56b0fa",
+      "frozen": true,
+      "evidence": {
+        "files": [],
+        "share": 0,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ],
+  "ripple_misses": 0
+}
