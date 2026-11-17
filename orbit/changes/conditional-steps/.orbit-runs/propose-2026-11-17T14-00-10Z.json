@@ -1,0 +1,16 @@
+{
+  "command": "propose",
+  "timestamp": "2026-11-17T14:00:10Z",
+  "change": "conditional-steps",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Consume-mode propose of conditional-steps, reduce-orbit-phase1's first stage. The exploration's nine decisions plus two settled at propose (D-cs-10: the rule for new steps lives in skill_body_convention.md, which CLAUDE.md and the budget test point at, found against orbit-conventions' convention-scope requirement; D-cs-11: RG1's projected 600 over is carried by the later stages) feed a proposal, a design that drafts every basic content word for word and measures the stage (about 47,130 characters moved, bodies at about 387,300), MODIFIED deltas for five requirements in four capabilities (the capabilities breach declared in Sal's chosen words), and 16 tasks. No live rule, so the Mechanism record lists all eleven decisions as not carried. Staging merged and moved; the trails merged with no clash. Program branch reduce-orbit-phase1 created and the draft program PR opened.",
+  "pr_attachment": {
+    "branch": "reduce-orbit-phase1",
+    "granularity": "per-architecture",
+    "doc": "reduce-orbit-phase1",
+    "url": "https://github.com/las-sal/orbit-spec/pull/46",
+    "state": "draft"
+  },
+  "next_recommended": "/orbit:review conditional-steps — proposal artifacts ready; review before apply"
+}
