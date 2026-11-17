@@ -1,0 +1,11 @@
+{
+  "command": "stop",
+  "timestamp": "2026-11-17T02:42:43Z",
+  "change": null,
+  "doc": "reduce-orbit-phase1",
+  "model": "claude-opus-5-5",
+  "condition": "ruling-amendment",
+  "about": "Whether phase 1 should also move steps that run at the defaults but do their detailed work only on an unusual result that an orbit command reports (the archive's gate prompt and fingerprint check, propose's size brief), which R-rop-2 left in the brief's undeclared stage D.",
+  "question": "Should the steps whose unusual case an orbit command reports move out of stage D into stage once-per-session-detail, with their basic content kept in the body, or stay in stage D for the evaluation as R-rop-2 has it?",
+  "detail": "Candidates, measured in today's generated bodies: archive Step 3.4 gate inflection prompt 3,688 chars (gates[] from orbit status), Step 3.45 base-fingerprint divergence check 2,753, propose size brief 2,864 (size from orbit status). Not proposed to move: archive Step 3.2 user-validation closure 3,376 (its trigger is the agent's own scan of tasks.md), archive Step 0 consent 4,734 (runs on every archive), review's fresh dispatch 4,520, architecture-mode render 1,817 and verification step 8,034 (picked by the user's flags; a separate mode question)."
+}

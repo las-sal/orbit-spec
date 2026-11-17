@@ -1,0 +1,35 @@
+{
+  "command": "architect",
+  "timestamp": "2026-11-17T02:46:20Z",
+  "change": null,
+  "doc": "reduce-orbit-phase1",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Continued resume session. Sal asked whether default-on steps should move too. Default-on steps were sorted by what picks the branch; three (archive's gate inflection prompt 3,688 chars, the base-fingerprint divergence check 2,753 in archive and also carried by bulk-archive, propose's size brief 2,864, measured in today's generated bodies) have an orbit command's result pick the branch, meeting the brief's rule 2. Sal moved them into the first stage and renamed it conditional-steps (stop-2026-11-17T02-42-43Z.json, ruling-amendment, resolved). R-rop-2 carries the amendment; the stage charter and exit criteria grew; RG3, once-per-session-detail's Depends-on, the program-stages intro, the evaluation charter, CLAUDE.md and the status log follow. The user-validation closure (agent's own scan) and review's flag-picked sections stay in stage D. Doc validates; all four stages premised.",
+  "stages_touched": [
+    "conditional-steps",
+    "once-per-session-detail",
+    "evaluation"
+  ],
+  "rulings_captured": [
+    "R-rop-2"
+  ],
+  "completions_ratified": [],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      {
+        "path": "orbit/architecture/reduce-orbit-phase1.md",
+        "why": "the live program: R-rop-2 as amended and the conditional-steps charter"
+      },
+      {
+        "path": "orbit/architecture/reduce-orbit-phase1-brief.md",
+        "why": "the program's source; 4.1 is stage A's moves, 4.4 the stage D rows the three steps came from, section 5 the pinning requirements"
+      }
+    ],
+    "next_command": "/orbit:explore conditional-steps",
+    "model_hint": "opus",
+    "seam": "first stage conditional-steps is premised; explore it before propose"
+  },
+  "next_recommended": "/orbit:explore conditional-steps"
+}

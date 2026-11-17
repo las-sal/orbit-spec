@@ -1,0 +1,29 @@
+{
+  "command": "architect",
+  "timestamp": "2026-11-17T02:40:33Z",
+  "change": null,
+  "doc": "reduce-orbit-phase1",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Resume session. The doc is valid; all four stages render premised, none awaits ratification. The program brief hold reads why: off; the program is not finished, so no brief was saved and arc-done does not apply. The brief beside the doc was listed MALFORMED because its four '### Stage A:' to '### Stage D:' headings matched the engine's stage-heading prefix; at Sal's choice they were numbered 4.1 to 4.4 under its section 4, with no other text changed, and the brief now renders legacy/opaque. Logged in the status log.",
+  "stages_touched": [],
+  "rulings_captured": [],
+  "completions_ratified": [],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      {
+        "path": "orbit/architecture/reduce-orbit-phase1.md",
+        "why": "the live program: rulings R-rop-1 to R-rop-12 and the default-off-steps charter"
+      },
+      {
+        "path": "orbit/architecture/reduce-orbit-phase1-brief.md",
+        "why": "the program's source; section 4.1 is stage A's moves, section 5 the pinning requirements"
+      }
+    ],
+    "next_command": "/orbit:explore default-off-steps",
+    "model_hint": "opus",
+    "seam": "first stage default-off-steps is premised; explore it (or propose directly if its charter is clear enough)"
+  },
+  "next_recommended": "/orbit:explore default-off-steps"
+}

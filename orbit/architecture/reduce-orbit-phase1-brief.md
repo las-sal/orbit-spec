@@ -65,7 +65,7 @@ orbit's own rules already allow this. The no-chaining requirement in `orbit-conv
 
 ## 4. The moves
 
-### Stage A: stub the steps that do nothing at default settings
+### 4.1 Stage A: stub the steps that do nothing at default settings
 
 Saves 54,485 characters (12.5%). Behaviour is preserved by construction: at defaults the stub handles the result inline and the reference is never opened; with the setting on, the agent reads the same text it reads today, one file read later.
 
@@ -94,7 +94,7 @@ Two things to settle in design:
 - **The brief save is not gated.** It runs under every setting and shares sections with the sign-off hold. The two have to be separated so only the hold moves.
 - **A chained arrival must know what the prompt tags mean.** The meaning of `(chain: routine, default: …)` and the other tags lives in the chain end step. If each phase runs in a fresh headless session (R-adf-8), the arriving session has not read it. Either the tag meaning stays in the body as one short paragraph, or the arriving body is told to read the reference when it was started by a chain.
 
-### Stage B: move once-per-session detail to references
+### 4.2 Stage B: move once-per-session detail to references
 
 Saves about 21,700 characters (5%).
 
@@ -105,7 +105,7 @@ Saves about 21,700 characters (5%).
 
 The account step is the less certain of the two: nothing in the engine prompts for an account, so the body's trigger has to carry it alone. Check whether the apply gate could report "account missing" before moving it.
 
-### Stage C: tighten what stays
+### 4.3 Stage C: tighten what stays
 
 Saves about 15,000 characters (3.5%).
 
@@ -116,7 +116,7 @@ Saves about 15,000 characters (3.5%).
 | Strip provenance from bodies: stage tags, ruling ids, `CHECKED MIRROR` notes, owning-spec citations in headings | about 4,000 after overlap with A and B | The mapping from text to spec lives in tests and `@scenario` tags, not in what the agent reads |
 | Trim the address-reviews description from 1,140 to about 200 characters | small | Descriptions load in every session, whether or not the skill runs |
 
-### Stage D: larger cuts that need evidence first
+### 4.4 Stage D: larger cuts that need evidence first
 
 Worth about 50,000 more (11%). Each changes what the agent sees on a path that runs under default settings, so none is safe by construction.
 

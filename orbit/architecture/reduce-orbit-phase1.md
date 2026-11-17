@@ -30,7 +30,7 @@ Ratified by Sal, 2026-11-17, from the opening session's answers to the brief's q
 - **RG2 — Anthropic's structural rules.** Every reference file is linked directly from its skill's `SKILL.md` (one level
   deep); every reference file over 100 lines opens with a table of contents; every skill's description is valid YAML,
   at most 1,024 characters, and says what the skill does and when to use it. Fails on one exception.
-- **RG3 — Growth is held.** From stage `default-off-steps` on, the per-body budget test runs in the suite and the size
+- **RG3 — Growth is held.** From stage `conditional-steps` on, the per-body budget test runs in the suite and the size
   report in CI (R-rop-8), and no ceiling is raised during the program. Fails if a ceiling rises.
 
 ## Rulings index
@@ -42,7 +42,12 @@ Ratified by Sal, 2026-11-17, from the opening session's answers to the brief's q
   architecture trail's `decisions/` folder).
 - **R-rop-2** (Sal, 2026-11-17) — Phase 1 is the brief's stages A, B and C, one change each, and then an evaluation of
   the result. Stage D (the cuts that need evidence first) is not declared; whether it is taken up is decided at that
-  evaluation. (The brief's question 1.)
+  evaluation. (The brief's question 1.) Amended by Sal, 2026-11-17: three of stage D's steps join stage A, which is
+  renamed `conditional-steps` to cover them: archive's gate inflection prompt, the base-fingerprint divergence check
+  (archive and bulk-archive) and propose's size brief. Each runs at the defaults, but an orbit command's result says
+  when its procedure is needed and its usual result needs none, so it moves as stage A's steps do (the brief's rule 2).
+  The rest of stage D still waits for the evaluation. Recorded as `stop-2026-11-17T02-42-43Z.json` and its resolution
+  in the architecture trail's `decisions/` folder.
 - **R-rop-3** (Sal, 2026-11-17) — A requirement that a block is carried byte-equal by each body is met by both halves,
   each byte-equal to one source: the step's BASIC CONTENT (when it runs, the command, the usual result, and the link to
   its reference file) in every carrying body, and the full step in every carrying skill's REFERENCE FILE. The tests keep
@@ -97,17 +102,20 @@ Ratified by Sal, 2026-11-17, from the opening session's answers to the brief's q
 
 ## Program stages
 
-One change per stage, in this order (R-rop-2). The brief's stage D is not declared: whether it is taken up is decided
-at `evaluation`.
+One change per stage, in this order (R-rop-2). The brief's stage D is not declared, apart from the three steps stage
+`conditional-steps` takes: whether the rest is taken up is decided at `evaluation`.
 
-### Stage default-off-steps — steps that do nothing at the defaults move to reference files
+### Stage conditional-steps — steps whose procedure an orbit command's result calls for move to reference files
 
 Depends-on: (none)
 Complete: [ ]
 
-The brief's stage A. The commit step, the chain end step's procedure, the sign-off hold and the PR lifecycle sections
-each keep their basic content in the body and move their procedure to a reference file, byte-equal to today's text,
-composed once in code as now (R-rop-3, R-rop-4, R-rop-5). The brief save, which runs at every archive, is separated from
+The brief's stage A, with three steps from its stage D (R-rop-2 as amended). The commit step, the chain end step's
+procedure, the sign-off hold and the PR lifecycle sections, which do nothing at the defaults, and archive's gate
+inflection prompt, the base-fingerprint divergence check (archive and bulk-archive) and propose's size brief, which run
+at the defaults but whose usual result needs no procedure, each keep their basic content in the body and move their
+procedure to a reference file, byte-equal to today's text, composed once in code as now (R-rop-3, R-rop-4, R-rop-5).
+In each, an orbit command's result picks the branch: the agent never judges whether to read the reference file. The brief save, which runs at every archive, is separated from
 the sign-off hold and stays in the body. The meaning of the prompt tags and what a chained command records stay in each
 chaining body (R-rop-6). The per-body budget test and the size report land in this change (R-rop-8). The requirements
 that pin each block's text (the brief's section 5) are modified so that both halves are pinned.
@@ -116,6 +124,9 @@ Exit criteria:
 - At the defaults, each gating command returns the result the basic content handles itself (`action: off`,
   `configured: false`, `why: "off"`), shown by test; with each setting on, one real run per step shows the reference
   file read and the step acting as before.
+- For the three steps from stage D, the usual result (every reviewed gate passed or superseded, no fingerprint
+  diverged, no size breach) is handled by the basic content, shown by test; one real run of each unusual result shows
+  the reference file read and the step acting as before.
 - Each reference file is byte-equal to today's block, and each basic content byte-equal across its carrying bodies,
   both tested.
 - The repeated-read measurement (R-rop-10) and the compaction measurement (R-rop-12) are recorded.
@@ -124,7 +135,7 @@ Exit criteria:
 
 ### Stage once-per-session-detail — run-summary payload detail and the account step move to reference files
 
-Depends-on: default-off-steps
+Depends-on: conditional-steps
 Complete: [ ]
 
 The brief's stage B. The run-summary payload detail the bodies still carry inline moves to each skill's run-summary
@@ -160,7 +171,7 @@ Exit criteria:
 Depends-on: tighten-bodies
 Complete: [ ]
 
-Measure the bodies and the sessions run on them, and decide what follows phase 1: the brief's stage D (R-rop-2), the
+Measure the bodies and the sessions run on them, and decide what follows phase 1: the rest of the brief's stage D (R-rop-2), the
 one-line decision-writing (R-rop-7), reads named by a command's output (R-rop-4), whether every body should fit in what
 survives a compaction (R-rop-12), and whether decision records are written by default at all. Worked through as a named
 exploration citing this stage. `automate-dev-flow` resumes once this stage is done (R-rop-9).
@@ -198,3 +209,14 @@ Exit criteria:
   doc (R-rop-11), chose to measure compaction rather than target it (R-rop-12), and ratified the Premise, Goals RG0 to
   RG3 and the four stages, with the guideline's structural fixes in `tighten-bodies`. R-rop-8 was amended the same day
   to hold explore at its 664 lines. `automate-dev-flow` is paused until `evaluation` is done (R-rop-9, its R-adf-16).
+- 2026-11-17 — Resume session: the brief's four `### Stage A:` to `### Stage D:` headings matched the engine's stage-heading
+  prefix, so `orbit architecture status` listed the brief as MALFORMED. At Sal's choice they are numbered `### 4.1 Stage A:`
+  to `### 4.4 Stage D:` under its section 4, with no other text changed; the brief now reads as a legacy doc, and "the
+  brief's stage A" still names the same section.
+- 2026-11-17 — Resume session, continued: Sal asked whether steps that run at the defaults should move too. The AI
+  sorted them by what picks the branch: archive's gate inflection prompt, the base-fingerprint divergence check and
+  propose's size brief have an orbit command's result say when their procedure is needed (about 9,300 characters
+  measured in today's bodies); archive's user-validation closure is picked by the agent's own scan of `tasks.md`, and
+  review's fresh dispatch, architecture-mode report and verification step by the user's flags, so those stay in stage D.
+  Sal moved the three into stage A and renamed it `conditional-steps` to cover them (R-rop-2 amended; RG3 and the
+  `once-per-session-detail` dependency follow the new id).

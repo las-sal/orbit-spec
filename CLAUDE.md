@@ -50,7 +50,7 @@ Three decisions were ratified during C1 remediation:
 slimmer and in line with Anthropic's guidance for building skills, without changing what any workflow does. Text a
 session rarely needs moves to reference files, each body keeping the step's basic content, and a per-body budget test
 keeps the bodies from growing back. Its source is Sal's brief beside it (`reduce-orbit-phase1-brief.md`); its stages run
-default-off-steps, once-per-session-detail, tighten-bodies, then an evaluation that decides what follows. Say "basic
+conditional-steps, once-per-session-detail, tighten-bodies, then an evaluation that decides what follows. Say "basic
 content" and "reference file" (Anthropic's terms), not "stub" (R-rop-3).
 
 **`orbit/architecture/automate-dev-flow.md`** (from 2026-11-07) is paused until that evaluation is done (R-adf-16): no

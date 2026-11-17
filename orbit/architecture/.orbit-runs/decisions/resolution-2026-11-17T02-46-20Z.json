@@ -1,0 +1,10 @@
+{
+  "command": "resolution",
+  "timestamp": "2026-11-17T02:46:20Z",
+  "change": null,
+  "doc": "reduce-orbit-phase1",
+  "model": "claude-opus-5-5",
+  "stop": "stop-2026-11-17T02-42-43Z.json",
+  "answer": "Add the three steps to the first stage, not the second, and rename that stage so its name covers them.",
+  "effect": "The first stage is renamed conditional-steps and now also moves archive's gate inflection prompt, the base-fingerprint divergence check and propose's size brief to reference files, each keeping its basic content; R-rop-2 records the amendment, and RG3 and the second stage's dependency follow the new name. The rest of the brief's stage D still waits for the evaluation."
+}
