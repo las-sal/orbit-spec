@@ -59,6 +59,7 @@ this stage (D-cs-3).
   capabilities a change modifies, which for a new step in archive is not `orbit-conventions`. Sal chose this over a
   requirement in `orbit-conventions`, CLAUDE.md alone, or the test alone.
   Kind: scope
+  Disposition: superseded D-cs-10
 - **2026-11-17 — D-cs-6: the program runs under `pr: per-architecture`** At Sal's direction `orbit/config.yaml`'s
   `pr:` is set to `per-architecture` (from `per-proposal`), recorded in the program doc as R-rop-13: this change and
   every later one citing `reduce-orbit-phase1` ride the branch `reduce-orbit-phase1` and one draft program PR, and work
@@ -93,6 +94,23 @@ this stage (D-cs-3).
   observation of real sessions, not a rehearsal, so it sits beside D-cs-7's tests-alone verification. The size report
   supplies the other half of R-rop-12: each body's estimated tokens against the 5,000 Claude Code keeps after a
   compaction.
+  Kind: scope
+- **2026-11-17 — D-cs-10: the rule for new steps lives in a convention file, which CLAUDE.md and the budget test point at**
+  Found at propose: `orbit-conventions`' `Convention scope distinct from other knowledge layers` sends a durable rule
+  about how the system is built to a `<topic>_convention.md` at the root, with CLAUDE.md only referencing it, and
+  `Convention file consumers` has proposal review's Passes 3 and 7, system review's Pass 2 and audit-drift's Category 3
+  read every such file. So the rule is written in a new `skill_body_convention.md` at the root; CLAUDE.md carries one
+  line naming the rule and pointing at the file, and the budget test's failure message names it too. It is then read at
+  design, at review and at test. Supersedes D-cs-5's CLAUDE.md placement; its reasoning (no requirement, the author
+  reached before the test fails) stands. Sal chose this over keeping D-cs-5 with a recorded exception.
+  Kind: scope
+- **2026-11-17 — D-cs-11: the later stages carry RG1's projected 600** Measured at propose (D-cs-8), from the basic
+  contents drafted word for word in `design.md`: this stage moves about 47,130 characters, landing the bodies at about
+  387,300, and the brief's estimates for stages B (about 21,700) and C (about 15,000) project about 350,600 after C,
+  about 600 over RG1. The gap comes from R-rop-6's tag paragraph (1,148 characters) kept in five bodies, bulk-archive
+  staying out (D-cs-3), and the PR sections already being mostly basic content. Sal chose to build this stage as drafted
+  and let the later stages carry the difference, measured again at the next stage's propose, over trimming more here,
+  bringing bulk-archive's hold back, or amending RG1 (`stop-2026-11-17T13-56-01Z.json` and its resolution).
   Kind: scope
 
 ## Open questions

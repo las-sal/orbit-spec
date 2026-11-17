@@ -1,0 +1,16 @@
+schema: spec-driven
+created: 2026-11-17
+schema_version: 5
+architecture:
+  doc: reduce-orbit-phase1
+  stage: conditional-steps
+base_fingerprints:
+  orbit-architect:
+    The architect session saves the program brief and asks for the program's sign-off: sha256:b0191ddbb518e2ed3f930726a6cc7532be817c560808e4f36c5628bfe909794e
+  orbit-archive-modifications:
+    The archive holds for a per-change sign-off: sha256:dd231cf44932901c6e70e8cbee952cfda43ed669b71a9bde7d15aac4262d8f28
+  orbit-conventions:
+    No-chaining contract: sha256:075b9c4056bd632cb91a0de72ea090e945c3271120fc90973d676c7c00c11620
+    The commit step closes each carrying body: sha256:df657580e6c81c60e76cadb7f2494f02177e317ae784acfb7bc262d4d8d5482d
+  orbit-propose-modifications:
+    Size brief after generation: sha256:82d9ef564bea9a021fa3d2d3f8ef9f1ccef45bcc7f5713614de2edec63948772
