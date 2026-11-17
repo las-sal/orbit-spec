@@ -1,0 +1,193 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-17T23:44:01Z",
+  "change": "tighten-bodies",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {},
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 6
+    }
+  },
+  "findings": [
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "D-tb-18 says the edit ledger refused the six in-kind removals, but no such pair was ever written",
+      "file": "orbit/changes/tighten-bodies/explore.md",
+      "line": 304,
+      "walk_entry": {
+        "title": "Members of the named provenance kinds stay in three tightened bodies, though the requirement says those kinds are removed",
+        "file": "orbit/changes/tighten-bodies/specs/orbit-conventions/spec.md"
+      },
+      "recommendation": "D-tb-18 (explore.md:304-305) says each removal 'would take characters no pattern covers, so the edit ledger refused it'. No pair for these sites was written; the ledger's coverage check would refuse one, which is why none was attempted. Reword to 'so the edit ledger's coverage check would refuse it' (or 'so none was written as a pair'), so the record states what happened."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "pass": "reading",
+      "title": "ledger-2026-11-17T20-16-13Z.json, row 4: 'decided' gives the walk description's target as about 300, where its cited D-tb-9 says about 360",
+      "file": "orbit/changes/tighten-bodies/.orbit-runs/decisions/ledger-2026-11-17T20-16-13Z.json",
+      "line": 1,
+      "recommendation": "The reader takes 300 as the target, tighter than D-tb-9's 360 (and the later ledger's 400). Write a replacement whose 'decided' gives D-tb-9's figure, or says why it differs."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "pass": "reading",
+      "title": "ledger-2026-11-17T20-16-13Z.json, row 3: 'a strict reader of the file format', the unexplained drift-scan sentence and 'review-walk skill' slow the reader",
+      "file": "orbit/changes/tighten-bodies/.orbit-runs/decisions/ledger-2026-11-17T20-16-13Z.json",
+      "line": 1,
+      "recommendation": "Say 'valid YAML' as RG2 does instead of 'a strict reader of the file format' and 'the reader Claude Code uses'; say why the drift-scan description might have changed before saying it stays; name the address-reviews skill as the other ledger does. A replacement record carries the rewording."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "pass": "reading",
+      "title": "stop-2026-11-17T19-56-53Z.json, row 3: 'about' gives '700 characters shorter' without saying it is per body, beside the doc's 9,400 total",
+      "file": "orbit/changes/tighten-bodies/.orbit-runs/decisions/stop-2026-11-17T19-56-53Z.json",
+      "line": 1,
+      "recommendation": "A reader takes 700 as the total saving and cannot square it with RG1's 9,400. Write a replacement whose 'about' says 'about 700 characters shorter in each body, as the brief estimated'."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "pass": "reading",
+      "title": "stop-2026-11-17T19-56-53Z.json, row 1: 'question' uses 'the stop-condition explanations' and 'the list of ledger areas', neither defined",
+      "file": "orbit/changes/tighten-bodies/.orbit-runs/decisions/stop-2026-11-17T19-56-53Z.json",
+      "line": 1,
+      "recommendation": "Add both terms to the replacement's 'defines' (what the bullet's glosses of each stop condition and its eighteen named areas are), or reword the option in the doc's words."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "pass": "reading",
+      "title": "stop-2026-11-17T20-08-45Z.json, row 4: 'defines' gives R-crc-14's mirror corollary without its 'the copy adds nothing' condition, and says the note names the spec rather than the requirement",
+      "file": "orbit/changes/tighten-bodies/.orbit-runs/decisions/stop-2026-11-17T20-08-45Z.json",
+      "line": 1,
+      "recommendation": "The definition lists three conditions; R-rop-14 shows the corollary also requires that the copy adds nothing, and that the note names the requirement. A reader takes the corollary as narrower than it is, and meets 'still adds nothing' in the resolution unexplained. Write a replacement whose definition carries all four conditions in R-rop-14's words."
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "pass": "reading",
+      "title": "stop-2026-11-17T20-08-45Z.json, row 3: 'about' counts 'about 1,860 characters in nine places' where the resolution and R-rop-14 count thirteen notes",
+      "file": "orbit/changes/tighten-bodies/.orbit-runs/decisions/stop-2026-11-17T20-08-45Z.json",
+      "line": 1,
+      "recommendation": "A reader cannot tell whether 'nine places' counts bodies or notes. The replacement says what nine counts (the notes measured at the time) beside the thirteen the stage removed."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "pass": "reading",
+      "title": "resolution-2026-11-17T20-16-12Z.json, row 4: 'effect' says thirteen mirror notes without squaring it with the stop's nine places",
+      "file": "orbit/changes/tighten-bodies/.orbit-runs/decisions/resolution-2026-11-17T20-16-12Z.json",
+      "line": 1,
+      "recommendation": "The resolution corrects the stop's 'eight specs' but then says 'thirteen mirror notes' with no word on the stop's 'nine places', so a reader thinks the scope grew between question and answer. A replacement's 'effect' adds one clause saying what nine and thirteen each count."
+    }
+  ],
+  "commentary": "Verified the walk of the fresh pass against the files at HEAD (d27609df). The amended named limit reads the same in the requirement and in explore.md's D-tb-6 residual (diffed), design.md's Risks entry and Mechanism row name the widening, and parseExploreRules over explore.md still reports six live rules, none open, no key defects. The orphaned comment is gone with no stray lines, and the proposal and design give the landed 415. The residual listing from the external return's commit holds only the five files the walk's entries edited. The one defect in the walk's additions is a sentence of D-tb-18 that reports a refusal which never happened. The reading step's reader found the earlier decision records mostly clear; its two substantive points are about how the mirror-note stop and its resolution count and define what they decided, both fixable by replacement records.",
+  "passes_run": [
+    1,
+    2,
+    3,
+    "reading"
+  ],
+  "passes_skipped": [
+    "0: a verification pass does not run the whole-change verify",
+    "4: no orbit/lenses/perspectives.md",
+    "5: no orbit/lenses/critical-paths.md",
+    "6: a verification pass does not run the project-wide audit-drift"
+  ],
+  "verification": [
+    {
+      "title": "Members of the named provenance kinds stay in three tightened bodies, though the requirement says those kinds are removed",
+      "file": "orbit/changes/tighten-bodies/specs/orbit-conventions/spec.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "Orphaned comment for the removed TWO_LEVEL exception in moved-blocks.test.ts",
+      "file": "test/core/templates/moved-blocks.test.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "Address-reviews' description figure in the proposal and design (about 360) does not match what landed (415)",
+      "file": "orbit/changes/tighten-bodies/proposal.md",
+      "verdict": "landed"
+    }
+  ],
+  "decision_records_read": [
+    "ledger-2026-11-17T20-16-13Z.json",
+    "ledger-2026-11-17T22-33-23Z.json",
+    "resolution-2026-11-17T20-01-02Z.json",
+    "resolution-2026-11-17T20-16-12Z.json",
+    "resolution-2026-11-17T20-35-45Z.json",
+    "stop-2026-11-17T19-56-53Z.json",
+    "stop-2026-11-17T20-08-45Z.json",
+    "stop-2026-11-17T20-32-21Z.json"
+  ],
+  "final_assessment": "0 critical, 2 warning, 6 suggestion.",
+  "decision_records_owed": [
+    "ledger-2026-11-17T20-16-13Z.json",
+    "ledger-2026-11-17T22-33-23Z.json",
+    "resolution-2026-11-17T20-01-02Z.json",
+    "resolution-2026-11-17T20-16-12Z.json",
+    "resolution-2026-11-17T20-35-45Z.json",
+    "stop-2026-11-17T19-56-53Z.json",
+    "stop-2026-11-17T20-08-45Z.json",
+    "stop-2026-11-17T20-32-21Z.json"
+  ],
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-11-17T23-36-53Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews tighten-bodies",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "ef55ee46c8966ac09dca3147330a976ab0136458",
+      "frozen": true,
+      "evidence": {
+        "files": [],
+        "share": 0,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ]
+}
