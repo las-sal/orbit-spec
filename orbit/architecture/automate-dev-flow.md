@@ -712,3 +712,16 @@ Exit criteria:
   exploration's trail), and each firing recorded with a stop only under a halt setting. Exit criteria gained the
   steward's stubbed fixture and a defaults test for each sensor's setting. A skill-size reduction stage went to
   Considered & out (D-tw-2). No ruling or goal changed; no stage awaited ratification.
+- 2026-11-16 — Architect session after `tripwires` was archived (merged as PR #45), the first of D-tw-19's four changes:
+  the sensor contract and the Touchpoints sensor (the stage's first Shipped-as paragraph). No ratification was offered:
+  the explorations `tripwire-sensors`, `tripwire-steward` and `tripwire-project-sensors` are live. A named limit, not
+  a ruling: the system review's reading step did not run on tripwires, because orbit's reader brief for its 26 records
+  was 155,670 characters (the whole doc, the records, and five cited requirements in full) and the reviewing session
+  cannot hand a reader that verbatim; 26 records archived unread, after program-signoff's 12. The fix on file, for
+  whenever the reader proves its worth: the reader runs `orbit decisions brief <change>` itself, and the brief carries
+  only what the plain-language rule says its reader knows (Premise, Goals, Rulings, stage charters: about 24 KB of the
+  doc's 65 KB, the Shipped-as paragraphs, Considered & out and this log left out); stage-level scoping was weighed and
+  not chosen, since the records' reader knows the whole program. Sal's direction: orbit is getting too big, so wrap
+  this session with minimal changes and take up a reduction architecture pass (the work D-tw-2 set aside) as its own
+  architect session. One measure taken for it: tripwires' trail was 4,213 lines against 2,184 lines of code and tests,
+  and the generated skills total 439 KB. No ruling, goal or stage changed.

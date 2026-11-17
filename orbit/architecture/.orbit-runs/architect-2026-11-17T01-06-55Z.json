@@ -1,0 +1,24 @@
+{
+  "command": "architect",
+  "timestamp": "2026-11-17T01:06:55Z",
+  "change": null,
+  "doc": "automate-dev-flow",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Session after tripwires' archive (PR #45). No ratification was due (stage tripwires is exploring, three explorations live). Recorded in the status log only: the reading step's skip on tripwires as a named limit, with the fix on file (the reader runs orbit decisions brief itself; the brief carries only the doc's Premise, Goals, Rulings and stage charters), and Sal's direction to wrap with minimal changes and take up a reduction architecture pass. The program brief's save and hold ran: signoff off, program not finished. No ruling, goal or stage changed.",
+  "stages_touched": [],
+  "rulings_captured": [],
+  "completions_ratified": [],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      "CLAUDE.md — orientation, disciplines, and where the programs live",
+      "orbit/architecture/automate-dev-flow.md — the live program; its latest status-log entry records the reduction direction and its measures",
+      "orbit/changes/archive/2026-11-16-tripwires/.orbit-runs/explore.md — not present; see orbit/changes/archive/2026-11-16-tripwires/explore.md, D-tw-2, the skill-size work set aside"
+    ],
+    "next_command": "/orbit:architect <reduction-doc-name> — the reduction architecture pass Sal directed, as its own program doc",
+    "model_hint": null,
+    "seam": "post-session"
+  },
+  "next_recommended": "/orbit:architect <reduction-doc-name> — the reduction architecture pass Sal directed, as its own program doc"
+}
