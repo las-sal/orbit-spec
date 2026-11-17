@@ -1,0 +1,16 @@
+{
+  "command": "stop",
+  "timestamp": "2026-11-17T02:31:47Z",
+  "change": null,
+  "doc": "reduce-orbit-phase1",
+  "model": "claude-opus-5-5",
+  "condition": "ruling-amendment",
+  "about": "The size rule ratified for this program fails any skill whose instructions run past 500 lines, the limit in Anthropic's guidance. The explore skill is 664 lines today and this program leaves it alone, so that check would fail the moment it lands, before any reduction has happened.",
+  "question": "Should the explore skill be held at its current 664 lines (a ceiling that may only go down) while every other skill keeps the 500-line limit, or should explore be brought under 500 lines within this program?",
+  "defines": [
+    {
+      "term": "skill",
+      "definition": "the instructions an AI loads to run one orbit command"
+    }
+  ]
+}

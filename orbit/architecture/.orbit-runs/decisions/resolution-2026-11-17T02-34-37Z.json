@@ -1,0 +1,16 @@
+{
+  "command": "resolution",
+  "timestamp": "2026-11-17T02:34:37Z",
+  "change": null,
+  "doc": "reduce-orbit-phase1",
+  "model": "claude-opus-5-5",
+  "stop": "stop-2026-11-17T02-31-47Z.json",
+  "answer": "Hold the explore skill at its current 664 lines, a ceiling that may only go down; every other skill keeps the 500-line limit.",
+  "effect": "The size rule is amended: explore is held at 664 lines until its own reduction is weighed at the program's evaluation, and the check passes on the day it lands.",
+  "defines": [
+    {
+      "term": "skill",
+      "definition": "the instructions an AI loads to run one orbit command"
+    }
+  ]
+}

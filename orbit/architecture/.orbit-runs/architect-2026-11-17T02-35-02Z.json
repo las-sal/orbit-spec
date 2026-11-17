@@ -1,0 +1,43 @@
+{
+  "command": "architect",
+  "timestamp": "2026-11-17T02:35:02Z",
+  "change": null,
+  "doc": "reduce-orbit-phase1",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Opening session of reduce-orbit-phase1: doc created from Sal's brief (kept beside it as reduce-orbit-phase1-brief.md), reviewed against Anthropic's skill-authoring guidance and Claude Code's skills page, the brief's nine questions walked one at a time, and the Premise, Goals RG0-RG3 and four stages ratified (default-off-steps, once-per-session-detail, tighten-bodies, evaluation). Twelve rulings captured; R-rop-8 amended the same day to hold explore at 664 lines (a stop and its resolution). In automate-dev-flow, G0 amended for restructuring (R-adf-15, a stop and its resolution) and the program paused until this one's evaluation (R-adf-16). The program brief's save and hold ran for automate-dev-flow (signoff off).",
+  "stages_touched": [
+    "default-off-steps",
+    "once-per-session-detail",
+    "tighten-bodies",
+    "evaluation"
+  ],
+  "rulings_captured": [
+    "R-rop-1",
+    "R-rop-2",
+    "R-rop-3",
+    "R-rop-4",
+    "R-rop-5",
+    "R-rop-6",
+    "R-rop-7",
+    "R-rop-8",
+    "R-rop-9",
+    "R-rop-10",
+    "R-rop-11",
+    "R-rop-12"
+  ],
+  "completions_ratified": [],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      "CLAUDE.md — orientation, disciplines, and where the programs live",
+      "orbit/architecture/reduce-orbit-phase1.md — this program: Premise, Goals RG0-RG3, rulings R-rop-1 to R-rop-12, and stage default-off-steps' charter",
+      "orbit/architecture/reduce-orbit-phase1-brief.md — the brief: sections 4 (stage A's moves and the commit-step example), 5 (requirements and tests that pin the text) and 7 (verification)",
+      "src/core/disciplines.ts — where COMMIT_STEP, CHAIN_END_STEP and the other shared blocks are composed"
+    ],
+    "next_command": "/orbit:explore default-off-steps — design stage A (the brief save's separation from the sign-off hold, the requirements to modify, the budget test)",
+    "model_hint": null,
+    "seam": "post-session"
+  },
+  "next_recommended": "/orbit:explore default-off-steps — design stage A (the brief save's separation from the sign-off hold, the requirements to modify, the budget test)"
+}

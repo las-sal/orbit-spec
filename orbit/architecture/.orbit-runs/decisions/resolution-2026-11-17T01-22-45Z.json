@@ -1,0 +1,16 @@
+{
+  "command": "resolution",
+  "timestamp": "2026-11-17T01:22:45Z",
+  "change": null,
+  "doc": "automate-dev-flow",
+  "model": "claude-opus-5-5",
+  "stop": "stop-2026-11-17T01-22-37Z.json",
+  "answer": "Amend the goal. As a general rule, goals may be amended in order to restructure orbit to be slimmer and more in line with Anthropic's guidelines for building skills; the alternative to this is to create an orbit-lite from scratch and build up from the beginning.",
+  "effect": "The first goal now allows restructuring that leaves what the AI does unchanged, recorded as a new ruling; the reduction program records the general rule as its first ruling, with the rebuild from scratch as the alternative it was chosen over.",
+  "defines": [
+    {
+      "term": "orbit-lite",
+      "definition": "a smaller orbit built again from the beginning instead of reducing this one"
+    }
+  ]
+}

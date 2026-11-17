@@ -34,16 +34,18 @@ stage; G1–G6 are graded at first-run, on that project's trail and transcripts.
   of a change with a pull request names, in one line, each file it commits from the change's folder that git never
   tracked (R-adf-13). Otherwise
   the engine's readouts and gates are unchanged, and a generated body changes only by an addition
-  that tells the AI to record something, or by text whose effect depends on a setting and which, with every setting
-  at its default, leaves what the AI does unchanged (R-adf-12) — never by a change to what it does at a seam or
-  what the user sees at the defaults. Every existing
+  that tells the AI to record something, by text whose effect depends on a setting and which, with every setting
+  at its default, leaves what the AI does unchanged (R-adf-12), or by restructuring that makes orbit slimmer and
+  leaves what the AI does unchanged: text moved into a reference the body points at, or text no command uses
+  removed (R-adf-15) — never by a change to what it does at a seam or what the user sees at the defaults. Every existing
   test still passes. An existing test is edited only where it enumerates a closed set the stage extends (a command
-  list, a hash pin), never to weaken what it asserts about today's behaviour, and each such edit is named in the
-  stage's archive. Under any setting, every record today's flow writes is still written. Fails if a default install
+  list, a hash pin) or where the text it pins has moved, following that text to its new home, never to weaken what it
+  asserts about today's behaviour, and each such edit is named in the stage's archive. Under any setting, every record today's flow writes is still written. Fails if a default install
   behaves differently, if an existing test's assertion about today's behaviour is weakened, or if a first-run trail
   lacks a record type the supervised flow would have written; a default install behaving differently beyond a
   ratified exception fails it. (Reworded by Sal, 2026-11-07, R-adf-9; exceptions by Sal, 2026-11-09, R-adf-11; setting-dependent text by Sal,
-  2026-11-09, R-adf-12; the archive's untracked-file line by Sal, 2026-11-11, R-adf-13.)
+  2026-11-09, R-adf-12; the archive's untracked-file line by Sal, 2026-11-11, R-adf-13; restructuring by Sal,
+  2026-11-17, R-adf-15.)
 - **G1 — The user only shows up where the user adds value.** In first-run, every user turn after the opening architect session
   is one of: answering a stop record, a sign-off, or a voluntary interjection the user makes. Fails on a single turn where
   the user had to type the next command, clear context, or re-boot a session to keep the run moving.
@@ -134,6 +136,15 @@ stage; G1–G6 are graded at first-run, on that project's trail and transcripts.
   adds (D-chrc-1 to D-chrc-6 in the `chained-review-commit` change's `explore.md`). New projects get
   `pr: per-architecture` from `orbit init` (D-chrc-7). Stated by Sal during that exploration as true of the entire
   program.
+- **R-adf-15** (Sal, 2026-11-17) — G0's body clause also allows restructuring that makes orbit slimmer and leaves what
+  the AI does unchanged: text moved from a body into a reference the body points at, or text no command uses removed;
+  and a test whose pinned text moves follows it to its new home. Amended for the program `reduce-orbit-phase1`, under
+  its general ruling that goals may be amended to restructure orbit to be slimmer and more in line with Anthropic's
+  guidelines for building skills, rather than building an orbit-lite from scratch (R-rop-1). Recorded as
+  `stop-2026-11-17T01-22-37Z.json` and its resolution in this trail's `decisions/` folder.
+- **R-adf-16** (Sal, 2026-11-17) — This program waits for `reduce-orbit-phase1`: no change of its remaining stages is
+  proposed until that program's stages A, B and C are archived and their evaluation is done (its R-rop-9). The
+  explorations `tripwire-sensors`, `tripwire-steward` and `tripwire-project-sensors` stay as they are meanwhile.
 
 ## Program stages
 
@@ -725,3 +736,8 @@ Exit criteria:
   this session with minimal changes and take up a reduction architecture pass (the work D-tw-2 set aside) as its own
   architect session. One measure taken for it: tripwires' trail was 4,213 lines against 2,184 lines of code and tests,
   and the generated skills total 439 KB. No ruling, goal or stage changed.
+- 2026-11-17 — G0 amended by Sal (R-adf-15), in the opening session of `reduce-orbit-phase1`: its body clause now also
+  allows restructuring that leaves what the AI does unchanged, and its test clause lets a test follow pinned text that
+  moved. No stage changed.
+- 2026-11-17 — Paused by Sal (R-adf-16) until `reduce-orbit-phase1`'s stages A, B and C are archived and evaluated, so
+  the remaining stages build on the slimmer bodies. No stage changed.
