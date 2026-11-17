@@ -1,0 +1,161 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-17T19:37:15Z",
+  "change": "once-per-session-detail",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 5
+    }
+  },
+  "findings": [
+    {
+      "pass": "reading",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/once-per-session-detail/.orbit-runs/decisions/ledger-2026-11-17T18-28-33Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-17T18-28-33Z.json, row 3: why says the gate counts a task handed to the user only after a session has 'recorded' it, which a reader takes as the task list",
+      "recommendation": "Write one replacement whose why says the gate counts a task handed to the user only after the session's run summary declares it, and that summary is written after the account step; the argument for dropping the gate-keyed read rests on that sentence, and 'recorded' reads as marking the task list, which happens earlier."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/once-per-session-detail/.orbit-runs/decisions/ledger-2026-11-17T18-28-33Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-17T18-28-33Z.json, row 3: why's 'rides on every turn of every session' is unexplained shorthand",
+      "recommendation": "In the same replacement, say the condition's text would sit in every body, which stays loaded on every turn (the Premise), rather than 'rides on every turn'."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/once-per-session-detail/.orbit-runs/decisions/ledger-2026-11-17T17-37-12Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-17T17-37-12Z.json, row 1: the apply gate's definition uses 'user-validation handoffs', which is not defined",
+      "recommendation": "Write one replacement whose apply-gate definition says 'or only tasks handed to the user remain', the wording ledger-2026-11-17T18-28-33Z.json uses."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/once-per-session-detail/.orbit-runs/decisions/ledger-2026-11-17T17-37-12Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-17T17-37-12Z.json, row 4: decided names only the apply skill while its alternatives and D-opsd-3 also set the walk's account step",
+      "recommendation": "In the same replacement, say the decision covers both account steps, apply's at the session's end and the review walk's after its logs, and add 'review walk' to defines."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/once-per-session-detail/.orbit-runs/decisions/ledger-2026-11-17T17-40-11Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-17T17-40-11Z.json, row 1: decided uses 'consent field', which is not defined",
+      "recommendation": "Write one replacement that adds 'consent field' to defines: the field saying whether the user typed the command, answered a prompt for it, or a setting allowed it."
+    },
+    {
+      "pass": "reading",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/once-per-session-detail/.orbit-runs/decisions/ledger-2026-11-17T17-40-11Z.json",
+      "line": 1,
+      "title": "ledger-2026-11-17T17-40-11Z.json, row 3: decided's 'before writing its first record' reads as the session's first decision record",
+      "recommendation": "In the same replacement, say 'before writing its first session record', and tie session record to the architecture doc's run-summary wording in its definition; this is the ambiguity the system walk fixed in the skill text."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "The walk's one resolved entry was checked site by site. A whitespace-normalized search over every tracked file outside the trails finds the retired wording only in explore.md, which the entry keeps as the exploration record; the eleven installed bodies carry the new cue; the scenario map shows the five scenarios under the renamed requirement declared, none orphaned or malformed; the full suite passed after the walk and validate is clean. The residual check from the external return's commit lists nine files, all inside the entry's edit record. Passes 1 to 3 over the sweep scope found nothing: no baseline requirement names the read moment, the cue constant's only consumers are the eleven templates and the pinned tests, and no CLI surface changed.\n\nThe reading step ran over the change's three ledger entries, all written during exploration and propose. The reader's findings are wording gaps a replacement fixes; the one it graded higher is the 18-28-33 why, whose 'recorded' hides the mechanism the whole decision rests on. The reader also remarked, outside its four rows, that ledger-17-37-12 rests on D-opsd-3, which D-opsd-8 superseded, and nothing in the record says the call was reversed. A replacement cannot carry that pointer, since it must keep relies_on unchanged and the later entry rests on a different decision; the brief shows D-opsd-3's superseded disposition beside the record, so this is left as an observation, not a finding.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "reading"
+  ],
+  "passes_skipped": [
+    "0: whole-change pass, not run on a VERIFICATION-genre pass",
+    "6: whole-project pass, not run on a VERIFICATION-genre pass",
+    "4: no perspectives defined (orbit/lenses/ absent)",
+    "5: no critical paths defined (orbit/lenses/ absent)"
+  ],
+  "verification": [
+    {
+      "title": "The read cue's 'the session's first emit' also covers account and decision-record emits that precede the run summary",
+      "file": "src/core/disciplines.ts",
+      "verdict": "landed"
+    }
+  ],
+  "decision_records_read": [
+    "ledger-2026-11-17T17-37-12Z.json",
+    "ledger-2026-11-17T17-40-11Z.json",
+    "ledger-2026-11-17T18-28-33Z.json"
+  ],
+  "final_assessment": "0 critical, 1 warning, 5 suggestion.",
+  "decision_records_owed": [
+    "ledger-2026-11-17T17-37-12Z.json",
+    "ledger-2026-11-17T17-40-11Z.json",
+    "ledger-2026-11-17T18-28-33Z.json"
+  ],
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-11-17T19-31-31Z",
+    "2026-11-17T19-31-41Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews once-per-session-detail",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "9c43eee38a0b20ee959c4c7975e3f51a3a55d754",
+      "frozen": true,
+      "evidence": {
+        "files": [],
+        "share": 0,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ]
+}
