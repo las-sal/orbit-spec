@@ -1,0 +1,175 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-17T18:17:04Z",
+  "change": "once-per-session-detail",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 3
+    },
+    "correctness": {
+      "critical": 1,
+      "warning": 2,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "6",
+      "severity": "CRITICAL",
+      "dimension": "correctness",
+      "file": "orbit/changes/once-per-session-detail/design.md",
+      "line": 47,
+      "title": "The account cue reads the apply gate before this session's emit declares user_validation_tasks, so a change ending on a user-validation handoff gets no account",
+      "recommendation": "Key apply's account basic content on what the session will declare, not only on the gate as it reads before the emit. The tracked gate's user-validation subset (src/core/artifact-graph/gates.ts:892-910) passes only when every unchecked task is named by the LATEST apply emit's `user_validation_tasks` (trail.latestApplyUserValidation, src/core/artifact-graph/trail.ts:252-255) and carries the `(User-validation` marker; the account step runs BEFORE this session's run-summary emit, so the declaration that would make the gate pass does not exist yet when the cue reads it. Today's ACCOUNT_STEP decides by the agent's own reading ('named in this session's `user_validation_tasks`'), which is why the subset case works now. Fix the cue in design Decision 1 (design.md:47 and the 'one predicate' claim at :54), the decision-records delta's paragraph (specs/orbit-decision-records/spec.md:48-56, 'each of apply's branches that writes anything follows the gate's `passed`'), and add a test case for the subset row; explore.md:31's COHERE line carries the same claim.",
+      "reproduction": "Constructed case (the delta's own scenario, specs/orbit-decision-records/spec.md:83): change foo's tasks.md holds 1.1, 1.2 and `- [ ] 2.1 (User-validation handoff) live-test`; no earlier apply emit declared 2.1. An apply session checks 1.1 and 1.2 and will declare user_validation_tasks: [\"2.1\"] in its run summary. Rule applied by hand: ACCOUNT_STEP_BASIC (design.md:47) runs at the session's end BEFORE the run-summary emit and reads the apply gate from `orbit status --change foo --json`. gates.ts:899-910: passed = 2/3 checked = false; trail.latestApplyUserValidation is undefined (no apply emit carries 2.1 yet), so the subset rule does not fire; state = 'ready'. Expected (the scenario's THEN, and today's ACCOUNT_STEP): the session writes the account before its run summary. Observed under the new basic content: the gate reads 'ready', the cue says 'when it is not `passed`, write no account', and no account is written; the system review and archive that follow never write one, and nothing reports it (the delta's own named limit), so the brief's built / seams / deviations for this change are lost.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Widen the cue: read the reference when the gate reads `passed`, OR when every unchecked task carries the `(User-validation` marker and this session declares it in `user_validation_tasks`; state the second arm in Decision 1, the delta paragraph and a test."
+        },
+        {
+          "label": "B",
+          "body": "Key the cue on tasks.md rather than the gate (every task checked, or every unchecked one a marked `(User-validation` task this session declares), and drop the 'one predicate with the gate' claim from Decision 1, the delta and explore's COHERE line."
+        }
+      ]
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/once-per-session-detail/proposal.md",
+      "line": 21,
+      "title": "The proposal names the reference files D-opsd-5 described; design, spec and tasks use one new run-summary-emit.md per skill",
+      "recommendation": "Rewrite What Changes' second bullet (proposal.md:17-23) to match design Decision 2: each of the seven skills gains `references/run-summary-emit.md` holding its whole emit section, and the existing schema references (review's and address-reviews' `run-summary-schema.md`, archive's `archive-summary-schema.md`) are left as they are. As written it says apply, architect, verify and propose gain a new `run-summary-schema.md` and the other three's text joins their existing schema references, which is the design's rejected option. Name the deviation from D-opsd-5's last sentence (and from the charter's 'each skill's run-summary schema reference') in the proposal too, since the proposal is what the human reads first and it currently shows no deviation."
+    },
+    {
+      "pass": "4",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/once-per-session-detail/specs/orbit-run-summary-emit/spec.md",
+      "line": 18,
+      "title": "The table's 'the reference only' rows and the apply scenario's 'carries none of those' are false on day one",
+      "recommendation": "Scope the 'reference only' rows (spec lines 18-24) to the emit SECTION, not the whole body, and name the kept mixed paragraphs, or an implementer either writes a failing test or 'fixes' text outside the section. Sites read in the generated bodies: apply's Step 3 inflection bullet (orbit-apply-change SKILL.md:63) says 'On Proceed anyway, record the decision in this session's apply emit as a continuation/proceed judgement entry carrying the gate, its state and its reason' — the trigger of an owed `judgements` field, in the body, outside the emit section; archive Step 3.2 (SKILL.md:197) composes the `deferred_validations` entry in the body; archive Step 3.4 sends the agent to gate-inflection.md, which composes Step 5.5's continuation entries; and design Decision 3 itself keeps address-reviews' first paragraph whole (it states the discovered log's `source`, `source_path`, `source_command`, `source_token`, `latest_apply_token` fields: payload field shape) and architect's opening parenthetical (a provenance note). So the scenario 'The reference holds the section as it was' (line 53: 'the apply body carries none of those') holds only for the emit step, and the first Named limit (line 31) overstates the loss: apply's and archive's event-owed triggers also live at the step where the event happens. Recommend: 'leaves the emit section' in the table header for those rows, a row or sentence for the two kept mixed paragraphs, 'its emit step carries none of those' in the scenario, and the named limit narrowed to the triggers stated only in the emit section."
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/once-per-session-detail/design.md",
+      "line": 47,
+      "title": "The account basic content does not follow the convention's handoff rule or name a non-zero exit",
+      "recommendation": "skill_body_convention.md's rules say a basic content that follows a command's result names 'the file to read on any other result or a non-zero exit' and hands off 'from the result you already have'; Decision 4 calls the account cue 'the conditional-steps rule applied'. ACCOUNT_STEP_BASIC as described says neither: what the session does when `orbit status` exits non-zero is unstated (write none, or read the reference?), and moved-blocks.test.ts' handoffPointers list (exactly seven) would have to grow or the account cue be named as an exception. State the non-zero-exit path and the handoff wording, or say in Decision 1 why the account cue is exempt."
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/once-per-session-detail/design.md",
+      "line": 93,
+      "title": "New body sentences are described, not given, and the spec calls the two-sentence cue 'one sentence'",
+      "recommendation": "Decision 3 adds text the moved sections never carried: archive's 'new first sentence (after upstream Step 5 completes, write the archive run summary)', verify's 'first sentence (at command completion)', and archive's and address-reviews' sentences naming their schema reference; apply's staying text is a paragraph split before its last sentence. Give each new sentence verbatim (as the cue is), so the staying-paragraph constants and the tests are fixed by the artifact rather than by the implementer. Archive's sentence should keep the instruction to READ `references/archive-summary-schema.md` when composing, which `orbit-archive-modifications`' `Archive summary schema reference ships with the skill` describes the body as giving ('that the skill body already instructs the AI to read when composing the summary'), not merely name it. The spec (orbit-run-summary-emit delta, line 7: 'in one sentence carried byte-equal by all seven') and design.md:81-83's cue, which is two sentences, should agree."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/once-per-session-detail/specs/orbit-run-summary-emit/spec.md",
+      "line": 31,
+      "title": "The named limits do not cover a read lost to compaction before a later emit",
+      "recommendation": "'Before the session's first emit' means a long apply or architect session reads the reference once and composes every later emit from memory of it. After a compaction that read can be gone while the session has emitted already, so the cue does not fire again; R-rop-4 names missed reads after a compaction as an evaluation candidate. Either add that case to the first named limit, or word the cue so a session that no longer has the reference in front of it reads it again before an emit (and say which R-rop-10 consequence that has)."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/once-per-session-detail/design.md",
+      "line": 98,
+      "title": "Address-reviews' emit move saves nothing per turn and adds a read, and the cue misdescribes its reference",
+      "recommendation": "Measured on the generated body: the only text leaving address-reviews step 6 is one 310-character paragraph ('Compose each payload — … Write the payload to a temp file and invoke:'); the body gains the 248-character cue plus the new sentence naming run-summary-schema.md, so the body stays level or grows, and every walk session now also reads a ~2,400-character run-summary-emit.md that repeats the kept paragraph and points on to run-summary-schema.md. The cue tells the agent the reference 'holds what the payload carries, when each optional field is owed, and what the engine owns', which for address-reviews is true only through that further file. Design Decision 3 notes 'its section therefore saves little'; record the measured figure in Risks so the evaluation sees it, or weigh leaving step 6 whole.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Keep address-reviews among the seven (D-opsd-5 as ratified) and record the measured per-turn and per-session cost in design Risks."
+        },
+        {
+          "label": "B",
+          "body": "Bring Sal the question of leaving address-reviews' step 6 whole like ff's, continue's, new's and audit-drift's (an amendment of D-opsd-5's set), keeping only its account move."
+        }
+      ]
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Probed hardest where the change claims equivalence: the account cue against the engine's gate code, the 'reference only' rows against what the generated bodies carry outside their emit sections, and the design's size and pointer claims against the current .claude/ surface (section sizes match the design's table to within two characters; the archive and address-reviews bodies do name their schema references only in the moving sections; review names run-summary-schema.md again at its disjunctive-recommendations section). The one defect that changes behaviour is the ordering of the gate read and the emit that makes the user-validation subset pass; everything else is scoping and wording. The emit move itself is sound: the move of whole sections byte-equal, with staying paragraphs composed once, is a clean extension of conditional-steps' pattern, and the decision to leave the 15,000 to 31,000 character schema references alone is well measured. orbit validate passes; no @review: markers; the seven undeclared-scenario infos are the new scenarios tasks 2.2 and 3.3 tag.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "direction": {
+    "disposition": "hold",
+    "reasoning": "Walk before apply. The account cue as designed keys on a gate state that, for a change ending on a user-validation handoff, only becomes true after the emit the account must precede, so that change silently loses its account: a behaviour change against RG0 and against the delta's own scenario, fixed by rewording one cue in three places.\nThe proposal's description of where the emit detail goes contradicts the design, spec and tasks, and the spec's 'reference only' rows are false for text the bodies keep elsewhere; both are wording fixes in the artifacts, but they decide what tests get written, so they belong before apply rather than in a later walk."
+  },
+  "final_assessment": "1 critical, 2 warning, 4 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews once-per-session-detail",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "dbc0d220a00df2dd08be66257125b4db54cbe2b8",
+      "frozen": false,
+      "evidence": {
+        "files": [],
+        "share": null,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ]
+}
