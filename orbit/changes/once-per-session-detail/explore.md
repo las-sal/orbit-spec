@@ -13,28 +13,28 @@ requirements and tests move, and the answer to the charter's account question.
 
 ## Mechanism
 
-### D-opsd-3 — the apply gate's `passed` picks the account step's read
-Domain: every situation an account step decides, and what picks its read
+### D-opsd-8 — each account step reads its reference at the step's moment, every time
+Domain: every situation an account step decides, and where it is decided
 | member | covered by |
 |---|---|
-| an apply session ends with the apply gate not passed | apply's basic content: no read, no account |
-| an apply session ends with the gate passed and no account | basic content cues the read; the reference writes one |
-| an apply session ends with the gate passed, an account, and work since that changed what it says | basic content cues the read; the reference writes a replacement |
-| the same, with nothing changed | basic content cues the read; the reference writes none |
-| an apply session arriving on `all_done` (no run summary) | the gate reads passed; the read comes before the completion readout, as today's step orders it |
-| a walk of an active change whose `.orbit-runs/account/` holds an account | address-reviews' basic content cues the read of its walk reference |
-| a walk of a change with no account, of an archived change, or with no change target | address-reviews' basic content: no read, no account |
-Closure: SOURCED — the branches of `ACCOUNT_STEP` and `ACCOUNT_WALK_STEP` in `src/core/disciplines.ts`
+| an apply session ends with apply not complete | the cue reads the reference at the session's end; the reference writes none |
+| an apply session ends with apply complete and no account (it checked the last task, it declares its first user-validation handoff, or it resumed) | the reference writes one |
+| an apply session ends with apply complete, an account, and work since that changed what it says | the reference writes a replacement |
+| the same, with nothing changed | the reference writes none |
+| an apply session arriving on `all_done` (no run summary) | the cue reads the reference before the completion readout, as today's step orders it |
+| a walk of an active change whose `.orbit-runs/account/` holds an account | the cue reads the walk reference after the logs; it decides the replacement |
+| a walk of a change with no account, of an archived change, or with no change target | the cue reads the walk reference after the logs; it writes none |
+Closure: SOURCED — the branches of `ACCOUNT_STEP` and `ACCOUNT_WALK_STEP` in `src/core/disciplines.ts`, every one decided in the reference
 Moves:
-- READ: applied — `ACCOUNT_STEP` defines "APPLY IS COMPLETE when the change's apply gate passes"; the gate's pass condition is D-opsd-2's
+- READ: applied — the gate counts a user-validation handoff only after an apply emit declared it (`gates.ts`, `trail.latestApplyUserValidation`), the fact D-opsd-3's cue missed; `ACCOUNT_STEP` names "this session's `user_validation_tasks`"
 - ENUMERATE: applied — this table, one row per branch of the two constants
-- COHERE: applied — the cue and the reference's definition of complete are one predicate, the gate's `passed`, user-validation subset included
-- EXECUTE: not applied — no body yet; Q4's run executes it
-- FALSIFY: applied — a session that skips the read writes no account and nothing reports it; the same holds today with the step in the body, and the move adds only the read to skip, a named limit as in `conditional-steps`; an engine report goes to `evaluation`
-- CONFORM: applied — R-rop-3 (basic content and reference, each byte-equal to a source), R-rop-4 (the body directs the read), R-rop-5 (same body under every configuration), the brief's rule 2, and the Premise (no engine change)
-- FEASIBILITY: not applied — one `orbit status` read the step already implies
-- CONSUME: applied — the account's readers (the brief, the decision-records reader) read the folder, whatever body wrote it
-- INVOKE: applied — the cue sits in the body and fires at every apply session's end and every walk of an active change
+- COHERE: applied — the body states only the moment, so the one predicate is the reference's own, today's text, and nothing in the body can disagree with it
+- EXECUTE: applied — the proposal walk's finding 1 re-derived: a session declaring its first handoff reads the reference whatever the gate reads, and the reference's rule counts this session's declaration
+- FALSIFY: applied — a session that skips the read writes no account and nothing reports it, as before; no condition in the body can misfire
+- CONFORM: applied — R-rop-3, R-rop-4, R-rop-5, the brief's rules 1 and 3, the Premise (no engine change), and D-opsd-4's read-at-a-moment shape
+- FEASIBILITY: applied — the 4,036- or 4,656-character read lands in a session's last turns; about 280 characters per turn stay in each body
+- CONSUME: applied — the account's readers read the folder, whatever body wrote it
+- INVOKE: applied — the cue sits where the step sits and fires at every apply session's end and every walk's end
 
 ### D-opsd-4 — each emit section keeps when and the command, and reads its reference before the session's first emit
 Domain: the parts of a body's run-summary emit section, and where each lands
@@ -87,6 +87,7 @@ Moves:
   is active and its `.orbit-runs/account/` holds an account, the agent reads its walk reference. Whether an account
   exists and whether it is replaced are decided in the reference. An engine report of a missing account is not built
   here: it is a guard against a missed read, not a branch, and goes to `evaluation`'s list beside R-rop-4's.
+  Disposition: superseded D-opsd-8
 
 - **2026-11-17 — D-opsd-4: every emit section keeps when it fires and its command, and reads its reference before the
   session's first emit** Sal's answer to Q2 after a comparison, choosing option 2 everywhere over the
@@ -103,6 +104,7 @@ Moves:
   architect, verify and propose gain a run-summary schema reference; archive's moved text joins
   `archive-summary-schema.md`; review's and address-reviews' join their existing `run-summary-schema.md`.
   Kind: scope
+  Disposition: superseded D-opsd-9
 
 - **2026-11-17 — D-opsd-6: this change's own apply shows the account written under the new bodies, its last chunk run
   in a fresh session** Sal's answer to Q4, over a throwaway project or the next stage's apply. A session runs on the
@@ -120,6 +122,24 @@ Moves:
   it adds none. Which `@scenario text` tags assert moving wording into a body is not measured here; propose measures it
   before planning tasks.
   Kind: fact
+- **2026-11-17 — D-opsd-8: each account step's basic content reads its reference at the step's moment, every time**
+  From the proposal walk (the blind pair's converged finding 1): D-opsd-3's cue read the apply gate, which counts a
+  user-validation handoff only after an apply emit has declared it, so a session completing apply on its first declared
+  handoff would have written no account. Sal chose, with slimness the measure, to drop the condition for both steps:
+  apply's basic content says that at the session's end, before the run-summary emit (or, with no run summary, before
+  the completion readout), the agent reads `references/account-step.md` and follows it; address-reviews' says that after
+  the logs are written the agent reads `references/account-walk-step.md` and follows it. Each reference holds its step
+  whole, today's completion rule and every branch included, and decides whether anything is written. No engine change.
+- **2026-11-17 — D-opsd-9: every emit step in scope takes the one shape; explore and bulk-archive are excepted** From
+  the proposal walk (finding 7): measured, address-reviews' step 6 would lose one 310-character paragraph and gain the
+  read cue and a sentence naming its schema reference, so its body stays level and each walk reads a new file. Sal
+  weighed leaving it whole and chose the opposite, for structure: skills will grow as well as shrink, and one shape gives
+  a new payload field one place to go and one test to hold it there. So all eleven emit steps in scope take it (apply,
+  archive, architect, review, verify, propose, address-reviews, ff, continue, new and audit-drift), each with its whole
+  section in `references/run-summary-emit.md`, and the four short ones that D-opsd-5 left whole join though they save
+  about nothing in size. Explore and bulk-archive keep theirs, outside phase 1 (the Premise; R-rop-2). The schema
+  references are not edited (design Decision 2).
+  Kind: scope
 
 ## Open questions
 
@@ -132,9 +152,14 @@ Moves:
   home for the triggers of the event-owed fields, kept in step by hand; Sal chose one home and an unconditional read
   (D-opsd-4).
 - **2026-11-17 — Moving ff's, continue's, new's and audit-drift's emit sections:** each is already about as short as
-  basic content would be, or (audit-drift) already composes from its reference (D-opsd-5).
+  basic content would be, or (audit-drift) already composes from its reference (D-opsd-5). Reversed by D-opsd-9.
 - **2026-11-17 — A throwaway project, or the next stage's apply, as the account evidence:** artificial, or too late for
   this stage's ratification (D-opsd-6).
+- **2026-11-17 — A cue keyed on the apply gate (D-opsd-3), on the gate or this session's declaration, or on `tasks.md`
+  alone:** each puts a condition in the body; the gate alone missed a first declared handoff, and the widened forms cost
+  about 240 and 120 characters on every turn against a read in a session's last turns (D-opsd-8).
+- **2026-11-17 — Six or seven bodies, leaving address-reviews' step 6 or the four short sections whole:** each left
+  shape-exceptions where the next payload field would land inline by habit; Sal chose one shape (D-opsd-9).
 
 ## References
 

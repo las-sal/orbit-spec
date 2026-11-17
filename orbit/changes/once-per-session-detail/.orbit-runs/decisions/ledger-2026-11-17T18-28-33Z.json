@@ -1,0 +1,48 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-17T18:28:33Z",
+  "change": "once-per-session-detail",
+  "model": "claude-opus-5-5",
+  "area": "when-things-go-wrong",
+  "decided": "Each account step keeps in its skill only when to read its reference file — at the end of an apply session, and at the end of a review walk — and reads it every time; the reference decides whether to write the account. Nothing in orbit reports a change whose apply is complete and which has no account.",
+  "alternatives": [
+    "read the reference only when the apply gate reads passed",
+    "read it when the gate reads passed or this session declares its remaining tasks as handoffs to the user",
+    "decide from the task list alone, in the skill's own text"
+  ],
+  "why": "The gate counts a task handed to the user only after a session has recorded it, which comes after the account step, so a gate-keyed read would miss a change that ends on its first such task; any condition that sees that case rides on every turn of every session, while one read at the step's moment costs only the session's last few turns.",
+  "relies_on": [
+    {
+      "kind": "decision",
+      "id": "D-opsd-8"
+    },
+    {
+      "kind": "ruling",
+      "doc": "reduce-orbit-phase1",
+      "id": "R-rop-4"
+    },
+    {
+      "kind": "goal",
+      "doc": "reduce-orbit-phase1",
+      "id": "RG0"
+    }
+  ],
+  "defines": [
+    {
+      "term": "account",
+      "definition": "the plain-language note a change carries of what it built, where the user is newly asked something, and where the work left its plan"
+    },
+    {
+      "term": "apply gate",
+      "definition": "orbit's check that a change's tasks are done; it reads passed when every task is checked, or only tasks handed to the user remain"
+    },
+    {
+      "term": "reference file",
+      "definition": "a file beside a skill's body that the agent reads only when the body tells it to"
+    },
+    {
+      "term": "review walk",
+      "definition": "the session that goes through a review's findings one by one and resolves each"
+    }
+  ]
+}

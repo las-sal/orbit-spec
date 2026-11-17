@@ -1,0 +1,375 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-17T18:38:08Z",
+  "change": "once-per-session-detail",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/once-per-session-detail/.orbit-runs/review-proposal-2026-11-17T18-17-04Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-17T18-17-04Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "walk_mode_source": null,
+  "input_findings_summary": {
+    "critical": 1,
+    "warning": 2,
+    "suggestion": 4
+  },
+  "pushback_verification": "All seven verified against current state; none stale. The CRITICAL re-derived from gates.ts and the design as proposed.",
+  "resolution_summary": {
+    "resolved": 7,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "CRITICAL",
+      "title": "The account cue reads the apply gate before this session's emit declares user_validation_tasks, so a change ending on a user-validation handoff gets no account",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/once-per-session-detail/design.md",
+      "line": 47,
+      "classification": "decision_required",
+      "action": "applied Sal's direction D, off the finding's menu: neither account step's basic content carries a condition; apply's reads references/account-step.md at the session's end, before the run summary or the completion readout, and the walk's reads references/account-walk-step.md after its logs, every time; each reference decides whether to write. D-opsd-3 superseded by D-opsd-8 in explore.md, its Mechanism entry renamed; design Decision 1, the decision-records delta and its two scenarios, the proposal, tasks 2.2 and 6.3, Risks and Alternatives follow; a new ledger entry records the call",
+      "reproduction_rerun": "reproduced",
+      "evidence": "re-derived against design.md Decision 1 as proposed: the cue read the apply gate before this session's emit; gates.ts 899-910 passes the subset rule only from trail.latestApplyUserValidation, which this session's declaration does not yet reach, so the gate reads ready and the cue wrote no account. The external half found the same independently",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Widen the cue: read the reference when the gate reads `passed`, OR when every unchecked task carries the `(User-validation` marker and this session declares it in `user_validation_tasks`; state the second arm in Decision 1, the delta paragraph and a test."
+          },
+          {
+            "label": "B",
+            "body": "Key the cue on tasks.md rather than the gate (every task checked, or every unchecked one a marked `(User-validation` task this session declares), and drop the 'one predicate with the gate' claim from Decision 1, the delta and explore's COHERE line."
+          }
+        ],
+        "chosen": null
+      },
+      "resolution": "D for both steps: drop the condition and read each account reference at the step's moment every time; the reference decides (Sal: 'D for both', after choosing slimness as the measure)",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/once-per-session-detail/proposal.md",
+          "orbit/changes/once-per-session-detail/specs/orbit-decision-records/spec.md",
+          "orbit/changes/once-per-session-detail/tasks.md",
+          "orbit/changes/once-per-session-detail/explore.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "reads the apply gate and, when it reads",
+          "The cue and the step's own definition are one predicate",
+          "the gate's `passed` already picks the branch",
+          "gate-keyed basic content",
+          "read the apply gate; write no account"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/once-per-session-detail/design.md",
+            "text": "No condition sits in either body"
+          },
+          {
+            "path": "orbit/changes/once-per-session-detail/specs/orbit-decision-records/spec.md",
+            "text": "carries no condition of its own"
+          },
+          {
+            "path": "orbit/changes/once-per-session-detail/explore.md",
+            "text": "D-opsd-8: each account step's basic content reads its reference at the step's moment, every time"
+          }
+        ],
+        "searched": [
+          "apply gate",
+          "passed",
+          "one predicate",
+          "D-opsd-3",
+          "user_validation_tasks",
+          "ACCOUNT_STEP_BASIC"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The proposal names the reference files D-opsd-5 described; design, spec and tasks use one new run-summary-emit.md per skill",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/once-per-session-detail/proposal.md",
+      "line": 21,
+      "classification": "trivial_fix",
+      "action": "rewrote What Changes' second bullet: one references/run-summary-emit.md per skill holding the section whole, the schema references left as they are, and the deviation from D-opsd-5's last sentence and the charter's wording named with its reason",
+      "evidence": "proposal.md:21 named a new run-summary-schema.md for four skills and sections of the existing schema references for three, as design Decision 2 rejects",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "a new `run-summary-schema.md` for apply"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/once-per-session-detail/proposal.md",
+            "text": "This departs from D-opsd-5's last sentence"
+          }
+        ],
+        "searched": [
+          "run-summary-schema.md",
+          "schema reference",
+          "join their existing"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The table's 'the reference only' rows and the apply scenario's 'carries none of those' are false on day one",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/once-per-session-detail/specs/orbit-run-summary-emit/spec.md",
+      "line": 18,
+      "classification": "trivial_fix",
+      "action": "scoped the table's rows to the emit section ('the reference, out of the emit section'), added the paragraph naming the text kept elsewhere (apply Step 3, archive Step 3.2) and the two mixed paragraphs kept whole, changed the scenario to 'the apply body's emit step carries none of those', and narrowed the first named limit to triggers only the emit section stated",
+      "evidence": "apply SKILL.md Step 3 states the Proceed-anyway judgements trigger; archive Step 3.2 composes deferred_validations; Decision 3 kept address-reviews' first paragraph and architect's parenthetical",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "| the reference only |",
+          "carried by no body"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/once-per-session-detail/specs/orbit-run-summary-emit/spec.md",
+            "text": "The table governs the emit section alone"
+          }
+        ],
+        "searched": [
+          "reference only",
+          "carries none of those",
+          "Named limit"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The account basic content does not follow the convention's handoff rule or name a non-zero exit",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/once-per-session-detail/design.md",
+      "line": 47,
+      "classification": "trivial_fix",
+      "action": "dissolved by finding 1's resolution: the account cue now runs no command, so it has no result to hand off and no exit to handle; design Decision 1 says so",
+      "evidence": "design Decision 1 as proposed read the gate through orbit status with no non-zero-exit path",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/once-per-session-detail/design.md",
+            "text": "No command runs in the cue, so there is no result to hand off"
+          }
+        ],
+        "searched": [
+          "non-zero exit",
+          "from the result you already have",
+          "handoffPointers"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "New body sentences are described, not given, and the spec calls the two-sentence cue 'one sentence'",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/once-per-session-detail/design.md",
+      "line": 93,
+      "classification": "trivial_fix",
+      "action": "wrote each body's emit section verbatim in Decision 3 (archive's sentence keeps the instruction to read archive-summary-schema.md); the spec calls the two-sentence cue the read cue",
+      "evidence": "Decision 3 described the new sentences; spec line 7 said one sentence",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "in one sentence carried byte-equal"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/once-per-session-detail/design.md",
+            "text": "The cue is two sentences; the spec calls it the READ CUE"
+          },
+          {
+            "path": "orbit/changes/once-per-session-detail/specs/orbit-run-summary-emit/spec.md",
+            "text": "in a read cue carried"
+          }
+        ],
+        "searched": [
+          "one sentence",
+          "read sentence",
+          "new first sentence"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The named limits do not cover a read lost to compaction before a later emit",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/once-per-session-detail/specs/orbit-run-summary-emit/spec.md",
+      "line": 31,
+      "classification": "trivial_fix",
+      "action": "added the compaction case to the first named limit, pointing at evaluation (R-rop-4, R-rop-12); the cue does not re-read, since a repeated read's cost is unmeasured (R-rop-10)",
+      "evidence": "the named limits covered a skipped read, not one lost to a compaction",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/once-per-session-detail/specs/orbit-run-summary-emit/spec.md",
+            "text": "when a compaction later drops that read"
+          }
+        ],
+        "searched": [
+          "compaction",
+          "first emit"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Address-reviews' emit move saves nothing per turn and adds a read, and the cue misdescribes its reference",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/once-per-session-detail/design.md",
+      "line": 98,
+      "classification": "decision_required",
+      "action": "applied Sal's direction, off the finding's menu: every emit step in scope takes the one shape, address-reviews kept and ff, continue, new and audit-drift added (eleven bodies); explore and bulk-archive excepted. D-opsd-5 superseded by D-opsd-9; the spec, design (Decision 3's table and verbatim list, Goals, Non-Goals, Risks with the measured cost, Alternatives, Touchpoints), tasks and proposal follow; the cue now says the reference holds the step whole, with where its fields are documented",
+      "evidence": "measured: address-reviews' step 6 loses one 310-character paragraph and gains the 248-character cue and a naming sentence, so its body stays level and each walk reads a ~2,400-character file",
+      "ratified_via": "prompt",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Keep address-reviews among the seven (D-opsd-5 as ratified) and record the measured per-turn and per-session cost in design Risks."
+          },
+          {
+            "label": "B",
+            "body": "Bring Sal the question of leaving address-reviews' step 6 whole like ff's, continue's, new's and audit-drift's (an amendment of D-opsd-5's set), keeping only its account move."
+          }
+        ],
+        "chosen": null
+      },
+      "resolution": "All eleven, uniform: one shape for every emit step in scope, so a payload field added later has one place to go and one test holding it there (Sal, on structure over size)",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/once-per-session-detail/proposal.md",
+          "orbit/changes/once-per-session-detail/specs/orbit-run-summary-emit/spec.md",
+          "orbit/changes/once-per-session-detail/tasks.md",
+          "orbit/changes/once-per-session-detail/explore.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "emit sections stay whole in their bodies",
+          "Four sections are left as they are",
+          "four untouched emit sections"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/once-per-session-detail/design.md",
+            "text": "Five steps move for shape, not size"
+          },
+          {
+            "path": "orbit/changes/once-per-session-detail/explore.md",
+            "text": "D-opsd-9: every emit step in scope takes the one shape"
+          },
+          {
+            "path": "orbit/changes/once-per-session-detail/specs/orbit-run-summary-emit/spec.md",
+            "text": "byte-equal by all eleven"
+          }
+        ],
+        "searched": [
+          "seven",
+          "four short",
+          "ff, continue, new and audit-drift",
+          "D-opsd-5"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Seven of seven resolved. The CRITICAL (account cue missed a first declared user-validation handoff) and finding 7 (address-reviews emit move) by Sal's directions: account steps read their reference unconditionally at the step's moment (D-opsd-8), and every emit step in scope takes the one shape across eleven bodies (D-opsd-9). Five by local repairs.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews once-per-session-detail",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "aa0928be81e3b9d1681f70e2f2969be56f565f34",
+      "frozen": false,
+      "evidence": {
+        "files": [],
+        "share": null,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ],
+  "ripple_misses": 0
+}

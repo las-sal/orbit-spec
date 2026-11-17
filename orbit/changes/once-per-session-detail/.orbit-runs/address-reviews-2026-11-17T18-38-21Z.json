@@ -1,0 +1,87 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-17T18:38:21Z",
+  "change": "once-per-session-detail",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/once-per-session-detail/.orbit-runs/external-proposal-2026-11-17T18-17-25Z.md",
+  "source_command": null,
+  "source_token": "2026-11-17T18-17-25Z",
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-6",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 0
+  },
+  "pushback_verification": "Both verified against current state after the fresh pass's walk: each site now carries the fix log 1 recorded.",
+  "resolution_summary": {
+    "resolved": 0,
+    "stale_suppressed": 2,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Pre-emit gate check misses newly declared user-validation handoffs",
+      "marker_source": "external",
+      "file": "orbit/changes/once-per-session-detail/specs/orbit-decision-records/spec.md",
+      "line": 66,
+      "classification": "stale",
+      "action": "converged with the fresh half's finding, walked in its log",
+      "evidence": "resolved in address-reviews-2026-11-17T18-38-08Z (the earlier pass's log), its entry on the account cue (design Decision 1, the decision-records delta and explore D-opsd-8: each account step reads its reference at the step's moment, every time, so a first declared handoff is decided by the reference's own rule)",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Proposal specifies reference destinations that the design explicitly rejects",
+      "marker_source": "external",
+      "file": "orbit/changes/once-per-session-detail/proposal.md",
+      "line": 21,
+      "classification": "stale",
+      "action": "converged with the fresh half's finding, walked in its log",
+      "evidence": "resolved in address-reviews-2026-11-17T18-38-08Z (the earlier pass's log), its entry on the proposal's reference destinations (proposal.md's second bullet now names one references/run-summary-emit.md per skill and the deviation)",
+      "outcome": "stale"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Both findings stale: each converged with a finding of the pair's fresh half and was walked in that pass's log.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal once-per-session-detail",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "aa0928be81e3b9d1681f70e2f2969be56f565f34",
+      "frozen": false,
+      "evidence": {
+        "files": [],
+        "share": null,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ],
+  "ripple_misses": 0
+}
