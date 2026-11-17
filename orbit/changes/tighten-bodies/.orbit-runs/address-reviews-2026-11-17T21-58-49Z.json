@@ -1,0 +1,184 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-17T21:58:49Z",
+  "change": "tighten-bodies",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/tighten-bodies/.orbit-runs/review-proposal-2026-11-17T21-54-13Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-17T21-54-13Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "walk_mode_source": null,
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 0
+  },
+  "pushback_verification": "Both verified against the generated bodies before acting: the 'the owner' instruction sentences and the three shared paragraphs are present at HEAD.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The mirror-note markers 'the owner' and 'its owner' match instruction sentences, so the coverage check accepts removing them",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/tighten-bodies/specs/orbit-conventions/spec.md",
+      "line": 283,
+      "classification": "trivial_fix",
+      "lane": "obvious",
+      "outcome": "resolved",
+      "remedy": "repair",
+      "action": "the mirror-note markers drop 'the owner' and 'its owner'; a note's span runs from the clause holding a marker to the end of its sentence or bracket (clauses split at , ; — and brackets outside backtick spans), so a note's owner clause goes with the marker it follows and a clause before it stays; the connectors gain the emphasis marks and the sentence's closing mark stays when text remains; the ledger row reads 'mirror-note spans'; a new scenario refuses removing review's 'The owner's ONE exemption' instruction; explore's D-tb-6 row notes the narrowing. The previewed 'from the clause before its marker' was corrected at the walk to the clause holding it, since the owner clauses follow their marker",
+      "evidence": "probe over the twelve generated bodies with the narrowed rule (mprobe.js in the session scratchpad): every marker line keeps its instructions (review:31 'The pass genre is a record…', review:130 'Grade over the paths…', verify:94 'Report what it returns by this table.', address-reviews:33 and 168) and no 'the owner' instruction (review:109, 111; propose:212, 246, 250) carries a marker; it surfaced propose:159's emphasis marks and propose:184's closing colon, both now stated",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/tighten-bodies/explore.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the owner, its owner",
+          "mirror-note sentences are taken out"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/tighten-bodies/specs/orbit-conventions/spec.md",
+            "text": "the span from the clause holding a marker to the end of its sentence"
+          },
+          {
+            "path": "orbit/changes/tighten-bodies/specs/orbit-conventions/spec.md",
+            "text": "A sentence that only names an owner is not a note"
+          },
+          {
+            "path": "orbit/changes/tighten-bodies/explore.md",
+            "text": "the markers narrowed to note-specific phrases at the proposal verification walk"
+          }
+        ],
+        "searched": [
+          "the owner",
+          "its owner",
+          "parity test",
+          "installed skill",
+          "mirror note"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "Three paragraphs a body shares with hash-pinned run-summary blocks carry provenance, which F3's rule does not cover",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/tighten-bodies/design.md",
+      "line": 60,
+      "classification": "decision_required",
+      "lane": "decision",
+      "outcome": "resolved",
+      "remedy": "repair",
+      "ratified_via": "chat",
+      "action": "Sal ratified A in chat: provenance in any text a body shares with a block moved-blocks.test.ts pins leaves the body's copy only, split from the block's constant, the block staying byte-equal; the requirement names the four headings and the three paragraphs (apply's completion-prompt override; architect's '(Per orbit-run-summary-emit …)' note and 'No emit without sweep' paragraph), design Decision 3 and task 4.1 follow, so architect's body says 'residency sweep' at every use",
+      "evidence": "the three paragraphs appear verbatim in both the body and references/run-summary-emit.md of apply and architect at HEAD; APPLY_RUN_SUMMARY_EMIT and ARCHITECT_RUN_SUMMARY_EMIT are pinned in moved-blocks.test.ts",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Split each shared paragraph: the body's copy loses its provenance; the pinned reference block keeps its bytes; the requirement, Decision 3 and task 4.1 name the three paragraphs."
+          },
+          {
+            "label": "B",
+            "body": "Keep provenance in text a body shares with a pinned block; the requirement names that exception, and the 'drops at every use' scenario and its row exempt architect's shared paragraph (so architect keeps 'R-d-8' there)."
+          }
+        ],
+        "chosen": "A"
+      },
+      "ripple_miss_of": {
+        "walk": "2026-11-17T21-21-46Z",
+        "title": "Removing citations from the shared step headings changes blocks moved-blocks.test.ts pins by hash, which no D-tb-15 row covers",
+        "file": "design.md",
+        "kind": "query"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/tighten-bodies/design.md",
+          "orbit/changes/tighten-bodies/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "A step heading's"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/tighten-bodies/specs/orbit-conventions/spec.md",
+            "text": "leaves the body's copy only: that copy is split from the block's"
+          },
+          {
+            "path": "orbit/changes/tighten-bodies/design.md",
+            "text": "walk of the proposal verification pass, V2"
+          },
+          {
+            "path": "orbit/changes/tighten-bodies/tasks.md",
+            "text": "split the three paragraphs"
+          }
+        ],
+        "searched": [
+          "Completion-prompt override",
+          "No emit without sweep",
+          "Per `orbit-run-summary-emit`",
+          "R-d-8",
+          "RUN_SUMMARY_EMIT"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "The verification pass is walked: V1 narrows the mirror-note markers to note-specific phrases with a clause-to-sentence-end unit, checked by a probe over every marker line of the twelve bodies; V2, ratified A by Sal, splits the three paragraphs a body shares with a pinned run-summary block as F3 split the headings. The change validates.",
+  "iteration": 3,
+  "next_recommended": "/orbit:apply tighten-bodies — user-invoked",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "6cb7e36e5843f59c1cddf320b28840abc80ee71d",
+      "frozen": false,
+      "evidence": {
+        "files": [],
+        "share": null,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ],
+  "ripple_misses": 1
+}

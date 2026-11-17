@@ -271,18 +271,22 @@ and text only template authors need goes to a comment beside the template litera
 | spec citations in prose | removed when the sentence gives the same instruction without it; kept where the citation names something the agent acts on, or where a requirement asks the body to name it (`Severity ladder`'s "SHALL NAME this ladder"; `Review mode decision framework`'s "the bodies that compose briefs name it") |
 
 **The removal unit.** A removal takes only provenance and the connectors that join it to its sentence; every other
-word of the paragraph or bracket stays. A span is COVERED by these patterns when, after the mirror-note sentences and
-clauses it holds are taken out whole, every remaining character is a match of a token pattern or a connector:
+word of the paragraph or bracket stays. A span is COVERED by these patterns when, after the mirror-note spans it holds
+are taken out whole, every remaining character is a match of a token pattern or a connector:
 
 ```
-CONNECTORS             whitespace, the marks — – - , ; : ( ), and the words per, see, by, since, from, in, at, of, the, its, and
+CONNECTORS             whitespace, the marks — – - , ; : ( ) and the emphasis marks * and **, and the words per, see, by,
+                       since, from, in, at, of, the, its, and
 stage tag              D-arc(?:'s)?(?: Stage D[0-9])?  |  Stage D[0-9]  |  \bC[0-9]\b  |  \brc[0-9]{2}[a-z]?\b
 NEW marker             \bNEW(?= Step )  |  orbit named edit
 ruling or decision id  \bR-[a-z0-9]+-[0-9]+(?:'s)?\b  |  \bD-[a-z0-9]+-[0-9]+(?:'s)?\b  |  \bD[0-9]{1,2}\b
 spec citation          `orbit-[a-z-]+`(?:'s?)?(?: (?:`[^`]+`|"[^"]+"|\*\*[^*]+\*\*)(?: requirement)?)?
-mirror note            a whole sentence or clause containing, in any case: checked mirror, mirror of, parity test,
-                       installed skill, has no specs, cannot open, never edit it here, the owner, its owner,
-                       the grammar module supplies it
+mirror note            the span from the clause holding a marker to the end of its sentence, or of the bracket the
+                       marker sits in; a marker is, in any case: checked mirror, mirror of, parity test, installed
+                       skill, has no specs, cannot open, never edit it here, the grammar module supplies it; clauses
+                       split at , ; — and brackets outside backtick spans, so a note's owner clause (", its owner",
+                       "— the owner of …") goes with the marker clause it follows, and a clause before it stays; the
+                       sentence's closing mark stays when text before the span remains (a colon introducing a fence)
 ```
 
 The patterns decide FORM: a span they cover may still name something the agent acts on, which the prose-citation row
@@ -294,9 +298,12 @@ Residual kind: a provenance form outside the six above (a coined tag, an archive
 Residual method: reading each tightened body whole after its edits, recording each find in the change's account and leaving it in place for the evaluation, and the removal test, which lists every removed span with its kind
 
 Explore, onboard and bulk-archive keep their own text until `reduce-orbit-phase1`'s evaluation, and so does the
-disciplines epitome's opening line, which explore and bulk-archive share; specs keep their own tags. A step heading's
-citation leaves the body's basic content only: the full step a reference file carries stays byte-equal to the block
-`moved-blocks.test.ts` records.
+disciplines epitome's opening line, which explore and bulk-archive share; specs keep their own tags. Provenance in text
+a body shares with a block `moved-blocks.test.ts` pins leaves the body's copy only: that copy is split from the block's
+constant, and the block stays byte-equal to its record. At `a5ba0f0c` the shared texts carrying provenance are four step
+headings (the commit step's, the chain end step's and the two account steps') and three paragraphs a body shares with
+its run-summary reference: apply's completion-prompt override, and architect's "(Per `orbit-run-summary-emit` …)"
+note and "No emit without sweep" paragraph.
 
 #### Scenario: A stage tag leaves a heading and its number stays
 
@@ -336,7 +343,7 @@ pair of one kind, checks each kind, and undoes every pair on today's body to com
 | member | covered by |
 |---|---|
 | a Guardrails line removed as restated | a pair of kind `restated`, naming the step line that states it; the test asserts that line is still in the body |
-| a provenance span removed | a pair of kind `provenance`; the test asserts the removed span is COVERED by the patterns in `Tightened bodies carry no provenance` — every character a token match or a connector once its mirror-note sentences are taken out — so no instruction is filed as provenance |
+| a provenance span removed | a pair of kind `provenance`; the test asserts the removed span is COVERED by the patterns in `Tightened bodies carry no provenance` — every character a token match or a connector once its mirror-note spans are taken out — so no instruction is filed as provenance |
 | an id dropped from a name | a pair of kind `provenance` at each use; the test asserts the id-bearing name occurs nowhere in the body |
 | a mirror note removed | a pair of kind `provenance`; the copied text after it is held unchanged by its parity test |
 | the decision-writing bullet restructured | one pair of kind `restructured`, shared by the fourteen bodies; the test asserts each clause of the one-paragraph form (the five conditions with their glosses, the eighteen areas, the three commands (`orbit emit stop`, `orbit emit resolution`, `orbit emit ledger`), the seam sentence, the record-routing sentence, the reference pointer) is in the new one |
@@ -370,6 +377,12 @@ The second table is sourced from a grep of `test/` for each removed string, the 
 
 - **WHEN** a pair of kind `provenance` removes a span the patterns do not cover — a mirror note together with the
   instruction after it, "The pass genre is a record and a header word; the gate reads nothing of it."
+- **THEN** the test fails naming the pair and the words left uncovered
+
+#### Scenario: A sentence that only names an owner is not a note
+
+- **WHEN** a pair of kind `provenance` removes review's instruction "The owner's ONE exemption: architecture mode keeps
+  its hand-computed per-doc iteration note …", which carries no mirror-note marker
 - **THEN** the test fails naming the pair and the words left uncovered
 
 #### Scenario: A restated line needs its step line

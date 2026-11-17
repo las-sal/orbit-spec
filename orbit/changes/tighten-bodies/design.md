@@ -61,7 +61,11 @@ stays (D-tb-4). The step headings composed in `src/core/disciplines.ts` lose the
 (`COMMIT_STEP_BASIC`, `CHAIN_END_STEP_BASIC`, and the account steps' basic contents, for which
 `ACCOUNT_STEP_HEADING` and `ACCOUNT_WALK_STEP_HEADING` are split into a body heading and the full step's own); the
 full steps in the reference files (`COMMIT_STEP`, `CHAIN_END_STEP`, `ACCOUNT_STEP`, `ACCOUNT_WALK_STEP`) stay
-byte-equal, so `moved-blocks.test.ts`' recorded hashes hold (walk of the fresh proposal pass, F3). Text only authors need (that a fence
+byte-equal, so `moved-blocks.test.ts`' recorded hashes hold (walk of the fresh proposal pass, F3). The same split
+applies to the three paragraphs a body shares with its pinned run-summary reference (apply's completion-prompt
+override; architect's "(Per `orbit-run-summary-emit` …)" note and "No emit without sweep" paragraph): the body's
+copy loses its provenance, so architect's body says "residency sweep" at every use, and the reference keeps its bytes
+(walk of the proposal verification pass, V2). Text only authors need (that a fence
 is a mirror, which test holds it) moves to a comment beside the template literal, which is not emitted. Mirror notes go
 whole (R-rop-14); the two requirements that asked for them are modified. A removal takes only provenance and the
 connectors joining it to its sentence: a note's own sentences and clauses go, an instruction sharing its paragraph or
