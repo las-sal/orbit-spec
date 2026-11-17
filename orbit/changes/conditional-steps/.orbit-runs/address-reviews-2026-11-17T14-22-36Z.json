@@ -1,0 +1,104 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-17T14:22:36Z",
+  "change": "conditional-steps",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/conditional-steps/.orbit-runs/review-proposal-2026-11-17T14-21-44Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-17T14-21-44Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 0
+  },
+  "pushback_verification": "Verified against current state: design §3 and task 3.5 claimed every basic content, and the three PR-section pointers carry no such phrase.",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The handoff rule claims every basic content, but the three PR-section pointers carry no such phrase",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 73,
+      "classification": "trivial_fix",
+      "action": "scoped the handoff rule in design §3 to the seven basic contents that follow a command's result, named the three PR-section pointers as outside it, and narrowed task 3.5's check to match",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/conditional-steps/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "Every basic content therefore says",
+          "each basic content's pointer carries"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/conditional-steps/design.md",
+            "text": "so they follow no result and are outside the rule."
+          },
+          {
+            "path": "orbit/changes/conditional-steps/tasks.md",
+            "text": "the three PR-section pointers are not checked for it"
+          }
+        ],
+        "searched": [
+          "basic content",
+          "the result you already have"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "One of one resolved: the handoff rule is scoped to the seven basic contents that follow a command's result, and the three PR-section pointers are named as outside it, in design §3 and task 3.5.",
+  "iteration": 3,
+  "next_recommended": "/orbit:apply conditional-steps — user-invoked",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "a14a9fcd94876c474c6f6b6b4bb9614bf47c42b1",
+      "frozen": false,
+      "evidence": {
+        "files": [],
+        "share": null,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ],
+  "ripple_misses": 0
+}

@@ -70,12 +70,15 @@ The design drafts each basic content so this stage's size is computed, not estim
 wording; it may not drop a result the basic content handles, the read it directs, or its position.
 
 **The handoff rule.** A reference file holds the whole of today's step, and today's step opens by running its command.
-Every basic content therefore says to follow the reference "from the result you already have", without running the
-command again: the agent enters the reference at the result it holds, a non-zero exit included. A literal repeat would
+Each of the seven basic contents that follow a command's result — the commit step, the chain end step, archive Steps
+3.4, 3.45 and 3.7, architect 5.4's hold and the size brief — therefore says to follow its reference "from the result you
+already have", without running the command again: the agent enters the reference at the result it holds, a non-zero exit included. A literal repeat would
 still do no harm — `orbit pr commit --json`, `orbit status --json`, `orbit fingerprint --check --json` and
 `orbit brief --hold --json` are read-only, and architect's `orbit brief <doc> --save` writes only a brief that changed
 since its latest copy — but it would waste a call and, at architect 5.4, could replace the save outcome the hold's
-table reads. The moved-blocks test checks that each basic content's pointer carries "the result you already have".
+table reads. The moved-blocks test checks that each of those seven pointers carries "the result you already have". The three
+PR-section pointers (propose's and ff's Position lines, architect 5.5) read their reference before any `orbit pr` command
+runs, so they follow no result and are outside the rule.
 
 **The chained read keeps its flags.** The status read in the chain end step's basic content carries the
 `--chain-ran`/`--chain-head` clause, because the read happens before the reference is opened, and a read without the

@@ -1,0 +1,155 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-17T14:21:44Z",
+  "change": "conditional-steps",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    }
+  },
+  "findings": [
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "The handoff rule claims every basic content, but the three PR-section pointers carry no such phrase",
+      "file": "design.md",
+      "line": 73,
+      "recommendation": "Design §3 says every basic content follows its reference \"from the result you already have\" (line 73) and that the moved-blocks test checks that phrase in each basic content's pointer (line 78), and task 3.5 says the same. Three basic contents carry no such phrase and need none: propose's and ff's PR Position lines and architect's 5.5 pointer read their reference before any orbit pr command runs, so there is no result to resume from and nothing to repeat. Built as written, the test either fails on those three or drives the phrase into them. Scope the rule, in §3 and in task 3.5, to the seven basic contents that follow a command's result (the commit step, the chain end step, archive Steps 3.4, 3.45 and 3.7, architect 5.4's hold, the size brief), and name the three PR pointers as outside it.",
+      "walk_entry": {
+        "title": "Reference handoffs can repeat commands instead of consuming the existing result",
+        "file": "orbit/changes/conditional-steps/design.md"
+      }
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Verified both walks against the committed pass files: each resolved entry's edit was read at its file and at every path its cascade claims, and the introduced wording was checked where the sweep places it. The residual check found every file changed since the base pass inside some entry's edit record, so the walks' edits are all accounted for. The one defect is a scope overreach in the handoff rule: written as a rule over every basic content, it also covers the three PR-section pointers, which follow no command result. The fix is a scoping sentence in the design and the task, not a change to any basic content.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "verification": [
+    {
+      "title": "The chain end step's basic content directs a status read without the chained command's --chain-ran/--chain-head flags",
+      "file": "design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The new closure 'a command a chain arrives at meets no tag its own body does not explain' is false on day one",
+      "file": "specs/orbit-conventions/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "No task covers the stage's second exit criterion: the three stage-D steps' usual results handled by the basic content, shown by test",
+      "file": "tasks.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The six new 'reads no reference file' scenarios assert session behaviour that no planned test can observe",
+      "file": "specs/orbit-conventions/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Where propose's and ff's moved Position paragraphs land in the shared pr-choreography.md, and how far each moved block reaches, are unspecified",
+      "file": "design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Byte-equal moves carry positional pointers that are wrong in their new homes; Risks names only one",
+      "file": "design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The commit and chain end basic contents phrase their exits less precisely than the full steps and the hold basic contents",
+      "file": "design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "'Seven steps' is followed by eight bullets and design §1's 'The seven splits' has eight rows",
+      "file": "proposal.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Reference handoffs can repeat commands instead of consuming the existing result",
+      "file": "orbit/changes/conditional-steps/design.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "Fingerprint handoff omits command failures and unexpected results",
+      "file": "orbit/changes/conditional-steps/design.md",
+      "verdict": "landed"
+    }
+  ],
+  "final_assessment": "0 critical, 1 warning, 0 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-11-17T14-19-38Z",
+    "2026-11-17T14-20-00Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews conditional-steps",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "a14a9fcd94876c474c6f6b6b4bb9614bf47c42b1",
+      "frozen": false,
+      "evidence": {
+        "files": [],
+        "share": null,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ]
+}
