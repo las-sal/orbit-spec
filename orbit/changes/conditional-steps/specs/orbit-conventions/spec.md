@@ -39,12 +39,16 @@ discipline requirements), an epitome echo is COMPLIANT, and body-fidelity checks
 epitome form, not the pre-D5 full block. The bodies whose end can name a change's next command — propose, ff,
 apply, review and address-reviews — carry the `chain` allowance in their echo and in their closing step, the chain end
 step, which is carried in two halves (`reduce-orbit-phase1`'s R-rop-3 and R-rop-6): its BASIC CONTENT — when it runs, the
-`chain` read, the `configured: false` result, the meaning of each prompt tag (`(chain: target)`, `(chain: routine,
-default: …)`, `(chain: decision)`) and what a chained command records — composed once in code and carried byte-equal by
-each of those bodies; and the full step, composed once in code (`CHAIN_END_STEP`) and carried byte-equal in each one's
-`references/chain-end-step.md`, which the basic content tells the agent to read and follow on any result but
-`configured: false`. A command a chain arrives at, in this session or a fresh one, therefore meets no tag its own body
-does not explain.
+`chain` read (with the `--chain-ran`/`--chain-head` flags a command a chain ran adds to it, since the read comes before
+the reference is opened), the `configured: false` result, the meaning of the three prompt tags (`(chain: target)`,
+`(chain: routine, default: …)`, `(chain: decision)`) and what a chained command records — composed once in code and
+carried byte-equal by each of those bodies; and the full step, composed once in code (`CHAIN_END_STEP`) and carried
+byte-equal in each one's `references/chain-end-step.md`, which the basic content tells the agent to read and follow,
+from the result it already has, on any result but `configured: false`, a non-zero exit included. Each of those five
+bodies therefore explains the three prompt tags its own prompts carry, and `(chain: not a prompt)` names itself. Named
+limit: archive, which a chain can arrive at, carries `(chain: decision)` tags and no chain end step, so its body
+explains none of them, as before this requirement was modified; a chained archive relies on the tag meaning the arriving
+session read in the chaining body that ran it (`reduce-orbit-phase1`'s R-rop-6 as amended).
 
 #### Scenario: Command completion ends the turn
 
@@ -110,17 +114,17 @@ does not explain.
 - **THEN** the commit step commits and pushes before the chain read, the pair's preflight finds a clean tree, and the
   pair writes its launch record, so the chain does not stop on `no-progress`
 
-#### Scenario: Without a chain setting the reference file is not read
+#### Scenario: Without a chain setting the basic content handles the result
 
-- **WHEN** one of the five bodies closes in a project with no `chain` setting
-- **THEN** its closing step reads `configured: false`, prints nothing more, and the session reads no
-  `references/chain-end-step.md`
+- **WHEN** one of the five bodies is generated
+- **THEN** its chain end step's basic content handles `configured: false` itself, printing nothing more, and names
+  `references/chain-end-step.md` only for the other results
 
 #### Scenario: Each chaining body explains the tags itself
 
 - **WHEN** the propose, ff, apply, review and address-reviews skills are generated
-- **THEN** each body carries the chain end step's basic content byte-equal, including the meaning of each prompt tag and
-  the `Chained: granted by chain.<key>.` sentence, and each skill ships `references/chain-end-step.md` holding
+- **THEN** each body carries the chain end step's basic content byte-equal, including the `--chain-ran`/`--chain-head` clause, the meaning of the three
+  prompt tags and the `Chained: granted by chain.<key>.` sentence, and each skill ships `references/chain-end-step.md` holding
   `CHAIN_END_STEP` byte-equal
 
 ### Requirement: The commit step closes each carrying body
@@ -129,8 +133,8 @@ Each CARRYING body, a generated workflow body the table below marks yes, SHALL c
 two halves (`reduce-orbit-phase1`'s R-rop-3): its BASIC CONTENT — when it runs, the command, the usual result and the
 link to its reference file — composed once in code (`COMMIT_STEP_BASIC`) and carried byte-equal by each carrying body;
 and the full step, composed once in code (`COMMIT_STEP`) and carried byte-equal in each carrying skill's
-`references/commit-step.md`, which the basic content tells the agent to read and follow on any result but `off` (a
-non-zero exit included). What the step does is the same whichever half states it. The step runs `orbit pr commit <change-name> --json` in the session the command
+`references/commit-step.md`, which the basic content tells the agent to read and follow, from the record it already
+has, on any result but `off` (a non-zero exit included). What the step does is the same whichever half states it. The step runs `orbit pr commit <change-name> --json` in the session the command
 was invoked in, after the command's run summary is written and BEFORE the position readout, so its lines precede the
 readout and the eligibility line that end the turn, and the chain end step (`No-chaining contract`) still follows
 them. With no change target (an architecture-mode review, a `--doc` walk, a project-wide walk) the step does nothing
@@ -166,8 +170,8 @@ half) persists its pass and returns, and never runs the step. The bodies, SOURCE
 | onboard | no: it writes nothing |
 
 (`feedback` is not generated, and `pr-choreography` is text propose and ff share, not a body.) At the defaults (neither
-setting granted) the step's one act is that read-only call: the record is `off`, the basic content handles it, and the
-body prints nothing, runs nothing and reads no reference file (G0, as R-adf-12 words it). Named limits: an apply session's work stays uncommitted until the session closes,
+setting granted) the step's one act is that read-only call: the record is `off`, and the basic content handles it: the
+body prints nothing and runs nothing (G0, as R-adf-12 words it). Named limits: an apply session's work stays uncommitted until the session closes,
 however many chunks it completes; and the writes of bulk-archive, sync-specs, verify and explore wait for the next
 carrying body.
 
@@ -216,7 +220,8 @@ carrying body.
   `references/commit-step.md` holding `COMMIT_STEP` byte-equal; no body the table marks no carries either, and no
   other skill ships the file
 
-#### Scenario: At the defaults the reference file is not read
+#### Scenario: At the defaults the basic content handles the record
 
-- **WHEN** a carrying body closes in a project that sets neither `commit` nor `push`
-- **THEN** the basic content handles the `off` record and the session reads no `references/commit-step.md`
+- **WHEN** a carrying body is generated
+- **THEN** its commit step's basic content handles the `off` record itself, printing nothing and running nothing, and names
+  `references/commit-step.md` only for the other results

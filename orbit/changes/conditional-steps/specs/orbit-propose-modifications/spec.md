@@ -28,8 +28,8 @@ The two routes for an undeclared breach, asked with `AskUserQuestion`, the user'
   dimension, carrying the user's reason in the user's words, and runs `orbit validate <name> --strict`.
 
 The body carries the step's BASIC CONTENT (`reduce-orbit-phase1`'s R-rop-3) — the read of `size` and its two silent rows,
-`ceiling` null and `breaches` empty — and tells the agent to read `references/size-brief.md` and follow it on any other
-result; that reference carries the step's full text byte-equal, the table and both routes among it. The reference
+`ceiling` null and `breaches` empty — and tells the agent to read `references/size-brief.md` and follow it, from the result it already has, on any other
+result or a non-zero exit; that reference carries the step's full text byte-equal, the table and both routes among it. The reference
 carries the declaration's production as a CHECKED MIRROR of `orbit-change-size`'s `A breach is declared in the
 proposal's Size section`, because an adopter's installed skill has neither this repository's specs nor its parser; a
 parity test holds the copy byte-equal to the owner's fence. Propose never writes a declaration the user did not
@@ -72,7 +72,8 @@ complete whichever route is taken.
 - **THEN** the parity test finds the `## Size` production in its `references/size-brief.md` byte-equal to the fence in
   `orbit-change-size`'s declaration requirement
 
-#### Scenario: A quiet size check reads no reference
+#### Scenario: The basic content handles a quiet size check
 
-- **WHEN** `orbit/config.yaml` carries no `size_ceiling` key, or the check is on and `breaches` is empty
-- **THEN** the body's basic content says nothing about size and the session reads no `references/size-brief.md`
+- **WHEN** the propose skill is generated
+- **THEN** its size brief's basic content says nothing about size when `ceiling` is `null` or `breaches` is empty, and names
+  `references/size-brief.md` only for the other results and a non-zero exit

@@ -1,19 +1,19 @@
 ## 1. Baseline
 
-- [ ] 1.1 Run the full `npm test` for the green baseline, then, before any template edit, record the sha256 of each block that moves (design §1: `COMMIT_STEP`, `CHAIN_END_STEP`, `SIGNOFF_HOLD_STEP`, `PROGRAM_SIGNOFF_STEP`, archive Step 3.4's and Step 3.45's text, propose's size brief, propose's and ff's PR Position paragraphs, architect 5.5's arc-done act) as today's templates compose it, into a new `test/core/templates/moved-blocks.test.ts`
+- [ ] 1.1 Run the full `npm test` for the green baseline, then, before any template edit, record the sha256 of each block that moves (design §1: `COMMIT_STEP`, `CHAIN_END_STEP`, `SIGNOFF_HOLD_STEP`, `PROGRAM_SIGNOFF_STEP`, archive Step 3.4's and Step 3.45's text, propose's size brief, propose's and ff's PR Position paragraphs, each from its bold `**Position` label up to the line beginning "Read the RESOLVED regime", architect 5.5's arc-done act) as today's templates compose it, into a new `test/core/templates/moved-blocks.test.ts`
 
 ## 2. The shared steps
 
 - [ ] 2.1 In `src/core/disciplines.ts`, add `COMMIT_STEP_BASIC`, `CHAIN_TAG_MEANING` (composed into `CHAIN_END_STEP` with its bytes unchanged), `CHAIN_END_STEP_BASIC` and the two reference constants (`commit-step.md`, `chain-end-step.md`); the six commit-carrying and five chaining bodies interpolate the basic contents (design §3) and ship the references
-- [ ] 2.2 Retarget `commit-step.test.ts`, `chain-prompt-tags.test.ts` (its stripped text also strips the chain end step's basic content) and `account-step.test.ts` (its anchor becomes `COMMIT_STEP_BASIC`); tag the delta scenarios of `The commit step closes each carrying body` and `No-chaining contract`
+- [ ] 2.2 Retarget `commit-step.test.ts`, `chain-prompt-tags.test.ts` (its stripped text also strips the chain end step's basic content) and `account-step.test.ts` (its anchor becomes `COMMIT_STEP_BASIC`); tag the delta scenarios of `The commit step closes each carrying body` and `No-chaining contract` `text`, each tag on a test that asserts its THEN about the generated text
 
 ## 3. Archive, architect, propose and ff
 
 - [ ] 3.1 In `archive-change.ts`, export Step 3.4's and Step 3.45's text as constants and ship `gate-inflection.md`, `fingerprint-divergence.md` and `signoff-hold.md` (`SIGNOFF_HOLD_STEP`, which bulk-archive keeps interpolating unchanged); the body carries the three basic contents, headings kept
 - [ ] 3.2 In `architect.ts`, compose `PROGRAM_SIGNOFF_STEP` from a save part and a hold part (bytes unchanged), ship `program-signoff.md`, carry the save part and the hold's basic content in 5.4, and move 5.5's arc-done act into `pr-resolution.md` (in `pr-choreography.ts`)
-- [ ] 3.3 In `propose.ts`, ship `size-brief.md` (the section's text with its checked mirror) and carry its basic content; move propose's and ff's PR Position paragraphs into `pr-choreography.md` and carry their one-line replacements
-- [ ] 3.4 Retarget `signoff-hold-step.test.ts`, `program-signoff-step.test.ts`, `size-declaration-parity.test.ts`, `archive-user-validation.test.ts` and `orbit-content-fidelity.test.ts`, and extend the closed reference lists in `orbit-generated-surface.test.ts`, `config-profile.test.ts` and `orbit-content-fidelity.test.ts`; tag the delta scenarios of the archive, architect and size-brief requirements
-- [ ] 3.5 Complete `moved-blocks.test.ts`: each reference file holds its block, whose sha256 equals the recorded one; each basic content is byte-equal across its carrying bodies; each body names every reference file its skill ships (one level deep); show the test able to fail with one deliberate byte change, then revert
+- [ ] 3.3 In `propose.ts`, ship `size-brief.md` (the section's text with its checked mirror) and carry its basic content; move propose's and ff's PR Position paragraphs into a new `## Where each phase runs` section of `pr-choreography.md` (design §1: the selection line, then `### In /orbit:propose` and `### In /orbit:ff`) and carry their one-line replacements
+- [ ] 3.4 Retarget `signoff-hold-step.test.ts`, `program-signoff-step.test.ts`, `size-declaration-parity.test.ts`, `archive-user-validation.test.ts` and `orbit-content-fidelity.test.ts`, and extend the closed reference lists in `orbit-generated-surface.test.ts`, `config-profile.test.ts` and `orbit-content-fidelity.test.ts`; tag the delta scenarios of the archive, architect and size-brief requirements `text`, as in 2.2
+- [ ] 3.5 Complete `moved-blocks.test.ts`: each reference file holds its block, whose sha256 equals the recorded one; each basic content is byte-equal across its carrying bodies; each body names every reference file its skill ships (one level deep); each basic content's pointer carries "the result you already have"; `pr-choreography.md` carries the selection line and both workflow subsections; show the test able to fail with one deliberate byte change, then revert
 
 ## 4. Holding the size
 
@@ -28,6 +28,6 @@
 ## 6. Closing
 
 - [ ] 6.1 Update `skill-templates-parity.test.ts`'s function and generated-skill hashes with a dated comment naming each moved hash and why
-- [ ] 6.2 Show by test, in a disposable project at the defaults, that each gating command returns the result its basic content handles itself: `orbit pr commit` → `action: off`, the status `chain` object → `configured: false`, `orbit brief --change` and `orbit brief <doc>` `--hold` → `why: "off"`, and the status `size` object → `ceiling: null`
+- [ ] 6.2 Show by test, in a disposable project at the defaults, that each gating command returns the result its basic content handles itself: `orbit pr commit` → `action: off`, the status `chain` object → `configured: false`, `orbit brief --change` and `orbit brief <doc>` `--hold` → `why: "off"`, and the status `size` object → `ceiling: null`; and that the three stage-D steps' usual results are the ones their basic contents handle (the stage's second exit criterion): every reviewed gate `passed` or `superseded`, `orbit fingerprint --check` with every requirement `verified`, and a size check that is on with `breaches` empty
 - [ ] 6.3 Run the full `npm test` green, `npm run build && node bin/orbit.js update --force`, and `npm run size:report`; record each body's post-change size against design's size table and set the budget test's ceilings from the measured sizes
 - [ ] 6.4 (User-validation) Observe this change's own apply, review and archive sessions on the new bodies and record, for each, whether it compacted and what of the skill bodies it lost (R-rop-12, D-cs-9)

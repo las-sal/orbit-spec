@@ -70,7 +70,11 @@ Ratified by Sal, 2026-11-17, from the opening session's answers to the brief's q
   `(chain: decision)`, `(chain: not a prompt)`) and what a chained command records stay in each chaining body, about
   1,000 characters, beside the tags they explain; only the chain end step's procedure moves to its reference file. A
   chained command, in this session or in a fresh one, then meets no tag its body does not explain. (The brief's
-  question 5.)
+  question 5.) Amended by Sal, 2026-11-17, at the proposal walk of `conditional-steps`: that last sentence holds for the
+  five chaining bodies, which explain the three prompt tags (`target`, `routine`, `decision`); `(chain: not a prompt)`
+  names itself; and archive, which a chain can arrive at but which carries no chain end step, explains none of its tags,
+  a named limit as before this program. Recorded as `stop-2026-11-17T14-14-43Z.json` and its resolution in
+  `orbit/changes/conditional-steps/.orbit-runs/decisions/`.
 - **R-rop-7** (Sal, 2026-11-17) — The decision-writing bullet is restructured in stage C into labelled sub-bullets
   (before asking, acting without asking, after a call, not a stop, where records go) with its content unchanged; the
   one-line form with its detail in `decision-records.md` is weighed at the evaluation, with stage D (R-rop-2). Whether
@@ -251,3 +255,5 @@ Exit criteria:
   (R-rop-13); the program's work rides the branch `reduce-orbit-phase1` from its first propose on.
 - 2026-11-17 — From the exploration `conditional-steps`: at Sal's choice the stage is verified by tests alone; the
   real-run checks of each unusual result leave its exit criteria, replaced by a named limit.
+- 2026-11-17 — From the proposal walk of `conditional-steps`: R-rop-6's closing sentence amended to what is true (the
+  five chaining bodies explain the three prompt tags; archive is a named limit, as before this program).

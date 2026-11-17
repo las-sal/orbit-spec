@@ -10,10 +10,11 @@ and a per-body budget test starts holding the bodies' size (R-rop-8, RG3). See `
 
 ## What Changes
 
-- **Seven steps split into basic content and a reference file.** The basic content (when the step runs, the command, the
+- **Seven steps split into basic content and a reference file** (the sign-off hold, in archive and architect, counted
+  once). The basic content (when the step runs, the command, the
   usual result, and the link to its reference file, R-rop-3) stays in each carrying body; the full step, byte-equal to
   today's text and composed once in code, moves to a reference file the basic content tells the agent to read on any
-  other result (R-rop-4). Every body stays the same under every configuration (R-rop-5).
+  other result or a non-zero exit and to follow from the result it already has (R-rop-4). Every body stays the same under every configuration (R-rop-5).
   - the commit step (propose, ff, apply, review, address-reviews, archive) → `references/commit-step.md`;
   - the chain end step (propose, ff, apply, review, address-reviews) → `references/chain-end-step.md`; the meaning of the
     prompt tags and what a chained command records stay in each body (R-rop-6);

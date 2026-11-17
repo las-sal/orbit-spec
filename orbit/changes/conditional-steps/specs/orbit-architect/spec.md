@@ -45,7 +45,8 @@ With every setting at its default, nothing the user sees or is asked changes: th
 program and says nothing, the hold reports `why: "off"` with no warning, and the arc-done readout is as before
 (`automate-dev-flow`'s R-adf-1, G0). The body carries the save and, as the hold's BASIC
 CONTENT (`reduce-orbit-phase1`'s R-rop-3), the hold command and its `why: "off"` row, and tells the agent to read
-`references/program-signoff.md` and follow it on any other result or a non-zero exit; that reference carries the two
+`references/program-signoff.md` and follow it, from the save's outcome and the result it already has, on any other
+result or a non-zero exit; that reference carries the two
 commands, the table and the `orbit emit signoff --doc` invocation with its fields, byte-equal to the step's text, so an
 installed skill needs no spec to run the step; a test holds the body's basic content and the reference.
 
@@ -108,8 +109,8 @@ installed skill needs no spec to run the step; a test holds the body's basic con
   non-zero
 - **THEN** the session states the failure in one line, asks no sign-off, and shows no arc-done readout
 
-#### Scenario: A default session reads no sign-off reference
+#### Scenario: The architect body's basic content handles the default hold
 
-- **WHEN** an architect session runs with every setting at its default
-- **THEN** the body's basic content handles the hold's `why: "off"` and the session reads no
-  `references/program-signoff.md`
+- **WHEN** the architect skill is generated
+- **THEN** its 5.4 basic content handles the hold's `why: "off"` itself and names `references/program-signoff.md` only for
+  the other results and a non-zero exit

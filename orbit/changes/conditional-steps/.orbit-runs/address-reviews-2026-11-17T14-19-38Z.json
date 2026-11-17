@@ -1,0 +1,366 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-17T14:19:38Z",
+  "change": "conditional-steps",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/conditional-steps/.orbit-runs/review-proposal-2026-11-17T14-08-41Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-17T14-08-41Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 4,
+    "suggestion": 4
+  },
+  "pushback_verification": "All eight verified against current state; the tag claim checked against the generated bodies (archive 9 decision tags and no chain end step; apply 4 and address-reviews 2 not-a-prompt tags); none stale.",
+  "resolution_summary": {
+    "resolved": 8,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The chain end step's basic content directs a status read without the chained command's --chain-ran/--chain-head flags",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 79,
+      "classification": "trivial_fix",
+      "action": "added the --chain-ran/--chain-head clause to the chain end step's basic-content read in design §3, and named it in the No-chaining contract delta's list of what the body carries",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/conditional-steps/specs/orbit-conventions/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/conditional-steps/design.md",
+            "text": "a command a chain ran adds"
+          },
+          {
+            "path": "orbit/changes/conditional-steps/specs/orbit-conventions/spec.md",
+            "text": "with the `--chain-ran`/`--chain-head` flags a command a chain ran adds to it"
+          }
+        ],
+        "searched": [
+          "--chain-ran",
+          "chain-head",
+          "status read"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The new closure 'a command a chain arrives at meets no tag its own body does not explain' is false on day one",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 46,
+      "classification": "decision_required",
+      "action": "applied Sal's direction A: the No-chaining contract delta now says the five chaining bodies explain the three prompt tags, (chain: not a prompt) names itself, and archive is a named limit as before; R-rop-6's last sentence carries the same correction as a dated amendment (stop-2026-11-17T14-14-43Z.json and its resolution)",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Narrow the delta: the five chaining bodies explain the three prompt tags (`target`, `routine`, `decision`) through their basic content, archive's tags take their meaning from the arriving session's chain end step, and `(chain: not a prompt)` is named as self-describing. Record the narrowing against R-rop-6's four tags."
+          },
+          {
+            "label": "B",
+            "body": "Make the closure true: add a sentence on `(chain: not a prompt)` to the chain end basic content (outside CHAIN_TAG_MEANING, so its bytes hold), and carry the tag meaning in archive's body too, re-measuring the size table. This takes on more than the drafted stage."
+          }
+        ],
+        "chosen": "A"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/architecture/reduce-orbit-phase1.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "therefore meets no tag its own body"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/conditional-steps/specs/orbit-conventions/spec.md",
+            "text": "names itself. Named"
+          },
+          {
+            "path": "orbit/architecture/reduce-orbit-phase1.md",
+            "text": "names itself; and archive, which a chain can arrive at"
+          }
+        ],
+        "searched": [
+          "meets no tag",
+          "not a prompt",
+          "chain end step"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "No task covers the stage's second exit criterion: the three stage-D steps' usual results handled by the basic content, shown by test",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 97,
+      "classification": "trivial_fix",
+      "action": "extended task 6.2 to show by test the three stage-D steps' usual results: every reviewed gate passed or superseded, fingerprint --check all verified, and a size check on with breaches empty",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/conditional-steps/tasks.md",
+            "text": "the three stage-D steps' usual results are the ones their basic contents handle"
+          }
+        ],
+        "searched": [
+          "exit criteria",
+          "usual result"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The six new 'reads no reference file' scenarios assert session behaviour that no planned test can observe",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 113,
+      "classification": "trivial_fix",
+      "action": "reworded each 'reads no reference file' scenario's THEN to what the generated text shows (the basic content handles the result itself and names its reference file only for the other results), and said in tasks 2.2 and 3.4 that they are tagged text",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/conditional-steps/specs/orbit-archive-modifications/spec.md",
+          "orbit/changes/conditional-steps/specs/orbit-architect/spec.md",
+          "orbit/changes/conditional-steps/specs/orbit-propose-modifications/spec.md",
+          "orbit/changes/conditional-steps/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the session reads no"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/conditional-steps/specs/orbit-conventions/spec.md",
+            "text": "only for the other results"
+          },
+          {
+            "path": "orbit/changes/conditional-steps/specs/orbit-propose-modifications/spec.md",
+            "text": "only for the other results"
+          },
+          {
+            "path": "orbit/changes/conditional-steps/specs/orbit-archive-modifications/spec.md",
+            "text": "names `references/signoff-hold.md` only for the other"
+          },
+          {
+            "path": "orbit/changes/conditional-steps/specs/orbit-architect/spec.md",
+            "text": "names `references/program-signoff.md` only for"
+          }
+        ],
+        "searched": [
+          "reads no",
+          "session reads"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Where propose's and ff's moved Position paragraphs land in the shared pr-choreography.md, and how far each moved block reaches, are unspecified",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 126,
+      "classification": "trivial_fix",
+      "action": "design §1 now puts both Position paragraphs in a new 'Where each phase runs' section of pr-choreography.md, opened by a selection line and holding '### In /orbit:propose' and '### In /orbit:ff', each block running from its bold Position label up to 'Read the RESOLVED regime'; tasks 1.1 and 3.3 follow",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/conditional-steps/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "its phase 1 runs here"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/conditional-steps/design.md",
+            "text": "Follow only the subsection of the workflow you are running."
+          }
+        ],
+        "searched": [
+          "Position",
+          "pr-choreography"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Byte-equal moves carry positional pointers that are wrong in their new homes; Risks names only one",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 241,
+      "classification": "trivial_fix",
+      "action": "Risks now names every positional pointer the byte-equal moves carry: the architect save paragraph's 'no row below', SIGNOFF_HOLD_STEP's 'the save step's just above', the size brief's '(below)' and the 'placed last for reading' labels",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/conditional-steps/design.md",
+            "text": "the save step's just above"
+          }
+        ],
+        "searched": [
+          "just above",
+          "(below)",
+          "placed last for reading",
+          "no row below"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The commit and chain end basic contents phrase their exits less precisely than the full steps and the hold basic contents",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 71,
+      "classification": "trivial_fix",
+      "action": "the commit basic content names archive's completion readout, and every basic content routes 'any other result, or a non-zero exit' to its reference",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "follow it before the readout"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/conditional-steps/design.md",
+            "text": "(in archive, the completion readout); in apply"
+          }
+        ],
+        "searched": [
+          "non-zero exit",
+          "position readout"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "'Seven steps' is followed by eight bullets and design §1's 'The seven splits' has eight rows",
+      "marker_source": "internal-review",
+      "file": "proposal.md",
+      "line": 13,
+      "classification": "trivial_fix",
+      "action": "the proposal's and design §1's step count says the sign-off hold is counted once across archive and architect, and the size table's numbers are formatted alike",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/conditional-steps/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/conditional-steps/proposal.md",
+            "text": "(the sign-off hold, in archive and architect, counted"
+          }
+        ],
+        "searched": [
+          "seven",
+          "Seven"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Eight of eight resolved. The four warnings: the chained read keeps its flags in the basic content; the tag claim is narrowed to what is true, R-rop-6 amended to match on Sal's direction A; task 6.2 now covers the stage-D steps' usual results; and the reads-no-reference scenarios now state what the generated text shows. The four suggestions: the PR Position paragraphs' new section and hash extent, the positional pointers named in Risks, the exits worded alike, and the step count. The walk's fixes lengthen the basic contents: RG1's projection after stage C is now about 2,700 over, not 600 (D-cs-11).",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews conditional-steps",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "5a25ca5ad26693843e578137ce916e988c2fdd45",
+      "frozen": false,
+      "evidence": {
+        "files": [],
+        "share": null,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ],
+  "ripple_misses": 0
+}

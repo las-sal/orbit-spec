@@ -30,7 +30,7 @@ converges.
 
 ## Decisions
 
-### 1. The seven splits
+### 1. The seven splits (the sign-off hold counted once, in archive and architect)
 
 | step | carrying bodies | the body keeps (basic content) | reference file (full text, byte-equal) |
 |---|---|---|---|
@@ -41,7 +41,13 @@ converges.
 | gate inflection prompt (Step 3.4) | archive | the `gates[]` read, all passed or superseded → go on | `gate-inflection.md` ← the step's text |
 | divergence check (Step 3.45) | archive | `orbit fingerprint --check`, all `verified` → go on | `fingerprint-divergence.md` ← the step's text, its prompt subsection included |
 | size brief | propose | the `size` read, `ceiling: null` or no breach → silent | `size-brief.md` ← the section's text, the checked mirror included |
-| PR sections | propose, ff, architect | the regime read and `never` → return (unchanged); the phase-1 timing in one line; architect's arc-done check (unchanged) | propose's and ff's Position paragraphs join `pr-choreography.md`; architect's arc-done act joins `pr-resolution.md` |
+| PR sections | propose, ff, architect | the regime read and `never` → return (unchanged); the phase-1 timing in one line; architect's arc-done check (unchanged) | propose's and ff's Position paragraphs join `pr-choreography.md`, in a new section (see below); architect's arc-done act joins `pr-resolution.md` |
+
+`pr-choreography.md` is one text shipped to both propose and ff, so the two Position paragraphs go in a new section,
+`## Where each phase runs`, opened by the line "Follow only the subsection of the workflow you are running." and holding
+`### In /orbit:propose` and `### In /orbit:ff`, each with its paragraph verbatim. Each moved block runs from the
+paragraph's bold `**Position` label up to, not including, the line beginning "Read the RESOLVED regime"; that extent is
+what task 1.1 hashes.
 
 Headings stay in the bodies, so every step keeps its name and number ("Step 3.4", "5.4", which
 `orbit-archive-modifications`, `orbit-lifecycle-consent` and the architect body cite). Bulk-archive keeps interpolating
@@ -63,12 +69,24 @@ unchanged, so the body can carry the save part alone.
 The design drafts each basic content so this stage's size is computed, not estimated (sizes below). Apply may tighten
 wording; it may not drop a result the basic content handles, the read it directs, or its position.
 
+**The handoff rule.** A reference file holds the whole of today's step, and today's step opens by running its command.
+Every basic content therefore says to follow the reference "from the result you already have", without running the
+command again: the agent enters the reference at the result it holds, a non-zero exit included. A literal repeat would
+still do no harm — `orbit pr commit --json`, `orbit status --json`, `orbit fingerprint --check --json` and
+`orbit brief --hold --json` are read-only, and architect's `orbit brief <doc> --save` writes only a brief that changed
+since its latest copy — but it would waste a call and, at architect 5.4, could replace the save outcome the hold's
+table reads. The moved-blocks test checks that each basic content's pointer carries "the result you already have".
+
+**The chained read keeps its flags.** The status read in the chain end step's basic content carries the
+`--chain-ran`/`--chain-head` clause, because the read happens before the reference is opened, and a read without the
+flags never matches `no-progress` (`orbit-engine-gates`).
+
 **Commit step** (each of the six bodies):
 
 ````markdown
 ## Commit step (the closing commit — `orbit-conventions`' `The commit step closes each carrying body`)
 
-Runs in the invoking session only, never in a dispatched worker, after the run summary (in archive, after the PR-attached tail) and before the position readout; in apply, once at the session's close. Skip it with no change target, or when this invocation's PR layer has already stopped. Otherwise run `orbit pr commit "<name>" --json`. On `action: off`, print nothing and go on. On any other result, read `references/commit-step.md` and follow it before the readout.
+Runs in the invoking session only, never in a dispatched worker, after the run summary (in archive, after the PR-attached tail) and before the position readout (in archive, the completion readout); in apply, once at the session's close. Skip it with no change target, or when this invocation's PR layer has already stopped. Otherwise run `orbit pr commit "<name>" --json`. On `action: off`, print nothing and go on. On any other result, or a non-zero exit, read `references/commit-step.md` and follow it from the result you already have, before the readout.
 ````
 
 **Chain end step** (each of the five bodies; the second paragraph is `CHAIN_TAG_MEANING`, today's text):
@@ -76,7 +94,7 @@ Runs in the invoking session only, never in a dispatched worker, after the run s
 ````markdown
 ## Chain end step (the closing step — `orbit-conventions`' `No-chaining contract`)
 
-The LAST act of the invoking session, after the position readout and the eligibility line; never in a dispatched worker, and nothing with no change target. Read the `chain` object from `orbit status --change "<name>" --json` (the call that supplied the eligibility line, or one right after it). On `configured: false`, print nothing more. On any other result, read `references/chain-end-step.md` and follow it.
+The LAST act of the invoking session, after the position readout and the eligibility line; never in a dispatched worker, and nothing with no change target. Read the `chain` object from `orbit status --change "<name>" --json` (the call that supplied the eligibility line, or one right after it); a command a chain ran adds `--chain-ran "<next>" --chain-head "<head>"` to that read, the `next` and `head` the previous read reported, a null `head` written as `null`. On `configured: false`, print nothing more. On any other result, or a non-zero exit, read `references/chain-end-step.md` and follow it from the result you already have.
 
 The chained command runs as on a typed arrival except for its prompts, each tagged at its site: a `(chain: target)` prompt does not fire (the next command names the change and the mode); a `(chain: routine, default: <option>)` prompt takes that default, and the run summary's `final_assessment` records `The chain took the default: <prompt> — <answer>.`; a `(chain: decision)` prompt is asked exactly as on a typed arrival, and after a decision the chain does not continue — the command's own closing step states in one line that the chain stopped at a decision and runs nothing. The chained command records `Chained: granted by chain.<key>.` as one sentence in the record its session writes: a walk in its run summary's `final_assessment`; an external review or a blind pair in its launch record's `final_assessment`; an in-context review in its pass's `commentary` (the review emit owns a pass's `final_assessment`); a chained apply or archive records it as its `consent: "setting"` value and writes no sentence. A chained fresh review records nothing — its worker writes the pass, and its brief carries nothing from this session (a named limit).
 ````
@@ -86,7 +104,7 @@ The chained command runs as on a typed arrival except for its prompts, each tagg
 ````markdown
 ## NEW Step 3.4 — Gate inflection prompt (C1; every reviewed gate since rc10)
 
-After Step 3.2, before the audit sweep (Step 3.5): read every `gates[]` row of kind `reviewed` from `orbit status --change "<change-name>" --json`. When each is `passed` or `superseded: true` (or there are none), go on without prompting. Otherwise read `references/gate-inflection.md` and follow it: it prompts once over the listed gates and, on **Proceed anyway**, composes Step 5.5's `continuation` entries before the move.
+After Step 3.2, before the audit sweep (Step 3.5): read every `gates[]` row of kind `reviewed` from `orbit status --change "<change-name>" --json`. When each is `passed` or `superseded: true` (or there are none), go on without prompting. Otherwise, or on a non-zero exit, read `references/gate-inflection.md` and follow it from the result you already have: it prompts once over the listed gates and, on **Proceed anyway**, composes Step 5.5's `continuation` entries before the move.
 ````
 
 **Archive Step 3.45** (heading kept):
@@ -94,19 +112,19 @@ After Step 3.2, before the audit sweep (Step 3.5): read every `gates[]` row of k
 ````markdown
 ## NEW Step 3.45 — Base-fingerprint divergence check (C2)
 
-After Step 3.4, before the Step 3.5 audit sweep, run `orbit fingerprint "<change-name>" --check --json` — this path's ONLY guard against a parallel change's spec loss. When every requirement is `verified` (or none is touched), go on silently. On `diverged`, `unverified` or `missing`, read `references/fingerprint-divergence.md` and follow it.
+After Step 3.4, before the Step 3.5 audit sweep, run `orbit fingerprint "<change-name>" --check --json` — this path's ONLY guard against a parallel change's spec loss. When every requirement is `verified` (or none is touched), go on silently. On `diverged`, `unverified` or `missing`, or a non-zero exit, read `references/fingerprint-divergence.md` and follow it from the result you already have.
 ````
 
 **Archive Step 3.7** (after its heading and its `(Per …)` line):
 
 ````markdown
-Directly after Step 3.6's save, BEFORE upstream Step 4, in every mode, run `orbit brief --change "<name>" --hold --json` (it renders and writes nothing). On `why: "off"`, go on silently, stating any warning in one line. On any other result or a non-zero exit, read `references/signoff-hold.md` and follow it before the sync.
+Directly after Step 3.6's save, BEFORE upstream Step 4, in every mode, run `orbit brief --change "<name>" --hold --json` (it renders and writes nothing). On `why: "off"`, go on silently, stating any warning in one line. On any other result or a non-zero exit, read `references/signoff-hold.md` and follow it from the result you already have, before the sync.
 ````
 
 **Architect 5.4** (after the save part, which stays as today):
 
 ````markdown
-The hold renders no brief and writes nothing. On `why: "off"`, say nothing about it and observe arc-done as Step 5.5 states, stating any warning in one line. On any other result or a non-zero exit, read `references/program-signoff.md` and follow it before Step 5.5.
+The hold renders no brief and writes nothing. On `why: "off"`, say nothing about it and observe arc-done as Step 5.5 states, stating any warning in one line. On any other result or a non-zero exit, read `references/program-signoff.md` and follow it from the save's outcome and the result you already have, before Step 5.5.
 ````
 
 **Architect 5.5** (replacing the paragraph that begins "When arc-done, run"):
@@ -120,17 +138,17 @@ When arc-done, read `references/pr-resolution.md` and follow its arc-done readou
 ````markdown
 ## Size brief after generation (NEW step — both modes)
 
-After every artifact is generated and `orbit validate "<name>"` passes non-strict, BEFORE Step 0d's move, Phase 3 and the completion emit, read `size` from `orbit status --change "<name>" --json`. When `ceiling` is `null` or `breaches` is empty, say nothing about size. Otherwise read `references/size-brief.md` and follow it.
+After every artifact is generated and `orbit validate "<name>"` passes non-strict, BEFORE Step 0d's move, Phase 3 and the completion emit, read `size` from `orbit status --change "<name>" --json`. When `ceiling` is `null` or `breaches` is empty, say nothing about size. Otherwise, or on a non-zero exit, read `references/size-brief.md` and follow it from the result you already have.
 ````
 
 **Propose's and ff's PR Position paragraphs** (each replaced; the rest of each PR section stays):
 
 ````markdown
-**Position (NEW Step 0.5).** Read the regime right after Step 0's mode detection and BEFORE Step 0a; on an active mode, read `references/pr-choreography.md` now — its phase 1 runs here, before any artifact is written, and it says where phases 2 and 3 run.
+**Position (NEW Step 0.5).** Read the regime right after Step 0's mode detection and BEFORE Step 0a; on an active mode, read `references/pr-choreography.md` now and run its Phase 1 here, before any artifact is written; its `Where each phase runs` section, under `### In /orbit:propose`, says where phases 2 and 3 run.
 ````
 
 ````markdown
-**Position.** Read the regime BEFORE Step 2 (`orbit new change`); on an active mode, read `references/pr-choreography.md` now — its phase 1 runs here, and it says where phases 2 and 3 run.
+**Position.** Read the regime BEFORE Step 2 (`orbit new change`); on an active mode, read `references/pr-choreography.md` now and run its Phase 1 here; its `Where each phase runs` section, under `### In /orbit:ff`, says where phases 2 and 3 run.
 ````
 
 ### 4. Prompt tags move with their prompts
@@ -186,17 +204,18 @@ From the generated bodies at `3f5b035b` (434,449 characters), with the drafts ab
 
 | move | today | basic content | bodies | saves |
 |---|---|---|---|---|
-| commit step | 3,504 | 570 | 6 | 17604 |
-| chain end step | 3,696 | 1644 | 5 | 10260 |
-| archive Step 3.4 | 3,689 | 506 | 1 | 3183 |
-| archive Step 3.45 | 2,754 | 404 | 1 | 2350 |
-| archive Step 3.7 | 4,349 | 326 | 1 | 4023 |
-| architect 5.4 hold | 6,227 | 267 | 1 | 5960 |
-| propose size brief | 2,865 | 384 | 1 | 2481 |
-| PR: propose, ff, architect 5.5 | 2,017 | 748 | 3 | 1,269 |
+| commit step | 3,504 | 661 | 6 | 17,058 |
+| chain end step | 3,696 | 1,866 | 5 | 9,150 |
+| archive Step 3.4 | 3,689 | 563 | 1 | 3,126 |
+| archive Step 3.45 | 2,754 | 457 | 1 | 2,297 |
+| archive Step 3.7 | 4,349 | 360 | 1 | 3,989 |
+| architect 5.4 hold | 6,227 | 324 | 1 | 5,903 |
+| propose size brief | 2,865 | 441 | 1 | 2,424 |
+| PR: propose, ff, architect 5.5 | 2,017 | 867 | 3 | 1,150 |
 
-About 47,130 characters move: the bodies land at about 387,300, and RG1's projection after stage C is about 350,600, the
-600 over to be carried by the later stages (D-cs-11). Apply's body lands at about 27,000; its 17,500 limit is reached in
+About 45,097 characters move: the bodies land at about 389,400, and RG1's projection after stage C is about
+352,700, about 2,700 over, to be carried by the later stages (D-cs-11; about 600 when Sal decided it,
+before the proposal walk added the handoff rule and the chained read's flags). Apply's body lands at about 27,000; its 17,500 limit is reached in
 stage B, as the brief projected. The budget test's ceilings are set from the sizes apply measures, not from this table.
 
 ## Touchpoints
@@ -238,9 +257,18 @@ The Mechanism section is empty: every decision is a scope or fact entry, so no l
   here and at the evaluation, are where a miss would be seen. The gate prompt is where an adopter would meet it first.
 - [A compaction drops a body's later steps mid-session] → R-rop-12's observation of this change's own sessions
   (D-cs-9); the size report prints each body's estimated tokens against the 5,000 kept.
-- [The architect body's save paragraph says "no row below reads them" while the rows now sit in the reference] →
-  accepted: the paragraph is byte-equal to today's text, and the sentence stays true of the step read whole; stage C,
-  which tightens what stays, may reword it.
+- [Text moved byte-equal keeps positional pointers that are wrong in its new home] → accepted, each named so stage C,
+  which tightens what stays, finds them: the architect save paragraph's "no row below reads them" (the rows now sit in
+  `program-signoff.md`); `SIGNOFF_HOLD_STEP`'s "the save step's just above" (in `signoff-hold.md` the save stays in the
+  archive body's Step 3.6, and bulk-archive keeps the constant, so its bytes cannot change); the size brief's "(below)"
+  (nothing follows it in `size-brief.md`); and the Position paragraphs' "placed last for reading" labels. Each stays
+  true of the step read whole.
+- [Today's divergence step defines no row for a non-zero exit] → a gap that predates this change: the basic content
+  routes a non-zero exit to the reference, which behaves exactly as today's step does. Defining that behaviour would
+  change what the workflow does, outside RG0, so it waits for a change that may.
+- [A chained archive meets tags its body does not explain] → a named limit as before this program (R-rop-6 as
+  amended): archive carries no chain end step, so it relies on the tag meaning the arriving session read in the
+  chaining body that ran it.
 - [RG1's projection is about 600 over] → D-cs-11: the next stage's propose measures again from the real bodies.
 - [Four capabilities against a limit of three] → declared in the proposal (D-cs-1).
 
