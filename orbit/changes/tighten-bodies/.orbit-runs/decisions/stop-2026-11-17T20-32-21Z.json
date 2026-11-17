@@ -1,0 +1,20 @@
+{
+  "command": "stop",
+  "timestamp": "2026-11-17T20:32:21Z",
+  "change": "tighten-bodies",
+  "model": "claude-opus-5-5",
+  "condition": "ruling-amendment",
+  "about": "R-rop-7 restructures the decision-writing bullet into labelled sub-bullets. The bullet is one text that every workflow skill carries, the exploration skill included, and the sub-bullet form adds five lines to each. The exploration skill is held at its 664 lines by a line limit that, under R-rop-8 and RG3, may only go down, so the sub-bullet form would break that limit unless a ruling gives way.",
+  "question": "Which ruling should give way: write the five labels inline in one paragraph instead of as sub-bullets (amends R-rop-7's form), let the exploration skill's line limit rise by those five lines (amends R-rop-8 and RG3), or take five lines out of the exploration skill's own text (amends the Premise's 'explore is left as it is')?",
+  "defines": [
+    {
+      "term": "decision-writing bullet",
+      "definition": "The paragraph in every skill's list of working disciplines that says when the agent writes a stop record, a resolution or a ledger entry."
+    },
+    {
+      "term": "line limit",
+      "definition": "The maximum number of lines a skill's main file may have, checked by a test in the suite."
+    }
+  ],
+  "detail": "orbit-explore SKILL.md is 664 lines at a5ba0f0c; LINE_CEILING in test/core/templates/skill-body-budget.test.ts holds it at 664. Sub-bullet form: 6 lines, 2,947 chars (+112). Inline labels: 1 line, 2,927 chars (+92)."
+}

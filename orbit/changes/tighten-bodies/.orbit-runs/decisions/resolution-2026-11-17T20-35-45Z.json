@@ -1,0 +1,9 @@
+{
+  "command": "resolution",
+  "timestamp": "2026-11-17T20:35:45Z",
+  "change": "tighten-bodies",
+  "model": "claude-opus-5-5",
+  "stop": "stop-2026-11-17T20-32-21Z.json",
+  "answer": "Raise the exploration skill's line limit by the five lines the sub-bullets add; keep the sub-bullet form as R-rop-7 rules it.",
+  "effect": "R-rop-8 and RG3 are amended for this one case: the exploration skill's line limit rises from 664 to 669, the five lines the decision-writing bullet's sub-bullets add to it, and only for that; every other limit still only goes down. The change's spec keeps the sub-bullet form, and its last task raises that one limit as a named edit."
+}
