@@ -1,0 +1,56 @@
+{
+  "command": "apply",
+  "timestamp": "2026-11-17T19:18:20Z",
+  "change": "once-per-session-detail",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "consent": "user-invoked",
+  "tasks_completed": 12,
+  "tasks_remaining": 0,
+  "user_validation_remaining": 0,
+  "chunk": "3 of 3",
+  "chunk_name": "A fresh session on the new bodies: ceilings and the account",
+  "chunk_complete": true,
+  "tasks_completed_this_session": 3,
+  "files_touched": [
+    "orbit/changes/once-per-session-detail/.orbit-runs/apply-2026-11-17T18-51-22Z.json",
+    "orbit/changes/once-per-session-detail/.orbit-runs/apply-2026-11-17T19-02-03Z.json",
+    "orbit/changes/once-per-session-detail/tasks.md",
+    "test/core/templates/run-summary-read-cue.test.ts",
+    "test/core/templates/skill-body-budget.test.ts"
+  ],
+  "diff_base": "b133eb76e228a2dda3a4095061c638172d1a2c2b",
+  "final_assessment": "Completed chunk 3 of 3 (A fresh session on the new bodies: ceilings and the account); 12 of 12 tasks done. chunk 3 ran in a new session on the regenerated bodies: its apply body carried the account basic content naming references/account-step.md and the read cue once each (6.1); eleven ceilings lowered to size plus 5% rounded up, each line naming its previous ceiling, none rising, the four out-of-scope bodies computing to their unchanged ceilings (6.2); size:report bodies 369,260 characters (389,374 at propose; apply 27,124 to 18,875, archive 31,894, review 41,756, address-reviews 47,487, propose 36,219, audit-drift 21,301, architect 17,487, verify 14,691, ff 14,312, continue 10,479, new 7,056), references 419,550 in 64 files, the new run-summary-emit.md files 631 to 5,743 and account-step.md 4,068, account-walk-step.md 4,707; full npm test 4,358 passed in 207 files and orbit validate clean after the ceilings change; this session read account-step.md at its end and wrote account-2026-11-17T19-18-08Z.json, and composed this summary from run-summary-emit.md (6.3)",
+  "next_recommended": "/orbit:review --as system --reviewer blind-pair once-per-session-detail",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "9c43eee38a0b20ee959c4c7975e3f51a3a55d754",
+      "frozen": true,
+      "evidence": {
+        "files": [],
+        "share": 0,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ]
+}

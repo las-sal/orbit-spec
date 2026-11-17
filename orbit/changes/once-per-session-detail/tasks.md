@@ -31,6 +31,6 @@ Implementation chunks:
 
 ## 6. Final chunk, in a NEW `/orbit:apply` session on the regenerated bodies (D-opsd-6)
 
-- [ ] 6.1 Confirm this session loaded the new apply body: its Account step section is the basic content naming `references/account-step.md`, and its run-summary step carries the read cue
-- [ ] 6.2 Lower each ceiling in `skill-body-budget.test.ts` to its body's new size plus 5%, rounded up, as a named edit per body (none rises), and run `npm run size:report`, recording each body's and reference's size and the bodies' total
-- [ ] 6.3 Run the full `npm test` after the ceilings change; this session then follows the account cue at its end, reads `references/account-step.md` and writes the change's account, and composes its run summary from `references/run-summary-emit.md` (the exit criterion's evidence, checked at the system review)
+- [x] 6.1 Confirm this session loaded the new apply body: its Account step section is the basic content naming `references/account-step.md`, and its run-summary step carries the read cue
+- [x] 6.2 Lower each ceiling in `skill-body-budget.test.ts` to its body's new size plus 5%, rounded up, as a named edit per body (none rises), and run `npm run size:report`, recording each body's and reference's size and the bodies' total
+- [x] 6.3 Run the full `npm test` after the ceilings change; this session then follows the account cue at its end, reads `references/account-step.md` and writes the change's account, and composes its run summary from `references/run-summary-emit.md` (the exit criterion's evidence, checked at the system review)

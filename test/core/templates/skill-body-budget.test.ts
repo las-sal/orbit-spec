@@ -19,23 +19,27 @@ import { generateSkillContent, getSkillTemplates } from '../../../src/core/share
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
 const VERSION = (JSON.parse(readFileSync(path.join(repo, 'package.json'), 'utf-8')) as { version: string }).version;
 
-/** Each body's character ceiling: its post-conditional-steps size (2026-11-17, measured at version 2.0.2) plus 5%. */
+/**
+ * Each body's character ceiling: its size plus 5%, rounded up (2026-11-17, measured at version 2.0.2) — after
+ * conditional-steps, and lowered after once-per-session-detail for the eleven bodies whose emit step it moved (each
+ * line names its edit and its previous ceiling).
+ */
 const CHARACTER_CEILING: Record<string, number> = {
   'orbit-explore': 52432, // 49,935
-  'orbit-new-change': 7588, // 7,226
-  'orbit-continue-change': 11182, // 10,649
-  'orbit-apply-change': 28481, // 27,124
-  'orbit-ff-change': 15293, // 14,564
+  'orbit-new-change': 7409, // 7,056 (once-per-session-detail; was 7588)
+  'orbit-continue-change': 11003, // 10,479 (once-per-session-detail; was 11182)
+  'orbit-apply-change': 19819, // 18,875 (once-per-session-detail; was 28481)
+  'orbit-ff-change': 15028, // 14,312 (once-per-session-detail; was 15293)
   'orbit-sync-specs': 9069, // 8,637
-  'orbit-archive-change': 36883, // 35,126
+  'orbit-archive-change': 33489, // 31,894 (once-per-session-detail; was 36883)
   'orbit-bulk-archive-change': 28022, // 26,687
-  'orbit-verify-change': 16073, // 15,307
+  'orbit-verify-change': 15426, // 14,691 (once-per-session-detail; was 16073)
   'orbit-onboard': 23567, // 22,444
-  'orbit-propose': 38295, // 36,471
-  'orbit-review': 45751, // 43,572
-  'orbit-address-reviews': 54442, // 51,849
-  'orbit-audit-drift': 22624, // 21,546
-  'orbit-architect': 19149, // 18,237
+  'orbit-propose': 38030, // 36,219 (once-per-session-detail; was 38295)
+  'orbit-review': 43844, // 41,756 (once-per-session-detail; was 45751)
+  'orbit-address-reviews': 49862, // 47,487 (once-per-session-detail; was 54442)
+  'orbit-audit-drift': 22367, // 21,301 (once-per-session-detail; was 22624)
+  'orbit-architect': 18362, // 17,487 (once-per-session-detail; was 19149)
 };
 
 const LINE_LIMIT = 500;
