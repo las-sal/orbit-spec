@@ -64,16 +64,21 @@ function carryFailure(body: string, statement: string): string | null {
   if (count !== 1) return `the statement appears ${count} times`;
   const ep = epitomeLines(body);
   if (ep === null) return 'no epitome heading';
-  const bullets = ep.filter(l => l.startsWith('- '));
-  const nc = bullets.findIndex(l => l.startsWith('- **No-chaining'));
+  const nc = ep.findIndex(l => l.startsWith('- **No-chaining'));
   if (nc < 0) return 'no no-chaining bullet';
-  if (bullets[nc + 1] !== statement) return 'the bullet after no-chaining is not the statement';
+  const next = ep.findIndex((l, k) => k > nc && l.startsWith('- '));
+  const lines = statement.split('\n');
+  if (next < 0 || ep.slice(next, next + lines.length).join('\n') !== statement) {
+    return 'the bullet after no-chaining is not the statement';
+  }
   return null;
 }
 
 /** The field names a reference's record section lists, in order. */
 function sectionOf(ref: string, command: DecisionCommand): string {
-  const start = ref.indexOf(`(\`orbit emit ${command}\`)`);
+  // The section's heading line, not the contents list's entry naming it (tighten-bodies).
+  const at = ref.search(new RegExp(`\\n## [^\\n]*\\(\`orbit emit ${command}\`\\)`));
+  const start = at < 0 ? -1 : at + 1;
   if (start < 0) return '';
   const next = ref.indexOf('\n## ', start);
   return ref.slice(start, next < 0 ? undefined : next);
@@ -170,6 +175,19 @@ describe('every epitome-carrying workflow body carries the statement', () => {
     expect(skills.filter(s => !carriers.includes(s)).map(s => s.dirName)).toEqual(['orbit-onboard']);
   });
 
+  // @scenario text orbit-conventions :: Decision-writing discipline :: Every workflow body carries the statement
+  it('the statement is a label line and five labelled sub-bullets nested under it', () => {
+    const lines = DECISION_WRITING_DISCIPLINE.split('\n');
+    expect(lines[0].startsWith(FIRST_LINE)).toBe(true);
+    expect(lines.slice(1).map(l => l.match(/^  - \*([^*]+)\*: /)?.[1] ?? l)).toEqual([
+      'Before asking',
+      'Acting without asking',
+      'After a call',
+      'Not a stop',
+      'Where records go',
+    ]);
+  });
+
   for (const s of carriers) {
     // @scenario text orbit-conventions :: Decision-writing discipline :: Every workflow body carries the statement
     it(`${s.dirName}: exactly once, as the bullet after no-chaining`, () => {
@@ -205,12 +223,16 @@ describe('every epitome-carrying workflow body carries the statement', () => {
     expect(carryFailure(body + '\n' + DECISION_WRITING_DISCIPLINE, DECISION_WRITING_DISCIPLINE)).toMatch(/2 times/);
     expect(carryFailure(body.replace(DECISION_WRITING_DISCIPLINE, ''), DECISION_WRITING_DISCIPLINE)).toMatch(/0 times/);
     const lines = body.split('\n');
-    const i = lines.indexOf(DECISION_WRITING_DISCIPLINE);
+    const width = DECISION_WRITING_DISCIPLINE.split('\n').length;
+    const i = lines.indexOf(DECISION_WRITING_DISCIPLINE.split('\n')[0]);
     const nc = lines.findIndex((l, k) => k < i && l.startsWith('- **No-chaining'));
     const moved = [...lines];
-    moved.splice(i, 1);
+    moved.splice(i, width);
     moved.splice(nc, 0, DECISION_WRITING_DISCIPLINE);
     expect(carryFailure(moved.join('\n'), DECISION_WRITING_DISCIPLINE)).toMatch(/after no-chaining/);
+    // A sub-bullet dropped from one body's copy is caught too.
+    const short = body.replace(/\n  - \*Not a stop\*[^\n]*/, '');
+    expect(carryFailure(short, DECISION_WRITING_DISCIPLINE)).toMatch(/0 times/);
   });
 
   // @scenario text orbit-conventions :: Decision-record reference ships beside the statement :: Every statement-carrying skill ships the reference

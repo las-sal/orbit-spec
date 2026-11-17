@@ -131,8 +131,6 @@ After completing all artifacts, summarize:
   - These guide what you write, but should never appear in the output
 
 **Guardrails**
-- Create ALL artifacts needed for implementation (as defined by schema's \`apply.requires\`)
-- Always read dependency artifacts before creating a new one
 - If context is critically unclear, ask the user - but prefer making reasonable decisions to keep momentum
 - If a change with that name already exists, suggest continuing that change instead
 - Verify each artifact file exists after writing before proceeding to next
@@ -153,8 +151,6 @@ ${DECISION_WRITING_DISCIPLINE}
 
 ## Base-fingerprint capture (NEW step)
 
-(Per \`orbit-base-fingerprints\`' \`Fingerprint capture at every spec-authoring point\` requirement)
-
 Immediately after the change's delta specs are generated (the \`specs\` artifact is written), run:
 
 \`\`\`bash
@@ -168,7 +164,7 @@ add-missing-only (\`--refresh\` is the deliberate re-stamp after reconciling a d
 ADDED-only changes stamp nothing; a "skipped — requirement not found in live baseline" warning
 means the delta references a nonexistent requirement (fix the delta; validation also catches it).
 
-## PR lifecycle (config-gated — D-arc Stage D6)
+## PR lifecycle (config-gated)
 
 \`ff\` is propose-in-one-breath, so it carries the IDENTICAL choreography — a change is never
 treated differently for how it was started.

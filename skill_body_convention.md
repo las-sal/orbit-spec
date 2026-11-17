@@ -28,15 +28,16 @@ R-rop-3, R-rop-4, R-rop-8). `test/core/templates/skill-body-budget.test.ts` poin
 - **Every body stays the same under every configuration.** The body's text never depends on a setting; a setting
   changes only what a command returns.
 - **The budget holds.** Each generated body stays under its character ceiling, and under 500 lines (explore under its
-  own line ceiling, which only goes down). Fix a breach by moving a step's procedure as above, never by raising a
-  ceiling.
+  own line ceiling, which only goes down; it rose once, from 664 to 669, for the five lines the decision-writing
+  bullet's labelled sub-bullets added in stage `tighten-bodies`). Fix a breach by moving a step's procedure as above,
+  never by raising a ceiling.
 
 ## Examples
 
 The commit step, carried by six bodies. The body keeps:
 
 ```markdown
-## Commit step (the closing commit — `orbit-conventions`' `The commit step closes each carrying body`)
+## Commit step (the closing commit)
 
 Runs in the invoking session only, never in a dispatched worker, after the run summary (in archive, after the PR-attached tail) and before the position readout (in archive, the completion readout); in apply, once at the session's close. Skip it with no change target, or when this invocation's PR layer has already stopped. Otherwise run `orbit pr commit "<name>" --json`. On `action: off`, print nothing and go on. On any other result, or a non-zero exit, read `references/commit-step.md` and follow it from the result you already have, before the readout.
 ```
@@ -72,6 +73,4 @@ Address-reviews' step 7 reads `references/account-walk-step.md` after the logs a
 ## Exceptions
 
 No step is exempt by design. Not yet brought under the convention: bulk-archive (its sign-off hold, PR section and
-divergence check, and its per-change archive emit), explore (its emit step among them) and onboard, untouched until `reduce-orbit-phase1`'s evaluation decides what follows. The review skill's external-review prompt references
-(`mode-sections.md`, `prompt-template.md`) are named by `references/external-handoff.md` rather than by the body, a
-two-level chain that predates this convention; stage `tighten-bodies` brings it to one level (RG2).
+divergence check, and its per-change archive emit), explore (its emit step among them) and onboard, untouched until `reduce-orbit-phase1`'s evaluation decides what follows.

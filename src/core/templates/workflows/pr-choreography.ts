@@ -62,6 +62,16 @@ export const WHERE_EACH_PHASE_RUNS_SELECTION = 'Follow only the subsection of th
 /** The reference emitted into the propose and ff skills. */
 export const PR_CHOREOGRAPHY_REFERENCE = `# Reference: the PR lifecycle at propose and ff
 
+## Contents
+
+- Where each phase runs
+  - In /orbit:propose
+  - In /orbit:ff
+- Phase 1 — select, before any artifact is written
+- Phase 2 — generate and validate, on that branch
+- Phase 3 — publish, only after phase 2 succeeds
+- Acting on the record
+
 Loaded ONLY when the engine-resolved regime (\`orbit status --json\`, field \`pr\`) is
 \`per-proposal\` or \`per-architecture\`. Under \`never\` (also what an absent key and every inert
 value resolve to) do not load this file and probe nothing.

@@ -183,7 +183,7 @@ describe('rc13c propose consume-mode integrity (Mechanism section consumption)',
 
   it('the concluded refuse sits inside Mode detection, after the conflict sub-step and before the consume-mode flow (exit 3)', () => {
     const sec = sections(body);
-    const mode = sec['Mode detection (NEW Step 0 — runs before upstream Step 1)'];
+    const mode = sec['Mode detection (Step 0 — runs before upstream Step 1)'];
     expect(mode, 'Mode detection section present').toBeTruthy();
     const conflict = mode.indexOf('**Check for conflict**');
     const refuse = mode.indexOf('this exploration concluded on');
@@ -241,7 +241,7 @@ describe('rc13c propose consume-mode integrity (Mechanism section consumption)',
     const owner = await ownerText('orbit-propose-modifications', 'a PARTITION of the entries and live rules');
     const m = owner.match(/lands in requirement text as one of four shapes, each observed on the record: ([\s\S]+?)\. Which shape fits/);
     expect(m, 'the owner states the four shapes in one clause').toBeTruthy();
-    const bm = body.match(/\*\*The CLOSED shapes\*\* \(a checked mirror of the requirement's list\): ([\s\S]+?)\. Which shape fits/);
+    const bm = body.match(/\*\*The CLOSED shapes\*\*: ([\s\S]+?)\. Which shape fits/);
     expect(bm, 'the body states its four shapes in one clause').toBeTruthy();
     expect(stripTrailing(bm![1])).toBe(stripTrailing(m![1]));
     expect(body.split(stripTrailing(m![1])).length - 1, 'exactly one occurrence in the body').toBe(1);
@@ -326,7 +326,7 @@ describe('rc15 ended-stage-state: the architect §5 offer, the unprompted route,
     expect(s5.split('**AskUserQuestion**').length - 1).toBe(1);
   });
 
-  it('the §2 scaffold sentence is a CHECKED MIRROR of the owner: the parser constant equals the owning spec\'s inline production, and the body interpolates it once (external system pass W1)', async () => {
+  it('the §2 scaffold sentence is a checked mirror of the owner: the parser constant equals the owning spec\'s inline production, and the body interpolates it once (external system pass W1)', async () => {
     // Body-level: the h3 slicer is fence-blind and §2's scaffold fence carries a `### Stage` line
     // that would truncate the slice (the rc13c lesson above). The sentence is stated once.
     // The owner is read through the single-active-owner lookup (an active delta holding the
@@ -335,8 +335,8 @@ describe('rc15 ended-stage-state: the architect §5 offer, the unprompted route,
     expect(owner).toContain(COMPLETE_SLOT_PRODUCTIONS);
     expect(architect.split(COMPLETE_SLOT_PRODUCTIONS).length - 1).toBe(1);
     expect(architect.indexOf(COMPLETE_SLOT_PRODUCTIONS)).toBeLessThan(architect.indexOf('### 3. Resume'));
-    // The mirror says it is one, and names its owner.
-    expect(architect).toContain("are a CHECKED MIRROR of `orbit-architecture-engine`'s `Parseable architecture-doc format` requirement");
+    // tighten-bodies (R-rop-14): the copy carries no note saying it is a mirror or naming its owner.
+    expect(architect).not.toContain("are a CHECKED MIRROR of `orbit-architecture-engine`'s `Parseable architecture-doc format` requirement");
     // once-per-session-detail: the emit field list moved with the emit section to its reference.
     const architectEmit = (getArchitectSkillTemplate().references ?? []).find((r) => r.name === 'run-summary-emit.md')!.content;
     expect(architectEmit).toContain('`stages_ended` (the stage ids this session declared ended');
@@ -734,16 +734,16 @@ describe('D6 PR lifecycle surface', () => {
   it('archive positions the preflight BEFORE the move and the emit, and the tail AFTER it', () => {
     const b = archive.instructions;
     // Anchor on the HEADINGS: the prose carries forward references to later steps.
-    const entryObservation = b.indexOf('## NEW Step 0.7');
+    const entryObservation = b.indexOf('## Step 0.7');
     // MOVED by rc12-body-adoption (task 3.2), a recorded act: the preflight runs BEFORE upstream
     // Step 5's move (`orbit pr preflight` resolves active changes only), renumbered 5.45 → 4.9.
-    const preflight = b.indexOf('## NEW Step 4.9');
-    expect(b.slice(preflight, b.indexOf('## NEW Step 5.5'))).toContain("BEFORE upstream Step 5's move");
+    const preflight = b.indexOf('## Step 4.9');
+    expect(b.slice(preflight, b.indexOf('## Step 5.5'))).toContain("BEFORE upstream Step 5's move");
     expect(entryObservation).toBeGreaterThan(-1);
-    expect(entryObservation).toBeLessThan(b.indexOf('## NEW Step 1.5')); // before any archive write
-    const emit = b.indexOf('## NEW Step 5.5 — Archive run summary');
-    const tail = b.indexOf('## NEW Step 5.6 — The PR-attached tail');
-    const garnish = b.indexOf('## NEW Step 5.7 — Stage-line garnish');
+    expect(entryObservation).toBeLessThan(b.indexOf('## Step 1.5')); // before any archive write
+    const emit = b.indexOf('## Step 5.5 — Archive run summary');
+    const tail = b.indexOf('## Step 5.6 — The PR-attached tail');
+    const garnish = b.indexOf('## Step 5.7 — Stage-line garnish');
     expect(preflight).toBeGreaterThan(-1);
     expect(preflight).toBeLessThan(emit);
     expect(emit).toBeLessThan(tail);
@@ -1266,7 +1266,7 @@ describe('seam-chaining-grants: the granted arrival in the apply and archive bod
   // @scenario text orbit-archive-modifications :: Consent prompt on AI-mediated archive entry :: Preview names the outward writes for an attached change
   // @scenario text orbit-archive-modifications :: Consent prompt on AI-mediated archive entry :: Unattached change keeps the pre-capability preview
   it("the prompted archive's preview names the outward writes for an attached change, and none for an unattached one", () => {
-    expect(archive).toContain('When the change is PR-ATTACHED (D6 — resolve this from the change\'s trail as part of the same read-only discovery), the preview ADDITIONALLY names the tail\'s OUTWARD writes: the branch the archive commit lands on, the PUSH to the resolved remote, and — for a per-proposal PR — the READY FLIP, or for a program PR the APPENDED stage entry.');
+    expect(archive).toContain('When the change is PR-ATTACHED (resolve this from the change\'s trail as part of the same read-only discovery), the preview ADDITIONALLY names the tail\'s OUTWARD writes: the branch the archive commit lands on, the PUSH to the resolved remote, and — for a per-proposal PR — the READY FLIP, or for a program PR the APPENDED stage entry.');
     expect(archive).toContain('The outward line is OMITTED for unattached changes, so the pre-capability prompt is unchanged wherever no PR exists');
   });
 
@@ -1303,7 +1303,7 @@ describe('seam-chaining-grants: carried scenarios the bodies and the engine sour
   const archive = archiveTpl.instructions;
   const tailRef = (archiveTpl.references ?? []).find(r => r.name === 'pr-archive-tail.md')!.content;
   // Step 5.6 ends at the next section: the commit step (chained-review-commit) now sits between it and Step 5.65.
-  const step56 = archive.slice(archive.indexOf('## NEW Step 5.6'), archive.indexOf('\n## ', archive.indexOf('## NEW Step 5.6')));
+  const step56 = archive.slice(archive.indexOf('## Step 5.6'), archive.indexOf('\n## ', archive.indexOf('## Step 5.6')));
 
   // @scenario text orbit-archive-modifications :: PR-attached archive tail :: Push failure degrades, archive stands
   it('a failed push stops the segment in one line naming completed, failed and skipped steps, and the archive never rolls back', () => {

@@ -40,9 +40,10 @@ describe('review body: the VERIFICATION branch (1.5)', () => {
     expect(b).not.toContain('| reviewer class | mode | trail position | pass genre |');
     // System walk 2 (fresh W1): an installed skill cannot open the owner, so the definition is carried
     // as a CHECKED MIRROR (held byte-equal by `verification-verdict-parity.test.ts`) — and nowhere else
-    // in the branch: the grading step names the mirror, it does not paraphrase it.
+    // in the branch: the grading step names the mirror, it does not paraphrase it. Since tighten-bodies the
+    // copy carries no note saying it is one: the fence's first line is the anchor.
     const [steps, mirror] = b.split('#### Verdicts');
-    expect(mirror).toMatch(/CHECKED MIRROR/);
+    expect(mirror.startsWith("\n\n```\nlanded — the resolution's edit is PRESENT")).toBe(true);
     expect(steps).not.toMatch(/PRESENT|NOT UNDONE|COMPLETE across/);
     expect(steps).toContain('by the definition under **Verdicts** below');
   });

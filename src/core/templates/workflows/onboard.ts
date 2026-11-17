@@ -9,7 +9,7 @@ import type { SkillTemplate, CommandTemplate } from '../types.js';
 export function getOnboardSkillTemplate(): SkillTemplate {
   return {
     name: 'orbit-onboard',
-    description: 'Single-pass onboarding reference for orbit - orientation to the self-contained tool, the canonical workflow, and the full command table. No demo changes, no interactive walkthrough.',
+    description: 'Single-pass onboarding reference for orbit - orientation to the self-contained tool, the canonical workflow, and the full command table. No demo changes, no interactive walkthrough. Use when someone is new to orbit or asks how its workflow fits together.',
     instructions: getOnboardInstructions(),
     license: 'MIT',
     compatibility: 'Requires orbit CLI.',

@@ -96,11 +96,11 @@ describe("verify's Scenario Coverage step reads the scenario map (rc06b)", () =>
     expect(gfmTable(coverageStep(), HEADER_ROW)).toBe(gfmTable(ownerSection, HEADER_ROW));
   });
 
-  it('the mirror says it is one and names its owner; the table appears once in the body', () => {
+  it('the copy carries no mirror note (tighten-bodies); the table appears once in the body', () => {
     const step = coverageStep();
     const lead = step.slice(0, step.indexOf(HEADER_ROW));
-    expect(lead).toMatch(/CHECKED MIRROR/);
-    expect(lead).toContain("`orbit-verify-modifications`' `Verify's Scenario Coverage step reads the scenario map`");
+    expect(lead).not.toMatch(/CHECKED MIRROR/i);
+    expect(lead).toContain('Report what it returns by this table. The table is exhaustive');
     expect(verifySkill().split(HEADER_ROW).length - 1).toBe(1);
   });
 
@@ -258,7 +258,7 @@ describe('Generated-file disposition is visible in the bodies (rc06b, task 4.2)'
     const headings = additions.split('\n').filter((l) => l.startsWith('## '));
     expect(headings).toEqual([
       '## Execution disciplines (epitome)',
-      '## Consent inheritance (D1, per `orbit-lifecycle-consent`)',
+      '## Consent inheritance',
     ]);
     // No numbered step and no command block: notes only.
     expect(additions).not.toMatch(/^\s*\d+\. \*\*/m);

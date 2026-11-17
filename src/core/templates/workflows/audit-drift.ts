@@ -282,7 +282,7 @@ Empty or absent lens files → skip Category 2 with the note \`lenses empty or a
 - Two docs disagree on the same fact → WARNING (both file:line refs + recommendation to reconcile).
 - A governing doc materially disagrees with a current spec → CRITICAL.
 
-**Architecture staleness check (D-arc Stage D2)** — Category 3 additionally checks parseable architecture docs against engine-computed reality ("a stale architecture doc is the most expensive drift there is"). Load \`orbit architecture status --json\` and, per parseable doc:
+**Architecture staleness check** — Category 3 additionally checks parseable architecture docs against engine-computed reality ("a stale architecture doc is the most expensive drift there is"). Load \`orbit architecture status --json\` and, per parseable doc:
 
 - **(a) Contradicting prose** — prose in a stage section that contradicts the stage's computed state (e.g. "awaits the user's propose" while a citing change is active) → WARNING.
 - **(b) Falsified/unsupported completion mark** — a \`Complete:\` mark — ratified \`[x]\` or ended \`[~]\` — on a stage whose observed state the engine's composition rule renders INCONSISTENT (the table in \`orbit-architecture-engine\`'s \`Computed stage state with completion-as-ratification\`; this check consumes that rule and enumerates none of its observations — read \`rendered\` and the \`inconsistency\` detail from the status JSON) → CRITICAL (the completion claim is falsified or unsupported by observation; the ended claim is contradicted by live work; the finding names the stage, the mark, and the citing artifact when one exists, with the detail's own words — a concluded exploration is named as a conclusion, never as live work).
@@ -304,7 +304,7 @@ Check (d) scans change/explore metadata INDEPENDENTLY of doc presence — a typo
 - **REMOVED requirement** in archived delta but **still present** in baseline → CRITICAL.
 - **RENAMED FROM** name still appearing in baseline (the rename didn't propagate) → WARNING.
 
-**Missing consent-record check (D1 tripwire, per \`orbit-lifecycle-consent\`)** — also scan ACTIVE changes, not only archived ones (any change with lifecycle emits is in scope):
+**Missing consent-record check (tripwire)** — also scan ACTIVE changes, not only archived ones (any change with lifecycle emits is in scope):
 
 For each change in scope, scan its \`.orbit-runs/\` for consent-scoped lifecycle emits (\`apply-*.json\`, \`archive-*.json\`) and apply the **three-tier era rule** from the change's \`.openspec.yaml\` metadata — the metadata markers are the ONLY authority (NOT schema-name resolution, which would misclassify old archives as the current version, and NOT any timestamp constant):
 
@@ -312,9 +312,9 @@ For each change in scope, scan its \`.orbit-runs/\` for consent-scoped lifecycle
 2. **\`consent_era_from\` present** (a straddler stamped at first post-capability touch) → only emits whose filename \`<TS>\` token is at-or-after the stamp are checked; earlier emits stay exempt.
 3. **NEITHER field** → fully pre-capability; every emit exempt (e.g. the C1/C2 archives).
 
-A checked emit **missing the \`consent\` field** → WARNING: \`lifecycle emit lacks consent record — an unconsented or contract-violating transition may have occurred\`, naming the emit path (e.g. \`orbit/changes/<name>/.orbit-runs/apply-<TS>.json\`) and the missing field (\`consent\`). This is the empirical tripwire behind the D-arc's harness-hooks deferral (R-d-2): its firing is the named re-entry trigger for hard enforcement.
+A checked emit **missing the \`consent\` field** → WARNING: \`lifecycle emit lacks consent record — an unconsented or contract-violating transition may have occurred\`, naming the emit path (e.g. \`orbit/changes/<name>/.orbit-runs/apply-<TS>.json\`) and the missing field (\`consent\`). This is the empirical tripwire behind the harness-hooks deferral: its firing is the named re-entry trigger for hard enforcement.
 
-### 7.5 Category 5 — Touchpoints divergence (D-arc Stage D5)
+### 7.5 Category 5 — Touchpoints divergence
 
 For each ACTIVE change whose \`design.md\` carries a \`## Touchpoints\` section AND whose apply has committed work: the divergence arithmetic is ENGINE-COMPUTED — the AI performs NO set arithmetic and NO matching, only severity judgment over the computed lists. Read them from ONE call:
 
@@ -330,7 +330,7 @@ The engine owns parse + matching per \`orbit-propose-modifications\`' Touchpoint
 - **Each \`predicted_unsatisfied\` entry** → SUGGESTION at pre-archive context only (the plan overshot — informational).
 - **Each \`malformed\` entry** (\`{line, text}\`) → SUGGESTION naming the line; the engine already excluded it from the arithmetic, never a false drift source.
 
-### 7.6 Category 6 — Explore emit attestation cross-check (D-arc Stage D5)
+### 7.6 Category 6 — Explore emit attestation cross-check
 
 For each staging exploration (\`orbit/explore/<name>/\`) with explore emits: cross-check the NEWEST emit's engine-computed counts (\`decisions_captured\`, \`open_questions_count\`, \`open_questions_with_recommendation\`) against a FRESH parse of the current \`explore.md\` (count per the five-section convention: Decisions entries; Open-question entries; those whose \`Standing recommendation:\` value is present and not the literal \`none yet\`). This closes leak-hardening layer 3's loop:
 

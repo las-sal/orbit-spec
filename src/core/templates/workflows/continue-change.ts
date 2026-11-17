@@ -133,12 +133,8 @@ Common artifact patterns:
 For other schemas, follow the \`instruction\` field from the CLI output.
 
 **Guardrails**
-- Create ONE artifact per invocation
-- Always read dependency artifacts before creating a new one
-- Never skip artifacts or create out of order
 - If context is unclear, ask the user before creating
 - Verify the artifact file exists after writing before marking progress
-- Use the schema's artifact sequence, don't assume specific artifact names
 - **IMPORTANT**: \`context\` and \`rules\` are constraints for YOU, not content for the file
   - Do NOT copy \`<context>\`, \`<rules>\`, \`<project_context>\` blocks into the artifact
   - These guide what you write, but should never appear in the output
@@ -158,8 +154,6 @@ The disciplines from \`orbit-conventions\`, embedded per body; detail lives wher
 ${DECISION_WRITING_DISCIPLINE}
 
 ## Base-fingerprint capture (NEW step — fires when the created artifact is \`specs\`)
-
-(Per \`orbit-base-fingerprints\`' \`Fingerprint capture at every spec-authoring point\` requirement)
 
 When the artifact this invocation created is the change's delta specs (the \`specs\` artifact),
 run — immediately after writing them, before the run-summary emit:

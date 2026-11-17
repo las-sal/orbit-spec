@@ -70,11 +70,11 @@ describe('the archive bodies carry the sign-off hold', () => {
     expect(count(ref as string, SIGNOFF_HOLD_STEP)).toBe(1);
     const basic = 'Directly after Step 3.6\'s save, BEFORE upstream Step 4, in every mode, run `orbit brief --change "<name>" --hold --json`';
     const at = [
-      "## NEW Step 3.6 — Save the change's brief (BEFORE the sync)",
+      "## Step 3.6 — Save the change's brief (BEFORE the sync)",
       BRIEF_SAVE_STEP,
-      '## NEW Step 3.7 — The sign-off hold (BEFORE the sync)',
+      '## Step 3.7 — The sign-off hold (BEFORE the sync)',
       basic,
-      '## NEW Step 4.9 — PR preflight',
+      '## Step 4.9 — PR preflight',
     ].map((s) => b.indexOf(s));
     expect(at.every((i) => i > -1)).toBe(true);
     expect([...at].sort((x, y) => x - y)).toEqual(at);

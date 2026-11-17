@@ -92,9 +92,10 @@ describe('each run-summary-emit.md holds its emit section whole', () => {
     for (const dir of RUN_SUMMARY_EMIT_SKILLS) {
       expect(emitRef(dir), dir).toBe(`# Reference: the run-summary emit step\n\n${STEPS[dir].section}\n`);
       expect(body(dir).includes(STEPS[dir].section), dir).toBe(false);
-      // The section and the body's basic content open with the same heading.
+      // The section and the body's basic content open with the same heading, but for the `NEW` the body's copy
+      // dropped (tighten-bodies: archive's Step 5.5).
       const heading = STEPS[dir].section.split('\n')[0];
-      expect(STEPS[dir].basic.split('\n')[0], dir).toBe(heading);
+      expect(STEPS[dir].basic.split('\n')[0], dir).toBe(heading.replace('## NEW Step ', '## Step '));
     }
   });
 
@@ -159,9 +160,25 @@ describe('what stays is in the body', () => {
     expect(ADDRESS_REVIEWS_RUN_SUMMARY_EMIT_BASIC).toContain('invoke BARE — `orbit emit address-reviews --payload <payload-file>`');
   });
 
+  /**
+   * tighten-bodies: the provenance each body's copy dropped from a paragraph it shares with its section (the reference
+   * keeps its bytes) — (the body's words, the section's words). The edit ledger proves each removal is provenance.
+   */
+  const SPLIT: Partial<Record<string, Array<[string, string]>>> = {
+    'orbit-apply-change': [['node (a separate verify gate', 'node (D5 — a separate verify gate']],
+    'orbit-archive-change': [['## Step 5.5 — Archive run summary', '## NEW Step 5.5 — Archive run summary']],
+    'orbit-architect': [
+      ['(`/orbit:architect` is a multi-turn', '(Per `orbit-run-summary-emit` — `/orbit:architect` is a multi-turn'],
+      ['`orbit emit architect`.)', '`orbit emit architect` — `orbit-emit-composition`.)'],
+      ['(leak-hardening layer 2', '(D-arc Stage D5, leak-hardening layer 2'],
+      ['the Step 4 residency sweep', 'the Step 4 R-d-8 residency sweep'],
+    ],
+  };
+
   it('every staying paragraph is also in the section, so the reference holds the step whole', () => {
     for (const dir of RUN_SUMMARY_EMIT_SKILLS) {
-      const paragraphs = STEPS[dir].basic.split('\n\n').map((p) => p.replace(`${RUN_SUMMARY_READ_CUE}`, '').trim()).filter(Boolean);
+      const restore = (p: string): string => (SPLIT[dir] ?? []).reduce((t, [body, section]) => t.replace(body, section), p);
+      const paragraphs = STEPS[dir].basic.split('\n\n').map((p) => restore(p.replace(`${RUN_SUMMARY_READ_CUE}`, '').trim())).filter(Boolean);
       // The new sentences opening the cue's paragraph in six bodies are the body's own; every other paragraph is the section's.
       const own = /^(At command completion, write the [a-z]+ run summary\.|After upstream Step 5 \(move-to-archive\) completes, write the archive run summary\.|Each payload's fields are listed in)/;
       for (const p of paragraphs) {

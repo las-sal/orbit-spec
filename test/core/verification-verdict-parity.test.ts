@@ -8,8 +8,9 @@ import { ownerText, fencedProduction } from '../helpers/owner-text.js';
  * fenced production in `orbit-emit-composition`'s `A VERIFICATION-genre payload carries its verdicts
  * and its findings link to the walk record`. An adopter's installed review skill has neither our
  * specs nor our parser, and a verifier cannot grade by a definition it cannot read, so the body
- * carries the fence as a CHECKED MIRROR under a "Verdicts" heading naming the owner; this test holds
- * it byte-equal through the single-active-owner lookup (the delta while open, the baseline after).
+ * carries the fence as a CHECKED MIRROR under a "Verdicts" heading; this test holds it byte-equal through the
+ * single-active-owner lookup (the delta while open, the baseline after). Since tighten-bodies (R-rop-14) the copy
+ * carries no note saying it is a mirror or naming its owner.
  */
 const FIRST = "landed — the resolution's edit is PRESENT";
 
@@ -22,10 +23,10 @@ describe('verification verdicts ↔ review body parity (rc03c)', () => {
     expect(fencedProduction(section, FIRST)).toBe(fencedProduction(owner, FIRST));
   });
 
-  it('the mirror says it is one and names its owner', () => {
+  it('the copy carries no note saying it is a mirror or naming its owner', () => {
     const section = getReviewSkillTemplate().instructions.split(/\n#{2,4} Verdicts\b/)[1].split('```')[0];
-    expect(section).toMatch(/CHECKED MIRROR/);
-    expect(section).toContain("`orbit-emit-composition`'s **A VERIFICATION-genre payload carries its verdicts and its findings link to the walk record**");
+    expect(section).not.toMatch(/CHECKED MIRROR/i);
+    expect(section).not.toContain("`orbit-emit-composition`'s **A VERIFICATION-genre payload carries its verdicts and its findings link to the walk record**");
   });
 
   it('the definition appears ONCE in the body (a mirror, never a restatement beside itself)', () => {

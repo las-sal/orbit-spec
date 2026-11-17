@@ -91,10 +91,8 @@ After completing the steps, summarize:
 
 **Guardrails**
 - Do NOT create any artifacts yet - just show the instructions
-- Do NOT advance beyond showing the first artifact template
 - If the name is invalid (not kebab-case), ask for a valid name
 - If a change with that name already exists, suggest continuing that change instead
-- Pass --schema if using a non-default workflow
 
 ---
 

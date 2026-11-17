@@ -153,7 +153,7 @@ The disciplines from \`orbit-conventions\`, embedded per body; detail lives wher
 - **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line — gate \`passed\` means *eligible*, not *commanded*.
 ${DECISION_WRITING_DISCIPLINE}
 
-## Consent inheritance (D1, per \`orbit-lifecycle-consent\`)
+## Consent inheritance
 
 Sync invoked as a step inside a consented flow (e.g. archive Step 4, bulk-archive Step 8a) inherits that flow's consent and does NOT prompt separately. Standalone \`/orbit:sync\` is not consent-scoped (no consent-marked gate, no run-summary emit, no prompt); AI-mediated invocation of it is barred by the no-chaining discipline above.`,
     references: [

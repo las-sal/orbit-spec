@@ -215,8 +215,6 @@ const INVENTORY: Entry[] = [
   { file: 'orbit-apply-change/SKILL.md', anchor: 'If paused: explain why and wait for guidance', tags: ['(chain: decision)'], row: 'apply: a pause' },
   { file: 'orbit-apply-change/SKILL.md', anchor: '**Output On Pause (Issue Encountered)**', tags: ['(chain: not a prompt)'], row: 'mention' },
   { file: 'orbit-apply-change/SKILL.md', anchor: 'If task is ambiguous, pause and ask before implementing', tags: ['(chain: decision)'], row: 'apply: a pause' },
-  { file: 'orbit-apply-change/SKILL.md', anchor: 'If implementation reveals issues, pause and suggest artifact updates', tags: ['(chain: decision)'], row: 'apply: a pause' },
-  { file: 'orbit-apply-change/SKILL.md', anchor: 'Pause on errors, blockers, or unclear requirements', tags: ['(chain: decision)'], row: 'apply: a pause' },
   { file: 'orbit-apply-change/SKILL.md', anchor: 'at a mid-chunk session pause (chain: not a prompt)', tags: ['(chain: not a prompt)'], row: 'mention' },
   // once-per-session-detail: the reference holds the emit section whole, this sentence included.
   { file: 'orbit-apply-change/run-summary-emit.md', anchor: 'at a mid-chunk session pause (chain: not a prompt)', tags: ['(chain: not a prompt)'], row: 'mention' },
@@ -312,7 +310,7 @@ describe('Each chained prompt states its kind', () => {
     for (const dir of ['orbit-apply-change', 'orbit-archive-change']) expect(labels).toContain(`${dir}/SKILL.md`);
     for (const r of skill('orbit-archive-change').references ?? []) expect(labels).toContain(`orbit-archive-change/${r.name}`);
     const body = skill('orbit-archive-change').instructions;
-    const mutated = body.replace('## NEW Step 1.5 — Unresolved', 'Confirm the archive date with **AskUserQuestion** first.\n\n## NEW Step 1.5 — Unresolved');
+    const mutated = body.replace('## Step 1.5 — Unresolved', 'Confirm the archive date with **AskUserQuestion** first.\n\n## Step 1.5 — Unresolved');
     expect(mutated).not.toBe(body);
     const failures = tagFailures('orbit-archive-change/SKILL.md', mutated);
     expect(failures).toHaveLength(1);
@@ -386,8 +384,6 @@ describe('A chain treats each prompt by its kind — each listed prompt is tagge
     ['apply: a pause (an error or blocker)', apply, 'Error or blocker encountered → report and wait for guidance', '(chain: decision)'],
     ['apply: a pause (the paused status)', apply, 'If paused: explain why and wait for guidance', '(chain: decision)'],
     ['apply: a pause (guardrails, an ambiguous task)', apply, 'If task is ambiguous, pause and ask before implementing', '(chain: decision)'],
-    ['apply: a pause (guardrails, a design issue)', apply, 'If implementation reveals issues, pause and suggest artifact updates', '(chain: decision)'],
-    ['apply: a pause (guardrails, errors)', apply, 'Pause on errors, blockers, or unclear requirements', '(chain: decision)'],
     ['archive: which change', archive, 'Use the **AskUserQuestion tool** to let the user select.', '(chain: target)'],
     ['archive: the consent prompt', archive, 'fire a consent **AskUserQuestion**', '(chain: not a prompt)'],
     ['archive: a user-validation task line the closure cannot dispose of', archive, 'who repairs `tasks.md` before the archive proceeds, or aborts', '(chain: decision)'],
@@ -437,7 +433,7 @@ describe('A chain treats each prompt by its kind — each listed prompt is tagge
   it('the marker prompt in a chained archive is a decision, asked as on a typed archive', () => {
     // archive: unaddressed `@review:` markers → (chain: decision), on the line right after the warning block.
     expect(lineExact(archive, 'Prompt via `AskUserQuestion` (chain: decision):')).toContain('(chain: decision)');
-    const step = archive.slice(archive.indexOf('## NEW Step 1.5'), archive.indexOf('## NEW Step 3.2'));
+    const step = archive.slice(archive.indexOf('## Step 1.5'), archive.indexOf('## Step 3.2'));
     expect(step).toContain('Prompt via `AskUserQuestion` (chain: decision):\n\n- **Address now**');
     expect(lineWith(archive, '- **Granted** (an AI-mediated arrival')).toContain('a decision prompt is asked exactly as on a typed arrival, and the chain does not continue after it');
   });
@@ -445,7 +441,7 @@ describe('A chain treats each prompt by its kind — each listed prompt is tagge
   // @scenario text orbit-conventions :: A chain treats each prompt by its kind :: The sign-off stops a chained archive
   it('the sign-off in a chained archive is a decision: the copy shown and asked as on a typed archive, and the chain stops after it', () => {
     // The body's basic content sends every result but `why: "off"` to the reference, which carries the prompt.
-    expect(archive.slice(archive.indexOf('## NEW Step 3.7'), archive.indexOf('## NEW Step 4.9'))).toContain('read `references/signoff-hold.md`');
+    expect(archive.slice(archive.indexOf('## Step 3.7'), archive.indexOf('## Step 4.9'))).toContain('read `references/signoff-hold.md`');
     const step = holdRef;
     expect(step).toContain('show it to the user WHOLE');
     expect(lineWith(step, '2. Ask with the **AskUserQuestion tool**')).toContain(

@@ -28,6 +28,13 @@ export const VERIFY_RUN_SUMMARY_EMIT_BASIC = [
   VERIFY_EMIT_COMMAND,
 ].join('\n\n');
 
+/**
+ * tighten-bodies (R-rop-14): the body carries no mirror notes; what only authors need is here.
+ *
+ * The Scenario Coverage reader table is a checked mirror of `orbit-verify-modifications`' `Verify's Scenario Coverage step
+ * reads the scenario map` (an installed skill cannot open that spec), held byte-equal by
+ * `test/core/templates/verify-scenario-map.test.ts`. Never edit the table here.
+ */
 export function getVerifyChangeSkillTemplate(): SkillTemplate {
   return {
     name: 'orbit-verify-change',
@@ -114,7 +121,7 @@ export function getVerifyChangeSkillTemplate(): SkillTemplate {
      \`\`\`bash
      orbit status --change "<name>" --scenarios --json
      \`\`\`
-     Report what it returns by this table, a CHECKED MIRROR of \`orbit-verify-modifications\`' \`Verify's Scenario Coverage step reads the scenario map\`, held byte-equal to it by a parity test (an installed skill cannot open that spec). The table is exhaustive: \`change\` and \`tests\` carry no coverage fact and raise nothing.
+     Report what it returns by this table. The table is exhaustive: \`change\` and \`tests\` carry no coverage fact and raise nothing.
 
 | what the surface returns | what verify reports |
 |---|---|

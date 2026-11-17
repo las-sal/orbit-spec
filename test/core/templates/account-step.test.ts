@@ -69,7 +69,7 @@ describe('the account steps: basic content in the apply and address-reviews bodi
     const b = body('orbit-apply-change');
     expect(count(b, ACCOUNT_STEP_BASIC)).toBe(1);
     expect(ACCOUNT_STEP_BASIC).toBe(
-      "## Account step (before the run summary — `orbit-decision-records`' `Each change carries one account, written when apply is complete`)\n\n" +
+      "## Account step (before the run summary)\n\n" +
         "At the session's end, BEFORE the run-summary emit (or, when the session writes no run summary, before the completion readout), read `references/account-step.md` and follow it: it says whether this session writes the account, a replacement of it, or none, and how."
     );
     expect(b.indexOf(ACCOUNT_STEP_BASIC)).toBeLessThan(b.indexOf('## Run-summary emit'));
@@ -86,7 +86,7 @@ describe('the account steps: basic content in the apply and address-reviews bodi
     const b = body('orbit-address-reviews');
     expect(count(b, ACCOUNT_WALK_STEP_BASIC)).toBe(1);
     expect(ACCOUNT_WALK_STEP_BASIC).toBe(
-      "### 7. Replace the account when a fix changed it (`orbit-decision-records`' `Each change carries one account, written when apply is complete`)\n\n" +
+      "### 7. Replace the account when a fix changed it\n\n" +
         "After the logs are written, read `references/account-walk-step.md` and follow it: it says whether this walk writes a replacement of the change's account, or none, and how."
     );
     expect(b.indexOf(ACCOUNT_WALK_STEP_BASIC)).toBeGreaterThan(b.indexOf('### 6. Persist the run summary'));

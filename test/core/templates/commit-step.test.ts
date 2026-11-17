@@ -106,8 +106,8 @@ describe('the commit step: carriage (chained-review-commit)', () => {
     expect(COMMIT_STEP_BASIC).toContain('after the run summary (in archive, after the PR-attached tail) and before the position readout (in archive, the completion readout)');
     const archive = body('orbit-archive-change');
     const at = archive.indexOf(COMMIT_STEP_BASIC);
-    expect(at).toBeGreaterThan(archive.indexOf('## NEW Step 5.6 — The PR-attached tail'));
-    expect(at).toBeLessThan(archive.indexOf('## NEW Step 5.65'));
+    expect(at).toBeGreaterThan(archive.indexOf('## Step 5.6 — The PR-attached tail'));
+    expect(at).toBeLessThan(archive.indexOf('## Step 5.65'));
     expect(archive).not.toContain('## Chain end step');
   });
 

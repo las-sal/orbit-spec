@@ -107,7 +107,7 @@ describe('the draft window and the archive close', () => {
     expect(close).toContain('Show every `human_acts` argv verbatim');
     expect(close).toContain('the merge, then the return\nto the default branch');
     expect(close).toContain('Run none of them.');
-    const echo = section(getArchiveChangeSkillTemplate().instructions, '## NEW Step 5.8');
+    const echo = section(getArchiveChangeSkillTemplate().instructions, '## Step 5.8');
     expect(echo).toContain('`human_acts`');
     expect(echo).toContain('Run none of them.');
   });

@@ -11,6 +11,15 @@ import { CHAIN_END_STEP_BASIC, CHAIN_END_STEP_REFERENCE, CHAIN_END_STEP_REFERENC
 
 const REVIEW_RUN_SUMMARY_SCHEMA_REFERENCE = `# Reference: review run-summary schema
 
+## Contents
+
+- Universal spine inheritance
+- Schema
+  - Example payload (change modes)
+- Field notes
+- Architecture-mode extensions (D-arc Stage D2)
+  - Example payload (architecture mode)
+
 Each \`/orbit:review\` invocation persists a JSON summary. The location is PER MODE (D-arc Stage D2): \`orbit/changes/<change-name>/.orbit-runs/review-<mode>-<TS>.json\` for \`proposal\` and \`system\` modes, and \`orbit/architecture/.orbit-runs/review-architecture-<TS>.json\` for \`architecture\` mode (the architecture trail — shared by all docs, never moved by change archiving). \`<TS>\` is ISO-8601 with hyphens (e.g., \`review-proposal-2026-05-18T14-35-23Z.json\`).
 
 Create the trail directory if it doesn't exist. The file is **committed** (not gitignored) so iteration history travels with the change into archive (change modes) or persists in the architecture trail (architecture mode).
@@ -442,6 +451,28 @@ No \`--fast\` subset: all six passes always run (the flag is a noted no-op in th
 
 const REVIEW_EXTERNAL_HANDOFF_REFERENCE = `# Reference: the external-handoff branch (\`--reviewer external\`)
 
+## Contents
+
+- Disciplines
+- Steps
+  - 1. Resolve the change
+  - 2. Resolve the mode
+  - 3. Handoff preflight — committed-and-pushed state
+  - 4. Count iterations (per mode)
+  - 5. Load cycle context
+  - 6. Compute the recommended-session note
+  - 7. Write the prompt file
+  - 8. Emit the chat invocation snippet (no runner launched)
+  - 9. Launch the recorded runner (launch route only)
+- Reference prompt template
+- Mode-specific sections
+- Worked example (chat output, iter 5 proposal-mode review of \`add-review-workflows\`)
+- Out of scope
+- Graceful degradation
+- Run-summary emit (T0 — when prompt is packaged, before findings return)
+  - JSON shape
+  - \`next_recommended\` — multi-step prose
+
 This branch packages a review request for an external AI (codex, fresh Claude, GPT, etc.) to perform a second-opinion review of an orbit change — the behavior formerly invoked as the standalone \`/orbit:review-external\` command (RETIRED at D-arc Stage D5; the RECORD VOCABULARY IS FROZEN: the T0 emit keeps \`command: "review-external"\` and its \`review-external-<TS>.json\` filename, prompts keep \`external-prompt-<as>-<TS>.md\`, findings keep \`external-<as>-<TS>.md\` — gates, orientation WAITING arithmetic, the report ordinal, and the address-reviews parser all key on those names). The branch writes a self-contained markdown prompt to \`orbit/changes/<change-name>/.orbit-runs/external-prompt-<as>-<TS>.md\` (committed; the external AI reads it from the repo), then takes ONE of two routes. **With no runner launched** (none recorded, or the recorded one not on \`PATH\`) it emits a short invocation snippet to chat that tells the user what to paste into the external AI's session — the handoff exactly as it was before runners existed. **With the user's recorded runner reachable** it launches that runner on the prompt itself, in a throwaway worktree at the handoff commit, and saves and commits the return — no paste (Step 9).
 
 **Runs the review ONLY through the user's recorded runner, and NEVER ingests findings.** The runner is the one the user recorded in their per-user global config (\`orbit-external-runner\`; read through \`orbit external runner --json\`); a runner merely present on \`PATH\` is never launched. With none, the external AI is the user's to run. Either way, ingestion is the change-scoped \`/orbit:address-reviews <change-name>\`, which discovers the saved return as an outstanding pass, or an explicit \`--from-file <path>\` aim — invoked separately, never by this branch's own steps: by the user, or, when the change status's \`chain\` object allows it, by the review body's Chain end step.
@@ -824,6 +855,10 @@ Substitute these into the \`## What to read for THIS review\` and \`## What to l
 
 const REVIEW_EXTERNAL_PROMPT_TEMPLATE_REFERENCE = `# Reference: external-review prompt template
 
+## Contents
+
+- Template
+
 This is the canonical template for the file written to \`orbit/changes/<change-name>/.orbit-runs/external-prompt-<as>-<TS>.md\` by the external-handoff branch of \`/orbit:review --as <mode> --reviewer external\`.
 
 **The implementer may adjust phrasing for clarity but MUST preserve the named sections and the "Output format" block verbatim** — the section headers (\`## CRITICAL\` / \`## WARNING\` / \`## SUGGESTION\` / \`## Blocks\` / \`## Direction\`) and the field labels (\`**File**:\`, \`**Description**:\`, \`**Reproduction**:\`, \`**Disposition**:\`) are what \`/orbit:address-reviews --from-file\` and the report renderer parse. Deviating breaks ingestion. The \`## Severity\` paragraph is a CHECKED MIRROR of \`orbit-conventions\`' Severity ladder (its fenced production), held byte-equal by a parity test — an external reviewer has none of our specs, so the copy must exist and must say what it is; never reword it here.
@@ -959,6 +994,26 @@ commit/push, and the user will commit it manually.
 `;
 
 const REVIEW_BLIND_PAIR_REFERENCE = `# Reference: the blind pair (\`--reviewer blind-pair\`)
+
+## Contents
+
+- Steps
+  - 1. Preflight and the runner
+  - 2. The launch
+  - 3. BASE
+  - 4. The route
+  - 5a. The external half, launched
+  - 5b. The external half, pasted
+  - 5c. The fresh half
+  - 6. Wait
+  - 7. The fresh pass file
+  - 8. The external return
+  - 9. The saved return
+  - 10. Push
+  - 11. The worktree
+  - 12. Reports
+  - 13. End
+- Session end
 
 This reference runs a BLIND PAIR — one \`fresh\` pass and one \`external\` pass of the mode, blind to each other — in ONE invocation. Its step order is \`orbit-review\`'s \`The blind-pair reviewer runs both halves in one invocation\`; what the launch record means is \`orbit-engine-gates\`' \`A pair's membership is computed from its launch\`. The external half's packaging, launch, save and commit are \`references/external-handoff.md\`'s (loaded with this one) and are NAMED below, never restated; the fresh half is the trunk's **Dispatching a fresh pass**, also named, not restated.
 
@@ -1141,11 +1196,21 @@ export const REVIEW_RUN_SUMMARY_EMIT_BASIC = [
   REVIEW_EMIT_COMMAND,
 ].join('\n\n');
 
+/**
+ * tighten-bodies (R-rop-14): the body carries no mirror notes; what only authors need is here.
+ *
+ * Checked mirrors (an installed skill has no specs to point at; never edit them here):
+ * - the pass-genre table: `orbit-conventions`' `Review mode decision framework`, held by `test/core/pass-genre-parity.test.ts`;
+ * - the Verdicts fence: `orbit-emit-composition`'s `A VERIFICATION-genre payload carries its verdicts and its findings link
+ *   to the walk record`, held by `test/core/verification-verdict-parity.test.ts`;
+ * - the Sweep scope and paths fence: `orbit-emit-composition`'s `The walk write gate checks sweep evidence`, which the walk's
+ *   write gate enforces, held by `test/core/sweep-path-parity.test.ts`.
+ */
 export function getReviewSkillTemplate(): SkillTemplate {
   return {
     name: 'orbit-review',
     description: "Editorial review of an orbit change or an architecture doc: proposal mode (pre-apply, 9 passes over artifacts), system mode (post-apply, verify-change + 6 system-wide passes), or architecture mode (a doc under orbit/architecture/, 6 passes, no gate). Use when the user wants a second-pair-of-eyes pass before applying or archiving, or a graded pass over a program architecture doc.",
-    instructions: `Run an editorial review of an orbit change or an architecture doc. Three modes: \`--as proposal\` reviews a change's pre-implementation artifacts (9 passes); \`--as system\` reviews the whole product state after apply (verify-change as Pass 0 + 6 system-wide passes); \`--as architecture\` reviews an architecture DOC under \`orbit/architecture/\` (6 passes, NO gate — D-arc Stage D2). All modes share the 3-dimension scorecard (Completeness / Correctness / Coherence), the severity ladder (CRITICAL / WARNING / SUGGESTION — defined ONCE, by consequence, in \`orbit-conventions\`' Severity ladder; every pass rule NAMES it and defines nothing of its own), pushback discipline, and \`.orbit-runs/\` persistence. They differ on which passes run, what the final-assessment references (the \`review-proposal\` / \`review-system\` gates for the change modes; NO gate in architecture mode), and a few mode-specific flags (\`--mark\` for proposal, \`--skip-verify\` for system). The command additionally carries the REVIEWER axis (D-arc Stage D5): \`--reviewer in-context|fresh|external|blind-pair\` (default \`in-context\`). The first three are the reviewer classes; \`blind-pair\` is not a class but an INVOCATION of both independent classes at once — one fresh pass and one external pass, blind to each other. Each value has ONE shorthand that is exactly \`--reviewer <value>\`: \`--in-context\`, \`--fresh\`, \`--external\`, \`--blind-pair\`; an invocation carries AT MOST ONE reviewer selector (the selector table under Step 3). \`--reviewer external\` and \`--reviewer blind-pair\`, by either spelling, REQUIRE \`--as proposal|system\` (architecture mode supports in-context and fresh only; the combination is a clean usage error naming the constraint, and writes no prompt file and no T0 emit). \`external\` dispatches to the EXTERNAL-HANDOFF BRANCH: load \`references/external-handoff.md\` and follow it — it packages the prompt file and the T0 emit, then either prints the chat invocation snippet for paste or, with a reachable recorded runner, launches that runner and saves its return; no pass of the internal classes runs in that invocation. \`blind-pair\` loads \`references/blind-pair.md\` AND \`references/external-handoff.md\` and follows the pair reference, which runs both halves. The in-context and fresh branches load neither reference.
+    instructions: `Run an editorial review of an orbit change or an architecture doc. Three modes: \`--as proposal\` reviews a change's pre-implementation artifacts (9 passes); \`--as system\` reviews the whole product state after apply (verify-change as Pass 0 + 6 system-wide passes); \`--as architecture\` reviews an architecture DOC under \`orbit/architecture/\` (6 passes, NO gate). All modes share the 3-dimension scorecard (Completeness / Correctness / Coherence), the severity ladder (CRITICAL / WARNING / SUGGESTION — defined ONCE, by consequence, in \`orbit-conventions\`' Severity ladder; every pass rule NAMES it and defines nothing of its own), pushback discipline, and \`.orbit-runs/\` persistence. They differ on which passes run, what the final-assessment references (the \`review-proposal\` / \`review-system\` gates for the change modes; NO gate in architecture mode), and a few mode-specific flags (\`--mark\` for proposal, \`--skip-verify\` for system). The command additionally carries the REVIEWER axis: \`--reviewer in-context|fresh|external|blind-pair\` (default \`in-context\`). The first three are the reviewer classes; \`blind-pair\` is not a class but an INVOCATION of both independent classes at once — one fresh pass and one external pass, blind to each other. Each value has ONE shorthand that is exactly \`--reviewer <value>\`: \`--in-context\`, \`--fresh\`, \`--external\`, \`--blind-pair\`; an invocation carries AT MOST ONE reviewer selector (the selector table under Step 3). \`--reviewer external\` and \`--reviewer blind-pair\`, by either spelling, REQUIRE \`--as proposal|system\` (architecture mode supports in-context and fresh only; the combination is a clean usage error naming the constraint, and writes no prompt file and no T0 emit). \`external\` dispatches to the EXTERNAL-HANDOFF BRANCH: load \`references/external-handoff.md\` and follow it — it packages the prompt file and the T0 emit, then either prints the chat invocation snippet for paste or, with a reachable recorded runner, launches that runner and saves its return; no pass of the internal classes runs in that invocation. \`blind-pair\` loads \`references/blind-pair.md\` AND \`references/external-handoff.md\` and follows the pair reference, which runs both halves. The in-context and fresh branches load neither reference.
 
 **Generates findings; does not resolve them.** Resolution flows through \`/orbit:address-reviews\` (inline \`@review:\` markers, OR \`--from-file\` ingesting external-review markdown OR internal review JSON OR audit-drift JSON) or by the user replying directly to the report.
 
@@ -1163,7 +1228,7 @@ ${DECISION_WRITING_DISCIPLINE}
 
 ## Pass genre
 
-The table below is a CHECKED MIRROR of \`orbit-conventions\`' \`Review mode decision framework\` — the owner of how a pass's genre is determined and of what a REVIEW-genre brief may carry. An installed skill has no specs to point at, so the copy exists here; a parity test holds it byte-equal to the owner's fence. Never edit it here. The pass genre is a record and a header word; the gate reads nothing of it.
+The pass genre is a record and a header word; the gate reads nothing of it.
 
 \`\`\`
 | reviewer class | mode | trail position | pass genre |
@@ -1196,7 +1261,7 @@ Resolve the MODE first — it decides what the positional even IS. Mode comes fr
 | \`--parallel\` | off | Spawn subagents for heavy passes. Proposal: parallelize Passes 2, 4, 6. System: parallelize Passes 2, 3, 4, 5. |
 | \`--focus <lens>\` | none | Emphasize specific passes (additive — does not skip others). See \`references/flags-detail.md\`. |
 | \`--strict\` | off | Fail-fast on the first CRITICAL or the first BLOCK — stop on what must be addressed. Useful for CI-like runs. |
-| \`--reviewer <value>\` | \`in-context\` | Reviewer: \`in-context\` (this session — the reacting class) / \`fresh\` (same model, clean context — a clean-context subagent; see Dispatching a fresh pass) / \`external\` (a different AI in a separate session — the handoff branch, \`references/external-handoff.md\`) / \`blind-pair\` (one fresh and one external pass in one invocation — \`references/blind-pair.md\`). |
+| \`--reviewer <value>\` | \`in-context\` | Reviewer: \`in-context\` (this session — the reacting class) / \`fresh\` (same model, clean context — a clean-context subagent; see Dispatching a fresh pass) / \`external\` (a different AI in a separate session — the handoff branch, \`references/external-handoff.md\`, which packages the prompt from \`references/prompt-template.md\` and \`references/mode-sections.md\`) / \`blind-pair\` (one fresh and one external pass in one invocation — \`references/blind-pair.md\`). |
 | \`--in-context\` | off | Exactly \`--reviewer in-context\`. |
 | \`--fresh\` | off | Exactly \`--reviewer fresh\` (same model, clean context). |
 | \`--external\` | off, proposal/system only | Exactly \`--reviewer external\`. |
@@ -1253,8 +1318,6 @@ Decide this pass's PASS GENRE first, by the table under **Pass genre** above. A 
 
 #### Verdicts
 
-The definition below is a CHECKED MIRROR of \`orbit-emit-composition\`'s **A VERIFICATION-genre payload carries its verdicts and its findings link to the walk record** — its owner. An installed skill has no specs to point at, so the copy exists here; a parity test holds it byte-equal to the owner's fence. Never edit it here.
-
 \`\`\`
 landed — the resolution's edit is PRESENT, COMPLETE across every site the resolution claims, CLEAN (it introduced no defect), and NOT UNDONE by a later edit.
 regressed — any of those fails, or the verifying pass cannot decide (an undecidable claim is not a held one); its cause is stated by the finding that names it.
@@ -1262,7 +1325,7 @@ regressed — any of those fails, or the verifying pass cannot decide (an undeci
 
 #### Sweep scope and paths
 
-The rule below is a CHECKED MIRROR of \`orbit-emit-composition\`'s **The walk write gate checks sweep evidence** — its owner, which the walk's write gate enforces. An installed skill has no specs to point at, so the copy exists here; a parity test holds it byte-equal to the owner's fence. Never edit it here. Grade over the paths it resolves, so you read the file the gate read.
+Grade over the paths it resolves, so you read the file the gate read.
 
 \`\`\`
 CHECK SCOPE — the union of: on a change-scoped walk, every file under the change directory except its .orbit-runs/ trail; the entry's file; its ripple_cascade.applied paths; its sweep.scope paths, a directory contributing the regular files under it (a symlink met inside a directory is not followed; a path named explicitly is read at its target). Files under .git/, node_modules/, dist/ and build/ are never read, however the path entered the scope; for the change directory's own files those names are read below the change directory.
@@ -1311,7 +1374,7 @@ Roll every pass's findings into the 3-dimension scorecard per the mode's dimensi
 the findings, what was probed and how hard, risk texture: everything the structured sections
 can't say. Commentary NEVER states finding counts, gate verdicts, or next commands (those
 exist only in the report's engine-computed sections; the contract is enforced at this source).
-The iteration note is NOT authored — the renderer computes it from the trail (D-arc Stage D4).
+The iteration note is NOT authored — the renderer computes it from the trail.
 Architecture mode keeps its hand-computed iteration note (matching mode AND \`doc\`, per Step 5
 — never cross-doc): \`Note: N of these findings appeared in the last run on <date>. M new this
 run.\` / \`First architecture review for this doc.\`
@@ -1334,7 +1397,7 @@ worth mentioning — never as hand-rendered structured sections.
 
 #### Architecture mode — NO gate (interim hand-rendered shape)
 
-No gate exists over architecture docs (review standing without a gate — D-arc D-d2-5), so the
+No gate exists over architecture docs (review standing without a gate), so the
 architecture-mode final assessment NEVER says PASSED/UNPASSED of a gate and never references a
 lifecycle command. Until the render surface covers the architecture trail, this mode keeps the
 shared hand-rendered scorecard shape, ending:

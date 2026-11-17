@@ -132,9 +132,9 @@ function handoffPointers(): Array<[string, string]> {
   return [
     ['commit step', COMMIT_STEP_BASIC],
     ['chain end step', CHAIN_END_STEP_BASIC],
-    ['archive Step 3.4', section(archive, '## NEW Step 3.4 — Gate inflection prompt')],
-    ['archive Step 3.45', section(archive, '## NEW Step 3.45 — Base-fingerprint divergence check')],
-    ['archive Step 3.7', section(archive, '## NEW Step 3.7 — The sign-off hold')],
+    ['archive Step 3.4', section(archive, '## Step 3.4 — Gate inflection prompt')],
+    ['archive Step 3.45', section(archive, '## Step 3.45 — Base-fingerprint divergence check')],
+    ['archive Step 3.7', section(archive, '## Step 3.7 — The sign-off hold')],
     ['architect 5.4 hold', PROGRAM_SIGNOFF_HOLD_BASIC],
     ['size brief', section(propose, '## Size brief after generation')],
   ];
@@ -145,8 +145,6 @@ function handoffPointers(): Array<[string, string]> {
  * are read from `references/external-handoff.md`, which the body names, not from the body itself. Stage
  * `tighten-bodies` owns RG2's one-level fix and removes this entry.
  */
-const TWO_LEVEL: Record<string, string[]> = { 'orbit-review': ['mode-sections.md', 'prompt-template.md'] };
-
 describe('moved blocks: each reference file holds its block, byte-equal to the recorded text (task 3.5)', () => {
   for (const m of MOVES) {
     it(`${m.key} hashes to its recorded sha256 and every carrying reference holds it`, () => {
@@ -188,20 +186,17 @@ describe('moved blocks: the basic contents (task 3.5)', () => {
     }
   });
 
+  // @scenario text orbit-skill-generation :: Reference files are linked from their skill and long ones open with contents :: Review's body names its prompt references
   it('each body names every reference file its skill ships, one level deep (the pass files by their <mode> pattern)', () => {
     const unnamed: string[] = [];
     for (const s of skills) {
       const body = s.template.instructions;
       for (const r of s.template.references ?? []) {
-        if (TWO_LEVEL[s.dirName]?.includes(r.name)) continue;
         const named = body.includes(`references/${r.name}`) || (/^passes-/.test(r.name) && body.includes('references/passes-<mode>.md'));
         if (!named) unnamed.push(`${s.dirName}/references/${r.name}`);
       }
     }
     expect(unnamed).toEqual([]);
-    // The exception stays true: those files are reached from the reference the body names.
-    const handoff = reference('orbit-review', 'external-handoff.md');
-    for (const name of TWO_LEVEL['orbit-review']) expect(handoff, name).toContain(`references/${name}`);
   });
 
   it("pr-choreography.md opens its `Where each phase runs` section with the selection line, then one subsection per workflow", () => {

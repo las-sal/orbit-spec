@@ -78,6 +78,9 @@ export const PROGRAM_SIGNOFF_HOLD_BASIC = `The hold renders no brief and writes 
 const ARCHITECT_EMIT_HEADING = `## Run-summary emit (conversation-boundary timing, architecture trail — via the engine emit surface)`;
 const ARCHITECT_EMIT_TIMING = `(Per \`orbit-run-summary-emit\` — \`/orbit:architect\` is a multi-turn conversational command; emit at conversation boundaries: user stop/pause signal, or AI-initiated wrap. Composed and written via \`orbit emit architect\` — \`orbit-emit-composition\`.)`;
 const ARCHITECT_EMIT_SWEEP = `**No emit without sweep** (D-arc Stage D5, leak-hardening layer 2 — shared with named-mode explore): the Step 4 R-d-8 residency sweep precedes EVERY boundary emit, riding this existing trigger with no new prompt — the emit describes the swept doc. Architect fires no BEGIN emit (the begin+boundary genre is named-mode explore's).`;
+// tighten-bodies: the body's copies of the two paragraphs above, without their provenance; the reference keeps its bytes.
+const ARCHITECT_EMIT_TIMING_BODY = `(\`/orbit:architect\` is a multi-turn conversational command; emit at conversation boundaries: user stop/pause signal, or AI-initiated wrap. Composed and written via \`orbit emit architect\`.)`;
+const ARCHITECT_EMIT_SWEEP_BODY = `**No emit without sweep** (leak-hardening layer 2 — shared with named-mode explore): the Step 4 residency sweep precedes EVERY boundary emit, riding this existing trigger with no new prompt — the emit describes the swept doc. Architect fires no BEGIN emit (the begin+boundary genre is named-mode explore's).`;
 const ARCHITECT_EMIT_COMMAND = `\`\`\`bash
 orbit emit architect --doc <doc-name> --payload <payload-file>
 \`\`\``;
@@ -93,17 +96,24 @@ export const ARCHITECT_RUN_SUMMARY_EMIT = [
 /** The body's emit section: when the emit fires, the read cue, the command and the chat behaviour beside them. */
 export const ARCHITECT_RUN_SUMMARY_EMIT_BASIC = [
   ARCHITECT_EMIT_HEADING,
-  ARCHITECT_EMIT_TIMING,
-  ARCHITECT_EMIT_SWEEP,
+  ARCHITECT_EMIT_TIMING_BODY,
+  ARCHITECT_EMIT_SWEEP_BODY,
   `${RUN_SUMMARY_READ_CUE}`,
   ARCHITECT_EMIT_COMMAND,
 ].join('\n\n');
 
+/**
+ * tighten-bodies (R-rop-14): the body carries no mirror notes; what only authors need is here.
+ *
+ * The `Complete:` productions in §2's slot-grammar sentence are a checked mirror of `orbit-architecture-engine`'s `Parseable
+ * architecture-doc format` requirement, which owns the slot grammar (this body cannot resolve the owner at runtime), held
+ * byte-equal by `test/core/templates/orbit-content-fidelity.test.ts`.
+ */
 export function getArchitectSkillTemplate(): SkillTemplate {
   return {
     name: 'orbit-architect',
     description:
-      'Author or resume an architecture doc (program layer above changes): parseable stage declarations, ruling capture, engine-rendered state, and the completion-ratification flow. Never a required entry point — /orbit:explore plus hand-editing remains first-class.',
+      'Author or resume an architecture doc (program layer above changes): parseable stage declarations, ruling capture, engine-rendered state, and the completion-ratification flow. Never a required entry point — /orbit:explore plus hand-editing remains first-class. Use when starting or steering a program of several changes, or ratifying a stage.',
     instructions: `Enter an architect session against one architecture doc under \`orbit/architecture/\`. This is the PROGRAM layer — cross-change structure (premise, rulings, stages with charters and exit criteria) — sitting above per-change flow. The session captures program-level material into the doc the way \`/orbit:explore\` captures decisions, while ALL state rendering comes from the engine.
 
 **Input**: Optional \`<doc-name>\` (the filename stem — the doc's citable identity). With a name: create \`orbit/architecture/<doc-name>.md\` if absent, or resume the existing doc. Bare: list docs via \`orbit architecture status\` and prompt selection via **AskUserQuestion** (offering create-new).
@@ -166,7 +176,7 @@ Complete: [ ]
 <append-only ledger; the engine never reads it>
 \`\`\`
 
-The stage-heading grammar is \`### Stage <kebab-id> — <title>\` (kebab-case id unique in the doc, em-dash separator). The two slot lines are OPTIONAL with omission semantics (absent \`Depends-on:\` = no dependencies; absent \`Complete:\` = unratified); when present they follow the exact grammar \`Depends-on: (none)\` / \`Depends-on: <id>[, <id>…]\` and ${COMPLETE_SLOT_PRODUCTIONS} — unratified, ratified, ENDED (the user's declaration that the stage ended without meeting its exit criteria; no free-text suffix — the reason lives in the status log). The \`Complete:\` productions in that sentence are a CHECKED MIRROR of \`orbit-architecture-engine\`'s \`Parseable architecture-doc format\` requirement, which OWNS the slot grammar — this body cannot resolve the owner at runtime, so it carries the copy and says so (held byte-equal by a parity test). Everything else — charter prose, exit criteria, rulings, status log — is engine-opaque judgment text.
+The stage-heading grammar is \`### Stage <kebab-id> — <title>\` (kebab-case id unique in the doc, em-dash separator). The two slot lines are OPTIONAL with omission semantics (absent \`Depends-on:\` = no dependencies; absent \`Complete:\` = unratified); when present they follow the exact grammar \`Depends-on: (none)\` / \`Depends-on: <id>[, <id>…]\` and ${COMPLETE_SLOT_PRODUCTIONS} — unratified, ratified, ENDED (the user's declaration that the stage ended without meeting its exit criteria; no free-text suffix — the reason lives in the status log). Everything else — charter prose, exit criteria, rulings, status log — is engine-opaque judgment text.
 
 ### 3. Resume (doc exists) — the doc is authoritative
 
@@ -182,7 +192,7 @@ During the session, capture program-level material into the doc as it is ratifie
 
 **Render state, never author it**: ALL stage-state and program-position statements come from \`orbit architecture status\` — rendered verbatim, never inferred. The body is PROHIBITED from hand-writing state into the doc: no \`*State:*\` lines, no position summaries duplicating what the engine computes. When the doc predates this contract (carries legacy hand-written state lines), FLAG them for deletion rather than updating them — every hand-maintained state line is a future staleness bug.
 
-**R-d-8 residency sweep at every conversation boundary**: pending recommendations, leanings, and open items discussed but not yet ratified must be file-resident BEFORE the emit writes — written into the owning section (e.g. an open question's standing-recommendation slot). Chat is never the store of record.
+**residency sweep at every conversation boundary**: pending recommendations, leanings, and open items discussed but not yet ratified must be file-resident BEFORE the emit writes — written into the owning section (e.g. an open question's standing-recommendation slot). Chat is never the store of record.
 
 ### 5. Completion-ratification flow (the completion flow's one AskUserQuestion — the doc selector in Step 1 and Step 5.4's program sign-off are the body's other two prompts)
 
@@ -207,7 +217,7 @@ ${PROGRAM_SIGNOFF_SAVE}
 
 ${PROGRAM_SIGNOFF_HOLD_BASIC}
 
-### 5.5. Arc-done readout: the program PR's human acts (D-arc Stage D6)
+### 5.5. Arc-done readout: the program PR's human acts
 
 On EVERY invocation — IDEMPOTENT — check whether the doc is ARC-DONE. The check has two
 definitions, by the sign-off setting:
@@ -228,7 +238,7 @@ that interaction has already passed. A ratification-gated readout would never fi
 
 When arc-done, read \`references/pr-resolution.md\` and follow its arc-done readout: it runs \`orbit pr program <doc> --json\` and surfaces the program PR and its human acts — recommend, NEVER invoke; the readout is never suppressed and repeats on every later invocation until the PR is no longer draft.
 
-### 6. Out of scope (deliberately — D-d2-6 rungs 6–8)
+### 6. Out of scope (deliberately — rungs 6–8)
 
 The body does NOT carry explore-grade thinking-partner stance prose, stage-lifecycle helpers (spin-up/close-out choreography), or retrofit guidance for converting legacy docs. Those are later rungs; v1 is create/resume + capture + render + ratification.
 

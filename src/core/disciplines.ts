@@ -49,18 +49,18 @@ const LEDGER_STOPS = LEDGER_STOP_CONDITIONS.map(code).join(' or ');
 const DIRECT_STOPS = PAYLOAD_STOP_CONDITIONS.filter(c => !(LEDGER_STOP_CONDITIONS as readonly string[]).includes(c)).map(code);
 const DIRECT_STOPS_TEXT = `${DIRECT_STOPS.slice(0, -1).join(', ')} or ${DIRECT_STOPS[DIRECT_STOPS.length - 1]}`;
 
-/** The epitome's fifth bullet, carried byte-equal by every workflow body that has an epitome. */
-export const DECISION_WRITING_DISCIPLINE =
-  `- **Decision-writing (call-time)**: under every setting, keep a record of each call and each stop without changing what the user sees or is asked. ` +
-  `BEFORE asking the user a question that a stop condition describes — ${CONDITIONS} — write a stop record (\`orbit emit stop\`), then ask exactly as you would have; ` +
-  `with the user's answer, write a resolution naming that stop (\`orbit emit resolution\`); ` +
-  `when ${DIRECT_STOPS_TEXT} describes an act you take without asking — the user directed it (they told you to amend a ruling), or no flow asks — write its stop record before the act, then, when the user directed it, a resolution naming that stop whose answer is their direction, and otherwise leave the stop open; ` +
-  `AFTER any call that falls in a ledger area — however you reached it: without asking, after a question no condition describes, or with the user's answer to a stop — ${AREAS} — write a ledger entry (\`orbit emit ledger\`) citing what it relies on; ` +
-  `when ${LEDGER_STOPS} describes the call, by its own gloss above, the entry cites nothing and names that stop: the one you asked at, or, where you would not have asked, one you write first — ask nothing and leave that stop open. ` +
-  `A designed prompt — a consent prompt, an inflection prompt (at a gate, or at a base-fingerprint divergence), a walk's closure prompt — is a seam, not a stop, and writes nothing, unless a stop condition also describes it: then write the stop record first and fire the prompt as designed. ` +
-  `A question no condition describes writes nothing, nor does a call in no area. ` +
-  `A record names the work it belongs to (\`--change <name>\` for a change or a named exploration, or \`--doc <doc>\` in an architect session); in a session with neither (a project-wide run, an unnamed exploration), or on an archived change (orbit writes no record to its trail), write no record, never attaching it to other work. ` +
-  `What each record carries — its fields, its citations and the plain-language rule, with an example of each — is in \`references/${DECISION_RECORDS_REFERENCE_NAME}\`, beside this skill; a refused record names the field to fix.`;
+/**
+ * The epitome's fifth bullet, carried byte-equal by every workflow body that has an epitome: a label line, then the
+ * five labelled sub-bullets (`tighten-bodies`, R-rop-7), every clause of the one-paragraph form kept.
+ */
+export const DECISION_WRITING_DISCIPLINE = [
+  `- **Decision-writing (call-time)**: under every setting, keep a record of each call and each stop without changing what the user sees or is asked. What each record carries — its fields, its citations and the plain-language rule, with an example of each — is in \`references/${DECISION_RECORDS_REFERENCE_NAME}\`, beside this skill; a refused record names the field to fix.`,
+  `  - *Before asking*: BEFORE asking the user a question that a stop condition describes — ${CONDITIONS} — write a stop record (\`orbit emit stop\`), then ask exactly as you would have; with the user's answer, write a resolution naming that stop (\`orbit emit resolution\`).`,
+  `  - *Acting without asking*: when ${DIRECT_STOPS_TEXT} describes an act you take without asking — the user directed it (they told you to amend a ruling), or no flow asks — write its stop record before the act, then, when the user directed it, a resolution naming that stop whose answer is their direction, and otherwise leave the stop open.`,
+  `  - *After a call*: AFTER any call that falls in a ledger area — however you reached it: without asking, after a question no condition describes, or with the user's answer to a stop — ${AREAS} — write a ledger entry (\`orbit emit ledger\`) citing what it relies on; when ${LEDGER_STOPS} describes the call, by its own gloss above, the entry cites nothing and names that stop: the one you asked at, or, where you would not have asked, one you write first — ask nothing and leave that stop open.`,
+  `  - *Not a stop*: a designed prompt — a consent prompt, an inflection prompt (at a gate, or at a base-fingerprint divergence), a walk's closure prompt — is a seam, not a stop, and writes nothing, unless a stop condition also describes it: then write the stop record first and fire the prompt as designed. A question no condition describes writes nothing, nor does a call in no area.`,
+  `  - *Where records go*: a record names the work it belongs to (\`--change <name>\` for a change or a named exploration, or \`--doc <doc>\` in an architect session); in a session with neither (a project-wide run, an unnamed exploration), or on an archived change (orbit writes no record to its trail), write no record, never attaching it to other work.`,
+].join('\n');
 
 // ---------------------------------------------------------------------------
 // The chain end step (seam-chaining, `orbit-conventions`' `No-chaining contract`)
@@ -159,7 +159,8 @@ export const CHAIN_END_STEP_REFERENCE = `# Reference: the chain end step\n\n${CH
 
 /** The commit step's basic content, carried byte-equal by the six bodies of `COMMIT_STEP_SKILLS`. */
 export const COMMIT_STEP_BASIC = [
-  "## Commit step (the closing commit — `orbit-conventions`' `The commit step closes each carrying body`)",
+  // The full step's heading cites its owning requirement, `orbit-conventions`' `The commit step closes each carrying body`.
+  '## Commit step (the closing commit)',
   '',
   `Runs in the invoking session only, never in a dispatched worker, after the run summary (in archive, after the PR-attached tail) and before the position readout (in archive, the completion readout); in apply, once at the session's close. Skip it with no change target, or when this invocation's PR layer has already stopped. Otherwise run \`orbit pr commit "<name>" --json\`. On \`action: off\`, print nothing and go on. On any other result, or a non-zero exit, read \`references/${COMMIT_STEP_REFERENCE_NAME}\` and follow it from the result you already have, before the readout.`,
 ].join('\n');
@@ -170,7 +171,8 @@ export const COMMIT_STEP_BASIC = [
  * `configured: false` result, and `CHAIN_TAG_MEANING` (R-rop-6).
  */
 export const CHAIN_END_STEP_BASIC = [
-  "## Chain end step (the closing step — `orbit-conventions`' `No-chaining contract`)",
+  // The full step's heading cites its owning requirement, `orbit-conventions`' `No-chaining contract`.
+  '## Chain end step (the closing step)',
   '',
   `The LAST act of the invoking session, after the position readout and the eligibility line; never in a dispatched worker, and nothing with no change target. Read the \`chain\` object from \`orbit status --change "<name>" --json\` (the call that supplied the eligibility line, or one right after it); a command a chain ran adds \`--chain-ran "<next>" --chain-head "<head>"\` to that read, the \`next\` and \`head\` the previous read reported, a null \`head\` written as \`null\`. On \`configured: false\`, print nothing more. On any other result, or a non-zero exit, read \`references/${CHAIN_END_STEP_REFERENCE_NAME}\` and follow it from the result you already have.`,
   '',
@@ -308,6 +310,15 @@ const PLAIN_LIST = DECISION_COMMANDS.flatMap(c => READER_BOUND_FIELDS[c]).map(co
 export const DECISION_RECORDS_REFERENCE = [
   '# Reference: decision records',
   '',
+  '## Contents',
+  '',
+  '- How a record is written',
+  '- The plain-language rule',
+  '- Fixing a record',
+  '- Stop record (`orbit emit stop`)',
+  '- Resolution (`orbit emit resolution`)',
+  '- Ledger entry (`orbit emit ledger`)',
+  '',
   'The decision-writing discipline in this skill says WHEN to write a record; this reference says WHAT each one holds.',
   '',
   '## How a record is written',
@@ -387,12 +398,16 @@ const ACCOUNT_HOW = (example: Record<string, unknown>): string[] => [
   '```',
 ];
 
-/** The apply body's account step heading, carried by both the step and its basic content. */
+/** The apply account step's heading in the full step, citing its owning requirement. */
 const ACCOUNT_STEP_HEADING =
   "## Account step (before the run summary — `orbit-decision-records`' `Each change carries one account, written when apply is complete`)";
-/** The address-reviews body's step 7 heading, carried by both the step and its basic content. */
+/** The apply body's account step heading: the full step's, without the citation (`tighten-bodies`). */
+const ACCOUNT_STEP_BODY_HEADING = '## Account step (before the run summary)';
+/** The address-reviews step 7 heading in the full step, citing its owning requirement. */
 const ACCOUNT_WALK_STEP_HEADING =
   "### 7. Replace the account when a fix changed it (`orbit-decision-records`' `Each change carries one account, written when apply is complete`)";
+/** The address-reviews body's step 7 heading: the full step's, without the citation (`tighten-bodies`). */
+const ACCOUNT_WALK_STEP_BODY_HEADING = '### 7. Replace the account when a fix changed it';
 
 /**
  * The apply skill's account step, whole — `references/account-step.md` (the body carries `ACCOUNT_STEP_BASIC`): written
@@ -447,14 +462,14 @@ export const ACCOUNT_WALK_STEP_REFERENCE = `# Reference: the account step of a w
 
 /** The apply body's account step: its heading and the read at the session's end. */
 export const ACCOUNT_STEP_BASIC = [
-  ACCOUNT_STEP_HEADING,
+  ACCOUNT_STEP_BODY_HEADING,
   '',
   `At the session's end, BEFORE the run-summary emit (or, when the session writes no run summary, before the completion readout), read \`references/${ACCOUNT_STEP_REFERENCE_NAME}\` and follow it: it says whether this session writes the account, a replacement of it, or none, and how.`,
 ].join('\n');
 
 /** The address-reviews body's step 7: its heading and the read after the logs. */
 export const ACCOUNT_WALK_STEP_BASIC = [
-  ACCOUNT_WALK_STEP_HEADING,
+  ACCOUNT_WALK_STEP_BODY_HEADING,
   '',
   `After the logs are written, read \`references/${ACCOUNT_WALK_STEP_REFERENCE_NAME}\` and follow it: it says whether this walk writes a replacement of the change's account, or none, and how.`,
 ].join('\n');

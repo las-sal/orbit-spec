@@ -91,6 +91,17 @@ export const PROPOSE_RUN_SUMMARY_EMIT_BASIC = [
   PROPOSE_EMIT_COMPLETION_OVERRIDE,
 ].join('\n\n');
 
+/**
+ * tighten-bodies (R-rop-14): the body carries no mirror notes; what only authors need is here.
+ *
+ * Checked mirrors (an installed skill cannot open these specs; never edit them here):
+ * - the `explore.md` section list: `orbit-conventions`' `explore.md` format requirement, held by
+ *   `test/core/templates/orbit-content-fidelity.test.ts`;
+ * - the Step 0b entry form and the Mechanism grammar: `orbit-conventions`' "Decision entry identity and classification"
+ *   and Mechanism-entry requirements, supplied by the grammar module (`src/core/explore-grammar.ts`);
+ * - the Step 0c.6 partition table and the CLOSED shapes: `orbit-propose-modifications`' requirement, held by
+ *   `test/core/templates/orbit-content-fidelity.test.ts`.
+ */
 export function getOrbitProposeSkillTemplate(): SkillTemplate {
   return {
     name: 'orbit-propose',
@@ -191,8 +202,6 @@ After completing all artifacts, summarize:
   - These guide what you write, but should never appear in the output
 
 **Guardrails**
-- Create ALL artifacts needed for implementation (as defined by schema's \`apply.requires\`)
-- Always read dependency artifacts before creating a new one
 - If context is critically unclear, ask the user - but prefer making reasonable decisions to keep momentum
 - If a change with that name already exists, ask if user wants to continue it or create a new one
 - Verify each artifact file exists after writing before proceeding to next
@@ -213,13 +222,13 @@ The disciplines from \`orbit-conventions\`, embedded per body; detail lives wher
 - **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line, invoking no next command unless the change status's \`chain\` object allows it — gate \`passed\` means *eligible*, not *commanded*.
 ${DECISION_WRITING_DISCIPLINE}
 
-## Mode detection (NEW Step 0 — runs before upstream Step 1)
+## Mode detection (Step 0 — runs before upstream Step 1)
 
 Before any upstream step, detect whether to run in consume mode or fall through to upstream standalone behavior:
 
 1. **Check for staging directory**: does \`orbit/explore/<name>/explore.md\` exist?
    - **If user provided \`<name>\`** as the argument: check that specific name.
-   - **If user provided no name** but exactly one LIVE staging directory exists under \`orbit/explore/\`: propose that name to the user via \`AskUserQuestion\`. On accept, treat as if the name was provided. A directory whose \`explore.md\`'s FIRST NON-BLANK line carries the \`concluded\` token (per \`orbit-conventions\`' status-header production — read that line, never \`head -1\`) is NOT a candidate; count LIVE staging directories only, so one live directory beside any number of concluded ones proposes the live name without a pick prompt.
+   - **If user provided no name** but exactly one LIVE staging directory exists under \`orbit/explore/\`: propose that name to the user via \`AskUserQuestion\`. On accept, treat as if the name was provided. A directory whose \`explore.md\`'s FIRST NON-BLANK line carries the \`concluded\` token (status-header production — read that line, never \`head -1\`) is NOT a candidate; count LIVE staging directories only, so one live directory beside any number of concluded ones proposes the live name without a pick prompt.
    - **If user provided no name and zero or multiple LIVE staging directories exist**: prompt user to specify a name (zero) or pick one (multiple).
 
 2. **Check for conflict**: do both \`orbit/explore/<name>/\` AND \`orbit/changes/<name>/\` exist?
@@ -230,7 +239,7 @@ Before any upstream step, detect whether to run in consume mode or fall through 
      - **Abort** — do nothing; user decides next.
 
 3. **Resolve mode** (precedence: the conflict check above fires first — its concluded refuse, then its prompt; then, in this order):
-   - Staging exists, no unresolved conflict, and \`explore.md\`'s FIRST NON-BLANK line carries the \`concluded\` token (per \`orbit-conventions\`' status-header production — read that line, never \`head -1\`) → **REFUSED**. Print \`this exploration concluded on <YYYY-MM-DD>. Re-entry: <the live CONCLUDED entry's Re-entry: slot, verbatim — first in file order when two entries carry one, as the readout resolves it; (no Re-entry: slot found) when none>\` and STOP: no \`AskUserQuestion\`, no \`orbit new change\`, no metadata, no move. The PR layer's phase 1 (select + switch) is never reached, because it runs AFTER this step — a refused promotion cuts no branch. A concluded exploration is done: propose neither reopens it nor offers to (the reopen edit belongs to the explore body, per \`orbit-explore-modifications\`' re-entry requirement — pointed at, not restated here).
+   - Staging exists, no unresolved conflict, and \`explore.md\`'s FIRST NON-BLANK line carries the \`concluded\` token (status-header production — read that line, never \`head -1\`) → **REFUSED**. Print \`this exploration concluded on <YYYY-MM-DD>. Re-entry: <the live CONCLUDED entry's Re-entry: slot, verbatim — first in file order when two entries carry one, as the readout resolves it; (no Re-entry: slot found) when none>\` and STOP: no \`AskUserQuestion\`, no \`orbit new change\`, no metadata, no move. The PR layer's phase 1 (select + switch) is never reached, because it runs AFTER this step — a refused promotion cuts no branch. A concluded exploration is done: propose neither reopens it nor offers to (the reopen edit belongs to the explore body, per \`orbit-explore-modifications\`' re-entry requirement — pointed at, not restated here).
    - Staging exists, no unresolved conflict, header NOT \`concluded\` (the \`exploring\` token, or neither token) → **consume mode** (continue with consume-mode flow below; skip upstream Step 1).
    - No staging → **standalone mode** (skip the consume-mode flow; resume at upstream Step 1).
 
@@ -241,8 +250,6 @@ Replaces upstream Step 1 (the "ask what to build" prompt). All later upstream st
 ### Step 0a — Validate \`explore.md\` structure
 
 Read \`orbit/explore/<name>/explore.md\`. Check for the sections the format's owner lists, in its order — Premise, Mechanism, Decisions, Open questions, Considered & out, References.
-
-*Mirror of \`orbit-conventions\`' \`explore.md\` format requirement — the owner of this list; a parity test holds this copy byte-equal.*
 
 - **All listed sections present** → proceed normally.
 - **Missing one or more sections** → warn the user naming the missing sections; prompt via \`AskUserQuestion\` to confirm proceed-anyway (default: proceed). An absent \`## Mechanism\` section is a format note like any other — and on proceed, every live rule is UNACCOUNTED (state \`absent\`) in the record Step 0c.6 writes.
@@ -258,13 +265,13 @@ For each entry in the Open questions section, prompt the user via \`AskUserQuest
 
 **Bulk handling**: if more than ~5 Open questions exist, offer "Resolve all (walk one by one)" / "Defer all (mark in artifacts)" / "Abandon all" / "Walk each individually" via \`AskUserQuestion\`. Default: walk each individually.
 
-The entry form (a checked mirror of \`orbit-conventions\`' "Decision entry identity and classification" — the owner; the grammar module supplies it):
+The entry form:
 
 \`\`\`
 ${EXPLORE_DECISION_ENTRY_PRODUCTION}
 \`\`\`
 
-**The Mechanism read — after this step's LAST write to \`explore.md\`, before generation.** Read the \`## Mechanism\` section by the grammar \`orbit-conventions\`' Mechanism-entry requirement owns — carried here as a checked mirror, because your repository may not hold that spec (the grammar module supplies it; a parity test holds it equal to the owner):
+**The Mechanism read — after this step's LAST write to \`explore.md\`, before generation.** Read the \`## Mechanism\` section by the grammar \`orbit-conventions\`' Mechanism-entry requirement owns:
 
 \`\`\`
 ${EXPLORE_MECHANISM_ENTRY_PRODUCTION}
@@ -289,7 +296,7 @@ When generating artifacts in upstream Step 4, apply this mapping:
 
 When \`design.md\` references background or decisions originally from \`explore.md\`, **cite the source** (\`see explore.md\`) rather than paraphrasing without attribution.
 
-### Step 0c.5 — Author \`## Touchpoints\` in design.md (BOTH modes — D-arc Stage D5)
+### Step 0c.5 — Author \`## Touchpoints\` in design.md (BOTH modes)
 
 The generated \`design.md\` carries a \`## Touchpoints\` section: the PREDICTED map of where the work lands in the codebase (files/modules to be created or modified) — seeded from the exploration's leanings and references in consume mode, authored fresh from the description + codebase reads in standalone mode.
 
@@ -308,7 +315,7 @@ The generated \`design.md\` carries a \`## Touchpoints\` section: the PREDICTED 
 
 ### Step 0c.6 — Carry the Mechanism section (the \`Mechanism section consumption\` requirement)
 
-Every Mechanism entry, and every live rule with none, is disposed of by ONE row of this table — rows tested IN ORDER, first match wins. A live rule is ACCOUNTED when it is counted in \`rules_total\` AND not in \`rules_open\` (\`orbit-emit-composition\` owns those fields; the readout's parser is the judge of FORM) — and you decide that from the FILE, by the grammar mirrored under Step 0b: the rule is accounted when its entry CONFORMS in FULL (a heading whose ID matches its Decisions entry; a \`Domain:\` line and a table with at least one member row; a \`Closure:\` token from the closed set; the two residual slots present exactly when BOUNDED; nine move lines, each exactly once). An entry failing ANY clause, or no entry, is OPEN; name the failing clause in the record's state column (the readout's state word when one is at hand). A key defect is an entry whose heading ID matches no Decisions entry (an orphan) or a second entry or heading under an already-used ID (a duplicate). The table is a checked mirror of the requirement's; a parity test holds it byte-equal:
+Every Mechanism entry, and every live rule with none, is disposed of by ONE row of this table — rows tested IN ORDER, first match wins. A live rule is ACCOUNTED when it is counted in \`rules_total\` AND not in \`rules_open\` (\`orbit-emit-composition\` owns those fields; the readout's parser is the judge of FORM) — and you decide that from the FILE, by the grammar mirrored under Step 0b: the rule is accounted when its entry CONFORMS in FULL (a heading whose ID matches its Decisions entry; a \`Domain:\` line and a table with at least one member row; a \`Closure:\` token from the closed set; the two residual slots present exactly when BOUNDED; nine move lines, each exactly once). An entry failing ANY clause, or no entry, is OPEN; name the failing clause in the record's state column (the readout's state word when one is at hand). A key defect is an entry whose heading ID matches no Decisions entry (an orphan) or a second entry or heading under an already-used ID (a duplicate).
 
 | row | owner's Decisions state | accounting state | lands in |
 |---|---|---|---|
@@ -318,7 +325,7 @@ Every Mechanism entry, and every live rule with none, is disposed of by ONE row 
 | 4 | live rule | accounted, \`Closure: DERIVED\` or \`SOURCED\` | the spec delta requirement the rule derives: the domain table as one of the CLOSED shapes below, the \`Closure:\` justification as the sentence naming the source |
 | 5 | live rule | accounted, \`Closure: BOUNDED\` (both residual slots present, by construction) | \`Residual kind:\` and \`Residual method:\` VERBATIM in that requirement's text as a named limit (the OWNER — only spec text survives archive); ONE \`design.md\` Risks entry naming the rule ID and POINTING at the requirement, restating nothing |
 
-**The CLOSED shapes** (a checked mirror of the requirement's list): a normative TABLE (the re-entry table in \`orbit-explore-modifications\`), a GRAMMAR or production block (the Mechanism grammar's fences in \`orbit-conventions\`), a SCENARIO SET — one scenario per member (the maturity rungs in \`orbit-run-summary-emit\`), or a SENTENCE naming the source with the members in prose (the concluded outcome's reader sentence in \`orbit-conventions\`). Which shape fits is your judgement; the record says which was chosen. The set is BOUNDED and its named limit is stated ONCE, in the requirement — point at it; never restate the two residual lines here.
+**The CLOSED shapes**: a normative TABLE (the re-entry table in \`orbit-explore-modifications\`), a GRAMMAR or production block (the Mechanism grammar's fences in \`orbit-conventions\`), a SCENARIO SET — one scenario per member (the maturity rungs in \`orbit-run-summary-emit\`), or a SENTENCE naming the source with the members in prose (the concluded outcome's reader sentence in \`orbit-conventions\`). Which shape fits is your judgement; the record says which was chosen. The set is BOUNDED and its named limit is stated ONCE, in the requirement — point at it; never restate the two residual lines here.
 
 **The record.** \`design.md\` carries a \`## Mechanism → artifacts\` section: a header line reading "the proposing AI's reading of the file; no engine record" — always that sentence — then one table row per Mechanism entry (and per live rule with none): the rule as the readout names it (ID, or \`line N\` for an ID-less entry; a key defect by ID plus \`line N\`), its closure token or its state word (the readout's when one is at hand; else the failing grammar clause; the defect kind for a key defect), its owner's state (\`none\` for an orphan; \`duplicate\` for a second claim), and its destination as a requirement title (plus the shape, for CLOSED entries; \`none\` for a key defect).
 
@@ -327,7 +334,7 @@ Every Mechanism entry, and every live rule with none, is disposed of by ONE row 
 ### Step 0d — Move the staging directory (with the staged-metadata MERGE)
 
 After all upstream steps complete successfully (artifacts generated, non-strict validation passes) and the
-size brief below has run, FIRST merge the staged metadata, THEN bulk-move (D-arc Stage D2):
+size brief below has run, FIRST merge the staged metadata, THEN bulk-move:
 
 1. **Staged-metadata MERGE** (before the bulk move): if \`orbit/explore/<name>/.openspec.yaml\`
    exists, read it via the change-metadata helpers and merge FIELD-LEVEL into the change's
@@ -372,8 +379,6 @@ When no \`orbit/explore/<name>/\` exists, fall through to upstream Step 1: promp
 
 ## Base-fingerprint capture (NEW step — both modes)
 
-(Per \`orbit-base-fingerprints\`' \`Fingerprint capture at every spec-authoring point\` requirement)
-
 Immediately after the change's delta specs are generated (the \`specs\` artifact is written, in
 consume mode or standalone mode alike), run:
 
@@ -397,9 +402,9 @@ detect a parallel change landing on the same requirements (no silent spec data-l
 
 After every artifact is generated and \`orbit validate "<name>"\` passes non-strict, BEFORE Step 0d's move, Phase 3 and the completion emit, read \`size\` from \`orbit status --change "<name>" --json\`. When \`ceiling\` is \`null\` or \`breaches\` is empty, say nothing about size. Otherwise, or on a non-zero exit, read \`references/${SIZE_BRIEF_REFERENCE_NAME}\` and follow it from the result you already have.
 
-## PR lifecycle (config-gated — D-arc Stage D6)
+## PR lifecycle (config-gated)
 
-**Position (NEW Step 0.5).** Read the regime right after Step 0's mode detection and BEFORE Step 0a; on an active mode, read \`references/pr-choreography.md\` now and run its Phase 1 here, before any artifact is written; its \`Where each phase runs\` section, under \`### In /orbit:propose\`, says where phases 2 and 3 run.
+**Position (Step 0.5).** Read the regime right after Step 0's mode detection and BEFORE Step 0a; on an active mode, read \`references/pr-choreography.md\` now and run its Phase 1 here, before any artifact is written; its \`Where each phase runs\` section, under \`### In /orbit:propose\`, says where phases 2 and 3 run.
 
 Read the RESOLVED regime from the engine FIRST — \`orbit status --json\`, field \`pr\` (never parse \`orbit/config.yaml\` yourself: the value set is closed and every inert path already resolves to \`never\` with the reader's warning). When it is \`never\`, absent, or an inert
 value/shape, RETURN IMMEDIATELY from this section: probe nothing (no \`orbit pr\` call, no

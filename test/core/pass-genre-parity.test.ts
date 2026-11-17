@@ -8,9 +8,10 @@ import { ownerText, fencedProduction } from '../helpers/owner-text.js';
  *
  * The pass-genre table is stated ONCE, as a fenced production in `orbit-conventions`' `Review mode
  * decision framework`. An adopter's installed review skill has neither our specs nor our parser, so
- * the body carries the table as a CHECKED MIRROR under a "Pass genre" heading naming the owner; this
- * test holds the mirror byte-equal to the owner's fence through the single-active-owner lookup (the
- * active delta while the change is open, the baseline after archive).
+ * the body carries the table as a CHECKED MIRROR under a "Pass genre" heading; this test holds the mirror
+ * byte-equal to the owner's fence through the single-active-owner lookup (the active delta while the change
+ * is open, the baseline after archive). Since tighten-bodies (R-rop-14) the copy carries no note saying it is
+ * a mirror or naming its owner.
  */
 const HEADER_ROW = '| reviewer class | mode | trail position | pass genre |';
 
@@ -25,11 +26,15 @@ describe('pass-genre table ↔ review body parity (rc03b)', () => {
     expect(fencedProduction(section, HEADER_ROW)).toBe(table);
   });
 
-  it('the mirror says it is one and names its owner', () => {
+  // @scenario text orbit-conventions :: Review mode decision framework :: The review body carries the table as a checked mirror
+  // @scenario text orbit-conventions :: Tightened bodies carry no provenance :: A mirror note goes and the copy stays
+  // @scenario text orbit-conventions :: Tightened bodies carry no provenance :: An instruction beside a mirror note stays
+  it('the copy carries no note saying it is a mirror or naming its owner, and the instruction beside the note stays', () => {
     const body = getReviewSkillTemplate().instructions;
     const section = body.split(/\n#{2,3} Pass genre\b/)[1].split('```')[0];
-    expect(section).toMatch(/CHECKED MIRROR/);
-    expect(section).toContain("`orbit-conventions`' `Review mode decision framework`");
+    expect(section).not.toMatch(/CHECKED MIRROR/i);
+    expect(section).not.toContain("`orbit-conventions`' `Review mode decision framework`");
+    expect(section).toContain('The pass genre is a record and a header word; the gate reads nothing of it.');
   });
 
   it('the table appears ONCE in the body (a mirror, never a restatement beside itself)', () => {

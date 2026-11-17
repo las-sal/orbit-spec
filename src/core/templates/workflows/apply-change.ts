@@ -15,6 +15,8 @@ const APPLY_EMIT_COMMAND = `\`\`\`bash
 orbit emit apply --change <name> --payload <payload-file>
 \`\`\``;
 const APPLY_EMIT_COMPLETION_OVERRIDE = `**Completion-prompt override (chat)**: on \`all_done\`, do NOT congratulate-and-suggest-archive (upstream) and do NOT hand-write \`/orbit:verify\` — instead render the gate graph's computed \`next_command\` + \`position\` from \`orbit status --change <name> --json\`. The lifecycle flow lives in the gate graph, not in this body; verify is Pass 0 of the \`review-system\` step the graph points to, not a separate lifecycle node (D5 — a separate verify gate would double-count).`;
+/** The body's copy of the override (tighten-bodies): the reference's, without the ruling id. */
+const APPLY_EMIT_COMPLETION_OVERRIDE_BODY = APPLY_EMIT_COMPLETION_OVERRIDE.replace('(D5 — ', '(');
 /** The emit section whole, as the body carried it before once-per-session-detail; shipped as `references/run-summary-emit.md`. */
 export const APPLY_RUN_SUMMARY_EMIT = [
   APPLY_EMIT_HEADING,
@@ -38,7 +40,7 @@ export const APPLY_RUN_SUMMARY_EMIT_BASIC = [
   APPLY_EMIT_HEADING,
   `${APPLY_EMIT_WHEN} ${RUN_SUMMARY_READ_CUE}`,
   APPLY_EMIT_COMMAND,
-  APPLY_EMIT_COMPLETION_OVERRIDE,
+  APPLY_EMIT_COMPLETION_OVERRIDE_BODY,
 ].join('\n\n');
 
 export function getApplyChangeSkillTemplate(): SkillTemplate {
@@ -51,19 +53,19 @@ export function getApplyChangeSkillTemplate(): SkillTemplate {
 
 **Steps**
 
-0. **Consent at entry (provenance rule — per \`orbit-lifecycle-consent\`)**
+0. **Consent at entry (provenance rule)**
 
    Apply is a consent-scoped command (the \`review-proposal\` gate carries \`consent: user-invoked\`). Determine invocation provenance — an observable transcript fact, never a judgment of delegated intent:
    - **User-invoked**: the triggering turn contains an explicit user invocation — the typed \`/orbit:apply\` command, or an unambiguous same-turn prose request naming the act ("apply it", "implement the change"). Proceed with ZERO added prompts (only anomaly prompts — the Step 3 gate inflection — may interrupt).
    - **AI-mediated**: everything else — delegation phrases ("finish the cadence"), inference ("continue"), a handoff document, a chain, or an eligibility readout pointing here. Unless the arrival is granted (next bullet), fire a consent **AskUserQuestion** (chain: not a prompt) BEFORE any write (after the read-only status/instructions loads in Steps 2–3, so the prompt can show real state): the position readout, what apply will write ("begin implementing N tasks from the artifacts"), and exactly two options — **Proceed** / **Abort**. On Abort: stop; no writes, no run summary.
-   - **Granted** (an AI-mediated arrival the project's \`chain\` setting allows, per \`orbit-lifecycle-consent\`): the arrival is not typed, and the \`chain\` object of \`orbit status --change "<name>" --json\` — the Step 2 read, made at entry; it is read-only — reports \`next\` as this command (\`/orbit:apply <name>\`, with or without the \` — user-invoked\` marker) with \`may_run: true\`. Record \`setting\`, fire no consent prompt, and stamp the consent era below as on the other two paths; every anomaly prompt still fires as on a typed arrival. Whether an arrival is granted is read from that object, never judged from how this command was reached: "continue" and a chain's closing step are the same arrival, granted alike when the object allows this command and prompted alike when it does not.
+   - **Granted** (an AI-mediated arrival the project's \`chain\` setting allows): the arrival is not typed, and the \`chain\` object of \`orbit status --change "<name>" --json\` — the Step 2 read, made at entry; it is read-only — reports \`next\` as this command (\`/orbit:apply <name>\`, with or without the \` — user-invoked\` marker) with \`may_run: true\`. Record \`setting\`, fire no consent prompt, and stamp the consent era below as on the other two paths; every anomaly prompt still fires as on a typed arrival. Whether an arrival is granted is read from that object, never judged from how this command was reached: "continue" and a chain's closing step are the same arrival, granted alike when the object allows this command and prompted alike when it does not.
    - **When provenance is uncertain, treat the arrival as AI-mediated** — erring toward one extra click, never toward a silent proceed.
 
    **Ordering invariant**: provenance is CLASSIFIED at entry (it is a fact about the triggering turn, known before anything runs); the consent prompt itself — and the era stamp below — fire AFTER read-only discovery (change selection, the Step 2–3 status/instructions loads, the \`chain\` object among them) and BEFORE any write or anomaly prompt. Read-only steps never require consent; writes always follow it.
 
    Record the consent story for this invocation: \`user-invoked\` (user-typed), \`prompted\` (prompt fired, user proceeded) or \`setting\` (granted by \`chain.apply\`, no prompt) — it lands in every apply emit this session writes.
 
-   **Consent-era stamp (migrate-on-touch)**: once consent is established (user-typed provenance, Proceed at the prompt, or a granted arrival), read the change's \`.openspec.yaml\`. If it lacks \`schema_version\`, stamp \`consent_era_from: <current UTC timestamp, YYYY-MM-DDTHH:MM:SSZ>\` into it (add-only; never overwrite an existing stamp). This marks a pre-capability change as tripwire-covered from this touch onward (per \`orbit-lifecycle-consent\`'s consent-era marker).
+   **Consent-era stamp (migrate-on-touch)**: once consent is established (user-typed provenance, Proceed at the prompt, or a granted arrival), read the change's \`.openspec.yaml\`. If it lacks \`schema_version\`, stamp \`consent_era_from: <current UTC timestamp, YYYY-MM-DDTHH:MM:SSZ>\` into it (add-only; never overwrite an existing stamp). This marks a pre-capability change as tripwire-covered from this touch onward (consent-era marker).
 
 1. **Select the change**
 
@@ -96,7 +98,7 @@ export function getApplyChangeSkillTemplate(): SkillTemplate {
 
    **Handle states:**
    - If \`state: "blocked"\` (missing artifacts): show message, suggest using orbit-continue-change
-   - If \`state: "blocked-by-gate"\` (C1 — the \`review-proposal\` gate is unpassed/stale at apply entry): fire the gate INFLECTION PROMPT via **AskUserQuestion** (chain: decision) — **Address the gate** (halt; run the \`next_command\` the CLI returned, e.g. \`/orbit:review --as proposal --fresh <name>\`) / **Proceed anyway** / **Abort**. The gate NEVER hard-blocks (apply-parity). On **Proceed anyway**, record the decision in this session's apply emit as a \`continuation\`/\`proceed\` judgement entry carrying the gate, its state and its reason (copied from the CLI's \`gate\` object at decision time — see the Run-summary emit section) and continue to implementation. On **Address**, stop and run the next command. On **Abort**, stop with no changes.
+   - If \`state: "blocked-by-gate"\` (the \`review-proposal\` gate is unpassed/stale at apply entry): fire the gate INFLECTION PROMPT via **AskUserQuestion** (chain: decision) — **Address the gate** (halt; run the \`next_command\` the CLI returned, e.g. \`/orbit:review --as proposal --fresh <name>\`) / **Proceed anyway** / **Abort**. The gate NEVER hard-blocks (apply-parity). On **Proceed anyway**, record the decision in this session's apply emit as a \`continuation\`/\`proceed\` judgement entry carrying the gate, its state and its reason (copied from the CLI's \`gate\` object at decision time — see the Run-summary emit section) and continue to implementation. On **Address**, stop and run the next command. On **Abort**, stop with no changes.
    - If \`state: "all_done"\`: first run the Account step below — it writes a missing account, or replaces the latest one when the work done since it was written changed what it says, so read that account and the change's trail since it before deciding — then congratulate, then render the ENGINE-computed next step — read \`next_command\` (and \`position\`) from \`orbit status --change "<name>" --json\` and surface it verbatim. Do NOT hard-code the next command: the gate graph owns the lifecycle flow. Post-apply this resolves to the \`review-system\` gate's first step — which review that is depends on the schema's cadence and the project's review preference, so it is read rather than predicted — which runs verify as its Pass 0 — verify is NOT a separate lifecycle step (it is Pass 0 of system review; a standalone verify gate would double-count).
    - Otherwise (\`ready\`): proceed to implementation
 
@@ -171,7 +173,7 @@ Position: <the \`position\` string from \`orbit status --change <name> --json\` 
 Ready when you are: <the \`next_command\` from \`orbit status --change <name> --json\`, rendered verbatim — post-apply the gate graph yields whichever class the first uncovered cadence slot needs, NEVER a hardcoded command>
 \`\`\`
 
-**Position-readout convention (C1, D-c1-2)**: every handoff — this completion output AND the emit's \`next_recommended\` — renders the GATE GRAPH's computed \`position\` + \`next_command\` from \`orbit status --change <name> --json\` (the \`--change\` form; bare \`orbit status\` is the D3 orientation surface, whose sprint may be a DIFFERENT change). The skill does NOT hand-write the next lifecycle command — the graph owns the flow (\`propose → review-proposal → apply → review-system → archive\`), so the "what's next" token is always read from the engine, never authored here. Post-apply the graph yields the \`review-system\` gate's first step; WHICH CLASS that step needs depends on the schema's cadence, so it is read rather than predicted. It executes verify as its Pass 0.
+**Position-readout convention**: every handoff — this completion output AND the emit's \`next_recommended\` — renders the GATE GRAPH's computed \`position\` + \`next_command\` from \`orbit status --change <name> --json\` (the \`--change\` form; bare \`orbit status\` is the orientation surface, whose sprint may be a DIFFERENT change). The skill does NOT hand-write the next lifecycle command — the graph owns the flow (\`propose → review-proposal → apply → review-system → archive\`), so the "what's next" token is always read from the engine, never authored here. Post-apply the graph yields the \`review-system\` gate's first step; WHICH CLASS that step needs depends on the schema's cadence, so it is read rather than predicted. It executes verify as its Pass 0.
 
 **Output On Pause (Issue Encountered)** (chain: not a prompt)
 
@@ -194,14 +196,8 @@ What would you like to do?
 \`\`\`
 
 **Guardrails**
-- Keep going through tasks until done or blocked
-- Always read context files before starting (from the apply instructions output)
 - If task is ambiguous, pause and ask before implementing (chain: decision)
-- If implementation reveals issues, pause and suggest artifact updates (chain: decision)
 - Keep code changes minimal and scoped to each task
-- Update task checkbox immediately after completing each task
-- Pause on errors, blockers, or unclear requirements - don't guess (chain: decision)
-- Use contextFiles from CLI output, don't assume specific file names
 
 **Fluid Workflow Integration**
 
