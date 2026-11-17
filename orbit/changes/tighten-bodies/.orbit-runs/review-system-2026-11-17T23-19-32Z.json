@@ -1,0 +1,128 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-17T23:19:32Z",
+  "change": "tighten-bodies",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "pass": "0",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/tighten-bodies/specs/orbit-conventions/spec.md",
+      "line": 268,
+      "title": "Members of the named provenance kinds stay in three tightened bodies, though the requirement says those kinds are removed",
+      "recommendation": "`Tightened bodies carry no provenance` says stage tags and ruling or decision ids are removed (its table rows at lines 266 and 268), and its named limit (lines 297-298) covers only a form OUTSIDE the six kinds. The generated bodies still carry in-kind members: review's `(R-crc-11(f))` and \"The vocabulary is rc04a's judgement record's\" (src/core/templates/workflows/review.ts:1371) and \"Labels follow D1's eligibility phrasing\" (review.ts:1410); propose's `pre-D2` twice (src/core/templates/workflows/propose.ts:349, 356); address-reviews' `pre-D4` (src/core/templates/workflows/address-reviews.ts:957). Each was left because its removal span takes characters the patterns do not cover (`'s` after a stage tag or a bare D-id, a clause suffix `(f)`, the `pre-` prefix). The account records them, and its own deviations sentence names this second class (\"or whose removal would take words those patterns do not cover\"), but the requirement does not: the spec and the product disagree on these six sites. Either remove them or make the requirement's limit say what was done.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Amend the requirement's named limit (spec.md:297-298) to name the second class the account already uses: a member of the six kinds whose removal span the patterns do not cover is recorded in the account and left in place for the evaluation. No body changes."
+        },
+        {
+          "label": "B",
+          "body": "Widen the patterns (`'s` on stage tags and bare D-ids, an optional `\\([a-z]\\)` clause suffix on ruling ids) in the requirement and in tightened-bodies.test.ts' TOKENS, then remove the review sites as provenance pairs; `pre-D2`/`pre-D4` name a generation of files, so reword them or record them as an id that names a thing."
+        }
+      ],
+      "reproduction": "Generate the bodies at HEAD 97f67395 (getSkillTemplates().map(s => s.template.instructions)) and grep the twelve tightened bodies for the requirement's own ruling-id and stage-tag patterns: orbit-review.md matches R-crc-11, rc04a and D1; orbit-propose.md matches D2 twice (pre-D2); orbit-address-reviews.md matches D4 (pre-D4). Compare with spec.md:266-268 (\"removed\") and the residual kind at spec.md:297 (\"a provenance form outside the six above\")."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "test/core/templates/moved-blocks.test.ts",
+      "line": 143,
+      "title": "Orphaned comment for the removed TWO_LEVEL exception in moved-blocks.test.ts",
+      "recommendation": "Task 6.2 removed the `TWO_LEVEL` constant, but its JSDoc (lines 143-147: \"Named exception to 'one level deep' ... Stage `tighten-bodies` owns RG2's one-level fix and removes this entry.\") was left in place and now sits directly above an unrelated `describe` block, describing an exception that no longer exists. Delete the comment."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/tighten-bodies/proposal.md",
+      "line": 25,
+      "title": "Address-reviews' description figure in the proposal and design (about 360) does not match what landed (415)",
+      "recommendation": "The proposal (line 25) and design Decision 4 (design.md:90) say address-reviews' description goes from 1,140 characters to about 360; the landed description is 415 characters (it gained \"every outstanding pass a change's gates report\"), and the account says about 400. The design called its text a draft finalized at apply, but the proposal states the figure as what changes. Update both to the landed figure (about 415) so the archived record matches the product."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Probed by generating every skill body and reference at the change start (60d3fe35) and at HEAD (97f67395) in two scratch worktrees and word-diffing each pair, rather than reading the template diffs: every body change is one of the four ledger kinds, explore, bulk-archive and onboard change only in the shared bullet (onboard not at all), and every reference change is an added contents list, nothing removed. The decision-writing bullet keeps every clause; the 42 Guardrails lines split 23 removed, 19 kept exactly as the table says, and each removed line's covering step line was read in the new body. Zero mirror-note markers remain in the six bodies that had them. Frontmatter: every installed skill and command file parses with a strict yaml parser, and the three descriptions that failed before were confirmed to fail on the old generator. Sizes were measured with the generator itself: 363,848 in total, apply 18,238, explore 669 lines, all ceilings arithmetically size plus 5% rounded up or kept. The full suite passed on a frozen HEAD worktree (210 files, 4,410 tests); the scenario map shows no uncovered delta scenario, and validate passes. Readings from the live checkout: the scenario map, validate and status, at HEAD. Pass 0 was run inline (tasks, scenario map, requirement mapping, design adherence) rather than through the verify skill, and Pass 6 as a residue sweep scoped to this change (docs, README, CLAUDE.md, baseline specs, the convention file and the edited tests, for removed strings and stale figures), not as a full audit-drift run, so this worker writes one record. Passes 4 and 5 were skipped: orbit/lenses/ does not exist. The main risk texture is the provenance rule's boundary: the pattern set is form-based, so whatever its patterns miss by a suffix stays in the body, and the requirement's wording has not yet caught up with that.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "6"
+  ],
+  "passes_skipped": [
+    "4",
+    "5"
+  ],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The change does what it set out to do with no instruction lost: the bodies are smaller, the restructured bullet keeps every clause, the frontmatter now parses, the long references open with contents, and the edit ledger proves every byte of every edit. What remains is record-keeping: the provenance requirement should describe the in-kind members it leaves, and two small residues should be tidied. None of it changes what an agent is told to do, so the walk can settle it before archive without reopening the design."
+  },
+  "final_assessment": "0 critical, 1 warning, 2 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews tighten-bodies",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "ef55ee46c8966ac09dca3147330a976ab0136458",
+      "frozen": true,
+      "evidence": {
+        "files": [],
+        "share": 0,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ]
+}
