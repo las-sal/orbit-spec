@@ -1,12 +1,12 @@
 ## ADDED Requirements
 
-### Requirement: A body reads its run-summary detail before the session's first emit
+### Requirement: A body reads its run-summary detail before the session's first run-summary emit
 
 Every workflow body's run-summary emit step in scope SHALL keep in the body when the emit fires, the `orbit emit`
 command with its scope forms, and the chat behaviour placed beside them: apply, archive, architect, review, verify,
 propose, address-reviews, ff, continue, new and audit-drift. Each SHALL tell the agent, in a read cue carried
 byte-equal by all eleven, to read the skill's
-`references/run-summary-emit.md` before the session's first emit and to follow it in composing the payload. That
+`references/run-summary-emit.md` before the session's first run-summary emit and to follow it in composing the payload. That
 reference SHALL hold the emit section whole, as the body carried it before this requirement, so the payload detail is
 read there and carried by no emit section. Each part of an emit section lands by this table:
 
@@ -14,7 +14,7 @@ read there and carried by no emit section. Each part of an emit section lands by
 |---|---|
 | when the emit fires (one-shot, chunk boundary, conversation boundary, the sweep before it) | the body |
 | the `orbit emit <cmd>` command and its scope forms | the body |
-| the read cue telling the agent to read the reference before the session's first emit | the body, byte-equal in all eleven |
+| the read cue telling the agent to read the reference before the session's first run-summary emit | the body, byte-equal in all eleven |
 | chat behaviour placed in the section (a completion-prompt override, propose's and ff's second publish segment) | the body |
 | each payload field's meaning and shape | the reference, out of the emit section |
 | when a field a session event owes is owed (apply's and archive's `judgements`, archive's `deferred_validations`, propose's and ff's `pr_attachment`) | the reference, out of the emit section |
@@ -38,7 +38,7 @@ architect's opening parenthetical, a provenance note beside its timing.
 Named limit — a session that does not read the reference composes without each trigger only the emit section stated
 (archive's readiness record is one), and the write gate, which checks a present field's shape and never an owed field's
 absence, writes the emit without it; only an absent `consent` is flagged, by audit-drift's consent tripwire. A long
-session reads the reference before its first emit only: when a compaction later drops that read, its later emits are
+session reads the reference before its first run-summary emit only: when a compaction later drops that read, its later emits are
 composed without it, and the cue does not send it back. Whether a read lost to a compaction calls for a re-read or a
 read named by an orbit command is weighed at `evaluation` (R-rop-4, R-rop-12).
 

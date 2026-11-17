@@ -461,7 +461,7 @@ export const ACCOUNT_WALK_STEP_BASIC = [
 
 // ---------------------------------------------------------------------------
 // once-per-session-detail (reduce-orbit-phase1, D-opsd-4, D-opsd-9; `orbit-run-summary-emit`'s `A body reads its
-// run-summary detail before the session's first emit`): each emit step in scope keeps when the emit fires, its command
+// run-summary detail before the session's first run-summary emit`): each emit step in scope keeps when the emit fires, its command
 // and the chat behaviour beside them, and reads its section, whole, from the skill's `references/run-summary-emit.md`.
 // ---------------------------------------------------------------------------
 
@@ -484,7 +484,7 @@ export const RUN_SUMMARY_EMIT_SKILLS = [
 export const RUN_SUMMARY_EMIT_REFERENCE_NAME = 'run-summary-emit.md';
 
 /** The READ CUE, carried byte-equal by each of the eleven bodies, immediately before its command block. */
-export const RUN_SUMMARY_READ_CUE = `Before the session's first emit, read \`references/${RUN_SUMMARY_EMIT_REFERENCE_NAME}\` and follow it to compose the payload: it holds this step whole, with where its fields are documented. Write the payload to a temp file and invoke:`;
+export const RUN_SUMMARY_READ_CUE = `Before the session's first run-summary emit, read \`references/${RUN_SUMMARY_EMIT_REFERENCE_NAME}\` and follow it to compose the payload: it holds this step whole, with where its fields are documented. Write the payload to a temp file and invoke:`;
 
 /** `references/run-summary-emit.md`: a one-line title, then the emit section whole. */
 export const runSummaryEmitReference = (section: string): string =>

@@ -20,7 +20,7 @@ import { VERIFY_RUN_SUMMARY_EMIT, VERIFY_RUN_SUMMARY_EMIT_BASIC } from '../../..
 
 /**
  * once-per-session-detail, task 3.3 — `orbit-run-summary-emit`'s `A body reads its run-summary detail before the
- * session's first emit`: each of the eleven emit steps in scope keeps when the emit fires, its command and the chat
+ * session's first run-summary emit`: each of the eleven emit steps in scope keeps when the emit fires, its command and the chat
  * behaviour beside them, and carries the shared READ CUE; its skill ships `references/run-summary-emit.md` holding the
  * emit section whole (byte-equal to the text before the change: `moved-blocks.test.ts` holds each section's sha256).
  */
@@ -58,12 +58,12 @@ const STEPS: Record<(typeof RUN_SUMMARY_EMIT_SKILLS)[number], { section: string;
 describe('the read cue', () => {
   it('is the two sentences design Decision 3 states, naming the reference file', () => {
     expect(RUN_SUMMARY_READ_CUE).toBe(
-      "Before the session's first emit, read `references/run-summary-emit.md` and follow it to compose the payload: it holds this step whole, with where its fields are documented. Write the payload to a temp file and invoke:"
+      "Before the session's first run-summary emit, read `references/run-summary-emit.md` and follow it to compose the payload: it holds this step whole, with where its fields are documented. Write the payload to a temp file and invoke:"
     );
     expect(RUN_SUMMARY_EMIT_SKILLS).toHaveLength(11);
   });
 
-  // @scenario text orbit-run-summary-emit :: A body reads its run-summary detail before the session's first emit :: Every emit step in scope carries the read cue
+  // @scenario text orbit-run-summary-emit :: A body reads its run-summary detail before the session's first run-summary emit :: Every emit step in scope carries the read cue
   it('each of the eleven bodies carries the cue once, byte-equal, followed by its command block, and ships run-summary-emit.md', () => {
     for (const dir of RUN_SUMMARY_EMIT_SKILLS) {
       const b = body(dir);
@@ -98,7 +98,7 @@ describe('each run-summary-emit.md holds its emit section whole', () => {
     }
   });
 
-  // @scenario text orbit-run-summary-emit :: A body reads its run-summary detail before the session's first emit :: The reference holds the section as it was
+  // @scenario text orbit-run-summary-emit :: A body reads its run-summary detail before the session's first run-summary emit :: The reference holds the section as it was
   it("apply's reference holds the judgements entry after Proceed anyway, the token source, consent and the withdrawn grant; the body's emit step carries none of them", () => {
     const ref = emitRef('orbit-apply-change');
     const moved = [
@@ -115,7 +115,7 @@ describe('each run-summary-emit.md holds its emit section whole', () => {
     }
   });
 
-  // @scenario text orbit-run-summary-emit :: A body reads its run-summary detail before the session's first emit :: The trigger of an owed field is in the reference
+  // @scenario text orbit-run-summary-emit :: A body reads its run-summary detail before the session's first run-summary emit :: The trigger of an owed field is in the reference
   it("archive's reference holds the readiness record's composition, and its body does not", () => {
     const ref = emitRef('orbit-archive-change');
     const readiness = '**COMPOSE THE READINESS RECORD (rc04a).** When this archive CONCLUDES A REVIEW CADENCE';
@@ -136,7 +136,7 @@ describe('each run-summary-emit.md holds its emit section whole', () => {
 });
 
 describe('what stays is in the body', () => {
-  // @scenario text orbit-run-summary-emit :: A body reads its run-summary detail before the session's first emit :: What stays is in the body
+  // @scenario text orbit-run-summary-emit :: A body reads its run-summary detail before the session's first run-summary emit :: What stays is in the body
   it("apply's emit step carries the chunk-boundary sentence and its completion override; propose's and ff's their second publish segment and override", () => {
     expect(APPLY_RUN_SUMMARY_EMIT_BASIC).toContain(
       '`/orbit:apply` is a chunked multi-turn command. Fire the emit at every chunk boundary, at a mid-chunk session pause (chain: not a prompt), or once at session end for a no-chunking change — the conversation-boundary judgment is yours; everything else is engine-computed.'
@@ -187,7 +187,7 @@ const section = (text: string, heading: string): string => {
 };
 
 describe('explore and bulk-archive are left as they are', () => {
-  // @scenario text orbit-run-summary-emit :: A body reads its run-summary detail before the session's first emit :: Explore and bulk-archive are left as they are
+  // @scenario text orbit-run-summary-emit :: A body reads its run-summary detail before the session's first run-summary emit :: Explore and bulk-archive are left as they are
   it('each emit section reads as before, and neither ships run-summary-emit.md nor carries the cue', () => {
     for (const [dir, heading, recorded] of UNTOUCHED) {
       expect(createHash('sha256').update(section(body(dir), heading)).digest('hex'), dir).toBe(recorded);

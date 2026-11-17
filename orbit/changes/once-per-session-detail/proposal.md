@@ -15,14 +15,14 @@ cannot rest on the write gate alone, since it refuses a malformed field and neve
   its moment comes, and the reference decides whether to write anything; no condition sits in the body. No engine
   change.
 - **Every emit step in scope keeps when the emit fires, the command and the chat behaviour beside them, and reads its
-  reference before the session's first emit** (D-opsd-4, D-opsd-9): apply, archive, architect, review, verify,
+  reference before the session's first run-summary emit** (D-opsd-4, D-opsd-9): apply, archive, architect, review, verify,
   propose, address-reviews, ff, continue, new and audit-drift, one shape for all eleven. The payload detail (each field's meaning and shape, when an optional field is
   owed, the token source, the composition rules, what the engine owns), with the provenance notes and rationale beside
   it, moves verbatim to one new reference file per skill, `references/run-summary-emit.md`, which holds the emit section
   whole; the existing schema references (review's and address-reviews' `run-summary-schema.md`, archive's
   `archive-summary-schema.md`) are left as they are. This departs from D-opsd-5's last sentence and from the charter's
   "each skill's run-summary schema reference": those files run to 15,000 to 31,000 characters, and a session that must
-  read its reference whole before its first emit would read more than the body carries today (design Decision 2).
+  read its reference whole before its first run-summary emit would read more than the body carries today (design Decision 2).
   Explore and bulk-archive keep theirs, outside this phase.
 - **The rule for once-a-session detail joins `skill_body_convention.md`** beside the rule for conditional steps: a
   block acted on once, at a moment the body names, keeps that moment and its command in the body and is read there.
@@ -39,7 +39,7 @@ cannot rest on the write gate alone, since it refuses a malformed field and neve
 
 - `orbit-decision-records`: `Each change carries one account, written when apply is complete` says the two bodies carry
   each step's basic content and its reference file the full instruction.
-- `orbit-run-summary-emit`: a new requirement, `A body reads its run-summary detail before the session's first emit`,
+- `orbit-run-summary-emit`: a new requirement, `A body reads its run-summary detail before the session's first run-summary emit`,
   says what every emit step in scope keeps in the body and what its reference holds, with the named limit of a skipped
   read.
 

@@ -23,7 +23,7 @@ section 3.
 - The account step keeps its basic content in apply and address-reviews and moves its full text, byte-equal, to a
   reference file each (D-opsd-8).
 - Every emit step in scope (eleven bodies) keeps when the emit fires, the command and the chat behaviour beside them, and
-  reads the moved detail before the session's first emit: one shape, so a payload field added later has one place to go
+  reads the moved detail before the session's first run-summary emit: one shape, so a payload field added later has one place to go
   and one test holding it there (D-opsd-4, D-opsd-9).
 - The budget test's ceilings go down to the new sizes plus 5%, set in a fresh apply session on the regenerated bodies,
   which also writes this change's account under the new body (D-opsd-6).
@@ -65,7 +65,7 @@ whether or not an account exists, stays in the body as it is.
 The exploration recorded that review's, address-reviews' and archive's moved text would join their existing schema
 references (D-opsd-5's last sentence), and the charter speaks of "each skill's run-summary schema reference". Measured
 at propose, those files are 20,107 (review), 30,760 (address-reviews) and 14,812 (archive) characters, and under
-D-opsd-4 every session reads its reference whole before its first emit: joining them would make each such session read
+D-opsd-4 every session reads its reference whole before its first run-summary emit: joining them would make each such session read
 15,000 to 31,000 characters where it carried 2,000 to 4,000, the opposite of the stage's purpose. So each of the eleven
 skills gains one small `references/run-summary-emit.md`, the same name in all eleven, and the schema references are left
 as they are. The bodies of address-reviews and archive name their schema reference only in the moving section today,
@@ -83,7 +83,7 @@ section constant, so each text has one home in the source.
 
 The shared cue, one constant (`RUN_SUMMARY_READ_CUE` in `src/core/disciplines.ts`), byte-equal in all eleven bodies:
 
-> Before the session's first emit, read `references/run-summary-emit.md` and follow it to compose the payload: it holds
+> Before the session's first run-summary emit, read `references/run-summary-emit.md` and follow it to compose the payload: it holds
 > this step whole, with where its fields are documented. Write the payload to a temp file and invoke:
 
 The cue is two sentences; the spec calls it the READ CUE. Each body's emit section after the move, verbatim (heading,
@@ -140,7 +140,7 @@ so every emit step in scope has one shape (D-opsd-9).
 ### 4. The rule joins the convention
 
 `skill_body_convention.md` gains a rule beside the conditional-steps one: a block acted on once, at a moment the body
-names (the session's first emit, the end of apply, the end of a walk), keeps that moment, its command and any chat
+names (the session's first run-summary emit, the end of apply, the end of a walk), keeps that moment, its command and any chat
 behaviour in the body and tells the agent to read its reference there, every time; the reference decides what the
 moment calls for. The emit steps and the account steps both follow it. Its Examples gain the emit step; its Exceptions name explore's and bulk-archive's emit steps. The CLAUDE.md
 sentence summarizing the convention is widened to match.
@@ -161,7 +161,7 @@ summary from `run-summary-emit.md`; it also lowers the ceilings, which needs the
 ## Risks / Trade-offs
 
 - [D-opsd-4 is BOUNDED] → its named limit and residual live in the requirement `A body reads its run-summary detail
-  before the session's first emit` (`orbit-run-summary-emit`); see there.
+  before the session's first run-summary emit` (`orbit-run-summary-emit`); see there.
 - [A session skips the account read] → no account is written and nothing reports it; the same as today with the step in
   the body, plus one read to skip. Named in `Each change carries one account, written when apply is complete`; an engine
   report of a missing account is on `evaluation`'s list (D-opsd-8, R-rop-4's companion).
@@ -220,7 +220,7 @@ The proposing AI's reading of the file; no engine record.
 | D-opsd-1 | — | fact (not carried) | none |
 | D-opsd-2 | — | fact (not carried) | none |
 | D-opsd-3 | — | superseded D-opsd-8 (not carried) | none |
-| D-opsd-4 | BOUNDED | live rule | `A body reads its run-summary detail before the session's first emit` (orbit-run-summary-emit), as a normative TABLE; its residual verbatim in that requirement, pointed at from Risks |
+| D-opsd-4 | BOUNDED | live rule | `A body reads its run-summary detail before the session's first run-summary emit` (orbit-run-summary-emit), as a normative TABLE; its residual verbatim in that requirement, pointed at from Risks |
 | D-opsd-5 | — | superseded D-opsd-9 (not carried) | none |
 | D-opsd-6 | — | scope (not carried) | none |
 | D-opsd-7 | — | fact (not carried) | none |

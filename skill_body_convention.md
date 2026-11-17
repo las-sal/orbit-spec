@@ -14,7 +14,7 @@ R-rop-3, R-rop-4, R-rop-8). `test/core/templates/skill-body-budget.test.ts` poin
   skill (`references/<name>.md`). The basic content says when the step runs, the command it runs, the usual result it
   handles itself, and the file to read on any other result or a non-zero exit.
 - **Detail acted on once is read at its moment.** A block acted on once, at a moment the body names (the session's first
-  emit, the end of apply, the end of a walk), keeps that moment, its command and any chat behaviour in the body, and
+  run-summary emit, the end of apply, the end of a walk), keeps that moment, its command and any chat behaviour in the body, and
   tells the agent to read its reference there, every time; the reference decides what the moment calls for, so the body
   carries no condition of its own (`once-per-session-detail`, D-opsd-4, D-opsd-8). The reference holds the block whole.
 - **The handoff names the result already in hand.** A basic content that follows a command's result tells the agent to
@@ -50,7 +50,7 @@ The run-summary emit step, carried by eleven bodies with one read cue (`RUN_SUMM
 ````markdown
 ## Run-summary emit (one-shot at command completion — via the engine emit surface)
 
-At command completion, write the new run summary. Before the session's first emit, read `references/run-summary-emit.md` and follow it to compose the payload: it holds this step whole, with where its fields are documented. Write the payload to a temp file and invoke:
+At command completion, write the new run summary. Before the session's first run-summary emit, read `references/run-summary-emit.md` and follow it to compose the payload: it holds this step whole, with where its fields are documented. Write the payload to a temp file and invoke:
 
 ```bash
 orbit emit new --change <name> --payload <payload-file>
