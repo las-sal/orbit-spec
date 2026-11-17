@@ -1,0 +1,29 @@
+{
+  "command": "stop",
+  "timestamp": "2026-11-17T23:48:08Z",
+  "change": "tighten-bodies",
+  "model": "claude-opus-5-5",
+  "condition": "ruling-amendment",
+  "about": "RG1 asks that the skill bodies total at most 350,000 characters, and apply's at most 17,500, after stage tighten-bodies. The moves the stage's charter names cannot reach that: restructuring the decision-writing bullet with its content unchanged (R-rop-7) makes it slightly longer, not about 700 characters shorter in each body (about 9,400 across the fourteen bodies that carry it) as the brief estimated, so the charter's moves reach about 360,000 at best, and apply about 17,650.",
+  "question": "Should RG1's figures be amended to what the charter's moves actually reach (set at propose from the measured drafts), should the decision-writing bullet be cut further now (moving the stop-condition explanations and the list of ledger areas to its reference file, which R-rop-7 left to the evaluation), or should RG1 stand and the shortfall come from moves the brief held for after the evaluation?",
+  "defines": [
+    {
+      "term": "decision-writing bullet",
+      "definition": "The paragraph in every skill's list of working disciplines that says when the agent writes a stop record, a resolution or a ledger entry."
+    },
+    {
+      "term": "reference file",
+      "definition": "A file beside a skill that the agent reads only when the skill tells it to, so its text costs nothing until then."
+    },
+    {
+      "term": "stop-condition explanations",
+      "definition": "The short gloss the bullet gives beside each of the five situations in which the agent writes a stop record before asking the user."
+    },
+    {
+      "term": "list of ledger areas",
+      "definition": "The bullet's list of the eighteen kinds of decision (what the user sees, defaults, secrets and the rest) after which the agent writes a ledger entry."
+    }
+  ],
+  "detail": "Measured at a5ba0f0c: bodies 369,392 (needs 19,392 off), apply 18,887 (needs 1,387 off). Draft restructure 2,901 vs 2,860 per body x14. Upper-bound savings: Guardrails <=4,208 (8 bodies), provenance ~4,000-6,000, address-reviews description ~940. See D-tb-1 in orbit/explore/tighten-bodies/explore.md.",
+  "replaces": "stop-2026-11-17T23-48-07Z.json"
+}

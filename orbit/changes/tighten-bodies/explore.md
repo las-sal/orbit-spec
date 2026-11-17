@@ -302,7 +302,7 @@ Moves:
 - **2026-11-17 — D-tb-18: a member of the six kinds the patterns cannot remove is recorded, like a form outside them**
   The fresh system review found six in-kind sites left in three bodies (`R-crc-11(f)`, `rc04a's` and `D1's` in review;
   `pre-D2` twice in propose; `pre-D4` in address-reviews): each removal would take characters no pattern covers, so
-  the edit ledger refused it, and the account recorded the six with the other residual finds. Sal's direction at the
+  the edit ledger's coverage check would refuse it and none was written as a pair, and the account recorded the six with the other residual finds. Sal's direction at the
   system walk ("walk all", option A): D-tb-6's named limit also names such a member, recorded in the account and left
   for the evaluation; no pattern is widened and no body changes. Chosen over widening the patterns (`'s`, a clause
   suffix) and removing the review sites, which would still leave `pre-D2` and `pre-D4` to reword. Narrows D-tb-6.

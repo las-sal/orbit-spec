@@ -1,0 +1,352 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-17T23:48:56Z",
+  "change": "tighten-bodies",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/tighten-bodies/.orbit-runs/review-system-2026-11-17T23-44-01Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-17T23-44-01Z",
+  "latest_apply_token": "2026-11-17T22-35-26Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "walk_mode_source": null,
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 6
+  },
+  "pushback_verification": "Each finding checked against the record or file it names at HEAD (d626c494): the four decision records carry the wording each reading finding quotes, and explore.md:304-305 says the edit ledger refused the removals.",
+  "resolution_summary": {
+    "resolved": 8,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "stop-2026-11-17T20-08-45Z.json, row 4: 'defines' gives R-crc-14's mirror corollary without its 'the copy adds nothing' condition, and says the note names the spec rather than the requirement",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/tighten-bodies/.orbit-runs/decisions/stop-2026-11-17T20-08-45Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "lane": "obvious",
+      "outcome": "resolved",
+      "remedy": "repair",
+      "action": "A replacement of the stop defines R-crc-14's mirror corollary with all four conditions, in R-rop-14's words (the copy says it is a copy and names the requirement that owns it, a test keeps it identical, and it adds nothing), and its 'about' says the note names the requirement.",
+      "evidence": "stop-2026-11-17T23-48-03Z.json replaces stop-2026-11-17T20-08-45Z.json, its link fields carried unchanged; the write gate accepted it.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/tighten-bodies/.orbit-runs/decisions/stop-2026-11-17T23-48-03Z.json",
+            "text": "a test keeps the copy identical to that requirement"
+          }
+        ],
+        "searched": [
+          "stop-2026-11-17T20-08-45Z.json"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/tighten-bodies/.orbit-runs/decisions/stop-2026-11-17T20-08-45Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "resolution-2026-11-17T20-16-12Z.json, row 4: 'effect' says thirteen mirror notes without squaring it with the stop's nine places",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/tighten-bodies/.orbit-runs/decisions/resolution-2026-11-17T20-16-12Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "lane": "obvious",
+      "outcome": "resolved",
+      "remedy": "repair",
+      "action": "A replacement of the resolution says what the two counts are: the stop's nine places were the notes measured when it was asked, and a count over all twelve bodies found thirteen. Written before the stop's replacements, so its carried stop link names the latest record.",
+      "evidence": "resolution-2026-11-17T23-48-02Z.json replaces resolution-2026-11-17T20-16-12Z.json, its link fields carried unchanged; the write gate accepted it.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/tighten-bodies/.orbit-runs/decisions/resolution-2026-11-17T23-48-02Z.json",
+            "text": "a count over all twelve bodies found thirteen"
+          }
+        ],
+        "searched": [
+          "resolution-2026-11-17T20-16-12Z.json"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/tighten-bodies/.orbit-runs/decisions/resolution-2026-11-17T20-16-12Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "D-tb-18 says the edit ledger refused the six in-kind removals, but no such pair was ever written",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/tighten-bodies/explore.md",
+      "line": 304,
+      "classification": "trivial_fix",
+      "lane": "obvious",
+      "outcome": "resolved",
+      "remedy": "repair",
+      "action": "D-tb-18 now says the edit ledger's coverage check would refuse such a removal and none was written as a pair.",
+      "evidence": "explore.md:304-305 reworded; no \"ledger refused\" remains in the change directory; orbit validate passes.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the edit ledger refused it"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/tighten-bodies/explore.md",
+            "text": "coverage check would refuse it and none was written as a pair"
+          }
+        ],
+        "searched": [
+          "ledger refused",
+          "refused it"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "ledger-2026-11-17T20-16-13Z.json, row 4: 'decided' gives the walk description's target as about 300, where its cited D-tb-9 says about 360",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/tighten-bodies/.orbit-runs/decisions/ledger-2026-11-17T20-16-13Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "lane": "obvious",
+      "outcome": "resolved",
+      "remedy": "repair",
+      "action": "A replacement of the ledger entry gives D-tb-9's figure, about 360.",
+      "evidence": "ledger-2026-11-17T23-48-05Z.json replaces ledger-2026-11-17T20-16-13Z.json, its link fields carried unchanged; the write gate accepted it.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/tighten-bodies/.orbit-runs/decisions/ledger-2026-11-17T23-48-05Z.json",
+            "text": "from about 1,140 to about 360 characters"
+          }
+        ],
+        "searched": [
+          "ledger-2026-11-17T20-16-13Z.json"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/tighten-bodies/.orbit-runs/decisions/ledger-2026-11-17T20-16-13Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "ledger-2026-11-17T20-16-13Z.json, row 3: 'a strict reader of the file format', the unexplained drift-scan sentence and 'review-walk skill' slow the reader",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/tighten-bodies/.orbit-runs/decisions/ledger-2026-11-17T20-16-13Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "lane": "obvious",
+      "outcome": "resolved",
+      "remedy": "repair",
+      "action": "A replacement of the latest entry says valid YAML (RG2's words), names the address-reviews skill, and says why the drift-scan description was checked before saying it stays; the alternatives say the same.",
+      "evidence": "ledger-2026-11-17T23-48-06Z.json replaces ledger-2026-11-17T23-48-05Z.json, its link fields carried unchanged; the write gate accepted it.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/tighten-bodies/.orbit-runs/decisions/ledger-2026-11-17T23-48-06Z.json",
+            "text": "will be written as valid YAML"
+          }
+        ],
+        "searched": [
+          "ledger-2026-11-17T20-16-13Z.json"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/tighten-bodies/.orbit-runs/decisions/ledger-2026-11-17T23-48-05Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "stop-2026-11-17T19-56-53Z.json, row 3: 'about' gives '700 characters shorter' without saying it is per body, beside the doc's 9,400 total",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/tighten-bodies/.orbit-runs/decisions/stop-2026-11-17T19-56-53Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "lane": "obvious",
+      "outcome": "resolved",
+      "remedy": "repair",
+      "action": "A replacement of the stop says the brief's estimate was about 700 characters in each body, about 9,400 across the fourteen.",
+      "evidence": "stop-2026-11-17T23-48-07Z.json replaces stop-2026-11-17T19-56-53Z.json, its link fields carried unchanged; the write gate accepted it.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/tighten-bodies/.orbit-runs/decisions/stop-2026-11-17T23-48-07Z.json",
+            "text": "shorter in each body (about 9,400 across the fourteen bodies that carry it)"
+          }
+        ],
+        "searched": [
+          "stop-2026-11-17T19-56-53Z.json"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/tighten-bodies/.orbit-runs/decisions/stop-2026-11-17T19-56-53Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "stop-2026-11-17T19-56-53Z.json, row 1: 'question' uses 'the stop-condition explanations' and 'the list of ledger areas', neither defined",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/tighten-bodies/.orbit-runs/decisions/stop-2026-11-17T19-56-53Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "lane": "obvious",
+      "outcome": "resolved",
+      "remedy": "repair",
+      "action": "A replacement of the latest stop adds both terms to its defines list.",
+      "evidence": "stop-2026-11-17T23-48-08Z.json replaces stop-2026-11-17T23-48-07Z.json, its link fields carried unchanged; the write gate accepted it.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/tighten-bodies/.orbit-runs/decisions/stop-2026-11-17T23-48-08Z.json",
+            "text": "after which the agent writes a ledger entry"
+          }
+        ],
+        "searched": [
+          "stop-2026-11-17T19-56-53Z.json"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/tighten-bodies/.orbit-runs/decisions/stop-2026-11-17T23-48-07Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "stop-2026-11-17T20-08-45Z.json, row 3: 'about' counts 'about 1,860 characters in nine places' where the resolution and R-rop-14 count thirteen notes",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/tighten-bodies/.orbit-runs/decisions/stop-2026-11-17T20-08-45Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "lane": "obvious",
+      "outcome": "resolved",
+      "remedy": "repair",
+      "action": "A replacement of the latest stop says the nine were the notes measured so far.",
+      "evidence": "stop-2026-11-17T23-48-04Z.json replaces stop-2026-11-17T23-48-03Z.json, its link fields carried unchanged; the write gate accepted it.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/tighten-bodies/.orbit-runs/decisions/stop-2026-11-17T23-48-04Z.json",
+            "text": "The nine notes measured so far are about 1,860 characters"
+          }
+        ],
+        "searched": [
+          "stop-2026-11-17T20-08-45Z.json"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/tighten-bodies/.orbit-runs/decisions/stop-2026-11-17T23-48-03Z.json",
+            "why": "a replaced record is never edited"
+          }
+        ]
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "The in-context verification pass is walked: seven replacement decision records fix the reading step's findings, each the latest of its chain with its links unchanged, and D-tb-18's sentence now states what happened. No product file changed.",
+  "iteration": 5,
+  "next_recommended": "/orbit:archive tighten-bodies — user-invoked",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "ef55ee46c8966ac09dca3147330a976ab0136458",
+      "frozen": true,
+      "evidence": {
+        "files": [],
+        "share": 0,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ],
+  "ripple_misses": 0
+}
