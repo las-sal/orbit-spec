@@ -1,0 +1,146 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-17T18:43:59Z",
+  "change": "once-per-session-detail",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/once-per-session-detail/.orbit-runs/review-proposal-2026-11-17T18-41-16Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-17T18-41-16Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "walk_mode_source": null,
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 2
+  },
+  "pushback_verification": "Both verified at HEAD: each line still read as the finding quoted.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "SUGGESTION",
+      "title": "Design Decision 5 still has the final apply session read the gate before the account cue",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/once-per-session-detail/design.md",
+      "line": 157,
+      "classification": "trivial_fix",
+      "action": "reworded Decision 5's last sentence to task 6.3's form (the session follows the account cue at its end, reads references/account-step.md and writes this change's account) and added the missing comma in task 2.2",
+      "evidence": "design.md:157-158 read \"reads the / gate, follows the account cue\" across a line break",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/once-per-session-detail/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "task reads the\ngate"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/once-per-session-detail/design.md",
+            "text": "follows the\naccount cue at its end"
+          },
+          {
+            "path": "orbit/changes/once-per-session-detail/tasks.md",
+            "text": "before the commit step), that each basic content"
+          }
+        ],
+        "searched": [
+          "reads the gate",
+          "reads the\\ngate (whitespace-normalized)",
+          "apply gate"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "ripple_miss_of": {
+        "walk": "2026-11-17T18-38-08Z",
+        "title": "The account cue reads the apply gate before this session's emit declares user_validation_tasks, so a change ending on a user-validation handoff gets no account",
+        "file": "orbit/changes/once-per-session-detail/design.md",
+        "kind": "query"
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "D-opsd-4's CONSUME move line still names new run-summary-schema.md files joining the schema-table parity test",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/once-per-session-detail/explore.md",
+      "line": 63,
+      "classification": "trivial_fix",
+      "action": "re-pointed D-opsd-4's CONSUME move line: the agent reads the payload instructions from each skill's references/run-summary-emit.md; the schema-table parity test reads the untouched schema references, and the moved sections carry no schema block",
+      "evidence": "explore.md:63 named new run-summary-schema.md files joining the parity test, which design Decision 2 replaced",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "files join its set, and archive already has"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/once-per-session-detail/explore.md",
+            "text": "the moved sections carry no schema block, so its set does not change"
+          }
+        ],
+        "searched": [
+          "run-summary-schema.md",
+          "schema-table parity",
+          "CONSUME"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Both suggestions resolved by local wording repairs: the account cue's last narrative site (a ripple miss of log 2026-11-17T18-38-08Z's CRITICAL entry, kind query) and D-opsd-4's stale CONSUME line.",
+  "iteration": 3,
+  "next_recommended": "/orbit:apply once-per-session-detail — user-invoked",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "aafdb4451e8176c6432919c716b103693dffb734",
+      "frozen": false,
+      "evidence": {
+        "files": [],
+        "share": null,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ],
+  "ripple_misses": 1
+}

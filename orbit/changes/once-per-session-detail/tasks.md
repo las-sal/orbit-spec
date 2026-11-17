@@ -12,7 +12,7 @@ Implementation chunks:
 ## 2. The account step (D-opsd-8)
 
 - [ ] 2.1 Add `ACCOUNT_STEP_BASIC` and `ACCOUNT_WALK_STEP_BASIC` to `src/core/disciplines.ts` (design Decision 1), interpolate them where the full steps sit in the apply and address-reviews templates, and ship `references/account-step.md` (apply) and `references/account-walk-step.md` (address-reviews), each a one-line title followed by the full constant
-- [ ] 2.2 Retarget `account-step.test.ts` and `account-reading-walk.test.ts` to the reference files; add tests that each basic content is carried once and in place (apply's before its run-summary emit and commit step; the walk's after step 6 and before the commit step) that each basic content carries no condition of its own, that each reference is its title plus its constant, and that apply's reference keeps the completion rule naming this session's `user_validation_tasks` (the proposal walk's first-declared-handoff case); tag the two new `orbit-decision-records` scenarios
+- [ ] 2.2 Retarget `account-step.test.ts` and `account-reading-walk.test.ts` to the reference files; add tests that each basic content is carried once and in place (apply's before its run-summary emit and commit step; the walk's after step 6 and before the commit step), that each basic content carries no condition of its own, that each reference is its title plus its constant, and that apply's reference keeps the completion rule naming this session's `user_validation_tasks` (the proposal walk's first-declared-handoff case); tag the two new `orbit-decision-records` scenarios
 
 ## 3. The emit steps (D-opsd-4, D-opsd-9)
 

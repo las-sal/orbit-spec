@@ -154,9 +154,9 @@ propose (the moving text removed in a throwaway worktree, 29 failures in 14 file
 account tests, `archive-user-validation`, `orbit-content-fidelity`, `orbit-generated-surface`, `reading-step-surface`;
 the probe's other failures (`walk-routing`, `chain-prompt-tags`, the size-brief split line, `moved-blocks`' one-level
 check) were text that stays. The real-session check is the apply itself: the last chunk runs in a NEW `/orbit:apply`
-session after `npm run build && node bin/orbit.js update --force`, so the session that checks the last task reads the
-gate, follows the account cue and writes this change's account, and composes its run summary from
-`run-summary-emit.md`; it also lowers the ceilings, which needs the final sizes.
+session after `npm run build && node bin/orbit.js update --force`, so the session that checks the last task follows the
+account cue at its end, reads `references/account-step.md` and writes this change's account, and composes its run
+summary from `run-summary-emit.md`; it also lowers the ceilings, which needs the final sizes.
 
 ## Risks / Trade-offs
 

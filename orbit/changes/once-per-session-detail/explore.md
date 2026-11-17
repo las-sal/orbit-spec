@@ -60,7 +60,7 @@ Moves:
 - FALSIFY: applied — a session that skips the read composes without the owed-field triggers and loses those records silently; only an absent `consent` is flagged (audit-drift's tripwire), a named limit Sal accepted against option 1's second home for the triggers
 - CONFORM: applied — the brief's rule 3 (one home), R-rop-3 (the reference byte-equal to today's text), R-rop-4 (the body directs the read), R-rop-10 ("first emit" avoids the unmeasured re-read at later emits)
 - FEASIBILITY: applied — the read happens once per session, at its first emit; apply and architect then carry the text for the rest of the session, which Sal accepted
-- CONSUME: applied — the emit-composition schema-table parity test reads each skill's schema reference against the engine's payload table; new `run-summary-schema.md` files join its set, and archive already has `archive-summary-schema.md`
+- CONSUME: applied — the agent composing the payload reads it from each skill's `references/run-summary-emit.md` (design Decision 2); the emit-composition schema-table parity test reads the schema references, which this change leaves untouched, and the moved sections carry no schema block, so its set does not change
 - INVOKE: applied — the read instruction sits beside the command, at the one moment every session reaches
 
 ## Decisions
