@@ -1,0 +1,176 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-17T21:22:08Z",
+  "change": "tighten-bodies",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/tighten-bodies/.orbit-runs/external-proposal-2026-11-17T20-47-13Z.md",
+  "source_command": null,
+  "source_token": "2026-11-17T20-47-13Z",
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-6",
+  "walk_mode": "per_finding",
+  "walk_mode_source": null,
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 3,
+    "suggestion": 0
+  },
+  "pushback_verification": "All three verified against current state. The RG1 finding's premise (the doc might keep the old limits) does not hold at HEAD, since 4acf48f9 wrote them at propose; the artifacts' wording that implied a later write is what was fixed. The description-test finding converges with the fresh pass's and takes its resolution.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 1,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Description test conflicts with the unchanged audit-drift description",
+      "marker_source": "external",
+      "file": "orbit/changes/tighten-bodies/tasks.md",
+      "line": 28,
+      "classification": "stale",
+      "lane": "obvious",
+      "outcome": "stale",
+      "action": "no edit here: converged with the fresh pass's finding on the same site and claim, walked and resolved in the earlier log",
+      "evidence": "resolved in address-reviews-2026-11-17T21-21-46Z (the fresh pass's 'The planned frontmatter test's \"Use when\" / \"Use after\" check fails on audit-drift's unchanged description'): task 5.1's test now accepts a 'Use' clause containing 'when', so audit-drift's 'Use standalone when' passes"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The RG1 amendment has no implementation task",
+      "marker_source": "external",
+      "file": "orbit/changes/tighten-bodies/tasks.md",
+      "line": 42,
+      "classification": "trivial_fix",
+      "lane": "obvious",
+      "outcome": "resolved",
+      "remedy": "repair",
+      "action": "no task is needed: RG1's figures (365,500 and 18,300) were written into reduce-orbit-phase1.md at propose, commit 4acf48f9; design Decision 7, its Touchpoints line and the proposal's What Changes and Impact now say so instead of 'written … by this change'",
+      "evidence": "orbit/architecture/reduce-orbit-phase1.md lines 35 and 328 carry 365,500 and 18,300 at HEAD (4acf48f9); design Decision 7 read 'written into `reduce-orbit-phase1.md` by this change'",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/tighten-bodies/design.md",
+          "orbit/changes/tighten-bodies/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "set to the measured totals",
+          "into `reduce-orbit-phase1.md` by this change"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/tighten-bodies/design.md",
+            "text": "at propose (`4acf48f9`), so no task"
+          },
+          {
+            "path": "orbit/changes/tighten-bodies/proposal.md",
+            "text": "written into the architecture doc at propose (`4acf48f9`)"
+          }
+        ],
+        "searched": [
+          "RG1",
+          "365,500",
+          "reduce-orbit-phase1.md"
+        ],
+        "scope": [
+          "orbit/architecture/reduce-orbit-phase1.md"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "Removing the new-change guardrail weakens its explicit boundary",
+      "marker_source": "external",
+      "file": "orbit/changes/tighten-bodies/specs/orbit-conventions/spec.md",
+      "line": 225,
+      "classification": "trivial_fix",
+      "lane": "obvious",
+      "outcome": "resolved",
+      "remedy": "repair",
+      "action": "new-change keeps 'Do NOT create any artifacts yet - just show the instructions': a prohibition no step states, so D-tb-3's own rule keeps it; 'Do NOT advance beyond showing the first artifact template' still goes, step 6's STOP stating it. 23 of 42 lines go (1,566 characters); the requirement's table, the proposal, design Decisions 2 and 7, task 3.1 and explore's D-tb-3 entry follow",
+      "evidence": "new-change's steps 5 and 6 show the first artifact's instructions and 'STOP and wait for user direction'; none says not to create an artifact",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/tighten-bodies/explore.md",
+          "orbit/changes/tighten-bodies/design.md",
+          "orbit/changes/tighten-bodies/proposal.md",
+          "orbit/changes/tighten-bodies/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "lines, 24 removed",
+          "Twenty-four lines go",
+          "the twenty-four lines",
+          "24 of 42 lines in six bodies"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/tighten-bodies/specs/orbit-conventions/spec.md",
+            "text": "kept — a prohibition no step states; steps 5 and 6"
+          },
+          {
+            "path": "orbit/changes/tighten-bodies/design.md",
+            "text": "Twenty-three lines go (1,566 characters)"
+          }
+        ],
+        "searched": [
+          "Do NOT create any artifacts yet",
+          "24 removed",
+          "1,629",
+          "twenty-four"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/tighten-bodies/explore.md",
+            "why": "D-tb-16 is a dated record of the count at propose ('24 of 42 removed, 1,629 characters'), history a later correction never edits"
+          }
+        ]
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "The external proposal pass is walked: the description-test finding converged with the fresh pass's and is stale, resolved there; the RG1 wording now says the figures were written at propose; new-change keeps its 'Do NOT create any artifacts yet' guardrail, 23 of 42 lines going.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal tighten-bodies",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "41e5293c605048c55b158082f75c53ccb42d3d9f",
+      "frozen": false,
+      "evidence": {
+        "files": [],
+        "share": null,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ],
+  "ripple_misses": 0
+}

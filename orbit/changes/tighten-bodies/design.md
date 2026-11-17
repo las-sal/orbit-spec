@@ -31,7 +31,7 @@ descriptions (D-tb-4, `skill_body_convention.md`'s Exceptions).
 
 ## Decisions
 
-### 1. The decision-writing bullet keeps every clause in six labelled sub-bullets (D-tb-1, R-rop-7)
+### 1. The decision-writing bullet keeps every clause in five labelled sub-bullets (D-tb-1, R-rop-7)
 
 The fifth epitome bullet keeps its label line and gains R-rop-7's five labelled sub-bullets, nested under it: before
 asking (the five stop conditions with their glosses, in the write gate's order, as today), acting without asking,
@@ -47,19 +47,27 @@ program raises, at Sal's choice (D-tb-17; R-rop-8 and RG3 amended).
 ### 2. Guardrails lines go only when a step line says them (D-tb-3)
 
 The removals are named in `Restated Guardrails lines are removed from orbit-modified bodies`, as `Generated-file
-disposition` asks of an edit to an upstream portion. Twenty-four lines go (1,629 characters) and eighteen stay;
+disposition` asks of an edit to an upstream portion. Twenty-three lines go (1,566 characters) and nineteen stay;
 archive's block goes whole. Apply keeps "pause and ask before implementing" and "scoped to each task", which no step
-says. Sync-specs keeps all five lines: `Generated-file disposition` classes it as upstream-verbatim, its upstream body
+says, and new-change keeps "Do NOT create any artifacts yet", a prohibition no step states (walk of the external
+proposal pass). Sync-specs keeps all five lines: `Generated-file disposition` classes it as upstream-verbatim, its upstream body
 unchanged (D-tb-16).
 
 ### 3. Provenance leaves the twelve bodies; the instruction stays (D-tb-6, D-tb-7)
 
 The six kinds and their treatment are the table in `Tightened bodies carry no provenance`. The shared epitome's opening
 line ("The disciplines from `orbit-conventions`, embedded per body; …") is shared with explore and bulk-archive and
-stays (D-tb-4). Shared headings composed in `src/core/disciplines.ts` (the commit step's, the chain end step's, the
-account step's) lose their citations; no body outside the twelve carries them. Text only authors need (that a fence
+stays (D-tb-4). The step headings composed in `src/core/disciplines.ts` lose their citations in the bodies' basic contents only
+(`COMMIT_STEP_BASIC`, `CHAIN_END_STEP_BASIC`, and the account steps' basic contents, for which
+`ACCOUNT_STEP_HEADING` and `ACCOUNT_WALK_STEP_HEADING` are split into a body heading and the full step's own); the
+full steps in the reference files (`COMMIT_STEP`, `CHAIN_END_STEP`, `ACCOUNT_STEP`, `ACCOUNT_WALK_STEP`) stay
+byte-equal, so `moved-blocks.test.ts`' recorded hashes hold (walk of the fresh proposal pass, F3). Text only authors need (that a fence
 is a mirror, which test holds it) moves to a comment beside the template literal, which is not emitted. Mirror notes go
-whole (R-rop-14); the two requirements that asked for them are modified. A citation a requirement asks the body to
+whole (R-rop-14); the two requirements that asked for them are modified. A removal takes only provenance and the
+connectors joining it to its sentence: a note's own sentences and clauses go, an instruction sharing its paragraph or
+bracket stays (review's "The pass genre is a record and a header word; …", archive's "(every reviewed gate)"). The
+six kinds have written patterns in the requirement, and the ledger checks a removed span is wholly covered by them
+(walk of the fresh proposal pass, F1). A citation a requirement asks the body to
 carry is not provenance and stays: the review and address-reviews bodies name `orbit-conventions`' Severity ladder
 wherever they assign a severity ("SHALL NAME this ladder"), and review names the `Review mode decision framework` rule
 where it composes a brief (D-tb-16). Before removing any other prose citation, apply greps `orbit/specs/` for a
@@ -75,14 +83,16 @@ fence "as a CHECKED MIRROR held byte-equal by a parity test", which stays true w
 does metadata values. A plain value (a kebab-case name, `MIT`) stays bare; a description with a comma or `: ` is
 JSON-quoted. Three descriptions are reworded, drafted here and finalized at apply:
 
-- address-reviews (1,140 characters to about 340): "Walk review findings and `@review:` markers to resolution, one
+- address-reviews (1,140 characters to about 360): "Walk review findings and `@review:` markers to resolution, one
   by one: pushback against current state, classify, fix the obvious ones, brief each decision for the user to
   ratify, cascade ripple edits, and record the walk. Use after `/orbit:review` or `/orbit:audit-drift` writes
   findings, after an external review returns, or when `@review:` markers have built up."
 - architect: today's text, plus "Use when starting or steering a program of several changes, or ratifying a stage."
 - onboard: today's text, plus "Use when someone is new to orbit or asks how its workflow fits together."
 
-Audit-drift's description stays: its "four categories" are `orbit-audit-drift`'s `Four scan categories executed`.
+Audit-drift's description stays: its "four categories" are `orbit-audit-drift`'s `Four scan categories executed`,
+and its "Use standalone when" is a when-clause the frontmatter test accepts (a "Use" clause containing "when", or
+"Use after").
 
 ### 5. An edit ledger reconciles each body to its recorded hash (D-tb-14)
 
@@ -99,18 +109,19 @@ recorded text`; any other stops the edit. Each is named in the archive.
 
 ### 7. RG1's amended figures
 
-From the measured drafts: Guardrails −1,629 (apply −435), the decision-writing bullet +1,568 (apply +112), the
+From the measured drafts: Guardrails −1,566 (apply −435), the decision-writing bullet +1,568 (apply +112), the
 descriptions about −650 net (address-reviews −800, architect and onboard +160, quoting about +30), and apply's
 provenance drafted at −358. The other eleven bodies' provenance is estimated at 3,100 to 3,800 (D-tb-8, less apply's
 share and the citations D-tb-16 keeps). Projection: about 364,500 to 365,200 in total, apply about 18,206. RG1 is set
-at **at most 365,500 in total and 18,300 for apply**, written into `reduce-orbit-phase1.md` by this change; the
-budget ceilings then come down to the exact sizes plus 5%. The exit criterion is met when the measured sizes at apply
+at **at most 365,500 in total and 18,300 for apply**, written into `reduce-orbit-phase1.md` at propose (`4acf48f9`), so no task
+writes them; the budget ceilings then come down to the exact sizes plus 5%. The exit criterion is met when the measured sizes at apply
 sit under both figures.
 
 ## Risks / Trade-offs
 
 - [D-tb-6's residual] A provenance form none of the six kinds names may remain in a body. The named limit and how a
   member is found are stated in `Tightened bodies carry no provenance`; this entry points there and restates nothing.
+  Such a form is recorded and left in place, never removed in this stage (walk of the fresh proposal pass, F2).
 - [An instruction mistaken for provenance] A spec citation the agent acts on could be cut. → The edit ledger's
   `provenance` kind check refuses a removed span that matches none of the six patterns, and the prose-citation rule
   keeps a citation the sentence needs.
@@ -137,13 +148,13 @@ the proposing AI's reading of the file; no engine record
 
 ## Touchpoints
 
-- `src/core/disciplines.ts` — the decision-writing constant, the shared step headings, `decision-records.md`'s contents list.
+- `src/core/disciplines.ts` — the decision-writing constant, the basic-content step headings (the account headings split), `decision-records.md`'s contents list.
 - `src/core/templates/workflows/*.ts` — the twelve tightened bodies, the three descriptions, review's flag row, the long references' contents lists.
 - `src/core/shared/skill-generation.ts` — `generateSkillContent` writes every frontmatter value through `yamlScalar`.
 - `test/core/templates/` — the new edit-ledger, frontmatter and contents tests; `moved-blocks.test.ts`, `chain-prompt-tags.test.ts`, `skill-templates-parity.test.ts`, `skill-body-budget.test.ts`.
 - `test/core/*-parity.test.ts` — the mirror parity suites' anchors and the decision-writing parity test.
-- `skill_body_convention.md` — its Exceptions lose the two-level sentence.
-- `orbit/architecture/reduce-orbit-phase1.md` — RG1's figures.
+- `skill_body_convention.md` — its Exceptions lose the two-level sentence; its commit-step example takes the new heading; its budget rule names explore's one rise.
+- `orbit/architecture/reduce-orbit-phase1.md` — RG1's figures, written at propose (`4acf48f9`); apply edits nothing there.
 
 ## Alternatives considered
 

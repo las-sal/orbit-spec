@@ -222,14 +222,15 @@ present. The lines it covers, from the bodies generated at `a5ba0f0c`:
 | ff-change and propose: "Create ALL artifacts needed for implementation (as defined by schema's `apply.requires`)" | removed — step 4b, until every `applyRequires` artifact is done |
 | ff-change and propose: "Always read dependency artifacts before creating a new one" | removed — step 4a, "Read any completed dependency files for context", and the Artifact Creation Guidelines |
 | ff-change and propose: the momentum, existing-name and file-verification lines | kept — no step states them |
-| new-change: "Do NOT create any artifacts yet - just show the instructions" and "Do NOT advance beyond showing the first artifact template" | removed — steps 5 and 6, the first artifact's instructions, then "STOP and wait for user direction" |
+| new-change: "Do NOT create any artifacts yet - just show the instructions" | kept — a prohibition no step states; steps 5 and 6 show the instructions and stop, but none says not to create an artifact |
+| new-change: "Do NOT advance beyond showing the first artifact template" | removed — step 6, "STOP and wait for user direction", after step 5 shows the first artifact's template |
 | new-change: "Pass --schema if using a non-default workflow" | removed — step 3, "Add `--schema <name>` only if the user requested a specific workflow" |
 | new-change: the invalid-name and existing-name lines | kept — no step states them |
 | sync-specs: all five lines | kept — `Generated-file disposition` classes sync-specs as upstream-verbatim, its upstream body unchanged |
 
 The table is sourced from the `**Guardrails**` blocks of the seven bodies that carry one among the twelve
 `tighten-bodies` tightens (explore's and bulk-archive's are untouched until `reduce-orbit-phase1`'s evaluation): 42
-lines, 24 removed.
+lines, 23 removed.
 
 #### Scenario: A line a step states goes
 
@@ -262,21 +263,40 @@ and text only template authors need goes to a comment beside the template litera
 
 | member | covered by |
 |---|---|
-| stage tags (`D-arc Stage D2` to `D6`, `C1`, `C2`, `rc04a`, `rc10`, `rc12`) | removed with their brackets or dash; a step's number stays |
+| stage tags (`D-arc Stage D2` to `D6`, `C1`, `C2`, `rc04a`, `rc10`, `rc12`) | removed with the connectors that join them; a bracket goes only when nothing else is left in it; a step's number stays |
 | the `NEW` before an orbit step's number, and "(orbit named edit, per …)" | removed; the number stays, so "Step 3.2" still resolves |
 | ruling and decision ids (`R-d-8`, `R-crc-6`, `D-c1-2`, `D-d2-6`, `D1`) | removed; where an id is part of a name ("R-d-8 residency sweep", "R-crc-6's three lanes"), the name stays without it, the same at every use in the body |
-| mirror notes (thirteen: archive 1, verify 1, propose 5, review 3, address-reviews 2, architect 1) | removed whole; the copied text stays, byte-equal, held by its parity test |
+| mirror notes (thirteen: archive 1, verify 1, propose 5, review 3, address-reviews 2, architect 1) | removed: the sentences or clauses that say the text is a copy, name its owner, say why the copy exists, or tell authors not to edit it; every other sentence or clause of the paragraph stays, and the copied text stays byte-equal, held by its parity test |
 | owning-spec citations in headings | removed; the heading's own words and number stay |
 | spec citations in prose | removed when the sentence gives the same instruction without it; kept where the citation names something the agent acts on, or where a requirement asks the body to name it (`Severity ladder`'s "SHALL NAME this ladder"; `Review mode decision framework`'s "the bodies that compose briefs name it") |
 
-The kinds were found by pattern over the generated bodies at `a5ba0f0c` and by reading the hits; the set is BOUNDED,
+**The removal unit.** A removal takes only provenance and the connectors that join it to its sentence; every other
+word of the paragraph or bracket stays. A span is COVERED by these patterns when, after the mirror-note sentences and
+clauses it holds are taken out whole, every remaining character is a match of a token pattern or a connector:
+
+```
+CONNECTORS             whitespace, the marks — – - , ; : ( ), and the words per, see, by, since, from, in, at, of, the, its, and
+stage tag              D-arc(?:'s)?(?: Stage D[0-9])?  |  Stage D[0-9]  |  \bC[0-9]\b  |  \brc[0-9]{2}[a-z]?\b
+NEW marker             \bNEW(?= Step )  |  orbit named edit
+ruling or decision id  \bR-[a-z0-9]+-[0-9]+(?:'s)?\b  |  \bD-[a-z0-9]+-[0-9]+(?:'s)?\b  |  \bD[0-9]{1,2}\b
+spec citation          `orbit-[a-z-]+`(?:'s?)?(?: (?:`[^`]+`|"[^"]+"|\*\*[^*]+\*\*)(?: requirement)?)?
+mirror note            a whole sentence or clause containing, in any case: checked mirror, mirror of, parity test,
+                       installed skill, has no specs, cannot open, never edit it here, the owner, its owner,
+                       the grammar module supplies it
+```
+
+The patterns decide FORM: a span they cover may still name something the agent acts on, which the prose-citation row
+above keeps by judgement and a grep of the specs before each removal. The kinds were found by pattern over the
+generated bodies at `a5ba0f0c` and by reading the hits; the set is BOUNDED,
 and its named limit is this:
 
 Residual kind: a provenance form outside the six above (a coined tag, an archive name, a pointer to orbit's own history)
-Residual method: reading each tightened body whole at propose, and the removal test, which lists every removed span with its kind
+Residual method: reading each tightened body whole after its edits, recording each find in the change's account and leaving it in place for the evaluation, and the removal test, which lists every removed span with its kind
 
 Explore, onboard and bulk-archive keep their own text until `reduce-orbit-phase1`'s evaluation, and so does the
-disciplines epitome's opening line, which explore and bulk-archive share; specs keep their own tags.
+disciplines epitome's opening line, which explore and bulk-archive share; specs keep their own tags. A step heading's
+citation leaves the body's basic content only: the full step a reference file carries stays byte-equal to the block
+`moved-blocks.test.ts` records.
 
 #### Scenario: A stage tag leaves a heading and its number stays
 
@@ -295,6 +315,12 @@ disciplines epitome's opening line, which explore and bulk-archive share; specs 
 - **WHEN** review's body assigns a severity
 - **THEN** it still names `orbit-conventions`' Severity ladder, as that requirement asks
 
+#### Scenario: An instruction beside a mirror note stays
+
+- **WHEN** review's body is generated
+- **THEN** the mirror note before its pass-genre table is gone, and "The pass genre is a record and a header word; the
+  gate reads nothing of it." still stands there
+
 #### Scenario: An id that names a thing drops at every use
 
 - **WHEN** architect's body is generated
@@ -310,10 +336,10 @@ pair of one kind, checks each kind, and undoes every pair on today's body to com
 | member | covered by |
 |---|---|
 | a Guardrails line removed as restated | a pair of kind `restated`, naming the step line that states it; the test asserts that line is still in the body |
-| a provenance span removed | a pair of kind `provenance`; the test asserts the removed text matches one of the six kinds' patterns in `Tightened bodies carry no provenance`, so no instruction is filed as provenance |
+| a provenance span removed | a pair of kind `provenance`; the test asserts the removed span is COVERED by the patterns in `Tightened bodies carry no provenance` — every character a token match or a connector once its mirror-note sentences are taken out — so no instruction is filed as provenance |
 | an id dropped from a name | a pair of kind `provenance` at each use; the test asserts the id-bearing name occurs nowhere in the body |
 | a mirror note removed | a pair of kind `provenance`; the copied text after it is held unchanged by its parity test |
-| the decision-writing bullet restructured | one pair of kind `restructured`, shared by the fourteen bodies; the test asserts each clause of the one-paragraph form (the five conditions with their glosses, the eighteen areas, the four commands, the seam sentence, the record-routing sentence, the reference pointer) is in the new one |
+| the decision-writing bullet restructured | one pair of kind `restructured`, shared by the fourteen bodies; the test asserts each clause of the one-paragraph form (the five conditions with their glosses, the eighteen areas, the three commands (`orbit emit stop`, `orbit emit resolution`, `orbit emit ledger`), the seam sentence, the record-routing sentence, the reference pointer) is in the new one |
 | review's flag row naming its two prompt references | a pair of kind `link` |
 | any edit the list misses | the undo of every pair no longer matches the recorded hash, and the test fails |
 
@@ -324,12 +350,13 @@ change's archive (RG0):
 
 | member | covered by |
 |---|---|
-| `chain-prompt-tags.test.ts`' rows for apply's Guardrails lines 4 and 7 | retargeted to the step 6 lines that state them; the row for the kept line 3 is unchanged |
+| `chain-prompt-tags.test.ts`' rows for apply's Guardrails lines 4 and 7 | removed: the step 6 lines that state them already have their own rows, so the instruction's home stays asserted; the row for the kept line 3 is unchanged |
 | an assertion that includes a provenance string (`NEW Step`, `(rc04a)`, `D-arc Stage`, a spec citation in a heading) | keeps its instruction and drops the provenance |
 | a parity test anchored on a `CHECKED MIRROR` note | takes a new anchor on the copied text itself (a heading or the fence's first line); its byte-equality assertion is unchanged |
 | a test tagged to a scenario this change modifies | follows the modified scenario |
 | the decision-writing parity test | follows the restructured form, the constant still held byte-equal in fourteen bodies |
 | `skill-templates-parity.test.ts`' per-body hashes | re-recorded, as for any template edit |
+| `skill-body-budget.test.ts`' ceilings | each lowered to its body's new size plus 5% as a named edit, or kept where that would exceed it; explore's line ceiling and the assertion holding it at 664 follow `reduce-orbit-phase1`'s R-rop-8 and RG3 as amended to 669, the one rise |
 | an assertion pinning removed text that fits none of the rows above | stops the edit: it is raised, not edited to pass |
 
 The second table is sourced from a grep of `test/` for each removed string, the strings taken from the ledger's pairs.
@@ -341,8 +368,9 @@ The second table is sourced from a grep of `test/` for each removed string, the 
 
 #### Scenario: An instruction filed as provenance fails
 
-- **WHEN** a pair of kind `provenance` removes text that matches none of the six kinds' patterns
-- **THEN** the test fails naming the pair
+- **WHEN** a pair of kind `provenance` removes a span the patterns do not cover — a mirror note together with the
+  instruction after it, "The pass genre is a record and a header word; the gate reads nothing of it."
+- **THEN** the test fails naming the pair and the words left uncovered
 
 #### Scenario: A restated line needs its step line
 
