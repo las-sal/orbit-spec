@@ -30,14 +30,17 @@ Ratified by Sal, 2026-11-17, from the opening session's answers to the brief's q
   (Amended by Sal, 2026-11-17, in stage `tighten-bodies`' exploration: both figures assumed the brief's saving of
   about 9,400 characters from restructuring the decision-writing bullet, and a restructure that keeps its content, as
   R-rop-7 requires, saves none. When `tighten-bodies` is proposed, the two figures are replaced by the sizes its drafted
-  moves measure, projected at about 362,800 to 363,500 and about 18,150 for apply; ceilings still only move down
-  (RG3). Recorded as `stop-2026-11-17T19-56-53Z.json` and its resolution in
-  `orbit/explore/tighten-bodies/.orbit-runs/decisions/`.)
+  moves measure; ceilings still only move down (RG3). Recorded as `stop-2026-11-17T19-56-53Z.json` and its resolution
+  in `orbit/changes/tighten-bodies/.orbit-runs/decisions/`. Set at that propose, from the drafts and apply's measured
+  provenance: **at most 365,500 in total, and 18,300 for apply's body**, the drafted bullet keeping every clause and
+  growing by 112 characters a body, and the required citations staying (`tighten-bodies`' design, Decision 7).)
 - **RG2 — Anthropic's structural rules.** Every reference file is linked directly from its skill's `SKILL.md` (one level
   deep); every reference file over 100 lines opens with a table of contents; every skill's description is valid YAML,
   at most 1,024 characters, and says what the skill does and when to use it. Fails on one exception.
 - **RG3 — Growth is held.** From stage `conditional-steps` on, the per-body budget test runs in the suite and the size
-  report in CI (R-rop-8), and no ceiling is raised during the program. Fails if a ceiling rises.
+  report in CI (R-rop-8), and no ceiling is raised during the program. Fails if a ceiling rises. (Amended by Sal,
+  2026-11-17, at `tighten-bodies`' propose: explore's line ceiling rises from 664 to 669 for the five lines the
+  decision-writing bullet's sub-bullets add to it, R-rop-7's form, and for nothing else; R-rop-8 as amended.)
 
 ## Rulings index
 
@@ -90,7 +93,10 @@ Ratified by Sal, 2026-11-17, from the opening session's answers to the brief's q
   limit), except explore, held at its 664 lines by a line ceiling that may only go down until its own reduction is
   weighed at the evaluation (amended by Sal, 2026-11-17: the check as first ratified would have failed explore on the
   day it landed; recorded as `stop-2026-11-17T02-31-47Z.json` and its resolution in the architecture trail's
-  `decisions/` folder). The test lands with stage A at post-A sizes, and stages B and C each lower the ceilings to their own sizes,
+  `decisions/` folder). Amended again by Sal, 2026-11-17, at `tighten-bodies`' propose: the decision-writing bullet
+  is one text explore shares, and R-rop-7's sub-bullets add five lines to it, so explore's line ceiling rises once,
+  from 664 to 669, for those five lines only; it may only go down from there. Recorded as
+  `stop-2026-11-17T20-32-21Z.json` and its resolution in `orbit/changes/tighten-bodies/.orbit-runs/decisions/`. The test lands with stage A at post-A sizes, and stages B and C each lower the ceilings to their own sizes,
   each a named edit; a ceiling only moves down in this program. A size report printing each skill's body and reference
   sizes runs in CI after the suite, reporting and never failing. orbit-spec's guard is a test, never a sensor run here
   (R-adf-5); the tripwires stage's size-budget sensor (D-tw-2) is the same idea for adopters' files. (The brief's
@@ -134,7 +140,7 @@ Ratified by Sal, 2026-11-17, from the opening session's answers to the brief's q
   `orbit-emit-composition`'s `A VERIFICATION-genre payload carries its verdicts and its findings link to the walk
   record`). Explore's and bulk-archive's notes, and those inside reference files, stay until the evaluation. Chosen over
   trimming each note to the corollary's minimum. Recorded as `stop-2026-11-17T20-08-45Z.json` and its resolution in
-  `orbit/explore/tighten-bodies/.orbit-runs/decisions/`.
+  `orbit/changes/tighten-bodies/.orbit-runs/decisions/`.
 
 ## Program stages
 
@@ -319,3 +325,7 @@ Exit criteria:
   direction RG1's figures are replaced at propose by the sizes the stage's moves measure (RG1 amended).
 - 2026-11-17 — From the exploration `tighten-bodies`: at Sal's direction the mirror notes leave the bodies entirely,
   amending R-crc-14's mirror corollary (R-rop-14).
+- 2026-11-17 — At `tighten-bodies`' propose: RG1's figures set at 365,500 in total and 18,300 for apply. The
+  restructured decision-writing bullet adds five lines to explore, which sat at its 664-line ceiling; at Sal's choice
+  that ceiling rises to 669 for those lines only (R-rop-8 and RG3 amended), over writing the labels inline or trimming
+  explore's own text.
