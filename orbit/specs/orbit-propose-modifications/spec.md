@@ -646,9 +646,12 @@ The two routes for an undeclared breach, asked with `AskUserQuestion`, the user'
 - **Declare** — the body writes a `## Size` section into `proposal.md` (or adds to it), one item per undeclared
   dimension, carrying the user's reason in the user's words, and runs `orbit validate <name> --strict`.
 
-The body carries the declaration's production as a CHECKED MIRROR of `orbit-change-size`'s `A breach is declared in
-the proposal's Size section`, because an adopter's installed skill has neither this repository's specs nor its parser;
-a parity test holds the copy byte-equal to the owner's fence. Propose never writes a declaration the user did not
+The body carries the step's BASIC CONTENT (`reduce-orbit-phase1`'s R-rop-3) — the read of `size` and its two silent rows,
+`ceiling` null and `breaches` empty — and tells the agent to read `references/size-brief.md` and follow it, from the result it already has, on any other
+result or a non-zero exit; that reference carries the step's full text byte-equal, the table and both routes among it. The reference
+carries the declaration's production as a CHECKED MIRROR of `orbit-change-size`'s `A breach is declared in the
+proposal's Size section`, because an adopter's installed skill has neither this repository's specs nor its parser; a
+parity test holds the copy byte-equal to the owner's fence. Propose never writes a declaration the user did not
 choose, and never chooses a split for the user. The brief REPORTS: it blocks nothing, and the change's artifacts are
 complete whichever route is taken.
 
@@ -685,7 +688,14 @@ complete whichever route is taken.
 #### Scenario: The mirror matches its owner
 
 - **WHEN** the generated propose skill is rendered
-- **THEN** the parity test finds its `## Size` production byte-equal to the fence in `orbit-change-size`'s declaration requirement
+- **THEN** the parity test finds the `## Size` production in its `references/size-brief.md` byte-equal to the fence in
+  `orbit-change-size`'s declaration requirement
+
+#### Scenario: The basic content handles a quiet size check
+
+- **WHEN** the propose skill is generated
+- **THEN** its size brief's basic content says nothing about size when `ceiling` is `null` or `breaches` is empty, and names
+  `references/size-brief.md` only for the other results and a non-zero exit
 
 ### Requirement: Propose-shaped bodies read the baseline before writing proposal.md
 

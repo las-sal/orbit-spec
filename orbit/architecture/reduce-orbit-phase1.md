@@ -157,6 +157,23 @@ Exit criteria:
 - The budget test and the size report run in the suite and in CI.
 - RG0 holds.
 
+Shipped as (2026-11-17; archived as `orbit/changes/archive/2026-11-17-conditional-steps/`; the charter stands): seven
+steps keep their basic content in the bodies and move their procedure, byte-equal, to reference files: the commit step
+(`commit-step.md`, six bodies) and the chain end step (`chain-end-step.md`, five bodies, the tag meaning kept in each);
+archive's gate prompt, divergence check and sign-off hold (`gate-inflection.md`, `fingerprint-divergence.md`,
+`signoff-hold.md`); architect's program sign-off hold (`program-signoff.md`); and propose's size brief
+(`size-brief.md`). Propose's and ff's PR placement paragraphs join `pr-choreography.md`'s new `Where each phase runs`
+section, and architect's arc-done act joins `pr-resolution.md`. Each moved block's sha256 was recorded before any edit
+and is held by `moved-blocks.test.ts`; a test in a disposable project shows each gating command returning, at the
+defaults and on the usual result, what its basic content handles itself. The bodies total 389,374 characters (apply
+27,124), and `skill-body-budget.test.ts` holds each at that size plus 5% (explore at 664 lines); `npm run size:report`
+runs in CI, and `skill_body_convention.md` states the rule for new steps. Carried forward: RG1's projection after
+`tighten-bodies` is about 352,700, about 2,700 over (D-cs-11 was decided at about 600); `pr-choreography.md` now runs to
+108 lines with no table of contents, a new RG2 instance for `tighten-bodies`, beside the review skill's two references
+reached through `external-handoff.md`; the positional phrases that moved with their text are listed in the change's
+design. The compaction observation (R-rop-12) is deferred to `evaluation`: the apply and review sessions ran in one
+session that did not compact.
+
 ### Stage once-per-session-detail — run-summary payload detail and the account step move to reference files
 
 Depends-on: conditional-steps
