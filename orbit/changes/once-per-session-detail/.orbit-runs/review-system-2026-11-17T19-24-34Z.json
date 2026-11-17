@@ -1,0 +1,99 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-17T19:24:34Z",
+  "change": "once-per-session-detail",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "src/core/disciplines.ts",
+      "line": 487,
+      "title": "The read cue's 'the session's first emit' also covers account and decision-record emits that precede the run summary",
+      "recommendation": "Say what the cue means: 'Before the session's first run-summary emit' (or 'before this step's first emit'), in RUN_SUMMARY_READ_CUE, the requirement's title and table row in specs/orbit-run-summary-emit/spec.md, the skill_body_convention.md rule and example, and the tests that pin the cue's text. In apply the account step runs `orbit emit account` BEFORE the run-summary emit by design, and in any body the decision-writing discipline may run `orbit emit ledger|stop|resolution` earlier (a walk's reading-finding replacements too), so read literally the cue names a moment that has already passed when the agent reaches it. An agent will most likely read the reference anyway, which is why this is a wording repair, not a defect."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Probed hardest where RG0 could quietly fail. Byte-equality of the moved blocks: moved-blocks.test.ts holds a sha256 per block recorded before any template edit, and run-summary-read-cue.test.ts holds each reference as its title plus its section constant and each staying paragraph inside its section, so the reference really is the old section whole. I also checked that the generated .claude surface matches dist for all thirteen affected skills (every body and every reference file byte-equal), that every reference a new file names (run-summary-schema.md, archive-summary-schema.md, pr-choreography.md, decision-records.md) is also named by its body (one level deep), and that explore's and bulk-archive's emit steps are untouched. Baseline sweep: no requirement outside the delta states that a body carries the payload detail or the account step's rules. The one baseline paragraph that did (orbit-decision-records, the old account-step paragraph) is replaced by the MODIFIED block, whose two new scenarios are tagged, and the base fingerprint is stamped. Archive's readiness record, the withdrawn-grant re-emit and apply's Proceed-anyway entry now live only in references; the sites that trigger them (apply Step 3, archive Step 3.2 and the gate-inflection reference) still name the run-summary section, and the cue sends the agent on from there. Exit-criterion evidence: account-2026-11-17T19-18-08Z.json was written 12 seconds before the chunk-3 apply emit, which carries consent and model as the reference prescribes. Full npm test: 4,358 passed in 207 files. orbit validate and validate --sources are clean. How the passes ran: Pass 0 ran inline (tasks, scenario tags, design Decision 3's per-body table checked against each *_RUN_SUMMARY_EMIT_BASIC) rather than through /orbit:verify, so this worker wrote no verify emit to the trail. Pass 6 was a residue sweep scoped to this change (src, test, specs, docs, architecture, CLAUDE.md, the convention), not a full audit-drift run. The one real deviation is that the charter's exit criterion says 'the bodies keep the calls and triggers', while the owed-field triggers moved to the references. Sal ratified that move (D-opsd-4), and the account's deviations field records it, so it belongs in the Shipped-as paragraph at archive, not in a finding.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "6"
+  ],
+  "passes_skipped": [
+    "4",
+    "5"
+  ],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The move does what the stage set out to do without losing text. Every moved block is held byte-equal, the generated surface matches the source, the bodies shrank by about 20,000 characters with apply down by a third, and the fresh-session account proves the new apply body works end to end. The one point raised is cue wording, cheap to fix in a walk or to carry into tighten-bodies. Nothing here argues for holding the stage back from archive once the pair's other half has landed and been walked."
+  },
+  "final_assessment": "0 critical, 0 warning, 1 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews once-per-session-detail",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "9c43eee38a0b20ee959c4c7975e3f51a3a55d754",
+      "frozen": true,
+      "evidence": {
+        "files": [],
+        "share": 0,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ]
+}
