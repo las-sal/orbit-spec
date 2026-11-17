@@ -27,6 +27,12 @@ Ratified by Sal, 2026-11-17, from the opening session's answers to the brief's q
   workflow behaves differently under any setting, or if an assertion about behaviour is weakened.
 - **RG1 — Slimmer bodies.** After stage `tighten-bodies`, the generated skill bodies total at most 350,000 characters
   (the brief's 344,931 for its stages A to C, with a margin), and apply's body is at most 17,500. Fails above either.
+  (Amended by Sal, 2026-11-17, in stage `tighten-bodies`' exploration: both figures assumed the brief's saving of
+  about 9,400 characters from restructuring the decision-writing bullet, and a restructure that keeps its content, as
+  R-rop-7 requires, saves none. When `tighten-bodies` is proposed, the two figures are replaced by the sizes its drafted
+  moves measure, projected at about 362,800 to 363,500 and about 18,150 for apply; ceilings still only move down
+  (RG3). Recorded as `stop-2026-11-17T19-56-53Z.json` and its resolution in
+  `orbit/explore/tighten-bodies/.orbit-runs/decisions/`.)
 - **RG2 — Anthropic's structural rules.** Every reference file is linked directly from its skill's `SKILL.md` (one level
   deep); every reference file over 100 lines opens with a table of contents; every skill's description is valid YAML,
   at most 1,024 characters, and says what the skill does and when to use it. Fails on one exception.
@@ -120,6 +126,15 @@ Ratified by Sal, 2026-11-17, from the opening session's answers to the brief's q
   the setting's first real use here, and it gives architect's program-PR readout, one of the sections stage
   `conditional-steps` moves, a real run at arc-done. Whether the setting stays when `automate-dev-flow` resumes is
   decided then.
+- **R-rop-14** (Sal, 2026-11-17) — R-crc-14's mirror corollary (`clean-up-review-cycle`) is amended: a skill body that
+  carries a copy of a spec's text no longer says it is a copy or names the requirement that owns it. The corollary's
+  other two conditions stand: a test holds the copy byte-equal to its owner, and the copy adds nothing. Stage
+  `tighten-bodies` removes the thirteen mirror notes from the bodies it tightens, as its charter says, and modifies the
+  two requirements that ask for the note (`orbit-conventions`' `Review mode decision framework` and
+  `orbit-emit-composition`'s `A VERIFICATION-genre payload carries its verdicts and its findings link to the walk
+  record`). Explore's and bulk-archive's notes, and those inside reference files, stay until the evaluation. Chosen over
+  trimming each note to the corollary's minimum. Recorded as `stop-2026-11-17T20-08-45Z.json` and its resolution in
+  `orbit/explore/tighten-bodies/.orbit-runs/decisions/`.
 
 ## Program stages
 
@@ -299,3 +314,8 @@ Exit criteria:
   departures from its charter recorded in its Shipped-as paragraph (a new `run-summary-emit.md` per skill, the owed-field
   triggers moved with the detail, the account step moved whole). RG1's projection after `tighten-bodies` widens to about
   4,400 over 350,000.
+- 2026-11-17 — From the exploration `tighten-bodies`: a restructure of the decision-writing bullet that keeps its
+  content saves nothing (measured at 2,901 characters against 2,860), so RG1 is out of reach by about 13,000. At Sal's
+  direction RG1's figures are replaced at propose by the sizes the stage's moves measure (RG1 amended).
+- 2026-11-17 — From the exploration `tighten-bodies`: at Sal's direction the mirror notes leave the bodies entirely,
+  amending R-crc-14's mirror corollary (R-rop-14).
