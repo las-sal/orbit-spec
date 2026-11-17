@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-11-17T02:47:11Z",
+  "change": "conditional-steps",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Begin: named exploration scaffolded (six sections, empty) for reduce-orbit-phase1's first stage. Citation recorded at Sal's choice: architecture {doc: reduce-orbit-phase1, stage: conditional-steps}.",
+  "decisions_captured": 0,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 0,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:explore conditional-steps — continue capturing thinking — no decisions captured yet"
+}

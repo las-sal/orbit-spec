@@ -1,0 +1,9 @@
+{
+  "command": "stop",
+  "timestamp": "2026-11-17T03:52:04Z",
+  "change": "conditional-steps",
+  "model": "claude-opus-5-5",
+  "condition": "ruling-amendment",
+  "about": "R-rop-10 has the first stage's verification measure whether a reference file read twice in one session costs twice, in one session chaining two commands; this repository never runs chained commands (R-adf-5). Sal directed that the measurement be deferred to when chaining is put to real use.",
+  "question": "Should R-rop-10's repeated-read measurement leave stage conditional-steps and be answered when chaining is first used in earnest?"
+}

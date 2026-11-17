@@ -566,6 +566,9 @@ Exit criteria:
 - G1–G7 graded, each Met or Failed, with the evidence, in this doc's status log; G2 and G4 by the closing review's
   classification of the trial's diffs and ledger.
 - On a failure, a ruling: fix and re-run, or accept.
+- Whether a reference file read twice in one chained session costs its full size twice is recorded, from the trial's
+  sessions (carried from `reduce-orbit-phase1`'s R-rop-10, with its consequence: if a repeat costs twice, the chain end
+  step's basic content takes on the common chained outcomes).
 
 ## Considered & out
 
@@ -741,3 +744,6 @@ Exit criteria:
   moved. No stage changed.
 - 2026-11-17 — Paused by Sal (R-adf-16) until `reduce-orbit-phase1`'s stages A, B and C are archived and evaluated, so
   the remaining stages build on the slimmer bodies. No stage changed.
+- 2026-11-17 — `reduce-orbit-phase1` amended its R-rop-10: the repeated-read measurement is answered here, in
+  `first-run`'s exit criteria, since this repository runs no chained commands (R-adf-5). No change is proposed meanwhile
+  (R-adf-16).

@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-11-17T05:21:33Z",
+  "change": "conditional-steps",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Both remaining open questions resolved: D-cs-8 (propose computes the stage's exact post-stage size from the drafted basic contents and sets the budget test's ceilings from it; Sal told only if RG1's post-C projection exceeds 350,000; today's projection about 345,000, measured at 3f5b035b) and D-cs-9 (R-rop-12's compaction observed in this change's own apply, review and archive sessions). Nine decisions, all scope or fact; no open questions; no Mechanism entry owed. Edits to orbit/config.yaml (pr: per-architecture), CLAUDE.md, both architecture docs and this exploration are uncommitted and must reach main before propose creates the program branch.",
+  "decisions_captured": 9,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 0,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose conditional-steps — 0 live rules accounted; formalize when you are ready (or /orbit:explore conditional-steps to keep refining)"
+}

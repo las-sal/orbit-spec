@@ -44,10 +44,14 @@ Ratified by Sal, 2026-11-17, from the opening session's answers to the brief's q
   the result. Stage D (the cuts that need evidence first) is not declared; whether it is taken up is decided at that
   evaluation. (The brief's question 1.) Amended by Sal, 2026-11-17: three of stage D's steps join stage A, which is
   renamed `conditional-steps` to cover them: archive's gate inflection prompt, the base-fingerprint divergence check
-  (archive and bulk-archive) and propose's size brief. Each runs at the defaults, but an orbit command's result says
+  and propose's size brief. Each runs at the defaults, but an orbit command's result says
   when its procedure is needed and its usual result needs none, so it moves as stage A's steps do (the brief's rule 2).
   The rest of stage D still waits for the evaluation. Recorded as `stop-2026-11-17T02-42-43Z.json` and its resolution
-  in the architecture trail's `decisions/` folder.
+  in the architecture trail's `decisions/` folder. Amended again by Sal, 2026-11-17, in the stage's exploration:
+  bulk-archive is left out of this stage, its steps staying in its body as they are, since it has never run in this
+  repository and its body costs a session nothing until it does; whether it is kept, folded into archive or retired is
+  weighed at the evaluation. Recorded as `stop-2026-11-17T03-00-00Z.json` and its resolution in
+  `orbit/explore/conditional-steps/.orbit-runs/decisions/`.
 - **R-rop-3** (Sal, 2026-11-17) — A requirement that a block is carried byte-equal by each body is met by both halves,
   each byte-equal to one source: the step's BASIC CONTENT (when it runs, the command, the usual result, and the link to
   its reference file) in every carrying body, and the full step in every carrying skill's REFERENCE FILE. The tests keep
@@ -91,7 +95,11 @@ Ratified by Sal, 2026-11-17, from the opening session's answers to the brief's q
   with a single one. Claude Code's skills page documents that a re-invoked skill with identical content adds only an
   "already loaded" note; it says nothing of a re-read reference file. If a repeat costs twice, the chain end step's
   basic content takes on the common chained outcomes and reads its reference only for the rare ones. At the defaults no
-  reference is read, so the answer changes nothing there. (The brief's question 9.)
+  reference is read, so the answer changes nothing there. (The brief's question 9.) Amended by Sal, 2026-11-17, in the
+  stage's exploration: the measurement leaves phase 1, since this repository runs no chained commands (R-adf-5), and is
+  answered where chaining is first used in earnest, `automate-dev-flow`'s stage `first-run`; the consequence above
+  travels with it. Recorded as `stop-2026-11-17T03-52-04Z.json` and its resolution in
+  `orbit/explore/conditional-steps/.orbit-runs/decisions/`.
 - **R-rop-12** (Sal, 2026-11-17) — Compaction is measured, not yet targeted: the size report also prints each body's
   estimated tokens against the 5,000 that Claude Code keeps of each skill after a compaction, stage A's verification
   records whether real long sessions compact and what was lost, and the evaluation decides whether every body must
@@ -99,6 +107,15 @@ Ratified by Sal, 2026-11-17, from the opening session's answers to the brief's q
 - **R-rop-11** (Sal, 2026-11-17) — The brief this program answers, Sal's "orbit: Skill Structural Cleanup" (measured at
   `b5dac0dd`), lives beside this doc as `orbit/architecture/reduce-orbit-phase1-brief.md` and is the program's source;
   "the brief" in this doc means it. Its program P2 and spikes S2, S9, S12 and S15 name work outside this repository.
+- **R-rop-13** (Sal, 2026-11-17) — The program's changes ride one program branch and one program PR: `orbit/config.yaml`
+  sets `pr: per-architecture` (from `per-proposal`), so each change citing this doc lands on the branch
+  `reduce-orbit-phase1`, each stage's archive appends its entry to one draft PR against main, and main receives phase 1
+  whole when Sal flips that PR READY and merges it at arc-done. From the first propose on, the work between stages (an
+  architect session, the next stage's exploration) is done on `reduce-orbit-phase1`, not main: propose's branch
+  selection skips when the exploration it consumes differs between the current branch and the program branch. It is
+  the setting's first real use here, and it gives architect's program-PR readout, one of the sections stage
+  `conditional-steps` moves, a real run at arc-done. Whether the setting stays when `automate-dev-flow` resumes is
+  decided then.
 
 ## Program stages
 
@@ -110,10 +127,10 @@ One change per stage, in this order (R-rop-2). The brief's stage D is not declar
 Depends-on: (none)
 Complete: [ ]
 
-The brief's stage A, with three steps from its stage D (R-rop-2 as amended). The commit step, the chain end step's
-procedure, the sign-off hold and the PR lifecycle sections, which do nothing at the defaults, and archive's gate
-inflection prompt, the base-fingerprint divergence check (archive and bulk-archive) and propose's size brief, which run
-at the defaults but whose usual result needs no procedure, each keep their basic content in the body and move their
+The brief's stage A, with three steps from its stage D, and without bulk-archive (R-rop-2 as amended). The commit step,
+the chain end step's procedure, the sign-off hold and the PR lifecycle sections, which do nothing at the defaults, and
+archive's gate inflection prompt, its base-fingerprint divergence check and propose's size brief, which run at the
+defaults but whose usual result needs no procedure, each keep their basic content in the body and move their
 procedure to a reference file, byte-equal to today's text, composed once in code as now (R-rop-3, R-rop-4, R-rop-5).
 In each, an orbit command's result picks the branch: the agent never judges whether to read the reference file. The brief save, which runs at every archive, is separated from
 the sign-off hold and stays in the body. The meaning of the prompt tags and what a chained command records stay in each
@@ -122,14 +139,17 @@ that pin each block's text (the brief's section 5) are modified so that both hal
 
 Exit criteria:
 - At the defaults, each gating command returns the result the basic content handles itself (`action: off`,
-  `configured: false`, `why: "off"`), shown by test; with each setting on, one real run per step shows the reference
-  file read and the step acting as before.
+  `configured: false`, `why: "off"`), shown by test.
 - For the three steps from stage D, the usual result (every reviewed gate passed or superseded, no fingerprint
-  diverged, no size breach) is handled by the basic content, shown by test; one real run of each unusual result shows
-  the reference file read and the step acting as before.
+  diverged, no size breach) is handled by the basic content, shown by test.
+- A named limit, accepted by Sal (2026-11-17): the stage shows by test, not by a real session, that an agent meeting an
+  unusual result opens the reference file and acts as before. A missed read would first reach adopters at archive's
+  gate prompt, which fires at every archive for anyone who does not review; real sessions on the new bodies, here and
+  in `evaluation`, are where one would be seen.
 - Each reference file is byte-equal to today's block, and each basic content byte-equal across its carrying bodies,
   both tested.
-- The repeated-read measurement (R-rop-10) and the compaction measurement (R-rop-12) are recorded.
+- The compaction measurement (R-rop-12) is recorded. (The repeated-read measurement, R-rop-10, is answered in
+  `automate-dev-flow`'s `first-run`.)
 - The budget test and the size report run in the suite and in CI.
 - RG0 holds.
 
@@ -173,12 +193,13 @@ Complete: [ ]
 
 Measure the bodies and the sessions run on them, and decide what follows phase 1: the rest of the brief's stage D (R-rop-2), the
 one-line decision-writing (R-rop-7), reads named by a command's output (R-rop-4), whether every body should fit in what
-survives a compaction (R-rop-12), and whether decision records are written by default at all. Worked through as a named
+survives a compaction (R-rop-12), whether decision records are written by default at all, and whether bulk-archive is
+kept, folded into archive or retired (R-rop-2). Worked through as a named
 exploration citing this stage. `automate-dev-flow` resumes once this stage is done (R-rop-9).
 
 Exit criteria:
-- The measures are written down: body and reference sizes, the repeated-read and compaction results, and what real
-  sessions on the new bodies showed.
+- The measures are written down: body and reference sizes, the compaction results, and what real sessions on the new
+  bodies showed.
 - Each decision above is recorded as a ruling or as considered and out.
 
 ## Considered & out
@@ -220,3 +241,13 @@ Exit criteria:
   review's fresh dispatch, architecture-mode report and verification step by the user's flags, so those stay in stage D.
   Sal moved the three into stage A and renamed it `conditional-steps` to cover them (R-rop-2 amended; RG3 and the
   `once-per-session-detail` dependency follow the new id).
+- 2026-11-17 — From the exploration `conditional-steps`: bulk-archive has never run in this repository (no commit
+  archives two changes; its 20 template edits since 2026-06-05 kept it in step with archive). At Sal's direction it is
+  left out of this stage, and its future goes to `evaluation` (R-rop-2 amended again).
+- 2026-11-17 — From the exploration `conditional-steps`: at Sal's direction the repeated-read measurement (R-rop-10)
+  leaves phase 1 for `automate-dev-flow`'s `first-run`, where chained sessions first run on real work; this
+  repository runs none (R-adf-5).
+- 2026-11-17 — From the exploration `conditional-steps`: at Sal's direction `pr:` is set to `per-architecture`
+  (R-rop-13); the program's work rides the branch `reduce-orbit-phase1` from its first propose on.
+- 2026-11-17 — From the exploration `conditional-steps`: at Sal's choice the stage is verified by tests alone; the
+  real-run checks of each unusual result leave its exit criteria, replaced by a named limit.

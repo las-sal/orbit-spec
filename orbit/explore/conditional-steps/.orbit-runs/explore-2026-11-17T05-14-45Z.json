@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-11-17T05:14:45Z",
+  "change": "conditional-steps",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Seven decisions, all scope or fact, so no Mechanism entry is owed: one change for the stage with a declared capabilities breach (D-cs-1); bulk-archive never run here (D-cs-2) and left out of the stage (D-cs-3, R-rop-2 amended); the repeated-read measurement carried to automate-dev-flow's first-run (D-cs-4, R-rop-10 amended); the rule for new steps stated in CLAUDE.md and the budget test's failure message (D-cs-5); the program on pr: per-architecture, branch reduce-orbit-phase1 (D-cs-6, R-rop-13); verification by tests alone, the missed-read risk named in the exit criteria (D-cs-7). Two open questions remain with standing recommendations propose can apply: RG1's margin measured at propose, and compaction watched in this change's own sessions (R-rop-12). The program doc, automate-dev-flow's first-run, CLAUDE.md and orbit/config.yaml were edited; all uncommitted.",
+  "decisions_captured": 7,
+  "open_questions_count": 2,
+  "open_questions_with_recommendation": "2 of 2",
+  "rules_total": 0,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:explore conditional-steps — 7 decisions captured but 2 open questions remain; resolve open questions before formalizing"
+}

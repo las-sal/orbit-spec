@@ -1,0 +1,9 @@
+{
+  "command": "resolution",
+  "timestamp": "2026-11-17T02:49:57Z",
+  "change": "conditional-steps",
+  "model": "claude-opus-5-5",
+  "stop": "stop-2026-11-17T02-48-26Z.json",
+  "answer": "One change for the whole stage, declaring the capability breach.",
+  "effect": "R-rop-2 stands unamended: stage conditional-steps is one change, and its proposal declares the capabilities breach in its Size section."
+}

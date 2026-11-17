@@ -1,0 +1,5 @@
+schema: spec-driven
+created: 2026-11-17
+architecture:
+  doc: reduce-orbit-phase1
+  stage: conditional-steps
