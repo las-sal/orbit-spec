@@ -1,0 +1,9 @@
+{
+  "command": "resolution",
+  "timestamp": "2026-11-17T20:09:53Z",
+  "change": "tighten-bodies",
+  "model": "claude-opus-5-5",
+  "stop": "stop-2026-11-17T20-08-45Z.json",
+  "answer": "Remove the mirror notes entirely, as the charter says.",
+  "effect": "R-crc-14's mirror corollary is amended: a skill body's copy of a spec's text no longer has to say it is a copy or name the spec that owns it; a test still keeps the copy identical to the spec, and the copy still adds nothing. The stage removes the nine mirror notes from the bodies it tightens and modifies the requirements in eight specs that ask for them, so the change goes past its three-capability size ceiling and the size question is settled at propose."
+}

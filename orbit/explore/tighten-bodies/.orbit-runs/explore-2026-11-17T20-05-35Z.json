@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-11-17T20:05:35Z",
+  "change": "tighten-bodies",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Guardrails triage done at Sal's direction. D-tb-3 (rule, Mechanism entry SOURCED over the seven bodies' 42 lines): a line goes only when a step line of its body says it, adding nothing; 25 lines go and 17 stay, 1,684 characters (apply 435, archive's whole block 500). Apply's tagged lines 4 and 7 go because step 6 tags each pause site itself; line 3 ('before implementing') and line 5 ('scoped to each task') stay. D-tb-4 (scope): per-body tightenings skip explore, onboard and bulk-archive per skill_body_convention.md's Exceptions; the shared decision-writing text and RG2's fixes reach every skill. D-tb-5 (fact): projection now about 361,000 to 363,000 total and about 18,160 for apply, above D-tb-2's expected 17,700; provenance is the one unmeasured move. Open: how the removal is tested (RG0's test-change clause and the two retired chain-tag rows), what provenance covers, how RG2's fixes are cut.",
+  "decisions_captured": 5,
+  "open_questions_count": 3,
+  "open_questions_with_recommendation": "3 of 3",
+  "rules_total": 1,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:explore tighten-bodies — 5 decisions captured but 3 open questions remain; resolve open questions before formalizing"
+}

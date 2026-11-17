@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-11-17T20:01:59Z",
+  "change": "tighten-bodies",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Measured the stage at a5ba0f0c: bodies 369,392 (RG1 needs 19,392 off), apply 18,887 (needs 1,387 off). A labelled restructure of the decision-writing bullet that keeps its content measured 2,901 against 2,860, so it does not shrink (D-tb-1, fact); the charter's moves reach at most about 10,600 in total and about 1,230 on apply. Sal amended RG1 to the measured figures, set at propose (D-tb-2; stop-2026-11-17T19-56-53Z.json and its resolution). RG2 findings recorded in the Premise: three descriptions are not valid YAML, eleven references over 100 lines lack a table of contents, and review keeps one two-level chain. Five open questions carry standing recommendations: which bodies the tightenings reach, how Guardrails lines are removed (upstream text, named deltas, apply's three chain-tagged lines kept), how no-acted-on-wording-removed is tested, what provenance covers, and how the RG2 fixes are cut.",
+  "decisions_captured": 2,
+  "open_questions_count": 5,
+  "open_questions_with_recommendation": "5 of 5",
+  "rules_total": 0,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:explore tighten-bodies — continue thinking, or /orbit:propose tighten-bodies if ready to formalize"
+}

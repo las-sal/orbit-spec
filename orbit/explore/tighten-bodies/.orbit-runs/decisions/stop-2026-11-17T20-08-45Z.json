@@ -1,0 +1,20 @@
+{
+  "command": "stop",
+  "timestamp": "2026-11-17T20:08:45Z",
+  "change": "tighten-bodies",
+  "model": "claude-opus-5-5",
+  "condition": "ruling-amendment",
+  "about": "The stage's charter says checked-mirror notes are removed from the skill bodies. A ruling from an earlier program (R-crc-14's mirror corollary) lets a body carry a copy of a spec's text only if the copy says it is one and names the spec that owns it, and eight specs repeat that condition. The notes are about 1,860 characters in nine places; trimming each to the ruling's minimum (that it is a copy, and of what) saves about 1,300 of them.",
+  "question": "Should the mirror notes be trimmed to what the ruling requires (keep 'a checked mirror of <owner>', drop the explanation aimed at authors), or removed entirely, which amends the ruling and changes eight specs for about 550 more characters?",
+  "defines": [
+    {
+      "term": "mirror note",
+      "definition": "The sentence in a skill body, before a copied table or grammar, saying that the text is a copy of a requirement in one of orbit's own specs and naming that requirement."
+    },
+    {
+      "term": "R-crc-14's mirror corollary",
+      "definition": "A ruling Sal made in an earlier program: a skill body may copy a spec's text only if the copy says it is a copy, names the spec it copies, and a test keeps the two identical."
+    }
+  ],
+  "detail": "Spec requirements naming the note: orbit-address-reviews, orbit-archive-modifications, orbit-conventions (3), orbit-emit-composition (2), orbit-propose-modifications (3), orbit-review-external (2), orbit-review, orbit-verify-modifications (2). Parity tests anchor on 'CHECKED MIRROR' (16 test files). size_ceiling capabilities: 3. Measured on the generated project at a5ba0f0c."
+}

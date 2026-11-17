@@ -1,0 +1,25 @@
+{
+  "command": "explore",
+  "timestamp": "2026-11-17T20:19:03Z",
+  "change": "tighten-bodies",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Testing question settled at Sal's direction; no open questions remain. D-tb-14 (rule, DERIVED): apply records the sha256 of each edited body before the first edit, and a new test holds every edit as a classed (before, after) pair (restated, provenance, restructured, link), checks each kind, and undoes every pair to match the recorded hash, so an unlisted edit fails; each check carries a mutation. D-tb-15 (rule, SOURCED): an existing test changes only to follow its instruction to the text that remains, or a requirement this stage modifies, each edit named in the archive; anything else stops the edit at apply. The exploration holds 15 decisions and 6 accounted rules with one bounded residual (D-tb-6). Ready for /orbit:propose tighten-bodies.",
+  "decisions_captured": 15,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 6,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [
+    {
+      "id": "D-tb-6",
+      "kind": "a provenance form outside the six above (a coined tag, an archive name, a pointer to orbit's own history)",
+      "method": "reading each tightened body whole at propose, and the removal test, which lists every removed span with its kind"
+    }
+  ],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose tighten-bodies — 6 live rules accounted, 1 bounded residual named (D-tb-6); formalize when you are ready (or /orbit:explore tighten-bodies to keep refining)"
+}
