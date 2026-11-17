@@ -1,0 +1,73 @@
+{
+  "command": "apply",
+  "timestamp": "2026-11-17T18:51:22Z",
+  "change": "once-per-session-detail",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "consent": "user-invoked",
+  "tasks_completed": 3,
+  "tasks_remaining": 9,
+  "user_validation_remaining": 0,
+  "chunk": "1 of 3",
+  "chunk_name": "Hashes and the account step",
+  "chunk_complete": true,
+  "tasks_completed_this_session": 3,
+  "files_touched": [
+    "orbit/changes/once-per-session-detail/.orbit-runs/address-reviews-2026-11-17T18-38-08Z.json",
+    "orbit/changes/once-per-session-detail/.orbit-runs/address-reviews-2026-11-17T18-38-21Z.json",
+    "orbit/changes/once-per-session-detail/.orbit-runs/address-reviews-2026-11-17T18-43-59Z.json",
+    "orbit/changes/once-per-session-detail/.orbit-runs/decisions/ledger-2026-11-17T18-28-33Z.json",
+    "orbit/changes/once-per-session-detail/.orbit-runs/external-prompt-proposal-2026-11-17T18-10-41Z.md",
+    "orbit/changes/once-per-session-detail/.orbit-runs/external-proposal-2026-11-17T18-17-25Z.md",
+    "orbit/changes/once-per-session-detail/.orbit-runs/propose-2026-11-17T17-55-36Z.json",
+    "orbit/changes/once-per-session-detail/.orbit-runs/review-external-2026-11-17T18-10-49Z.json",
+    "orbit/changes/once-per-session-detail/.orbit-runs/review-proposal-2026-11-17T18-17-04Z.json",
+    "orbit/changes/once-per-session-detail/.orbit-runs/review-proposal-2026-11-17T18-41-16Z.json",
+    "orbit/changes/once-per-session-detail/design.md",
+    "orbit/changes/once-per-session-detail/explore.md",
+    "orbit/changes/once-per-session-detail/proposal.md",
+    "orbit/changes/once-per-session-detail/specs/orbit-decision-records/spec.md",
+    "orbit/changes/once-per-session-detail/specs/orbit-run-summary-emit/spec.md",
+    "orbit/changes/once-per-session-detail/tasks.md",
+    "src/core/disciplines.ts",
+    "src/core/templates/workflows/address-reviews.ts",
+    "src/core/templates/workflows/apply-change.ts",
+    "test/core/templates/account-reading-walk.test.ts",
+    "test/core/templates/account-step.test.ts",
+    "test/core/templates/moved-blocks.test.ts"
+  ],
+  "diff_base": "38a843fca9cecfcecc9b850fd4e66c9f61200648",
+  "final_assessment": "Completed chunk 1 of 3 (Hashes and the account step); 3 of 12 tasks done. chunk 1 done: the thirteen moved blocks' sha256 recorded from 9c43eee3 (baseline 4,331 passing), the account steps split into basic content and references with their tests retargeted; six pins of reference lists and parity hashes are left failing for task 3.4, which moves them once the emit steps have their references",
+  "next_recommended": "/orbit:apply once-per-session-detail — next chunk: The emit steps, the convention, the regenerated surface",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "9c43eee38a0b20ee959c4c7975e3f51a3a55d754",
+      "frozen": false,
+      "evidence": {
+        "files": [],
+        "share": null,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ]
+}

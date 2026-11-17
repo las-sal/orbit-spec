@@ -6,7 +6,7 @@
  */
 import type { SkillTemplate, CommandTemplate } from '../types.js';
 import { PR_ARCHIVE_TAIL_REFERENCE } from './pr-choreography.js';
-import { COMMIT_STEP_BASIC, COMMIT_STEP_REFERENCE, COMMIT_STEP_REFERENCE_NAME, DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../disciplines.js';
+import { COMMIT_STEP_BASIC, COMMIT_STEP_REFERENCE, COMMIT_STEP_REFERENCE_NAME, DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE, RUN_SUMMARY_EMIT_REFERENCE_NAME, RUN_SUMMARY_READ_CUE, runSummaryEmitReference } from '../../disciplines.js';
 
 
 // Reference: full schema for the Step 5.5 archive run summary. Migrated from the overlay
@@ -290,6 +290,31 @@ A payload file the archive writes after the move — here an archive that took e
 - **\`warnings\`** captures the upstream warning surfaces (incomplete artifacts, incomplete tasks other than user-validation ones, sync skipped) — kept human-readable since they vary in shape.
 `;
 
+// once-per-session-detail (reduce-orbit-phase1, D-opsd-4, D-opsd-9): the emit section, whole, is
+// `references/run-summary-emit.md`; the body carries its heading, the paragraphs that stay, the read cue and the command.
+const ARCHIVE_EMIT_HEADING = `## NEW Step 5.5 — Archive run summary`;
+const ARCHIVE_EMIT_COMMAND = `\`\`\`bash
+orbit emit archive --change <name> --payload <payload-file>
+\`\`\``;
+/** The emit section whole, as the body carried it before once-per-session-detail; shipped as `references/run-summary-emit.md`. */
+export const ARCHIVE_RUN_SUMMARY_EMIT = [
+  ARCHIVE_EMIT_HEADING,
+  `After upstream Step 5 (move-to-archive) completes, compose the payload — narrative + the extension fields \`references/archive-summary-schema.md\` lists (\`archive_path\`, \`audit\`, \`sync_specs\`, \`unresolved_markers\`, \`user_decision\`, \`consent\`, \`warnings\`, plus Step 3.2's \`deferred_validations\` when it deferred any task) — write it to a temp file, and invoke:`,
+  `**COMPOSE THE READINESS RECORD (rc04a).** When this archive CONCLUDES A REVIEW CADENCE — readable as the change's trail carrying independent passes — the payload SHALL carry a \`judgements\` entry with \`kind: "readiness"\`. Its \`formed_against\` is those passes' \`<TS>\` tokens; its \`disposition\` is your own judgement; its \`accepted\` list is where RESIDUAL RISK goes, one \`{claim, why}\` pair each. Where Step 3.4 fired **Proceed anyway**, its \`continuation\` entries sit in the SAME array — the archive is the one emit admitting both kinds, which is why the carrier is an array.`,
+  `The token source is the TRAIL ITSELF, not \`orbit status\`: the change-tier status payload reports gate spend COUNTS and reason strings, never pass tokens. List \`<archive_path>/.orbit-runs/\` and take the \`<TS>\` of each \`review-<mode>-<TS>.json\` whose \`reviewer_class\` is \`fresh\` or \`external\`, plus each \`external-<mode>-<TS>.md\` the trail reader ACCEPTED as a pass — a return the gate's \`reason\` names as REJECTED is not citable, and enumerating filenames alone over-counts by exactly those. Which passes count is \`orbit-run-summary-emit\`'s rule (the trail reader's pass set); this body names it and does not restate it — the write gate enforces it and names the pass it refuses on. The trail MOVED with the change at Step 5, so the ACTIVE path no longer resolves and \`orbit status --change <name> --json\` now errors — read the archived directory, or reuse the tokens Step 3.4 captured before the move.`,
+  `A \`disposition: "not-ready"\` is an ARCHIVE-TIME DISSENT, not a routing decision: it says the work was archived against your own judgement, and \`ratified_by\` records honestly whether that belief was yours (\`ai\`) or the user's (\`user\`). It does NOT block — the seam already carries consent, gate and audit prompts for stopping — and Step 5.65 states it where a human is looking. (Routing a cadence back to architecture instead of archiving is a real judgement with no carrier here, deliberately: the archive readout is this record's only reader, and in the routing case there is no archive to read it.)`,
+  `**\`accepted\` versus \`warnings\`, and the test that separates them**: a residual formed AGAINST the independent passes is an \`accepted\` pair; something that arose at the SEAM ITSELF and was formed against no pass — a divergence observed at archive, a correction made in flow — stays a \`warnings\` entry. The test is whether independent review output informed it, which is also what makes the ordering check possible; a \`warnings\` entry cites nothing and can be ordered against nothing. Writing a pass-formed residual into \`warnings\` is the practice this record replaces.`,
+  ARCHIVE_EMIT_COMMAND,
+  `The ENGINE resolves the post-move landing itself (the lexically-greatest \`orbit/changes/archive/*-<name>/\` scan) and owns the spine, filename, and collision handling — never hand-compose the JSON or the path.`,
+  `**A withdrawn grant**: the write gate checks \`consent\` (\`references/archive-summary-schema.md\`). When it refuses \`setting\` naming the \`archive\` key — the grant was withdrawn between entry and this emit — write the emit again with NO \`consent\` field, and name the withdrawn \`chain.archive\` key in its \`final_assessment\`. Ask the user nothing: the sync and the move have already happened. The absent field is the audit-drift tripwire's condition.`,
+].join('\n\n');
+/** The body's emit section: when the emit fires, the read cue, the command and the chat behaviour beside them. */
+export const ARCHIVE_RUN_SUMMARY_EMIT_BASIC = [
+  ARCHIVE_EMIT_HEADING,
+  `After upstream Step 5 (move-to-archive) completes, write the archive run summary. Its extension fields are documented in \`references/archive-summary-schema.md\`; read it when composing them. ${RUN_SUMMARY_READ_CUE}`,
+  ARCHIVE_EMIT_COMMAND,
+].join('\n\n');
+
 export function getArchiveChangeSkillTemplate(): SkillTemplate {
   return {
     name: 'orbit-archive-change',
@@ -557,25 +582,7 @@ report it verbatim, and the archive continues unattached.
 (The HEAD-vs-attachment observation already fired at Step 0.7, before any archive write; the
 tail re-checks HEAD immediately before staging as its guard.)
 
-## NEW Step 5.5 — Archive run summary
-
-After upstream Step 5 (move-to-archive) completes, compose the payload — narrative + the extension fields \`references/archive-summary-schema.md\` lists (\`archive_path\`, \`audit\`, \`sync_specs\`, \`unresolved_markers\`, \`user_decision\`, \`consent\`, \`warnings\`, plus Step 3.2's \`deferred_validations\` when it deferred any task) — write it to a temp file, and invoke:
-
-**COMPOSE THE READINESS RECORD (rc04a).** When this archive CONCLUDES A REVIEW CADENCE — readable as the change's trail carrying independent passes — the payload SHALL carry a \`judgements\` entry with \`kind: "readiness"\`. Its \`formed_against\` is those passes' \`<TS>\` tokens; its \`disposition\` is your own judgement; its \`accepted\` list is where RESIDUAL RISK goes, one \`{claim, why}\` pair each. Where Step 3.4 fired **Proceed anyway**, its \`continuation\` entries sit in the SAME array — the archive is the one emit admitting both kinds, which is why the carrier is an array.
-
-The token source is the TRAIL ITSELF, not \`orbit status\`: the change-tier status payload reports gate spend COUNTS and reason strings, never pass tokens. List \`<archive_path>/.orbit-runs/\` and take the \`<TS>\` of each \`review-<mode>-<TS>.json\` whose \`reviewer_class\` is \`fresh\` or \`external\`, plus each \`external-<mode>-<TS>.md\` the trail reader ACCEPTED as a pass — a return the gate's \`reason\` names as REJECTED is not citable, and enumerating filenames alone over-counts by exactly those. Which passes count is \`orbit-run-summary-emit\`'s rule (the trail reader's pass set); this body names it and does not restate it — the write gate enforces it and names the pass it refuses on. The trail MOVED with the change at Step 5, so the ACTIVE path no longer resolves and \`orbit status --change <name> --json\` now errors — read the archived directory, or reuse the tokens Step 3.4 captured before the move.
-
-A \`disposition: "not-ready"\` is an ARCHIVE-TIME DISSENT, not a routing decision: it says the work was archived against your own judgement, and \`ratified_by\` records honestly whether that belief was yours (\`ai\`) or the user's (\`user\`). It does NOT block — the seam already carries consent, gate and audit prompts for stopping — and Step 5.65 states it where a human is looking. (Routing a cadence back to architecture instead of archiving is a real judgement with no carrier here, deliberately: the archive readout is this record's only reader, and in the routing case there is no archive to read it.)
-
-**\`accepted\` versus \`warnings\`, and the test that separates them**: a residual formed AGAINST the independent passes is an \`accepted\` pair; something that arose at the SEAM ITSELF and was formed against no pass — a divergence observed at archive, a correction made in flow — stays a \`warnings\` entry. The test is whether independent review output informed it, which is also what makes the ordering check possible; a \`warnings\` entry cites nothing and can be ordered against nothing. Writing a pass-formed residual into \`warnings\` is the practice this record replaces.
-
-\`\`\`bash
-orbit emit archive --change <name> --payload <payload-file>
-\`\`\`
-
-The ENGINE resolves the post-move landing itself (the lexically-greatest \`orbit/changes/archive/*-<name>/\` scan) and owns the spine, filename, and collision handling — never hand-compose the JSON or the path.
-
-**A withdrawn grant**: the write gate checks \`consent\` (\`references/archive-summary-schema.md\`). When it refuses \`setting\` naming the \`archive\` key — the grant was withdrawn between entry and this emit — write the emit again with NO \`consent\` field, and name the withdrawn \`chain.archive\` key in its \`final_assessment\`. Ask the user nothing: the sync and the move have already happened. The absent field is the audit-drift tripwire's condition.
+${ARCHIVE_RUN_SUMMARY_EMIT_BASIC}
 
 ## NEW Step 5.6 — The PR-attached tail (AFTER the emit, BEFORE the completion readout — D-arc Stage D6)
 
@@ -661,6 +668,7 @@ This is a deliberate choice (per \`orbit-archive-modifications\`' \`Audit inform
       { name: GATE_INFLECTION_REFERENCE_NAME, content: GATE_INFLECTION_REFERENCE },
       { name: FINGERPRINT_DIVERGENCE_REFERENCE_NAME, content: FINGERPRINT_DIVERGENCE_REFERENCE },
       { name: SIGNOFF_HOLD_REFERENCE_NAME, content: SIGNOFF_HOLD_REFERENCE },
+      { name: RUN_SUMMARY_EMIT_REFERENCE_NAME, content: runSummaryEmitReference(ARCHIVE_RUN_SUMMARY_EMIT) },
       { name: COMMIT_STEP_REFERENCE_NAME, content: COMMIT_STEP_REFERENCE },
       { name: 'decision-records.md', content: DECISION_RECORDS_REFERENCE },
     ],

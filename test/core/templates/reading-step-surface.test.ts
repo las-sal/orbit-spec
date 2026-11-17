@@ -38,9 +38,10 @@ describe("orbit-review: The reading step checks decision records in system revie
     // The four reader rows and the severity rule, as the engine's constants word them.
     for (const row of READER_ROWS) expect(step).toContain(row.replace(/^a /, ''));
     expect(step).toContain(READER_SEVERITY_RULE.replace(/^A record/, 'a record'));
-    // The body's pass step and its payload list name the step too.
+    // The body's pass step and its payload list name the step too (the payload list, since once-per-session-detail, in
+    // Step 9's reference).
     expect(review.body).toMatch(/system \(0–6, plus the reading step on the in-context pass whenever `orbit decisions brief <name>` selects records\)/);
-    expect(review.body).toContain('`decision_records_read` (in-context system pass only');
+    expect(review.ref('run-summary-emit.md')).toContain('`decision_records_read` (in-context system pass only');
   });
 
   // @scenario text orbit-review :: The reading step checks decision records in system review :: The reader's brief carries no path

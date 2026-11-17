@@ -6,7 +6,7 @@
  * to the orbit-run-summary-emit baseline where the change's iter-1 review corrected it.
  */
 import type { SkillTemplate, CommandTemplate } from '../types.js';
-import { DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../disciplines.js';
+import { DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE, RUN_SUMMARY_EMIT_REFERENCE_NAME, RUN_SUMMARY_READ_CUE, runSummaryEmitReference } from '../../disciplines.js';
 
 const AUDIT_DRIFT_RUN_SUMMARY_SCHEMA_REFERENCE = `# Reference: audit-drift run-summary schema
 
@@ -150,6 +150,28 @@ Scorecard rollup:
 Run summary: orbit/.orbit-runs/audit-drift-2026-05-18T15-04-11Z.json
 \`\`\`
 `;
+
+// once-per-session-detail (reduce-orbit-phase1, D-opsd-4, D-opsd-9): the emit section, whole, is
+// `references/run-summary-emit.md`; the body carries its heading, the paragraphs that stay, the read cue and the command.
+const AUDIT_DRIFT_EMIT_HEADING = `### 10. Persist the run summary`;
+const AUDIT_DRIFT_EMIT_STANDALONE = `**Standalone invocations only** — library / pre-archive contexts write no separate JSON (findings fold into the caller's emit: the review's \`review-system-<TS>.json\` or the archive's \`archive-<TS>.json\` \`audit.*\` fields).`;
+const AUDIT_DRIFT_EMIT_COMMAND = `\`\`\`bash
+orbit emit audit-drift --change <name> --payload <payload-file>   # change-scoped standalone
+orbit emit audit-drift --payload <payload-file>                   # project-wide standalone (bare)
+\`\`\``;
+/** The emit section whole, as the body carried it before once-per-session-detail; shipped as `references/run-summary-emit.md`. */
+export const AUDIT_DRIFT_RUN_SUMMARY_EMIT = [
+  AUDIT_DRIFT_EMIT_HEADING,
+  `${AUDIT_DRIFT_EMIT_STANDALONE} Compose the payload in the shape of the **Example payload** in \`references/run-summary-schema.md\` — the only keys it may carry are the ones that example carries; the two counts are engine-computed and refused — write it to a temp file, and invoke:`,
+  AUDIT_DRIFT_EMIT_COMMAND,
+  `The ENGINE owns the spine, paths, collision handling, and the WHOLE \`next_recommended\` logic — all four mode × findings combinations, including the clean-run defer-to-prior-narrative rule. Never hand-compose them.`,
+].join('\n\n');
+/** The body's emit section: when the emit fires, the read cue, the command and the chat behaviour beside them. */
+export const AUDIT_DRIFT_RUN_SUMMARY_EMIT_BASIC = [
+  AUDIT_DRIFT_EMIT_HEADING,
+  `${AUDIT_DRIFT_EMIT_STANDALONE} ${RUN_SUMMARY_READ_CUE}`,
+  AUDIT_DRIFT_EMIT_COMMAND,
+].join('\n\n');
 
 export function getAuditDriftSkillTemplate(): SkillTemplate {
   return {
@@ -338,16 +360,7 @@ Stock phrasings, context-specific:
 | pre-archive | All clear | \`No drift detected.\` |
 | library | any | No standalone final-assessment emitted; findings handed to caller (folded into review report's Coherence dimension). |
 
-### 10. Persist the run summary
-
-**Standalone invocations only** — library / pre-archive contexts write no separate JSON (findings fold into the caller's emit: the review's \`review-system-<TS>.json\` or the archive's \`archive-<TS>.json\` \`audit.*\` fields). Compose the payload in the shape of the **Example payload** in \`references/run-summary-schema.md\` — the only keys it may carry are the ones that example carries; the two counts are engine-computed and refused — write it to a temp file, and invoke:
-
-\`\`\`bash
-orbit emit audit-drift --change <name> --payload <payload-file>   # change-scoped standalone
-orbit emit audit-drift --payload <payload-file>                   # project-wide standalone (bare)
-\`\`\`
-
-The ENGINE owns the spine, paths, collision handling, and the WHOLE \`next_recommended\` logic — all four mode × findings combinations, including the clean-run defer-to-prior-narrative rule. Never hand-compose them.
+${AUDIT_DRIFT_RUN_SUMMARY_EMIT_BASIC}
 
 ## Output format
 
@@ -381,6 +394,7 @@ When \`/orbit:audit-drift\` is called by \`/orbit:archive\` (library / pre-archi
         name: 'worked-example.md',
         content: AUDIT_DRIFT_WORKED_EXAMPLE_REFERENCE,
       },
+      { name: RUN_SUMMARY_EMIT_REFERENCE_NAME, content: runSummaryEmitReference(AUDIT_DRIFT_RUN_SUMMARY_EMIT) },
       { name: 'decision-records.md', content: DECISION_RECORDS_REFERENCE },
     ],
     license: 'MIT',

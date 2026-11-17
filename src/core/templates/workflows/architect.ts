@@ -12,7 +12,7 @@
 import type { SkillTemplate, CommandTemplate } from '../types.js';
 import { COMPLETE_SLOT_PRODUCTIONS } from '../../architecture/parser.js';
 import { PR_RESOLUTION_REFERENCE } from './pr-choreography.js';
-import { DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../disciplines.js';
+import { DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE, RUN_SUMMARY_EMIT_REFERENCE_NAME, RUN_SUMMARY_READ_CUE, runSummaryEmitReference } from '../../disciplines.js';
 
 /**
  * program-signoff: Step 5.4 — the program's save and its sign-off at arc-done (`orbit-architect`'s `The architect
@@ -72,6 +72,32 @@ const PROGRAM_SIGNOFF_REFERENCE = `# Reference: the program's save and sign-off 
  * reference, from the save's outcome and the hold's result the session already has (R-rop-4).
  */
 export const PROGRAM_SIGNOFF_HOLD_BASIC = `The hold renders no brief and writes nothing. On \`why: "off"\`, say nothing about it and observe arc-done as Step 5.5 states, stating any warning in one line. On any other result or a non-zero exit, read \`references/${PROGRAM_SIGNOFF_REFERENCE_NAME}\` and follow it from the save's outcome and the result you already have, before Step 5.5.`;
+
+// once-per-session-detail (reduce-orbit-phase1, D-opsd-4, D-opsd-9): the emit section, whole, is
+// `references/run-summary-emit.md`; the body carries its heading, the paragraphs that stay, the read cue and the command.
+const ARCHITECT_EMIT_HEADING = `## Run-summary emit (conversation-boundary timing, architecture trail — via the engine emit surface)`;
+const ARCHITECT_EMIT_TIMING = `(Per \`orbit-run-summary-emit\` — \`/orbit:architect\` is a multi-turn conversational command; emit at conversation boundaries: user stop/pause signal, or AI-initiated wrap. Composed and written via \`orbit emit architect\` — \`orbit-emit-composition\`.)`;
+const ARCHITECT_EMIT_SWEEP = `**No emit without sweep** (D-arc Stage D5, leak-hardening layer 2 — shared with named-mode explore): the Step 4 R-d-8 residency sweep precedes EVERY boundary emit, riding this existing trigger with no new prompt — the emit describes the swept doc. Architect fires no BEGIN emit (the begin+boundary genre is named-mode explore's).`;
+const ARCHITECT_EMIT_COMMAND = `\`\`\`bash
+orbit emit architect --doc <doc-name> --payload <payload-file>
+\`\`\``;
+/** The emit section whole, as the body carried it before once-per-session-detail; shipped as `references/run-summary-emit.md`. */
+export const ARCHITECT_RUN_SUMMARY_EMIT = [
+  ARCHITECT_EMIT_HEADING,
+  ARCHITECT_EMIT_TIMING,
+  ARCHITECT_EMIT_SWEEP,
+  `Compose the payload — \`final_assessment\`, \`stages_touched\`, \`rulings_captured\`, \`completions_ratified\` (may be empty), \`stages_ended\` (the stage ids this session declared ended, by the offer or the unprompted route — may be empty; optional, so every earlier emit stays valid), \`handoff\`, + the required nullable \`model\` — into a temp file and invoke:`,
+  ARCHITECT_EMIT_COMMAND,
+  `The ENGINE owns the spine (\`change: null\` + \`doc\`), the FOURTH trail location (\`orbit/architecture/.orbit-runs/\`, shared by all docs, never moved by change archiving), timestamp + collision handling, and mirrors the handoff's \`next_command\` into \`next_recommended\`. The \`handoff\` section is arc ruling R-d-9(b), complied with from birth: \`boot_sequence\` entries are POINTERS (paths + one-line why), never content copies; \`next_command\` is the one command a cold session would run first; \`model_hint\` and \`seam\` complete the shape. \`/orbit:review --as architecture\` emits carry the same \`handoff\` shape (owned here).`,
+].join('\n\n');
+/** The body's emit section: when the emit fires, the read cue, the command and the chat behaviour beside them. */
+export const ARCHITECT_RUN_SUMMARY_EMIT_BASIC = [
+  ARCHITECT_EMIT_HEADING,
+  ARCHITECT_EMIT_TIMING,
+  ARCHITECT_EMIT_SWEEP,
+  `${RUN_SUMMARY_READ_CUE}`,
+  ARCHITECT_EMIT_COMMAND,
+].join('\n\n');
 
 export function getArchitectSkillTemplate(): SkillTemplate {
   return {
@@ -206,19 +232,7 @@ When arc-done, read \`references/pr-resolution.md\` and follow its arc-done read
 
 The body does NOT carry explore-grade thinking-partner stance prose, stage-lifecycle helpers (spin-up/close-out choreography), or retrofit guidance for converting legacy docs. Those are later rungs; v1 is create/resume + capture + render + ratification.
 
-## Run-summary emit (conversation-boundary timing, architecture trail — via the engine emit surface)
-
-(Per \`orbit-run-summary-emit\` — \`/orbit:architect\` is a multi-turn conversational command; emit at conversation boundaries: user stop/pause signal, or AI-initiated wrap. Composed and written via \`orbit emit architect\` — \`orbit-emit-composition\`.)
-
-**No emit without sweep** (D-arc Stage D5, leak-hardening layer 2 — shared with named-mode explore): the Step 4 R-d-8 residency sweep precedes EVERY boundary emit, riding this existing trigger with no new prompt — the emit describes the swept doc. Architect fires no BEGIN emit (the begin+boundary genre is named-mode explore's).
-
-Compose the payload — \`final_assessment\`, \`stages_touched\`, \`rulings_captured\`, \`completions_ratified\` (may be empty), \`stages_ended\` (the stage ids this session declared ended, by the offer or the unprompted route — may be empty; optional, so every earlier emit stays valid), \`handoff\`, + the required nullable \`model\` — into a temp file and invoke:
-
-\`\`\`bash
-orbit emit architect --doc <doc-name> --payload <payload-file>
-\`\`\`
-
-The ENGINE owns the spine (\`change: null\` + \`doc\`), the FOURTH trail location (\`orbit/architecture/.orbit-runs/\`, shared by all docs, never moved by change archiving), timestamp + collision handling, and mirrors the handoff's \`next_command\` into \`next_recommended\`. The \`handoff\` section is arc ruling R-d-9(b), complied with from birth: \`boot_sequence\` entries are POINTERS (paths + one-line why), never content copies; \`next_command\` is the one command a cold session would run first; \`model_hint\` and \`seam\` complete the shape. \`/orbit:review --as architecture\` emits carry the same \`handoff\` shape (owned here).
+${ARCHITECT_RUN_SUMMARY_EMIT_BASIC}
 
 ## Output at session end
 
@@ -229,6 +243,7 @@ Render the doc's computed position from \`orbit architecture status\` verbatim, 
         content: PR_RESOLUTION_REFERENCE,
       },
       { name: PROGRAM_SIGNOFF_REFERENCE_NAME, content: PROGRAM_SIGNOFF_REFERENCE },
+      { name: RUN_SUMMARY_EMIT_REFERENCE_NAME, content: runSummaryEmitReference(ARCHITECT_RUN_SUMMARY_EMIT) },
       { name: 'decision-records.md', content: DECISION_RECORDS_REFERENCE },
     ],
     license: 'MIT',

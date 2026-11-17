@@ -5,7 +5,41 @@
  * templates file into workflow-focused modules.
  */
 import type { SkillTemplate, CommandTemplate } from '../types.js';
-import { ACCOUNT_STEP, CHAIN_END_STEP_BASIC, CHAIN_END_STEP_REFERENCE, CHAIN_END_STEP_REFERENCE_NAME, COMMIT_STEP_BASIC, COMMIT_STEP_REFERENCE, COMMIT_STEP_REFERENCE_NAME, DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../disciplines.js';
+import { ACCOUNT_STEP_BASIC, ACCOUNT_STEP_REFERENCE, ACCOUNT_STEP_REFERENCE_NAME, CHAIN_END_STEP_BASIC, CHAIN_END_STEP_REFERENCE, CHAIN_END_STEP_REFERENCE_NAME, COMMIT_STEP_BASIC, COMMIT_STEP_REFERENCE, COMMIT_STEP_REFERENCE_NAME, DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE, RUN_SUMMARY_EMIT_REFERENCE_NAME, RUN_SUMMARY_READ_CUE, runSummaryEmitReference } from '../../disciplines.js';
+
+// once-per-session-detail (reduce-orbit-phase1, D-opsd-4, D-opsd-9): the emit section, whole, is
+// `references/run-summary-emit.md`; the body carries its heading, the paragraphs that stay, the read cue and the command.
+const APPLY_EMIT_HEADING = `## Run-summary emit (chunk-aware — via the engine emit surface)`;
+const APPLY_EMIT_WHEN = `\`/orbit:apply\` is a chunked multi-turn command. Fire the emit at every chunk boundary, at a mid-chunk session pause (chain: not a prompt), or once at session end for a no-chunking change — the conversation-boundary judgment is yours; everything else is engine-computed.`;
+const APPLY_EMIT_COMMAND = `\`\`\`bash
+orbit emit apply --change <name> --payload <payload-file>
+\`\`\``;
+const APPLY_EMIT_COMPLETION_OVERRIDE = `**Completion-prompt override (chat)**: on \`all_done\`, do NOT congratulate-and-suggest-archive (upstream) and do NOT hand-write \`/orbit:verify\` — instead render the gate graph's computed \`next_command\` + \`position\` from \`orbit status --change <name> --json\`. The lifecycle flow lives in the gate graph, not in this body; verify is Pass 0 of the \`review-system\` step the graph points to, not a separate lifecycle node (D5 — a separate verify gate would double-count).`;
+/** The emit section whole, as the body carried it before once-per-session-detail; shipped as `references/run-summary-emit.md`. */
+export const APPLY_RUN_SUMMARY_EMIT = [
+  APPLY_EMIT_HEADING,
+  `(Per \`orbit-run-summary-emit\`; composed and written via \`orbit emit apply\` — \`orbit-emit-composition\`.)`,
+  `${APPLY_EMIT_WHEN} Compose the payload into a temp file and invoke:`,
+  APPLY_EMIT_COMMAND,
+  `Payload fields (the ONLY things the AI supplies):`,
+  `- \`assessment_suffix\` (optional) — one clause appended to the engine's computed final-assessment core (blockers, session notes worth persisting).
+- \`user_validation_tasks\` (optional) — identifier list of unchecked tasks recognized as user-validation work (the ONE checkbox judgment the payload carries); the engine verifies each and derives the counts.
+- \`judgements\` (rc04a) — the CADENCE JUDGEMENT record, an ARRAY. Present when a CADENCE JUDGEMENT was taken at this seam — a decision holding a CADENCE POSITION, whether or not independent output existed to cite; the key is OMITTED entirely when none was, so its presence means a judgement happened. Each entry: \`kind\` (\`continuation\` | \`readiness\`), \`formed_against\` (array of independent pass \`<TS>\` tokens; may be EMPTY only on a \`continuation\`/\`proceed\` and only when the trail carries no accepted independent pass earlier than this emit — \`orbit-run-summary-emit\`'s totality rule, which the write gate enforces; named here, not restated), \`disposition\`, \`reasoning\` (prose), \`ratified_by\` (\`ai\` | \`user\` — never inferred). A \`continuation/proceed\` additionally carries \`gate\`/\`gate_state\`/\`gate_reason\`; a \`readiness\` carries \`accepted: [{claim, why}]\`. The CARRIER TABLE IS CLOSED and enforced by KIND as well as by command: **apply admits \`continuation\` only** (a \`readiness\` here is refused — the cadence does not end at apply). The write gate also REFUSES any entry citing a token that is not STRICTLY earlier than this emit's own, or that resolves to no independent pass on the trail, and an EMPTY citation on a \`continuation\`/\`proceed\` when an independent pass DOES precede the emit (naming the latest one) — belief is not observable, ordering is.
+  **AT THIS SEAM**: when Step 3's inflection prompt was answered **Proceed anyway**, compose a \`continuation\` entry with \`disposition: "proceed"\` carrying \`gate\`/\`gate_state\`/\`gate_reason\` as the CLI's \`gate\` object reported them at decision time — this entry is the SOLE record of the decision. \`formed_against\` is the independent pass tokens the decision was taken knowing about; when the trail carries none earlier than this emit, write the entry anyway with \`formed_against: []\` — the write gate accepts an empty citation exactly when the trail bears it out, and refuses it naming the latest preceding pass when it does not. The token source is the TRAIL ITSELF, not \`orbit status\`: the change-tier status payload reports gate spend COUNTS and reason strings, never pass tokens. List \`orbit/changes/<change-name>/.orbit-runs/\` and take the \`<TS>\` of each \`review-<mode>-<TS>.json\` whose \`reviewer_class\` is \`fresh\` or \`external\`, plus each \`external-<mode>-<TS>.md\` the trail reader ACCEPTED as a pass — a return the gate's \`reason\` names as REJECTED is not citable, and enumerating filenames alone over-counts by exactly those. Which passes count is \`orbit-run-summary-emit\`'s rule (the trail reader's pass set); this body names it and does not restate it — the write gate enforces it and names the pass it refuses on.
+- \`consent\` — \`"user-invoked" | "prompted" | "setting"\` per Step 0's provenance classification (D1, \`orbit-lifecycle-consent\`); CONSTANT across one invocation's chunk emits, except an emit after a withdrawn grant (below); a consent Abort writes NO summary. The write gate checks \`setting\`: it refuses it, naming the key, unless the project's \`chain\` map grants \`apply\`, and refuses any value outside the three.
+  **A withdrawn grant**: when the gate refuses \`setting\` naming the \`apply\` key — the grant was withdrawn between entry and this emit — write the emit again with NO \`consent\` field, and name the withdrawn \`chain.apply\` key in its \`final_assessment\` through \`assessment_suffix\`. Ask the user nothing: the command's writes have already happened. The emits this invocation wrote before the withdrawal stand, and the absent field is the audit-drift tripwire's condition.
+- \`model\` — the emitting AI's model identity (required, nullable).`,
+  `The ENGINE owns everything else: chunk detection from the tasks.md preamble (malformed preamble → stderr warning + no-chunking fallback), chunk identity + completion, task arithmetic, \`files_touched\` against the prior emit's \`diff_base\` tree snapshot, the whole \`next_recommended\` advancement (next chunk / mid-chunk resume / the gate graph's \`next_command\` on apply-complete), spine, filename, and collision handling. Never hand-compose them.`,
+  APPLY_EMIT_COMPLETION_OVERRIDE,
+  `**Why chunk-aware**: per-chunk emits bound post-apply regression bisection to a single chunk's task set (typically 10-20× blast-radius reduction) and give clean resume boundaries between sessions.`,
+].join('\n\n');
+/** The body's emit section: when the emit fires, the read cue, the command and the chat behaviour beside them. */
+export const APPLY_RUN_SUMMARY_EMIT_BASIC = [
+  APPLY_EMIT_HEADING,
+  `${APPLY_EMIT_WHEN} ${RUN_SUMMARY_READ_CUE}`,
+  APPLY_EMIT_COMMAND,
+  APPLY_EMIT_COMPLETION_OVERRIDE,
+].join('\n\n');
 
 export function getApplyChangeSkillTemplate(): SkillTemplate {
   return {
@@ -190,39 +224,17 @@ The disciplines from \`orbit-conventions\`, embedded per body; detail lives wher
 - **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line, invoking no next command unless the change status's \`chain\` object allows it — blanket delegation covers work WITHIN the requested command, never the next one; gate \`passed\` means *eligible*, not *commanded*.
 ${DECISION_WRITING_DISCIPLINE}
 
-${ACCOUNT_STEP}
+${ACCOUNT_STEP_BASIC}
 
-## Run-summary emit (chunk-aware — via the engine emit surface)
-
-(Per \`orbit-run-summary-emit\`; composed and written via \`orbit emit apply\` — \`orbit-emit-composition\`.)
-
-\`/orbit:apply\` is a chunked multi-turn command. Fire the emit at every chunk boundary, at a mid-chunk session pause (chain: not a prompt), or once at session end for a no-chunking change — the conversation-boundary judgment is yours; everything else is engine-computed. Compose the payload into a temp file and invoke:
-
-\`\`\`bash
-orbit emit apply --change <name> --payload <payload-file>
-\`\`\`
-
-Payload fields (the ONLY things the AI supplies):
-
-- \`assessment_suffix\` (optional) — one clause appended to the engine's computed final-assessment core (blockers, session notes worth persisting).
-- \`user_validation_tasks\` (optional) — identifier list of unchecked tasks recognized as user-validation work (the ONE checkbox judgment the payload carries); the engine verifies each and derives the counts.
-- \`judgements\` (rc04a) — the CADENCE JUDGEMENT record, an ARRAY. Present when a CADENCE JUDGEMENT was taken at this seam — a decision holding a CADENCE POSITION, whether or not independent output existed to cite; the key is OMITTED entirely when none was, so its presence means a judgement happened. Each entry: \`kind\` (\`continuation\` | \`readiness\`), \`formed_against\` (array of independent pass \`<TS>\` tokens; may be EMPTY only on a \`continuation\`/\`proceed\` and only when the trail carries no accepted independent pass earlier than this emit — \`orbit-run-summary-emit\`'s totality rule, which the write gate enforces; named here, not restated), \`disposition\`, \`reasoning\` (prose), \`ratified_by\` (\`ai\` | \`user\` — never inferred). A \`continuation/proceed\` additionally carries \`gate\`/\`gate_state\`/\`gate_reason\`; a \`readiness\` carries \`accepted: [{claim, why}]\`. The CARRIER TABLE IS CLOSED and enforced by KIND as well as by command: **apply admits \`continuation\` only** (a \`readiness\` here is refused — the cadence does not end at apply). The write gate also REFUSES any entry citing a token that is not STRICTLY earlier than this emit's own, or that resolves to no independent pass on the trail, and an EMPTY citation on a \`continuation\`/\`proceed\` when an independent pass DOES precede the emit (naming the latest one) — belief is not observable, ordering is.
-  **AT THIS SEAM**: when Step 3's inflection prompt was answered **Proceed anyway**, compose a \`continuation\` entry with \`disposition: "proceed"\` carrying \`gate\`/\`gate_state\`/\`gate_reason\` as the CLI's \`gate\` object reported them at decision time — this entry is the SOLE record of the decision. \`formed_against\` is the independent pass tokens the decision was taken knowing about; when the trail carries none earlier than this emit, write the entry anyway with \`formed_against: []\` — the write gate accepts an empty citation exactly when the trail bears it out, and refuses it naming the latest preceding pass when it does not. The token source is the TRAIL ITSELF, not \`orbit status\`: the change-tier status payload reports gate spend COUNTS and reason strings, never pass tokens. List \`orbit/changes/<change-name>/.orbit-runs/\` and take the \`<TS>\` of each \`review-<mode>-<TS>.json\` whose \`reviewer_class\` is \`fresh\` or \`external\`, plus each \`external-<mode>-<TS>.md\` the trail reader ACCEPTED as a pass — a return the gate's \`reason\` names as REJECTED is not citable, and enumerating filenames alone over-counts by exactly those. Which passes count is \`orbit-run-summary-emit\`'s rule (the trail reader's pass set); this body names it and does not restate it — the write gate enforces it and names the pass it refuses on.
-- \`consent\` — \`"user-invoked" | "prompted" | "setting"\` per Step 0's provenance classification (D1, \`orbit-lifecycle-consent\`); CONSTANT across one invocation's chunk emits, except an emit after a withdrawn grant (below); a consent Abort writes NO summary. The write gate checks \`setting\`: it refuses it, naming the key, unless the project's \`chain\` map grants \`apply\`, and refuses any value outside the three.
-  **A withdrawn grant**: when the gate refuses \`setting\` naming the \`apply\` key — the grant was withdrawn between entry and this emit — write the emit again with NO \`consent\` field, and name the withdrawn \`chain.apply\` key in its \`final_assessment\` through \`assessment_suffix\`. Ask the user nothing: the command's writes have already happened. The emits this invocation wrote before the withdrawal stand, and the absent field is the audit-drift tripwire's condition.
-- \`model\` — the emitting AI's model identity (required, nullable).
-
-The ENGINE owns everything else: chunk detection from the tasks.md preamble (malformed preamble → stderr warning + no-chunking fallback), chunk identity + completion, task arithmetic, \`files_touched\` against the prior emit's \`diff_base\` tree snapshot, the whole \`next_recommended\` advancement (next chunk / mid-chunk resume / the gate graph's \`next_command\` on apply-complete), spine, filename, and collision handling. Never hand-compose them.
-
-**Completion-prompt override (chat)**: on \`all_done\`, do NOT congratulate-and-suggest-archive (upstream) and do NOT hand-write \`/orbit:verify\` — instead render the gate graph's computed \`next_command\` + \`position\` from \`orbit status --change <name> --json\`. The lifecycle flow lives in the gate graph, not in this body; verify is Pass 0 of the \`review-system\` step the graph points to, not a separate lifecycle node (D5 — a separate verify gate would double-count).
-
-**Why chunk-aware**: per-chunk emits bound post-apply regression bisection to a single chunk's task set (typically 10-20× blast-radius reduction) and give clean resume boundaries between sessions.
+${APPLY_RUN_SUMMARY_EMIT_BASIC}
 
 ${COMMIT_STEP_BASIC}
 
 ${CHAIN_END_STEP_BASIC}
 `,
     references: [
+      { name: ACCOUNT_STEP_REFERENCE_NAME, content: ACCOUNT_STEP_REFERENCE },
+      { name: RUN_SUMMARY_EMIT_REFERENCE_NAME, content: runSummaryEmitReference(APPLY_RUN_SUMMARY_EMIT) },
       { name: COMMIT_STEP_REFERENCE_NAME, content: COMMIT_STEP_REFERENCE },
       { name: CHAIN_END_STEP_REFERENCE_NAME, content: CHAIN_END_STEP_REFERENCE },
       { name: 'decision-records.md', content: DECISION_RECORDS_REFERENCE },

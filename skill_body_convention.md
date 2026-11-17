@@ -13,6 +13,10 @@ R-rop-3, R-rop-4, R-rop-8). `test/core/templates/skill-body-budget.test.ts` poin
   procedure is needed, the body keeps the step's BASIC CONTENT and its procedure moves to a reference file beside the
   skill (`references/<name>.md`). The basic content says when the step runs, the command it runs, the usual result it
   handles itself, and the file to read on any other result or a non-zero exit.
+- **Detail acted on once is read at its moment.** A block acted on once, at a moment the body names (the session's first
+  emit, the end of apply, the end of a walk), keeps that moment, its command and any chat behaviour in the body, and
+  tells the agent to read its reference there, every time; the reference decides what the moment calls for, so the body
+  carries no condition of its own (`once-per-session-detail`, D-opsd-4, D-opsd-8). The reference holds the block whole.
 - **The handoff names the result already in hand.** A basic content that follows a command's result tells the agent to
   follow the reference "from the result you already have", so the command is not run twice.
 - **One home per text, composed once in code.** The step's full text is one exported constant in the workflow templates
@@ -41,9 +45,33 @@ At the defaults `orbit pr commit` returns `action: off`, so the session never op
 the agent reads `references/commit-step.md`, which holds the whole step (`COMMIT_STEP`), and acts on the record it
 already has.
 
+The run-summary emit step, carried by eleven bodies with one read cue (`RUN_SUMMARY_READ_CUE`). New's body keeps:
+
+````markdown
+## Run-summary emit (one-shot at command completion — via the engine emit surface)
+
+At command completion, write the new run summary. Before the session's first emit, read `references/run-summary-emit.md` and follow it to compose the payload: it holds this step whole, with where its fields are documented. Write the payload to a temp file and invoke:
+
+```bash
+orbit emit new --change <name> --payload <payload-file>
+```
+````
+
+`references/run-summary-emit.md` holds the emit section whole, its
+field list and what the engine owns included. A body with chat behaviour beside its emit, as apply's, propose's, ff's and
+continue's completion-prompt overrides, keeps it in the body.
+
+The account step, in apply. The body keeps the step's heading and one read, with no condition:
+
+```markdown
+At the session's end, BEFORE the run-summary emit (or, when the session writes no run summary, before the completion readout), read `references/account-step.md` and follow it: it says whether this session writes the account, a replacement of it, or none, and how.
+```
+
+Address-reviews' step 7 reads `references/account-walk-step.md` after the logs are written, the same way.
+
 ## Exceptions
 
 No step is exempt by design. Not yet brought under the convention: bulk-archive (its sign-off hold, PR section and
-divergence check), explore and onboard, untouched until `reduce-orbit-phase1`'s evaluation decides what follows. The review skill's external-review prompt references
+divergence check, and its per-change archive emit), explore (its emit step among them) and onboard, untouched until `reduce-orbit-phase1`'s evaluation decides what follows. The review skill's external-review prompt references
 (`mode-sections.md`, `prompt-template.md`) are named by `references/external-handoff.md` rather than by the body, a
 two-level chain that predates this convention; stage `tighten-bodies` brings it to one level (RG2).

@@ -387,12 +387,20 @@ const ACCOUNT_HOW = (example: Record<string, unknown>): string[] => [
   '```',
 ];
 
+/** The apply body's account step heading, carried by both the step and its basic content. */
+const ACCOUNT_STEP_HEADING =
+  "## Account step (before the run summary — `orbit-decision-records`' `Each change carries one account, written when apply is complete`)";
+/** The address-reviews body's step 7 heading, carried by both the step and its basic content. */
+const ACCOUNT_WALK_STEP_HEADING =
+  "### 7. Replace the account when a fix changed it (`orbit-decision-records`' `Each change carries one account, written when apply is complete`)";
+
 /**
- * The apply body's account step: written by the session that ends with apply complete, before its run
+ * The apply skill's account step, whole — `references/account-step.md` (the body carries `ACCOUNT_STEP_BASIC`): written
+ * by the session that ends with apply complete, before its run
  * summary (or its `all_done` completion readout when it writes none).
  */
 export const ACCOUNT_STEP = [
-  "## Account step (before the run summary — `orbit-decision-records`' `Each change carries one account, written when apply is complete`)",
+  ACCOUNT_STEP_HEADING,
   '',
   "The change's ACCOUNT says, in plain language, what the change built, the new places the user is asked something, and where the work left its plan. It is not a decision record and not a run summary. APPLY IS COMPLETE when the change's apply gate passes: every task is checked, or every unchecked one is a declared, marked `(User-validation` handoff (named in this session's `user_validation_tasks`). Decide at the session's end, BEFORE the run-summary emit — or, when the session writes no run summary (it arrived on `all_done`), before the completion readout:",
   '',
@@ -404,11 +412,12 @@ export const ACCOUNT_STEP = [
 ].join('\n');
 
 /**
- * The address-reviews body's account step: a walk replaces the account when a resolved finding changes what
+ * The address-reviews skill's account step, whole — `references/account-walk-step.md` (the body carries
+ * `ACCOUNT_WALK_STEP_BASIC`): a walk replaces the account when a resolved finding changes what
  * it says, unless the walk resolved any finding by reopening tasks.
  */
 export const ACCOUNT_WALK_STEP = [
-  "### 7. Replace the account when a fix changed it (`orbit-decision-records`' `Each change carries one account, written when apply is complete`)",
+  ACCOUNT_WALK_STEP_HEADING,
   '',
   "A change's ACCOUNT says, in plain language, what the change built, the new places the user is asked something, and where the work left its plan; the apply session that completes the change writes it. After the logs are written, decide:",
   '',
@@ -419,3 +428,64 @@ export const ACCOUNT_WALK_STEP = [
   '',
   ...ACCOUNT_HOW(ACCOUNT_EXAMPLES.walk),
 ].join('\n');
+
+// ---------------------------------------------------------------------------
+// once-per-session-detail (reduce-orbit-phase1, D-opsd-8): each account step's BASIC CONTENT — its heading and the
+// read at the step's moment, with no condition of its own — carried by its body; the full step, byte-equal, in a
+// reference file the basic content sends the agent to every time the moment comes. The reference decides every branch.
+// ---------------------------------------------------------------------------
+
+/** The reference file the apply skill ships, holding `ACCOUNT_STEP` byte-equal. */
+export const ACCOUNT_STEP_REFERENCE_NAME = 'account-step.md';
+/** The reference file the address-reviews skill ships, holding `ACCOUNT_WALK_STEP` byte-equal. */
+export const ACCOUNT_WALK_STEP_REFERENCE_NAME = 'account-walk-step.md';
+
+/** `references/account-step.md`: a one-line title, then the full step. */
+export const ACCOUNT_STEP_REFERENCE = `# Reference: the account step\n\n${ACCOUNT_STEP}\n`;
+/** `references/account-walk-step.md`: a one-line title, then the full step. */
+export const ACCOUNT_WALK_STEP_REFERENCE = `# Reference: the account step of a walk (step 7)\n\n${ACCOUNT_WALK_STEP}\n`;
+
+/** The apply body's account step: its heading and the read at the session's end. */
+export const ACCOUNT_STEP_BASIC = [
+  ACCOUNT_STEP_HEADING,
+  '',
+  `At the session's end, BEFORE the run-summary emit (or, when the session writes no run summary, before the completion readout), read \`references/${ACCOUNT_STEP_REFERENCE_NAME}\` and follow it: it says whether this session writes the account, a replacement of it, or none, and how.`,
+].join('\n');
+
+/** The address-reviews body's step 7: its heading and the read after the logs. */
+export const ACCOUNT_WALK_STEP_BASIC = [
+  ACCOUNT_WALK_STEP_HEADING,
+  '',
+  `After the logs are written, read \`references/${ACCOUNT_WALK_STEP_REFERENCE_NAME}\` and follow it: it says whether this walk writes a replacement of the change's account, or none, and how.`,
+].join('\n');
+
+// ---------------------------------------------------------------------------
+// once-per-session-detail (reduce-orbit-phase1, D-opsd-4, D-opsd-9; `orbit-run-summary-emit`'s `A body reads its
+// run-summary detail before the session's first emit`): each emit step in scope keeps when the emit fires, its command
+// and the chat behaviour beside them, and reads its section, whole, from the skill's `references/run-summary-emit.md`.
+// ---------------------------------------------------------------------------
+
+/** The skills whose emit step reads its detail from the reference: every emit step in scope, eleven bodies. */
+export const RUN_SUMMARY_EMIT_SKILLS = [
+  'orbit-apply-change',
+  'orbit-archive-change',
+  'orbit-architect',
+  'orbit-review',
+  'orbit-verify-change',
+  'orbit-propose',
+  'orbit-address-reviews',
+  'orbit-ff-change',
+  'orbit-continue-change',
+  'orbit-new-change',
+  'orbit-audit-drift',
+] as const;
+
+/** The reference file each of `RUN_SUMMARY_EMIT_SKILLS` ships, holding its emit section whole. */
+export const RUN_SUMMARY_EMIT_REFERENCE_NAME = 'run-summary-emit.md';
+
+/** The READ CUE, carried byte-equal by each of the eleven bodies, immediately before its command block. */
+export const RUN_SUMMARY_READ_CUE = `Before the session's first emit, read \`references/${RUN_SUMMARY_EMIT_REFERENCE_NAME}\` and follow it to compose the payload: it holds this step whole, with where its fields are documented. Write the payload to a temp file and invoke:`;
+
+/** `references/run-summary-emit.md`: a one-line title, then the emit section whole. */
+export const runSummaryEmitReference = (section: string): string =>
+  `# Reference: the run-summary emit step\n\n${section}\n`;

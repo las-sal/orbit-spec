@@ -6,7 +6,7 @@
  * to the orbit-run-summary-emit baseline where the change's iter-1 review corrected it.
  */
 import type { SkillTemplate, CommandTemplate } from '../types.js';
-import { ACCOUNT_WALK_STEP, CHAIN_END_STEP_BASIC, CHAIN_END_STEP_REFERENCE, CHAIN_END_STEP_REFERENCE_NAME, COMMIT_STEP_BASIC, COMMIT_STEP_REFERENCE, COMMIT_STEP_REFERENCE_NAME, DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../disciplines.js';
+import { ACCOUNT_WALK_STEP_BASIC, ACCOUNT_WALK_STEP_REFERENCE, ACCOUNT_WALK_STEP_REFERENCE_NAME, CHAIN_END_STEP_BASIC, CHAIN_END_STEP_REFERENCE, CHAIN_END_STEP_REFERENCE_NAME, COMMIT_STEP_BASIC, COMMIT_STEP_REFERENCE, COMMIT_STEP_REFERENCE_NAME, DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE, RUN_SUMMARY_EMIT_REFERENCE_NAME, RUN_SUMMARY_READ_CUE, runSummaryEmitReference } from '../../disciplines.js';
 
 const ADDRESS_REVIEWS_EXTERNAL_FINDINGS_FORMAT_REFERENCE = `# Reference: external-findings file format (for \`--from-file\` markdown parsing)
 
@@ -1001,6 +1001,31 @@ The v2 shape is a **structural change** from v1, not a rename. Readers handling 
 \`\`\`
 `;
 
+// once-per-session-detail (reduce-orbit-phase1, D-opsd-4, D-opsd-9): the emit section, whole, is
+// `references/run-summary-emit.md`; the body carries its heading, the paragraphs that stay, the read cue and the command.
+const ADDRESS_REVIEWS_EMIT_HEADING = `### 6. Persist the run summary`;
+const ADDRESS_REVIEWS_EMIT_PER_SOURCE = `**ONE resolution log PER SOURCE.** A walk that discovered more than one source writes one log per discovered pass, one per discovered audit-drift emit, and one for the markers when any were found. Each carries its own single \`source_path\` (the markers' log carries the scope, \`source: "scope"\`), so the gate's per-pass match reads every log unchanged. The logs go in token order, oldest first, then the markers. In walk mode, write each source's log when that source's findings are walked, before the next source begins. In batch mode the invocation resolves every source's findings, runs its ONE aggregated cascade, then writes every source's log, in the same order; an interrupted batch writes no log for a source whose log was not yet written, and a mid-walk switch to batch applies only to the sources whose logs are not yet written. An interrupted walk leaves the logs it completed on the trail; the sources whose logs were not written stay outstanding, and the next invocation discovers them again. A discovered source's log carries \`source: "auto-discovered"\`, \`source_path\` (that one file), \`source_command\` (its top-level \`command\`, or \`null\` for an external return), \`source_token\` and \`latest_apply_token\`; no \`tie_break_rationale\` is written, because nothing is selected by recency.`;
+const ADDRESS_REVIEWS_EMIT_COMMAND = `\`\`\`bash
+orbit emit address-reviews --change <name> --payload <payload-file>
+\`\`\``;
+const ADDRESS_REVIEWS_EMIT_SCOPE_FORMS = `Architecture-scoped ingest (the source was a \`review-architecture-*.json\` emit): \`--doc <doc-name>\` instead of \`--change\` — the log lands on \`orbit/architecture/.orbit-runs/\` with \`change: null\`, keeping the architecture evidence chain whole. Whole-repo / cross-change walks with no change anchor: invoke BARE — \`orbit emit address-reviews --payload <payload-file>\` — and the engine writes \`orbit/.orbit-runs/address-reviews-<TS>.json\` with \`change: null\`. An ARCHIVED change name resolves through the same \`--change <name>\` invocation (the engine falls back to the archived trail). Every walk persists through the emit surface — never hand-compose the JSON.`;
+/** The emit section whole, as the body carried it before once-per-session-detail; shipped as `references/run-summary-emit.md`. */
+export const ADDRESS_REVIEWS_RUN_SUMMARY_EMIT = [
+  ADDRESS_REVIEWS_EMIT_HEADING,
+  ADDRESS_REVIEWS_EMIT_PER_SOURCE,
+  `Compose each payload — narrative + per-command extension fields ONLY; \`references/run-summary-schema.md\` lists what the AI supplies. The ENGINE owns the spine, the iteration ordinal, \`next_recommended\` composition, filename + collision handling, and the write gate. Write the payload to a temp file and invoke:`,
+  ADDRESS_REVIEWS_EMIT_COMMAND,
+  ADDRESS_REVIEWS_EMIT_SCOPE_FORMS,
+].join('\n\n');
+/** The body's emit section: when the emit fires, the read cue, the command and the chat behaviour beside them. */
+export const ADDRESS_REVIEWS_RUN_SUMMARY_EMIT_BASIC = [
+  ADDRESS_REVIEWS_EMIT_HEADING,
+  ADDRESS_REVIEWS_EMIT_PER_SOURCE,
+  `Each payload's fields are listed in \`references/run-summary-schema.md\`. ${RUN_SUMMARY_READ_CUE}`,
+  ADDRESS_REVIEWS_EMIT_COMMAND,
+  ADDRESS_REVIEWS_EMIT_SCOPE_FORMS,
+].join('\n\n');
+
 export function getAddressReviewsSkillTemplate(): SkillTemplate {
   return {
     name: 'orbit-address-reviews',
@@ -1240,19 +1265,9 @@ Suggested next: re-run /orbit:review --as proposal to confirm clean baseline.
 
 The final-assessment line summarizes remaining-in-scope markers (0 if clean) plus any deliberately persisted escalations, and names any REDESIGN's route (\`/orbit:explore <name>\`) without invoking it. What runs next is the engine's eligibility line, read from \`orbit status --change <name> --json\`.
 
-### 6. Persist the run summary
+${ADDRESS_REVIEWS_RUN_SUMMARY_EMIT_BASIC}
 
-**ONE resolution log PER SOURCE.** A walk that discovered more than one source writes one log per discovered pass, one per discovered audit-drift emit, and one for the markers when any were found. Each carries its own single \`source_path\` (the markers' log carries the scope, \`source: "scope"\`), so the gate's per-pass match reads every log unchanged. The logs go in token order, oldest first, then the markers. In walk mode, write each source's log when that source's findings are walked, before the next source begins. In batch mode the invocation resolves every source's findings, runs its ONE aggregated cascade, then writes every source's log, in the same order; an interrupted batch writes no log for a source whose log was not yet written, and a mid-walk switch to batch applies only to the sources whose logs are not yet written. An interrupted walk leaves the logs it completed on the trail; the sources whose logs were not written stay outstanding, and the next invocation discovers them again. A discovered source's log carries \`source: "auto-discovered"\`, \`source_path\` (that one file), \`source_command\` (its top-level \`command\`, or \`null\` for an external return), \`source_token\` and \`latest_apply_token\`; no \`tie_break_rationale\` is written, because nothing is selected by recency.
-
-Compose each payload — narrative + per-command extension fields ONLY; \`references/run-summary-schema.md\` lists what the AI supplies. The ENGINE owns the spine, the iteration ordinal, \`next_recommended\` composition, filename + collision handling, and the write gate. Write the payload to a temp file and invoke:
-
-\`\`\`bash
-orbit emit address-reviews --change <name> --payload <payload-file>
-\`\`\`
-
-Architecture-scoped ingest (the source was a \`review-architecture-*.json\` emit): \`--doc <doc-name>\` instead of \`--change\` — the log lands on \`orbit/architecture/.orbit-runs/\` with \`change: null\`, keeping the architecture evidence chain whole. Whole-repo / cross-change walks with no change anchor: invoke BARE — \`orbit emit address-reviews --payload <payload-file>\` — and the engine writes \`orbit/.orbit-runs/address-reviews-<TS>.json\` with \`change: null\`. An ARCHIVED change name resolves through the same \`--change <name>\` invocation (the engine falls back to the archived trail). Every walk persists through the emit surface — never hand-compose the JSON.
-
-${ACCOUNT_WALK_STEP}
+${ACCOUNT_WALK_STEP_BASIC}
 
 ## Marker syntax across file types
 
@@ -1307,6 +1322,8 @@ ${CHAIN_END_STEP_BASIC}
         name: 'run-summary-schema.md',
         content: ADDRESS_REVIEWS_RUN_SUMMARY_SCHEMA_REFERENCE,
       },
+      { name: RUN_SUMMARY_EMIT_REFERENCE_NAME, content: runSummaryEmitReference(ADDRESS_REVIEWS_RUN_SUMMARY_EMIT) },
+      { name: ACCOUNT_WALK_STEP_REFERENCE_NAME, content: ACCOUNT_WALK_STEP_REFERENCE },
       { name: COMMIT_STEP_REFERENCE_NAME, content: COMMIT_STEP_REFERENCE },
       { name: CHAIN_END_STEP_REFERENCE_NAME, content: CHAIN_END_STEP_REFERENCE },
       { name: 'decision-records.md', content: DECISION_RECORDS_REFERENCE },

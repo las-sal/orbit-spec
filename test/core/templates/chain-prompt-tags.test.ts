@@ -218,6 +218,8 @@ const INVENTORY: Entry[] = [
   { file: 'orbit-apply-change/SKILL.md', anchor: 'If implementation reveals issues, pause and suggest artifact updates', tags: ['(chain: decision)'], row: 'apply: a pause' },
   { file: 'orbit-apply-change/SKILL.md', anchor: 'Pause on errors, blockers, or unclear requirements', tags: ['(chain: decision)'], row: 'apply: a pause' },
   { file: 'orbit-apply-change/SKILL.md', anchor: 'at a mid-chunk session pause (chain: not a prompt)', tags: ['(chain: not a prompt)'], row: 'mention' },
+  // once-per-session-detail: the reference holds the emit section whole, this sentence included.
+  { file: 'orbit-apply-change/run-summary-emit.md', anchor: 'at a mid-chunk session pause (chain: not a prompt)', tags: ['(chain: not a prompt)'], row: 'mention' },
   { file: 'orbit-archive-change/SKILL.md', anchor: 'Use the **AskUserQuestion tool** to let the user select. (chain: target)', tags: ['(chain: target)'], row: 'archive: which change' },
   { file: 'orbit-archive-change/SKILL.md', anchor: '- Use **AskUserQuestion tool** to confirm user wants to proceed (chain: decision)', tags: ['(chain: decision)'], row: 'archive: incomplete artifacts; archive: incomplete tasks', exact: true, count: 2 },
   { file: 'orbit-archive-change/SKILL.md', anchor: '"Sync now (recommended)", "Archive without syncing" (chain: routine, default: Sync now)', tags: ['(chain: routine, default: Sync now)'], row: 'archive: the sync assessment' },

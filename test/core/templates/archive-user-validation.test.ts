@@ -275,7 +275,9 @@ describe('archive schema reference and body (carried scenarios)', () => {
   });
 
   // @scenario text orbit-archive-modifications :: Archive run summary written :: not-ready does not block
-  it('the body says a not-ready readiness does not block', () => {
-    expect(body()).toContain('It does NOT block — the seam already carries consent, gate and audit prompts for stopping');
+  it("the archive's emit section says a not-ready readiness does not block", () => {
+    // once-per-session-detail: the readiness composition moved, with the emit section whole, to its reference.
+    const emit = (getArchiveChangeSkillTemplate().references ?? []).find(r => r.name === 'run-summary-emit.md')!.content;
+    expect(emit).toContain('It does NOT block — the seam already carries consent, gate and audit prompts for stopping');
   });
 });

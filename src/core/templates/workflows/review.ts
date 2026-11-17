@@ -7,7 +7,7 @@
  * definitions into lazy references (passes-{proposal,system,architecture}.md).
  */
 import type { SkillTemplate, CommandTemplate } from '../types.js';
-import { CHAIN_END_STEP_BASIC, CHAIN_END_STEP_REFERENCE, CHAIN_END_STEP_REFERENCE_NAME, COMMIT_STEP_BASIC, COMMIT_STEP_REFERENCE, COMMIT_STEP_REFERENCE_NAME, DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../disciplines.js';
+import { CHAIN_END_STEP_BASIC, CHAIN_END_STEP_REFERENCE, CHAIN_END_STEP_REFERENCE_NAME, COMMIT_STEP_BASIC, COMMIT_STEP_REFERENCE, COMMIT_STEP_REFERENCE_NAME, DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE, RUN_SUMMARY_EMIT_REFERENCE_NAME, RUN_SUMMARY_READ_CUE, runSummaryEmitReference } from '../../disciplines.js';
 
 const REVIEW_RUN_SUMMARY_SCHEMA_REFERENCE = `# Reference: review run-summary schema
 
@@ -1120,6 +1120,27 @@ Lens-specific emphasis (additive — does NOT skip other passes):
 When \`--focus <lens>\` is set, run all passes but apply elevated rigor (more probes, longer cite chains) to the listed ones.
 `;
 
+// once-per-session-detail (reduce-orbit-phase1, D-opsd-4, D-opsd-9): the emit section, whole, is
+// `references/run-summary-emit.md`; the body carries its heading, the paragraphs that stay, the read cue and the command.
+const REVIEW_EMIT_HEADING = `### 9. Persist via the emit surface (persist-first)`;
+const REVIEW_EMIT_COMMAND = `\`\`\`bash
+orbit emit review --change <name> --payload <payload.json> --render   # proposal/system
+orbit emit review --doc <doc-name> --payload <payload.json>           # architecture mode
+\`\`\``;
+/** The emit section whole, as the body carried it before once-per-session-detail; shipped as `references/run-summary-emit.md`. */
+export const REVIEW_RUN_SUMMARY_EMIT = [
+  REVIEW_EMIT_HEADING,
+  `Compose the NARRATIVE payload only — \`mode\`, \`reviewer_class\` (\`"fresh"\` under \`--reviewer fresh\`, else \`"in-context"\`), \`depth\`, \`flags\`, \`scorecard\`, \`findings\` (each with its owning \`dimension\`, \`title\`, \`file\`, \`line\`, \`recommendation\`, \`reproduction\` — a string, multi-line allowed, never a single-line slot; REQUIRED non-empty when \`severity\` is CRITICAL per \`orbit-conventions\`' Severity ladder and refused by the surface otherwise, optional below — plus \`recommendation_options\` when disjunctive), \`blocks\` (optional array of single-line strings — Pass 1's validate failure and Pass 8's unresolved markers compose into it, never into \`findings[]\`; absent when none), \`direction\` (OWED when \`reviewer_class\` is \`fresh\` or \`external\` — the surface refuses the payload without it — and optional in-context; composed per Step 8), \`verification\` (OWED when the engine computes VERIFICATION pass genre, refused on a REVIEW-genre pass; each finding may carry \`walk_entry\` — composed per Step 5's VERIFICATION branch), \`stale_suppressed\`, \`commentary\`, \`passes_run\`/\`passes_skipped\`, \`decision_records_read\` (in-context system pass only: the records the reading step's brief rendered, per \`references/passes-system.md\`'s reading step), and the required nullable \`model\` — and invoke:`,
+  REVIEW_EMIT_COMMAND,
+  `The ENGINE owns everything else (per \`orbit-emit-composition\`): the spine, the severity-counts \`final_assessment\`, the findings-dependent \`next_recommended\`, the shared-axis \`iteration\` (per-doc in architecture mode), the computed \`pass_genre\` and \`verified_walks\`, the filename token, and the write gate — never hand-compose the JSON (the retired practice; the surface rejects engine-owned and unknown payload keys, so a payload the table doesn't name fails loudly). Architecture-mode payloads additionally carry the architect-owned \`handoff\` section; the engine mirrors \`handoff.next_command\` into the spine. Payload fields are documented in \`references/run-summary-schema.md\` — a MIRROR of the engine's authoritative table, never its definition.`,
+].join('\n\n');
+/** The body's emit section: when the emit fires, the read cue, the command and the chat behaviour beside them. */
+export const REVIEW_RUN_SUMMARY_EMIT_BASIC = [
+  REVIEW_EMIT_HEADING,
+  `${RUN_SUMMARY_READ_CUE}`,
+  REVIEW_EMIT_COMMAND,
+].join('\n\n');
+
 export function getReviewSkillTemplate(): SkillTemplate {
   return {
     name: 'orbit-review',
@@ -1295,16 +1316,7 @@ Architecture mode keeps its hand-computed iteration note (matching mode AND \`do
 — never cross-doc): \`Note: N of these findings appeared in the last run on <date>. M new this
 run.\` / \`First architecture review for this doc.\`
 
-### 9. Persist via the emit surface (persist-first)
-
-Compose the NARRATIVE payload only — \`mode\`, \`reviewer_class\` (\`"fresh"\` under \`--reviewer fresh\`, else \`"in-context"\`), \`depth\`, \`flags\`, \`scorecard\`, \`findings\` (each with its owning \`dimension\`, \`title\`, \`file\`, \`line\`, \`recommendation\`, \`reproduction\` — a string, multi-line allowed, never a single-line slot; REQUIRED non-empty when \`severity\` is CRITICAL per \`orbit-conventions\`' Severity ladder and refused by the surface otherwise, optional below — plus \`recommendation_options\` when disjunctive), \`blocks\` (optional array of single-line strings — Pass 1's validate failure and Pass 8's unresolved markers compose into it, never into \`findings[]\`; absent when none), \`direction\` (OWED when \`reviewer_class\` is \`fresh\` or \`external\` — the surface refuses the payload without it — and optional in-context; composed per Step 8), \`verification\` (OWED when the engine computes VERIFICATION pass genre, refused on a REVIEW-genre pass; each finding may carry \`walk_entry\` — composed per Step 5's VERIFICATION branch), \`stale_suppressed\`, \`commentary\`, \`passes_run\`/\`passes_skipped\`, \`decision_records_read\` (in-context system pass only: the records the reading step's brief rendered, per \`references/passes-system.md\`'s reading step), and the required nullable \`model\` — and invoke:
-
-\`\`\`bash
-orbit emit review --change <name> --payload <payload.json> --render   # proposal/system
-orbit emit review --doc <doc-name> --payload <payload.json>           # architecture mode
-\`\`\`
-
-The ENGINE owns everything else (per \`orbit-emit-composition\`): the spine, the severity-counts \`final_assessment\`, the findings-dependent \`next_recommended\`, the shared-axis \`iteration\` (per-doc in architecture mode), the computed \`pass_genre\` and \`verified_walks\`, the filename token, and the write gate — never hand-compose the JSON (the retired practice; the surface rejects engine-owned and unknown payload keys, so a payload the table doesn't name fails loudly). Architecture-mode payloads additionally carry the architect-owned \`handoff\` section; the engine mirrors \`handoff.next_command\` into the spine. Payload fields are documented in \`references/run-summary-schema.md\` — a MIRROR of the engine's authoritative table, never its definition.
+${REVIEW_RUN_SUMMARY_EMIT_BASIC}
 
 ### 10. Render and paste the report (change modes)
 
@@ -1443,6 +1455,7 @@ ${CHAIN_END_STEP_BASIC}
         name: 'flags-detail.md',
         content: REVIEW_FLAGS_DETAIL_REFERENCE,
       },
+      { name: RUN_SUMMARY_EMIT_REFERENCE_NAME, content: runSummaryEmitReference(REVIEW_RUN_SUMMARY_EMIT) },
       { name: COMMIT_STEP_REFERENCE_NAME, content: COMMIT_STEP_REFERENCE },
       { name: CHAIN_END_STEP_REFERENCE_NAME, content: CHAIN_END_STEP_REFERENCE },
       { name: 'decision-records.md', content: DECISION_RECORDS_REFERENCE },

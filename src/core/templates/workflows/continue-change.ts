@@ -5,7 +5,31 @@
  * templates file into workflow-focused modules.
  */
 import type { SkillTemplate, CommandTemplate } from '../types.js';
-import { DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../disciplines.js';
+import { DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE, RUN_SUMMARY_EMIT_REFERENCE_NAME, RUN_SUMMARY_READ_CUE, runSummaryEmitReference } from '../../disciplines.js';
+
+// once-per-session-detail (reduce-orbit-phase1, D-opsd-4, D-opsd-9): the emit section, whole, is
+// `references/run-summary-emit.md`; the body carries its heading, the paragraphs that stay, the read cue and the command.
+const CONTINUE_EMIT_HEADING = `## Run-summary emit (one-shot at command completion — via the engine emit surface)`;
+const CONTINUE_EMIT_COMMAND = `\`\`\`bash
+orbit emit continue --change <name> --payload <payload-file>
+\`\`\``;
+const CONTINUE_EMIT_COMPLETION_OVERRIDE = `**Completion-prompt override (chat)**: where the upstream steps above suggest "implement this change or archive it" once all artifacts exist, instead suggest: "All artifacts created — run \`/orbit:review <name>\` before implementation."`;
+/** The emit section whole, as the body carried it before once-per-session-detail; shipped as `references/run-summary-emit.md`. */
+export const CONTINUE_RUN_SUMMARY_EMIT = [
+  CONTINUE_EMIT_HEADING,
+  `(Per \`orbit-run-summary-emit\`; composed and written via \`orbit emit continue\` — \`orbit-emit-composition\`.)`,
+  `At command completion, compose the narrative payload (\`final_assessment\` + the required nullable \`model\`) into a temp file and invoke:`,
+  CONTINUE_EMIT_COMMAND,
+  `The ENGINE owns the spine, the trail path, timestamp + collision handling, and \`next_recommended\` composition (completion-aware: continue-vs-review from artifact state). Never hand-compose the JSON.`,
+  CONTINUE_EMIT_COMPLETION_OVERRIDE,
+].join('\n\n');
+/** The body's emit section: when the emit fires, the read cue, the command and the chat behaviour beside them. */
+export const CONTINUE_RUN_SUMMARY_EMIT_BASIC = [
+  CONTINUE_EMIT_HEADING,
+  `At command completion, write the continue run summary. ${RUN_SUMMARY_READ_CUE}`,
+  CONTINUE_EMIT_COMMAND,
+  CONTINUE_EMIT_COMPLETION_OVERRIDE,
+].join('\n\n');
 
 export function getContinueChangeSkillTemplate(): SkillTemplate {
   return {
@@ -152,21 +176,10 @@ ADDED-only changes stamp nothing; a "skipped — requirement not found in live b
 means the delta references a nonexistent requirement (fix the delta; validation also catches it).
 For artifacts other than \`specs\`, skip this step.
 
-## Run-summary emit (one-shot at command completion — via the engine emit surface)
-
-(Per \`orbit-run-summary-emit\`; composed and written via \`orbit emit continue\` — \`orbit-emit-composition\`.)
-
-At command completion, compose the narrative payload (\`final_assessment\` + the required nullable \`model\`) into a temp file and invoke:
-
-\`\`\`bash
-orbit emit continue --change <name> --payload <payload-file>
-\`\`\`
-
-The ENGINE owns the spine, the trail path, timestamp + collision handling, and \`next_recommended\` composition (completion-aware: continue-vs-review from artifact state). Never hand-compose the JSON.
-
-**Completion-prompt override (chat)**: where the upstream steps above suggest "implement this change or archive it" once all artifacts exist, instead suggest: "All artifacts created — run \`/orbit:review <name>\` before implementation."
+${CONTINUE_RUN_SUMMARY_EMIT_BASIC}
 `,
     references: [
+      { name: RUN_SUMMARY_EMIT_REFERENCE_NAME, content: runSummaryEmitReference(CONTINUE_RUN_SUMMARY_EMIT) },
       { name: 'decision-records.md', content: DECISION_RECORDS_REFERENCE },
     ],
     license: 'MIT',

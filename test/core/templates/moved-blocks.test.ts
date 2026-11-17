@@ -2,6 +2,8 @@ import { createHash } from 'node:crypto';
 import { describe, expect, it } from 'vitest';
 import { getSkillTemplates } from '../../../src/core/shared/skill-generation.js';
 import {
+  ACCOUNT_STEP,
+  ACCOUNT_WALK_STEP,
   CHAIN_END_STEP,
   CHAIN_END_STEP_BASIC,
   CHAIN_END_STEP_SKILLS,
@@ -9,13 +11,22 @@ import {
   COMMIT_STEP_BASIC,
   COMMIT_STEP_SKILLS,
 } from '../../../src/core/disciplines.js';
+import { APPLY_RUN_SUMMARY_EMIT } from '../../../src/core/templates/workflows/apply-change.js';
+import { ADDRESS_REVIEWS_RUN_SUMMARY_EMIT } from '../../../src/core/templates/workflows/address-reviews.js';
+import { AUDIT_DRIFT_RUN_SUMMARY_EMIT } from '../../../src/core/templates/workflows/audit-drift.js';
+import { CONTINUE_RUN_SUMMARY_EMIT } from '../../../src/core/templates/workflows/continue-change.js';
+import { FF_RUN_SUMMARY_EMIT } from '../../../src/core/templates/workflows/ff-change.js';
+import { NEW_RUN_SUMMARY_EMIT } from '../../../src/core/templates/workflows/new-change.js';
+import { REVIEW_RUN_SUMMARY_EMIT } from '../../../src/core/templates/workflows/review.js';
+import { VERIFY_RUN_SUMMARY_EMIT } from '../../../src/core/templates/workflows/verify-change.js';
 import {
+  ARCHIVE_RUN_SUMMARY_EMIT,
   FINGERPRINT_DIVERGENCE_STEP,
   GATE_INFLECTION_STEP,
   SIGNOFF_HOLD_STEP,
 } from '../../../src/core/templates/workflows/archive-change.js';
-import { PROGRAM_SIGNOFF_HOLD_BASIC, PROGRAM_SIGNOFF_STEP } from '../../../src/core/templates/workflows/architect.js';
-import { SIZE_BRIEF_STEP } from '../../../src/core/templates/workflows/propose.js';
+import { ARCHITECT_RUN_SUMMARY_EMIT, PROGRAM_SIGNOFF_HOLD_BASIC, PROGRAM_SIGNOFF_STEP } from '../../../src/core/templates/workflows/architect.js';
+import { PROPOSE_RUN_SUMMARY_EMIT, SIZE_BRIEF_STEP } from '../../../src/core/templates/workflows/propose.js';
 import {
   ARC_DONE_ACT,
   FF_PR_POSITION,
@@ -46,6 +57,22 @@ const RECORDED: Record<string, string> = {
   PROPOSE_PR_POSITION: 'af2a7f6ef739175c0c8574e050491b8223ec90c8fd24eac17ca7ef75bccae1c7',
   FF_PR_POSITION: '7a0f252718c34cb9fdffeff9882b3012dbe9623f9bef18bf3590254e20854f18',
   ARCHITECT_ARC_DONE_ACT: '6564c39dbf3725d80347be89cdbb6e6a325e2b3ea46bf5e91798252766384bc7',
+  // once-per-session-detail (reduce-orbit-phase1), task 1.1: recorded from the skills generated at 9c43eee3, before
+  // any template was edited. The two account steps are their constants; each emit section runs from its heading to the
+  // next heading of the same or a higher level, to its last non-blank line (trailing newlines dropped).
+  ACCOUNT_STEP: 'dde4faf974d40c5bd8c34a8a38511f064a33d82f66648513267ba09d9480dda4',
+  ACCOUNT_WALK_STEP: '8b4eb2fbc3e5fd17be3e67610dbba72aa49b9ea4c7bc3cbf6a554fd16f95428c',
+  APPLY_RUN_SUMMARY_EMIT: 'efcd0a22dd87a825b3b5f75cf63b597a632197451c606b49f1e9a4efe9374f73',
+  ARCHIVE_RUN_SUMMARY_EMIT: '67b164fac5fd8149295ce6622b9927633d957d2224ca6edd52aaf05d7dde1b94',
+  ARCHITECT_RUN_SUMMARY_EMIT: '6a595f0017458bab0cbb9a46fe5887ab52d2ddb4e61626f7f56b1d67dc5e204d',
+  REVIEW_RUN_SUMMARY_EMIT: '800cfb192b6b380956f951aff0e5b434df382307a3656f2570000c714043cb56',
+  VERIFY_RUN_SUMMARY_EMIT: 'aceb2775860d09d9fb46fd3006e103837606df0f791d0530340791799d0642d3',
+  PROPOSE_RUN_SUMMARY_EMIT: 'a5e52c9488c496f247e36207e32579a1a88f5fc4e447d63dcb5a29354cb49b80',
+  ADDRESS_REVIEWS_RUN_SUMMARY_EMIT: '0bbd21e0d51afdbcea6888806fd2d8e2bd60b1bb854307e486034c426fdc0b9a',
+  FF_RUN_SUMMARY_EMIT: '4ec14a8791430ae8c6fbeb03e88d1527e8a61666aa72e1b1c33618e269f29fd2',
+  CONTINUE_RUN_SUMMARY_EMIT: '72f8fe69124f964c99668afa9afebabc9bb90004639f2ff5a6594aae900e5906',
+  NEW_RUN_SUMMARY_EMIT: '34dd0abbb17a964a4ad83449283a89b4484982942850d9b59b85d2c62f4b0d3c',
+  AUDIT_DRIFT_RUN_SUMMARY_EMIT: 'e778c7de3acbd0a89e58b503e18d2719bc5baa64f9f339fca192e3b4f20c7f24',
 };
 
 const sha = (s: string): string => createHash('sha256').update(s).digest('hex');
@@ -82,6 +109,20 @@ const MOVES: Array<{ key: string; block: string; files: Array<[string, string]>;
   { key: 'PROPOSE_PR_POSITION', block: PROPOSE_PR_POSITION, files: [['orbit-propose', 'pr-choreography.md'], ['orbit-ff-change', 'pr-choreography.md']] },
   { key: 'FF_PR_POSITION', block: FF_PR_POSITION, files: [['orbit-propose', 'pr-choreography.md'], ['orbit-ff-change', 'pr-choreography.md']] },
   { key: 'ARCHITECT_ARC_DONE_ACT', block: ARC_DONE_ACT, files: [['orbit-architect', 'pr-resolution.md']] },
+  // once-per-session-detail (task 2.2): the account steps.
+  { key: 'ACCOUNT_STEP', block: ACCOUNT_STEP, files: [['orbit-apply-change', 'account-step.md']], title: '# Reference: the account step' },
+  { key: 'ACCOUNT_WALK_STEP', block: ACCOUNT_WALK_STEP, files: [['orbit-address-reviews', 'account-walk-step.md']], title: '# Reference: the account step of a walk (step 7)' },  // once-per-session-detail (task 3.3): each emit section, whole, in its skill's run-summary-emit.md.
+  { key: 'APPLY_RUN_SUMMARY_EMIT', block: APPLY_RUN_SUMMARY_EMIT, files: [['orbit-apply-change', 'run-summary-emit.md']], title: '# Reference: the run-summary emit step' },
+  { key: 'ARCHIVE_RUN_SUMMARY_EMIT', block: ARCHIVE_RUN_SUMMARY_EMIT, files: [['orbit-archive-change', 'run-summary-emit.md']], title: '# Reference: the run-summary emit step' },
+  { key: 'ARCHITECT_RUN_SUMMARY_EMIT', block: ARCHITECT_RUN_SUMMARY_EMIT, files: [['orbit-architect', 'run-summary-emit.md']], title: '# Reference: the run-summary emit step' },
+  { key: 'REVIEW_RUN_SUMMARY_EMIT', block: REVIEW_RUN_SUMMARY_EMIT, files: [['orbit-review', 'run-summary-emit.md']], title: '# Reference: the run-summary emit step' },
+  { key: 'VERIFY_RUN_SUMMARY_EMIT', block: VERIFY_RUN_SUMMARY_EMIT, files: [['orbit-verify-change', 'run-summary-emit.md']], title: '# Reference: the run-summary emit step' },
+  { key: 'PROPOSE_RUN_SUMMARY_EMIT', block: PROPOSE_RUN_SUMMARY_EMIT, files: [['orbit-propose', 'run-summary-emit.md']], title: '# Reference: the run-summary emit step' },
+  { key: 'ADDRESS_REVIEWS_RUN_SUMMARY_EMIT', block: ADDRESS_REVIEWS_RUN_SUMMARY_EMIT, files: [['orbit-address-reviews', 'run-summary-emit.md']], title: '# Reference: the run-summary emit step' },
+  { key: 'FF_RUN_SUMMARY_EMIT', block: FF_RUN_SUMMARY_EMIT, files: [['orbit-ff-change', 'run-summary-emit.md']], title: '# Reference: the run-summary emit step' },
+  { key: 'CONTINUE_RUN_SUMMARY_EMIT', block: CONTINUE_RUN_SUMMARY_EMIT, files: [['orbit-continue-change', 'run-summary-emit.md']], title: '# Reference: the run-summary emit step' },
+  { key: 'NEW_RUN_SUMMARY_EMIT', block: NEW_RUN_SUMMARY_EMIT, files: [['orbit-new-change', 'run-summary-emit.md']], title: '# Reference: the run-summary emit step' },
+  { key: 'AUDIT_DRIFT_RUN_SUMMARY_EMIT', block: AUDIT_DRIFT_RUN_SUMMARY_EMIT, files: [['orbit-audit-drift', 'run-summary-emit.md']], title: '# Reference: the run-summary emit step' },
 ];
 
 /** The handoff rule's seven pointers (design §3): each basic content that follows a command's result. */

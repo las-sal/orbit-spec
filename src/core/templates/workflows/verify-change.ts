@@ -5,7 +5,28 @@
  * templates file into workflow-focused modules.
  */
 import type { SkillTemplate, CommandTemplate } from '../types.js';
-import { DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../disciplines.js';
+import { DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE, RUN_SUMMARY_EMIT_REFERENCE_NAME, RUN_SUMMARY_READ_CUE, runSummaryEmitReference } from '../../disciplines.js';
+
+// once-per-session-detail (reduce-orbit-phase1, D-opsd-4, D-opsd-9): the emit section, whole, is
+// `references/run-summary-emit.md`; the body carries its heading, the paragraphs that stay, the read cue and the command.
+const VERIFY_EMIT_HEADING = `## Run-summary emit (one-shot at command completion — via the engine emit surface)`;
+const VERIFY_EMIT_COMMAND = `\`\`\`bash
+orbit emit verify --change <name> --payload <payload-file>
+\`\`\``;
+/** The emit section whole, as the body carried it before once-per-session-detail; shipped as `references/run-summary-emit.md`. */
+export const VERIFY_RUN_SUMMARY_EMIT = [
+  VERIFY_EMIT_HEADING,
+  `(Per \`orbit-run-summary-emit\`; composed and written via \`orbit emit verify\` — \`orbit-emit-composition\`.)`,
+  `At command completion, compose the narrative payload (\`final_assessment\`, \`verdict\`, \`fail_mode\`, \`validator_message\`, \`warnings_count\` (required when \`fail_mode: "warnings"\`), \`scenarios_failed\` (optional count with \`fail_mode: "scenarios-fail"\`), + the required nullable \`model\`) into a temp file and invoke:`,
+  VERIFY_EMIT_COMMAND,
+  `The ENGINE owns the spine, the trail path, timestamp + collision handling, and \`next_recommended\` composition (the fail-mode-conditional recommendation — validator-error / tasks-incomplete / scenarios-fail / warnings (pass WITH non-blocking findings — never recorded as clean) / incomplete (aborted or partial verify run) / clean — is composed from the payload's \`verdict\`/\`fail_mode\` — the mode you classified above, never re-classified). Never hand-compose the JSON.`,
+].join('\n\n');
+/** The body's emit section: when the emit fires, the read cue, the command and the chat behaviour beside them. */
+export const VERIFY_RUN_SUMMARY_EMIT_BASIC = [
+  VERIFY_EMIT_HEADING,
+  `At command completion, write the verify run summary. ${RUN_SUMMARY_READ_CUE}`,
+  VERIFY_EMIT_COMMAND,
+].join('\n\n');
 
 export function getVerifyChangeSkillTemplate(): SkillTemplate {
   return {
@@ -213,19 +234,10 @@ orbit validate <name>
 
 Then take the FIRST that holds, by the precedence validator-error > tasks-incomplete > scenarios-fail: \`validator-error\` when validate fails (its message verbatim as \`validator_message\`); \`tasks-incomplete\` when any task is unchecked; \`scenarios-fail\` when spec scenarios fail against the implementation; otherwise \`warnings\` on a pass with warnings, and no fail mode on a clean pass.
 
-## Run-summary emit (one-shot at command completion — via the engine emit surface)
-
-(Per \`orbit-run-summary-emit\`; composed and written via \`orbit emit verify\` — \`orbit-emit-composition\`.)
-
-At command completion, compose the narrative payload (\`final_assessment\`, \`verdict\`, \`fail_mode\`, \`validator_message\`, \`warnings_count\` (required when \`fail_mode: "warnings"\`), \`scenarios_failed\` (optional count with \`fail_mode: "scenarios-fail"\`), + the required nullable \`model\`) into a temp file and invoke:
-
-\`\`\`bash
-orbit emit verify --change <name> --payload <payload-file>
-\`\`\`
-
-The ENGINE owns the spine, the trail path, timestamp + collision handling, and \`next_recommended\` composition (the fail-mode-conditional recommendation — validator-error / tasks-incomplete / scenarios-fail / warnings (pass WITH non-blocking findings — never recorded as clean) / incomplete (aborted or partial verify run) / clean — is composed from the payload's \`verdict\`/\`fail_mode\` — the mode you classified above, never re-classified). Never hand-compose the JSON.
+${VERIFY_RUN_SUMMARY_EMIT_BASIC}
 `,
     references: [
+      { name: RUN_SUMMARY_EMIT_REFERENCE_NAME, content: runSummaryEmitReference(VERIFY_RUN_SUMMARY_EMIT) },
       { name: 'decision-records.md', content: DECISION_RECORDS_REFERENCE },
     ],
     license: 'MIT',

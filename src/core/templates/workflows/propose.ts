@@ -8,7 +8,7 @@ import type { SkillTemplate, CommandTemplate } from '../types.js';
 import { PR_CHOREOGRAPHY_REFERENCE } from './pr-choreography.js';
 import { EXPLORE_DECISION_ENTRY_PRODUCTION, EXPLORE_MECHANISM_ENTRY_PRODUCTION } from '../../explore-grammar.js';
 import { SIZE_DECLARATION_PRODUCTION } from '../../change-size.js';
-import { CHAIN_END_STEP_BASIC, CHAIN_END_STEP_REFERENCE, CHAIN_END_STEP_REFERENCE_NAME, COMMIT_STEP_BASIC, COMMIT_STEP_REFERENCE, COMMIT_STEP_REFERENCE_NAME, DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../disciplines.js';
+import { CHAIN_END_STEP_BASIC, CHAIN_END_STEP_REFERENCE, CHAIN_END_STEP_REFERENCE_NAME, COMMIT_STEP_BASIC, COMMIT_STEP_REFERENCE, COMMIT_STEP_REFERENCE_NAME, DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE, RUN_SUMMARY_EMIT_REFERENCE_NAME, RUN_SUMMARY_READ_CUE, runSummaryEmitReference } from '../../disciplines.js';
 
 /**
  * conditional-steps (reduce-orbit-phase1): the size brief's full text, moved byte-equal to `references/size-brief.md`;
@@ -58,6 +58,38 @@ change's artifacts are complete whichever route is taken.`;
 
 export const SIZE_BRIEF_REFERENCE_NAME = 'size-brief.md';
 const SIZE_BRIEF_REFERENCE = `# Reference: the size brief after generation\n\n${SIZE_BRIEF_STEP}\n`;
+
+// once-per-session-detail (reduce-orbit-phase1, D-opsd-4, D-opsd-9): the emit section, whole, is
+// `references/run-summary-emit.md`; the body carries its heading, the paragraphs that stay, the read cue and the command.
+const PROPOSE_EMIT_HEADING = `## Run-summary emit (one-shot at command completion — via the engine emit surface)`;
+const PROPOSE_EMIT_COMMAND = `\`\`\`bash
+orbit emit propose --change <name> --payload <payload-file>
+\`\`\``;
+const PROPOSE_EMIT_SECOND_SEGMENT = `When \`publish\` printed a second segment, the emit is NOT the last act: run that segment with
+the just-written emit's path as \`<emit-path>\`, so the attachment record the archive reads
+reaches the branch. After a failed step or a PR-half degradation the emit stays LOCAL; the
+failure line names the recovery.`;
+const PROPOSE_EMIT_COMPLETION_OVERRIDE = `**Completion-prompt override (chat)**: where the upstream steps above prompt "Run \`/orbit:apply\` or ask me to implement", instead prompt: "Run \`/orbit:review <name>\` — review the artifacts before implementation." The upstream text above is kept verbatim; this override is the operative instruction — except after the size brief's **Split** route, whose split recommendation is the closing chat line instead.`;
+/** The emit section whole, as the body carried it before once-per-session-detail; shipped as `references/run-summary-emit.md`. */
+export const PROPOSE_RUN_SUMMARY_EMIT = [
+  PROPOSE_EMIT_HEADING,
+  `(Per \`orbit-run-summary-emit\`; composed and written via \`orbit emit propose\` — \`orbit-emit-composition\`.)`,
+  `At command completion, compose the narrative payload (\`final_assessment\`, the required
+nullable \`model\`, and — when \`orbit pr publish\` ran — the \`pr_attachment\` object per
+\`references/pr-choreography.md\`) into a temp file and invoke:`,
+  PROPOSE_EMIT_COMMAND,
+  `The ENGINE owns the spine, the trail path, timestamp + collision handling, and \`next_recommended\` composition (propose-shaped: the review-gate pointer). Never hand-compose the JSON.`,
+  PROPOSE_EMIT_SECOND_SEGMENT,
+  PROPOSE_EMIT_COMPLETION_OVERRIDE,
+].join('\n\n');
+/** The body's emit section: when the emit fires, the read cue, the command and the chat behaviour beside them. */
+export const PROPOSE_RUN_SUMMARY_EMIT_BASIC = [
+  PROPOSE_EMIT_HEADING,
+  `At command completion, write the propose run summary. ${RUN_SUMMARY_READ_CUE}`,
+  PROPOSE_EMIT_COMMAND,
+  PROPOSE_EMIT_SECOND_SEGMENT,
+  PROPOSE_EMIT_COMPLETION_OVERRIDE,
+].join('\n\n');
 
 export function getOrbitProposeSkillTemplate(): SkillTemplate {
   return {
@@ -384,26 +416,7 @@ Two things that stay TRUE HERE regardless of config: propose fires NO consent pr
 not consent-scoped — the choreography rides the user's own invocation), and generation +
 validation are never rolled back by a PR-layer failure.
 
-## Run-summary emit (one-shot at command completion — via the engine emit surface)
-
-(Per \`orbit-run-summary-emit\`; composed and written via \`orbit emit propose\` — \`orbit-emit-composition\`.)
-
-At command completion, compose the narrative payload (\`final_assessment\`, the required
-nullable \`model\`, and — when \`orbit pr publish\` ran — the \`pr_attachment\` object per
-\`references/pr-choreography.md\`) into a temp file and invoke:
-
-\`\`\`bash
-orbit emit propose --change <name> --payload <payload-file>
-\`\`\`
-
-The ENGINE owns the spine, the trail path, timestamp + collision handling, and \`next_recommended\` composition (propose-shaped: the review-gate pointer). Never hand-compose the JSON.
-
-When \`publish\` printed a second segment, the emit is NOT the last act: run that segment with
-the just-written emit's path as \`<emit-path>\`, so the attachment record the archive reads
-reaches the branch. After a failed step or a PR-half degradation the emit stays LOCAL; the
-failure line names the recovery.
-
-**Completion-prompt override (chat)**: where the upstream steps above prompt "Run \`/orbit:apply\` or ask me to implement", instead prompt: "Run \`/orbit:review <name>\` — review the artifacts before implementation." The upstream text above is kept verbatim; this override is the operative instruction — except after the size brief's **Split** route, whose split recommendation is the closing chat line instead.
+${PROPOSE_RUN_SUMMARY_EMIT_BASIC}
 
 ${COMMIT_STEP_BASIC}
 
@@ -415,6 +428,7 @@ ${CHAIN_END_STEP_BASIC}
         content: PR_CHOREOGRAPHY_REFERENCE,
       },
       { name: SIZE_BRIEF_REFERENCE_NAME, content: SIZE_BRIEF_REFERENCE },
+      { name: RUN_SUMMARY_EMIT_REFERENCE_NAME, content: runSummaryEmitReference(PROPOSE_RUN_SUMMARY_EMIT) },
       { name: COMMIT_STEP_REFERENCE_NAME, content: COMMIT_STEP_REFERENCE },
       { name: CHAIN_END_STEP_REFERENCE_NAME, content: CHAIN_END_STEP_REFERENCE },
       { name: 'decision-records.md', content: DECISION_RECORDS_REFERENCE },

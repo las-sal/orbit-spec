@@ -45,7 +45,9 @@ Three decisions were ratified during C1 remediation:
   named-tool idiom (`AskUserQuestion`, `Task tool`) stays in bodies by design.
 
 A new or grown step follows **`skill_body_convention.md`**: a step whose procedure an orbit command's result calls for
-keeps its basic content in the body and moves its procedure to a reference file; `skill-body-budget.test.ts` holds each body's size.
+keeps its basic content in the body and moves its procedure to a reference file, and a block acted on once, at a moment
+the body names (the session's first emit, the end of apply or of a walk), keeps that moment and its command in the body
+and reads its reference there; `skill-body-budget.test.ts` holds each body's size.
 
 ## Programs: one live
 
