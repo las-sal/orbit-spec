@@ -177,7 +177,7 @@ session that did not compact.
 ### Stage once-per-session-detail — run-summary payload detail and the account step move to reference files
 
 Depends-on: conditional-steps
-Complete: [ ]
+Complete: [x] 2026-11-17 (Sal)
 
 The brief's stage B. The run-summary payload detail the bodies still carry inline moves to each skill's run-summary
 schema reference, the body keeping the emit's call; the account step keeps its basic content and moves its field rules
@@ -295,3 +295,7 @@ Exit criteria:
   five chaining bodies explain the three prompt tags; archive is a named limit, as before this program).
 - 2026-11-17 — Stage `conditional-steps` archived and ratified by Sal: six exit criteria met, the compaction observation
   met in part (the apply and review sessions did not compact) and its remainder deferred to `evaluation` (its task 6.4).
+- 2026-11-17 — Stage `once-per-session-detail` archived and ratified by Sal: four exit criteria met, with the three
+  departures from its charter recorded in its Shipped-as paragraph (a new `run-summary-emit.md` per skill, the owed-field
+  triggers moved with the detail, the account step moved whole). RG1's projection after `tighten-bodies` widens to about
+  4,400 over 350,000.

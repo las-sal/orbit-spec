@@ -1,0 +1,37 @@
+{
+  "command": "architect",
+  "timestamp": "2026-11-17T19:49:58Z",
+  "change": null,
+  "doc": "reduce-orbit-phase1",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Ratified stage once-per-session-detail at Sal's word: its four exit criteria are met, and the three charter departures are recorded in its Shipped-as paragraph. A status-log entry records the ratification and RG1's widened projection. The program is not finished, so its brief was not saved; the sign-off hold reads off.",
+  "stages_touched": [
+    "once-per-session-detail"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [
+    "once-per-session-detail"
+  ],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      {
+        "path": "orbit/architecture/reduce-orbit-phase1.md",
+        "why": "the program: rulings, goals, the tighten-bodies charter, and both Shipped-as paragraphs (RG1's gap of about 4,400 and the RG2 instances carried forward)"
+      },
+      {
+        "path": "orbit/architecture/reduce-orbit-phase1-brief.md",
+        "why": "the brief's stage C, the source of tighten-bodies"
+      },
+      {
+        "path": "skill_body_convention.md",
+        "why": "the two rules the bodies now follow, which tighten-bodies keeps"
+      }
+    ],
+    "next_command": "/orbit:explore tighten-bodies",
+    "model_hint": null,
+    "seam": "Stages conditional-steps and once-per-session-detail are ratified; tighten-bodies is premised and opens with its named exploration, on the branch reduce-orbit-phase1 (R-rop-13)."
+  },
+  "next_recommended": "/orbit:explore tighten-bodies"
+}
