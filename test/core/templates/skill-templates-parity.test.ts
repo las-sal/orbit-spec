@@ -195,7 +195,8 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // hashes and both generated SKILL.md hashes moved. The review body's fold-step clause (its task 4.2) moves no pin
   // here: the review skill is not in this pinned set.
   // conditional-steps apply (2026-11-17), a PLANNED move (its task 6.1, R-rop-3): Steps 3.4, 3.45 and 3.7 keep their basic contents, their text moving byte-equal to `gate-inflection.md`, `fingerprint-divergence.md` and `signoff-hold.md`; the Commit step carries its basic content, the full step moving to `commit-step.md`.
-  getArchiveChangeSkillTemplate: '83a311d7db2d91e44f67d9939db93f4d4a39e6bcbf10b0dd591720990a1c75ab',
+  // Moved again at conditional-steps' system walk (2026-11-17, fresh S1): archive Step 3.7's basic content hands over the save's outcome with the hold's result, as architect 5.4's does.
+  getArchiveChangeSkillTemplate: '81dd9f7b596ca4b475e294036f2e776715994d0fde27cfb497072c3314961df6',
   getBulkArchiveChangeSkillTemplate: 'f180838d4e4cf84ee93005304ca2b44b520accf8eba8babedb4366176cf3900c',
   getOrbitSyncCommandTemplate: 'b985d0a4d89b0e2cc3c6b6dec2521ef2a9d0df44a8ba9ec92a5495052c94a39c',
   // rc06b-map-readers (2026-10-05) — verify moved DELIBERATELY, the first named edit to an upstream
@@ -290,7 +291,8 @@ const EXPECTED_GENERATED_SKILL_CONTENT_HASHES: Record<string, string> = {
   'orbit-ff-change': '2f9631682d42956d7034b03982a1aa8dc98d3ddd670ead9a50ca9f8c4129c860', // seam-chaining: the Chain end step and the epitome clause, at apply, the system walk and the verification walk; then seam-chaining-grants apply: the end step's two key rows and consent clause
   'orbit-sync-specs': '09ebdddd32d976022699b1575f8cf5e85fabf57ea71f1aa1afce1c793f322c99',
   // conditional-steps apply (2026-11-17), a PLANNED move (its task 6.1, R-rop-3): Steps 3.4, 3.45 and 3.7 keep their basic contents, their text moving byte-equal to `gate-inflection.md`, `fingerprint-divergence.md` and `signoff-hold.md`; the Commit step carries its basic content, the full step moving to `commit-step.md`.
-  'orbit-archive-change': '4c14f1a33d0a76b5834ddc1777e579aa882197305ee48d1837a813d4401409ef', // rc10-apply-closure task 2.8, then its system walk; then seam-chaining-grants apply and its system walk; then brief-render apply: Step 3.6; then program-brief apply: Step 3.7; then program-signoff apply: the hold's setting values (see the function-hash note above)
+  // Moved again at conditional-steps' system walk (2026-11-17, fresh S1): archive Step 3.7's basic content hands over the save's outcome with the hold's result, as architect 5.4's does.
+  'orbit-archive-change': 'e8abaa635636f6c2e7b4c7b0447fbdb34764f16976538c9d04ac1dc3bf1735f0', // rc10-apply-closure task 2.8, then its system walk; then seam-chaining-grants apply and its system walk; then brief-render apply: Step 3.6; then program-brief apply: Step 3.7; then program-signoff apply: the hold's setting values (see the function-hash note above)
   'orbit-bulk-archive-change': '79728529ce5653f125e5cf4b4e3cfd8525b8d337181c015b9c49bce6bb92d8e3', // rc10-apply-closure task 2.8, then its system walk; then brief-render apply: the per-change brief save; then program-brief apply: the per-change sign-off hold; then program-signoff apply: the hold's setting values (see the function-hash note above)
   'orbit-verify-change': '86d0fad7fe26e44c2df6e52bcac54c015a4911afd13bb288a825495773c99390', // rc06b-map-readers (2026-10-05): moved with the body's step 6 edit, then again at system walk 2's additions edit (see the function-hash note above)
   'orbit-onboard': 'e704c183201dc18a574de32da10a8722e8a53cc590e455fd66580317761d4698', // landing-page task 2.2 (see the function-hash note above); then seam-chaining system walk: the No-chaining line qualified by the chain setting

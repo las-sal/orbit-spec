@@ -31,7 +31,7 @@ summary reports it among the changes not archived, with the reason.
 With every setting at its default, nothing the user sees or is asked changes: the hold reports `why: "off"` with no
 warning and the archive goes on silently (`automate-dev-flow`'s R-adf-12). The archive body carries the step's BASIC
 CONTENT (`reduce-orbit-phase1`'s R-rop-3) — the hold command and its `why: "off"` row — and tells the agent to read
-`references/signoff-hold.md` and follow it, from the result it already has, on any other result or a non-zero exit; that reference carries the command,
+`references/signoff-hold.md` and follow it, from the save's outcome and the result it already has, on any other result or a non-zero exit; that reference carries the command,
 the table and the `orbit emit signoff` invocation with its fields, byte-equal to the step's text. The bulk-archive body
 carries the whole step, as before. Either way an installed skill needs no spec to run the step; a test holds the
 archive body's basic content, its reference file and the bulk-archive body's whole step.

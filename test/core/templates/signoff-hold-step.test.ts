@@ -81,7 +81,7 @@ describe('the archive bodies carry the sign-off hold', () => {
     const step = b.slice(at[2], at[4]);
     // `why: "off"` is handled in the body; every other result and a non-zero exit read the reference.
     const off = step.indexOf('On `why: "off"`, go on silently, stating any warning in one line.');
-    const other = step.indexOf('On any other result or a non-zero exit, read `references/signoff-hold.md` and follow it from the result you already have, before the sync.');
+    const other = step.indexOf('On any other result or a non-zero exit, read `references/signoff-hold.md` and follow it from the save\'s outcome and the result you already have, before the sync.');
     expect(off).toBeGreaterThan(-1);
     expect(other).toBeGreaterThan(off);
     expect(count(step, 'references/signoff-hold.md')).toBe(1);

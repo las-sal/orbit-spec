@@ -534,7 +534,7 @@ ${BRIEF_SAVE_STEP}
 
 (Per \`orbit-archive-modifications\`' \`The archive holds for a per-change sign-off\` requirement)
 
-Directly after Step 3.6's save, BEFORE upstream Step 4, in every mode, run \`orbit brief --change "<name>" --hold --json\` (it renders and writes nothing). On \`why: "off"\`, go on silently, stating any warning in one line. On any other result or a non-zero exit, read \`references/${SIGNOFF_HOLD_REFERENCE_NAME}\` and follow it from the result you already have, before the sync.
+Directly after Step 3.6's save, BEFORE upstream Step 4, in every mode, run \`orbit brief --change "<name>" --hold --json\` (it renders and writes nothing). On \`why: "off"\`, go on silently, stating any warning in one line. On any other result or a non-zero exit, read \`references/${SIGNOFF_HOLD_REFERENCE_NAME}\` and follow it from the save's outcome and the result you already have, before the sync.
 
 ## NEW Step 4.9 — PR preflight (\`orbit pr preflight\`, READ-ONLY, BEFORE the move — D-arc Stage D6; moved before the move by rc12)
 

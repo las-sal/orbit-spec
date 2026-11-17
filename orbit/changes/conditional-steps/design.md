@@ -121,7 +121,7 @@ After Step 3.4, before the Step 3.5 audit sweep, run `orbit fingerprint "<change
 **Archive Step 3.7** (after its heading and its `(Per …)` line):
 
 ````markdown
-Directly after Step 3.6's save, BEFORE upstream Step 4, in every mode, run `orbit brief --change "<name>" --hold --json` (it renders and writes nothing). On `why: "off"`, go on silently, stating any warning in one line. On any other result or a non-zero exit, read `references/signoff-hold.md` and follow it from the result you already have, before the sync.
+Directly after Step 3.6's save, BEFORE upstream Step 4, in every mode, run `orbit brief --change "<name>" --hold --json` (it renders and writes nothing). On `why: "off"`, go on silently, stating any warning in one line. On any other result or a non-zero exit, read `references/signoff-hold.md` and follow it from the save's outcome and the result you already have, before the sync.
 ````
 
 **Architect 5.4** (after the save part, which stays as today):
@@ -264,15 +264,23 @@ The Mechanism section is empty: every decision is a scope or fact entry, so no l
   which tightens what stays, finds them: the architect save paragraph's "no row below reads them" (the rows now sit in
   `program-signoff.md`); `SIGNOFF_HOLD_STEP`'s "the save step's just above" (in `signoff-hold.md` the save stays in the
   archive body's Step 3.6, and bulk-archive keeps the constant, so its bytes cannot change); the size brief's "(below)"
-  (nothing follows it in `size-brief.md`); and the Position paragraphs' "placed last for reading" labels. Each stays
-  true of the step read whole.
+  (nothing follows it in `size-brief.md`); the Position paragraphs' "placed last for reading" labels; the arc-done act
+  in `pr-resolution.md`, which names that same file ("per `references/pr-resolution.md`") and says "this body makes no
+  outward write"; and `gate-inflection.md`'s "which this body points at rather than restates" and "this body names it
+  and does not restate it". Each stays true of the step read whole.
+- [`pr-choreography.md` passes 100 lines with no table of contents] → the `Where each phase runs` section takes it from
+  83 lines to 108, a new instance of what RG2 forbids; stage `tighten-bodies`, which owns RG2's tables of contents,
+  adds one, and the stage's Shipped-as paragraph names it.
 - [Today's divergence step defines no row for a non-zero exit] → a gap that predates this change: the basic content
   routes a non-zero exit to the reference, which behaves exactly as today's step does. Defining that behaviour would
   change what the workflow does, outside RG0, so it waits for a change that may.
 - [A chained archive meets tags its body does not explain] → a named limit as before this program (R-rop-6 as
   amended): archive carries no chain end step, so it relies on the tag meaning the arriving session read in the
   chaining body that ran it.
-- [RG1's projection is about 600 over] → D-cs-11: the next stage's propose measures again from the real bodies.
+- [RG1's projection is about 2,700 over] → D-cs-11 (decided at about 600, before the proposal walk added the handoff
+  rule and the chained read's flags): measured at apply, the bodies total 389,374 characters, and less the brief's
+  estimates for stages B and C they project about 352,700 after C; the next stage's propose measures again from the
+  real bodies.
 - [Four capabilities against a limit of three] → declared in the proposal (D-cs-1).
 
 ## Alternatives considered
