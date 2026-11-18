@@ -1,0 +1,19 @@
+{
+  "command": "stop",
+  "timestamp": "2026-11-18T13:57:16Z",
+  "change": "evaluation",
+  "model": "claude-opus-5-5",
+  "condition": "ruling-amendment",
+  "about": "What follows phase 1. The evaluation has decided a phase 2 (the replay set first, then the cuts it grades, every body under the 5,000 tokens a compaction keeps, the rewording) and that decision records stop being written at the defaults. R-rop-9 says automate-dev-flow resumes once this evaluation is done; letting phase 2 go first would amend it.",
+  "question": "What runs next: phase 2 first with automate-dev-flow waiting until it is done (amends R-rop-9), automate-dev-flow resuming now as R-rop-9 says with phase 2 after it, or the records change built first as one small change and then automate-dev-flow, with phase 2 after?",
+  "defines": [
+    {
+      "term": "phase 2",
+      "definition": "The follow-on to this program that the evaluation has decided: build a set of replayed sessions to grade risky cuts by, then make the cuts, bring every skill body under 5,000 tokens and reword what phase 1 left."
+    },
+    {
+      "term": "decision record",
+      "definition": "A small file the AI writes when it makes a call in one of eighteen listed areas, or before it stops to ask at one of five listed situations, with the answer recorded beside it."
+    }
+  ]
+}

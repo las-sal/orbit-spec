@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-11-18T13:58:37Z",
+  "change": "evaluation",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "The evaluation's decisions are taken: rule now on what needs no replay and leave the two evidence-gated cuts to a phase 2 (D-eval-1); bulk-archive becomes a thin loop when parallel lanes need it (D-eval-2); decision records are written only when a setting reads them (D-eval-3); every body is to fit a compaction, phase 2's goal (D-eval-4); the body keeps directing reads and the apply gate reports no missing account (D-eval-5); the left provenance goes to phase 2's rewording (D-eval-6); ff stays as it is (D-eval-7); the records change runs next, then automate-dev-flow, then phase 2 (D-eval-8); and the phase-1 measures are written down (D-eval-9). Nothing is built in this exploration: the rulings and the new stage are written in the next architect session.",
+  "decisions_captured": 9,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 1,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose evaluation — 1 live rule accounted; formalize when you are ready (or /orbit:explore evaluation to keep refining)"
+}

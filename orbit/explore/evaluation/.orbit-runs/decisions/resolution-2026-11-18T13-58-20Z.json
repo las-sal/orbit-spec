@@ -1,0 +1,9 @@
+{
+  "command": "resolution",
+  "timestamp": "2026-11-18T13:58:20Z",
+  "change": "evaluation",
+  "model": "claude-opus-5-5",
+  "stop": "stop-2026-11-18T13-57-16Z.json",
+  "answer": "Build the records change first as one small change, then resume automate-dev-flow, with phase 2 after it.",
+  "effect": "The program gains one stage after the evaluation, the change that writes decision records only when a setting reads them, so R-rop-2's list of stages and R-rop-9's resume point are both amended in the next architect session: automate-dev-flow resumes once the evaluation and that change are done. Phase 2 follows automate-dev-flow, and moving mechanical steps into the engine stays a later program of its own."
+}
