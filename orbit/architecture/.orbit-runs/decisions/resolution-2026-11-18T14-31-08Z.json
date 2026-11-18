@@ -1,0 +1,10 @@
+{
+  "command": "resolution",
+  "timestamp": "2026-11-18T14:31:08Z",
+  "change": null,
+  "doc": "reduce-orbit-phase1",
+  "model": "claude-opus-5-5",
+  "stop": "stop-2026-11-18T14-27-24Z.json",
+  "answer": "Amend RG0 to name the records stage as its one exception.",
+  "effect": "RG0 gains a clause naming stage records-by-setting: from that stage on, the AI writes decision records only when a setting that reads them is on, and the bodies carry a pointer in place of the rule at the defaults; nothing else about the defaults may change. The stage is declared in this program after the evaluation, and automate-dev-flow's G0 is amended to match."
+}

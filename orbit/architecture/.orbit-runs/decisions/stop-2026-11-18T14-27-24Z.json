@@ -1,0 +1,20 @@
+{
+  "command": "stop",
+  "timestamp": "2026-11-18T14:27:24Z",
+  "change": null,
+  "doc": "reduce-orbit-phase1",
+  "model": "claude-opus-5-5",
+  "condition": "ruling-amendment",
+  "about": "The evaluation decided that decision records are written only when a setting that reads them is on (D-eval-3), built as this program's next stage (D-eval-8). This program's goal RG0 says every workflow does at its defaults what it does today, and the AI writing no records at the defaults is a change at the defaults. The question at the evaluation named only automate-dev-flow's G0, so RG0 has not been asked about.",
+  "question": "Should RG0 name the records stage as its one exception (at the defaults the AI no longer writes decision records, and the bodies carry a pointer in place of the rule), or should the records change wait for a program whose goals allow it?",
+  "defines": [
+    {
+      "term": "decision record",
+      "definition": "A small file the AI writes when it makes a call in one of eighteen listed areas, or before it stops to ask at one of five listed situations, with the answer recorded beside it."
+    },
+    {
+      "term": "records stage",
+      "definition": "The stage the evaluation added to this program after its last one: the change that writes decision records only when a setting reads them."
+    }
+  ]
+}

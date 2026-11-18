@@ -40,12 +40,12 @@ stage; G1–G6 are graded at first-run, on that project's trail and transcripts.
   removed (R-adf-15) — never by a change to what it does at a seam or what the user sees at the defaults. Every existing
   test still passes. An existing test is edited only where it enumerates a closed set the stage extends (a command
   list, a hash pin) or where the text it pins has moved, following that text to its new home, never to weaken what it
-  asserts about today's behaviour, and each such edit is named in the stage's archive. Under any setting, every record today's flow writes is still written. Fails if a default install
+  asserts about today's behaviour, and each such edit is named in the stage's archive. Under any setting, every record today's flow writes is still written, except decision records, which from `reduce-orbit-phase1`'s stage `records-by-setting` on are written only when a setting that reads them is on (R-adf-17). Fails if a default install
   behaves differently, if an existing test's assertion about today's behaviour is weakened, or if a first-run trail
   lacks a record type the supervised flow would have written; a default install behaving differently beyond a
   ratified exception fails it. (Reworded by Sal, 2026-11-07, R-adf-9; exceptions by Sal, 2026-11-09, R-adf-11; setting-dependent text by Sal,
   2026-11-09, R-adf-12; the archive's untracked-file line by Sal, 2026-11-11, R-adf-13; restructuring by Sal,
-  2026-11-17, R-adf-15.)
+  2026-11-17, R-adf-15; decision records by setting by Sal, 2026-11-18, R-adf-17.)
 - **G1 — The user only shows up where the user adds value.** In first-run, every user turn after the opening architect session
   is one of: answering a stop record, a sign-off, or a voluntary interjection the user makes. Fails on a single turn where
   the user had to type the next command, clear context, or re-boot a session to keep the run moving.
@@ -145,6 +145,14 @@ stage; G1–G6 are graded at first-run, on that project's trail and transcripts.
 - **R-adf-16** (Sal, 2026-11-17) — This program waits for `reduce-orbit-phase1`: no change of its remaining stages is
   proposed until that program's stages A, B and C are archived and their evaluation is done (its R-rop-9). The
   explorations `tripwire-sensors`, `tripwire-steward` and `tripwire-project-sensors` stay as they are meanwhile.
+  Amended by Sal, 2026-11-18, with that program's R-rop-9: this program resumes once `reduce-orbit-phase1`'s
+  `evaluation` and `records-by-setting` are done.
+- **R-adf-17** (Sal, 2026-11-18) — G0's "every record today's flow writes is still written" excepts decision records:
+  from `reduce-orbit-phase1`'s stage `records-by-setting` on, the AI writes a ledger entry, stop record or resolution only
+  when a setting that reads them is on (chaining, a sign-off setting of `change` or `program`, the tripwires, and later
+  this program's driver). The settings this program builds are the records' readers, so its first run, under them,
+  writes them; a supervised trail no longer carries them. Amended for `reduce-orbit-phase1`'s R-rop-17, recorded as
+  `stop-2026-11-18T00-27-46Z.json` and its resolution in `orbit/explore/evaluation/.orbit-runs/decisions/`.
 
 ## Program stages
 
