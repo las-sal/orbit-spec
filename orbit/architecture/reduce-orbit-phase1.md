@@ -233,7 +233,7 @@ characters against the brief's 21,700, so RG1's projection after `tighten-bodies
 ### Stage tighten-bodies — tighten what stays, and Anthropic's structural rules
 
 Depends-on: once-per-session-detail
-Complete: [ ]
+Complete: [x] 2026-11-17 (Sal)
 
 The brief's stage C: the decision-writing bullet restructured into labelled sub-bullets with its content unchanged
 (R-rop-7); Guardrails sections that restate the steps removed, keeping any line that says something the steps do not;
@@ -347,3 +347,7 @@ Exit criteria:
   restructured decision-writing bullet adds five lines to explore, which sat at its 664-line ceiling; at Sal's choice
   that ceiling rises to 669 for those lines only (R-rop-8 and RG3 amended), over writing the labels inline or trimming
   explore's own text.
+- 2026-11-17 — Stage `tighten-bodies` archived and ratified by Sal: its four exit criteria met (RG1 at 363,848 and
+  18,238 against 365,500 and 18,300; RG2 whole; the edit ledger shows no instruction removed; nine ceilings lowered and
+  six kept, none raised but explore's named line rise), with the two departures from its charter's wording recorded in
+  its Shipped-as paragraph (115 provenance forms the patterns cannot remove, and one kept citation, for `evaluation`).

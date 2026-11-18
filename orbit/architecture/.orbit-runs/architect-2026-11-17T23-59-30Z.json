@@ -1,0 +1,37 @@
+{
+  "command": "architect",
+  "timestamp": "2026-11-17T23:59:30Z",
+  "change": null,
+  "doc": "reduce-orbit-phase1",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Stage tighten-bodies ratified by Sal (Complete: [x] 2026-11-17), its status-log entry appended; the program brief's save and hold ran (hold off); evaluation is the program's last stage, premised.",
+  "stages_touched": [
+    "tighten-bodies"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [
+    "tighten-bodies"
+  ],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      {
+        "path": "orbit/architecture/reduce-orbit-phase1.md",
+        "why": "the program: its rulings, the evaluation stage's charter and decisions to make, and the three Shipped-as paragraphs with what each carried forward"
+      },
+      {
+        "path": "orbit/architecture/reduce-orbit-phase1-brief.md",
+        "why": "the brief's stage D and its spikes, which the evaluation weighs"
+      },
+      {
+        "path": "orbit/changes/archive/2026-11-17-tighten-bodies/.orbit-runs/account/account-2026-11-17T22-35-17Z.json",
+        "why": "the residual provenance forms left for the evaluation, listed in its detail"
+      }
+    ],
+    "next_command": "/orbit:explore evaluation",
+    "model_hint": null,
+    "seam": "Stages conditional-steps, once-per-session-detail and tighten-bodies are ratified; evaluation is premised and opens with its named exploration on the branch reduce-orbit-phase1 (R-rop-13)."
+  },
+  "next_recommended": "/orbit:explore evaluation"
+}
