@@ -1,0 +1,31 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-18T16:38:57Z",
+  "change": "records-by-setting",
+  "model": "claude-opus-5-5",
+  "area": "things-others-build-on",
+  "decided": "A new orbit command, run the same way at the start of every session, answers whether decision records are to be written and names the settings that read them; it takes no change name, since the settings belong to the whole project.",
+  "alternatives": [
+    "add the answer to the status of one change",
+    "have the command that writes a record refuse when none is needed"
+  ],
+  "why": "Some sessions never ask for one change's status, and a refusing write command would still need the whole rule in every skill to know when to call it, so only a command of its own can replace the rule with one short line that is the same everywhere.",
+  "relies_on": [
+    {
+      "kind": "ruling",
+      "doc": "reduce-orbit-phase1",
+      "id": "R-rop-4"
+    },
+    {
+      "kind": "ruling",
+      "doc": "reduce-orbit-phase1",
+      "id": "R-rop-5"
+    }
+  ],
+  "defines": [
+    {
+      "term": "decision record",
+      "definition": "A small file the AI writes when it makes a call in one of eighteen listed areas, or before it stops to ask at one of five listed situations, with the answer recorded beside it."
+    }
+  ]
+}
