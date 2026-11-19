@@ -1,0 +1,14 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-11-19T00:07:45Z",
+  "change": "records-by-setting",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "prompt_path": "orbit/changes/records-by-setting/.orbit-runs/external-prompt-proposal-2026-11-19T00-07-31Z.md",
+  "target": "codex",
+  "final_assessment": "External review prompt packaged for records-by-setting (iter 1, mode proposal) as the external half of a launched blind pair; awaiting findings from codex.",
+  "pair": true,
+  "awaiting_findings": true,
+  "next_recommended": "Paste orbit/changes/records-by-setting/.orbit-runs/external-prompt-proposal-2026-11-19T00-07-31Z.md into the target AI, and save the response as orbit/changes/records-by-setting/.orbit-runs/external-proposal-<TS>.md"
+}
