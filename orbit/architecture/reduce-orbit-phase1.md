@@ -349,6 +349,29 @@ Exit criteria:
 - The budget test's ceilings are lowered to the new sizes.
 - RG0 holds as amended.
 
+Shipped as (2026-11-19; archived as `orbit/changes/archive/2026-11-19-records-by-setting/`; the charter above stays as
+declared): a new command, `orbit decisions status [--json]`, reports `write` and `readers`: records are written when a
+chain key is granted, when `signoff` is `change` or `program`, or when a tripwire sensor is set to `on_fire: halt`, and
+not otherwise (a `chain:` map with no grant, or sensors left at `record`, turn nothing on). It avoids the word "owed",
+which already means a record awaiting its reading. The fourteen bodies carry the rule's basic content, one line: run
+the command at each command's first step and again after the session edits the project config, follow the rule in
+`decision-records.md` on `write: true`, and on `write: false` write no new ledger entry or stop record. The rule moved
+whole into that reference's first section, every clause of today's bullet kept but "under every setting", and the edit
+ledger undoes this swap before its own pairs. Onboard's line, `docs/cli.md`, `docs/customization.md`, CLAUDE.md and
+`orbit-decision-records`' Purpose now say records are written when a setting reads them. The bodies total 329,979
+characters (apply 15,805), down from 363,848; fourteen ceilings came down to their new sizes plus 5%, onboard's stayed,
+and explore's line ceiling went back from 669 to 664. Two departures from the charter's wording, both decided at the
+proposal walk (D-rbs-10) and named in the change's account: at the defaults a resolution answering a stop already in a
+trail, and a replacement fixing a record already there, are still written, so turning the last reading setting off
+strands no stop; and the reading step selects nothing at the defaults only on a trail with no records, since records
+written earlier are still read and fixed. The system walk kept the basic content with no branch for a failing command
+(the user's choice A), a named limit in the change's design: only a body newer than the installed CLI meets it. Tests
+that moved (RG0): the decision-writing parity test (two fences), the edit ledger, the skill hash pins (twelve at apply,
+eleven again at the system walk), one re-tagged scenario and the budget ceilings, each listed in the change's account.
+The system review's reading step did not run: orbit's brief for the change's seven ledger entries was 123,852
+characters, too large to hand a reader verbatim, so they archive unread. From this change's `update --force` on, this
+repository, which sets none of the three keys, writes no new decision records.
+
 ## Considered & out
 
 - **2026-11-17 — An orbit-lite built from scratch:** the alternative to restructuring this orbit (R-rop-1).
