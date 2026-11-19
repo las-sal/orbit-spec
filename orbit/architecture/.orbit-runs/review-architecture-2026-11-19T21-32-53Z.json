@@ -1,0 +1,119 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-19T21:32:53Z",
+  "change": null,
+  "doc": "reduce-orbit-phase1",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "architecture",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {},
+  "scorecard": {
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    },
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "pass": "1",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "orbit/architecture/reduce-orbit-phase1.md",
+      "line": 167,
+      "title": "R-rop-17 and RG0's exception state the defaults more broadly than what shipped",
+      "recommendation": "R-rop-17 (line 167) says that at the defaults the decision-writing rule leaves the bodies and the review's reading step finds nothing to read; RG0's exception (line 30) says that at the defaults the bodies carry a pointer in place of the rule. What shipped (D-rbs-10, the records-by-setting proposal walk): every body carries the same one-line basic content under every configuration (R-rop-5), a resolution answering a stop already in a trail and a replacement fixing a record already there are still written at the defaults, and the reading step still reads records a trail already holds. The stage's Shipped-as paragraph (line 352) names the narrowing, but a reader taking the ruling or the goal alone, as the decision-reading brief hands it, reads the broader rule. Amending the ruling or the goal is the user's.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Leave R-rop-17 and RG0 as ratified; the Shipped-as paragraph is the record of the narrowing."
+        },
+        {
+          "label": "B",
+          "body": "Append a dated note to R-rop-17 and to RG0's exception: as built (D-rbs-10), an answer to a stop already in a trail and a fix of a record already there are still written at the defaults, and records already in a trail are still read; every body carries the same basic content under every configuration."
+        }
+      ]
+    },
+    {
+      "pass": "1",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "orbit/architecture/reduce-orbit-phase1.md",
+      "line": 98,
+      "title": "R-rop-7 and the Premise still say phase 1 leaves decision records and workflow behaviour alone",
+      "recommendation": "R-rop-7 (line 98) says whether decision records are written by default at all is a separate question, outside phase 1, and the Premise (line 14) says phase 1 restructures the bodies without changing what any workflow does. The evaluation brought that question into phase 1 as stage records-by-setting (R-rop-2's third amendment, R-rop-17), and RG0 names it as its one exception, but neither R-rop-7 nor the Premise points there, so a reader of either line finds a program that, by its own later rulings, did both. Add a one-clause pointer at each to R-rop-17 and RG0's exception (a ruling amendment, the user's), or leave them as the record of what was ratified on 2026-11-17 with the amendments carrying the change.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Add a dated pointer clause at R-rop-7 and at the Premise's sentence: brought into phase 1 by D-eval-8 as stage records-by-setting (R-rop-17; RG0's one exception)."
+        },
+        {
+          "label": "B",
+          "body": "Leave both as ratified on 2026-11-17; R-rop-2's third amendment and RG0's exception are the record."
+        }
+      ]
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/architecture/reduce-orbit-phase1.md",
+      "line": 155,
+      "title": "R-rop-15's deferred one-line decision-writing reads as undone work after records-by-setting",
+      "recommendation": "R-rop-15 (line 155), the evaluation's Concluded-as paragraph (line 325) and Considered & out (line 384) defer the one-line decision-writing bullet (R-rop-7: 'the one-line form with its detail in decision-records.md') to phase 2. Records-by-setting shipped a one-line body bullet with the rule in decision-records.md, which matches that wording; what it did not do is reword the rule itself, which moved whole (its design's non-goals). The distinction lives only in the archived change's design, so phase 2, planned from this doc, could take the cut as done or redo it. Add one sentence to records-by-setting's Shipped-as paragraph saying that the one-line rewording R-rop-7 weighed is not this change, the rule moved whole and its rewording still waits for phase 2."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/architecture/reduce-orbit-phase1.md",
+      "line": 403,
+      "title": "The doc grades no goal at the program's close",
+      "recommendation": "Every declared stage is done, but RG0 to RG3 are graded only piecemeal: RG1 and RG2 in tighten-bodies' status-log entry, RG3's one rise in R-rop-8, RG0 in each stage's exit criteria. A reader of the finished program finds no single statement of which goals held. Add a closing status-log entry (line 403's section) grading each: RG0 held with its one named exception (records-by-setting); RG1 met at tighten-bodies (363,848 and 18,238 against 365,500 and 18,300) and the bodies since went to 329,979; RG2 met; RG3 held, its one named rise (explore 664 to 669) reversed at records-by-setting."
+    },
+    {
+      "pass": "4",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/architecture/reduce-orbit-phase1.md",
+      "line": 130,
+      "title": "R-rop-12 sits before R-rop-11 in the rulings index",
+      "recommendation": "The index is otherwise in ID order; R-rop-12 (line 130) precedes R-rop-11 (line 134). Swap the two entries so a reader scanning by ID finds each where expected; no text changes."
+    }
+  ],
+  "commentary": "First architecture review for this doc.\n\nThe closing review of a program whose every stage is done. Dependencies run as a straight chain (conditional-steps, once-per-session-detail, tighten-bodies, evaluation, records-by-setting) and match the sequencing prose; each stage carries falsifiable exit criteria and a Shipped-as or Concluded-as paragraph naming its departures, and the engine renders four complete and one ended from its exploration, none inconsistent. The pattern behind the findings is a program that changed course at its evaluation: the rulings and the Premise written on 2026-11-17 describe a pure restructure, and the amendments of 2026-11-18 (R-rop-2's third, R-rop-9's, RG0's exception, R-rop-17) carry the one behaviour change, but the earliest text was not pointed at them, and the records-by-setting walk narrowed R-rop-17 again without touching the ruling. None changes what the next work does; each is a reader's trap for phase 2's planning, which starts from this doc.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6"
+  ],
+  "handoff": {
+    "boot_sequence": [
+      "orbit/architecture/reduce-orbit-phase1.md — the program doc; every declared stage done",
+      "orbit/architecture/.orbit-runs/ — this review emit, whose findings the walk reads"
+    ],
+    "next_command": "/orbit:address-reviews --from-file <this emit's path>",
+    "model_hint": "claude-opus-5-5",
+    "seam": "closing architecture review → walk"
+  },
+  "final_assessment": "0 critical, 0 warning, 5 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews --from-file orbit/architecture/.orbit-runs/review-architecture-2026-11-19T21-32-53Z.json"
+}
