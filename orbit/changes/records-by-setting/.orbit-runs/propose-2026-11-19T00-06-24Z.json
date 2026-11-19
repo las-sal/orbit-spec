@@ -1,0 +1,16 @@
+{
+  "command": "propose",
+  "timestamp": "2026-11-19T00:06:24Z",
+  "change": "records-by-setting",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Proposed records-by-setting (reduce-orbit-phase1 stage records-by-setting) in consume mode from orbit/explore/records-by-setting (D-rbs-1 to D-rbs-7, no open questions). Two capabilities, five requirements: orbit-decision-records renames 'Decision records are written in every mode' to 'Decision records are written when a setting reads them' (D-rbs-1's table) and adds 'orbit decisions status says whether decision records are written' (D-rbs-2); orbit-conventions modifies 'Decision-writing discipline' (two fences, the basic content and the rule; D-rbs-3's BOUNDED residual verbatim as its named limit), 'Decision-record reference ships beside the statement' (the reference carries the rule) and the tighten-bodies edit-ledger requirement (the swap undone first). 16 tasks in two chunks; size within every ceiling. One propose-time docs ledger (docs/customization.md's three setting rows). Staging moved into the change, metadata merged (architecture citation kept); landed on the program branch and the program PR #46 adopted.",
+  "pr_attachment": {
+    "branch": "reduce-orbit-phase1",
+    "granularity": "per-architecture",
+    "doc": "reduce-orbit-phase1",
+    "url": "https://github.com/las-sal/orbit-spec/pull/46",
+    "state": "draft"
+  },
+  "next_recommended": "/orbit:review records-by-setting — proposal artifacts ready; review before apply"
+}
