@@ -332,7 +332,7 @@ seen to compact and lose a step, or to skip a read its body directed.
 ### Stage records-by-setting — decision records written only when a setting reads them
 
 Depends-on: evaluation
-Complete: [ ]
+Complete: [x] 2026-11-19 (Sal)
 
 R-rop-17, with RG0 as amended. At the defaults the AI writes no ledger entry, stop record or resolution; under
 chaining, a sign-off setting of `change` or `program`, or the tripwires, it writes them as today. Every body stays the
@@ -461,3 +461,11 @@ repository, which sets none of the three keys, writes no new decision records.
   exploration; its exit criteria are met by those records, so no mark is written. R-rop-2 and R-rop-9 are amended
   (stage `records-by-setting` follows `evaluation`, and `automate-dev-flow` resumes after it), RG0 names that stage as its
   one exception, and the stage is declared.
+- 2026-11-19 — Stage `records-by-setting` archived and ratified by Sal: its four exit criteria met (at the defaults
+  `orbit decisions status` reports nothing written and each of the three settings turns writing on, shown by test; the
+  rule in `decision-records.md` keeps every clause but its one replaced opening, held by the edit ledger; fourteen
+  ceilings lowered and explore's line ceiling back to 664; RG0 holding as amended), with the two narrowings of the
+  charter's wording recorded in its Shipped-as paragraph. Every declared stage is now done; what remains of phase 1 is
+  its closing architecture review and, at arc-done, Sal's READY flip and merge of the program PR. `automate-dev-flow`
+  resumes after this stage (R-rop-9 as amended); whether `pr: per-architecture` stays when it does is decided then
+  (R-rop-13).

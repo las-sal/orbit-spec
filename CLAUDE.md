@@ -51,7 +51,8 @@ and reads its reference there; `skill-body-budget.test.ts` holds each body's siz
 
 ## Programs: one live
 
-**`orbit/architecture/reduce-orbit-phase1.md`** (from 2026-11-17) is live: it restructures the skill bodies to be
+**`orbit/architecture/reduce-orbit-phase1.md`** (from 2026-11-17) is live, every declared stage done (records-by-setting
+ratified 2026-11-19); what remains is its closing architecture review and, at arc-done, the program PR. It restructures the skill bodies to be
 slimmer and in line with Anthropic's guidance for building skills, without changing what any workflow does. Text a
 session rarely needs moves to reference files, each body keeping the step's basic content, and a per-body budget test
 keeps the bodies from growing back. Its source is Sal's brief beside it (`reduce-orbit-phase1-brief.md`); its stages run
@@ -62,9 +63,9 @@ content" and "reference file" (Anthropic's terms), not "stub" (R-rop-3). This re
 (R-rop-13): from its first propose on, the program's work, between stages too, is done on the branch
 `reduce-orbit-phase1`, which carries one draft PR against main until arc-done.
 
-**`orbit/architecture/automate-dev-flow.md`** (from 2026-11-07) is paused until that program's evaluation and its
-records-by-setting stage are done (R-adf-16 as amended): no
-change of its remaining stages is proposed meanwhile, and its three tripwire explorations stay as they are. It makes
+**`orbit/architecture/automate-dev-flow.md`** (from 2026-11-07) was paused until that program's evaluation and its
+records-by-setting stage were done (R-adf-16 as amended); both are, so it resumes, its three tripwire explorations as they
+were left, and whether `pr: per-architecture` stays for it is decided then (R-rop-13). It makes
 orbit able to run a whole program with Sal present only where Sal adds value, seam-chained or autonomous, with every
 permission an explicit setting that defaults to today's behaviour (R-adf-1, R-adf-6). It is built here under today's
 supervised flow and first proven on a big, non-critical project (R-adf-5: never dogfooded in orbit-spec). Its G0 now
@@ -161,7 +162,7 @@ body.
 
 ## When in doubt
 
-- The fork plan's decisions remain citable — `orbit/architecture/fork-and-orbify.md` (program complete); the D-arc that followed it is `orbit/architecture/d-arc-arbitered-flow.md` (also complete — historical record). The previous program is `orbit/architecture/clean-up-review-cycle.md`, its stages all closed; read its Premise, Goals, Rulings index and "Carried at close" table, never the whole doc. The docs program that followed is `orbit/architecture/update-gh-documentation.md` (complete). The program after it, `orbit/architecture/refine-documentation-and-architect.md`, is complete too. The latest, `orbit/architecture/propose-reads-specs.md`, is complete as well (its measurement moved to issue #32). The live program is `orbit/architecture/reduce-orbit-phase1.md`; `orbit/architecture/automate-dev-flow.md` is paused until that program's evaluation and records-by-setting are done. `orbit architecture status` gives every doc's position.
+- The fork plan's decisions remain citable — `orbit/architecture/fork-and-orbify.md` (program complete); the D-arc that followed it is `orbit/architecture/d-arc-arbitered-flow.md` (also complete — historical record). The previous program is `orbit/architecture/clean-up-review-cycle.md`, its stages all closed; read its Premise, Goals, Rulings index and "Carried at close" table, never the whole doc. The docs program that followed is `orbit/architecture/update-gh-documentation.md` (complete). The program after it, `orbit/architecture/refine-documentation-and-architect.md`, is complete too. The latest, `orbit/architecture/propose-reads-specs.md`, is complete as well (its measurement moved to issue #32). The live program is `orbit/architecture/reduce-orbit-phase1.md`; `orbit/architecture/automate-dev-flow.md` resumes now that program's evaluation and records-by-setting are done. `orbit architecture status` gives every doc's position.
 - Engine behavior is defined in the vendored TypeScript under `src/` (the architecture doc maps it).
 - Keep tests green: run `npm test` before and after substantive changes; the green baseline is the
   contract.
