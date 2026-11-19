@@ -328,7 +328,7 @@ export const DECISION_RECORDS_REFERENCE = [
   '- Resolution (`orbit emit resolution`)',
   '- Ledger entry (`orbit emit ledger`)',
   '',
-  "Read this reference when `orbit decisions status` reports `write: true`, or when you answer a stop already in the trail or fix a record already there: its first section says WHEN to write a record, and the rest WHAT each one holds. On `write: false` that section's `write: true` condition does not cover such an answer or fix, which follows the Resolution and Fixing a record sections.",
+  "Read this reference when `orbit decisions status` reports `write: true`, or when you answer a stop already in the trail or fix a record already there: its first section says WHEN to write a record, and the rest WHAT each one holds; on `write: false` that section's `write: true` condition does not cover such an answer or fix, which follows that record's own section and Fixing a record.",
   '',
   '## When to write a record',
   '',

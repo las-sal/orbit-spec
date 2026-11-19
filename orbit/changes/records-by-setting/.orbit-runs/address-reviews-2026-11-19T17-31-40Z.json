@@ -1,0 +1,177 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-19T17:31:40Z",
+  "change": "records-by-setting",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/records-by-setting/.orbit-runs/review-system-2026-11-19T17-19-39Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-19T17-19-39Z",
+  "latest_apply_token": "2026-11-19T17-08-55Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 3
+  },
+  "pushback_verification": "All three verified against current state: the first reproduced (installed orbit 2.0.2 answers unknown command 'decisions'), the second holds (the constant was two sentences naming the Resolution section), the third is already carried by the account's deviations.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 1,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "SUGGESTION",
+      "title": "The decision-writing basic content names no branch for a non-zero exit of orbit decisions status",
+      "marker_source": "internal-review",
+      "file": "src/core/disciplines.ts",
+      "line": 71,
+      "classification": "decision_required",
+      "action": "Kept the basic content as it is (ratified A) and recorded the gap as a named limit in design.md's Risks: only a body newer than the installed CLI reaches it, and this repository runs node bin/orbit.js decisions status until a release carries it.",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Keep the basic content as is; the non-zero case is a version mismatch that CLAUDE.md covers in this repository."
+          },
+          {
+            "label": "B",
+            "body": "Add one clause to DECISION_WRITING_BASIC and its fence naming what a non-zero exit means, and move the parity and ledger tests with it."
+          }
+        ],
+        "chosen": "A"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/records-by-setting/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/records-by-setting/design.md",
+            "text": "[A failing `orbit decisions status`] a body newer than the installed CLI"
+          }
+        ],
+        "searched": [
+          "non-zero exit",
+          "unknown command",
+          "node bin/orbit.js decisions status"
+        ],
+        "scope": [
+          "CLAUDE.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The reference's opening is worded differently in the spec and in the shipped constant",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/records-by-setting/specs/orbit-conventions/spec.md",
+      "line": 202,
+      "classification": "trivial_fix",
+      "action": "The spec owns the wording, so the constant follows it: DECISION_RECORDS_REFERENCE's opening is now one sentence ending 'which follows that record's own section and Fixing a record'; design Decision 4's quote and the parity test's assertions moved with it (the test now also checks the opening is one sentence and that every record's own section exists); eleven function hashes re-recorded; .claude regenerated.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/disciplines.ts",
+          "orbit/changes/records-by-setting/design.md",
+          "test/core/decision-writing-parity.test.ts",
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the Resolution and Fixing a record sections"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/disciplines.ts",
+            "text": "which follows that record's own section and Fixing a record."
+          },
+          {
+            "path": "test/core/decision-writing-parity.test.ts",
+            "text": "which follows that record's own section and Fixing a record."
+          }
+        ],
+        "searched": [
+          "Resolution and Fixing a record",
+          "opens with one sentence",
+          "Read this reference when"
+        ],
+        "scope": [
+          "orbit/specs/orbit-conventions/spec.md",
+          "docs/cli.md"
+        ],
+        "kept": []
+      },
+      "ripple_miss_of": {
+        "walk": "2026-11-19T16-27-27Z",
+        "title": "At write: false the rule the basic content sends the agent to still gates a resolution on write: true",
+        "file": "orbit/changes/records-by-setting/specs/orbit-conventions/spec.md",
+        "kind": "judgement"
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The stage charter's summary of the defaults is broader than what shipped",
+      "marker_source": "internal-review",
+      "file": "orbit/architecture/reduce-orbit-phase1.md",
+      "line": 337,
+      "classification": "stale",
+      "action": "Stale: the account account-2026-11-19T17-08-49Z.json already names both narrowings in its deviations (a resolution answering a stop already in a trail, and a replacement fixing a record already there, are still written; the reading step selects nothing only on a trail with no records), and the stage's Shipped-as paragraph is written at archive from what shipped. The charter is a ratified stage text and the finding asks for no edit to it.",
+      "outcome": "stale"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Three of three walked: the non-zero-exit gap kept as Sal ratified (A) and recorded as a named limit in design.md's Risks; the reference's opening made one sentence naming that record's own section and Fixing a record, as its spec says; the charter finding stale, the account's deviations already naming both narrowings for the archive's Shipped-as paragraph.",
+  "iteration": 4,
+  "next_recommended": "/orbit:review --as system records-by-setting",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "0717c696ee8838445398c81daee8ecef3b5cfbad",
+      "frozen": true,
+      "evidence": {
+        "files": [],
+        "share": 0,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ],
+  "ripple_misses": 1
+}

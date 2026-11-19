@@ -85,9 +85,9 @@ that file, names the file the reader holds. `DECISION_RECORDS_REFERENCE` gains a
 record`, holding the rule, and its Contents list gains the entry. Its opening sentence ("The decision-writing discipline
 in this skill says WHEN to write a record; this reference says WHAT each one holds.") becomes "Read this reference when
 `orbit decisions status` reports `write: true`, or when you answer a stop already in the trail or fix a record already
-there: its first section says WHEN to write a record, and the rest WHAT each one holds. On `write: false` that
-section's `write: true` condition does not cover such an answer or fix, which follows the Resolution and Fixing a record
-sections." The rule itself stays whole (D-rbs-6), so the opening sentence, outside it, carries D-rbs-8's exception into
+there: its first section says WHEN to write a record, and the rest WHAT each one holds; on `write: false` that
+section's `write: true` condition does not cover such an answer or fix, which follows that record's own section and
+Fixing a record." The rule itself stays whole (D-rbs-6), so the opening sentence, outside it, carries D-rbs-8's exception into
 the reference. The `orbit-conventions` requirement keeps two fences, one per half, each held equal to its constant by the
 parity test.
 
@@ -145,6 +145,11 @@ Carried from explore.md's Considered & out:
 - **[This change's own trail] this repository stops writing new records once apply runs `update --force` (D-rbs-9)** →
   its system review, walk and archive write no new ledger entry or stop; the ledger entries already in its trail are
   still read by the system review's reading step, and a finding on one is fixed by a replacement, as today.
+- **[A failing `orbit decisions status`] a body newer than the installed CLI, which answers `unknown command`** → the
+  basic content names no branch for a non-zero exit, by the system walk's choice A: the command itself exits zero on
+  every config, so only a version mismatch reaches it, and an adopter's skills and CLI come from the same `orbit
+  update`; this repository runs `node bin/orbit.js decisions status` until a release carries it (CLAUDE.md). A clause
+  in all fourteen bodies was weighed and not taken, since this program cuts body text.
 - **[An agent skipping the call]** → the same exposure as every body-directed read (R-rop-4, D-eval-5); a skip at a
   reading setting leaves a trail without records, visible at sign-off or to the chain's open-stop check.
 

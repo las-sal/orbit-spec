@@ -139,10 +139,13 @@ import { generateSkillContent } from '../../../src/core/shared/skill-generation.
 // bullet became its one-line basic content (`DECISION_WRITING_BASIC`), the rule moving to the first section of the shared
 // decision-records.md reference; onboard's one-line statement says records are written when a setting reads them. All
 // twelve pinned skill function hashes and all twelve generated-skill hashes moved; no command-template pin did.
+// records-by-setting system walk (2026-11-19, fresh S2): the shared decision-records.md reference's opening became one
+// sentence naming that record's own section and Fixing a record, as its spec says. 11 function hashes moved — every
+// pinned skill carrying the reference; onboard, which carries none, did not — and no generated-skill or command-template pin did.
 const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
-  getExploreSkillTemplate: 'd34fa0c13828fcce6adf14ec15bad47c9117a8e005e2d8c221a5c9f4801fab53',
-  getNewChangeSkillTemplate: '19264514858cdc2fa61052875136483b4f6db96707448401f82c0dfd98731824',
-  getContinueChangeSkillTemplate: '7c35a0a5ed8fac1e9f2647f85d1bd22345bedb03dee1817e97f0c72570e4b6bc',
+  getExploreSkillTemplate: 'bc18c844ec5edd033a2346524ce37b80d0b42533e967732511e97a74edcd1717',
+  getNewChangeSkillTemplate: '6e3e4d989127f7092d5b22d5fb9d0d1b7ac0bf5d1c4ca398301e308097e75baf',
+  getContinueChangeSkillTemplate: '387fed78edc1df683c1c67546f6cedee911798bfc0d145add549ddae3dec529d',
   // rc17a-invoked-coverage apply (2026-10-05), a PLANNED move (its task 4.2): Step 3's all_done clause
   // stopped naming "spec-driven v4" and `blind-pair` as the post-apply slot — under v5 which review comes
   // next depends on the cadence and the review preference, so the body says it is read, not predicted.
@@ -150,12 +153,12 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // seam-chaining-grants apply (2026-11-11, task 6.2): the Chain end step gains the `apply` and `archive` key rows (interpolated from `CHAIN_KEY_TABLE`) and the clause that a chained apply or archive records its grant as `consent: "setting"` (task 3.5). Apply also moved by its own body: Step 0's granted bullet, the three-value consent story and payload note, the withdrawn-grant line, and the prompt tags (tasks 3.1, 3.4).
   // change-account apply (2026-11-12), a PLANNED move (its task 3.5): the Account step (`ACCOUNT_STEP`, composed from the account write gate's field list) before the Run-summary emit, and Step 3's all_done clause writes a missing account first (task 3.3); then its system walk (2026-11-13), a moved pin: the all_done clause runs the Account step whether or not an account exists, reading the latest account and the trail since it first. address-reviews carries `ACCOUNT_WALK_STEP` too but is not pinned here.
   // conditional-steps apply (2026-11-17), a PLANNED move (its task 6.1, R-rop-3): the closing Commit step and Chain end step now carry their basic contents (`COMMIT_STEP_BASIC`, `CHAIN_END_STEP_BASIC`), the full steps moving byte-equal to `references/commit-step.md` and `references/chain-end-step.md`.
-  getApplyChangeSkillTemplate: 'e2c7a262f7afd96dce098d46fea2b65b30e40d58c9c7c9585f6791ace32d94c5',
+  getApplyChangeSkillTemplate: '00d3ddaa51f4d18fe5fe278f73396058079bea8b4b9310d8b82afab73d0f26c9',
   // seam-chaining (2026-11-09): the Chain end step and the no-chaining epitome clause, at apply (task 3.1), again at the system walk, and a third time at the verification walk (the dirty-tree clause).
   // seam-chaining-grants apply (2026-11-11, task 6.2): the Chain end step gains the `apply` and `archive` key rows (interpolated from `CHAIN_KEY_TABLE`) and the clause that a chained apply or archive records its grant as `consent: "setting"` (task 3.5). No ff template line moved.
   // conditional-steps apply (2026-11-17), a PLANNED move (its task 6.1, R-rop-3): the closing steps carry their basic contents, the full steps moving to `commit-step.md` and `chain-end-step.md`; the PR Position paragraph becomes a one-line pointer, the paragraph moving byte-equal into `pr-choreography.md`'s `Where each phase runs`.
-  getFfChangeSkillTemplate: '5ad79d7db22273afbd4a5c60b495a2f341da8a97492e57c286756d105799eaef',
-  getSyncSpecsSkillTemplate: '55f4a614a914d309509b9c2979a86082af2f27b8f8ba32806fda561bdf50c490',
+  getFfChangeSkillTemplate: '7c5bf29e83609fe8c05c0e13c88644f7350ee07d283ee4a8d4c25b9da7b58f48',
+  getSyncSpecsSkillTemplate: '0d545da4efc4026eb0f99f6d54d9de66803820eaea3d9108aa21916ac0881d2c',
   // rc08b-walk-routing (2026-10-05, task 3.3): the command-table row's retired "auto-discovers … when invoked
   // with a change name and no markers found" became the discovery sentence. One re-record, both onboard hashes.
   // rc17b-blind-pair-command (2026-10-06, task 5.1), a PLANNED move: the Identity, Phase 4 cross-AI and
@@ -205,8 +208,8 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // here: the review skill is not in this pinned set.
   // conditional-steps apply (2026-11-17), a PLANNED move (its task 6.1, R-rop-3): Steps 3.4, 3.45 and 3.7 keep their basic contents, their text moving byte-equal to `gate-inflection.md`, `fingerprint-divergence.md` and `signoff-hold.md`; the Commit step carries its basic content, the full step moving to `commit-step.md`.
   // Moved again at conditional-steps' system walk (2026-11-17, fresh S1): archive Step 3.7's basic content hands over the save's outcome with the hold's result, as architect 5.4's does.
-  getArchiveChangeSkillTemplate: '6f5b9447ce2a3bf7925348f5a8230480267d547ecba22264613ed87ea5b7bf6d',
-  getBulkArchiveChangeSkillTemplate: 'e4ddffaecbaceabc72202ee114c6ec7f4102b31159c305f26a5c2e55cbc13020',
+  getArchiveChangeSkillTemplate: '257b1ec01ad2645e84309a6e2a75278ffefa3994f14393f949c751b3eee5b032',
+  getBulkArchiveChangeSkillTemplate: 'f499c18d490902b6b7d677d5ddd61fd9e4beb6c4d521ea2d1831ba32b9f6770d',
   getOrbitSyncCommandTemplate: 'b985d0a4d89b0e2cc3c6b6dec2521ef2a9d0df44a8ba9ec92a5495052c94a39c',
   // rc06b-map-readers (2026-10-05) — verify moved DELIBERATELY, the first named edit to an upstream
   // portion under `orbit-conventions`' narrowed `Generated-file disposition`: step 6's test-tracing
@@ -218,7 +221,7 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // take the first mode by precedence), because the engine composes from the mode verify hands it
   // and classifies nothing; the emit paragraph stopped restating the precedence. Upstream portion
   // unchanged by this second move.
-  getVerifyChangeSkillTemplate: 'd39e854c30c2a8cd2b6aa7cd359974afcb13966cb9b7c43b27dbf439bd7ddf87',
+  getVerifyChangeSkillTemplate: '34fb3376faf55379a5d1268e8f263aa8a932f158aa4588bd766ac5c7914513ed',
   getOrbitArchiveCommandTemplate: '5889c3a6269b5c76c85578bf2ce6e6c4152b7536452e5ec1332dd93d3b493665',
   getOrbitOnboardCommandTemplate: '3a3e98c6a01517896dfdccaba4fa4477edea62fd69dc4189df1dd105bbedcc5b',
   getOrbitBulkArchiveCommandTemplate: 'bbb9fc75d87fb8339cf4a80ad75189f6d9a8b339c9b4539778e690b1c9043053',
@@ -248,7 +251,7 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // seam-chaining (2026-11-09): the Chain end step and the no-chaining epitome clause, at apply (task 3.1), again at the system walk, and a third time at the verification walk (the dirty-tree clause).
   // seam-chaining-grants apply (2026-11-11, task 6.2): the Chain end step gains the `apply` and `archive` key rows (interpolated from `CHAIN_KEY_TABLE`) and the clause that a chained apply or archive records its grant as `consent: "setting"` (task 3.5). No propose template line moved.
   // conditional-steps apply (2026-11-17), a PLANNED move (its task 6.1, R-rop-3): the closing steps carry their basic contents, the full steps moving to `commit-step.md` and `chain-end-step.md`; the size brief keeps its basic content, its text moving byte-equal to `size-brief.md`; the PR Position paragraph becomes a one-line pointer, moving into `pr-choreography.md`.
-  getOrbitProposeSkillTemplate: '0e0801e9562722bf510177ca97ac7912e5f1ccdb6e51f265a9676e684cea46ec',
+  getOrbitProposeSkillTemplate: 'c6293163c05425d8edadd7874d8e304c96ec868e7c4bba02e91f69e9d2c89b76',
   getOrbitProposeCommandTemplate: '33077b4185c425952edcdf14f4f16f2a0fa9d5961158f3c63534b58cee2576fb',
   getFeedbackSkillTemplate: 'ded61ad85c5050f7bf241870b14bfcdd929f0be68a028c1130fd30a66efbda3b',
   // rc15 (ended-stage-state, 2026-09-29): the orbit-architect body moved ONCE, deliberately — §5 (the
@@ -279,7 +282,7 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // arc-done definitions, Step 5.4's row being the check under `signoff: program` (fresh S1, external W1). The other
   // two body edits of that walk (the review and address-reviews account clauses) move no pin here.
   // conditional-steps apply (2026-11-17), a PLANNED move (its task 6.1, R-rop-3): Step 5.4 carries the save and the hold's basic content, the whole step moving byte-equal to `program-signoff.md`; Step 5.5's arc-done act becomes a one-line pointer, the paragraph moving byte-equal into `pr-resolution.md`.
-  getArchitectSkillTemplate: 'c37834611f2daa2d8a97f121815d7ad36598d3aa77648b8538adfc72536bf5ad',
+  getArchitectSkillTemplate: 'a8c27d88bc9a34315e8981218a57d6e739b4d6b890f22a05693d852410c5ab20',
   getOrbitArchitectCommandTemplate: 'b65b8cca6431bb45aa8587d3bfc1e9458981e2e1bc925ae45cd57414143cb3db',
 // once-per-session-detail apply (2026-11-17), a PLANNED move (its task 3.4): the apply and address-reviews bodies carry
 // the account step's basic content and ship the full step as a reference (D-opsd-8), and each of the eleven emit steps in

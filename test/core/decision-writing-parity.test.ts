@@ -334,10 +334,12 @@ describe('the decision-record reference', () => {
     expect(opening.startsWith('Read this reference when `orbit decisions status` reports `write: true`')).toBe(true);
     expect(opening).toContain('or when you answer a stop already in the trail or fix a record already there');
     expect(opening).toContain('its first section says WHEN to write a record, and the rest WHAT each one holds');
-    expect(opening).toContain("On `write: false` that section's `write: true` condition does not cover such an answer or fix, which follows the Resolution and Fixing a record sections.");
-    // The sections it names exist.
+    expect(opening).toContain("on `write: false` that section's `write: true` condition does not cover such an answer or fix, which follows that record's own section and Fixing a record.");
+    // One sentence, as the spec says it opens.
+    expect(opening.split(/\. (?=[A-Z])/)).toHaveLength(1);
+    // The sections it names exist: each record's own, and Fixing a record.
     expect(DECISION_RECORDS_REFERENCE).toContain('\n## Fixing a record\n');
-    expect(DECISION_RECORDS_REFERENCE).toMatch(/\n## Resolution \(/);
+    for (const c of REFERENCE_RECORD_ORDER) expect(DECISION_RECORDS_REFERENCE).toMatch(new RegExp(`\\n## [^\\n]*\\(\`orbit emit ${c}\`\\)`));
     // Mutation: the opening sentence as it read before records-by-setting fails.
     const old = DECISION_RECORDS_REFERENCE.replace(opening, 'The decision-writing discipline in this skill says WHEN to write a record; this reference says WHAT each one holds.');
     expect(openingSentence(old)).not.toContain('fix a record already there');
