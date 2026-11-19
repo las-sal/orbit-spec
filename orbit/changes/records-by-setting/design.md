@@ -84,8 +84,11 @@ included, is unchanged. That includes the label line's pointer to `references/de
 that file, names the file the reader holds. `DECISION_RECORDS_REFERENCE` gains a first section, `## When to write a
 record`, holding the rule, and its Contents list gains the entry. Its opening sentence ("The decision-writing discipline
 in this skill says WHEN to write a record; this reference says WHAT each one holds.") becomes "Read this reference when
-`orbit decisions status` reports `write: true`: its first section says WHEN to write a record, and the rest WHAT each
-one holds." The `orbit-conventions` requirement keeps two fences, one per half, each held equal to its constant by the
+`orbit decisions status` reports `write: true`, or when you answer a stop already in the trail or fix a record already
+there: its first section says WHEN to write a record, and the rest WHAT each one holds. On `write: false` that
+section's `write: true` condition does not cover such an answer or fix, which follows the Resolution and Fixing a record
+sections." The rule itself stays whole (D-rbs-6), so the opening sentence, outside it, carries D-rbs-8's exception into
+the reference. The `orbit-conventions` requirement keeps two fences, one per half, each held equal to its constant by the
 parity test.
 
 ### Decision 5: the edit ledger undoes this change first

@@ -201,7 +201,8 @@ Every generated workflow skill whose epitome carries the decision-writing basic 
 `references/decision-records.md`, one constant shared by every such skill, so that the basic content's pointer names a
 file the installed skill holds. The reference opens with one sentence saying it is read when `orbit decisions status`
 reports `write: true`, or when a record already in the trail is answered or fixed, that its first section says WHEN to
-write a record and the rest WHAT each one holds; its first
+write a record and the rest WHAT each one holds, and that on `write: false` that section's `write: true` condition does
+not cover such an answer or fix, which follows the record's own section and `Fixing a record`; its first
 section, `## When to write a record`, carries the decision-writing RULE byte-equal to `Decision-writing discipline`'s
 rule fence. It then says, for each of the three records (`orbit-decision-records`):
 
@@ -229,6 +230,13 @@ holds; the body's basic content says only when to read it.
 - **WHEN** the reference is read
 - **THEN** its first section, `## When to write a record`, carries the decision-writing rule byte-equal to
   `Decision-writing discipline`'s rule fence, and its Contents list names that section first
+
+#### Scenario: The reference lets an answer or a fix through at write: false
+
+- **WHEN** the reference's opening sentence is read
+- **THEN** it says the reference is also read when a record already in the trail is answered or fixed, and that on
+  `write: false` the rule section's `write: true` condition does not cover such an answer or fix, which follows the
+  record's own section and `Fixing a record`
 
 #### Scenario: Every skill carrying the basic content ships the reference
 

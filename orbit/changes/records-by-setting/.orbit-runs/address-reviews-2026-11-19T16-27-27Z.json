@@ -1,0 +1,213 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-19T16:27:27Z",
+  "change": "records-by-setting",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/records-by-setting/.orbit-runs/review-proposal-2026-11-19T16-15-40Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-19T16-15-40Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 2
+  },
+  "pushback_verification": "All four verified at HEAD fee0b561; none stale. Two attributed as query misses of the earlier walk's F1 and X3 entries.",
+  "resolution_summary": {
+    "resolved": 4,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "D1's exception for answers and fixes is missing from design Decision 4's drafted reference sentence and from the onboard and docs tasks",
+      "file": "orbit/changes/records-by-setting/design.md",
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "Carried D1's exception into design Decision 4's drafted opening sentence of the reference, and into tasks 2.2 (onboard's line) and 3.2 (docs/cli.md's paragraph).",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/records-by-setting/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "reports `write: true`: its first section says WHEN"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/records-by-setting/design.md",
+            "text": "or when you answer a stop already in the trail or fix a record already"
+          },
+          {
+            "path": "orbit/changes/records-by-setting/tasks.md",
+            "text": "is written whatever it reports"
+          },
+          {
+            "path": "orbit/changes/records-by-setting/tasks.md",
+            "text": "is written whatever `orbit decisions status` reports) and add"
+          }
+        ],
+        "searched": [
+          "Read this reference when",
+          "onboard",
+          "decision-records paragraph",
+          "write: true"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "ripple_miss_of": {
+        "walk": "2026-11-19T16-02-34Z",
+        "title": "At write: false the basic content forbids the replacement a walk must write for a reading finding on a record written earlier",
+        "file": "orbit/changes/records-by-setting/specs/orbit-conventions/spec.md",
+        "kind": "query"
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "At write: false the rule the basic content sends the agent to still gates a resolution on write: true",
+      "file": "orbit/changes/records-by-setting/specs/orbit-conventions/spec.md",
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "The reference requirement's opening sentence now says that on write: false the rule section's write: true condition does not cover an answer to a stop already in the trail or a fix of a record already there, which follow the record's own section and Fixing a record; a scenario pins it and task 2.3 tags it. The rule fence is unchanged (D-rbs-6).",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/records-by-setting/design.md",
+          "orbit/changes/records-by-setting/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/records-by-setting/specs/orbit-conventions/spec.md",
+            "text": "not cover such an answer or fix, which follows the record's own section"
+          },
+          {
+            "path": "orbit/changes/records-by-setting/specs/orbit-conventions/spec.md",
+            "text": "The reference lets an answer or a fix through at write: false"
+          }
+        ],
+        "searched": [
+          "opening sentence",
+          "When to write a record",
+          "Fixing a record"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "ripple_miss_of": {
+        "walk": "2026-11-19T16-02-50Z",
+        "title": "Rechecking settings can strand a stop awaiting an answer",
+        "file": "orbit/changes/records-by-setting/specs/orbit-conventions/spec.md",
+        "kind": "query"
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Task 2.3's second fence prefix is a broken code span",
+      "file": "orbit/changes/records-by-setting/tasks.md",
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "Task 2.3's two fence prefixes are written in prose, with no nested code span.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "\\`orbit decisions status\\``)"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/records-by-setting/tasks.md",
+            "text": "the basic content's label line continuing"
+          }
+        ],
+        "searched": [
+          "\\`"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The change's .openspec.yaml changed outside every walk entry's edit record",
+      "file": "orbit/changes/records-by-setting/.openspec.yaml",
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "Acknowledged: the fingerprint run reordered .openspec.yaml with no value changed; nothing to edit. This walk's fingerprint run left it untouched, and this entry's sweep names the file.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [],
+        "searched": [
+          "base_fingerprints",
+          "architecture:"
+        ],
+        "scope": [
+          "orbit/changes/records-by-setting/.openspec.yaml"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Walked the in-context verification pass: all four resolved as obvious fixes — D1's exception carried into design Decision 4, tasks 2.2 and 3.2, and the reference's opening sentence (outside the rule fence); task 2.3's prefixes rewritten in prose; the metadata record gap acknowledged.",
+  "iteration": 3,
+  "next_recommended": "/orbit:apply records-by-setting — user-invoked",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "fee0b56112c9a52ab91adadc373068b074c23c91",
+      "frozen": false,
+      "evidence": {
+        "files": [],
+        "share": null,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ],
+  "ripple_misses": 2
+}
