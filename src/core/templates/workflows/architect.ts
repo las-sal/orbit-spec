@@ -12,7 +12,7 @@
 import type { SkillTemplate, CommandTemplate } from '../types.js';
 import { COMPLETE_SLOT_PRODUCTIONS } from '../../architecture/parser.js';
 import { PR_RESOLUTION_REFERENCE } from './pr-choreography.js';
-import { DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE, RUN_SUMMARY_EMIT_REFERENCE_NAME, RUN_SUMMARY_READ_CUE, runSummaryEmitReference } from '../../disciplines.js';
+import { DECISION_RECORDS_REFERENCE, DECISION_WRITING_BASIC, RUN_SUMMARY_EMIT_REFERENCE_NAME, RUN_SUMMARY_READ_CUE, runSummaryEmitReference } from '../../disciplines.js';
 
 /**
  * program-signoff: Step 5.4 — the program's save and its sign-off at arc-done (`orbit-architect`'s `The architect
@@ -128,7 +128,7 @@ The disciplines from \`orbit-conventions\`, embedded per body; detail lives wher
 - **Change completeness (modification-time)**: doc edits land whole — a stage added to the grammar, its Depends-on slots, and the status-log entry move together; re-read after to confirm.
 - **Pushback (review-time)**: verify a claimed stage state against \`orbit architecture status\` before restating it; computed state wins over remembered state.
 - **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line — gate \`passed\` means *eligible*, not *commanded*.
-${DECISION_WRITING_DISCIPLINE}
+${DECISION_WRITING_BASIC}
 
 ## Steps
 

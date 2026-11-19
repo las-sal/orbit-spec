@@ -1,0 +1,58 @@
+{
+  "command": "apply",
+  "timestamp": "2026-11-19T17:08:55Z",
+  "change": "records-by-setting",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "consent": "user-invoked",
+  "tasks_completed": 16,
+  "tasks_remaining": 0,
+  "user_validation_remaining": 0,
+  "chunk": "2 of 2",
+  "chunk_name": "the text that says \"every setting\", sizes, and the close",
+  "chunk_complete": true,
+  "tasks_completed_this_session": 7,
+  "files_touched": [
+    "CLAUDE.md",
+    "docs/cli.md",
+    "docs/customization.md",
+    "orbit/changes/records-by-setting/tasks.md",
+    "orbit/specs/orbit-decision-records/spec.md",
+    "skill_body_convention.md",
+    "test/core/templates/skill-body-budget.test.ts"
+  ],
+  "diff_base": "657c37b072036a5905005c04e4c184816fad3d65",
+  "final_assessment": "Completed chunk 2 of 2 (the text that says \"every setting\", sizes, and the close); 16 of 16 tasks done. chunk 2 corrected every text saying records are written under every setting (Purpose, docs/cli.md with the new command's section, docs/customization.md, CLAUDE.md), regenerated .claude/ (this repo now reports Decision records: not written), and lowered fourteen ceilings and explore's line ceiling to 664; bodies 363,848 -> 329,979 characters, 4,431 tests green, validate --strict valid, scenario map 0 uncovered; account account-2026-11-19T17-08-49Z.json",
+  "next_recommended": "/orbit:review --as system --reviewer blind-pair records-by-setting",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "0717c696ee8838445398c81daee8ecef3b5cfbad",
+      "frozen": false,
+      "evidence": {
+        "files": [],
+        "share": null,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ]
+}

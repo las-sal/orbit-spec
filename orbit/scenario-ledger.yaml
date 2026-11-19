@@ -179,3 +179,10 @@ scenarios:
   - key: "orbit-pr-lifecycle :: Program PR (Shape A) semantics :: Mid-flight adoption"
     kind: untestable
     why: "The THEN spans sessions: the program PR's appended history starting at the stage current when `pr:` was first enabled, with no back-fill, is the PR body the archive tails compose stage by stage. The first touch's create-as-draft path is behaviour-tested in test/core/pr/publish.test.ts ('zero survivors: the program PR is created'); no test enables the setting on a repo that already carries archived stages and reads the PR's later bodies."
+  # records-by-setting (task 2.3) — two scenarios of the Decision-writing discipline that are an AI's conduct in a live session.
+  - key: "orbit-conventions :: Decision-writing discipline :: A stop already in the trail is answered at the defaults"
+    kind: untestable
+    why: "The THEN is an AI writing a resolution in a live session after the user answers a stop, with chaining just turned off; no test runs that session. orbit decisions status reporting write false at the defaults is behaviour-tested, and the basic content saying a resolution answering a stop already in the trail is still written is text-tested in test/core/decision-writing-parity.test.ts."
+  - key: "orbit-conventions :: Decision-writing discipline :: A reading finding is fixed at the defaults"
+    kind: untestable
+    why: "The THEN is an AI-run walk writing a replacement of a ledger entry a system review's reading step found unclear; no test runs a walk session. The write gate accepting a replacement is behaviour-tested, and the basic content saying a replacement fixing a record already there is still written is text-tested in test/core/decision-writing-parity.test.ts."

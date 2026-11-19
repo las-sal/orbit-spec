@@ -50,17 +50,25 @@ const DIRECT_STOPS = PAYLOAD_STOP_CONDITIONS.filter(c => !(LEDGER_STOP_CONDITION
 const DIRECT_STOPS_TEXT = `${DIRECT_STOPS.slice(0, -1).join(', ')} or ${DIRECT_STOPS[DIRECT_STOPS.length - 1]}`;
 
 /**
- * The epitome's fifth bullet, carried byte-equal by every workflow body that has an epitome: a label line, then the
- * five labelled sub-bullets (`tighten-bodies`, R-rop-7), every clause of the one-paragraph form kept.
+ * The decision-writing RULE, carried byte-equal by the first section of `references/decision-records.md`: a label line,
+ * then the five labelled sub-bullets (`tighten-bodies`, R-rop-7), every clause of the one-paragraph form kept but its
+ * opening "under every setting", which `records-by-setting` (R-rop-17) replaced by the condition the basic content reads.
  */
 export const DECISION_WRITING_DISCIPLINE = [
-  `- **Decision-writing (call-time)**: under every setting, keep a record of each call and each stop without changing what the user sees or is asked. What each record carries — its fields, its citations and the plain-language rule, with an example of each — is in \`references/${DECISION_RECORDS_REFERENCE_NAME}\`, beside this skill; a refused record names the field to fix.`,
+  `- **Decision-writing (call-time)**: when \`orbit decisions status\` reports \`write: true\`, keep a record of each call and each stop without changing what the user sees or is asked. What each record carries — its fields, its citations and the plain-language rule, with an example of each — is in \`references/${DECISION_RECORDS_REFERENCE_NAME}\`, beside this skill; a refused record names the field to fix.`,
   `  - *Before asking*: BEFORE asking the user a question that a stop condition describes — ${CONDITIONS} — write a stop record (\`orbit emit stop\`), then ask exactly as you would have; with the user's answer, write a resolution naming that stop (\`orbit emit resolution\`).`,
   `  - *Acting without asking*: when ${DIRECT_STOPS_TEXT} describes an act you take without asking — the user directed it (they told you to amend a ruling), or no flow asks — write its stop record before the act, then, when the user directed it, a resolution naming that stop whose answer is their direction, and otherwise leave the stop open.`,
   `  - *After a call*: AFTER any call that falls in a ledger area — however you reached it: without asking, after a question no condition describes, or with the user's answer to a stop — ${AREAS} — write a ledger entry (\`orbit emit ledger\`) citing what it relies on; when ${LEDGER_STOPS} describes the call, by its own gloss above, the entry cites nothing and names that stop: the one you asked at, or, where you would not have asked, one you write first — ask nothing and leave that stop open.`,
   `  - *Not a stop*: a designed prompt — a consent prompt, an inflection prompt (at a gate, or at a base-fingerprint divergence), a walk's closure prompt — is a seam, not a stop, and writes nothing, unless a stop condition also describes it: then write the stop record first and fire the prompt as designed. A question no condition describes writes nothing, nor does a call in no area.`,
   `  - *Where records go*: a record names the work it belongs to (\`--change <name>\` for a change or a named exploration, or \`--doc <doc>\` in an architect session); in a session with neither (a project-wide run, an unnamed exploration), or on an archived change (orbit writes no record to its trail), write no record, never attaching it to other work.`,
 ].join('\n');
+
+/**
+ * The decision-writing BASIC CONTENT, the epitome's fifth bullet in every workflow body that has an epitome
+ * (`records-by-setting`, R-rop-3 and R-rop-17): the moment `orbit decisions status` runs, the usual result and the
+ * link to the rule. The same text under every configuration (R-rop-5); the command's result picks the branch (R-rop-4).
+ */
+export const DECISION_WRITING_BASIC = `- **Decision-writing (call-time)**: at each command's first step, and again after this session edits the project config (\`orbit/config.yaml\` or \`.yml\`), run \`orbit decisions status --json\`. On \`write: true\`, read \`references/${DECISION_RECORDS_REFERENCE_NAME}\` and follow its rule for the rest of the command. On \`write: false\`, write no new ledger entry or stop record; a resolution answering a stop already in the trail, or a replacement fixing a record already there, is still written — read that reference when you write one.`;
 
 // ---------------------------------------------------------------------------
 // The chain end step (seam-chaining, `orbit-conventions`' `No-chaining contract`)
@@ -297,7 +305,7 @@ function recordSection(command: DecisionCommand): string {
       '',
       citationLines(),
       '',
-      `When ${LEDGER_STOPS} describes the call (each by its gloss in the decision-writing statement), write \`"relies_on": []\` and \`"raised_stop": "stop-<TS>.json"\`, naming the ${LEDGER_STOPS} stop you wrote for it — never both a citation and a stop.`
+      `When ${LEDGER_STOPS} describes the call (each by its gloss in the rule above), write \`"relies_on": []\` and \`"raised_stop": "stop-<TS>.json"\`, naming the ${LEDGER_STOPS} stop you wrote for it — never both a citation and a stop.`
     );
   }
   parts.push('', 'Example:', '', '```json', JSON.stringify(DECISION_RECORD_EXAMPLES[command], null, 2), '```');
@@ -306,12 +314,13 @@ function recordSection(command: DecisionCommand): string {
 
 const PLAIN_LIST = DECISION_COMMANDS.flatMap(c => READER_BOUND_FIELDS[c]).map(code).join(', ');
 
-/** `references/decision-records.md`, shipped beside every skill whose epitome carries the statement. */
+/** `references/decision-records.md`, shipped beside every skill whose epitome carries the basic content: the rule, then the record forms. */
 export const DECISION_RECORDS_REFERENCE = [
   '# Reference: decision records',
   '',
   '## Contents',
   '',
+  '- When to write a record',
   '- How a record is written',
   '- The plain-language rule',
   '- Fixing a record',
@@ -319,7 +328,11 @@ export const DECISION_RECORDS_REFERENCE = [
   '- Resolution (`orbit emit resolution`)',
   '- Ledger entry (`orbit emit ledger`)',
   '',
-  'The decision-writing discipline in this skill says WHEN to write a record; this reference says WHAT each one holds.',
+  "Read this reference when `orbit decisions status` reports `write: true`, or when you answer a stop already in the trail or fix a record already there: its first section says WHEN to write a record, and the rest WHAT each one holds. On `write: false` that section's `write: true` condition does not cover such an answer or fix, which follows the Resolution and Fixing a record sections.",
+  '',
+  '## When to write a record',
+  '',
+  DECISION_WRITING_DISCIPLINE,
   '',
   '## How a record is written',
   '',

@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 import { describe, expect, it } from 'vitest';
 import { getSkillTemplates } from '../../../src/core/shared/skill-generation.js';
-import { DECISION_WRITING_DISCIPLINE } from '../../../src/core/disciplines.js';
+import { DECISION_RECORDS_REFERENCE, DECISION_WRITING_BASIC, DECISION_WRITING_DISCIPLINE } from '../../../src/core/disciplines.js';
 
 /**
  * tighten-bodies (reduce-orbit-phase1) — the edit ledger (`orbit-conventions`' `An edit ledger holds every tightened
@@ -49,6 +49,24 @@ const ONE_PARAGRAPH_CLAUSES = [
 const ONE_PARAGRAPH_SEPARATORS = ['. ', '; ', '; ', '; ', '; ', '. ', '. ', '. ', '; ', '. ', '; '];
 const ONE_PARAGRAPH =
   ONE_PARAGRAPH_CLAUSES.map((c, i) => c + (ONE_PARAGRAPH_SEPARATORS[i] ?? '.')).join('');
+
+/**
+ * The one later edit to these bodies, `records-by-setting`'s (R-rop-17): each body's labelled bullet became its basic
+ * content (`DECISION_WRITING_BASIC`), and the rule moved to `references/decision-records.md` with its opening clause
+ * replaced. The labelled bullet as `tighten-bodies` left it is the rule with that one clause restored.
+ */
+const REPLACED_CLAUSE = { was: 'under every setting,', now: 'when `orbit decisions status` reports `write: true`,' };
+const LABELLED_FORM = DECISION_WRITING_DISCIPLINE.replace(REPLACED_CLAUSE.now, REPLACED_CLAUSE.was);
+
+/** The rule as the reference carries it: the body of its `## When to write a record` section. */
+function ruleInReference(ref: string): string {
+  const head = '\n## When to write a record\n\n';
+  const start = ref.indexOf(head);
+  if (start < 0) return '';
+  const from = start + head.length;
+  const end = ref.indexOf('\n\n## ', from);
+  return ref.slice(from, end < 0 ? undefined : end);
+}
 
 /** The clauses of the one-paragraph form the labelled form lacks; a clause's first letter may change case. */
 function missingClauses(statement: string): string[] {
@@ -226,7 +244,8 @@ function provenanceFailure(before: string, after: string): string | null {
 // ---------------------------------------------------------------------------
 // The pairs: every edit to the fourteen bodies, in the order applied, written from the generated diff.
 // `restated` names the step line(s) that state the removed Guardrails line; the decision-writing bullet's one
-// `restructured` pair (ONE_PARAGRAPH → DECISION_WRITING_DISCIPLINE) is shared by every body and applied first.
+// `restructured` pair (ONE_PARAGRAPH → the labelled form) is shared by every body and applied first; `records-by-setting`'s
+// swap (the labelled form → DECISION_WRITING_BASIC) was applied after every pair, so `undo` reverses it first.
 // ---------------------------------------------------------------------------
 
 type Pair = {
@@ -415,27 +434,38 @@ describe('tighten-bodies edit ledger', () => {
 
   // @scenario text orbit-conventions :: Decision-writing discipline :: The labelled form keeps every clause
   // @scenario text orbit-conventions :: An edit ledger holds every tightened body to its recorded text :: A clause dropped from the bullet fails
-  it('the labelled form keeps every clause of the one-paragraph form', () => {
-    expect(missingClauses(DECISION_WRITING_DISCIPLINE)).toEqual([]);
-    expect(DECISION_WRITING_DISCIPLINE.split('\n')).toHaveLength(6);
-    // Mutation: a clause dropped from the bullet is named.
-    const dropped = DECISION_WRITING_DISCIPLINE.replace(' A question no condition describes writes nothing, nor does a call in no area.', '');
-    expect(missingClauses(dropped)).toEqual(['A question no condition describes writes nothing, nor does a call in no area']);
+  it('the rule in the reference keeps every clause of the one-paragraph form but the one replaced clause', () => {
+    const rule = ruleInReference(DECISION_RECORDS_REFERENCE);
+    expect(rule).toBe(DECISION_WRITING_DISCIPLINE);
+    expect(rule.split('\n')).toHaveLength(6);
+    // The one replaced clause is named: the opening "under every setting", now the condition the basic content reads.
+    expect(rule.split(REPLACED_CLAUSE.now).length - 1).toBe(1);
+    expect(rule).not.toContain(REPLACED_CLAUSE.was);
+    expect(missingClauses(rule)).toEqual([ONE_PARAGRAPH_CLAUSES[0]]);
+    expect(missingClauses(rule.replace(REPLACED_CLAUSE.now, REPLACED_CLAUSE.was))).toEqual([]);
+    // Mutation: a clause dropped from the rule is named.
+    const dropped = rule.replace(' A question no condition describes writes nothing, nor does a call in no area.', '');
+    expect(missingClauses(dropped)).toEqual([ONE_PARAGRAPH_CLAUSES[0], 'A question no condition describes writes nothing, nor does a call in no area']);
   });
 
   const body = (dir: string): string => skills.find((s) => s.dirName === dir)!.template.instructions;
 
-  /** Undo every pair of `dir` on `text`, last applied first, then the shared restructure; or the first failure. */
+  /**
+   * Undo `records-by-setting`'s swap (the basic content back to the labelled bullet), then every pair of `dir` on
+   * `text`, last applied first, then the shared restructure; or the first failure.
+   */
   function undo(dir: string, text: string, pairs: Pair[] = PAIRS): { text: string } | { failure: string } {
-    let t = text;
+    const swaps = text.split(DECISION_WRITING_BASIC).length - 1;
+    if (swaps !== 1) return { failure: `${dir}: the decision-writing basic content occurs ${swaps} times` };
+    let t = text.replace(DECISION_WRITING_BASIC, () => LABELLED_FORM);
     for (const p of [...pairs].reverse().filter((x) => x.body === dir)) {
       const n = t.split(p.after).length - 1;
       if (n !== 1) return { failure: `${dir}: a pair's after occurs ${n} times: ${JSON.stringify(p.after.slice(0, 80))}` };
       t = t.replace(p.after, () => p.before);
     }
-    const n = t.split(DECISION_WRITING_DISCIPLINE).length - 1;
+    const n = t.split(LABELLED_FORM).length - 1;
     if (n !== 1) return { failure: `${dir}: the decision-writing bullet occurs ${n} times` };
-    return { text: t.replace(DECISION_WRITING_DISCIPLINE, () => ONE_PARAGRAPH) };
+    return { text: t.replace(LABELLED_FORM, () => ONE_PARAGRAPH) };
   }
 
   /** Why the undo of `dir`'s pairs does not reproduce its recorded body, or null. */
@@ -576,8 +606,19 @@ describe('tighten-bodies edit ledger', () => {
     expect(added).toContain('`references/mode-sections.md`');
   });
 
-  it('the restructure is one pair shared by the fourteen bodies', () => {
-    for (const dir of Object.keys(RECORDED)) expect(body(dir).split(DECISION_WRITING_DISCIPLINE).length - 1, dir).toBe(1);
-    expect(missingClauses(DECISION_WRITING_DISCIPLINE)).toEqual([]);
+  it('the restructure is one pair shared by the fourteen bodies, and records-by-setting\'s swap one edit undone first', () => {
+    expect(LABELLED_FORM).not.toBe(DECISION_WRITING_DISCIPLINE);
+    expect(missingClauses(LABELLED_FORM)).toEqual([]);
+    for (const dir of Object.keys(RECORDED)) {
+      expect(body(dir).split(DECISION_WRITING_BASIC).length - 1, dir).toBe(1);
+      expect(body(dir), dir).not.toContain(LABELLED_FORM);
+    }
+  });
+
+  it('mutation: a body that still carries the labelled bullet, or carries the basic content twice, fails the ledger', () => {
+    const dir = 'orbit-explore';
+    expect(ledgerFailure(dir, body(dir))).toBeNull();
+    expect(ledgerFailure(dir, body(dir).replace(DECISION_WRITING_BASIC, () => LABELLED_FORM))).toMatch(/basic content occurs 0 times/);
+    expect(ledgerFailure(dir, body(dir) + '\n' + DECISION_WRITING_BASIC)).toMatch(/basic content occurs 2 times/);
   });
 });

@@ -29,7 +29,8 @@ R-rop-3, R-rop-4, R-rop-8). `test/core/templates/skill-body-budget.test.ts` poin
   changes only what a command returns.
 - **The budget holds.** Each generated body stays under its character ceiling, and under 500 lines (explore under its
   own line ceiling, which only goes down; it rose once, from 664 to 669, for the five lines the decision-writing
-  bullet's labelled sub-bullets added in stage `tighten-bodies`). Fix a breach by moving a step's procedure as above,
+  bullet's labelled sub-bullets added in stage `tighten-bodies`, and came back to 664 in stage `records-by-setting`,
+  when that bullet became its one-line basic content). Fix a breach by moving a step's procedure as above,
   never by raising a ceiling.
 
 ## Examples

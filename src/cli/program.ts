@@ -361,10 +361,19 @@ export function buildProgram(options: ProgramOptions = {}): Command {
       if (exitCode !== 0) process.exit(exitCode);
     });
 
-  // decision-reading: the reading step's brief, rendered read-only
+  // decision-reading: the reading step's brief, rendered read-only; records-by-setting: whether records are written
   const decisions = program
     .command('decisions')
-    .description('Decision records: the brief the reading step gives its reader (read-only)');
+    .description('Decision records: whether they are written, and the brief the reading step gives its reader (read-only)');
+  decisions
+    .command('status')
+    .description('Report whether decision records are written: true when a setting that reads them is on (writes nothing)')
+    .option('--json', 'Output as JSON')
+    .action(async (options?: { json?: boolean }) => {
+      const { DecisionsCommand } = await import('../commands/decisions.js');
+      const exitCode = new DecisionsCommand().status(options ?? {});
+      if (exitCode !== 0) process.exit(exitCode);
+    });
   decisions
     .command('brief <change-name>')
     .description('Render the brief of the decision records no reading has yet read (writes nothing)')

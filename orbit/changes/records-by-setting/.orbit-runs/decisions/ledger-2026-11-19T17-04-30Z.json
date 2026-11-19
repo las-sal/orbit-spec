@@ -1,0 +1,19 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-19T17:04:30Z",
+  "change": "records-by-setting",
+  "model": "claude-opus-5-5",
+  "area": "user-sees-or-does",
+  "decided": "The help text of the new command says: \"Report whether decision records are written: true when a setting that reads them is on (writes nothing)\", and the help of the decisions group now says it covers both whether records are written and the brief the reading step gives its reader.",
+  "alternatives": [
+    "reuse the one-line output as the help text",
+    "leave the decisions group help naming only the brief"
+  ],
+  "why": "The design fixed the command's output lines and its JSON form but not its help text; this wording names what the result means and that the command changes nothing, and the group's old help would no longer describe both of its commands.",
+  "relies_on": [
+    {
+      "kind": "decision",
+      "id": "D-rbs-2"
+    }
+  ]
+}

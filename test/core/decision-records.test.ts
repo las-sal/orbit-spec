@@ -492,8 +492,8 @@ describe('orbit-decision-records: where decision records are kept', () => {
   });
 });
 
-describe('orbit-decision-records: written in every mode', () => {
-  // @scenario behaviour orbit-decision-records :: Decision records are written in every mode :: A stop under supervised settings halts nothing
+describe('orbit-decision-records: written when a setting reads them', () => {
+  // @scenario behaviour orbit-decision-records :: Decision records are written when a setting reads them :: A stop under supervised settings halts nothing
   it('a stop under default settings changes no gate, readout or next command', () => {
     makeChange('foo');
     const before = formatChangeStatus(loadChangeContext(root, 'foo'));

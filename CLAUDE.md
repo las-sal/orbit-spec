@@ -134,14 +134,15 @@ body.
   position readout + the engine's eligibility line (`Ready when you are:`); blanket delegation covers
   work WITHIN the requested command, never the next one — gate `passed` means *eligible*, not
   *commanded*.
-- **Decision-writing** (`orbit-conventions`, stage `decision-writing`) — keep a decision record
-  (`orbit-decision-records`) without changing what the user sees or is asked: a stop record BEFORE asking a
-  question one of the five AI-raised stop conditions describes (or before an act one describes, taken without
-  asking), a resolution with the answer, a ledger entry after any call in one of the eighteen ledger areas; a
-  designed prompt (consent, inflection, closure) is a seam and writes nothing, and a walk of an archived change
-  writes no record. The full statement is the fifth epitome bullet in every workflow body with a disciplines
-  epitome; what a record holds is each skill's `references/decision-records.md`. Until a release carrying decision records is installed, the
-  installed `orbit` refuses these commands here: write records with `node bin/orbit.js emit stop|resolution|ledger …`.
+- **Decision-writing** (`orbit-conventions`, stages `decision-writing` and `records-by-setting`) — decision records
+  (`orbit-decision-records`) are written when `orbit decisions status` says so (`write: true`: a granted `chain` key,
+  `signoff: change` or `program`, or a tripwire at `on_fire: halt`); run it as `node bin/orbit.js decisions status`
+  until a release carrying it is installed. This repository sets no `chain`, `signoff` or `tripwires` key, so a
+  session here writes no NEW ledger entry or stop record, while a resolution answering a stop already in a trail, or a
+  replacement fixing a record already there, is still written. Every workflow body with a disciplines epitome carries
+  the basic content (when to run the command) as its fifth epitome bullet; the rule and what a record holds are each
+  skill's `references/decision-records.md`. Until a release carrying decision records is installed, the
+  installed `orbit` refuses these commands here: write such a record with `node bin/orbit.js emit stop|resolution|ledger …`.
   Likewise the commit step's `orbit pr commit` (chained-review-commit): until a release carrying it is installed, run it
   as `node bin/orbit.js pr commit "<name>" --json` (here it returns `off`: this repo sets neither `commit` nor `push`).
   And the archive's brief save, `orbit brief` (brief-render): until a release carrying it is installed, run it as

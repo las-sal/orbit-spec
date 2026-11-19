@@ -1,4 +1,7 @@
 /**
+ * `orbit decisions status` (stage `records-by-setting`, `orbit-decision-records`' `orbit decisions status says
+ * whether decision records are written`): report, read-only and project-wide, whether decision records are written.
+ *
  * `orbit decisions brief <change>` (stage `decision-reading`, `orbit-decision-records`' `The reading
  * step's brief is rendered by orbit`): render, read-only, the brief the reading step gives its reader.
  * Writes no file. A brief is whole or absent: a source that does not resolve exits non-zero naming it,
@@ -6,8 +9,15 @@
  */
 
 import { buildDecisionBrief, renderDecisionBrief, DecisionBriefError } from '../core/decision-records.js';
+import { decisionStatus, renderDecisionStatus } from '../core/decision-status.js';
 
 export class DecisionsCommand {
+  status(options: { json?: boolean } = {}): number {
+    const status = decisionStatus('.');
+    process.stdout.write(options.json ? JSON.stringify(status, null, 2) + '\n' : renderDecisionStatus(status) + '\n');
+    return 0;
+  }
+
   brief(change: string, options: { json?: boolean } = {}): number {
     let output: string;
     try {

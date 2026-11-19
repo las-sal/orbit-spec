@@ -6,7 +6,7 @@
  */
 import type { SkillTemplate, CommandTemplate } from '../types.js';
 import { PR_ARCHIVE_TAIL_REFERENCE } from './pr-choreography.js';
-import { COMMIT_STEP_BASIC, COMMIT_STEP_REFERENCE, COMMIT_STEP_REFERENCE_NAME, DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE, RUN_SUMMARY_EMIT_REFERENCE_NAME, RUN_SUMMARY_READ_CUE, runSummaryEmitReference } from '../../disciplines.js';
+import { COMMIT_STEP_BASIC, COMMIT_STEP_REFERENCE, COMMIT_STEP_REFERENCE_NAME, DECISION_RECORDS_REFERENCE, DECISION_WRITING_BASIC, RUN_SUMMARY_EMIT_REFERENCE_NAME, RUN_SUMMARY_READ_CUE, runSummaryEmitReference } from '../../disciplines.js';
 
 
 // Reference: full schema for the Step 5.5 archive run summary. Migrated from the overlay
@@ -445,7 +445,7 @@ The disciplines from \`orbit-conventions\`, embedded per body; detail lives in t
 - **Change completeness (modification-time)**: the flow moves the change dir, writes baseline via sync-specs, and emits the summary — sweep after each step so no dangling baseline references or unreflected deltas survive.
 - **Pushback (review-time)**: second-pass-verify each pre-archive audit finding against current session state; stale findings get a note in the summary, not a re-prompt.
 - **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line — gate \`passed\` means *eligible*, not *commanded*.
-${DECISION_WRITING_DISCIPLINE}
+${DECISION_WRITING_BASIC}
 
 ## Step 0 — Consent at entry (provenance rule)
 

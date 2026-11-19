@@ -6,7 +6,7 @@
  * to the orbit-run-summary-emit baseline where the change's iter-1 review corrected it.
  */
 import type { SkillTemplate, CommandTemplate } from '../types.js';
-import { DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE, RUN_SUMMARY_EMIT_REFERENCE_NAME, RUN_SUMMARY_READ_CUE, runSummaryEmitReference } from '../../disciplines.js';
+import { DECISION_RECORDS_REFERENCE, DECISION_WRITING_BASIC, RUN_SUMMARY_EMIT_REFERENCE_NAME, RUN_SUMMARY_READ_CUE, runSummaryEmitReference } from '../../disciplines.js';
 
 const AUDIT_DRIFT_RUN_SUMMARY_SCHEMA_REFERENCE = `# Reference: audit-drift run-summary schema
 
@@ -195,7 +195,7 @@ The disciplines from \`orbit-conventions\`, embedded per body; detail lives in t
 - **Change completeness (modification-time)**: audit-drift is scan-only; when a prior \`.orbit-runs/audit-drift-*.json\` is malformed or partial, the new summary is a clean rewrite — never merged with broken prior state.
 - **Pushback (review-time)**: verify each potential finding against current state per its category (term still present; capability genuinely missing, not renamed; both sides of a disagreement still exist; requirement truly absent from baseline). Suppress stale findings with an evidence note into \`stale_suppressed\` — never the user-facing report.
 - **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line — gate \`passed\` means *eligible*, not *commanded*.
-${DECISION_WRITING_DISCIPLINE}
+${DECISION_WRITING_BASIC}
 
 **Bias toward lower severity when uncertain.** SUGGESTION beats WARNING beats CRITICAL — signal, not volume.
 

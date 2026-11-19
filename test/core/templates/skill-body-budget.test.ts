@@ -12,7 +12,8 @@ import { generateSkillContent, getSkillTemplates } from '../../../src/core/share
  *   file, frontmatter included). A ceiling only moves DOWN in this program; stages B and C lower it.
  * - a LINE limit of 500 (Anthropic's guidance for a skill body), counted as `wc -l` counts (newlines), except explore,
  *   held by a line ceiling that may only go down — but for its one named rise, from 664 to 669, for the five lines the
- *   decision-writing bullet's labelled sub-bullets added (tighten-bodies, D-tb-17; R-rop-8 and RG3 as amended).
+ *   decision-writing bullet's labelled sub-bullets added (tighten-bodies, D-tb-17; R-rop-8 and RG3 as amended), which
+ *   records-by-setting took back down to 664 when the bullet became its one-line basic content.
  *
  * A failure names the body, its size and its ceiling, then states the rule for fixing it (D-cs-5, D-cs-10).
  */
@@ -23,30 +24,31 @@ const VERSION = (JSON.parse(readFileSync(path.join(repo, 'package.json'), 'utf-8
 /**
  * Each body's character ceiling: its size plus 5%, rounded up (2026-11-17, measured at version 2.0.2) — after
  * conditional-steps, lowered after once-per-session-detail for the eleven bodies whose emit step it moved, and lowered
- * again after tighten-bodies wherever the new size plus 5% is below the ceiling (each line names its edit and its
- * previous ceiling; a body whose new size plus 5% would exceed its ceiling keeps it, so none rises).
+ * again after tighten-bodies and after records-by-setting wherever the new size plus 5% is below the ceiling (each line
+ * names its edit and its previous ceiling; a body whose new size plus 5% would exceed its ceiling keeps it, so none
+ * rises).
  */
 const CHARACTER_CEILING: Record<string, number> = {
-  'orbit-explore': 52432, // 50,049 at tighten-bodies, which kept the ceiling: its size plus 5% would exceed it
-  'orbit-new-change': 7409, // 7,074 at tighten-bodies, which kept the ceiling (once-per-session-detail's; was 7588)
-  'orbit-continue-change': 10803, // 10,288 (tighten-bodies; was 11003)
-  'orbit-apply-change': 19150, // 18,238 (tighten-bodies; was 19819)
-  'orbit-ff-change': 14759, // 14,056 (tighten-bodies; was 15028)
-  'orbit-sync-specs': 9069, // 8,715 at tighten-bodies, which kept the ceiling: its size plus 5% would exceed it
-  'orbit-archive-change': 32127, // 30,597 (tighten-bodies; was 33489)
-  'orbit-bulk-archive-change': 28022, // 26,799 at tighten-bodies, which kept the ceiling: its size plus 5% would exceed it
-  'orbit-verify-change': 15358, // 14,626 (tighten-bodies; was 15426)
-  'orbit-onboard': 23567, // 22,519 at tighten-bodies, which kept the ceiling: its size plus 5% would exceed it
-  'orbit-propose': 37082, // 35,316 (tighten-bodies; was 38030)
-  'orbit-review': 42880, // 40,838 (tighten-bodies; was 43844)
-  'orbit-address-reviews': 48420, // 46,114 (tighten-bodies; was 49862)
-  'orbit-audit-drift': 22367, // 21,328 at tighten-bodies, which kept the ceiling (once-per-session-detail's; was 22624)
-  'orbit-architect': 18156, // 17,291 (tighten-bodies; was 18362)
+  'orbit-explore': 49997, // 47,616 (records-by-setting; was 52432)
+  'orbit-new-change': 4874, // 4,641 (records-by-setting; was 7409)
+  'orbit-continue-change': 8248, // 7,855 (records-by-setting; was 10803)
+  'orbit-apply-change': 16596, // 15,805 (records-by-setting; was 19150)
+  'orbit-ff-change': 12205, // 11,623 (records-by-setting; was 14759)
+  'orbit-sync-specs': 6597, // 6,282 (records-by-setting; was 9069)
+  'orbit-archive-change': 29573, // 28,164 (records-by-setting; was 32127)
+  'orbit-bulk-archive-change': 25585, // 24,366 (records-by-setting; was 28022)
+  'orbit-verify-change': 12803, // 12,193 (records-by-setting; was 15358)
+  'orbit-onboard': 23567, // 22,712 at records-by-setting, which kept the ceiling: its size plus 5% would exceed it
+  'orbit-propose': 34528, // 32,883 (records-by-setting; was 37082)
+  'orbit-review': 40326, // 38,405 (records-by-setting; was 42880)
+  'orbit-address-reviews': 45866, // 43,681 (records-by-setting; was 48420)
+  'orbit-audit-drift': 19840, // 18,895 (records-by-setting; was 22367)
+  'orbit-architect': 15601, // 14,858 (records-by-setting; was 18156)
 };
 
 const LINE_LIMIT = 500;
 /** Explore's own line ceiling (R-rop-8): it starts over the limit and may only go down. */
-const LINE_CEILING: Record<string, number> = { 'orbit-explore': 669 };
+const LINE_CEILING: Record<string, number> = { 'orbit-explore': 664 }; // 664 lines (records-by-setting; was 669)
 
 const BUDGET_RULE =
   "keep the step's basic content (when it runs, the command, the usual result, the link) in the body and move its procedure to a reference file — see skill_body_convention.md";
@@ -80,8 +82,8 @@ describe('skill body budget (R-rop-8)', () => {
     expect(Object.keys(CHARACTER_CEILING).sort()).toEqual(rendered().map(([d]) => d).sort());
   });
 
-  it("explore's line ceiling holds at 669 or lower, and only explore is over the 500-line limit", () => {
-    expect(LINE_CEILING['orbit-explore']).toBeLessThanOrEqual(669);
+  it("explore's line ceiling holds at 664 or lower, and only explore is over the 500-line limit", () => {
+    expect(LINE_CEILING['orbit-explore']).toBeLessThanOrEqual(664);
     expect(Object.keys(LINE_CEILING)).toEqual(['orbit-explore']);
   });
 

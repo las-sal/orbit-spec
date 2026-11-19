@@ -577,9 +577,14 @@ export const COMMAND_REGISTRY: CommandDefinition[] = [
   },
   {
     name: 'decisions',
-    description: 'Decision records: the brief the reading step gives its reader (read-only)',
+    description: 'Decision records: whether they are written, and the brief the reading step gives its reader (read-only)',
     flags: [],
     subcommands: [
+      {
+        name: 'status',
+        description: 'Report whether decision records are written: true when a setting that reads them is on (writes nothing)',
+        flags: [COMMON_FLAGS.json],
+      },
       {
         name: 'brief',
         description: 'Render the brief of the decision records no reading has yet read',
