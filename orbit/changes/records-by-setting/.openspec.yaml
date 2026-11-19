@@ -1,0 +1,13 @@
+schema: spec-driven
+created: 2026-11-19
+schema_version: 5
+base_fingerprints:
+  orbit-conventions:
+    Decision-writing discipline: sha256:b4ebd782c6afb55dbc75721f40efe836bbdbb1636017d71b5d35498138d0fde5
+    Decision-record reference ships beside the statement: sha256:e7289f4be62b8ef18a24819c08535bfa8204d51bb1ee33658acb2dc753b86717
+    An edit ledger holds every tightened body to its recorded text: sha256:f232e2ea546e465959969d875320a8f4ea6d4b6f582505e1bd29b99a5223b0ac
+  orbit-decision-records:
+    Decision records are written in every mode: sha256:8ca9454294f64b9c2dc5a963b0485574254baa564ddaeb2fa4e33e4097dc07ab
+architecture:
+  doc: reduce-orbit-phase1
+  stage: records-by-setting
