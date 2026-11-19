@@ -12,15 +12,17 @@ of a `decisions/` folder in `src/core` and found three that run only under a set
 - the tripwires, which read only their own `tripwire` stops and the resolutions answering them, written only when a
   sensor is set to `on_fire: halt` (`src/core/tripwires.ts`).
 
-The review's reading step and the walk read whatever was written; at the defaults nothing is, and the step is already
-skipped when nothing is selected. Onboard carries its own one-line restatement of the rule, and CLAUDE.md, `docs/cli.md`
+The review's reading step and the walk read whatever a trail already holds, whatever the settings: records written
+before this change, or while a setting was on, keep being selected and read at the defaults, and a reading finding on
+one is fixed by a replacement record. On a trail that holds none, the step is skipped as when nothing is selected. Onboard carries its own one-line restatement of the rule, and CLAUDE.md, `docs/cli.md`
 and `orbit-decision-records`' Purpose all say records are written in every mode.
 
 ## Goals / Non-Goals
 
 **Goals:**
 
-- At the defaults the AI writes no decision record; under a granted chain key, `signoff: change` or `program`, or a
+- At the defaults the AI writes no new decision record (a resolution answering a stop already in the trail, and a
+  replacement fixing a record already there, are still written); under a granted chain key, `signoff: change` or `program`, or a
   halting tripwire it writes them exactly as today (R-rop-17, RG0 as amended, R-adf-17).
 - Every body is the same under every configuration (R-rop-5); an orbit command's result picks the branch (R-rop-4).
 - The rule keeps every clause of today's bullet but its opening one (the stage's exit criterion, D-rbs-6).
@@ -55,18 +57,24 @@ joins `orbit decisions brief` in `src/cli/program.ts`: no argument, read-only, e
 `decision_records_owed` already uses for records owed a reading. An unrecognized `signoff` value reads as off with no
 warning here, since the holds already print one.
 
-### Decision 3: the basic content, one line in every body (D-rbs-3)
+### Decision 3: the basic content, one line in every body (D-rbs-10, which walked D-rbs-3)
 
 A new constant `DECISION_WRITING_BASIC` replaces `${DECISION_WRITING_DISCIPLINE}` in the fourteen templates, keeping the
 epitome's fifth-bullet position:
 
 ```
-- **Decision-writing (call-time)**: at the session's start, and again after this session edits `orbit/config.yaml`, run `orbit decisions status --json`. On `write: true`, read `references/decision-records.md` and follow its rule for the rest of the session; on `write: false`, write no ledger entry, stop record or resolution.
+- **Decision-writing (call-time)**: at each command's first step, and again after this session edits the project config (`orbit/config.yaml` or `.yml`), run `orbit decisions status --json`. On `write: true`, read `references/decision-records.md` and follow its rule for the rest of the command. On `write: false`, write no new ledger entry or stop record; a resolution answering a stop already in the trail, or a replacement fixing a record already there, is still written — read that reference when you write one.
 ```
 
+The call runs at each command's first step, so a chained command, a command typed later in a conversation and a
+command after a compaction each read the settings afresh; the result governs that command (the proposal walk's D2).
 The body names the moment, the command, the usual result (`write: false` at the defaults) and the link: R-rop-3's basic
 content. It is a block acted on once, at a moment the body names (`skill_body_convention.md`), so the read happens
-there, unconditionally whenever the result is `write: true`.
+there, unconditionally whenever the result is `write: true`. On `write: false` the prohibition covers only NEW records: a
+resolution answering a stop already in the trail and a replacement fixing a record already there are written whatever
+the result, and the agent reads the reference when it writes one. So turning the last reader off strands no stop, a
+`tripwire` stop is answered whatever the working tree says, and a reading finding is fixed at the defaults (the
+proposal blind pair's F1, X1 and X3).
 
 ### Decision 4: the rule moves whole into the reference (D-rbs-5, D-rbs-6)
 
@@ -115,13 +123,15 @@ Carried from explore.md's Considered & out:
   project-wide session has no change.
 - **The emit answering "not owed":** the agent would still need the whole rule to know when to call it.
 - **Running the command before the first record:** circular. **At every designed moment:** repeated calls for a
-  result that changes only with the settings.
+  result that changes only with the settings. **Once per session, at its start** (D-rbs-3): a command typed later, or
+  one after a compaction, could act with no result; **per command unless the session already holds a result**: brings
+  back the judgement compaction makes unreliable (the proposal walk's D2).
 - **The write gate refusing, or noting, a record when none is owed:** each changes a gate or readout at the defaults,
   amending G0 and RG0, to stop something harmless.
 
 ## Risks / Trade-offs
 
-- **[D-rbs-3, BOUNDED] a settings edit made outside the session** → its named limit is stated once, in
+- **[D-rbs-10, BOUNDED] a settings edit made outside the session while one command runs, or a compaction mid-command** → its named limit is stated once, in
   `orbit-conventions`' `Decision-writing discipline`.
 - **[Named limit, D-rbs-2] the command reads the working tree, a halting sensor the committed config or the change's
   fixed point** → stated in `orbit-decision-records`' `orbit decisions status says whether decision records are
@@ -129,9 +139,9 @@ Carried from explore.md's Considered & out:
 - **[A stray record at the defaults] an agent writing from habit, a stale memory or instruction** → accepted and read as
   any record (D-rbs-4), at one reader's cost at review; CLAUDE.md, onboard and the docs are corrected so no project text
   asks for one.
-- **[This change's own trail] this repository stops writing records once apply runs `update --force` (D-rbs-7)** → its
-  system review, walk and archive write none, which is correct here, since nothing reads them; its trail holds records
-  from explore, propose and the proposal review only.
+- **[This change's own trail] this repository stops writing new records once apply runs `update --force` (D-rbs-9)** →
+  its system review, walk and archive write no new ledger entry or stop; the ledger entries already in its trail are
+  still read by the system review's reading step, and a finding on one is fixed by a replacement, as today.
 - **[An agent skipping the call]** → the same exposure as every body-directed read (R-rop-4, D-eval-5); a skip at a
   reading setting leaves a trail without records, visible at sign-off or to the chain's open-stop check.
 
@@ -143,7 +153,8 @@ session, and its existing records stay where they are and are read as today. Rol
 ## Touchpoints
 
 - `src/core/decision-status.ts` — new: the predicate (D-rbs-1).
-- `src/cli/program.ts` — `orbit decisions status`.
+- `src/cli/program.ts` — `orbit decisions status` and the `decisions` group's description.
+- `src/commands/decisions.ts` — the `status` action, beside `brief`'s.
 - `src/core/completions/command-registry.ts` — the new subcommand.
 - `src/core/disciplines.ts` — the rule's opening clause, `DECISION_WRITING_BASIC`, the reference's new section.
 - `src/core/templates/workflows/*.ts` — the fourteen bodies interpolate the basic content; onboard's line.
@@ -165,8 +176,11 @@ The proposing AI's reading of the file; no engine record.
 |---|---|---|---|
 | D-rbs-1 | SOURCED | live rule | `orbit-decision-records`' `Decision records are written when a setting reads them`, as a TABLE of the three settings' states |
 | D-rbs-2 | SOURCED | live rule | `orbit-decision-records`' `orbit decisions status says whether decision records are written`, as a SENTENCE naming the source (the fourteen bodies) with the session kinds in prose |
-| D-rbs-3 | BOUNDED | live rule | `orbit-conventions`' `Decision-writing discipline`, its residual lines verbatim as a named limit; Risks above points at it |
+| D-rbs-3 | — | superseded D-rbs-8 (not carried) | none |
+| D-rbs-8 | — | superseded D-rbs-10 (not carried) | none |
+| D-rbs-10 | BOUNDED | live rule | `orbit-conventions`' `Decision-writing discipline`, its residual lines verbatim as a named limit; Risks above points at it |
 | D-rbs-4 | — | scope (not carried) | none |
 | D-rbs-5 | — | scope (not carried) | none |
 | D-rbs-6 | — | scope (not carried) | none |
-| D-rbs-7 | — | fact (not carried) | none |
+| D-rbs-7 | — | superseded D-rbs-9 (not carried) | none |
+| D-rbs-9 | — | fact (not carried) | none |

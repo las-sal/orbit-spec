@@ -10,27 +10,35 @@ not a stop, where records go), carried byte-equal by the `references/decision-re
 (`Decision-record reference ships beside the statement`). The basic content:
 
 ```
-- **Decision-writing (call-time)**: at the session's start, and again after this session edits `orbit/config.yaml`, run `orbit decisions status --json`. On `write: true`, read `references/decision-records.md` and follow its rule for the rest of the session; on `write: false`, write no ledger entry, stop record or resolution.
+- **Decision-writing (call-time)**: at each command's first step, and again after this session edits the project config (`orbit/config.yaml` or `.yml`), run `orbit decisions status --json`. On `write: true`, read `references/decision-records.md` and follow its rule for the rest of the command. On `write: false`, write no new ledger entry or stop record; a resolution answering a stop already in the trail, or a replacement fixing a record already there, is still written — read that reference when you write one.
 ```
 
 It names the moment, the command, the usual result and the link, so an orbit command's result picks the branch, never
 the agent's judgement (R-rop-4): `orbit decisions status` (`orbit-decision-records`' `orbit decisions status says
-whether decision records are written`) reports `write: false` at the defaults, and the rule is then read by no session.
-The moments at which a session's result can differ from the settings it works under:
+whether decision records are written`) reports `write: false` at the defaults, and the rule is then read only by a
+session that answers or fixes a record already in its trail. On `write: false` the AI writes no NEW ledger entry or stop
+record, but a record that answers or fixes one already in the trail is written whatever the result: a resolution
+answering a stop already there (one written while a reader was on, or a `tripwire` stop orbit wrote), and a replacement
+fixing a record a reading found wanting, since records written before this rule, or while a setting was on, are still
+selected and read at the defaults (`orbit-decision-records`' `The reading step's brief is rendered by orbit`). Turning
+the last reader off therefore strands no stop, and a reading finding is fixed at the defaults as before. The moments at
+which a session's result can differ from the settings it works under:
 
 | member | covered by |
 |---|---|
-| the session starts | the first call, before the first step and so before any call or question the rule covers |
-| the session itself edits `orbit/config.yaml` | the call is run again after the edit |
-| a command chained into the same session | covered by the earlier call: one session, one result |
-| a dispatched worker (a fresh reviewer, a blind pair's fresh half) | its own session, so its own first call |
-| a settings edit made outside the session while it runs | not covered — the named limit below |
+| a command starts — typed, chained, or loaded mid-conversation | its first step runs the call, before any call or question the rule covers, and the result governs that command |
+| the session itself edits the project config (`orbit/config.yaml` or `.yml`) | the call is run again after the edit |
+| a compaction between commands | covered: the next command's first step runs the call |
+| a dispatched worker (a fresh reviewer, a blind pair's fresh half) | its own command, so its own first call |
+| a settings edit made outside the session while one command runs, or a compaction during one command | not covered — the named limit below |
+| a record already in the trail awaits an answer or a fix | written whatever the result, so no result leaves it stranded |
 
-Named limit — the session's own starts and edits are enumerable, but edits made from outside it are not.
+Named limit — each command's start and the session's own edits are enumerable, but edits made from outside it, and a
+result a compaction drops mid-command, are not.
 
-Residual kind: a change to `orbit/config.yaml` made outside the session while it runs (by the user's hand, another tool, a branch switch)
+Residual kind: a change to the project config made outside the session while one command runs (by the user's hand, another tool, a branch switch), or a result a compaction drops before the command ends
 
-Residual method: the next session's first call reads the settings afresh; a review of a trail showing records missing under a reader, or written with none, finds one after the fact
+Residual method: the next command's first call reads the settings afresh; a review of a trail showing records missing under a reader, or written with none, finds one after the fact
 
 The rule — the restructure `tighten-bodies` (`reduce-orbit-phase1`, R-rop-7) gave it, every clause, gloss and area
 name of the one-paragraph form kept except its opening clause, "under every setting", which `records-by-setting`
@@ -74,7 +82,8 @@ one does (asked, or not asked), or in none — and every branch is a row; a mome
 record — no change and no doc, or an archived change — is its own row whatever its branch. The two ledger conditions
 are read each by its own gloss, as R-adf-3 rules them: an end-user-visible call that a requirement supports but no
 ratified goal covers is `user-facing-uncovered`, and its entry cites nothing and names that stop. While `orbit decisions status` reports `write:
-false` — at the defaults — the AI writes none of these records, and the moments above go unrecorded by design
+false` — at the defaults — the AI writes no new record at any of these moments, and they go unrecorded by design (a
+resolution answering a stop already in the trail is still written)
 (`orbit-decision-records`' `Decision records are written when a setting reads them`). While it reports `write: true`,
 the discipline changes nothing the user sees or is asked: a stop record keeps the moment and halts nothing unless a
 setting says so, and an OPEN stop — one written where today's flow asks nothing — is expected: it marks a moment a
@@ -93,13 +102,26 @@ when it is written, never that a record was owed.
 
 - **WHEN** a generated body is read in a project that sets no `chain`, `signoff` or `tripwires` key
 - **THEN** `orbit decisions status --json` reports `write: false`, and the basic content the body carries says that on
-  `write: false` no ledger entry, stop record or resolution is written
+  `write: false` no new ledger entry or stop record is written
+
+#### Scenario: A stop already in the trail is answered at the defaults
+
+- **WHEN** a stop record written while `chain.review: true` was set is still open, the session turns chaining off and
+  runs `orbit decisions status` again, which reports `write: false`, and the user then answers the stop's question
+- **THEN** the AI writes a resolution naming that stop, and the stop is closed
+
+#### Scenario: A reading finding is fixed at the defaults
+
+- **WHEN** at the defaults a system review's reading step finds a ledger entry written before this rule unclear, and the
+  walk resolves the finding
+- **THEN** the walk writes a replacement of that entry, as `orbit-decision-records`' `A record is fixed by a replacement,
+  never edited` says, and writes no new ledger entry
 
 #### Scenario: The basic content names when the command runs
 
 - **WHEN** the basic content is read
-- **THEN** it names the session's start, and an edit of `orbit/config.yaml` by the session, as the moments
-  `orbit decisions status` runs
+- **THEN** it names each command's first step, and an edit of the project config (`orbit/config.yaml` or `.yml`) by
+  the session, as the moments `orbit decisions status` runs, and says the result governs the rest of the command
 
 #### Scenario: The statement is composed from the write gate's lists
 
@@ -109,20 +131,21 @@ when it is written, never that a record was owed.
 
 #### Scenario: A stop record precedes the question it keeps
 
-- **WHEN** the AI is about to ask the user whether to amend a ratified ruling
+- **WHEN** while `orbit decisions status` reports `write: true`, the AI is about to ask the user whether to amend a ratified ruling
 - **THEN** it writes a stop record of condition `ruling-amendment` first, then asks exactly as it would have, and on
   the user's answer writes a resolution naming that stop
 
 #### Scenario: A call put to the user leaves all three records
 
-- **WHEN** the AI is about to ask the user how to handle a security-relevant call with nothing approved to rely on
+- **WHEN** while `orbit decisions status` reports `write: true`, the AI is about to ask the user how to handle a security-relevant call with nothing
+  approved to rely on
 - **THEN** it writes a stop record of condition `security-unprecedented`, asks exactly as it would have, writes a
   resolution naming that stop with the user's answer, and, once it makes the call, a ledger entry whose `raised_stop`
   names that stop
 
 #### Scenario: A call relying on nothing, made without asking, names an open stop
 
-- **WHEN** under a setting that reads records the AI picks a default that a spec requirement supports but no ratified
+- **WHEN** while `orbit decisions status` reports `write: true`, the AI picks a default that a spec requirement supports but no ratified
   goal covers, where today's flow asks nothing
 - **THEN** it writes a stop record of condition `user-facing-uncovered`, then a ledger entry with `relies_on: []`
   whose `raised_stop` names that stop; it asks the user nothing, and no resolution is written
@@ -135,7 +158,8 @@ when it is written, never that a record was owed.
 
 #### Scenario: An act the user directed writes its stop and its resolution
 
-- **WHEN** the user tells the AI to amend a ratified ruling, and the AI amends it without asking anything
+- **WHEN** while `orbit decisions status` reports `write: true`, the user tells the AI to amend a ratified ruling, and the AI amends it without asking
+  anything
 - **THEN** it writes a stop record of condition `ruling-amendment` before the amendment, and a resolution naming that
   stop whose answer is the user's direction
 
@@ -146,8 +170,8 @@ when it is written, never that a record was owed.
 
 #### Scenario: A call after a clarifying question writes its ledger entry
 
-- **WHEN** the AI asks the user a clarifying question no stop condition describes, then makes a call in a ledger area
-  that something approved covers
+- **WHEN** while `orbit decisions status` reports `write: true`, the AI asks the user a clarifying question no stop condition describes, then makes a
+  call in a ledger area that something approved covers
 - **THEN** it writes a ledger entry citing what the call relies on, and no stop record
 
 #### Scenario: A seam prompt writes nothing
@@ -158,8 +182,8 @@ when it is written, never that a record was owed.
 
 #### Scenario: A seam a stop condition describes writes its stop first
 
-- **WHEN** a gate's inflection prompt is about to fire over a CRITICAL review finding no edit inside the change
-  resolves
+- **WHEN** while `orbit decisions status` reports `write: true`, a gate's inflection prompt is about to fire over a CRITICAL review finding no edit inside
+  the change resolves
 - **THEN** the AI writes a stop record of condition `unresolvable-critical`, fires the prompt exactly as designed,
   and on the user's answer writes a resolution naming that stop
 
@@ -173,10 +197,11 @@ when it is written, never that a record was owed.
 
 ### Requirement: Decision-record reference ships beside the statement
 
-Every generated workflow skill whose epitome carries the decision-writing statement SHALL ship the reference
+Every generated workflow skill whose epitome carries the decision-writing basic content SHALL ship the reference
 `references/decision-records.md`, one constant shared by every such skill, so that the basic content's pointer names a
 file the installed skill holds. The reference opens with one sentence saying it is read when `orbit decisions status`
-reports `write: true`, that its first section says WHEN to write a record and the rest WHAT each one holds; its first
+reports `write: true`, or when a record already in the trail is answered or fixed, that its first section says WHEN to
+write a record and the rest WHAT each one holds; its first
 section, `## When to write a record`, carries the decision-writing RULE byte-equal to `Decision-writing discipline`'s
 rule fence. It then says, for each of the three records (`orbit-decision-records`):
 
@@ -205,10 +230,10 @@ holds; the body's basic content says only when to read it.
 - **THEN** its first section, `## When to write a record`, carries the decision-writing rule byte-equal to
   `Decision-writing discipline`'s rule fence, and its Contents list names that section first
 
-#### Scenario: Every statement-carrying skill ships the reference
+#### Scenario: Every skill carrying the basic content ships the reference
 
 - **WHEN** the generated workflow skills are generated
-- **THEN** every skill whose epitome carries the decision-writing statement ships `references/decision-records.md`,
+- **THEN** every skill whose epitome carries the decision-writing basic content ships `references/decision-records.md`,
   byte-equal across them, and no other skill ships it
 
 #### Scenario: The reference's fields are the write gate's
