@@ -1,0 +1,48 @@
+{
+  "command": "architect",
+  "timestamp": "2026-11-20T16:01:25Z",
+  "change": null,
+  "doc": "reduce-orbit-phase2",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Opened reduce-orbit-phase2 at Sal's direction the day phase 1 merged: automate-dev-flow suspended (R-rop2-1, amending phase 1's R-rop-15 and R-rop-9 and R-adf-16) and to be rescoped in architecture afterwards (R-rop2-3); the replay set on claude plugin eval as the first stage (R-rop2-2); goals G0 to G3 ratified, G0 relaxed so a removal is Sal's recorded decision and G1 holding every body to 5,000 estimated tokens; upstream OpenSpec text in scope (R-rop2-4); three Claude Code skill tools folded in (R-rop2-5); six stages declared, inventory first (R-rop2-6); pr: per-architecture kept (R-rop2-7); the Premise ratified. CLAUDE.md's Programs section now names phase 2 live, phase 1 complete and automate-dev-flow paused.",
+  "stages_touched": [
+    "replay-set",
+    "inventory",
+    "cut-review-walk",
+    "cut-propose-archive",
+    "cut-explore-onboard",
+    "close"
+  ],
+  "rulings_captured": [
+    "R-rop2-1",
+    "R-rop2-2",
+    "R-rop2-3",
+    "R-rop2-4",
+    "R-rop2-5",
+    "R-rop2-6",
+    "R-rop2-7"
+  ],
+  "completions_ratified": [],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      {
+        "path": "orbit/architecture/reduce-orbit-phase2.md",
+        "why": "R-rop2-2 and R-rop2-5 (the runner, the spike, the fallback) and stage replay-set's charter and exit criteria"
+      },
+      {
+        "path": "orbit/architecture/reduce-orbit-phase1-brief.md",
+        "why": "the brief's S15 and section 7, what the replay set grades"
+      },
+      {
+        "path": "skill_body_convention.md",
+        "why": "the rules a body follows, which the cases exercise"
+      }
+    ],
+    "next_command": "/orbit:explore replay-set",
+    "model_hint": null,
+    "seam": "Phase 2 is declared with six premised stages; replay-set opens with its named exploration on main, and its first propose creates the branch reduce-orbit-phase2 and the program PR (R-rop2-7)."
+  },
+  "next_recommended": "/orbit:explore replay-set"
+}

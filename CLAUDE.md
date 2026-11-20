@@ -51,21 +51,27 @@ and reads its reference there; `skill-body-budget.test.ts` holds each body's siz
 
 ## Programs: one live
 
-**`orbit/architecture/reduce-orbit-phase1.md`** (from 2026-11-17) is live, every declared stage done (records-by-setting
-ratified 2026-11-19); what remains is its closing architecture review and, at arc-done, the program PR. It restructures the skill bodies to be
+**`orbit/architecture/reduce-orbit-phase2.md`** (from 2026-11-20) is live: the second reduction phase, opened the day
+phase 1 merged, at Sal's direction ahead of `automate-dev-flow` (R-rop2-1). It takes up what phase 1 left (its R-rop-15,
+R-rop-18, R-rop-19): every body fitting the 5,000 tokens kept after a compaction, the cuts graded by a replay set, the
+rewording held back, and explore's and onboard's own text. Its Goals and stages wait on its opening session.
+
+**`orbit/architecture/reduce-orbit-phase1.md`** (2026-11-17 to 2026-11-20, merged as PR #46) is complete. It restructured the skill bodies to be
 slimmer and in line with Anthropic's guidance for building skills, without changing what any workflow does. Text a
 session rarely needs moves to reference files, each body keeping the step's basic content, and a per-body budget test
 keeps the bodies from growing back. Its source is Sal's brief beside it (`reduce-orbit-phase1-brief.md`); its stages run
 conditional-steps, once-per-session-detail, tighten-bodies and an evaluation, whose decisions (R-rop-15 to R-rop-19) add
 one last stage, records-by-setting: decision records written only when a setting reads them, RG0's one named exception;
-a phase 2 that starts with a replay set follows `automate-dev-flow` (R-rop-15). Say "basic
+a phase 2 that starts with a replay set was to follow `automate-dev-flow` (R-rop-15, amended 2026-11-20 by phase 2's
+R-rop2-1 to run first). Say "basic
 content" and "reference file" (Anthropic's terms), not "stub" (R-rop-3). This repo sets `pr: per-architecture` for it
-(R-rop-13): from its first propose on, the program's work, between stages too, is done on the branch
-`reduce-orbit-phase1`, which carries one draft PR against main until arc-done.
+(R-rop-13): from its first propose on, the program's work, between stages too, was done on the branch
+`reduce-orbit-phase1`, which carried one draft PR against main until arc-done.
 
-**`orbit/architecture/automate-dev-flow.md`** (from 2026-11-07) was paused until that program's evaluation and its
-records-by-setting stage were done (R-adf-16 as amended); both are, so it resumes, its three tripwire explorations as they
-were left, and whether `pr: per-architecture` stays for it is decided then (R-rop-13). It makes
+**`orbit/architecture/automate-dev-flow.md`** (from 2026-11-07) is paused until `reduce-orbit-phase2` is done (R-adf-16 as
+amended again 2026-11-20): no change of its remaining stages is proposed meanwhile, its three tripwire explorations stay as
+they are, and when it resumes it first goes back to an architect session that rescopes it (phase 2's R-rop2-3), which also
+decides whether `pr: per-architecture` stays for it (R-rop-13). It makes
 orbit able to run a whole program with Sal present only where Sal adds value, seam-chained or autonomous, with every
 permission an explicit setting that defaults to today's behaviour (R-adf-1, R-adf-6). It is built here under today's
 supervised flow and first proven on a big, non-critical project (R-adf-5: never dogfooded in orbit-spec). Its G0 now
@@ -96,8 +102,9 @@ per stage. The narrative it carried until 2026-10-13 — the fork program, the D
 
 ## Source of truth for the plan
 
-- `orbit/architecture/reduce-orbit-phase1.md` — the live program (above: slimmer skill bodies), with its brief
-  `reduce-orbit-phase1-brief.md`.
+- `orbit/architecture/reduce-orbit-phase2.md` — the live program (above: the second reduction phase).
+- `orbit/architecture/reduce-orbit-phase1.md` — the previous program (complete, PR #46; above: slimmer skill bodies), with
+  its brief `reduce-orbit-phase1-brief.md`.
 - `orbit/architecture/automate-dev-flow.md` — the paused program (above: settings, seam-chaining, the driver, a trial elsewhere).
 - `orbit/architecture/propose-reads-specs.md` — the previous program (complete; above: the propose read instruction, `v2.0.2`, its measurement moved to #32).
 - `orbit/architecture/refine-documentation-and-architect.md` — the architect-first program (complete; above: architect-first, CLI says orbit, docs, `v2.0.1`).
@@ -162,7 +169,7 @@ body.
 
 ## When in doubt
 
-- The fork plan's decisions remain citable — `orbit/architecture/fork-and-orbify.md` (program complete); the D-arc that followed it is `orbit/architecture/d-arc-arbitered-flow.md` (also complete — historical record). The previous program is `orbit/architecture/clean-up-review-cycle.md`, its stages all closed; read its Premise, Goals, Rulings index and "Carried at close" table, never the whole doc. The docs program that followed is `orbit/architecture/update-gh-documentation.md` (complete). The program after it, `orbit/architecture/refine-documentation-and-architect.md`, is complete too. The latest, `orbit/architecture/propose-reads-specs.md`, is complete as well (its measurement moved to issue #32). The live program is `orbit/architecture/reduce-orbit-phase1.md`; `orbit/architecture/automate-dev-flow.md` resumes now that program's evaluation and records-by-setting are done. `orbit architecture status` gives every doc's position.
+- The fork plan's decisions remain citable — `orbit/architecture/fork-and-orbify.md` (program complete); the D-arc that followed it is `orbit/architecture/d-arc-arbitered-flow.md` (also complete — historical record). The previous program is `orbit/architecture/clean-up-review-cycle.md`, its stages all closed; read its Premise, Goals, Rulings index and "Carried at close" table, never the whole doc. The docs program that followed is `orbit/architecture/update-gh-documentation.md` (complete). The program after it, `orbit/architecture/refine-documentation-and-architect.md`, is complete too. The latest, `orbit/architecture/propose-reads-specs.md`, is complete as well (its measurement moved to issue #32). `orbit/architecture/reduce-orbit-phase1.md` is complete (PR #46). The live program is `orbit/architecture/reduce-orbit-phase2.md`; `orbit/architecture/automate-dev-flow.md` is paused until it is done. `orbit architecture status` gives every doc's position.
 - Engine behavior is defined in the vendored TypeScript under `src/` (the architecture doc maps it).
 - Keep tests green: run `npm test` before and after substantive changes; the green baseline is the
   contract.

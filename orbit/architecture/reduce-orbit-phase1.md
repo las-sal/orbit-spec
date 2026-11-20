@@ -121,7 +121,8 @@ Ratified by Sal, 2026-11-17, from the opening session's answers to the brief's q
   over waiting for stage A alone or for a split.) Amended by Sal, 2026-11-18, at the evaluation (its D-eval-8):
   `automate-dev-flow` resumes once `evaluation` and `records-by-setting` are done, so it resumes on bodies that already
   write records only under the settings it builds; phase 2 follows it (R-rop-15). Recorded as
-  `stop-2026-11-18T13-57-16Z.json` and its resolution in `orbit/explore/evaluation/.orbit-runs/decisions/`.
+  `stop-2026-11-18T13-57-16Z.json` and its resolution in `orbit/explore/evaluation/.orbit-runs/decisions/`. Amended
+  again by Sal, 2026-11-20: `automate-dev-flow` stays paused until phase 2 (`reduce-orbit-phase2`) is done (its R-rop2-1).
 - **R-rop-10** (Sal, 2026-11-17) — Whether a reference file read again in one session costs its full size again (the
   brief's spike S9) is measured in stage A's verification: one session chaining two commands, comparing a repeated read
   with a single one. Claude Code's skills page documents that a re-invoked skill with identical content adds only an
@@ -163,7 +164,9 @@ Ratified by Sal, 2026-11-17, from the opening session's answers to the brief's q
   bullet (R-rop-7), are out of phase 1 and wait for it; so does the rewording the brief held back (R-rop-19). The
   brief's program P2, moving mechanical steps into the engine (the engine printing readouts among it), stays a later
   program of its own. (The evaluation's D-eval-1 and D-eval-8; chosen over ruling on every cut from one session's
-  evidence, and over building a replay set inside this program.)
+  evidence, and over building a replay set inside this program.) Amended by Sal, 2026-11-20, after this program merged:
+  phase 2 (`reduce-orbit-phase2`) runs now, ahead of `automate-dev-flow`, which stays paused until it is done (that
+  doc's R-rop2-1).
 - **R-rop-16** (Sal, 2026-11-18) — bulk-archive becomes a thin loop: it keeps selecting several changes, detecting and
   resolving the spec conflicts between them and the batch table, and runs archive's own steps for each change, so
   archive's per-change steps stop being mirrored in a second body. It is built when `automate-dev-flow`'s
@@ -487,3 +490,5 @@ is one line; rewording the rule itself still waits for phase 2.
   RG3 held, no ceiling raised but explore's one named line rise (664 to 669), which `records-by-setting` took back to
   664. At Sal's choice the walk added "as built" notes to R-rop-17, RG0's exception and `automate-dev-flow`'s R-adf-17,
   and pointers to `records-by-setting` at R-rop-7 and the Premise.
+- 2026-11-20 — After the program merged (PR #46, `e2eabb02`), Sal suspended `automate-dev-flow` to take up phase 2
+  now: `orbit/architecture/reduce-orbit-phase2.md` is opened, and R-rop-15 and R-rop-9 are amended (its R-rop2-1).

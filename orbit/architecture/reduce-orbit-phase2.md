@@ -1,0 +1,194 @@
+# Program: reduce-orbit-phase2
+
+> Position is COMPUTED — run `orbit architecture status`. This doc declares; the engine renders.
+
+## Premise
+
+Phase 1 (`reduce-orbit-phase1`, merged 2026-11-20) restructured orbit's skill bodies without rewording them: the
+bodies a session loads went from 434,449 characters to 329,979, text a session rarely needs moved to reference files,
+and a per-body budget test holds each body where it landed. Seven bodies still exceed the 5,000 tokens Claude Code
+keeps of an invoked skill after a compaction (`npm run size:report` at `e2eabb02`): explore (11,904 estimated tokens),
+address-reviews (10,921), review (9,602), propose (8,221), archive (7,041), bulk-archive (6,092) and onboard (5,678).
+A long session that compacts in one of them loses its closing steps.
+
+Phase 1 left to this phase what it could not do safely by construction (`reduce-orbit-phase1`'s R-rop-15, R-rop-18 and
+R-rop-19): every body fitting what survives a compaction; the cuts its brief gated on evidence, chiefly review's,
+archive's and propose's mode-only sections moved to references and the rewording of the decision-writing rule itself;
+the rewording of the 115 provenance forms `tighten-bodies` could not remove; and explore's and onboard's own text, left
+alone in phase 1. Its evaluation ruled that such cuts are graded by a replay set the brief calls S15 (sessions replayed
+several times on fixed tasks, graded by orbit's computed facts) rather than ruled on from one session's evidence.
+
+This phase goes further than phase 1 in two ways. What is not meeting orbit's needs or proving itself may come out, by
+Sal's recorded decision (G0), rather than only moving to a reference; and the upstream OpenSpec text in each skill is
+analysed and cut on the same terms as orbit's own (R-rop2-4).
+
+(Drafted at the opening session from the rulings it cites; ratified by Sal, 2026-11-20.)
+
+## Goals
+
+Ratified by Sal, 2026-11-20, at the opening session.
+
+- **G0 — Every removal is Sal's decision, and every change is named.** This phase may remove a step, a check, a record
+  or a whole workflow that is not meeting orbit's needs or proving itself. Each removal is Sal's decision, made from
+  replay grades, real sessions or outside evidence, and recorded as a ruling citing that evidence; its stage's archive
+  names what it removes (the specs, tests and text). What is not removed keeps working: the full suite passes, and every
+  baseline requirement holds or changes through a named delta. Fails if anything is removed without Sal's recorded
+  decision, or changes without being named. (Phase 1's "nothing is lost", RG0, relaxed for this phase at Sal's
+  direction: "If something isn't meeting our needs or proving itself, it can come out.")
+- **G1 — Every body fits what survives a compaction.** At the program's end every generated skill body, explore and
+  onboard included, is at most 5,000 estimated tokens as `npm run size:report` computes them (R-rop-18). Fails on one
+  body over.
+- **G2 — Growth is held.** Phase 1's per-body budget test keeps running in the suite and the size report in CI, and no
+  ceiling is raised during the program. Fails if a ceiling rises.
+- **G3 — The replay set grades every cut meant to keep behaviour.** No move to a reference and no rewording that changes
+  what a session reads at the defaults lands before the replay set (R-rop2-2) has run on it before and after; a
+  removal under G0 needs none, its ruling being its record. Fails on one such cut landing ungraded.
+
+## Rulings index
+
+- **R-rop2-1** (Sal, 2026-11-20) — Phase 2 runs now, ahead of `automate-dev-flow`, which stays paused until this program
+  is done ("let's suspend automate dev flow for now to work on reduction"). Amends `reduce-orbit-phase1`'s R-rop-15 (a
+  phase 2 that followed `automate-dev-flow`) and R-rop-9 (`automate-dev-flow` resuming once `evaluation` and
+  `records-by-setting` were done), and `automate-dev-flow`'s R-adf-16. Chosen over drafting this phase now and running it
+  after `automate-dev-flow`, the order D-eval-8 had set. No stop record: this repository writes none since
+  `records-by-setting` (`orbit decisions status` reports nothing written).
+- **R-rop2-2** (Sal, 2026-11-20) — The replay set (the brief's S15) is this phase's first stage: a development-time check
+  of orbit's own skill bodies, kept in this repository (cases, fixtures and a script that wraps the built skills as a
+  throwaway plugin) and never shipped: nothing `orbit init` or `orbit update` installs changes, and no command, skill
+  or body is added. It runs on `claude plugin eval` (Anthropic's eval runner: fresh headless sessions in throwaway
+  workspaces, several runs per case, a cost ceiling, a JSON result), started by Sal before and after a cut and billed
+  per session, outside `npm test` and CI by default. Its first exit criterion is a spike showing that runner can grade
+  orbit's computed facts (an emit's fields at its timestamped path, a gate's state); if it cannot, the stage falls back
+  to a small runner of this repository's own (`claude -p` in fixture projects, graded by orbit's commands), keeping the
+  cases and fixtures. Chosen over that runner from the start and over no replay set.
+- **R-rop2-3** (Sal, 2026-11-20) — After this program's reduction passes, `automate-dev-flow` goes back into
+  architecture and is rescoped before any of its remaining stages is proposed: its charters were written for the bodies
+  and workflows phase 1 left, and this phase may remove some of what they build on (G0). Recorded in that doc's
+  R-adf-16 and status log.
+- **R-rop2-4** (Sal, 2026-11-20) — The upstream OpenSpec text in each skill is in scope as much as orbit's own: it is
+  analysed and cut where it is not carrying weight ("the openspec text itself in each skill is up for analysis and cuts
+  itself if it isn't carrying weight"). Each such cut still lands as `orbit-conventions`' `Generated-file disposition`
+  requires, a change whose delta spec names the edit, and a skill kept upstream-verbatim (sync-specs) may move to
+  orbit-modified. A later cherry-pick from the read-only `upstream` remote (CLAUDE.md) then meets more local edits.
+- **R-rop2-5** (Sal, 2026-11-20) — Three of Claude Code's skill tools join the program, each where it fits: the
+  `replay-set` spike also tries Anthropic's `skill-creator` skill (its evals and its benchmark with variance analysis)
+  beside `claude plugin eval`, R-rop2-2's runner and fallback unchanged; `/skill-doctor`'s usage data (each skill's
+  listing cost, tokens and uses, and never-invoked warnings), with orbit's own record of which commands ran across the
+  archived changes, is evidence the `inventory` stage brings to Sal's removal decisions (G0), named as measuring one
+  user; and `claude plugin validate` over the generated skills runs in CI beside the size report (G2). `/doctor`,
+  which checks the installation's health, stays out until it is seen to say something about skills.
+- **R-rop2-6** (Sal, 2026-11-20) — The program runs in six stages: the replay set, an up-front inventory that ends in
+  Sal's removal rulings, three cut stages by body group, and a close. The inventory comes first so every removal is
+  decided with the whole picture, the same step usually sitting in several bodies. Chosen over each cut stage
+  inventorying its own bodies and over one cut stage per body.
+- **R-rop2-7** (Sal, 2026-11-20) — `pr: per-architecture` stays for this program (the question phase 1's R-rop-13 left
+  open): the first propose citing this doc creates the branch `reduce-orbit-phase2` and one draft PR against main, each
+  stage's archive appends its entry, and Sal merges once at arc-done. From that propose on, the program's work, the
+  `inventory` exploration and architect sessions included, is done on that branch. Chosen over a branch and PR per change
+  and over no PR handling.
+
+## Program stages
+
+One change per stage, except `inventory`, worked as a named exploration citing it (as phase 1's `evaluation` was). The
+three cut stages depend on `replay-set` and `inventory` and not on each other (R-rop2-6).
+
+### Stage replay-set — the replay set that grades cuts meant to keep behaviour
+
+Depends-on: (none)
+Complete: [ ]
+
+The brief's S15 as R-rop2-2 sets it: cases, fixtures and a script in this repository that run orbit's built skills as
+real headless sessions, several runs per case, graded by facts orbit records. Never shipped; started by Sal and billed
+per session. Its spike comes first: can `claude plugin eval` grade orbit's facts (an emit's fields at its timestamped
+path, a gate's state), and does Anthropic's `skill-creator` skill, tried beside it, grade them better or say more about
+whether a difference between two runs is real (R-rop2-5)? Failing both, the small runner of this repository's own.
+
+Exit criteria:
+- The spike's result recorded, the runner chosen, and the fallback taken if neither tool grades orbit's facts.
+- Cases covering the default lifecycle (explore, propose, apply, review, the walk, archive) on fixture projects, each
+  shown able to fail on a deliberately broken body.
+- One baseline run on the bodies as phase 1 left them, recorded with its cost.
+- `claude plugin validate` over the generated skills runs in CI beside the size report (R-rop2-5, G2).
+
+### Stage inventory — every over-budget body, section by section
+
+Depends-on: replay-set
+Complete: [ ]
+
+A section-by-section inventory of the seven bodies over 5,000 estimated tokens, upstream text included (R-rop2-4) and
+explore's and onboard's own text (the brief's S12, widened): for each section its size, when a session uses it, and
+what shows it carries weight. The evidence is the replay set's baseline, `/skill-doctor`'s usage data and orbit's own
+record of which commands ran across the archived changes (R-rop2-5), and any outside evidence Sal brings. Worked as a
+named exploration citing this stage.
+
+Exit criteria:
+- Each of the seven bodies has its inventory and a cut list (keep, move to a reference, reword, remove), with a
+  projected size against G1.
+- Every removal on those lists is Sal's ruling, citing its evidence (G0); every move and rewording is marked for the
+  replay set (G3).
+- A step shared by several bodies is decided once, for all of them.
+
+### Stage cut-review-walk — review and address-reviews
+
+Depends-on: replay-set, inventory
+Complete: [ ]
+
+The inventory's cut list for review and address-reviews, the two largest shared-text bodies, applied and graded.
+
+Exit criteria:
+- Both bodies at most 5,000 estimated tokens (G1), their ceilings lowered (G2).
+- The replay set run before and after, its grades no worse on every cut meant to keep behaviour (G3); every removal
+  named in the archive with its ruling (G0).
+
+### Stage cut-propose-archive — propose, archive and bulk-archive
+
+Depends-on: replay-set, inventory
+Complete: [ ]
+
+The inventory's cut list for propose, archive and bulk-archive, applied and graded; bulk-archive's future (phase 1's
+R-rop-16, a thin loop) is the inventory's to rule on, since it has never run here.
+
+Exit criteria:
+- The three bodies at most 5,000 estimated tokens, or bulk-archive removed by Sal's ruling (G0, G1); ceilings lowered (G2).
+- The replay set run before and after on every cut meant to keep behaviour (G3); every removal named in the archive.
+
+### Stage cut-explore-onboard — the two bodies whose text is their own
+
+Depends-on: replay-set, inventory
+Complete: [ ]
+
+The inventory's cut list for explore and onboard, applied and graded: the text phase 1 left alone.
+
+Exit criteria:
+- Both bodies at most 5,000 estimated tokens (G1), explore's line ceiling and both character ceilings lowered (G2).
+- The replay set run before and after on every cut meant to keep behaviour (G3); every removal named in the archive.
+
+### Stage close — measure the program against its goals
+
+Depends-on: cut-review-walk, cut-propose-archive, cut-explore-onboard
+Complete: [ ]
+
+The size report against G1 for every body, the ceilings at their final sizes, and the goals graded; then
+`automate-dev-flow` returns to architecture to be rescoped (R-rop2-3).
+
+Exit criteria:
+- G0 to G3 graded, each with its evidence, in the status log.
+- Every generated body at most 5,000 estimated tokens, or a ruling of Sal's for each that is not.
+
+## Considered & out
+
+- **2026-11-20 — No replay set, phase 2's cuts judged by tests, structural rules and real sessions:** cheapest, but the
+  riskiest cut, rewording the decision-writing rule that applies on every call, would have nothing grading it; it would
+  also amend R-rop-15's evidence rule and the evaluation's D-eval-1 (R-rop2-2).
+
+## Status log
+
+- 2026-11-20 — Doc created by an architect session at Sal's direction, the day phase 1 merged as PR #46: Sal suspended
+  `automate-dev-flow` to work on reduction (R-rop2-1). The Premise is drafted from phase 1's R-rop-15, R-rop-18 and
+  R-rop-19 and the brief's deferred items; the Goals and stages wait on the opening session's questions.
+- 2026-11-20 — Opening session: Sal chose the replay set on `claude plugin eval` as the first stage (R-rop2-2), sent
+  `automate-dev-flow` back to architecture after the reduction passes (R-rop2-3), relaxed "nothing is lost" into G0
+  (removals by Sal's recorded decision), kept R-rop-18's size goal whole as G1, and put the upstream OpenSpec text in
+  scope (R-rop2-4). Goals G0 to G3 ratified. Sal then folded three Claude Code skill tools in where each fits (R-rop2-5)
+  and chose the six-stage shape with the inventory first (R-rop2-6); the stages are declared. `pr: per-architecture`
+  stays (R-rop2-7), and Sal ratified the Premise with two sentences added for G0's removals and R-rop2-4's upstream text.

@@ -146,7 +146,9 @@ stage; G1–G6 are graded at first-run, on that project's trail and transcripts.
   proposed until that program's stages A, B and C are archived and their evaluation is done (its R-rop-9). The
   explorations `tripwire-sensors`, `tripwire-steward` and `tripwire-project-sensors` stay as they are meanwhile.
   Amended by Sal, 2026-11-18, with that program's R-rop-9: this program resumes once `reduce-orbit-phase1`'s
-  `evaluation` and `records-by-setting` are done.
+  `evaluation` and `records-by-setting` are done. Amended again by Sal, 2026-11-20 (`reduce-orbit-phase2`'s
+  R-rop2-1): with both done, this program stays paused until `reduce-orbit-phase2` is done, and then returns to an
+  architect session that rescopes it before any remaining stage is proposed (that doc's R-rop2-3).
 - **R-adf-17** (Sal, 2026-11-18) — G0's "every record today's flow writes is still written" excepts decision records:
   from `reduce-orbit-phase1`'s stage `records-by-setting` on, the AI writes a ledger entry, stop record or resolution only
   when a setting that reads them is on (chaining, a sign-off setting of `change` or `program`, the tripwires, and later
@@ -758,3 +760,8 @@ Exit criteria:
 - 2026-11-17 — `reduce-orbit-phase1` amended its R-rop-10: the repeated-read measurement is answered here, in
   `first-run`'s exit criteria, since this repository runs no chained commands (R-adf-5). No change is proposed meanwhile
   (R-adf-16).
+- 2026-11-20 — `reduce-orbit-phase1` merged (PR #46). Sal kept this program paused to work on reduction first: it
+  resumes once `reduce-orbit-phase2` is done (R-adf-16 amended again; that doc's R-rop2-1). No stage changed.
+- 2026-11-20 — Sal: after the reduction passes this program goes back into architecture and is rescoped before any
+  remaining stage is proposed (`reduce-orbit-phase2`'s R-rop2-3), since that phase may remove some of what its stages
+  build on. G0 is not amended: it grades this program's own stages, and its baseline will be what phase 2 leaves.
