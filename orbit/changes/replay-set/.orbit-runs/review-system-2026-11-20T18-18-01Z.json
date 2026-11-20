@@ -1,0 +1,158 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-20T18:18:01Z",
+  "change": "replay-set",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 2
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "0",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "replay/lib/trace.mjs",
+      "line": 11,
+      "title": "orbit_output admits any Bash call naming the orbit/ directory, so a trail listing passes the printed-path graders",
+      "recommendation": "Restrict commandRunsOrbit to `orbit` in command position (start of the command, or after ;, &&, ||, |, (, $( or a backtick), so `find orbit ...`, `ls orbit`, `grep -r x orbit` and `git log -- orbit` stop counting as orbit calls; then add such a listing, with the case's seeded trail path in its result, to the synthetic bait trace in test/replay/cases.test.ts. Because the review and walk seeds already hold a file each printed-path pattern matches, also consider making those graders match only a path newer than the seed's newest trail token. Correct replay/README.md:128 and :148-150 (and the spec's named limit) to what the reader then admits.",
+      "reproduction": "commandRunsOrbit returns true for `find orbit -name \"review-system-*\"`, `ls orbit`, `grep -rl x orbit` and `git log --name-only -- orbit` (RUNS_ORBIT matches `orbit` after any whitespace, not only as the command word, contrary to the comment at trace.mjs:10). On the review case's seed built by buildFixture with the repository's build, a trace holding one Bash call `find orbit -name 'review-system-*'` and its real result gives review-emit-printed pass=true (the seeded orbit/changes/greet-name/.orbit-runs/review-system-<seed TS>.json); on the walk seed, `find orbit -name 'address-reviews-*'` gives walk-emit-printed pass=true. Both are the cases' `break` graders, so a broken-body run or a cut that loses the emit step passes them if the session lists the trail that way. The spec's grader table admits only 'the results of the session's shell calls that ran orbit'."
+    },
+    {
+      "pass": "0",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "replay/cases/explore/graders/exploration-listed.md",
+      "line": 6,
+      "title": "exploration-listed does not read explore.md, so explore-md's pairing vouches for nothing about that file",
+      "recommendation": "Pair explore-md with an orbit answer that actually changes with explore.md (find one by deleting or emptying the file and watching which orbit --json answer moves), or, if no orbit command reads it, say so in the grader and in design Decision 6 and grade the file by a regex over its content beside the emit facts. Correct the grader's prose ('orbit's reading of the staging directory and its explore.md header') either way.",
+      "reproduction": "On the propose seed (a staged exploration under orbit/explore/greet-name/ with .openspec.yaml and its explore emit), grading exploration-listed passes with explore.md present, passes after `rm orbit/explore/greet-name/explore.md`, and passes with explore.md emptied: bare `orbit status --json` still lists sprint {name: greet-name, kind: explore, position: exploring}. The requirement 'Every grader grades what orbit printed or wrote' requires the paired grader's fact to be one only orbit's answer makes true about the same file; this pair's `about` names explore.md but its fact is independent of it."
+    },
+    {
+      "pass": "0",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "replay/compare.mjs",
+      "line": 52,
+      "title": "The comparison never reports skills that are not orbit's, the mitigation design.md's Risks names for user-level skills reaching a session",
+      "recommendation": "In compareRecords, collect each graded run's `skills` on both sides and warn (first, beside the model and version warnings) on any skill not named orbit-*, then add a compare.test.ts case for it; or, if the record alone is judged enough, strike the clause from design.md's Risks so the artifact states the mitigation the code has.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Implement the warning in compare.mjs (non-orbit skills on either side) with a test."
+        },
+        {
+          "label": "B",
+          "body": "Amend design.md:274-275 to say the record lists the skills and Sal reads them; the comparison does not."
+        }
+      ],
+      "reproduction": "orbit/changes/replay-set/design.md:274-275: 'The record lists the skills each session's start reported, and the comparison prints any that are not orbit's.' replay/compare.mjs contains no reference to `skills` (grep finds none); run.mjs:250 records them, nothing reads them."
+    },
+    {
+      "pass": "0",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/replay-set/tasks.md",
+      "line": 141,
+      "title": "Task 5.2 says a $3 ceiling stops after the explore session; the runner runs cases alphabetically, apply first",
+      "recommendation": "listCases sorts the case ids (apply, archive, explore, propose, review, walk), so a $3 ceiling runs apply (budget 3) and stops at archive (budget 4). Reword the parenthetical to the real order, and state the arithmetic $8 rests on: review starts only if apply, archive, explore and propose together spent at most $4, and walk only if the first five spent at most $5."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "replay/run.mjs",
+      "line": 103,
+      "title": "An interrupted or crashing run writes no record, and its detached session keeps billing",
+      "recommendation": "Write the record incrementally (or in a finally/SIGINT handler that also kills the current session's process group), and load every case's graders before the first session so a malformed grader in a later case cannot throw after earlier sessions were billed. The spec requires every run to write one record; today it is written only at the end (run.mjs:283).",
+      "reproduction": "runSession spawns claude with detached: true (its own process group), so Ctrl-C at the terminal kills the runner but not the session, which runs on to its --max-budget-usd with nobody grading or recording it; and loadGraders (run.mjs:199) or checkStart's RegExp can throw mid-loop, losing the record of every session already billed."
+    },
+    {
+      "pass": "0",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "replay/cases/review/graders/in-context-slot-filled.md",
+      "line": 5,
+      "title": "in-context-slot-filled passes on the absence of one reason phrase, so any other change to the gate's prose passes it",
+      "recommendation": "Grade a structured field instead (the trail's latest review-system pass being reviewer_class in-context and later than the seeded walk, through an orbit --json answer that exposes it), or pair the negative lookahead with a positive match on the reason the in-context pass leaves. The start check keyed on the same phrase guards an engine rewording, but not a session that changes the gate another way (for example by unchecking a task, which moves the reason off that phrase)."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Pass 0 ran inline (tasks, scenario tags against the delta's sixteen scenarios with the ledger's untestable entry, design adherence by reading every replay module) rather than through the verify skill, for the same reason Pass 6 was not delegated. The free checks were run here: npx vitest run test/replay is green.\n\nThe harness itself is careful: the ceiling reservation, the no-result accounting, the commit-only build, the workdir refusal and the never-shipped boundary all hold as the spec states them, and nothing under src/ changed, so no adopter-visible surface moved. The weak spot is the one the design worried about most, D-rs-8: what a grader may read. Two of the pairings that are meant to tie a file fact to orbit's own answer do not hold when probed on real seeds. The trace reader treats the project's own directory name as an orbit invocation, and the explore case's orbit fact does not depend on the file it vouches for. Both were found by building the seeds with the repository's build and grading synthetic traces against them, not by reading alone.\n\nThese matter more than their grade suggests because of timing: the broken-body and baseline runs are billed and the baseline becomes the reference every later cut is judged against. A grader repaired after the baseline is a new grader the comparison will not judge.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3"
+  ],
+  "passes_skipped": [
+    "4: no perspectives defined (orbit/lenses/ is absent); skip Pass 4",
+    "5: no critical paths defined (orbit/lenses/ is absent); skip Pass 5",
+    "6: audit-drift not invoked (this fresh worker runs no other orbit workflow command); a bounded residue read of replay/README.md, scripts/README.md, the scenario ledger and the CLAUDE.md capability figure ran under Pass 3 instead"
+  ],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The runner, the build path, the comparison's arithmetic and the CI validation are sound and match the spec; nothing here needs redesign. Move forward, but repair the two grader-validity defects (the trace reader's notion of an orbit call, and the explore case's pairing) before Sal starts the broken-body and baseline runs: those runs are billed, and a baseline recorded on graders that can pass without orbit's answer would have to be re-run once the graders are fixed. The comparison's missing skills warning is a smaller design-versus-code gap that can be closed or struck in the same walk."
+  },
+  "final_assessment": "0 critical, 3 warning, 3 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews replay-set",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "9c54a9fc8301e8b483ae6092d234c2bcd2641944",
+      "frozen": true,
+      "evidence": {
+        "files": [],
+        "share": 0,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ]
+}
