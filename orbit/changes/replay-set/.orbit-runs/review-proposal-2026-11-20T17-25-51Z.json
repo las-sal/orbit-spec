@@ -1,0 +1,209 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-20T17:25:51Z",
+  "change": "replay-set",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "tasks.md",
+      "line": 69,
+      "title": "Task 2.1 pairs explore.md with a fact about a different file",
+      "recommendation": "The spec's grader requirement (spec.md:156-161) says a file grader's pairs_with names a fact orbit's answer makes true about THE SAME file, and that a file the session writes itself is graded by orbit's reading of it. explore.md is such a file: the explore skill has the session scaffold it (the CLI writes no explore.md), so the explore emit's printed path, which task 2.1 pairs it with, says nothing about explore.md. An implementer following 2.1 builds a pairing the spec forbids, and the free check 'every file grader names a pairs_with grader' would not catch it. Rewrite 2.1: grade explore.md by orbit's reading of it (bare `orbit status --json` listing the exploration as exploring, or its parsed Mechanism/decision counts), and pair the explore emit's file in the trail with the path orbit printed when it wrote the emit. Have task 3.2's pairing check compare the two graders' files, not only their kinds.",
+      "walk_entry": {
+        "title": "A file_exists grader cannot tell a file orbit wrote from one the session wrote by hand",
+        "file": "specs/orbit-replay-set/spec.md"
+      }
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "specs/orbit-replay-set/spec.md",
+      "line": 163,
+      "title": "The named limit paragraph swallowed the known-bad SHALL",
+      "recommendation": "The F4 edit inserted 'Named limit — …' ahead of the sentence 'Before a grader joins the set, it SHALL be shown failing on known-bad input:', which now continues the named-limit paragraph and introduces its list. Move the named limit after the known-bad list's closing 'These checks run in npm test and bill nothing.' so the normative sentence opens its own paragraph.",
+      "walk_entry": {
+        "title": "A file_exists grader cannot tell a file orbit wrote from one the session wrote by hand",
+        "file": "specs/orbit-replay-set/spec.md"
+      }
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "specs/orbit-replay-set/spec.md",
+      "line": 203,
+      "title": "The new session end states reach neither the record's list nor case.yaml",
+      "recommendation": "F9's fix added a session that ends with no result record, a timeout or no numeric cost, each 'recorded with that reason', and a per-case timeout_minutes. The record requirement still lists only 'its start state, at a limit or at the run's ceiling' (spec.md:203-204), and design D4's case.yaml list names max_turns and max_budget_usd but not timeout_minutes (design.md:121). Add 'or with no result record (a crash, a kill, its timeout, no numeric cost)' to the record's list and timeout_minutes to D4.",
+      "walk_entry": {
+        "title": "The ceiling can be overshot by a session, and a session that ends without a result record is unhandled",
+        "file": "design.md"
+      }
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "design.md",
+      "line": 92,
+      "title": "A --cli run's record has no commit for its name",
+      "recommendation": "Design D2 says a --cli run's record names its CLI directory in place of a commit, but the record's filename is <time>-<sha7>-<label>.json (design.md:219, spec.md:195-196) and the record requirement lists 'the commit the build came from'. Say what a --cli run writes in both places, e.g. 'local' in place of sha7 and the directory in place of the commit.",
+      "walk_entry": {
+        "title": "The runner's free checks need seams the design does not name",
+        "file": "tasks.md"
+      }
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Graded the two walks' thirteen resolved entries over the change directory, every path their records name, and the residual diff from the commit that added the external return (5599e338): the four artifacts changed, each inside some entry's edit record. Re-checked the engine claims the seed rewrite rests on: both reviewed gates' cadence in schema.yaml, the tracked apply gate in gates.ts, and that clause (b) is resolution of every relevant pass, not a separate readiness record, so the restated seeds can reach their start states. Re-checked the five convergence calls in the external log against each finding's sub-points; they hold. The defects sit where edits met text they did not rewrite: a cascade that paired a session-written file with a fact about another file, a paragraph join, and new end states and a new run variant that two enumerations elsewhere do not yet name. orbit validate replay-set --strict passes; no @review: markers.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "verification": [
+    {
+      "title": "The seeds' gate states do not match the engine's default cadence",
+      "file": "design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The apply case's 'the project's test passes' fact has no grader type that can grade it",
+      "file": "tasks.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The free checks link .orbit-cli to the repository root, where the shim finds no orbit.js",
+      "file": "design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "A file_exists grader cannot tell a file orbit wrote from one the session wrote by hand",
+      "file": "specs/orbit-replay-set/spec.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "The comparison does not say how a run that was not run, or failed at its start state, counts",
+      "file": "specs/orbit-replay-set/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The broken-body run on the cheap model departs from D-rs-4 and from the spec's 'plumbing only'",
+      "file": "specs/orbit-replay-set/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The runner's free checks need seams the design does not name",
+      "file": "tasks.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "The per-commit cache sits in a per-run directory, and records can overwrite each other",
+      "file": "design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The ceiling can be overshot by a session, and a session that ends without a result record is unhandled",
+      "file": "design.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "--no-session-persistence does not keep the user's settings out",
+      "file": "specs/orbit-replay-set/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The release tree does carry replay/; what it installs does not",
+      "file": "specs/orbit-replay-set/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The total cost ceiling does not cap total cost",
+      "file": "orbit/changes/replay-set/design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Clarify the case-directory count",
+      "file": "orbit/changes/replay-set/tasks.md",
+      "verdict": "landed"
+    }
+  ],
+  "final_assessment": "0 critical, 1 warning, 3 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-11-20T17-18-05Z",
+    "2026-11-20T17-18-37Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews replay-set",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "4eee224020803b4481ed2681e431c32780454651",
+      "frozen": false,
+      "evidence": {
+        "files": [],
+        "share": null,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ]
+}
