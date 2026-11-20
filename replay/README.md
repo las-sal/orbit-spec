@@ -82,7 +82,7 @@ The six budgets sum to $19.50 per run of the set. Recorded spends (fill in from 
 
 | run | model | runs a case | total |
 |---|---|---|---|
-| plumbing | sonnet | 1 | not yet run |
+| plumbing | sonnet (claude-sonnet-5-5) | 1 | $1.15, all 27 facts passed: `results/2026-11-20T20-12-39Z-1e9d930-plumbing.json` |
 | broken bodies | Sal's model | 1 | not yet run |
 | baseline | Sal's model | 3 | not yet run |
 

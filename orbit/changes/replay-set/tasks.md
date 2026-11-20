@@ -135,7 +135,7 @@ paired with a fact orbit's answer makes true (`pairs_with`).
   a case's folder shape and how to add one, what a grader may read, the comparison's rows, and the costs the billed runs
   record. Run the full `npm test`, `npx tsc --noEmit`, `npm run lint` and `node bin/orbit.js validate replay-set --strict`,
   and report the count against 1.1's
-- [ ] 5.2 (User-validation) Sal starts the plumbing run:
+- [x] 5.2 (User-validation) Sal starts the plumbing run:
   `npm run replay -- --model sonnet --runs 1 --max-total-usd 8 --label plumbing`. Every case reaches its session, every
   trace is graded, and the record shows each case's cost. (The ceiling is 8, not 3: the runner reserves each case's
   whole `max_budget_usd`, up to $4, before starting it, and runs the cases in name order — apply, archive, explore,
