@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-11-20T16:39:30Z",
+  "change": "replay-set",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Ran the spike at Sal's word, five runs on Sonnet for $0.59 in all. claude plugin eval cannot host orbit's cases: its sandbox gives the shell a read-only workspace, so orbit's CLI cannot write its records (D-rs-6); skill-creator runs cases as subagents graded by a model, not real sessions. R-rop2-2's fallback is taken and proven: a claude -p runner of this repository's own, in fixtures with orbit's skills installed as project skills, graded by orbit's commands afterwards (D-rs-7, Case 4: the emit was written and found). Graders read only what orbit printed or wrote and are shown failing on a known-bad run first (D-rs-8, after two false passes in Case 2); a cut is no worse when every reliably passing fact still passes, reported as mean and spread (D-rs-9); each run uses a packed copy of its commit's CLI (D-rs-10, superseding D-rs-1). A finding for inventory: on a broken CLI the explore body let the session improvise (D-rs-11). No open questions remain.",
+  "decisions_captured": 11,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 5,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose replay-set — 5 live rules accounted; formalize when you are ready (or /orbit:explore replay-set to keep refining)"
+}

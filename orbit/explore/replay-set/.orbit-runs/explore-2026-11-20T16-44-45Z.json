@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-11-20T16:44:45Z",
+  "change": "replay-set",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Session wrap before a context clear: the spike's case files, graders, scaffold and walk-up shim are kept in sketches/spike-files/ with the fallback runner's command and fixture as Case 4 ran them, so the change can start from them; nothing else changed.",
+  "decisions_captured": 11,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 5,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose replay-set — 5 live rules accounted; formalize when you are ready (or /orbit:explore replay-set to keep refining)"
+}
