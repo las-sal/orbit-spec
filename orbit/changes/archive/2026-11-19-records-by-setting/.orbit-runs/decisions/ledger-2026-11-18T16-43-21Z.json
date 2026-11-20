@@ -1,0 +1,31 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-18T16:43:21Z",
+  "change": "records-by-setting",
+  "model": "claude-opus-5-5",
+  "area": "defaults",
+  "decided": "With every setting at its default, a decision record written anyway is still accepted and checked as today; orbit does not start refusing or warning about it.",
+  "alternatives": [
+    "refuse such a record",
+    "accept it and print a note that no setting reads it"
+  ],
+  "why": "Nothing depends on such records being absent, it costs one reader at review as any record does today, and refusing or warning would change what orbit does at the defaults beyond the one change the goals allow.",
+  "relies_on": [
+    {
+      "kind": "goal",
+      "doc": "reduce-orbit-phase1",
+      "id": "RG0"
+    },
+    {
+      "kind": "goal",
+      "doc": "automate-dev-flow",
+      "id": "G0"
+    }
+  ],
+  "defines": [
+    {
+      "term": "decision record",
+      "definition": "A small file the AI writes when it makes a call in one of eighteen listed areas, or before it stops to ask at one of five listed situations, with the answer recorded beside it."
+    }
+  ]
+}

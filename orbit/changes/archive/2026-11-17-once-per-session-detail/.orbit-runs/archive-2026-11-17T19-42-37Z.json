@@ -1,0 +1,102 @@
+{
+  "command": "archive",
+  "timestamp": "2026-11-17T19:42:37Z",
+  "change": "once-per-session-detail",
+  "kind": "lifecycle",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Archived once-per-session-detail to orbit/changes/archive/2026-11-17-once-per-session-detail/: eleven emit steps keep when they fire, their command and their chat behaviour, and read references/run-summary-emit.md before the session's first run-summary emit; apply's and the walk's account steps became basic content reading account-step.md and account-walk-step.md; the bodies fell from 389,374 to 369,392 characters (apply 27,124 to 18,887) and eleven budget ceilings were lowered. The account written by the fresh chunk-3 session met the exit criterion. The stage's Shipped-as paragraph in reduce-orbit-phase1.md records the charter deviations and RG1's wider projected gap.",
+  "archive_path": "orbit/changes/archive/2026-11-17-once-per-session-detail/",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": [
+      "orbit-decision-records",
+      "orbit-run-summary-emit"
+    ],
+    "added": 1,
+    "modified": 1,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
+  "user_decision": "proceeded_with_no_critical",
+  "consent": "user-invoked",
+  "warnings": [],
+  "judgements": [
+    {
+      "kind": "readiness",
+      "formed_against": [
+        "2026-11-17T18-17-04Z",
+        "2026-11-17T18-17-25Z",
+        "2026-11-17T19-24-34Z",
+        "2026-11-17T19-24-53Z"
+      ],
+      "disposition": "ready",
+      "reasoning": "Both blind pairs' findings were walked and verified landed: the proposal pair's account-cue finding reshaped D-opsd-8 before apply, and the system pair's one converged finding (the read cue's moment) was fixed across every site and checked by the in-context verification. Each moved block is held byte-equal to its pre-change sha256, the suite passes at 4,358, the sync's two blocks are byte-equal in the baseline, and a fresh apply session on the regenerated bodies followed both cues and wrote the account.",
+      "ratified_by": "ai",
+      "accepted": [
+        {
+          "claim": "The shipped shape departs from the stage charter in three places: the payload detail went to a new references/run-summary-emit.md in each skill rather than the existing schema references, the owed-field triggers moved to the references with the rest of the detail, and the account step moved whole, conditions included",
+          "why": "Ratified by Sal at exploration (D-opsd-4, D-opsd-9) and propose (design Decision 2); recorded in the account's deviations and in the stage's Shipped-as paragraph, which the fresh system pass named as their home."
+        },
+        {
+          "claim": "A session that skips a reference read loses owed fields or the account silently; nothing in orbit reports a change whose apply is complete and which has no account",
+          "why": "The requirements' named limits; an engine report of a missing account, and reads named by a command's output, are on the evaluation stage's list (D-opsd-8, R-rop-4)."
+        },
+        {
+          "claim": "Both external halves ran read-only in a worktree without node_modules, so neither executed the suite; the system half was a short pass",
+          "why": "Execution evidence comes from the fresh halves, the apply and the in-context verification, each of which ran the full suite."
+        },
+        {
+          "claim": "The stage saved 19,982 characters against the brief's 21,700, widening RG1's projected gap after tighten-bodies from about 2,700 to about 4,400 over 350,000",
+          "why": "Design Risks predicted the shortfall (the read cue stays in every body and five sections moved for shape, not size); tighten-bodies measures again at its propose, and the Shipped-as paragraph carries the figure."
+        }
+      ]
+    }
+  ],
+  "pr_url": "https://github.com/las-sal/orbit-spec/pull/46",
+  "pr_state": "draft",
+  "next_recommended": "/orbit:architect reduce-orbit-phase1 — change archived; review stage once-per-session-detail and take up the program's next stage, or run /orbit:audit-drift for a project-wide drift check.",
+  "decision_records_unread": 3,
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "9c43eee38a0b20ee959c4c7975e3f51a3a55d754",
+      "frozen": true,
+      "evidence": {
+        "files": [],
+        "share": 0,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ]
+}

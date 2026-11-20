@@ -1,0 +1,181 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-17T21:54:13Z",
+  "change": "tighten-bodies",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {},
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    }
+  },
+  "findings": [
+    {
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "title": "The mirror-note markers 'the owner' and 'its owner' match instruction sentences, so the coverage check accepts removing them",
+      "file": "orbit/changes/tighten-bodies/specs/orbit-conventions/spec.md",
+      "line": 283,
+      "walk_entry": {
+        "title": "Provenance removal has no defined extent, and the ledger kind check cannot catch an instruction removed with a note",
+        "file": "specs/orbit-conventions/spec.md"
+      },
+      "recommendation": "Drop 'the owner' and 'its owner' from the mirror-note markers in `Tightened bodies carry no provenance`, keeping the note-specific ones (checked mirror, mirror of, parity test, installed skill, has no specs, cannot open, never edit it here, the grammar module supplies it). State the note unit as the clauses of a marker-carrying sentence from the clause before its marker to its end, so a note's own owner clause (', its owner', '— the owner of …') goes with the marker it follows while verify's leading 'Report what it returns by this table' stays. Add a ledger mutation in which a provenance pair removes review's 'The owner's ONE exemption: …' sentence and is refused.",
+      "reproduction": "Generated bodies at HEAD (a project from `orbit init --tools claude` at a5ba0f0c; src/ unchanged since): orbit-review/SKILL.md:111 carries the instruction sentence 'The owner's ONE exemption: architecture mode keeps its hand-computed per-doc iteration note …'; orbit-review/SKILL.md:109 '… the owner names that limit, and where the two differ the engine's computation is authoritative'; orbit-propose/SKILL.md:212 '… a partition over the owner's live-rule status × the readout's accounting state'. Each contains the marker 'the owner'. A `provenance` pair whose span is that whole sentence is, by the requirement's COVERED rule, 'a whole sentence … containing … the owner', so the ledger's provenance check passes it and the hash reconstruction accepts it: the instruction is removed with every check green, the defect F1 was resolved to close."
+    },
+    {
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "Three paragraphs a body shares with hash-pinned run-summary blocks carry provenance, which F3's rule does not cover",
+      "file": "orbit/changes/tighten-bodies/design.md",
+      "line": 60,
+      "walk_entry": {
+        "title": "Removing citations from the shared step headings changes blocks moved-blocks.test.ts pins by hash, which no D-tb-15 row covers",
+        "file": "design.md"
+      },
+      "recommendation": "Widen the F3 rule from step headings to any text a body shares with a block `moved-blocks.test.ts` pins: the body's copy is split from the reference's constant and loses its provenance, and the pinned block stays byte-equal. Say so in `Tightened bodies carry no provenance` (replacing 'A step heading's citation leaves the body's basic content only'), design Decision 3 and task 4.1, naming the three paragraphs. The alternative, keeping provenance in shared text, would contradict the scenario 'An id that names a thing drops at every use', since architect's shared paragraph names the R-d-8 residency sweep.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Split each shared paragraph: the body's copy loses its provenance; the pinned reference block keeps its bytes; the requirement, Decision 3 and task 4.1 name the three paragraphs."
+        },
+        {
+          "label": "B",
+          "body": "Keep provenance in text a body shares with a pinned block; the requirement names that exception, and the 'drops at every use' scenario and its row exempt architect's shared paragraph (so architect keeps 'R-d-8' there)."
+        }
+      ],
+      "reproduction": "Generated bodies at HEAD: apply's body and references/run-summary-emit.md both carry '**Completion-prompt override (chat)**: … (D5 — a separate verify gate would double-count)'; architect's body and its run-summary-emit.md both carry '(Per `orbit-run-summary-emit` — …' and '**No emit without sweep** (D-arc Stage D5, leak-hardening layer 2 — shared with named-mode explore): the Step 4 R-d-8 residency sweep …'. moved-blocks.test.ts pins APPLY_RUN_SUMMARY_EMIT and ARCHITECT_RUN_SUMMARY_EMIT by sha256, and once-per-session-detail composed each staying paragraph as one constant interpolated into both. Removing the provenance from the body as task 4.1 asks changes those constants and the recorded hashes, and the ledger's test-edit table has no row for it, so apply stops; leaving it keeps 'R-d-8' in architect's body against the scenario 'An id that names a thing drops at every use'."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "This pass graded the two walks over the change directory, the whole sweep scope. Ten resolutions hold as written; the two that do not are F1's and F3's, and both were found by running the walk's new rules against the real bodies rather than reading the edits: F1's marker list was checked phrase by phrase against every tightened body's instruction sentences, and F3's rule by listing every line a body shares verbatim with a pinned run-summary reference. Both holes sit where a rule meets text shared or phrased like provenance, the same seam the fresh pass's F1 opened; a third pass over the wider class (any shared constant, any marker phrase) was the probe, and it found exactly these. The two stale calls (F11 fixed by F2's edit; the description test converging with F5) are right. The residual check found every changed file inside some entry's edit record.",
+  "passes_run": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "passes_skipped": [],
+  "verification": [
+    {
+      "title": "Provenance removal has no defined extent, and the ledger kind check cannot catch an instruction removed with a note",
+      "file": "specs/orbit-conventions/spec.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "Task 4.3's residual removals cannot pass the ledger's provenance-kind check",
+      "file": "tasks.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Removing citations from the shared step headings changes blocks moved-blocks.test.ts pins by hash, which no D-tb-15 row covers",
+      "file": "design.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "Task 8.1's 'new size plus 5%, none rises' is contradictory for the four bodies that grow",
+      "file": "tasks.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The planned frontmatter test's \"Use when\" / \"Use after\" check fails on audit-drift's unchanged description",
+      "file": "tasks.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The bullet carries three commands, not 'the four commands'",
+      "file": "specs/orbit-conventions/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Retargeting apply's two Guardrails rows duplicates rows the step 6 lines already have",
+      "file": "specs/orbit-conventions/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Decision 1's heading says six sub-bullets; the fence and its text have five",
+      "file": "design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Address-reviews' new description length is given three ways",
+      "file": "proposal.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The convention's commit-step example will quote a heading the bodies no longer carry",
+      "file": "skill_body_convention.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The RG1 amendment has no implementation task",
+      "file": "orbit/changes/tighten-bodies/tasks.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Removing the new-change guardrail weakens its explicit boundary",
+      "file": "orbit/changes/tighten-bodies/specs/orbit-conventions/spec.md",
+      "verdict": "landed"
+    }
+  ],
+  "final_assessment": "0 critical, 2 warning, 0 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-11-17T21-21-46Z",
+    "2026-11-17T21-22-08Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews tighten-bodies",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "ffb3403099bd4d4e93204e61cd62d3e319c156bc",
+      "frozen": false,
+      "evidence": {
+        "files": [],
+        "share": null,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ]
+}

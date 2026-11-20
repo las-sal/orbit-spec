@@ -1,0 +1,130 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-17T19:31:31Z",
+  "change": "once-per-session-detail",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/once-per-session-detail/.orbit-runs/review-system-2026-11-17T19-24-34Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-17T19-24-34Z",
+  "latest_apply_token": "2026-11-17T19-18-20Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 1
+  },
+  "pushback_verification": "Verified at HEAD: RUN_SUMMARY_READ_CUE read \"Before the session's first emit\", while apply's account step runs orbit emit account before the run summary and any body may write ledger, stop or resolution records earlier.",
+  "resolution_summary": {
+    "resolved": 1,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "SUGGESTION",
+      "title": "The read cue's 'the session's first emit' also covers account and decision-record emits that precede the run summary",
+      "marker_source": "internal-review",
+      "file": "src/core/disciplines.ts",
+      "line": 487,
+      "classification": "trivial_fix",
+      "action": "named the moment the read cue means: \"the session's first run-summary emit\" in RUN_SUMMARY_READ_CUE and its comment, the requirement title, its cue sentence, table row and compaction limit, the convention's rule and quoted example, the CLAUDE.md summary, the tests (pinned cue and five @scenario tags), proposal, design and tasks; rebuilt, regenerated .claude/ (eleven bodies carry the new cue) and moved the sixteen skill-templates-parity pins; full suite 4,358 passed, validate clean",
+      "evidence": "src/core/disciplines.ts:487 read \"Before the session's first emit\"; both halves of the pair found it",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/templates/run-summary-read-cue.test.ts",
+          "test/core/templates/skill-templates-parity.test.ts",
+          "skill_body_convention.md",
+          "CLAUDE.md",
+          "orbit/changes/once-per-session-detail/proposal.md",
+          "orbit/changes/once-per-session-detail/design.md",
+          "orbit/changes/once-per-session-detail/tasks.md",
+          "orbit/changes/once-per-session-detail/specs/orbit-run-summary-emit/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "session's first emit",
+          "before its first emit"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/disciplines.ts",
+            "text": "Before the session's first run-summary emit, read"
+          },
+          {
+            "path": "orbit/changes/once-per-session-detail/specs/orbit-run-summary-emit/spec.md",
+            "text": "### Requirement: A body reads its run-summary detail before the session's first run-summary emit"
+          },
+          {
+            "path": "skill_body_convention.md",
+            "text": "the session's first run-summary emit, the end of apply"
+          },
+          {
+            "path": "CLAUDE.md",
+            "text": "the session's first run-summary emit, the end of apply or of a walk"
+          }
+        ],
+        "searched": [
+          "session's first emit (whitespace-normalized, across comment prefixes)",
+          "before its first emit",
+          "first emit"
+        ],
+        "scope": [
+          "src",
+          "test",
+          "orbit/architecture/reduce-orbit-phase1.md"
+        ],
+        "kept": [
+          {
+            "path": "orbit/changes/once-per-session-detail/explore.md",
+            "why": "the exploration record of D-opsd-4 as decided; its wording is history the walk does not rewrite"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "The one suggestion, found by both halves of the pair, resolved by a wording repair: the read cue and every text naming its moment now say the session's first run-summary emit.",
+  "iteration": 4,
+  "next_recommended": "/orbit:address-reviews once-per-session-detail",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "9c43eee38a0b20ee959c4c7975e3f51a3a55d754",
+      "frozen": true,
+      "evidence": {
+        "files": [],
+        "share": 0,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ],
+  "ripple_misses": 0
+}

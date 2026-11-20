@@ -1,0 +1,224 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-17T20:46:50Z",
+  "change": "tighten-bodies",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 3,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 2
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 4
+    }
+  },
+  "findings": [
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 313,
+      "title": "Provenance removal has no defined extent, and the ledger kind check cannot catch an instruction removed with a note",
+      "recommendation": "Define the removal unit and make the ledger's provenance check exact. In `Tightened bodies carry no provenance`, say that a mirror note's removal takes only the sentences or clauses that say the text is a copy, name its owner, say why the copy exists or tell authors not to edit it, and that a stage tag inside a parenthetical removes only the tag (and the parenthetical only when nothing else is left in it); every other word in the paragraph or parenthetical stays. Then give each of the six kinds a written pattern in that requirement (today the table lists example tokens, not patterns), and make the ledger's `provenance` check require the WHOLE removed span, less connecting punctuation, to be covered by those patterns, not merely to contain a match. Add a mutation in which a provenance pair also removes an instruction sentence from the same paragraph and is refused.",
+      "reproduction": "In the generated bodies at HEAD, instructions share a paragraph or parenthetical with the provenance the spec says is 'removed whole' or 'removed with their brackets': review's pass-genre mirror note ends 'The pass genre is a record and a header word; the gate reads nothing of it.'; review's sweep-scope note ends 'Grade over the paths it resolves, so you read the file the gate read.'; verify's note is a clause of the instruction 'Report what it returns by this table, a CHECKED MIRROR of ...'; archive's heading is 'NEW Step 3.4 — Gate inflection prompt (C1; every reviewed gate since rc10)' and Step 4.9's is '(`orbit pr preflight`, READ-ONLY, BEFORE the move — D-arc Stage D6; moved before the move by rc12)'. A pair removing the whole note paragraph, or the whole bracket, contains 'CHECKED MIRROR' or 'rc10' and so 'matches one of the six kinds' patterns' as written, and the hash reconstruction accepts it because the pair is listed; the instruction is lost with every check green."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "tasks.md",
+      "line": 24,
+      "title": "Task 4.3's residual removals cannot pass the ledger's provenance-kind check",
+      "recommendation": "Decide how a provenance form outside the six kinds is handled before apply, since the ledger requirement (specs/orbit-conventions/spec.md:313 and its scenario 'An instruction filed as provenance fails') refuses any `provenance` pair matching none of the six patterns, while task 4.3 removes exactly such forms 'under the same rules'.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Task 4.3 records each residual find in the account and leaves it in place for the evaluation; no residual removal is made in this stage."
+        },
+        {
+          "label": "B",
+          "body": "Add a seventh ledger kind, `residual`, whose pairs each name the form found; the ledger requirement's table gains its row and its check (the span is listed in the account), and the spec says so at propose."
+        }
+      ],
+      "reproduction": "audit-drift's body at HEAD carries 'the empirical tripwire behind the D-arc's harness-hooks deferral (R-d-2)': 'the D-arc's' is a pointer to orbit's history, the residual kind the spec names, and matches none of the six listed kinds. Removing it as task 4.3 asks yields a `provenance` pair that the ledger test fails."
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "design.md",
+      "line": 59,
+      "title": "Removing citations from the shared step headings changes blocks moved-blocks.test.ts pins by hash, which no D-tb-15 row covers",
+      "recommendation": "Say which copy of each shared heading changes and name the test edit it needs.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Remove the citation from the bodies' basic-content headings only: split ACCOUNT_STEP_HEADING and ACCOUNT_WALK_STEP_HEADING so the reference files' full steps keep theirs, and leave COMMIT_STEP and CHAIN_END_STEP unchanged; the moved-blocks hashes then hold."
+        },
+        {
+          "label": "B",
+          "body": "Edit both copies, and add a row to the ledger requirement's second table allowing moved-blocks.test.ts' RECORDED hashes to be re-recorded for a heading-only provenance edit; name moved-blocks.test.ts' hashes in Impact and Touchpoints."
+        }
+      ],
+      "reproduction": "src/core/disciplines.ts: ACCOUNT_STEP_HEADING ('## Account step (before the run summary — `orbit-decision-records`' ...)') is 'carried by both the step and its basic content', so it is the first line of ACCOUNT_STEP, and ACCOUNT_WALK_STEP_HEADING of ACCOUNT_WALK_STEP. test/core/templates/moved-blocks.test.ts:153 asserts sha(ACCOUNT_STEP) and sha(ACCOUNT_WALK_STEP) equal their RECORDED values; COMMIT_STEP and CHAIN_END_STEP are pinned the same way. Task 4.1's edit to these headings changes those hashes; the ledger requirement's second table has no row for it, so its last row stops apply."
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "tasks.md",
+      "line": 42,
+      "title": "Task 8.1's 'new size plus 5%, none rises' is contradictory for the four bodies that grow",
+      "recommendation": "State that a body whose new size plus 5% exceeds its current character ceiling keeps that ceiling unchanged, as a named edit, and name the bodies expected to (explore, bulk-archive, onboard, sync-specs), checking that each still fits under it; or, if a rise is wanted, it is an RG3 amendment to raise with Sal, not an apply-time edit.",
+      "reproduction": "Explore, bulk-archive and sync-specs gain the bullet's 112 characters and two quote characters; onboard gains its when-clause (about 80) and quotes; sync-specs loses only '(D1, per `orbit-lifecycle-consent`)' from one heading. With the ceilings in skill-body-budget.test.ts at their size plus 5% today (explore 52,432 for 49,935; bulk-archive 28,022 for 26,687; onboard 23,567 for 22,444; sync-specs 9,069 for 8,637), new size plus 5% is about 52,552, 28,142, 23,653 and 9,147: applying the task's formula raises four ceilings, which its own '(none rises)' and RG3 forbid."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "tasks.md",
+      "line": 28,
+      "title": "The planned frontmatter test's \"Use when\" / \"Use after\" check fails on audit-drift's unchanged description",
+      "recommendation": "Make the planned check and the descriptions agree before apply.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Reword audit-drift's description to 'Use when something feels off; ...' and list it beside address-reviews, architect and onboard in design Decision 4 (and the delta's sourcing sentence)."
+        },
+        {
+          "label": "B",
+          "body": "State the test's when-clause predicate so it accepts 'Use standalone when' (for example a 'Use' ... 'when' clause or 'Use after'), and keep design Decision 4's 'Audit-drift's description stays'."
+        }
+      ],
+      "reproduction": "The generated orbit-audit-drift/SKILL.md description reads '... Use standalone when something feels off; auto-invoked as Pass 6 ...'. It contains neither 'Use when' nor 'Use after', and design.md:85 keeps it unchanged, so the test task 5.1 adds fails on the day it lands."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 316,
+      "title": "The bullet carries three commands, not 'the four commands'",
+      "recommendation": "Name the commands the clause check holds (`orbit emit stop`, `orbit emit resolution`, `orbit emit ledger`) instead of a count; the one-paragraph form names three, and the record-routing flags `--change`/`--doc` are already the record-routing sentence."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 327,
+      "title": "Retargeting apply's two Guardrails rows duplicates rows the step 6 lines already have",
+      "recommendation": "chain-prompt-tags.test.ts already lists 'Task is unclear → ask for clarification' and 'Error or blocker encountered → report and wait for guidance' (and '**Pause if:** (chain: decision)'); retargeting the rows for Guardrails lines 4 and 7 onto them adds duplicates. Say the two rows are removed because their instruction's home is already listed (as explore's COHERE move for D-tb-3 says), in the ledger requirement's second table and task 3.1."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "design.md",
+      "line": 34,
+      "title": "Decision 1's heading says six sub-bullets; the fence and its text have five",
+      "recommendation": "Change the heading to 'five labelled sub-bullets', matching the delta fence and R-rop-7."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "proposal.md",
+      "line": 25,
+      "title": "Address-reviews' new description length is given three ways",
+      "recommendation": "The proposal says about 300, design Decision 4 and task 5.1 about 340, and the drafted text in design.md:78-81 measures 364 characters; give one figure (or 'under 400') so the size projection and the task agree."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "skill_body_convention.md",
+      "line": 39,
+      "title": "The convention's commit-step example will quote a heading the bodies no longer carry",
+      "recommendation": "If task 4.1 removes the citation from the commit step's basic-content heading, update skill_body_convention.md's Examples block (line 39) in task 6.2 alongside its Exceptions and budget-rule edits, and add it to Touchpoints."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 276,
+      "title": "The provenance residual method says the whole-body read happens at propose; task 4.3 does it at apply",
+      "recommendation": "Say 'reading each tightened body whole after the edits (task 4.3)' or name both reads, so the named limit's method matches when it actually runs; explore records no whole read at propose."
+    }
+  ],
+  "commentary": "The change is well sourced: every Guardrails removal's covering step line exists verbatim in the generated bodies, the restructured decision-writing fence keeps every word of the one-paragraph form (a word-multiset diff against DECISION_WRITING_DISCIPLINE loses only connectives, 2,835 to 2,947 characters, six lines), the thirteen mirror notes and eleven long references count out as stated, and the two MODIFIED mirror requirements change only the note clause. What was probed hardest is the stage's central claim, that no wording an agent acts on is removed, shown by tests. The hash reconstruction proves every edit is listed; it does not prove a listed edit removed only provenance, and that second half rests on a kind check whose patterns are not yet written and whose match rule is 'contains'. The places where provenance and instruction share a paragraph or a bracket are exactly where that matters. The other findings are apply-time collisions with existing tests and formulas (moved-blocks hashes, ceilings for bodies that grow, the when-clause predicate), each cheap to settle now and each a stop-the-edit at apply if left.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "direction": {
+    "disposition": "hold",
+    "reasoning": "Settle the removal extent and the provenance kind check before apply: they carry the stage's promise that nothing an agent acts on is lost, and as written a listed over-wide removal passes every check.\nThe residual-removal, shared-heading, ceiling and description-predicate questions each collide with an existing test or rule on the first run, so deciding them in the artifacts now saves apply from stopping on them one by one.\nThe rest of the design (the Guardrails table, the restructured bullet, the frontmatter quoting, the contents lists) is sound and ready."
+  },
+  "final_assessment": "0 critical, 5 warning, 6 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews tighten-bodies",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "c03d8754c2f45773e4f624ee37171ed324cc59be",
+      "frozen": false,
+      "evidence": {
+        "files": [],
+        "share": null,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ]
+}

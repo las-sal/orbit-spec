@@ -42,10 +42,10 @@ describe("the archive bodies carry the brief save step", () => {
     const b = body('orbit-archive-change');
     expect(count(b, BRIEF_SAVE_STEP)).toBe(1);
     const at = [
-      '## NEW Step 3.5 — Pre-archive audit-drift sweep',
-      "## NEW Step 3.6 — Save the change's brief (BEFORE the sync)",
+      '## Step 3.5 — Pre-archive audit-drift sweep',
+      "## Step 3.6 — Save the change's brief (BEFORE the sync)",
       BRIEF_SAVE_STEP,
-      '## NEW Step 4.9 — PR preflight',
+      '## Step 4.9 — PR preflight',
     ].map((s) => b.indexOf(s));
     expect(at.every((i) => i > -1)).toBe(true);
     expect([...at].sort((x, y) => x - y)).toEqual(at);

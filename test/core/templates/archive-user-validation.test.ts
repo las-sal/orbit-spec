@@ -28,16 +28,22 @@ const step3 = () => {
   const b = body();
   return b.slice(b.indexOf('3. **Check task completion status**'), b.indexOf('4. **Assess delta spec sync state**'));
 };
-const step32 = () => section(body(), '## NEW Step 3.2 — User-validation closure');
-const step34 = () => section(body(), '## NEW Step 3.4 — Gate inflection prompt');
+const step32 = () => section(body(), '## Step 3.2 — User-validation closure');
+/** Step 3.4's full text: since conditional-steps it is the archive skill's `references/gate-inflection.md`. */
+const step34 = () => {
+  const r = (getArchiveChangeSkillTemplate().references ?? []).find(x => x.name === 'gate-inflection.md');
+  expect(r, 'the archive skill ships references/gate-inflection.md').toBeDefined();
+  return (r as { content: string }).content;
+};
+/** Step 3.4's basic content in the body: the heading kept, the usual result handled, the reference named. */
+const step34Basic = () => section(body(), '## Step 3.4 — Gate inflection prompt');
 
 describe('archive body: Step 3 named edit (task 2.1)', () => {
   // @scenario text orbit-archive-modifications :: User-validation closure at the archive seam :: Step 3 no longer asks about validation tasks
-  it('Step 3 excludes every unchecked (User-validation task from its count and names the edit', () => {
+  it('Step 3 excludes every unchecked (User-validation task from its count', () => {
     const s = step3();
     expect(s).toContain('Exclude every unchecked task carrying the `(User-validation` marker from the count');
-    expect(s).toContain('Step 3.2 owns those');
-    expect(s).toContain("orbit named edit, per `orbit-archive-modifications`' `User-validation closure at the archive seam`");
+    expect(s).toContain('Step 3.2 owns those.');
     // Every other unchecked task still prompts, unchanged.
     expect(s).toContain('**If incomplete tasks found:**');
     expect(s).toContain('Use **AskUserQuestion tool** to confirm user wants to proceed');
@@ -47,8 +53,8 @@ describe('archive body: Step 3 named edit (task 2.1)', () => {
 describe('archive body: Step 3.2 user-validation closure (task 2.2)', () => {
   it('runs after Step 3 and before Step 3.4, ahead of the move', () => {
     const b = body();
-    expect(b.indexOf('## NEW Step 3.2')).toBeGreaterThan(b.indexOf('3. **Check task completion status**'));
-    expect(b.indexOf('## NEW Step 3.2')).toBeLessThan(b.indexOf('## NEW Step 3.4'));
+    expect(b.indexOf('## Step 3.2')).toBeGreaterThan(b.indexOf('3. **Check task completion status**'));
+    expect(b.indexOf('## Step 3.2')).toBeLessThan(b.indexOf('## Step 3.4'));
   });
 
   // @scenario text orbit-archive-modifications :: User-validation closure at the archive seam :: An observed validation is closed with its evidence
@@ -80,10 +86,10 @@ describe('archive body: Step 3.2 user-validation closure (task 2.2)', () => {
     expect(s).toContain('A marked task with no id, in no `## ` group, or with an id another task line carries (cases 2, 3 and 8), or a `tasks.md` that cannot be read, is REPORTED to the user, who repairs `tasks.md` before the archive proceeds, or aborts');
   });
 
-  it('carries the DEFERRAL REFUSALS production once, as a checked mirror naming its owner', () => {
+  it('carries the DEFERRAL REFUSALS production once, as a checked mirror with no note saying it is one', () => {
     const s = step32();
     expect(s).toContain('```\n' + DEFERRAL_REFUSALS + '\n```');
-    expect(s).toContain("CHECKED MIRROR of the production `orbit-archive-modifications`' `User-validation closure at the archive seam` states once");
+    expect(s).not.toMatch(/CHECKED MIRROR/i);
     expect(body().split(DEFERRAL_REFUSALS).length - 1).toBe(1);
   });
 });
@@ -107,6 +113,10 @@ describe('archive body: Step 3.4 widened (task 2.3)', () => {
   // @scenario text orbit-engine-gates :: Inflection-prompt override contract :: A superseded gate stays silent at archive
   it('fires no prompt when no gate is listed', () => {
     expect(step34()).toContain('When no gate is listed (every reviewed gate passed or superseded, or the schema declares none), proceed without prompting');
+    // The body's basic content handles that result itself and reads the reference only otherwise.
+    const basic = step34Basic();
+    expect(basic).toContain('When each is `passed` or `superseded: true` (or there are none), go on without prompting.');
+    expect(basic).toContain('Otherwise, or on a non-zero exit, read `references/gate-inflection.md` and follow it from the result you already have');
   });
 
   // @scenario text orbit-archive-modifications :: Archive run summary written :: Two gates proceeded past, two entries
@@ -120,7 +130,7 @@ describe('archive body: Step 3.4 widened (task 2.3)', () => {
 describe('archive body: completion readout (task 2.4)', () => {
   // @scenario text orbit-archive-modifications :: User-validation closure at the archive seam :: A validation possible only after shipping is deferred and printed
   it('prints one line per deferral', () => {
-    expect(body()).toContain('One line per Step 3.2 deferral (orbit, rc10): `deferred: <task> — <why>; when <when>, where <where>`');
+    expect(body()).toContain('One line per Step 3.2 deferral (orbit): `deferred: <task> — <why>; when <when>, where <where>`');
   });
 });
 
@@ -264,7 +274,9 @@ describe('archive schema reference and body (carried scenarios)', () => {
   });
 
   // @scenario text orbit-archive-modifications :: Archive run summary written :: not-ready does not block
-  it('the body says a not-ready readiness does not block', () => {
-    expect(body()).toContain('It does NOT block — the seam already carries consent, gate and audit prompts for stopping');
+  it("the archive's emit section says a not-ready readiness does not block", () => {
+    // once-per-session-detail: the readiness composition moved, with the emit section whole, to its reference.
+    const emit = (getArchiveChangeSkillTemplate().references ?? []).find(r => r.name === 'run-summary-emit.md')!.content;
+    expect(emit).toContain('It does NOT block — the seam already carries consent, gate and audit prompts for stopping');
   });
 });

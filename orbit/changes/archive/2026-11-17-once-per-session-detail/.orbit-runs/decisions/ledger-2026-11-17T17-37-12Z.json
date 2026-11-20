@@ -1,0 +1,43 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-17T17:37:12Z",
+  "change": "once-per-session-detail",
+  "model": "claude-opus-5-5",
+  "area": "when-things-go-wrong",
+  "decided": "Once the account step's rules move to a reference file, the apply skill tells the agent to read them when the apply gate reads passed at the end of the session; nothing in orbit reports a change whose apply is complete but which has no account.",
+  "alternatives": [
+    "have orbit status report a missing account when apply is complete",
+    "leave the account step whole in the apply and walk bodies"
+  ],
+  "why": "The gate's passed state is exactly when the step applies, and orbit already reports it, so it picks the read with no change to the engine, which this stage leaves alone; a report of a missing account would guard against a skipped read, and is weighed at the evaluation if real sessions are seen to skip it.",
+  "relies_on": [
+    {
+      "kind": "decision",
+      "id": "D-opsd-3"
+    },
+    {
+      "kind": "ruling",
+      "doc": "reduce-orbit-phase1",
+      "id": "R-rop-4"
+    },
+    {
+      "kind": "goal",
+      "doc": "reduce-orbit-phase1",
+      "id": "RG0"
+    }
+  ],
+  "defines": [
+    {
+      "term": "account",
+      "definition": "the plain-language note a change carries of what it built, where the user is newly asked something, and where the work left its plan"
+    },
+    {
+      "term": "apply gate",
+      "definition": "orbit's check that a change's tasks are done; it reads passed when every task is checked, or only user-validation handoffs remain"
+    },
+    {
+      "term": "reference file",
+      "definition": "a file beside a skill's body that the agent reads only when the body tells it to"
+    }
+  ]
+}

@@ -7,7 +7,7 @@
  */
 import { describe, it, expect } from 'vitest';
 import { getSkillTemplates, generateSkillContent } from '../../../src/core/shared/skill-generation.js';
-import { ACCOUNT_WALK_STEP } from '../../../src/core/disciplines.js';
+import { ACCOUNT_WALK_STEP, ACCOUNT_WALK_STEP_BASIC, ACCOUNT_WALK_STEP_REFERENCE_NAME } from '../../../src/core/disciplines.js';
 
 function skill(dirName: string): { body: string; ref: (name: string) => string } {
   const entry = getSkillTemplates().find(s => s.dirName === dirName);
@@ -51,7 +51,9 @@ describe('the walk resolves a reading finding against the account by a replaceme
   });
 
   it('step 7 carries the exception and the order of a fact-changing replacement after reading replacements', () => {
-    expect(walk).toContain(ACCOUNT_WALK_STEP);
+    // once-per-session-detail: the body carries step 7's basic content; its reference carries the full step.
+    expect(walk).toContain(ACCOUNT_WALK_STEP_BASIC);
+    expect(skill('orbit-address-reviews').ref(ACCOUNT_WALK_STEP_REFERENCE_NAME)).toContain(ACCOUNT_WALK_STEP);
     expect(ACCOUNT_WALK_STEP).toContain('The one exception is a reading finding against the account, below: its replacement rewords and states no new fact.');
     expect(ACCOUNT_WALK_STEP).toContain(
       '- **A reading finding against the account resolved** (its `file` under the change\'s account folder, read when the project\'s `signoff` setting is `change` or `program`) → write a replacement of the latest account for EACH such finding, at its resolution'

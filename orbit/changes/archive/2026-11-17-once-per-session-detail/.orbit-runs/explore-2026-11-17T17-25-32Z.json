@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-11-17T17:25:32Z",
+  "change": "once-per-session-detail",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Named exploration scaffolded for reduce-orbit-phase1's stage once-per-session-detail; the architecture citation is recorded at Sal's word. Six sections in place, nothing decided yet.",
+  "decisions_captured": 0,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 0,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:explore once-per-session-detail — continue capturing thinking — no decisions captured yet"
+}

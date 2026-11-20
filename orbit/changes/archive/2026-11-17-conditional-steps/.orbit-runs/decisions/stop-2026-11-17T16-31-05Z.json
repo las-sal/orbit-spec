@@ -1,0 +1,11 @@
+{
+  "command": "stop",
+  "timestamp": "2026-11-17T16:31:05Z",
+  "change": "conditional-steps",
+  "model": "claude-opus-5-5",
+  "condition": "ruling-amendment",
+  "about": "R-rop-6 ends by saying a chained command, in this session or a fresh one, meets no prompt tag its body does not explain; that is false today for archive, which a chain can arrive at, carries nine prompts tagged as decisions and has no chain end step, and for the 'not a prompt' tag, which the paragraph explaining the prompt tags that R-rop-6 keeps in each chaining body does not explain. The review found the change's revised rule repeating the claim.",
+  "question": "Should the change narrow the claim to what is true (the five chaining bodies explain the three prompt tags; archive is a named limit, as before this program; the 'not a prompt' tag names itself) and correct R-rop-6's last sentence to match, or make the claim true by adding the tag meaning to archive's body and a sentence on the 'not a prompt' tag?",
+  "detail": "Finding: fresh pass review-proposal-2026-11-17T14-08-41Z, WARNING at specs/orbit-conventions/spec.md:46. Counts from the generated bodies at 5a25ca5a: archive 9 (chain: decision), 1 (chain: not a prompt), no chain end step; apply 4 and address-reviews 2 (chain: not a prompt).",
+  "replaces": "stop-2026-11-17T14-14-43Z.json"
+}

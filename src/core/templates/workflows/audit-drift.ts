@@ -6,7 +6,7 @@
  * to the orbit-run-summary-emit baseline where the change's iter-1 review corrected it.
  */
 import type { SkillTemplate, CommandTemplate } from '../types.js';
-import { DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../disciplines.js';
+import { DECISION_RECORDS_REFERENCE, DECISION_WRITING_BASIC, RUN_SUMMARY_EMIT_REFERENCE_NAME, RUN_SUMMARY_READ_CUE, runSummaryEmitReference } from '../../disciplines.js';
 
 const AUDIT_DRIFT_RUN_SUMMARY_SCHEMA_REFERENCE = `# Reference: audit-drift run-summary schema
 
@@ -151,6 +151,28 @@ Run summary: orbit/.orbit-runs/audit-drift-2026-05-18T15-04-11Z.json
 \`\`\`
 `;
 
+// once-per-session-detail (reduce-orbit-phase1, D-opsd-4, D-opsd-9): the emit section, whole, is
+// `references/run-summary-emit.md`; the body carries its heading, the paragraphs that stay, the read cue and the command.
+const AUDIT_DRIFT_EMIT_HEADING = `### 10. Persist the run summary`;
+const AUDIT_DRIFT_EMIT_STANDALONE = `**Standalone invocations only** — library / pre-archive contexts write no separate JSON (findings fold into the caller's emit: the review's \`review-system-<TS>.json\` or the archive's \`archive-<TS>.json\` \`audit.*\` fields).`;
+const AUDIT_DRIFT_EMIT_COMMAND = `\`\`\`bash
+orbit emit audit-drift --change <name> --payload <payload-file>   # change-scoped standalone
+orbit emit audit-drift --payload <payload-file>                   # project-wide standalone (bare)
+\`\`\``;
+/** The emit section whole, as the body carried it before once-per-session-detail; shipped as `references/run-summary-emit.md`. */
+export const AUDIT_DRIFT_RUN_SUMMARY_EMIT = [
+  AUDIT_DRIFT_EMIT_HEADING,
+  `${AUDIT_DRIFT_EMIT_STANDALONE} Compose the payload in the shape of the **Example payload** in \`references/run-summary-schema.md\` — the only keys it may carry are the ones that example carries; the two counts are engine-computed and refused — write it to a temp file, and invoke:`,
+  AUDIT_DRIFT_EMIT_COMMAND,
+  `The ENGINE owns the spine, paths, collision handling, and the WHOLE \`next_recommended\` logic — all four mode × findings combinations, including the clean-run defer-to-prior-narrative rule. Never hand-compose them.`,
+].join('\n\n');
+/** The body's emit section: when the emit fires, the read cue, the command and the chat behaviour beside them. */
+export const AUDIT_DRIFT_RUN_SUMMARY_EMIT_BASIC = [
+  AUDIT_DRIFT_EMIT_HEADING,
+  `${AUDIT_DRIFT_EMIT_STANDALONE} ${RUN_SUMMARY_READ_CUE}`,
+  AUDIT_DRIFT_EMIT_COMMAND,
+].join('\n\n');
+
 export function getAuditDriftSkillTemplate(): SkillTemplate {
   return {
     name: 'orbit-audit-drift',
@@ -173,7 +195,7 @@ The disciplines from \`orbit-conventions\`, embedded per body; detail lives in t
 - **Change completeness (modification-time)**: audit-drift is scan-only; when a prior \`.orbit-runs/audit-drift-*.json\` is malformed or partial, the new summary is a clean rewrite — never merged with broken prior state.
 - **Pushback (review-time)**: verify each potential finding against current state per its category (term still present; capability genuinely missing, not renamed; both sides of a disagreement still exist; requirement truly absent from baseline). Suppress stale findings with an evidence note into \`stale_suppressed\` — never the user-facing report.
 - **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line — gate \`passed\` means *eligible*, not *commanded*.
-${DECISION_WRITING_DISCIPLINE}
+${DECISION_WRITING_BASIC}
 
 **Bias toward lower severity when uncertain.** SUGGESTION beats WARNING beats CRITICAL — signal, not volume.
 
@@ -260,7 +282,7 @@ Empty or absent lens files → skip Category 2 with the note \`lenses empty or a
 - Two docs disagree on the same fact → WARNING (both file:line refs + recommendation to reconcile).
 - A governing doc materially disagrees with a current spec → CRITICAL.
 
-**Architecture staleness check (D-arc Stage D2)** — Category 3 additionally checks parseable architecture docs against engine-computed reality ("a stale architecture doc is the most expensive drift there is"). Load \`orbit architecture status --json\` and, per parseable doc:
+**Architecture staleness check** — Category 3 additionally checks parseable architecture docs against engine-computed reality ("a stale architecture doc is the most expensive drift there is"). Load \`orbit architecture status --json\` and, per parseable doc:
 
 - **(a) Contradicting prose** — prose in a stage section that contradicts the stage's computed state (e.g. "awaits the user's propose" while a citing change is active) → WARNING.
 - **(b) Falsified/unsupported completion mark** — a \`Complete:\` mark — ratified \`[x]\` or ended \`[~]\` — on a stage whose observed state the engine's composition rule renders INCONSISTENT (the table in \`orbit-architecture-engine\`'s \`Computed stage state with completion-as-ratification\`; this check consumes that rule and enumerates none of its observations — read \`rendered\` and the \`inconsistency\` detail from the status JSON) → CRITICAL (the completion claim is falsified or unsupported by observation; the ended claim is contradicted by live work; the finding names the stage, the mark, and the citing artifact when one exists, with the detail's own words — a concluded exploration is named as a conclusion, never as live work).
@@ -282,7 +304,7 @@ Check (d) scans change/explore metadata INDEPENDENTLY of doc presence — a typo
 - **REMOVED requirement** in archived delta but **still present** in baseline → CRITICAL.
 - **RENAMED FROM** name still appearing in baseline (the rename didn't propagate) → WARNING.
 
-**Missing consent-record check (D1 tripwire, per \`orbit-lifecycle-consent\`)** — also scan ACTIVE changes, not only archived ones (any change with lifecycle emits is in scope):
+**Missing consent-record check (tripwire)** — also scan ACTIVE changes, not only archived ones (any change with lifecycle emits is in scope):
 
 For each change in scope, scan its \`.orbit-runs/\` for consent-scoped lifecycle emits (\`apply-*.json\`, \`archive-*.json\`) and apply the **three-tier era rule** from the change's \`.openspec.yaml\` metadata — the metadata markers are the ONLY authority (NOT schema-name resolution, which would misclassify old archives as the current version, and NOT any timestamp constant):
 
@@ -290,9 +312,9 @@ For each change in scope, scan its \`.orbit-runs/\` for consent-scoped lifecycle
 2. **\`consent_era_from\` present** (a straddler stamped at first post-capability touch) → only emits whose filename \`<TS>\` token is at-or-after the stamp are checked; earlier emits stay exempt.
 3. **NEITHER field** → fully pre-capability; every emit exempt (e.g. the C1/C2 archives).
 
-A checked emit **missing the \`consent\` field** → WARNING: \`lifecycle emit lacks consent record — an unconsented or contract-violating transition may have occurred\`, naming the emit path (e.g. \`orbit/changes/<name>/.orbit-runs/apply-<TS>.json\`) and the missing field (\`consent\`). This is the empirical tripwire behind the D-arc's harness-hooks deferral (R-d-2): its firing is the named re-entry trigger for hard enforcement.
+A checked emit **missing the \`consent\` field** → WARNING: \`lifecycle emit lacks consent record — an unconsented or contract-violating transition may have occurred\`, naming the emit path (e.g. \`orbit/changes/<name>/.orbit-runs/apply-<TS>.json\`) and the missing field (\`consent\`). This is the empirical tripwire behind the harness-hooks deferral: its firing is the named re-entry trigger for hard enforcement.
 
-### 7.5 Category 5 — Touchpoints divergence (D-arc Stage D5)
+### 7.5 Category 5 — Touchpoints divergence
 
 For each ACTIVE change whose \`design.md\` carries a \`## Touchpoints\` section AND whose apply has committed work: the divergence arithmetic is ENGINE-COMPUTED — the AI performs NO set arithmetic and NO matching, only severity judgment over the computed lists. Read them from ONE call:
 
@@ -308,7 +330,7 @@ The engine owns parse + matching per \`orbit-propose-modifications\`' Touchpoint
 - **Each \`predicted_unsatisfied\` entry** → SUGGESTION at pre-archive context only (the plan overshot — informational).
 - **Each \`malformed\` entry** (\`{line, text}\`) → SUGGESTION naming the line; the engine already excluded it from the arithmetic, never a false drift source.
 
-### 7.6 Category 6 — Explore emit attestation cross-check (D-arc Stage D5)
+### 7.6 Category 6 — Explore emit attestation cross-check
 
 For each staging exploration (\`orbit/explore/<name>/\`) with explore emits: cross-check the NEWEST emit's engine-computed counts (\`decisions_captured\`, \`open_questions_count\`, \`open_questions_with_recommendation\`) against a FRESH parse of the current \`explore.md\` (count per the five-section convention: Decisions entries; Open-question entries; those whose \`Standing recommendation:\` value is present and not the literal \`none yet\`). This closes leak-hardening layer 3's loop:
 
@@ -338,16 +360,7 @@ Stock phrasings, context-specific:
 | pre-archive | All clear | \`No drift detected.\` |
 | library | any | No standalone final-assessment emitted; findings handed to caller (folded into review report's Coherence dimension). |
 
-### 10. Persist the run summary
-
-**Standalone invocations only** — library / pre-archive contexts write no separate JSON (findings fold into the caller's emit: the review's \`review-system-<TS>.json\` or the archive's \`archive-<TS>.json\` \`audit.*\` fields). Compose the payload in the shape of the **Example payload** in \`references/run-summary-schema.md\` — the only keys it may carry are the ones that example carries; the two counts are engine-computed and refused — write it to a temp file, and invoke:
-
-\`\`\`bash
-orbit emit audit-drift --change <name> --payload <payload-file>   # change-scoped standalone
-orbit emit audit-drift --payload <payload-file>                   # project-wide standalone (bare)
-\`\`\`
-
-The ENGINE owns the spine, paths, collision handling, and the WHOLE \`next_recommended\` logic — all four mode × findings combinations, including the clean-run defer-to-prior-narrative rule. Never hand-compose them.
+${AUDIT_DRIFT_RUN_SUMMARY_EMIT_BASIC}
 
 ## Output format
 
@@ -381,6 +394,7 @@ When \`/orbit:audit-drift\` is called by \`/orbit:archive\` (library / pre-archi
         name: 'worked-example.md',
         content: AUDIT_DRIFT_WORKED_EXAMPLE_REFERENCE,
       },
+      { name: RUN_SUMMARY_EMIT_REFERENCE_NAME, content: runSummaryEmitReference(AUDIT_DRIFT_RUN_SUMMARY_EMIT) },
       { name: 'decision-records.md', content: DECISION_RECORDS_REFERENCE },
     ],
     license: 'MIT',

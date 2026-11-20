@@ -1,0 +1,25 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-17T20:13:32Z",
+  "change": "tighten-bodies",
+  "model": "claude-opus-5-5",
+  "area": "user-sees-or-does",
+  "decided": "Each skill's description, the short text that tells the user and the AI what the skill does and when to use it, will be written so a strict reader of the file format accepts it; the review-walk skill's description is cut from about 1,140 to about 300 characters; the architect and onboarding skills gain a sentence on when to use them; and the drift-scan skill's description is corrected from four categories to the six it runs.",
+  "alternatives": [
+    "reword only the three descriptions a strict reader refuses today, leaving later ones to break the same way",
+    "leave the descriptions as they are, since the reader Claude Code uses accepts them"
+  ],
+  "why": "RG2 asks for descriptions that are valid, at most 1,024 characters, and say what the skill does and when to use it; fixing the way every description is written, rather than three of them, keeps the next one valid too, and the shorter walk description costs every session less.",
+  "relies_on": [
+    {
+      "kind": "goal",
+      "doc": "reduce-orbit-phase1",
+      "id": "RG2"
+    },
+    {
+      "kind": "decision",
+      "id": "D-tb-9"
+    }
+  ],
+  "detail": "generateSkillContent writes description bare; metadata already goes through yamlScalar. The yaml package refuses orbit-address-reviews, orbit-architect and orbit-review frontmatter at a5ba0f0c."
+}

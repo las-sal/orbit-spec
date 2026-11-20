@@ -5,7 +5,28 @@
  * templates file into workflow-focused modules.
  */
 import type { SkillTemplate, CommandTemplate } from '../types.js';
-import { DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../disciplines.js';
+import { DECISION_RECORDS_REFERENCE, DECISION_WRITING_BASIC, RUN_SUMMARY_EMIT_REFERENCE_NAME, RUN_SUMMARY_READ_CUE, runSummaryEmitReference } from '../../disciplines.js';
+
+// once-per-session-detail (reduce-orbit-phase1, D-opsd-4, D-opsd-9): the emit section, whole, is
+// `references/run-summary-emit.md`; the body carries its heading, the paragraphs that stay, the read cue and the command.
+const NEW_EMIT_HEADING = `## Run-summary emit (one-shot at command completion — via the engine emit surface)`;
+const NEW_EMIT_COMMAND = `\`\`\`bash
+orbit emit new --change <name> --payload <payload-file>
+\`\`\``;
+/** The emit section whole, as the body carried it before once-per-session-detail; shipped as `references/run-summary-emit.md`. */
+export const NEW_RUN_SUMMARY_EMIT = [
+  NEW_EMIT_HEADING,
+  `(Per \`orbit-run-summary-emit\`; composed and written via \`orbit emit new\` — \`orbit-emit-composition\`.)`,
+  `At command completion, compose the narrative payload (\`final_assessment\` + the required nullable \`model\`) into a temp file and invoke:`,
+  NEW_EMIT_COMMAND,
+  `The ENGINE owns the spine, the trail path, timestamp + collision handling, and \`next_recommended\` composition (completion-aware: continue-vs-review from artifact state). Never hand-compose the JSON.`,
+].join('\n\n');
+/** The body's emit section: when the emit fires, the read cue, the command and the chat behaviour beside them. */
+export const NEW_RUN_SUMMARY_EMIT_BASIC = [
+  NEW_EMIT_HEADING,
+  `At command completion, write the new run summary. ${RUN_SUMMARY_READ_CUE}`,
+  NEW_EMIT_COMMAND,
+].join('\n\n');
 
 export function getNewChangeSkillTemplate(): SkillTemplate {
   return {
@@ -70,10 +91,8 @@ After completing the steps, summarize:
 
 **Guardrails**
 - Do NOT create any artifacts yet - just show the instructions
-- Do NOT advance beyond showing the first artifact template
 - If the name is invalid (not kebab-case), ask for a valid name
 - If a change with that name already exists, suggest continuing that change instead
-- Pass --schema if using a non-default workflow
 
 ---
 
@@ -87,21 +106,12 @@ The disciplines from \`orbit-conventions\`, embedded per body; detail lives wher
 - **Change completeness (modification-time)**: apply substantive modifications fully across ALL affected artifacts; after mechanical edits, sweep for residue AND new bugs the replacement introduced.
 - **Pushback (review-time)**: verify each flagged issue against current state before acting; suppress stale findings with evidence rather than re-fixing already-fixed state.
 - **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line — gate \`passed\` means *eligible*, not *commanded*.
-${DECISION_WRITING_DISCIPLINE}
+${DECISION_WRITING_BASIC}
 
-## Run-summary emit (one-shot at command completion — via the engine emit surface)
-
-(Per \`orbit-run-summary-emit\`; composed and written via \`orbit emit new\` — \`orbit-emit-composition\`.)
-
-At command completion, compose the narrative payload (\`final_assessment\` + the required nullable \`model\`) into a temp file and invoke:
-
-\`\`\`bash
-orbit emit new --change <name> --payload <payload-file>
-\`\`\`
-
-The ENGINE owns the spine, the trail path, timestamp + collision handling, and \`next_recommended\` composition (completion-aware: continue-vs-review from artifact state). Never hand-compose the JSON.
+${NEW_RUN_SUMMARY_EMIT_BASIC}
 `,
     references: [
+      { name: RUN_SUMMARY_EMIT_REFERENCE_NAME, content: runSummaryEmitReference(NEW_RUN_SUMMARY_EMIT) },
       { name: 'decision-records.md', content: DECISION_RECORDS_REFERENCE },
     ],
     license: 'MIT',

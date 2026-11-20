@@ -67,6 +67,7 @@ describe('validateSkillTemplates (preflight, orbit-skill-generation)', () => {
     ).toThrow(/Duplicate reference name/);
   });
 
+  // @scenario behaviour orbit-skill-generation :: Frontmatter metadata pass-through :: Invalid metadata key fails preflight
   it.each([
     ['integer-like', '1'],
     ['YAML-significant', 'a: b'],
@@ -301,6 +302,8 @@ describe('skillReferencesDrifted (declared-set + root-shape detection)', () => {
 });
 
 describe('metadata pass-through serialization (orbit-skill-generation)', () => {
+  // @scenario behaviour orbit-skill-generation :: Frontmatter metadata pass-through :: Arbitrary metadata keys survive generation
+  // @scenario behaviour orbit-skill-generation :: Frontmatter metadata pass-through :: generatedBy is generator-owned
   it('preserves non-alphabetic declared order, drops mid-position generatedBy, appends generator value last', () => {
     const template: SkillTemplate = {
       name: 't',

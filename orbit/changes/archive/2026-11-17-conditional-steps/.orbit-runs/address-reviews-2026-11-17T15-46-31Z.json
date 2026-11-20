@@ -1,0 +1,240 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-17T15:46:31Z",
+  "change": "conditional-steps",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/conditional-steps/.orbit-runs/review-system-2026-11-17T15-37-41Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-17T15-37-41Z",
+  "latest_apply_token": "2026-11-17T14-57-38Z",
+  "walk_mode": "per_finding",
+  "walk_mode_source": null,
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 3
+  },
+  "pushback_verification": "Verified against current state: design.md:275 still said about 600 while its Size section and the measured bodies give about 2,700; archive Step 3.7's pointer named only the hold's result; the moved pr-resolution.md and gate-inflection.md texts carry the self-reference and 'this body' phrases; pr-choreography.md measures 108 lines with no table of contents.",
+  "resolution_summary": {
+    "resolved": 4,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Design's Risks line still says RG1's projection is about 600 over; its own Size section and the measured bodies put it at about 2,700",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/conditional-steps/design.md",
+      "line": 275,
+      "classification": "trivial_fix",
+      "action": "corrected design's Risks bullet to the measured gap: about 2,700 over RG1 (bodies 389,374 at apply, about 352,700 after stages B and C), noting D-cs-11 was decided at about 600",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "RG1's projection is about 600 over"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/conditional-steps/design.md",
+            "text": "RG1's projection is about 2,700 over"
+          }
+        ],
+        "searched": [
+          "600",
+          "2,700",
+          "352,700"
+        ],
+        "scope": [
+          "orbit/changes/conditional-steps/proposal.md",
+          "orbit/changes/conditional-steps/tasks.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Archive Step 3.7's pointer hands over only the hold's result, while the moved table's third row reads the save's outcome",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/archive-change.ts",
+      "line": 537,
+      "classification": "trivial_fix",
+      "action": "archive Step 3.7's basic content now follows signoff-hold.md from the save's outcome and the result already in hand, as architect 5.4's does; design §3's draft, the archive delta's requirement text and the sign-off hold test move with it, and the archive parity hashes move with a dated comment",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/conditional-steps/design.md",
+          "orbit/changes/conditional-steps/specs/orbit-archive-modifications/spec.md",
+          "test/core/templates/signoff-hold-step.test.ts",
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "signoff-hold.md` and follow it from the result you already have",
+          "signoff-hold.md` and follow it, from the result it already has"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/templates/workflows/archive-change.ts",
+            "text": "follow it from the save's outcome and the result you already have, before the sync."
+          },
+          {
+            "path": "orbit/changes/conditional-steps/design.md",
+            "text": "read `references/signoff-hold.md` and follow it from the save's outcome and the result you already have"
+          },
+          {
+            "path": "orbit/changes/conditional-steps/specs/orbit-archive-modifications/spec.md",
+            "text": "follow it, from the save's outcome and the result it already has"
+          }
+        ],
+        "searched": [
+          "signoff-hold.md` and follow it",
+          "the result you already have",
+          "the result it already has"
+        ],
+        "scope": [
+          "src/core/templates/workflows",
+          "test/core/templates",
+          "skill_body_convention.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The moved arc-done act points at its own file and calls itself 'this body'; design's list of accepted positional pointers omits it",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/pr-choreography.ts",
+      "line": 222,
+      "classification": "trivial_fix",
+      "action": "named the three further positional phrases in design's Risks list: pr-resolution.md's self-reference and its 'this body makes no outward write', and gate-inflection.md's two 'this body' phrases",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/conditional-steps/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "and the Position paragraphs' \"placed last for reading\" labels. Each stays"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/conditional-steps/design.md",
+            "text": "which names that same file"
+          },
+          {
+            "path": "orbit/changes/conditional-steps/design.md",
+            "text": "which this body points at rather than restates"
+          }
+        ],
+        "searched": [
+          "this body",
+          "this step",
+          "just above",
+          "(below)",
+          "no row below",
+          "per `references/pr-resolution.md`"
+        ],
+        "scope": [
+          "src/core/templates/workflows/pr-choreography.ts",
+          "src/core/templates/workflows/archive-change.ts",
+          "src/core/templates/workflows/architect.ts",
+          "src/core/templates/workflows/propose.ts"
+        ],
+        "kept": []
+      },
+      "ripple_miss_of": {
+        "walk": "2026-11-17T14-19-38Z",
+        "title": "Byte-equal moves carry positional pointers that are wrong in their new homes; Risks names only one",
+        "file": "design.md",
+        "kind": "scope"
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "pr-choreography.md now runs past 100 lines with no table of contents (a new RG2 instance)",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/pr-choreography.ts",
+      "line": 75,
+      "classification": "trivial_fix",
+      "action": "added a Risks bullet naming pr-choreography.md (83 to 108 lines, no table of contents) as a new RG2 instance for stage tighten-bodies, to be named in the stage's Shipped-as paragraph at archive",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/conditional-steps/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/conditional-steps/design.md",
+            "text": "passes 100 lines with no table of contents"
+          }
+        ],
+        "searched": [
+          "table of contents",
+          "RG2",
+          "100 lines"
+        ],
+        "scope": [
+          "orbit/architecture/reduce-orbit-phase1.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Four of four resolved: design's Risks names the RG1 gap at about 2,700, the further positional phrases and pr-choreography.md's new RG2 instance for tighten-bodies; archive Step 3.7's basic content now hands over the save's outcome with the hold's result, as architect 5.4's does.",
+  "iteration": 4,
+  "next_recommended": "/orbit:review --as system conditional-steps",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "84ccb68254585f560169ebca2475c6fbff56b0fa",
+      "frozen": true,
+      "evidence": {
+        "files": [],
+        "share": 0,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ],
+  "ripple_misses": 1
+}

@@ -1,0 +1,76 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-17T19:31:41Z",
+  "change": "once-per-session-detail",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/once-per-session-detail/.orbit-runs/external-system-2026-11-17T19-24-53Z.md",
+  "source_command": null,
+  "source_token": "2026-11-17T19-24-53Z",
+  "latest_apply_token": "2026-11-17T19-18-20Z",
+  "external_reviewer": "GPT-6",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 1
+  },
+  "pushback_verification": "Converged with the fresh half's finding (same site, same claim, same proposed wording); walked in its log.",
+  "resolution_summary": {
+    "resolved": 0,
+    "stale_suppressed": 1,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "SUGGESTION",
+      "title": "Clarify which emit triggers the reference read",
+      "marker_source": "external",
+      "file": "src/core/disciplines.ts",
+      "line": 487,
+      "classification": "stale",
+      "action": "converged with the fresh half's finding, walked in its log",
+      "evidence": "resolved in address-reviews-2026-11-17T19-31-31Z (the earlier pass's log): RUN_SUMMARY_READ_CUE now reads \"Before the session's first run-summary emit\", the wording this finding proposed, with the requirement, convention, CLAUDE.md, tests and artifacts swept to match",
+      "outcome": "stale"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "The one suggestion converged with the fresh half's and is recorded stale against that log's fix.",
+  "iteration": 5,
+  "next_recommended": "/orbit:review --as system once-per-session-detail",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "9c43eee38a0b20ee959c4c7975e3f51a3a55d754",
+      "frozen": true,
+      "evidence": {
+        "files": [],
+        "share": 0,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ],
+  "ripple_misses": 0
+}

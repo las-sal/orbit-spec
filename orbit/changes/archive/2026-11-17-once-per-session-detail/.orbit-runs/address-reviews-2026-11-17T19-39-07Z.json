@@ -1,0 +1,275 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-17T19:39:07Z",
+  "change": "once-per-session-detail",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/once-per-session-detail/.orbit-runs/review-system-2026-11-17T19-37-15Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-17T19-37-15Z",
+  "latest_apply_token": "2026-11-17T19-18-20Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 5
+  },
+  "pushback_verification": "All six verified: the three ledger entries were unchanged since the reading and each quoted phrase was still in its field.",
+  "resolution_summary": {
+    "resolved": 6,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "ledger-2026-11-17T18-28-33Z.json, row 3: why says the gate counts a task handed to the user only after a session has 'recorded' it, which a reader takes as the task list",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/once-per-session-detail/.orbit-runs/decisions/ledger-2026-11-17T18-28-33Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote replacement ledger-2026-11-17T19-38-38Z.json, whose why says the gate counts a handed-off task once the session's run summary declares it, which is written after the account step",
+      "evidence": "ledger-2026-11-17T18-28-33Z.json unchanged since the reading; the phrase the finding names is still in the field",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/once-per-session-detail/.orbit-runs/decisions/ledger-2026-11-17T19-38-38Z.json",
+            "text": "only once a session's run summary has declared it, and that summary is written after the account step"
+          }
+        ],
+        "searched": [
+          "ledger-2026-11-17T18-28-33Z.json"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/once-per-session-detail/.orbit-runs/decisions/ledger-2026-11-17T18-28-33Z.json",
+            "why": "a replaced decision record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "ledger-2026-11-17T18-28-33Z.json, row 3: why's 'rides on every turn of every session' is unexplained shorthand",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/once-per-session-detail/.orbit-runs/decisions/ledger-2026-11-17T18-28-33Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote replacement ledger-2026-11-17T19-38-39Z.json of the latest record in the chain (19-38-38), whose why says the condition would sit in every apply and walk body, loaded on every turn",
+      "evidence": "ledger-2026-11-17T18-28-33Z.json unchanged since the reading; the phrase the finding names is still in the field",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/once-per-session-detail/.orbit-runs/decisions/ledger-2026-11-17T19-38-39Z.json",
+            "text": "would sit in every apply and walk body, which stays loaded on every turn of every session"
+          }
+        ],
+        "searched": [
+          "ledger-2026-11-17T18-28-33Z.json"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/once-per-session-detail/.orbit-runs/decisions/ledger-2026-11-17T19-38-38Z.json",
+            "why": "a replaced decision record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "ledger-2026-11-17T17-37-12Z.json, row 1: the apply gate's definition uses 'user-validation handoffs', which is not defined",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/once-per-session-detail/.orbit-runs/decisions/ledger-2026-11-17T17-37-12Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote replacement ledger-2026-11-17T19-38-40Z.json, whose apply-gate definition ends or only tasks handed to the user remain",
+      "evidence": "ledger-2026-11-17T17-37-12Z.json unchanged since the reading; the phrase the finding names is still in the field",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/once-per-session-detail/.orbit-runs/decisions/ledger-2026-11-17T19-38-40Z.json",
+            "text": "or only tasks handed to the user remain"
+          }
+        ],
+        "searched": [
+          "ledger-2026-11-17T17-37-12Z.json"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/once-per-session-detail/.orbit-runs/decisions/ledger-2026-11-17T17-37-12Z.json",
+            "why": "a replaced decision record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "ledger-2026-11-17T17-37-12Z.json, row 4: decided names only the apply skill while its alternatives and D-opsd-3 also set the walk's account step",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/once-per-session-detail/.orbit-runs/decisions/ledger-2026-11-17T17-37-12Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote replacement ledger-2026-11-17T19-38-41Z.json of the latest record in the chain (19-38-40), whose decided covers both account steps as D-opsd-3 did, with review walk defined",
+      "evidence": "ledger-2026-11-17T17-37-12Z.json unchanged since the reading; the phrase the finding names is still in the field",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/once-per-session-detail/.orbit-runs/decisions/ledger-2026-11-17T19-38-41Z.json",
+            "text": "and the review walk tells it to read its own after its logs, when the change is active and holds an account"
+          }
+        ],
+        "searched": [
+          "ledger-2026-11-17T17-37-12Z.json"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/once-per-session-detail/.orbit-runs/decisions/ledger-2026-11-17T19-38-40Z.json",
+            "why": "a replaced decision record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "ledger-2026-11-17T17-40-11Z.json, row 1: decided uses 'consent field', which is not defined",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/once-per-session-detail/.orbit-runs/decisions/ledger-2026-11-17T17-40-11Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote replacement ledger-2026-11-17T19-38-42Z.json, which defines consent field",
+      "evidence": "ledger-2026-11-17T17-40-11Z.json unchanged since the reading; the phrase the finding names is still in the field",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/once-per-session-detail/.orbit-runs/decisions/ledger-2026-11-17T19-38-42Z.json",
+            "text": "the field of a session record that says whether the user typed the command, answered a prompt for it, or a setting allowed it"
+          }
+        ],
+        "searched": [
+          "ledger-2026-11-17T17-40-11Z.json"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/once-per-session-detail/.orbit-runs/decisions/ledger-2026-11-17T17-40-11Z.json",
+            "why": "a replaced decision record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "ledger-2026-11-17T17-40-11Z.json, row 3: decided's 'before writing its first record' reads as the session's first decision record",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/once-per-session-detail/.orbit-runs/decisions/ledger-2026-11-17T17-40-11Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "wrote replacement ledger-2026-11-17T19-38-43Z.json of the latest record in the chain (19-38-42), whose decided says first session record and whose session-record definition names the run summary",
+      "evidence": "ledger-2026-11-17T17-40-11Z.json unchanged since the reading; the phrase the finding names is still in the field",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/once-per-session-detail/.orbit-runs/decisions/ledger-2026-11-17T19-38-43Z.json",
+            "text": "before writing its first session record"
+          }
+        ],
+        "searched": [
+          "ledger-2026-11-17T17-40-11Z.json"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/once-per-session-detail/.orbit-runs/decisions/ledger-2026-11-17T19-38-42Z.json",
+            "why": "a replaced decision record is never edited"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "All six reading findings resolved by replacement ledger entries, each replacing the latest record of its chain with area and relies_on unchanged; no file outside the trail changed.",
+  "iteration": 6,
+  "next_recommended": "/orbit:archive once-per-session-detail — user-invoked",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "9c43eee38a0b20ee959c4c7975e3f51a3a55d754",
+      "frozen": true,
+      "evidence": {
+        "files": [],
+        "share": 0,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ],
+  "ripple_misses": 0
+}

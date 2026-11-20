@@ -1,0 +1,14 @@
+schema: spec-driven
+created: 2026-11-17
+schema_version: 5
+base_fingerprints:
+  orbit-conventions:
+    Decision-writing discipline: sha256:e3fc838b8d1d3341e5249d53790d0feb1a1ad272dfce8c22b982679c45e723aa
+    Review mode decision framework: sha256:3bf3c26d5d1917acad8a26799d2db78501c27db184b6ab94f0a8d71d920e3d67
+  orbit-emit-composition:
+    A VERIFICATION-genre payload carries its verdicts and its findings link to the walk record: sha256:2aeb947f90041ebc3c715a6c8c29f239487d5e0ca5b66e0de068a68b582137d9
+  orbit-skill-generation:
+    Frontmatter metadata pass-through: sha256:074c13da478bcb07158a61cda6f1cbad0ebb5e5b36e06567f3474bc354e49e1f
+architecture:
+  doc: reduce-orbit-phase1
+  stage: tighten-bodies

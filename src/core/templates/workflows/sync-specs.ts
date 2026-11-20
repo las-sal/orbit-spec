@@ -5,7 +5,7 @@
  * templates file into workflow-focused modules.
  */
 import type { SkillTemplate, CommandTemplate } from '../types.js';
-import { DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../disciplines.js';
+import { DECISION_RECORDS_REFERENCE, DECISION_WRITING_BASIC } from '../../disciplines.js';
 
 export function getSyncSpecsSkillTemplate(): SkillTemplate {
   return {
@@ -151,9 +151,9 @@ The disciplines from \`orbit-conventions\`, embedded per body; detail lives wher
 - **Change completeness (modification-time)**: apply substantive modifications fully across ALL affected artifacts; after mechanical edits, sweep for residue AND new bugs the replacement introduced.
 - **Pushback (review-time)**: verify each flagged issue against current state before acting; suppress stale findings with evidence rather than re-fixing already-fixed state.
 - **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line — gate \`passed\` means *eligible*, not *commanded*.
-${DECISION_WRITING_DISCIPLINE}
+${DECISION_WRITING_BASIC}
 
-## Consent inheritance (D1, per \`orbit-lifecycle-consent\`)
+## Consent inheritance
 
 Sync invoked as a step inside a consented flow (e.g. archive Step 4, bulk-archive Step 8a) inherits that flow's consent and does NOT prompt separately. Standalone \`/orbit:sync\` is not consent-scoped (no consent-marked gate, no run-summary emit, no prompt); AI-mediated invocation of it is barred by the no-chaining discipline above.`,
     references: [

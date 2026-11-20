@@ -1,0 +1,95 @@
+{
+  "command": "archive",
+  "timestamp": "2026-11-17T23:55:01Z",
+  "change": "tighten-bodies",
+  "kind": "lifecycle",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Archived tighten-bodies to orbit/changes/archive/2026-11-17-tighten-bodies/: four requirements added and four modified across orbit-conventions, orbit-emit-composition and orbit-skill-generation, synced through the engine and byte-verified; the pre-archive audit found no critical drift and no warnings.",
+  "archive_path": "orbit/changes/archive/2026-11-17-tighten-bodies/",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 4
+    },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": [
+      "orbit-conventions",
+      "orbit-emit-composition",
+      "orbit-skill-generation"
+    ],
+    "added": 4,
+    "modified": 4,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
+  "user_decision": null,
+  "consent": "user-invoked",
+  "warnings": [],
+  "judgements": [
+    {
+      "kind": "readiness",
+      "formed_against": [
+        "2026-11-17T20-46-50Z",
+        "2026-11-17T20-47-13Z",
+        "2026-11-17T23-19-32Z",
+        "2026-11-17T23-20-08Z"
+      ],
+      "disposition": "ready",
+      "reasoning": "Both cadences ran in full: a blind pair at proposal and at system, each walked, each followed by an in-context verification that was walked in turn. Every finding the system cadence raised was record-keeping (a named limit's wording, two stale figures, the decision records' readability); none changed what an agent is told to do, and the edit ledger reconciles every edited body to its recorded hash.",
+      "ratified_by": "ai",
+      "accepted": [
+        {
+          "claim": "About 115 provenance forms remain in the twelve tightened bodies (forms outside the six kinds, and in-kind members the patterns cannot remove), recorded in the account.",
+          "why": "The stage's rule removes only what its patterns cover; the fresh system pass named the in-kind ones and the walk made the named limit say so (D-tb-18); whether to widen the patterns is the evaluation's."
+        },
+        {
+          "claim": "The external system pass returned no findings after a light read: no lens files exist, so it walked no perspectives or critical paths.",
+          "why": "The fresh half of the same pair read the generated bodies at the change start and at HEAD and found the substantive items; the pair together covered the change."
+        }
+      ]
+    }
+  ],
+  "pr_url": "https://github.com/las-sal/orbit-spec/pull/46",
+  "pr_state": "draft",
+  "next_recommended": "/orbit:architect reduce-orbit-phase1 — change archived; review stage tighten-bodies and take up the program's next stage, or run /orbit:audit-drift for a project-wide drift check.",
+  "decision_records_unread": 4,
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "ef55ee46c8966ac09dca3147330a976ab0136458",
+      "frozen": true,
+      "evidence": {
+        "files": [],
+        "share": 0,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ]
+}

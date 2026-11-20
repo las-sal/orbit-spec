@@ -1,0 +1,34 @@
+{
+  "command": "ledger",
+  "timestamp": "2026-11-19T15:58:32Z",
+  "change": "records-by-setting",
+  "model": "claude-opus-5-5",
+  "area": "defaults",
+  "decided": "With every setting at its default, the AI writes no new decision record, but it still records the user's answer to a stop already in the change's history and still writes the corrected version of a record a review found unclear.",
+  "alternatives": [
+    "forbid every record at the defaults and name the gaps this leaves as limits",
+    "have the command also look at the change's history, so an existing record turns writing on"
+  ],
+  "why": "Records already in a history keep being read at the defaults, and a stop written while a setting was on must still be answerable after it is turned off; forbidding these would leave a stop unanswered or a record unfixable.",
+  "relies_on": [
+    {
+      "kind": "ruling",
+      "doc": "reduce-orbit-phase1",
+      "id": "R-rop-17"
+    },
+    {
+      "kind": "decision",
+      "id": "D-rbs-8"
+    }
+  ],
+  "defines": [
+    {
+      "term": "decision record",
+      "definition": "A small file the AI writes when it makes a call in one of eighteen listed areas, or before it stops to ask at one of five listed situations, with the answer recorded beside it."
+    },
+    {
+      "term": "stop",
+      "definition": "A record that the AI needed the user at a moment, holding the question put to them; it stays open until a record of the answer names it."
+    }
+  ]
+}

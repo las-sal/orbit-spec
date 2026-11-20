@@ -497,6 +497,10 @@ One goal per phase, each falsifiable, each stage naming its goal (settled under 
   body template, the spec check, the surface test and the parser all read — is rc13b's, recorded
   in that stage's handoff.
 
+  **Amended** (Sal, 2026-11-17, `reduce-orbit-phase1`'s R-rop-14): the first condition is dropped —
+  a skill body's mirror no longer says it is one or names its owner. The other two stand: a test
+  holds it BYTE-EQUAL to the owner, and it is a COPY, never an extension.
+
   **The boundary.** This does not forbid a body from telling its reader what will happen to them:
   an instruction needs its consequence in place. It forbids the body from carrying the rule's
   DEFINITION — the class list, the exclusion, the comparison — which is what turns a pointer into

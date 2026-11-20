@@ -1,0 +1,16 @@
+{
+  "command": "propose",
+  "timestamp": "2026-11-17T17:55:36Z",
+  "change": "once-per-session-detail",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Consumed the exploration (7 decisions, no open questions; D-opsd-3 SOURCED and D-opsd-4 BOUNDED, both carried into spec text). Two capabilities: orbit-decision-records' account requirement MODIFIED (all 11 scenarios carried, 2 added; the bodies carry the basic content, the references the full step) and orbit-run-summary-emit gains 'A body reads its run-summary detail before the session's first emit' with D-opsd-4's residual verbatim. A probe at propose (moving text removed in a throwaway worktree) found 29 failing tests in 14 files; the requirement prose of only one capability pins the text. Design Decision 2 departs from D-opsd-5's last sentence: the moved emit text goes to a new small references/run-summary-emit.md in each of the seven skills, since joining the existing schema references would make each session read 15,000 to 31,000 characters. Paragraph classification (D-opsd-4's residual method) found two kinds the table lacked, provenance notes and a rationale, now rows of the requirement. 12 tasks in 3 chunks, the last in a fresh apply session on the regenerated bodies (D-opsd-6). Size within every ceiling.",
+  "pr_attachment": {
+    "branch": "reduce-orbit-phase1",
+    "granularity": "per-architecture",
+    "doc": "reduce-orbit-phase1",
+    "url": "https://github.com/las-sal/orbit-spec/pull/46",
+    "state": "draft"
+  },
+  "next_recommended": "/orbit:review once-per-session-detail — proposal artifacts ready; review before apply"
+}

@@ -1,14 +1,16 @@
 /**
  * decision-writing (`orbit-conventions`' `Decision-writing discipline` and `Decision-record reference
- * ships beside the statement`): the fifth execution discipline is OWNED by the fence in the spec and
- * carried in code by `src/core/disciplines.ts`, composed from the write gate's own lists. This test
- * is the seam between them, and between the module and every generated workflow body.
+ * ships beside the statement`): the fifth execution discipline is OWNED by two fences in the spec — the
+ * rule and its basic content (`records-by-setting`) — and carried in code by `src/core/disciplines.ts`,
+ * the rule composed from the write gate's own lists. This test is the seam between them, between the basic
+ * content and every generated workflow body, and between the rule and the reference that carries it.
  */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import * as fs from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
 import {
+  DECISION_WRITING_BASIC,
   DECISION_WRITING_DISCIPLINE,
   DECISION_RECORDS_REFERENCE,
   DECISION_RECORD_EXAMPLES,
@@ -28,8 +30,17 @@ import { composeAndWriteEmit } from '../../src/core/emit-composition.js';
 import { getSkillTemplates } from '../../src/core/shared/skill-generation.js';
 import { ownerText, fencedProduction } from '../helpers/owner-text.js';
 import { REFERENCES } from '../helpers/schema-references.js';
+import { decisionStatus } from '../../src/core/decision-status.js';
 
 const FIRST_LINE = '- **Decision-writing (call-time)**';
+/**
+ * The two fences share the label, and `fencedProduction` returns the first fence it finds, so each is found by a
+ * prefix longer than the label: the rule's continues "when `orbit decisions status`", the basic content's "at each
+ * command's first step".
+ */
+const RULE_PREFIX = FIRST_LINE + ': when `orbit decisions status`';
+const BASIC_PREFIX = FIRST_LINE + ": at each command's first step";
+const RULE_HEADING = '## When to write a record';
 const REF_NAME = 'decision-records.md';
 const EPITOME = '## Execution disciplines (epitome)';
 
@@ -64,16 +75,21 @@ function carryFailure(body: string, statement: string): string | null {
   if (count !== 1) return `the statement appears ${count} times`;
   const ep = epitomeLines(body);
   if (ep === null) return 'no epitome heading';
-  const bullets = ep.filter(l => l.startsWith('- '));
-  const nc = bullets.findIndex(l => l.startsWith('- **No-chaining'));
+  const nc = ep.findIndex(l => l.startsWith('- **No-chaining'));
   if (nc < 0) return 'no no-chaining bullet';
-  if (bullets[nc + 1] !== statement) return 'the bullet after no-chaining is not the statement';
+  const next = ep.findIndex((l, k) => k > nc && l.startsWith('- '));
+  const lines = statement.split('\n');
+  if (next < 0 || ep.slice(next, next + lines.length).join('\n') !== statement) {
+    return 'the bullet after no-chaining is not the statement';
+  }
   return null;
 }
 
 /** The field names a reference's record section lists, in order. */
 function sectionOf(ref: string, command: DecisionCommand): string {
-  const start = ref.indexOf(`(\`orbit emit ${command}\`)`);
+  // The section's heading line, not the contents list's entry naming it (tighten-bodies).
+  const at = ref.search(new RegExp(`\\n## [^\\n]*\\(\`orbit emit ${command}\`\\)`));
+  const start = at < 0 ? -1 : at + 1;
   if (start < 0) return '';
   const next = ref.indexOf('\n## ', start);
   return ref.slice(start, next < 0 ? undefined : next);
@@ -135,11 +151,18 @@ function conditionList(statement: string): string {
 
 describe('decision-writing statement ↔ owning fence', () => {
   // @scenario text orbit-conventions :: Decision-writing discipline :: The statement is composed from the write gate's lists
-  it('the module string equals the owning fence', async () => {
+  it('the module\'s rule equals the rule fence', async () => {
     const owner = await ownerText('orbit-conventions', '```\n' + FIRST_LINE);
-    expect(DECISION_WRITING_DISCIPLINE, 'decision-writing statement diverged from its owner').toBe(
-      fencedProduction(owner, FIRST_LINE)
-    );
+    expect(DECISION_WRITING_DISCIPLINE, 'decision-writing rule diverged from its owner').toBe(fencedProduction(owner, RULE_PREFIX));
+  });
+
+  // @scenario text orbit-conventions :: Decision-writing discipline :: Every workflow body carries the basic content
+  it('the module\'s basic content equals the basic-content fence', async () => {
+    const owner = await ownerText('orbit-conventions', '```\n' + FIRST_LINE);
+    expect(DECISION_WRITING_BASIC, 'decision-writing basic content diverged from its owner').toBe(fencedProduction(owner, BASIC_PREFIX));
+    // Mutation: the shared label alone finds the basic content's fence first, which is not the rule.
+    expect(fencedProduction(owner, FIRST_LINE)).toBe(DECISION_WRITING_BASIC);
+    expect(fencedProduction(owner, FIRST_LINE)).not.toBe(DECISION_WRITING_DISCIPLINE);
   });
 
   // @scenario text orbit-conventions :: Decision-writing discipline :: The statement is composed from the write gate's lists
@@ -151,7 +174,8 @@ describe('decision-writing statement ↔ owning fence', () => {
 
   it('mutation: each check fails on a clean mutation', async () => {
     const owner = await ownerText('orbit-conventions', '```\n' + FIRST_LINE);
-    const fence = fencedProduction(owner, FIRST_LINE);
+    const fence = fencedProduction(owner, RULE_PREFIX);
+    expect(DECISION_WRITING_BASIC.replace('first step', 'last step')).not.toBe(fencedProduction(owner, BASIC_PREFIX));
     expect(DECISION_WRITING_DISCIPLINE.replace('call-time', 'call time')).not.toBe(fence);
     // A dropped area, and two swapped conditions, are each caught by the order check.
     expect(inOrder(DECISION_WRITING_DISCIPLINE.replace('`licensing`, ', ''), LEDGER_AREAS)).toBe('licensing');
@@ -161,7 +185,7 @@ describe('decision-writing statement ↔ owning fence', () => {
   });
 });
 
-describe('every epitome-carrying workflow body carries the statement', () => {
+describe('every epitome-carrying workflow body carries the basic content, and none the rule', () => {
   const skills = getSkillTemplates();
   const carriers = skills.filter(s => s.template.instructions.includes(EPITOME));
 
@@ -170,12 +194,57 @@ describe('every epitome-carrying workflow body carries the statement', () => {
     expect(skills.filter(s => !carriers.includes(s)).map(s => s.dirName)).toEqual(['orbit-onboard']);
   });
 
+  it('the rule is a label line and five labelled sub-bullets nested under it; the basic content is one line', () => {
+    expect(DECISION_WRITING_BASIC.split('\n')).toHaveLength(1);
+    expect(DECISION_WRITING_BASIC.startsWith(FIRST_LINE)).toBe(true);
+    const lines = DECISION_WRITING_DISCIPLINE.split('\n');
+    expect(lines[0].startsWith(FIRST_LINE)).toBe(true);
+    expect(lines.slice(1).map(l => l.match(/^  - \*([^*]+)\*: /)?.[1] ?? l)).toEqual([
+      'Before asking',
+      'Acting without asking',
+      'After a call',
+      'Not a stop',
+      'Where records go',
+    ]);
+  });
+
+  /** The rule's lines a body must not carry: any one of them would mean the rule, or part of it, is back in a body. */
+  const ruleLeak = (body: string): string | null => DECISION_WRITING_DISCIPLINE.split('\n').find(l => body.includes(l)) ?? null;
+
   for (const s of carriers) {
-    // @scenario text orbit-conventions :: Decision-writing discipline :: Every workflow body carries the statement
-    it(`${s.dirName}: exactly once, as the bullet after no-chaining`, () => {
-      expect(carryFailure(s.template.instructions, DECISION_WRITING_DISCIPLINE)).toBeNull();
+    // @scenario text orbit-conventions :: Decision-writing discipline :: Every workflow body carries the basic content
+    it(`${s.dirName}: the basic content exactly once, as the bullet after no-chaining, and no line of the rule`, () => {
+      expect(carryFailure(s.template.instructions, DECISION_WRITING_BASIC)).toBeNull();
+      expect(ruleLeak(s.template.instructions)).toBeNull();
     });
   }
+
+  it('mutation: a body carrying the rule, or one sub-bullet of it, is caught', () => {
+    const body = carriers[0].template.instructions;
+    expect(ruleLeak(body.replace(DECISION_WRITING_BASIC, DECISION_WRITING_DISCIPLINE))).not.toBeNull();
+    expect(ruleLeak(body + '\n' + DECISION_WRITING_DISCIPLINE.split('\n')[3])).not.toBeNull();
+  });
+
+  // @scenario text orbit-conventions :: Decision-writing discipline :: The basic content names when the command runs
+  it('the basic content names each command\'s first step and the session\'s config edit as the moments, and the result governs the command', () => {
+    expect(DECISION_WRITING_BASIC).toContain("at each command's first step");
+    expect(DECISION_WRITING_BASIC).toContain('again after this session edits the project config (`orbit/config.yaml` or `.yml`)');
+    expect(DECISION_WRITING_BASIC).toContain('run `orbit decisions status --json`');
+    expect(DECISION_WRITING_BASIC).toContain(`On \`write: true\`, read \`references/${REF_NAME}\` and follow its rule for the rest of the command.`);
+  });
+
+  // @scenario behaviour orbit-conventions :: Decision-writing discipline :: At the defaults the body directs no record
+  it('at the defaults the command reports write: false, and the basic content says write: false writes no new ledger entry or stop', () => {
+    const empty = fs.mkdtempSync(path.join(os.tmpdir(), 'decision-defaults-'));
+    try {
+      expect(decisionStatus(empty)).toEqual({ write: false, readers: [] });
+    } finally {
+      fs.rmSync(empty, { recursive: true, force: true });
+    }
+    expect(DECISION_WRITING_BASIC).toContain('On `write: false`, write no new ledger entry or stop record;');
+    // and an answer or a fix of a record already in the trail is still written
+    expect(DECISION_WRITING_BASIC).toContain('a resolution answering a stop already in the trail, or a replacement fixing a record already there, is still written');
+  });
 
   /** Why an epitome is not one bullet per discipline ending no-chaining, decision-writing, or null (review leads with pushback). */
   const DISCIPLINES = ['Read-before-reference', 'Change completeness', 'Pushback', 'No-chaining', 'Decision-writing'];
@@ -197,23 +266,26 @@ describe('every epitome-carrying workflow body carries the statement', () => {
     // Mutation: a dropped bullet and an extra one each fail.
     const body = carriers[0].template.instructions;
     expect(epitomeFailure(body.replace(/\n- \*\*Pushback[^\n]*/, ''))).toMatch(/bullets are/);
-    expect(epitomeFailure(body.replace(DECISION_WRITING_DISCIPLINE, DECISION_WRITING_DISCIPLINE + '\n- **Extra**: x'))).toMatch(/bullets are/);
+    expect(epitomeFailure(body.replace(DECISION_WRITING_BASIC, DECISION_WRITING_BASIC + '\n- **Extra**: x'))).toMatch(/bullets are/);
   });
 
-  it('mutation: a duplicated statement, a moved one and a missing one each fail', () => {
+  it('mutation: a duplicated basic content, a moved one and a missing one each fail', () => {
     const body = carriers[0].template.instructions;
-    expect(carryFailure(body + '\n' + DECISION_WRITING_DISCIPLINE, DECISION_WRITING_DISCIPLINE)).toMatch(/2 times/);
-    expect(carryFailure(body.replace(DECISION_WRITING_DISCIPLINE, ''), DECISION_WRITING_DISCIPLINE)).toMatch(/0 times/);
+    expect(carryFailure(body + '\n' + DECISION_WRITING_BASIC, DECISION_WRITING_BASIC)).toMatch(/2 times/);
+    expect(carryFailure(body.replace(DECISION_WRITING_BASIC, ''), DECISION_WRITING_BASIC)).toMatch(/0 times/);
     const lines = body.split('\n');
-    const i = lines.indexOf(DECISION_WRITING_DISCIPLINE);
+    const i = lines.indexOf(DECISION_WRITING_BASIC);
     const nc = lines.findIndex((l, k) => k < i && l.startsWith('- **No-chaining'));
     const moved = [...lines];
     moved.splice(i, 1);
-    moved.splice(nc, 0, DECISION_WRITING_DISCIPLINE);
-    expect(carryFailure(moved.join('\n'), DECISION_WRITING_DISCIPLINE)).toMatch(/after no-chaining/);
+    moved.splice(nc, 0, DECISION_WRITING_BASIC);
+    expect(carryFailure(moved.join('\n'), DECISION_WRITING_BASIC)).toMatch(/after no-chaining/);
+    // A clause dropped from one body's copy is caught too.
+    const short = body.replace(' — read that reference when you write one', '');
+    expect(carryFailure(short, DECISION_WRITING_BASIC)).toMatch(/0 times/);
   });
 
-  // @scenario text orbit-conventions :: Decision-record reference ships beside the statement :: Every statement-carrying skill ships the reference
+  // @scenario text orbit-conventions :: Decision-record reference ships beside the statement :: Every skill carrying the basic content ships the reference
   it('every carrier ships references/decision-records.md byte-equal, and no other skill ships it', () => {
     for (const s of skills) {
       const refs = (s.template.references ?? []).filter(r => r.name === REF_NAME);
@@ -228,6 +300,51 @@ describe('every epitome-carrying workflow body carries the statement', () => {
 });
 
 describe('the decision-record reference', () => {
+  /** Why the reference fails to carry the rule whole in its first section, named first in its Contents, or null. */
+  const ruleSectionFailure = (ref: string): string | null => {
+    const contents = ref.indexOf('## Contents\n\n');
+    if (contents < 0) return 'no Contents';
+    const firstEntry = ref.slice(contents + '## Contents\n\n'.length).split('\n')[0];
+    if (firstEntry !== '- When to write a record') return `the Contents list opens with ${JSON.stringify(firstEntry)}`;
+    const sections = [...ref.matchAll(/^## (.*)$/gm)].map(m => m[1]).filter(h => h !== 'Contents');
+    if (sections[0] !== 'When to write a record') return `the first section is ${JSON.stringify(sections[0])}`;
+    const start = ref.indexOf(`\n${RULE_HEADING}\n\n`) + `\n${RULE_HEADING}\n\n`.length;
+    const end = ref.indexOf('\n\n## ', start);
+    if (ref.slice(start, end) !== DECISION_WRITING_DISCIPLINE) return 'the first section is not the rule, byte-equal';
+    return null;
+  };
+
+  // @scenario text orbit-conventions :: Decision-record reference ships beside the statement :: The reference carries the rule whole
+  it('its first section, When to write a record, carries the rule byte-equal, and the Contents list names it first', () => {
+    expect(ruleSectionFailure(DECISION_RECORDS_REFERENCE)).toBeNull();
+    // Mutation: a dropped sub-bullet, and a Contents list that no longer leads with the section, each fail.
+    expect(ruleSectionFailure(DECISION_RECORDS_REFERENCE.replace(/\n  - \*Not a stop\*[^\n]*/, ''))).toMatch(/not the rule/);
+    expect(ruleSectionFailure(DECISION_RECORDS_REFERENCE.replace('- When to write a record\n', ''))).toMatch(/Contents list opens/);
+  });
+
+  /** The reference's opening sentence: the paragraph after the Contents list. */
+  const openingSentence = (ref: string): string => {
+    const after = ref.slice(ref.indexOf('## Contents\n\n'));
+    return after.split('\n\n')[2] ?? '';
+  };
+
+  // @scenario text orbit-conventions :: Decision-record reference ships beside the statement :: The reference lets an answer or a fix through at write: false
+  it('its opening sentence says it is read for an answer or a fix too, which the rule section\'s write: true condition does not cover', () => {
+    const opening = openingSentence(DECISION_RECORDS_REFERENCE);
+    expect(opening.startsWith('Read this reference when `orbit decisions status` reports `write: true`')).toBe(true);
+    expect(opening).toContain('or when you answer a stop already in the trail or fix a record already there');
+    expect(opening).toContain('its first section says WHEN to write a record, and the rest WHAT each one holds');
+    expect(opening).toContain("on `write: false` that section's `write: true` condition does not cover such an answer or fix, which follows that record's own section and Fixing a record.");
+    // One sentence, as the spec says it opens.
+    expect(opening.split(/\. (?=[A-Z])/)).toHaveLength(1);
+    // The sections it names exist: each record's own, and Fixing a record.
+    expect(DECISION_RECORDS_REFERENCE).toContain('\n## Fixing a record\n');
+    for (const c of REFERENCE_RECORD_ORDER) expect(DECISION_RECORDS_REFERENCE).toMatch(new RegExp(`\\n## [^\\n]*\\(\`orbit emit ${c}\`\\)`));
+    // Mutation: the opening sentence as it read before records-by-setting fails.
+    const old = DECISION_RECORDS_REFERENCE.replace(opening, 'The decision-writing discipline in this skill says WHEN to write a record; this reference says WHAT each one holds.');
+    expect(openingSentence(old)).not.toContain('fix a record already there');
+  });
+
   it('presents every record once', () => {
     expect([...REFERENCE_RECORD_ORDER].sort()).toEqual([...DECISION_COMMANDS].sort());
   });

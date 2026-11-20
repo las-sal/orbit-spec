@@ -1,0 +1,19 @@
+{
+  "command": "stop",
+  "timestamp": "2026-11-18T00:27:46Z",
+  "change": "evaluation",
+  "model": "claude-opus-5-5",
+  "condition": "ruling-amendment",
+  "about": "Whether orbit writes decision records when no setting uses them. Today every workflow body carries the decision-writing rule and the AI writes a record at each listed call and stop under every setting; a system review then has a reader check them. In a supervised project nothing else reads them. The program's evaluation stage must decide whether that stays the default, and one answer would amend automate-dev-flow's goal G0, which says every record today's flow writes is still written under any setting.",
+  "question": "Should decision records stay written in every mode, or be written only when a setting that reads them is on (chaining, and later the autonomous driver), with the rule leaving the bodies at the defaults, which amends automate-dev-flow's G0?",
+  "defines": [
+    {
+      "term": "decision record",
+      "definition": "A small file the AI writes when it makes a call in one of eighteen listed areas (a ledger entry), or reaches one of five situations where it must stop and ask (a stop record), with the answer as a resolution."
+    },
+    {
+      "term": "reading step",
+      "definition": "The part of a system review in which a separate reader checks that the change's decision records make sense to someone who knows only the program's architecture doc."
+    }
+  ]
+}

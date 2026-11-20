@@ -5,8 +5,36 @@
  * templates file into workflow-focused modules.
  */
 import type { SkillTemplate, CommandTemplate } from '../types.js';
-import { DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../disciplines.js';
+import { DECISION_RECORDS_REFERENCE, DECISION_WRITING_BASIC, RUN_SUMMARY_EMIT_REFERENCE_NAME, RUN_SUMMARY_READ_CUE, runSummaryEmitReference } from '../../disciplines.js';
 
+// once-per-session-detail (reduce-orbit-phase1, D-opsd-4, D-opsd-9): the emit section, whole, is
+// `references/run-summary-emit.md`; the body carries its heading, the paragraphs that stay, the read cue and the command.
+const VERIFY_EMIT_HEADING = `## Run-summary emit (one-shot at command completion — via the engine emit surface)`;
+const VERIFY_EMIT_COMMAND = `\`\`\`bash
+orbit emit verify --change <name> --payload <payload-file>
+\`\`\``;
+/** The emit section whole, as the body carried it before once-per-session-detail; shipped as `references/run-summary-emit.md`. */
+export const VERIFY_RUN_SUMMARY_EMIT = [
+  VERIFY_EMIT_HEADING,
+  `(Per \`orbit-run-summary-emit\`; composed and written via \`orbit emit verify\` — \`orbit-emit-composition\`.)`,
+  `At command completion, compose the narrative payload (\`final_assessment\`, \`verdict\`, \`fail_mode\`, \`validator_message\`, \`warnings_count\` (required when \`fail_mode: "warnings"\`), \`scenarios_failed\` (optional count with \`fail_mode: "scenarios-fail"\`), + the required nullable \`model\`) into a temp file and invoke:`,
+  VERIFY_EMIT_COMMAND,
+  `The ENGINE owns the spine, the trail path, timestamp + collision handling, and \`next_recommended\` composition (the fail-mode-conditional recommendation — validator-error / tasks-incomplete / scenarios-fail / warnings (pass WITH non-blocking findings — never recorded as clean) / incomplete (aborted or partial verify run) / clean — is composed from the payload's \`verdict\`/\`fail_mode\` — the mode you classified above, never re-classified). Never hand-compose the JSON.`,
+].join('\n\n');
+/** The body's emit section: when the emit fires, the read cue, the command and the chat behaviour beside them. */
+export const VERIFY_RUN_SUMMARY_EMIT_BASIC = [
+  VERIFY_EMIT_HEADING,
+  `At command completion, write the verify run summary. ${RUN_SUMMARY_READ_CUE}`,
+  VERIFY_EMIT_COMMAND,
+].join('\n\n');
+
+/**
+ * tighten-bodies (R-rop-14): the body carries no mirror notes; what only authors need is here.
+ *
+ * The Scenario Coverage reader table is a checked mirror of `orbit-verify-modifications`' `Verify's Scenario Coverage step
+ * reads the scenario map` (an installed skill cannot open that spec), held byte-equal by
+ * `test/core/templates/verify-scenario-map.test.ts`. Never edit the table here.
+ */
 export function getVerifyChangeSkillTemplate(): SkillTemplate {
   return {
     name: 'orbit-verify-change',
@@ -93,7 +121,7 @@ export function getVerifyChangeSkillTemplate(): SkillTemplate {
      \`\`\`bash
      orbit status --change "<name>" --scenarios --json
      \`\`\`
-     Report what it returns by this table, a CHECKED MIRROR of \`orbit-verify-modifications\`' \`Verify's Scenario Coverage step reads the scenario map\`, held byte-equal to it by a parity test (an installed skill cannot open that spec). The table is exhaustive: \`change\` and \`tests\` carry no coverage fact and raise nothing.
+     Report what it returns by this table. The table is exhaustive: \`change\` and \`tests\` carry no coverage fact and raise nothing.
 
 | what the surface returns | what verify reports |
 |---|---|
@@ -201,7 +229,7 @@ The disciplines from \`orbit-conventions\`, embedded per body; detail lives wher
 - **Change completeness (modification-time)**: apply substantive modifications fully across ALL affected artifacts; after mechanical edits, sweep for residue AND new bugs the replacement introduced.
 - **Pushback (review-time)**: verify each flagged issue against current state before acting; suppress stale findings with evidence rather than re-fixing already-fixed state.
 - **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line — gate \`passed\` means *eligible*, not *commanded*.
-${DECISION_WRITING_DISCIPLINE}
+${DECISION_WRITING_BASIC}
 
 ## Fail-mode classification
 
@@ -213,19 +241,10 @@ orbit validate <name>
 
 Then take the FIRST that holds, by the precedence validator-error > tasks-incomplete > scenarios-fail: \`validator-error\` when validate fails (its message verbatim as \`validator_message\`); \`tasks-incomplete\` when any task is unchecked; \`scenarios-fail\` when spec scenarios fail against the implementation; otherwise \`warnings\` on a pass with warnings, and no fail mode on a clean pass.
 
-## Run-summary emit (one-shot at command completion — via the engine emit surface)
-
-(Per \`orbit-run-summary-emit\`; composed and written via \`orbit emit verify\` — \`orbit-emit-composition\`.)
-
-At command completion, compose the narrative payload (\`final_assessment\`, \`verdict\`, \`fail_mode\`, \`validator_message\`, \`warnings_count\` (required when \`fail_mode: "warnings"\`), \`scenarios_failed\` (optional count with \`fail_mode: "scenarios-fail"\`), + the required nullable \`model\`) into a temp file and invoke:
-
-\`\`\`bash
-orbit emit verify --change <name> --payload <payload-file>
-\`\`\`
-
-The ENGINE owns the spine, the trail path, timestamp + collision handling, and \`next_recommended\` composition (the fail-mode-conditional recommendation — validator-error / tasks-incomplete / scenarios-fail / warnings (pass WITH non-blocking findings — never recorded as clean) / incomplete (aborted or partial verify run) / clean — is composed from the payload's \`verdict\`/\`fail_mode\` — the mode you classified above, never re-classified). Never hand-compose the JSON.
+${VERIFY_RUN_SUMMARY_EMIT_BASIC}
 `,
     references: [
+      { name: RUN_SUMMARY_EMIT_REFERENCE_NAME, content: runSummaryEmitReference(VERIFY_RUN_SUMMARY_EMIT) },
       { name: 'decision-records.md', content: DECISION_RECORDS_REFERENCE },
     ],
     license: 'MIT',

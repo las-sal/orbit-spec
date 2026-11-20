@@ -165,11 +165,13 @@ export function generateSkillContent(
     `  generatedBy: ${JSON.stringify(generatedByVersion)}`,
   ].join('\n');
 
+  // Every frontmatter value is written YAML-safe (orbit-skill-generation's `Frontmatter metadata pass-through`): a plain
+  // value stays bare, any other is JSON-quoted, so a description containing `: ` parses as one string.
   return `---
-name: ${template.name}
-description: ${template.description}
-license: ${template.license || 'MIT'}
-compatibility: ${template.compatibility || 'Requires orbit CLI.'}
+name: ${yamlScalar(template.name)}
+description: ${yamlScalar(template.description)}
+license: ${yamlScalar(template.license || 'MIT')}
+compatibility: ${yamlScalar(template.compatibility || 'Requires orbit CLI.')}
 metadata:
 ${metadataBlock}
 ---

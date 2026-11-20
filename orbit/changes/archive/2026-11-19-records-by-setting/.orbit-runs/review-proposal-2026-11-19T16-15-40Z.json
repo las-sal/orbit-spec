@@ -1,0 +1,200 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-19T16:15:40Z",
+  "change": "records-by-setting",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "title": "D1's exception for answers and fixes is missing from design Decision 4's drafted reference sentence and from the onboard and docs tasks",
+      "file": "orbit/changes/records-by-setting/design.md",
+      "line": 86,
+      "recommendation": "The walk added the exception (a resolution answering a stop already in the trail, or a replacement fixing a record already there, is written at write: false) to the basic content, the two requirements and design Decision 3, but three sites that describe the same text were not carried: design Decision 4 still drafts the reference's opening sentence as \"Read this reference when `orbit decisions status` reports `write: true`: ...\", while `Decision-record reference ships beside the statement` now requires it to add \"or when a record already in the trail is answered or fixed\"; task 2.2 says onboard's line reads only \"records are written when a setting reads them\"; and task 3.2 says only \"reword the decision-records paragraph\" of docs/cli.md. An implementer working from design and tasks writes the reference sentence, onboard's line and the docs paragraph without the exception. Carry D1 into Decision 4's drafted sentence and into tasks 2.2 and 3.2.",
+      "walk_entry": {
+        "title": "At write: false the basic content forbids the replacement a walk must write for a reading finding on a record written earlier",
+        "file": "orbit/changes/records-by-setting/specs/orbit-conventions/spec.md"
+      }
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "title": "At write: false the rule the basic content sends the agent to still gates a resolution on write: true",
+      "file": "orbit/changes/records-by-setting/specs/orbit-conventions/spec.md",
+      "line": 48,
+      "recommendation": "On write: false the basic content says a resolution answering a stop already in the trail is still written and to read references/decision-records.md when writing one. That reference's first section is the rule, whose label line (kept by D-rbs-6) opens \"when `orbit decisions status` reports `write: true`, keep a record of each call and each stop\", and whose Before-asking clause is the only place that says to write a resolution with the user's answer. An agent at write: false that reads the reference as told meets a rule that does not apply and may write nothing, so the stranded-stop case X3 named is closed in the body and reopened by the reference. Replacements are unaffected: the reference's 'Fixing a record' section is not gated. Fix outside the rule fence, so D-rbs-6 holds: the reference's opening sentence (and its requirement) says that on write: false the first section's write: true condition does not apply to a resolution answering a stop already in the trail or a replacement fixing a record already there, which follow the Resolution and Fixing a record sections.",
+      "walk_entry": {
+        "title": "Rechecking settings can strand a stop awaiting an answer",
+        "file": "orbit/changes/records-by-setting/specs/orbit-conventions/spec.md"
+      }
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "title": "Task 2.3's second fence prefix is a broken code span",
+      "file": "orbit/changes/records-by-setting/tasks.md",
+      "line": 18,
+      "recommendation": "The walk wrote the prefix as `…: when \\`orbit decisions status\\`` — a backslash does not escape a backtick inside a markdown code span, so the span ends early and the text renders garbled. Write it with a double-backtick span (``…: when `orbit decisions status` ``) or in prose (the prefix ending 'when orbit decisions status').",
+      "walk_entry": {
+        "title": "The two new fences share a first line, and one scenario task 2.3 tags has a behaviour THEN",
+        "file": "orbit/changes/records-by-setting/tasks.md"
+      }
+    },
+    {
+      "pass": "1",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "title": "The change's .openspec.yaml changed outside every walk entry's edit record",
+      "file": "orbit/changes/records-by-setting/.openspec.yaml",
+      "line": 1,
+      "recommendation": "Since the base pass's commit (2c752115), `.openspec.yaml` changed: re-running `orbit fingerprint` rewrote it with the `architecture:` citation moved above `base_fingerprints`, values unchanged. No walk entry names it in its file or ripple_cascade.applied. A record gap, not a defect: nothing to edit, and the next walk's sweep can name the fingerprint run if it repeats."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Verified both walks of the proposal blind pair entry by entry over each sweep scope, then ran the nine proposal passes over the walked files and the residual diff from the codex return's commit. The eight obvious fixes landed cleanly. The weak spot is the one the walk made under its own ratified decision: D1's exception for answers and fixes was written into the basic content, the two requirements and design Decision 3, but not followed into every text that describes the same behaviour — the reference the basic content sends the agent to (whose rule, deliberately kept whole, still opens on write: true), design Decision 4's drafted sentence, and the onboard and docs tasks. Both are one-sentence carries; neither reopens the decision. validate --strict passes and no markers remain.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "verification": [
+    {
+      "title": "At write: false the basic content forbids the replacement a walk must write for a reading finding on a record written earlier",
+      "file": "orbit/changes/records-by-setting/specs/orbit-conventions/spec.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "The deltas still say bodies carry the \"rule\" or the \"statement\", which this change moves to the reference",
+      "file": "orbit/changes/records-by-setting/specs/orbit-decision-records/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Task 3.2 adds decision-record claims to customization.md's settings rows without adding their owner to the section's Carried by line",
+      "file": "orbit/changes/records-by-setting/tasks.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The moments table leaves out a command the user types later in the same session, a result lost to compaction, and orbit/config.yml",
+      "file": "orbit/changes/records-by-setting/specs/orbit-conventions/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The tripwire named limit's \"disagree only when a halt is removed after a change's fixed point\" misses an uncommitted removal",
+      "file": "orbit/changes/records-by-setting/specs/orbit-decision-records/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Proposal Impact places the predicate in decision-records.ts or project-config.ts, which the design rules out",
+      "file": "orbit/changes/records-by-setting/proposal.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Touchpoints omit src/commands/decisions.ts, where the `decisions` subcommands' actions live",
+      "file": "orbit/changes/records-by-setting/design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The two new fences share a first line, and one scenario task 2.3 tags has a behaviour THEN",
+      "file": "orbit/changes/records-by-setting/tasks.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "Scenario titles use \"owed\", the word Decision 2 keeps for records owed a reading",
+      "file": "orbit/changes/records-by-setting/specs/orbit-decision-records/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Task 3.3's \"rewrite CLAUDE.md's Decision-writing bullet\" covers a bullet that also carries the installed-CLI workarounds",
+      "file": "orbit/changes/records-by-setting/tasks.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Scenarios require records even when the new rule forbids them",
+      "file": "orbit/changes/records-by-setting/specs/orbit-conventions/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Rechecking settings can strand a stop awaiting an answer",
+      "file": "orbit/changes/records-by-setting/specs/orbit-conventions/spec.md",
+      "verdict": "regressed"
+    }
+  ],
+  "final_assessment": "0 critical, 2 warning, 2 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-11-19T16-02-34Z",
+    "2026-11-19T16-02-50Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews records-by-setting",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "560ae81725fb85031d332dde9e36727f897b2c3a",
+      "frozen": false,
+      "evidence": {
+        "files": [],
+        "share": null,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ]
+}

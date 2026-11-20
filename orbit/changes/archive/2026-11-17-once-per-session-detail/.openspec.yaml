@@ -1,0 +1,9 @@
+schema: spec-driven
+created: 2026-11-17
+schema_version: 5
+base_fingerprints:
+  orbit-decision-records:
+    Each change carries one account, written when apply is complete: sha256:fcce084d736ce4dafb52b06084289e42bd279c47437227fcf0234af76b1860cd
+architecture:
+  doc: reduce-orbit-phase1
+  stage: once-per-session-detail

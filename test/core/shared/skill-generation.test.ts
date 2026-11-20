@@ -217,6 +217,7 @@ describe('skill-generation', () => {
       expect(content).toContain('Test instructions');
     });
 
+    // @scenario behaviour orbit-skill-generation :: Frontmatter metadata pass-through :: No fallback defaults — templates are the source of truth
     it('emits no fallback metadata defaults — templates are the source of truth (orbit-skill-generation)', () => {
       const minimal: SkillTemplate = {
         name: 'minimal-skill',

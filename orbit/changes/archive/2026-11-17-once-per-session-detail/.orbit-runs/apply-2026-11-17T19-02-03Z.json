@@ -1,0 +1,74 @@
+{
+  "command": "apply",
+  "timestamp": "2026-11-17T19:02:03Z",
+  "change": "once-per-session-detail",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "consent": "user-invoked",
+  "tasks_completed": 9,
+  "tasks_remaining": 3,
+  "user_validation_remaining": 0,
+  "chunk": "2 of 3",
+  "chunk_name": "The emit steps, the convention, the regenerated surface",
+  "chunk_complete": true,
+  "tasks_completed_this_session": 6,
+  "files_touched": [
+    "CLAUDE.md",
+    "orbit/changes/once-per-session-detail/tasks.md",
+    "skill_body_convention.md",
+    "src/core/disciplines.ts",
+    "src/core/templates/workflows/address-reviews.ts",
+    "src/core/templates/workflows/apply-change.ts",
+    "src/core/templates/workflows/architect.ts",
+    "src/core/templates/workflows/archive-change.ts",
+    "src/core/templates/workflows/audit-drift.ts",
+    "src/core/templates/workflows/continue-change.ts",
+    "src/core/templates/workflows/ff-change.ts",
+    "src/core/templates/workflows/new-change.ts",
+    "src/core/templates/workflows/propose.ts",
+    "src/core/templates/workflows/review.ts",
+    "src/core/templates/workflows/verify-change.ts",
+    "test/commands/config-profile.test.ts",
+    "test/core/templates/archive-user-validation.test.ts",
+    "test/core/templates/chain-prompt-tags.test.ts",
+    "test/core/templates/moved-blocks.test.ts",
+    "test/core/templates/orbit-content-fidelity.test.ts",
+    "test/core/templates/orbit-generated-surface.test.ts",
+    "test/core/templates/reading-step-surface.test.ts",
+    "test/core/templates/skill-templates-parity.test.ts"
+  ],
+  "diff_base": "7564da3ff1fd6b01bab62afa66e741c5d33f561d",
+  "final_assessment": "Completed chunk 2 of 3 (The emit steps, the convention, the regenerated surface); 9 of 12 tasks done. chunk 2 done: the eleven emit steps keep their timing, the read cue, their command and their chat behaviour, each section whole in run-summary-emit.md and byte-equal to its recorded sha256; pins retargeted (one beyond the probe: chain-prompt-tags' inventory gained a mention row for the chunk-boundary sentence the apply reference now also holds; init.test.ts holds no per-skill list and needed no change); 4,358 passing; .claude/ regenerated, so chunk 3 runs in a NEW /orbit:apply session on the new bodies",
+  "next_recommended": "/orbit:apply once-per-session-detail — next chunk: A fresh session on the new bodies: ceilings and the account",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "9c43eee38a0b20ee959c4c7975e3f51a3a55d754",
+      "frozen": false,
+      "evidence": {
+        "files": [],
+        "share": null,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ]
+}

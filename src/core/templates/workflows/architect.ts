@@ -12,23 +12,24 @@
 import type { SkillTemplate, CommandTemplate } from '../types.js';
 import { COMPLETE_SLOT_PRODUCTIONS } from '../../architecture/parser.js';
 import { PR_RESOLUTION_REFERENCE } from './pr-choreography.js';
-import { DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../disciplines.js';
+import { DECISION_RECORDS_REFERENCE, DECISION_WRITING_BASIC, RUN_SUMMARY_EMIT_REFERENCE_NAME, RUN_SUMMARY_READ_CUE, runSummaryEmitReference } from '../../disciplines.js';
 
 /**
  * program-signoff: Step 5.4 — the program's save and its sign-off at arc-done (`orbit-architect`'s `The architect
  * session saves the program brief and asks for the program's sign-off`). Its table and the paragraph naming its rows
  * are a CHECKED MIRROR of the owner's, held verbatim by `test/core/templates/program-signoff-step.test.ts`.
  */
-export const PROGRAM_SIGNOFF_STEP = `Run the save, then read the hold — on EVERY invocation on a doc, under every sign-off setting, after the doc's state is rendered and BEFORE the arc-done readout of Step 5.5, so a sign-off owed under \`signoff: program\` is asked before the program PR's READY flip is surfaced:
+export const PROGRAM_SIGNOFF_SAVE = `Run the save, then read the hold — on EVERY invocation on a doc, under every sign-off setting, after the doc's state is rendered and BEFORE the arc-done readout of Step 5.5, so a sign-off owed under \`signoff: program\` is asked before the program PR's READY flip is surfaced:
 
 \`\`\`bash
 orbit brief <doc> --save
 orbit brief <doc> --hold --json
 \`\`\`
 
-The save writes a copy of the program's brief into \`orbit/architecture/.orbit-runs/brief/<doc>/\` only for a FINISHED program (every declared stage done, no live work citing the doc) whose brief changed since its latest copy. Run it WITHOUT \`--json\`, which would print the whole program brief: act on its exit status alone — it prints one or two lines (the saved copy's path and \`sha256 <hex>\`, or one line saying the copy is unchanged or the program is not finished), and no row below reads them. Say nothing about the save in chat under any setting but \`program\`; when it exits non-zero, record the failure, as the command reported it, in this session's run-summary \`final_assessment\`. Under \`program\` a failed save is stated in one line, and no sign-off is asked in this session, since the latest copy may not be the program's current text.
+The save writes a copy of the program's brief into \`orbit/architecture/.orbit-runs/brief/<doc>/\` only for a FINISHED program (every declared stage done, no live work citing the doc) whose brief changed since its latest copy. Run it WITHOUT \`--json\`, which would print the whole program brief: act on its exit status alone — it prints one or two lines (the saved copy's path and \`sha256 <hex>\`, or one line saying the copy is unchanged or the program is not finished), and no row below reads them. Say nothing about the save in chat under any setting but \`program\`; when it exits non-zero, record the failure, as the command reported it, in this session's run-summary \`final_assessment\`. Under \`program\` a failed save is stated in one line, and no sign-off is asked in this session, since the latest copy may not be the program's current text.`;
 
-The hold renders no brief and writes nothing. It prints one object: \`doc\`; \`setting\` (\`off\`, \`change\` or \`program\`); \`warning\` (a sentence, or \`null\`); \`finished\`; \`closing_review\` (\`{file}\`, or \`null\`); \`copy\` (\`{file, sha256}\` of the latest saved copy, or \`null\`); \`signoff\` (\`{file, answer}\` of the latest sign-off, or \`null\`); \`why\` and \`held\`. Act by the first row of this table that matches, the save's outcome being the command just above:
+/** Step 5.4's hold part: the table and the sign-off, carried whole only in `references/program-signoff.md`. */
+const PROGRAM_SIGNOFF_HOLD = `The hold renders no brief and writes nothing. It prints one object: \`doc\`; \`setting\` (\`off\`, \`change\` or \`program\`); \`warning\` (a sentence, or \`null\`); \`finished\`; \`closing_review\` (\`{file}\`, or \`null\`); \`copy\` (\`{file, sha256}\` of the latest saved copy, or \`null\`); \`signoff\` (\`{file, answer}\` of the latest sign-off, or \`null\`); \`why\` and \`held\`. Act by the first row of this table that matches, the save's outcome being the command just above:
 
 | the save and the hold | the architect body |
 |---|---|
@@ -60,11 +61,59 @@ The rows are the hold command's failure, the hold's six \`why\` values (\`re-sig
 
 No stage's ratification waits for the sign-off: the Step 5 offer is made as Step 5 states, before or after it. With every setting at its default the save writes a copy only for a finished program and says nothing, the hold reports \`why: "off"\` with no warning, and the arc-done readout is as before: nothing the user sees or is asked changes.`;
 
+/** The whole step, its bytes unchanged by the split (conditional-steps): the save part, then the hold part. */
+export const PROGRAM_SIGNOFF_STEP = `${PROGRAM_SIGNOFF_SAVE}\n\n${PROGRAM_SIGNOFF_HOLD}`;
+
+export const PROGRAM_SIGNOFF_REFERENCE_NAME = 'program-signoff.md';
+const PROGRAM_SIGNOFF_REFERENCE = `# Reference: the program's save and sign-off (architect Step 5.4)\n\n${PROGRAM_SIGNOFF_STEP}\n`;
+
+/**
+ * The hold's basic content (R-rop-3): the body carries the save part and this; every result but `why: "off"` reads the
+ * reference, from the save's outcome and the hold's result the session already has (R-rop-4).
+ */
+export const PROGRAM_SIGNOFF_HOLD_BASIC = `The hold renders no brief and writes nothing. On \`why: "off"\`, say nothing about it and observe arc-done as Step 5.5 states, stating any warning in one line. On any other result or a non-zero exit, read \`references/${PROGRAM_SIGNOFF_REFERENCE_NAME}\` and follow it from the save's outcome and the result you already have, before Step 5.5.`;
+
+// once-per-session-detail (reduce-orbit-phase1, D-opsd-4, D-opsd-9): the emit section, whole, is
+// `references/run-summary-emit.md`; the body carries its heading, the paragraphs that stay, the read cue and the command.
+const ARCHITECT_EMIT_HEADING = `## Run-summary emit (conversation-boundary timing, architecture trail — via the engine emit surface)`;
+const ARCHITECT_EMIT_TIMING = `(Per \`orbit-run-summary-emit\` — \`/orbit:architect\` is a multi-turn conversational command; emit at conversation boundaries: user stop/pause signal, or AI-initiated wrap. Composed and written via \`orbit emit architect\` — \`orbit-emit-composition\`.)`;
+const ARCHITECT_EMIT_SWEEP = `**No emit without sweep** (D-arc Stage D5, leak-hardening layer 2 — shared with named-mode explore): the Step 4 R-d-8 residency sweep precedes EVERY boundary emit, riding this existing trigger with no new prompt — the emit describes the swept doc. Architect fires no BEGIN emit (the begin+boundary genre is named-mode explore's).`;
+// tighten-bodies: the body's copies of the two paragraphs above, without their provenance; the reference keeps its bytes.
+const ARCHITECT_EMIT_TIMING_BODY = `(\`/orbit:architect\` is a multi-turn conversational command; emit at conversation boundaries: user stop/pause signal, or AI-initiated wrap. Composed and written via \`orbit emit architect\`.)`;
+const ARCHITECT_EMIT_SWEEP_BODY = `**No emit without sweep** (leak-hardening layer 2 — shared with named-mode explore): the Step 4 residency sweep precedes EVERY boundary emit, riding this existing trigger with no new prompt — the emit describes the swept doc. Architect fires no BEGIN emit (the begin+boundary genre is named-mode explore's).`;
+const ARCHITECT_EMIT_COMMAND = `\`\`\`bash
+orbit emit architect --doc <doc-name> --payload <payload-file>
+\`\`\``;
+/** The emit section whole, as the body carried it before once-per-session-detail; shipped as `references/run-summary-emit.md`. */
+export const ARCHITECT_RUN_SUMMARY_EMIT = [
+  ARCHITECT_EMIT_HEADING,
+  ARCHITECT_EMIT_TIMING,
+  ARCHITECT_EMIT_SWEEP,
+  `Compose the payload — \`final_assessment\`, \`stages_touched\`, \`rulings_captured\`, \`completions_ratified\` (may be empty), \`stages_ended\` (the stage ids this session declared ended, by the offer or the unprompted route — may be empty; optional, so every earlier emit stays valid), \`handoff\`, + the required nullable \`model\` — into a temp file and invoke:`,
+  ARCHITECT_EMIT_COMMAND,
+  `The ENGINE owns the spine (\`change: null\` + \`doc\`), the FOURTH trail location (\`orbit/architecture/.orbit-runs/\`, shared by all docs, never moved by change archiving), timestamp + collision handling, and mirrors the handoff's \`next_command\` into \`next_recommended\`. The \`handoff\` section is arc ruling R-d-9(b), complied with from birth: \`boot_sequence\` entries are POINTERS (paths + one-line why), never content copies; \`next_command\` is the one command a cold session would run first; \`model_hint\` and \`seam\` complete the shape. \`/orbit:review --as architecture\` emits carry the same \`handoff\` shape (owned here).`,
+].join('\n\n');
+/** The body's emit section: when the emit fires, the read cue, the command and the chat behaviour beside them. */
+export const ARCHITECT_RUN_SUMMARY_EMIT_BASIC = [
+  ARCHITECT_EMIT_HEADING,
+  ARCHITECT_EMIT_TIMING_BODY,
+  ARCHITECT_EMIT_SWEEP_BODY,
+  `${RUN_SUMMARY_READ_CUE}`,
+  ARCHITECT_EMIT_COMMAND,
+].join('\n\n');
+
+/**
+ * tighten-bodies (R-rop-14): the body carries no mirror notes; what only authors need is here.
+ *
+ * The `Complete:` productions in §2's slot-grammar sentence are a checked mirror of `orbit-architecture-engine`'s `Parseable
+ * architecture-doc format` requirement, which owns the slot grammar (this body cannot resolve the owner at runtime), held
+ * byte-equal by `test/core/templates/orbit-content-fidelity.test.ts`.
+ */
 export function getArchitectSkillTemplate(): SkillTemplate {
   return {
     name: 'orbit-architect',
     description:
-      'Author or resume an architecture doc (program layer above changes): parseable stage declarations, ruling capture, engine-rendered state, and the completion-ratification flow. Never a required entry point — /orbit:explore plus hand-editing remains first-class.',
+      'Author or resume an architecture doc (program layer above changes): parseable stage declarations, ruling capture, engine-rendered state, and the completion-ratification flow. Never a required entry point — /orbit:explore plus hand-editing remains first-class. Use when starting or steering a program of several changes, or ratifying a stage.',
     instructions: `Enter an architect session against one architecture doc under \`orbit/architecture/\`. This is the PROGRAM layer — cross-change structure (premise, rulings, stages with charters and exit criteria) — sitting above per-change flow. The session captures program-level material into the doc the way \`/orbit:explore\` captures decisions, while ALL state rendering comes from the engine.
 
 **Input**: Optional \`<doc-name>\` (the filename stem — the doc's citable identity). With a name: create \`orbit/architecture/<doc-name>.md\` if absent, or resume the existing doc. Bare: list docs via \`orbit architecture status\` and prompt selection via **AskUserQuestion** (offering create-new).
@@ -79,7 +128,7 @@ The disciplines from \`orbit-conventions\`, embedded per body; detail lives wher
 - **Change completeness (modification-time)**: doc edits land whole — a stage added to the grammar, its Depends-on slots, and the status-log entry move together; re-read after to confirm.
 - **Pushback (review-time)**: verify a claimed stage state against \`orbit architecture status\` before restating it; computed state wins over remembered state.
 - **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line — gate \`passed\` means *eligible*, not *commanded*.
-${DECISION_WRITING_DISCIPLINE}
+${DECISION_WRITING_BASIC}
 
 ## Steps
 
@@ -127,7 +176,7 @@ Complete: [ ]
 <append-only ledger; the engine never reads it>
 \`\`\`
 
-The stage-heading grammar is \`### Stage <kebab-id> — <title>\` (kebab-case id unique in the doc, em-dash separator). The two slot lines are OPTIONAL with omission semantics (absent \`Depends-on:\` = no dependencies; absent \`Complete:\` = unratified); when present they follow the exact grammar \`Depends-on: (none)\` / \`Depends-on: <id>[, <id>…]\` and ${COMPLETE_SLOT_PRODUCTIONS} — unratified, ratified, ENDED (the user's declaration that the stage ended without meeting its exit criteria; no free-text suffix — the reason lives in the status log). The \`Complete:\` productions in that sentence are a CHECKED MIRROR of \`orbit-architecture-engine\`'s \`Parseable architecture-doc format\` requirement, which OWNS the slot grammar — this body cannot resolve the owner at runtime, so it carries the copy and says so (held byte-equal by a parity test). Everything else — charter prose, exit criteria, rulings, status log — is engine-opaque judgment text.
+The stage-heading grammar is \`### Stage <kebab-id> — <title>\` (kebab-case id unique in the doc, em-dash separator). The two slot lines are OPTIONAL with omission semantics (absent \`Depends-on:\` = no dependencies; absent \`Complete:\` = unratified); when present they follow the exact grammar \`Depends-on: (none)\` / \`Depends-on: <id>[, <id>…]\` and ${COMPLETE_SLOT_PRODUCTIONS} — unratified, ratified, ENDED (the user's declaration that the stage ended without meeting its exit criteria; no free-text suffix — the reason lives in the status log). Everything else — charter prose, exit criteria, rulings, status log — is engine-opaque judgment text.
 
 ### 3. Resume (doc exists) — the doc is authoritative
 
@@ -143,7 +192,7 @@ During the session, capture program-level material into the doc as it is ratifie
 
 **Render state, never author it**: ALL stage-state and program-position statements come from \`orbit architecture status\` — rendered verbatim, never inferred. The body is PROHIBITED from hand-writing state into the doc: no \`*State:*\` lines, no position summaries duplicating what the engine computes. When the doc predates this contract (carries legacy hand-written state lines), FLAG them for deletion rather than updating them — every hand-maintained state line is a future staleness bug.
 
-**R-d-8 residency sweep at every conversation boundary**: pending recommendations, leanings, and open items discussed but not yet ratified must be file-resident BEFORE the emit writes — written into the owning section (e.g. an open question's standing-recommendation slot). Chat is never the store of record.
+**residency sweep at every conversation boundary**: pending recommendations, leanings, and open items discussed but not yet ratified must be file-resident BEFORE the emit writes — written into the owning section (e.g. an open question's standing-recommendation slot). Chat is never the store of record.
 
 ### 5. Completion-ratification flow (the completion flow's one AskUserQuestion — the doc selector in Step 1 and Step 5.4's program sign-off are the body's other two prompts)
 
@@ -164,9 +213,11 @@ The body NEVER checks or ends a stage on its own judgment, and never nags: the o
 
 ### 5.4. The program's saved brief and its sign-off (program-signoff)
 
-${PROGRAM_SIGNOFF_STEP}
+${PROGRAM_SIGNOFF_SAVE}
 
-### 5.5. Arc-done readout: the program PR's human acts (D-arc Stage D6)
+${PROGRAM_SIGNOFF_HOLD_BASIC}
+
+### 5.5. Arc-done readout: the program PR's human acts
 
 On EVERY invocation — IDEMPOTENT — check whether the doc is ARC-DONE. The check has two
 definitions, by the sign-off setting:
@@ -185,33 +236,13 @@ NOT gated on the ratification interaction above: the natural ordering is final-s
 → final-stage ratification → closing review, so arc-done becomes true at the LAST step, after
 that interaction has already passed. A ratification-gated readout would never fire.
 
-When arc-done, run \`orbit pr program <doc> --json\` and surface the program PR and its human
-acts per \`references/pr-resolution.md\` — recommend, NEVER invoke; this body makes no outward
-write. The engine locates the PR (the latest URL-bearing record, else the constrained query),
-validates it LIVE and falls through on a positive invalidation; the readout is NEVER SUPPRESSED
-by any outcome, since a silent readout is indistinguishable from an unfinished program. The
-acts (\`human_acts\`: ready, then merge) are the user's; orbit flips nothing here and merges
-nothing anywhere. The readout repeats on every later invocation until the PR is no longer
-draft. A whole-program body rewrite is OPTIONAL polish available on request, never a required
-transition step.
+When arc-done, read \`references/pr-resolution.md\` and follow its arc-done readout: it runs \`orbit pr program <doc> --json\` and surfaces the program PR and its human acts — recommend, NEVER invoke; the readout is never suppressed and repeats on every later invocation until the PR is no longer draft.
 
-### 6. Out of scope (deliberately — D-d2-6 rungs 6–8)
+### 6. Out of scope (deliberately — rungs 6–8)
 
 The body does NOT carry explore-grade thinking-partner stance prose, stage-lifecycle helpers (spin-up/close-out choreography), or retrofit guidance for converting legacy docs. Those are later rungs; v1 is create/resume + capture + render + ratification.
 
-## Run-summary emit (conversation-boundary timing, architecture trail — via the engine emit surface)
-
-(Per \`orbit-run-summary-emit\` — \`/orbit:architect\` is a multi-turn conversational command; emit at conversation boundaries: user stop/pause signal, or AI-initiated wrap. Composed and written via \`orbit emit architect\` — \`orbit-emit-composition\`.)
-
-**No emit without sweep** (D-arc Stage D5, leak-hardening layer 2 — shared with named-mode explore): the Step 4 R-d-8 residency sweep precedes EVERY boundary emit, riding this existing trigger with no new prompt — the emit describes the swept doc. Architect fires no BEGIN emit (the begin+boundary genre is named-mode explore's).
-
-Compose the payload — \`final_assessment\`, \`stages_touched\`, \`rulings_captured\`, \`completions_ratified\` (may be empty), \`stages_ended\` (the stage ids this session declared ended, by the offer or the unprompted route — may be empty; optional, so every earlier emit stays valid), \`handoff\`, + the required nullable \`model\` — into a temp file and invoke:
-
-\`\`\`bash
-orbit emit architect --doc <doc-name> --payload <payload-file>
-\`\`\`
-
-The ENGINE owns the spine (\`change: null\` + \`doc\`), the FOURTH trail location (\`orbit/architecture/.orbit-runs/\`, shared by all docs, never moved by change archiving), timestamp + collision handling, and mirrors the handoff's \`next_command\` into \`next_recommended\`. The \`handoff\` section is arc ruling R-d-9(b), complied with from birth: \`boot_sequence\` entries are POINTERS (paths + one-line why), never content copies; \`next_command\` is the one command a cold session would run first; \`model_hint\` and \`seam\` complete the shape. \`/orbit:review --as architecture\` emits carry the same \`handoff\` shape (owned here).
+${ARCHITECT_RUN_SUMMARY_EMIT_BASIC}
 
 ## Output at session end
 
@@ -221,6 +252,8 @@ Render the doc's computed position from \`orbit architecture status\` verbatim, 
         name: 'pr-resolution.md',
         content: PR_RESOLUTION_REFERENCE,
       },
+      { name: PROGRAM_SIGNOFF_REFERENCE_NAME, content: PROGRAM_SIGNOFF_REFERENCE },
+      { name: RUN_SUMMARY_EMIT_REFERENCE_NAME, content: runSummaryEmitReference(ARCHITECT_RUN_SUMMARY_EMIT) },
       { name: 'decision-records.md', content: DECISION_RECORDS_REFERENCE },
     ],
     license: 'MIT',

@@ -1,0 +1,544 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-17T21:21:46Z",
+  "change": "tighten-bodies",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/tighten-bodies/.orbit-runs/review-proposal-2026-11-17T20-46-50Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-17T20-46-50Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "walk_mode_source": null,
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 5,
+    "suggestion": 6
+  },
+  "pushback_verification": "All eleven verified against current state before acting; F11 was made stale by F2's edit within this walk. F5 converges with the external half's description-test finding and is walked here, the earlier pass.",
+  "resolution_summary": {
+    "resolved": 10,
+    "stale_suppressed": 1,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Provenance removal has no defined extent, and the ledger kind check cannot catch an instruction removed with a note",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 313,
+      "classification": "decision_required",
+      "lane": "decision",
+      "outcome": "resolved",
+      "remedy": "repair",
+      "ratified_via": "chat",
+      "action": "Sal ratified A in chat: the provenance requirement defines the removal unit (only provenance and the connectors joining it; a bracket goes only when nothing else is left in it; a mirror note loses only the sentences or clauses saying it is a copy, naming its owner, saying why, or telling authors not to edit it) and carries a written pattern per kind; the ledger's provenance check now requires the removed span to be wholly COVERED by those patterns and the connectors; a new scenario holds review's instruction beside its note, and the over-wide-removal scenario replaces the contains-a-match one",
+      "evidence": "verified at HEAD in the generated bodies: review's pass-genre note ends 'The pass genre is a record and a header word; the gate reads nothing of it.', verify's note is a clause of 'Report what it returns by this table', archive's 'NEW Step 3.4 — Gate inflection prompt (C1; every reviewed gate since rc10)'; the spec's ledger row read 'matches one of the six kinds' patterns', with no pattern written",
+      "resolution": "A — exact removal unit, written patterns, whole-span coverage check (Sal: 'a')",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/tighten-bodies/design.md",
+          "orbit/changes/tighten-bodies/explore.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "removed whole; the copied text stays",
+          "removes text that matches none of the six kinds' patterns",
+          "removed with their brackets or dash"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/tighten-bodies/specs/orbit-conventions/spec.md",
+            "text": "**The removal unit.** A removal takes only provenance and the connectors that join it to its sentence"
+          },
+          {
+            "path": "orbit/changes/tighten-bodies/design.md",
+            "text": "A removal takes only provenance and the"
+          },
+          {
+            "path": "orbit/changes/tighten-bodies/explore.md",
+            "text": "wholly covered by the six kinds' written patterns and the connectors"
+          }
+        ],
+        "searched": [
+          "removed whole",
+          "with their brackets",
+          "matches one of the six",
+          "CHECKED MIRROR",
+          "The pass genre is a record"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "Task 4.3's residual removals cannot pass the ledger's provenance-kind check",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 24,
+      "classification": "decision_required",
+      "lane": "decision",
+      "outcome": "resolved",
+      "remedy": "repair",
+      "ratified_via": "chat",
+      "action": "Sal ratified A in chat: task 4.3 records each provenance form outside the six kinds in the change's account and leaves it in place for the evaluation; the residual method in the spec and in explore's D-tb-6, carried verbatim, now reads 'after its edits, recording each find … and leaving it in place'; design Risks says such a form is never removed in this stage",
+      "evidence": "audit-drift's body carries 'the D-arc's harness-hooks deferral (R-d-2)'; under F1's whole-span check only 'R-d-2' is covered, so removing the clause fails the ledger, as task 4.3 then asked",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Task 4.3 records each residual find in the account and leaves it in place for the evaluation; no residual removal is made in this stage."
+          },
+          {
+            "label": "B",
+            "body": "Add a seventh ledger kind, `residual`, whose pairs each name the form found; the ledger requirement's table gains its row and its check (the span is listed in the account), and the spec says so at propose."
+          }
+        ],
+        "chosen": "A"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/tighten-bodies/specs/orbit-conventions/spec.md",
+          "orbit/changes/tighten-bodies/explore.md",
+          "orbit/changes/tighten-bodies/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "reading each tightened body whole at propose",
+          "remove what is found under the same rules"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/tighten-bodies/specs/orbit-conventions/spec.md",
+            "text": "recording each find in the change's account and leaving it in place for the evaluation"
+          },
+          {
+            "path": "orbit/changes/tighten-bodies/tasks.md",
+            "text": "is never removed in this stage"
+          }
+        ],
+        "searched": [
+          "at propose",
+          "under the same rules",
+          "Residual method"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "Removing citations from the shared step headings changes blocks moved-blocks.test.ts pins by hash, which no D-tb-15 row covers",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 59,
+      "classification": "decision_required",
+      "lane": "decision",
+      "outcome": "resolved",
+      "remedy": "repair",
+      "ratified_via": "chat",
+      "action": "Sal ratified A in chat after asking what the hashes are for and confirming they live only in the test suite: heading citations leave the bodies' basic contents only (COMMIT_STEP_BASIC, CHAIN_END_STEP_BASIC, and the account steps' basic contents, ACCOUNT_STEP_HEADING and ACCOUNT_WALK_STEP_HEADING split into a body heading and the full step's own); the four full steps in the reference files stay byte-equal, so moved-blocks.test.ts' recorded hashes hold; the provenance requirement says so",
+      "evidence": "src/core/disciplines.ts: COMMIT_STEP (128) and COMMIT_STEP_BASIC (161) each carry their own heading literal, likewise CHAIN_END_STEP (97) and CHAIN_END_STEP_BASIC (172); ACCOUNT_STEP_HEADING (391) opens ACCOUNT_STEP (402-403) and the basic content (450); moved-blocks.test.ts pins the full steps by sha256",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Remove the citation from the bodies' basic-content headings only: split ACCOUNT_STEP_HEADING and ACCOUNT_WALK_STEP_HEADING so the reference files' full steps keep theirs, and leave COMMIT_STEP and CHAIN_END_STEP unchanged; the moved-blocks hashes then hold."
+          },
+          {
+            "label": "B",
+            "body": "Edit both copies, and add a row to the ledger requirement's second table allowing moved-blocks.test.ts' RECORDED hashes to be re-recorded for a heading-only provenance edit; name moved-blocks.test.ts' hashes in Impact and Touchpoints."
+          }
+        ],
+        "chosen": "A"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/tighten-bodies/tasks.md",
+          "orbit/changes/tighten-bodies/specs/orbit-conventions/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "and from the shared step headings in",
+          "Shared headings composed in"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/tighten-bodies/specs/orbit-conventions/spec.md",
+            "text": "citation leaves the body's basic content only"
+          },
+          {
+            "path": "orbit/changes/tighten-bodies/design.md",
+            "text": "recorded hashes hold (walk of the fresh proposal pass, F3)"
+          },
+          {
+            "path": "orbit/changes/tighten-bodies/tasks.md",
+            "text": "splitting `ACCOUNT_STEP_HEADING`"
+          }
+        ],
+        "searched": [
+          "shared step headings",
+          "ACCOUNT_STEP_HEADING",
+          "COMMIT_STEP_BASIC",
+          "moved-blocks"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "Task 8.1's 'new size plus 5%, none rises' is contradictory for the four bodies that grow",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 42,
+      "classification": "trivial_fix",
+      "lane": "obvious",
+      "outcome": "resolved",
+      "remedy": "repair",
+      "action": "task 8.1: a body whose new size plus 5% would exceed its current ceiling (explore, bulk-archive, onboard, sync-specs by the drafts) keeps that ceiling after checking it still fits, so none rises; explore's line ceiling and the test's 664 assertion follow D-tb-17 to 669; the ledger requirement's test-edit table gains a skill-body-budget row for both",
+      "evidence": "skill-body-budget.test.ts: explore 52432, sync-specs 9069, bulk-archive 28022, onboard 23567, and line 82 asserts LINE_CEILING['orbit-explore'] <= 664",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/tighten-bodies/specs/orbit-conventions/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "as a named edit per body (none rises), and raise"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/tighten-bodies/tasks.md",
+            "text": "keeps that ceiling, after checking it still fits under it"
+          },
+          {
+            "path": "orbit/changes/tighten-bodies/specs/orbit-conventions/spec.md",
+            "text": "or kept where that would exceed it"
+          }
+        ],
+        "searched": [
+          "none rises",
+          "664",
+          "CHARACTER_CEILING"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "The planned frontmatter test's \"Use when\" / \"Use after\" check fails on audit-drift's unchanged description",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 28,
+      "classification": "trivial_fix",
+      "lane": "obvious",
+      "outcome": "resolved",
+      "remedy": "repair",
+      "action": "B, as previewed: the frontmatter test accepts a 'Use' clause containing 'when', or 'Use after', so audit-drift's unchanged 'Use standalone when' passes; design Decision 4 says so. The external half found the same independently",
+      "evidence": "the generated orbit-audit-drift description reads 'Use standalone when something feels off'; task 5.1 asked for 'Use when' or 'Use after' and Decision 4 kept the description",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Reword audit-drift's description to 'Use when something feels off; ...' and list it beside address-reviews, architect and onboard in design Decision 4 (and the delta's sourcing sentence)."
+          },
+          {
+            "label": "B",
+            "body": "State the test's when-clause predicate so it accepts 'Use standalone when' (for example a 'Use' ... 'when' clause or 'Use after'), and keep design Decision 4's 'Audit-drift's description stays'."
+          }
+        ],
+        "chosen": "B"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/tighten-bodies/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "with a \"Use when\" or \"Use after\" clause"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/tighten-bodies/tasks.md",
+            "text": "with a when-clause (a"
+          },
+          {
+            "path": "orbit/changes/tighten-bodies/design.md",
+            "text": "is a when-clause the frontmatter test accepts"
+          }
+        ],
+        "searched": [
+          "Use when",
+          "Use after",
+          "Use standalone"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The bullet carries three commands, not 'the four commands'",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 316,
+      "classification": "trivial_fix",
+      "lane": "obvious",
+      "outcome": "resolved",
+      "remedy": "repair",
+      "action": "the ledger's restructured row names the three commands (orbit emit stop, orbit emit resolution, orbit emit ledger); explore's D-tb-14 row follows",
+      "evidence": "the one-paragraph bullet names three emit commands",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/tighten-bodies/explore.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the four commands"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/tighten-bodies/specs/orbit-conventions/spec.md",
+            "text": "the three commands (`orbit emit stop`"
+          }
+        ],
+        "searched": [
+          "four commands",
+          "orbit emit"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Retargeting apply's two Guardrails rows duplicates rows the step 6 lines already have",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 327,
+      "classification": "trivial_fix",
+      "lane": "obvious",
+      "outcome": "resolved",
+      "remedy": "repair",
+      "action": "apply's two Guardrails rows are removed, not retargeted: the step 6 lines already have their own rows, so the instruction's home stays asserted; the ledger's test-edit row, task 3.1 and explore's D-tb-15 row and FALSIFY move follow",
+      "evidence": "chain-prompt-tags.test.ts 385-386 already carry rows for 'Task is unclear → ask for clarification' and 'Error or blocker encountered → report and wait for guidance'",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/tighten-bodies/tasks.md",
+          "orbit/changes/tighten-bodies/explore.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "retargeted to the step 6 lines that",
+          "retarget `chain-prompt-tags.test.ts`' rows"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/tighten-bodies/specs/orbit-conventions/spec.md",
+            "text": "so the instruction's home stays asserted"
+          },
+          {
+            "path": "orbit/changes/tighten-bodies/tasks.md",
+            "text": "whose step 6 lines already have their own rows"
+          }
+        ],
+        "searched": [
+          "retarget",
+          "chain-prompt-tags"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Decision 1's heading says six sub-bullets; the fence and its text have five",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 34,
+      "classification": "trivial_fix",
+      "lane": "obvious",
+      "outcome": "resolved",
+      "remedy": "repair",
+      "action": "design Decision 1's heading says five labelled sub-bullets",
+      "evidence": "the fence and R-rop-7 carry five labels",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "in six labelled sub-bullets"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/tighten-bodies/design.md",
+            "text": "in five labelled sub-bullets"
+          }
+        ],
+        "searched": [
+          "six labelled"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Address-reviews' new description length is given three ways",
+      "marker_source": "internal-review",
+      "file": "proposal.md",
+      "line": 25,
+      "classification": "trivial_fix",
+      "lane": "obvious",
+      "outcome": "resolved",
+      "remedy": "repair",
+      "action": "one figure, about 360 characters (the draft measures 364), in the proposal, design Decision 4, task 5.1 and explore's D-tb-9",
+      "evidence": "the drafted description measures 364 characters (node length)",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/tighten-bodies/design.md",
+          "orbit/changes/tighten-bodies/tasks.md",
+          "orbit/changes/tighten-bodies/explore.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "to about 340",
+          "to about 300"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/tighten-bodies/proposal.md",
+            "text": "to about 360,"
+          }
+        ],
+        "searched": [
+          "about 300",
+          "about 340"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The convention's commit-step example will quote a heading the bodies no longer carry",
+      "marker_source": "internal-review",
+      "file": "skill_body_convention.md",
+      "line": 39,
+      "classification": "trivial_fix",
+      "lane": "obvious",
+      "outcome": "resolved",
+      "remedy": "repair",
+      "action": "task 6.2 also updates skill_body_convention.md's commit-step example to the basic content's new heading; design Touchpoints and the proposal's Impact name it. The convention itself is edited at apply, with the heading",
+      "evidence": "skill_body_convention.md:39 quotes the commit step's basic-content heading with its citation",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/tighten-bodies/design.md",
+          "orbit/changes/tighten-bodies/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the two-level sentence."
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/tighten-bodies/tasks.md",
+            "text": "update its commit-step example to the basic content's new heading"
+          },
+          {
+            "path": "orbit/changes/tighten-bodies/design.md",
+            "text": "its commit-step example takes the new heading"
+          }
+        ],
+        "searched": [
+          "commit-step example",
+          "Exceptions"
+        ],
+        "scope": [
+          "skill_body_convention.md"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The provenance residual method says the whole-body read happens at propose; task 4.3 does it at apply",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-conventions/spec.md",
+      "line": 276,
+      "classification": "stale",
+      "lane": "obvious",
+      "outcome": "stale",
+      "action": "no edit: already fixed by this walk's F2 resolution",
+      "evidence": "the residual method in specs/orbit-conventions/spec.md now reads 'reading each tightened body whole after its edits, recording each find in the change\\'s account …', written by F2's edit; 'at propose' no longer appears there"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "The fresh proposal pass is walked: three decisions ratified by Sal in chat (F1 A: an exact removal unit, written patterns and a whole-span ledger check; F2 A: provenance outside the six kinds recorded and left in place; F3 A: heading citations leave the bodies' basic contents only, so moved-blocks' hashes hold), seven obvious fixes applied as previewed, and F11 stale, fixed by F2. The change validates; all six explore rules stay accounted.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews tighten-bodies",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "41e5293c605048c55b158082f75c53ccb42d3d9f",
+      "frozen": false,
+      "evidence": {
+        "files": [],
+        "share": null,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ],
+  "ripple_misses": 0
+}

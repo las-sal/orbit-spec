@@ -2313,6 +2313,7 @@ describe('rc03c: pass genre, verified walks and the verification record', () => 
     refuses(sys([], { verified_walks: [] }), /'verified_walks' is engine-owned/);
   });
 
+  // @scenario behaviour orbit-emit-composition :: A VERIFICATION-genre payload carries its verdicts and its findings link to the walk record :: Owed record absent is refused
   it('an owed record that is absent is refused naming the field, the owed count and each owed key with its walk', () => {
     seed([[W1, [res('A', 'a.md'), res('B', 'b.md')]]]);
     const was = before();
@@ -2325,6 +2326,8 @@ describe('rc03c: pass genre, verified walks and the verification record', () => 
     expect(before()).toEqual(was);
   });
 
+  // @scenario behaviour orbit-emit-composition :: A VERIFICATION-genre payload carries its verdicts and its findings link to the walk record :: A complete record writes
+  // @scenario behaviour orbit-emit-composition :: A VERIFICATION-genre payload carries its verdicts and its findings link to the walk record :: A missing key is named with its walk
   it('a complete record writes; a missing key is refused as walk <token>: (<title>, <file>)', () => {
     seed([[W1, [res('A', 'a.md'), res('B', 'b.md')]]]);
     refuses(sys([], { verification: [{ title: 'A', file: 'a.md', verdict: 'landed' }] }), `walk ${W1}: (B, b.md)`);
@@ -2332,6 +2335,7 @@ describe('rc03c: pass genre, verified walks and the verification record', () => 
     expect((r.emit as any).verification).toHaveLength(2);
   });
 
+  // @scenario behaviour orbit-emit-composition :: A VERIFICATION-genre payload carries its verdicts and its findings link to the walk record :: Only resolved entries owe a verdict
   it('a stray verdict, a duplicate verdict, and a verdict for a stale entry are refused', () => {
     seed([[W1, [res('A', 'a.md'), res('S', 's.md', 'stale')]]]);
     const A = { title: 'A', file: 'a.md', verdict: 'landed' };
@@ -2340,6 +2344,8 @@ describe('rc03c: pass genre, verified walks and the verification record', () => 
     refuses(sys([], { verification: [A, { title: 'S', file: 's.md', verdict: 'landed' }] }), /\(S, s\.md\).*not owed/);
   });
 
+  // @scenario behaviour orbit-emit-composition :: A VERIFICATION-genre payload carries its verdicts and its findings link to the walk record :: A key in two walks owes one verdict
+  // @scenario behaviour orbit-emit-composition :: A VERIFICATION-genre payload carries its verdicts and its findings link to the walk record :: A later stale call does not lift an earlier resolution
   it('a key in two walks owes ONE verdict judged against the latest resolved walk; a later stale call does not lift it', () => {
     seed([
       [W1, [res('A', 'a.md'), res('B', 'b.md')]],
@@ -2355,12 +2361,14 @@ describe('rc03c: pass genre, verified walks and the verification record', () => 
     writes(sys([], { verification: [A, { title: 'B', file: 'b.md', verdict: 'landed' }] }));
   });
 
+  // @scenario behaviour orbit-emit-composition :: A VERIFICATION-genre payload carries its verdicts and its findings link to the walk record :: Payload keys are normalized before matching
   it('payload keys are normalized (trimmed title, :line stripped) before matching; refusals print the normalized form', () => {
     seed([[W1, [res('T', 'design.md')]]]);
     writes(sys([], { verification: [{ title: ' T ', file: 'design.md:42', verdict: 'landed' }] }));
     refuses(sys([], { verification: [{ title: ' T ', file: 'design.md:42', verdict: 'landed' }, { title: ' U ', file: 'u.md:3', verdict: 'landed' }] }), /\(U, u\.md\)/);
   });
 
+  // @scenario behaviour orbit-emit-composition :: A VERIFICATION-genre payload carries its verdicts and its findings link to the walk record :: Zero owed entries still owe an empty record
   it('zero owed entries still owe [] — absent refused with an owed count of 0, [] writes', () => {
     seed([[W1, [res('S', 's.md', 'stale'), res('D', 'd.md', 'deferred')]]]);
     refuses(sys(), /'verification'.*0 owed/);
@@ -2368,6 +2376,8 @@ describe('rc03c: pass genre, verified walks and the verification record', () => 
     expect((r.emit as any).verification).toEqual([]);
   });
 
+  // @scenario behaviour orbit-emit-composition :: A VERIFICATION-genre payload carries its verdicts and its findings link to the walk record :: An unreadable walk owes nothing
+  // @scenario behaviour orbit-emit-composition :: A VERIFICATION-genre payload carries its verdicts and its findings link to the walk record :: A walk with an entry no verdict can name is unreadable for the record
   it('an unreadable walk, or one with an entry carrying no title, owes nothing and stays listed', () => {
     seed([[W1, null], [W2, [{ severity: 'WARNING', outcome: 'resolved', file: 'a.md' }]]]);
     const r = writes(sys([], { verification: [] }));
@@ -2375,22 +2385,26 @@ describe('rc03c: pass genre, verified walks and the verification record', () => 
   });
 
   // @scenario behaviour orbit-review :: Verification-genre passes grade the walk record :: A defect in the walk's own addition is a regression with its finding
+  // @scenario behaviour orbit-emit-composition :: A VERIFICATION-genre payload carries its verdicts and its findings link to the walk record :: A regressed verdict needs its finding
   it('a regressed verdict needs a finding naming it', () => {
     seed([[W1, [res('T', 'F')]]]);
     refuses(sys([], { verification: [{ title: 'T', file: 'F', verdict: 'regressed' }] }), /\(T, F\) 'regressed' but no finding/);
     writes(sys([{ title: 'The edit stops short', walk_entry: { title: 'T', file: 'F' } }], { verification: [{ title: 'T', file: 'F', verdict: 'regressed' }] }));
   });
 
+  // @scenario behaviour orbit-emit-composition :: A VERIFICATION-genre payload carries its verdicts and its findings link to the walk record :: A finding against a landed entry is a contradiction
   it('a walk_entry on a landed key is a contradiction when every entry carrying the key is resolved', () => {
     seed([[W1, [res('T', 'F')]]]);
     refuses(sys([{ title: 'x', walk_entry: { title: 'T', file: 'F' } }], { verification: [{ title: 'T', file: 'F', verdict: 'landed' }] }), /'landed'.*contradiction/);
   });
 
+  // @scenario behaviour orbit-emit-composition :: A VERIFICATION-genre payload carries its verdicts and its findings link to the walk record :: A shared key lets a stale finding link beside a landed verdict
   it('a shared key (W1 resolved, W2 stale) accepts a landed verdict beside a linked finding', () => {
     seed([[W1, [res('T', 'F')]], [W2, [res('T', 'F', 'stale')]]]);
     writes(sys([{ title: 'W2 dismissed a real finding', walk_entry: { title: 'T', file: 'F' } }], { verification: [{ title: 'T', file: 'F', verdict: 'landed' }] }));
   });
 
+  // @scenario behaviour orbit-emit-composition :: A VERIFICATION-genre payload carries its verdicts and its findings link to the walk record :: A finding may link to a stale entry
   it('a walk_entry naming a stale entry is accepted; one outside the walk set is refused', () => {
     seed([[W1, [res('A', 'a.md'), res('S', 's.md', 'stale')]]]);
     const v = { verification: [{ title: 'A', file: 'a.md', verdict: 'landed' }] };
@@ -2398,6 +2412,7 @@ describe('rc03c: pass genre, verified walks and the verification record', () => 
     refuses(sys([{ title: 'x', walk_entry: { title: 'Q', file: 'q.md' } }], v), /findings\[0\]\.walk_entry.*\(Q, q\.md\).*no readable walk/);
   });
 
+  // @scenario behaviour orbit-emit-composition :: A VERIFICATION-genre payload carries its verdicts and its findings link to the walk record :: Records and links on a REVIEW-genre pass are refused
   it('on a REVIEW-genre pass, verification in any form ([] included) and any walk_entry are refused', () => {
     seed([]);
     refuses(sys([], { verification: [] }), /'verification'.*REVIEW/);
@@ -2415,6 +2430,7 @@ describe('rc03c: pass genre, verified walks and the verification record', () => 
     refuses(sys([{ title: 'x', walk_entry: { title: 'A', file: 'a.md' } }]), DIRECTIVE);
   });
 
+  // @scenario behaviour orbit-emit-composition :: A VERIFICATION-genre payload carries its verdicts and its findings link to the walk record :: Mis-shaped verdicts are refused at any genre
   it('mis-shaped verdicts, extra keys and a string walk_entry are refused at ANY genre', () => {
     for (const walks of [[], [[W1, [res('T', 'F')]]]] as Array<Array<[string, Entry[]]>>) {
       fs.rmSync(path.join(root, 'orbit'), { recursive: true, force: true });

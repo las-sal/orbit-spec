@@ -1,0 +1,16 @@
+{
+  "command": "propose",
+  "timestamp": "2026-11-17T20:37:38Z",
+  "change": "tighten-bodies",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Consumed the exploration tighten-bodies (17 decisions, 6 live rules all accounted, D-tb-6 BOUNDED) into a change of three capabilities and eight requirements: orbit-conventions MODIFIED Decision-writing discipline (the five labelled sub-bullets, every clause kept) and Review mode decision framework (no mirror note), ADDED the named Guardrails removals (24 of 42 lines; sync-specs kept as upstream-verbatim), provenance-free tightened bodies (D-tb-6's residual verbatim as the named limit) and the edit ledger; orbit-emit-composition MODIFIED the VERIFICATION-genre payload requirement (no mirror note); orbit-skill-generation MODIFIED Frontmatter metadata pass-through (every value YAML-safe, descriptions within 1,024 saying what and when) and ADDED linked references with contents lists. A whole read of the two large specs found sync-specs' upstream-verbatim class and the Severity ladder and brief-rule citations a requirement asks bodies to carry (D-tb-16). The sub-bullets add five lines to explore at its 664-line ceiling; Sal chose to raise that one ceiling to 669 (stop-2026-11-17T20-32-21Z.json and its resolution; R-rop-8 and RG3 amended). RG1 set at 365,500 in total and 18,300 for apply from the drafted moves. Validated; no size breach; 13 tasks.",
+  "pr_attachment": {
+    "branch": "reduce-orbit-phase1",
+    "granularity": "per-architecture",
+    "doc": "reduce-orbit-phase1",
+    "url": "https://github.com/las-sal/orbit-spec/pull/46",
+    "state": "draft"
+  },
+  "next_recommended": "/orbit:review tighten-bodies — proposal artifacts ready; review before apply"
+}

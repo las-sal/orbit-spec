@@ -9,7 +9,7 @@ import type { SkillTemplate, CommandTemplate } from '../types.js';
 export function getOnboardSkillTemplate(): SkillTemplate {
   return {
     name: 'orbit-onboard',
-    description: 'Single-pass onboarding reference for orbit - orientation to the self-contained tool, the canonical workflow, and the full command table. No demo changes, no interactive walkthrough.',
+    description: 'Single-pass onboarding reference for orbit - orientation to the self-contained tool, the canonical workflow, and the full command table. No demo changes, no interactive walkthrough. Use when someone is new to orbit or asks how its workflow fits together.',
     instructions: getOnboardInstructions(),
     license: 'MIT',
     compatibility: 'Requires orbit CLI.',
@@ -64,7 +64,7 @@ What makes orbit distinctive vs running upstream alone:
   - **Change completeness** (modification-time): substantive modifications to a change-in-flight must apply fully across ALL affected artifacts before being declared done. Known residue MUST NOT be left for a downstream review to catch.
   - **Pushback** (review-time): verify each flagged issue against current state before acting. Stale findings get reported with evidence and suppressed.
   - **No-chaining** (turn boundary): the AI invokes at most the orbit workflow commands the user's message explicitly requests — one command per explicit request; it recommends, never invokes, unless the project's \`chain\` setting grants the next command. Completing a command ends the turn at the position readout and the engine's eligibility line (\`Ready when you are:\`); gate \`passed\` means *eligible*, not *commanded*.
-  - **Decision-writing** (call-time): under every setting, the AI keeps a record of each call it makes in one of the ledger's areas and of each moment it needs the user — a stop record before such a question, a resolution with the user's answer, a ledger entry after the call (\`orbit emit stop\`, \`orbit emit resolution\`, \`orbit emit ledger\`) — without changing what the user sees or is asked. A designed prompt (consent, inflection, closure) is a seam, not a stop, and writes nothing.
+  - **Decision-writing** (call-time): when a setting that reads the records is on, as \`orbit decisions status\` reports, the AI keeps a record of each call it makes in one of the ledger's areas and of each moment it needs the user — a stop record before such a question, a resolution with the user's answer, a ledger entry after the call (\`orbit emit stop\`, \`orbit emit resolution\`, \`orbit emit ledger\`) — without changing what the user sees or is asked. An answer to a stop already in the trail, or a fix of a record already there, is written whatever \`orbit decisions status\` reports. A designed prompt (consent, inflection, closure) is a seam, not a stop, and writes nothing.
 
 ---
 

@@ -1,0 +1,25 @@
+{
+  "command": "explore",
+  "timestamp": "2026-11-18T23:55:01Z",
+  "change": "records-by-setting",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Every open question is decided (D-rbs-1 to D-rbs-7, all Sal's choice A where asked). Records are owed exactly when a reader runs: a granted chain key, signoff change or program, or a tripwire sensor set to halt (D-rbs-1). A new project-wide `orbit decisions status [--json]` reports `write` and `readers` (D-rbs-2), run at the session's start and again after the session edits orbit/config.yaml (D-rbs-3, BOUNDED: an outside edit mid-session is the residual). The write gate is unchanged (D-rbs-4). The ripple is edited in the change: two orbit-conventions requirements and its edit-ledger requirement, orbit-decision-records' every-mode requirement renamed plus the command added, onboard's line, docs/cli.md and CLAUDE.md (D-rbs-5); the clause test names 'under every setting' as the one replaced clause (D-rbs-6). This repository stops writing records once the change's apply refreshes its skills (D-rbs-7). Ready for /orbit:propose records-by-setting.",
+  "decisions_captured": 7,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 3,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [
+    {
+      "id": "D-rbs-3",
+      "kind": "a change to `orbit/config.yaml` made outside the session while it runs (by the user's hand, another tool, a branch switch)",
+      "method": "the next session's first call reads the settings afresh; a review of a trail showing records missing under a reader, or written with none, finds one after the fact"
+    }
+  ],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose records-by-setting — 3 live rules accounted, 1 bounded residual named (D-rbs-3); formalize when you are ready (or /orbit:explore records-by-setting to keep refining)"
+}

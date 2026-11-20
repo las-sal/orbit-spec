@@ -1,0 +1,460 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-19T16:02:34Z",
+  "change": "records-by-setting",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/records-by-setting/.orbit-runs/review-proposal-2026-11-19T00-15-22Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-19T00-15-22Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 3,
+    "suggestion": 7
+  },
+  "pushback_verification": "All ten verified against HEAD (selectUnreadRecords, the walk's replacement step, fencedProduction, program.ts, customization.md, disciplines.ts); none stale.",
+  "resolution_summary": {
+    "resolved": 10,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "At write: false the basic content forbids the replacement a walk must write for a reading finding on a record written earlier",
+      "file": "orbit/changes/records-by-setting/specs/orbit-conventions/spec.md",
+      "marker_source": "internal-review",
+      "classification": "decision_required",
+      "action": "Ratified A: on write: false the basic content forbids only new ledger entries and stop records; a resolution answering a stop already in the trail and a replacement fixing a record already there are written whatever the result. Rule, requirement text, a moments-table row and two scenarios added; the three premise sentences corrected; explore.md gains D-rbs-8 and D-rbs-9, superseding D-rbs-3 and D-rbs-7.",
+      "ratified_via": "chat",
+      "resolution": "A — narrow the prohibition to new records; a resolution answering a stop already in the trail, or a replacement fixing a record already there, is still written",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Narrow the prohibition to new records and keep allowing a walk's replacements"
+          },
+          {
+            "label": "B",
+            "body": "Keep the blanket prohibition; resolve such findings deferred and name the limit"
+          }
+        ],
+        "chosen": "A"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/records-by-setting/specs/orbit-decision-records/spec.md",
+          "orbit/changes/records-by-setting/design.md",
+          "orbit/changes/records-by-setting/proposal.md",
+          "orbit/changes/records-by-setting/explore.md",
+          "orbit/changes/records-by-setting/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "which at the defaults is nothing",
+          "at the defaults nothing is",
+          "write none, which is correct here"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/records-by-setting/specs/orbit-conventions/spec.md",
+            "text": "write no new ledger entry or stop record"
+          },
+          {
+            "path": "orbit/changes/records-by-setting/specs/orbit-decision-records/spec.md",
+            "text": "A record that answers or fixes one"
+          },
+          {
+            "path": "orbit/changes/records-by-setting/design.md",
+            "text": "write no new ledger entry or stop record"
+          },
+          {
+            "path": "orbit/changes/records-by-setting/explore.md",
+            "text": "D-rbs-8: write: false forbids only new records"
+          }
+        ],
+        "searched": [
+          "write no ledger entry",
+          "nothing is",
+          "at the defaults",
+          "D-rbs-3",
+          "D-rbs-7"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The deltas still say bodies carry the \"rule\" or the \"statement\", which this change moves to the reference",
+      "file": "orbit/changes/records-by-setting/specs/orbit-decision-records/spec.md",
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "The ADDED requirement and the reference requirement say the bodies carry the basic content; the reference requirement's scenario is retitled; task 2.1 rewords disciplines.ts' gloss pointer to the rule above, and task 2.3 re-tags the renamed scenario.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/records-by-setting/specs/orbit-conventions/spec.md",
+          "orbit/changes/records-by-setting/tasks.md",
+          "orbit/changes/records-by-setting/explore.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "every session whose body carries the decision-writing rule runs the same call",
+          "whose epitome carries the decision-writing statement"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/records-by-setting/specs/orbit-conventions/spec.md",
+            "text": "carries the decision-writing basic content SHALL ship"
+          },
+          {
+            "path": "orbit/changes/records-by-setting/specs/orbit-conventions/spec.md",
+            "text": "Every skill carrying the basic content ships the reference"
+          }
+        ],
+        "searched": [
+          "decision-writing statement",
+          "decision-writing rule",
+          "statement-carrying"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Task 3.2 adds decision-record claims to customization.md's settings rows without adding their owner to the section's Carried by line",
+      "file": "orbit/changes/records-by-setting/tasks.md",
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "Task 3.2 adds orbit-decision-records to the settings section's Carried by line.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/records-by-setting/tasks.md",
+            "text": "add `orbit-decision-records` to that section's `Carried by` line"
+          }
+        ],
+        "searched": [
+          "Carried by"
+        ],
+        "scope": [
+          "docs/customization.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The moments table leaves out a command the user types later in the same session, a result lost to compaction, and orbit/config.yml",
+      "file": "orbit/changes/records-by-setting/specs/orbit-conventions/spec.md",
+      "marker_source": "internal-review",
+      "classification": "decision_required",
+      "action": "Ratified A: the call runs at each command's first step and again after the session edits the project config (orbit/config.yaml or .yml), and its result governs that command; moments table, residual lines, scenario, design, proposal and explore.md (D-rbs-10 superseding D-rbs-8) follow.",
+      "ratified_via": "chat",
+      "resolution": "A — at each command's first step, and again after the session edits the project config (orbit/config.yaml or .yml); the result governs the rest of the command",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/records-by-setting/design.md",
+          "orbit/changes/records-by-setting/proposal.md",
+          "orbit/changes/records-by-setting/explore.md",
+          "orbit/changes/records-by-setting/specs/orbit-decision-records/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "at the session's start, and again after this session edits"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/records-by-setting/specs/orbit-conventions/spec.md",
+            "text": "at each command's first step, and again after this session edits the project config"
+          },
+          {
+            "path": "orbit/changes/records-by-setting/design.md",
+            "text": "at each command's first step, and again after this session edits the project config"
+          },
+          {
+            "path": "orbit/changes/records-by-setting/explore.md",
+            "text": "D-rbs-10: the command runs at each command's first step"
+          }
+        ],
+        "searched": [
+          "session's start",
+          "config.yml",
+          "compaction",
+          "for the rest of the session"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/records-by-setting/explore.md",
+            "why": "the exploration record: superseded decisions (D-rbs-3, D-rbs-7, D-rbs-8) keep the wording they were ratified with"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The tripwire named limit's \"disagree only when a halt is removed after a change's fixed point\" misses an uncommitted removal",
+      "file": "orbit/changes/records-by-setting/specs/orbit-decision-records/spec.md",
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "The named limit names both disagreements (an uncommitted halt change, a halt removed after a fixed point) and says, after D1, that they differ only about new records; explore.md's D-rbs-2 text and Mechanism move line corrected.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/records-by-setting/explore.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "disagree only when a halt is removed"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/records-by-setting/specs/orbit-decision-records/spec.md",
+            "text": "They disagree only about whether NEW records are written"
+          }
+        ],
+        "searched": [
+          "disagree only",
+          "fixed point"
+        ],
+        "scope": [
+          "orbit/changes/records-by-setting/design.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Proposal Impact places the predicate in decision-records.ts or project-config.ts, which the design rules out",
+      "file": "orbit/changes/records-by-setting/proposal.md",
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "The proposal's Impact names src/core/decision-status.ts (new) and src/commands/decisions.ts.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "(or `project-config.ts`)"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/records-by-setting/proposal.md",
+            "text": "`src/core/decision-status.ts` (new)"
+          }
+        ],
+        "searched": [
+          "project-config.ts",
+          "decision-status.ts"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Touchpoints omit src/commands/decisions.ts, where the `decisions` subcommands' actions live",
+      "file": "orbit/changes/records-by-setting/design.md",
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "Touchpoints add src/commands/decisions.ts and the decisions group's description; task 1.2 builds the action there and rewords the group description.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/records-by-setting/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/records-by-setting/design.md",
+            "text": "`src/commands/decisions.ts` — the `status` action"
+          },
+          {
+            "path": "orbit/changes/records-by-setting/tasks.md",
+            "text": "its action in `src/commands/decisions.ts`"
+          }
+        ],
+        "searched": [
+          "src/commands/decisions.ts",
+          "decisions group"
+        ],
+        "scope": [
+          "src/cli/program.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The two new fences share a first line, and one scenario task 2.3 tags has a behaviour THEN",
+      "file": "orbit/changes/records-by-setting/tasks.md",
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "Task 2.3 finds each fence by a longer prefix and tags the defaults scenario as behaviour with the predicate run on an empty project.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/records-by-setting/tasks.md",
+            "text": "since `fencedProduction` returns the first match"
+          }
+        ],
+        "searched": [
+          "fencedProduction",
+          "FIRST_LINE"
+        ],
+        "scope": [
+          "test/helpers/owner-text.ts",
+          "test/core/decision-writing-parity.test.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Scenario titles use \"owed\", the word Decision 2 keeps for records owed a reading",
+      "file": "orbit/changes/records-by-setting/specs/orbit-decision-records/spec.md",
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "The three scenario titles say written, not owed.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "At the defaults no record is owed",
+          "Each reading setting makes records owed",
+          "A setting with no reader owes nothing"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/records-by-setting/specs/orbit-decision-records/spec.md",
+            "text": "At the defaults no new record is written"
+          }
+        ],
+        "searched": [
+          "owed",
+          "owes"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Task 3.3's \"rewrite CLAUDE.md's Decision-writing bullet\" covers a bullet that also carries the installed-CLI workarounds",
+      "file": "orbit/changes/records-by-setting/tasks.md",
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "Task 3.3 rewrites only the bullet's decision-record sentences and keeps its installed-CLI workarounds.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "Rewrite CLAUDE.md's Decision-writing bullet"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/records-by-setting/tasks.md",
+            "text": "keeping its installed-CLI workarounds"
+          }
+        ],
+        "searched": [
+          "CLAUDE.md"
+        ],
+        "scope": [
+          "CLAUDE.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Walked the fresh half of the proposal blind pair: all ten findings resolved — two decisions ratified in chat (D1: write: false forbids only new records; D2: the call runs at each command's first step), eight obvious fixes. explore.md gains D-rbs-8 to D-rbs-10.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews records-by-setting",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "2c75211503cac0b109ea35cd47e21da17bc4e1cf",
+      "frozen": false,
+      "evidence": {
+        "files": [],
+        "share": null,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ],
+  "ripple_misses": 0
+}

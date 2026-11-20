@@ -1,0 +1,29 @@
+{
+  "command": "architect",
+  "timestamp": "2026-11-20T15:17:34Z",
+  "change": null,
+  "doc": "reduce-orbit-phase1",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Arc-done readout for reduce-orbit-phase1: every declared stage is done (four ratified, evaluation ended from its concluded exploration), the closing architecture review is recorded and walked, the program brief is unchanged since its saved copy, and the sign-off hold reads off. The program PR #46 is draft and valid; its READY flip and merge are Sal's. No stage awaited ratification and nothing in the doc changed this session.",
+  "stages_touched": [],
+  "rulings_captured": [],
+  "completions_ratified": [],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      {
+        "path": "orbit/architecture/automate-dev-flow.md",
+        "why": "the resumed program: R-adf-16 as amended, R-adf-17 and its as-built note, and the tripwires stage's three explorations"
+      },
+      {
+        "path": "orbit/architecture/reduce-orbit-phase1.md",
+        "why": "R-rop-13's open question (whether pr: per-architecture stays) and R-rop-15's phase 2"
+      }
+    ],
+    "next_command": "/orbit:architect automate-dev-flow",
+    "model_hint": null,
+    "seam": "Phase 1 is arc-done; after Sal merges PR #46 and returns to main, automate-dev-flow resumes, deciding first whether pr: per-architecture stays (R-rop-13)."
+  },
+  "next_recommended": "/orbit:architect automate-dev-flow"
+}

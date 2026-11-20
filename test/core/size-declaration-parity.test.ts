@@ -11,13 +11,21 @@ import { ownerText, fencedProduction } from '../helpers/owner-text.js';
  * propose body interpolates that constant as a CHECKED MIRROR, because an adopter's installed skill has
  * neither our specs nor our parser. This test holds the constant byte-equal to the owner's fence through
  * the single-active-owner lookup (the active delta while the change is open, the baseline after
- * archive), and the rendered propose skill to the same text.
+ * archive), and the rendered propose skill to the same text. Since conditional-steps the brief's full text, the mirror
+ * among it, is the propose skill's `references/size-brief.md`; the body keeps the brief's basic content.
  */
 const FIRST_LINE = '## Size';
 const ANCHOR = '```\n## Size\n- <dimension>';
 
 const body = (): string => getOrbitProposeSkillTemplate().instructions;
+/** The brief's full text: the propose skill's `references/size-brief.md`. */
 const section = (): string => {
+  const r = (getOrbitProposeSkillTemplate().references ?? []).find((x) => x.name === 'size-brief.md');
+  expect(r, 'the propose skill ships references/size-brief.md').toBeDefined();
+  return (r as { content: string }).content;
+};
+/** The brief's basic content, in the body's `Size brief after generation` section. */
+const basic = (): string => {
   const s = body().split('\n## Size brief after generation')[1];
   expect(s, 'the body carries a "Size brief after generation" section').toBeDefined();
   return s.split('\n## PR lifecycle')[0];
@@ -35,11 +43,24 @@ describe('size declaration production ↔ owner ↔ propose body parity (rc09a)'
     expect(fencedProduction(section(), FIRST_LINE)).toBe(fencedProduction(owner, FIRST_LINE));
   });
 
-  it('the mirror says it is one, names its owner, and appears ONCE in the body', () => {
+  it('the mirror says it is one, names its owner, and appears ONCE, in the reference and not in the body', () => {
     const s = section();
     expect(s).toMatch(/CHECKED MIRROR/);
     expect(s).toContain("`orbit-change-size`'s `A breach is declared in the proposal's\nSize section`");
-    expect(body().split(SIZE_DECLARATION_PRODUCTION).length - 1).toBe(1);
+    expect(s.split(SIZE_DECLARATION_PRODUCTION).length - 1).toBe(1);
+    expect(body().split(SIZE_DECLARATION_PRODUCTION).length - 1).toBe(0);
+  });
+
+  // @scenario text orbit-propose-modifications :: Size brief after generation :: The basic content handles a quiet size check
+  it('the basic content says nothing about size on a null ceiling or no breaches, and names the reference only otherwise', () => {
+    const b = basic();
+    const quiet = b.indexOf('When `ceiling` is `null` or `breaches` is empty, say nothing about size.');
+    const other = b.indexOf('Otherwise, or on a non-zero exit, read `references/size-brief.md` and follow it from the result you already have.');
+    expect(quiet).toBeGreaterThan(-1);
+    expect(other).toBeGreaterThan(quiet);
+    expect(b.split('references/size-brief.md').length - 1).toBe(1);
+    expect(b).toContain('read `size` from `orbit status --change "<name>" --json`');
+    expect(b).toContain("BEFORE Step 0d's move, Phase 3 and the completion emit");
   });
 });
 

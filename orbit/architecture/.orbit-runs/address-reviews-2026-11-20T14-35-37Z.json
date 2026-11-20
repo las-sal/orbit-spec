@@ -1,0 +1,231 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-20T14:35:37Z",
+  "change": null,
+  "doc": "reduce-orbit-phase1",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "from-file",
+  "source_path": "orbit/architecture/.orbit-runs/review-architecture-2026-11-19T21-32-53Z.json",
+  "source_command": null,
+  "source_token": null,
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 5
+  },
+  "pushback_verification": "All five verified against the doc at HEAD 9d5bc650: every cited line still read as the finding said; none stale.",
+  "resolution_summary": {
+    "resolved": 5,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "SUGGESTION",
+      "title": "R-rop-17 and RG0's exception state the defaults more broadly than what shipped",
+      "marker_source": "internal-review",
+      "file": "orbit/architecture/reduce-orbit-phase1.md",
+      "line": 167,
+      "classification": "decision_required",
+      "action": "Ratified B: a dated 'As built' note after R-rop-17 and after RG0's exception (every body carries the same basic content under every configuration; at the defaults an answer to a stop already in a trail, or a fix of a record already there, is still written; the reading step still reads records a trail holds). Ripple ratified A: the same note after automate-dev-flow's R-adf-17, which restates R-rop-17; its G0 stays, citing R-adf-17.",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Leave R-rop-17 and RG0 as ratified; the Shipped-as paragraph is the record of the narrowing."
+          },
+          {
+            "label": "B",
+            "body": "Append a dated note to R-rop-17 and to RG0's exception: as built (D-rbs-10), an answer to a stop already in a trail and a fix of a record already there are still written at the defaults, and records already in a trail are still read; every body carries the same basic content under every configuration."
+          }
+        ],
+        "chosen": "B"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/architecture/automate-dev-flow.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/architecture/reduce-orbit-phase1.md",
+            "text": "As built (`records-by-setting`,"
+          },
+          {
+            "path": "orbit/architecture/reduce-orbit-phase1.md",
+            "text": "noted 2026-11-20: the bodies carry the same basic content under every configuration"
+          },
+          {
+            "path": "orbit/architecture/automate-dev-flow.md",
+            "text": "noted 2026-11-20 at Sal's choice, `reduce-orbit-phase1`'s closing-review walk"
+          }
+        ],
+        "searched": [
+          "finds nothing to read",
+          "carry a pointer in place of",
+          "only when a setting that reads them is on",
+          "R-rop-17"
+        ],
+        "scope": [
+          "CLAUDE.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "R-rop-7 and the Premise still say phase 1 leaves decision records and workflow behaviour alone",
+      "marker_source": "internal-review",
+      "file": "orbit/architecture/reduce-orbit-phase1.md",
+      "line": 98,
+      "classification": "decision_required",
+      "action": "Ratified A: a parenthetical after the Premise's opening sentence naming the one exception (records-by-setting; RG0's exception, R-rop-17), and a dated note after R-rop-7 saying the evaluation brought that question into phase 1 (D-eval-8) as stage records-by-setting.",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Add a dated pointer clause at R-rop-7 and at the Premise's sentence: brought into phase 1 by D-eval-8 as stage records-by-setting (R-rop-17; RG0's one exception)."
+          },
+          {
+            "label": "B",
+            "body": "Leave both as ratified on 2026-11-17; R-rop-2's third amendment and RG0's exception are the record."
+          }
+        ],
+        "chosen": "A"
+      },
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/architecture/reduce-orbit-phase1.md",
+            "text": "one exception, ratified at the evaluation:"
+          },
+          {
+            "path": "orbit/architecture/reduce-orbit-phase1.md",
+            "text": "that question was brought into phase 1 by the evaluation (D-eval-8)"
+          }
+        ],
+        "searched": [
+          "without changing what any workflow does",
+          "outside phase 1"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "R-rop-15's deferred one-line decision-writing reads as undone work after records-by-setting",
+      "marker_source": "internal-review",
+      "file": "orbit/architecture/reduce-orbit-phase1.md",
+      "line": 155,
+      "classification": "trivial_fix",
+      "action": "Added one sentence to records-by-setting's Shipped-as paragraph: the one-line decision-writing R-rop-7 weighed and R-rop-15 sends to phase 2 is not this change; the rule moved whole and only the body's pointer is one line; rewording the rule still waits for phase 2.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/architecture/reduce-orbit-phase1.md",
+            "text": "rewording the rule itself still waits for phase 2"
+          }
+        ],
+        "searched": [
+          "one-line decision-writing",
+          "one-line form"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The doc grades no goal at the program's close",
+      "marker_source": "internal-review",
+      "file": "orbit/architecture/reduce-orbit-phase1.md",
+      "line": 403,
+      "classification": "trivial_fix",
+      "action": "Appended a 2026-11-20 status-log entry grading RG0 to RG3 at the close, with their evidence, and recording the walk.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/architecture/reduce-orbit-phase1.md",
+            "text": "RG3 held, no ceiling raised but explore"
+          }
+        ],
+        "searched": [
+          "RG1",
+          "RG2",
+          "RG3"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "R-rop-12 sits before R-rop-11 in the rulings index",
+      "marker_source": "internal-review",
+      "file": "orbit/architecture/reduce-orbit-phase1.md",
+      "line": 130,
+      "classification": "trivial_fix",
+      "action": "Swapped the R-rop-11 and R-rop-12 entries so the index runs in ID order; no text changed.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [],
+        "searched": [
+          "R-rop-11",
+          "R-rop-12"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Five of five resolved: two ruling amendments by Sal's choice (B, with the R-adf-17 ripple A; then A), three obvious fixes. R-rop-17, RG0's exception and automate-dev-flow's R-adf-17 carry dated as-built notes; R-rop-7 and the Premise point at records-by-setting; the Shipped-as paragraph separates the pointer from R-rop-7's rewording; the status log grades RG0 to RG3; the rulings index runs in ID order.",
+  "iteration": 1,
+  "next_recommended": "/orbit:review --as architecture reduce-orbit-phase1 — confirm the resolutions",
+  "ripple_misses": 0
+}

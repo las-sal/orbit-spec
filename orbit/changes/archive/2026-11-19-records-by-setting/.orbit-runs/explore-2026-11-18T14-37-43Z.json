@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-11-18T14:37:43Z",
+  "change": "records-by-setting",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Named exploration records-by-setting scaffolded (six sections, Premise written from R-rop-17 and the stage charter) with the architecture citation reduce-orbit-phase1 / records-by-setting, accepted by Sal. Nothing decided yet.",
+  "decisions_captured": 0,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 0,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:explore records-by-setting — continue capturing thinking — no decisions captured yet"
+}

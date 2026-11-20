@@ -5,7 +5,7 @@
  * templates file into workflow-focused modules.
  */
 import type { SkillTemplate, CommandTemplate } from '../types.js';
-import { DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../disciplines.js';
+import { DECISION_RECORDS_REFERENCE, DECISION_WRITING_BASIC } from '../../disciplines.js';
 import {
   EXPLORE_STATUS_HEADER_PRODUCTION,
   EXPLORE_DECISION_ENTRY_PRODUCTION,
@@ -362,7 +362,7 @@ The disciplines from \`orbit-conventions\`, embedded per body; detail lives wher
 - **Change completeness (modification-time)**: section moves in \`explore.md\` land whole (a resolved Open question MOVES to Decisions — never left in both); re-read the section after to confirm.
 - **Pushback (review-time)**: when the conversation flags something as already-decided, verify against \`explore.md\` before treating it as new; don't re-litigate captured decisions.
 - **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line — gate \`passed\` means *eligible*, not *commanded*.
-${DECISION_WRITING_DISCIPLINE}
+${DECISION_WRITING_BASIC}
 
 ## Three invocation modes
 

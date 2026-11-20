@@ -1,0 +1,10 @@
+{
+  "command": "resolution",
+  "timestamp": "2026-11-17T20:16:12Z",
+  "change": "tighten-bodies",
+  "model": "claude-opus-5-5",
+  "stop": "stop-2026-11-17T20-08-45Z.json",
+  "answer": "Remove the mirror notes entirely, as the charter says.",
+  "effect": "R-crc-14's mirror corollary is amended: a skill body's copy of a spec's text no longer has to say it is a copy or name the spec that owns it; a test still keeps the copy identical to the spec, and the copy still adds nothing. The stage removes the thirteen mirror notes from the bodies it tightens. Only two requirements ask for the note itself (one in orbit-conventions, one in orbit-emit-composition), so only those two are modified; the others describe a copy kept identical by a test, which stays true. The question as asked overstated this as eight specs.",
+  "replaces": "resolution-2026-11-17T20-09-53Z.json"
+}

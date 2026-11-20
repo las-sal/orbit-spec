@@ -1,0 +1,109 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-19T17:38:06Z",
+  "change": "records-by-setting",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    }
+  },
+  "findings": [],
+  "stale_suppressed": [],
+  "commentary": "Graded the system walk of the fresh pass. The non-zero-exit entry kept the body as ratified and gave the choice a home in design.md's Risks; the bullet's facts check out (the command exits zero on every config, an adopter's skills and CLI come from one orbit update, CLAUDE.md names the built-CLI workaround here). The opening entry's edit is present at all four sites it claims: the constant is one sentence naming that record's own section and Fixing a record, design Decision 4 quotes it exactly once whitespace is normalized, the parity test asserts the new clause, and the eleven moved function hashes are re-recorded with their history line. The new one-sentence assertion was shown able to fail: the old two-sentence form splits in two under its rule. The fourteen regenerated references carry the new opening. The stale call on the charter finding holds: the account's deviations already name both narrowings, which the archive's Shipped-as paragraph has to carry.\n\nResidual check from f48181a6, the commit that added the latest accepted independent pass: four files changed, every one inside an entry's edit record; nothing untracked. Passes 1 to 3 ran over the walk's scope (the delta and baseline orbit-conventions specs, the constant, design.md, the two tests, docs/cli.md, CLAUDE.md) and found nothing.\n\nThe reading step selected seven ledger entries but did not run: orbit's brief is 123,852 characters, most of it the two architecture docs whole, and the reviewing session does not hand a reader that verbatim, as at tripwires' system review. The records stay selected for a later reading. The fix on file in automate-dev-flow's status log (the reader runs orbit decisions brief itself, and the brief carries only the docs' Premise, Goals, Rulings and stage charters) would bring this one within reach.",
+  "passes_run": [
+    "1",
+    "2",
+    "3"
+  ],
+  "passes_skipped": [
+    "0: VERIFICATION genre — a whole-change pass is not run over the walk scope",
+    "4: no perspectives defined (orbit/lenses/ absent)",
+    "5: no critical paths defined (orbit/lenses/ absent)",
+    "6: VERIFICATION genre — a whole-project pass is not run over the walk scope",
+    "reading: the brief orbit renders (123,852 characters: two architecture docs and seven ledger entries) is too large to hand a reader verbatim"
+  ],
+  "verification": [
+    {
+      "title": "The decision-writing basic content names no branch for a non-zero exit of orbit decisions status",
+      "file": "src/core/disciplines.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "The reference's opening is worded differently in the spec and in the shipped constant",
+      "file": "orbit/changes/records-by-setting/specs/orbit-conventions/spec.md",
+      "verdict": "landed"
+    }
+  ],
+  "final_assessment": "No findings.",
+  "decision_records_owed": [
+    "ledger-2026-11-18T15-16-25Z.json",
+    "ledger-2026-11-18T16-38-57Z.json",
+    "ledger-2026-11-18T16-43-21Z.json",
+    "ledger-2026-11-18T23-54-52Z.json",
+    "ledger-2026-11-19T00-05-57Z.json",
+    "ledger-2026-11-19T15-58-32Z.json",
+    "ledger-2026-11-19T17-04-30Z.json"
+  ],
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-11-19T17-31-40Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "orbit status --change records-by-setting --report",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "0717c696ee8838445398c81daee8ecef3b5cfbad",
+      "frozen": true,
+      "evidence": {
+        "files": [],
+        "share": 0,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ]
+}

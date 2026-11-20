@@ -44,19 +44,28 @@ Three decisions were ratified during C1 remediation:
 - **D11 refinement — Claude primacy**: never trade Claude efficacy for cross-tool neutrality; upstream's
   named-tool idiom (`AskUserQuestion`, `Task tool`) stays in bodies by design.
 
+A new or grown step follows **`skill_body_convention.md`**: a step whose procedure an orbit command's result calls for
+keeps its basic content in the body and moves its procedure to a reference file, and a block acted on once, at a moment
+the body names (the session's first run-summary emit, the end of apply or of a walk), keeps that moment and its command in the body
+and reads its reference there; `skill-body-budget.test.ts` holds each body's size.
+
 ## Programs: one live
 
-**`orbit/architecture/reduce-orbit-phase1.md`** (from 2026-11-17) is live: it restructures the skill bodies to be
+**`orbit/architecture/reduce-orbit-phase1.md`** (from 2026-11-17) is live, every declared stage done (records-by-setting
+ratified 2026-11-19); what remains is its closing architecture review and, at arc-done, the program PR. It restructures the skill bodies to be
 slimmer and in line with Anthropic's guidance for building skills, without changing what any workflow does. Text a
 session rarely needs moves to reference files, each body keeping the step's basic content, and a per-body budget test
 keeps the bodies from growing back. Its source is Sal's brief beside it (`reduce-orbit-phase1-brief.md`); its stages run
-conditional-steps, once-per-session-detail, tighten-bodies, then an evaluation that decides what follows. Say "basic
+conditional-steps, once-per-session-detail, tighten-bodies and an evaluation, whose decisions (R-rop-15 to R-rop-19) add
+one last stage, records-by-setting: decision records written only when a setting reads them, RG0's one named exception;
+a phase 2 that starts with a replay set follows `automate-dev-flow` (R-rop-15). Say "basic
 content" and "reference file" (Anthropic's terms), not "stub" (R-rop-3). This repo sets `pr: per-architecture` for it
 (R-rop-13): from its first propose on, the program's work, between stages too, is done on the branch
 `reduce-orbit-phase1`, which carries one draft PR against main until arc-done.
 
-**`orbit/architecture/automate-dev-flow.md`** (from 2026-11-07) is paused until that evaluation is done (R-adf-16): no
-change of its remaining stages is proposed meanwhile, and its three tripwire explorations stay as they are. It makes
+**`orbit/architecture/automate-dev-flow.md`** (from 2026-11-07) was paused until that program's evaluation and its
+records-by-setting stage were done (R-adf-16 as amended); both are, so it resumes, its three tripwire explorations as they
+were left, and whether `pr: per-architecture` stays for it is decided then (R-rop-13). It makes
 orbit able to run a whole program with Sal present only where Sal adds value, seam-chained or autonomous, with every
 permission an explicit setting that defaults to today's behaviour (R-adf-1, R-adf-6). It is built here under today's
 supervised flow and first proven on a big, non-critical project (R-adf-5: never dogfooded in orbit-spec). Its G0 now
@@ -126,14 +135,15 @@ body.
   position readout + the engine's eligibility line (`Ready when you are:`); blanket delegation covers
   work WITHIN the requested command, never the next one — gate `passed` means *eligible*, not
   *commanded*.
-- **Decision-writing** (`orbit-conventions`, stage `decision-writing`) — keep a decision record
-  (`orbit-decision-records`) without changing what the user sees or is asked: a stop record BEFORE asking a
-  question one of the five AI-raised stop conditions describes (or before an act one describes, taken without
-  asking), a resolution with the answer, a ledger entry after any call in one of the eighteen ledger areas; a
-  designed prompt (consent, inflection, closure) is a seam and writes nothing, and a walk of an archived change
-  writes no record. The full statement is the fifth epitome bullet in every workflow body with a disciplines
-  epitome; what a record holds is each skill's `references/decision-records.md`. Until a release carrying decision records is installed, the
-  installed `orbit` refuses these commands here: write records with `node bin/orbit.js emit stop|resolution|ledger …`.
+- **Decision-writing** (`orbit-conventions`, stages `decision-writing` and `records-by-setting`) — decision records
+  (`orbit-decision-records`) are written when `orbit decisions status` says so (`write: true`: a granted `chain` key,
+  `signoff: change` or `program`, or a tripwire at `on_fire: halt`); run it as `node bin/orbit.js decisions status`
+  until a release carrying it is installed. This repository sets no `chain`, `signoff` or `tripwires` key, so a
+  session here writes no NEW ledger entry or stop record, while a resolution answering a stop already in a trail, or a
+  replacement fixing a record already there, is still written. Every workflow body with a disciplines epitome carries
+  the basic content (when to run the command) as its fifth epitome bullet; the rule and what a record holds are each
+  skill's `references/decision-records.md`. Until a release carrying decision records is installed, the
+  installed `orbit` refuses these commands here: write such a record with `node bin/orbit.js emit stop|resolution|ledger …`.
   Likewise the commit step's `orbit pr commit` (chained-review-commit): until a release carrying it is installed, run it
   as `node bin/orbit.js pr commit "<name>" --json` (here it returns `off`: this repo sets neither `commit` nor `push`).
   And the archive's brief save, `orbit brief` (brief-render): until a release carrying it is installed, run it as
@@ -152,7 +162,7 @@ body.
 
 ## When in doubt
 
-- The fork plan's decisions remain citable — `orbit/architecture/fork-and-orbify.md` (program complete); the D-arc that followed it is `orbit/architecture/d-arc-arbitered-flow.md` (also complete — historical record). The previous program is `orbit/architecture/clean-up-review-cycle.md`, its stages all closed; read its Premise, Goals, Rulings index and "Carried at close" table, never the whole doc. The docs program that followed is `orbit/architecture/update-gh-documentation.md` (complete). The program after it, `orbit/architecture/refine-documentation-and-architect.md`, is complete too. The latest, `orbit/architecture/propose-reads-specs.md`, is complete as well (its measurement moved to issue #32). The live program is `orbit/architecture/reduce-orbit-phase1.md`; `orbit/architecture/automate-dev-flow.md` is paused until its evaluation. `orbit architecture status` gives every doc's position.
+- The fork plan's decisions remain citable — `orbit/architecture/fork-and-orbify.md` (program complete); the D-arc that followed it is `orbit/architecture/d-arc-arbitered-flow.md` (also complete — historical record). The previous program is `orbit/architecture/clean-up-review-cycle.md`, its stages all closed; read its Premise, Goals, Rulings index and "Carried at close" table, never the whole doc. The docs program that followed is `orbit/architecture/update-gh-documentation.md` (complete). The program after it, `orbit/architecture/refine-documentation-and-architect.md`, is complete too. The latest, `orbit/architecture/propose-reads-specs.md`, is complete as well (its measurement moved to issue #32). The live program is `orbit/architecture/reduce-orbit-phase1.md`; `orbit/architecture/automate-dev-flow.md` resumes now that program's evaluation and records-by-setting are done. `orbit architecture status` gives every doc's position.
 - Engine behavior is defined in the vendored TypeScript under `src/` (the architecture doc maps it).
 - Keep tests green: run `npm test` before and after substantive changes; the green baseline is the
   contract.

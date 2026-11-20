@@ -1045,9 +1045,12 @@ with the same table: a change whose hold stops is not archived and stays active,
 summary reports it among the changes not archived, with the reason.
 
 With every setting at its default, nothing the user sees or is asked changes: the hold reports `why: "off"` with no
-warning and the archive goes on silently (`automate-dev-flow`'s R-adf-12). Each body carries the command, the table,
-and the `orbit emit signoff` invocation with its fields, so an installed skill needs no spec to run the step; a test
-holds each body carrying them.
+warning and the archive goes on silently (`automate-dev-flow`'s R-adf-12). The archive body carries the step's BASIC
+CONTENT (`reduce-orbit-phase1`'s R-rop-3) — the hold command and its `why: "off"` row — and tells the agent to read
+`references/signoff-hold.md` and follow it, from the save's outcome and the result it already has, on any other result or a non-zero exit; that reference carries the command,
+the table and the `orbit emit signoff` invocation with its fields, byte-equal to the step's text. The bulk-archive body
+carries the whole step, as before. Either way an installed skill needs no spec to run the step; a test holds the
+archive body's basic content, its reference file and the bulk-archive body's whole step.
 
 #### Scenario: A default archive reads the hold and asks nothing
 
@@ -1107,4 +1110,10 @@ holds each body carrying them.
   `bar`
 - **THEN** `foo` is archived, `bar` stays active, and the bulk summary reports `bar` among the changes not archived with
   the user's reason
+
+#### Scenario: The archive body's basic content handles the default hold
+
+- **WHEN** the archive skill is generated
+- **THEN** its Step 3.7 basic content handles `why: "off"` itself and names `references/signoff-hold.md` only for the other
+  results and a non-zero exit
 

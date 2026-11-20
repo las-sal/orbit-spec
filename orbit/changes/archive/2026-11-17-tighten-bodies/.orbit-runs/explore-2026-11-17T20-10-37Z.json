@@ -1,0 +1,25 @@
+{
+  "command": "explore",
+  "timestamp": "2026-11-17T20:10:37Z",
+  "change": "tighten-bodies",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Provenance worked through at Sal's direction. D-tb-6 (rule, Mechanism BOUNDED): stage tags, the NEW before orbit step numbers, ruling and decision ids, mirror notes and owning-spec citations in headings leave the twelve bodies; a prose spec citation goes only when the sentence still gives the same instruction; an id that is part of a name drops at every use. The mirror notes collided with R-crc-14's mirror corollary (a copy must say it is one and name its owner, restated in eight specs); Sal chose removal over trimming to the corollary's minimum (D-tb-7; stop-2026-11-17T20-08-45Z.json and its resolution), so the corollary's first condition is dropped and eight capabilities' requirements are modified. D-tb-8 (fact): provenance about 3,800 to 4,500, so the stage projects about 362,800 to 363,500 in total and about 18,150 for apply. Open: how the removals are tested, how RG2's fixes are cut, and the change's size against its three-capability ceiling (standing recommendation: declare the breach rather than split).",
+  "decisions_captured": 8,
+  "open_questions_count": 3,
+  "open_questions_with_recommendation": "3 of 3",
+  "rules_total": 2,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [
+    {
+      "id": "D-tb-6",
+      "kind": "a provenance form outside the six above (a coined tag, an archive name, a pointer to orbit's own history)",
+      "method": "reading each tightened body whole at propose, and the removal test, which lists every removed span with its kind"
+    }
+  ],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:explore tighten-bodies — 8 decisions captured but 3 open questions remain; resolve open questions before formalizing"
+}

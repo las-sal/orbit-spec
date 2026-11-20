@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { getSkillTemplates } from '../../../src/core/shared/skill-generation.js';
-import { PROGRAM_SIGNOFF_STEP } from '../../../src/core/templates/workflows/architect.js';
+import { PROGRAM_SIGNOFF_HOLD_BASIC, PROGRAM_SIGNOFF_SAVE, PROGRAM_SIGNOFF_STEP } from '../../../src/core/templates/workflows/architect.js';
 import { ownerText } from '../../helpers/owner-text.js';
 
 /**
@@ -19,6 +19,8 @@ const body = (dir: string): string => {
   return s.template.instructions;
 };
 const count = (hay: string, needle: string): number => hay.split(needle).length - 1;
+const reference = (dir: string, name: string): string | undefined =>
+  (skills.find((x) => x.dirName === dir)?.template.references ?? []).find((r) => r.name === name)?.content;
 const HEADING = "### Requirement: The architect session saves the program brief and asks for the program's sign-off";
 
 async function ownerBlock(): Promise<string> {
@@ -60,13 +62,15 @@ describe("the architect body carries the program's save and sign-off (Step 5.4)"
     expect(PROGRAM_SIGNOFF_STEP).toMatch(/\*\*AskUserQuestion tool\*\* \(chain: decision\)/);
   });
 
-  it('the architect body carries it once, as Step 5.4, after the ratification flow and before the arc-done readout', () => {
+  it('the architect body carries the save and the hold\'s basic content once, as Step 5.4, after the ratification flow and before the arc-done readout; the whole step ships in references/program-signoff.md', () => {
     const b = body('orbit-architect');
-    expect(count(b, PROGRAM_SIGNOFF_STEP)).toBe(1);
+    expect(count(b, PROGRAM_SIGNOFF_STEP)).toBe(0);
+    expect(PROGRAM_SIGNOFF_STEP.startsWith(`${PROGRAM_SIGNOFF_SAVE}\n\nThe hold renders no brief and writes nothing. It prints one object:`)).toBe(true);
+    expect(count(reference('orbit-architect', 'program-signoff.md') ?? '', PROGRAM_SIGNOFF_STEP)).toBe(1);
     const at = [
       '### 5. Completion-ratification flow',
       "### 5.4. The program's saved brief and its sign-off (program-signoff)",
-      PROGRAM_SIGNOFF_STEP,
+      `${PROGRAM_SIGNOFF_SAVE}\n\n${PROGRAM_SIGNOFF_HOLD_BASIC}`,
       '### 5.5. Arc-done readout',
     ].map((s) => b.indexOf(s));
     expect(at.every((i) => i > -1)).toBe(true);
@@ -77,6 +81,18 @@ describe("the architect body carries the program's save and sign-off (Step 5.4)"
     // Under program the readout is Step 5.4's row, never re-testing every stage archived (fresh S1, external W1).
     expect(b).toContain("- **Under `signoff: program`** — Step 5.4's row IS the check, and replaces the one above");
     expect(b).toContain('never re-test "every stage archived" here');
+  });
+
+  // @scenario text orbit-architect :: The architect session saves the program brief and asks for the program's sign-off :: The architect body's basic content handles the default hold
+  it("the hold's basic content handles `why: \"off\"` itself and names the reference only for the other results and a non-zero exit", () => {
+    const off = PROGRAM_SIGNOFF_HOLD_BASIC.indexOf('On `why: "off"`, say nothing about it and observe arc-done as Step 5.5 states, stating any warning in one line.');
+    const other = PROGRAM_SIGNOFF_HOLD_BASIC.indexOf("On any other result or a non-zero exit, read `references/program-signoff.md` and follow it from the save's outcome and the result you already have, before Step 5.5.");
+    expect(off).toBeGreaterThan(-1);
+    expect(other).toBeGreaterThan(off);
+    expect(count(PROGRAM_SIGNOFF_HOLD_BASIC, 'references/program-signoff.md')).toBe(1);
+    // The save stays whole in the body, with the hold command it runs.
+    expect(body('orbit-architect')).toContain(PROGRAM_SIGNOFF_SAVE);
+    expect(PROGRAM_SIGNOFF_SAVE).toContain('orbit brief <doc> --save\norbit brief <doc> --hold --json');
   });
 
   // @scenario text orbit-architect :: The architect session saves the program brief and asks for the program's sign-off :: A default session saves silently and asks nothing

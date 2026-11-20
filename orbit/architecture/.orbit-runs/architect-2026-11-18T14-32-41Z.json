@@ -1,0 +1,42 @@
+{
+  "command": "architect",
+  "timestamp": "2026-11-18T14:32:41Z",
+  "change": null,
+  "doc": "reduce-orbit-phase1",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "The evaluation's decisions are written into the program: R-rop-15 (a phase 2 that starts with the replay set; P2 its own later program), R-rop-16 (bulk-archive's thin loop at parallel-lanes), R-rop-17 (decision records only when a setting reads them), R-rop-18 (phase 2's 5,000-token goal) and R-rop-19 (the left provenance to phase 2's rewording), with four considered-and-out entries and the evaluation's Concluded-as paragraph. R-rop-2 and R-rop-9 are amended, RG0 names stage records-by-setting as its one exception (Sal's answer to stop-2026-11-18T14-27-24Z.json), and that stage is declared; automate-dev-flow's G0 gains the matching R-adf-17 and its R-adf-16 the new resume point. CLAUDE.md's Programs section is brought up to date.",
+  "stages_touched": [
+    "evaluation",
+    "records-by-setting"
+  ],
+  "rulings_captured": [
+    "R-rop-15",
+    "R-rop-16",
+    "R-rop-17",
+    "R-rop-18",
+    "R-rop-19"
+  ],
+  "completions_ratified": [],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      {
+        "path": "orbit/architecture/reduce-orbit-phase1.md",
+        "why": "R-rop-17 and the records-by-setting charter, RG0's named exception, and R-rop-3 to R-rop-5, the shape the stage's basic content takes"
+      },
+      {
+        "path": "orbit/explore/evaluation/explore.md",
+        "why": "D-eval-3's Mechanism entry: every reader of a decisions folder and the setting each reads under"
+      },
+      {
+        "path": "skill_body_convention.md",
+        "why": "the rule a step moved to a reference file follows"
+      }
+    ],
+    "next_command": "/orbit:explore records-by-setting",
+    "model_hint": null,
+    "seam": "Stages conditional-steps, once-per-session-detail and tighten-bodies are ratified and evaluation ended from its concluded exploration; records-by-setting is premised and opens with its named exploration on the branch reduce-orbit-phase1 (R-rop-13)."
+  },
+  "next_recommended": "/orbit:explore records-by-setting"
+}

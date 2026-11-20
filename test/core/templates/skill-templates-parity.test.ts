@@ -130,21 +130,35 @@ import { generateSkillContent } from '../../../src/core/shared/skill-generation.
 // replacement-liveness apply (2026-11-10): the shared decision-records.md reference's `decision` line gained the
 // carried exception (`CITATION_EXISTS.decision`, D-rl-1). Eleven function hashes moved — every pinned skill carrying
 // the reference; onboard, which carries none, did not — and no generated-skill or command-template pin did.
+// tighten-bodies apply (2026-11-17), a PLANNED move (its task 8.1): the decision-writing bullet's labelled sub-bullets,
+// the restated Guardrails lines, the bodies' provenance and mirror notes, the YAML-safe frontmatter (every value through
+// `yamlScalar`), three descriptions and the long references' contents lists. All twelve pinned skill function hashes
+// and all twelve generated-skill hashes moved; no command-template pin did. The edits are listed pair by pair in
+// `tightened-bodies.test.ts`.
+// records-by-setting apply (2026-11-19), a PLANNED move (its task 2.5, R-rop-17): every epitome body's decision-writing
+// bullet became its one-line basic content (`DECISION_WRITING_BASIC`), the rule moving to the first section of the shared
+// decision-records.md reference; onboard's one-line statement says records are written when a setting reads them. All
+// twelve pinned skill function hashes and all twelve generated-skill hashes moved; no command-template pin did.
+// records-by-setting system walk (2026-11-19, fresh S2): the shared decision-records.md reference's opening became one
+// sentence naming that record's own section and Fixing a record, as its spec says. 11 function hashes moved — every
+// pinned skill carrying the reference; onboard, which carries none, did not — and no generated-skill or command-template pin did.
 const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
-  getExploreSkillTemplate: '95a415b0d74b2c78e69f949519bd8863da052afb087fabca5734cc6a72543ea2',
-  getNewChangeSkillTemplate: '5ed2e894d1df739fd015d720832da2313f1900fccd0231f452c4497add5b9201',
-  getContinueChangeSkillTemplate: '3386adb1018015d0bfd823b6b049c0c2773e1e450c3904927e5c66c83a171c27',
+  getExploreSkillTemplate: 'bc18c844ec5edd033a2346524ce37b80d0b42533e967732511e97a74edcd1717',
+  getNewChangeSkillTemplate: '6e3e4d989127f7092d5b22d5fb9d0d1b7ac0bf5d1c4ca398301e308097e75baf',
+  getContinueChangeSkillTemplate: '387fed78edc1df683c1c67546f6cedee911798bfc0d145add549ddae3dec529d',
   // rc17a-invoked-coverage apply (2026-10-05), a PLANNED move (its task 4.2): Step 3's all_done clause
   // stopped naming "spec-driven v4" and `blind-pair` as the post-apply slot — under v5 which review comes
   // next depends on the cadence and the review preference, so the body says it is read, not predicted.
   // seam-chaining (2026-11-09): the Chain end step and the no-chaining epitome clause, at apply (task 3.1), again at the system walk, and a third time at the verification walk (the dirty-tree clause).
   // seam-chaining-grants apply (2026-11-11, task 6.2): the Chain end step gains the `apply` and `archive` key rows (interpolated from `CHAIN_KEY_TABLE`) and the clause that a chained apply or archive records its grant as `consent: "setting"` (task 3.5). Apply also moved by its own body: Step 0's granted bullet, the three-value consent story and payload note, the withdrawn-grant line, and the prompt tags (tasks 3.1, 3.4).
   // change-account apply (2026-11-12), a PLANNED move (its task 3.5): the Account step (`ACCOUNT_STEP`, composed from the account write gate's field list) before the Run-summary emit, and Step 3's all_done clause writes a missing account first (task 3.3); then its system walk (2026-11-13), a moved pin: the all_done clause runs the Account step whether or not an account exists, reading the latest account and the trail since it first. address-reviews carries `ACCOUNT_WALK_STEP` too but is not pinned here.
-  getApplyChangeSkillTemplate: '2e54ba242376815f7324af327f21d04cd853172369f053d0264f5164bf42c339',
+  // conditional-steps apply (2026-11-17), a PLANNED move (its task 6.1, R-rop-3): the closing Commit step and Chain end step now carry their basic contents (`COMMIT_STEP_BASIC`, `CHAIN_END_STEP_BASIC`), the full steps moving byte-equal to `references/commit-step.md` and `references/chain-end-step.md`.
+  getApplyChangeSkillTemplate: '00d3ddaa51f4d18fe5fe278f73396058079bea8b4b9310d8b82afab73d0f26c9',
   // seam-chaining (2026-11-09): the Chain end step and the no-chaining epitome clause, at apply (task 3.1), again at the system walk, and a third time at the verification walk (the dirty-tree clause).
   // seam-chaining-grants apply (2026-11-11, task 6.2): the Chain end step gains the `apply` and `archive` key rows (interpolated from `CHAIN_KEY_TABLE`) and the clause that a chained apply or archive records its grant as `consent: "setting"` (task 3.5). No ff template line moved.
-  getFfChangeSkillTemplate: '1c8ca2d14ce269ae9c51abe870928ae04a602df9ff0c309642cf3bc928abfee7',
-  getSyncSpecsSkillTemplate: 'a63e917c3d85e986634285b04f2a9662baab19639bd7225ae74ac1a99c79b97a',
+  // conditional-steps apply (2026-11-17), a PLANNED move (its task 6.1, R-rop-3): the closing steps carry their basic contents, the full steps moving to `commit-step.md` and `chain-end-step.md`; the PR Position paragraph becomes a one-line pointer, the paragraph moving byte-equal into `pr-choreography.md`'s `Where each phase runs`.
+  getFfChangeSkillTemplate: '7c5bf29e83609fe8c05c0e13c88644f7350ee07d283ee4a8d4c25b9da7b58f48',
+  getSyncSpecsSkillTemplate: '0d545da4efc4026eb0f99f6d54d9de66803820eaea3d9108aa21916ac0881d2c',
   // rc08b-walk-routing (2026-10-05, task 3.3): the command-table row's retired "auto-discovers … when invoked
   // with a change name and no markers found" became the discovery sentence. One re-record, both onboard hashes.
   // rc17b-blind-pair-command (2026-10-06, task 5.1), a PLANNED move: the Identity, Phase 4 cross-AI and
@@ -154,7 +168,7 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // printing orbit's own version and states the upstream engine baseline 1.3.1 apart from it (design D6), because
   // `--version` prints 2.0.0 from this stage on. One re-record, both onboard hashes.
   // seam-chaining system walk (2026-11-09): the No-chaining line qualified by the project's `chain` setting.
-  getOnboardSkillTemplate: 'b425441abd792a0da63706d56d1a7f9cf668beafa46f8729b99550d7ee1e1bc8',
+  getOnboardSkillTemplate: 'de4ea913463b57583f8c9bdc8986d2e87ebab769b97fc50da86da79306f54be1',
   getOrbitExploreCommandTemplate: 'ca4bdbd66993b629a5d234d2166efc1681b69da7e7e5665c1926b8e8ab154dda',
   getOrbitNewCommandTemplate: '18edaa0b230e31b5d55952d6b6328237c0ac7b6c85c23d44e5aa3e024a29aaba',
   getOrbitContinueCommandTemplate: '19b561b34b9e9946e6babd7faa74169efca692190dc5d036d2d5044aed0e5d16',
@@ -192,8 +206,10 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // `program`, since under `signoff: program` the change hold reports `program`. That one clause; both function
   // hashes and both generated SKILL.md hashes moved. The review body's fold-step clause (its task 4.2) moves no pin
   // here: the review skill is not in this pinned set.
-  getArchiveChangeSkillTemplate: 'c34f80c915a4816727220f5310aaa91c476a7d259a238eb2ec145f636b37b0d8',
-  getBulkArchiveChangeSkillTemplate: 'f180838d4e4cf84ee93005304ca2b44b520accf8eba8babedb4366176cf3900c',
+  // conditional-steps apply (2026-11-17), a PLANNED move (its task 6.1, R-rop-3): Steps 3.4, 3.45 and 3.7 keep their basic contents, their text moving byte-equal to `gate-inflection.md`, `fingerprint-divergence.md` and `signoff-hold.md`; the Commit step carries its basic content, the full step moving to `commit-step.md`.
+  // Moved again at conditional-steps' system walk (2026-11-17, fresh S1): archive Step 3.7's basic content hands over the save's outcome with the hold's result, as architect 5.4's does.
+  getArchiveChangeSkillTemplate: '257b1ec01ad2645e84309a6e2a75278ffefa3994f14393f949c751b3eee5b032',
+  getBulkArchiveChangeSkillTemplate: 'f499c18d490902b6b7d677d5ddd61fd9e4beb6c4d521ea2d1831ba32b9f6770d',
   getOrbitSyncCommandTemplate: 'b985d0a4d89b0e2cc3c6b6dec2521ef2a9d0df44a8ba9ec92a5495052c94a39c',
   // rc06b-map-readers (2026-10-05) — verify moved DELIBERATELY, the first named edit to an upstream
   // portion under `orbit-conventions`' narrowed `Generated-file disposition`: step 6's test-tracing
@@ -205,7 +221,7 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // take the first mode by precedence), because the engine composes from the mode verify hands it
   // and classifies nothing; the emit paragraph stopped restating the precedence. Upstream portion
   // unchanged by this second move.
-  getVerifyChangeSkillTemplate: '282082ffc25b2e6c084a38b1d98561c3f1937c6ff0ebf032297e2e4993702f1d',
+  getVerifyChangeSkillTemplate: '34fb3376faf55379a5d1268e8f263aa8a932f158aa4588bd766ac5c7914513ed',
   getOrbitArchiveCommandTemplate: '5889c3a6269b5c76c85578bf2ce6e6c4152b7536452e5ec1332dd93d3b493665',
   getOrbitOnboardCommandTemplate: '3a3e98c6a01517896dfdccaba4fa4477edea62fd69dc4189df1dd105bbedcc5b',
   getOrbitBulkArchiveCommandTemplate: 'bbb9fc75d87fb8339cf4a80ad75189f6d9a8b339c9b4539778e690b1c9043053',
@@ -234,7 +250,8 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // line's "exactly" dropped (the parser reads CommonMark indentation) — one re-record for the walk's edits.
   // seam-chaining (2026-11-09): the Chain end step and the no-chaining epitome clause, at apply (task 3.1), again at the system walk, and a third time at the verification walk (the dirty-tree clause).
   // seam-chaining-grants apply (2026-11-11, task 6.2): the Chain end step gains the `apply` and `archive` key rows (interpolated from `CHAIN_KEY_TABLE`) and the clause that a chained apply or archive records its grant as `consent: "setting"` (task 3.5). No propose template line moved.
-  getOrbitProposeSkillTemplate: '4011cbf10c5ef6f75ebf4cb208bf05dfe7df3583376dcbd314ff3bbf8cfd8471',
+  // conditional-steps apply (2026-11-17), a PLANNED move (its task 6.1, R-rop-3): the closing steps carry their basic contents, the full steps moving to `commit-step.md` and `chain-end-step.md`; the size brief keeps its basic content, its text moving byte-equal to `size-brief.md`; the PR Position paragraph becomes a one-line pointer, moving into `pr-choreography.md`.
+  getOrbitProposeSkillTemplate: 'c6293163c05425d8edadd7874d8e304c96ec868e7c4bba02e91f69e9d2c89b76',
   getOrbitProposeCommandTemplate: '33077b4185c425952edcdf14f4f16f2a0fa9d5961158f3c63534b58cee2576fb',
   getFeedbackSkillTemplate: 'ded61ad85c5050f7bf241870b14bfcdd929f0be68a028c1130fd30a66efbda3b',
   // rc15 (ended-stage-state, 2026-09-29): the orbit-architect body moved ONCE, deliberately — §5 (the
@@ -264,8 +281,15 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
   // would print the whole program brief, acting on its exit status alone (fresh W1, option A); Step 5.5 states its two
   // arc-done definitions, Step 5.4's row being the check under `signoff: program` (fresh S1, external W1). The other
   // two body edits of that walk (the review and address-reviews account clauses) move no pin here.
-  getArchitectSkillTemplate: 'c689d70505e5944c8a1c6095392bcf7cc5c7ccec429d386db9350774264dbedf',
+  // conditional-steps apply (2026-11-17), a PLANNED move (its task 6.1, R-rop-3): Step 5.4 carries the save and the hold's basic content, the whole step moving byte-equal to `program-signoff.md`; Step 5.5's arc-done act becomes a one-line pointer, the paragraph moving byte-equal into `pr-resolution.md`.
+  getArchitectSkillTemplate: 'a8c27d88bc9a34315e8981218a57d6e739b4d6b890f22a05693d852410c5ab20',
   getOrbitArchitectCommandTemplate: 'b65b8cca6431bb45aa8587d3bfc1e9458981e2e1bc925ae45cd57414143cb3db',
+// once-per-session-detail apply (2026-11-17), a PLANNED move (its task 3.4): the apply and address-reviews bodies carry
+// the account step's basic content and ship the full step as a reference (D-opsd-8), and each of the eleven emit steps in
+// scope keeps its timing, the shared read cue, its command and its chat behaviour, shipping its section whole as
+// `run-summary-emit.md` (D-opsd-4, D-opsd-9). Eight function hashes and the same eight generated-skill hashes moved
+// (new, continue, apply, ff, archive, verify, propose, architect: the eight of the eleven this table pins); explore, bulk-archive,
+// sync, onboard and every command template did not.
 };
 
 // Post-rc06b project-wide audit-drift walk (2026-10-05, category 3 WARNING) — archive, explore and
@@ -276,18 +300,24 @@ const EXPECTED_FUNCTION_HASHES: Record<string, string> = {
 // emit under orbit/.orbit-runs/. Their three function hashes and three generated-skill hashes moved;
 // no other pin did.
 const EXPECTED_GENERATED_SKILL_CONTENT_HASHES: Record<string, string> = {
-  'orbit-explore': '76dca5fd1d4695ed615200485340acbbd092f84307bdd46eb02e7d1fcd6c9127', // rc16-retirement-sweep: moved once with the body at apply, a second time at the system blind-pair walk (see the function-hash note above)
-  'orbit-new-change': '7a474b86d0e0156a1b89516d97878e50c9e3a4e0fa6ef2d66a35670f46731806',
-  'orbit-continue-change': 'd6e3515a1bd92815cedf4a6718d9d2c7374854dddddc16c16dc89db5bc479541',
-  'orbit-apply-change': 'd082434b59a4ebc8ea068d468d7152410a70cb13dd3a789e221b107e8f0191f6', // rc17a apply: the v4 clause (see the function-hash note above); then seam-chaining: the Chain end step and the epitome clause, at apply, the system walk and the verification walk; then seam-chaining-grants apply (see the function-hash note above); then change-account apply: the Account step, then its system walk: the all_done clause (see the function-hash note above)
-  'orbit-ff-change': '101fbd4b7ff9481d6f776c8d33ea5e53e9ddb85a5a07885b3be9d4d0f7d6cbbf', // seam-chaining: the Chain end step and the epitome clause, at apply, the system walk and the verification walk; then seam-chaining-grants apply: the end step's two key rows and consent clause
-  'orbit-sync-specs': '09ebdddd32d976022699b1575f8cf5e85fabf57ea71f1aa1afce1c793f322c99',
-  'orbit-archive-change': 'e90a321a4e2b33317b3a7325da95debfaa2c901ce51c8d14cc3ce0791bc9de7e', // rc10-apply-closure task 2.8, then its system walk; then seam-chaining-grants apply and its system walk; then brief-render apply: Step 3.6; then program-brief apply: Step 3.7; then program-signoff apply: the hold's setting values (see the function-hash note above)
-  'orbit-bulk-archive-change': '79728529ce5653f125e5cf4b4e3cfd8525b8d337181c015b9c49bce6bb92d8e3', // rc10-apply-closure task 2.8, then its system walk; then brief-render apply: the per-change brief save; then program-brief apply: the per-change sign-off hold; then program-signoff apply: the hold's setting values (see the function-hash note above)
-  'orbit-verify-change': '86d0fad7fe26e44c2df6e52bcac54c015a4911afd13bb288a825495773c99390', // rc06b-map-readers (2026-10-05): moved with the body's step 6 edit, then again at system walk 2's additions edit (see the function-hash note above)
-  'orbit-onboard': 'e704c183201dc18a574de32da10a8722e8a53cc590e455fd66580317761d4698', // landing-page task 2.2 (see the function-hash note above); then seam-chaining system walk: the No-chaining line qualified by the chain setting
-  'orbit-propose': 'be0e434d434c3db13a49eb2057413384131c225a34901a1266030987c36e402b', // rc13c, then rc03b, then rc05's system walk, then rc09a's size brief (task 5.3) and its system walk: moved with the body (see the function-hash notes above); then seam-chaining: the Chain end step and the epitome clause, at apply, the system walk and the verification walk; then seam-chaining-grants apply: the end step's two key rows and consent clause
-  'orbit-architect': 'ac823324b963e15aa64c45aa33a6eef065e11d92ff6b5142bc15a976502564f5', // rc15: moved twice with the body — apply, then the system walk; a third time at the post-archive audit walk; a fourth at rc05's apply, the scaffold's escaped backticks; a fifth at program-signoff apply, Step 5.4; a sixth at its system walk (see the function-hash note above)
+  'orbit-explore': 'b08d4e76cebcf679dfae17c365caf0c23ab25f663adcb66bc4787353095d1f52', // rc16-retirement-sweep: moved once with the body at apply, a second time at the system blind-pair walk (see the function-hash note above)
+  'orbit-new-change': '2fe0b4681937213512b5a5089c382cd2a9aaaeacb85b5b0e2edbab432daad31b', // once-per-session-detail apply: the account and emit steps keep their basic content (see the function-hash note above)
+  'orbit-continue-change': '3dd2e4eee9e094a05ad655843a4f0ebe2195d5636e4c43a42f0f8ad73610e627', // once-per-session-detail apply: the account and emit steps keep their basic content (see the function-hash note above)
+  // conditional-steps apply (2026-11-17), a PLANNED move (its task 6.1, R-rop-3): the closing Commit step and Chain end step now carry their basic contents (`COMMIT_STEP_BASIC`, `CHAIN_END_STEP_BASIC`), the full steps moving byte-equal to `references/commit-step.md` and `references/chain-end-step.md`.
+  'orbit-apply-change': '83993df4ce9280d513227244e2e8784ec4594aeb5007492cc09d84b4901b9101', // rc17a apply: the v4 clause (see the function-hash note above); then seam-chaining: the Chain end step and the epitome clause, at apply, the system walk and the verification walk; then seam-chaining-grants apply (see the function-hash note above); then change-account apply: the Account step, then its system walk: the all_done clause (see the function-hash note above); then once-per-session-detail apply: the account and emit steps keep their basic content (see the function-hash note above)
+  // conditional-steps apply (2026-11-17), a PLANNED move (its task 6.1, R-rop-3): the closing steps carry their basic contents, the full steps moving to `commit-step.md` and `chain-end-step.md`; the PR Position paragraph becomes a one-line pointer, the paragraph moving byte-equal into `pr-choreography.md`'s `Where each phase runs`.
+  'orbit-ff-change': '91513785835bc93e5afcb0b211211deb0f97ab370c5d02a7b69ab6a9414ac93d', // seam-chaining: the Chain end step and the epitome clause, at apply, the system walk and the verification walk; then seam-chaining-grants apply: the end step's two key rows and consent clause; then once-per-session-detail apply: the account and emit steps keep their basic content (see the function-hash note above)
+  'orbit-sync-specs': '14ee86242ce48a49d23ff798be5b5c4380d6b6583f7f2449c8ad75fe8802cc6a',
+  // conditional-steps apply (2026-11-17), a PLANNED move (its task 6.1, R-rop-3): Steps 3.4, 3.45 and 3.7 keep their basic contents, their text moving byte-equal to `gate-inflection.md`, `fingerprint-divergence.md` and `signoff-hold.md`; the Commit step carries its basic content, the full step moving to `commit-step.md`.
+  // Moved again at conditional-steps' system walk (2026-11-17, fresh S1): archive Step 3.7's basic content hands over the save's outcome with the hold's result, as architect 5.4's does.
+  'orbit-archive-change': '3ff8d2816c379ecee07cde28266d4b1e66a07adb68ad6031f1aaa88a4768f907', // rc10-apply-closure task 2.8, then its system walk; then seam-chaining-grants apply and its system walk; then brief-render apply: Step 3.6; then program-brief apply: Step 3.7; then program-signoff apply: the hold's setting values (see the function-hash note above); then once-per-session-detail apply: the account and emit steps keep their basic content (see the function-hash note above)
+  'orbit-bulk-archive-change': 'cb02a4191e1ad02d3507de3f300ece6d2afb52b3afcc91ad7c1953766e309aa0', // rc10-apply-closure task 2.8, then its system walk; then brief-render apply: the per-change brief save; then program-brief apply: the per-change sign-off hold; then program-signoff apply: the hold's setting values (see the function-hash note above)
+  'orbit-verify-change': '5e07fe4af23b59ab191695419ca94c51f9707dd7a0efa287a9334acdf7ee7a77', // rc06b-map-readers (2026-10-05): moved with the body's step 6 edit, then again at system walk 2's additions edit (see the function-hash note above); then once-per-session-detail apply: the account and emit steps keep their basic content (see the function-hash note above)
+  'orbit-onboard': '798585e6e7722048c10ddef3bcff019c65991def103b608fe7fe416383cfd0c7', // landing-page task 2.2 (see the function-hash note above); then seam-chaining system walk: the No-chaining line qualified by the chain setting
+  // conditional-steps apply (2026-11-17), a PLANNED move (its task 6.1, R-rop-3): the closing steps carry their basic contents, the full steps moving to `commit-step.md` and `chain-end-step.md`; the size brief keeps its basic content, its text moving byte-equal to `size-brief.md`; the PR Position paragraph becomes a one-line pointer, moving into `pr-choreography.md`.
+  'orbit-propose': '72e90170a0399abca0f88a78ed5c7eadcc6c227e9ba9abf49728fd8cf1f5fc65', // rc13c, then rc03b, then rc05's system walk, then rc09a's size brief (task 5.3) and its system walk: moved with the body (see the function-hash notes above); then seam-chaining: the Chain end step and the epitome clause, at apply, the system walk and the verification walk; then seam-chaining-grants apply: the end step's two key rows and consent clause; then once-per-session-detail apply: the account and emit steps keep their basic content (see the function-hash note above)
+  // conditional-steps apply (2026-11-17), a PLANNED move (its task 6.1, R-rop-3): Step 5.4 carries the save and the hold's basic content, the whole step moving byte-equal to `program-signoff.md`; Step 5.5's arc-done act becomes a one-line pointer, the paragraph moving byte-equal into `pr-resolution.md`.
+  'orbit-architect': 'd1e156a6d8165bd572319e2299a96d3e63686a563c57ff0a8728698e71bdd4c9', // rc15: moved twice with the body — apply, then the system walk; a third time at the post-archive audit walk; a fourth at rc05's apply, the scaffold's escaped backticks; a fifth at program-signoff apply, Step 5.4; a sixth at its system walk (see the function-hash note above); then once-per-session-detail apply: the account and emit steps keep their basic content (see the function-hash note above)
 };
 
 function stableStringify(value: unknown): string {

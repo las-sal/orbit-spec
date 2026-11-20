@@ -11,7 +11,8 @@ it in tokens, in time, and in the AI's hold on its own instructions; after a com
 5,000 tokens of each skill, so a long body loses its closing steps. Anthropic's guidance for building skills is the
 measure: concise bodies, progressive disclosure, reference files one level deep.
 
-Phase 1 restructures the bodies without changing what any workflow does. Text a session rarely needs moves to reference
+Phase 1 restructures the bodies without changing what any workflow does (one exception, ratified at the evaluation:
+stage `records-by-setting` writes decision records only when a setting reads them; RG0's exception, R-rop-17). Text a session rarely needs moves to reference
 files; each body keeps the step's basic content (when it runs, the command, the usual result, and the link to its
 reference file); and a budget test keeps the bodies from growing back. It does not reword instructions, move steps into
 the engine, or decide how much process a change should carry: those are weighed at its evaluation. Explore and onboard,
@@ -24,14 +25,30 @@ Ratified by Sal, 2026-11-17, from the opening session's answers to the brief's q
 - **RG0 — Nothing is lost.** With every setting at its default and with each setting on, every workflow does what it
   does today; every baseline requirement holds and the full suite passes. A test changes only to follow text that moved
   to its new home (R-adf-15) or to lower a size ceiling, each such edit named in the stage's archive. Fails if a
-  workflow behaves differently under any setting, or if an assertion about behaviour is weakened.
+  workflow behaves differently under any setting, or if an assertion about behaviour is weakened. (Amended by Sal,
+  2026-11-18, at the architect session after `evaluation`: one exception, named here. From stage `records-by-setting` on,
+  the AI writes decision records only when a setting that reads them is on (chaining, a sign-off setting of `change` or
+  `program`, the tripwires, and later the autonomous driver), and at the defaults the bodies carry a pointer in place of
+  the decision-writing rule (R-rop-17); nothing else about the defaults may change. Recorded as
+  `stop-2026-11-18T14-27-24Z.json` and its resolution in the architecture trail's `decisions/` folder. As built,
+  noted 2026-11-20: the bodies carry the same basic content under every configuration, and at the defaults an answer to
+  a stop already in a trail, or a fix of a record already there, is still written (R-rop-17's note).)
 - **RG1 — Slimmer bodies.** After stage `tighten-bodies`, the generated skill bodies total at most 350,000 characters
   (the brief's 344,931 for its stages A to C, with a margin), and apply's body is at most 17,500. Fails above either.
+  (Amended by Sal, 2026-11-17, in stage `tighten-bodies`' exploration: both figures assumed the brief's saving of
+  about 9,400 characters from restructuring the decision-writing bullet, and a restructure that keeps its content, as
+  R-rop-7 requires, saves none. When `tighten-bodies` is proposed, the two figures are replaced by the sizes its drafted
+  moves measure; ceilings still only move down (RG3). Recorded as `stop-2026-11-17T19-56-53Z.json` and its resolution
+  in `orbit/changes/tighten-bodies/.orbit-runs/decisions/`. Set at that propose, from the drafts and apply's measured
+  provenance: **at most 365,500 in total, and 18,300 for apply's body**, the drafted bullet keeping every clause and
+  growing by 112 characters a body, and the required citations staying (`tighten-bodies`' design, Decision 7).)
 - **RG2 — Anthropic's structural rules.** Every reference file is linked directly from its skill's `SKILL.md` (one level
   deep); every reference file over 100 lines opens with a table of contents; every skill's description is valid YAML,
   at most 1,024 characters, and says what the skill does and when to use it. Fails on one exception.
 - **RG3 — Growth is held.** From stage `conditional-steps` on, the per-body budget test runs in the suite and the size
-  report in CI (R-rop-8), and no ceiling is raised during the program. Fails if a ceiling rises.
+  report in CI (R-rop-8), and no ceiling is raised during the program. Fails if a ceiling rises. (Amended by Sal,
+  2026-11-17, at `tighten-bodies`' propose: explore's line ceiling rises from 664 to 669 for the five lines the
+  decision-writing bullet's sub-bullets add to it, R-rop-7's form, and for nothing else; R-rop-8 as amended.)
 
 ## Rulings index
 
@@ -51,7 +68,10 @@ Ratified by Sal, 2026-11-17, from the opening session's answers to the brief's q
   bulk-archive is left out of this stage, its steps staying in its body as they are, since it has never run in this
   repository and its body costs a session nothing until it does; whether it is kept, folded into archive or retired is
   weighed at the evaluation. Recorded as `stop-2026-11-17T03-00-00Z.json` and its resolution in
-  `orbit/explore/conditional-steps/.orbit-runs/decisions/`.
+  `orbit/explore/conditional-steps/.orbit-runs/decisions/`. Amended a third time by Sal, 2026-11-18, at the evaluation
+  (its D-eval-8): one stage follows `evaluation`, `records-by-setting`, the change that writes decision records only when
+  a setting reads them (R-rop-17); the rest of stage D goes to a phase 2 (R-rop-15). Recorded as
+  `stop-2026-11-18T13-57-16Z.json` and its resolution in `orbit/explore/evaluation/.orbit-runs/decisions/`.
 - **R-rop-3** (Sal, 2026-11-17) — A requirement that a block is carried byte-equal by each body is met by both halves,
   each byte-equal to one source: the step's BASIC CONTENT (when it runs, the command, the usual result, and the link to
   its reference file) in every carrying body, and the full step in every carrying skill's REFERENCE FILE. The tests keep
@@ -70,17 +90,26 @@ Ratified by Sal, 2026-11-17, from the opening session's answers to the brief's q
   `(chain: decision)`, `(chain: not a prompt)`) and what a chained command records stay in each chaining body, about
   1,000 characters, beside the tags they explain; only the chain end step's procedure moves to its reference file. A
   chained command, in this session or in a fresh one, then meets no tag its body does not explain. (The brief's
-  question 5.)
+  question 5.) Amended by Sal, 2026-11-17, at the proposal walk of `conditional-steps`: that last sentence holds for the
+  five chaining bodies, which explain the three prompt tags (`target`, `routine`, `decision`); `(chain: not a prompt)`
+  names itself; and archive, which a chain can arrive at but which carries no chain end step, explains none of its tags,
+  a named limit as before this program. Recorded as `stop-2026-11-17T14-14-43Z.json` and its resolution in
+  `orbit/changes/conditional-steps/.orbit-runs/decisions/`.
 - **R-rop-7** (Sal, 2026-11-17) — The decision-writing bullet is restructured in stage C into labelled sub-bullets
   (before asking, acting without asking, after a call, not a stop, where records go) with its content unchanged; the
   one-line form with its detail in `decision-records.md` is weighed at the evaluation, with stage D (R-rop-2). Whether
   decision records are written by default at all is a separate question, outside phase 1. (The brief's question 6.)
+  Noted 2026-11-20: that question was brought into phase 1 by the evaluation (D-eval-8) as stage `records-by-setting`
+  (R-rop-17).
 - **R-rop-8** (Sal, 2026-11-17) — Growth is held by a per-body budget test in the suite, run locally and in CI: each
   generated body has a character ceiling at its size plus 5%, and any body over 500 lines fails (the guideline's own
   limit), except explore, held at its 664 lines by a line ceiling that may only go down until its own reduction is
   weighed at the evaluation (amended by Sal, 2026-11-17: the check as first ratified would have failed explore on the
   day it landed; recorded as `stop-2026-11-17T02-31-47Z.json` and its resolution in the architecture trail's
-  `decisions/` folder). The test lands with stage A at post-A sizes, and stages B and C each lower the ceilings to their own sizes,
+  `decisions/` folder). Amended again by Sal, 2026-11-17, at `tighten-bodies`' propose: the decision-writing bullet
+  is one text explore shares, and R-rop-7's sub-bullets add five lines to it, so explore's line ceiling rises once,
+  from 664 to 669, for those five lines only; it may only go down from there. Recorded as
+  `stop-2026-11-17T20-32-21Z.json` and its resolution in `orbit/changes/tighten-bodies/.orbit-runs/decisions/`. The test lands with stage A at post-A sizes, and stages B and C each lower the ceilings to their own sizes,
   each a named edit; a ceiling only moves down in this program. A size report printing each skill's body and reference
   sizes runs in CI after the suite, reporting and never failing. orbit-spec's guard is a test, never a sensor run here
   (R-adf-5); the tripwires stage's size-budget sensor (D-tw-2) is the same idea for adopters' files. (The brief's
@@ -89,7 +118,10 @@ Ratified by Sal, 2026-11-17, from the opening session's answers to the brief's q
   (`tripwires`' three further changes, `driver`, `parallel-lanes`, `release`, `first-run`) is proposed until stages A,
   B and C are archived and their evaluation is done, so that program resumes on the slimmer bodies and on whatever the
   evaluation settles about the process. Recorded in `automate-dev-flow` as R-adf-16. (The brief's question 8; option B,
-  over waiting for stage A alone or for a split.)
+  over waiting for stage A alone or for a split.) Amended by Sal, 2026-11-18, at the evaluation (its D-eval-8):
+  `automate-dev-flow` resumes once `evaluation` and `records-by-setting` are done, so it resumes on bodies that already
+  write records only under the settings it builds; phase 2 follows it (R-rop-15). Recorded as
+  `stop-2026-11-18T13-57-16Z.json` and its resolution in `orbit/explore/evaluation/.orbit-runs/decisions/`.
 - **R-rop-10** (Sal, 2026-11-17) — Whether a reference file read again in one session costs its full size again (the
   brief's spike S9) is measured in stage A's verification: one session chaining two commands, comparing a repeated read
   with a single one. Claude Code's skills page documents that a re-invoked skill with identical content adds only an
@@ -100,13 +132,13 @@ Ratified by Sal, 2026-11-17, from the opening session's answers to the brief's q
   answered where chaining is first used in earnest, `automate-dev-flow`'s stage `first-run`; the consequence above
   travels with it. Recorded as `stop-2026-11-17T03-52-04Z.json` and its resolution in
   `orbit/explore/conditional-steps/.orbit-runs/decisions/`.
+- **R-rop-11** (Sal, 2026-11-17) — The brief this program answers, Sal's "orbit: Skill Structural Cleanup" (measured at
+  `b5dac0dd`), lives beside this doc as `orbit/architecture/reduce-orbit-phase1-brief.md` and is the program's source;
+  "the brief" in this doc means it. Its program P2 and spikes S2, S9, S12 and S15 name work outside this repository.
 - **R-rop-12** (Sal, 2026-11-17) — Compaction is measured, not yet targeted: the size report also prints each body's
   estimated tokens against the 5,000 that Claude Code keeps of each skill after a compaction, stage A's verification
   records whether real long sessions compact and what was lost, and the evaluation decides whether every body must
   fit. Phase 1 already brings apply, the longest-running session, within that budget.
-- **R-rop-11** (Sal, 2026-11-17) — The brief this program answers, Sal's "orbit: Skill Structural Cleanup" (measured at
-  `b5dac0dd`), lives beside this doc as `orbit/architecture/reduce-orbit-phase1-brief.md` and is the program's source;
-  "the brief" in this doc means it. Its program P2 and spikes S2, S9, S12 and S15 name work outside this repository.
 - **R-rop-13** (Sal, 2026-11-17) — The program's changes ride one program branch and one program PR: `orbit/config.yaml`
   sets `pr: per-architecture` (from `per-proposal`), so each change citing this doc lands on the branch
   `reduce-orbit-phase1`, each stage's archive appends its entry to one draft PR against main, and main receives phase 1
@@ -116,6 +148,45 @@ Ratified by Sal, 2026-11-17, from the opening session's answers to the brief's q
   the setting's first real use here, and it gives architect's program-PR readout, one of the sections stage
   `conditional-steps` moves, a real run at arc-done. Whether the setting stays when `automate-dev-flow` resumes is
   decided then.
+- **R-rop-14** (Sal, 2026-11-17) — R-crc-14's mirror corollary (`clean-up-review-cycle`) is amended: a skill body that
+  carries a copy of a spec's text no longer says it is a copy or names the requirement that owns it. The corollary's
+  other two conditions stand: a test holds the copy byte-equal to its owner, and the copy adds nothing. Stage
+  `tighten-bodies` removes the thirteen mirror notes from the bodies it tightens, as its charter says, and modifies the
+  two requirements that ask for the note (`orbit-conventions`' `Review mode decision framework` and
+  `orbit-emit-composition`'s `A VERIFICATION-genre payload carries its verdicts and its findings link to the walk
+  record`). Explore's and bulk-archive's notes, and those inside reference files, stay until the evaluation. Chosen over
+  trimming each note to the corollary's minimum. Recorded as `stop-2026-11-17T20-08-45Z.json` and its resolution in
+  `orbit/changes/tighten-bodies/.orbit-runs/decisions/`.
+- **R-rop-15** (Sal, 2026-11-18) — A phase 2 follows `automate-dev-flow` (R-rop-9 as amended) and starts by building the
+  replay set the brief calls S15: sessions replayed several times on fixed tasks, graded by orbit's computed facts. The
+  two cuts the brief gated on it, stage D's mode-only sections moved to references and the one-line decision-writing
+  bullet (R-rop-7), are out of phase 1 and wait for it; so does the rewording the brief held back (R-rop-19). The
+  brief's program P2, moving mechanical steps into the engine (the engine printing readouts among it), stays a later
+  program of its own. (The evaluation's D-eval-1 and D-eval-8; chosen over ruling on every cut from one session's
+  evidence, and over building a replay set inside this program.)
+- **R-rop-16** (Sal, 2026-11-18) — bulk-archive becomes a thin loop: it keeps selecting several changes, detecting and
+  resolving the spec conflicts between them and the batch table, and runs archive's own steps for each change, so
+  archive's per-change steps stop being mirrored in a second body. It is built when `automate-dev-flow`'s
+  `parallel-lanes` first archives changes in parallel; until then it stays as it is. (D-eval-2; chosen over folding it
+  into archive, over retiring it, and over keeping it with no direction.)
+- **R-rop-17** (Sal, 2026-11-18) — Decision records are written only when a setting that reads them is on: chaining, a
+  sign-off setting of `change` or `program`, the tripwires, and later the autonomous driver. At the defaults the
+  decision-writing rule leaves the bodies and the review's reading step finds nothing to read. Every body stays the
+  same under every configuration (R-rop-5): it carries the rule's basic content, and the rule whole moves to
+  `decision-records.md`. Built as stage `records-by-setting`; amends RG0 and `automate-dev-flow`'s G0 (its R-adf-17).
+  (D-eval-3, answering `stop-2026-11-18T00-27-46Z.json` and its resolution in `orbit/explore/evaluation/.orbit-runs/decisions/`; chosen over
+  keeping records in every mode and over keeping them with no reader at the defaults.) As built (`records-by-setting`,
+  D-rbs-10, noted 2026-11-20 at Sal's choice in the closing review's walk): every body carries the same basic content
+  under every configuration; at the defaults no NEW ledger entry or stop record is written, but an answer to a stop
+  already in a trail, or a fix of a record already there, still is; and the reading step still reads the records a
+  trail already holds, finding nothing only on a trail that holds none.
+- **R-rop-18** (Sal, 2026-11-18) — Phase 2's size goal: every generated skill body fits the 5,000 tokens Claude Code
+  keeps of a skill after a compaction, as `npm run size:report` estimates them, so a long session that compacts keeps
+  every body's closing steps. Explore's and onboard's own text, left alone in phase 1, comes into scope. (D-eval-4, the
+  decision R-rop-12 left to the evaluation; chosen over a goal for the two longest-running bodies only and over
+  measuring with no goal.)
+- **R-rop-19** (Sal, 2026-11-18) — The provenance `tighten-bodies` could not remove (115 forms, listed in its account)
+  goes to phase 2's rewording, graded by the replay set; no pattern is widened meanwhile. (D-eval-6.)
 
 ## Program stages
 
@@ -125,7 +196,7 @@ One change per stage, in this order (R-rop-2). The brief's stage D is not declar
 ### Stage conditional-steps — steps whose procedure an orbit command's result calls for move to reference files
 
 Depends-on: (none)
-Complete: [ ]
+Complete: [x] 2026-11-17 (Sal)
 
 The brief's stage A, with three steps from its stage D, and without bulk-archive (R-rop-2 as amended). The commit step,
 the chain end step's procedure, the sign-off hold and the PR lifecycle sections, which do nothing at the defaults, and
@@ -153,10 +224,27 @@ Exit criteria:
 - The budget test and the size report run in the suite and in CI.
 - RG0 holds.
 
+Shipped as (2026-11-17; archived as `orbit/changes/archive/2026-11-17-conditional-steps/`; the charter stands): seven
+steps keep their basic content in the bodies and move their procedure, byte-equal, to reference files: the commit step
+(`commit-step.md`, six bodies) and the chain end step (`chain-end-step.md`, five bodies, the tag meaning kept in each);
+archive's gate prompt, divergence check and sign-off hold (`gate-inflection.md`, `fingerprint-divergence.md`,
+`signoff-hold.md`); architect's program sign-off hold (`program-signoff.md`); and propose's size brief
+(`size-brief.md`). Propose's and ff's PR placement paragraphs join `pr-choreography.md`'s new `Where each phase runs`
+section, and architect's arc-done act joins `pr-resolution.md`. Each moved block's sha256 was recorded before any edit
+and is held by `moved-blocks.test.ts`; a test in a disposable project shows each gating command returning, at the
+defaults and on the usual result, what its basic content handles itself. The bodies total 389,374 characters (apply
+27,124), and `skill-body-budget.test.ts` holds each at that size plus 5% (explore at 664 lines); `npm run size:report`
+runs in CI, and `skill_body_convention.md` states the rule for new steps. Carried forward: RG1's projection after
+`tighten-bodies` is about 352,700, about 2,700 over (D-cs-11 was decided at about 600); `pr-choreography.md` now runs to
+108 lines with no table of contents, a new RG2 instance for `tighten-bodies`, beside the review skill's two references
+reached through `external-handoff.md`; the positional phrases that moved with their text are listed in the change's
+design. The compaction observation (R-rop-12) is deferred to `evaluation`: the apply and review sessions ran in one
+session that did not compact.
+
 ### Stage once-per-session-detail — run-summary payload detail and the account step move to reference files
 
 Depends-on: conditional-steps
-Complete: [ ]
+Complete: [x] 2026-11-17 (Sal)
 
 The brief's stage B. The run-summary payload detail the bodies still carry inline moves to each skill's run-summary
 schema reference, the body keeping the emit's call; the account step keeps its basic content and moves its field rules
@@ -169,10 +257,29 @@ Exit criteria:
 - The budget test's ceilings are lowered to the new sizes.
 - RG0 holds.
 
+Shipped as (2026-11-17; archived as `orbit/changes/archive/2026-11-17-once-per-session-detail/`; the charter above
+stays as declared): every emit step in scope, eleven bodies (apply, archive, architect, review, verify, propose,
+address-reviews, ff, continue, new, audit-drift), keeps when its emit fires, its command and its chat behaviour, and
+tells the agent to read `references/run-summary-emit.md` before the session's first run-summary emit; that reference
+holds the emit section whole, byte-equal. Apply's and the walk's account steps keep their basic content and read
+`account-step.md` and `account-walk-step.md` every time their moment comes. Explore's and bulk-archive's emit steps are
+unchanged. `skill_body_convention.md` gains the rule for a block acted on once. The bodies total 369,392 characters
+(apply 18,887), and eleven ceilings in `skill-body-budget.test.ts` came down to their new sizes plus 5%. A fresh apply
+session on the regenerated bodies followed both cues and wrote the change's account, meeting the second exit criterion.
+Three departures from the charter, ratified at exploration and propose and recorded in the change's account: the
+payload detail went to a new small `run-summary-emit.md` in each skill, not to the existing schema references (15,000
+to 31,000 characters each, which every session would have read whole before its first run summary); the triggers of
+the owed fields (apply's and archive's `judgements`, archive's `deferred_validations`, propose's and ff's
+`pr_attachment`) moved to the reference with the rest of the detail, so the bodies keep the emit's trigger but not
+theirs (D-opsd-4); and the account step moved whole, its conditions included, so the body carries no condition
+(D-opsd-8). The charter's check found that the apply gate cannot report a missing account without an engine change, so
+none was made; that report joins `evaluation`'s list beside R-rop-4's. Carried forward: the stage saved 19,982
+characters against the brief's 21,700, so RG1's projection after `tighten-bodies` is about 354,400, about 4,400 over.
+
 ### Stage tighten-bodies — tighten what stays, and Anthropic's structural rules
 
 Depends-on: once-per-session-detail
-Complete: [ ]
+Complete: [x] 2026-11-17 (Sal)
 
 The brief's stage C: the decision-writing bullet restructured into labelled sub-bullets with its content unchanged
 (R-rop-7); Guardrails sections that restate the steps removed, keeping any line that says something the steps do not;
@@ -185,6 +292,24 @@ Exit criteria:
 - No wording an agent acts on is removed, shown by tests.
 - The budget test's ceilings are lowered to the new sizes.
 - RG0 holds.
+
+Shipped as (2026-11-17; archived as `orbit/changes/archive/2026-11-17-tighten-bodies/`; the charter above stays as
+declared): the decision-writing bullet reads as a label line and five labelled sub-bullets, every clause of the
+one-paragraph form kept (R-rop-7); 23 of the 42 Guardrails lines that only restated a step left six bodies (archive's
+whole block; sync-specs, upstream-verbatim, keeps its five); stage tags, `NEW` before step numbers, ruling and decision
+ids, the thirteen mirror notes and owning-spec citations in headings left the twelve tightened bodies (R-rop-14), the
+text only authors need moving to comments beside the template literals. Every frontmatter value is written YAML-safe;
+address-reviews' description went from 1,140 characters to 415, and architect's and onboard's say when to use them. The
+eleven references over 100 lines open with a contents list, and review's body names its two prompt references, so
+every reference is one level deep (RG2). `tightened-bodies.test.ts` lists each of the 123 edits as a classed pair and
+undoes them to every edited body's recorded hash. The bodies total 363,848 characters (apply 18,238), inside RG1 as
+amended; nine ceilings came down to their new sizes plus 5%, and six stayed where that would have raised them, explore's
+line ceiling rising once to 669 (R-rop-8 as amended). Two departures from the charter's wording: provenance the stage's
+patterns cannot remove stays in place, 115 forms in the twelve bodies (outside the six kinds, or in-kind members such as
+`rc04a's` and `pre-D2` whose removal would take characters no pattern covers, the requirement's named limit widened at
+the system walk), recorded in the change's account for `evaluation`; and one spec citation the plan would have removed
+stays, because the review body's verification branch says each step names the owner it points at. Carried forward: the
+residual forms and whether to widen the patterns, and the explore, onboard and bulk-archive bodies, go to `evaluation`.
 
 ### Stage evaluation — measure phase 1 and decide what follows
 
@@ -202,6 +327,62 @@ Exit criteria:
   bodies showed.
 - Each decision above is recorded as a ruling or as considered and out.
 
+Concluded as (2026-11-18; the exploration `orbit/explore/evaluation/`, concluded with no change proposed; the charter
+above stays as declared): the measures are written down in its D-eval-9 (bodies 434,449 to 363,848 characters, 16%
+less; references 425,459 in 64 files; apply 18,238; eight bodies over 5,000 tokens; no compaction observed in three
+stages' sessions; one session ran every command from `tighten-bodies`' system review on the new bodies and followed
+every read its basic contents direct). Each decision is recorded: the rest of stage D and the one-line decision-writing
+go to a phase 2 (R-rop-15); reads stay body-directed and the apply gate reports no missing account (considered and out
+below); every body is to fit a compaction, phase 2's goal (R-rop-18); decision records are written only when a setting
+reads them (R-rop-17), built as the next stage; bulk-archive becomes a thin loop at `parallel-lanes` (R-rop-16); ff
+stays as it is (considered and out below). Its re-entry: the replay set is built, or a real session on the new bodies is
+seen to compact and lose a step, or to skip a read its body directed.
+
+### Stage records-by-setting — decision records written only when a setting reads them
+
+Depends-on: evaluation
+Complete: [x] 2026-11-19 (Sal)
+
+R-rop-17, with RG0 as amended. At the defaults the AI writes no ledger entry, stop record or resolution; under
+chaining, a sign-off setting of `change` or `program`, or the tripwires, it writes them as today. Every body stays the
+same under every configuration (R-rop-5): the decision-writing bullet becomes its basic content (when to check, the
+command whose result says whether records are owed, and the link to `decision-records.md`, which takes the rule whole),
+so an orbit command's result picks the branch, never the agent's judgement (R-rop-3, R-rop-4). The review's reading
+step at the defaults selects nothing and is skipped as it is today when nothing is selected. `automate-dev-flow`'s G0
+gains the matching exception (R-adf-17).
+
+Exit criteria:
+- At the defaults the gating command reports that no records are owed, and the bodies carry the basic content in place
+  of the rule, shown by test; with each of the three settings on, it reports them owed, shown by test.
+- The rule's text in `decision-records.md` keeps every clause of today's bullet, shown by test.
+- The budget test's ceilings are lowered to the new sizes.
+- RG0 holds as amended.
+
+Shipped as (2026-11-19; archived as `orbit/changes/archive/2026-11-19-records-by-setting/`; the charter above stays as
+declared): a new command, `orbit decisions status [--json]`, reports `write` and `readers`: records are written when a
+chain key is granted, when `signoff` is `change` or `program`, or when a tripwire sensor is set to `on_fire: halt`, and
+not otherwise (a `chain:` map with no grant, or sensors left at `record`, turn nothing on). It avoids the word "owed",
+which already means a record awaiting its reading. The fourteen bodies carry the rule's basic content, one line: run
+the command at each command's first step and again after the session edits the project config, follow the rule in
+`decision-records.md` on `write: true`, and on `write: false` write no new ledger entry or stop record. The rule moved
+whole into that reference's first section, every clause of today's bullet kept but "under every setting", and the edit
+ledger undoes this swap before its own pairs. Onboard's line, `docs/cli.md`, `docs/customization.md`, CLAUDE.md and
+`orbit-decision-records`' Purpose now say records are written when a setting reads them. The bodies total 329,979
+characters (apply 15,805), down from 363,848; fourteen ceilings came down to their new sizes plus 5%, onboard's stayed,
+and explore's line ceiling went back from 669 to 664. Two departures from the charter's wording, both decided at the
+proposal walk (D-rbs-10) and named in the change's account: at the defaults a resolution answering a stop already in a
+trail, and a replacement fixing a record already there, are still written, so turning the last reading setting off
+strands no stop; and the reading step selects nothing at the defaults only on a trail with no records, since records
+written earlier are still read and fixed. The system walk kept the basic content with no branch for a failing command
+(the user's choice A), a named limit in the change's design: only a body newer than the installed CLI meets it. Tests
+that moved (RG0): the decision-writing parity test (two fences), the edit ledger, the skill hash pins (twelve at apply,
+eleven again at the system walk), one re-tagged scenario and the budget ceilings, each listed in the change's account.
+The system review's reading step did not run: orbit's brief for the change's seven ledger entries was 123,852
+characters, too large to hand a reader verbatim, so they archive unread. From this change's `update --force` on, this
+repository, which sets none of the three keys, writes no new decision records. The one-line decision-writing that
+R-rop-7 weighed and R-rop-15 sends to phase 2 is not this: here the rule moved whole and only the body's pointer to it
+is one line; rewording the rule itself still waits for phase 2.
+
 ## Considered & out
 
 - **2026-11-17 — An orbit-lite built from scratch:** the alternative to restructuring this orbit (R-rop-1).
@@ -216,6 +397,19 @@ Exit criteria:
 - **2026-11-17 — Reordering bodies, or a goal that every body survive a compaction, in phase 1:** reordering rewords
   pinned positions, and the goal needs stage D; measured instead (R-rop-12).
 - **2026-11-17 — Keeping the brief out of the repository:** the rulings rely on it (R-rop-11).
+- **2026-11-18 — Each gating command naming its reference file in its output:** an engine change to every gating
+  readout, defending against an agent that runs a command and forgets what its result asks, which no session has shown;
+  R-rop-4 stands (the evaluation's D-eval-5). Re-entry: a real session seen not reading the reference a result called for.
+- **2026-11-18 — The apply gate reporting a change that completed apply with no account:** an engine change to one
+  readout at the defaults; every apply session so far wrote its account from the body's cue (D-eval-5). Re-entry: an
+  archived change found with no account.
+- **2026-11-18 — ff as a thin launcher for propose's standalone mode:** it would end the mirroring and give ff changes
+  propose's Touchpoints authoring and size brief, which ff lacks, but changes what ff does; ff stays as it is
+  (D-eval-7). Re-entry: the first real `/orbit:ff` run, or a change reaching review without predicted Touchpoints
+  because ff started it.
+- **2026-11-18 — Phase 2 before `automate-dev-flow`, or `automate-dev-flow` before the records change:** the first
+  leaves `automate-dev-flow` paused behind a replay set nobody has scoped; the second makes its stages pay the body cost
+  the records change removes (D-eval-8).
 
 ## Status log
 
@@ -251,3 +445,45 @@ Exit criteria:
   (R-rop-13); the program's work rides the branch `reduce-orbit-phase1` from its first propose on.
 - 2026-11-17 — From the exploration `conditional-steps`: at Sal's choice the stage is verified by tests alone; the
   real-run checks of each unusual result leave its exit criteria, replaced by a named limit.
+- 2026-11-17 — From the proposal walk of `conditional-steps`: R-rop-6's closing sentence amended to what is true (the
+  five chaining bodies explain the three prompt tags; archive is a named limit, as before this program).
+- 2026-11-17 — Stage `conditional-steps` archived and ratified by Sal: six exit criteria met, the compaction observation
+  met in part (the apply and review sessions did not compact) and its remainder deferred to `evaluation` (its task 6.4).
+- 2026-11-17 — Stage `once-per-session-detail` archived and ratified by Sal: four exit criteria met, with the three
+  departures from its charter recorded in its Shipped-as paragraph (a new `run-summary-emit.md` per skill, the owed-field
+  triggers moved with the detail, the account step moved whole). RG1's projection after `tighten-bodies` widens to about
+  4,400 over 350,000.
+- 2026-11-17 — From the exploration `tighten-bodies`: a restructure of the decision-writing bullet that keeps its
+  content saves nothing (measured at 2,901 characters against 2,860), so RG1 is out of reach by about 13,000. At Sal's
+  direction RG1's figures are replaced at propose by the sizes the stage's moves measure (RG1 amended).
+- 2026-11-17 — From the exploration `tighten-bodies`: at Sal's direction the mirror notes leave the bodies entirely,
+  amending R-crc-14's mirror corollary (R-rop-14).
+- 2026-11-17 — At `tighten-bodies`' propose: RG1's figures set at 365,500 in total and 18,300 for apply. The
+  restructured decision-writing bullet adds five lines to explore, which sat at its 664-line ceiling; at Sal's choice
+  that ceiling rises to 669 for those lines only (R-rop-8 and RG3 amended), over writing the labels inline or trimming
+  explore's own text.
+- 2026-11-17 — Stage `tighten-bodies` archived and ratified by Sal: its four exit criteria met (RG1 at 363,848 and
+  18,238 against 365,500 and 18,300; RG2 whole; the edit ledger shows no instruction removed; nine ceilings lowered and
+  six kept, none raised but explore's named line rise), with the two departures from its charter's wording recorded in
+  its Shipped-as paragraph (115 provenance forms the patterns cannot remove, and one kept citation, for `evaluation`).
+- 2026-11-18 — From the exploration `evaluation`, concluded on Sal's word with no change proposed: its decisions are
+  recorded as R-rop-15 to R-rop-19 and four considered-and-out entries, and its measures in the stage's Concluded-as
+  paragraph. The stage renders `ended-from-explore`, the engine's reading of a stage cited only by a concluded
+  exploration; its exit criteria are met by those records, so no mark is written. R-rop-2 and R-rop-9 are amended
+  (stage `records-by-setting` follows `evaluation`, and `automate-dev-flow` resumes after it), RG0 names that stage as its
+  one exception, and the stage is declared.
+- 2026-11-19 — Stage `records-by-setting` archived and ratified by Sal: its four exit criteria met (at the defaults
+  `orbit decisions status` reports nothing written and each of the three settings turns writing on, shown by test; the
+  rule in `decision-records.md` keeps every clause but its one replaced opening, held by the edit ledger; fourteen
+  ceilings lowered and explore's line ceiling back to 664; RG0 holding as amended), with the two narrowings of the
+  charter's wording recorded in its Shipped-as paragraph. Every declared stage is now done; what remains of phase 1 is
+  its closing architecture review and, at arc-done, Sal's READY flip and merge of the program PR. `automate-dev-flow`
+  resumes after this stage (R-rop-9 as amended); whether `pr: per-architecture` stays when it does is decided then
+  (R-rop-13).
+- 2026-11-20 — Closing architecture review (`review-architecture-2026-11-19T21-32-53Z`) and its walk. The goals at
+  the program's close: RG0 held, with its one named exception (`records-by-setting`, as built per R-rop-17's note),
+  every stage's suite green and every moved assertion named in its archive; RG1 met at `tighten-bodies` (363,848 and
+  18,238 against 365,500 and 18,300), the bodies since down to 329,979 (apply 15,805); RG2 met at `tighten-bodies`;
+  RG3 held, no ceiling raised but explore's one named line rise (664 to 669), which `records-by-setting` took back to
+  664. At Sal's choice the walk added "as built" notes to R-rop-17, RG0's exception and `automate-dev-flow`'s R-adf-17,
+  and pointers to `records-by-setting` at R-rop-7 and the Premise.

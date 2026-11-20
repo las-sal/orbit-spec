@@ -1,0 +1,9 @@
+{
+  "command": "resolution",
+  "timestamp": "2026-11-17T20:01:02Z",
+  "change": "tighten-bodies",
+  "model": "claude-opus-5-5",
+  "stop": "stop-2026-11-17T19-56-53Z.json",
+  "answer": "Amend RG1 to what the charter's moves measure: keep the charter's moves and R-rop-7 as ruled, and re-set RG1's two figures at propose to the sizes the drafted moves actually reach.",
+  "effect": "The stage keeps its four tightenings and the structural fixes, with the decision-writing bullet keeping all its content. At propose, each move is drafted and measured, and RG1's total and apply figures are amended in the architecture doc to those sizes (expected around 358,000 to 363,000 in total and about 17,700 for apply); size ceilings still only move down."
+}

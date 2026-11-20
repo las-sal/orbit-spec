@@ -368,8 +368,10 @@ the user or security, a moment a run needed you, and your answer to it — to `.
 of the change, exploration or architecture trail. They take `--change` or `--doc`, and carry no next step. A record is
 never edited: one is fixed by a new record of the same kind whose `replaces` names the old record's filename and whose
 links (the stop it names, what it relies on) are unchanged. The
-decision-writing discipline in every workflow skill with a disciplines epitome tells the AI when to write them, under
-every setting and without changing what you are asked, so a trail's `decisions/` folder fills as the work runs; a walk of an archived change writes none.
+decision-writing discipline in every workflow skill with a disciplines epitome tells the AI when to write them: only
+while a setting that reads them is on, as `orbit decisions status` reports, and never by changing what you are asked.
+At the defaults no new record is written; an answer to a stop already in a trail, or a fix of a record already there,
+is written whatever `orbit decisions status` reports. A walk of an archived change writes none.
 
 `account` is not a run summary or a decision record either. It writes a change's account — in plain words, what the
 change built, the new places you are asked something, and where the work left its plan — to
@@ -401,7 +403,28 @@ orbit emit apply --change add-dark-mode --payload payload.json
 
 ### `orbit decisions`
 
-Decision records, read back.
+Whether decision records are written, and the records read back.
+
+#### `orbit decisions status`
+
+Say whether decision records are written in this project. They are while a setting that reads them is on — a `chain`
+key granted (`chain.<key>: true`), `signoff: change` or `signoff: program`, or a tripwire sensor set to
+`on_fire: halt` — and not otherwise. Every workflow skill with a disciplines epitome runs it at each command's first
+step, and again after the session edits `orbit/config.yaml`. It reads `orbit/config.yaml` (or `orbit/config.yml`) in
+the working tree, where an absent or unparseable file, or a value a setting does not recognize, reads as that setting's
+default. It takes no change name, writes nothing and exits zero. It prints one line, `Decision records: not written (no
+setting reads them)` or `Decision records: written (read by chain, signoff)`, naming each setting that is on in the
+order `chain`, `signoff`, `tripwires`.
+
+Usage: `orbit decisions status`.
+
+| Option | Description |
+|---|---|
+| `--json` | Output `{"write": <boolean>, "readers": [...]}` |
+
+```bash
+orbit decisions status
+```
 
 #### `orbit decisions brief`
 

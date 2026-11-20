@@ -1,0 +1,159 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-19T16:02:50Z",
+  "change": "records-by-setting",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/records-by-setting/.orbit-runs/external-proposal-2026-11-19T00-15-44Z.md",
+  "source_command": null,
+  "source_token": "2026-11-19T00-15-44Z",
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-6",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 3,
+    "suggestion": 1
+  },
+  "pushback_verification": "All four verified against HEAD; two converged with the fresh half's findings and are stale by its log.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 2,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Working-tree settings can suppress answers to active tripwire stops",
+      "file": "orbit/changes/records-by-setting/specs/orbit-decision-records/spec.md",
+      "marker_source": "external",
+      "classification": "stale",
+      "action": "converged with the fresh half's finding on the same named limit, walked in its log",
+      "evidence": "resolved in address-reviews-2026-11-19T16-02-34Z (the earlier pass's log): the limit now names the uncommitted case, and since D-rbs-8 a tripwire stop's answer is written whatever the command reports",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Scenarios require records even when the new rule forbids them",
+      "file": "orbit/changes/records-by-setting/specs/orbit-conventions/spec.md",
+      "marker_source": "external",
+      "classification": "trivial_fix",
+      "action": "Each carried scenario that writes a record (a stop before a question, a call put to the user, a call relying on nothing, a directed act, a call after a clarifying question, a seam a stop condition describes) gains the precondition that orbit decisions status reports write: true; the defaults keep their own scenarios.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "**WHEN** the AI is about to ask the user whether to amend"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/records-by-setting/specs/orbit-conventions/spec.md",
+            "text": "the AI is about to ask the user whether to amend a ratified ruling"
+          }
+        ],
+        "searched": [
+          "#### Scenario",
+          "**WHEN** the AI",
+          "under a setting that reads records"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Rechecking settings can strand a stop awaiting an answer",
+      "file": "orbit/changes/records-by-setting/specs/orbit-conventions/spec.md",
+      "marker_source": "external",
+      "classification": "decision_required",
+      "action": "Ratified A in chat (the same decision as the fresh half's F1): a resolution answering a stop already in the trail is written whatever orbit decisions status reports, so turning the last reader off strands no stop; a scenario covers the transition.",
+      "ratified_via": "chat",
+      "resolution": "A — narrow the prohibition to new records; a resolution answering a stop already in the trail, or a replacement fixing a record already there, is still written",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/records-by-setting/specs/orbit-decision-records/spec.md",
+          "orbit/changes/records-by-setting/design.md",
+          "orbit/changes/records-by-setting/explore.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "which at the defaults is nothing"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/records-by-setting/specs/orbit-conventions/spec.md",
+            "text": "the last reader off therefore strands no stop"
+          },
+          {
+            "path": "orbit/changes/records-by-setting/specs/orbit-conventions/spec.md",
+            "text": "A stop already in the trail is answered at the defaults"
+          }
+        ],
+        "searched": [
+          "strand",
+          "open stop",
+          "turns chaining off"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Proposal and design disagree about the predicate’s location",
+      "file": "orbit/changes/records-by-setting/proposal.md",
+      "marker_source": "external",
+      "classification": "stale",
+      "action": "converged with the fresh half's finding on the proposal's Impact line, walked in its log",
+      "evidence": "resolved in address-reviews-2026-11-19T16-02-34Z (the earlier pass's log): the Impact names src/core/decision-status.ts (new)",
+      "outcome": "stale"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Walked the external half of the proposal blind pair: two findings resolved (the scenario preconditions, and the stranded-stop transition by the walk's D1), two stale as converged with the fresh half's log.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal records-by-setting",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "2c75211503cac0b109ea35cd47e21da17bc4e1cf",
+      "frozen": false,
+      "evidence": {
+        "files": [],
+        "share": null,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ],
+  "ripple_misses": 0
+}

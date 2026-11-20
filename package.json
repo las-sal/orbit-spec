@@ -54,7 +54,8 @@
     "postinstall": "node scripts/postinstall.js",
     "release:tree": "node scripts/release-tree.mjs",
     "capture:gh": "node scripts/capture-gh-contract.mjs",
-    "capture:git": "vitest run --config scripts/capture.vitest.config.ts"
+    "capture:git": "vitest run --config scripts/capture.vitest.config.ts",
+    "size:report": "node scripts/skill-size-report.mjs"
   },
   "engines": {
     "node": ">=20.19.0"

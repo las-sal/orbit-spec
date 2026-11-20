@@ -1,0 +1,150 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-17T14:20:00Z",
+  "change": "conditional-steps",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/conditional-steps/.orbit-runs/external-proposal-2026-11-17T14-09-05Z.md",
+  "source_command": null,
+  "source_token": "2026-11-17T14-09-05Z",
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-6",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 1
+  },
+  "pushback_verification": "All three verified against current state; one converged with the fresh pass's finding and is stale against its walk.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 1,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Reference handoffs can repeat commands instead of consuming the existing result",
+      "marker_source": "external",
+      "file": "orbit/changes/conditional-steps/design.md",
+      "line": 71,
+      "classification": "trivial_fix",
+      "action": "design §3 adds the handoff rule: every basic content tells the agent to follow its reference from the result it already has, a non-zero exit included; the design notes the five reads are read-only and architect's save writes only a changed brief; the moved-blocks test (task 3.5) checks each pointer; the proposal and the four deltas say the same",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/conditional-steps/proposal.md",
+          "orbit/changes/conditional-steps/tasks.md",
+          "orbit/changes/conditional-steps/specs/orbit-conventions/spec.md",
+          "orbit/changes/conditional-steps/specs/orbit-archive-modifications/spec.md",
+          "orbit/changes/conditional-steps/specs/orbit-architect/spec.md",
+          "orbit/changes/conditional-steps/specs/orbit-propose-modifications/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "and follow it on any other"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/conditional-steps/design.md",
+            "text": "**The handoff rule.**"
+          },
+          {
+            "path": "orbit/changes/conditional-steps/tasks.md",
+            "text": "the result you already have"
+          }
+        ],
+        "searched": [
+          "follow it",
+          "references/",
+          "run the command again"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The shared PR reference receives incompatible timing instructions without a selection rule",
+      "marker_source": "external",
+      "file": "orbit/changes/conditional-steps/tasks.md",
+      "line": 14,
+      "classification": "stale",
+      "action": "converged with the fresh pass's finding on the Position paragraphs' placement, walked and resolved in address-reviews-2026-11-17T14-19-38Z: pr-choreography.md gains a 'Where each phase runs' section opened by 'Follow only the subsection of the workflow you are running.' with one subsection per workflow",
+      "evidence": "address-reviews-2026-11-17T14-19-38Z resolved it; design.md §1 carries the selection line and both subsections",
+      "outcome": "stale"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Fingerprint handoff omits command failures and unexpected results",
+      "marker_source": "external",
+      "file": "orbit/changes/conditional-steps/design.md",
+      "line": 97,
+      "classification": "trivial_fix",
+      "action": "the divergence basic content routes a non-zero exit to its reference, which behaves exactly as today's step; Risks names today's missing failure row as a gap that predates this change and is outside RG0",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/conditional-steps/design.md",
+            "text": "Today's divergence step defines no row for a non-zero exit"
+          }
+        ],
+        "searched": [
+          "fingerprint",
+          "non-zero exit"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Two resolved and one stale. The handoff rule closes the main warning: each basic content's reference is followed from the result already in hand. The fingerprint exit is routed to the reference, its missing failure row named as a pre-existing gap outside RG0. The shared-PR-reference warning converged with the fresh pass's and is recorded stale against that walk.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal conditional-steps",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "5a25ca5ad26693843e578137ce916e988c2fdd45",
+      "frozen": false,
+      "evidence": {
+        "files": [],
+        "share": null,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ],
+  "ripple_misses": 0
+}

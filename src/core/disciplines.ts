@@ -49,18 +49,26 @@ const LEDGER_STOPS = LEDGER_STOP_CONDITIONS.map(code).join(' or ');
 const DIRECT_STOPS = PAYLOAD_STOP_CONDITIONS.filter(c => !(LEDGER_STOP_CONDITIONS as readonly string[]).includes(c)).map(code);
 const DIRECT_STOPS_TEXT = `${DIRECT_STOPS.slice(0, -1).join(', ')} or ${DIRECT_STOPS[DIRECT_STOPS.length - 1]}`;
 
-/** The epitome's fifth bullet, carried byte-equal by every workflow body that has an epitome. */
-export const DECISION_WRITING_DISCIPLINE =
-  `- **Decision-writing (call-time)**: under every setting, keep a record of each call and each stop without changing what the user sees or is asked. ` +
-  `BEFORE asking the user a question that a stop condition describes — ${CONDITIONS} — write a stop record (\`orbit emit stop\`), then ask exactly as you would have; ` +
-  `with the user's answer, write a resolution naming that stop (\`orbit emit resolution\`); ` +
-  `when ${DIRECT_STOPS_TEXT} describes an act you take without asking — the user directed it (they told you to amend a ruling), or no flow asks — write its stop record before the act, then, when the user directed it, a resolution naming that stop whose answer is their direction, and otherwise leave the stop open; ` +
-  `AFTER any call that falls in a ledger area — however you reached it: without asking, after a question no condition describes, or with the user's answer to a stop — ${AREAS} — write a ledger entry (\`orbit emit ledger\`) citing what it relies on; ` +
-  `when ${LEDGER_STOPS} describes the call, by its own gloss above, the entry cites nothing and names that stop: the one you asked at, or, where you would not have asked, one you write first — ask nothing and leave that stop open. ` +
-  `A designed prompt — a consent prompt, an inflection prompt (at a gate, or at a base-fingerprint divergence), a walk's closure prompt — is a seam, not a stop, and writes nothing, unless a stop condition also describes it: then write the stop record first and fire the prompt as designed. ` +
-  `A question no condition describes writes nothing, nor does a call in no area. ` +
-  `A record names the work it belongs to (\`--change <name>\` for a change or a named exploration, or \`--doc <doc>\` in an architect session); in a session with neither (a project-wide run, an unnamed exploration), or on an archived change (orbit writes no record to its trail), write no record, never attaching it to other work. ` +
-  `What each record carries — its fields, its citations and the plain-language rule, with an example of each — is in \`references/${DECISION_RECORDS_REFERENCE_NAME}\`, beside this skill; a refused record names the field to fix.`;
+/**
+ * The decision-writing RULE, carried byte-equal by the first section of `references/decision-records.md`: a label line,
+ * then the five labelled sub-bullets (`tighten-bodies`, R-rop-7), every clause of the one-paragraph form kept but its
+ * opening "under every setting", which `records-by-setting` (R-rop-17) replaced by the condition the basic content reads.
+ */
+export const DECISION_WRITING_DISCIPLINE = [
+  `- **Decision-writing (call-time)**: when \`orbit decisions status\` reports \`write: true\`, keep a record of each call and each stop without changing what the user sees or is asked. What each record carries — its fields, its citations and the plain-language rule, with an example of each — is in \`references/${DECISION_RECORDS_REFERENCE_NAME}\`, beside this skill; a refused record names the field to fix.`,
+  `  - *Before asking*: BEFORE asking the user a question that a stop condition describes — ${CONDITIONS} — write a stop record (\`orbit emit stop\`), then ask exactly as you would have; with the user's answer, write a resolution naming that stop (\`orbit emit resolution\`).`,
+  `  - *Acting without asking*: when ${DIRECT_STOPS_TEXT} describes an act you take without asking — the user directed it (they told you to amend a ruling), or no flow asks — write its stop record before the act, then, when the user directed it, a resolution naming that stop whose answer is their direction, and otherwise leave the stop open.`,
+  `  - *After a call*: AFTER any call that falls in a ledger area — however you reached it: without asking, after a question no condition describes, or with the user's answer to a stop — ${AREAS} — write a ledger entry (\`orbit emit ledger\`) citing what it relies on; when ${LEDGER_STOPS} describes the call, by its own gloss above, the entry cites nothing and names that stop: the one you asked at, or, where you would not have asked, one you write first — ask nothing and leave that stop open.`,
+  `  - *Not a stop*: a designed prompt — a consent prompt, an inflection prompt (at a gate, or at a base-fingerprint divergence), a walk's closure prompt — is a seam, not a stop, and writes nothing, unless a stop condition also describes it: then write the stop record first and fire the prompt as designed. A question no condition describes writes nothing, nor does a call in no area.`,
+  `  - *Where records go*: a record names the work it belongs to (\`--change <name>\` for a change or a named exploration, or \`--doc <doc>\` in an architect session); in a session with neither (a project-wide run, an unnamed exploration), or on an archived change (orbit writes no record to its trail), write no record, never attaching it to other work.`,
+].join('\n');
+
+/**
+ * The decision-writing BASIC CONTENT, the epitome's fifth bullet in every workflow body that has an epitome
+ * (`records-by-setting`, R-rop-3 and R-rop-17): the moment `orbit decisions status` runs, the usual result and the
+ * link to the rule. The same text under every configuration (R-rop-5); the command's result picks the branch (R-rop-4).
+ */
+export const DECISION_WRITING_BASIC = `- **Decision-writing (call-time)**: at each command's first step, and again after this session edits the project config (\`orbit/config.yaml\` or \`.yml\`), run \`orbit decisions status --json\`. On \`write: true\`, read \`references/${DECISION_RECORDS_REFERENCE_NAME}\` and follow its rule for the rest of the command. On \`write: false\`, write no new ledger entry or stop record; a resolution answering a stop already in the trail, or a replacement fixing a record already there, is still written — read that reference when you write one.`;
 
 // ---------------------------------------------------------------------------
 // The chain end step (seam-chaining, `orbit-conventions`' `No-chaining contract`)
@@ -84,8 +92,15 @@ export const CHAIN_END_STEP_SKILLS = [
 const KEY_ROWS = CHAIN_KEYS.map(k => `  - \`${k}\` — ${CHAIN_KEY_TABLE[k].map(code).join(', ')}`).join('\n');
 
 /**
- * The closing step, carried byte-equal by the five bodies. The key table is interpolated from the
- * engine's own (`CHAIN_KEY_TABLE`), so an adopter's generated skill ships the mapping it relies on.
+ * conditional-steps: what the prompt tags mean and what a chained command records (R-rop-6) — one text that both
+ * `CHAIN_END_STEP` (indented, as before) and its basic content `CHAIN_END_STEP_BASIC` carry, so the halves cannot diverge.
+ */
+export const CHAIN_TAG_MEANING =
+  "The chained command runs as on a typed arrival except for its prompts, each tagged at its site: a `(chain: target)` prompt does not fire (the next command names the change and the mode); a `(chain: routine, default: <option>)` prompt takes that default, and the run summary's `final_assessment` records `The chain took the default: <prompt> — <answer>.`; a `(chain: decision)` prompt is asked exactly as on a typed arrival, and after a decision the chain does not continue — the command's own closing step states in one line that the chain stopped at a decision and runs nothing. The chained command records `Chained: granted by chain.<key>.` as one sentence in the record its session writes: a walk in its run summary's `final_assessment`; an external review or a blind pair in its launch record's `final_assessment`; an in-context review in its pass's `commentary` (the review emit owns a pass's `final_assessment`); a chained apply or archive records it as its `consent: \"setting\"` value and writes no sentence. A chained fresh review records nothing — its worker writes the pass, and its brief carries nothing from this session (a named limit).";
+
+/**
+ * The closing step, carried byte-equal in each of the five skills' `references/chain-end-step.md`. The key table is
+ * interpolated from the engine's own (`CHAIN_KEY_TABLE`), so an adopter's generated skill ships the mapping it relies on.
  */
 export const CHAIN_END_STEP = [
   "## Chain end step (the closing step — `orbit-conventions`' `No-chaining contract`)",
@@ -95,7 +110,7 @@ export const CHAIN_END_STEP = [
   '- **`may_run: true`** → print `Chaining: <next> (granted by chain.<key>)` and run `<next>` as the next act of this turn. `<key>` is the row covering `<next>`:',
   KEY_ROWS,
   '',
-  "  The chained command runs as on a typed arrival except for its prompts, each tagged at its site: a `(chain: target)` prompt does not fire (the next command names the change and the mode); a `(chain: routine, default: <option>)` prompt takes that default, and the run summary's `final_assessment` records `The chain took the default: <prompt> — <answer>.`; a `(chain: decision)` prompt is asked exactly as on a typed arrival, and after a decision the chain does not continue — the command's own closing step states in one line that the chain stopped at a decision and runs nothing. The chained command records `Chained: granted by chain.<key>.` as one sentence in the record its session writes: a walk in its run summary's `final_assessment`; an external review or a blind pair in its launch record's `final_assessment`; an in-context review in its pass's `commentary` (the review emit owns a pass's `final_assessment`); a chained apply or archive records it as its `consent: \"setting\"` value and writes no sentence. A chained fresh review records nothing — its worker writes the pass, and its brief carries nothing from this session (a named limit). The chained command's closing step reads the status with `--chain-ran \"<next>\" --chain-head \"<head>\"` added — the `next` and `head` this read reported, a null `head` written as the word `null` — so a command that wrote no run record stops the chain on `no-progress`. A chained external review or blind pair needs a committed tree. Where the commit step commits (`commit: true` on the change's attached branch), it ran before this read, so the review arrives on a committed tree; anywhere else, on an uncommitted tree the pair and a launched external review each refuse and write nothing, so no run record lands and the chain stops on `no-progress` — say then that the working tree has uncommitted changes (a named limit).",
+  `  ${CHAIN_TAG_MEANING}` + " The chained command's closing step reads the status with `--chain-ran \"<next>\" --chain-head \"<head>\"` added — the `next` and `head` this read reported, a null `head` written as the word `null` — so a command that wrote no run record stops the chain on `no-progress`. A chained external review or blind pair needs a committed tree. Where the commit step commits (`commit: true` on the change's attached branch), it ran before this read, so the review arrives on a committed tree; anywhere else, on an uncommitted tree the pair and a launched external review each refuse and write nothing, so no run record lands and the chain stops on `no-progress` — say then that the working tree has uncommitted changes (a named limit).",
   '- **`may_run: false` with `configured: true`** → print `Chain stops: <why>` and end the turn. On `open-stop` print `Chain stops: open-stop — <stop>: <question>`, reading `question` from the stop record at the `stop` path, and put that question to the user; the resolution their answer writes lets the next read pass that row.',
   '- **`configured: false`** → print nothing more: the turn ends at the eligibility line exactly as without the setting.',
 ].join('\n');
@@ -115,7 +130,7 @@ export const COMMIT_STEP_SKILLS = [
 ] as const;
 
 /**
- * The closing commit step, carried byte-equal by the six bodies. It restates the consumption-table rows the step
+ * The closing commit step, carried byte-equal in each of the six skills' `references/commit-step.md`. It restates the consumption-table rows the step
  * meets, because an installed apply, review or walk skill carries no PR reference to point at.
  */
 export const COMMIT_STEP = [
@@ -132,6 +147,44 @@ export const COMMIT_STEP = [
   "- **A step fails** → stop at that step and write ONE line naming the completed, the failed and the skipped steps by their `step` names, showing the failed step's argv and then each skipped step's, verbatim with `<message-file>` filled, as the recovery the user runs in that order. The session's writes stay uncommitted or unpushed until that recovery lands, and nothing the session wrote is undone. Never retry with other flags and never force a push.",
   '',
   "What the step may commit, and to which branch, is `orbit-pr-lifecycle`'s `` `orbit pr commit` computes the closing commit step ``: everything uncommitted, the user's own edits included, except the untracked files `.gitignore` excludes, and only on the change's attached branch. What grants it is that capability's `The commit and push settings`: `commit: true` and `push: true` in `orbit/config.yaml`, each granted only by the literal `true`.",
+].join('\n');
+
+// ---------------------------------------------------------------------------
+// conditional-steps (reduce-orbit-phase1, R-rop-3/R-rop-4): each closing step's BASIC CONTENT — when it runs, the
+// command, the usual result, and the link to its reference file — carried byte-equal by each carrying body; the full
+// step moves, byte-equal, to a reference file the basic content points at for every other result.
+// ---------------------------------------------------------------------------
+
+/** The reference file each commit-carrying skill ships, holding `COMMIT_STEP` byte-equal. */
+export const COMMIT_STEP_REFERENCE_NAME = 'commit-step.md';
+/** The reference file each chaining skill ships, holding `CHAIN_END_STEP` byte-equal. */
+export const CHAIN_END_STEP_REFERENCE_NAME = 'chain-end-step.md';
+
+/** `references/commit-step.md`: a one-line title, then the full step. */
+export const COMMIT_STEP_REFERENCE = `# Reference: the commit step\n\n${COMMIT_STEP}\n`;
+/** `references/chain-end-step.md`: a one-line title, then the full step. */
+export const CHAIN_END_STEP_REFERENCE = `# Reference: the chain end step\n\n${CHAIN_END_STEP}\n`;
+
+/** The commit step's basic content, carried byte-equal by the six bodies of `COMMIT_STEP_SKILLS`. */
+export const COMMIT_STEP_BASIC = [
+  // The full step's heading cites its owning requirement, `orbit-conventions`' `The commit step closes each carrying body`.
+  '## Commit step (the closing commit)',
+  '',
+  `Runs in the invoking session only, never in a dispatched worker, after the run summary (in archive, after the PR-attached tail) and before the position readout (in archive, the completion readout); in apply, once at the session's close. Skip it with no change target, or when this invocation's PR layer has already stopped. Otherwise run \`orbit pr commit "<name>" --json\`. On \`action: off\`, print nothing and go on. On any other result, or a non-zero exit, read \`references/${COMMIT_STEP_REFERENCE_NAME}\` and follow it from the result you already have, before the readout.`,
+].join('\n');
+
+/**
+ * The chain end step's basic content, carried byte-equal by the five bodies of `CHAIN_END_STEP_SKILLS`: the `chain`
+ * read with the flags a chained command adds to it (the read comes before the reference is opened), the
+ * `configured: false` result, and `CHAIN_TAG_MEANING` (R-rop-6).
+ */
+export const CHAIN_END_STEP_BASIC = [
+  // The full step's heading cites its owning requirement, `orbit-conventions`' `No-chaining contract`.
+  '## Chain end step (the closing step)',
+  '',
+  `The LAST act of the invoking session, after the position readout and the eligibility line; never in a dispatched worker, and nothing with no change target. Read the \`chain\` object from \`orbit status --change "<name>" --json\` (the call that supplied the eligibility line, or one right after it); a command a chain ran adds \`--chain-ran "<next>" --chain-head "<head>"\` to that read, the \`next\` and \`head\` the previous read reported, a null \`head\` written as \`null\`. On \`configured: false\`, print nothing more. On any other result, or a non-zero exit, read \`references/${CHAIN_END_STEP_REFERENCE_NAME}\` and follow it from the result you already have.`,
+  '',
+  CHAIN_TAG_MEANING,
 ].join('\n');
 
 // ---------------------------------------------------------------------------
@@ -252,7 +305,7 @@ function recordSection(command: DecisionCommand): string {
       '',
       citationLines(),
       '',
-      `When ${LEDGER_STOPS} describes the call (each by its gloss in the decision-writing statement), write \`"relies_on": []\` and \`"raised_stop": "stop-<TS>.json"\`, naming the ${LEDGER_STOPS} stop you wrote for it — never both a citation and a stop.`
+      `When ${LEDGER_STOPS} describes the call (each by its gloss in the rule above), write \`"relies_on": []\` and \`"raised_stop": "stop-<TS>.json"\`, naming the ${LEDGER_STOPS} stop you wrote for it — never both a citation and a stop.`
     );
   }
   parts.push('', 'Example:', '', '```json', JSON.stringify(DECISION_RECORD_EXAMPLES[command], null, 2), '```');
@@ -261,11 +314,25 @@ function recordSection(command: DecisionCommand): string {
 
 const PLAIN_LIST = DECISION_COMMANDS.flatMap(c => READER_BOUND_FIELDS[c]).map(code).join(', ');
 
-/** `references/decision-records.md`, shipped beside every skill whose epitome carries the statement. */
+/** `references/decision-records.md`, shipped beside every skill whose epitome carries the basic content: the rule, then the record forms. */
 export const DECISION_RECORDS_REFERENCE = [
   '# Reference: decision records',
   '',
-  'The decision-writing discipline in this skill says WHEN to write a record; this reference says WHAT each one holds.',
+  '## Contents',
+  '',
+  '- When to write a record',
+  '- How a record is written',
+  '- The plain-language rule',
+  '- Fixing a record',
+  '- Stop record (`orbit emit stop`)',
+  '- Resolution (`orbit emit resolution`)',
+  '- Ledger entry (`orbit emit ledger`)',
+  '',
+  "Read this reference when `orbit decisions status` reports `write: true`, or when you answer a stop already in the trail or fix a record already there: its first section says WHEN to write a record, and the rest WHAT each one holds; on `write: false` that section's `write: true` condition does not cover such an answer or fix, which follows that record's own section and Fixing a record.",
+  '',
+  '## When to write a record',
+  '',
+  DECISION_WRITING_DISCIPLINE,
   '',
   '## How a record is written',
   '',
@@ -344,12 +411,24 @@ const ACCOUNT_HOW = (example: Record<string, unknown>): string[] => [
   '```',
 ];
 
+/** The apply account step's heading in the full step, citing its owning requirement. */
+const ACCOUNT_STEP_HEADING =
+  "## Account step (before the run summary — `orbit-decision-records`' `Each change carries one account, written when apply is complete`)";
+/** The apply body's account step heading: the full step's, without the citation (`tighten-bodies`). */
+const ACCOUNT_STEP_BODY_HEADING = '## Account step (before the run summary)';
+/** The address-reviews step 7 heading in the full step, citing its owning requirement. */
+const ACCOUNT_WALK_STEP_HEADING =
+  "### 7. Replace the account when a fix changed it (`orbit-decision-records`' `Each change carries one account, written when apply is complete`)";
+/** The address-reviews body's step 7 heading: the full step's, without the citation (`tighten-bodies`). */
+const ACCOUNT_WALK_STEP_BODY_HEADING = '### 7. Replace the account when a fix changed it';
+
 /**
- * The apply body's account step: written by the session that ends with apply complete, before its run
+ * The apply skill's account step, whole — `references/account-step.md` (the body carries `ACCOUNT_STEP_BASIC`): written
+ * by the session that ends with apply complete, before its run
  * summary (or its `all_done` completion readout when it writes none).
  */
 export const ACCOUNT_STEP = [
-  "## Account step (before the run summary — `orbit-decision-records`' `Each change carries one account, written when apply is complete`)",
+  ACCOUNT_STEP_HEADING,
   '',
   "The change's ACCOUNT says, in plain language, what the change built, the new places the user is asked something, and where the work left its plan. It is not a decision record and not a run summary. APPLY IS COMPLETE when the change's apply gate passes: every task is checked, or every unchecked one is a declared, marked `(User-validation` handoff (named in this session's `user_validation_tasks`). Decide at the session's end, BEFORE the run-summary emit — or, when the session writes no run summary (it arrived on `all_done`), before the completion readout:",
   '',
@@ -361,11 +440,12 @@ export const ACCOUNT_STEP = [
 ].join('\n');
 
 /**
- * The address-reviews body's account step: a walk replaces the account when a resolved finding changes what
+ * The address-reviews skill's account step, whole — `references/account-walk-step.md` (the body carries
+ * `ACCOUNT_WALK_STEP_BASIC`): a walk replaces the account when a resolved finding changes what
  * it says, unless the walk resolved any finding by reopening tasks.
  */
 export const ACCOUNT_WALK_STEP = [
-  "### 7. Replace the account when a fix changed it (`orbit-decision-records`' `Each change carries one account, written when apply is complete`)",
+  ACCOUNT_WALK_STEP_HEADING,
   '',
   "A change's ACCOUNT says, in plain language, what the change built, the new places the user is asked something, and where the work left its plan; the apply session that completes the change writes it. After the logs are written, decide:",
   '',
@@ -376,3 +456,64 @@ export const ACCOUNT_WALK_STEP = [
   '',
   ...ACCOUNT_HOW(ACCOUNT_EXAMPLES.walk),
 ].join('\n');
+
+// ---------------------------------------------------------------------------
+// once-per-session-detail (reduce-orbit-phase1, D-opsd-8): each account step's BASIC CONTENT — its heading and the
+// read at the step's moment, with no condition of its own — carried by its body; the full step, byte-equal, in a
+// reference file the basic content sends the agent to every time the moment comes. The reference decides every branch.
+// ---------------------------------------------------------------------------
+
+/** The reference file the apply skill ships, holding `ACCOUNT_STEP` byte-equal. */
+export const ACCOUNT_STEP_REFERENCE_NAME = 'account-step.md';
+/** The reference file the address-reviews skill ships, holding `ACCOUNT_WALK_STEP` byte-equal. */
+export const ACCOUNT_WALK_STEP_REFERENCE_NAME = 'account-walk-step.md';
+
+/** `references/account-step.md`: a one-line title, then the full step. */
+export const ACCOUNT_STEP_REFERENCE = `# Reference: the account step\n\n${ACCOUNT_STEP}\n`;
+/** `references/account-walk-step.md`: a one-line title, then the full step. */
+export const ACCOUNT_WALK_STEP_REFERENCE = `# Reference: the account step of a walk (step 7)\n\n${ACCOUNT_WALK_STEP}\n`;
+
+/** The apply body's account step: its heading and the read at the session's end. */
+export const ACCOUNT_STEP_BASIC = [
+  ACCOUNT_STEP_BODY_HEADING,
+  '',
+  `At the session's end, BEFORE the run-summary emit (or, when the session writes no run summary, before the completion readout), read \`references/${ACCOUNT_STEP_REFERENCE_NAME}\` and follow it: it says whether this session writes the account, a replacement of it, or none, and how.`,
+].join('\n');
+
+/** The address-reviews body's step 7: its heading and the read after the logs. */
+export const ACCOUNT_WALK_STEP_BASIC = [
+  ACCOUNT_WALK_STEP_BODY_HEADING,
+  '',
+  `After the logs are written, read \`references/${ACCOUNT_WALK_STEP_REFERENCE_NAME}\` and follow it: it says whether this walk writes a replacement of the change's account, or none, and how.`,
+].join('\n');
+
+// ---------------------------------------------------------------------------
+// once-per-session-detail (reduce-orbit-phase1, D-opsd-4, D-opsd-9; `orbit-run-summary-emit`'s `A body reads its
+// run-summary detail before the session's first run-summary emit`): each emit step in scope keeps when the emit fires, its command
+// and the chat behaviour beside them, and reads its section, whole, from the skill's `references/run-summary-emit.md`.
+// ---------------------------------------------------------------------------
+
+/** The skills whose emit step reads its detail from the reference: every emit step in scope, eleven bodies. */
+export const RUN_SUMMARY_EMIT_SKILLS = [
+  'orbit-apply-change',
+  'orbit-archive-change',
+  'orbit-architect',
+  'orbit-review',
+  'orbit-verify-change',
+  'orbit-propose',
+  'orbit-address-reviews',
+  'orbit-ff-change',
+  'orbit-continue-change',
+  'orbit-new-change',
+  'orbit-audit-drift',
+] as const;
+
+/** The reference file each of `RUN_SUMMARY_EMIT_SKILLS` ships, holding its emit section whole. */
+export const RUN_SUMMARY_EMIT_REFERENCE_NAME = 'run-summary-emit.md';
+
+/** The READ CUE, carried byte-equal by each of the eleven bodies, immediately before its command block. */
+export const RUN_SUMMARY_READ_CUE = `Before the session's first run-summary emit, read \`references/${RUN_SUMMARY_EMIT_REFERENCE_NAME}\` and follow it to compose the payload: it holds this step whole, with where its fields are documented. Write the payload to a temp file and invoke:`;
+
+/** `references/run-summary-emit.md`: a one-line title, then the emit section whole. */
+export const runSummaryEmitReference = (section: string): string =>
+  `# Reference: the run-summary emit step\n\n${section}\n`;

@@ -117,7 +117,9 @@ describe('config profile interactive flow', () => {
 
     // archive declares references (orbit-skill-generation); a synced surface carries them.
     // D6 added pr-archive-tail.md alongside the summary schema.
-    for (const refName of ['archive-summary-schema.md', 'pr-archive-tail.md', 'decision-records.md']) {
+    // conditional-steps added the three conditional steps' references and the commit step's.
+    // once-per-session-detail added run-summary-emit.md.
+    for (const refName of ['archive-summary-schema.md', 'pr-archive-tail.md', 'gate-inflection.md', 'fingerprint-divergence.md', 'signoff-hold.md', 'run-summary-emit.md', 'commit-step.md', 'decision-records.md']) {
       const archiveRefPath = path.join(
         projectDir, '.claude', 'skills', 'orbit-archive-change', 'references', refName
       );
@@ -131,18 +133,20 @@ describe('config profile interactive flow', () => {
     const DR = 'decision-records.md';
     const editorialRefs: Record<string, string[]> = {
       'orbit-explore': ['capture-formats.md', DR],
-      'orbit-propose': ['pr-choreography.md', DR],
-      'orbit-ff-change': ['pr-choreography.md', DR],
-      'orbit-architect': ['pr-resolution.md', DR],
-      'orbit-review': ['run-summary-schema.md', 'passes-proposal.md', 'passes-system.md', 'passes-architecture.md', 'external-handoff.md', 'blind-pair.md', 'mode-sections.md', 'prompt-template.md', 'flags-detail.md', DR],
-      'orbit-address-reviews': ['external-findings-format.md', 'internal-findings-format.md', 'resolution-detail.md', 'run-summary-schema.md', DR],
-      'orbit-audit-drift': ['run-summary-schema.md', 'worked-example.md', DR],
-      'orbit-new-change': [DR],
-      'orbit-continue-change': [DR],
-      'orbit-apply-change': [DR],
+      // conditional-steps: the commit step and chain end step references, and propose's size brief.
+  // once-per-session-detail: each emit step's run-summary-emit.md, and the two account steps' references.
+      'orbit-propose': ['pr-choreography.md', 'size-brief.md', 'run-summary-emit.md', 'commit-step.md', 'chain-end-step.md', DR],
+      'orbit-ff-change': ['pr-choreography.md', 'run-summary-emit.md', 'commit-step.md', 'chain-end-step.md', DR],
+      'orbit-architect': ['pr-resolution.md', 'program-signoff.md', 'run-summary-emit.md', DR],
+      'orbit-review': ['run-summary-schema.md', 'passes-proposal.md', 'passes-system.md', 'passes-architecture.md', 'external-handoff.md', 'blind-pair.md', 'mode-sections.md', 'prompt-template.md', 'flags-detail.md', 'run-summary-emit.md', 'commit-step.md', 'chain-end-step.md', DR],
+      'orbit-address-reviews': ['external-findings-format.md', 'internal-findings-format.md', 'resolution-detail.md', 'run-summary-schema.md', 'run-summary-emit.md', 'account-walk-step.md', 'commit-step.md', 'chain-end-step.md', DR],
+      'orbit-audit-drift': ['run-summary-schema.md', 'worked-example.md', 'run-summary-emit.md', DR],
+      'orbit-new-change': ['run-summary-emit.md', DR],
+      'orbit-continue-change': ['run-summary-emit.md', DR],
+      'orbit-apply-change': ['account-step.md', 'run-summary-emit.md', 'commit-step.md', 'chain-end-step.md', DR],
       'orbit-sync-specs': [DR],
       'orbit-bulk-archive-change': [DR],
-      'orbit-verify-change': [DR],
+      'orbit-verify-change': ['run-summary-emit.md', DR],
     };
     for (const [dirName, refNames] of Object.entries(editorialRefs)) {
       for (const refName of refNames) {

@@ -18,6 +18,8 @@ const body = (dir: string): string => {
   return s.template.instructions;
 };
 const count = (hay: string, needle: string): number => hay.split(needle).length - 1;
+const reference = (dir: string, name: string): string | undefined =>
+  (skills.find((x) => x.dirName === dir)?.template.references ?? []).find((r) => r.name === name)?.content;
 const HEADING = '### Requirement: The archive holds for a per-change sign-off';
 
 async function ownerBlock(): Promise<string> {
@@ -59,19 +61,30 @@ describe('the archive bodies carry the sign-off hold', () => {
     expect(SIGNOFF_HOLD_STEP).toContain('the chain does not continue after it');
   });
 
-  it('the archive body carries it once, as Step 3.7, after the save step and before the sync and the preflight', () => {
+  // @scenario text orbit-archive-modifications :: The archive holds for a per-change sign-off :: The archive body's basic content handles the default hold
+  it("the archive body carries the step's basic content as Step 3.7, after the save step and before the sync and the preflight, and ships the whole step in references/signoff-hold.md", () => {
     const b = body('orbit-archive-change');
-    expect(count(b, SIGNOFF_HOLD_STEP)).toBe(1);
+    expect(count(b, SIGNOFF_HOLD_STEP)).toBe(0);
+    const ref = reference('orbit-archive-change', 'signoff-hold.md');
+    expect(ref).toBeDefined();
+    expect(count(ref as string, SIGNOFF_HOLD_STEP)).toBe(1);
+    const basic = 'Directly after Step 3.6\'s save, BEFORE upstream Step 4, in every mode, run `orbit brief --change "<name>" --hold --json`';
     const at = [
-      "## NEW Step 3.6 — Save the change's brief (BEFORE the sync)",
+      "## Step 3.6 — Save the change's brief (BEFORE the sync)",
       BRIEF_SAVE_STEP,
-      '## NEW Step 3.7 — The sign-off hold (BEFORE the sync)',
-      SIGNOFF_HOLD_STEP,
-      '## NEW Step 4.9 — PR preflight',
+      '## Step 3.7 — The sign-off hold (BEFORE the sync)',
+      basic,
+      '## Step 4.9 — PR preflight',
     ].map((s) => b.indexOf(s));
     expect(at.every((i) => i > -1)).toBe(true);
     expect([...at].sort((x, y) => x - y)).toEqual(at);
-    expect(b.slice(at[2], at[3])).toContain('BEFORE upstream Step 4 (the sync assessment)');
+    const step = b.slice(at[2], at[4]);
+    // `why: "off"` is handled in the body; every other result and a non-zero exit read the reference.
+    const off = step.indexOf('On `why: "off"`, go on silently, stating any warning in one line.');
+    const other = step.indexOf('On any other result or a non-zero exit, read `references/signoff-hold.md` and follow it from the save\'s outcome and the result you already have, before the sync.');
+    expect(off).toBeGreaterThan(-1);
+    expect(other).toBeGreaterThan(off);
+    expect(count(step, 'references/signoff-hold.md')).toBe(1);
   });
 
   // @scenario text orbit-archive-modifications :: The archive holds for a per-change sign-off :: Bulk archive asks per change
@@ -96,7 +109,8 @@ describe('the archive bodies carry the sign-off hold', () => {
         expect(b.includes('--change "<name>" --hold'), s.dirName).toBe(false);
         expect(b.includes('orbit emit signoff --change'), s.dirName).toBe(false);
         expect(b).toContain('orbit brief <doc> --hold --json');
-        expect(b).toContain('orbit emit signoff --doc <doc>');
+        // conditional-steps: the emit invocation moved with the hold's table to the architect's reference.
+        expect(reference(s.dirName, 'program-signoff.md')).toContain('orbit emit signoff --doc <doc>');
         continue;
       }
       expect(b.includes('--hold'), s.dirName).toBe(false);

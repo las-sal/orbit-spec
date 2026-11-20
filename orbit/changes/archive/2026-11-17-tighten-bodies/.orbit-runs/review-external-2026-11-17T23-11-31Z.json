@@ -1,0 +1,14 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-11-17T23:11:31Z",
+  "change": "tighten-bodies",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "prompt_path": "orbit/changes/tighten-bodies/.orbit-runs/external-prompt-system-2026-11-17T23-11-10Z.md",
+  "target": "codex",
+  "final_assessment": "External review prompt packaged for tighten-bodies (iter 1, mode system) as the external half of a launched blind pair; awaiting findings from codex.",
+  "pair": true,
+  "awaiting_findings": true,
+  "next_recommended": "Paste orbit/changes/tighten-bodies/.orbit-runs/external-prompt-system-2026-11-17T23-11-10Z.md into the target AI, and save the response as orbit/changes/tighten-bodies/.orbit-runs/external-system-<TS>.md"
+}

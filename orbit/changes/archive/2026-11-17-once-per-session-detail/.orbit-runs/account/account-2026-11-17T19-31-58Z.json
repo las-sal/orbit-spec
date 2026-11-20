@@ -1,0 +1,25 @@
+{
+  "command": "account",
+  "timestamp": "2026-11-17T19:31:58Z",
+  "change": "once-per-session-detail",
+  "model": "claude-opus-5-5",
+  "built": "Two blocks of the skill bodies that a session acts on once now wait in reference files until that moment. Eleven bodies (apply, archive, architect, review, verify, propose, address-reviews, ff, continue, new and audit-drift) keep when their run summary is written, the command that writes it and what they say in chat, plus one shared sentence telling the AI to read a new reference file, run-summary-emit.md, before the session's first run summary; what goes into the record moved there unchanged. Apply's account step, and the review walk's, became a line sending the AI to a reference file that holds the step whole and decides whether to write anything. The skill-body convention gained the rule for a block acted on once, and the budget test's ceilings came down to the new sizes plus 5%. The bodies went from 389,374 to 369,392 characters in all; apply's from 27,124 to 18,887. No workflow does anything differently.",
+  "seams": "None.",
+  "deviations": "Three. The charter sends the record detail to each skill's existing run-summary schema reference; it went to a new, small run-summary-emit.md in each of the eleven skills instead, because review's, address-reviews' and archive's schema references run to 15,000 to 31,000 characters and every session would have read one whole before its first record. The charter keeps the triggers in the bodies; the rules for when an optional field of the record is owed (apply's and archive's judgement entries, archive's deferred validations, propose's and ff's PR attachment) moved to the reference with the rest of the detail, as Sal chose over keeping a second copy in each body. And the account step moved whole, its conditions included, not only its field rules, so that the body carries no condition: the AI reads the reference every time apply's session ends. The charter's check found that the apply gate cannot report a missing account without an engine change, so none was made; it is on the evaluation stage's list.",
+  "defines": [
+    {
+      "term": "run summary",
+      "definition": "the record each orbit command writes at the end of its session, saying what it did and what comes next"
+    },
+    {
+      "term": "account step",
+      "definition": "the instruction to write the change's account, the plain record of what it built, its new seams and its deviations, once apply is complete"
+    },
+    {
+      "term": "review walk",
+      "definition": "the address-reviews command, which resolves a review's findings one by one"
+    }
+  ],
+  "detail": "Constants ACCOUNT_STEP_BASIC, ACCOUNT_WALK_STEP_BASIC and RUN_SUMMARY_READ_CUE in src/core/disciplines.ts; moved blocks held byte-equal by test/core/templates/moved-blocks.test.ts; design.md Decisions 1-3 (D-opsd-4, D-opsd-8, D-opsd-9). Full suite 4,358 passed after the ceilings change. After the system review walk (address-reviews-2026-11-17T19-31-31Z) the read cue says the session's first run-summary emit, adding 12 characters to each of the eleven bodies.",
+  "replaces": "account-2026-11-17T19-18-08Z.json"
+}

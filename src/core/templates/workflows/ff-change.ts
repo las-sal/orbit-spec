@@ -6,7 +6,39 @@
  */
 import type { SkillTemplate, CommandTemplate } from '../types.js';
 import { PR_CHOREOGRAPHY_REFERENCE } from './pr-choreography.js';
-import { CHAIN_END_STEP, COMMIT_STEP, DECISION_RECORDS_REFERENCE, DECISION_WRITING_DISCIPLINE } from '../../disciplines.js';
+import { CHAIN_END_STEP_BASIC, CHAIN_END_STEP_REFERENCE, CHAIN_END_STEP_REFERENCE_NAME, COMMIT_STEP_BASIC, COMMIT_STEP_REFERENCE, COMMIT_STEP_REFERENCE_NAME, DECISION_RECORDS_REFERENCE, DECISION_WRITING_BASIC, RUN_SUMMARY_EMIT_REFERENCE_NAME, RUN_SUMMARY_READ_CUE, runSummaryEmitReference } from '../../disciplines.js';
+
+// once-per-session-detail (reduce-orbit-phase1, D-opsd-4, D-opsd-9): the emit section, whole, is
+// `references/run-summary-emit.md`; the body carries its heading, the paragraphs that stay, the read cue and the command.
+const FF_EMIT_HEADING = `## Run-summary emit (one-shot at command completion — via the engine emit surface)`;
+const FF_EMIT_COMMAND = `\`\`\`bash
+orbit emit ff --change <name> --payload <payload-file>
+\`\`\``;
+const FF_EMIT_SECOND_SEGMENT = `When \`publish\` printed a second segment, the emit is NOT the last act: run that segment with
+the just-written emit's path as \`<emit-path>\`, so the attachment record the archive reads
+reaches the branch. After a failed step or a PR-half degradation the emit stays LOCAL; the
+failure line names the recovery.`;
+const FF_EMIT_COMPLETION_OVERRIDE = `**Completion-prompt override (chat)**: where the upstream steps above prompt "Run \`/orbit:apply\` or ask me to implement", instead prompt: "Run \`/orbit:review <name>\` — review the artifacts before implementation."`;
+/** The emit section whole, as the body carried it before once-per-session-detail; shipped as `references/run-summary-emit.md`. */
+export const FF_RUN_SUMMARY_EMIT = [
+  FF_EMIT_HEADING,
+  `(Per \`orbit-run-summary-emit\`; composed and written via \`orbit emit ff\` — \`orbit-emit-composition\`.)`,
+  `At command completion, compose the narrative payload (\`final_assessment\`, the required
+nullable \`model\`, and — when \`orbit pr publish\` ran — the \`pr_attachment\` object per
+\`references/pr-choreography.md\`) into a temp file and invoke:`,
+  FF_EMIT_COMMAND,
+  `The ENGINE owns the spine, the trail path, timestamp + collision handling, and \`next_recommended\` composition (propose-shaped: the review-gate pointer). Never hand-compose the JSON.`,
+  FF_EMIT_SECOND_SEGMENT,
+  FF_EMIT_COMPLETION_OVERRIDE,
+].join('\n\n');
+/** The body's emit section: when the emit fires, the read cue, the command and the chat behaviour beside them. */
+export const FF_RUN_SUMMARY_EMIT_BASIC = [
+  FF_EMIT_HEADING,
+  `At command completion, write the ff run summary. ${RUN_SUMMARY_READ_CUE}`,
+  FF_EMIT_COMMAND,
+  FF_EMIT_SECOND_SEGMENT,
+  FF_EMIT_COMPLETION_OVERRIDE,
+].join('\n\n');
 
 export function getFfChangeSkillTemplate(): SkillTemplate {
   return {
@@ -99,8 +131,6 @@ After completing all artifacts, summarize:
   - These guide what you write, but should never appear in the output
 
 **Guardrails**
-- Create ALL artifacts needed for implementation (as defined by schema's \`apply.requires\`)
-- Always read dependency artifacts before creating a new one
 - If context is critically unclear, ask the user - but prefer making reasonable decisions to keep momentum
 - If a change with that name already exists, suggest continuing that change instead
 - Verify each artifact file exists after writing before proceeding to next
@@ -117,11 +147,9 @@ The disciplines from \`orbit-conventions\`, embedded per body; detail lives wher
 - **Change completeness (modification-time)**: apply substantive modifications fully across ALL affected artifacts; after mechanical edits, sweep for residue AND new bugs the replacement introduced.
 - **Pushback (review-time)**: verify each flagged issue against current state before acting; suppress stale findings with evidence rather than re-fixing already-fixed state.
 - **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line, invoking no next command unless the change status's \`chain\` object allows it — gate \`passed\` means *eligible*, not *commanded*.
-${DECISION_WRITING_DISCIPLINE}
+${DECISION_WRITING_BASIC}
 
 ## Base-fingerprint capture (NEW step)
-
-(Per \`orbit-base-fingerprints\`' \`Fingerprint capture at every spec-authoring point\` requirement)
 
 Immediately after the change's delta specs are generated (the \`specs\` artifact is written), run:
 
@@ -136,18 +164,12 @@ add-missing-only (\`--refresh\` is the deliberate re-stamp after reconciling a d
 ADDED-only changes stamp nothing; a "skipped — requirement not found in live baseline" warning
 means the delta references a nonexistent requirement (fix the delta; validation also catches it).
 
-## PR lifecycle (config-gated — D-arc Stage D6)
+## PR lifecycle (config-gated)
 
 \`ff\` is propose-in-one-breath, so it carries the IDENTICAL choreography — a change is never
 treated differently for how it was started.
 
-**Position (this section is placed last for reading, not for running).** Phase 1
-(\`orbit pr select\`, then running its switch) runs BEFORE Step 2 (\`orbit new change\`): that
-step writes \`orbit/changes/<name>/.openspec.yaml\`, a path a compatible branch already TRACKS,
-so a switch attempted after it is exactly the \`git switch\` refusal the ordering exists to
-prevent. Phase 2 (generation + validation, ON that branch) IS Steps 2–4; phase 3 (the no-CI
-note, then \`orbit pr publish\`: its land-and-open segment, the emit, then its record segment)
-runs after Step 5's final status.
+**Position.** Read the regime BEFORE Step 2 (\`orbit new change\`); on an active mode, read \`references/pr-choreography.md\` now and run its Phase 1 here; its \`Where each phase runs\` section, under \`### In /orbit:ff\`, says where phases 2 and 3 run.
 
 Read the RESOLVED regime from the engine FIRST
 — \`orbit status --json\`, field \`pr\` (never parse \`orbit/config.yaml\` yourself: the value
@@ -161,36 +183,20 @@ yours. The engine computes every precondition, the commit scope and the program-
 change built that way reaches archive unattached — the tail's PR path terminates there before
 any remote or \`gh\` work.)
 
-## Run-summary emit (one-shot at command completion — via the engine emit surface)
+${FF_RUN_SUMMARY_EMIT_BASIC}
 
-(Per \`orbit-run-summary-emit\`; composed and written via \`orbit emit ff\` — \`orbit-emit-composition\`.)
+${COMMIT_STEP_BASIC}
 
-At command completion, compose the narrative payload (\`final_assessment\`, the required
-nullable \`model\`, and — when \`orbit pr publish\` ran — the \`pr_attachment\` object per
-\`references/pr-choreography.md\`) into a temp file and invoke:
-
-\`\`\`bash
-orbit emit ff --change <name> --payload <payload-file>
-\`\`\`
-
-The ENGINE owns the spine, the trail path, timestamp + collision handling, and \`next_recommended\` composition (propose-shaped: the review-gate pointer). Never hand-compose the JSON.
-
-When \`publish\` printed a second segment, the emit is NOT the last act: run that segment with
-the just-written emit's path as \`<emit-path>\`, so the attachment record the archive reads
-reaches the branch. After a failed step or a PR-half degradation the emit stays LOCAL; the
-failure line names the recovery.
-
-**Completion-prompt override (chat)**: where the upstream steps above prompt "Run \`/orbit:apply\` or ask me to implement", instead prompt: "Run \`/orbit:review <name>\` — review the artifacts before implementation."
-
-${COMMIT_STEP}
-
-${CHAIN_END_STEP}
+${CHAIN_END_STEP_BASIC}
 `,
     references: [
       {
         name: 'pr-choreography.md',
         content: PR_CHOREOGRAPHY_REFERENCE,
       },
+      { name: RUN_SUMMARY_EMIT_REFERENCE_NAME, content: runSummaryEmitReference(FF_RUN_SUMMARY_EMIT) },
+      { name: COMMIT_STEP_REFERENCE_NAME, content: COMMIT_STEP_REFERENCE },
+      { name: CHAIN_END_STEP_REFERENCE_NAME, content: CHAIN_END_STEP_REFERENCE },
       { name: 'decision-records.md', content: DECISION_RECORDS_REFERENCE },
     ],
     license: 'MIT',

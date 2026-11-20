@@ -1,0 +1,147 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-17T18:41:16Z",
+  "change": "once-per-session-detail",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "dimension": "coherence",
+      "severity": "SUGGESTION",
+      "title": "Design Decision 5 still has the final apply session read the gate before the account cue",
+      "file": "orbit/changes/once-per-session-detail/design.md",
+      "line": 157,
+      "recommendation": "Decision 5's last sentences say the session that checks the last task \"reads the gate, follows the account cue and writes this change's account\"; under D-opsd-8 the cue reads no gate. Reword to task 6.3's form: the session follows the account cue at its end, reads references/account-step.md and writes this change's account. The same entry's ripple left task 2.2 missing a comma before \"that each basic content carries no condition of its own\". Every normative site (Decision 1, the decision-records delta and its scenarios, the proposal, tasks 2.2 and 6.3, explore D-opsd-8) carries the fix; this one narrative site was missed because the phrase wraps across a line and the sweep's retired strings did not name it.",
+      "walk_entry": {
+        "title": "The account cue reads the apply gate before this session's emit declares user_validation_tasks, so a change ending on a user-validation handoff gets no account",
+        "file": "orbit/changes/once-per-session-detail/design.md"
+      }
+    },
+    {
+      "dimension": "coherence",
+      "severity": "SUGGESTION",
+      "title": "D-opsd-4's CONSUME move line still names new run-summary-schema.md files joining the schema-table parity test",
+      "file": "orbit/changes/once-per-session-detail/explore.md",
+      "line": 63,
+      "recommendation": "explore.md:63 says new run-summary-schema.md files join the emit-composition schema-table parity test's set. Design Decision 2 put the moved text in references/run-summary-emit.md instead and left the schema references untouched, and the moved sections carry no schema block, so the parity test's set does not change. Re-point the move line to what holds now (its consumer is the agent composing the payload from run-summary-emit.md; the parity test is untouched) without changing D-opsd-4's rule. Not introduced by either walk: it predates the walk (Decision 2 at propose), and the blind pair did not name it."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Graded both walks against the six artifacts they edited, read whole. The account-cue rewrite (D-opsd-8) is in every normative site, including the decision-records delta's paragraph and both new scenarios, and the explore rules parse with D-opsd-4 and D-opsd-8 live and D-opsd-3 and D-opsd-5 superseded. The eleven-body cascade (D-opsd-9) checked by summing the context table (21,849 matches the eleven sections) and by the audit-drift claim that its body names run-summary-schema.md outside the emit section (SKILL.md line 213). The external log's two stale calls are right: each site carries log 1's fix. The residual range (from the external pass's adding commit) lists only files inside the walks' edit records.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "verification": [
+    {
+      "title": "The account cue reads the apply gate before this session's emit declares user_validation_tasks, so a change ending on a user-validation handoff gets no account",
+      "file": "orbit/changes/once-per-session-detail/design.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "The proposal names the reference files D-opsd-5 described; design, spec and tasks use one new run-summary-emit.md per skill",
+      "file": "orbit/changes/once-per-session-detail/proposal.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The table's 'the reference only' rows and the apply scenario's 'carries none of those' are false on day one",
+      "file": "orbit/changes/once-per-session-detail/specs/orbit-run-summary-emit/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The account basic content does not follow the convention's handoff rule or name a non-zero exit",
+      "file": "orbit/changes/once-per-session-detail/design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "New body sentences are described, not given, and the spec calls the two-sentence cue 'one sentence'",
+      "file": "orbit/changes/once-per-session-detail/design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The named limits do not cover a read lost to compaction before a later emit",
+      "file": "orbit/changes/once-per-session-detail/specs/orbit-run-summary-emit/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Address-reviews' emit move saves nothing per turn and adds a read, and the cue misdescribes its reference",
+      "file": "orbit/changes/once-per-session-detail/design.md",
+      "verdict": "landed"
+    }
+  ],
+  "final_assessment": "0 critical, 0 warning, 2 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-11-17T18-38-08Z",
+    "2026-11-17T18-38-21Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews once-per-session-detail",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "aafdb4451e8176c6432919c716b103693dffb734",
+      "frozen": false,
+      "evidence": {
+        "files": [],
+        "share": null,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ]
+}
