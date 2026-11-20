@@ -173,7 +173,9 @@ fact of the complete cases:
 | failed every run | any | reported; a cut that makes it pass is noted |
 
 Each case also shows pass rate, turns and cost as mean ± standard deviation on each side. It warns first when the
-records' models or Claude Code versions differ, and exits non-zero on any regression or incomplete case. A cut is
+records' models or Claude Code versions differ, or when the two sides' sessions loaded different skills, and notes each
+side's skills that are not orbit's (the same on every record of one machine). It exits non-zero on any regression or
+incomplete case. A cut is
 "no worse" exactly when every case is complete and nothing regressed.
 
 ## Files

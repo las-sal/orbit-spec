@@ -210,8 +210,8 @@ seam) has no commit: its filename carries `local` in its place, and its record n
 - the model each session reported;
 - the skills each session's start reported, so a skill from outside the fixture shows there;
 - for each case and run, each grader's pass or fail, the session's turns, cost and duration, and whether it stopped at
-  its start state, at a limit, at the run's ceiling, or with no result record (a crash, a kill, its timeout, no numeric
-  cost);
+  its start state, at a limit, at the run's ceiling, with no result record (a crash, a kill, its timeout, no numeric
+  cost), or was not run because Sal stopped the run;
 - the run's total cost;
 - the work directory holding its fixtures and traces.
 
@@ -248,7 +248,7 @@ and is listed with what it lacks. A grader only the cut holds is listed as new a
 The cut is "no worse" exactly when every case is complete and no fact is a regression. The report also shows, for each
 case, the pass rate, turns and cost as mean ± standard deviation across runs on each side, so a difference is read
 beside the spread it sits in. It warns, first, when the two records name different models or Claude Code versions,
-because then a difference may come from either. The comparison exits non-zero when it finds a regression or an
+or sessions that loaded different skills, because then a difference may come from any of these. The comparison exits non-zero when it finds a regression or an
 incomplete case.
 
 #### Scenario: A reliable fact failing once is a regression

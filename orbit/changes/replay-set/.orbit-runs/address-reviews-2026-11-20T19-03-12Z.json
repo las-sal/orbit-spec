@@ -1,0 +1,197 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-20T19:03:12Z",
+  "change": "replay-set",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/replay-set/.orbit-runs/review-system-2026-11-20T18-55-05Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-20T18-55-05Z",
+  "latest_apply_token": "2026-11-20T18-02-21Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 2
+  },
+  "pushback_verification": "All three verified against current state; none stale.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The foreign-skill warning reads a skills list no trace has shown yet, and would fire on every record if Claude Code's bundled skills appear in it",
+      "marker_source": "internal-review",
+      "file": "replay/compare.mjs",
+      "line": 52,
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "evidence": "At HEAD foreignSkills' warning fired on any non-orbit skill on either side; Claude Code's bundled skills load in every session whatever --setting-sources says, so a real record would most likely warn every time.",
+      "action": "replay:compare now warns only when the two sides loaded different skills (a skill one side's sessions reported and the other's did not), and prints each side's non-orbit skills as a Note line, the same on every record of one machine. Two compare tests replace the old one (same bundled set: a note, no warning; a skill only the cut loaded: the warning, first). The mutation warning on any foreign skill was shown caught (both tests fail). Task 5.2 now asks the plumbing run to read one trace's init record for its skills list, which the warning rests on; design's Risks and Decision 9, the spec's comparison requirement and the README say the same.",
+      "ripple_cascade": {
+        "applied": [
+          "test/replay/compare.test.ts",
+          "orbit/changes/replay-set/design.md",
+          "orbit/changes/replay-set/specs/orbit-replay-set/spec.md",
+          "orbit/changes/replay-set/tasks.md",
+          "replay/README.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the comparison prints any that are not orbit's",
+          "sessions loaded skills that are not orbit's"
+        ],
+        "introduced": [
+          {
+            "path": "replay/compare.mjs",
+            "text": "the two sides loaded different skills"
+          },
+          {
+            "path": "test/replay/compare.test.ts",
+            "text": "warns first when one side loaded a skill the other did not"
+          },
+          {
+            "path": "orbit/changes/replay-set/design.md",
+            "text": "The comparison warns when the two sides loaded different skills"
+          },
+          {
+            "path": "orbit/changes/replay-set/specs/orbit-replay-set/spec.md",
+            "text": "or sessions that loaded different skills"
+          },
+          {
+            "path": "orbit/changes/replay-set/tasks.md",
+            "text": "the comparison's skills warning rests on it"
+          },
+          {
+            "path": "replay/README.md",
+            "text": "or when the two sides' sessions loaded different skills"
+          }
+        ],
+        "searched": [
+          "foreignSkills",
+          "not orbit's",
+          "skills"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The record requirement's list of how a run ends has no place for a run the user stopped",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/replay-set/specs/orbit-replay-set/spec.md",
+      "line": 212,
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "evidence": "The spec's record requirement listed start state, limit, ceiling and no result record as the end states; the runner also records 'interrupted'.",
+      "action": "The spec's record requirement now ends the list with 'or was not run because Sal stopped the run', and design Decision 7's paragraph on not-run sessions says what a stopped run does: kills the running session (its whole budget counted), records every later run as not run, exits 130, the record kept.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/replay-set/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/replay-set/specs/orbit-replay-set/spec.md",
+            "text": "was not run because Sal stopped the run"
+          },
+          {
+            "path": "orbit/changes/replay-set/design.md",
+            "text": "kills the running session, which counts its whole budget"
+          }
+        ],
+        "searched": [
+          "interrupted",
+          "not run",
+          "the run's ceiling"
+        ],
+        "scope": [
+          "replay/README.md"
+        ],
+        "kept": []
+      },
+      "ripple_miss_of": {
+        "walk": "2026-11-20T18-46-32Z",
+        "title": "An interrupted or crashing run writes no record, and its detached session keeps billing",
+        "file": "replay/run.mjs",
+        "kind": "query"
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The walk deleted explore-md.md, and no entry's edit record names it",
+      "marker_source": "internal-review",
+      "file": "replay/cases/explore/graders/explore-md.md",
+      "line": 1,
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "evidence": "The walk 2026-11-20T18-46-32Z deleted replay/cases/explore/graders/explore-md.md and named it only in an action; a walk log is never edited.",
+      "action": "No repository edit: this entry is the edit record for the deletion (its file is the deleted grader), so the file now sits inside a walk's edit record for the next residual check.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [],
+        "searched": [
+          "explore-md"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "All three findings of the in-context verification pass resolved: the comparison warns on a difference between the two sides' skill sets and notes each side's non-orbit skills, with the plumbing run asked to confirm the init record's skills field; the spec and design name a run Sal stops; this log is the edit record for the deleted explore-md grader. One ripple miss of the previous walk (the runner entry's spec site). Sal ratified the walk with 'walk all'.",
+  "iteration": 6,
+  "next_recommended": "/orbit:archive replay-set — user-invoked",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "9c54a9fc8301e8b483ae6092d234c2bcd2641944",
+      "frozen": true,
+      "evidence": {
+        "files": [],
+        "share": 0,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ],
+  "ripple_misses": 1
+}

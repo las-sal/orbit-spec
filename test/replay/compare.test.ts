@@ -143,15 +143,33 @@ describe('replay:compare — the four baseline-by-cut rows', () => {
     expect(code).toBe(0);
   });
 
-  it("warns when either side's sessions loaded a skill that is not orbit's", () => {
+  it('notes the skills that are not orbit\'s, the same on both sides, without warning', () => {
+    const bundled = ['orbit-explore', 'simplify', 'update-config'];
     const base = record({ x: [ok, ok, ok] });
-    base.results.forEach((r) => Object.assign(r, { skills: ['orbit-explore', 'orbit-apply-change'] }));
+    base.results.forEach((r) => Object.assign(r, { skills: bundled }));
     const cut = record({ x: [ok, ok, ok] }, { label: 'cut' });
-    cut.results.forEach((r, i) => Object.assign(r, { skills: i === 1 ? ['orbit-explore', 'pdf', 'my-plugin:helper'] : ['orbit-explore'] }));
+    cut.results.forEach((r) => Object.assign(r, { skills: bundled }));
     const report = compareRecords(base, cut);
-    expect(report.warnings).toEqual(["the cut's sessions loaded skills that are not orbit's: my-plugin:helper, pdf"]);
+    expect(report.warnings).toEqual([]);
+    expect(report.info).toEqual([
+      "skills not orbit's that the sessions loaded — baseline: simplify, update-config; cut: simplify, update-config",
+    ]);
     const { text, code } = runMain(base, cut);
-    expect(text.split('\n')[0]).toBe("WARNING: the cut's sessions loaded skills that are not orbit's: my-plugin:helper, pdf");
+    expect(text.split('\n')[0]).toBe(
+      "Note: skills not orbit's that the sessions loaded — baseline: simplify, update-config; cut: simplify, update-config",
+    );
+    expect(code).toBe(0);
+  });
+
+  it('warns first when one side loaded a skill the other did not', () => {
+    const base = record({ x: [ok, ok, ok] });
+    base.results.forEach((r) => Object.assign(r, { skills: ['orbit-explore', 'simplify'] }));
+    const cut = record({ x: [ok, ok, ok] }, { label: 'cut' });
+    cut.results.forEach((r, i) => Object.assign(r, { skills: i === 1 ? ['orbit-explore', 'simplify', 'my-plugin:helper'] : ['orbit-explore', 'simplify'] }));
+    const report = compareRecords(base, cut);
+    expect(report.warnings).toEqual(['the two sides loaded different skills (baseline only: none; cut only: my-plugin:helper)']);
+    const { text, code } = runMain(base, cut);
+    expect(text.split('\n')[0]).toBe('WARNING: the two sides loaded different skills (baseline only: none; cut only: my-plugin:helper)');
     expect(code).toBe(0);
     expect(compareRecords(base, base).warnings).toEqual([]);
   });

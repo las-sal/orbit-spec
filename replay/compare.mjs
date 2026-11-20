@@ -65,14 +65,22 @@ export function compareRecords(base, cut) {
       `the records name different Claude Code versions (baseline: ${base.claude_code_version}; cut: ${cut.claude_code_version})`,
     );
   }
-  // A skill a session reported that is not orbit's (a user-level skill, a plugin's) reached the
-  // session from outside its fixture: either side's grades may then owe something to it.
-  for (const [side, rec] of [
-    ['baseline', base],
-    ['cut', cut],
-  ]) {
-    const foreign = foreignSkills(rec);
-    if (foreign.length) warnings.push(`the ${side}'s sessions loaded skills that are not orbit's: ${foreign.join(', ')}`);
+  // A skill a session reported that is not orbit's reached it from outside its fixture (Claude Code's
+  // bundled skills, a user-level skill, a plugin's). What can skew a comparison is a skill ONE side
+  // loaded and the other did not: that is the warning. Each side's full foreign set is information,
+  // the same on every record of one machine.
+  const bf = foreignSkills(base);
+  const cf = foreignSkills(cut);
+  const onlyBase = bf.filter((n) => !cf.includes(n));
+  const onlyCut = cf.filter((n) => !bf.includes(n));
+  if (onlyBase.length || onlyCut.length) {
+    warnings.push(
+      `the two sides loaded different skills (baseline only: ${onlyBase.join(', ') || 'none'}; cut only: ${onlyCut.join(', ') || 'none'})`,
+    );
+  }
+  const info = [];
+  if (bf.length || cf.length) {
+    info.push(`skills not orbit's that the sessions loaded — baseline: ${bf.join(', ') || 'none'}; cut: ${cf.join(', ') || 'none'}`);
   }
   if (base.broken || /plumbing/.test(base.label ?? '')) {
     warnings.push(`the baseline record is labelled ${JSON.stringify(base.label)}, not a baseline`);
@@ -117,6 +125,7 @@ export function compareRecords(base, cut) {
   const incomplete = cases.filter((c) => c.status === 'incomplete').map((c) => c.case);
   return {
     warnings,
+    info,
     cases,
     new_cases: newCases,
     regressions,
@@ -138,6 +147,7 @@ const ROW_TEXT = {
 export function renderReport(report, baseFile, cutFile) {
   const out = [];
   for (const w of report.warnings) out.push(`WARNING: ${w}`);
+  for (const i of report.info ?? []) out.push(`Note: ${i}`);
   out.push(`baseline: ${baseFile}`, `cut:      ${cutFile}`, '');
   for (const c of report.cases) {
     out.push(`## ${c.case} — ${c.status}`);

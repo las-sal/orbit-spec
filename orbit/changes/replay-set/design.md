@@ -222,7 +222,9 @@ The trace's `system`/`init` record gives the model and the loaded skills, and it
 sequence keeps the spend predictable against the ceiling. Before each session the runner RESERVES the case's
 `max_budget_usd`: it starts the session only when the spend so far plus that budget stays within `--max-total-usd`, so
 the ceiling holds even if the session spends its whole budget. Otherwise it records the rest as not run and exits
-non-zero. Each session runs under the case's `timeout_minutes` (default 30); at the timeout the runner kills it. A
+non-zero. A run Sal stops (Ctrl-C, or SIGTERM) kills the running session, which counts its whole budget, records
+every later run as not run because the run was stopped, and exits 130; the record, written before the first session
+and after every run, keeps every session already billed. Each session runs under the case's `timeout_minutes` (default 30); at the timeout the runner kills it. A
 session whose trace has no `result` record (a crash, a kill, the timeout), or one with no numeric `total_cost_usd`,
 counts its whole `max_budget_usd` as spent and is recorded with that reason and no grades.
 
@@ -254,7 +256,7 @@ the cuts must be found before the baseline, not after. A grader that fails to fa
 it lacks, or a case with fewer graded runs than its side's run count makes that case INCOMPLETE, listed with what it
 lacks and given no verdict. It then classifies every (case, grader) fact of the complete cases by D-rs-9's four rows
 and prints, per case, the pass rate, turns and cost as mean ± standard deviation on each side. It warns first when the
-records' models or Claude Code versions differ. It exits non-zero on any regression or any incomplete case, so a cut the
+records' models or Claude Code versions differ, or when the two sides' sessions loaded different skills. It exits non-zero on any regression or any incomplete case, so a cut the
 ceiling cut short is never reported "no worse". A grader only the cut holds is listed as new and not judged. The module exports its classifier so `test/replay/` checks the four
 rows and the exit code without a billed run.
 
@@ -279,8 +281,9 @@ judges, and a warning that only prints would be ignored.
 
 - [A user-level skill, memory or setting reaches a case session; `--setting-sources project` keeps settings out but not
   necessarily user skills or `~/.claude/CLAUDE.md` (D-rs-7's FALSIFY)] → The record lists the skills each session's
-  start reported, and the comparison prints any that are not orbit's. Sal's own environment is constant between a
-  baseline and a cut run on the same machine.
+  start reported. The comparison warns when the two sides loaded different skills, the difference that can skew a
+  verdict, and notes each side's skills that are not orbit's (Claude Code's bundled skills among them, the same on every
+  record of one machine). Sal's own environment is constant between a baseline and a cut run on the same machine.
 - [Three runs miss a rare failure (D-rs-9's FALSIFY)] → A fact the baseline passes only sometimes is reported with its
   spread, and its case's `--runs` can be raised for the cuts it guards.
 - [The model or Claude Code changes between a baseline and a cut] → Both are recorded, the comparison warns, and a new
