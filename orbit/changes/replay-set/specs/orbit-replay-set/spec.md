@@ -158,12 +158,10 @@ a file, SHALL name (`pairs_with`) a grader of its case whose fact only orbit's a
 `orbit` grader whose answer reads it (an artifact's status in `orbit status --change <name> --json`, `orbit validate
 <name>`, a gate reading an emit), or a `regex` over orbit's output matching the path orbit printed when it wrote it. A
 file the workflow has the session write itself (a change's proposal, design, specs and tasks) is graded by orbit's
-reading of it, which is what the next command reads.
+reading of it, which is what the next command reads. The paired grader names the file it vouches for in `about`, and
+that path is the file grader's own.
 
-Named limit — a session that writes a file orbit then accepts as its own (a well-formed emit at a trail path) without
-calling orbit passes an `orbit` grader that reads it. Only a `regex` over orbit's printed path catches that, and a case
-holds one wherever orbit prints the path it writes. Before a grader joins the set, it SHALL be shown
-failing on known-bad input:
+Before a grader joins the set, it SHALL be shown failing on known-bad input:
 
 - its case's seeded fixture before any session has run. A grader whose fact already holds at the seed (a thing the
   command must NOT do) instead names a known-bad scaffold of its own, which makes its fact false;
@@ -171,6 +169,10 @@ failing on known-bad input:
   but no answer from orbit.
 
 These checks run in `npm test` and bill nothing.
+
+Named limit — a session that writes a file orbit then accepts as its own (a well-formed emit at a trail path) without
+calling orbit passes an `orbit` grader that reads it. Only a `regex` over orbit's printed path catches that, and a case
+holds one wherever orbit prints the path it writes.
 
 #### Scenario: Every grader fails on its known-bad fixture
 
@@ -182,7 +184,7 @@ These checks run in `npm test` and bill nothing.
 
 - **WHEN** a case's graders are read
 - **THEN** every `file_exists` grader and every `regex` grader over a file names in `pairs_with` an `orbit` grader, or a
-  `regex` grader over orbit's output, of the same case
+  `regex` grader over orbit's output, of the same case, whose `about` is the file grader's own path
 
 #### Scenario: Every trace grader fails on a trace without orbit's answer
 
@@ -194,14 +196,16 @@ These checks run in `npm test` and bill nothing.
 
 Every replay run SHALL write one record under `replay/results/` (or the directory `--results` names), a JSON file named
 for its UTC start time to the second, its commit and its label (`run` when none is given). The runner refuses to start
-when that name already exists, so no record is ever overwritten. The record names:
+when that name already exists, so no record is ever overwritten. A run given an installed CLI (`--cli`, the free checks'
+seam) has no commit: its filename carries `local` in its place, and its record names that directory. The record names:
 
-- the commit the build came from;
+- the commit the build came from, or the `--cli` directory;
 - the Claude Code version that ran the sessions;
 - the model each session reported;
 - the skills each session's start reported, so a skill from outside the fixture shows there;
 - for each case and run, each grader's pass or fail, the session's turns, cost and duration, and whether it stopped at
-  its start state, at a limit or at the run's ceiling;
+  its start state, at a limit, at the run's ceiling, or with no result record (a crash, a kill, its timeout, no numeric
+  cost);
 - the run's total cost;
 - the work directory holding its fixtures and traces.
 

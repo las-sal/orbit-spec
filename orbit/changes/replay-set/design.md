@@ -90,7 +90,8 @@ The runner resolves `--ref` (default `HEAD`) to a commit, then:
 
 The installed CLI is cached by commit outside every run's work directory, so a second run on the same commit skips the
 build. `--cli <dir>` skips the build entirely and uses an already-installed CLI directory of the same layout: the free
-checks' seam (decision 6), whose record names that directory in place of a commit and is never a baseline. Each fixture's `.orbit-cli` is a
+checks' seam (decision 6): its record names that directory in place of a commit, its filename carries `local` in place
+of the commit hash, and it is never a baseline. Each fixture's `.orbit-cli` is a
 symlink to that directory, which the spike's walk-up shim (`.orbit-cli/node_modules/orbit-spec/bin/orbit.js`, exit 127
 when absent) finds. A dirty working tree is irrelevant to a run, because a run reads only the commit: uncommitted body
 edits are never graded, so a cut is graded only once it is committed, and the runner prints the commit it built.
@@ -118,7 +119,7 @@ shell write:
   something, the answer stated up front ("Scaffold it, record that one sentence as its premise, and stop there; ask me
   nothing", as Case 4 ran). A `claude -p` session has no one to answer `AskUserQuestion`.
 - **`case.yaml`** holds:
-  - `max_turns` and `max_budget_usd`;
+  - `max_turns`, `max_budget_usd` and `timeout_minutes` (default 30);
   - `start`: a list of `orbit`-type checks the seeded fixture must pass before the session is billed, for example the
     change's gate state;
   - `break`: the deliberately broken body for the case's broken-body run, naming the installed skill file, the section
@@ -171,7 +172,9 @@ facts only: whether the project's own code works is not one of them (D-rs-8; see
 A grader may name `negative_scaffold`: a script that makes its fact false on top of the seed, for facts that already hold
 at the seed (the apply case's "no review emit"). A `file_exists` grader, or a `regex` over a file, names `pairs_with`:
 the id of a grader of its case whose fact only orbit's answer makes true about the same file (an `orbit` grader reading
-it, or a `regex` over `orbit_output` matching the path orbit printed). A file a session can write by hand never grades
+it, or a `regex` over `orbit_output` matching the path orbit printed), which names that file in `about`. A file the
+session writes itself, such as the explore case's `explore.md`, pairs with orbit's reading of it (the exploration
+listed in bare `orbit status --json`), never with a fact about another file. A file a session can write by hand never grades
 alone: that was the spike's Case 1 (D-rs-11).
 
 The free checks in `test/replay/` build each case's seeded fixture with the repository's own build, laid out as the
@@ -180,7 +183,7 @@ suite's setup builds. Node resolves the symlink, so the repository's own `node_m
 shim finds `.orbit-cli/node_modules/orbit-spec/bin/orbit.js` as it does in a billed run. The checks then assert:
 
 - a seed command reaches that build (it answers `orbit decisions status`, which the stale global install lacks);
-- every file grader names a `pairs_with` grader of the kind above;
+- every file grader names a `pairs_with` grader of the kind above, whose `about` is the file grader's own path;
 - every grader fails on the seed (or on its negative scaffold);
 - every `orbit_output` grader fails on a synthetic trace holding the typed command and the skill's body as a loaded
   Skill result, but no `orbit` result;
@@ -216,7 +219,8 @@ non-zero. Each session runs under the case's `timeout_minutes` (default 30); at 
 session whose trace has no `result` record (a crash, a kill, the timeout), or one with no numeric `total_cost_usd`,
 counts its whole `max_budget_usd` as spent and is recorded with that reason and no grades.
 
-The record goes to `replay/results/<YYYY-MM-DDTHH-MM-SSZ>-<sha7>-<label>.json` (label `run` by default), with the
+The record goes to `replay/results/<YYYY-MM-DDTHH-MM-SSZ>-<sha7>-<label>.json` (label `run` by default; `local` in
+place of `<sha7>` for a `--cli` run), with the
 fields `orbit-replay-set`'s record requirement lists. The runner refuses to start when that file already exists. `--broken` applies each case's `break` to the installed skill file after `orbit init`, and the label
 records it.
 

@@ -31,7 +31,7 @@ Implementation chunks:
   - **the three grader types:** `file_exists` with `absent`, `regex` over `orbit_output` or `file:<path>`, and `orbit`
     with `args`, `path`, and `equals`/`matches`/`exists`, parsed from Markdown files with YAML frontmatter. No type reads
     a tool input or a Skill result. A `file_exists` grader or a `regex` over a file carries `pairs_with`, naming a
-    grader whose fact only orbit's answer makes true about the same file
+    grader whose fact only orbit's answer makes true about the same file, which names that file in `about`
 - [ ] 1.5 Add `replay/run.mjs`:
   - **arguments:** refuse to start without `--model` or `--max-total-usd`; `--ref`, `--runs` (default 3), `--cases`,
     `--label` (default `run`), `--broken`, `--workdir`, `--cli <dir>` (an installed CLI, skipping the build) and
@@ -67,8 +67,10 @@ gate states it must reach by the engine's gate ids (`review-proposal`, `apply`, 
 paired with a fact orbit's answer makes true (`pairs_with`).
 
 - [ ] 2.1 Add the shared fixture project under `replay/project/` (a Node script and one baseline capability spec) and the
-  `explore` case (`/orbit:explore <name>`, its prompt saying to stop after the premise). Its graders: `explore.md`
-  exists, paired with the explore emit's path in orbit's output, and the explore emit in its trail
+  `explore` case (`/orbit:explore <name>`, its prompt saying to stop after the premise). Its graders: the
+  exploration listed as exploring in bare `orbit status --json` (orbit's reading of the `explore.md` the session writes,
+  `about` that file), `explore.md` existing paired with it, and the explore emit in its trail paired with the emit path
+  orbit printed when it wrote it
 - [ ] 2.2 Add the `propose` case. Its seed is a staged exploration whose decisions are facts and scope only, seeded as
   `/orbit:explore` leaves one (`explore.md` and its explore emit under `orbit/explore/<name>/`). Its graders: the four
   artifacts done in `orbit status --change <name> --json`, `orbit validate <name>` passing, the staging directory gone,
@@ -105,7 +107,8 @@ paired with a fact orbit's answer makes true (`pairs_with`).
   `.orbit-cli/node_modules/orbit-spec` symlinked to the repository root, so the shim finds it as in a billed run:
   - a seed command reaches that build;
   - six cases (directories holding `case.yaml`), one per lifecycle command;
-  - every file grader names a `pairs_with` grader that orbit's answer makes true;
+  - every file grader names a `pairs_with` grader that orbit's answer makes true, whose `about` is the file grader's own
+    path;
   - every `start` check passes on its seed;
   - every grader fails on its seed or its negative scaffold;
   - every `orbit_output` grader fails on a synthetic trace holding the typed command and the skill body as a loaded
