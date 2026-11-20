@@ -1,0 +1,16 @@
+{
+  "command": "propose",
+  "timestamp": "2026-11-20T16:58:37Z",
+  "change": "replay-set",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Consume mode from orbit/explore/replay-set (11 decisions, 0 open; the engine's parse: 5 live rules, 0 open, 0 key defects). One new capability, orbit-replay-set, 9 ADDED requirements; the five live rules (D-rs-2, D-rs-7, D-rs-8, D-rs-9, D-rs-10) each land as a requirement's TABLE, D-rs-1 superseded and not carried. The harness lives in replay/, outside package.json's files, never shipped (R-rop2-2): a claude -p runner on one commit's packed CLI reached by the walk-up shim, six cases seeded by orbit's own commands, graders that read only orbit's output and files (orbit_output pairs tool results by id, so the typed command and the loaded body are excluded by construction), a run record and the D-rs-9 comparison. Two choices the exploration did not make: the work directory sits outside any repository and below no CLAUDE.md, since Claude Code would load orbit-spec's own instructions into a nested fixture; and claude plugin validate --strict is a failing CI step, measured at propose to pass on a fresh surface with no credentials and to fail (exit 1) on a skill missing its description. The three billed runs (plumbing, broken bodies, baseline) are User-validation tasks Sal starts. Tasks came to 20 against a ceiling of 19; the comparison's tests were folded into its own task, leaving 19 and no breach. Branch reduce-orbit-phase2 created from origin/main; draft program PR opened.",
+  "pr_attachment": {
+    "branch": "reduce-orbit-phase2",
+    "granularity": "per-architecture",
+    "doc": "reduce-orbit-phase2",
+    "url": "https://github.com/las-sal/orbit-spec/pull/47",
+    "state": "draft"
+  },
+  "next_recommended": "/orbit:review replay-set — proposal artifacts ready; review before apply"
+}
