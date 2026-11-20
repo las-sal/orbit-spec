@@ -1,0 +1,14 @@
+# Archive the walked change: review-system has passed.
+max_turns: 60
+max_budget_usd: 4
+start:
+  - args: [status, --change, greet-name, --json]
+    path: gates[id=review-system].state
+    equals: passed
+  - args: [status, --change, greet-name, --json]
+    path: gates[id=apply].state
+    equals: passed
+break:
+  file: .claude/skills/orbit-archive-change/SKILL.md
+  section: "## Step 5.5 — Archive run summary"
+  grader: archive-emit-printed

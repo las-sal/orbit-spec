@@ -1,0 +1,22 @@
+[
+  {
+    "severity": "WARNING",
+    "title": "The design does not say what an empty first argument prints",
+    "marker_source": "internal-review",
+    "file": "design.md",
+    "line": 16,
+    "classification": "trivial_fix",
+    "remedy": "repair",
+    "outcome": "resolved",
+    "evidence": "Decision 1 named only a present argument; D-gn-1 settled the empty one.",
+    "action": "Decision 1 now says an empty first argument prints Hello, world!.",
+    "ripple_cascade": { "applied": [], "flagged_not_applied": [] },
+    "sweep": {
+      "retired": [],
+      "introduced": [{ "path": "orbit/changes/greet-name/design.md", "text": "for an empty argument" }],
+      "searched": ["empty"],
+      "scope": [],
+      "kept": []
+    }
+  }
+]

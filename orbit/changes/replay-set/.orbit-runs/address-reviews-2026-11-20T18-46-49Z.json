@@ -1,0 +1,87 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-20T18:46:49Z",
+  "change": "replay-set",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/replay-set/.orbit-runs/external-system-2026-11-20T18-18-25Z.md",
+  "source_command": null,
+  "source_token": "2026-11-20T18-18-25Z",
+  "latest_apply_token": "2026-11-20T18-02-21Z",
+  "external_reviewer": "GPT-6",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 0
+  },
+  "pushback_verification": "Both verified against current state after log 2026-11-20T18-46-32Z: the trace finding converged with the fresh pass's and is fixed there; the billed-runs finding restates tasks 5.2-5.4.",
+  "resolution_summary": {
+    "resolved": 0,
+    "stale_suppressed": 2,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Trace grading accepts output from commands that never run orbit",
+      "marker_source": "external",
+      "file": "replay/lib/trace.mjs",
+      "line": 11,
+      "classification": "stale",
+      "action": "Converged with the fresh pass's finding 'orbit_output admits any Bash call naming the orbit/ directory, so a trail listing passes the printed-path graders', resolved in walk 2026-11-20T18-46-32Z; no further edit.",
+      "evidence": "walk 2026-11-20T18-46-32Z resolved 'orbit_output admits any Bash call naming the orbit/ directory, so a trail listing passes the printed-path graders'. Every sub-point is covered: commandRunsOrbit now requires orbit as the first word of one of the call's commands, so `echo orbit ...` is not an orbit call (pinned by the trace-reader test in test/replay/cases.test.ts); the mixed-command attribution this finding names is stated as a named limit in the spec's grader requirement, design Decision 6, the README and trace.mjs.",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The replay set has not yet demonstrated that its cases detect broken bodies",
+      "marker_source": "external",
+      "file": "orbit/changes/replay-set/tasks.md",
+      "line": 112,
+      "classification": "stale",
+      "action": "No edit: the change already carries exactly this work as its user-validation tasks, and the archive reads them.",
+      "evidence": "tasks.md 5.2-5.4 are (User-validation) billed runs Sal starts: 5.3 requires every case's break to fail its named grader on Sal's model, and repairs a grader that does not fail (or moves its break) before the baseline; 5.4 records the baseline. The apply emit 2026-11-20T18-02-21Z declares 5.2, 5.3 and 5.4 as user_validation_tasks, and the archive's user-validation closure reads them before the change can archive. The finding's recommendation is the change's plan as written.",
+      "outcome": "stale"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Both findings of the external system pass recorded stale with evidence: the trace-attribution warning converged with the fresh pass and was fixed in walk 2026-11-20T18-46-32Z, with its mixed-command point stated as a named limit; the broken-body warning is the change's own user-validation tasks 5.2-5.4, which the archive reads. Sal ratified the walk with 'walk all'.",
+  "iteration": 5,
+  "next_recommended": "/orbit:review --as system replay-set",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "9c54a9fc8301e8b483ae6092d234c2bcd2641944",
+      "frozen": true,
+      "evidence": {
+        "files": [],
+        "share": 0,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ],
+  "ripple_misses": 0
+}

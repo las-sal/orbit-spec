@@ -67,6 +67,14 @@ jobs:
         continue-on-error: true
         run: npm run size:report
 
+      - name: Validate generated skills
+        # `claude plugin validate --strict` over a freshly generated skill surface, Claude Code pinned in
+        # scripts/validate-skills.mjs (reduce-orbit-phase2, R-rop2-5); a validation error or warning fails the build.
+        if: matrix.os == 'ubuntu-latest'
+        env:
+          DISABLE_AUTOUPDATER: '1'
+        run: npm run validate:skills
+
       - name: Upload test coverage
         if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@v4

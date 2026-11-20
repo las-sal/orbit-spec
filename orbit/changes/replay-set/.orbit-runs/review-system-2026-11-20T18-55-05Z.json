@@ -1,0 +1,158 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-20T18:55:05Z",
+  "change": "replay-set",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "replay/compare.mjs",
+      "line": 52,
+      "title": "The foreign-skill warning reads a skills list no trace has shown yet, and would fire on every record if Claude Code's bundled skills appear in it",
+      "recommendation": "foreignSkills flags every reported skill not named orbit-* or orbit:*. A session's init record most likely lists the skills Claude Code bundles (update-config, simplify, code-review and the like), which load whatever --setting-sources says; if so, every comparison opens with the same long warning and a user-level skill that really reached one side is lost in it. If init carries no skills field at all, the warning never fires. Neither can be decided before a real trace exists. Warn on the DIFFERENCE between the two sides' skill sets (a skill one side loaded and the other did not), which is what can skew a comparison, and print the foreign set once as information; then confirm the init record's skills field on the plumbing run's trace (task 5.2) and adjust the test fixture to its real shape.",
+      "walk_entry": {
+        "title": "The comparison never reports skills that are not orbit's, the mitigation design.md's Risks names for user-level skills reaching a session",
+        "file": "replay/compare.mjs"
+      }
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/replay-set/specs/orbit-replay-set/spec.md",
+      "line": 212,
+      "title": "The record requirement's list of how a run ends has no place for a run the user stopped",
+      "recommendation": "The walk's runner fix records the runs after a Ctrl-C or SIGTERM as stopped 'interrupted' and the record as interrupted, and the session it kills as a kill (already covered). The spec's record requirement lists the end states as its start state, a limit, the run's ceiling, or no result record; add 'or not run because the run was stopped' there, and name it beside the ceiling in design Decision 7's paragraph on not-run sessions.",
+      "walk_entry": {
+        "title": "An interrupted or crashing run writes no record, and its detached session keeps billing",
+        "file": "replay/run.mjs"
+      }
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "replay/cases/explore/graders/explore-md.md",
+      "line": 1,
+      "title": "The walk deleted explore-md.md, and no entry's edit record names it",
+      "recommendation": "The residual check lists replay/cases/explore/graders/explore-md.md (deleted in the walk's commit) outside every entry's file and ripple_cascade.applied; entry 'exploration-listed does not read explore.md, so explore-md's pairing vouches for nothing about that file' made the deletion and named it only in its action. A record gap, not a defect: name a deleted file in the entry's applied list next time."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Graded the walk of the fresh pass entry by entry over its sweep scopes and the walk commit's diff, and checked the residual list from the commit that added the external return. The command-position rule was re-run against the walk's own sample commands and the cases test's bait (a find listing, a dangling orbit call, orbit's real --boot answer over each seed); the after_seed rule was read against the archive pattern, whose directory date carries no T and so cannot be mistaken for the record's token. The runner's interruption path was read for the order of events: a signal during a session kills its group and counts its budget, but a signal that lands while a fixture is being built reaches the build's own child processes too, so that run is recorded as a failed seed rather than as stopped; every later run is still recorded as not run, so the comparison reads it as incomplete either way. The two codex entries recorded stale were re-checked and hold. Two weaknesses remain beyond this pass's reach: whether a real session's init record lists skills, and what it lists, is unknown until the plumbing run.",
+  "passes_run": [
+    "1",
+    "2",
+    "3"
+  ],
+  "passes_skipped": [
+    "0",
+    "4",
+    "5",
+    "6",
+    "reading"
+  ],
+  "verification": [
+    {
+      "title": "orbit_output admits any Bash call naming the orbit/ directory, so a trail listing passes the printed-path graders",
+      "file": "replay/lib/trace.mjs",
+      "verdict": "landed"
+    },
+    {
+      "title": "exploration-listed does not read explore.md, so explore-md's pairing vouches for nothing about that file",
+      "file": "replay/cases/explore/graders/exploration-listed.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The comparison never reports skills that are not orbit's, the mitigation design.md's Risks names for user-level skills reaching a session",
+      "file": "replay/compare.mjs",
+      "verdict": "regressed"
+    },
+    {
+      "title": "Task 5.2 says a $3 ceiling stops after the explore session; the runner runs cases alphabetically, apply first",
+      "file": "orbit/changes/replay-set/tasks.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "An interrupted or crashing run writes no record, and its detached session keeps billing",
+      "file": "replay/run.mjs",
+      "verdict": "regressed"
+    },
+    {
+      "title": "in-context-slot-filled passes on the absence of one reason phrase, so any other change to the gate's prose passes it",
+      "file": "replay/cases/review/graders/in-context-slot-filled.md",
+      "verdict": "landed"
+    }
+  ],
+  "final_assessment": "0 critical, 1 warning, 2 suggestion.",
+  "decision_records_owed": [],
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-11-20T18-46-32Z",
+    "2026-11-20T18-46-49Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews replay-set",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "9c54a9fc8301e8b483ae6092d234c2bcd2641944",
+      "frozen": true,
+      "evidence": {
+        "files": [],
+        "share": 0,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ]
+}

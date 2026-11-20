@@ -1,0 +1,538 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-20T17:18:05Z",
+  "change": "replay-set",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/replay-set/.orbit-runs/review-proposal-2026-11-20T17-11-58Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-20T17-11-58Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 6,
+    "suggestion": 5
+  },
+  "pushback_verification": "All eleven verified against current state; F1's cadence and tracked-gate claims checked in schema.yaml and gates.ts at triage; none stale.",
+  "resolution_summary": {
+    "resolved": 11,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The seeds' gate states do not match the engine's default cadence",
+      "file": "design.md",
+      "line": 140,
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "evidence": "schemas/spec-driven/schema.yaml: review-proposal and review-system declare cadence [invoked, in-context]; gates.ts:885-916: apply is tracked, passed only when checked === total; no gate has id archive",
+      "action": "Design D5's table rewrites the apply, review, walk and archive seeds as the pass-and-walk sequence the default cadence reads, names gates by engine id (review-proposal, apply, review-system), and adds a paragraph on the cadence and start checks; tasks 2.3-2.6 and group 2's preamble follow.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/replay-set/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "(apply gate passed)",
+          "the archive gate passed"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/replay-set/design.md",
+            "text": "There is no gate named `archive`"
+          },
+          {
+            "path": "orbit/changes/replay-set/tasks.md",
+            "text": "with a `start` check that `review-proposal`"
+          }
+        ],
+        "searched": [
+          "apply gate",
+          "archive gate",
+          "start check",
+          "gate passes"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "marker_source": "internal-review"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The apply case's 'the project's test passes' fact has no grader type that can grade it",
+      "file": "tasks.md",
+      "line": 63,
+      "classification": "decision_required",
+      "ratified_via": "chat",
+      "remedy": "descope",
+      "outcome": "resolved",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Add a fourth grader type, command, graded by exit status."
+          },
+          {
+            "label": "B",
+            "body": "Drop the fact from the apply case and grade only orbit's facts there."
+          }
+        ],
+        "chosen": "B"
+      },
+      "resolution": "B, settled under R-crc-3 (a command grader would admit a source outside D-rs-8's table and R-rop-15's orbit-computed facts); Sal's 'walk all' accepted the triage's resolution.",
+      "action": "Dropped 'the project's test passes' from task 2.3 and design D5; the fixture project loses its test; the command grader is recorded under Alternatives considered.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/replay-set/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the project's test passes",
+          "the project's test\n  passing"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/replay-set/design.md",
+            "text": "A `command` grader running the fixture project"
+          }
+        ],
+        "searched": [
+          "project's test",
+          "a test)",
+          "command grader"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "marker_source": "internal-review"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The free checks link .orbit-cli to the repository root, where the shim finds no orbit.js",
+      "file": "design.md",
+      "line": 161,
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "evidence": "ls node_modules/orbit-spec in the repository root: absent; the shim tests only .orbit-cli/node_modules/orbit-spec/bin/orbit.js",
+      "action": "Design D6 and task 3.2 lay the free checks out as the installed copy is: a temporary .orbit-cli/node_modules/orbit-spec symlinked to the repository root, with a check that a seed command reaches that build.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/replay-set/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "links to the repository root, whose",
+          "linked to the repository root):"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/replay-set/design.md",
+            "text": "a temporary `.orbit-cli/node_modules/orbit-spec` symlinked to the repository root"
+          },
+          {
+            "path": "orbit/changes/replay-set/tasks.md",
+            "text": "`.orbit-cli/node_modules/orbit-spec` symlinked to the repository root"
+          }
+        ],
+        "searched": [
+          "repository root",
+          ".orbit-cli"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "marker_source": "internal-review"
+    },
+    {
+      "severity": "WARNING",
+      "title": "A file_exists grader cannot tell a file orbit wrote from one the session wrote by hand",
+      "file": "specs/orbit-replay-set/spec.md",
+      "line": 131,
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "action": "The grader requirement's table row for files now admits a file only beside a fact orbit's answer makes true; a file_exists or file-regex grader names pairs_with; session-written artifacts are graded by orbit's reading of them; named limit for a hand-written file orbit accepts; new scenario 'A file grader never stands alone'. Design D6, tasks 1.4, 2.x and 3.2, and the proposal follow.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/replay-set/design.md",
+          "orbit/changes/replay-set/tasks.md",
+          "orbit/changes/replay-set/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "| the files orbit wrote in the fixture | allowed |"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/replay-set/specs/orbit-replay-set/spec.md",
+            "text": "A file grader never stands alone"
+          },
+          {
+            "path": "orbit/changes/replay-set/design.md",
+            "text": "names `pairs_with`"
+          },
+          {
+            "path": "orbit/changes/replay-set/proposal.md",
+            "text": "A file's presence never grades alone"
+          }
+        ],
+        "searched": [
+          "files orbit wrote",
+          "file_exists",
+          "pairs_with"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/changes/replay-set/explore.md",
+            "why": "the exploration's record; its D-rs-8 Mechanism table travels unchanged as history"
+          }
+        ]
+      },
+      "marker_source": "internal-review"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The comparison does not say how a run that was not run, or failed at its start state, counts",
+      "file": "specs/orbit-replay-set/spec.md",
+      "line": 192,
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "action": "The comparison requirement checks completeness first (a missing case or baseline grader, or fewer graded runs than a side's run count, is INCOMPLETE: no verdict, non-zero exit); 'no worse' needs every case complete; new scenario 'A cut with a run missing is incomplete, not no worse'. Design D9, task 1.6 and the proposal follow.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/replay-set/design.md",
+          "orbit/changes/replay-set/tasks.md",
+          "orbit/changes/replay-set/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "The comparison exits non-zero when it finds a regression.",
+          "listed as unmatched"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/replay-set/specs/orbit-replay-set/spec.md",
+            "text": "A cut with a run missing is incomplete, not no worse"
+          },
+          {
+            "path": "orbit/changes/replay-set/design.md",
+            "text": "first checks completeness"
+          }
+        ],
+        "searched": [
+          "unmatched",
+          "not run",
+          "exits non-zero"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "marker_source": "internal-review"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The broken-body run on the cheap model departs from D-rs-4 and from the spec's 'plumbing only'",
+      "file": "specs/orbit-replay-set/spec.md",
+      "line": 114,
+      "classification": "decision_required",
+      "ratified_via": "chat",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Keep the broken-body run on the cheap model; amend the spec and proposal and record the narrowing of D-rs-4."
+          },
+          {
+            "label": "B",
+            "body": "Run the broken-body run on Sal's model, one run a case."
+          }
+        ],
+        "chosen": "B"
+      },
+      "resolution": "Sal: \"walk all, B\"",
+      "action": "The runner requirement says the broken-body run uses Sal's model, one run a case; design D8 (its run line and rationale), the Alternatives entry, task 5.3 and the proposal follow.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/replay-set/design.md",
+          "orbit/changes/replay-set/tasks.md",
+          "orbit/changes/replay-set/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "--model sonnet --runs 1 --broken"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/replay-set/specs/orbit-replay-set/spec.md",
+            "text": "The broken-body run, which shows each case able to fail, SHALL use that model too"
+          },
+          {
+            "path": "orbit/changes/replay-set/tasks.md",
+            "text": "Sal starts the broken-body run on Sal's model"
+          }
+        ],
+        "searched": [
+          "sonnet",
+          "cheap model",
+          "broken-body"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "marker_source": "internal-review"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The runner's free checks need seams the design does not name",
+      "file": "tasks.md",
+      "line": 74,
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "action": "Added --cli <dir> (an installed CLI, skipping the build) and --results <dir> to design D2, D3 and D7 and task 1.5; task 3.1 runs the runner with both.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/replay-set/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/replay-set/tasks.md",
+            "text": "`--results <dir>`"
+          },
+          {
+            "path": "orbit/changes/replay-set/design.md",
+            "text": "`--cli <dir>` skips the build entirely"
+          }
+        ],
+        "searched": [
+          "--workdir",
+          "replay/results/"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "marker_source": "internal-review"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The per-commit cache sits in a per-run directory, and records can overwrite each other",
+      "file": "design.md",
+      "line": 89,
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "action": "The CLI cache moves to <os.tmpdir()>/orbit-replay/cli/<sha>/ and the build worktree is removed after the pack (design D2, task 1.2); records are named by UTC time to the second with default label run, and the runner refuses an existing name (spec record requirement, design D7, task 1.5).",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/replay-set/specs/orbit-replay-set/spec.md",
+          "orbit/changes/replay-set/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "into `<workdir>/cli/`",
+          "<YYYY-MM-DD>-<sha7>-<label>.json",
+          "named for its date, its commit"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/replay-set/design.md",
+            "text": "orbit-replay/cli/<sha>/"
+          },
+          {
+            "path": "orbit/changes/replay-set/specs/orbit-replay-set/spec.md",
+            "text": "so no record is ever overwritten"
+          }
+        ],
+        "searched": [
+          "cached by commit",
+          "results/<",
+          "worktree"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "marker_source": "internal-review"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The ceiling can be overshot by a session, and a session that ends without a result record is unhandled",
+      "file": "design.md",
+      "line": 192,
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "action": "A session starts only when spend plus its case's max_budget_usd fits the ceiling; a per-case timeout_minutes (default 30) kills a hung session; a session with no result record counts its whole budget. Spec runner requirement (row, paragraph, two scenarios), design D7, tasks 1.5 and 3.1 and the proposal follow.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/replay-set/specs/orbit-replay-set/spec.md",
+          "orbit/changes/replay-set/tasks.md",
+          "orbit/changes/replay-set/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "Before each session the runner compares the spend so far",
+          "past which no further session starts"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/replay-set/design.md",
+            "text": "RESERVES the case"
+          },
+          {
+            "path": "orbit/changes/replay-set/specs/orbit-replay-set/spec.md",
+            "text": "A session with no result record counts its whole budget"
+          }
+        ],
+        "searched": [
+          "ceiling",
+          "max_budget_usd",
+          "timeout"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "marker_source": "internal-review"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "--no-session-persistence does not keep the user's settings out",
+      "file": "specs/orbit-replay-set/spec.md",
+      "line": 106,
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "action": "Moved --no-session-persistence to its own row of the runner table: 'no session left in the user's history'.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "`--setting-sources project` and `--no-session-persistence`"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/replay-set/specs/orbit-replay-set/spec.md",
+            "text": "| no session left in the user's history | `--no-session-persistence` |"
+          }
+        ],
+        "searched": [
+          "no-session-persistence"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "marker_source": "internal-review"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The release tree does carry replay/; what it installs does not",
+      "file": "specs/orbit-replay-set/spec.md",
+      "line": 5,
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "action": "Reworded to 'nothing npm pack, an install from the release tree, orbit init or orbit update carries', noting the release tree holds replay/; the proposal follows.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/replay-set/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "nothing `npm pack`, the release tree,"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/replay-set/specs/orbit-replay-set/spec.md",
+            "text": "an install from the release tree"
+          },
+          {
+            "path": "orbit/changes/replay-set/proposal.md",
+            "text": "an install from the release tree"
+          }
+        ],
+        "searched": [
+          "release tree"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "marker_source": "internal-review"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "All eleven findings of the fresh pass resolved: nine repairs, one descope (F2, the project's test fact dropped, settled under R-crc-3) and one scope decision Sal ratified (F6: the broken-body run on Sal's model). The largest repair restates the seeds in the engine's cadence terms.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews replay-set",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "5599e338d8dba6dba34483178e98f97e6eaa773b",
+      "frozen": false,
+      "evidence": {
+        "files": [],
+        "share": null,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ],
+  "ripple_misses": 0
+}

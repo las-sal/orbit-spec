@@ -1,0 +1,13 @@
+# A named explore from the bare project (design Decision 5).
+max_turns: 15
+max_budget_usd: 1.5
+timeout_minutes: 10
+start:
+  # No change and no exploration yet: bare status has no sprint.
+  - args: [status, --json]
+    path: sprint
+    exists: false
+break:
+  file: .claude/skills/orbit-explore/SKILL.md
+  section: "## Run-summary emit (named-mode only)"
+  grader: explore-emit-printed

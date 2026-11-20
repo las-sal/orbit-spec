@@ -1,0 +1,345 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-20T18:46:32Z",
+  "change": "replay-set",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/replay-set/.orbit-runs/review-system-2026-11-20T18-18-01Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-20T18-18-01Z",
+  "latest_apply_token": "2026-11-20T18-02-21Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 3,
+    "suggestion": 3
+  },
+  "pushback_verification": "All six verified against current state and none stale; the two grader-validity warnings were reproduced on seeds built from the repository build, and the first widened by a probe showing orbit --boot output also names seeded records.",
+  "resolution_summary": {
+    "resolved": 6,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "orbit_output admits any Bash call naming the orbit/ directory, so a trail listing passes the printed-path graders",
+      "marker_source": "internal-review",
+      "file": "replay/lib/trace.mjs",
+      "line": 11,
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "evidence": "Reproduced at HEAD: RUNS_ORBIT matched orbit after any whitespace, so `find orbit -name ...` counted as an orbit call. Probed further: orbit's own `status --change greet-name --boot` answer over the review and walk seeds prints a seeded review-system / address-reviews path, which passed those cases' printed-path graders with no new record.",
+      "action": "trace.mjs counts a Bash call only when orbit is the first word of one of its commands (start, or after ; && || | ( $( backtick or a line break, past NAME=value prefixes). Printed-path graders carry after_seed: true and pass only on a path whose timestamp is later than the seed's newest trail record; buildFixture's newestTrailToken is recorded per run as seed_token and passed to grading, and an after_seed grader refuses to grade without it. The six examples moved to a 2099 token. The synthetic trace now plants a `find orbit` listing of the seeded trail, a new check grades orbit's own status/--boot/--report answers over each seed (all fail), and a unit test pins the command-position rule. Named limit added: a call running orbit and another command contributes its whole output. Mutations shown caught: the old regex (2 tests fail), after_seed disabled (2 tests fail).",
+      "ripple_cascade": {
+        "applied": [
+          "replay/lib/graders.mjs",
+          "replay/lib/fixture.mjs",
+          "replay/run.mjs",
+          "replay/cases/explore/graders/explore-emit-printed.md",
+          "replay/cases/propose/graders/propose-emit-printed.md",
+          "replay/cases/apply/graders/apply-emit-printed.md",
+          "replay/cases/review/graders/review-emit-printed.md",
+          "replay/cases/walk/graders/walk-emit-printed.md",
+          "replay/cases/archive/graders/archive-emit-printed.md",
+          "test/replay/cases.test.ts",
+          "replay/README.md",
+          "orbit/changes/replay-set/design.md",
+          "orbit/changes/replay-set/specs/orbit-replay-set/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "stands as a command word in it",
+          "whitespace-delimited"
+        ],
+        "introduced": [
+          {
+            "path": "replay/lib/trace.mjs",
+            "text": "is not a call"
+          },
+          {
+            "path": "replay/lib/graders.mjs",
+            "text": "after_seed needs the seed's newest token"
+          },
+          {
+            "path": "replay/README.md",
+            "text": "not a bare argument such as"
+          },
+          {
+            "path": "orbit/changes/replay-set/design.md",
+            "text": "contributes its whole output"
+          },
+          {
+            "path": "orbit/changes/replay-set/specs/orbit-replay-set/spec.md",
+            "text": "for a printed path only one written after the seed"
+          },
+          {
+            "path": "test/replay/cases.test.ts",
+            "text": "which name the seeded records"
+          }
+        ],
+        "searched": [
+          "RUNS_ORBIT",
+          "commandRunsOrbit",
+          "orbit_output",
+          "ran `orbit`",
+          "printed path"
+        ],
+        "scope": [
+          "replay/compare.mjs",
+          "test/replay/runner.test.ts"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "exploration-listed does not read explore.md, so explore-md's pairing vouches for nothing about that file",
+      "marker_source": "internal-review",
+      "file": "replay/cases/explore/graders/exploration-listed.md",
+      "line": 6,
+      "classification": "trivial_fix",
+      "remedy": "descope",
+      "outcome": "resolved",
+      "evidence": "Reproduced on the propose seed: bare `orbit status --json` and `orbit status --full --json` read the exploration identically with explore.md's header exploring, with it concluded, and with the file deleted. No orbit command reads explore.md once the session ends.",
+      "action": "The explore case's file grader explore-md is removed and exploration-listed carries no about: the case grades the exploration as listed, and explore.md only through the explore emit orbit wrote from it (its printed path and its file). exploration-listed's prose, design Decision 5's explore row and Decision 6's pairing paragraph, and task 2.1 now say so.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/replay-set/design.md",
+          "orbit/changes/replay-set/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "explore-md",
+          "existing paired with it",
+          "pairs with orbit's reading of it (the exploration",
+          "the staging directory and its"
+        ],
+        "introduced": [
+          {
+            "path": "replay/cases/explore/graders/exploration-listed.md",
+            "text": "No orbit command reads"
+          },
+          {
+            "path": "orbit/changes/replay-set/tasks.md",
+            "text": "gets no file grader"
+          },
+          {
+            "path": "orbit/changes/replay-set/design.md",
+            "text": "A file no orbit command reads once the session ends"
+          }
+        ],
+        "searched": [
+          "explore.md",
+          "explore-md",
+          "about: orbit/explore"
+        ],
+        "scope": [
+          "replay/cases/explore",
+          "replay/README.md",
+          "test/replay/cases.test.ts"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "The comparison never reports skills that are not orbit's, the mitigation design.md's Risks names for user-level skills reaching a session",
+      "marker_source": "internal-review",
+      "file": "replay/compare.mjs",
+      "line": 52,
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "evidence": "compare.mjs held no reference to skills at HEAD; design.md's Risks says the comparison prints any that are not orbit's.",
+      "action": "compare.mjs gains foreignSkills(record) and warns first, beside the model and version warnings, naming each side's session skills that are not orbit-* or orbit:*; compare.test.ts covers it. Settled as option A (implement), since the design's mitigation is the cheaper truth to keep.",
+      "ripple_cascade": {
+        "applied": [
+          "test/replay/compare.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "replay/compare.mjs",
+            "text": "loaded skills that are not orbit's"
+          },
+          {
+            "path": "test/replay/compare.test.ts",
+            "text": "warns when either side's sessions loaded a skill"
+          }
+        ],
+        "searched": [
+          "skills",
+          "not orbit's"
+        ],
+        "scope": [
+          "orbit/changes/replay-set/design.md"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Task 5.2 says a $3 ceiling stops after the explore session; the runner runs cases alphabetically, apply first",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/replay-set/tasks.md",
+      "line": 141,
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "evidence": "listCases sorts the case ids, so the runner reaches apply, archive, explore, propose, review, walk in that order.",
+      "action": "Task 5.2 now names the name order, that a $3 ceiling runs apply alone, and the arithmetic $8 rests on (review starts only if the first four spent at most $4, walk only if the first five spent at most $5); the README Cost section says the same and when the runs go in name order.",
+      "ripple_cascade": {
+        "applied": [
+          "replay/README.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "stops the run after the explore session"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/replay-set/tasks.md",
+            "text": "so a $3 ceiling runs apply alone"
+          },
+          {
+            "path": "replay/README.md",
+            "text": "Cases run in name order"
+          }
+        ],
+        "searched": [
+          "$3",
+          "max-total-usd 8",
+          "explore session"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "An interrupted or crashing run writes no record, and its detached session keeps billing",
+      "marker_source": "internal-review",
+      "file": "replay/run.mjs",
+      "line": 103,
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "evidence": "At HEAD the record was written once, at the end (flag wx), and graders loaded inside the loop; a SIGINT killed the runner but not the detached session.",
+      "action": "run.mjs writes the record before the first session (flag wx) and rewrites it after every run; every selected case's graders load before any build or spend; SIGINT/SIGTERM kills the running session's process group, which counts its whole budget, records the remaining runs as interrupted, writes the record and exits 130. runner.test.ts covers Ctrl-C mid-session and a malformed grader in a later case; mutations removing the early write or the kill were shown caught.",
+      "ripple_cascade": {
+        "applied": [
+          "test/replay/runner.test.ts",
+          "replay/README.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "replay/run.mjs",
+            "text": "rewritten after every run"
+          },
+          {
+            "path": "test/replay/runner.test.ts",
+            "text": "a run that stops part-way"
+          },
+          {
+            "path": "replay/README.md",
+            "text": "records the rest as not run"
+          }
+        ],
+        "searched": [
+          "writeFileSync(recordFile",
+          "loadGraders",
+          "SIGINT"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "in-context-slot-filled passes on the absence of one reason phrase, so any other change to the gate's prose passes it",
+      "marker_source": "internal-review",
+      "file": "replay/cases/review/graders/in-context-slot-filled.md",
+      "line": 5,
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "evidence": "At HEAD the grader matched a negative lookahead for the in-context reason phrase.",
+      "action": "in-context-slot-filled now matches positively: the gate's state is passed, or its reason names a pass holding unresolved substantive findings; the seed reads neither (shown by the free checks), the after-state passes.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "slot is no longer"
+        ],
+        "introduced": [
+          {
+            "path": "replay/cases/review/graders/in-context-slot-filled.md",
+            "text": "At the seed it reads neither"
+          }
+        ],
+        "searched": [
+          "in-context. has no fresh pass"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "All six findings of the fresh system pass resolved: the trace reader counts orbit only in command position and printed-path graders read only records later than the seed; the explore case's false pairing is descoped; the comparison warns on foreign skills; task 5.2 states the real order; the record is written incrementally and a stopped run kills its session; the in-context grader matches positively. The fifteen new or changed checks were shown able to fail by five mutations. Sal ratified the walk with 'walk all'.",
+  "iteration": 4,
+  "next_recommended": "/orbit:address-reviews replay-set",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "9c54a9fc8301e8b483ae6092d234c2bcd2641944",
+      "frozen": true,
+      "evidence": {
+        "files": [],
+        "share": 0,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ],
+  "ripple_misses": 0
+}

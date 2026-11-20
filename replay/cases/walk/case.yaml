@@ -1,0 +1,11 @@
+# The walk of an in-context system pass whose findings are obvious fixes only.
+max_turns: 50
+max_budget_usd: 3
+start:
+  - args: [status, --change, greet-name, --json]
+    path: gates[id=review-system].reason
+    matches: unresolved substantive findings
+break:
+  file: .claude/skills/orbit-address-reviews/SKILL.md
+  section: "### 5. Report — emit the resolution log"
+  grader: walk-emit-printed

@@ -1,0 +1,20 @@
+{
+  "model": null,
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": { "parallel": false, "focus": null, "strict": false, "fresh": false, "mark": false, "skip_verify": false },
+  "scorecard": {
+    "completeness": { "critical": 0, "warning": 0, "suggestion": 0 },
+    "correctness": { "critical": 0, "warning": 0, "suggestion": 0 },
+    "coherence": { "critical": 0, "warning": 0, "suggestion": 0 }
+  },
+  "findings": [],
+  "stale_suppressed": [],
+  "commentary": "Seeded in-context verification pass: the walk's one repair landed; no new finding.",
+  "passes_run": ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
+  "passes_skipped": [],
+  "verification": [
+    { "title": "The design does not say what an empty first argument prints", "file": "design.md", "verdict": "landed" }
+  ]
+}

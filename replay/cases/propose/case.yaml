@@ -1,0 +1,14 @@
+# Propose from a staged exploration whose decisions are facts and scope only, so no Mechanism entry is owed.
+max_turns: 60
+max_budget_usd: 4
+start:
+  - args: [status, --json]
+    path: sprint
+    matches: '"name":"greet-name","kind":"explore"[\s\S]*"position":"exploring"'
+  - args: [list, --json]
+    path: changes
+    equals: []
+break:
+  file: .claude/skills/orbit-propose/SKILL.md
+  section: "## Run-summary emit (one-shot at command completion"
+  grader: propose-emit-printed
