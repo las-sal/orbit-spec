@@ -1,0 +1,14 @@
+# Apply a proposed change whose review-proposal gate has passed.
+max_turns: 40
+max_budget_usd: 3
+start:
+  - args: [status, --change, greet-name, --json]
+    path: gates[id=review-proposal].state
+    equals: passed
+  - args: [status, --change, greet-name, --json]
+    path: gates[id=apply].state
+    equals: ready
+break:
+  file: .claude/skills/orbit-apply-change/SKILL.md
+  section: "## Run-summary emit (chunk-aware"
+  grader: apply-emit-printed

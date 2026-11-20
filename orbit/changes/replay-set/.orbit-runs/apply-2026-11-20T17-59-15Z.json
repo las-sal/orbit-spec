@@ -1,0 +1,55 @@
+{
+  "command": "apply",
+  "timestamp": "2026-11-20T17:59:15Z",
+  "change": "replay-set",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "consent": "user-invoked",
+  "tasks_completed": 15,
+  "tasks_remaining": 4,
+  "user_validation_remaining": 0,
+  "chunk": null,
+  "chunk_name": null,
+  "chunk_complete": false,
+  "tasks_completed_this_session": 3,
+  "files_touched": [
+    ".github/workflows/ci.yml",
+    "orbit/changes/replay-set/tasks.md",
+    "orbit/scenario-ledger.yaml",
+    "scripts/README.md"
+  ],
+  "diff_base": "4e50a787e6fa11c5cd9eb855583953d34fe8717d",
+  "final_assessment": "15 of 19 tasks done. the free checks (runner, cases, comparison) green and shown able to fail by four mutations; validate:skills passes on a fresh surface (PATH claude and pinned npx) and fails on a skill without description; all 16 delta scenarios declared",
+  "next_recommended": "/orbit:apply replay-set",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "9c54a9fc8301e8b483ae6092d234c2bcd2641944",
+      "frozen": false,
+      "evidence": {
+        "files": [],
+        "share": null,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ]
+}

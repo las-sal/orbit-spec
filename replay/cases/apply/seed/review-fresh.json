@@ -1,0 +1,28 @@
+{
+  "model": null,
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": { "parallel": false, "focus": null, "strict": false, "fresh": true, "mark": false, "skip_verify": false },
+  "scorecard": {
+    "completeness": { "critical": 0, "warning": 1, "suggestion": 0 },
+    "correctness": { "critical": 0, "warning": 0, "suggestion": 0 },
+    "coherence": { "critical": 0, "warning": 0, "suggestion": 0 }
+  },
+  "findings": [
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "design.md",
+      "line": 16,
+      "title": "The design does not say what an empty first argument prints",
+      "recommendation": "State in decision 1 that an empty first argument prints Hello, world!, as D-gn-1 settled."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Seeded fresh proposal pass: the artifacts follow the exploration; one gap against D-gn-1.",
+  "passes_run": ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
+  "passes_skipped": [],
+  "direction": { "disposition": "forward", "reasoning": "One warning, an obvious fix; apply can follow its walk." }
+}

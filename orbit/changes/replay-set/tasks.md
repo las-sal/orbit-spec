@@ -7,24 +7,24 @@ Implementation chunks:
 
 ## 1. The harness (design Decisions 1, 2, 3, 6 and 7)
 
-- [ ] 1.1 Run the full `npm test` for the baseline count. Create `replay/` with `shim/orbit` (the walk-up shim from
+- [x] 1.1 Run the full `npm test` for the baseline count. Create `replay/` with `shim/orbit` (the walk-up shim from
   `orbit/changes/replay-set/sketches/spike-files/orbit-shim.sh`, made executable), `cases/`, `project/`, `results/` and
   `lib/`. Add
   the `replay`, `replay:compare` and `validate:skills` scripts to `package.json`, and check by reading `files` that no
   entry reaches `replay/`
-- [ ] 1.2 Add `replay/lib/build.mjs`. It holds the work-directory check (refuse a directory inside a git work tree, or
+- [x] 1.2 Add `replay/lib/build.mjs`. It holds the work-directory check (refuse a directory inside a git work tree, or
   below a `CLAUDE.md` or a `.claude/` other than the home directory's), and the per-commit CLI build: a detached worktree
   at `--ref` under `<os.tmpdir()>/orbit-replay/build/`, `npm ci`, `npm run build`, `npm pack`, `npm install <tgz>
   --omit=dev --ignore-scripts` into `<os.tmpdir()>/orbit-replay/cli/<sha>/` (the cache, outside every run's work
   directory), then `git worktree remove --force` of the build worktree
-- [ ] 1.3 Add `replay/lib/fixture.mjs`, Case 4's recipe:
+- [x] 1.3 Add `replay/lib/fixture.mjs`, Case 4's recipe:
   - `git init` with a fixed author, `.gitignore` holding `.orbit-cli`, the `.orbit-cli` symlink;
   - `orbit init --tools claude` through the shim;
   - the case's `scaffold.sh`, then one commit;
   - the `start` checks;
   - applying a case's `break` (delete a heading's section from the installed skill file) and a grader's
     `negative_scaffold`
-- [ ] 1.4 Add `replay/lib/trace.mjs` and `replay/lib/graders.mjs`:
+- [x] 1.4 Add `replay/lib/trace.mjs` and `replay/lib/graders.mjs`:
   - **the trace reader:** the `system`/`init` record's model and skills; the `result` record's `total_cost_usd`, turns,
     duration and end reason; `orbit_output` built only from the `tool_result`s paired by id with Bash `tool_use`s whose
     command runs `orbit`;
@@ -32,7 +32,7 @@ Implementation chunks:
     with `args`, `path`, and `equals`/`matches`/`exists`, parsed from Markdown files with YAML frontmatter. No type reads
     a tool input or a Skill result. A `file_exists` grader or a `regex` over a file carries `pairs_with`, naming a
     grader whose fact only orbit's answer makes true about the same file, which names that file in `about`
-- [ ] 1.5 Add `replay/run.mjs`:
+- [x] 1.5 Add `replay/run.mjs`:
   - **arguments:** refuse to start without `--model` or `--max-total-usd`; `--ref`, `--runs` (default 3), `--cases`,
     `--label` (default `run`), `--broken`, `--workdir`, `--cli <dir>` (an installed CLI, skipping the build) and
     `--results <dir>`;
@@ -45,7 +45,7 @@ Implementation chunks:
     grades;
   - **the record:** written to `<results>/<YYYY-MM-DDTHH-MM-SSZ>-<sha7>-<label>.json`, refusing to start when that file
     exists, with every field of `A run's record names its build, its model, its cost and every fact's grade`
-- [ ] 1.6 Add `replay/compare.mjs`:
+- [x] 1.6 Add `replay/compare.mjs`:
   - a completeness check first: a case the cut lacks, a baseline grader it lacks, or fewer graded runs than a side's
     run count makes the case incomplete, listed with what it lacks and given no verdict;
   - an exported classifier over D-rs-9's four rows for the complete cases, with a grader only the cut holds listed as
@@ -66,32 +66,32 @@ the pass-and-walk sequence the default cadence `[invoked, in-context]` reads, an
 gate states it must reach by the engine's gate ids (`review-proposal`, `apply`, `review-system`). Every file fact is
 paired with a fact orbit's answer makes true (`pairs_with`).
 
-- [ ] 2.1 Add the shared fixture project under `replay/project/` (a Node script and one baseline capability spec) and the
+- [x] 2.1 Add the shared fixture project under `replay/project/` (a Node script and one baseline capability spec) and the
   `explore` case (`/orbit:explore <name>`, its prompt saying to stop after the premise). Its graders: the
   exploration listed as exploring in bare `orbit status --json` (orbit's reading of the `explore.md` the session writes,
   `about` that file), `explore.md` existing paired with it, and the explore emit in its trail paired with the emit path
   orbit printed when it wrote it
-- [ ] 2.2 Add the `propose` case. Its seed is a staged exploration whose decisions are facts and scope only, seeded as
+- [x] 2.2 Add the `propose` case. Its seed is a staged exploration whose decisions are facts and scope only, seeded as
   `/orbit:explore` leaves one (`explore.md` and its explore emit under `orbit/explore/<name>/`). Its graders: the four
   artifacts done in `orbit status --change <name> --json`, `orbit validate <name>` passing, the staging directory gone,
   and a propose emit
-- [ ] 2.3 Add the `apply` case. Its seed is a proposed change holding, through `orbit emit`, a fresh proposal pass, its
+- [x] 2.3 Add the `apply` case. Its seed is a proposed change holding, through `orbit emit`, a fresh proposal pass, its
   walk, and a later in-context proposal pass with no substantive findings, with a `start` check that `review-proposal`
   has passed. Its graders: the `apply` gate passed (every task checked) and an apply emit. Its must-not grader (no
   review emit, no-chaining) names a `negative_scaffold`
-- [ ] 2.4 Add the `review` case: an applied change (`apply` passed) holding a fresh system pass and its walk, so the
+- [x] 2.4 Add the `review` case: an applied change (`apply` passed) holding a fresh system pass and its walk, so the
   typed `/orbit:review <name>` fills `review-system`'s in-context slot. Its graders: an in-context system review emit,
   and the `review-system` gate state that reads it
-- [ ] 2.5 Add the `walk` case: the `review` seed plus an in-context system pass whose findings are obvious fixes only
+- [x] 2.5 Add the `walk` case: the `review` seed plus an in-context system pass whose findings are obvious fixes only
   (`/orbit:address-reviews <name>`, its prompt ratifying the recommendations). Its graders: a walk emit closing every
   finding, and `review-system` passed
-- [ ] 2.6 Add the `archive` case: the walked state, with a `start` check that `review-system` has passed. Its graders: the change under
+- [x] 2.6 Add the `archive` case: the walked state, with a `start` check that `review-system` has passed. Its graders: the change under
   `orbit/changes/archive/<date>-<name>/`, the delta's requirement in `orbit/specs/`, and an archive emit. Give each of
   the six cases a `break` naming the section whose deletion should fail its named grader
 
 ## 3. The free checks (`orbit-replay-set`'s scenarios)
 
-- [ ] 3.1 Add `test/replay/runner.test.ts`, with a stub `claude` first on `PATH` that writes a marker and prints a canned
+- [x] 3.1 Add `test/replay/runner.test.ts`, with a stub `claude` first on `PATH` that writes a marker and prints a canned
   stream-json trace with a fixed cost, the run given `--cli` (the repository's own build, laid out as in 3.2) and a
   temporary `--results`:
   - no session without `--max-total-usd`;
@@ -103,7 +103,7 @@ paired with a fact orbit's answer makes true (`pairs_with`).
   - `package.json`'s `files` reaches nothing under `replay/`.
 
   Tag each scenario `behaviour`
-- [ ] 3.2 Add `test/replay/cases.test.ts`, building every case's seed with the repository's own build: a temporary
+- [x] 3.2 Add `test/replay/cases.test.ts`, building every case's seed with the repository's own build: a temporary
   `.orbit-cli/node_modules/orbit-spec` symlinked to the repository root, so the shim finds it as in a billed run:
   - a seed command reaches that build;
   - six cases (directories holding `case.yaml`), one per lifecycle command;
@@ -119,7 +119,7 @@ paired with a fact orbit's answer makes true (`pairs_with`).
 
 ## 4. The CI validation (design Decision 10)
 
-- [ ] 4.1 Add `scripts/validate-skills.mjs`. It generates the surface in a temporary directory with
+- [x] 4.1 Add `scripts/validate-skills.mjs`. It generates the surface in a temporary directory with
   `node <repo>/bin/orbit.js init --tools claude` and runs `claude plugin validate --strict` over its `.claude/`, using the
   `claude` on `PATH` at the pinned 2.1.329 or else `npx --yes @anthropic-ai/claude-code@2.1.329`, with
   `DISABLE_AUTOUPDATER=1`. Then:
@@ -131,13 +131,14 @@ paired with a fact orbit's answer makes true (`pairs_with`).
 
 ## 5. Close
 
-- [ ] 5.1 Write `replay/README.md`: what the replay set is and is not (never shipped, billed, Sal-started), the commands,
+- [x] 5.1 Write `replay/README.md`: what the replay set is and is not (never shipped, billed, Sal-started), the commands,
   a case's folder shape and how to add one, what a grader may read, the comparison's rows, and the costs the billed runs
   record. Run the full `npm test`, `npx tsc --noEmit`, `npm run lint` and `node bin/orbit.js validate replay-set --strict`,
   and report the count against 1.1's
 - [ ] 5.2 (User-validation) Sal starts the plumbing run:
-  `npm run replay -- --model sonnet --runs 1 --max-total-usd 3 --label plumbing`. Every case reaches its session, every
-  trace is graded, and the record shows each case's cost
+  `npm run replay -- --model sonnet --runs 1 --max-total-usd 8 --label plumbing`. Every case reaches its session, every
+  trace is graded, and the record shows each case's cost. (The ceiling is 8, not 3: the runner reserves each case's
+  whole `max_budget_usd`, up to $4, before starting it, so a $3 ceiling stops the run after the explore session.)
 - [ ] 5.3 (User-validation) Sal starts the broken-body run on Sal's model, one run a case, with a ceiling sized from
   5.2's costs: `npm run replay -- --model <Sal's model> --runs 1 --broken --max-total-usd <usd> --label broken`. In
   every case its `break`'s named grader fails. A grader that does not fail is repaired (or its `break` moved to a step

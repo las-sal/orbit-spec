@@ -1,0 +1,14 @@
+# The in-context system review after apply, filling review-system's in-context slot.
+max_turns: 60
+max_budget_usd: 4
+start:
+  - args: [status, --change, greet-name, --json]
+    path: gates[id=apply].state
+    equals: passed
+  - args: [status, --change, greet-name, --json]
+    path: gates[id=review-system].reason
+    matches: "'in-context' has no fresh pass"
+break:
+  file: .claude/skills/orbit-review/SKILL.md
+  section: "### 9. Persist via the emit surface"
+  grader: review-emit-printed

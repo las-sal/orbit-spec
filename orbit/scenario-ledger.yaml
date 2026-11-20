@@ -186,3 +186,7 @@ scenarios:
   - key: "orbit-conventions :: Decision-writing discipline :: A reading finding is fixed at the defaults"
     kind: untestable
     why: "The THEN is an AI-run walk writing a replacement of a ledger entry a system review's reading step found unclear; no test runs a walk session. The write gate accepting a replacement is behaviour-tested, and the basic content saying a replacement fixing a record already there is still written is text-tested in test/core/decision-writing-parity.test.ts."
+  # replay-set (task 4.1) — the CI validation runs Claude Code's validator, which is not installed where `npm test` runs.
+  - key: "orbit-replay-set :: CI validates the generated skill surface :: A malformed skill fails the check"
+    kind: untestable
+    why: "The THEN is Claude Code's `claude plugin validate --strict` (pinned 2.1.329) judging a generated surface; the validator is not installed where `npm test` runs, and CI's validate:skills step runs it over a correct surface only. Measured at apply (2026-11-20): `node scripts/validate-skills.mjs` passed on a freshly generated surface, through the claude on PATH and through the pinned npx copy, and `--surface` over the same surface with orbit-explore's `description` line deleted reported 'No description in frontmatter' and exited 1 ('--strict treats warnings as errors')."

@@ -1,0 +1,28 @@
+{
+  "model": null,
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": { "parallel": false, "focus": null, "strict": false, "fresh": true, "mark": false, "skip_verify": false },
+  "scorecard": {
+    "completeness": { "critical": 0, "warning": 1, "suggestion": 0 },
+    "correctness": { "critical": 0, "warning": 0, "suggestion": 0 },
+    "coherence": { "critical": 0, "warning": 0, "suggestion": 0 }
+  },
+  "findings": [
+    {
+      "pass": "0",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "README.md",
+      "line": 5,
+      "title": "The README does not say what the script prints with no name",
+      "recommendation": "Add that node greet.js alone prints Hello, world!, as the baseline requirement states."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Seeded fresh system pass: the code matches the delta; the README misses the no-name case.",
+  "passes_run": ["0", "1", "2", "3", "4", "5", "6"],
+  "passes_skipped": [],
+  "direction": { "disposition": "forward", "reasoning": "One warning, an obvious fix; archive can follow the cadence." }
+}
