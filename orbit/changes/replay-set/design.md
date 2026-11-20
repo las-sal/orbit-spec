@@ -141,7 +141,7 @@ never depends on another's luck (D-rs-2's FALSIFY).
 
 | case | typed command | seeded state | facts it must leave (graders, exact fields read from the engine at apply) |
 |---|---|---|---|
-| `explore` | `/orbit:explore <name>` with the topic and "stop after the premise" | project only | `orbit/explore/<name>/explore.md`; an explore emit in its trail |
+| `explore` | `/orbit:explore <name>` with the topic and "stop after the premise" | project only | the exploration listed as exploring; an explore emit in its trail |
 | `propose` | `/orbit:propose <name>` | a staged exploration whose decisions are facts and scope only, so no Mechanism entry is owed | the change's four artifacts; `orbit validate <name>` passes; the staging directory moved; a propose emit |
 | `apply` | `/orbit:apply <name>` | a proposed change whose `review-proposal` gate has passed: a fresh proposal pass, its walk, and a later in-context proposal pass with no substantive findings | every task checked (the `apply` gate passed); an apply emit; no review emit (no-chaining, a must-not fact with its own known-bad scaffold) |
 | `review` | `/orbit:review <name>` | an applied change (the `apply` gate passed) holding a fresh system pass and its walk, so the typed review fills `review-system`'s in-context slot | an in-context system review emit; the `review-system` gate reading it |
@@ -163,19 +163,25 @@ facts only: whether the project's own code works is not one of them (D-rs-8; see
 
 - **`file_exists`:** `path` is a glob in the fixture, and `absent: true` inverts it.
 - **`regex`:** `pattern` is matched against `target`, which is `orbit_output` or `file:<path>`. `orbit_output` is the
-  concatenated RESULTS of the session's Bash calls whose command runs `orbit`. The runner pairs each `tool_use` with its
-  `tool_result` by id and keeps only the result, so the command the session typed and the Skill tool's loaded body are
-  excluded by construction, not by a careful pattern. These were Case 2's two false passes.
+  concatenated RESULTS of the session's Bash calls whose command runs `orbit`: `orbit` as the first word of one of its
+  commands (at the start, or after `;`, `&&`, `||`, `|`, `(`, `$(`, a backtick or a line break, past any `NAME=value`
+  prefixes), so a listing that merely names the project's `orbit/` directory (`find orbit …`, `ls orbit`) is not a call.
+  The runner pairs each `tool_use` with its `tool_result` by id and keeps only the result, so the command the session
+  typed and the Skill tool's loaded body are excluded by construction, not by a careful pattern. These were Case 2's two
+  false passes. A grader over a printed path carries `after_seed: true`: it passes only on a path whose timestamp is
+  later than the seed's newest trail record, because orbit's own answers (`orbit status --change <name> --boot`) print
+  the seeded records' paths too. Named limit: a call that runs orbit and another command (`orbit status; echo …`)
+  contributes its whole output.
 - **`orbit`:** `args` is an orbit command run in the fixture after the session (with `--json`). `path` is a dotted path
   into its answer, compared with `equals`, `matches` or `exists`.
 
 A grader may name `negative_scaffold`: a script that makes its fact false on top of the seed, for facts that already hold
 at the seed (the apply case's "no review emit"). A `file_exists` grader, or a `regex` over a file, names `pairs_with`:
 the id of a grader of its case whose fact only orbit's answer makes true about the same file (an `orbit` grader reading
-it, or a `regex` over `orbit_output` matching the path orbit printed), which names that file in `about`. A file the
-session writes itself, such as the explore case's `explore.md`, pairs with orbit's reading of it (the exploration
-listed in bare `orbit status --json`), never with a fact about another file. A file a session can write by hand never grades
-alone: that was the spike's Case 1 (D-rs-11).
+it, or a `regex` over `orbit_output` matching the path orbit printed), which names that file in `about`. A file no orbit command reads once the session ends, such as the explore case's
+`explore.md` (bare `orbit status --json` lists the exploration whatever its header says, or with the file gone), has no
+file grader: the case grades it only through the explore emit orbit wrote from it. A file a session can write by hand
+never grades alone: that was the spike's Case 1 (D-rs-11).
 
 The free checks in `test/replay/` build each case's seeded fixture with the repository's own build, laid out as the
 installed copy is: a temporary `.orbit-cli/node_modules/orbit-spec` symlinked to the repository root, whose `dist/` the
@@ -185,8 +191,9 @@ shim finds `.orbit-cli/node_modules/orbit-spec/bin/orbit.js` as it does in a bil
 - a seed command reaches that build (it answers `orbit decisions status`, which the stale global install lacks);
 - every file grader names a `pairs_with` grader of the kind above, whose `about` is the file grader's own path;
 - every grader fails on the seed (or on its negative scaffold);
-- every `orbit_output` grader fails on a synthetic trace holding the typed command and the skill's body as a loaded
-  Skill result, but no `orbit` result;
+- every `orbit_output` grader fails on a synthetic trace holding the typed command, the skill's body as a loaded
+  Skill result and a listing of the seeded trail (`find orbit …`), but no `orbit` result, and fails on orbit's own
+  `--boot` answer over the seed;
 - every case's `start` checks pass on its seed.
 
 The case's broken-body run (decision 8) is the billed check that the case as a whole can fail.

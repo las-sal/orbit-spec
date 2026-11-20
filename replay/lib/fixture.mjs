@@ -97,7 +97,8 @@ export function applyBreak(fixtureDir, brk) {
 
 const TOKEN = /\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}Z/;
 
-function newestTrailToken(dir) {
+/** The newest timestamp token in the fixture's trails (`.orbit-runs/`), or `null` when there is none. */
+export function newestTrailToken(dir) {
   let newest = null;
   const walk = (d) => {
     for (const e of fs.readdirSync(d, { withFileTypes: true })) {

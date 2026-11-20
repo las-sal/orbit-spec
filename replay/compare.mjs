@@ -48,6 +48,12 @@ function modelsOf(record) {
   return [...s].sort();
 }
 
+/** The skills any session of a record reported whose name is not orbit's (`orbit-…` or `orbit:…`). */
+export function foreignSkills(record) {
+  const names = new Set(record.results.flatMap((r) => (Array.isArray(r.skills) ? r.skills : [])).map(String));
+  return [...names].filter((n) => !/^orbit[-:]/.test(n)).sort();
+}
+
 /** Compares two run records; returns the whole report as data. */
 export function compareRecords(base, cut) {
   const warnings = [];
@@ -58,6 +64,15 @@ export function compareRecords(base, cut) {
     warnings.push(
       `the records name different Claude Code versions (baseline: ${base.claude_code_version}; cut: ${cut.claude_code_version})`,
     );
+  }
+  // A skill a session reported that is not orbit's (a user-level skill, a plugin's) reached the
+  // session from outside its fixture: either side's grades may then owe something to it.
+  for (const [side, rec] of [
+    ['baseline', base],
+    ['cut', cut],
+  ]) {
+    const foreign = foreignSkills(rec);
+    if (foreign.length) warnings.push(`the ${side}'s sessions loaded skills that are not orbit's: ${foreign.join(', ')}`);
   }
   if (base.broken || /plumbing/.test(base.label ?? '')) {
     warnings.push(`the baseline record is labelled ${JSON.stringify(base.label)}, not a baseline`);

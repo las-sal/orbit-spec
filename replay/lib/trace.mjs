@@ -7,8 +7,14 @@
 // printed or wrote`).
 import fs from 'node:fs';
 
-/** A Bash command runs `orbit` when the word `orbit` stands as a command word in it. */
-const RUNS_ORBIT = /(?:^|[\s;&|()`])orbit(?=\s|$)/m;
+/**
+ * A Bash command runs `orbit` when `orbit` is the first word of one of its commands: at the start,
+ * or after a separator (`;`, `&&`, `||`, `|`, `(`, `$(`, a backtick or a line break), past any
+ * `NAME=value` prefixes. A bare argument naming the project's `orbit/` directory (`find orbit …`,
+ * `ls orbit`, `git log -- orbit`) is not a call. Named limit: a call that runs orbit AND another
+ * command (`orbit status; echo …`) contributes its whole output.
+ */
+const RUNS_ORBIT = /(?:^|[;&|(`\n]|\$\()[ \t]*(?:[A-Za-z_][A-Za-z0-9_]*=\S*[ \t]+)*orbit(?=[ \t\n]|$)/;
 
 export function commandRunsOrbit(command) {
   return typeof command === 'string' && RUNS_ORBIT.test(command);

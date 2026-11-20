@@ -143,6 +143,19 @@ describe('replay:compare — the four baseline-by-cut rows', () => {
     expect(code).toBe(0);
   });
 
+  it("warns when either side's sessions loaded a skill that is not orbit's", () => {
+    const base = record({ x: [ok, ok, ok] });
+    base.results.forEach((r) => Object.assign(r, { skills: ['orbit-explore', 'orbit-apply-change'] }));
+    const cut = record({ x: [ok, ok, ok] }, { label: 'cut' });
+    cut.results.forEach((r, i) => Object.assign(r, { skills: i === 1 ? ['orbit-explore', 'pdf', 'my-plugin:helper'] : ['orbit-explore'] }));
+    const report = compareRecords(base, cut);
+    expect(report.warnings).toEqual(["the cut's sessions loaded skills that are not orbit's: my-plugin:helper, pdf"]);
+    const { text, code } = runMain(base, cut);
+    expect(text.split('\n')[0]).toBe("WARNING: the cut's sessions loaded skills that are not orbit's: my-plugin:helper, pdf");
+    expect(code).toBe(0);
+    expect(compareRecords(base, base).warnings).toEqual([]);
+  });
+
   it('shows pass rate, turns and cost as mean ± standard deviation on each side', () => {
     expect(meanSd([1, 2, 3])).toEqual({ mean: 2, sd: 1, n: 3 });
     const { text } = runMain(record({ x: [ok, ok, ok] }), record({ x: [ok, ok, ok] }, { label: 'cut' }));

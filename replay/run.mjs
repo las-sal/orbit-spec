@@ -13,7 +13,7 @@ import path from 'node:path';
 import { spawn, spawnSync } from 'node:child_process';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { REPLAY_TMP, buildCli, cliEntry, resolveCommit, workdirProblem } from './lib/build.mjs';
-import { CASES_DIR, buildFixture, fixtureEnv, listCases, loadCase } from './lib/fixture.mjs';
+import { CASES_DIR, buildFixture, fixtureEnv, listCases, loadCase, newestTrailToken } from './lib/fixture.mjs';
 import { checkStart, gradeAll, loadGraders } from './lib/graders.mjs';
 import { endOf, readTrace } from './lib/trace.mjs';
 
@@ -73,6 +73,9 @@ function claudeVersion() {
   return r.stdout.trim();
 }
 
+/** The session running now (its own process group), which a stopped run kills. */
+let activeSession = null;
+
 /** Runs one session in the fixture; resolves `{ code, signal, timedOut }`. */
 function runSession({ c, model, fixture, trace, stderrFile }) {
   const args = [
@@ -102,6 +105,7 @@ function runSession({ c, model, fixture, trace, stderrFile }) {
       stdio: ['ignore', out, err],
       detached: true,
     });
+    activeSession = child;
     let timedOut = false;
     const timer = setTimeout(() => {
       timedOut = true;
@@ -112,6 +116,7 @@ function runSession({ c, model, fixture, trace, stderrFile }) {
       }
     }, c.timeout_minutes * 60_000);
     const finish = (code, signal) => {
+      activeSession = null;
       clearTimeout(timer);
       fs.closeSync(out);
       fs.closeSync(err);
@@ -146,6 +151,8 @@ export async function main(argv, { log = (s) => console.error(s) } = {}) {
   for (const id of caseIds) if (!all.includes(id)) return log(`replay: no case ${id} under ${casesDir}`), 2;
   const cases = caseIds.map((id) => loadCase(path.join(casesDir, id)));
   cases.forEach(validateCase);
+  // Every case's graders load before any build or spend, so a malformed grader stops the run unbilled.
+  const gradersOf = new Map(cases.map((c) => [c.id, loadGraders(c.dir)]));
 
   let sha = null;
   let cliDir = null;
@@ -193,97 +200,143 @@ export async function main(argv, { log = (s) => console.error(s) } = {}) {
     results: [],
   };
 
+  // The record is written before the first session and rewritten after every run, so a run that
+  // stops part-way (a crash, Ctrl-C) still leaves the record of every session it billed.
+  fs.mkdirSync(resultsDir, { recursive: true });
   let spent = 0;
   let ceilingHit = false;
-  for (const c of cases) {
-    const graders = loadGraders(c.dir);
-    for (let run = 1; run <= o.runs; run++) {
-      const entry = {
-        case: c.id,
-        run,
-        stopped: null,
-        reason: null,
-        budget_usd: c.max_budget_usd,
-        model: null,
-        skills: null,
-        slash_commands: null,
-        turns: null,
-        cost_usd: null,
-        duration_ms: null,
-        grades: null,
-        details: null,
-        fixture: null,
-        trace: null,
-      };
-      record.results.push(entry);
-      if (ceilingHit || spent + c.max_budget_usd > o.maxTotalUsd) {
-        ceilingHit = true;
-        entry.stopped = 'ceiling';
-        entry.reason = `not run: $${spent.toFixed(4)} spent + $${c.max_budget_usd} budget exceeds the $${o.maxTotalUsd} ceiling`;
-        continue;
-      }
-      const runDir = path.join(workdir, c.id, `run-${run}`);
-      const fixture = path.join(runDir, 'fixture');
-      entry.fixture = fixture;
+  let interrupted = null;
+  let written = false;
+  const save = () => {
+    record.total_cost_usd = Number(spent.toFixed(6));
+    fs.writeFileSync(recordFile, `${JSON.stringify(record, null, 2)}\n`, written ? {} : { flag: 'wx' });
+    written = true;
+  };
+  const onSignal = (sig) => {
+    interrupted = sig;
+    log(`replay: ${sig}: stopping after the current step`);
+    if (activeSession) {
       try {
-        await buildFixture({ dir: fixture, cliDir, caseDir: c.dir, casesDir, brk: o.broken ? c.break : null });
-      } catch (e) {
-        entry.stopped = 'start-state';
-        entry.reason = `the seed failed to build: ${e.message.split('\n')[0]}`;
-        log(`replay: ${c.id} run ${run}: ${entry.reason}`);
-        continue;
+        process.kill(-activeSession.pid, 'SIGKILL');
+      } catch {
+        activeSession.kill('SIGKILL');
       }
-      const failures = checkStart(c.start, { fixtureDir: fixture });
-      if (failures.length) {
-        entry.stopped = 'start-state';
-        entry.reason = `start state not reached: ${failures.join('; ')}`;
-        log(`replay: ${c.id} run ${run}: ${entry.reason}`);
-        continue;
-      }
+    }
+  };
+  process.on('SIGINT', onSignal);
+  process.on('SIGTERM', onSignal);
+  save();
 
-      const trace = path.join(runDir, 'trace.jsonl');
-      entry.trace = trace;
-      log(`replay: ${c.id} run ${run}: session started (budget $${c.max_budget_usd})`);
-      const s = await runSession({ c, model: o.model, fixture, trace, stderrFile: path.join(runDir, 'stderr.log') });
-      const t = readTrace(trace);
-      entry.model = t.init?.model ?? null;
-      entry.skills = t.init?.skills ?? null;
-      entry.slash_commands = t.init?.slash_commands ?? null;
-      const end = endOf(t.result);
-      if (end === null) {
-        spent += c.max_budget_usd;
-        entry.cost_usd = c.max_budget_usd;
-        entry.stopped = 'no-result';
-        entry.reason = s.timedOut
+  const notRun = (entry) => {
+    entry.stopped = 'interrupted';
+    entry.reason = `not run: the run was stopped by ${interrupted}`;
+  };
+
+  async function runOne(c, run, graders, entry) {
+    if (interrupted) return notRun(entry);
+    if (ceilingHit || spent + c.max_budget_usd > o.maxTotalUsd) {
+      ceilingHit = true;
+      entry.stopped = 'ceiling';
+      entry.reason = `not run: $${spent.toFixed(4)} spent + $${c.max_budget_usd} budget exceeds the $${o.maxTotalUsd} ceiling`;
+      return;
+    }
+    const runDir = path.join(workdir, c.id, `run-${run}`);
+    const fixture = path.join(runDir, 'fixture');
+    entry.fixture = fixture;
+    try {
+      await buildFixture({ dir: fixture, cliDir, caseDir: c.dir, casesDir, brk: o.broken ? c.break : null });
+    } catch (e) {
+      entry.stopped = 'start-state';
+      entry.reason = `the seed failed to build: ${e.message.split('\n')[0]}`;
+      log(`replay: ${c.id} run ${run}: ${entry.reason}`);
+      return;
+    }
+    const failures = checkStart(c.start, { fixtureDir: fixture });
+    if (failures.length) {
+      entry.stopped = 'start-state';
+      entry.reason = `start state not reached: ${failures.join('; ')}`;
+      log(`replay: ${c.id} run ${run}: ${entry.reason}`);
+      return;
+    }
+    entry.seed_token = newestTrailToken(fixture);
+    if (interrupted) return notRun(entry);
+
+    const trace = path.join(runDir, 'trace.jsonl');
+    entry.trace = trace;
+    log(`replay: ${c.id} run ${run}: session started (budget $${c.max_budget_usd})`);
+    const s = await runSession({ c, model: o.model, fixture, trace, stderrFile: path.join(runDir, 'stderr.log') });
+    const t = readTrace(trace);
+    entry.model = t.init?.model ?? null;
+    entry.skills = t.init?.skills ?? null;
+    entry.slash_commands = t.init?.slash_commands ?? null;
+    const end = endOf(t.result);
+    if (end === null || interrupted) {
+      spent += c.max_budget_usd;
+      entry.cost_usd = c.max_budget_usd;
+      entry.stopped = 'no-result';
+      entry.reason = interrupted
+        ? `killed when the run was stopped by ${interrupted}`
+        : s.timedOut
           ? `killed at its ${c.timeout_minutes}-minute timeout`
           : t.result
             ? 'its result record reports no numeric cost'
             : `exited ${s.code ?? s.signal} with no result record`;
-        entry.reason += '; its whole budget counts as spent';
-        log(`replay: ${c.id} run ${run}: ${entry.reason}`);
-        continue;
-      }
-      spent += t.result.total_cost_usd;
-      entry.cost_usd = t.result.total_cost_usd;
-      entry.turns = t.result.num_turns;
-      entry.duration_ms = t.result.duration_ms;
-      entry.stopped = end;
-      entry.reason = t.result.subtype;
-      const graded = gradeAll(graders, { fixtureDir: fixture, orbitOutput: t.orbitOutput });
-      entry.grades = Object.fromEntries(Object.entries(graded).map(([k, v]) => [k, v.pass]));
-      entry.details = Object.fromEntries(Object.entries(graded).map(([k, v]) => [k, v.detail]));
-      const passed = Object.values(entry.grades).filter(Boolean).length;
-      log(`replay: ${c.id} run ${run}: ${end}, $${entry.cost_usd}, ${entry.turns} turns, ${passed}/${graders.length} facts`);
+      entry.reason += '; its whole budget counts as spent';
+      log(`replay: ${c.id} run ${run}: ${entry.reason}`);
+      return;
     }
+    spent += t.result.total_cost_usd;
+    entry.cost_usd = t.result.total_cost_usd;
+    entry.turns = t.result.num_turns;
+    entry.duration_ms = t.result.duration_ms;
+    entry.stopped = end;
+    entry.reason = t.result.subtype;
+    const graded = gradeAll(graders, { fixtureDir: fixture, orbitOutput: t.orbitOutput, seedToken: entry.seed_token });
+    entry.grades = Object.fromEntries(Object.entries(graded).map(([k, v]) => [k, v.pass]));
+    entry.details = Object.fromEntries(Object.entries(graded).map(([k, v]) => [k, v.detail]));
+    const passed = Object.values(entry.grades).filter(Boolean).length;
+    log(`replay: ${c.id} run ${run}: ${end}, $${entry.cost_usd}, ${entry.turns} turns, ${passed}/${graders.length} facts`);
   }
 
-  record.total_cost_usd = Number(spent.toFixed(6));
+  try {
+    for (const c of cases) {
+      const graders = gradersOf.get(c.id);
+      for (let run = 1; run <= o.runs; run++) {
+        const entry = {
+          case: c.id,
+          run,
+          stopped: null,
+          reason: null,
+          budget_usd: c.max_budget_usd,
+          seed_token: null,
+          model: null,
+          skills: null,
+          slash_commands: null,
+          turns: null,
+          cost_usd: null,
+          duration_ms: null,
+          grades: null,
+          details: null,
+          fixture: null,
+          trace: null,
+        };
+        record.results.push(entry);
+        await runOne(c, run, graders, entry);
+        save();
+      }
+    }
+  } finally {
+    process.off('SIGINT', onSignal);
+    process.off('SIGTERM', onSignal);
+  }
+
   record.finished_at = new Date().toISOString();
-  fs.mkdirSync(resultsDir, { recursive: true });
-  fs.writeFileSync(recordFile, `${JSON.stringify(record, null, 2)}\n`, { flag: 'wx' });
+  record.interrupted = interrupted;
+  save();
   log(`replay: record ${recordFile}; total $${record.total_cost_usd}`);
   const ungraded = record.results.filter((r) => r.grades === null).length;
   if (ungraded) log(`replay: ${ungraded} case run(s) not graded`);
+  if (interrupted) return 130;
   return ungraded ? 1 : 0;
 }
 

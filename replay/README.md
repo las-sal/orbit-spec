@@ -52,7 +52,11 @@ A run, in order:
    ```
 
 3. grades the fixture and the trace, and writes the record to
-   `replay/results/<YYYY-MM-DDTHH-MM-SSZ>-<sha7>-<label>.json` (never overwritten).
+   `replay/results/<YYYY-MM-DDTHH-MM-SSZ>-<sha7>-<label>.json` (never overwritten). The record is written before the
+   first session and rewritten after every run, so a run that stops part-way keeps the record of every session it
+   billed; Ctrl-C (or SIGTERM) kills the running session, counts its whole budget, and records the rest as not run.
+
+Cases run in name order (apply, archive, explore, propose, review, walk), each case's runs one after another.
 
 The shim walks up from the session's directory to the first `.orbit-cli/` and exits 127 when there is none, so a
 session never reaches the global `orbit` install.
@@ -62,7 +66,8 @@ session never reaches the global `orbit` install.
 Before each session the runner **reserves the case's whole `max_budget_usd`**: it starts the session only when the spend
 so far plus that budget fits under `--max-total-usd`. A session that crashes, is killed at its `timeout_minutes`
 (default 30), or leaves no result record counts its whole budget. So the ceiling must cover the expected spend of the
-runs before the last one plus the largest case budget, not just the expected total.
+runs before the last one plus the largest case budget, not just the expected total: a $3 ceiling runs the apply case
+alone, and at $8 the review case starts only if the first four cases spent at most $4 together.
 
 | case | `max_turns` | `max_budget_usd` | `timeout_minutes` |
 |---|---|---|---|
@@ -125,7 +130,7 @@ A grader reads only what orbit printed or wrote:
 
 | source | |
 |---|---|
-| orbit's printed output in the trace | allowed: the results of the session's Bash calls that ran `orbit`, paired with each call by id |
+| orbit's printed output in the trace | allowed: the results of the session's Bash calls that ran `orbit` as a command (`orbit` the first word of one of the call's commands, not a bare argument such as `find orbit …`), paired with each call by id |
 | a file in the fixture | allowed only beside a fact orbit's answer makes true about it |
 | orbit's commands run in the fixture after the session | allowed |
 | the command line the session typed | refused |
@@ -135,7 +140,9 @@ Types:
 
 - `file_exists` — `path` (a glob, `*` within one segment), `absent: true` to invert. Needs `pairs_with`.
 - `regex` — `pattern` over `target`: `orbit_output` (needs `example`, a line orbit prints that the pattern matches) or
-  `file:<path>` (needs `pairs_with`).
+  `file:<path>` (needs `pairs_with`). `after_seed: true` on an `orbit_output` grader over a printed path makes it pass
+  only on a path whose timestamp is later than the seed's newest trail record (the record keeps it as `seed_token`):
+  orbit's own answers, such as `orbit status --change <name> --boot`, print the seeded records' paths too.
 - `orbit` — `args` (an orbit command, with `--json`), `path` into its answer (`a.b`, `a.0`, `a[id=x].c`, `a.length`)
   and one of `equals`, `matches`, `exists`.
 
@@ -143,11 +150,14 @@ A file grader's `pairs_with` names an `orbit` grader, or a `regex` over `orbit_o
 is the file grader's own path. A grader whose fact already holds at the seed (a must-not fact) names a
 `negative_scaffold`, a script that makes it false. The free checks (`test/replay/cases.test.ts`) show every grader
 failing on its seed or its known-bad scaffold, every `orbit_output` grader failing on a trace holding the typed
-command and the loaded body but no orbit answer, and every grader passing on the state its command leaves.
+command, the loaded body and a listing of the seeded trail but no orbit answer, and on orbit's own `--boot` answer over
+the seed, and every grader passing on the state its command leaves. A file no orbit command reads once the session ends
+(the explore case's `explore.md`) gets no file grader: it is graded only through what orbit wrote from it.
 
-Named limit: a session that hand-writes a file orbit then accepts as its own (a well-formed emit at a trail path)
+Named limits: a session that hand-writes a file orbit then accepts as its own (a well-formed emit at a trail path)
 passes an `orbit` grader that reads it; only the `regex` over orbit's printed path catches that, and every case holds
-one.
+one. A Bash call that runs orbit and another command (`orbit status; echo …`) contributes its whole output, so text the
+other command prints is read as orbit's.
 
 ## The comparison
 

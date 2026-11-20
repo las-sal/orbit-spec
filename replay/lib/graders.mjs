@@ -12,6 +12,7 @@ import YAML from 'yaml';
 export const SHIM_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'shim');
 
 const TYPES = new Set(['file_exists', 'regex', 'orbit']);
+const TOKEN = /\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}Z/;
 
 /** Splits `---\n<yaml>\n---\n<body>`; a file without frontmatter yields `{}` and the whole text. */
 export function splitFrontmatter(text) {
@@ -42,6 +43,8 @@ export function parseGrader(file) {
       if (typeof g.example !== 'string' || !re.test(g.example)) {
         fail('a regex over orbit_output needs an example of orbit output its pattern matches');
       }
+      if ('after_seed' in g && typeof g.after_seed !== 'boolean') fail('after_seed must be true or false');
+      if (g.after_seed && !TOKEN.test(g.example)) fail('an after_seed grader\'s example must carry a timestamp token');
     }
   }
   if (g.type === 'orbit') {
@@ -176,8 +179,9 @@ function deepEqual(a, b) {
 }
 
 /**
- * Grades one fact. `ctx` is `{ fixtureDir, orbitOutput, orbit? }`, where `orbit(args)` runs orbit
- * in the fixture (default: through the shim). Returns `{ pass, detail }`.
+ * Grades one fact. `ctx` is `{ fixtureDir, orbitOutput, seedToken?, orbit? }`: `seedToken` is the
+ * newest trail token the seed held (`null` for a seed with no trail), which an `after_seed` grader
+ * needs; `orbit(args)` runs orbit in the fixture (default: through the shim). Returns `{ pass, detail }`.
  */
 export function grade(g, ctx) {
   const orbit = ctx.orbit ?? ((args) => runOrbit(ctx.fixtureDir, args));
@@ -195,6 +199,18 @@ export function grade(g, ctx) {
       const hits = globFixture(ctx.fixtureDir, filePathOf(g));
       if (hits.length === 0) return { pass: false, detail: `no file at ${filePathOf(g)}` };
       text = fs.readFileSync(hits[0], 'utf8');
+    }
+    if (g.target === 'orbit_output' && g.after_seed) {
+      // A printed path counts only when it names a record written after the seed: orbit's own
+      // answers (`orbit status --boot`, say) print the seeded records' paths too.
+      if (ctx.seedToken === undefined) throw new Error(`${g.id}: after_seed needs the seed's newest token`);
+      const global = new RegExp(re.source, re.flags.includes('g') ? re.flags : `${re.flags}g`);
+      const fresh = [...text.matchAll(global)].filter((m) => {
+        const t = TOKEN.exec(m[0])?.[0];
+        return t && (ctx.seedToken === null || t > ctx.seedToken);
+      });
+      const pass = fresh.length > 0;
+      return { pass, detail: pass ? `matched ${fresh[0][0]}` : `no match newer than the seed (${ctx.seedToken})` };
     }
     const pass = re.test(text);
     return { pass, detail: pass ? 'matched' : 'no match' };

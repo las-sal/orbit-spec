@@ -2,7 +2,7 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { spawnSync } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 
 // The replay runner's free checks: the real runner (`node replay/run.mjs`) against a stub `claude`
 // first on PATH, which writes a marker per session and prints a canned stream-json trace with a fixed
@@ -26,6 +26,7 @@ const argv = process.argv.slice(2);
 if (argv.includes('--version')) { console.log('9.9.9 (Claude Code stub)'); process.exit(0); }
 const prompt = argv[argv.indexOf('-p') + 1] || '';
 fs.appendFileSync(process.env.STUB_MARKER, prompt.split('\\n')[0] + '\\n');
+if (process.env.STUB_PID) fs.writeFileSync(process.env.STUB_PID, String(process.pid));
 const out = (o) => process.stdout.write(JSON.stringify(o) + '\\n');
 out({ type: 'system', subtype: 'init', model: 'claude-stub-1', skills: ['orbit-explore'], slash_commands: ['orbit:explore'] });
 if (prompt.includes('STUB:HANG')) { setTimeout(() => {}, 600000); return; }
@@ -90,6 +91,8 @@ beforeAll(() => {
   );
   writeCase('no-result', '/orbit:explore STUB:NO-RESULT', 'max_turns: 5\nmax_budget_usd: 1\n', { answered: ANSWERED });
   writeCase('hang', '/orbit:explore STUB:HANG', 'max_turns: 5\nmax_budget_usd: 0.5\ntimeout_minutes: 0.03\n');
+  writeCase('long-hang', '/orbit:explore STUB:HANG', 'max_turns: 5\nmax_budget_usd: 0.5\ntimeout_minutes: 5\n');
+  writeCase('zz-bad', '/orbit:explore stub', 'max_turns: 5\nmax_budget_usd: 1\n', { broken: '---\ntype: nonsense\n---\nA malformed grader.\n' });
 });
 
 afterAll(() => {
@@ -245,6 +248,46 @@ describe('replay runner — the record', () => {
     expect(r.stderr).toMatch(/refusing work directory .*is a git work tree/);
     expect(fs.readFileSync(marker, 'utf8')).toBe('');
     expect(fs.existsSync(path.join(REPO, 'replay', 'results', 'never'))).toBe(false);
+  });
+});
+
+describe('replay runner — a run that stops part-way', () => {
+  it('Ctrl-C kills the running session, counts its whole budget, records the rest as not run, and keeps the record', async () => {
+    fs.writeFileSync(marker, '');
+    const pidFile = path.join(root, 'stub.pid');
+    fs.rmSync(pidFile, { force: true });
+    const results = fs.mkdtempSync(path.join(root, 'results-'));
+    const child = spawn(
+      process.execPath,
+      [RUN, '--cli', cliDir, '--results', results, '--cases-dir', casesDir, '--workdir', fs.mkdtempSync(path.join(root, 'work-')),
+        '--model', 'stub', '--max-total-usd', '5', '--runs', '1', '--cases', 'long-hang,ok'],
+      { cwd: REPO, env: { ...process.env, STUB_MARKER: marker, STUB_PID: pidFile, PATH: `${stubDir}${path.delimiter}${process.env.PATH}` } },
+    );
+    const exited = new Promise<number | null>((resolve) => child.on('exit', (code) => resolve(code)));
+    for (let i = 0; i < 300 && !fs.existsSync(pidFile); i++) await new Promise((r) => setTimeout(r, 100));
+    const stubPid = Number(fs.readFileSync(pidFile, 'utf8'));
+    // The record already exists while the session runs: it is written before the first session.
+    expect(fs.readdirSync(results)).toHaveLength(1);
+    child.kill('SIGINT');
+    expect(await exited).toBe(130);
+    const rec = JSON.parse(fs.readFileSync(path.join(results, fs.readdirSync(results)[0]), 'utf8'));
+    expect(rec.interrupted).toBe('SIGINT');
+    expect(rec.results.map((e: { case: string; stopped: string }) => `${e.case}:${e.stopped}`)).toEqual([
+      'long-hang:no-result',
+      'ok:interrupted',
+    ]);
+    expect(rec.results[0].reason).toContain('killed when the run was stopped by SIGINT; its whole budget counts as spent');
+    expect(rec.total_cost_usd).toBe(0.5);
+    expect(() => process.kill(stubPid, 0)).toThrow();
+    expect(fs.readFileSync(marker, 'utf8').split('\n').filter(Boolean)).toHaveLength(1);
+  }, 60_000);
+
+  it("a malformed grader in any selected case stops the run before any session", () => {
+    const r = run(['--model', 'stub', '--max-total-usd', '5', '--runs', '1', '--cases', 'ok,zz-bad']);
+    expect(r.status).not.toBe(0);
+    expect(r.stderr).toContain('type must be one of');
+    expect(r.sessions).toEqual([]);
+    expect(r.files).toEqual([]);
   });
 });
 

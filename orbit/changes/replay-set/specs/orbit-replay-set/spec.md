@@ -141,7 +141,7 @@ A replay grader SHALL read only what orbit printed or wrote, each source admitte
 
 | member | covered by |
 |---|---|
-| orbit's printed output in the trace | allowed: the results of the session's shell calls that ran `orbit` |
+| orbit's printed output in the trace | allowed: the results of the session's shell calls that ran `orbit` as a command, and for a printed path only one written after the seed |
 | a file in the fixture | allowed only beside a fact orbit's own answer makes true about it: a file's presence cannot tell orbit's write from the session's |
 | orbit's commands run in the fixture after the session | allowed |
 | the command line the session typed | refused: a pattern matching it passes a run whose CLI never answered |
@@ -170,9 +170,15 @@ Before a grader joins the set, it SHALL be shown failing on known-bad input:
 
 These checks run in `npm test` and bill nothing.
 
+A shell call runs `orbit` when `orbit` is the first word of one of its commands; a call that only names the project's
+`orbit/` directory as an argument (`find orbit …`) is not one. A `regex` over a path orbit prints matches only a path
+whose timestamp is later than the seed's newest trail record, because orbit's own answers print the seeded records'
+paths too.
+
 Named limit — a session that writes a file orbit then accepts as its own (a well-formed emit at a trail path) without
 calling orbit passes an `orbit` grader that reads it. Only a `regex` over orbit's printed path catches that, and a case
-holds one wherever orbit prints the path it writes.
+holds one wherever orbit prints the path it writes. A shell call that runs orbit and another command contributes its
+whole output, so text the other command prints is read as orbit's.
 
 #### Scenario: Every grader fails on its known-bad fixture
 
@@ -188,8 +194,8 @@ holds one wherever orbit prints the path it writes.
 
 #### Scenario: Every trace grader fails on a trace without orbit's answer
 
-- **WHEN** each case's `regex` graders over orbit's output are run against a trace holding the case's typed command and
-  its skill's body as loaded text, and no result from an `orbit` call
+- **WHEN** each case's `regex` graders over orbit's output are run against a trace holding the case's typed command,
+  its skill's body as loaded text and a listing of the seeded trail, and no result from an `orbit` call
 - **THEN** every one of them fails
 
 ### Requirement: A run's record names its build, its model, its cost and every fact's grade
