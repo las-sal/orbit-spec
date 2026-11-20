@@ -152,7 +152,10 @@ stage; G1–G6 are graded at first-run, on that project's trail and transcripts.
   when a setting that reads them is on (chaining, a sign-off setting of `change` or `program`, the tripwires, and later
   this program's driver). The settings this program builds are the records' readers, so its first run, under them,
   writes them; a supervised trail no longer carries them. Amended for `reduce-orbit-phase1`'s R-rop-17, recorded as
-  `stop-2026-11-18T00-27-46Z.json` and its resolution in `orbit/explore/evaluation/.orbit-runs/decisions/`.
+  `stop-2026-11-18T00-27-46Z.json` and its resolution in `orbit/explore/evaluation/.orbit-runs/decisions/`. As built
+  (noted 2026-11-20 at Sal's choice, `reduce-orbit-phase1`'s closing-review walk; R-rop-17's note): at the defaults no
+  NEW ledger entry or stop record is written, but an answer to a stop already in a trail, or a fix of a record already
+  there, still is, so a supervised trail keeps the records written while a reader was on and their answers.
 
 ## Program stages
 
