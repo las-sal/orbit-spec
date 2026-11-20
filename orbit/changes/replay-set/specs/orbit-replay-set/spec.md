@@ -3,8 +3,9 @@
 ### Requirement: The replay set is a development-time check that is never shipped
 
 orbit-spec SHALL keep its replay set (`reduce-orbit-phase2`'s R-rop2-2) under `replay/` in this repository, outside
-every path `package.json`'s `files` names, so nothing `npm pack`, the release tree, `orbit init` or `orbit update`
-carries changes and no command, skill, body or reference is added for it. Every session the replay set starts is a
+every path `package.json`'s `files` names, so nothing `npm pack`, an install from the release tree, `orbit init` or
+`orbit update` carries changes and no command, skill, body or reference is added for it. (The release tree, being the
+commit's whole tree, holds `replay/`; the file set it installs does not.) Every session the replay set starts is a
 billed `claude -p` session, and only the `replay` npm script starts one. That script refuses to start without a total
 cost ceiling given on its command line (`--max-total-usd`), so each billed run is one Sal typed and capped. `npm test`
 and CI start none. They run the free checks only: the graders' shown failures, the comparison, the shim and the run's
@@ -35,8 +36,8 @@ A replay case SHALL fix everything that makes two runs of it comparable, member 
 This table is DERIVED: a session's outcome is a function of its starting state, its input, the body it loads and its
 settings. The first four rows fix each of these, and the fifth names the grade.
 
-A case is a directory in the folder shape `claude plugin eval` uses, so it stays portable if that runner ever lets the
-shell write: `prompt.md` (the typed text), `case.yaml` (its turn and per-session cost limits and the start state its seed
+A case is a directory under `replay/cases/` holding a `case.yaml`, in the folder shape `claude plugin eval` uses, so
+it stays portable if that runner ever lets the shell write: `prompt.md` (the typed text), `case.yaml` (its turn and per-session cost limits and the start state its seed
 must reach), `scaffold.sh` (the seed, run in the fixture after orbit's skills are installed) and `graders/` (one file per
 fact). Before the billed session starts, the runner checks the seeded fixture against the case's start state. A seed
 that misses it fails the case unrun, and no session is billed.
@@ -60,7 +61,7 @@ user's answer given mid-session is graded only as far as the prompt's stated ans
 
 #### Scenario: The set lists one case per default lifecycle command
 
-- **WHEN** the case directories under `replay/cases/` are listed
+- **WHEN** the directories under `replay/cases/` holding a `case.yaml` are listed
 - **THEN** there are six, and their `prompt.md` files begin with `/orbit:explore`, `/orbit:propose`, `/orbit:apply`,
   `/orbit:review`, `/orbit:address-reviews` and `/orbit:archive`, one each
 
@@ -103,8 +104,9 @@ ends, with every part of a run covered:
 | orbit's skills loaded as a user has them | `orbit init --tools claude` in the fixture, from the build under test |
 | the typed command run as a slash command | `claude -p` given the case's `prompt.md` |
 | the shell able to write orbit's records | an unsandboxed session in the fixture, its tools limited by `--allowedTools "Bash Read Write Edit Glob Grep Skill"` |
-| the user's own settings kept out | `--setting-sources project` and `--no-session-persistence` |
-| a ceiling on cost and length | the case's `--max-turns` and `--max-budget-usd`, and the run's `--max-total-usd`, past which no further session starts |
+| the user's own settings kept out | `--setting-sources project` |
+| no session left in the user's history | `--no-session-persistence` |
+| a ceiling on cost and length | the case's `--max-turns`, `--max-budget-usd` and wall-clock timeout, and the run's `--max-total-usd`: a session starts only when the spend so far plus its `--max-budget-usd` stays within the total |
 | a trace to read | `--output-format stream-json --verbose`, kept beside the fixture |
 | the grade | the case's graders, run in the fixture after the session against what it left and the trace |
 
@@ -112,14 +114,26 @@ This table is DERIVED: a run is a session (its skills, its input, its permission
 each part has its row.
 
 Graded runs SHALL use the model Sal works with, given as `--model`, which the runner requires, and three runs a case by
-default (`--runs`). A cheaper model with one run is for proving the plumbing only, and its record carries the label the
-run was given (`--label`), so a plumbing run is never read as a baseline.
+default (`--runs`). The broken-body run, which shows each case able to fail, SHALL use that model too, one run a case,
+because a stronger model may recover from a broken body that a cheaper one fails on. A cheaper model with one run is
+for proving the plumbing only, and its record carries the label the run was given (`--label`), so a plumbing run is
+never read as a baseline.
+
+A session's spend is the cost its trace's result record reports. A session that ends with no result record (it crashed,
+was killed, or reached its timeout), or whose result record reports no numeric cost, counts its whole
+`--max-budget-usd` as spent and is recorded with that reason, so the run's total never undercounts.
 
 #### Scenario: The run stops starting sessions at its total ceiling
 
-- **WHEN** the cost the run's finished sessions reported reaches its `--max-total-usd`
+- **WHEN** the spend so far plus the next session's `--max-budget-usd` would exceed the run's `--max-total-usd`
 - **THEN** the runner starts no further session, records every case and run it did not start as not run, and exits
   non-zero
+
+#### Scenario: A session with no result record counts its whole budget
+
+- **WHEN** a session ends without a result record in its trace
+- **THEN** its case's whole `--max-budget-usd` counts toward the run's spend, and its run is recorded with no grades and
+  the reason it ended
 
 ### Requirement: Every grader grades what orbit printed or wrote, and is shown failing on a known-bad input
 
@@ -128,7 +142,7 @@ A replay grader SHALL read only what orbit printed or wrote, each source admitte
 | member | covered by |
 |---|---|
 | orbit's printed output in the trace | allowed: the results of the session's shell calls that ran `orbit` |
-| the files orbit wrote in the fixture | allowed |
+| a file in the fixture | allowed only beside a fact orbit's own answer makes true about it: a file's presence cannot tell orbit's write from the session's |
 | orbit's commands run in the fixture after the session | allowed |
 | the command line the session typed | refused: a pattern matching it passes a run whose CLI never answered |
 | the skill body's text, recorded in the trace when the skill loads | refused: the body states the answers it asks for |
@@ -139,7 +153,16 @@ and the fixture holds files. The rows are those sources.
 
 The grader types are `file_exists` (a glob in the fixture), `regex` (over orbit's output in the trace, or over a file
 the fixture holds) and `orbit` (an orbit command run in the fixture with `--json`, and a value its answer must hold). No
-grader type reads the session's tool inputs or the loaded skill's text. Before a grader joins the set, it SHALL be shown
+grader type reads the session's tool inputs or the loaded skill's text. A `file_exists` grader, or a `regex` grader over
+a file, SHALL name (`pairs_with`) a grader of its case whose fact only orbit's answer makes true about the same file: an
+`orbit` grader whose answer reads it (an artifact's status in `orbit status --change <name> --json`, `orbit validate
+<name>`, a gate reading an emit), or a `regex` over orbit's output matching the path orbit printed when it wrote it. A
+file the workflow has the session write itself (a change's proposal, design, specs and tasks) is graded by orbit's
+reading of it, which is what the next command reads.
+
+Named limit — a session that writes a file orbit then accepts as its own (a well-formed emit at a trail path) without
+calling orbit passes an `orbit` grader that reads it. Only a `regex` over orbit's printed path catches that, and a case
+holds one wherever orbit prints the path it writes. Before a grader joins the set, it SHALL be shown
 failing on known-bad input:
 
 - its case's seeded fixture before any session has run. A grader whose fact already holds at the seed (a thing the
@@ -155,6 +178,12 @@ These checks run in `npm test` and bill nothing.
   a known-bad scaffold, against the fixture that scaffold leaves
 - **THEN** every grader fails
 
+#### Scenario: A file grader never stands alone
+
+- **WHEN** a case's graders are read
+- **THEN** every `file_exists` grader and every `regex` grader over a file names in `pairs_with` an `orbit` grader, or a
+  `regex` grader over orbit's output, of the same case
+
 #### Scenario: Every trace grader fails on a trace without orbit's answer
 
 - **WHEN** each case's `regex` graders over orbit's output are run against a trace holding the case's typed command and
@@ -163,8 +192,9 @@ These checks run in `npm test` and bill nothing.
 
 ### Requirement: A run's record names its build, its model, its cost and every fact's grade
 
-Every replay run SHALL write one record under `replay/results/`, a JSON file named for its date, its commit and its
-label. The record names:
+Every replay run SHALL write one record under `replay/results/` (or the directory `--results` names), a JSON file named
+for its UTC start time to the second, its commit and its label (`run` when none is given). The runner refuses to start
+when that name already exists, so no record is ever overwritten. The record names:
 
 - the commit the build came from;
 - the Claude Code version that ran the sessions;
@@ -187,7 +217,8 @@ session. The record is the part kept in this repository, and a baseline's record
 
 ### Requirement: A cut is "no worse" when every fact that passed in all baseline runs passes in all of its runs
 
-The comparison (`replay:compare`) SHALL read a baseline record and a cut's record and classify every fact the two share:
+The comparison (`replay:compare`) SHALL read a baseline record and a cut's record and classify every fact of the cases
+it finds complete (below):
 
 | member | covered by |
 |---|---|
@@ -199,15 +230,26 @@ The comparison (`replay:compare`) SHALL read a baseline record and a cut's recor
 This table is DERIVED: the baseline passed a fact every time, some times or never, and each of those crossed with the
 cut's result is a row.
 
-The cut is "no worse" exactly when no fact is a regression. The report also shows, for each case, the pass rate, turns
-and cost as mean ± standard deviation across runs on each side, so a difference is read beside the spread it sits in.
-It warns, first, when the two records name different models or Claude Code versions, because then a difference may come
-from either. The comparison exits non-zero when it finds a regression.
+Before classifying, the comparison SHALL check that the cut covers what the baseline graded. A case is INCOMPLETE when
+the cut lacks it or one of its baseline graders, or when either side has fewer graded runs of it than that side's run
+count (a run not run, stopped at its start state, or ended with no result record). An incomplete case gets no verdict
+and is listed with what it lacks. A grader only the cut holds is listed as new and not judged.
+
+The cut is "no worse" exactly when every case is complete and no fact is a regression. The report also shows, for each
+case, the pass rate, turns and cost as mean ± standard deviation across runs on each side, so a difference is read
+beside the spread it sits in. It warns, first, when the two records name different models or Claude Code versions,
+because then a difference may come from either. The comparison exits non-zero when it finds a regression or an
+incomplete case.
 
 #### Scenario: A reliable fact failing once is a regression
 
 - **WHEN** a fact passed all three baseline runs and fails one of the cut's three runs
 - **THEN** the comparison lists it as a regression and exits non-zero
+
+#### Scenario: A cut with a run missing is incomplete, not no worse
+
+- **WHEN** the cut's record holds two graded runs of a case whose third was not run, and no fact regressed
+- **THEN** the comparison reports that case incomplete with no verdict, gives no "no worse" result, and exits non-zero
 
 #### Scenario: An unreliable fact is reported, not judged
 

@@ -11,8 +11,8 @@ Case 4 (D-rs-7). The decisions are the exploration's D-rs-2 to D-rs-10 (see expl
 ## What Changes
 
 - **A development-time harness under `replay/`**, never shipped: outside `package.json`'s `files`, so nothing
-  `npm pack`, the release tree, `orbit init` or `orbit update` carries changes, and no command, skill or body is added
-  (R-rop2-2). Sal starts every billed run by hand; `npm test` and CI never start one.
+  `npm pack`, an install from the release tree, `orbit init` or `orbit update` carries changes, and no command, skill or
+  body is added (R-rop2-2). The release tree, being the commit's whole tree, holds `replay/`; what it installs does not. Sal starts every billed run by hand; `npm test` and CI never start one.
 - **Each run tests one commit's build** (D-rs-10). The harness packs that commit (`npm pack`, installed with
   `--omit=dev --ignore-scripts`), installs orbit's skills into each fixture from it (`orbit init --tools claude`), and
   puts a shim first on the session's `PATH`. The shim walks up to the fixture's `.orbit-cli/` and exits 127 when the copy
@@ -25,22 +25,25 @@ Case 4 (D-rs-7). The decisions are the exploration's D-rs-2 to D-rs-10 (see expl
   - flags: `--setting-sources project`, a fixed tool allow-list, `--max-turns`, `--max-budget-usd` and
     `--output-format stream-json --verbose`;
   - grading happens afterwards, by orbit's own commands in the fixture and by reading the trace;
-  - it stops starting sessions once the run's total cost ceiling, a number Sal types, is reached.
+  - it starts a session only when the spend so far plus that session's budget fits under the run's total cost ceiling,
+    a number Sal types. A session that crashes, hangs past its timeout or leaves no result counts its whole budget.
 - **Graders read only what orbit printed or wrote** (D-rs-8): never the command the session typed, nor the skill body's
-  own text. Before a grader joins the set, it is shown failing on input where its fact is false: the case's unrun seed,
-  and a trace holding the typed command and the loaded body but no answer from orbit. These checks run free in
-  `npm test`.
+  own text. A file's presence never grades alone, since the session can write a file by hand: each file fact is paired
+  with one only orbit's answer makes true (orbit's reading of the file, or the path orbit printed when it wrote it).
+  Before a grader joins the set, it is shown failing on input where its fact is false: the case's unrun seed, and a
+  trace holding the typed command and the loaded body but no answer from orbit. These checks run free in `npm test`.
 - **A run's record** gives, for each case and run, each fact's grade plus the run's turns, cost and duration. It also
   names the commit, the Claude Code version, the model the session reported and the skills the session loaded. A
   comparison
   (`npm run replay:compare`) reads two records:
   - a fact the baseline passed every time and the cut fails even once is a regression;
   - a fact the baseline passed only sometimes is reported with its spread, not judged;
+  - a case the cut did not fully grade (a run not run, a grader missing) is incomplete: no verdict, and a non-zero exit;
   - pass rate, turns and cost per case are shown as mean ± standard deviation (D-rs-9).
 - **Graded runs** use the model Sal works with, three runs a case, under a cost ceiling. Cheap one-run sessions are only
   for proving the plumbing (D-rs-4).
 - **A recorded baseline**: one graded run on the bodies as phase 1 left them, with its cost. Also, each case is run once
-  on a deliberately broken body and seen to fail (the stage's exit criteria). Each is a billed run Sal starts.
+  on a deliberately broken body, on Sal's model, and seen to fail (the stage's exit criteria). Each is a billed run Sal starts.
 - **`claude plugin validate --strict` in CI** over a freshly generated skill surface, beside the size report
   (R-rop2-5, G2). It fails the build when validation fails.
 
@@ -63,8 +66,8 @@ Case 4 (D-rs-7). The decisions are the exploration's D-rs-2 to D-rs-10 (see expl
 
 ## Impact
 
-- New: `replay/` (the runner, the shim, the fixture builder, the graders, the comparison, six cases with their seeds, a
-  README) and `test/replay/` (the free grader and comparison checks); the `replay` and `replay:compare` npm scripts.
+- New: `replay/` (the runner, the shim, the fixture builder, the graders, the comparison, six cases with their seeds,
+  the shared fixture project, a README) and `test/replay/` (the free grader and comparison checks); the `replay` and `replay:compare` npm scripts.
   Run records are kept under `replay/results/`. Fixtures and traces live in a work directory outside any repository,
   so no parent `CLAUDE.md` reaches a session.
 - CI: one step in `.github/workflows/ci.yml` that generates the skill surface in a temporary project and runs a pinned

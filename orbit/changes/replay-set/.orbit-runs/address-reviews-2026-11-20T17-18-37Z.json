@@ -1,0 +1,199 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-20T17:18:37Z",
+  "change": "replay-set",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/replay-set/.orbit-runs/external-proposal-2026-11-20T17-12-19Z.md",
+  "source_command": null,
+  "source_token": "2026-11-20T17-12-19Z",
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-6",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 6,
+    "suggestion": 1
+  },
+  "pushback_verification": "All seven verified against current state after walk 2026-11-20T17-18-05Z; five stale by convergence, one partly converged and finished here, one new.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 5,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Incomplete comparisons can report a cut as no worse",
+      "marker_source": "external",
+      "file": "orbit/changes/replay-set/design.md",
+      "line": 215,
+      "classification": "stale",
+      "action": "Converged with the fresh pass's finding 'The comparison does not say how a run that was not run, or failed at its start state, counts', resolved in walk 2026-11-20T17-18-05Z; no further edit.",
+      "evidence": "walk 2026-11-20T17-18-05Z resolved 'The comparison does not say how a run that was not run, or failed at its start state, counts'. Every sub-point is covered: a missing case or baseline grader, or a run not graded, makes the case INCOMPLETE with a non-zero exit (spec comparison requirement, design D9).",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The total cost ceiling does not cap total cost",
+      "marker_source": "external",
+      "file": "orbit/changes/replay-set/design.md",
+      "line": 192,
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "action": "Converged in part with walk 2026-11-20T17-18-05Z's fix of the fresh pass's ceiling finding (budget reservation; a missing result record counts the whole budget). This finding's remaining sub-point, a malformed cost report, is closed here: a result record with no numeric cost counts the whole budget too (spec runner requirement, design D7, task 1.5).",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/replay-set/design.md",
+          "orbit/changes/replay-set/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/replay-set/specs/orbit-replay-set/spec.md",
+            "text": "or whose result record reports no numeric cost"
+          },
+          {
+            "path": "orbit/changes/replay-set/design.md",
+            "text": "or one with no numeric `total_cost_usd`"
+          }
+        ],
+        "searched": [
+          "total_cost_usd",
+          "result record",
+          "malformed"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "The declared graders cannot verify the fixture test passes",
+      "marker_source": "external",
+      "file": "orbit/changes/replay-set/design.md",
+      "line": 140,
+      "classification": "stale",
+      "action": "Converged with the fresh pass's finding 'The apply case's 'the project's test passes' fact has no grader type that can grade it', resolved in walk 2026-11-20T17-18-05Z; no further edit.",
+      "evidence": "walk 2026-11-20T17-18-05Z resolved 'The apply case's 'the project's test passes' fact has no grader type that can grade it'. Resolved by dropping the fact (option B, settled under R-crc-3): the apply case is graded on orbit's facts only, so no grader is owed for the project's test.",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The free fixture checks point the shim at the wrong layout",
+      "marker_source": "external",
+      "file": "orbit/changes/replay-set/design.md",
+      "line": 161,
+      "classification": "stale",
+      "action": "Converged with the fresh pass's finding 'The free checks link .orbit-cli to the repository root, where the shim finds no orbit.js', resolved in walk 2026-11-20T17-18-05Z; no further edit.",
+      "evidence": "walk 2026-11-20T17-18-05Z resolved 'The free checks link .orbit-cli to the repository root, where the shim finds no orbit.js'. Both sub-points are covered: the installed-package layout via a symlinked .orbit-cli/node_modules/orbit-spec, and a check that a seed command reaches that build (design D6, task 3.2).",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "File graders cannot establish that orbit wrote the evidence",
+      "marker_source": "external",
+      "file": "orbit/changes/replay-set/specs/orbit-replay-set/spec.md",
+      "line": 124,
+      "classification": "stale",
+      "action": "Converged with the fresh pass's finding 'A file_exists grader cannot tell a file orbit wrote from one the session wrote by hand', resolved in walk 2026-11-20T17-18-05Z; no further edit.",
+      "evidence": "walk 2026-11-20T17-18-05Z resolved 'A file_exists grader cannot tell a file orbit wrote from one the session wrote by hand'. Both sub-points are covered: each file fact is paired (pairs_with) with one only orbit's answer makes true, and artifacts the session writes itself are graded by orbit's reading of them (spec grader requirement).",
+      "outcome": "stale"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The run record can overwrite earlier evidence",
+      "marker_source": "external",
+      "file": "orbit/changes/replay-set/design.md",
+      "line": 195,
+      "classification": "stale",
+      "action": "Converged with the fresh pass's finding 'The per-commit cache sits in a per-run directory, and records can overwrite each other', resolved in walk 2026-11-20T17-18-05Z; no further edit.",
+      "evidence": "walk 2026-11-20T17-18-05Z resolved 'The per-commit cache sits in a per-run directory, and records can overwrite each other'. Both sub-points are covered: records are named by UTC time to the second, and the runner refuses to start when the name exists (spec record requirement, design D7).",
+      "outcome": "stale"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Clarify the case-directory count",
+      "marker_source": "external",
+      "file": "orbit/changes/replay-set/tasks.md",
+      "line": 55,
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "action": "A case is a directory under replay/cases/ holding a case.yaml (spec case requirement and its listing scenario); the shared fixture project moves to replay/project/, outside cases/ (design D1 and D5, tasks 1.1, 2.1 and 3.2, the proposal).",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/replay-set/specs/orbit-replay-set/spec.md",
+          "orbit/changes/replay-set/design.md",
+          "orbit/changes/replay-set/proposal.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "replay/cases/_project/"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/replay-set/tasks.md",
+            "text": "`replay/project/`"
+          },
+          {
+            "path": "orbit/changes/replay-set/specs/orbit-replay-set/spec.md",
+            "text": "holding a `case.yaml`"
+          }
+        ],
+        "searched": [
+          "_project",
+          "case directories",
+          "cases/"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Seven findings of the external return walked: five converged with the fresh pass's findings and were closed as stale against walk 2026-11-20T17-18-05Z, each checked to cover every sub-point; the ceiling finding's extra sub-point (a malformed cost report) and the case-directory suggestion were resolved here.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal replay-set",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "5599e338d8dba6dba34483178e98f97e6eaa773b",
+      "frozen": false,
+      "evidence": {
+        "files": [],
+        "share": null,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ],
+  "ripple_misses": 0
+}

@@ -67,7 +67,8 @@ Constraints:
 - `run.mjs` (the runner) and `compare.mjs` (the comparison);
 - `lib/` (fixture building, trace reading, graders, records);
 - `shim/orbit` (the walk-up shim, from `sketches/spike-files/orbit-shim.sh`);
-- `cases/<id>/` (the six cases);
+- `cases/<id>/` (the six cases: a case is a directory holding `case.yaml`);
+- `project/` (the small project every fixture starts from, outside `cases/`);
 - `results/` (committed records);
 - `README.md` (how to run it, what it costs, how to add a case).
 
@@ -82,11 +83,14 @@ would need a build step that `npm test` does not run for `scripts/`.
 
 The runner resolves `--ref` (default `HEAD`) to a commit, then:
 
-1. adds a detached `git worktree` at that commit in the work directory;
+1. adds a detached `git worktree` at that commit under `<os.tmpdir()>/orbit-replay/build/`;
 2. runs `npm ci`, `npm run build` and `npm pack` there;
-3. installs the pack into `<workdir>/cli/` with `npm install <tgz> --omit=dev --ignore-scripts`.
+3. installs the pack into `<os.tmpdir()>/orbit-replay/cli/<sha>/` with `npm install <tgz> --omit=dev --ignore-scripts`;
+4. removes the build worktree (`git worktree remove --force`), so no run leaves one registered in this repository.
 
-The result is cached by commit, so a second run on the same commit skips the build. Each fixture's `.orbit-cli` is a
+The installed CLI is cached by commit outside every run's work directory, so a second run on the same commit skips the
+build. `--cli <dir>` skips the build entirely and uses an already-installed CLI directory of the same layout: the free
+checks' seam (decision 6), whose record names that directory in place of a commit and is never a baseline. Each fixture's `.orbit-cli` is a
 symlink to that directory, which the spike's walk-up shim (`.orbit-cli/node_modules/orbit-spec/bin/orbit.js`, exit 127
 when absent) finds. A dirty working tree is irrelevant to a run, because a run reads only the commit: uncommitted body
 edits are never graded, so a cut is graded only once it is committed, and the runner prints the commit it built.
@@ -101,7 +105,8 @@ orbit-spec would hand every session this repository's CLAUDE.md and `.claude/` s
 - has a `CLAUDE.md` or a `.claude/` directory in any ancestor below the filesystem root, other than the user's home
   directory's own `.claude/`.
 
-Records are written back into `replay/results/` in the repository; the work directory is not cleaned, so its traces stay
+Records are written back into `replay/results/` in the repository (`--results <dir>` overrides it, so the free checks
+write into a temporary directory and never into the tree); the work directory is not cleaned, so its traces stay
 readable after a run (the record names it).
 
 ### 4. A case is `prompt.md`, `case.yaml`, `scaffold.sh` and `graders/` (D-rs-2, D-rs-7)
@@ -129,7 +134,7 @@ A fixture is built as follows: `git init`, a fixed author, `.gitignore` holding 
 
 ### 5. The six cases share one small project and chain their seeds by construction (D-rs-3)
 
-The fixtures are one tiny project: a Node script with one baseline capability spec and a test. Each case's seed is the
+The fixtures are one tiny project, `replay/project/`: a Node script and one baseline capability spec. Each case's seed is the
 state the previous command leaves, rebuilt by its own scaffold rather than taken from a previous run. That way a case
 never depends on another's luck (D-rs-2's FALSIFY).
 
@@ -137,13 +142,21 @@ never depends on another's luck (D-rs-2's FALSIFY).
 |---|---|---|---|
 | `explore` | `/orbit:explore <name>` with the topic and "stop after the premise" | project only | `orbit/explore/<name>/explore.md`; an explore emit in its trail |
 | `propose` | `/orbit:propose <name>` | a staged exploration whose decisions are facts and scope only, so no Mechanism entry is owed | the change's four artifacts; `orbit validate <name>` passes; the staging directory moved; a propose emit |
-| `apply` | `/orbit:apply <name>` | a proposed change whose proposal review and walk are recorded (apply gate passed) | every task checked; the project's test passes; an apply emit; no review emit (no-chaining, a must-not fact with its own known-bad scaffold) |
-| `review` | `/orbit:review <name>` | an applied change | a system-mode review emit carrying a verdict; the gate reading it |
-| `walk` | `/orbit:address-reviews <name>` | a system review with obvious-fix findings only | a walk emit closing every finding; the archive gate passed |
-| `archive` | `/orbit:archive <name>` | a walked change, every gate passed | the change under `orbit/changes/archive/<date>-<name>/`; the delta synced into `orbit/specs/`; an archive emit |
+| `apply` | `/orbit:apply <name>` | a proposed change whose `review-proposal` gate has passed: a fresh proposal pass, its walk, and a later in-context proposal pass with no substantive findings | every task checked (the `apply` gate passed); an apply emit; no review emit (no-chaining, a must-not fact with its own known-bad scaffold) |
+| `review` | `/orbit:review <name>` | an applied change (the `apply` gate passed) holding a fresh system pass and its walk, so the typed review fills `review-system`'s in-context slot | an in-context system review emit; the `review-system` gate reading it |
+| `walk` | `/orbit:address-reviews <name>` | the `review` seed plus an in-context system pass whose findings are obvious fixes only | a walk emit closing every finding; the `review-system` gate passed |
+| `archive` | `/orbit:archive <name>` | the walked state, `review-system` passed | the change under `orbit/changes/archive/<date>-<name>/`; the delta synced into `orbit/specs/`; an archive emit |
+
+Each seed is written as the sequence of passes and walks the engine's default cadence reads. Both reviewed gates
+declare `[invoked, in-context]` (`schemas/spec-driven/schema.yaml`): the first slot needs a fresh or external pass, and
+the in-context slot needs a pass later than the walk of that pass's findings. `apply` is a tracked gate, passed only
+when every task is checked (`src/core/artifact-graph/gates.ts`). There is no gate named `archive`: `review-system`
+guards it. Every case's `start` checks name the gate states its seed must reach in these ids, so a seed that misses one
+fails in the free checks before any spend.
 
 The exact grader fields (emit filename globs, JSON paths in `orbit status --change <name> --json`) are read from the
-engine when each case is written (read-before-reference), not taken from this table.
+engine when each case is written (read-before-reference), not taken from this table. The apply case grades orbit's
+facts only: whether the project's own code works is not one of them (D-rs-8; see Alternatives).
 
 ### 6. Three grader types, none able to read a tool input or a skill's text (D-rs-8)
 
@@ -156,11 +169,18 @@ engine when each case is written (read-before-reference), not taken from this ta
   into its answer, compared with `equals`, `matches` or `exists`.
 
 A grader may name `negative_scaffold`: a script that makes its fact false on top of the seed, for facts that already hold
-at the seed (the apply case's "no review emit").
+at the seed (the apply case's "no review emit"). A `file_exists` grader, or a `regex` over a file, names `pairs_with`:
+the id of a grader of its case whose fact only orbit's answer makes true about the same file (an `orbit` grader reading
+it, or a `regex` over `orbit_output` matching the path orbit printed). A file a session can write by hand never grades
+alone: that was the spike's Case 1 (D-rs-11).
 
-The free checks in `test/replay/` build each case's seeded fixture with the repository's own build. There `.orbit-cli`
-links to the repository root, whose `dist/` the suite's setup builds, so no pack is needed. The checks then assert:
+The free checks in `test/replay/` build each case's seeded fixture with the repository's own build, laid out as the
+installed copy is: a temporary `.orbit-cli/node_modules/orbit-spec` symlinked to the repository root, whose `dist/` the
+suite's setup builds. Node resolves the symlink, so the repository's own `node_modules` serves the dependencies, and the
+shim finds `.orbit-cli/node_modules/orbit-spec/bin/orbit.js` as it does in a billed run. The checks then assert:
 
+- a seed command reaches that build (it answers `orbit decisions status`, which the stale global install lacks);
+- every file grader names a `pairs_with` grader of the kind above;
 - every grader fails on the seed (or on its negative scaffold);
 - every `orbit_output` grader fails on a synthetic trace holding the typed command and the skill's body as a loaded
   Skill result, but no `orbit` result;
@@ -171,7 +191,7 @@ The case's broken-body run (decision 8) is the billed check that the case as a w
 ### 7. The runner, its limits and its record (D-rs-7, D-rs-4)
 
 `npm run replay -- --model <m> --max-total-usd <usd> [--ref <commit>] [--runs 3] [--cases a,b] [--label <l>] [--broken]
-[--workdir <dir>]` refuses to start without `--model` or `--max-total-usd`. In order, it:
+[--workdir <dir>] [--cli <dir>] [--results <dir>]` refuses to start without `--model` or `--max-total-usd`. In order, it:
 
 1. checks the work directory (decision 3);
 2. builds the CLI (decision 2);
@@ -189,11 +209,15 @@ The case's broken-body run (decision 8) is the billed check that the case as a w
 
 The trace's `system`/`init` record gives the model and the loaded skills, and its `result` record gives the cost
 (`total_cost_usd`), turns, duration and how the session ended. Cases run in sequence: a run is a handful of sessions, and
-sequence keeps the spend predictable against the ceiling. Before each session the runner compares the spend so far with
-`--max-total-usd`. When the ceiling is reached it records the rest as not run and exits non-zero.
+sequence keeps the spend predictable against the ceiling. Before each session the runner RESERVES the case's
+`max_budget_usd`: it starts the session only when the spend so far plus that budget stays within `--max-total-usd`, so
+the ceiling holds even if the session spends its whole budget. Otherwise it records the rest as not run and exits
+non-zero. Each session runs under the case's `timeout_minutes` (default 30); at the timeout the runner kills it. A
+session whose trace has no `result` record (a crash, a kill, the timeout), or one with no numeric `total_cost_usd`,
+counts its whole `max_budget_usd` as spent and is recorded with that reason and no grades.
 
-The record goes to `replay/results/<YYYY-MM-DD>-<sha7>-<label>.json`, with the fields `orbit-replay-set`'s record
-requirement lists. `--broken` applies each case's `break` to the installed skill file after `orbit init`, and the label
+The record goes to `replay/results/<YYYY-MM-DDTHH-MM-SSZ>-<sha7>-<label>.json` (label `run` by default), with the
+fields `orbit-replay-set`'s record requirement lists. The runner refuses to start when that file already exists. `--broken` applies each case's `break` to the installed skill file after `orbit init`, and the label
 records it.
 
 ### 8. The billed runs, in order, each started by Sal
@@ -202,20 +226,25 @@ Three billed runs close the stage. Each is a `(User-validation)` task, so apply 
 reads them:
 
 1. **Plumbing:** `--model sonnet --runs 1 --label plumbing`, all six cases, about $1, proves the runner end to end.
-2. **Broken bodies:** `--model sonnet --runs 1 --broken --label broken`. Each case's named grader fails, which is the exit
-   criterion that each case is shown able to fail on a deliberately broken body.
+2. **Broken bodies:** `--model <Sal's model> --runs 1 --broken --label broken`, its ceiling sized from the plumbing
+   run's costs. Each case's named grader fails, which is the exit criterion that each case is shown able to fail on a
+   deliberately broken body.
 3. **Baseline:** Sal's model, three runs a case, on the commit that holds this change's harness and phase 1's bodies
    unchanged (`--label baseline`). Its record is committed, and its cost goes into the stage's `Shipped as`.
 
-The broken-body run uses the cheap model because what it proves is that the graders catch a missing step, which does not
-depend on the model's quality. A grader that fails to fail there is repaired before the baseline.
+The broken-body run uses Sal's model (Sal's ruling at the proposal walk, which keeps D-rs-4 whole): a stronger model may
+recover from a deleted section by doing the step anyway, and a case that cannot detect a cut on the model that grades
+the cuts must be found before the baseline, not after. A grader that fails to fail there is repaired, or its case's
+`break` moved to a section the model cannot recover, before the baseline.
 
 ### 9. The comparison (D-rs-9)
 
-`npm run replay:compare -- <baseline.json> <cut.json>` classifies every (case, grader) fact present in both records by
-D-rs-9's four rows and prints, per case, the pass rate, turns and cost as mean ± standard deviation on each side. It warns
-first when the records' models or Claude Code versions differ, and exits non-zero on any regression. A fact present on
-only one side is listed as unmatched and not judged. The module exports its classifier so `test/replay/` checks the four
+`npm run replay:compare -- <baseline.json> <cut.json>` first checks completeness: a case the cut lacks, a baseline grader
+it lacks, or a case with fewer graded runs than its side's run count makes that case INCOMPLETE, listed with what it
+lacks and given no verdict. It then classifies every (case, grader) fact of the complete cases by D-rs-9's four rows
+and prints, per case, the pass rate, turns and cost as mean ± standard deviation on each side. It warns first when the
+records' models or Claude Code versions differ. It exits non-zero on any regression or any incomplete case, so a cut the
+ceiling cut short is never reported "no worse". A grader only the cut holds is listed as new and not judged. The module exports its classifier so `test/replay/` checks the four
 rows and the exit code without a billed run.
 
 ### 10. `claude plugin validate --strict` in CI over a freshly generated surface (R-rop2-5)
@@ -250,7 +279,10 @@ judges, and a warning that only prints would be ignored.
 - [The `prompt.md` answers a question the body would have asked, so a cut to that question's text goes ungraded] →
   Stated as the six-case requirement's named limit. A cut to such text gets its own case (D-rs-3).
 - [A billed run costs more than expected on Sal's model] → `--max-total-usd` is required, each case carries its own
-  `--max-budget-usd`, and the plumbing run's recorded costs on Sonnet size the baseline's ceiling before Sal types it.
+  `--max-budget-usd`, and the plumbing run's recorded costs on Sonnet size the broken-body run's and the baseline's
+  ceilings before Sal types them.
+- [A session hand-writes a file orbit then accepts as its own, without calling orbit] → Stated as the grader
+  requirement's named limit; a case holds a `regex` over orbit's printed path wherever orbit prints the path it writes.
 - [The pinned Claude Code in CI ages] → It is pinned on purpose so CI is reproducible. Raising it is a one-line edit made
   when a newer validator is wanted.
 
@@ -266,8 +298,12 @@ judges, and a warning that only prints would be ignored.
 - **Seeds taken from a previous run's fixture**: cheaper to author, but a case would inherit an earlier session's luck
   and its seed would differ run to run. Scaffolds built with orbit's own commands give the same seed every time
   (decision 5).
-- **The broken-body runs on Sal's model**: they test the graders, not a body's quality, so the cheap model is enough
-  (decision 8).
+- **The broken-body runs on a cheaper model** (Sal's ruling at the proposal walk: Sal's model instead): cheaper, but a
+  stronger model may recover from a broken body that a cheaper one fails on, so the case would not be shown able to fail
+  on the model that grades the cuts (decision 8).
+- **A `command` grader running the fixture project's test** (settled under R-crc-3 at the proposal walk): it would admit
+  a source outside D-rs-8's table, what orbit printed or wrote, and R-rop-15's "graded by orbit's computed facts". The
+  apply case is graded on orbit's facts instead: every task checked, an apply emit, no review emit.
 
 ## Migration Plan
 
