@@ -9,6 +9,9 @@ start:
     path: gates[id=apply].state
     equals: ready
 break:
+  # The emit step cut from the body AND its reference: the 2026-11-20 broken run's session read
+  # references/run-summary-emit.md after the body section was gone, and emitted anyway.
   file: .claude/skills/orbit-apply-change/SKILL.md
   section: "## Run-summary emit (chunk-aware"
+  remove: [references/run-summary-emit.md]
   grader: apply-emit-printed

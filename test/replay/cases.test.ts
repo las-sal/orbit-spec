@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
-import { CASES_DIR, LIB_DIR, buildFixture, deleteSection, fixtureEnv, listCases, loadCase, newestTrailToken } from '../../replay/lib/fixture.mjs';
+import { CASES_DIR, LIB_DIR, applyBreak, breakSections, buildFixture, fixtureEnv, listCases, loadCase, newestTrailToken } from '../../replay/lib/fixture.mjs';
 import { checkStart, filePathOf, grade, gradeAll, isFileGrader, isOrbitFact, loadGraders, runOrbit } from '../../replay/lib/graders.mjs';
 import { commandRunsOrbit, readTraceRecords } from '../../replay/lib/trace.mjs';
 
@@ -87,13 +87,41 @@ describe('replay cases — the set', () => {
     }
   });
 
-  it("each case's break deletes exactly one section of its installed skill file", () => {
+  it("each case's break deletes each of its sections, and every reference file it removes, from the installed skill", () => {
     for (const [id, c] of Object.entries(cases)) {
-      const file = path.join(seeds[id], c.break.file);
+      // A copy of the seed's installed skills, so the shared seed is never broken.
+      const copy = fs.mkdtempSync(path.join(root, `break-${id}-`));
+      fs.cpSync(path.join(seeds[id], '.claude'), path.join(copy, '.claude'), { recursive: true });
+      const file = path.join(copy, c.break.file);
       const before = fs.readFileSync(file, 'utf8');
-      const after = deleteSection(before, c.break.section);
+      const removes: string[] = c.break.remove ?? [];
+      for (const rel of removes) expect(fs.existsSync(path.join(path.dirname(file), rel)), `${id} ${rel}`).toBe(true);
+      const result = applyBreak(copy, c.break);
+      const after = fs.readFileSync(file, 'utf8');
       expect(after.length, id).toBeLessThan(before.length);
-      expect(after, id).not.toContain(c.break.section);
+      // The cut takes the emit step with it: fewer `orbit emit` lines than the body held (the
+      // 2026-11-20 walk break cut the report section and left the emit command in place).
+      const emits = (t: string) => (t.match(/orbit emit /g) ?? []).length;
+      expect(emits(after), `${id} orbit emit lines`).toBeLessThan(emits(before));
+      for (const heading of breakSections(c.break)) {
+        expect(before.split('\n').filter((l) => l.startsWith(heading)), `${id} ${heading}`).toHaveLength(1);
+        expect(after, `${id} ${heading}`).not.toContain(heading);
+      }
+      expect(result.removed, id).toEqual(removes);
+      for (const rel of removes) expect(fs.existsSync(path.join(path.dirname(file), rel)), `${id} ${rel} removed`).toBe(false);
+    }
+  });
+
+  it('a break naming a reference file the skill does not install refuses, so a break cannot silently break nothing', () => {
+    const copy = fs.mkdtempSync(path.join(root, 'break-missing-'));
+    fs.cpSync(path.join(seeds.apply, '.claude'), path.join(copy, '.claude'), { recursive: true });
+    expect(() => applyBreak(copy, { ...cases.apply.break, remove: ['references/no-such-file.md'] })).toThrow(/break remove: no references\/no-such-file\.md/);
+  });
+
+  it("every case whose skill installs an emit reference removes it in its break", () => {
+    for (const [id, c] of Object.entries(cases)) {
+      const ref = path.join(path.dirname(path.join(seeds[id], c.break.file)), 'references', 'run-summary-emit.md');
+      if (fs.existsSync(ref)) expect(c.break.remove ?? [], id).toContain('references/run-summary-emit.md');
     }
   });
 

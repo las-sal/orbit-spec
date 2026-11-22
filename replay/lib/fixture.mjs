@@ -86,13 +86,31 @@ export function deleteSection(text, heading) {
   return [...lines.slice(0, start), ...lines.slice(end)].join('\n');
 }
 
-/** Applies a case's `break` ({file, section}) to the fixture's installed skill file. */
+/** A break's sections, one heading or a list of them. */
+export function breakSections(brk) {
+  return Array.isArray(brk.section) ? brk.section : [brk.section];
+}
+
+/**
+ * Applies a case's `break` to the fixture's installed skill: `file`, the skill file; `section`, a
+ * heading (or a list) whose section is deleted; `remove`, reference files deleted beside it, each
+ * relative to the skill file's directory, so a step cut from the body is not still readable in the
+ * reference it pointed to. A heading or a file that is not there throws: a break must break.
+ */
 export function applyBreak(fixtureDir, brk) {
   const file = path.join(fixtureDir, brk.file);
   const before = fs.readFileSync(file, 'utf8');
-  const after = deleteSection(before, brk.section);
+  let after = before;
+  for (const heading of breakSections(brk)) after = deleteSection(after, heading);
   fs.writeFileSync(file, after);
-  return { removed_chars: before.length - after.length };
+  const removed = [];
+  for (const rel of brk.remove ?? []) {
+    const ref = path.join(path.dirname(file), rel);
+    if (!fs.existsSync(ref)) throw new Error(`break remove: no ${rel} beside ${brk.file}`);
+    fs.rmSync(ref);
+    removed.push(rel);
+  }
+  return { removed_chars: before.length - after.length, removed };
 }
 
 const TOKEN = /\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}Z/;
@@ -165,7 +183,7 @@ export async function buildFixture({
   if (brk) {
     applyBreak(dir, brk);
     sh('git', ['add', '-A'], dir, 'git add');
-    sh('git', ['commit', '-q', '-m', `fixture: break ${brk.section}`], dir, 'git commit');
+    sh('git', ['commit', '-q', '-m', `fixture: break ${breakSections(brk).join(' + ')}`], dir, 'git commit');
   }
   await waitPastTrail(dir);
   return dir;

@@ -9,6 +9,8 @@ start:
     path: changes
     equals: []
 break:
+  # The emit step cut from the body AND its reference (the 2026-11-20 broken run read it).
   file: .claude/skills/orbit-propose/SKILL.md
   section: "## Run-summary emit (one-shot at command completion"
+  remove: [references/run-summary-emit.md]
   grader: propose-emit-printed

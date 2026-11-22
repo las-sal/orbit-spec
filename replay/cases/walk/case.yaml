@@ -6,6 +6,9 @@ start:
     path: gates[id=review-system].reason
     matches: unresolved substantive findings
 break:
+  # The persist step (### 6 — the 2026-11-20 run cut ### 5, the report, by mistake) AND the emit and
+  # payload-schema references (that run's session read both).
   file: .claude/skills/orbit-address-reviews/SKILL.md
-  section: "### 5. Report — emit the resolution log"
+  section: "### 6. Persist the run summary"
+  remove: [references/run-summary-emit.md, references/run-summary-schema.md]
   grader: walk-emit-printed

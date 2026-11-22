@@ -9,6 +9,9 @@ start:
     path: gates[id=apply].state
     equals: passed
 break:
+  # The run-summary step cut from the body AND its emit and summary-schema references (the
+  # 2026-11-20 broken run read both).
   file: .claude/skills/orbit-archive-change/SKILL.md
   section: "## Step 5.5 — Archive run summary"
+  remove: [references/run-summary-emit.md, references/archive-summary-schema.md]
   grader: archive-emit-printed

@@ -123,7 +123,11 @@ shell write:
   - `start`: a list of `orbit`-type checks the seeded fixture must pass before the session is billed, for example the
     change's gate state;
   - `break`: the deliberately broken body for the case's broken-body run, naming the installed skill file, the section
-    to delete (a heading anchor to the next heading of the same level) and the grader expected to fail.
+    to delete (a heading anchor to the next heading of the same level, or a list of them), the reference files to
+    delete beside it (`remove`, relative to the skill file) and the grader expected to fail. A step cut from a body is
+    cut from the reference it points to as well: the first broken-body run (2026-11-20, `claude-opus-5-5`) caught one
+    case of six, because the other five sessions read the emit step from the still-installed
+    `references/run-summary-emit.md`. A heading or a file the installed skill does not hold refuses the run.
 - **`scaffold.sh`** seeds the fixture after `orbit init --tools claude`. It copies the case's `seed/` files and runs orbit's
   own commands through the shim (`orbit new change`, `orbit emit … --payload`), then commits, so the seeded trail and gate
   states are what the engine computes and never hand-written JSON that the engine would read differently.

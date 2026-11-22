@@ -9,6 +9,11 @@ start:
     path: gates[id=review-system].reason
     matches: "'in-context' has no fresh pass"
 break:
+  # The persist step and the fresh-dispatch section (which also names `orbit emit review`) cut from
+  # the body, AND the emit and payload-schema references (the 2026-11-20 broken run read both).
   file: .claude/skills/orbit-review/SKILL.md
-  section: "### 9. Persist via the emit surface"
+  section:
+    - "### 9. Persist via the emit surface"
+    - "### Dispatching a fresh pass"
+  remove: [references/run-summary-emit.md, references/run-summary-schema.md]
   grader: review-emit-printed
