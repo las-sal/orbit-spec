@@ -142,10 +142,14 @@ paired with a fact orbit's answer makes true (`pairs_with`).
   propose, review, walk — so a $3 ceiling runs apply alone. At $8, review starts only if the first four cases spent at
   most $4 together, and walk only if the first five spent at most $5.) Read one trace's `system`/`init` record: whether it
   lists `skills` and which (Claude Code's bundled skills or orbit's only); the comparison's skills warning rests on it
-- [ ] 5.3 (User-validation) Sal starts the broken-body run on Sal's model, one run a case, with a ceiling sized from
+- [x] 5.3 (User-validation) Sal starts the broken-body run on Sal's model, one run a case, with a ceiling sized from
   5.2's costs: `npm run replay -- --model <Sal's model> --runs 1 --broken --max-total-usd <usd> --label broken`. In
   every case its `break`'s named grader fails. A grader that does not fail is repaired (or its `break` moved to a step
-  the model cannot recover) and the case re-run before 5.4
+  the model cannot recover) and the case re-run before 5.4. Done 2026-11-20 to 2026-11-23 over three runs on
+  `claude-opus-5-5` ($5.89): explore failed with its emit section cut; apply and propose with the section and its
+  reference cut; review, walk and archive only with their whole body cut, since their sessions rebuild the emit step
+  from orbit's help, its write-gate refusals and the seeded trail. Those three cases catch a lost workflow, not a lost
+  emit section (evidence for the `inventory` stage)
 - [ ] 5.4 (User-validation) Sal starts the baseline on Sal's model, three runs a case, with a ceiling sized from 5.2's
   costs: `npm run replay -- --model <Sal's model> --max-total-usd <usd> --label baseline`. Its record is committed under
   `replay/results/`, and its total cost goes into the stage's `Shipped as`

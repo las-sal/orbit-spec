@@ -34,7 +34,7 @@ const cases: Record<string, Case> = {};
 const graders: Record<string, Grader[]> = {};
 const seeds: Record<string, string> = {};
 
-async function seed(id: string, name: string, extra: { extraScaffolds?: string[] } = {}) {
+async function seed(id: string, name: string, extra: { extraScaffolds?: string[]; brk?: Record<string, unknown> } = {}) {
   return buildFixture({ dir: path.join(root, name), cliDir, caseDir: path.join(CASES_DIR, id), ...extra });
 }
 
@@ -141,6 +141,20 @@ describe('replay cases — the set', () => {
       expect(after.split('\n---\n')[1] ?? '', id).toBe('');
     }
   });
+
+  it("a broken fixture's history does not tell the session a break happened", async () => {
+    const git = (dir: string, args: string[]) => spawnSync('git', args, { cwd: dir, encoding: 'utf8' }).stdout;
+    const broken = await seed('review', 'review-broken-history', { brk: cases.review.break });
+    for (const dir of [broken, seeds.walk]) {
+      const subjects = git(dir, ['log', '--format=%s']).trim().split('\n');
+      expect(subjects.filter((m) => /break|fixture|seed|replay/i.test(m)), dir).toEqual([]);
+      expect(git(dir, ['status', '--porcelain']).trim(), dir).toBe('');
+    }
+    // The broken body is the committed state from the first commit: no later commit touches .claude/.
+    expect(git(broken, ['log', '--format=%h', '--', '.claude']).trim().split('\n')).toHaveLength(1);
+    const body = fs.readFileSync(path.join(broken, cases.review.break.file), 'utf8');
+    expect(body.split('\n---\n')[1] ?? '').toBe('');
+  }, 60_000);
 
   it('a seed command reaches the build under test, not the stale global install', () => {
     const r = runOrbit(seeds.explore, ['decisions', 'status', '--json']);

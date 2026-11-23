@@ -161,8 +161,12 @@ export async function waitPastTrail(fixtureDir, maxMs = 30_000) {
 }
 
 /**
- * Builds one fixture. `scaffolds` is the list of extra scripts run after the case's own (a known-bad
- * scaffold). Returns the fixture directory.
+ * Builds one fixture. `extraScaffolds` are scripts run after the case's own (a known-bad scaffold).
+ * A broken-body run's `brk` is applied right after `orbit init`, before the first commit, so the
+ * broken body is the fixture's committed state from the start, as if the build under test had
+ * shipped it: no commit, diff or message tells the session a break happened (the 2026-11-23
+ * whole-body sessions read a `fixture: break whole body` commit). Every commit message is plain.
+ * Returns the fixture directory.
  */
 export async function buildFixture({
   dir,
@@ -180,8 +184,9 @@ export async function buildFixture({
   fs.symlinkSync(cliDir, path.join(dir, '.orbit-cli'));
   copyDir(projectDir, dir);
   sh('orbit', ['init', '--tools', 'claude'], dir, 'orbit init');
+  if (brk) applyBreak(dir, brk);
   sh('git', ['add', '-A'], dir, 'git add');
-  sh('git', ['commit', '-q', '-m', 'fixture: project and orbit init'], dir, 'git commit');
+  sh('git', ['commit', '-q', '-m', 'Initial commit'], dir, 'git commit');
 
   const seedEnv = { REPLAY_LIB: LIB_DIR, REPLAY_CASES: casesDir };
   const scripts = [path.join(caseDir, 'scaffold.sh'), ...extraScaffolds];
@@ -189,14 +194,8 @@ export async function buildFixture({
     if (fs.existsSync(script)) sh('bash', [script], dir, `scaffold ${path.relative(casesDir, script)}`, seedEnv);
   }
   sh('git', ['add', '-A'], dir, 'git add');
-  sh('git', ['commit', '-q', '--allow-empty', '-m', 'fixture: seed'], dir, 'git commit');
-
-  if (brk) {
-    applyBreak(dir, brk);
-    sh('git', ['add', '-A'], dir, 'git add');
-    const what = brk.whole_body ? 'whole body' : breakSections(brk).join(' + ');
-    sh('git', ['commit', '-q', '-m', `fixture: break ${what}`], dir, 'git commit');
-  }
+  const dirty = sh('git', ['status', '--porcelain'], dir, 'git status').trim() !== '';
+  if (dirty) sh('git', ['commit', '-q', '-m', 'Update greet-name'], dir, 'git commit');
   await waitPastTrail(dir);
   return dir;
 }

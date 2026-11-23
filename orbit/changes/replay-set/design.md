@@ -132,7 +132,8 @@ shell write:
     references were cut too, the review, walk and archive sessions still rebuilt the emit step from the seeded trail's
     records of the same kind, `orbit emit --help` and the write gate's refusals (archive also from
     `orbit-bulk-archive-change`'s body), so those three cases break the whole body to ask whether they depend on their
-    skill's text at all.
+    skill's text at all. They do: with the body gone, each session found no workflow and stopped (2026-11-23). So the
+    review, walk and archive cases catch a cut that loses the workflow, not one that loses only the emit step.
 - **`scaffold.sh`** seeds the fixture after `orbit init --tools claude`. It copies the case's `seed/` files and runs orbit's
   own commands through the shim (`orbit new change`, `orbit emit … --payload`), then commits, so the seeded trail and gate
   states are what the engine computes and never hand-written JSON that the engine would read differently.
@@ -140,7 +141,10 @@ shell write:
   prose as its body.
 
 A fixture is built as follows: `git init`, a fixed author, `.gitignore` holding `.orbit-cli`, the `.orbit-cli` symlink,
-`orbit init --tools claude` through the shim, `scaffold.sh`, then one commit. This is Case 4's recipe.
+`orbit init --tools claude` through the shim (on a broken-body run, the case's `break` applied right after it), a first
+commit, then `scaffold.sh`, whose steps commit as a user's would. Every commit message is plain, so no commit, diff or
+message tells a session that its state was seeded or its skill broken: the whole-body sessions of 2026-11-23 read a
+`fixture: break whole body` commit before this was fixed. This extends Case 4's recipe.
 
 ### 5. The six cases share one small project and chain their seeds by construction (D-rs-3)
 
