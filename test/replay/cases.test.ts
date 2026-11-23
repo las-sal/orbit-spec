@@ -118,10 +118,27 @@ describe('replay cases — the set', () => {
     expect(() => applyBreak(copy, { ...cases.apply.break, remove: ['references/no-such-file.md'] })).toThrow(/break remove: no references\/no-such-file\.md/);
   });
 
-  it("every case whose skill installs an emit reference removes it in its break", () => {
+  it('every case whose skill installs an emit reference has its break remove it', () => {
     for (const [id, c] of Object.entries(cases)) {
-      const ref = path.join(path.dirname(path.join(seeds[id], c.break.file)), 'references', 'run-summary-emit.md');
-      if (fs.existsSync(ref)) expect(c.break.remove ?? [], id).toContain('references/run-summary-emit.md');
+      const rel = path.join(path.dirname(c.break.file), 'references', 'run-summary-emit.md');
+      if (!fs.existsSync(path.join(seeds[id], rel))) continue;
+      const copy = fs.mkdtempSync(path.join(root, `emitref-${id}-`));
+      fs.cpSync(path.join(seeds[id], '.claude'), path.join(copy, '.claude'), { recursive: true });
+      applyBreak(copy, c.break);
+      expect(fs.existsSync(path.join(copy, rel)), `${id} ${rel}`).toBe(false);
+    }
+  });
+
+  it('a whole-body break keeps only the frontmatter, so the skill still loads with no instructions', () => {
+    const whole = Object.entries(cases).filter(([, c]) => c.break.whole_body);
+    expect(whole.map(([id]) => id).sort()).toEqual(['archive', 'review', 'walk']);
+    for (const [id, c] of whole) {
+      const copy = fs.mkdtempSync(path.join(root, `whole-${id}-`));
+      fs.cpSync(path.join(seeds[id], '.claude'), path.join(copy, '.claude'), { recursive: true });
+      applyBreak(copy, c.break);
+      const after = fs.readFileSync(path.join(copy, c.break.file), 'utf8');
+      expect(after, id).toMatch(/^---\n(?:[\s\S]*\n)?name: orbit-[\s\S]*\ndescription: [\s\S]*\n---\n$/);
+      expect(after.split('\n---\n')[1] ?? '', id).toBe('');
     }
   });
 

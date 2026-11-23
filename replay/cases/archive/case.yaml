@@ -9,9 +9,11 @@ start:
     path: gates[id=apply].state
     equals: passed
 break:
-  # The run-summary step cut from the body AND its emit and summary-schema references (the
-  # 2026-11-20 broken run read both).
+  # The whole body and every reference: the 2026-11-23 re-run showed a session rebuilding the emit
+  # step without the body's emit section (from the seeded trail's records of the same kind, `orbit
+  # emit --help` and the write gate's refusals, and orbit-bulk-archive-change's body), so this break
+  # asks whether the case depends on its skill's text at all.
   file: .claude/skills/orbit-archive-change/SKILL.md
-  section: "## Step 5.5 — Archive run summary"
-  remove: [references/run-summary-emit.md, references/archive-summary-schema.md]
+  whole_body: true
+  remove: [references]
   grader: archive-emit-printed

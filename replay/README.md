@@ -83,7 +83,7 @@ The six budgets sum to $19.50 per run of the set. Recorded spends (fill in from 
 | run | model | runs a case | total |
 |---|---|---|---|
 | plumbing | sonnet (claude-sonnet-5-5) | 1 | $1.15, all 27 facts passed: `results/2026-11-20T20-12-39Z-1e9d930-plumbing.json` |
-| broken bodies | claude-opus-5-5 | 1 | first run $2.79, 1 of 6 breaks caught (the other sessions read the emit reference the break left installed; `results/2026-11-20T20-26-39Z-9256d59-broken.json`); re-run of the five repaired cases pending |
+| broken bodies | claude-opus-5-5 | 1 | first run $2.79, 1 of 6 breaks caught (the other sessions read the emit reference the break left installed; `results/2026-11-20T20-26-39Z-9256d59-broken.json`); re-run with references cut $2.67 on Claude Code 2.1.330, apply and propose caught, review, walk and archive rebuilt the step from orbit itself (`results/2026-11-23T13-41-25Z-b3e1103-broken.json`); whole-body run of those three pending |
 | baseline | Sal's model | 3 | not yet run |
 
 ## Cases
@@ -111,7 +111,7 @@ A case is a directory under `cases/` holding a `case.yaml` (the folder shape `cl
   given mid-session is graded only as far as the prompt's stated answer reaches it.
 - `case.yaml` — `max_turns`, `max_budget_usd`, `timeout_minutes`; `start` (orbit checks the seeded fixture must pass
   before any spend); `break` (`file`, the installed skill file; `section`, a heading — or a list — whose section
-  `--broken` deletes; `remove`, reference files deleted beside it, relative to the skill file; `grader`, the grader
+  `--broken` deletes, or `whole_body: true`, which keeps only the frontmatter; `remove`, reference files deleted beside it, relative to the skill file; `grader`, the grader
   expected to fail then). Cut a step from its references too: a session that finds the step in a reference file the
   body pointed to recovers it, and the case then cannot fail.
 - `scaffold.sh` — the seed, run in the fixture after `orbit init` with `REPLAY_LIB` and `REPLAY_CASES` set.

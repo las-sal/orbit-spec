@@ -88,26 +88,37 @@ export function deleteSection(text, heading) {
 
 /** A break's sections, one heading or a list of them. */
 export function breakSections(brk) {
+  if (brk.section === undefined) return [];
   return Array.isArray(brk.section) ? brk.section : [brk.section];
+}
+
+/** Keeps a skill file's YAML frontmatter (so the skill still loads) and drops its whole body. */
+export function emptyBody(text) {
+  const m = /^---\r?\n[\s\S]*?\r?\n---\r?\n/.exec(text);
+  if (!m) throw new Error('whole_body break: the skill file has no frontmatter');
+  return m[0];
 }
 
 /**
  * Applies a case's `break` to the fixture's installed skill: `file`, the skill file; `section`, a
- * heading (or a list) whose section is deleted; `remove`, reference files deleted beside it, each
- * relative to the skill file's directory, so a step cut from the body is not still readable in the
- * reference it pointed to. A heading or a file that is not there throws: a break must break.
+ * heading (or a list) whose section is deleted, or `whole_body: true`, which keeps only the
+ * frontmatter; `remove`, files or directories deleted beside it, each relative to the skill file's
+ * directory, so a step cut from the body is not still readable in the reference it pointed to. A
+ * heading or a path that is not there throws: a break must break.
  */
 export function applyBreak(fixtureDir, brk) {
   const file = path.join(fixtureDir, brk.file);
   const before = fs.readFileSync(file, 'utf8');
-  let after = before;
+  if (brk.whole_body && brk.section !== undefined) throw new Error('a break names whole_body or section, not both');
+  if (!brk.whole_body && brk.section === undefined) throw new Error('a break needs a section or whole_body: true');
+  let after = brk.whole_body ? emptyBody(before) : before;
   for (const heading of breakSections(brk)) after = deleteSection(after, heading);
   fs.writeFileSync(file, after);
   const removed = [];
   for (const rel of brk.remove ?? []) {
     const ref = path.join(path.dirname(file), rel);
     if (!fs.existsSync(ref)) throw new Error(`break remove: no ${rel} beside ${brk.file}`);
-    fs.rmSync(ref);
+    fs.rmSync(ref, { recursive: true });
     removed.push(rel);
   }
   return { removed_chars: before.length - after.length, removed };
@@ -183,7 +194,8 @@ export async function buildFixture({
   if (brk) {
     applyBreak(dir, brk);
     sh('git', ['add', '-A'], dir, 'git add');
-    sh('git', ['commit', '-q', '-m', `fixture: break ${breakSections(brk).join(' + ')}`], dir, 'git commit');
+    const what = brk.whole_body ? 'whole body' : breakSections(brk).join(' + ');
+    sh('git', ['commit', '-q', '-m', `fixture: break ${what}`], dir, 'git commit');
   }
   await waitPastTrail(dir);
   return dir;

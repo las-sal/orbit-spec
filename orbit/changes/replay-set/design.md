@@ -127,7 +127,12 @@ shell write:
     delete beside it (`remove`, relative to the skill file) and the grader expected to fail. A step cut from a body is
     cut from the reference it points to as well: the first broken-body run (2026-11-20, `claude-opus-5-5`) caught one
     case of six, because the other five sessions read the emit step from the still-installed
-    `references/run-summary-emit.md`. A heading or a file the installed skill does not hold refuses the run.
+    `references/run-summary-emit.md`. A heading or a file the installed skill does not hold refuses the run. A break may
+    instead empty the whole body (`whole_body: true`, the frontmatter kept so the skill still loads): after the
+    references were cut too, the review, walk and archive sessions still rebuilt the emit step from the seeded trail's
+    records of the same kind, `orbit emit --help` and the write gate's refusals (archive also from
+    `orbit-bulk-archive-change`'s body), so those three cases break the whole body to ask whether they depend on their
+    skill's text at all.
 - **`scaffold.sh`** seeds the fixture after `orbit init --tools claude`. It copies the case's `seed/` files and runs orbit's
   own commands through the shim (`orbit new change`, `orbit emit … --payload`), then commits, so the seeded trail and gate
   states are what the engine computes and never hand-written JSON that the engine would read differently.

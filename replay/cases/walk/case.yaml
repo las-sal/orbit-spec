@@ -6,9 +6,11 @@ start:
     path: gates[id=review-system].reason
     matches: unresolved substantive findings
 break:
-  # The persist step (### 6 — the 2026-11-20 run cut ### 5, the report, by mistake) AND the emit and
-  # payload-schema references (that run's session read both).
+  # The whole body and every reference: the 2026-11-23 re-run showed a session rebuilding the emit
+  # step without the body's emit section (from the seeded trail's records of the same kind, `orbit
+  # emit --help` and the write gate's refusals), so this break asks whether the case depends on
+  # its skill's text at all.
   file: .claude/skills/orbit-address-reviews/SKILL.md
-  section: "### 6. Persist the run summary"
-  remove: [references/run-summary-emit.md, references/run-summary-schema.md]
+  whole_body: true
+  remove: [references]
   grader: walk-emit-printed
