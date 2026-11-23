@@ -1,4 +1,8 @@
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
+
+// These checks build real fixtures and spawn the CLI many times; CI's runners are slower than a
+// workstation, so each test gets a minute instead of the suite's ten-second default.
+vi.setConfig({ testTimeout: 60_000 });
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';

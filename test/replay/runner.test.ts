@@ -1,4 +1,8 @@
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
+
+// These checks build real fixtures and spawn the CLI many times; CI's runners are slower than a
+// workstation, so each test gets a minute instead of the suite's ten-second default.
+vi.setConfig({ testTimeout: 60_000 });
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -324,11 +328,29 @@ describe('the replay set is never shipped', () => {
       expect(entry.startsWith('replay')).toBe(false);
       expect(/^[!]?(\*|\*\*)(\/|$)/.test(entry)).toBe(false);
     }
-    const r = spawnSync('npm', ['pack', '--dry-run', '--json', '--ignore-scripts'], { cwd: REPO, encoding: 'utf8' });
-    expect(r.status).toBe(0);
+    // npm pack runs the package's `prepare` (the build) on some npm versions even with --ignore-scripts,
+    // which rewrote dist/ under the rest of the suite in CI (2026-11-23). So the pack runs in a scratch
+    // replica: every tracked path and every dist/ file as an empty file, the real package.json and
+    // .gitignore with no scripts at all. The file list npm computes is the real one; nothing can build.
+    const replica = fs.mkdtempSync(path.join(root, 'pack-'));
+    const tracked = spawnSync('git', ['ls-files'], { cwd: REPO, encoding: 'utf8' }).stdout.split('\n').filter(Boolean);
+    const built = spawnSync('find', ['dist', '-type', 'f'], { cwd: REPO, encoding: 'utf8' }).stdout.split('\n').filter(Boolean);
+    for (const rel of [...tracked, ...built]) {
+      const dest = path.join(replica, rel);
+      fs.mkdirSync(path.dirname(dest), { recursive: true });
+      fs.writeFileSync(dest, '');
+    }
+    const pkg = JSON.parse(fs.readFileSync(path.join(REPO, 'package.json'), 'utf8'));
+    delete pkg.scripts;
+    fs.writeFileSync(path.join(replica, 'package.json'), JSON.stringify(pkg, null, 2));
+    fs.copyFileSync(path.join(REPO, '.gitignore'), path.join(replica, '.gitignore'));
+    expect(built.length).toBeGreaterThan(0);
+    const r = spawnSync('npm', ['pack', '--dry-run', '--json', '--ignore-scripts'], { cwd: replica, encoding: 'utf8' });
+    expect(r.status, r.stderr).toBe(0);
     const [pack] = JSON.parse(r.stdout);
     const paths: string[] = pack.files.map((f: { path: string }) => f.path);
     expect(paths.length).toBeGreaterThan(0);
+    expect(tracked.some((p) => p.startsWith('replay/')), 'the replica holds replay/ files').toBe(true);
     expect(paths.filter((p) => p.startsWith('replay/'))).toEqual([]);
     expect(paths.some((p) => p.startsWith('dist/'))).toBe(true);
   }, 60_000);
