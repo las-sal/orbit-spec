@@ -1,0 +1,97 @@
+{
+  "command": "archive",
+  "timestamp": "2026-11-23T18:11:25Z",
+  "change": "replay-set",
+  "kind": "lifecycle",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Archived replay-set to orbit/changes/archive/2026-11-23-replay-set/: the replay set (a claude -p runner Sal starts, six lifecycle cases seeded through orbit's own commands, graders that read only what orbit printed or wrote, the no-worse comparison) and CI's strict validation of the generated skills. All 19 tasks done; the plumbing, broken-body and baseline runs were Sal's (plumbing $1.15, broken bodies $5.89 over three runs, baseline $7.90 with all 81 facts passing). The new capability orbit-replay-set was synced with its nine requirements and its Purpose written in place.",
+  "archive_path": "orbit/changes/archive/2026-11-23-replay-set/",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": [
+      "orbit-replay-set"
+    ],
+    "added": 9,
+    "modified": 0,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
+  "user_decision": "proceeded_with_no_critical",
+  "consent": "user-invoked",
+  "warnings": [
+    "Pre-archive audit: two Category 5 suggestions, both informational. orbit/scenario-ledger.yaml changed without being predicted (the untestable entry for the CI validation scenario rides with the change), and CLAUDE.md was predicted and is satisfied in this flow (its src:capabilities figure moves 34 to 35).",
+    "The broken-body runs showed that the review, walk and archive cases catch a cut that loses the workflow, not one that loses only the emit step: their sessions rebuild the emit from orbit's help, its write-gate refusals and the seeded trail's records of the same kind (archive also from orbit-bulk-archive-change's body). Recorded in task 5.3 and design Decision 4 as evidence for the inventory stage.",
+    "Claude Code auto-updated between the billed runs: the plumbing run used 2.1.329, the later broken-body runs and the baseline 2.1.330. The comparison warns when a cut's version differs from the baseline's; holding the version steady for the cut stages (DISABLE_AUTOUPDATER=1) is Sal's call."
+  ],
+  "judgements": [
+    {
+      "kind": "readiness",
+      "formed_against": [
+        "2026-11-20T17-11-58Z",
+        "2026-11-20T17-12-19Z",
+        "2026-11-20T18-18-01Z",
+        "2026-11-20T18-18-25Z"
+      ],
+      "disposition": "ready",
+      "reasoning": "Both blind pairs' findings were walked and verified, the in-context verification passes found what the walks missed and those were walked too, and the billed runs then exercised the instrument on real sessions: every case reached its session, every case was shown able to fail, and the baseline passed every fact in all three runs. What remains open is named below and in warnings, none of it a defect the next stage trips over.",
+      "ratified_by": "ai",
+      "accepted": [
+        {
+          "claim": "A Bash call that runs orbit and another command contributes its whole output, so text the other command prints is read as orbit's.",
+          "why": "Raised by the external system pass's mixed-command point; stated as a named limit in the spec, design, README and trace reader. A session would have to print a timestamped emit path newer than the seed beside a real orbit call, a deliberate forgery, and the after_seed rule already refuses every path orbit's own answers print about the seed."
+        },
+        {
+          "claim": "The external system half did not execute the test suite.",
+          "why": "Its read-only worktree has no node_modules or dist; it judged from the code and said so. Execution evidence comes from the fresh half (the replay tests run), the apply and walks (full npm test each time) and the billed runs."
+        }
+      ]
+    }
+  ],
+  "pr_url": "https://github.com/las-sal/orbit-spec/pull/47",
+  "pr_state": "draft",
+  "next_recommended": "/orbit:architect reduce-orbit-phase2 — change archived; review stage replay-set and take up the program's next stage, or run /orbit:audit-drift for a project-wide drift check.",
+  "decision_records_unread": 0,
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "9c54a9fc8301e8b483ae6092d234c2bcd2641944",
+      "frozen": true,
+      "evidence": {
+        "files": [],
+        "share": 0,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ]
+}

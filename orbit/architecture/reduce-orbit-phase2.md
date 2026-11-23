@@ -110,6 +110,27 @@ Exit criteria:
 - One baseline run on the bodies as phase 1 left them, recorded with its cost.
 - `claude plugin validate` over the generated skills runs in CI beside the size report (R-rop2-5, G2).
 
+Shipped as (2026-11-23; archived as `orbit/changes/archive/2026-11-23-replay-set/`; the charter stands, its second
+exit criterion met in a weaker form for three cases, below). The spike found that `claude plugin eval`'s sandbox makes
+the shell's workspace read-only, so `orbit emit` cannot write a record, and that `skill-creator` runs a case as a
+subagent graded by a model; the fallback was taken, a `claude -p` runner of this repository's own (`replay/`, never
+shipped). Each run packs one commit's build and installs it into a throwaway fixture per case behind a walk-up shim.
+Six cases (explore, propose, apply, the system review, the walk, archive) are seeded at the state just before their
+command by orbit's own emits. Each session is graded only by what orbit printed or wrote: printed paths only from
+orbit's own calls, and only records later than the seed. Each grader is shown failing on its seed and passing on its
+command's result in `npm test`. `npm run replay:compare` says whether a cut is no worse than a baseline: any case a run
+did not fully grade has no verdict. `npm run validate:skills` runs `claude plugin validate --strict` over a freshly
+generated surface as a failing CI step, Claude Code pinned at 2.1.329.
+
+Sal's billed runs cost $14.94: plumbing on Sonnet $1.15 (27 of 27 facts), broken bodies on `claude-opus-5-5` $5.89 over
+three runs, and the baseline on `claude-opus-5-5` $7.90 (three runs a case, all 81 facts, Claude Code 2.1.330,
+`replay/results/2026-11-23T16-08-25Z-6076d85-baseline.json`). Every case was shown able to fail, but the breaks had to
+be strengthened twice. A section cut from a body was recovered from the reference it pointed to. With references cut
+too, the review, walk and archive sessions still rebuilt the emit step from `orbit emit --help`, the write gate's
+refusals and the seeded trail's records of the same kind, and failed only when their whole body was emptied. So those
+three cases catch a cut that loses the workflow, not one that loses only the emit step: evidence for `inventory` (their
+emit sections are recoverable text for this model).
+
 ### Stage inventory — every over-budget body, section by section
 
 Depends-on: replay-set

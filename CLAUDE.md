@@ -27,7 +27,7 @@ surgical cherry-picks only — there is no auto-ingest. A version bump is its ow
   update's smart detection may skip) so your local surface doesn't lag the source.
 - **Releases** are cut by `npm run release:tree` (the `orbit-release` capability), the only release path; pushing the
   tag is the maintainer's act.
-- `orbit/specs/` holds <!-- src:capabilities -->34<!-- /src:capabilities --> baseline capabilities. Every marked
+- `orbit/specs/` holds <!-- src:capabilities -->35<!-- /src:capabilities --> baseline capabilities. Every marked
   figure in this file is checked against `orbit/sources.yaml` by `orbit validate --sources`; an UNMARKED figure is
   invisible to that check.
 
@@ -54,7 +54,9 @@ and reads its reference there; `skill-body-budget.test.ts` holds each body's siz
 **`orbit/architecture/reduce-orbit-phase2.md`** (from 2026-11-20) is live: the second reduction phase, opened the day
 phase 1 merged, at Sal's direction ahead of `automate-dev-flow` (R-rop2-1). It takes up what phase 1 left (its R-rop-15,
 R-rop-18, R-rop-19): every body fitting the 5,000 tokens kept after a compaction, the cuts graded by a replay set, the
-rewording held back, and explore's and onboard's own text. Its Goals and stages wait on its opening session.
+rewording held back, and explore's and onboard's own text. Its first stage, `replay-set`, shipped on 2026-11-23: the
+replay set under `replay/` (`npm run replay`, every run Sal-started and billed; `npm run replay:compare` against the
+baseline record in `replay/results/`), and `npm run validate:skills` in CI. `inventory` is next.
 
 **`orbit/architecture/reduce-orbit-phase1.md`** (2026-11-17 to 2026-11-20, merged as PR #46) is complete. It restructured the skill bodies to be
 slimmer and in line with Anthropic's guidance for building skills, without changing what any workflow does. Text a
