@@ -150,7 +150,7 @@ paired with a fact orbit's answer makes true (`pairs_with`).
   reference cut; review, walk and archive only with their whole body cut, since their sessions rebuild the emit step
   from orbit's help, its write-gate refusals and the seeded trail. Those three cases catch a lost workflow, not a lost
   emit section (evidence for the `inventory` stage)
-- [ ] 5.4 (User-validation) Sal starts the baseline on Sal's model, three runs a case, with a ceiling sized from 5.2's
+- [x] 5.4 (User-validation) Sal starts the baseline on Sal's model, three runs a case, with a ceiling sized from 5.2's
   costs: `npm run replay -- --model <Sal's model> --max-total-usd <usd> --label baseline`. Its record is committed under
   `replay/results/`, and its total cost goes into the stage's `Shipped as`
 

@@ -84,7 +84,7 @@ The six budgets sum to $19.50 per run of the set. Recorded spends (fill in from 
 |---|---|---|---|
 | plumbing | sonnet (claude-sonnet-5-5) | 1 | $1.15, all 27 facts passed: `results/2026-11-20T20-12-39Z-1e9d930-plumbing.json` |
 | broken bodies | claude-opus-5-5 | 1 | $5.89 over three runs (`results/*-broken.json`): every case shown able to fail — explore by its emit section, apply and propose by the section and its reference, review, walk and archive only by their whole body (they rebuild the emit step from orbit's help, refusals and the seeded trail) |
-| baseline | Sal's model | 3 | not yet run |
+| baseline | claude-opus-5-5 | 3 | $7.90, all 81 facts passed (every fact 3/3) on Claude Code 2.1.330 at 6076d85c: `results/2026-11-23T16-08-25Z-6076d85-baseline.json` |
 
 ## Cases
 
