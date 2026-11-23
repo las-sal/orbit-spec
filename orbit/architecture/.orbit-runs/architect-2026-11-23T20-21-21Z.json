@@ -1,0 +1,39 @@
+{
+  "command": "architect",
+  "timestamp": "2026-11-23T20:21:21Z",
+  "change": null,
+  "doc": "reduce-orbit-phase2",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Session after replay-set's archive. Ratification offered; Sal said not yet: the stage's fourth exit criterion is unmet, since PR #47's CI was red from the change's own npm-pack check, which made CI's npm rebuild dist/ mid-suite and stopped the job before validate:skills ever ran. Fixed by a direct commit at Sal's direction (R-rop2-8, 8a85907f); ratification waits on that run's Linux leg. Phase 1's evaluation stays concluded, its fired reopen trigger answered by the inventory stage (R-rop2-9). The macOS zsh-completion failure, red on main, is recorded as outside the program.",
+  "stages_touched": [
+    "replay-set",
+    "inventory"
+  ],
+  "rulings_captured": [
+    "R-rop2-8",
+    "R-rop2-9"
+  ],
+  "completions_ratified": [],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      {
+        "path": "orbit/architecture/reduce-orbit-phase2.md",
+        "why": "R-rop2-8 and R-rop2-9, the 2026-11-23 status-log entry (the open items), and stage replay-set's Shipped as paragraph"
+      },
+      {
+        "path": "replay/README.md",
+        "why": "how a run, a case and the comparison work, and the recorded costs of the billed runs"
+      },
+      {
+        "path": "replay/results/2026-11-23T16-08-25Z-6076d85-baseline.json",
+        "why": "the baseline every cut is compared against (all 81 facts, claude-opus-5-5, Claude Code 2.1.330)"
+      }
+    ],
+    "next_command": "/orbit:architect reduce-orbit-phase2",
+    "model_hint": null,
+    "seam": "replay-set is archived and awaits ratification once CI run 45258186600 (commit 8a85907f) shows the Linux leg green with validate:skills executing; then inventory opens as a named exploration citing this doc, taking up D-eval-1's two replay-gated cuts (R-rop2-9)."
+  },
+  "next_recommended": "/orbit:architect reduce-orbit-phase2"
+}

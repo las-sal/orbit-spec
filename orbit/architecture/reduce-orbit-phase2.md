@@ -86,6 +86,15 @@ Ratified by Sal, 2026-11-20, at the opening session.
   stage's archive appends its entry, and Sal merges once at arc-done. From that propose on, the program's work, the
   `inventory` exploration and architect sessions included, is done on that branch. Chosen over a branch and PR per change
   and over no PR handling.
+- **R-rop2-8** (Sal, 2026-11-23) — `replay-set`'s CI repair lands as a direct commit on the program branch, outside the
+  change lifecycle, recorded here (`8a85907f`): its `npm pack --dry-run` check had made CI's npm rebuild `dist/`
+  mid-suite. The stage stays unratified until CI's Linux leg runs green with `validate:skills` executing, its fourth
+  exit criterion. Chosen over a small change citing the stage and over an exploration of the CI picture first.
+- **R-rop2-9** (Sal, 2026-11-23) — Phase 1's concluded exploration `evaluation` stays concluded. Its reopen trigger ("the
+  replay set S15 is built") has fired, and this program answers it: the two replay-gated cuts it deferred (D-eval-1:
+  stage D's mode-only sections moved to references, and the decision-writing bullet) are the `inventory` stage's
+  inputs, which opens as its own named exploration citing this doc. Chosen over reopening `evaluation`, which is cited
+  to phase 1's doc, and over re-weighing all of D-eval-1 to D-eval-8 in the inventory.
 
 ## Program stages
 
@@ -213,3 +222,13 @@ Exit criteria:
   scope (R-rop2-4). Goals G0 to G3 ratified. Sal then folded three Claude Code skill tools in where each fits (R-rop2-5)
   and chose the six-stage shape with the inventory first (R-rop2-6); the stages are declared. `pr: per-architecture`
   stays (R-rop2-7), and Sal ratified the Premise with two sentences added for G0's removals and R-rop2-4's upstream text.
+- 2026-11-23 — Architect session after `replay-set`'s archive. Offered for ratification, Sal said not yet: its fourth
+  exit criterion is unmet. PR #47's CI had been red since the change's apply. On CI's npm, the runner test's
+  `npm pack --dry-run --ignore-scripts` ran the build and rewrote `dist/` mid-suite, failing five unrelated tests. The
+  job then stopped before the size report and `validate:skills`, so the validation step had never run. Fixed by a
+  direct commit (R-rop2-8, `8a85907f`). The pack check now runs in a scratch replica with no scripts, and the two
+  replay test files get a minute a test. Ratification waits on that run's Linux leg. Phase 1's `evaluation` stays
+  concluded, its reopen trigger answered by `inventory` (R-rop2-9). Open, outside this program: the macOS leg's
+  `completion-offers` test fails on a generated zsh script (`parse error near '<'`, line 32), red on main since
+  `e2eabb02`; filing an issue is Sal's. Open for the cut stages: Claude Code auto-updated between the billed runs
+  (2.1.329 to 2.1.330); holding it steady for the comparisons (`DISABLE_AUTOUPDATER=1`) is Sal's call.
