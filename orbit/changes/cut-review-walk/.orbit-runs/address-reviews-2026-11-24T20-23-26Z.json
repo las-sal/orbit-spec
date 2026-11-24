@@ -1,0 +1,492 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-24T20:23:26Z",
+  "change": "cut-review-walk",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/cut-review-walk/.orbit-runs/review-proposal-2026-11-24T20-09-38Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-24T20-09-38Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 5,
+    "suggestion": 5
+  },
+  "pushback_verification": "All ten verified against current state: F1's four onboard sites read in onboard.ts; F2's counts from the scenario map; F3's paragraph in address-reviews.ts; F5's pointers at address-reviews.ts:373/:377 and review.ts:212; F7's scenario untagged in test/ and src/; none stale.",
+  "resolution_summary": {
+    "resolved": 10,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Onboard's body names batch mode in two places beyond its command table, and the change scopes onboard to the table alone",
+      "file": "orbit/changes/cut-review-walk/design.md",
+      "line": 44,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "evidence": "onboard.ts:50, :92 and :114 (twice) each name `--batch`; the design's Non-Goals, D3, the Touchpoints line, the proposal's What Changes and Impact, and task 2.2 named the command table only.",
+      "action": "Design Non-Goals, D3 and the onboard Touchpoint, the proposal's What Changes and Impact, and task 2.2 now name onboard's four mentions of batch mode (its address-reviews layer line, its Phase 4 paragraph, its command table row and that row's description).",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/cut-review-walk/proposal.md",
+          "orbit/changes/cut-review-walk/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "to drop `[--batch]` from its command table",
+          "onboard's command table and",
+          "the command table row."
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/cut-review-walk/design.md",
+            "text": "Onboard is touched here only to drop its four mentions of batch mode"
+          },
+          {
+            "path": "orbit/changes/cut-review-walk/tasks.md",
+            "text": "onboard's four mentions (`onboard.ts:50`"
+          },
+          {
+            "path": "orbit/changes/cut-review-walk/proposal.md",
+            "text": "onboard's four mentions and"
+          }
+        ],
+        "searched": [
+          "onboard",
+          "--batch",
+          "command table"
+        ],
+        "scope": [
+          "src/core/templates/workflows/onboard.ts"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "No task declares the delta scenarios: 28 are undeclared and 7 tags go orphan, and the check turns to ERROR once apply passes",
+      "file": "orbit/changes/cut-review-walk/tasks.md",
+      "line": 30,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "evidence": "orbit status --change cut-review-walk --scenarios at triage: 124 delta scenarios, 28 uncovered, 7 orphan tags; no task planned declarations.",
+      "action": "Task 5.2 widened: every uncovered delta scenario is declared by a tag whose test asserts its THEN or by a ledger entry, every orphan tag retired or re-pointed, with the propose-time counts and an instruction to record the counts read at apply.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/cut-review-walk/tasks.md",
+            "text": "every delta scenario `orbit status --change cut-review-walk --scenarios` lists as uncovered is declared"
+          }
+        ],
+        "searched": [
+          "scenario",
+          "orphan",
+          "@scenario"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "M10 moves the walk-time rule for several sources to the emit step's reference, which a session following the steps reads only after it has walked every source",
+      "file": "orbit/changes/cut-review-walk/design.md",
+      "line": 56,
+      "marker_source": "internal-review",
+      "classification": "decision_required",
+      "ratified_via": "chat",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Keep the timing sentence (walk source by source, write each source's log before the next source begins) in the body, at Step 3 or in the several-sources basic content, as a `reworded` pair. Only the emit-time fields move under M10."
+          },
+          {
+            "label": "B",
+            "body": "Move the timing sentence to `references/triage-sources.md` (M2), which the body reads when discovery yields more than one source, before the walk starts. Name the split of the paragraph in the cut ledger, since the text no longer moves whole."
+          }
+        ],
+        "chosen": "B"
+      },
+      "resolution": "B: the walk-order sentences move to references/triage-sources.md, read when discovery yields more than one source (before the walk); the log fields and scope forms stay with M10. Sal's 'walk all' accepted the triage's resolution.",
+      "evidence": "ADDRESS_REVIEWS_EMIT_PER_SOURCE holds walk-time ordering ('write each source's log when that source's findings are walked, before the next source begins') beside emit-time fields; design D1 sent the whole paragraph to run-summary-emit.md, read only before the first emit.",
+      "action": "Design D1's M10 now splits the per-source paragraph: walk-order sentences to triage-sources.md, log fields and scope forms to run-summary-emit.md, the split named in the ledger. Task 3.3 adds a test that the body's triage step reads triage-sources.md when discovery yields more than one source, before Step 3, checked against the scenarios 'A blind pair walks in two logs' and 'An interrupted walk resumes by rediscovery' (the external pass's matching finding asked for the same check).",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/cut-review-walk/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "M10 one log per source and the scope forms",
+          "(the per-source paragraph and scope forms leave the body;"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/cut-review-walk/design.md",
+            "text": "M10 the per-source paragraph SPLIT"
+          },
+          {
+            "path": "orbit/changes/cut-review-walk/tasks.md",
+            "text": "its walk-order sentences to `references/triage-sources.md`, checked by a test"
+          }
+        ],
+        "searched": [
+          "M10",
+          "per-source",
+          "run-summary-emit.md",
+          "before the next source"
+        ],
+        "scope": [
+          "src/core/templates/workflows/address-reviews.ts"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "A command-shaped mid-walk batch switch (\"go batch\", \"batch the rest\") has no specified behaviour once batch mode is removed",
+      "file": "orbit/changes/cut-review-walk/specs/orbit-address-reviews/spec.md",
+      "line": 177,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "evidence": "The renamed requirement's retired-trigger rule covered the invocation only; the removed command-shaped switch had no rule, and the positional handling of --batch was unstated.",
+      "action": "`Every walk runs finding by finding` now says --batch is a flag dropped before discovery resolves the positional, names the retired verbal forms that get the one-line notice, and reads a bare mid-walk 'go batch' / 'switch to batch' / 'batch the rest' as a mid-walk delegation recorded verbatim as delegation_directive; a new scenario 'A retired mid-walk switch is a delegation'.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "An invocation carrying `--batch`, or a batch-intent phrase in its message, is walked"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/cut-review-walk/specs/orbit-address-reviews/spec.md",
+            "text": "dropped before discovery resolves the positional"
+          },
+          {
+            "path": "orbit/changes/cut-review-walk/specs/orbit-address-reviews/spec.md",
+            "text": "#### Scenario: A retired mid-walk switch is a delegation"
+          }
+        ],
+        "searched": [
+          "retired trigger",
+          "go batch",
+          "batch the rest",
+          "delegation_directive"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "D4 rewords positional pointers only inside moved text, while unmoved references point at text the moves take out of the bodies",
+      "file": "orbit/changes/cut-review-walk/design.md",
+      "line": 132,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "evidence": "address-reviews.ts:373 and :377 (resolution-detail.md) point at 'the body's DISCOVERY rows 4 and 5' and 'the DISCOVERY fence in the body's Step 1'; review.ts:212 (schema reference) says 'Step 5's VERIFICATION branch'; D4 reworded pointers only inside moved text.",
+      "action": "D4 now re-points pointers from unmoved text into moved text: every reference of both skills grepped for \"the body's\", \"Step N\" and the moved headings, the three known sites named, the re-pointings named in the archive since references are not hashed; tasks 3.4 and 4.3 carry the grep for each skill.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/cut-review-walk/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/cut-review-walk/design.md",
+            "text": "A pointer from text that does\nNOT move into text that does is re-pointed too"
+          },
+          {
+            "path": "orbit/changes/cut-review-walk/tasks.md",
+            "text": "every address-reviews reference grepped for pointers into the moved sections"
+          }
+        ],
+        "searched": [
+          "the body's",
+          "Step 5",
+          "DISCOVERY",
+          "pointer"
+        ],
+        "scope": [
+          "src/core/templates/workflows/address-reviews.ts",
+          "src/core/templates/workflows/review.ts"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Task 2.2 lists only some of the schema reference's batch and disagreement text",
+      "file": "orbit/changes/cut-review-walk/tasks.md",
+      "line": 8,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "evidence": "address-reviews.ts:585, :604, :667, :730, :950, ~:990 and resolution-detail.md's title and Contents carry batch or disagreement text task 2.2/2.3 did not list; no engine check reads walk_mode's value.",
+      "action": "Task 2.2 lists every schema-reference batch site and resolution-detail.md's title and Contents; task 2.3 adds the external example's disagreement prose. `Every walk runs finding by finding` names the limit: these rules govern what the walk writes, and the write gate checks neither walk_mode's value nor a per-resolution disagreement object (the external pass's write-guarantee finding asked the same).",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/cut-review-walk/specs/orbit-address-reviews/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the schema reference's two rows, its batch example replaced"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/cut-review-walk/tasks.md",
+            "text": "the spine-extension list naming the two fields"
+          },
+          {
+            "path": "orbit/changes/cut-review-walk/specs/orbit-address-reviews/spec.md",
+            "text": "the write gate checks neither `walk_mode`'s value nor a per-resolution `disagreement` object"
+          }
+        ],
+        "searched": [
+          "walk_mode",
+          "batch",
+          "disagreement",
+          "resolution-detail.md"
+        ],
+        "scope": [
+          "src/core/templates/workflows/address-reviews.ts",
+          "src/core/emit-composition.ts"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The scenario 'Batch delegation compresses the lane; batch prompts never fire' keeps 'batch' in its title after batch mode is removed",
+      "file": "orbit/changes/cut-review-walk/specs/orbit-address-reviews/spec.md",
+      "line": 270,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "evidence": "The MODIFIED decision-forks block kept 'Batch delegation compresses the lane; batch prompts never fire' and 'batch prompts prohibited; batch DELEGATION'; grep of test/ and src/ found no tag on the scenario.",
+      "action": "Scenario renamed 'A delegation compresses the lane; multi-finding prompts never fire'; the requirement says 'a prompt spanning several findings is prohibited; a mid-walk DELEGATION'; the log-shape block says 'delegation rule'; task 2.2 rewords the body's 'batch DELEGATION' and 'batch prompts' as reworded pairs.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/cut-review-walk/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "Batch delegation compresses the lane",
+          "batch prompts prohibited; batch DELEGATION",
+          "protocol's batch-delegation rule"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/cut-review-walk/specs/orbit-address-reviews/spec.md",
+            "text": "#### Scenario: A delegation compresses the lane; multi-finding prompts never fire"
+          }
+        ],
+        "searched": [
+          "batch DELEGATION",
+          "batch prompts",
+          "Batch delegation"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The cut ledger has no stated kind for dropping a restatement (V5, review R1, address-reviews R1)",
+      "file": "orbit/changes/cut-review-walk/design.md",
+      "line": 152,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "evidence": "V5, review's R1 and address-reviews' R1 drop restatements: no ruling, so not `removed`; their words survive at the restated step, so a phrase check fails by construction.",
+      "action": "Design D5's table and the ADDED `A cut ledger names every body edit a cut stage makes` gain a `restated` kind (tighten-bodies' precedent): the pair names the step text it restates and the test asserts it is still in the body; tasks 3.4 and 4.3 name which edits are restated pairs.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/cut-review-walk/specs/orbit-conventions/spec.md",
+          "orbit/changes/cut-review-walk/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "is a `moved` or `reworded` pair."
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/cut-review-walk/design.md",
+            "text": "| `restated` | the text dropped as a restatement"
+          },
+          {
+            "path": "orbit/changes/cut-review-walk/specs/orbit-conventions/spec.md",
+            "text": "| `restated` — text dropped because it restates a step the body keeps"
+          }
+        ],
+        "searched": [
+          "restated",
+          "restatement",
+          "kind"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Design cites 'the stage's third exit criterion' for the shared steps, and its Goals leave out onboard's ceiling",
+      "file": "orbit/changes/cut-review-walk/design.md",
+      "line": 74,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "evidence": "reduce-orbit-phase2.md: the shared-step criterion is stage inventory's third exit criterion; cut-review-walk has two. Goals and D7 left out onboard, which D5 and task 5.4 re-ceiling.",
+      "action": "D1 cites the `inventory` stage's third exit criterion; the Goals bullet and D7 include onboard's ceiling.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "(the stage's third exit criterion,",
+          "and apply's, ff's and propose's lowered wherever the tag paragraph's move"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/cut-review-walk/design.md",
+            "text": "the `inventory` stage's third exit criterion"
+          },
+          {
+            "path": "orbit/changes/cut-review-walk/design.md",
+            "text": "propose's and onboard's lowered wherever this change's edits"
+          }
+        ],
+        "searched": [
+          "third exit criterion",
+          "ceiling",
+          "onboard"
+        ],
+        "scope": [
+          "orbit/architecture/reduce-orbit-phase2.md"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "V2's basic content is unstated, and its read condition ('the reviewer is fresh') also matches the dispatched worker",
+      "file": "orbit/changes/cut-review-walk/design.md",
+      "line": 61,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "evidence": "orbit-review's delta (a) read 'which the body reads when the reviewer is `fresh`, alone or as a blind pair's half' — a dispatched worker also runs --reviewer fresh; D4 did not state V2's basic content.",
+      "action": "D4 names V2's basic content: dispatch is the invoking session's act alone; a worker holding the brief skips the step without reading the reference, and the Commit and Chain end steps; the invoking session reads fresh-dispatch.md on a --reviewer fresh run or at a blind pair's step 5c. orbit-review's delta (a) says the same.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/cut-review-walk/specs/orbit-review/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "which the body reads when the reviewer is `fresh`, alone or as a blind pair's half"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/cut-review-walk/design.md",
+            "text": "V2's basic content, and who reads it."
+          },
+          {
+            "path": "orbit/changes/cut-review-walk/specs/orbit-review/spec.md",
+            "text": "which a worker holding the brief skips without reading"
+          }
+        ],
+        "searched": [
+          "fresh-dispatch.md",
+          "worker",
+          "Dispatching a fresh pass"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "All ten findings of the fresh pass resolved, every one a repair; F3 took option B (walk-order sentences to triage-sources.md), as the triage proposed and Sal's 'walk all' accepted. The blind pair's external half is walked in its own log next.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews cut-review-walk",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "de0bb814a6858c3621cb716f1482f848f50e3629",
+      "frozen": false,
+      "evidence": {
+        "files": [],
+        "share": null,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ],
+  "ripple_misses": 0
+}

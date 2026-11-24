@@ -11,9 +11,10 @@ stage, whose undo runs first. A pair is of one kind:
 
 | member | covered by |
 |---|---|
-| `moved` — text that leaves a body for a reference file, the body keeping its basic content | the undo replaces the basic content with the moved text, read from the reference; the test asserts the moved text is in that reference byte-equal and that the body names the reference by path |
+| `moved` — text that leaves a body for a reference file, the body keeping its basic content | the pair names the span by a start and an end anchor, each unique in the reference, and records the sha256 of the text before the move; the undo replaces the basic content with the span read between the anchors, and where the reference already held that text before the move (a span it shared with the body) the undo copies it back into the body and adds nothing to the reference; the test asserts the span hashes to the recorded digest and that the body names the reference by path |
 | `removed` — text a removal ruling takes | the pair names the ruling; the undo restores the text; the test asserts that a phrase the pair names, specific to the removed text, occurs nowhere in the generated skill, body or references |
 | `reworded` — text a rewording replaces, a positional pointer that a move would make wrong included | the undo restores it; whether the rewording keeps its meaning is the reviewer's judgement, so the test asserts only the reconstruction |
+| `restated` — text dropped because it restates a step the body keeps | the pair names the step text it restates; the undo restores the dropped text; the test asserts the step text is still in the body |
 | `shared` — any of the three on a constant several bodies carry | undone in every carrier the pair names |
 | an edit no pair lists | the undo does not reproduce the recorded hash, and the test fails naming the body |
 
@@ -32,7 +33,7 @@ ledger, and grading it is the stage's reviewers'.
 
 - **WHEN** a pair of kind `moved` names review's VERIFICATION procedure and a word of it is changed in
   `references/verification.md`
-- **THEN** the test fails naming the pair, because the moved text is no longer in the reference byte-equal
+- **THEN** the test fails naming the pair, because the span between its anchors no longer hashes to the digest recorded before the move
 
 #### Scenario: A removed text still present fails
 
@@ -89,7 +90,7 @@ step, which is carried in two halves (`reduce-orbit-phase1`'s R-rop-3 and R-rop-
 R-rop2-14 amends it): its BASIC CONTENT — when it runs, the `chain` read (with the `--chain-ran`/`--chain-head` flags a
 command a chain ran adds to it, since the read comes before the reference is opened), the `configured: false` result,
 and one sentence telling a command a chain ran that what its prompts' tags mean, and what it records, is in
-`references/chain-end-step.md` — composed once in code and carried byte-equal by each of those bodies; and the full
+`references/chain-end-step.md`, to be read before its first tagged prompt when the session has not read it — composed once in code and carried byte-equal by each of those bodies; and the full
 step, composed once in code (`CHAIN_END_STEP`, which carries the meaning of the three prompt tags (`(chain: target)`,
 `(chain: routine, default: …)`, `(chain: decision)`) and what a chained command records) and carried byte-equal in each
 one's `references/chain-end-step.md`, which the basic content tells the agent to read and follow, from the result it

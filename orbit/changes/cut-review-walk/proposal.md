@@ -15,10 +15,11 @@ edit is named (G0).
   moment the step names (`skill_body_convention.md`): discovery and the `--from-file` ingest (Step 1, every walk);
   several sources and a rediscovered pass (when discovery yields more than one source, or a pass a log already names);
   hybrid detection and ratification recording (into the existing `resolution-detail.md`, when a finding enters the
-  decision lane); the sweep record with its CHECK SCOPE / PATH production and ripple-miss attribution (when an entry
-  resolves); reading findings against a decision record or an account (when a finding's `pass` is `reading`); the
-  REDESIGN route (when a remedy is `redesign`); the report template (Step 5); one log per source and the emit scope forms
-  (into the existing `run-summary-emit.md`, before the first emit); the ripple cascade's tables and rules (when a fix
+  decision lane); ripple-miss attribution (at triage, on a change-scoped walk whose trail holds earlier walk logs) and the sweep
+  record with its CHECK SCOPE / PATH production (when an entry resolves), both in one reference; reading findings against a decision record or an account (when a finding's `pass` is `reading`); the
+  REDESIGN route (when a remedy is `redesign`); the report template (Step 5); the order of a walk over several sources
+  (into `triage-sources.md`, read before the walk) and each log's fields with the emit scope forms (into the existing
+  `run-summary-emit.md`, before the first emit); the ripple cascade's tables and rules (when a fix
   edits a normative artifact). Constraints drop their two restatements of Step 3's defaults; the prose that stays is
   tightened, no step removed.
 - **review's body** likewise moves: the VERIFICATION procedure, its verdicts and the CHECK SCOPE / PATH production (when
@@ -33,7 +34,7 @@ edit is named (G0).
   phase 1's R-rop-6). Propose, ff and apply shrink by the same paragraph.
 - **REMOVED (G0, R-rop2-12): address-reviews' batch mode** — the `--batch` flag, the verbal invocation phrase and the
   command-shaped mid-walk switch, their records `walk_mode_source` and `walk_mode_shifted_at_finding` (dropped from the
-  emit surface's payload table), and every batch clause in the body, its references, onboard's command table and
+  emit surface's payload table), and every batch clause in the body, its references, onboard's four mentions and
   `docs/commands.md`. Every walk runs finding by finding; new logs record `walk_mode: "per_finding"`, and logs written
   before keep their `"batch"` values and fields, which readers still read. A mid-walk delegation ("handle the rest") is
   not batch mode and stays.
@@ -71,8 +72,8 @@ change significantly what a session does, so none is replayed (R-rop2-10); the b
 
 ## Impact
 
-- `src/core/templates/workflows/address-reviews.ts`, `review.ts` (bodies, references and the address-reviews launcher's argument hint), `onboard.ts` (the command
-  table's `[--batch]`), `src/core/disciplines.ts` (`CHAIN_END_STEP_BASIC`), `src/core/emit-composition.ts` (two
+- `src/core/templates/workflows/address-reviews.ts`, `review.ts` (bodies, references and the address-reviews launcher's argument hint), `onboard.ts` (its four
+  mentions of batch mode), `src/core/disciplines.ts` (`CHAIN_END_STEP_BASIC`), `src/core/emit-composition.ts` (two
   address-reviews payload fields).
 - `docs/commands.md` (the `--batch` row).
 - Tests that read the moved text follow it to its reference: `orbit-content-fidelity`, `walk-routing`,

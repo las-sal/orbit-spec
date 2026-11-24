@@ -174,9 +174,9 @@ The system SHALL execute Step 3's lifecycle finding by finding — each finding 
 
 **Walk UX**: at each per-finding boundary, the AI resolves per the finding's LANE — an obvious-fix finding (previewed at triage) applies its resolution with no prompt and no discussion; a decision-lane finding follows the present → discuss → ratify protocol (per `Disjunctive recommendation fields surface as decision forks`). No mandatory per-finding `AskUserQuestion` exists; the user can interrupt between findings. A mid-walk DELEGATION ("handle the rest, only brief me on real decisions") compresses the decision lane as that requirement says; it is not a mode, and every prompt that fires still covers exactly one finding.
 
-**A retired trigger walks finding by finding.** An invocation carrying `--batch`, or a batch-intent phrase in its message, is walked finding by finding like any other, and the walk says in one line that batch mode was removed.
+**A retired trigger walks finding by finding.** `--batch` is a flag, dropped before discovery resolves the positional, so it is never read as part of a scope: `/orbit:address-reviews foo --batch` discovers `foo` exactly as `/orbit:address-reviews foo` does. An invocation carrying `--batch`, or one of the retired verbal forms in its message ("fix them all", "batch them", "go ahead with all", "address all at once", or a phrase of the same intent), is walked finding by finding like any other, and the walk says in one line that batch mode was removed. A bare mid-walk message that was the retired command-shaped switch ("go batch", "switch to batch", "batch the rest") is read as a mid-walk delegation (`Disjunctive recommendation fields surface as decision forks`): the rest of the findings are resolved as it delegates, a decision-lane finding is still briefed and ratified on its own, and the message is recorded verbatim as `delegation_directive`.
 
-**Resolution log capture**: the top-level `walk_mode` field in `address-reviews-<TS>.json` SHALL be `"per_finding"`. A log written while batch mode existed may carry `"batch"`, `walk_mode_source` and `walk_mode_shifted_at_finding`: it stays on the trail and is read as before, since no reader reads those fields, and the emit surface refuses the two retired fields on a new payload as unknown keys.
+**Resolution log capture**: the top-level `walk_mode` field in `address-reviews-<TS>.json` SHALL be `"per_finding"`. A log written while batch mode existed may carry `"batch"`, `walk_mode_source` and `walk_mode_shifted_at_finding`: it stays on the trail and is read as before, since no reader reads those fields, and the emit surface refuses the two retired fields on a new payload as unknown keys. These rules govern what the walk writes: the write gate checks neither `walk_mode`'s value nor a per-resolution `disagreement` object, so a payload composed outside the skill could carry `"batch"` or `disagreement` and be accepted — a named limit, since no reader reads either.
 
 #### Scenario: Default invocation walks finding by finding
 
@@ -187,6 +187,11 @@ The system SHALL execute Step 3's lifecycle finding by finding — each finding 
 
 - **WHEN** the user invokes `/orbit:address-reviews <change-name> --batch`, or `/orbit:address-reviews <change-name> — fix them all`
 - **THEN** the walk runs finding by finding, says in one line that batch mode was removed, and the resolution log records `walk_mode: "per_finding"` and carries no `walk_mode_source`
+
+#### Scenario: A retired mid-walk switch is a delegation
+
+- **WHEN** during a walk, after finding 1 is resolved, the user sends the bare message "batch the rest"
+- **THEN** findings 2 to N are resolved as a delegation of the rest, each decision-lane finding is still briefed and ratified on its own, and the log records `delegation_directive: "batch the rest"` and `walk_mode: "per_finding"`
 
 #### Scenario: A retired field is refused on a new payload
 
@@ -200,7 +205,7 @@ The system SHALL execute Step 3's lifecycle finding by finding — each finding 
 
 ### Requirement: Disjunctive recommendation fields surface as decision forks
 
-When a finding enters the DECISION lane, the system SHALL resolve it through the present → discuss → ratify protocol: (1) PRESENT — a full-prose briefing in chat carrying what the finding means, why it matters, terminology level-setting where concepts are novel, and the concrete options with real tradeoffs; the briefing's option set comes from the detection machinery below; the briefing is the presentation — option content is never confined to prompt labels; (2) DISCUSS — genuine back-and-forth for as many exchanges as the finding needs (zero exchanges is legitimate for crisp cases); (3) RATIFY — a direction the user types in chat IS ratification (user-typed provenance, the consent model's strongest signal); the `AskUserQuestion` is an OPTIONAL CLOSURE DEVICE, fired only AFTER the finding's discussion CONCLUDES without a crisp user directive (never before the briefing, never mid-discussion), carrying the discussed conclusion as its default option. A dismissed or inconclusive prompt RE-PRESENTS the finding — the walk position and briefing context are never lost. The prompt NEVER precedes the briefing, and one prompt NEVER spans multiple findings (batch prompts prohibited; batch DELEGATION — an explicit user directive compressing the decision lane, e.g. "handle the rest, brief me only on real decisions" — remains the user's prerogative and is recorded in the resolution log).
+When a finding enters the DECISION lane, the system SHALL resolve it through the present → discuss → ratify protocol: (1) PRESENT — a full-prose briefing in chat carrying what the finding means, why it matters, terminology level-setting where concepts are novel, and the concrete options with real tradeoffs; the briefing's option set comes from the detection machinery below; the briefing is the presentation — option content is never confined to prompt labels; (2) DISCUSS — genuine back-and-forth for as many exchanges as the finding needs (zero exchanges is legitimate for crisp cases); (3) RATIFY — a direction the user types in chat IS ratification (user-typed provenance, the consent model's strongest signal); the `AskUserQuestion` is an OPTIONAL CLOSURE DEVICE, fired only AFTER the finding's discussion CONCLUDES without a crisp user directive (never before the briefing, never mid-discussion), carrying the discussed conclusion as its default option. A dismissed or inconclusive prompt RE-PRESENTS the finding — the walk position and briefing context are never lost. The prompt NEVER precedes the briefing, and one prompt NEVER spans multiple findings (a prompt spanning several findings is prohibited; a mid-walk DELEGATION — an explicit user directive compressing the decision lane, e.g. "handle the rest, brief me only on real decisions" — remains the user's prerogative and is recorded in the resolution log).
 
 **Detection** (hybrid — structured path preferred, heuristic fallback) supplies the briefing's option set:
 
@@ -267,7 +272,7 @@ When a finding enters the DECISION lane, the system SHALL resolve it through the
 - **WHEN** a finding's pushback + classify yields "unresolvable" (needs information not currently available; will be filed as task / converted to TODO / escalated)
 - **THEN** the lifecycle proceeds to the unresolvable-path UX; no briefing-protocol prompt; the resolution log omits `recommendation_fork`
 
-#### Scenario: Batch delegation compresses the lane; batch prompts never fire
+#### Scenario: A delegation compresses the lane; multi-finding prompts never fire
 
 - **WHEN** the user issues an explicit mid-walk delegation ("handle the rest, only brief me on real decisions") with decision-lane findings left in scope
 - **THEN** the AI resolves per the delegation's scope, briefing only what the directive reserves; every prompt that does fire covers exactly ONE finding — a single `AskUserQuestion` spanning multiple findings never fires; the resolution log records the delegation directive
@@ -289,7 +294,7 @@ The system SHALL extend the `address-reviews-<TS>.json` resolution-log shape wit
 
 - **`walk_mode`** (top-level, required): `"per_finding"`, the only walk mode (`Every walk runs finding by finding`); a log written while batch mode existed may carry `"batch"`.
 - **`walk_mode_source`** and **`walk_mode_shifted_at_finding`** (top-level): RETIRED with batch mode (R-rop2-12). They appear only in logs written before its removal, and the emit surface refuses them on a new payload.
-- **`delegation_directive`** (top-level, optional): the user's verbatim mid-walk delegation ("handle the rest, only brief me on real decisions"), present when one was issued (per the decision-lane protocol's batch-delegation rule).
+- **`delegation_directive`** (top-level, optional): the user's verbatim mid-walk delegation ("handle the rest, only brief me on real decisions"), present when one was issued (per the decision-lane protocol's delegation rule).
 - **`reproduction_rerun`** (per-resolution, REQUIRED on every CRITICAL entry, absent below CRITICAL — rc02b): the Step 3a step-(0) result, one of the CLOSED values `reproduced` / `not-reproduced` / `cannot-run` (the marker carried a reproduction and it was re-run) or `unreproduced` (the marker carried none); the output or derivation rides `evidence`. Named in `references/run-summary-schema.md` and derived by the schema-table parity test; a reader that does not know the field ignores it (the `recommendation_options` precedent).
 - **`ratified_via`** (per-resolution, required for EVERY decision-lane resolution — forked or not): `"chat"` (a user-typed directive ratified the resolution) or `"prompt"` (the optional closure `AskUserQuestion` did). Absent on non-decision-lane resolutions (stale, trivial fix, unresolvable).
 - **`resolution`** (per-resolution, conditionally required): the ratified direction verbatim — required when no fork was detected (the briefing's options were AI-derived prose) OR when the ratified direction is off-menu; optional when `recommendation_fork.chosen` names a presented option (the label suffices).

@@ -29,8 +29,8 @@ are `src/core/disciplines.ts` constants carried byte-equal by several bodies (`C
 **Goals:**
 
 - Both bodies at most 5,000 estimated tokens (G1), with their character ceilings in `skill-body-budget.test.ts` lowered
-  to the new sizes plus 5% (G2), and apply's, ff's and propose's lowered wherever the tag paragraph's move brings their
-  size plus 5% under the ceiling.
+  to the new sizes plus 5% (G2), and apply's, ff's, propose's and onboard's lowered wherever this change's edits bring
+  their size plus 5% under the ceiling.
 - Every edit named (G0): each removal by its ruling, and every edit to a body's instructions as a pair in a ledger an
   unnamed edit fails.
 - Behaviour kept for every cut that is not a removal: what a session reads is the same text, read at the step that uses
@@ -41,7 +41,9 @@ are `src/core/disciplines.ts` constants carried byte-equal by several bodies (`C
 - The epitome's decision-writing bullet (D-inv-2 shortens it in every body). Neither cut list here needs it, and it is the
   rewording phase 1 deferred as the riskiest (R-rop-15); it lands with the first cut stage whose body does.
 - Bulk-archive's removal (R-rop2-11, `cut-propose-archive`) and explore's and onboard's own cuts (`cut-explore-onboard`).
-  Onboard is touched here only to drop `[--batch]` from its command table, a consequence of R-rop2-12.
+  Onboard is touched here only to drop its four mentions of batch mode (`onboard.ts:50`, the address-reviews layer
+  line; `:92`, its Phase 4 paragraph; `:114`, the command table row and that row's description), a consequence of
+  R-rop2-12.
 - Any replay run (R-rop2-10): no entry is postulated to change significantly what a session does.
 
 ## Decisions
@@ -50,11 +52,15 @@ are `src/core/disciplines.ts` constants carried byte-equal by several bodies (`C
 
 Address-reviews, from its sketch: M1 discovery → `references/discovery.md`; M2 several sources and a rediscovered pass →
 `references/triage-sources.md` (the disagreement test is removed, D3); M3 and M6 ripple-miss attribution, the sweep's five
-arrays and the CHECK SCOPE / PATH production → `references/sweep-record.md`; M4 batch mode removed (D3); M5 hybrid
+arrays and the CHECK SCOPE / PATH production → `references/sweep-record.md`, read at TWO moments: at triage (Step 2), on
+a change-scoped walk whose trail holds earlier walk logs, for the attribution, which `A ripple miss is attributed by the
+walk that finds it` puts at triage, before the walk edits files; and at Step 3d.5, when an entry resolves, for the sweep; M4 batch mode removed (D3); M5 hybrid
 detection and ratification recording → the existing `references/resolution-detail.md`; M7 reading findings →
 `references/reading-findings.md`; M8 the REDESIGN route → `references/redesign.md`; M9 the report template →
-`references/report.md`; M10 one log per source and the scope forms → the existing `references/run-summary-emit.md`
-(already holding them whole); M11 the cascade's OUT table, IN rule, `--no-cascade` and trust rule →
+`references/report.md`; M10 the per-source paragraph SPLIT: its walk-order sentences (token order, each source's log written before the next
+source begins, an interrupted walk's logs standing) → `references/triage-sources.md`, read when discovery yields more
+than one source and so before the walk, and its log fields with the scope forms → the existing
+`references/run-summary-emit.md` (already holding them whole), the split named in the ledger; M11 the cascade's OUT table, IN rule, `--no-cascade` and trust rule →
 `references/cascade.md`; R1 Constraints keep only "never write new markers"; R2 the prose that stays tightened.
 
 Review, from its sketch: V1 the VERIFICATION procedure (a) to (e), the Verdicts fence and the Sweep scope and paths fence →
@@ -71,7 +77,7 @@ step; review's pass-genre table (a checked mirror held in the body, `orbit-conve
 framework`), Steps 1, 2 (change modes), 4, 6 to 9, the disjunctive-recommendation rule, the direction and commentary
 contracts, the special cases, the worked example, the commit step.
 
-The shared steps, decided once (the stage's third exit criterion, the inventory's table): the CHECK SCOPE / PATH fence
+The shared steps, decided once (the `inventory` stage's third exit criterion, the inventory's table): the CHECK SCOPE / PATH fence
 moves in both bodies into each skill's own reference, the same bytes (M6, V1); the chain end step's tag paragraph moves
 in all five carrying bodies at once, because it is one constant (D2); the commit step stays whole.
 
@@ -83,7 +89,7 @@ per step) rules out.
 
 `CHAIN_END_STEP_BASIC` drops `CHAIN_TAG_MEANING` and gains one sentence after its read-and-route paragraph:
 
-> A command a chain ran reads what its prompts' `(chain: …)` tags mean, and what it records, in `references/chain-end-step.md`.
+> A command a chain ran reads what its prompts' `(chain: …)` tags mean, and what it records, in `references/chain-end-step.md`, before its first tagged prompt when this session has not read it.
 
 `CHAIN_END_STEP` (the reference) already carries `CHAIN_TAG_MEANING` and is unchanged, so `moved-blocks`' recorded hash
 for it holds. The `--chain-ran` / `--chain-head` clause stays in the basic content: the read comes before the reference
@@ -97,8 +103,8 @@ Batch mode: the three triggers and the batch-mode UX go from the body, `resoluti
 "Decision-lane behavior in batch-mode" paragraph, the run-summary schema reference's `walk_mode_source` and
 `walk_mode_shifted_at_finding` rows and its batch example payload, the per-source paragraph's batch sentences (body and
 `run-summary-emit.md`), the sweep clause "in batch mode, …", the Constraints bullet, the skill's `compatibility`
-frontmatter clause, the launcher's argument hint where it names `--batch`, onboard's command table, and
-`docs/commands.md`'s row. `walk_mode` stays a required top-level field; a new log always carries `"per_finding"`. The
+frontmatter clause, the launcher's argument hint where it names `--batch`, onboard's four mentions (its address-reviews layer line, its
+Phase 4 paragraph, its command table row and that row's description), and `docs/commands.md`'s row. `walk_mode` stays a required top-level field; a new log always carries `"per_finding"`. The
 two retired fields leave `emit-composition.ts`' address-reviews `payloadFields`, so a new payload carrying them is
 refused as unknown. A log written before keeps them, and no reader reads them (the engine has none; the gate reads
 resolutions). The mid-walk DELEGATION directive ("handle the rest, only brief me on real decisions") is not batch mode:
@@ -128,9 +134,19 @@ precedes it (phase 1's reading-order rule). Two moments need care:
   met by a session that has the reference loaded.
 - **The fresh half of a blind pair.** `blind-pair.md`'s step 5c dispatches the fresh half "per the trunk's Dispatching a
   fresh pass"; it is re-pointed to `references/fresh-dispatch.md`, which now holds the brief.
+- **V2's basic content, and who reads it.** A dispatched worker runs `--reviewer fresh` too, so "the reviewer is fresh"
+  is no read cue. The body keeps the step's heading and three sentences: dispatch is the INVOKING session's act alone; a
+  subagent holding the brief is the worker, skips this step without reading the reference, and skips the Commit step and
+  the Chain end step, returning once its pass is persisted; the invoking session, on a `--reviewer fresh` run or at a blind
+  pair's step 5c, reads `references/fresh-dispatch.md` and follows it.
 
 Text that moves is moved byte-equal. A positional pointer inside it that the new home makes wrong ("are below", "just
-above", "Step 3 trigger table") is reworded as a named pair in the ledger (D5), never left. `flags-detail.md` opens "Loaded
+above", "Step 3 trigger table") is reworded as a named pair in the ledger (D5), never left. A pointer from text that does
+NOT move into text that does is re-pointed too: every reference of both skills is grepped for "the body's", "Step N" and
+each moved heading, and each hit naming a moved section is re-pointed to its reference — known at propose:
+`resolution-detail.md`'s "the body's DISCOVERY rows 4 and 5" and "the DISCOVERY fence in the body's Step 1"
+(`address-reviews.ts:373`, `:377`), and review's schema reference's "Step 5's VERIFICATION branch" (`review.ts:212`).
+References are not hashed by the ledger, so these re-pointings are named in the archive. `flags-detail.md` opens "Loaded
 only when one of these flags is set"; with V4 it is read at Step 3 of every pass, so that line is reworded.
 
 New references: `discovery.md`, `triage-sources.md`, `sweep-record.md`, `reading-findings.md`, `redesign.md`,
@@ -151,9 +167,10 @@ pair of one kind:
 
 | kind | the pair | the undo | the check |
 |---|---|---|---|
-| `moved` | the skill, the reference, the moved text's first line, the basic content that replaces it | replaces the basic content with the moved text read from the reference | the moved text is in the reference byte-equal, and the body names the reference |
+| `moved` | the skill, the reference, the moved span's start and end anchors (each unique in the reference), the sha256 of the text before the move, the basic content that replaces it | replaces the basic content with the span read from the reference between its anchors; where the destination already held the text (M10's log fields, the chain paragraph), the pair names that existing span and the undo copies it back into the body, never appending a second copy | the span between the anchors hashes to the recorded digest, and the body names the reference |
 | `removed` | the text removed, what replaces it (often nothing), the ruling | restores the text | a phrase specific to the removed text occurs nowhere in the generated skill |
 | `reworded` | before, after | restores before | none beyond the reconstruction: whether a rewording keeps its meaning is the reviewer's judgement |
+| `restated` | the text dropped as a restatement, and the step text it restates | restores the dropped text | the step text it restates is still in the body (V5, review's R1, address-reviews' R1) |
 | `shared` | one of the above on a constant several bodies carry (`CHAIN_END_STEP_BASIC`) | applied in every carrier | as its kind |
 
 Undoing every pair, in reverse order, must reproduce each recorded hash; an unlisted edit fails naming the body.
@@ -166,7 +183,7 @@ over a snapshot fixture of today's bodies (a second copy of 80 KB of text that e
 
 ### D6 — The specs that said "the body carries" now say which file of the skill carries it
 
-Four sentences in three owners place a fence or a step in a BODY: `orbit-address-reviews`' DISCOVERY fence (`Address-reviews
+Six placements, in five requirements of three owners, put a fence or a step in a BODY: `orbit-address-reviews`' DISCOVERY fence (`Address-reviews
 command available`), `orbit-emit-composition`'s Verdicts fence and CHECK SCOPE fence, `orbit-review`'s VERIFICATION branch
 and its verdicts mirror, and `orbit-review`'s dispatch brief in the brief-region rule. Each is modified to name the skill's
 reference. The parity tests holding those mirrors (`discovery-parity`, `verification-verdict-parity`, `sweep-path-parity`)
@@ -177,7 +194,8 @@ so `orbit-conventions`' `The review body carries the table as a checked mirror` 
 
 After the last body edit (the walk's included), each edited body's character ceiling is lowered to its new size plus 5%, as
 a named edit naming its previous ceiling, the rule phase 1 set; a body whose size plus 5% would exceed its ceiling keeps it.
-Apply's, ff's and propose's come down too, since the tag paragraph's move shrinks them by about 990 characters.
+Apply's, ff's and propose's come down too, since the tag paragraph's move shrinks them by about 990 characters, and
+onboard's, which loses its batch mentions.
 
 ## Alternatives considered
 
@@ -221,7 +239,7 @@ Apply's, ff's and propose's come down too, since the tag paragraph's move shrink
 - `src/core/templates/workflows/review.ts` — the body, the new references, `flags-detail.md`, `blind-pair.md`'s step 5c.
 - `src/core/disciplines.ts` — `CHAIN_END_STEP_BASIC`.
 - `src/core/emit-composition.ts` — address-reviews' `payloadFields`.
-- `src/core/templates/workflows/onboard.ts` — the command table row.
+- `src/core/templates/workflows/onboard.ts` — its four mentions of batch mode.
 - `docs/commands.md` — the `--batch` row.
 - `test/core/templates/cut-ledger.test.ts` — the new ledger.
 - `test/core/templates/tightened-bodies.test.ts` — undoes the cut ledger first.

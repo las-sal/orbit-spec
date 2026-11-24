@@ -119,8 +119,8 @@ Ratified by Sal, 2026-11-20, at the opening session.
   with `/orbit:archive`. Landed by `cut-propose-archive`. Chosen over keeping it under 5,000 by moving two per-change
   steps to references (D-inv-3, superseded).
 - **R-rop2-12** (Sal, 2026-11-23; D-inv-15, G0) — address-reviews' batch mode and the blind-pair disagreement test are
-  removed. Evidence: neither fired in the 476 walk logs on this repository's trails (438 per-finding, 30 legacy walk-mode
-  logs, none batch; no resolution carries a `disagreement`; D-inv-7). The removal takes the three batch triggers
+  removed. Evidence: neither fired in the 476 walk logs on this repository's trails (438 `per_finding`, 30 with the
+  legacy value `walk`, 8 written before the field existed, none `batch`, measured 2026-11-24 over the tracked logs; no resolution carries a `disagreement`; D-inv-7). The removal takes the three batch triggers
   (`--batch`, the verbal phrase, the command-shaped mid-walk switch) and their records (`walk_mode_source`,
   `walk_mode_shifted_at_finding`), the disagreement rule and its `disagreement` record, and their text in the
   address-reviews, review, audit-drift and onboard templates and the baseline specs `orbit-address-reviews`,
