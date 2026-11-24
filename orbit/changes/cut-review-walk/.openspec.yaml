@@ -1,0 +1,27 @@
+schema: spec-driven
+created: 2026-11-24
+schema_version: 5
+architecture:
+  doc: reduce-orbit-phase2
+  stage: cut-review-walk
+base_fingerprints:
+  orbit-address-reviews:
+    Walk-mode by default with --batch opt-in: sha256:3bf47c8ae8c5a96e81abb5d0b5312f77177ae0ca508222646c6fc87c68228676
+    A disagreement between the halves of a pair is settled by one test: sha256:af589ce2753790311ecaadee93d46b116cd3e5c7a0a7d4ee4588400e3ed04041
+    Address-reviews command available: sha256:1a2db60181190fc4baf14415d2416d6ed8ed026dc9c5e4555a7b2bb068a4ddef
+    Discover → triage → walk → ripple flag → report lifecycle: sha256:05ba8a6d1e6a8cc9163eb34505cdb199c184e9b2aaa4ff5e0d0836bb79b030da
+    Disjunctive recommendation fields surface as decision forks: sha256:7e7d06e7517251ae9ea27a5b974ef945803e2996452745d3569d33c0370d0e91
+    Resolution-log JSON shape extensions for walk-mode / decision-forks / cascade: sha256:5b548923157a6861bb22fb48c34df5607cc9b2d0cdf1b2fd232c1d748e2914bc
+    A resolved walk entry records its sweep evidence: sha256:5abde7c5cafe95d6192cb7ba71ca70d573da2190e990e0eb0d37c8c1964d7abe
+    One invocation writes one log per discovered source: sha256:f9d7648993aaf809695e68d6af077826b467e277a258af1dff2d0713a57f3994
+  orbit-conventions:
+    No-chaining contract: sha256:fd015f8d74d9f9b797c96275d38a2851ff71eabfa8d939d4afcc9c2a7c0ebd5e
+    An edit ledger holds every tightened body to its recorded text: sha256:0ce7d5f1653e5500e6411fa8384c4b0003dffd57885e9cc3339f348e6cc88981
+  orbit-decision-records:
+    A record is fixed by a replacement, never edited: sha256:9fac7a5773c247e7b8413647d1e13f18e6b0b342a28d337cb27c060c2dd16134
+  orbit-emit-composition:
+    A VERIFICATION-genre payload carries its verdicts and its findings link to the walk record: sha256:d068c1117ea74629d500526cb515ada62a4f3cdfd4e53545aaa97fa8eec4dc54
+    The walk write gate checks sweep evidence: sha256:a44bbb5dcdb88bce0c8ac444b121e0925dd157a99a3fcfa56e5f79cd8d049b87
+  orbit-review:
+    Review-genre passes read the artifacts and the code, never the trail's findings: sha256:7d5fbb152c0c1923e7209fd2ae01f7d893cc93001a9c2296bcc10599a11c3c4e
+    Verification-genre passes grade the walk record: sha256:d39c56b522c9d330da6f608aa64b70ebd7e18e8e40ff2154c0ffe9850cf4a1e8
