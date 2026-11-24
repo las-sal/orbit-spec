@@ -104,7 +104,7 @@ three cut stages depend on `replay-set` and `inventory` and not on each other (R
 ### Stage replay-set — the replay set that grades cuts meant to keep behaviour
 
 Depends-on: (none)
-Complete: [ ]
+Complete: [x] 2026-11-23 (Sal)
 
 The brief's S15 as R-rop2-2 sets it: cases, fixtures and a script in this repository that run orbit's built skills as
 real headless sessions, several runs per case, graded by facts orbit records. Never shipped; started by Sal and billed
@@ -232,3 +232,9 @@ Exit criteria:
   `completion-offers` test fails on a generated zsh script (`parse error near '<'`, line 32), red on main since
   `e2eabb02`; filing an issue is Sal's. Open for the cut stages: Claude Code auto-updated between the billed runs
   (2.1.329 to 2.1.330); holding it steady for the comparisons (`DISABLE_AUTOUPDATER=1`) is Sal's call.
+- 2026-11-23 — Architect session, continued: CI run 45258559650 on `c871f875` showed the Linux leg passing its tests,
+  its size report and `Validate generated skills` (the pinned `npx` copy of Claude Code 2.1.329 printed `Validation
+  passed`), R-rop2-8's condition. Sal ratified `replay-set`: all four exit criteria met, the second in the weaker form
+  its Shipped as records. The macOS leg stays red outside this stage: the zsh-completion test, and three
+  `invoked-coverage-oracle` shards that timed out at 300 s after passing in 73 to 91 s two runs earlier (a re-run of the
+  failed jobs is Sal's). `inventory` is next, as a named exploration citing this doc.
