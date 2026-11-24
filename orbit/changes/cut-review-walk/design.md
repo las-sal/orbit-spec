@@ -104,12 +104,17 @@ Batch mode: the three triggers and the batch-mode UX go from the body, `resoluti
 `walk_mode_shifted_at_finding` rows and its batch example payload, the per-source paragraph's batch sentences (body and
 `run-summary-emit.md`), the sweep clause "in batch mode, …", the Constraints bullet, the skill's `compatibility`
 frontmatter clause, the launcher's argument hint where it names `--batch`, onboard's four mentions (its address-reviews layer line, its
-Phase 4 paragraph, its command table row and that row's description), and `docs/commands.md`'s row. `walk_mode` stays a required top-level field; a new log always carries `"per_finding"`. The
+Phase 4 paragraph, its command table row and that row's description), and `docs/commands.md`'s row. `walk_mode` stays a required top-level field; a log the walk writes carries `"per_finding"`, and the write gate
+does not check the value (the named limit in `Every walk runs finding by finding`). The
 two retired fields leave `emit-composition.ts`' address-reviews `payloadFields`, so a new payload carrying them is
 refused as unknown. A log written before keeps them, and no reader reads them (the engine has none; the gate reads
 resolutions). The mid-walk DELEGATION directive ("handle the rest, only brief me on real decisions") is not batch mode:
 it, `delegation_directive` and "one prompt never spans two findings" stay, the scenario that named both losing its batch
-clause.
+clause. The retired triggers keep body text of their own: `--batch` is dropped before discovery resolves the positional,
+the retired verbal forms get a one-line notice that batch mode was removed, and a bare mid-walk "go batch" / "switch to
+batch" / "batch the rest" is read as a delegation and recorded verbatim (`Every walk runs finding by finding`). The body
+therefore still names those words, so batch mode's `removed` pairs take their phrase from text that leaves the skill
+entirely (`walk_mode_source`, `command-shape-interruption`, "Batch-mode is opt-in").
 
 The disagreement test: the body's paragraph, the per-resolution `disagreement` key in the schema reference and its
 examples, and the requirement go. The triage's cross-pass split (found by both / one pass only / contradictory) stays as
@@ -223,8 +228,9 @@ onboard's, which loses its batch mentions.
   Measured at this propose: neither carries batch mode or the disagreement test (audit-drift's "disagreement" is
   doc-vs-spec drift; engine-gates' mentions are a 2026-09-14 history note and bulk-archive), so neither is a capability
   here; recorded in the archive's Shipped as.
-- [The cut ledger is large: every moved section's first line and every reworded span.] → Moves store no text (the undo
-  reads it from the reference); only removals and rewordings store their before text.
+- [The cut ledger is large: every moved span's two anchors and digest, and every removed, reworded or restated span.] →
+  Moves store their anchors and a digest, never the moved text (the undo reads it from the reference); only removals,
+  rewordings and restatements store their before text.
 
 ## At archive
 

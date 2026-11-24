@@ -1,0 +1,192 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-24T22:46:18Z",
+  "change": "cut-review-walk",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/cut-review-walk/.orbit-runs/review-proposal-2026-11-24T22-32-40Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-24T22-32-40Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 2
+  },
+  "pushback_verification": "All three verified at HEAD (4b31c241): each quoted line was present as the pass describes; none stale.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Task 2.2 and design D3 carry only the retired trigger's notice, not the flag handling or the mid-walk switch the spec now requires",
+      "file": "tasks.md",
+      "line": 8,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "evidence": "tasks.md:8 read 'add the one-line notice for a retired trigger'; design D3 named only the surviving delegation; the spec's `Every walk runs finding by finding` (spec.md:177) carries the flag drop, the verbal forms and the mid-walk delegation reading.",
+      "action": "Task 2.2 and design D3 now carry the three behaviours the spec requires, and say batch mode's removed pairs take their phrase from text that leaves the skill entirely (walk_mode_source, command-shape-interruption, 'Batch-mode is opt-in').",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/cut-review-walk/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "ripple_miss_of": {
+        "walk": "2026-11-24T20-23-26Z",
+        "title": "A command-shaped mid-walk batch switch (\"go batch\", \"batch the rest\") has no specified behaviour once batch mode is removed",
+        "file": "orbit/changes/cut-review-walk/specs/orbit-address-reviews/spec.md",
+        "kind": "judgement"
+      },
+      "sweep": {
+        "retired": [
+          "add the one-line notice for a retired trigger;"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/cut-review-walk/tasks.md",
+            "text": "dropped before discovery resolves the positional, the retired verbal forms answered by a one-line notice"
+          },
+          {
+            "path": "orbit/changes/cut-review-walk/design.md",
+            "text": "The retired triggers keep body text of their own"
+          }
+        ],
+        "searched": [
+          "retired trigger",
+          "one-line notice",
+          "delegation",
+          "removed` pair"
+        ],
+        "scope": [
+          "orbit/changes/cut-review-walk/specs/orbit-address-reviews/spec.md"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Design D3 still says a new log always carries per_finding, which the spec's new named limit contradicts",
+      "file": "design.md",
+      "line": 107,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "evidence": "design.md:107 said 'a new log always carries \"per_finding\"' against the spec's named limit that the write gate checks no walk_mode value.",
+      "action": "Design D3 says a log the walk writes carries per_finding and the write gate does not check the value, pointing at the spec's named limit.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "ripple_miss_of": {
+        "walk": "2026-11-24T20-23-26Z",
+        "title": "Task 2.2 lists only some of the schema reference's batch and disagreement text",
+        "file": "orbit/changes/cut-review-walk/tasks.md",
+        "kind": "judgement"
+      },
+      "sweep": {
+        "retired": [
+          "a new log always carries `\"per_finding\"`"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/cut-review-walk/design.md",
+            "text": "a log the walk writes carries `\"per_finding\"`, and the write gate"
+          }
+        ],
+        "searched": [
+          "always carries",
+          "per_finding"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "A Risks bullet still describes moved pairs by their first line",
+      "file": "design.md",
+      "line": 226,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "evidence": "design.md:226's Risks bullet described moved pairs by 'every moved section's first line' after walk 2 made them anchors plus a digest.",
+      "action": "The Risks bullet now says moves store their two anchors and a digest, never the moved text, and that removals, rewordings and restatements store their before text.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "ripple_miss_of": {
+        "walk": "2026-11-24T20-25-08Z",
+        "title": "The cut ledger cannot reliably identify the bytes it must restore",
+        "file": "orbit/changes/cut-review-walk/design.md",
+        "kind": "judgement"
+      },
+      "sweep": {
+        "retired": [
+          "every moved section's first line"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/cut-review-walk/design.md",
+            "text": "every moved span's two anchors and digest"
+          }
+        ],
+        "searched": [
+          "first line",
+          "store no text"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "The verification pass walked: three repairs, each completing a fix the earlier walks landed one artifact short, attributed as ripple misses of kind judgement.",
+  "iteration": 3,
+  "next_recommended": "/orbit:apply cut-review-walk — user-invoked",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "4b31c241143dff8d06b1cd73e4c371be0b369bfb",
+      "frozen": false,
+      "evidence": {
+        "files": [],
+        "share": null,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ],
+  "ripple_misses": 3
+}
