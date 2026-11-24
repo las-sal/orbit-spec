@@ -1,0 +1,191 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-24T20:09:38Z",
+  "change": "cut-review-walk",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 3
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "pass": "3",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/cut-review-walk/design.md",
+      "line": 44,
+      "title": "Onboard's body names batch mode in two places beyond its command table, and the change scopes onboard to the table alone",
+      "recommendation": "Onboard's generated instructions carry batch mode three times, not once: src/core/templates/workflows/onboard.ts:50 (\"Walk-mode (per-finding) is the default; `--batch` opts in.\"), :92 (\"walk-mode is the default (`--batch` opts in)\") and the command table at :114. The design's Non-Goals (design.md:44, \"Onboard is touched here only to drop `[--batch]` from its command table\"), the proposal's Impact (`onboard.ts` (the command table's `[--batch]`)) and task 2.2 all name the table only, so an implementation built to the artifacts leaves onboard telling every new user that `--batch` opts in after the flag is gone (and a `removed` pair whose phrase is `--batch` would fail on onboard). Widen D3, the Non-Goals sentence, the proposal's Impact line and task 2.2 to onboard's three sites, each a `removed` pair naming R-rop2-12."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/cut-review-walk/tasks.md",
+      "line": 30,
+      "title": "No task declares the delta scenarios: 28 are undeclared and 7 tags go orphan, and the check turns to ERROR once apply passes",
+      "recommendation": "`orbit status --change cut-review-walk --scenarios` reads 124 delta scenarios with 28 uncovered and 7 ORPHAN tags. The uncovered set is mostly CARRIED, not new: the MODIFIED `Disjunctive recommendation fields surface as decision forks` pulls 11 scenarios that carry no tag today, the MODIFIED `Review-genre passes read the artifacts and the code, never the trail's findings` pulls 5, and the new or renamed scenarios (the DISCOVERY fence in `references/discovery.md`, the four of `Every walk runs finding by finding`, `Each chaining body points at the tags' meaning`, `A cut stage's edits are undone first`, the cut ledger's four) carry none either. The orphans are the tags on the removed batch and disagreement scenarios and the renamed chain scenario (chain-prompt-tags.test.ts:81, orbit-content-fidelity.test.ts:1150-1151, walk-routing.test.ts:108/143/150/155). The validator reports undeclared delta scenarios at INFO until the apply gate passes and at ERROR after (src/core/validation/validator.ts scenarioLevel). No task plans the declarations: 2.1 follows one scenario, and 5.2 follows tests that read moved text, which does not cover carried scenarios with no tag. Add a task (or widen 5.2) that declares every delta scenario the map lists as uncovered, by a tag whose evidence fits its THEN or a ledger entry, retires or re-points the 7 orphans, and records the counts read from the map at apply."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/cut-review-walk/design.md",
+      "line": 56,
+      "title": "M10 moves the walk-time rule for several sources to the emit step's reference, which a session following the steps reads only after it has walked every source",
+      "recommendation": "`ADDRESS_REVIEWS_EMIT_PER_SOURCE` holds two different kinds of instruction: the log's fields (emit-time) and the walk ORDER, \"write each source's log when that source's findings are walked, before the next source begins\" (walk-time, `One invocation writes one log per discovered source`). M10 moves the whole paragraph to `references/run-summary-emit.md`, read \"before the session's first run-summary emit\". The body runs triage (2), walk (3), report (5), persist (6), so a session that follows its steps walks every source's findings before it opens that reference and first learns there that each source's log was owed before the next source began. That contradicts the design's goal for every non-removal cut (\"what a session reads is the same text, read at the step that uses it\") and makes an interrupted multi-source walk leave no logs. Choose a home for the walk-time sentence that the walk reaches in time.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Keep the timing sentence (walk source by source, write each source's log before the next source begins) in the body, at Step 3 or in the several-sources basic content, as a `reworded` pair. Only the emit-time fields move under M10."
+        },
+        {
+          "label": "B",
+          "body": "Move the timing sentence to `references/triage-sources.md` (M2), which the body reads when discovery yields more than one source, before the walk starts. Name the split of the paragraph in the cut ledger, since the text no longer moves whole."
+        }
+      ]
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/cut-review-walk/specs/orbit-address-reviews/spec.md",
+      "line": 177,
+      "title": "A command-shaped mid-walk batch switch (\"go batch\", \"batch the rest\") has no specified behaviour once batch mode is removed",
+      "recommendation": "The retired-trigger rule covers the INVOCATION only (\"An invocation carrying `--batch`, or a batch-intent phrase in its message\"). The removed third trigger, a bare mid-walk \"go batch\" / \"switch to batch\" / \"batch the rest\", gets no rule. It sits right beside the DELEGATION directive that stays (\"handle the rest, only brief me on real decisions\"), and the schema reference's current executed example records `\"delegation_directive\": \"batch the rest\"`. So one implementation reads a mid-walk \"batch the rest\" as a delegation (compressing the decision lane), and another prints the batch-removed notice and keeps briefing. State which: for example, \"a mid-walk message asking for batch mode is read as a delegation directive when it delegates, and otherwise answered with the one-line notice\". Choose the replacement example's `delegation_directive` wording so it does not keep the retired phrase."
+    },
+    {
+      "pass": "7",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/cut-review-walk/design.md",
+      "line": 132,
+      "title": "D4 rewords positional pointers only inside moved text, while unmoved references point at text the moves take out of the bodies",
+      "recommendation": "D4 rewords a pointer only when it sits inside the moved text. References that do not move also point at the body's copies. `references/resolution-detail.md` says \"the body's DISCOVERY rows 4 and 5\" and \"Discovery is the DISCOVERY fence in the body's Step 1\" (src/core/templates/workflows/address-reviews.ts:373 and :377). After M1 the fence is in `references/discovery.md`, so both are false. Review's run-summary schema reference says \"the grading procedure is Step 5's VERIFICATION branch\" (review.ts:212), and after V1 that procedure is in `references/verification.md`. The cut ledger cannot see these, because references are not hashed (its own named limit). Extend D4 and tasks 3.4 and 4.3 to grep every reference of both skills for pointers into each moved section (\"the body's\", \"Step N\", the moved headings) and re-point them."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/cut-review-walk/tasks.md",
+      "line": 8,
+      "title": "Task 2.2 lists only some of the schema reference's batch and disagreement text",
+      "recommendation": "Beyond the 'two rows' and 'its batch example' that task 2.2 names, the address-reviews schema reference also carries: the spine-extension list naming `walk_mode_source` and `walk_mode_shifted_at_finding` (address-reviews.ts:585); `\"walk_mode\": \"per_finding\" | \"batch\"` in the schema block (:604); the `walk_mode` field note describing batch as a live mode (:950); the worked snippet '(b) Batch-mode with verbal source' (~:990); the examples' intro ('walked in a mode that switched to batch mid-walk', :667); and the external example's prose ('one repaired after a disagreement test', 'one settled by a test', :730ff). `resolution-detail.md`'s title and Contents also name 'batch triggers' and the 'Batch-mode trigger table' (:356, :361). List them in 2.2/2.3 so the sweep is planned, not found. Also say in `Every walk runs finding by finding` that the write gate does not check `walk_mode`'s value (the engine has no check: a new payload with `\"batch\"` is accepted), so that SHALL is held by the skill text alone, a named limit."
+    },
+    {
+      "pass": "7",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/cut-review-walk/specs/orbit-address-reviews/spec.md",
+      "line": 270,
+      "title": "The scenario 'Batch delegation compresses the lane; batch prompts never fire' keeps 'batch' in its title after batch mode is removed",
+      "recommendation": "After batch mode's removal, 'batch' survives only in the decision lane's 'batch DELEGATION' and 'batch prompts prohibited'. Those are different senses from the removed mode, but they invite the confusion the removal ends. Since the scenario carries no tag today, it can be renamed for free, for example 'A delegation compresses the lane; multi-finding prompts never fire' (with 'batch DELEGATION' / 'batch prompts' reworded in the requirement). Otherwise the `removed` pairs' phrases must be chosen to avoid these surviving uses."
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/cut-review-walk/design.md",
+      "line": 152,
+      "title": "The cut ledger has no stated kind for dropping a restatement (V5, review R1, address-reviews R1)",
+      "recommendation": "V5 drops 'Output format (change modes)', review's R1 drops the preamble's branch-by-branch detail, and address-reviews' R1 drops the Constraints' two restatements of Step 3. None of the three is a removal ruling, and none moves text. `removed` needs a ruling, and its check (a specific phrase occurs nowhere in the skill) fails by construction on a restatement, whose words survive at the step it restates. So these must be `reworded` pairs with an empty after, or a new kind like tighten-bodies' `restated`. State which in D5's table so two implementers build the same ledger."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/cut-review-walk/design.md",
+      "line": 74,
+      "title": "Design cites 'the stage's third exit criterion' for the shared steps, and its Goals leave out onboard's ceiling",
+      "recommendation": "cut-review-walk has two exit criteria. 'A step shared by several bodies is decided once, for all of them' is the INVENTORY stage's third (reduce-orbit-phase2.md:207), so say 'the inventory's third exit criterion'. Separately, Goals (design.md:31-33) and D7 lower the ceilings of the two bodies plus apply, ff and propose, while D5 and task 5.4 also edit and re-ceiling onboard. Add onboard to the Goals bullet and D7."
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/cut-review-walk/design.md",
+      "line": 61,
+      "title": "V2's basic content is unstated, and its read condition ('the reviewer is fresh') also matches the dispatched worker",
+      "recommendation": "The modified `Review-genre passes ...` (a) says the body reads `references/fresh-dispatch.md` 'when the reviewer is `fresh`, alone or as a blind pair's half'. A dispatched worker is itself running `--reviewer fresh` and loads the same body, so that condition matches it too. Today the body's dispatch step says in place that the worker skips it, and skips the Commit and Chain end steps, and D4's general rule (heading, one or two sentences, the read) does not say whether that sentence stays. Name V2's basic content: the step's heading, that dispatch is the invoking session's act alone, that a worker holding the brief skips this step without reading the reference, and the read for the invoking session."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Probed by diffing every MODIFIED block against its baseline (the deltas change only where a fence or step lives, plus the batch and disagreement removals, cleanly), then reading the two templates for what the cut lists leave behind. Most of what I found sits at the edges of the enumerations: text the removals reach that the tasks don't list (onboard, the schema reference's prose), pointers into moved text from references that don't move, and one move (M10) whose text is partly walk-time. The scenario map was the probe that bit hardest: carrying two large MODIFIED blocks pulls in scenarios that were never tagged, and nothing in the plan declares them. The structural core holds up. The cut ledger's derived closure, R-rop2-14's pointer with its named limit, D4's refusal route for a probe-missed VERIFICATION, and D6's re-anchoring are each sound as written. `orbit validate --strict` is clean apart from INFO, no `@review:` markers are present, and the size figures match `npm run size:report`.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The change is well-shaped: the moves are byte-equal, the removals are ruled, and a ledger is designed so that an unnamed edit fails. Nothing here contradicts a baseline or puts the program's goals at risk. Every gap is a planning omission a walk can close in place: widen the enumerations to the sites they miss, give M10's walk-time sentence a home the walk reaches, specify the mid-walk batch phrase, and plan the scenario declarations. Walk these, then apply."
+  },
+  "final_assessment": "0 critical, 5 warning, 5 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews cut-review-walk",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "baaf565b7daafc3e887a8fa4e58acd181f7705eb",
+      "frozen": false,
+      "evidence": {
+        "files": [],
+        "share": null,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ]
+}
