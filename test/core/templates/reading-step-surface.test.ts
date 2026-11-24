@@ -64,7 +64,8 @@ describe("orbit-review: The reading step checks decision records in system revie
 });
 
 describe("orbit-decision-records: A record is fixed by a replacement, never edited (generated surface)", () => {
-  const walk = skill('orbit-address-reviews').body;
+  // cut-review-walk (M7): the walk body reads `references/reading-findings.md` on a reading finding, which holds the rule.
+  const walk = skill('orbit-address-reviews').ref('reading-findings.md');
 
   // @scenario text orbit-decision-records :: A record is fixed by a replacement, never edited :: Several fixes to one record make a chain
   it('the walk writes one replacement per resolved finding, of the latest in the chain, records it in its sweep, and defers a brief gap', () => {

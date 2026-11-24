@@ -144,11 +144,13 @@ describe('the commit step: carriage (chained-review-commit)', () => {
   it('a dispatched worker never runs it: the step says so, and the fresh-reviewer brief tells the worker to skip it', () => {
     expect(COMMIT_STEP).toContain("A worker that session dispatched — a fresh reviewer, a blind pair's fresh half — never runs it: it persists its pass and returns.");
     expect(COMMIT_STEP_BASIC).toContain('Runs in the invoking session only, never in a dispatched worker');
-    const review = body('orbit-review');
+    // cut-review-walk (V2): the brief is `references/fresh-dispatch.md`'s; the body keeps the worker's skip.
+    const review = (skills.find((s) => s.dirName === 'orbit-review')!.template.references ?? []).find((r) => r.name === 'fresh-dispatch.md')!.content;
     const start = review.indexOf('You are the fresh-context reviewer');
     const brief = review.slice(start, review.indexOf('```', start));
     expect(brief).toContain("Skip the skill's closing Commit step and Chain end step too:\nonce your pass is persisted, return — never commit");
     expect(review).toContain("the invoking session's Commit step commits the pass");
+    expect(body('orbit-review')).toContain('skips the Commit step and the Chain end step, and returns once its pass is persisted');
   });
 
   it('the message file is written outside the working tree and kept until every printed step has run', () => {

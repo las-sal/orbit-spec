@@ -70,9 +70,10 @@ describe('reference files open with their contents (tighten-bodies)', () => {
   });
 
   // @scenario text orbit-skill-generation :: Reference files are linked from their skill and long ones open with contents :: Review's body names its prompt references
-  it("review's body names its two prompt references in its --reviewer external flag row", () => {
+  it("review's body names its two prompt references where Step 3 dispatches the external reviewer", () => {
+    // cut-review-walk (V4): the flag table moved to `references/flags-detail.md`; Step 3's dispatch sentence names them.
     const review = skills.find((s) => s.dirName === 'orbit-review')!.template.instructions;
-    const row = review.split('\n').find((l) => l.startsWith('| `--reviewer <value>` |'))!;
+    const row = review.split('\n').find((l) => l.includes('`external` loads `references/external-handoff.md` and follows it'))!;
     expect(row).toContain('`references/prompt-template.md`');
     expect(row).toContain('`references/mode-sections.md`');
   });

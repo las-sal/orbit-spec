@@ -69,6 +69,10 @@ change significantly what a session does, so none is replayed (R-rop2-10); the b
 - `orbit-conventions`: the chain end step's basic content carries a pointer to the tag paragraph instead of the
   paragraph (No-chaining contract); a cut ledger names every body edit a cut stage makes, and the tighten-bodies ledger
   undoes it first.
+- `orbit-run-summary-emit`: address-reviews' one-log-per-source paragraph and its emit scope forms leave its body for
+  its `references/run-summary-emit.md` (M10), an exception to the rule that keeps a body's scope forms and that paragraph
+  in its emit section. Found at apply: the cut list's M10 met that baseline rule, which no delta modified; Sal ruled the
+  amendment on 2026-11-24, since keeping both in the body leaves address-reviews at about 5,351 tokens, over G1.
 
 ## Impact
 
@@ -88,4 +92,4 @@ change significantly what a session does, so none is replayed (R-rop2-10); the b
 ## Size
 
 - capabilities: One stage, one change (the program's stage rule; conditional-steps declared on the same ground): splitting would separate the moves from the ledger and budget test that hold them, and the shared steps were decided once for both bodies. Declared by Sal at propose, 2026-11-24.
-- requirements: The same reason: most of the sixteen re-point where a fence or step lives (body to reference), and the rest carry the removals R-rop2-12 rules. Declared by Sal at propose, 2026-11-24.
+- requirements: The same reason: most of the seventeen re-point where a fence or step lives (body to reference), and the rest carry the removals R-rop2-12 rules. Declared by Sal at propose, 2026-11-24; the sixth capability and seventeenth requirement (`orbit-run-summary-emit`'s) were added at apply by Sal's ruling, 2026-11-24.

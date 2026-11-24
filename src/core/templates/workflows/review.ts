@@ -209,7 +209,7 @@ A payload file the body writes for an in-context system pass whose reading step 
 - **\`blocks\`** (rc02b) is an OPTIONAL array of single-line strings, one per lifecycle BLOCK the pass found — a condition that must be addressed before apply and is not a severity, per \`orbit-conventions\`' Severity ladder (by pointer; this reference defines no block of its own) — each naming the condition and its location. Never counted in the scorecard, never a finding, never a gate input; the report renders them above the findings. The surface refuses a non-array or a multi-line entry naming \`blocks[<i>]\`.
 - **\`direction\`** (rc04b) is the pass's FORWARD RECOMMENDATION, the object the block above shows: OWED when \`reviewer_class\` is \`fresh\` or \`external\` and OPTIONAL in-context — \`orbit emit review\` refuses the payload otherwise, in every mode. Its SHAPE is owned by \`orbit-emit-composition\`'s **The review payload carries \`direction\`** and its CONTENT contract by \`orbit-report-rendering\`'s **Direction renders as its own section and its absence is marked on independent passes** (which also renders it as \`### Direction\` and marks a prior-generation independent pass \`[no direction]\`); the authoring instruction is Step 8 of the body. The vocabulary is \`orbit-run-summary-emit\`'s judgement record's (\`disposition\` + \`reasoning\`) — adopted, not invented. This note names the owners and re-lists nothing.
 - **\`pass_genre\` / \`verified_walks\`** (rc03c) are ENGINE-COMPUTED on every review emit, in every mode, and REFUSED in the payload: the pass genre by the table \`orbit-conventions\`' **Review mode decision framework** owns, and the qualifying walks it read, by \`orbit-emit-composition\`'s **The review emit records its pass genre and the walks it verifies**. Never supply either; a refusal naming the owed record is how a body learns the engine computed VERIFICATION.
-- **\`verification\` / \`walk_entry\`** (rc03c) are the VERIFICATION RECORD and a finding's link to it: \`verification\` is OWED when the computed \`pass_genre\` is \`VERIFICATION\` (\`[]\` when nothing is owed) and REFUSED in any form on a REVIEW-genre pass; \`walk_entry\` is optional on each finding. Their shapes, the owed set and the meaning of \`landed\` / \`regressed\` are owned by \`orbit-emit-composition\`'s **A VERIFICATION-genre payload carries its verdicts and its findings link to the walk record**; the render (\`### Verification\`, the \`walk entry:\` line, \`[outside the walk record]\`, \`[no verification record]\`) by \`orbit-report-rendering\`'s **Verification renders as its own section and its absence is marked**; the grading procedure is Step 5's VERIFICATION branch. This note names the owners and re-lists nothing.
+- **\`verification\` / \`walk_entry\`** (rc03c) are the VERIFICATION RECORD and a finding's link to it: \`verification\` is OWED when the computed \`pass_genre\` is \`VERIFICATION\` (\`[]\` when nothing is owed) and REFUSED in any form on a REVIEW-genre pass; \`walk_entry\` is optional on each finding. Their shapes, the owed set and the meaning of \`landed\` / \`regressed\` are owned by \`orbit-emit-composition\`'s **A VERIFICATION-genre payload carries its verdicts and its findings link to the walk record**; the render (\`### Verification\`, the \`walk entry:\` line, \`[outside the walk record]\`, \`[no verification record]\`) by \`orbit-report-rendering\`'s **Verification renders as its own section and its absence is marked**; the grading procedure is \`references/verification.md\`, which Step 5's VERIFICATION branch reads. This note names the owners and re-lists nothing.
 - **\`decision_records_read\` / \`decision_records_owed\`** (decision-reading) record the READING STEP, on an in-context system pass only. \`decision_records_read\` is the payload's: the filenames of the records the reader's brief (\`orbit decisions brief <name>\`) rendered, listed with \`reading\` in \`passes_run\`; absent or \`[]\` when no reading ran, and refused on every other pass. \`decision_records_owed\` is ENGINE-COMPUTED and refused in the payload: the records no earlier in-context system pass listed as read, when this emit is written. \`orbit emit review\` refuses an in-context system payload that owed records and lists \`reading\` in neither \`passes_run\` nor \`passes_skipped\`, one listing \`reading\` with no read list, a read list without \`reading\`, and a read list naming a record outside the owed set — \`orbit-emit-composition\`'s \`The reading's selection is recorded at review and archive\` owns them. A skip is listed as \`reading: <reason>\` in \`passes_skipped\`, the reason in \`commentary\` too. No readout and no gate reads either field.
 - **\`recommendation_options\`** is OPTIONAL on each finding. Present only when the finding's recommendation is genuinely disjunctive — multiple defensible paths the user must choose between. Producer-side contract (per \`orbit-review\` spec's \`Optional recommendation_options field on finding entries\`): MUST contain ≥ 2 entries; each entry MUST have non-empty \`label\` (typically \`"A"\`, \`"B"\`, \`"C"\`, … or \`"1"\`, \`"2"\`, …) and non-empty \`body\`. The prose \`recommendation\` field still summarizes the disjunction for human readers. Consumer (address-reviews) uses this for the structured decision-fork detection path; absence triggers heuristic fallback. Omit the field for single-recommendation findings.
 
@@ -1015,7 +1015,7 @@ const REVIEW_BLIND_PAIR_REFERENCE = `# Reference: the blind pair (\`--reviewer b
   - 13. End
 - Session end
 
-This reference runs a BLIND PAIR — one \`fresh\` pass and one \`external\` pass of the mode, blind to each other — in ONE invocation. Its step order is \`orbit-review\`'s \`The blind-pair reviewer runs both halves in one invocation\`; what the launch record means is \`orbit-engine-gates\`' \`A pair's membership is computed from its launch\`. The external half's packaging, launch, save and commit are \`references/external-handoff.md\`'s (loaded with this one) and are NAMED below, never restated; the fresh half is the trunk's **Dispatching a fresh pass**, also named, not restated.
+This reference runs a BLIND PAIR — one \`fresh\` pass and one \`external\` pass of the mode, blind to each other — in ONE invocation. Its step order is \`orbit-review\`'s \`The blind-pair reviewer runs both halves in one invocation\`; what the launch record means is \`orbit-engine-gates\`' \`A pair's membership is computed from its launch\`. The external half's packaging, launch, save and commit are \`references/external-handoff.md\`'s (loaded with this one) and are NAMED below, never restated; the fresh half is \`references/fresh-dispatch.md\`, also named, not restated.
 
 **Input**: the change name and \`--as proposal|system\`, resolved by the review trunk before this reference loads (architecture mode never reaches it).
 
@@ -1073,7 +1073,7 @@ Print the handoff reference's Step 8 items in order, with item 4 the output Step
 
 ### 5c. The fresh half
 
-Dispatch the fresh half per the trunk's **Dispatching a fresh pass** — a clean-context subagent with that section's brief, unchanged — in the background (the **Task tool** with \`run_in_background\`). It reads the live checkout at BASE and persists through \`orbit emit review\` with \`reviewer_class: "fresh"\` like any fresh pass; it carries no launch token.
+Dispatch the fresh half per \`references/fresh-dispatch.md\` — a clean-context subagent with that reference's brief, unchanged — in the background (the **Task tool** with \`run_in_background\`). It reads the live checkout at BASE and persists through \`orbit emit review\` with \`reviewer_class: "fresh"\` like any fresh pass; it carries no launch token.
 
 ### 6. Wait
 
@@ -1134,9 +1134,38 @@ A session that ends mid-pair leaves work outside the record. On the LAUNCHED rou
 On the PASTED route print: \`If this session ends before the fresh half does: IF a fresh pass file landed (the review-<as>-*.json with reviewer_class "fresh" later than <L>), commit it alone (git add <path>, then git commit --only <path>) and push; with none, the pair stays open missing its fresh half.\`
 `;
 
-const REVIEW_FLAGS_DETAIL_REFERENCE = `# Reference: rarely-used review flags — \`--mark\` / \`--parallel\` / \`--focus\`
+const REVIEW_FLAGS_DETAIL_REFERENCE = `# Reference: review flags — the flag table and the reviewer selectors, then \`--mark\` / \`--parallel\` / \`--focus\`
 
-Loaded only when one of these flags is set (D5 body-economy pass; content moved from the body verbatim).
+Read at Step 3 of every pass for its first section; sections 11–13 are followed only when their flag is set.
+
+### 3. The flags, the reviewer selectors and the wrong-mode notes
+
+| Flag | Default | Effect |
+|---|---|---|
+| \`--fast\` / \`--full\` / \`--thorough\` | \`--full\` | Depth. Mutually exclusive. \`--thorough\` is partially specified; fall back to \`--full\` if unclear. |
+| \`--parallel\` | off | Spawn subagents for heavy passes. Proposal: parallelize Passes 2, 4, 6. System: parallelize Passes 2, 3, 4, 5. |
+| \`--focus <lens>\` | none | Emphasize specific passes (additive — does not skip others). See \`references/flags-detail.md\`. |
+| \`--strict\` | off | Fail-fast on the first CRITICAL or the first BLOCK — stop on what must be addressed. Useful for CI-like runs. |
+| \`--reviewer <value>\` | \`in-context\` | Reviewer: \`in-context\` (this session — the reacting class) / \`fresh\` (same model, clean context — a clean-context subagent; see Dispatching a fresh pass) / \`external\` (a different AI in a separate session — the handoff branch, \`references/external-handoff.md\`, which packages the prompt from \`references/prompt-template.md\` and \`references/mode-sections.md\`) / \`blind-pair\` (one fresh and one external pass in one invocation — \`references/blind-pair.md\`). |
+| \`--in-context\` | off | Exactly \`--reviewer in-context\`. |
+| \`--fresh\` | off | Exactly \`--reviewer fresh\` (same model, clean context). |
+| \`--external\` | off, proposal/system only | Exactly \`--reviewer external\`. |
+| \`--blind-pair\` | off, proposal/system only | Exactly \`--reviewer blind-pair\`. |
+| \`--mark\` | off, proposal only | After report, write \`@review: <text>\` markers at each finding's file:line. See \`references/flags-detail.md\`. |
+| \`--skip-verify\` | off, system only | Skip Pass 0 (verify-change). Use when verify-change was run separately. |
+
+**Reviewer selectors.** Resolve the reviewer BEFORE anything is read or written, by this table; every error row is a clean usage error that runs no pass and writes no file:
+
+| selectors given | resolves to |
+|---|---|
+| none | \`--reviewer in-context\`, the default |
+| exactly one shorthand | exactly \`--reviewer <its value>\` |
+| \`--reviewer <value>\` alone | that value |
+| two shorthands, or a shorthand with an explicit \`--reviewer\` — even when they agree | usage error naming the shorthand equivalence: \`--<value> is exactly --reviewer <value>; give one reviewer selector\` |
+| \`external\` or \`blind-pair\`, by either spelling, with \`--as architecture\` | usage error: \`--reviewer <value> requires --as proposal|system; architecture mode supports in-context and fresh only\` |
+| a \`--reviewer\` value outside the four | usage error naming the four: \`in-context\`, \`fresh\`, \`external\`, \`blind-pair\` |
+
+If a flag is specified for the wrong mode (e.g., \`--mark\` in system mode or \`--skip-verify\` in proposal mode), accept it silently and emit a one-line note in the report (\`Note: --mark writes to source files is v2; ignored for v1 system-mode runs.\`). In architecture mode, \`--parallel\`, \`--fast\`, and \`--focus <lens>\` are accepted but are no-ops (architecture docs are small; all six passes run in one context — no per-mode subset or lens table is defined), each noted in the report the same way.
 
 ### 11. (Optional) \`--mark\` writer (proposal mode only)
 
@@ -1196,121 +1225,11 @@ export const REVIEW_RUN_SUMMARY_EMIT_BASIC = [
   REVIEW_EMIT_COMMAND,
 ].join('\n\n');
 
-/**
- * tighten-bodies (R-rop-14): the body carries no mirror notes; what only authors need is here.
- *
- * Checked mirrors (an installed skill has no specs to point at; never edit them here):
- * - the pass-genre table: `orbit-conventions`' `Review mode decision framework`, held by `test/core/pass-genre-parity.test.ts`;
- * - the Verdicts fence: `orbit-emit-composition`'s `A VERIFICATION-genre payload carries its verdicts and its findings link
- *   to the walk record`, held by `test/core/verification-verdict-parity.test.ts`;
- * - the Sweep scope and paths fence: `orbit-emit-composition`'s `The walk write gate checks sweep evidence`, which the walk's
- *   write gate enforces, held by `test/core/sweep-path-parity.test.ts`.
- */
-export function getReviewSkillTemplate(): SkillTemplate {
-  return {
-    name: 'orbit-review',
-    description: "Editorial review of an orbit change or an architecture doc: proposal mode (pre-apply, 9 passes over artifacts), system mode (post-apply, verify-change + 6 system-wide passes), or architecture mode (a doc under orbit/architecture/, 6 passes, no gate). Use when the user wants a second-pair-of-eyes pass before applying or archiving, or a graded pass over a program architecture doc.",
-    instructions: `Run an editorial review of an orbit change or an architecture doc. Three modes: \`--as proposal\` reviews a change's pre-implementation artifacts (9 passes); \`--as system\` reviews the whole product state after apply (verify-change as Pass 0 + 6 system-wide passes); \`--as architecture\` reviews an architecture DOC under \`orbit/architecture/\` (6 passes, NO gate). All modes share the 3-dimension scorecard (Completeness / Correctness / Coherence), the severity ladder (CRITICAL / WARNING / SUGGESTION — defined ONCE, by consequence, in \`orbit-conventions\`' Severity ladder; every pass rule NAMES it and defines nothing of its own), pushback discipline, and \`.orbit-runs/\` persistence. They differ on which passes run, what the final-assessment references (the \`review-proposal\` / \`review-system\` gates for the change modes; NO gate in architecture mode), and a few mode-specific flags (\`--mark\` for proposal, \`--skip-verify\` for system). The command additionally carries the REVIEWER axis: \`--reviewer in-context|fresh|external|blind-pair\` (default \`in-context\`). The first three are the reviewer classes; \`blind-pair\` is not a class but an INVOCATION of both independent classes at once — one fresh pass and one external pass, blind to each other. Each value has ONE shorthand that is exactly \`--reviewer <value>\`: \`--in-context\`, \`--fresh\`, \`--external\`, \`--blind-pair\`; an invocation carries AT MOST ONE reviewer selector (the selector table under Step 3). \`--reviewer external\` and \`--reviewer blind-pair\`, by either spelling, REQUIRE \`--as proposal|system\` (architecture mode supports in-context and fresh only; the combination is a clean usage error naming the constraint, and writes no prompt file and no T0 emit). \`external\` dispatches to the EXTERNAL-HANDOFF BRANCH: load \`references/external-handoff.md\` and follow it — it packages the prompt file and the T0 emit, then either prints the chat invocation snippet for paste or, with a reachable recorded runner, launches that runner and saves its return; no pass of the internal classes runs in that invocation. \`blind-pair\` loads \`references/blind-pair.md\` AND \`references/external-handoff.md\` and follows the pair reference, which runs both halves. The in-context and fresh branches load neither reference.
+// cut-review-walk (reduce-orbit-phase2): references the body reads at the moment it names.
+const REVIEW_VERIFICATION_REFERENCE = `# Reference: the VERIFICATION pass (Step 5)
 
-**Generates findings; does not resolve them.** Resolution flows through \`/orbit:address-reviews\` (inline \`@review:\` markers, OR \`--from-file\` ingesting external-review markdown OR internal review JSON OR audit-drift JSON) or by the user replying directly to the report.
-
-**Input**: Optional change name (or, with \`--as architecture\`, a doc name) and optional \`--as proposal|system|architecture\` mode flag plus secondary flags. If change name omitted, prompt via \`AskUserQuestion\` over \`orbit list --json\` (architecture mode prompts over \`orbit architecture status --json\`'s parseable docs instead). If mode omitted, infer from \`tasks.md\` state (see Step 3) — architecture mode is NEVER inferred. (chain: target)
-
-## Execution disciplines (epitome)
-
-The disciplines from \`orbit-conventions\`, embedded per body; detail lives in the step where each fires.
-
-- **Pushback (review-time) — primary here**: verify every finding against current state before reporting; suppress a stale finding with an evidence note (\`stale finding suppressed: <evidence>\`) whose evidence is what the current state shows. A VERIFICATION-genre pass additionally reads its walk (Step 5).
-- **Read-before-reference (authoring-time)**: every construct a finding names is backed by an actual read (enforcement rule under Special cases); unverifiable → downgrade or omit.
-- **Change completeness (modification-time)**: \`--mark\` insertions land fully in one pass, then sweep for residue (Step 11); stale or partial prior \`.orbit-runs/\` files are cleaned before persisting.
-- **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line, invoking no next command unless the change status's \`chain\` object allows it — review-cycle COUNT is the user's call; gate \`passed\` means *eligible*, not *commanded*.
-${DECISION_WRITING_BASIC}
-
-## Pass genre
-
-The pass genre is a record and a header word; the gate reads nothing of it.
-
-\`\`\`
-| reviewer class | mode | trail position | pass genre |
-|---|---|---|---|
-| \`fresh\` or \`external\` | proposal or system | any | REVIEW — reads the whole artifact and the thesis |
-| \`in-context\` | proposal or system | a qualifying walk of this mode precedes the pass | VERIFICATION — reads that walk and answers landed / regressed per resolution |
-| \`in-context\` | proposal or system | no qualifying walk of this mode precedes it | REVIEW — a reaction with nothing yet to verify; the cadence's slot arithmetic is unchanged by pass genre |
-| \`in-context\` | proposal or system | only MODE-LESS walks precede it | REVIEW — a walk whose mode cannot be read is not evidence of a qualifying walk of this mode |
-| \`in-context\` or \`fresh\` | architecture | — | REVIEW — the architecture trail carries no change-mode walk records and the mode has no gate |
-| \`external\` | architecture | — | not a member — refused by \`orbit-review\`'s mode constraint |
-\`\`\`
-
-## Steps
-
-### 1. Resolve the mode
-
-Resolve the MODE first — it decides what the positional even IS. Mode comes from \`--as proposal|system|architecture\`. **Architecture mode is NEVER inferred** — it requires the explicit flag; a positional that happens to match a doc name does NOT trigger it. If \`--as\` is omitted, infer between the change modes from \`orbit/changes/<name>/tasks.md\` checkbox arithmetic: all unchecked → \`proposal\`; all checked + code changes since the change was proposed (\`git log --format=%h -- orbit/changes/<name>/ ':!orbit/changes/<name>/.orbit-runs'\` — hashes only: the inference needs only whether such a commit exists, and commit subjects can carry prior passes' counts) → \`system\`; mixed or ambiguous → \`AskUserQuestion\` (chain: target). State the resolution in the report header (\`Mode: proposal (inferred from 12 unchecked tasks)\`).
-
-### 2. Resolve the target
-
-**Change modes** — the target is a CHANGE: use the provided name; otherwise prompt via \`AskUserQuestion\` over \`orbit list --json\` (mark changes with incomplete tasks \`(In Progress)\`) (chain: target). Announce \`Using change: <name> --as <mode>\` at the start of the report header.
-
-**Architecture mode** — the target is a DOC, never a change: do NOT run \`orbit list\` or prompt over changes, and NONE of the change-oriented steps below apply (Step 4's change CLI calls, Step 9's gate tail). The positional resolves against \`orbit/architecture/\` (the filename stem); when omitted or ambiguous, prompt over \`orbit architecture status --json\`'s parseable docs (chain: target). A doc resolving LEGACY (zero stage-prefixed headings outside fences) is an error suggesting retrofit; MALFORMED (fails the near-miss rule) is an error naming the grammar violation. Announce \`Using doc: <doc-name> --as architecture\`.
-
-### 3. Resolve flags
-
-| Flag | Default | Effect |
-|---|---|---|
-| \`--fast\` / \`--full\` / \`--thorough\` | \`--full\` | Depth. Mutually exclusive. \`--thorough\` is partially specified; fall back to \`--full\` if unclear. |
-| \`--parallel\` | off | Spawn subagents for heavy passes. Proposal: parallelize Passes 2, 4, 6. System: parallelize Passes 2, 3, 4, 5. |
-| \`--focus <lens>\` | none | Emphasize specific passes (additive — does not skip others). See \`references/flags-detail.md\`. |
-| \`--strict\` | off | Fail-fast on the first CRITICAL or the first BLOCK — stop on what must be addressed. Useful for CI-like runs. |
-| \`--reviewer <value>\` | \`in-context\` | Reviewer: \`in-context\` (this session — the reacting class) / \`fresh\` (same model, clean context — a clean-context subagent; see Dispatching a fresh pass) / \`external\` (a different AI in a separate session — the handoff branch, \`references/external-handoff.md\`, which packages the prompt from \`references/prompt-template.md\` and \`references/mode-sections.md\`) / \`blind-pair\` (one fresh and one external pass in one invocation — \`references/blind-pair.md\`). |
-| \`--in-context\` | off | Exactly \`--reviewer in-context\`. |
-| \`--fresh\` | off | Exactly \`--reviewer fresh\` (same model, clean context). |
-| \`--external\` | off, proposal/system only | Exactly \`--reviewer external\`. |
-| \`--blind-pair\` | off, proposal/system only | Exactly \`--reviewer blind-pair\`. |
-| \`--mark\` | off, proposal only | After report, write \`@review: <text>\` markers at each finding's file:line. See \`references/flags-detail.md\`. |
-| \`--skip-verify\` | off, system only | Skip Pass 0 (verify-change). Use when verify-change was run separately. |
-
-**Reviewer selectors.** Resolve the reviewer BEFORE anything is read or written, by this table; every error row is a clean usage error that runs no pass and writes no file:
-
-| selectors given | resolves to |
-|---|---|
-| none | \`--reviewer in-context\`, the default |
-| exactly one shorthand | exactly \`--reviewer <its value>\` |
-| \`--reviewer <value>\` alone | that value |
-| two shorthands, or a shorthand with an explicit \`--reviewer\` — even when they agree | usage error naming the shorthand equivalence: \`--<value> is exactly --reviewer <value>; give one reviewer selector\` |
-| \`external\` or \`blind-pair\`, by either spelling, with \`--as architecture\` | usage error: \`--reviewer <value> requires --as proposal|system; architecture mode supports in-context and fresh only\` |
-| a \`--reviewer\` value outside the four | usage error naming the four: \`in-context\`, \`fresh\`, \`external\`, \`blind-pair\` |
-
-If a flag is specified for the wrong mode (e.g., \`--mark\` in system mode or \`--skip-verify\` in proposal mode), accept it silently and emit a one-line note in the report (\`Note: --mark writes to source files is v2; ignored for v1 system-mode runs.\`). In architecture mode, \`--parallel\`, \`--fast\`, and \`--focus <lens>\` are accepted but are no-ops (architecture docs are small; all six passes run in one context — no per-mode subset or lens table is defined), each noted in the report the same way.
-
-### 4. Load context
-
-**Architecture mode**: the change-oriented CLI calls below do NOT apply — there is no change. Load instead: the doc itself (\`orbit/architecture/<doc>.md\`), \`orbit architecture status --json\` (computed stage states, for cross-checks), and root \`CLAUDE.md\`; then continue at Step 5. \`orbit architecture show <doc> <stage>\` slices single stages when the whole doc is not needed.
-
-**Change modes** — use the orbit CLI as source of truth:
-
-\`\`\`bash
-orbit status --change "<name>" --json
-orbit instructions apply --change "<name>" --json
-\`\`\`
-
-From the returned \`contextFiles\`, read every artifact: \`proposal\`, \`design\`, \`tasks\`, all paths under \`specs\`. Also read:
-- \`orbit/changes/<name>/explore.md\` if present
-- \`orbit/changes/<name>/sketches/\` if present
-- Project context: \`CLAUDE.md\` (root), \`orbit/project.md\`, any \`*_convention.md\` at project root
-- Baseline: \`orbit/specs/*/spec.md\`
-- Orbit lenses: \`orbit/lenses/perspectives.md\`, \`orbit/lenses/critical-paths.md\` (system mode primarily; proposal mode uses for cross-doc checks)
-
-System mode also reads:
-- \`git diff <change-start>..HEAD -- . ':!orbit/changes/<name>/.orbit-runs'\` — \`<change-start>\` is the commit that first added the change's \`proposal.md\`, found by hash alone (\`git log --diff-filter=A --format=%h -- orbit/changes/<name>/proposal.md | tail -1\`); commit subjects can carry prior passes' counts, so a REVIEW-genre pass never reads them. The pathspec keeps the trail's pass records and walk logs out of what the pass reads
-- Code paths around the change (cohesion + surface walks)
-
-### 5. Inspect prior runs (VERIFICATION pass genre only)
-
-Decide this pass's PASS GENRE first, by the table under **Pass genre** above. A \`fresh\` pass and any architecture-mode pass are REVIEW. An in-context pass in a change mode decides from ONE bounded metadata probe — the token-ordered listing of the change's \`.orbit-runs/\` pass and walk records: \`review-<mode>-*.json\` reading each record's \`reviewer_class\` field (or \`flags.fresh\` when that field is absent — a legacy fresh pass), \`external-<mode>-*.md\` by filename, and \`address-reviews-*.json\` reading each record's \`source_path\` — to find the latest ACCEPTED independent pass of this mode and any walk of this mode after it. Open no record's findings, suppressed list or resolutions to decide; a walk whose \`source_path\` resolves to no mode is MODE-LESS and qualifies for none; an unreadable listing is REVIEW. Every \`external-<mode>-*.md\` file counts as a pass here — whether the engine ACCEPTS a return cannot be read from metadata; the owner names that limit, and where the two differ the engine's computation is authoritative.
-
-- **REVIEW pass genre** — SKIP the rest of this step: the metadata probe above is the ONLY read of the trail's pass and walk records a REVIEW-genre pass makes. Pushback is current-state verification and needs no prior list, and the iteration ordinal and trend are ENGINE-computed at render time from the trail — never authored here. The owner's ONE exemption: architecture mode keeps its hand-computed per-doc iteration note (Step 8), counted over \`review-architecture-*.json\` emits in \`orbit/architecture/.orbit-runs/\` whose \`doc\` field equals the doc under review — the trail is shared across docs, and a review of doc B must never treat doc A's run as its previous iteration.
-- **VERIFICATION pass genre** — this pass VERIFIES the walks; it does not re-review the whole artifact. The procedure is \`orbit-review\`'s **Verification-genre passes grade the walk record**; each step below names the owner it points at and restates none.
-  - **(a) Genre.** The probe above is this body's reading; the ENGINE's computation, by \`orbit-conventions\`' table, is authoritative. When \`orbit emit review\` refuses the payload — an owed \`verification\` missing, a key omitted, a verdict not owed — the refusal names each key as \`walk <token>: (<title>, <file>)\`: read those entries, grade or drop them, and emit again. The refusal is the reconciling channel, in BOTH directions — never a second probe, never a hand-computed walk set: when it says \`verification\` is refused on a REVIEW-genre pass, the engine computed REVIEW, so drop \`verification\` and every \`walk_entry\`, run this pass as a REVIEW-genre pass over the whole artifact, and emit again.
+A VERIFICATION-genre pass verifies the walks; it does not re-review the whole artifact. The procedure is \`orbit-review\`'s **Verification-genre passes grade the walk record**; each step below names the owner it points at and restates none.
+  - **(a) Genre.** The body's metadata probe (Step 5) is its reading; the ENGINE's computation, by \`orbit-conventions\`' table, is authoritative. When \`orbit emit review\` refuses the payload — an owed \`verification\` missing, a key omitted, a verdict not owed — the refusal names each key as \`walk <token>: (<title>, <file>)\`: read those entries, grade or drop them, and emit again. The refusal is the reconciling channel, in BOTH directions — never a second probe, never a hand-computed walk set: when it says \`verification\` is refused on a REVIEW-genre pass, the engine computed REVIEW, so drop \`verification\` and every \`walk_entry\`, run this pass as a REVIEW-genre pass over the whole artifact, and emit again.
   - **(b) Read the walks.** Open the address-reviews records of this mode after the latest accepted independent pass — the walks the probe found — and each entry's disposition.
   - **(c) Grade.** Every OWED entry — the \`resolved\` ones, at every severity — gets one verdict, \`landed\` or \`regressed\`, by the definition under **Verdicts** below and the owed set \`orbit-emit-composition\`'s **A VERIFICATION-genre payload carries its verdicts and its findings link to the walk record** owns. Read each entry's SWEEP SCOPE: its \`file\`, every path in its \`ripple_cascade.applied\` (the cascade record \`orbit-address-reviews\` specifies), and, on an entry that carries one, every path in its \`sweep.scope\` (the sweep record \`orbit-address-reviews\`' \`A resolved walk entry records its sweep evidence\` owns; a directory contributes its files, and every path resolves by the rule under **Sweep scope and paths** below). A \`stale\`, \`deferred\` or \`escalated\` entry owes nothing, but a wrong call there is still a finding.
   - **(d) Review the scope, then the residual check.** Run this mode's FILE-SET passes over the union of the sweep scopes — every proposal-mode pass; system-mode Passes 1–5. A pass whose subject is the whole change or the whole project — system-mode Pass 0 (verify-change) and Pass 6 (audit-drift) — is NOT run: list it in \`passes_skipped\` naming that reason. Then list \`git diff --name-only <C> -- . ':!orbit/changes/<name>/.orbit-runs'\` plus \`git ls-files --others --exclude-standard -- . ':!orbit/changes/<name>/.orbit-runs'\`, where \`<C>\` is \`git log --diff-filter=A --format=%h -- <base file> | tail -1\` (a hash-only read), or \`HEAD\` when that file is not yet committed — the BASE FILE is the latest accepted independent pass's file, or, when this mode has no accepted independent pass, the file of the pass the earliest walk you verify walked. Name each listed file outside every entry's EDIT RECORD — its \`file\` plus its \`ripple_cascade.applied\`; \`sweep.scope\` names paths examined, not edited, so it never exempts a file here — as a SUGGESTION without \`walk_entry\` — a record gap, not a defect; a defect you find in such a file is its own finding, graded by \`orbit-conventions\`' Severity ladder. KNOWN LIMIT: an edit committed in \`<C>\` itself — the commit that added the base file — is outside the diff's reach; never claim the scope was checked against that commit. It is the ORDINARY case, not an edge, when the base file was committed together with the walks' edits — commit the pass file BEFORE the walks' edits so they stay in range.
@@ -1331,8 +1250,9 @@ Grade over the paths it resolves, so you read the file the gate read.
 CHECK SCOPE — the union of: on a change-scoped walk, every file under the change directory except its .orbit-runs/ trail; the entry's file; its ripple_cascade.applied paths; its sweep.scope paths, a directory contributing the regular files under it (a symlink met inside a directory is not followed; a path named explicitly is read at its target). Files under .git/, node_modules/, dist/ and build/ are never read, however the path entered the scope; for the change directory's own files those names are read below the change directory.
 PATH — strip a trailing :<line> or :<line>:<column> (digits only, at the very end; a path carrying anything after the suffix, such as "design.md:40 (section)", is not stripped, and resolves to nothing); a path beginning orbit/changes/<name>/ for the walk's own change resolves under the change directory, archived or active; otherwise it resolves against the project root, then, on a change-scoped walk and only when nothing exists there, against the change directory.
 \`\`\`
+`;
 
-### Dispatching a fresh pass (\`--reviewer fresh\`)
+const REVIEW_FRESH_DISPATCH_REFERENCE = `# Reference: dispatching a fresh pass (\`--reviewer fresh\`)
 
 A fresh pass is REVIEW pass genre. Spawn a clean-context subagent (the **Task tool**, general-purpose — never a fork of this conversation, which would carry its context) with the review contract, and hand it the brief below. What the brief may carry is \`orbit-conventions\`' \`Review mode decision framework\`'s rule, stated there once; the brief adds nothing beyond it and nothing from the trail. The subagent persists through \`orbit emit review\` with \`reviewer_class: "fresh"\` and its owed \`direction\` (Step 8); this conversation then renders the report from the engine (Step 10) and pastes it. Dispatch is the INVOKING session's act alone: a subagent holding this brief is the worker, skips this step, and never dispatches again. So are the Commit step and the Chain end step: the worker skips both and returns once its pass is persisted, so it never commits the session's work — the invoking session's Commit step commits the pass — and never starts a walk or a review while the session that dispatched it is still running — assembling a pair, say.
 
@@ -1348,54 +1268,20 @@ once your pass is persisted, return — never commit, and never run another orbi
 change status's chain object says.
 \`\`\`
 
-**A re-run of a blind pair's missing fresh half.** Before dispatching, read \`orbit status --change <name> --json\`. When the mode's reviewed gate row carries \`openPair: {missing: "fresh"}\`, the run is a RE-RUN: find the pair's open launch L — the latest \`review-external-<TS>.json\` of this mode carrying \`pair: true\`, reading only its \`mode\` and \`pair\` fields — and list the trail's \`apply-*.json\` tokens. With NO apply token later than L, BASE is \`git log --diff-filter=A --format=%H -- <L's T0 path> | tail -1\` (a hash-only read) and the REVIEWED COMMIT is \`git rev-parse <BASE>^1\`. With an apply token later than L, the landed external member was emitted after it and reviewed the post-apply state, and the engine counts this run as the pair's missing member: the REVIEWED COMMIT is \`git rev-parse <M>^1\`, M being \`git log --diff-filter=A --format=%H -- <member path> | tail -1\` for the earliest \`external-<mode>-*.md\` later than L (when M is empty, stop and say to commit that file alone first). Either way the brief gains these lines after its last: \`Review the repository as it stands at commit <REVIEWED COMMIT>, not the live checkout: read the change's files and, in system mode, the code and the commit range ending at that commit (git show <commit>:<path>; git diff <change-start>..<commit>). Where the skill's steps read state through the orbit CLI — orbit status, orbit instructions, the scenario map, Pass 0's structural check — that output describes the live checkout, not the reviewed commit: take the artifacts you review from the commit, use the CLI only for what the emit needs, and say in the pass which readings came from the live checkout. Run orbit emit review from the repository root as usual.\` The isolation is instructed, not physical — the rule and its named limit are \`orbit-review-external\`'s \`A pair's external half reads the pair's reviewed state\`. When the mode has no \`openPair\` and the latest launch's one landed member is STALE — read from the trail: exactly one landed member later than L (an earliest fresh \`review-<mode>-*.json\` or earliest \`external-<mode>-*.md\`, and none of the other class), no \`address-reviews-*.json\` naming it in its \`source_path\`, and an \`apply-*.json\` token later than it — never from the gate's reason — say \`The pair launched at <L> reviewed a superseded state (an apply landed after its <class> member); this run is an ordinary single on the current state.\` and dispatch the brief unchanged. The re-run test is this body's reading of the trail; the gate's computation is authoritative.
+**A re-run of a blind pair's missing fresh half.** Before dispatching, read \`orbit status --change <name> --json\`. When the mode's reviewed gate row carries \`openPair: {missing: "fresh"}\`, the run is a RE-RUN: find the pair's open launch L — the latest \`review-external-<TS>.json\` of this mode carrying \`pair: true\`, reading only its \`mode\` and \`pair\` fields — and list the trail's \`apply-*.json\` tokens. With NO apply token later than L, BASE is \`git log --diff-filter=A --format=%H -- <L's T0 path> | tail -1\` (a hash-only read) and the REVIEWED COMMIT is \`git rev-parse <BASE>^1\`. With an apply token later than L, the landed external member was emitted after it and reviewed the post-apply state, and the engine counts this run as the pair's missing member: the REVIEWED COMMIT is \`git rev-parse <M>^1\`, M being \`git log --diff-filter=A --format=%H -- <member path> | tail -1\` for the earliest \`external-<mode>-*.md\` later than L (when M is empty, stop and say to commit that file alone first). Either way the brief gains these lines after its last: \`Review the repository as it stands at commit <REVIEWED COMMIT>, not the live checkout: read the change's files and, in system mode, the code and the commit range ending at that commit (git show <commit>:<path>; git diff <change-start>..<commit>). Where the skill's steps read state through the orbit CLI — orbit status, orbit instructions, the scenario map, Pass 0's structural check — that output describes the live checkout, not the reviewed commit: take the artifacts you review from the commit, use the CLI only for what the emit needs, and say in the pass which readings came from the live checkout. Run orbit emit review from the repository root as usual.\` The isolation is instructed, not physical — the rule and its named limit are \`orbit-review-external\`'s \`A pair's external half reads the pair's reviewed state\`. When the mode has no \`openPair\` and the latest launch's one landed member is STALE — read from the trail: exactly one landed member later than L (an earliest fresh \`review-<mode>-*.json\` or earliest \`external-<mode>-*.md\`, and none of the other class), no \`address-reviews-*.json\` naming it in its \`source_path\`, and an \`apply-*.json\` token later than it — never from the gate's reason — say \`The pair launched at <L> reviewed a superseded state (an apply landed after its <class> member); this run is an ordinary single on the current state.\` and dispatch the brief unchanged. The re-run test is this skill's reading of the trail; the gate's computation is authoritative.
+`;
 
-### 6. Run passes (load the resolved mode's reference ONLY)
+const REVIEW_ARCHITECTURE_MODE_REFERENCE = `# Reference: architecture mode (\`--as architecture\`)
 
-Load \`references/passes-<mode>.md\` for the RESOLVED mode — proposal (9 passes), system (0–6, plus the reading step on the in-context pass whenever \`orbit decisions brief <name>\` selects records), or architecture (6) — and run its pass set sequentially (or in parallel for the marked passes when \`--parallel\` is on). Only the resolved mode's reference is loaded; the other two stay lazy. For each pass:
+## The target (Step 2)
 
-1. Apply the read-before-reference discipline to every cited construct.
-2. Apply the pushback discipline against current state.
-3. Emit findings tagged CRITICAL / WARNING / SUGGESTION with file:line + actionable recommendation, graded by \`orbit-conventions\`' Severity ladder as each pass rule names it: a CRITICAL carries its \`reproduction\` (the surface refuses one without it); a lifecycle BLOCK (Pass 1's validate failure, Pass 8's unresolved marker) goes to the payload's \`blocks\`, never to a finding.
+**Architecture mode** — the target is a DOC, never a change: do NOT run \`orbit list\` or prompt over changes, and NONE of the body's change-oriented steps apply (Step 4's change CLI calls, Step 9's gate tail). The positional resolves against \`orbit/architecture/\` (the filename stem); when omitted or ambiguous, prompt over \`orbit architecture status --json\`'s parseable docs (chain: target). A doc resolving LEGACY (zero stage-prefixed headings outside fences) is an error suggesting retrofit; MALFORMED (fails the near-miss rule) is an error naming the grammar violation. Announce \`Using doc: <doc-name> --as architecture\`.
 
-### Disjunctive recommendations: emit structured \`recommendation_options\`
+## The context (Step 4)
 
-When a finding's recommendation genuinely offers the user a choice between two or more defensible concrete paths (different outcomes, not rewordings), emit \`recommendation_options: [{label, body}]\` alongside the prose \`recommendation\` — each entry a non-empty \`label\` (\`"A"\`, \`"B"\`, …) plus the concrete action the user would take. Do NOT emit it for single-action recommendations or loose conversational "or" ("fix it now or later") — false-negative bias is intentional. The prose field still summarizes the disjunction for human readers; the structured field is the producer-side fork affordance address-reviews consumes, OPTIONAL on every finding and ignorable by downstream parsers (canonical JSON shape: \`references/run-summary-schema.md\`).
+**Architecture mode**: the change modes' CLI calls (Step 4) do NOT apply — there is no change. Load instead: the doc itself (\`orbit/architecture/<doc>.md\`), \`orbit architecture status --json\` (computed stage states, for cross-checks), and root \`CLAUDE.md\`; then continue at Step 5. \`orbit architecture show <doc> <stage>\` slices single stages when the whole doc is not needed.
 
-### 7. Apply scorecard rollup
-
-Roll every pass's findings into the 3-dimension scorecard per the mode's dimension mapping (in the loaded pass reference).
-
-### 8. Author the direction and the commentary
-
-**The direction.** An independent pass OWES its forward recommendation: when \`reviewer_class\` is \`fresh\` or \`external\`, compose the \`direction\` object — \`disposition\` exactly one of \`forward\` | \`hold\`, \`reasoning\` a non-empty string, multi-line allowed. The SHAPE is owned by \`orbit-emit-composition\`'s **The review payload carries \`direction\`**, which the write gate enforces: \`orbit emit review\` REFUSES a fresh or external payload without it, and a mis-shaped one at any class, in every mode (an architecture-mode fresh pass owes it too — the rule keys on class, never on mode). An \`in-context\` pass MAY carry one and is not incomplete without it: the reacting class's direction is the readiness record's job (R-crc-11(f)). The CONTENT contract is owned by \`orbit-report-rendering\`'s **Direction renders as its own section and its absence is marked on independent passes**, carried here because a reviewer reads this body, not the spec: the direction says WHICH WAY and WHY — your own recommendation on moving forward — and never states finding counts, the gate's state, or a command token; those exist only in the report's engine-computed sections, and the report renders the direction in its own \`### Direction\` section inside the quarantine with the engine tail still last. The vocabulary is rc04a's judgement record's (\`disposition\` + \`reasoning\`), adopted, not invented. The engine judges presence and shape only: whether the direction is RIGHT, and whether its reasons agree with its token, is the in-context reaction's and the readiness author's call.
-
-**The commentary** (change modes). The reviewer's insight travels as the emit's OPTIONAL \`commentary\` field — the pattern behind
-the findings, what was probed and how hard, risk texture: everything the structured sections
-can't say. Commentary NEVER states finding counts, gate verdicts, or next commands (those
-exist only in the report's engine-computed sections; the contract is enforced at this source).
-The iteration note is NOT authored — the renderer computes it from the trail.
-Architecture mode keeps its hand-computed iteration note (matching mode AND \`doc\`, per Step 5
-— never cross-doc): \`Note: N of these findings appeared in the last run on <date>. M new this
-run.\` / \`First architecture review for this doc.\`
-
-${REVIEW_RUN_SUMMARY_EMIT_BASIC}
-
-### 10. Render and paste the report (change modes)
-
-\`--render\` on the Step 9 invocation already printed the engine report (persist-first and run-and-paste in one breath); otherwise run \`orbit status --change <name> --report\`. Paste the output VERBATIM as the report. The
-body NEVER hand-renders the structured report sections — header, trend, scorecard table,
-findings, Suppressed, or the gate/position/eligibility tail; hand-rendering them is PROHIBITED
-in change modes (architecture mode is EXEMPT — it has no render surface yet and keeps its
-hand-rendered gate-less shape below). The engine-rendered tail IS the assessment: the gate
-verdict, position, and canonical next command come from the gate graph at render time — the
-reviewing AI authors none of them. The chat turn is LOOSE FORM: the pasted report grounds it,
-and free conversational engagement follows (the report is the anchor, not the whole voice);
-the conversation may not contradict the tail's engine-computed lines. Skipped-pass notes (the
-emit's \`passes_run\`/\`passes_skipped\` record) surface in this loose-form conversation when
-worth mentioning — never as hand-rendered structured sections.
-
-#### Architecture mode — NO gate (interim hand-rendered shape)
+## The report — NO gate, hand-rendered (Step 10)
 
 No gate exists over architecture docs (review standing without a gate), so the
 architecture-mode final assessment NEVER says PASSED/UNPASSED of a gate and never references a
@@ -1426,39 +1312,157 @@ Direction: hold
 > Ready when you are: /orbit:archive x
 0 critical / 1 warning(s). Ready when you are: /orbit:address-reviews --from-file <the just-written review-architecture emit>.
 \`\`\`
+`;
+
+/**
+ * tighten-bodies (R-rop-14): the body carries no mirror notes; what only authors need is here.
+ *
+ * Checked mirrors (an installed skill has no specs to point at; never edit them here):
+ * - the pass-genre table: `orbit-conventions`' `Review mode decision framework`, held by `test/core/pass-genre-parity.test.ts`;
+ * - the Verdicts fence: `orbit-emit-composition`'s `A VERIFICATION-genre payload carries its verdicts and its findings link
+ *   to the walk record`, held by `test/core/verification-verdict-parity.test.ts`;
+ * - the Sweep scope and paths fence: `orbit-emit-composition`'s `The walk write gate checks sweep evidence`, which the walk's
+ *   write gate enforces, held by `test/core/sweep-path-parity.test.ts`.
+ */
+export function getReviewSkillTemplate(): SkillTemplate {
+  return {
+    name: 'orbit-review',
+    description: "Editorial review of an orbit change or an architecture doc: proposal mode (pre-apply, 9 passes over artifacts), system mode (post-apply, verify-change + 6 system-wide passes), or architecture mode (a doc under orbit/architecture/, 6 passes, no gate). Use when the user wants a second-pair-of-eyes pass before applying or archiving, or a graded pass over a program architecture doc.",
+    instructions: `Run an editorial review of an orbit change or an architecture doc. Three modes: \`--as proposal\` reviews a change's pre-implementation artifacts (9 passes); \`--as system\` reviews the whole product state after apply (verify-change as Pass 0 + 6 system-wide passes); \`--as architecture\` reviews an architecture DOC under \`orbit/architecture/\` (6 passes, NO gate). All modes share the 3-dimension scorecard (Completeness / Correctness / Coherence), the severity ladder (CRITICAL / WARNING / SUGGESTION — defined ONCE, by consequence, in \`orbit-conventions\`' Severity ladder; every pass rule NAMES it and defines nothing of its own), pushback discipline, and \`.orbit-runs/\` persistence; they differ in their passes, their gate (\`review-proposal\` / \`review-system\`; none in architecture mode) and a few mode flags. The command additionally carries the REVIEWER axis: \`--reviewer in-context|fresh|external|blind-pair\` (default \`in-context\`).
+
+**Generates findings; does not resolve them** — resolution flows through \`/orbit:address-reviews\` or the user's reply to the report.
+
+**Input**: an optional change name (or, with \`--as architecture\`, a doc name), an optional \`--as proposal|system|architecture\` and secondary flags. A missing mode is inferred at Step 1 (architecture mode NEVER is) and a missing target is prompted for at Step 2 (chain: target).
+
+## Execution disciplines (epitome)
+
+The disciplines from \`orbit-conventions\`, embedded per body; detail lives in the step where each fires.
+
+- **Pushback (review-time) — primary here**: verify every finding against current state before reporting; suppress a stale finding with an evidence note (\`stale finding suppressed: <evidence>\`) whose evidence is what the current state shows. A VERIFICATION-genre pass additionally reads its walk (Step 5).
+- **Read-before-reference (authoring-time)**: every construct a finding names is backed by an actual read (enforcement rule under Special cases); unverifiable → downgrade or omit.
+- **Change completeness (modification-time)**: \`--mark\` insertions land fully in one pass, then sweep for residue (Step 11); stale or partial prior \`.orbit-runs/\` files are cleaned before persisting.
+- **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line, invoking no next command unless the change status's \`chain\` object allows it — review-cycle COUNT is the user's call; gate \`passed\` means *eligible*, not *commanded*.
+${DECISION_WRITING_BASIC}
+
+## Pass genre
+
+The pass genre is a record and a header word; the gate reads nothing of it.
+
+\`\`\`
+| reviewer class | mode | trail position | pass genre |
+|---|---|---|---|
+| \`fresh\` or \`external\` | proposal or system | any | REVIEW — reads the whole artifact and the thesis |
+| \`in-context\` | proposal or system | a qualifying walk of this mode precedes the pass | VERIFICATION — reads that walk and answers landed / regressed per resolution |
+| \`in-context\` | proposal or system | no qualifying walk of this mode precedes it | REVIEW — a reaction with nothing yet to verify; the cadence's slot arithmetic is unchanged by pass genre |
+| \`in-context\` | proposal or system | only MODE-LESS walks precede it | REVIEW — a walk whose mode cannot be read is not evidence of a qualifying walk of this mode |
+| \`in-context\` or \`fresh\` | architecture | — | REVIEW — the architecture trail carries no change-mode walk records and the mode has no gate |
+| \`external\` | architecture | — | not a member — refused by \`orbit-review\`'s mode constraint |
+\`\`\`
+
+## Steps
+
+### 1. Resolve the mode
+
+Resolve the MODE first — it decides what the positional IS — from \`--as proposal|system|architecture\`. **Architecture mode is NEVER inferred**: it needs the flag, and a positional matching a doc name does NOT trigger it. Without \`--as\`, infer a change mode from \`orbit/changes/<name>/tasks.md\`'s checkboxes: all unchecked → \`proposal\`; all checked plus code changes since the change was proposed (\`git log --format=%h -- orbit/changes/<name>/ ':!orbit/changes/<name>/.orbit-runs'\` — hashes only, never commit subjects, which can carry prior passes' counts) → \`system\`; mixed or ambiguous → \`AskUserQuestion\` (chain: target). State the resolution in the report header (\`Mode: proposal (inferred from 12 unchecked tasks)\`).
+
+### 2. Resolve the target
+
+**Change modes** — the target is a CHANGE: use the provided name; otherwise prompt via \`AskUserQuestion\` over \`orbit list --json\` (mark changes with incomplete tasks \`(In Progress)\`) (chain: target). Announce \`Using change: <name> --as <mode>\` at the start of the report header.
+
+**Architecture mode** — the target is a DOC, never a change: read \`references/architecture-mode.md\` and follow it, here and at Steps 4 and 10.
+
+### 3. Resolve flags
+
+Resolve the reviewer FIRST, before anything is read or written: read \`references/flags-detail.md\` and follow its first section (the flags, the reviewer selectors and the wrong-mode notes). The first three reviewer values are the classes; \`blind-pair\` is not a class but an INVOCATION of both independent classes at once — one fresh pass and one external pass, blind to each other. Each reviewer value has ONE shorthand, exactly \`--reviewer <value>\`, and an invocation carries AT MOST ONE selector. \`in-context\` runs this body's steps; \`fresh\` dispatches (Dispatching a fresh pass); \`external\` loads \`references/external-handoff.md\` and follows it, packaging the prompt from \`references/prompt-template.md\` and \`references/mode-sections.md\`, and no pass of the internal classes runs; \`blind-pair\` loads \`references/blind-pair.md\` AND \`references/external-handoff.md\` and follows the pair reference, which runs both halves. \`external\` and \`blind-pair\` require \`--as proposal|system\`.
+
+### 4. Load context
+
+**Architecture mode**: load the context \`references/architecture-mode.md\` names, then continue at Step 5.
+
+**Change modes** — use the orbit CLI as source of truth:
+
+\`\`\`bash
+orbit status --change "<name>" --json
+orbit instructions apply --change "<name>" --json
+\`\`\`
+
+From the returned \`contextFiles\`, read every artifact: \`proposal\`, \`design\`, \`tasks\`, all paths under \`specs\`. Also read:
+- \`orbit/changes/<name>/explore.md\` if present
+- \`orbit/changes/<name>/sketches/\` if present
+- Project context: \`CLAUDE.md\` (root), \`orbit/project.md\`, any \`*_convention.md\` at project root
+- Baseline: \`orbit/specs/*/spec.md\`
+- Orbit lenses: \`orbit/lenses/perspectives.md\`, \`orbit/lenses/critical-paths.md\` (system mode primarily; proposal mode uses for cross-doc checks)
+
+System mode also reads:
+- \`git diff <change-start>..HEAD -- . ':!orbit/changes/<name>/.orbit-runs'\` — \`<change-start>\` is the commit that first added the change's \`proposal.md\`, found by hash alone (\`git log --diff-filter=A --format=%h -- orbit/changes/<name>/proposal.md | tail -1\`); commit subjects can carry prior passes' counts, so a REVIEW-genre pass never reads them. The pathspec keeps the trail's pass records and walk logs out of what the pass reads
+- Code paths around the change (cohesion + surface walks)
+
+### 5. Inspect prior runs (VERIFICATION pass genre only)
+
+Decide this pass's PASS GENRE first, by the table under **Pass genre** above. A \`fresh\` pass and any architecture-mode pass are REVIEW. An in-context pass in a change mode decides from ONE bounded metadata probe — the token-ordered listing of the change's \`.orbit-runs/\` pass and walk records: \`review-<mode>-*.json\` reading each record's \`reviewer_class\` field (or \`flags.fresh\` when that field is absent — a legacy fresh pass), \`external-<mode>-*.md\` by filename, and \`address-reviews-*.json\` reading each record's \`source_path\` — to find the latest ACCEPTED independent pass of this mode and any walk of this mode after it. Open no record's findings, suppressed list or resolutions to decide; a walk whose \`source_path\` resolves to no mode is MODE-LESS and qualifies for none; an unreadable listing is REVIEW. Every \`external-<mode>-*.md\` file counts as a pass here — whether the engine ACCEPTS a return cannot be read from metadata; the owner names that limit, and where the two differ the engine's computation is authoritative.
+
+- **REVIEW pass genre** — SKIP the rest of this step: the metadata probe above is the ONLY read of the trail's pass and walk records a REVIEW-genre pass makes. Pushback is current-state verification and needs no prior list, and the iteration ordinal and trend are ENGINE-computed at render time from the trail — never authored here. The owner's ONE exemption: architecture mode keeps its hand-computed per-doc iteration note (Step 8), counted over \`review-architecture-*.json\` emits in \`orbit/architecture/.orbit-runs/\` whose \`doc\` field equals the doc under review — the trail is shared across docs, and a review of doc B must never treat doc A's run as its previous iteration.
+- **VERIFICATION pass genre** — this pass VERIFIES the walks; it does not re-review the whole artifact: read \`references/verification.md\` and follow it.
+- **A refusal naming owed \`verification\` keys** means the engine computed VERIFICATION: read \`references/verification.md\` and follow it from the refusal you already have.
+
+### Dispatching a fresh pass (\`--reviewer fresh\`)
+
+A fresh pass is REVIEW pass genre, and dispatching it is the INVOKING session's act alone: a subagent holding the brief is the worker — it skips this step without reading its reference, skips the Commit step and the Chain end step, and returns once its pass is persisted. The invoking session, on a \`--reviewer fresh\` run or at a blind pair's step 5c, reads \`references/fresh-dispatch.md\` and follows it.
+
+### 6. Run passes (load the resolved mode's reference ONLY)
+
+Load \`references/passes-<mode>.md\` for the RESOLVED mode — proposal (9 passes), system (0–6, plus the reading step on the in-context pass whenever \`orbit decisions brief <name>\` selects records), or architecture (6) — and run its pass set sequentially (or in parallel for the marked passes when \`--parallel\` is on). For each pass:
+
+1. Apply the read-before-reference discipline to every cited construct.
+2. Apply the pushback discipline against current state.
+3. Emit findings tagged CRITICAL / WARNING / SUGGESTION with file:line + actionable recommendation, graded by \`orbit-conventions\`' Severity ladder as each pass rule names it: a CRITICAL carries its \`reproduction\` (the surface refuses one without it); a lifecycle BLOCK (Pass 1's validate failure, Pass 8's unresolved marker) goes to the payload's \`blocks\`, never to a finding.
+
+### Disjunctive recommendations: emit structured \`recommendation_options\`
+
+When a finding's recommendation genuinely offers a choice between two or more defensible concrete paths (different outcomes, not rewordings), emit \`recommendation_options: [{label, body}]\` beside the prose \`recommendation\` — each entry a non-empty \`label\` (\`"A"\`, \`"B"\`, …) and the concrete action the user would take. Never for a single action or a loose conversational "or" ("fix it now or later"): false-negative bias is intentional. The prose still summarizes the disjunction; the structured field, OPTIONAL on every finding, is the fork address-reviews consumes (shape: \`references/run-summary-schema.md\`).
+
+### 7. Apply scorecard rollup
+
+Roll every pass's findings into the 3-dimension scorecard per the mode's dimension mapping (in the loaded pass reference).
+
+### 8. Author the direction and the commentary
+
+**The direction.** An independent pass OWES its forward recommendation: when \`reviewer_class\` is \`fresh\` or \`external\`, compose \`direction\` — \`disposition\` exactly one of \`forward\` | \`hold\`, \`reasoning\` a non-empty string, multi-line allowed. The SHAPE is \`orbit-emit-composition\`'s **The review payload carries \`direction\`**: \`orbit emit review\` REFUSES a fresh or external payload without it, and a mis-shaped one at any class, in every mode (an architecture-mode fresh pass owes it too: the rule keys on class, never on mode). An \`in-context\` pass MAY carry one (optional there): the reacting class's direction is the readiness record's job. The CONTENT is \`orbit-report-rendering\`'s **Direction renders as its own section and its absence is marked on independent passes**: the direction says WHICH WAY and WHY — your own recommendation on moving forward — and never states finding counts, the gate's state, or a command token; those exist only in the report's engine-computed sections, and the report renders the direction in its own \`### Direction\` section inside the quarantine, the engine tail still last. The engine judges presence and shape only: whether the direction is RIGHT, and whether its reasons agree with its token, is the in-context reaction's and the readiness author's call.
+
+**The commentary** (change modes) is the emit's OPTIONAL \`commentary\` field: the pattern behind the findings, what was probed and how hard, risk texture — everything the structured sections can't say. It NEVER states finding counts, gate verdicts, or next commands (those exist only in the report's engine-computed sections). The iteration note is NOT authored — the renderer computes it from the trail. Architecture mode keeps its hand-computed iteration note (matching mode AND \`doc\`, per Step 5 — never cross-doc): \`Note: N of these findings appeared in the last run on <date>. M new this run.\` / \`First architecture review for this doc.\`
+
+${REVIEW_RUN_SUMMARY_EMIT_BASIC}
+
+### 10. Render and paste the report (change modes)
+
+\`--render\` on the Step 9 invocation already printed the engine report; otherwise run \`orbit status --change <name> --report\`. Paste the output VERBATIM as the report; hand-rendering its structured sections — header, trend, scorecard table, findings, Suppressed, the gate/position/eligibility tail — is PROHIBITED in change modes (architecture mode is EXEMPT: it has no render surface yet, below). The engine-rendered tail IS the assessment: the gate verdict, position, and canonical next command come from the gate graph at render time, and the reviewing AI authors none of them. The chat turn is LOOSE FORM: the pasted report grounds it and free conversation follows, never contradicting the tail's engine-computed lines; skipped-pass notes (\`passes_run\`/\`passes_skipped\`) surface there when worth mentioning, never as hand-rendered sections.
+
+#### Architecture mode — NO gate (interim hand-rendered shape)
+
+Read \`references/architecture-mode.md\` and follow its gate-less, hand-rendered shape.
 
 
 ### 11. Rarely-used flags: \`--mark\`, \`--parallel\`, \`--focus\`
 
-Full procedures live in \`references/flags-detail.md\` — load it ONLY when one of these flags is set. Gist: \`--mark\` (proposal mode only) writes \`@review:\` markers at CRITICAL/WARNING finding sites — and no marker for a block, which is already a condition the artifact carries (a marker would be a second record of it) — then sweeps for residue per change completeness (system mode: accepted but ignored with a note); \`--parallel\` spawns subagents for the heavy passes and merges their findings (subagents inherit the execution disciplines); \`--focus <lens>\` applies elevated rigor to the lens's pass set without skipping any pass.
+Full procedures are \`references/flags-detail.md\`'s sections 11–13, followed ONLY when their flag is set. Gist: \`--mark\` (proposal mode only) writes \`@review:\` markers at CRITICAL/WARNING finding sites, no marker for a block, then sweeps for residue (system mode: ignored with a note); \`--parallel\` spawns subagents for the heavy passes and merges their findings; \`--focus <lens>\` applies elevated rigor to the lens's passes, skipping none.
 
 ## Special cases
 
 ### Graceful degradation
 
-- **Proposal mode, no \`orbit/specs/\` baseline** → Pass 4 skipped (\`no baseline to check against\`); other passes proceed normally.
-- **Proposal mode, no \`*_convention.md\` and no \`project.md\`** → Pass 3 lens-driven cross-checks skipped; rest of Pass 3 (\`CLAUDE.md\` checks) still runs.
+- **Proposal mode, no \`orbit/specs/\` baseline** → Pass 4 skipped (\`no baseline to check against\`).
+- **Proposal mode, no \`*_convention.md\` and no \`project.md\`** → Pass 3's lens-driven cross-checks skipped; its \`CLAUDE.md\` checks still run.
 - **System mode, empty \`orbit/lenses/\`** → Passes 4 and 5 skipped; Pass 3 still runs against capabilities derived from \`orbit/specs/\`.
-- **System mode, \`verify-change\` unavailable** → Pass 0 fails with a note; continue with Passes 1–6 and downgrade the assessment to \`unable to delegate Pass 0; partial review\`.
-- **Missing \`tasks.md\`** → use \`AskUserQuestion\` for mode rather than inferring. (chain: target)
+- **System mode, \`verify-change\` unavailable** → Pass 0 fails with a note; Passes 1–6 continue and the assessment reads \`unable to delegate Pass 0; partial review\`.
+- **Missing \`tasks.md\`** → ask for the mode with \`AskUserQuestion\` rather than inferring. (chain: target)
 
 ### Pushback bias
 
-When uncertain, prefer the lower severity — \`orbit-conventions\`' Severity ladder's false-positive bias (SUGGESTION over WARNING over CRITICAL), and it runs in ONE direction only: a condition that must stop apply regardless is a BLOCK, never an ambiguous CRITICAL. Pushback against the bias to over-flag — the goal is signal, not volume.
+When uncertain, prefer the lower severity (\`orbit-conventions\`' Severity ladder's false-positive bias: SUGGESTION over WARNING over CRITICAL), in ONE direction only: a condition that must stop apply regardless is a BLOCK, never an ambiguous CRITICAL. The goal is signal, not volume.
 
 ### Read-before-reference enforcement
 
-Every finding that cites a specific file:line must be backed by an actual read of that line. If the citation is inferred (e.g., "I think this is around line 50 of design.md"), either read first or downgrade to a less specific finding ("design.md mentions <topic> but does not specify <X>" — searchable, but no false-precision line number).
-
-## Output format (change modes)
-
-The report IS the engine render: run \`orbit status --change <name> --report\` after persisting
-the emit and paste the output verbatim — header, trend, scorecard table, findings (blockquote-
-contained recommendations, labeled options), Suppressed, the delimited Commentary slot, and
-the engine tail (gate / position / eligibility) last. Never hand-render those sections in
-change modes; free conversational engagement follows the pasted report (loose form).
-Architecture mode keeps its hand-rendered gate-less shape (Step 10) until the render surface
-covers the architecture trail.
+Every finding that cites a specific file:line is backed by an actual read of that line; an inferred citation ("I think this is around line 50 of design.md") is read first or downgraded to a less specific finding ("design.md mentions <topic> but does not specify <X>"), with no false-precision line number.
 
 ## Worked example (the change-mode turn shape)
 
@@ -1470,9 +1474,6 @@ covers the architecture trail.
 Gate review-system: unpassed — pass 2026-05-26T15-12-08Z has unresolved substantive findings
 Position: propose ✓ → review(proposal) (past) → apply ✓ → review(system) unpassed → archive blocked-by-gate
 Ready when you are: /orbit:address-reviews example-change]
-
-[then loose-form conversation: what the pattern behind the findings means, what to probe
-next, anything the structure can't say — never contradicting the tail's engine lines]
 \`\`\`
 
 
@@ -1518,6 +1519,9 @@ ${CHAIN_END_STEP_BASIC}
         name: 'flags-detail.md',
         content: REVIEW_FLAGS_DETAIL_REFERENCE,
       },
+      { name: 'verification.md', content: REVIEW_VERIFICATION_REFERENCE },
+      { name: 'fresh-dispatch.md', content: REVIEW_FRESH_DISPATCH_REFERENCE },
+      { name: 'architecture-mode.md', content: REVIEW_ARCHITECTURE_MODE_REFERENCE },
       { name: RUN_SUMMARY_EMIT_REFERENCE_NAME, content: runSummaryEmitReference(REVIEW_RUN_SUMMARY_EMIT) },
       { name: COMMIT_STEP_REFERENCE_NAME, content: COMMIT_STEP_REFERENCE },
       { name: CHAIN_END_STEP_REFERENCE_NAME, content: CHAIN_END_STEP_REFERENCE },

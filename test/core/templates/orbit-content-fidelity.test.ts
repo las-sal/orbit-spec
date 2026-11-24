@@ -82,7 +82,7 @@ const RELOCATED: Array<[string, () => SkillTemplate, string[]]> = [
   ['onboard', getOnboardSkillTemplate, ['Execution disciplines', 'self-contained', '**Execution disciplines** codified in']],
   ['sync-specs', getSyncSpecsSkillTemplate, ['Execution disciplines', 'Consent inheritance']],
   // B3 editorial workflows (net-new relocation; parity proof per D-b3-4)
-  ['review', getReviewSkillTemplate, ['Execution disciplines', 'orbit status --change <name> --report', 'Paste the output VERBATIM', 'hand-rendering them is PROHIBITED', 'architecture mode is EXEMPT', 'recommendation_options', 'reviewer_class', 'commentary', 'REVIEWER axis', 'references/external-handoff.md', 'references/passes-<mode>.md', 'orbit emit review']],
+  ['review', getReviewSkillTemplate, ['Execution disciplines', 'orbit status --change <name> --report', 'Paste the output VERBATIM', 'is PROHIBITED in change modes', 'architecture mode is EXEMPT', 'recommendation_options', 'reviewer_class', 'commentary', 'REVIEWER axis', 'references/external-handoff.md', 'references/passes-<mode>.md', 'orbit emit review']],
   ['address-reviews', getAddressReviewsSkillTemplate, ['Execution disciplines', 'Ripple cascade', 'obvious-fix lane preview', 'present → discuss → ratify', "AFTER the finding's discussion concludes", 'RE-PRESENTS the finding', 'one prompt NEVER spans multiple findings', 'ratified_via', 'delegation_directive', 'resolution log']],
   ['audit-drift', getAuditDriftSkillTemplate, ['Execution disciplines', 'Vocabulary residue', 'Persist the run summary', 'recommendation_options']],
 ];
@@ -110,8 +110,8 @@ const ALL_SURFACE_SKILLS: Array<[string, () => SkillTemplate]> = [
 
 // dirName -> exact reference declarations for the B3 multi-file editorial skills
 const B3_REFERENCES: Array<[string, () => SkillTemplate, string[]]> = [
-  ['review', getReviewSkillTemplate, ['run-summary-schema.md', 'passes-proposal.md', 'passes-system.md', 'passes-architecture.md', 'external-handoff.md', 'blind-pair.md', 'mode-sections.md', 'prompt-template.md', 'flags-detail.md', 'run-summary-emit.md', 'commit-step.md', 'chain-end-step.md', 'decision-records.md']],
-  ['address-reviews', getAddressReviewsSkillTemplate, ['external-findings-format.md', 'internal-findings-format.md', 'resolution-detail.md', 'run-summary-schema.md', 'run-summary-emit.md', 'account-walk-step.md', 'commit-step.md', 'chain-end-step.md', 'decision-records.md']],
+  ['review', getReviewSkillTemplate, ['run-summary-schema.md', 'passes-proposal.md', 'passes-system.md', 'passes-architecture.md', 'external-handoff.md', 'blind-pair.md', 'mode-sections.md', 'prompt-template.md', 'flags-detail.md', 'verification.md', 'fresh-dispatch.md', 'architecture-mode.md', 'run-summary-emit.md', 'commit-step.md', 'chain-end-step.md', 'decision-records.md']],
+  ['address-reviews', getAddressReviewsSkillTemplate, ['external-findings-format.md', 'internal-findings-format.md', 'discovery.md', 'triage-sources.md', 'sweep-record.md', 'reading-findings.md', 'redesign.md', 'report.md', 'cascade.md', 'resolution-detail.md', 'run-summary-schema.md', 'run-summary-emit.md', 'account-walk-step.md', 'commit-step.md', 'chain-end-step.md', 'decision-records.md']],
   ['audit-drift', getAuditDriftSkillTemplate, ['run-summary-schema.md', 'worked-example.md', 'run-summary-emit.md', 'decision-records.md']],
 ];
 
@@ -811,7 +811,8 @@ describe('rc02b severity ladder: the generated bodies NAME the ladder and define
     const body = review.instructions;
     const bias = body.split('### Pushback bias')[1].split('###')[0];
     expect(bias).toMatch(LADDER);
-    const strictRow = body.split('\n').find(l => l.startsWith('| `--strict`'))!;
+    // cut-review-walk (V4): the flag table is `references/flags-detail.md`'s first section, read at Step 3.
+    const strictRow = ref(review, 'flags-detail.md').split('\n').find(l => l.startsWith('| `--strict`'))!;
     expect(strictRow).toMatch(/block/i);
     const markGist = body.split('### 11. Rarely-used flags')[1].split('## Special cases')[0];
     expect(markGist).toMatch(/no marker for a block|never for a block/i);
@@ -969,8 +970,9 @@ describe('rc04b-forward-recommendation: the generated surface carries the direct
 
   // @scenario text orbit-review :: Internal run summary persisted per mode :: Architecture-mode fresh pass prints its direction
   it('the architecture interim shape prints `Direction: <disposition>` and contains every reasoning line under `> `; a multiline near-miss with `Ready when you are:` on its second line is pinned contained (walk 2, external W3)', () => {
-    const body = review.instructions;
-    const interim = body.split('#### Architecture mode — NO gate')[1].split('### 11.')[0];
+    // cut-review-walk (V3): the interim shape is `references/architecture-mode.md`'s, read at Step 10.
+    expect(review.instructions.split('#### Architecture mode — NO gate')[1].split('### 11.')[0]).toContain('`references/architecture-mode.md`');
+    const interim = ref(review, 'architecture-mode.md').split('## The report — NO gate')[1];
     expect(interim).toContain('Direction: <disposition>');
     expect(interim).toMatch(/every reasoning line/i);
     expect(interim).toMatch(/^> Ready when you are: /m);
@@ -1015,6 +1017,7 @@ describe('rc03b-pass-genres: the review-genre brief carries nothing from the tra
     expect(project).not.toContain('.orbit-runs');
   });
 
+  // @scenario text orbit-review :: Review-genre passes read the artifacts and the code, never the trail's findings :: System-mode diff excludes the trail
   it('the system-mode read list (mode-sections) and the body\'s Step 4 carry the trail-excluding pathspec', () => {
     const sys = ref(review, 'mode-sections.md').split('## System mode — "What to read for THIS review"')[1].split('## System mode — "What to look for"')[0];
     // Each block carries its own change placeholder (system walk 1, fresh W3): mode-sections is
@@ -1033,6 +1036,8 @@ describe('rc03b-pass-genres: the review-genre brief carries nothing from the tra
     expect(review.instructions).not.toContain('git log --oneline');
   });
 
+  // @scenario text orbit-review :: Review-genre passes read the artifacts and the code, never the trail's findings :: Prior-run inspection skipped for review genre
+  // @scenario text orbit-review :: Review-genre passes read the artifacts and the code, never the trail's findings :: In-context pass decides its own genre from the walk listing
   it("Step 5 is scoped to VERIFICATION pass genre; the REVIEW-genre branch names the bounded metadata probe as its only read of the trail's pass and walk records", () => {
     const step5 = review.instructions.split('### 5. Inspect prior runs')[1].split('### 6.')[0];
     expect(step5).toContain('VERIFICATION');
@@ -1049,13 +1054,20 @@ describe('rc03b-pass-genres: the review-genre brief carries nothing from the tra
     expect(epitome).toMatch(/current state/);
   });
 
+  // @scenario text orbit-review :: Review-genre passes read the artifacts and the code, never the trail's findings :: Fresh brief carries no finding
   it('the `--reviewer`/`--fresh` prose carries the repaired class words, and the fresh dispatch step points at the owner\'s brief rule', () => {
-    const body = review.instructions;
-    expect(body).toContain('same model, clean context');
-    expect(body).toContain('different AI in a separate session');
-    const dispatch = body.split('### Dispatching a fresh pass')[1].split(/\n### /)[0];
+    // cut-review-walk (V2, V4): the flag rows are `references/flags-detail.md`'s; the dispatch is `references/fresh-dispatch.md`.
+    const flags = ref(review, 'flags-detail.md');
+    expect(flags).toContain('same model, clean context');
+    expect(flags).toContain('different AI in a separate session');
+    const dispatch = ref(review, 'fresh-dispatch.md');
     expect(dispatch).toContain("`orbit-conventions`' `Review mode decision framework`");
     expect(dispatch).toContain('orbit emit review');
+    // The brief itself carries no trail path and no pass token: what it may carry is the owner's rule's.
+    const brief = dispatch.split('```')[1];
+    expect(brief).toContain('You are the fresh-context reviewer');
+    expect(brief).not.toContain('.orbit-runs/');
+    expect(brief).not.toMatch(/\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}Z/);
   });
 });
 
@@ -1071,7 +1083,9 @@ describe('rc08a-sweep-evidence: the walk body records its sweep and attributes r
     const iRemove = body.indexOf('#### 3e. Remove the marker');
     expect(iSweep).toBeGreaterThan(iCascade);
     expect(iRemove).toBeGreaterThan(iSweep);
-    const step = body.slice(iSweep, iRemove);
+    // cut-review-walk (M6): the step reads `references/sweep-record.md`, which holds the five keys' meanings.
+    expect(body.slice(iSweep, iRemove)).toContain('Read `references/sweep-record.md` and follow its sweep section');
+    const step = body.slice(iSweep, iRemove) + '\n' + walk.references!.find(r => r.name === 'sweep-record.md')!.content.split('## The sweep record')[1];
     for (const k of ['retired', 'introduced', 'searched', 'scope', 'kept']) {
       expect(step.split('\n').some(l => l.startsWith(`- \`${k}\``)), `a one-line meaning for \`${k}\``).toBe(true);
     }
@@ -1083,7 +1097,10 @@ describe('rc08a-sweep-evidence: the walk body records its sweep and attributes r
   // @scenario text orbit-address-reviews :: A ripple miss is attributed by the walk that finds it :: A system-review finding is attributed to the proposal walk that missed it
   // @scenario text orbit-address-reviews :: A ripple miss is attributed by the walk that finds it :: An unrelated finding carries no attribution
   it('Step 2 carries the attribution read: earlier walks of the change, `ripple_miss_of`, and the three kind values', () => {
-    const triage = body.split('### 2. Triage')[1].split('### 3. Walk each marker')[0];
+    // cut-review-walk (M3): Step 2 reads `references/sweep-record.md`'s first section for the attribution, at triage.
+    const step2 = body.split('### 2. Triage')[1].split('### 3. Walk each marker')[0];
+    expect(step2).toContain('read `references/sweep-record.md` now, before any edit, and follow its first section');
+    const triage = walk.references!.find(r => r.name === 'sweep-record.md')!.content.split('## The sweep record')[0];
     expect(triage).toContain('ripple_miss_of');
     expect(triage).toContain('(the site lay outside that entry\'s check scope)');
     expect(triage).toContain('a finding no earlier entry touched carries none');
@@ -1129,6 +1146,8 @@ describe('rc08a task 4.2: the walk body and its schema reference carry the lifec
   const notes = schema.split('## Field notes')[1].split('## Worked-example')[0];
   const triage = body.split('### 2. Triage')[1].split('### 3. Walk each marker')[0];
   const step3 = body.split('### 3. Walk each marker')[1].split('#### 3a.')[0];
+  // cut-review-walk (M5): the decision lane's detection and recording are `references/resolution-detail.md`'s, read in the lane.
+  const detail = walk.references!.find(r => r.name === 'resolution-detail.md')!.content;
 
   // @scenario text orbit-address-reviews :: Discover → triage → walk → ripple flag → report lifecycle :: Triage scoping
   it('triage scoping: the user may walk a subset', () => {
@@ -1138,7 +1157,7 @@ describe('rc08a task 4.2: the walk body and its schema reference carry the lifec
   // @scenario text orbit-address-reviews :: Discover → triage → walk → ripple flag → report lifecycle :: Lane preview before any fix
   it('the obvious-fix lane is previewed before any fix lands, and a word moves an item to the decision lane', () => {
     expect(triage).toContain('**obvious-fix lane preview**');
-    expect(triage).toContain('BEFORE any fix lands, so the user can pull any item into the decision lane with a word');
+    expect(triage).toContain('BEFORE any fix lands, so the user can pull it into the decision lane with a word');
   });
 
   // @scenario text orbit-address-reviews :: Discover → triage → walk → ripple flag → report lifecycle :: Walk-mode lifecycle order per finding
@@ -1147,38 +1166,45 @@ describe('rc08a task 4.2: the walk body and its schema reference carry the lifec
     expect(step3).toContain('the resolution log captures partial completion if interrupted');
   });
 
-  // @scenario text orbit-address-reviews :: Discover → triage → walk → ripple flag → report lifecycle :: Batch-mode lifecycle order
-  // @scenario text orbit-address-reviews :: Resolution-log JSON shape extensions for walk-mode / decision-forks / cascade :: Batch-mode resolution log structure
-  it('batch-mode: resolve all, then one aggregated cascade; decisions still briefed per finding; recorded as batch with its source', () => {
-    expect(step3).toContain('all markers complete pushback + classify + resolve before ripples apply once as a single aggregated step');
-    expect(step3).toContain('decision-lane findings STILL get their per-finding briefing and ratification');
-    expect(step3).toContain('the `--batch` flag (`"flag"`)');
-    expect(schema).toContain('"walk_mode": "per_finding" | "batch"');
-    expect(notes).toContain('`flag` (`--batch` argv)');
+  // @scenario text orbit-address-reviews :: Every walk runs finding by finding :: A retired batch trigger walks finding by finding
+  it('batch mode is removed (R-rop2-12): a retired trigger walks finding by finding, the walk saying so; the schema has one walk mode', () => {
+    expect(step3).not.toContain('single aggregated step');
+    expect(step3).toContain('Batch mode was removed: an invocation whose message carries a retired batch phrase ("fix them all", "batch them", "go ahead with all", "address all at once", or one of the same intent) is walked finding by finding, saying so in one line');
+    expect(body).toContain('a `--batch` flag is dropped before the positional resolves, and the walk says so in one line');
+    expect(schema).toContain('"walk_mode": "per_finding",');
+    expect(schema).not.toContain('"walk_mode": "per_finding" | "batch"');
+    expect(notes).not.toContain('`--batch` argv');
+  });
+
+  // @scenario text orbit-address-reviews :: Every walk runs finding by finding :: A retired mid-walk switch is a delegation
+  it('a bare mid-walk "batch the rest" is read as a delegation of the rest, recorded verbatim', () => {
+    expect(step3).toContain('a bare mid-walk "go batch" / "switch to batch" / "batch the rest" is a mid-walk delegation of the rest (3b.5), recorded verbatim as `delegation_directive`');
+    expect(body).toContain('**A mid-walk DELEGATION** — an explicit user directive');
   });
 
   // @scenario text orbit-address-reviews :: Resolution-log JSON shape extensions for walk-mode / decision-forks / cascade :: Walk-mode resolution log structure
   // @scenario text orbit-address-reviews :: Resolution-log JSON shape extensions for walk-mode / decision-forks / cascade :: Resolution log omits recommendation_fork for findings without forks
   it('per-finding log: walk_mode per_finding, per-entry ripple_cascade split, and no recommendation_fork without a fork', () => {
-    expect(notes).toContain('`per_finding` (default');
+    expect(notes).toContain('`per_finding`, the only walk mode');
     expect(notes).toContain('splits each resolution\'s ripples into `applied`');
     expect(notes).toContain('`flagged_not_applied`');
     expect(notes).toContain('absence IS the no-fork representation');
-    expect(body).toContain('NO `recommendation_fork` object is recorded (absence IS the no-fork representation)');
+    expect(detail).toContain('NO `recommendation_fork` object is recorded (absence IS the no-fork representation)');
   });
 
   // @scenario text orbit-address-reviews :: Resolution-log JSON shape extensions for walk-mode / decision-forks / cascade :: Forked decision records its ratification channel at the entry level
   // @scenario text orbit-address-reviews :: Resolution-log JSON shape extensions for walk-mode / decision-forks / cascade :: Non-fork decision still records its channel
   // @scenario text orbit-address-reviews :: Resolution-log JSON shape extensions for walk-mode / decision-forks / cascade :: Off-menu chat ratification recorded
   it('decision-lane recording: ratified_via at the entry level for every decision, resolution verbatim when unforked or off-menu, the fork carrying detection only', () => {
-    expect(body).toMatch(/every decision-lane resolution records `ratified_via: "chat" \| "prompt"` at the ENTRY level, plus a verbatim `resolution` string when no fork was detected or the ratified direction is off-menu/);
+    expect(detail).toMatch(/every decision-lane resolution records `ratified_via: "chat" \| "prompt"` at the ENTRY level, plus a verbatim `resolution` string when no fork was detected or the ratified direction is off-menu/);
     expect(notes).toMatch(/^- \*\*`ratified_via`\*\* \(per-resolution, REQUIRED for every decision-lane resolution — forked or not\)/m);
     expect(notes).toContain('`chosen` (a presented label, or `"off-menu"` with the entry-level `resolution` carrying the direction)');
   });
 
   // @scenario text orbit-address-reviews :: Resolution-log JSON shape extensions for walk-mode / decision-forks / cascade :: --no-cascade resolution log records all ripples as flagged_not_applied
   it('--no-cascade records every ripple under flagged_not_applied with the one suppression reason', () => {
-    expect(body).toContain('ALL ripple-flagged files are recorded under `ripple_cascade.flagged_not_applied[]` with reason `--no-cascade suppressed`');
+    expect(body).toContain('read `references/cascade.md` and follow it');
+    expect(walk.references!.find(r => r.name === 'cascade.md')!.content).toContain('ALL ripple-flagged files are recorded under `ripple_cascade.flagged_not_applied[]` with reason `--no-cascade suppressed`');
   });
 });
 

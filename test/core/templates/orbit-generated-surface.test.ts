@@ -54,8 +54,8 @@ const SURFACE: Array<[string, string, string[]]> = [
   ['orbit-bulk-archive-change', 'bulk-archive', ['# Orbit additions']],
   ['orbit-verify-change', 'verify', ['Execution disciplines', 'Run-summary emit']],
   ['orbit-onboard', 'onboard', ['Execution disciplines', 'self-contained', 'Program architecture', 'orbit/architecture/.orbit-runs/', 'architecture mode — D-arc Stage D2']],
-  ['orbit-review', 'review', ['Execution disciplines', 'Paste the output VERBATIM', 'hand-rendering them is PROHIBITED', 'REVIEWER axis', 'references/external-handoff.md', 'references/passes-<mode>.md', 'orbit emit review', 'Using doc:', 'First architecture review for this doc']],
-  ['orbit-address-reviews', 'address-reviews', ['Execution disciplines', 'Ripple cascade', 'resolution log', 'Architecture-scoped']],
+  ['orbit-review', 'review', ['Execution disciplines', 'Paste the output VERBATIM', 'is PROHIBITED in change modes', 'REVIEWER axis', 'references/external-handoff.md', 'references/passes-<mode>.md', 'orbit emit review', 'references/architecture-mode.md', 'First architecture review for this doc']],
+  ['orbit-address-reviews', 'address-reviews', ['Execution disciplines', 'Ripple cascade', 'resolution log', 'references/run-summary-emit.md']],
   ['orbit-audit-drift', 'audit-drift', ['Execution disciplines', 'Vocabulary residue', 'Persist the run summary', 'Architecture staleness check']],
   ['orbit-architect', 'architect', ['Execution disciplines', 'Run-summary emit', 'Completion-ratification flow', 'a gatekeeper']],
 ];
@@ -68,12 +68,13 @@ const REFERENCE_SKILLS: Record<string, string[]> = {
   // D6: propose and ff share ONE choreography reference (see pr-choreography.ts).
   // conditional-steps: the commit step and chain end step references, and propose's size brief.
   // once-per-session-detail: each emit step's run-summary-emit.md, and the two account steps' references.
+  // cut-review-walk: review's verification, fresh-dispatch and architecture-mode references; address-reviews' seven.
   'orbit-propose': ['pr-choreography.md', 'size-brief.md', 'run-summary-emit.md', 'commit-step.md', 'chain-end-step.md', DR],
   'orbit-ff-change': ['pr-choreography.md', 'run-summary-emit.md', 'commit-step.md', 'chain-end-step.md', DR],
   // D6 (external iter 1): the arc-done readout carries the shared resolution algorithm.
   'orbit-architect': ['pr-resolution.md', 'program-signoff.md', 'run-summary-emit.md', DR],
-  'orbit-review': ['run-summary-schema.md', 'passes-proposal.md', 'passes-system.md', 'passes-architecture.md', 'external-handoff.md', 'blind-pair.md', 'mode-sections.md', 'prompt-template.md', 'flags-detail.md', 'run-summary-emit.md', 'commit-step.md', 'chain-end-step.md', DR],
-  'orbit-address-reviews': ['external-findings-format.md', 'internal-findings-format.md', 'resolution-detail.md', 'run-summary-schema.md', 'run-summary-emit.md', 'account-walk-step.md', 'commit-step.md', 'chain-end-step.md', DR],
+  'orbit-review': ['run-summary-schema.md', 'passes-proposal.md', 'passes-system.md', 'passes-architecture.md', 'external-handoff.md', 'blind-pair.md', 'mode-sections.md', 'prompt-template.md', 'flags-detail.md', 'verification.md', 'fresh-dispatch.md', 'architecture-mode.md', 'run-summary-emit.md', 'commit-step.md', 'chain-end-step.md', DR],
+  'orbit-address-reviews': ['external-findings-format.md', 'internal-findings-format.md', 'discovery.md', 'triage-sources.md', 'sweep-record.md', 'reading-findings.md', 'redesign.md', 'report.md', 'cascade.md', 'resolution-detail.md', 'run-summary-schema.md', 'run-summary-emit.md', 'account-walk-step.md', 'commit-step.md', 'chain-end-step.md', DR],
   'orbit-audit-drift': ['run-summary-schema.md', 'worked-example.md', 'run-summary-emit.md', DR],
   'orbit-new-change': ['run-summary-emit.md', DR],
   'orbit-continue-change': ['run-summary-emit.md', DR],

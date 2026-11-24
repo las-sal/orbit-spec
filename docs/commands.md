@@ -166,7 +166,6 @@ and one active change, it aims at that change; otherwise it scans the repository
 | Option | Effect |
 |---|---|
 | `--from-file <path>` | Walk one file only: an external review, a review record or a drift audit |
-| `--batch` | Triage and resolve all findings together rather than one at a time |
 | `--no-cascade` | Do not apply ripple edits to other files |
 
 ### `/orbit:verify`

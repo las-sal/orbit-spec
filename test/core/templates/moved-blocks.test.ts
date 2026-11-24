@@ -68,7 +68,11 @@ const RECORDED: Record<string, string> = {
   REVIEW_RUN_SUMMARY_EMIT: '800cfb192b6b380956f951aff0e5b434df382307a3656f2570000c714043cb56',
   VERIFY_RUN_SUMMARY_EMIT: 'aceb2775860d09d9fb46fd3006e103837606df0f791d0530340791799d0642d3',
   PROPOSE_RUN_SUMMARY_EMIT: 'a5e52c9488c496f247e36207e32579a1a88f5fc4e447d63dcb5a29354cb49b80',
-  ADDRESS_REVIEWS_RUN_SUMMARY_EMIT: '0bbd21e0d51afdbcea6888806fd2d8e2bd60b1bb854307e486034c426fdc0b9a',
+  // cut-review-walk (reduce-orbit-phase2), 2026-11-24: re-recorded once. Batch mode's removal (R-rop2-12, task 2.2) took
+  // the per-source paragraph's two batch sentences ("In batch mode the invocation resolves every source's findings …"
+  // and the mid-walk switch's) and reworded "In walk mode, write" to "Write"; nothing else in the section moved. The
+  // hash before was 0bbd21e0d51afdbcea6888806fd2d8e2bd60b1bb854307e486034c426fdc0b9a. The cut ledger names the edits.
+  ADDRESS_REVIEWS_RUN_SUMMARY_EMIT: 'c2e1a51576527017683206230b70490a4b3f4003e6b87e560b78bf541d752d35',
   FF_RUN_SUMMARY_EMIT: '4ec14a8791430ae8c6fbeb03e88d1527e8a61666aa72e1b1c33618e269f29fd2',
   CONTINUE_RUN_SUMMARY_EMIT: '72f8fe69124f964c99668afa9afebabc9bb90004639f2ff5a6594aae900e5906',
   NEW_RUN_SUMMARY_EMIT: '34dd0abbb17a964a4ad83449283a89b4484982942850d9b59b85d2c62f4b0d3c',

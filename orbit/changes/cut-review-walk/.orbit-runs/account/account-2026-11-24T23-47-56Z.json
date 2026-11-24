@@ -1,0 +1,21 @@
+{
+  "command": "account",
+  "timestamp": "2026-11-24T23:47:56Z",
+  "change": "cut-review-walk",
+  "model": "claude-opus-5-5",
+  "built": "The review and the review-walk instructions now each fit within the 5,000 estimated tokens kept after a compaction: review is about 4,991 and the walk about 4,981, down from about 9,600 and 10,900. Each step keeps what it does and when, and its detail moved to a reference file the step names and tells the session to read at that moment. Ten new reference files carry that detail, word for word as the instructions had it. Batch mode and the blind-pair disagreement test are gone, as Sal ruled: every walk now runs finding by finding, a batch request is walked finding by finding with a one-line note that batch mode was removed, and the two old batch fields are refused on a new walk record. The chain end step that five instructions share now points to where its tags are explained instead of repeating them, so apply, ff and propose shrank too. A new cut ledger names every edit to the six instruction texts this stage changed, and the size limits of those six came down.",
+  "seams": "None. No new question is asked. A batch request is no longer a choice: it is walked finding by finding, with a one-line note.",
+  "deviations": "One. The walk's per-source logging paragraph and its two other emit forms (for an architecture review and for a walk with no change) were planned to leave the walk instructions, but a requirement the first reduction phase wrote keeps both in the instructions. Keeping them would have left the walk at about 5,351 estimated tokens, over the goal. Sal ruled at apply to amend that requirement for the walk alone, so this change now also modifies the run-summary capability, its sixth.",
+  "defines": [
+    {
+      "term": "cut ledger",
+      "definition": "A test listing every edit this stage made to an instruction text, each as a pair it can undo, so an edit it does not list fails the test."
+    },
+    {
+      "term": "reference file",
+      "definition": "A file shipped beside a skill's instructions, read only at the step that names it."
+    }
+  ],
+  "detail": "Moves M1-M3 and M5-M11 (address-reviews) and V1-V5 (review) per design D1; removals under R-rop2-12; R-rop2-14 for the chain tag paragraph. The new MODIFIED delta is orbit-run-summary-emit's `A body reads its run-summary detail before the session's first run-summary emit`, with one new scenario and its base fingerprint stamped. Scenario map: 131 delta scenarios, 0 uncovered, 0 orphans.",
+  "replaces": "account-2026-11-24T23-47-48Z.json"
+}

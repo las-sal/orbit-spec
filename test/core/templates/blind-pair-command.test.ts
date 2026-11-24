@@ -14,21 +14,26 @@ const trunk = review.instructions;
 const refOf = (name: string) => review.references!.find((r) => r.name === name)!.content;
 const pairRef = refOf('blind-pair.md');
 const handoff = refOf('external-handoff.md');
+/**
+ * cut-review-walk: the trunk as a session reads it — the body, then the references it reads at Steps 2–4 and at the
+ * fresh dispatch (V2–V4). Assertions on the body alone read `trunk`.
+ */
+const surface = [trunk, refOf('flags-detail.md'), refOf('fresh-dispatch.md'), refOf('architecture-mode.md')].join('\n\n');
 const onboard = getOnboardSkillTemplate().instructions;
 
 describe('rc17b — the review trunk (task 2.3)', () => {
   // @scenario text orbit-review :: Review command available with `--as` mode flag :: Each shorthand is its reviewer value
   it('the axis carries four values, each with one shorthand that is exactly --reviewer <value>', () => {
     expect(trunk).toContain('`--reviewer in-context|fresh|external|blind-pair` (default `in-context`)');
-    expect(trunk).toContain('`--in-context`, `--fresh`, `--external`, `--blind-pair`');
+    expect(trunk).toContain('Each reviewer value has ONE shorthand, exactly `--reviewer <value>`, and an invocation carries AT MOST ONE selector.');
     for (const v of ['in-context', 'fresh', 'external', 'blind-pair']) {
-      expect(trunk).toMatch(new RegExp(`\\| \`--${v}\` \\| off[^|]*\\| Exactly \`--reviewer ${v}\``));
+      expect(surface).toMatch(new RegExp(`\\| \`--${v}\` \\| off[^|]*\\| Exactly \`--reviewer ${v}\``));
     }
   });
 
   // @scenario text orbit-review :: Review command available with `--as` mode flag :: Shorthand and explicit reviewer flags do not combine
   it('the selector table: at most one selector, agreeing forms included, and an unknown value is a usage error', () => {
-    const table = trunk.split('**Reviewer selectors.**')[1].split('If a flag is specified for the wrong mode')[0];
+    const table = surface.split('**Reviewer selectors.**')[1].split('If a flag is specified for the wrong mode')[0];
     expect(table).toContain('every error row is a clean usage error that runs no pass and writes no file');
     expect(table).toContain('| none | `--reviewer in-context`, the default |');
     expect(table).toContain('| exactly one shorthand | exactly `--reviewer <its value>` |');
@@ -38,18 +43,19 @@ describe('rc17b — the review trunk (task 2.3)', () => {
 
   // @scenario text orbit-review :: Review command available with `--as` mode flag :: Architecture mode rejects the external and blind-pair reviewers
   it('external and blind-pair, by either spelling, are refused with --as architecture, writing no prompt and no T0', () => {
-    expect(trunk).toContain('`--reviewer external` and `--reviewer blind-pair`, by either spelling, REQUIRE `--as proposal|system`');
-    expect(trunk).toContain('writes no prompt file and no T0 emit');
-    expect(trunk).toContain('| `external` or `blind-pair`, by either spelling, with `--as architecture` | usage error');
+    expect(trunk).toContain('`external` and `blind-pair` require `--as proposal|system`.');
+    expect(surface).toContain('every error row is a clean usage error that runs no pass and writes no file');
+    expect(surface).toContain('| `external` or `blind-pair`, by either spelling, with `--as architecture` | usage error');
   });
 
   // @scenario text orbit-review :: Review command available with `--as` mode flag :: External reviewer class dispatches to the handoff branch
   // @scenario text orbit-review :: Review command available with `--as` mode flag :: Blind-pair reviewer dispatches to the pair reference
   it('dispatch: external loads the handoff reference, blind-pair loads both, the internal branches neither', () => {
-    expect(trunk).toContain('`external` dispatches to the EXTERNAL-HANDOFF BRANCH: load `references/external-handoff.md`');
-    expect(trunk).toContain('then either prints the chat invocation snippet for paste or, with a reachable recorded runner, launches that runner and saves its return; no pass of the internal classes runs in that invocation');
+    expect(trunk).toContain('`external` loads `references/external-handoff.md` and follows it');
+    expect(trunk).toContain('and no pass of the internal classes runs');
+    expect(handoff).toContain('then takes ONE of two routes. **With no runner launched**');
     expect(trunk).toContain('`blind-pair` loads `references/blind-pair.md` AND `references/external-handoff.md` and follows the pair reference');
-    expect(trunk).toContain('The in-context and fresh branches load neither reference.');
+    expect(trunk).toContain("`in-context` runs this body's steps; `fresh` dispatches (Dispatching a fresh pass)");
   });
 
   it('the retired packaging-only sentence is gone', () => {
@@ -61,13 +67,13 @@ describe('rc17b — the review trunk (task 2.3)', () => {
   // @scenario text orbit-review :: Review command available with `--as` mode flag :: Per-mode reference loading
   it('the resolved mode loads only its own pass reference', () => {
     expect(trunk).toContain('Load `references/passes-<mode>.md` for the RESOLVED mode');
-    expect(trunk).toContain("Only the resolved mode's reference is loaded; the other two stay lazy.");
+    expect(trunk).toContain("### 6. Run passes (load the resolved mode's reference ONLY)");
   });
 
   // @scenario text orbit-review :: Review command available with `--as` mode flag :: Invoke architecture mode with doc name
   it('architecture mode resolves a doc and errors on legacy and malformed docs', () => {
-    expect(trunk).toContain("prompt over `orbit architecture status --json`'s parseable docs");
-    expect(trunk).toContain('A doc resolving LEGACY (zero stage-prefixed headings outside fences) is an error suggesting retrofit; MALFORMED (fails the near-miss rule) is an error naming the grammar violation.');
+    expect(surface).toContain("prompt over `orbit architecture status --json`'s parseable docs");
+    expect(surface).toContain('A doc resolving LEGACY (zero stage-prefixed headings outside fences) is an error suggesting retrofit; MALFORMED (fails the near-miss rule) is an error naming the grammar violation.');
   });
 
   // @scenario text orbit-review :: Review command available with `--as` mode flag :: Invoke without change name
@@ -75,19 +81,20 @@ describe('rc17b — the review trunk (task 2.3)', () => {
   it('an omitted change prompts over orbit list; an omitted mode infers from tasks, never architecture', () => {
     expect(trunk).toContain('otherwise prompt via `AskUserQuestion` over `orbit list --json`');
     expect(trunk).toContain('**Architecture mode is NEVER inferred**');
-    expect(trunk).toMatch(/all unchecked → `proposal`; all checked \+ code changes[^]*→ `system`; mixed or ambiguous → `AskUserQuestion`/);
+    expect(trunk).toMatch(/all unchecked → `proposal`; all checked plus code changes[^]*→ `system`; mixed or ambiguous → `AskUserQuestion`/);
   });
 
   // @scenario text orbit-review :: `--fresh` runs pass work in a clean execution context :: Fresh pass execution
   it('a fresh pass runs in a clean-context subagent and persists as reviewer_class fresh', () => {
-    const fresh = trunk.split('### Dispatching a fresh pass')[1].split('### 6. Run passes')[0];
+    const fresh = refOf('fresh-dispatch.md');
+    expect(trunk.split('### Dispatching a fresh pass')[1].split('### 6. Run passes')[0]).toContain('reads `references/fresh-dispatch.md` and follows it');
     expect(fresh).toContain('never a fork of this conversation');
     expect(fresh).toContain('The subagent persists through `orbit emit review` with `reviewer_class: "fresh"`');
   });
 
   // @scenario text orbit-review-external :: A pair's external half reads the pair's reviewed state :: A fresh re-run is briefed with the reviewed commit
   it("a fresh re-run of a pair's missing half is briefed with the reviewed commit and still emits from the root", () => {
-    const fresh = trunk.split('### Dispatching a fresh pass')[1].split('### 6. Run passes')[0];
+    const fresh = refOf('fresh-dispatch.md');
     const rerun = fresh.split("**A re-run of a blind pair's missing fresh half.**")[1];
     expect(rerun).toContain('`openPair: {missing: "fresh"}`');
     expect(rerun).toContain('`git log --diff-filter=A --format=%H -- <L\'s T0 path> | tail -1`');
@@ -144,7 +151,7 @@ describe('rc17b — the pair reference (task 3.3)', () => {
     expect(steps.indexOf('orbit external runner --json')).toBeLessThan(steps.indexOf('### 2. The launch'));
     expect(steps).toContain("the handoff reference's Steps 4–7");
     expect(steps).toContain("the handoff reference's 9b");
-    expect(steps).toContain("the trunk's **Dispatching a fresh pass**");
+    expect(steps).toContain('`references/fresh-dispatch.md`');
   });
 
   it('the save comes after the fresh commit, with --launch L', () => {
@@ -246,8 +253,8 @@ describe('rc17b — the external-handoff reference (task 4.4)', () => {
     expect(step3b.indexOf('is STALE**')).toBeLessThan(step3b.indexOf('**Any other state**'));
     // System verification (V1): the reason-string test is gone from both bodies.
     expect(handoff).not.toContain("the gate's reason names a member of the latest launch as stale");
-    expect(trunk).not.toContain("the gate's reason names a member of the latest launch as stale");
-    expect(trunk).toContain('read from the trail: exactly one landed member later than L');
+    expect(surface).not.toContain("the gate's reason names a member of the latest launch as stale");
+    expect(surface).toContain('read from the trail: exactly one landed member later than L');
     expect(step3b).not.toContain('**An apply token later than L** — NOT a re-run');
   });
 

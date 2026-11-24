@@ -59,8 +59,7 @@ detection and ratification recording → the existing `references/resolution-det
 `references/reading-findings.md`; M8 the REDESIGN route → `references/redesign.md`; M9 the report template →
 `references/report.md`; M10 the per-source paragraph SPLIT: its walk-order sentences (token order, each source's log written before the next
 source begins, an interrupted walk's logs standing) → `references/triage-sources.md`, read when discovery yields more
-than one source and so before the walk, and its log fields with the scope forms → the existing
-`references/run-summary-emit.md` (already holding them whole), the split named in the ledger; M11 the cascade's OUT table, IN rule, `--no-cascade` and trust rule →
+than one source and so before the walk, and its log fields with the scope forms → the existing `references/run-summary-emit.md` (already holding them whole), the split named in the ledger — an exception to `orbit-run-summary-emit`'s `A body reads its run-summary detail before the session's first run-summary emit`, which kept the scope forms and that paragraph in the body, so that requirement is MODIFIED (found at apply; Sal's ruling, 2026-11-24); M11 the cascade's OUT table, IN rule, `--no-cascade` and trust rule →
 `references/cascade.md`; R1 Constraints keep only "never write new markers"; R2 the prose that stays tightened.
 
 Review, from its sketch: V1 the VERIFICATION procedure (a) to (e), the Verdicts fence and the Sweep scope and paths fence →
@@ -188,7 +187,7 @@ over a snapshot fixture of today's bodies (a second copy of 80 KB of text that e
 
 ### D6 — The specs that said "the body carries" now say which file of the skill carries it
 
-Six placements, in five requirements of three owners, put a fence or a step in a BODY: `orbit-address-reviews`' DISCOVERY fence (`Address-reviews
+Six placements, in five requirements of three owners, put a fence or a step in a BODY (a seventh, `orbit-run-summary-emit`'s scope forms and per-source paragraph, was found at apply and is modified by D1's M10): `orbit-address-reviews`' DISCOVERY fence (`Address-reviews
 command available`), `orbit-emit-composition`'s Verdicts fence and CHECK SCOPE fence, `orbit-review`'s VERIFICATION branch
 and its verdicts mirror, and `orbit-review`'s dispatch brief in the brief-region rule. Each is modified to name the skill's
 reference. The parity tests holding those mirrors (`discovery-parity`, `verification-verdict-parity`, `sweep-path-parity`)

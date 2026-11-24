@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 import { describe, expect, it } from 'vitest';
 import { getSkillTemplates } from '../../../src/core/shared/skill-generation.js';
 import { DECISION_RECORDS_REFERENCE, DECISION_WRITING_BASIC, DECISION_WRITING_DISCIPLINE } from '../../../src/core/disciplines.js';
+import { CUT_RECORDED, undoCut } from './cut-ledger-pairs.js';
 
 /**
  * tighten-bodies (reduce-orbit-phase1) — the edit ledger (`orbit-conventions`' `An edit ledger holds every tightened
@@ -451,10 +452,17 @@ describe('tighten-bodies edit ledger', () => {
   const body = (dir: string): string => skills.find((s) => s.dirName === dir)!.template.instructions;
 
   /**
-   * Undo `records-by-setting`'s swap (the basic content back to the labelled bullet), then every pair of `dir` on
+   * Undo the later edits first — a reduce-orbit-phase2 cut stage's, by the cut ledger's own pairs (`cut-ledger-pairs.ts`),
+   * then `records-by-setting`'s swap (the basic content back to the labelled bullet) — then every pair of `dir` on
    * `text`, last applied first, then the shared restructure; or the first failure.
    */
-  function undo(dir: string, text: string, pairs: Pair[] = PAIRS): { text: string } | { failure: string } {
+  function undo(dir: string, today: string, pairs: Pair[] = PAIRS): { text: string } | { failure: string } {
+    let text = today;
+    if (dir in CUT_RECORDED) {
+      const cut = undoCut(dir, today);
+      if ('failure' in cut) return cut;
+      text = cut.text;
+    }
     const swaps = text.split(DECISION_WRITING_BASIC).length - 1;
     if (swaps !== 1) return { failure: `${dir}: the decision-writing basic content occurs ${swaps} times` };
     let t = text.replace(DECISION_WRITING_BASIC, () => LABELLED_FORM);
@@ -498,6 +506,15 @@ describe('tighten-bodies edit ledger', () => {
     }, 0);
     expect(lines).toBe(23);
     for (const p of PAIRS) expect(Object.keys(RECORDED), p.body).toContain(p.body);
+  });
+
+  // @scenario text orbit-conventions :: An edit ledger holds every tightened body to its recorded text :: A cut stage's edits are undone first
+  it("cut-review-walk's edits are undone first: review's VERIFICATION procedure is in its reference, and review still reconstructs", () => {
+    expect(body('orbit-review')).not.toContain('**(a) Genre.**');
+    expect(ledgerFailure('orbit-review', body('orbit-review'))).toBeNull();
+    // Without the cut ledger's undo, the tighten-bodies reconstruction no longer matches.
+    const r = undoCut('orbit-review', body('orbit-review'));
+    expect('text' in r && r.text).toContain('**(a) Genre.**');
   });
 
   for (const dir of Object.keys(RECORDED)) {

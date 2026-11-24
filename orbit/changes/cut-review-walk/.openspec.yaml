@@ -25,3 +25,5 @@ base_fingerprints:
   orbit-review:
     Review-genre passes read the artifacts and the code, never the trail's findings: sha256:7d5fbb152c0c1923e7209fd2ae01f7d893cc93001a9c2296bcc10599a11c3c4e
     Verification-genre passes grade the walk record: sha256:d39c56b522c9d330da6f608aa64b70ebd7e18e8e40ff2154c0ffe9850cf4a1e8
+  orbit-run-summary-emit:
+    A body reads its run-summary detail before the session's first run-summary emit: sha256:3b3d0e19f74694e3ad8e43820731e146f09759e5486dfbd5a06ade546fd898ea

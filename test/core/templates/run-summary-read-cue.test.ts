@@ -149,15 +149,32 @@ describe('what stays is in the body', () => {
     }
     expect(CONTINUE_RUN_SUMMARY_EMIT_BASIC).toContain('**Completion-prompt override (chat)**: where the upstream steps above suggest');
     // The timing stays where it is not a sentence the cue opens: architect's conversation-boundary paragraph and its
-    // sweep, audit-drift's standalone-only sentence, address-reviews' one-log-per-source paragraph.
+    // sweep, audit-drift's standalone-only sentence; address-reviews keeps a one-line pointer to its per-source paragraph
+    // (cut-review-walk, M10: the paragraph and its scope forms are its reference's).
     expect(ARCHITECT_RUN_SUMMARY_EMIT_BASIC).toContain('emit at conversation boundaries');
     expect(ARCHITECT_RUN_SUMMARY_EMIT_BASIC).toContain('**No emit without sweep**');
     expect(AUDIT_DRIFT_RUN_SUMMARY_EMIT_BASIC).toContain('**Standalone invocations only** — library / pre-archive contexts write no separate JSON');
-    expect(ADDRESS_REVIEWS_RUN_SUMMARY_EMIT_BASIC).toContain('**ONE resolution log PER SOURCE.**');
-    // Each command block keeps its scope forms.
+    expect(ADDRESS_REVIEWS_RUN_SUMMARY_EMIT_BASIC).toContain('**ONE resolution log PER SOURCE**: a walk that discovered several sources writes one log for each');
+    // Each command block keeps its scope forms, address-reviews' excepted (below).
     expect(REVIEW_RUN_SUMMARY_EMIT_BASIC).toContain('orbit emit review --doc <doc-name> --payload <payload.json>');
     expect(AUDIT_DRIFT_RUN_SUMMARY_EMIT_BASIC).toContain('orbit emit audit-drift --payload <payload-file>');
-    expect(ADDRESS_REVIEWS_RUN_SUMMARY_EMIT_BASIC).toContain('invoke BARE — `orbit emit address-reviews --payload <payload-file>`');
+  });
+
+  // @scenario text orbit-run-summary-emit :: A body reads its run-summary detail before the session's first run-summary emit :: Address-reviews reads its per-source paragraph and scope forms from its reference
+  it("address-reviews' emit step points at its per-source paragraph and scope forms, which its reference carries", () => {
+    const walk = getSkillTemplates().find((s) => s.dirName === 'orbit-address-reviews')!.template;
+    const emitRef = walk.references!.find((r) => r.name === 'run-summary-emit.md')!.content;
+    const triageRef = walk.references!.find((r) => r.name === 'triage-sources.md')!.content;
+    expect(ADDRESS_REVIEWS_RUN_SUMMARY_EMIT_BASIC).toContain(RUN_SUMMARY_READ_CUE);
+    expect(ADDRESS_REVIEWS_RUN_SUMMARY_EMIT_BASIC).toContain('orbit emit address-reviews --change <name> --payload <payload-file>');
+    expect(ADDRESS_REVIEWS_RUN_SUMMARY_EMIT_BASIC).not.toContain('**ONE resolution log PER SOURCE.**');
+    expect(ADDRESS_REVIEWS_RUN_SUMMARY_EMIT_BASIC).not.toContain('invoke BARE');
+    expect(ADDRESS_REVIEWS_RUN_SUMMARY_EMIT_BASIC).not.toContain('`--doc <doc-name>`');
+    expect(emitRef).toContain('**ONE resolution log PER SOURCE.**');
+    expect(emitRef).toContain('invoke BARE — `orbit emit address-reviews --payload <payload-file>`');
+    expect(emitRef).toContain('`--doc <doc-name>` instead of `--change`');
+    expect(triageRef).toContain("The logs go in token order, oldest first, then the markers. Write each source's log when that source's findings are walked, before the next source begins.");
+    expect(walk.instructions).toContain('read `references/triage-sources.md` before the walk');
   });
 
   /**
@@ -180,7 +197,7 @@ describe('what stays is in the body', () => {
       const restore = (p: string): string => (SPLIT[dir] ?? []).reduce((t, [body, section]) => t.replace(body, section), p);
       const paragraphs = STEPS[dir].basic.split('\n\n').map((p) => restore(p.replace(`${RUN_SUMMARY_READ_CUE}`, '').trim())).filter(Boolean);
       // The new sentences opening the cue's paragraph in six bodies are the body's own; every other paragraph is the section's.
-      const own = /^(At command completion, write the [a-z]+ run summary\.|After upstream Step 5 \(move-to-archive\) completes, write the archive run summary\.|Each payload's fields are listed in)/;
+      const own = /^(At command completion, write the [a-z]+ run summary\.|After upstream Step 5 \(move-to-archive\) completes, write the archive run summary\.|Each payload's fields are listed in|\*\*ONE resolution log PER SOURCE\*\*: a walk that discovered several sources)/;
       for (const p of paragraphs) {
         if (own.test(p)) continue;
         expect(STEPS[dir].section, `${dir}: ${p.slice(0, 60)}`).toContain(p);

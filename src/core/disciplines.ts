@@ -92,8 +92,8 @@ export const CHAIN_END_STEP_SKILLS = [
 const KEY_ROWS = CHAIN_KEYS.map(k => `  - \`${k}\` — ${CHAIN_KEY_TABLE[k].map(code).join(', ')}`).join('\n');
 
 /**
- * conditional-steps: what the prompt tags mean and what a chained command records (R-rop-6) — one text that both
- * `CHAIN_END_STEP` (indented, as before) and its basic content `CHAIN_END_STEP_BASIC` carry, so the halves cannot diverge.
+ * conditional-steps: what the prompt tags mean and what a chained command records (R-rop-6). `CHAIN_END_STEP` carries it
+ * (indented, as before); since cut-review-walk (R-rop2-14) the basic content `CHAIN_END_STEP_BASIC` points at it instead.
  */
 export const CHAIN_TAG_MEANING =
   "The chained command runs as on a typed arrival except for its prompts, each tagged at its site: a `(chain: target)` prompt does not fire (the next command names the change and the mode); a `(chain: routine, default: <option>)` prompt takes that default, and the run summary's `final_assessment` records `The chain took the default: <prompt> — <answer>.`; a `(chain: decision)` prompt is asked exactly as on a typed arrival, and after a decision the chain does not continue — the command's own closing step states in one line that the chain stopped at a decision and runs nothing. The chained command records `Chained: granted by chain.<key>.` as one sentence in the record its session writes: a walk in its run summary's `final_assessment`; an external review or a blind pair in its launch record's `final_assessment`; an in-context review in its pass's `commentary` (the review emit owns a pass's `final_assessment`); a chained apply or archive records it as its `consent: \"setting\"` value and writes no sentence. A chained fresh review records nothing — its worker writes the pass, and its brief carries nothing from this session (a named limit).";
@@ -176,7 +176,8 @@ export const COMMIT_STEP_BASIC = [
 /**
  * The chain end step's basic content, carried byte-equal by the five bodies of `CHAIN_END_STEP_SKILLS`: the `chain`
  * read with the flags a chained command adds to it (the read comes before the reference is opened), the
- * `configured: false` result, and `CHAIN_TAG_MEANING` (R-rop-6).
+ * `configured: false` result, and a pointer to where `CHAIN_TAG_MEANING` is (`reduce-orbit-phase2`'s R-rop2-14,
+ * amending R-rop-6: the paragraph itself is in `CHAIN_END_STEP`, the reference).
  */
 export const CHAIN_END_STEP_BASIC = [
   // The full step's heading cites its owning requirement, `orbit-conventions`' `No-chaining contract`.
@@ -184,7 +185,7 @@ export const CHAIN_END_STEP_BASIC = [
   '',
   `The LAST act of the invoking session, after the position readout and the eligibility line; never in a dispatched worker, and nothing with no change target. Read the \`chain\` object from \`orbit status --change "<name>" --json\` (the call that supplied the eligibility line, or one right after it); a command a chain ran adds \`--chain-ran "<next>" --chain-head "<head>"\` to that read, the \`next\` and \`head\` the previous read reported, a null \`head\` written as \`null\`. On \`configured: false\`, print nothing more. On any other result, or a non-zero exit, read \`references/${CHAIN_END_STEP_REFERENCE_NAME}\` and follow it from the result you already have.`,
   '',
-  CHAIN_TAG_MEANING,
+  `A command a chain ran reads what its prompts' \`(chain: …)\` tags mean, and what it records, in \`references/${CHAIN_END_STEP_REFERENCE_NAME}\`, before its first tagged prompt when this session has not read it.`,
 ].join('\n');
 
 // ---------------------------------------------------------------------------
