@@ -1,0 +1,16 @@
+{
+  "command": "propose",
+  "timestamp": "2026-11-24T19:54:50Z",
+  "change": "cut-review-walk",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Standalone mode: no staging directory; the change cites stage cut-review-walk of reduce-orbit-phase2 through its metadata, so pr select attached it to the program branch and PR #47. It applies the inventory's cut lists for review and address-reviews (moves to references read at named moments, light rewordings, none marked for the replay set under R-rop2-10), removes address-reviews' batch mode and the blind-pair disagreement test (R-rop2-12), and moves the chain end step's tag paragraph to its reference in all five chaining bodies (R-rop2-14, ruled by Sal at this propose, amending phase 1's R-rop-6). Measured at propose: the sketches' projections left out the frontmatter (about 286 and 172 tokens) and undercounted the batch text, so address-reviews projects to about 4,580 and review to about 4,680, both fitting only with the tightening. Five capabilities: address-reviews (removals; DISCOVERY fence placement), review and emit-composition (four sentences that placed a fence or step in a body), decision-records (a pointer to the renamed walk-mode requirement), conventions (the chain paragraph, a new cut ledger that names every body edit, the tighten-bodies ledger undoing it first). The size ceiling was missed before generation (my read of config.yaml stopped at line 80); Sal declared the capabilities and requirements breaches after generation (one stage, one change). R-rop2-12's list of specs named orbit-audit-drift and orbit-engine-gates, which carry neither removed feature. The decision-writing bullet's shortening is left to a later cut stage. Archive merge rehearsed through the engine's buildUpdatedSpec; strict validate passes.",
+  "pr_attachment": {
+    "branch": "reduce-orbit-phase2",
+    "granularity": "per-architecture",
+    "doc": "reduce-orbit-phase2",
+    "url": "https://github.com/las-sal/orbit-spec/pull/47",
+    "state": "draft"
+  },
+  "next_recommended": "/orbit:review cut-review-walk — proposal artifacts ready; review before apply"
+}
