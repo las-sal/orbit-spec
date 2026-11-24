@@ -1,0 +1,21 @@
+{
+  "command": "explore",
+  "timestamp": "2026-11-24T01:06:24Z",
+  "change": "inventory",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Concluded on Sal's word, before a context clear: the inventory is decisions, not a change. Cut lists for the seven over-budget bodies in sketches/, every remaining body projected under 5,000 estimated tokens; Sal's replay rule (D-inv-1, amending G3) and three G0 removals (D-inv-14 bulk-archive, D-inv-15 address-reviews' batch mode and disagreement test, D-inv-16 explore's illustrative upstream text). The next architect session writes them into reduce-orbit-phase2 as rulings and offers the stage for ratification; each cut stage proposes its own change. Re-entry: a cut stage finds a body its cut list does not bring under 5,000, or a cut marked minor changes what a session does.",
+  "decisions_captured": 18,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 1,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "concluded",
+    "date": "2026-11-23",
+    "re_entry": "a cut stage finds a body that its cut list does not bring under 5,000, or a cut the inventory marked minor turns out to change what a session does"
+  },
+  "next_recommended": "Concluded 2026-11-23. Reopens when: a cut stage finds a body that its cut list does not bring under 5,000, or a cut the inventory marked minor turns out to change what a session does."
+}

@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-11-24T00:21:45Z",
+  "change": "inventory",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Settled threads 1-4 under Sal's delegation. D-inv-1 (Sal's rule, amending G3): a cut is replayed only when postulated to change significantly what a session does. D-inv-2: the chain end step's chained-prompt paragraph moves to its reference, the commit step stays, the decision-writing bullet shortens. D-inv-3: bulk-archive stays, under 5,000 by moving two per-change steps to references. D-inv-4: no mode case unless a cut is postulated major. D-inv-5: explore's mirrored Mechanism grammar, closure, nine moves and exemplar move to a reference read when a rule is captured, concluding to one read on the conclude word. D-inv-6: usage measured over 81 trails. Remaining gaps: address-reviews about 5,348, review 4,143, explore 2,895, propose 2,840, archive 1,928, onboard 575.",
+  "decisions_captured": 6,
+  "open_questions_count": 2,
+  "open_questions_with_recommendation": "2 of 2",
+  "rules_total": 1,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:explore inventory — 6 decisions captured but 2 open questions remain; resolve open questions before formalizing"
+}

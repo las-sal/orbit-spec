@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-11-24T00:27:15Z",
+  "change": "inventory",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Inventoried all seven over-budget bodies section by section (D-inv-7 to D-inv-13), with cut lists in sketches/: every body fits under 5,000 estimated tokens on moves to references read at named moments plus light rewordings, no removal needed (projected explore about 4,954, address-reviews 4,546, review 4,509, propose 4,059, archive 4,542, bulk-archive 4,286, onboard 4,391); explore fits only with its prose tightened. Shared steps are decided once. Use evidence from 476 walk logs. Open for Sal: three G0 removal candidates (bulk-archive; address-reviews' batch mode and disagreement test, none ever fired) and explore's tightening margin. D-inv-1 (Sal's rule) amends G3 and goes to the next architect session.",
+  "decisions_captured": 13,
+  "open_questions_count": 3,
+  "open_questions_with_recommendation": "3 of 3",
+  "rules_total": 1,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:explore inventory — 13 decisions captured but 3 open questions remain; resolve open questions before formalizing"
+}
