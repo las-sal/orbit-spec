@@ -134,6 +134,15 @@ Ratified by Sal, 2026-11-20, at the opening session.
   moves (D-inv-5's two references, the crystallization flow, the emit timing, the new-exploration metadata, the propose
   composition in one sentence) explore projects from 11,816 to about 4,926 estimated tokens, about 4,430 tightened.
   Landed by `cut-explore-onboard`. Chosen over keeping one of the four examples (D-inv-11, superseded).
+- **R-rop2-14** (Sal, 2026-11-24, at `cut-review-walk`'s propose) — The chain end step's paragraph saying what the three
+  prompt tags mean and what a chained command records moves from the basic content of the five chaining bodies
+  (propose, ff, apply, review, address-reviews) to `references/chain-end-step.md`, which already carries it. Each body
+  keeps a one-line pointer to it (the inventory's D-inv-2, settled under Sal's delegation). Amends `reduce-orbit-phase1`'s
+  R-rop-6, which kept the paragraph in each chaining body so that a chained command, in this session or in a fresh one,
+  meets no tag its body does not explain. Now the body points at the explanation. Named limit: a chained command in a
+  fresh session, or after a compaction, follows the pointer to learn what its tags mean; `automate-dev-flow`'s rescoping
+  (R-rop2-3) takes this up. The move saves about 250 estimated tokens in each of the five bodies, and address-reviews
+  needs it to fit (G1). Chosen over keeping R-rop-6 and fitting by further tightening.
 
 ## Program stages
 
