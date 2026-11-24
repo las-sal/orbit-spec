@@ -56,7 +56,10 @@ phase 1 merged, at Sal's direction ahead of `automate-dev-flow` (R-rop2-1). It t
 R-rop-18, R-rop-19): every body fitting the 5,000 tokens kept after a compaction, the cuts graded by a replay set, the
 rewording held back, and explore's and onboard's own text. Its first stage, `replay-set`, shipped on 2026-11-23: the
 replay set under `replay/` (`npm run replay`, every run Sal-started and billed; `npm run replay:compare` against the
-baseline record in `replay/results/`), and `npm run validate:skills` in CI. `inventory` is next.
+baseline record in `replay/results/`), and `npm run validate:skills` in CI. Its `inventory`, a named exploration
+(`orbit/explore/inventory/`), concluded the same day with a cut list per over-budget body; Sal's rulings from it replay
+only a cut postulated to change what a session does (R-rop2-10) and remove bulk-archive, address-reviews' batch mode and
+disagreement test, and explore's illustrative upstream text (R-rop2-11 to R-rop2-13). The three cut stages are next.
 
 **`orbit/architecture/reduce-orbit-phase1.md`** (2026-11-17 to 2026-11-20, merged as PR #46) is complete. It restructured the skill bodies to be
 slimmer and in line with Anthropic's guidance for building skills, without changing what any workflow does. Text a

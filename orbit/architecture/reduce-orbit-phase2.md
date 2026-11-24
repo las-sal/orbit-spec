@@ -40,9 +40,13 @@ Ratified by Sal, 2026-11-20, at the opening session.
   body over.
 - **G2 — Growth is held.** Phase 1's per-body budget test keeps running in the suite and the size report in CI, and no
   ceiling is raised during the program. Fails if a ceiling rises.
-- **G3 — The replay set grades every cut meant to keep behaviour.** No move to a reference and no rewording that changes
-  what a session reads at the defaults lands before the replay set (R-rop2-2) has run on it before and after; a
-  removal under G0 needs none, its ruling being its record. Fails on one such cut landing ungraded.
+- **G3 — The replay set grades every cut postulated to change what a session does.** A cut the inventory's cut list
+  postulates major, one expected to change significantly what a session does at the defaults, lands only after the
+  replay set (R-rop2-2) has run on it before and after, `npm run replay:compare` no worse. A move to a reference read at
+  a named moment, the basic content kept in the body, and a rewording that keeps a step's meaning land without a replay
+  unless postulated major; a removal under G0 needs none, its ruling being its record. Each cut list entry carries its
+  replay mark, which a cut stage's proposal reviewer may contest. Fails on one cut postulated major landing ungraded.
+  (Amended by R-rop2-10, 2026-11-23; as ratified 2026-11-20 it graded every cut meant to keep behaviour.)
 
 ## Rulings index
 
@@ -95,6 +99,41 @@ Ratified by Sal, 2026-11-20, at the opening session.
   stage D's mode-only sections moved to references, and the decision-writing bullet) are the `inventory` stage's
   inputs, which opens as its own named exploration citing this doc. Chosen over reopening `evaluation`, which is cited
   to phase 1's doc, and over re-weighing all of D-eval-1 to D-eval-8 in the inventory.
+- **R-rop2-10** (Sal, 2026-11-23; the inventory's D-inv-1) — A cut is replayed only when it is postulated to change
+  significantly what a session does ("I'm not as concerned about replay testing now unless we make a major change and
+  postulate that it will significantly change the system"). Each cut list entry carries its replay mark, yes only when
+  postulated major; moves to references read at named moments and rewordings that keep a step's meaning land without a
+  replay, and a removal never needed one (G0). The cut stages' proposals plan a replay task only where an entry's mark
+  says yes, and the baseline stays available to run at any time. Amends G3 (its text edited above) and R-rop2-2's
+  "started by Sal before and after a cut". Chosen over replaying every cut meant to keep behaviour, G3 as ratified.
+- **R-rop2-11** (Sal, 2026-11-23; D-inv-14, G0) — bulk-archive is removed. Evidence (`orbit/explore/inventory/explore.md`):
+  no record of it ever running in this repository (it writes no run summary and no trail names a bulk archive, D-inv-6);
+  orbit is single-user and single-session, concurrency a non-goal; its per-change steps mirror archive's and cost 20
+  template edits since June to keep in step (phase 1's D-eval-2); and the parallel lanes D-eval-2 waited on belong to
+  `automate-dev-flow`, which R-rop2-3 rescopes first. The removal takes the template
+  `src/core/templates/workflows/bulk-archive-change.ts`, the skill `orbit-bulk-archive-change` with its references and
+  its `/orbit:bulk-archive` launcher, and its mentions in the baseline specs `orbit-architect`,
+  `orbit-archive-modifications`, `orbit-base-fingerprints`, `orbit-conventions`, `orbit-engine-gates`,
+  `orbit-lifecycle-consent`, `orbit-run-summary-emit` and `orbit-decision-records`, in onboard's command table, the
+  tests and the docs; D15's full surface goes from 15 workflows to 14. An adopter archives several changes one at a time
+  with `/orbit:archive`. Landed by `cut-propose-archive`. Chosen over keeping it under 5,000 by moving two per-change
+  steps to references (D-inv-3, superseded).
+- **R-rop2-12** (Sal, 2026-11-23; D-inv-15, G0) — address-reviews' batch mode and the blind-pair disagreement test are
+  removed. Evidence: neither fired in the 476 walk logs on this repository's trails (438 per-finding, 30 legacy walk-mode
+  logs, none batch; no resolution carries a `disagreement`; D-inv-7). The removal takes the three batch triggers
+  (`--batch`, the verbal phrase, the command-shaped mid-walk switch) and their records (`walk_mode_source`,
+  `walk_mode_shifted_at_finding`), the disagreement rule and its `disagreement` record, and their text in the
+  address-reviews, review, audit-drift and onboard templates and the baseline specs `orbit-address-reviews`,
+  `orbit-decision-records`, `orbit-audit-drift` and `orbit-engine-gates`. Walk mode becomes the only mode, and a
+  contradiction between a pair's halves is walked like any two findings; logs written before the removal keep their
+  fields, and readers keep reading them. Landed by `cut-review-walk`. Chosen over moving both to references.
+- **R-rop2-13** (Sal, 2026-11-23; D-inv-16, G0, R-rop2-4) — explore's illustrative upstream text is removed ("ok to remove
+  some of openspec's original stuff"): the four "Handling Different Entry Points" dialogues, the ASCII box under
+  "Visualize" (the stance already says to use diagrams liberally), "Ending Discovery"'s summary template (its one-line
+  point kept) and the Guardrails lines repeating the opening's "don't implement" and the stance. With the inventory's
+  moves (D-inv-5's two references, the crystallization flow, the emit timing, the new-exploration metadata, the propose
+  composition in one sentence) explore projects from 11,816 to about 4,926 estimated tokens, about 4,430 tightened.
+  Landed by `cut-explore-onboard`. Chosen over keeping one of the four examples (D-inv-11, superseded).
 
 ## Program stages
 
@@ -163,35 +202,40 @@ Exit criteria:
 Depends-on: replay-set, inventory
 Complete: [ ]
 
-The inventory's cut list for review and address-reviews, the two largest shared-text bodies, applied and graded.
+The inventory's cut list for review and address-reviews, the two largest shared-text bodies, applied
+(`orbit/explore/inventory/sketches/review.md` and `address-reviews.md`), with R-rop2-12's removal of batch mode and the
+disagreement test.
 
 Exit criteria:
 - Both bodies at most 5,000 estimated tokens (G1), their ceilings lowered (G2).
-- The replay set run before and after, its grades no worse on every cut meant to keep behaviour (G3); every removal
-  named in the archive with its ruling (G0).
+- The replay set run before and after, its grades no worse, on every cut whose replay mark says yes (G3, R-rop2-10);
+  every removal named in the archive with its ruling (G0).
 
 ### Stage cut-propose-archive — propose, archive and bulk-archive
 
 Depends-on: replay-set, inventory
 Complete: [ ]
 
-The inventory's cut list for propose, archive and bulk-archive, applied and graded; bulk-archive's future (phase 1's
-R-rop-16, a thin loop) is the inventory's to rule on, since it has never run here.
+The inventory's cut list for propose and archive, applied (`orbit/explore/inventory/sketches/explore-propose-archive-onboard.md`),
+and bulk-archive removed as R-rop2-11 rules (its future, phase 1's R-rop-16 thin loop, was the inventory's to rule on).
 
 Exit criteria:
-- The three bodies at most 5,000 estimated tokens, or bulk-archive removed by Sal's ruling (G0, G1); ceilings lowered (G2).
-- The replay set run before and after on every cut meant to keep behaviour (G3); every removal named in the archive.
+- Propose and archive at most 5,000 estimated tokens and bulk-archive removed (G0, G1); ceilings lowered (G2).
+- The replay set run before and after on every cut whose replay mark says yes (G3, R-rop2-10); every removal named in
+  the archive.
 
 ### Stage cut-explore-onboard — the two bodies whose text is their own
 
 Depends-on: replay-set, inventory
 Complete: [ ]
 
-The inventory's cut list for explore and onboard, applied and graded: the text phase 1 left alone.
+The inventory's cut list for explore and onboard, applied (`orbit/explore/inventory/sketches/explore-propose-archive-onboard.md`):
+the text phase 1 left alone, with R-rop2-13's removal of explore's illustrative upstream text.
 
 Exit criteria:
 - Both bodies at most 5,000 estimated tokens (G1), explore's line ceiling and both character ceilings lowered (G2).
-- The replay set run before and after on every cut meant to keep behaviour (G3); every removal named in the archive.
+- The replay set run before and after on every cut whose replay mark says yes (G3, R-rop2-10); every removal named in
+  the archive.
 
 ### Stage close — measure the program against its goals
 
@@ -238,3 +282,15 @@ Exit criteria:
   its Shipped as records. The macOS leg stays red outside this stage: the zsh-completion test, and three
   `invoked-coverage-oracle` shards that timed out at 300 s after passing in 73 to 91 s two runs earlier (a re-run of the
   failed jobs is Sal's). `inventory` is next, as a named exploration citing this doc.
+- 2026-11-23 — Architect session after `inventory` concluded (D-inv-18, its emit `2026-11-24T01-06-24Z`). The stage
+  renders `ended-from-explore`, so it is offered no ratification and its slot stays `[ ]`. Its four decisions for this
+  doc are written as rulings: Sal's replay rule (R-rop2-10, from D-inv-1), amending G3, whose text is edited, and
+  R-rop2-2's "before and after a cut"; and Sal's three removals under G0, bulk-archive (R-rop2-11, D-inv-14),
+  address-reviews' batch mode and the blind-pair disagreement test (R-rop2-12, D-inv-15) and explore's illustrative
+  upstream text (R-rop2-13, D-inv-16). The three cut stages' charters now name their cut lists and removals, and their
+  G3 exit criteria read R-rop2-10's replay mark; `cut-propose-archive` no longer offers bulk-archive's fit as an
+  alternative to its removal. Every remaining body projects under 5,000 estimated tokens (D-inv-17). The three cut
+  stages depend on nothing left undone and not on each other; each proposes its own change from its cut list.
+  Recommended order (not ratified, any order is allowed): `cut-review-walk` first (the two largest bodies, and the most-run
+  command), then `cut-propose-archive`, then `cut-explore-onboard` last, since R-rop2-11 and R-rop2-12 both edit onboard's
+  text, so onboard is cut once, after both removals.
