@@ -1,0 +1,135 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-25T21:31:28Z",
+  "change": "cut-propose-archive",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/cut-propose-archive/.orbit-runs/review-system-2026-11-25T19-56-28Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-25T19-56-28Z",
+  "latest_apply_token": "2026-11-25T17-21-43Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 2
+  },
+  "pushback_verification": "Both verified against HEAD (dff3a23e): npm run size:report prints orbit-archive-change 19,507 characters, 4,877 estimated tokens; the CUT_PROPOSE_ARCHIVE_PAIRS block counts 4 removed, 25 reworded, 11 moved, 2 restated, 1 retired; the latest account still says about 4,840 and 42 pairs; no entry of walks 19-35-56Z or 19-39-44Z lists skill-templates-parity.test.ts.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "SUGGESTION",
+      "title": "The account's archive size and ledger count predate the walk's Step 4.9 rewording",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/cut-propose-archive/.orbit-runs/account/account-2026-11-25T17-21-39Z.json",
+      "line": 1,
+      "classification": "trivial_fix",
+      "action": "A replacement of account-2026-11-25T17-21-39Z.json is written at this walk's account step (the account is never edited): built gives archive at about 4,880 estimated tokens and says the guide tells the user to archive several changes one at a time; seams says consent is asked before any write or other question; detail counts 43 pairs (11 moved, 4 removed, 25 reworded with one walk pair, 2 restated, 1 retired), the walk's two function and two generated-skill parity re-pins, and task 4.3's two entry-observation tests.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [],
+        "searched": [
+          "4,840",
+          "42 pairs",
+          "24 reworded"
+        ],
+        "scope": [
+          "orbit/changes/cut-propose-archive/design.md",
+          "orbit/architecture/reduce-orbit-phase2.md"
+        ],
+        "kept": []
+      },
+      "ripple_miss_of": {
+        "walk": "2026-11-25T19-39-44Z",
+        "title": "Archive preflight leaves the single-observation handoff ambiguous",
+        "file": "src/core/templates/workflows/archive-change.ts",
+        "kind": "scope"
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The parity re-pin is in the walk commit but in no entry's edit record",
+      "marker_source": "internal-review",
+      "file": "test/core/templates/skill-templates-parity.test.ts",
+      "line": 302,
+      "classification": "trivial_fix",
+      "action": "No file edit: the file is right as it stands (the suite is green and its dated note counts the moves). This entry is the record: commit 50055369 re-pinned getApplyChangeSkillTemplate, getArchiveChangeSkillTemplate, orbit-apply-change and orbit-archive-change after the consent-cue rewording (walk 19-35-56Z), the reference pointer rename (same walk) and Step 4.9's rewording (walk 19-39-44Z), and added the dated note.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [],
+        "searched": [
+          "skill-templates-parity"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "ripple_miss_of": {
+        "walk": "2026-11-25T19-35-56Z",
+        "title": "The consent read cue says 'before any write', a later moment than the ordering invariant's 'before any write or anomaly prompt'",
+        "file": "src/core/templates/workflows/archive-change.ts",
+        "kind": "query"
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Both resolved: the account is replaced at this walk's account step with archive at about 4,880 estimated tokens and the ledger's 43 pairs, and this log records the system walk's parity re-pin under the entry whose edits moved it. Remaining markers in scope: 0.",
+  "iteration": 6,
+  "next_recommended": "/orbit:archive cut-propose-archive — user-invoked",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "af79e5cc2c7f7d5efce5559eab2d555daa8c5671",
+      "frozen": true,
+      "evidence": {
+        "files": [
+          {
+            "path": "src/core/templates/workflows/pr-choreography.ts",
+            "lines": 32
+          }
+        ],
+        "share": 3.6,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ],
+  "ripple_misses": 2
+}

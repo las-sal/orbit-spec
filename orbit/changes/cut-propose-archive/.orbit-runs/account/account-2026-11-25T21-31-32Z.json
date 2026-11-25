@@ -1,0 +1,25 @@
+{
+  "command": "account",
+  "timestamp": "2026-11-25T21:31:32Z",
+  "change": "cut-propose-archive",
+  "model": "claude-opus-5-5",
+  "built": "The propose and archive workflows each now fit in the part of a skill Claude Code keeps after a compaction: propose at about 4,620 estimated tokens and archive at about 4,880, down from 7,982 and 7,041. Propose's steps for turning an exploration into a change (checking the exploration's sections, the open questions, which section feeds which artifact, carrying the Mechanism section, and moving the exploration folder) now live in a reference file the workflow reads only when it is consuming an exploration. Archive's steps for an arrival the user did not type, for tasks left for the user to validate, for a failed save of the change's brief, and for the pull request checks at entry and at the close moved to reference files the workflow reads when that case comes up, and the rest of its text was tightened without removing a step. Apply's consent step moved the same way as archive's. The bulk-archive workflow is gone: its skill and command are no longer installed, a plain orbit update removes them from an existing install, and the documentation counts 14 workflows and says to archive several finished changes by archiving each in turn. Every edit is listed in the cut ledger test, which rebuilds each edited workflow's earlier text from today's.",
+  "seams": "None. No new question is asked anywhere. An AI-mediated archive or apply still asks for consent before any write or other question, from the moved text.",
+  "deviations": "None against the stage's charter or the proposal. Two choices the design left open were settled here: the brief save keeps one sentence beside its basic content (the save runs under every setting, and the pull-request tail stages the copy without naming it), and the two references now over 100 lines (the new consume-mode reference, and the existing pull-request archive reference, which grew) each gained a contents list.",
+  "defines": [
+    {
+      "term": "reference file",
+      "definition": "a file shipped beside a skill's body that the body tells the AI to read at a named moment"
+    },
+    {
+      "term": "basic content",
+      "definition": "what stays in the body for a step whose detail moved: when the step runs, what it does in one sentence, and when to read its reference file"
+    },
+    {
+      "term": "cut ledger",
+      "definition": "the test that lists every edit a cut stage makes to a workflow body and checks that undoing them gives back the body recorded before the stage's first edit"
+    }
+  ],
+  "detail": "Ledger: cut-ledger-pairs.ts records hashes and pairs per stage (cut-review-walk, then cut-propose-archive), undone newest first, each stage's hashes compared after its own undo; this stage adds 43 pairs (11 moved, 4 removed, 25 reworded, 2 restated, 1 retired), one of the reworded pairs a review walk's (WALK-F4-tail-pointer, undone after the moved pair it edits, whose span digest was re-pinned). Ceilings lowered: propose 33,523 to 19,386; archive 29,573 to 20,000; apply 15,591 to 14,876; sync-specs 6,597 to 6,573; onboard 23,567 to 23,562; bulk-archive's deleted. At apply, five parity function hashes and five generated-skill hashes re-pinned; the system review walks re-pinned two more of each (apply and archive) after the consent cue gained 'or anomaly prompt' and archive Step 4.9 came to name the reference's preflight section. Task 4.3's two constructed-case tests for the entry observation are in pr-references.test.ts. Scenario map: 159 delta scenarios, 0 uncovered, 0 orphans.",
+  "replaces": "account-2026-11-25T17-21-39Z.json"
+}
