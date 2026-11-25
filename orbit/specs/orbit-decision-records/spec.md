@@ -377,8 +377,8 @@ unchanged:
 
 Each resolved finding writes its own replacement, of the LATEST record in the chain: when a walk resolves several
 findings on one record, the first replaces the record, the next replaces that replacement, and so on, so each link of the
-chain carries one walk entry's fix and the walk's one-finding-at-a-time cycle (`orbit-address-reviews`' `Walk-mode by
-default with --batch opt-in`) holds unchanged. A finding a walk does not resolve (stale, deferred or escalated) writes none. A finding
+chain carries one walk entry's fix and the walk's one-finding-at-a-time cycle (`orbit-address-reviews`' `Every walk
+runs finding by finding`) holds unchanged. A finding a walk does not resolve (stale, deferred or escalated) writes none. A finding
 that is a gap in the brief rather than in the record is a finding against `The reading step's brief is rendered by
 orbit`, which only orbit's own code can fix: the walk records it `deferred`, naming that requirement, and writes no
 replacement. A finding that a record cites the wrong thing is outside what a replacement can fix, since its links are

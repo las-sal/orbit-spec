@@ -59,7 +59,10 @@ replay set under `replay/` (`npm run replay`, every run Sal-started and billed; 
 baseline record in `replay/results/`), and `npm run validate:skills` in CI. Its `inventory`, a named exploration
 (`orbit/explore/inventory/`), concluded the same day with a cut list per over-budget body; Sal's rulings from it replay
 only a cut postulated to change what a session does (R-rop2-10) and remove bulk-archive, address-reviews' batch mode and
-disagreement test, and explore's illustrative upstream text (R-rop2-11 to R-rop2-13). The three cut stages are next.
+disagreement test, and explore's illustrative upstream text (R-rop2-11 to R-rop2-13). The first cut stage,
+`cut-review-walk`, shipped on 2026-11-25: review and address-reviews each under 5,000 estimated tokens, batch mode and
+the disagreement test removed, and every body edit named in a cut ledger (`test/core/templates/cut-ledger.test.ts`).
+`cut-propose-archive` and `cut-explore-onboard` are next.
 
 **`orbit/architecture/reduce-orbit-phase1.md`** (2026-11-17 to 2026-11-20, merged as PR #46) is complete. It restructured the skill bodies to be
 slimmer and in line with Anthropic's guidance for building skills, without changing what any workflow does. Text a

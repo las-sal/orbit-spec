@@ -220,6 +220,36 @@ Exit criteria:
 - The replay set run before and after, its grades no worse, on every cut whose replay mark says yes (G3, R-rop2-10);
   every removal named in the archive with its ruling (G0).
 
+Shipped as (2026-11-25; archived as `orbit/changes/archive/2026-11-25-cut-review-walk/`; the charter stands, with one
+amendment Sal ruled at apply, below). `npm run size:report` at archive reads review at 4,988 estimated tokens and
+address-reviews at 4,990, down from 9,602 and 10,921 (G1). Their character ceilings are 20,000, the G1 line itself
+rather than size plus 5%, so the suite fails as soon as either body regrows past 5,000 tokens. The ceilings of apply,
+ff and propose came down too, and onboard's stayed, its size plus 5% being over it (G2). No cut was marked for the replay
+set, so none was replayed (R-rop2-10). Every edit is named in a new cut ledger (`test/core/templates/cut-ledger.test.ts`
+and `cut-ledger-pairs.ts`, `orbit-conventions`' `A cut ledger names every body edit a cut stage makes`). It records the
+six bodies' hashes before the cut and each edit as moved, removed, reworded, restated or shared. The suite undoes the
+ledger and gets back the recorded bodies byte for byte, and phase 1's tightened-bodies ledger undoes it first (G0).
+Procedure moved to ten new references read at named moments: `discovery.md`, `triage-sources.md`, `sweep-record.md`,
+`reading-findings.md`, `redesign.md`, `report.md` and `cascade.md` for address-reviews, and `verification.md`,
+`fresh-dispatch.md` and `architecture-mode.md` for review. Review's flag and reviewer-selector tables moved into its
+existing `flags-detail.md`, which is read at Step 1. Removed under R-rop2-12: batch mode (the `--batch` flag and its
+phrases now walk finding by finding and say so, a mid-walk "batch the rest" is a delegation, and the payload fields
+`walk_mode_source` and `walk_mode_shifted_at_finding` are refused on a new log while old logs still read), and the blind
+pair's disagreement test (`orbit-address-reviews`' requirement removed). Of the specs D-inv-15 named, `orbit-audit-drift`
+and `orbit-engine-gates` were measured at propose and carry neither, so they are unchanged. Under R-rop2-14 the chain end
+step's tag paragraph left the five chaining bodies for `references/chain-end-step.md`, the bodies keeping a one-line
+pointer. Sal's amendment at apply: moving address-reviews' per-source paragraph and its scope forms out of the body ran
+against `orbit-run-summary-emit`'s `A body reads its run-summary detail before the session's first run-summary emit`, so
+that requirement is MODIFIED to allow it (a sixth capability). The tests that read moved or removed text follow it:
+`orbit-content-fidelity`, `walk-routing`, `discovery-parity`, `sweep-path-parity`, `verification-verdict-parity`,
+`chain-prompt-tags`, `blind-pair-command`, `orbit-generated-surface`, `config-profile`, `review-genre-brief`,
+`review-verification-branch`, `run-summary-read-cue`, `commit-step`, `reference-contents`, `reading-step-surface`,
+`account-reading-walk` and `tightened-bodies`. Three pins moved with dated notes: `moved-blocks`,
+`rc03b-untouched-modules` and eight `skill-templates-parity` hashes. New tests are `batch-mode-removed` and
+`decision-lane`, and the budget test's ceilings were lowered. Both review cycles ran as blind pairs. The system pair's
+external half found five moved reads landing after the decision they govern, and each was put back where a session
+first needs it.
+
 ### Stage cut-propose-archive — propose, archive and bulk-archive
 
 Depends-on: replay-set, inventory

@@ -957,16 +957,17 @@ condemns. Its carrier belongs with whatever surface reads it, which no stage has
 
 Every workflow body's run-summary emit step in scope SHALL keep in the body when the emit fires, the `orbit emit`
 command with its scope forms, and the chat behaviour placed beside them: apply, archive, architect, review, verify,
-propose, address-reviews, ff, continue, new and audit-drift. Each SHALL tell the agent, in a read cue carried
+propose, address-reviews, ff, continue, new and audit-drift, save address-reviews' one exception below. Each SHALL tell the agent, in a read cue carried
 byte-equal by all eleven, to read the skill's
 `references/run-summary-emit.md` before the session's first run-summary emit and to follow it in composing the payload. That
-reference SHALL hold the emit section whole, as the body carried it before this requirement, so the payload detail is
+reference SHALL hold the emit section whole, as the body carried it before this requirement less what a later removal
+ruling took from it (address-reviews' batch-mode sentences, `reduce-orbit-phase2`'s R-rop2-12), so the payload detail is
 read there and carried by no emit section. Each part of an emit section lands by this table:
 
 | part of an emit section | lands |
 |---|---|
 | when the emit fires (one-shot, chunk boundary, conversation boundary, the sweep before it) | the body |
-| the `orbit emit <cmd>` command and its scope forms | the body |
+| the `orbit emit <cmd>` command and its scope forms | the body (address-reviews' scope forms excepted, below) |
 | the read cue telling the agent to read the reference before the session's first run-summary emit | the body, byte-equal in all eleven |
 | chat behaviour placed in the section (a completion-prompt override, propose's and ff's second publish segment) | the body |
 | each payload field's meaning and shape | the reference, out of the emit section |
@@ -984,9 +985,17 @@ reference stays one level from the body.
 
 The table governs the emit section alone. Text of these kinds elsewhere in a body stays where it is: apply's Step 3
 states the `judgements` trigger where Proceed anyway is chosen, and archive's Step 3.2 composes `deferred_validations`
-where a task is deferred. Two mixed paragraphs stay whole in their sections, because each is mostly when the emit
-fires: address-reviews' paragraph on one log per source, which also names a discovered log's provenance fields, and
-architect's opening parenthetical, a provenance note beside its timing.
+where a task is deferred. One mixed paragraph stays whole in its section,
+because it is mostly when the emit fires: architect's opening parenthetical, a provenance note beside its timing.
+Address-reviews' paragraph on one log per source, which also names a discovered log's provenance fields, and its scope
+forms (the `--doc` invocation of an architecture-scoped ingest and the bare one of a walk with no change anchor) leave its
+body for its `references/run-summary-emit.md`, which held both whole already, so the body fits the 5,000 estimated tokens
+`reduce-orbit-phase2`'s G1 keeps (`cut-review-walk`, Sal's ruling at its apply): the body keeps a one-line pointer saying
+that a walk which discovered several sources writes one log for each, and the paragraph's sentences on the order of the
+walk are also in the skill's `references/triage-sources.md`, which the body reads before the walk when discovery yields
+more than one source. Named limit — the body's emit command shows only `--change`, so a walk of an architecture review
+or with no change anchor takes its form from the reference the read cue sends it to before its first emit; a session
+that skipped that read invokes `--change` with no change to name, which the emit surface refuses, naming what it lacks.
 
 Named limit — a session that does not read the reference composes without each trigger only the emit section stated
 (archive's readiness record is one), and the write gate, which checks a present field's shape and never an owed field's
@@ -1032,4 +1041,12 @@ Residual method: classify each paragraph of every moving section against this ta
 
 - **WHEN** the explore and bulk-archive skills are generated
 - **THEN** each emit section reads as before this requirement, and neither ships `references/run-summary-emit.md`
+
+#### Scenario: Address-reviews reads its per-source paragraph and scope forms from its reference
+
+- **WHEN** the address-reviews skill is generated
+- **THEN** its emit step carries the read cue, the `--change` command and a one-line pointer that one log is written per
+  discovered source, and carries neither the per-source paragraph nor the `--doc` and bare forms; its
+  `references/run-summary-emit.md` carries both, and its triage step reads `references/triage-sources.md`, which carries
+  the paragraph's sentences on the order of the walk
 
