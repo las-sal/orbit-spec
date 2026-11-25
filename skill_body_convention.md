@@ -24,7 +24,9 @@ R-rop-3, R-rop-4, R-rop-8). `test/core/templates/skill-body-budget.test.ts` poin
   that constant, and a basic content carried by several bodies is one constant too.
 - **One level deep.** The body names every reference file its skill ships; a reference does not send the agent on to a
   further file the body does not name.
-- **The step keeps its heading.** The body keeps the step's heading and number, so citations of the step stay true.
+- **The step keeps its heading.** The body keeps the step's heading and number, so citations of the step stay true. A
+  mode read whole at one moment (propose's consume mode, `cut-propose-archive`) keeps the mode's heading and its read in
+  the body, and its steps' headings move with its reference, where citations of them resolve.
 - **Every body stays the same under every configuration.** The body's text never depends on a setting; a setting
   changes only what a command returns.
 - **The budget holds.** Each generated body stays under its character ceiling, and under 500 lines (explore under its

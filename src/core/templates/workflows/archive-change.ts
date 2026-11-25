@@ -159,7 +159,7 @@ const SIGNOFF_HOLD_REFERENCE = `# Reference: the sign-off hold (archive Step 3.7
 export const CONSENT_AT_ENTRY_REFERENCE_NAME = 'consent-at-entry.md';
 const ARCHIVE_CONSENT_AT_ENTRY_REFERENCE = `# Reference: consent at entry off the user-invoked path (archive Step 0)
 
-Read when Step 0 classifies the arrival as AI-mediated or granted, before any write.
+Read when Step 0 classifies the arrival as AI-mediated or granted, before any write or anomaly prompt.
 
 ## An AI-mediated arrival
 
@@ -515,7 +515,7 @@ Determine invocation provenance — an observable transcript fact, never a judgm
 - **Granted** (an AI-mediated arrival the project's \`chain\` setting allows): the arrival is not typed, and the \`chain\` object of \`orbit status --change "<name>" --json\`, read at entry (read-only), reports \`next\` as this command (\`/orbit:archive <name>\`, with or without the \` — user-invoked\` marker) with \`may_run: true\`.
 - **When provenance is uncertain, treat the arrival as AI-mediated** — erring toward one extra click, never toward a silent proceed.
 
-On an arrival classified above as AI-mediated or granted, read \`references/consent-at-entry.md\` and follow it before any write.
+On an arrival classified above as AI-mediated or granted, read \`references/consent-at-entry.md\` and follow it before any write or anomaly prompt.
 
 **Consent-era stamp (migrate-on-touch)**: once consent is established (user-typed provenance, Proceed at the prompt, or a granted arrival), read the change's \`.openspec.yaml\`. If it lacks \`schema_version\`, stamp \`consent_era_from: <current UTC timestamp, YYYY-MM-DDTHH:MM:SSZ>\` into it (add-only; never overwrite an existing stamp) — this marks a pre-capability change as tripwire-covered from this touch onward.
 
@@ -613,8 +613,9 @@ It mutates nothing. \`off\` means the change is UNATTACHED: no tail runs at Step
 archive ends exactly as pre-capability; when the \`pr\` regime read from \`orbit status --json\`
 is active, write ONE line noting the unattached state (\`/orbit:new\` + \`/orbit:continue\`
 changes never attach). A non-zero exit is a usage error: report it verbatim, and the archive
-continues unattached. On any other result, read \`references/pr-archive-tail.md\` now, if Step 0.7
-did not, and carry its record forward.
+continues unattached. On any other result, follow \`references/pr-archive-tail.md\`'s "Preflight, before the
+move" section from the result you already have, reading the file now if Step 0.7 did not: that one result
+supplies both the emit's PR fields and the tail's outcome.
 
 ${ARCHIVE_RUN_SUMMARY_EMIT_BASIC}
 

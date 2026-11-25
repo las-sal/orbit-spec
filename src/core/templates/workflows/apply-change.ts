@@ -49,7 +49,7 @@ export const APPLY_RUN_SUMMARY_EMIT_BASIC = [
  */
 const APPLY_CONSENT_AT_ENTRY_REFERENCE = `# Reference: consent at entry off the user-invoked path (apply Step 0)
 
-Read when Step 0 classifies the arrival as AI-mediated or granted, before any write.
+Read when Step 0 classifies the arrival as AI-mediated or granted, before any write or anomaly prompt.
 
 ## An AI-mediated arrival
 
@@ -78,7 +78,7 @@ export function getApplyChangeSkillTemplate(): SkillTemplate {
    - **Granted** (an AI-mediated arrival the project's \`chain\` setting allows): the arrival is not typed, and the \`chain\` object of \`orbit status --change "<name>" --json\` — the Step 2 read, made at entry; it is read-only — reports \`next\` as this command (\`/orbit:apply <name>\`, with or without the \` — user-invoked\` marker) with \`may_run: true\`.
    - **When provenance is uncertain, treat the arrival as AI-mediated** — erring toward one extra click, never toward a silent proceed.
 
-   On an arrival classified above as AI-mediated or granted, read \`references/consent-at-entry.md\` and follow it before any write.
+   On an arrival classified above as AI-mediated or granted, read \`references/consent-at-entry.md\` and follow it before any write or anomaly prompt.
 
    **Ordering invariant**: provenance is CLASSIFIED at entry (it is a fact about the triggering turn, known before anything runs); the consent prompt itself — and the era stamp below — fire AFTER read-only discovery (change selection, the Step 2–3 status/instructions loads, the \`chain\` object among them) and BEFORE any write or anomaly prompt. Read-only steps never require consent; writes always follow it.
 

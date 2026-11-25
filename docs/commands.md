@@ -227,6 +227,8 @@ Finish a change: merge its delta specs into `orbit/specs/` and move it to
 /orbit:archive add-dark-mode
 ```
 
+It archives one change. To archive several finished changes, run it once for each.
+
 In a project whose `orbit/config.yaml` sets `pr:`, it then commits, pushes, and marks the change's pull request
 ready. Merging it stays yours.
 

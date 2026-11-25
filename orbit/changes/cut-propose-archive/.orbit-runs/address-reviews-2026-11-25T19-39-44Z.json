@@ -1,0 +1,164 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-25T19:39:44Z",
+  "change": "cut-propose-archive",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/cut-propose-archive/.orbit-runs/external-system-2026-11-25T17-56-56Z.md",
+  "source_command": null,
+  "source_token": "2026-11-25T17-56-56Z",
+  "latest_apply_token": "2026-11-25T17-21-43Z",
+  "external_reviewer": "GPT-6",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 2
+  },
+  "pushback_verification": "All three verified against current state; one stale (the Purpose edit is already planned at archive). No finding converges with the fresh half's.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 1,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Archive preflight leaves the single-observation handoff ambiguous",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/archive-change.ts",
+      "line": 616,
+      "classification": "trivial_fix",
+      "action": "Step 4.9's cue on any other result now reads: follow references/pr-archive-tail.md's \"Preflight, before the move\" section from the result you already have, reading the file now if Step 0.7 did not: that one result supplies both the emit's PR fields and the tail's outcome. The A4-step-4.9 reworded pair's after and design D2's quotation follow. Archive measures 19,507 characters (4,877 estimated tokens), under its 20,000 ceiling.",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/templates/cut-ledger-pairs.ts",
+          "orbit/changes/cut-propose-archive/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "and carry its record forward"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/templates/workflows/archive-change.ts",
+            "text": "section from the result you already have, reading the file now if Step 0.7 did not: that one result"
+          },
+          {
+            "path": "src/core/templates/workflows/archive-change.ts",
+            "text": "supplies both the emit's PR fields and the tail's outcome."
+          }
+        ],
+        "searched": [
+          "carry its record forward",
+          "Step 4.9",
+          "Preflight, before the move"
+        ],
+        "scope": [
+          "src/core/templates/workflows/pr-choreography.ts",
+          "test/core/templates/pr-references.test.ts"
+        ],
+        "kept": []
+      },
+      "ripple_miss_of": {
+        "walk": "2026-11-25T04-15-18Z",
+        "title": "Step 4.9 assumes a prior reference read on a path that can skip it",
+        "file": "orbit/changes/cut-propose-archive/design.md",
+        "kind": "judgement"
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The consent capability's Purpose still lists bulk-archive",
+      "marker_source": "external",
+      "file": "orbit/specs/orbit-lifecycle-consent/spec.md",
+      "line": 9,
+      "classification": "stale",
+      "action": "No edit: the design's At archive list already carries this Purpose edit, made in place at archive (no delta carries a Purpose).",
+      "evidence": "design.md \"## At archive\": \"Purposes edited in place (no delta carries `## Purpose`): `orbit-lifecycle-consent`: \"(apply / archive / bulk-archive per change; …)\" drops \"/ bulk-archive per change\".\"",
+      "outcome": "stale"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The command guide drops the migration advice along with the retired command",
+      "marker_source": "external",
+      "file": "docs/commands.md",
+      "line": 230,
+      "classification": "trivial_fix",
+      "action": "Added one sentence under /orbit:archive, after its example: it archives one change, and several finished changes are archived by running it once for each.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "docs/commands.md",
+            "text": "To archive several finished changes, run it once for each."
+          }
+        ],
+        "searched": [
+          "bulk-archive",
+          "one at a time",
+          "once per change"
+        ],
+        "scope": [
+          "orbit/changes/cut-propose-archive/proposal.md",
+          "docs/workflows.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Two resolved and one stale: Step 4.9 now sends the agent to the reference's preflight section from the result it holds and says that one result supplies both the emit fields and the tail outcome; the command guide says to archive several changes one at a time; the consent Purpose edit is already in the design's At archive list.",
+  "iteration": 5,
+  "next_recommended": "/orbit:review --as system cut-propose-archive",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "af79e5cc2c7f7d5efce5559eab2d555daa8c5671",
+      "frozen": true,
+      "evidence": {
+        "files": [
+          {
+            "path": "src/core/templates/workflows/pr-choreography.ts",
+            "lines": 32
+          }
+        ],
+        "share": 3.6,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ],
+  "ripple_misses": 1
+}

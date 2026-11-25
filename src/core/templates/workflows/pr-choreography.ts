@@ -183,7 +183,7 @@ compare HEAD's branch (\`git branch --show-current\`) with \`pr_attachment.branc
 SAY SO NOW — in the consent preview when one fires, otherwise as one line before Step 1 (on a
 granted arrival that line is the only notice and nobody is asked: the archive proceeds and the tail
 skips, a named limit) — naming both branches and the case-specific switch (\`git switch <branch>\` locally; the
-tracking form when only the remote has it). The tail's HEAD precondition (in the reference)
+tracking form when only the remote has it). The tail's HEAD precondition (Tail, after the move and the emit, below)
 remains the GUARD that skips the PR half; this observation is the early warning that lets the
 user switch first instead of carrying uncommitted sync, move, and emit writes across a
 \`git switch\` afterward. Unattached changes see nothing here.

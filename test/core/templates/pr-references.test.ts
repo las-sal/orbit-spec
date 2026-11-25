@@ -145,3 +145,38 @@ describe('the consumption table scopes a recovery to the steps that can attach',
     expect(select).toContain('a failed step is named in ONE line with no recovery shown');
   });
 });
+
+describe('the entry observation names a HEAD mismatch before any write (cut-propose-archive task 4.3)', () => {
+  const flat = (text: string) => text.replace(/\s+/g, ' ');
+  const archive = getArchiveChangeSkillTemplate();
+  const body = archive.instructions;
+  const consent = archive.references!.find((r) => r.name === 'consent-at-entry.md')!.content;
+  const entry = flat(section(PR_ARCHIVE_TAIL_REFERENCE, '## Entry observation, before any write'));
+
+  it('an AI-mediated arrival on an attached change with HEAD on another branch: the mismatch reaches the consent preview', () => {
+    // The body's Step 0.7 is part of Step 0's read-only discovery and reads the reference before the prompt is composed.
+    const step07 = flat(section(body, '## Step 0.7'));
+    expect(step07).toContain("Part of Step 0's read-only discovery, on every arrival, BEFORE a consent prompt is composed");
+    expect(step07).toContain('read `pr_attachment` from the latest attachment-bearing propose or ff emit');
+    expect(step07).toContain('read `references/pr-archive-tail.md` and run its entry observation now');
+    expect(step07).toContain('so a HEAD mismatch is named in the consent preview when one fires');
+    // Step 0 fires the consent prompt only after that discovery, so the preview can carry what it found.
+    expect(flat(section(body, '## Step 0 '))).toContain('fire AFTER read-only discovery');
+    // The reference compares the branches and names the mismatch in the preview, with both branches and the switch.
+    expect(entry).toContain("compare HEAD's branch (`git branch --show-current`) with `pr_attachment.branch`");
+    expect(entry).toContain('On mismatch, SAY SO NOW — in the consent preview when one fires');
+    expect(entry).toContain('naming both branches and the case-specific switch (`git switch <branch>` locally');
+    // The AI-mediated prompt's preview is the one that names an attached change's outward writes.
+    expect(flat(section(consent, '## An AI-mediated arrival'))).toContain('When the change is PR-ATTACHED');
+  });
+
+  it('an arrival with no prompt (typed or granted): the mismatch is one line before Step 1, and on a granted arrival nobody is asked', () => {
+    expect(flat(section(body, '## Step 0.7'))).toContain('and otherwise as one line before Step 1');
+    expect(entry).toContain('runs on EVERY provenance path, user-typed included');
+    expect(entry).toContain(
+      'otherwise as one line before Step 1 (on a granted arrival that line is the only notice and nobody is asked: the archive proceeds and the tail skips, a named limit)',
+    );
+    // The granted reference shows no preview, so that line is the only notice.
+    expect(flat(section(consent, '## A granted arrival'))).toContain('No preview is shown');
+  });
+});

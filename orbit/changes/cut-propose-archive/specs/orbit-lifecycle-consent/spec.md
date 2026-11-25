@@ -39,7 +39,7 @@ chunks and the inherited sync. The consent prompt carries:
 - **Where the rule lives in the two bodies**: apply's and archive's Step 0 each carry its BASIC CONTENT
   (`reduce-orbit-phase1`'s R-rop-3) — the provenance classification, the user-invoked path, the uncertainty rule, the
   ordering invariant, the consent-era stamp and sync inheritance — and tell the agent, on an arrival Step 0 classifies
-  as AI-mediated or granted, to read the skill's `references/consent-at-entry.md` and follow it before any write; that
+  as AI-mediated or granted, to read the skill's `references/consent-at-entry.md` and follow it before any write or anomaly prompt; that
   reference carries the AI-mediated prompt and the granted path. Apply's Step 0 is orbit text placed in the upstream
   portion of the apply body (upstream's steps begin at Step 1), so this requirement names that edit, made in place, per
   `orbit-conventions`' `Generated-file disposition`.

@@ -1284,7 +1284,7 @@ describe('seam-chaining-grants: the granted arrival in the apply and archive bod
   it('an arrival not typed and not granted fires the consent prompt before any write, and keeps "uncertain → AI-mediated"', () => {
     for (const [body, ref] of [[apply, applyConsent], [archive, archiveConsent]] as const) {
       expect(body).toContain('a handoff document, a chain, or an eligibility readout pointing here.\n');
-      expect(body).toContain('On an arrival classified above as AI-mediated or granted, read `references/consent-at-entry.md` and follow it before any write.');
+      expect(body).toContain('On an arrival classified above as AI-mediated or granted, read `references/consent-at-entry.md` and follow it before any write or anomaly prompt.');
       expect(aiPath(ref)).toContain('Unless the arrival is granted, fire a consent **AskUserQuestion** (chain: not a prompt) BEFORE any');
       expect(body).toContain('**When provenance is uncertain, treat the arrival as AI-mediated**');
     }
@@ -1307,7 +1307,7 @@ describe('seam-chaining-grants: the granted arrival in the apply and archive bod
       expect(s).toMatch(/\*\*Granted\*\* \(an AI-mediated arrival the project's `chain` setting allows\): the arrival is not typed, [^\n]* with `may_run: true`\.\n/);
       expect(s).toContain('**When provenance is uncertain, treat the arrival as AI-mediated**');
       // The read is keyed on the classification, and after the classes it reads.
-      const read = s.indexOf('On an arrival classified above as AI-mediated or granted, read `references/consent-at-entry.md` and follow it before any write.');
+      const read = s.indexOf('On an arrival classified above as AI-mediated or granted, read `references/consent-at-entry.md` and follow it before any write or anomaly prompt.');
       expect(read).toBeGreaterThan(s.indexOf('**When provenance is uncertain'));
       // Neither body carries the prompt's options; the reference carries the prompt and the granted path.
       expect(body).not.toContain('**Proceed** / **Abort**');

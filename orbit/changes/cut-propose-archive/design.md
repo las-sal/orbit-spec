@@ -108,7 +108,7 @@ and a consume session needs every step.
   the tag handling. The body keeps the Step 0 heading, the ordering invariant, the three classifying bullets, the
   uncertainty bullet, the era stamp and sync inheritance, plus one sentence keyed on Step 0's own classification,
   never on whether a command was typed: "On an arrival classified
-  above as AI-mediated or granted, read `references/consent-at-entry.md` and follow it before any write." An explicit
+  above as AI-mediated or granted, read `references/consent-at-entry.md` and follow it before any write or anomaly prompt." An explicit
   same-turn prose request ("archive it") is user-invoked by the User-invoked bullet and never reads the reference (the
   external review, walked 2026-11-25). Apply's Step 0 gets the same move into its own `references/consent-at-entry.md`. The texts differ (apply's
   preview names tasks, archive's names deltas and the outward tail), so each skill carries its own, under one file name.
@@ -146,9 +146,12 @@ and a consume session needs every step.
   - Step 0.7's procedure is NEW to the reference: a `moved` span into a new section, "Entry observation, before any
     write", placed before "Preflight, before the move".
   - Step 4.9 keeps in the body its position, the command, the `off` row with its one unattached line, the non-zero-exit
-    row (report verbatim, continue unattached) and the read cue on any other result: "read `references/pr-archive-tail.md`
-    now, if Step 0.7 did not, and carry its record forward". An unattached change never read the reference at Step 0.7,
-    so the cue cannot assume it (the external review, walked 2026-11-25). Only its carry-forward sentences, which restate
+    row (report verbatim, continue unattached) and the read cue on any other result: "follow
+    `references/pr-archive-tail.md`'s "Preflight, before the move" section from the result you already have, reading the
+    file now if Step 0.7 did not: that one result supplies both the emit's PR fields and the tail's outcome". An
+    unattached change never read the reference at Step 0.7, so the cue cannot assume it (the external review, walked
+    2026-11-25), and a session that read it at entry is sent back to the section by name, with the result it holds, so
+    it neither misses the mapping nor runs the preflight twice (the system review, walked 2026-11-25). Only its carry-forward sentences, which restate
     the reference's "Preflight, before the move" bullets in other words, and its closing note on the HEAD observation
     leave the body, as `reworded` pairs; the reference is not edited for them.
   - Step 5.8's per-change echo restates the reference's "At the close"; it leaves the body as a `reworded` pair. Its
@@ -200,6 +203,9 @@ Bodies and references that name bulk-archive follow:
 
 The project-root `skill_body_convention.md`'s Exceptions paragraph drops its bulk-archive clause ("bulk-archive (its
 sign-off hold, PR section and divergence check, and its per-change archive emit), "), leaving explore and onboard.
+Its "The step keeps its heading" rule gains one sentence naming D1's shape: a mode read whole at one moment keeps the
+mode's heading and its read in the body, and its steps' headings move with its reference (the system review, walked
+2026-11-25).
 Docs: `docs/commands.md` loses its section, its index row and its consent sentence's bulk clause. `docs/concepts.md`,
 `docs/workflows.md` and `docs/workflow-engine.md` drop their mentions. The 15-workflow and fourteen-skill counts in
 `README.md`, `docs/cli.md`, `docs/commands.md`, `docs/installation.md`, `docs/migration-guide.md`,
@@ -267,8 +273,11 @@ Bulk-archive's ceiling entry is deleted with the body.
   R2. A body still over 5,000 after R2 meets the inventory's re-entry trigger ("a cut stage finds a body that its cut
   list does not bring under 5,000"), and the stage raises it rather than cutting further without naming the cut.
 - [A consume session skips reading `consume-mode.md`, or reads it before Phase 1.] → The body's read sentence names the
-  moment after Step 0.5. Under R-rop2-10 no case covers consume mode (D-inv-4), so the risk is graded by the proposal's
-  reviewers.
+  moment after Step 0.5. The replay set's `propose` case is a consume-mode run (its seeded state is a staged
+  exploration), and its `staging-moved` grader asserts Step 0d's move, which is now only in the reference, so a session
+  that skipped the read would fail it when the set is next replayed. No cut here is postulated to change what a session
+  does, so under R-rop2-10 the case is not run for this stage (D-inv-4's premise that no case reads consume mode's steps
+  does not hold, noted in the Shipped as), and the risk is graded by the reviewers.
 - [A session on a PR-attached change does not read `pr-archive-tail.md` early enough to warn of a branch mismatch.] → A4
   keeps the attachment read and the read cue in Step 0.7's basic content, inside Step 0's read-only discovery and before
   a consent prompt is composed, so the mismatch reaches the preview. The tail's HEAD precondition stays the guard.
@@ -286,7 +295,9 @@ Bulk-archive's ceiling entry is deleted with the body.
   - `orbit-lifecycle-consent`: "(apply / archive / bulk-archive per change; …)" drops "/ bulk-archive per change".
   - `orbit-base-fingerprints`: "the agent-driven archive workflows run" becomes singular.
 - The Shipped as names the removal with its ruling (R-rop2-11), the files it took, the tests each edit followed, the
-  four historical statements kept as records (D3), and the measured sizes.
+  four historical statements kept as records (D3), and the measured sizes. It also notes that D-inv-4's premise does not
+  hold: the replay set's `propose` case runs consume mode and grades Step 0d's move, and it was not run here
+  (R-rop2-10).
 
 ## Touchpoints
 
