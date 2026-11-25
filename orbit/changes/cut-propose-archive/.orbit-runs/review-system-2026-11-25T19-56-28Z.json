@@ -1,0 +1,152 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-25T19:56:28Z",
+  "change": "cut-propose-archive",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "orbit/changes/cut-propose-archive/.orbit-runs/account/account-2026-11-25T17-21-39Z.json",
+      "line": 1,
+      "title": "The account's archive size and ledger count predate the walk's Step 4.9 rewording",
+      "recommendation": "The latest account's built field says archive is at about 4,840 estimated tokens, and its detail counts 42 cut-ledger pairs (24 reworded). After the walk, `npm run size:report` measures archive at 4,877 (19,507 characters), and the ledger holds 43 pairs (25 reworded, WALK-F4-tail-pointer added). Write a replacement account with those figures (about 4,880; 43 pairs) before archive, where the brief carries the account to the program's readers. The walk's account step judged nothing it did changed what was built; the size figure inside built did move.",
+      "reproduction": "npm run size:report prints 'orbit-archive-change 19,507 296 4,877 within'; the CUT_PROPOSE_ARCHIVE_PAIRS block of test/core/templates/cut-ledger-pairs.ts counts { removed: 4, reworded: 25, moved: 11, restated: 2, retired: 1 }; account-2026-11-25T17-21-39Z.json says 'archive at about 4,840' and '42 pairs (11 moved, 4 removed, 24 reworded, 2 restated, 1 retired)'."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "test/core/templates/skill-templates-parity.test.ts",
+      "line": 302,
+      "title": "The parity re-pin is in the walk commit but in no entry's edit record",
+      "recommendation": "The walk re-pinned two function hashes and two generated-skill hashes (apply, archive) and added a dated note, which followed F3, F4 and X1, but no resolved entry lists the file in ripple_cascade.applied. Nothing is wrong in the file (the suite is green and the note counts the moves); the record gap only means a later ripple-miss attribution would not see it. No edit needed beyond noting it; a future walk lists such re-pins under the entry whose edit moved them."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Each resolution was read in the committed diff from the external return's commit (5e25ff7d) to HEAD and checked against its sweep. The replay line now matches replay/README.md and the propose case's staging-moved grader, and the At archive list carries the D-inv-4 note. The two new tests read the body's Step 0.7, the reference's entry observation and both consent sections, and each failed under a mutation of its text during the walk. The consent cue reads 'before any write or anomaly prompt' in both bodies, both references' openings, the delta requirement, design D2's quotation and the two ledger pairs, with no copy of the old wording left in src/, test/ or the change. The renamed pointer names a section that exists below it, and the ledger records it as a walk pair undone after the move, with the moved span's digest re-pinned. Step 4.9's cue names a section the reference has and states the one-result rule the section's bullets carry. The convention sentence and the docs sentence read true against propose's body and archive's single-change form.\n\nOn the whole tree: npm test is green (4,533 tests in 219 files), validate --strict for the change and --all, validate --sources and validate:skills pass, and the scenario map holds 159 delta scenarios with none uncovered. The residual diff shows one file outside every edit record (the parity test). The consent-Purpose entry was rightly stale: the design's At archive list names that edit. Passes 0 and 6 judge the whole change or project and are not run by a verification pass; Passes 4 and 5 have no lenses here.",
+  "passes_run": [
+    "1",
+    "2",
+    "3"
+  ],
+  "passes_skipped": [
+    "0: a verification pass does not run the whole-change verify pass",
+    "4: no perspectives defined; skip Pass 4",
+    "5: no critical paths defined; skip Pass 5",
+    "6: a verification pass does not run the whole-project drift pass",
+    "reading: nothing selected"
+  ],
+  "verification": [
+    {
+      "title": "The design's consume-mode risk says no replay case covers consume mode, but the propose case is a consume-mode run graded on Step 0d's move",
+      "file": "orbit/changes/cut-propose-archive/design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Task 4.3's two constructed-case tests for the entry observation are not in the suite",
+      "file": "orbit/changes/cut-propose-archive/tasks.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The consent read cue says 'before any write', a later moment than the ordering invariant's 'before any write or anomaly prompt'",
+      "file": "src/core/templates/workflows/archive-change.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "The moved entry observation now points '(in the reference)' from inside that reference",
+      "file": "src/core/templates/workflows/pr-choreography.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "Propose's Steps 0a to 0d left the body with their headings, which the convention's 'The step keeps its heading' rule does not provide for",
+      "file": "skill_body_convention.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Archive preflight leaves the single-observation handoff ambiguous",
+      "file": "src/core/templates/workflows/archive-change.ts",
+      "verdict": "landed"
+    },
+    {
+      "title": "The command guide drops the migration advice along with the retired command",
+      "file": "docs/commands.md",
+      "verdict": "landed"
+    }
+  ],
+  "final_assessment": "0 critical, 0 warning, 2 suggestion.",
+  "decision_records_owed": [],
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-11-25T19-35-56Z",
+    "2026-11-25T19-39-44Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews cut-propose-archive",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "af79e5cc2c7f7d5efce5559eab2d555daa8c5671",
+      "frozen": true,
+      "evidence": {
+        "files": [
+          {
+            "path": "src/core/templates/workflows/pr-choreography.ts",
+            "lines": 32
+          }
+        ],
+        "share": 3.6,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ]
+}
