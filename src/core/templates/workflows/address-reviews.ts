@@ -484,7 +484,7 @@ Cascade summary: 14 IN files cascaded across 9 resolutions; 3 OUT files flagged_
 ### Final assessment
 
 0 unresolved external findings.
-Suggested next: re-run /orbit:review --as proposal to confirm convergence.
+Suggested next: <the engine's next_command, from orbit status --change <name> --json>
 
 Run summary: orbit/changes/add-review-workflows/.orbit-runs/address-reviews-2026-05-18T14-43-41Z.json
 \`\`\`
@@ -518,7 +518,7 @@ Pushback verification: 1 verified against current state; 0 stale suppressions.
 ### Final assessment
 
 0 unresolved findings.
-Suggested next: continue with current change's archive flow; the schema-doc gap is filed as a follow-up task and will be addressed in a future change.
+Suggested next: <the engine's next_command, from orbit status --change <name> --json>
 
 Run summary: orbit/changes/harden-export-validation/.orbit-runs/address-reviews-2026-05-26T20-XX-XXZ.json
 \`\`\`

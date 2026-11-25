@@ -17,7 +17,7 @@
 
 ## 4. Review's moves (design D1, D4)
 
-- [x] 4.1 V1 → `references/verification.md` (procedure (a)–(e), Verdicts, Sweep scope and paths), the body keeping the genre probe and D4's route for a refusal naming owed `verification` keys; `verification-verdict-parity` and `sweep-path-parity` re-anchored; `review-verification-branch` follows.
+- [x] 4.1 V1 → `references/verification.md` (procedure (a)–(e), Verdicts, Sweep scope and paths), the body keeping the genre probe and D4's route for a refusal saying the pass owes `verification`, with owed keys or none; `verification-verdict-parity` and `sweep-path-parity` re-anchored; `review-verification-branch` follows.
 - [x] 4.2 V2 → `references/fresh-dispatch.md` (the dispatch, its brief, a pair's missing fresh half), with `blind-pair.md` step 5c re-pointed to it; V3 → `references/architecture-mode.md`; `review-genre-brief`'s brief regions follow `orbit-review`'s modified grep rule; `blind-pair-command` follows.
 - [x] 4.3 V4 → `references/flags-detail.md` (the flag table, the reviewer-selector table, the wrong-mode notes; its "Loaded only when…" line reworded), V5 (drop "Output format (change modes)"), R1 (the preamble's dispatch detail), R2 (tighten the prose that stays); every review reference grepped for pointers into the moved sections and each hit re-pointed, the schema reference's "Step 5's VERIFICATION branch" among them. Every edit of group 4 is a `moved`, `reworded` or `restated` pair (V5 and R1 are `restated`).
 

@@ -132,9 +132,10 @@ Each moved step keeps, in the body, its heading, what it does in one or two sent
 precedes it (phase 1's reading-order rule). Two moments need care:
 
 - **A VERIFICATION pass the probe missed.** The body's metadata probe decides whether to read `verification.md`. When the
-  probe read REVIEW but the engine computes VERIFICATION, `orbit emit review` refuses the payload naming the owed keys; the
-  body's basic content therefore says: on a refusal that names owed `verification` keys, read `references/verification.md`
-  and follow it from the refusal you already have. The inverse refusal (verification refused on a REVIEW-genre pass) is
+  probe read REVIEW but the engine computes VERIFICATION, `orbit emit review` refuses the payload, naming the owed keys when it has any; the
+  body's basic content therefore says: on a refusal saying the pass owes `verification`, with owed keys or none (the
+  system walk, 2026-11-24: a refusal can owe the record with no entry to name), read `references/verification.md` and follow
+  it from the refusal you already have. The inverse refusal (verification refused on a REVIEW-genre pass) is
   met by a session that has the reference loaded.
 - **The fresh half of a blind pair.** `blind-pair.md`'s step 5c dispatches the fresh half "per the trunk's Dispatching a
   fresh pass"; it is re-pointed to `references/fresh-dispatch.md`, which now holds the brief.
