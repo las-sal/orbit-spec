@@ -1,0 +1,163 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-25T17:56:28Z",
+  "change": "cut-propose-archive",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "pass": "0",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/cut-propose-archive/design.md",
+      "line": 270,
+      "title": "The design's consume-mode risk says no replay case covers consume mode, but the propose case is a consume-mode run graded on Step 0d's move",
+      "recommendation": "Correct the Risks entry (and the Shipped as, at archive): the replay set's propose case reads the steps P1 moved to references/consume-mode.md, and a session that skipped the read would fail its staging-moved grader. Whether to replay is then Sal's call under R-rop2-10. D-inv-4, which the line cites, rests on the same false premise ('propose's consume-only steps are read by no case'); its correction belongs to the program doc, since the inventory has concluded.",
+      "reproduction": "replay/README.md:97 gives the propose case's seeded state as 'a staged exploration with its explore emit'; replay/cases/propose/scaffold.sh writes orbit/explore/greet-name/explore.md (its header reads 'exploring'), so mode detection resolves consume mode; replay/cases/propose/graders/staging-moved.md asserts orbit/explore/greet-name is absent after the run, which is Step 0d's move, now only in references/consume-mode.md. design.md:270 says: 'Under R-rop2-10 no case covers consume mode (D-inv-4), so the risk is graded by the proposal's reviewers.'",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Correct design.md:270 to name the propose case as covering consume mode, and offer Sal one billed propose-case run (npm run replay, then npm run replay:compare against the 2026-11-23 baseline record) before archive. It is the one cut here whose read moment changed and that a case can grade."
+        },
+        {
+          "label": "B",
+          "body": "Correct design.md:270 only. Keep R-rop2-10's no-replay ruling, since no cut is postulated to change what a session does, and record that the propose case, with its staging-moved grader, would catch a consume session that never read the reference if a later stage replays it."
+        }
+      ]
+    },
+    {
+      "pass": "0",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/cut-propose-archive/tasks.md",
+      "line": 34,
+      "title": "Task 4.3's two constructed-case tests for the entry observation are not in the suite",
+      "recommendation": "Add the two tests 4.3 names, or reword the task to say what holds the text instead. First, an AI-mediated arrival on an attached change with HEAD on another branch: assert that Step 0.7's basic content (read pr_attachment, read references/pr-archive-tail.md before a consent prompt is composed, the mismatch named in the consent preview) sits inside Step 0's discovery, before the consent read cue fires, and that the reference's 'Entry observation, before any write' section carries the preview clause. Second, the no-prompt arrival: assert the 'one line before Step 1' clause, with the granted named limit, in that section. Today only the cut ledger's hash and digest pin these bytes, and orbit-content-fidelity's Step 0.7 test checks heading order alone.",
+      "reproduction": "command grep -rn \"SAY SO NOW\\|before a consent prompt is composed\\|run its entry observation\\|Entry observation, before any write\" test/ --include='*.ts' finds only test/core/templates/cut-ledger-pairs.ts (the A4-step-0.7 moved pair). The added test titles (git diff 9b6d6d3f..HEAD -- test/ | grep '^+.*it(') include no Step 0.7 or HEAD-mismatch case, and the task line is checked."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "src/core/templates/workflows/archive-change.ts",
+      "line": 518,
+      "title": "The consent read cue says 'before any write', a later moment than the ordering invariant's 'before any write or anomaly prompt'",
+      "recommendation": "In archive (line 518) and apply (apply-change.ts:81), say 'read references/consent-at-entry.md and follow it before any write or anomaly prompt' (or 'now, at entry'), matching the ordering invariant two lines away. The procedure the reference holds (the consent prompt; on a granted arrival, how each later tagged prompt is met) is needed before Step 1.5's marker prompt and Step 3.4's gate prompt in archive, and before Step 3's gate prompt in apply, all of which precede the first write. Each wording is a reworded pair in the cut ledger.",
+      "reproduction": "Archive SKILL.md Step 0: 'the consent prompt itself ... fire AFTER read-only discovery ... and BEFORE any write or anomaly prompt', followed by 'On an arrival classified above as AI-mediated or granted, read references/consent-at-entry.md and follow it before any write.' A session that follows the cue literally can meet the Step 1.5 marker prompt, or the Step 3.4 gate prompt, before it has read the prompt it owes first. Before the move this could not happen, because the procedure stood inline in the bullet."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "src/core/templates/workflows/pr-choreography.ts",
+      "line": 186,
+      "title": "The moved entry observation now points '(in the reference)' from inside that reference",
+      "recommendation": "Reword '(in the reference)' to name the section, for example '(Tail, after the move and the emit, below)'. The span moved byte-equal, and task 4.4's pointer grep keyed on 'below', 'above', 'next bullet' and 'the other two paths', so this self-pointer slipped through. References are not hashed by the ledger, so the archive names the edit. The same span's 'before upstream Step 1' also reads oddly now that the body places the observation inside Step 0's discovery, after change selection. That wording is older than this change: worth a look while the line is open."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "skill_body_convention.md",
+      "line": 27,
+      "title": "Propose's Steps 0a to 0d left the body with their headings, which the convention's 'The step keeps its heading' rule does not provide for",
+      "recommendation": "Either name the case in the convention (a whole mode read at one moment keeps the mode's heading and basic content in the body, and its steps' headings travel with its reference), or note it in design D1 as a deliberate departure. The propose body still cites 'BEFORE Step 0a' (propose.ts:435) and 'BEFORE Step 0d's move' (its size brief), and both now resolve only in references/consume-mode.md. They are harmless in practice, because a consume session reads the reference before either matters, but the convention, which skill-body-budget.test.ts points new work at, says otherwise.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Add one sentence to skill_body_convention.md's 'The step keeps its heading' rule: a mode read whole at one moment keeps the mode's heading and its read in the body, and its steps' headings move with its reference, where citations of them resolve."
+        },
+        {
+          "label": "B",
+          "body": "Leave the convention as it is and record in design D1 (and the Shipped as) that consume mode's step headings moved as a deliberate departure, the Consume-mode flow heading standing in for them."
+        }
+      ]
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "The cut held up when probed directly. A fresh `orbit init --tools claude` sandbox is byte-identical to the committed .claude/ surface, with 14 skills and 14 launchers, thirteen of them with references/. A plain `orbit update` over a sandbox seeded with an old orbit-bulk-archive-change skill and bulk-archive launcher removed both. `npm run size:report` puts propose at 4,616 and archive at 4,839 estimated tokens. Archive's margin is 161, not the design's projected 220. The full suite is green (4,531 tests in 219 files), `validate cut-propose-archive --strict`, `validate --all --strict`, `validate --sources` and `validate:skills` all pass, and the scenario map shows 159 delta scenarios with none uncovered and no orphans.\n\nThe ceilings match D5's arithmetic for all five edited bodies. The repository-wide bulk-archive sweep leaves only historical records (architecture docs, the concluded explorations, replay results and the replay archive case's dated comment), the unsynced baseline specs this archive's sync rewrites, the frozen rc04c fixtures, and the retired registry with its tests. The config picker's lookup falls back to the bare id, so a stored profile still naming bulk-archive cannot break it.\n\nThe new references read whole and in order. consume-mode.md keeps the size-brief-before-Step-0d ordering, and its positional pointers ('the entry form below', 'treated as above', 'merged above') resolve inside the file. The A1 split leaves each class's defining sentence in the body.\n\nThe risk texture is in read timing, not missing text. The two places where a session might act before it reads are the consent cue's 'before any write' and the replay-set claim, which says no case exercises consume mode when one does. Pass 0 and Pass 6 were run inline, by verify-change's and audit-drift's checks, rather than by invoking those skills, so that this worker writes no record beyond its own review emit. Passes 4 and 5 were skipped because orbit/lenses/ does not exist.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "6"
+  ],
+  "passes_skipped": [
+    "4: no perspectives defined; skip Pass 4",
+    "5: no critical paths defined; skip Pass 5"
+  ],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "Move forward to the walk. The stage's own exit criteria are met and measured: both bodies fit G1, every edited ceiling came down per D5, bulk-archive is gone from the generated surface and converges out of an existing one, and the cut ledger and parity tests hold every body edit. Nothing found breaks a user path or loses data.\n\nThe two warnings are a false sentence in the design's risk section and a pair of tests the task promised. Both are cheap to settle in the walk. The first carries a real choice for Sal: the replay set does exercise consume mode, so a single propose-case run would grade the one cut whose read moment moved. That is a scope and billing decision under R-rop2-10, not a reason to hold the change. The suggestions are wording repairs that can ride the same walk."
+  },
+  "final_assessment": "0 critical, 2 warning, 3 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews cut-propose-archive",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "af79e5cc2c7f7d5efce5559eab2d555daa8c5671",
+      "frozen": true,
+      "evidence": {
+        "files": [
+          {
+            "path": "src/core/templates/workflows/pr-choreography.ts",
+            "lines": 32
+          }
+        ],
+        "share": 3.6,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ]
+}
