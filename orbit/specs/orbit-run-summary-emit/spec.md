@@ -16,7 +16,6 @@ The following orbit commands SHALL emit `orbit/changes/<name>/.orbit-runs/<comma
 
 The following commands SHALL NOT emit additional JSONs as part of this change:
 
-- `/orbit:bulk-archive` — wrapper; each inner `/orbit:archive` invocation emits separately
 - `/orbit:onboard` — meta walkthrough; no change-state transition
 - `/orbit:sync` (the `orbit-sync-specs` skill) — upstream primitive whose upstream portion orbit does not edit (per `orbit-conventions`' `Generated-file disposition`); no emit behavior is added to it
 
@@ -45,10 +44,6 @@ Existing emit-producing commands (`/orbit:review`, `/orbit:address-reviews`, `/o
 #### Scenario: /orbit:onboard does not emit
 - **WHEN** the user invokes `/orbit:onboard` and completes the walkthrough
 - **THEN** no `.orbit-runs/onboard-<TS>.json` is written anywhere in the project
-
-#### Scenario: /orbit:bulk-archive relies on inner /orbit:archive emits
-- **WHEN** the user invokes `/orbit:bulk-archive` to archive 3 changes
-- **THEN** 3 `archive-<TS>.json` files are written (one per inner archive), and no `bulk-archive-<TS>.json` file is written
 
 #### Scenario: Bodies instruct the surface, never hand-compose
 - **WHEN** any generated body reaches its emit step
@@ -978,14 +973,13 @@ read there and carried by no emit section. Each part of an emit section lands by
 | a provenance note naming the owning requirements | the reference, out of the emit section |
 | a rationale for the step's shape | the reference, out of the emit section |
 
-Two emit steps keep their sections whole, outside phase 1 of `reduce-orbit-phase1`: explore's, and bulk-archive's
-per-change archive emit. A body whose moved section was the only place it named a reference its skill ships
+One emit step keeps its section whole, outside phase 1 of `reduce-orbit-phase1`: explore's. A body whose moved section was the only place it named a reference its skill ships
 (archive's `archive-summary-schema.md`, address-reviews' `run-summary-schema.md`) keeps a sentence naming it, so every
 reference stays one level from the body.
 
 The table governs the emit section alone. Text of these kinds elsewhere in a body stays where it is: apply's Step 3
-states the `judgements` trigger where Proceed anyway is chosen, and archive's Step 3.2 composes `deferred_validations`
-where a task is deferred. One mixed paragraph stays whole in its section,
+states the `judgements` trigger where Proceed anyway is chosen, and archive's `references/user-validation.md`, read at
+its Step 3.2, composes `deferred_validations` where a task is deferred. One mixed paragraph stays whole in its section,
 because it is mostly when the emit fires: architect's opening parenthetical, a provenance note beside its timing.
 Address-reviews' paragraph on one log per source, which also names a discovered log's provenance fields, and its scope
 forms (the `--doc` invocation of an architecture-scoped ingest and the bare one of a walk with no change anchor) leave its
@@ -1037,10 +1031,10 @@ Residual method: classify each paragraph of every moving section against this ta
 - **THEN** its emit step carries the chunk-boundary sentence with `(chain: not a prompt)` and the completion-prompt
   override, and propose's and ff's carry their second publish segment and their completion-prompt override
 
-#### Scenario: Explore and bulk-archive are left as they are
+#### Scenario: Explore is left as it is
 
-- **WHEN** the explore and bulk-archive skills are generated
-- **THEN** each emit section reads as before this requirement, and neither ships `references/run-summary-emit.md`
+- **WHEN** the explore skill is generated
+- **THEN** its emit section reads as before this requirement, and it ships no `references/run-summary-emit.md`
 
 #### Scenario: Address-reviews reads its per-source paragraph and scope forms from its reference
 

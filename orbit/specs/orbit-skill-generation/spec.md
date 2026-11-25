@@ -147,7 +147,8 @@ begins.
 Update reconciliation SHALL consult an explicit retired-artifacts registry (skill directory
 names + launcher command ids whose workflow id no longer exists — as of D5:
 `orbit-review-external` / `review-external`, the standalone external-review surface merged into
-review's `--reviewer` axis) and remove those artifacts from pre-existing surfaces on both
+review's `--reviewer` axis; as of `cut-propose-archive`: `orbit-bulk-archive-change` / `bulk-archive`, the
+bulk-archive workflow removed by `reduce-orbit-phase2`'s R-rop2-11) and remove those artifacts from pre-existing surfaces on both
 update paths — retirement is a first-class transition, never an unknown directory left behind
 (the deselection sweep cannot see it: it iterates known workflow ids only). The presence of a
 retired skill directory or launcher SHALL count as profile drift, so plain update's smart
@@ -160,6 +161,13 @@ are never generated); the registry grows on any future retirement.
   and `.claude/commands/orbit/review-external.md`, and a plain `orbit update` runs
 - **THEN** drift detection defeats the current-stamps short-circuit, and reconciliation removes
   both the retired skill directory and the retired launcher
+
+#### Scenario: Plain update removes the retired bulk-archive surface
+
+- **WHEN** a surface generated before `cut-propose-archive` carries `.claude/skills/orbit-bulk-archive-change/` and
+  `.claude/commands/orbit/bulk-archive.md`, and a plain `orbit update` runs
+- **THEN** drift detection defeats the current-stamps short-circuit, and reconciliation removes both, leaving the other
+  fourteen workflows' skills and launchers in place
 
 #### Scenario: Fresh surfaces never see the retired set
 

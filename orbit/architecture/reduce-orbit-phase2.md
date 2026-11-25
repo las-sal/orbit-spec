@@ -263,6 +263,37 @@ Exit criteria:
 - The replay set run before and after on every cut whose replay mark says yes (G3, R-rop2-10); every removal named in
   the archive.
 
+Shipped as (2026-11-25; archived as `orbit/changes/archive/2026-11-25-cut-propose-archive/`; the charter stands).
+`npm run size:report` at archive reads propose at 4,616 estimated tokens and archive at 4,877, down from 7,982 and 7,041
+(G1). The character ceilings came down after the last edit: propose 33,523 to 19,386, archive 29,573 to 20,000, apply
+15,591 to 14,876, sync-specs 6,597 to 6,573 and onboard 23,567 to 23,562 (G2). No cut was marked for the replay set, so
+none was replayed (R-rop2-10). One premise the inventory gave for that does not hold (D-inv-4): the replay set's
+`propose` case is a consume-mode run, and its `staging-moved` grader checks Step 0d's move, which now lives only in the
+reference. Under R-rop2-10 the case was not run here, and the design's Risks entry names it. Propose's consume mode moved
+whole to a new `references/consume-mode.md`, read at mode detection's consume outcome. The body keeps the mode's heading
+and its read, and Steps 0a to 0d take their headings with them. `skill_body_convention.md`'s "The step keeps its heading"
+rule gained a sentence for that shape, at the system walk. Archive's AI-mediated consent, user-validation closure and
+failed brief save moved to `consent-at-entry.md`, `user-validation.md` and `brief-save.md`. Its PR entry observation and
+preflight moved into the existing `pr-archive-tail.md`, which gained a contents list, as `consume-mode.md` did. Apply's
+consent half moved to its own `consent-at-entry.md`. Removed under R-rop2-11: bulk-archive. Its template, launcher and
+registry entries are gone, and its skill and command joined the retired registries, so a plain `orbit update` removes
+them from an existing install. The clauses naming it as a live workflow left the specs, and the two Purposes that
+named it were edited in place at archive. What remains in `orbit-conventions`, `orbit-skill-generation` and
+`orbit-architect` names it as retired, or is one of the four historical statements D3 keeps as records of a past stage.
+Onboard, sync-specs and archive's summary schema dropped their mentions, the docs and `CLAUDE.md` count 14 workflows,
+and `docs/commands.md` says to archive several changes one at a time. Every edit is named in the cut
+ledger: 43 pairs (11 moved, 4 removed, 25 reworded, 2 restated, 1 retired), the `retired` kind being new for a deleted
+body. The suite undoes them after `cut-review-walk`'s, newest first (G0). The tests that read moved or removed text
+follow it: `orbit-content-fidelity`, `archive-user-validation`, `brief-save-step`, `signoff-hold-step`,
+`run-summary-read-cue`, `commit-step`, `moved-blocks`, `verify-scenario-map`, `orbit-generated-surface`,
+`chain-prompt-tags`, `pr-references`, `size-declaration-parity`, `deferral-refusals-parity`, and the tests that list the
+workflows. Parity hashes moved with dated notes: five function and five generated-skill hashes at apply, and two more of
+each at the system walk. The proposal was reviewed in-context and externally. The system review ran as a blind pair, and
+its walk put three things right: the consent read cue now says "before any write or anomaly prompt", as the ordering
+invariant does; archive Step 4.9 hands off to the reference's preflight section from the one result it holds; and task
+4.3's two entry-observation tests, missing until then, joined the suite. The verification pass found every resolution
+landed.
+
 ### Stage cut-explore-onboard — the two bodies whose text is their own
 
 Depends-on: replay-set, inventory

@@ -847,9 +847,9 @@ any other.
 `write` is true exactly when a row marked written in `Decision records are written when a setting reads them` holds,
 and `readers` names each term that is on, in the order `chain`, `signoff`, `tripwires`. It takes no change name and no
 doc: the settings are the project's, and every session whose body carries the decision-writing basic content runs the same call,
-whether it works on one change, on several (bulk-archive), on a named exploration, in an architect session, project-wide
+whether it works on one change, on a named exploration, in an architect session, project-wide
 (audit-drift, a project-wide walk, a bare explore) or as a dispatched worker, so the basic content can be one text in
-the fourteen bodies that carry it (`orbit-conventions`' `Decision-writing discipline`). It prints one line, `Decision
+the thirteen bodies that carry it (`orbit-conventions`' `Decision-writing discipline`). It prints one line, `Decision
 records: not written (no setting reads them)` or `Decision records: written (read by <readers, comma-separated>)`;
 `--json` prints `{"write": <boolean>, "readers": [<term>, …]}`. It reads `orbit/config.yaml` (or `orbit/config.yml`) in the working tree through
 each setting's own resolver, so an absent or unparseable file, or a value a resolver does not recognize, reads as that

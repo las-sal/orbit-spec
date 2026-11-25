@@ -8,7 +8,7 @@ authoring time (`base_fingerprints` in `.openspec.yaml`, stamped via `orbit fing
 verifies it before any archive-time write — refusing by default on divergence with a
 live-vs-would-be-written diff, warning on missing fingerprints, and recording every deliberate
 override in the run trail. Coverage is two-layer: the spec-apply engine guards CLI/programmatic
-archives; the agent-driven archive workflows run a mandatory pre-archive check step. Data loss
+archives; the agent-driven archive workflow runs a mandatory pre-archive check step. Data loss
 remains possible only via a deliberate, recorded act after the divergence was shown — never
 accidentally. (Phase 1: 3-way merge; Phase 2: scenario-level deltas — deferred follow-ups.)
 ## Requirements
@@ -163,11 +163,11 @@ capture) and compare against the change's stored `base_fingerprints`:
 
 Coverage model (two layers): the engine guard covers every path that runs `buildUpdatedSpec` —
 the `orbit archive` CLI (including `--yes` non-interactive runs) and any programmatic caller.
-The generated archive workflows (`/orbit:archive`, `/orbit:bulk-archive`) apply deltas
-agent-driven (via the sync-specs primitive) and move with `mv`, so they never run
-`buildUpdatedSpec`; those paths are covered by the mandatory pre-archive fingerprint check step
-(per `orbit-archive-modifications`' `Fingerprint-divergence inflection prompt` requirement,
-which bulk-archive SHALL apply per change). Neither layer has a silent path.
+The generated archive workflow (`/orbit:archive`) applies deltas
+agent-driven (via the sync-specs primitive) and moves with `mv`, so it never runs
+`buildUpdatedSpec`; that path is covered by the mandatory pre-archive fingerprint check step
+(per `orbit-archive-modifications`' `Fingerprint-divergence inflection prompt` requirement).
+Neither layer has a silent path.
 
 #### Scenario: Stale snapshot refused
 
@@ -199,7 +199,7 @@ which bulk-archive SHALL apply per change). Neither layer has a silent path.
 
 #### Scenario: Agent-driven archive path is covered by the check step
 
-- **WHEN** the generated `/orbit:archive` or `/orbit:bulk-archive` workflow (which applies deltas
+- **WHEN** the generated `/orbit:archive` workflow (which applies deltas
   agent-driven rather than through `buildUpdatedSpec`) reaches its pre-archive fingerprint check
   and a requirement reports `diverged`
 - **THEN** the workflow fires the divergence inflection prompt (per `orbit-archive-modifications`)

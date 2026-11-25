@@ -1,0 +1,111 @@
+{
+  "command": "archive",
+  "timestamp": "2026-11-25T22:54:18Z",
+  "change": "cut-propose-archive",
+  "kind": "lifecycle",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Archived cut-propose-archive to orbit/changes/archive/2026-11-25-cut-propose-archive/. Propose and archive each fit 5,000 estimated tokens (4,616 and 4,877 by npm run size:report at archive), down from 7,982 and 7,041; propose's consume mode moved whole to a reference read at the consume outcome, archive's AI-mediated consent, user-validation closure, failed brief save and PR entry/preflight moved to references, and apply's consent half followed; bulk-archive is removed (R-rop2-11) and converges away on update; every body edit is named in the cut ledger (43 pairs). Ten capabilities synced (25 requirements modified); two Purposes edited in place; the stage's Shipped as and CLAUDE.md written at archive. No cut was marked for the replay set (R-rop2-10); the Shipped as notes that D-inv-4's premise does not hold for the propose case.",
+  "archive_path": "orbit/changes/archive/2026-11-25-cut-propose-archive/",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": [
+      "orbit-architect",
+      "orbit-archive-modifications",
+      "orbit-base-fingerprints",
+      "orbit-conventions",
+      "orbit-decision-records",
+      "orbit-engine-gates",
+      "orbit-lifecycle-consent",
+      "orbit-propose-modifications",
+      "orbit-run-summary-emit",
+      "orbit-skill-generation"
+    ],
+    "added": 0,
+    "modified": 25,
+    "removed": 0,
+    "renamed": 0
+  },
+  "unresolved_markers": [],
+  "user_decision": "proceeded_with_no_critical",
+  "consent": "user-invoked",
+  "warnings": [
+    "CI on reduce-orbit-phase2 (run 45705173188, the verification walk's push): Linux and lint pass; the macOS leg fails only completion-offers.test.ts (the generated zsh script's -n parse), red on main since e2eabb02 and outside this program.",
+    "At-archive edits: orbit-lifecycle-consent's Purpose drops '/ bulk-archive per change'; orbit-base-fingerprints' Purpose says the agent-driven archive workflow runs (singular); the stage's Shipped as paragraph in orbit/architecture/reduce-orbit-phase2.md; CLAUDE.md's phase 2 paragraph names the shipped stage.",
+    "Audit-drift pre-archive: one Category 5 warning, touchpoints divergence: src/core/templates/workflows/pr-choreography.ts is unpredicted: pr-archive-tail.md is generated from it, so the apply's A4 moves and the system walk's pointer rename (F4) edited it, while the Touchpoints named the reference under archive-change.ts; Categories 1 to 4 and 6 clean, no lenses (Category 2 skipped)."
+  ],
+  "judgements": [
+    {
+      "kind": "readiness",
+      "formed_against": [
+        "2026-11-25T03-30-56Z",
+        "2026-11-25T03-31-25Z",
+        "2026-11-25T17-56-28Z",
+        "2026-11-25T17-56-56Z"
+      ],
+      "disposition": "ready",
+      "reasoning": "Both review cycles had an independent fresh and external pass, and every finding of the four was walked; the in-context verification of the system walks found all seven resolutions landed, and its own two suggestions were walked, so review-system passed with nothing outstanding. The exit criteria hold as measured at archive: both bodies under 5,000 estimated tokens, the edited bodies' ceilings lowered, bulk-archive removed with its ruling named, no cut marked for replay. The full suite passes after the sync and move (219 files, 4,533 tests), validate --all --strict and validate --sources pass.",
+      "ratified_by": "ai",
+      "accepted": [
+        {
+          "claim": "The replay set's propose case grades Step 0d's move, which now lives only in consume-mode.md, and it was not run.",
+          "why": "The system pair's fresh half found D-inv-4's premise false; Sal ruled the line corrected with no replay (R-rop2-10 replays only a cut postulated to change behaviour, and the move keeps the read at the consume outcome). The case will grade the move the next time the set is replayed; the Shipped as names it."
+        },
+        {
+          "claim": "Archive sits about 120 estimated tokens under G1 (4,877).",
+          "why": "Its ceiling is 20,000 characters, the G1 line, so regrowth past 5,000 tokens fails the suite; the system walk's two additions were paid for inside it."
+        }
+      ]
+    }
+  ],
+  "pr_url": "https://github.com/las-sal/orbit-spec/pull/47",
+  "pr_state": "draft",
+  "next_recommended": "/orbit:architect reduce-orbit-phase2 — change archived; review stage cut-propose-archive and take up the program's next stage, or run /orbit:audit-drift for a project-wide drift check.",
+  "decision_records_unread": 0,
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "af79e5cc2c7f7d5efce5559eab2d555daa8c5671",
+      "frozen": true,
+      "evidence": {
+        "files": [
+          {
+            "path": "src/core/templates/workflows/pr-choreography.ts",
+            "lines": 32
+          }
+        ],
+        "share": 3.6,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ]
+}
