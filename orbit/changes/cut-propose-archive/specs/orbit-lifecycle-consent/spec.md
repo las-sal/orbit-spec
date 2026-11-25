@@ -36,6 +36,13 @@ chunks and the inherited sync. The consent prompt carries:
   gate prompt — consent asks "should we be here at all"; anomaly prompts ask "is the state
   sound"). Read-only steps never require consent; writes always follow it. A granted arrival
   stamps the consent era at the same point.
+- **Where the rule lives in the two bodies**: apply's and archive's Step 0 each carry its BASIC CONTENT
+  (`reduce-orbit-phase1`'s R-rop-3) — the provenance classification, the user-invoked path, the uncertainty rule, the
+  ordering invariant, the consent-era stamp and sync inheritance — and tell the agent, on an arrival Step 0 classifies
+  as AI-mediated or granted, to read the skill's `references/consent-at-entry.md` and follow it before any write; that
+  reference carries the AI-mediated prompt and the granted path. Apply's Step 0 is orbit text placed in the upstream
+  portion of the apply body (upstream's steps begin at Step 1), so this requirement names that edit, made in place, per
+  `orbit-conventions`' `Generated-file disposition`.
 - **Sync inheritance**: `sync` invoked as a step inside a consented flow (e.g. archive Step 4)
   inherits that flow's consent and SHALL NOT prompt separately. Standalone `/orbit:sync` is NOT
   consent-scoped in this change — it has no consent-marked gate, no run-summary emit, and no
@@ -53,6 +60,13 @@ chunks and the inherited sync. The consent prompt carries:
 - **WHEN** the archive workflow is reached AI-mediated, the arrival is not granted, and the user
   chooses Abort at the consent prompt
 - **THEN** no baseline write, no sync, no move, and no run summary occur
+
+#### Scenario: Each consent-scoped body reads its consent reference only off the user-invoked path
+
+- **WHEN** the apply and archive skills are generated
+- **THEN** each body's Step 0 carries the user-invoked path and names `references/consent-at-entry.md` for an arrival it
+  classifies as AI-mediated or granted, and each skill ships that reference carrying the AI-mediated prompt and the
+  granted path
 
 #### Scenario: User-typed entry runs prompt-free
 

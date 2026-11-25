@@ -34,8 +34,8 @@ ceilings come down (G2), and every removal and every other edit is named (G0).
   existing surface. An adopter archives several changes one at a time with `/orbit:archive`. Onboard's command table
   row and PR-layer mention, sync-specs' consent-inheritance example, archive's schema reference and the docs that
   count or describe the command follow.
-- **The ledgers.** The cut ledger records the bodies this stage edits (propose and archive; apply and onboard, which
-  this stage also edits) and names every edit as a pair. A new `retired` kind names a workflow removed whole: a test
+- **The ledgers.** The cut ledger records the bodies this stage edits (propose and archive; apply, onboard and
+  sync-specs, which this stage also edits) and names every edit as a pair. A new `retired` kind names a workflow removed whole: a test
   holds that its skill and launcher are absent from the generated surface and present in the retired registry. Phase
   1's tighten-bodies ledger drops bulk-archive's recorded body. Each edited body's character ceiling comes down (G2).
 

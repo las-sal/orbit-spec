@@ -1,0 +1,395 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-25T04:15:10Z",
+  "change": "cut-propose-archive",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/cut-propose-archive/.orbit-runs/review-proposal-2026-11-25T03-30-56Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-25T03-30-56Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 4,
+    "suggestion": 4
+  },
+  "pushback_verification": "All 8 findings verified against current state at 513a91a6+; none stale. The cited pointers, reference sections, ledger assertion and upstream step numbering were each read before the fix.",
+  "resolution_summary": {
+    "resolved": 8,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/cut-propose-archive/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "severity": "WARNING",
+      "title": "Positional pointers in the moved text go wrong beyond the one D1 rewords",
+      "file": "orbit/changes/cut-propose-archive/design.md",
+      "line": 71,
+      "action": "D1 names Step 0d's \"the size brief below has run\" as a second reworded pair (size-declaration-parity follows it) and records the five within-span pointers that stay true; D2's A1 names the Granted bullets' \"consent era below\" (archive, apply) and \"each prompt below\" (archive) as reworded pairs; tasks 3.1, 4.1 and 4.4 carry them, 4.4's grep widened.",
+      "evidence": "propose.ts:337 \"size brief below has run\"; archive-change.ts:460 and apply-change.ts:61 \"consent era below as on the other two paths\"; size-declaration-parity.test.ts:121 asserts the string in the body. A grep of propose.ts 240-380 for below/above found the other five pointing within the moved span.",
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/cut-propose-archive/design.md",
+            "text": "\"the size brief below has run\", which becomes \"the body's size brief has run\""
+          },
+          {
+            "path": "orbit/changes/cut-propose-archive/tasks.md",
+            "text": "grep each moved span for \"below\", \"above\", \"next bullet\" and \"the other two paths\""
+          }
+        ],
+        "searched": [
+          "below",
+          "above",
+          "next bullet",
+          "the other two paths",
+          "size brief below"
+        ],
+        "scope": [
+          "src/core/templates/workflows/propose.ts",
+          "src/core/templates/workflows/archive-change.ts",
+          "src/core/templates/workflows/apply-change.ts",
+          "test/core/size-declaration-parity.test.ts"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/cut-propose-archive/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "severity": "WARNING",
+      "title": "pr-archive-tail.md already carries part of A4, and its load condition stops being true",
+      "file": "orbit/changes/cut-propose-archive/design.md",
+      "line": 106,
+      "action": "D2's A4 classifies each piece: Step 0.7's procedure moved into a new 'Entry observation' section; Step 4.9's carry-forward and Step 5.8's per-change echo reworded out of the body (the reference holds them); Step 5.8's program-PR and invalidation sentences moved into 'At the close'; the reference's 'Loaded when…' opening reworded; pr-references follows. D4 and task 4.3 follow.",
+      "evidence": "pr-archive-tail.md line 3 'Loaded when `orbit pr preflight` returned anything but `off`'; its 'Preflight, before the move' carries observations.emit / observations.outcome; 'At the close' carries the human_acts echo.",
+      "sweep": {
+        "retired": [
+          "Step 4.9's carry-forward detail and Step 5.8's echo move into the same"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/cut-propose-archive/design.md",
+            "text": "Step 0.7's procedure is NEW to the reference: a `moved` span into a new section, \"Entry observation, before any"
+          }
+        ],
+        "searched": [
+          "pr-archive-tail",
+          "Loaded when",
+          "human_acts",
+          "observations.emit"
+        ],
+        "scope": [
+          "src/core/templates/workflows/pr-choreography.ts",
+          "test/core/templates/pr-references.test.ts"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "marker_source": "internal-review",
+      "classification": "decision_required",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/cut-propose-archive/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "severity": "WARNING",
+      "title": "After A4, the HEAD-mismatch notice can no longer reach the consent preview",
+      "file": "orbit/changes/cut-propose-archive/design.md",
+      "line": 107,
+      "ratified_via": "prompt",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Keep one sentence in Step 0.7's basic content: when a consent prompt fires, run this observation (read the reference) before the prompt and name a mismatch in its preview. Leave the rest of the procedure in the reference."
+          },
+          {
+            "label": "B",
+            "body": "Carry the mismatch clause in archive's consent-at-entry.md AI-mediated text: an attached change whose HEAD is not on pr_attachment.branch names both branches and the switch in the preview. Record it as a reworded pair made before the move, and have Step 0.7 point there."
+          }
+        ],
+        "chosen": "A"
+      },
+      "action": "Option A: D2's A4 keeps Step 0.7's basic content inside Step 0's read-only discovery, on every arrival, before a consent prompt is composed and before the era stamp, so a mismatch is named in the preview, otherwise one line before Step 1; the Risks entry and task 4.3 follow, with tests for both arrivals. Ratified by Sal choosing 'Walk all' over 'Discuss F3/E2' at triage.",
+      "evidence": "Today's Step 0.7 says 'SAY SO NOW — in the consent preview when one fires'; the propose-time A4 basic content read the reference 'before Step 1', after Step 0's prompt.",
+      "sweep": {
+        "retired": [
+          "The body keeps \"before any write, read `pr_attachment`"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/cut-propose-archive/design.md",
+            "text": "every arrival, BEFORE a consent prompt is composed and before the consent-era stamp"
+          }
+        ],
+        "searched": [
+          "before Step 1",
+          "consent preview",
+          "entry observation"
+        ],
+        "scope": [
+          "src/core/templates/workflows/archive-change.ts"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/cut-propose-archive/design.md",
+          "orbit/changes/cut-propose-archive/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "severity": "WARNING",
+      "title": "skill_body_convention.md still names bulk-archive as a body not yet under the convention",
+      "file": "skill_body_convention.md",
+      "line": 76,
+      "action": "D3 and task 5.1 now drop the Exceptions paragraph's bulk-archive clause at apply; Touchpoints names the file.",
+      "evidence": "skill_body_convention.md:76 \"Not yet brought under the convention: bulk-archive (its sign-off hold, PR section and\".",
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/cut-propose-archive/design.md",
+            "text": "The project-root `skill_body_convention.md`'s Exceptions paragraph drops its bulk-archive clause"
+          },
+          {
+            "path": "orbit/changes/cut-propose-archive/tasks.md",
+            "text": "`skill_body_convention.md`'s Exceptions paragraph, which drops its bulk-archive clause"
+          }
+        ],
+        "searched": [
+          "bulk",
+          "skill_body_convention"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/cut-propose-archive/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "severity": "SUGGESTION",
+      "title": "Two of the Graceful degradation cases P2 moves belong to mode detection, not to consume mode",
+      "file": "orbit/changes/cut-propose-archive/design.md",
+      "line": 57,
+      "action": "D1 moves only the two consume-mode cases; the standalone 'no message' case stays in the body under the section heading, and the conflict case is dropped as a restated pair naming Step 0's step 2; task 3.1 follows.",
+      "evidence": "The propose body's Graceful degradation lists four cases; \"No staging directory but user explicitly invoked propose\" is standalone, and the conflict case is Step 0 step 2's three-way prompt.",
+      "sweep": {
+        "retired": [
+          "and the Graceful degradation section. The body keeps four things"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/cut-propose-archive/design.md",
+            "text": "stays in the body under the section's heading, so a"
+          }
+        ],
+        "searched": [
+          "Graceful degradation",
+          "no message"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/cut-propose-archive/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "severity": "SUGGESTION",
+      "title": "The task lists leave out three tests that read moved text, and one orphan that is a ledger entry",
+      "file": "orbit/changes/cut-propose-archive/tasks.md",
+      "line": 45,
+      "action": "Task 2.4 names chain-prompt-tags, pr-references and size-declaration-parity; task 5.3 reads 'each ORPHAN tag or orbit/scenario-ledger.yaml entry'; Touchpoints names the parity test and the ledger.",
+      "evidence": "chain-prompt-tags.test.ts:433/465 read the Granted bullet; pr-references.test.ts:110-112 read Step 5.8; orbit/scenario-ledger.yaml:175 keys \"Bulk archive saves each change's brief\".",
+      "sweep": {
+        "retired": [
+          "Retire or re-point each ORPHAN tag the removal leaves"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/cut-propose-archive/tasks.md",
+            "text": "`chain-prompt-tags` (archive's Granted bullet, A1), `pr-references` (Step 5.8, A4) and `size-declaration-parity` (Step 0d, P1)"
+          }
+        ],
+        "searched": [
+          "Bulk archive saves",
+          "Granted",
+          "human_acts"
+        ],
+        "scope": [
+          "orbit/scenario-ledger.yaml",
+          "test/core/templates/chain-prompt-tags.test.ts",
+          "test/core/templates/pr-references.test.ts"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/cut-propose-archive/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "severity": "SUGGESTION",
+      "title": "The cut ledger's data shape cannot hold a second recording of a body",
+      "file": "orbit/changes/cut-propose-archive/design.md",
+      "line": 162,
+      "action": "D4 makes CUT_RECORDED and the pairs per stage, newest stage undone first with each stage's hashes compared after its own undo, tightened-bodies undoing both, and fixes the sentence's subject; task 1.1 follows.",
+      "evidence": "cut-ledger.test.ts: expect(Object.keys(CUT_RECORDED)).toHaveLength(6) over a flat body-to-hash map holding orbit-propose, orbit-apply-change and orbit-onboard.",
+      "sweep": {
+        "retired": [
+          "which re-record propose, apply and onboard from HEAD"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/cut-propose-archive/design.md",
+            "text": "The recorded hashes and the pairs become PER STAGE"
+          }
+        ],
+        "searched": [
+          "CUT_RECORDED",
+          "re-record"
+        ],
+        "scope": [
+          "test/core/templates/cut-ledger.test.ts",
+          "test/core/templates/cut-ledger-pairs.ts"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/cut-propose-archive/specs/orbit-lifecycle-consent/spec.md",
+          "orbit/changes/cut-propose-archive/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "severity": "SUGGESTION",
+      "title": "Apply's Step 0 sits in the upstream portion, and no delta names the A1 edit to it",
+      "file": "orbit/changes/cut-propose-archive/design.md",
+      "line": 95,
+      "action": "orbit-lifecycle-consent's modified 'Consent prompts at consent-marked seams' gains a bullet naming where the rule lives in both bodies and that apply's Step 0 is orbit text in the upstream portion, with a scenario; D2 says so; task 4.1 adds its test.",
+      "evidence": "upstream/v1.3.1 apply-change.ts numbers its steps from 1 (\"1. **Select the change**\"); orbit's apply-change.ts:56 inserts \"0. **Consent at entry (provenance rule)**\" above them.",
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/cut-propose-archive/specs/orbit-lifecycle-consent/spec.md",
+            "text": "Where the rule lives in the two bodies"
+          },
+          {
+            "path": "orbit/changes/cut-propose-archive/design.md",
+            "text": "Apply's Step 0 is orbit text inside the upstream portion of its body"
+          }
+        ],
+        "searched": [
+          "Consent at entry",
+          "upstream portion"
+        ],
+        "scope": [
+          "src/core/templates/workflows/apply-change.ts"
+        ],
+        "kept": []
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Walked the fresh half of the proposal blind pair finding by finding (Sal: walk all). Every finding was real and repaired in the artifacts: the moved spans' positional pointers named as reworded pairs, A4 classified piece by piece against the reference that already holds part of it, the HEAD-mismatch observation kept before the consent prompt (option A), the convention file joined the retirement sweep, the standalone degradation case kept in the body, the missing tests and the ledger orphan named, the cut ledger made per stage, and apply's Step 0 edit named in orbit-lifecycle-consent's delta.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews cut-propose-archive",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "22161681bbcf0369a4e003c3157f2f1796cc54b5",
+      "frozen": false,
+      "evidence": {
+        "files": [],
+        "share": null,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ],
+  "ripple_misses": 0
+}

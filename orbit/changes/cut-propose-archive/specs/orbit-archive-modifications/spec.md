@@ -511,9 +511,11 @@ group or with a duplicated id, or an unreadable tasks file, is reported to the u
 No engine surface runs the write gate before the move, so the archive skill carries the production
 as a CHECKED MIRROR in its `references/user-validation.md`, held byte-equal to this fence by a parity test (R-crc-14's
 mirror corollary). The archive body carries the step's BASIC CONTENT (`reduce-orbit-phase1`'s R-rop-3): when it runs,
-what it does in one sentence, the "says nothing" case when no marked task is unchecked, and the recovery after the
-move; and it tells the agent, when `tasks.md` holds an unchecked task carrying the marker, to read
-`references/user-validation.md` and follow it. That reference carries the two dispositions, the check of the production
+what it does in one sentence, the scan's three outcomes, and the recovery after the move. A scan that reads `tasks.md`
+and finds no unchecked task carrying the marker says nothing; one that finds one or more tells the agent to read
+`references/user-validation.md` and follow it; a `tasks.md` that exists and cannot be read is reported to the user,
+who repairs it before the archive proceeds, or aborts, before the sync and the move, and is never taken as an empty
+marked set. That reference carries the two dispositions, the check of the production
 before the move, the report-to-the-user cases and the brief. When the emit
 still refuses after the move, the archive SHALL repair the payload and re-run `orbit emit archive`
 against the archived directory, never repeating the sync or the move.
@@ -581,7 +583,8 @@ are its only surfaces.
 
 - **WHEN** the archive skill is generated
 - **THEN** its Step 3.2 basic content says nothing when no marked task is unchecked, names
-  `references/user-validation.md` for the case where one is, and a parity test finds the DEFERRAL REFUSALS
+  `references/user-validation.md` for the case where one is, reports an unreadable `tasks.md` for repair or abort
+  before the move without reading the reference, and a parity test finds the DEFERRAL REFUSALS
   production in that reference byte-equal to this requirement's fence, and not in the body
 
 ### Requirement: The archive saves the change's brief before the sync
