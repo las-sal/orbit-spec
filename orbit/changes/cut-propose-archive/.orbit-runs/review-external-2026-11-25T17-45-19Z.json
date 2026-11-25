@@ -1,0 +1,14 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-11-25T17:45:19Z",
+  "change": "cut-propose-archive",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "prompt_path": "orbit/changes/cut-propose-archive/.orbit-runs/external-prompt-system-2026-11-25T17-45-01Z.md",
+  "target": "codex",
+  "final_assessment": "External review prompt packaged for cut-propose-archive (iter 1, mode system) as the external half of a launched blind pair; awaiting findings from codex.",
+  "pair": true,
+  "awaiting_findings": true,
+  "next_recommended": "Paste orbit/changes/cut-propose-archive/.orbit-runs/external-prompt-system-2026-11-25T17-45-01Z.md into the target AI, and save the response as orbit/changes/cut-propose-archive/.orbit-runs/external-system-<TS>.md"
+}
