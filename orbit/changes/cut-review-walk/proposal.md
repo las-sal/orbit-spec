@@ -26,7 +26,7 @@ edit is named (G0).
   the pass genre is VERIFICATION, or when the emit's refusal says the engine computed it); dispatching a fresh pass and
   re-running a pair's missing fresh half (when the reviewer is `fresh`, alone or as a pair's half); architecture mode's
   target, context and hand-rendered shape (with `--as architecture`); the flag and reviewer-selector tables (into the
-  existing `flags-detail.md`, at Step 3). The duplicated "Output format (change modes)" section and the preamble's
+  existing `flags-detail.md`, read at Step 1, where the reviewer is resolved before anything is read or asked). The duplicated "Output format (change modes)" section and the preamble's
   branch-by-branch dispatch detail go; the prose that stays is tightened.
 - **The chain end step's tag paragraph** — what the three prompt tags mean and what a chained command records — leaves
   the basic content of the five chaining bodies (propose, ff, apply, review, address-reviews) for

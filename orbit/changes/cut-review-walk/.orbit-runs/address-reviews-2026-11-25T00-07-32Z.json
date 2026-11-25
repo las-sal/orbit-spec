@@ -1,0 +1,186 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-25T00:07:32Z",
+  "change": "cut-review-walk",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/cut-review-walk/.orbit-runs/review-system-2026-11-24T23-59-16Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-24T23-59-16Z",
+  "latest_apply_token": "2026-11-24T23-48-08Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 3
+  },
+  "pushback_verification": "All three verified against current state; none stale.",
+  "resolution_summary": {
+    "resolved": 3,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/cut-review-walk/design.md",
+          "orbit/changes/cut-review-walk/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved",
+      "severity": "SUGGESTION",
+      "title": "The new ceilings sit above G1's 20,000 characters, so nothing holds the two bodies under 5,000 tokens",
+      "file": "test/core/templates/skill-body-budget.test.ts",
+      "line": 43,
+      "action": "Option A: capped orbit-review's and orbit-address-reviews' ceilings at 20,000 (the smaller of size plus 5% and 20,000), naming the previous ceilings; D7 and task 5.4 state the cap.",
+      "evidence": "Ceilings were 20961 and 20918 at skill-body-budget.test.ts:43-44, above 20,000 characters.",
+      "sweep": {
+        "retired": [
+          "'orbit-review': 20961,",
+          "'orbit-address-reviews': 20918,"
+        ],
+        "introduced": [
+          {
+            "path": "test/core/templates/skill-body-budget.test.ts",
+            "text": "'orbit-review': 20000,"
+          },
+          {
+            "path": "test/core/templates/skill-body-budget.test.ts",
+            "text": "'orbit-address-reviews': 20000,"
+          },
+          {
+            "path": "orbit/changes/cut-review-walk/design.md",
+            "text": "A body that fits G1 is capped at 20,000 characters"
+          }
+        ],
+        "searched": [
+          "20961",
+          "20918",
+          "size plus 5%"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved",
+      "severity": "SUGGESTION",
+      "title": "The schema reference still calls per_finding the default walk mode",
+      "file": "src/core/templates/workflows/address-reviews.ts",
+      "line": 951,
+      "action": "Reworded the snippet heading and its Contents entry to '(a) Clean run (per_finding, all IN, no fork)' and dropped '(default)' from the worked report's Walk mode line.",
+      "sweep": {
+        "retired": [
+          "Walk-mode clean run",
+          "per_finding default",
+          "per_finding (default)"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/templates/workflows/address-reviews.ts",
+            "text": "(a) Clean run (per_finding, all IN, no fork)"
+          }
+        ],
+        "searched": [
+          "default",
+          "Walk-mode clean run"
+        ],
+        "scope": [
+          "test/core/templates"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/templates/cut-ledger-pairs.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved",
+      "severity": "SUGGESTION",
+      "title": "The flag table moved into flags-detail.md still points readers at flags-detail.md",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 1147,
+      "action": "Reworded the --focus and --mark rows to 'See section 13 below.' and 'See section 11 below.' as two body pairs placed before V4 in the cut ledger, so the moved span stays byte-equal to its source.",
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "src/core/templates/workflows/review.ts",
+            "text": "See section 13 below."
+          },
+          {
+            "path": "src/core/templates/workflows/review.ts",
+            "text": "See section 11 below."
+          },
+          {
+            "path": "test/core/templates/cut-ledger-pairs.ts",
+            "text": "V4-pointers-mark"
+          }
+        ],
+        "searched": [
+          "references/flags-detail.md"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Three of three resolved, each in the obvious-fix lane after walk all: review's and address-reviews' character ceilings capped at G1's 20,000 so the suite fails when either regrows past 5,000 tokens (D7 and task 5.4 name the cap), the schema reference no longer calls per_finding a default, and the two flag rows the V4 move carried into flags-detail.md point at their sections there, reworded as body pairs before the move so the moved span stays byte-equal.",
+  "iteration": 4,
+  "next_recommended": "/orbit:address-reviews cut-review-walk",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "ecf27d147b6caaa394b29c1642012726caad89be",
+      "frozen": true,
+      "evidence": {
+        "files": [],
+        "share": 0,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ],
+  "ripple_misses": 0
+}

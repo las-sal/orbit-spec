@@ -1136,7 +1136,7 @@ On the PASTED route print: \`If this session ends before the fresh half does: IF
 
 const REVIEW_FLAGS_DETAIL_REFERENCE = `# Reference: review flags — the flag table and the reviewer selectors, then \`--mark\` / \`--parallel\` / \`--focus\`
 
-Read at Step 3 of every pass for its first section; sections 11–13 are followed only when their flag is set.
+Read at Step 1 of every pass for its first section; sections 11–13 are followed only when their flag is set.
 
 ### 3. The flags, the reviewer selectors and the wrong-mode notes
 
@@ -1144,14 +1144,14 @@ Read at Step 3 of every pass for its first section; sections 11–13 are followe
 |---|---|---|
 | \`--fast\` / \`--full\` / \`--thorough\` | \`--full\` | Depth. Mutually exclusive. \`--thorough\` is partially specified; fall back to \`--full\` if unclear. |
 | \`--parallel\` | off | Spawn subagents for heavy passes. Proposal: parallelize Passes 2, 4, 6. System: parallelize Passes 2, 3, 4, 5. |
-| \`--focus <lens>\` | none | Emphasize specific passes (additive — does not skip others). See \`references/flags-detail.md\`. |
+| \`--focus <lens>\` | none | Emphasize specific passes (additive — does not skip others). See section 13 below. |
 | \`--strict\` | off | Fail-fast on the first CRITICAL or the first BLOCK — stop on what must be addressed. Useful for CI-like runs. |
 | \`--reviewer <value>\` | \`in-context\` | Reviewer: \`in-context\` (this session — the reacting class) / \`fresh\` (same model, clean context — a clean-context subagent; see Dispatching a fresh pass) / \`external\` (a different AI in a separate session — the handoff branch, \`references/external-handoff.md\`, which packages the prompt from \`references/prompt-template.md\` and \`references/mode-sections.md\`) / \`blind-pair\` (one fresh and one external pass in one invocation — \`references/blind-pair.md\`). |
 | \`--in-context\` | off | Exactly \`--reviewer in-context\`. |
 | \`--fresh\` | off | Exactly \`--reviewer fresh\` (same model, clean context). |
 | \`--external\` | off, proposal/system only | Exactly \`--reviewer external\`. |
 | \`--blind-pair\` | off, proposal/system only | Exactly \`--reviewer blind-pair\`. |
-| \`--mark\` | off, proposal only | After report, write \`@review: <text>\` markers at each finding's file:line. See \`references/flags-detail.md\`. |
+| \`--mark\` | off, proposal only | After report, write \`@review: <text>\` markers at each finding's file:line. See section 11 below. |
 | \`--skip-verify\` | off, system only | Skip Pass 0 (verify-change). Use when verify-change was run separately. |
 
 **Reviewer selectors.** Resolve the reviewer BEFORE anything is read or written, by this table; every error row is a clean usage error that runs no pass and writes no file:
@@ -1363,7 +1363,7 @@ The pass genre is a record and a header word; the gate reads nothing of it.
 
 ### 1. Resolve the mode
 
-Resolve the MODE first — it decides what the positional IS — from \`--as proposal|system|architecture\`. **Architecture mode is NEVER inferred**: it needs the flag, and a positional matching a doc name does NOT trigger it. Without \`--as\`, infer a change mode from \`orbit/changes/<name>/tasks.md\`'s checkboxes: all unchecked → \`proposal\`; all checked plus code changes since the change was proposed (\`git log --format=%h -- orbit/changes/<name>/ ':!orbit/changes/<name>/.orbit-runs'\` — hashes only, never commit subjects, which can carry prior passes' counts) → \`system\`; mixed or ambiguous → \`AskUserQuestion\` (chain: target). State the resolution in the report header (\`Mode: proposal (inferred from 12 unchecked tasks)\`).
+Resolve the reviewer FIRST, before anything is read, asked or written: read \`references/flags-detail.md\` and follow its first section; a selector usage error stops here. Then resolve the MODE — it decides what the positional IS — from \`--as proposal|system|architecture\`. **Architecture mode is NEVER inferred**: it needs the flag, and a positional matching a doc name does NOT trigger it. Without \`--as\`, infer a change mode from \`orbit/changes/<name>/tasks.md\`'s checkboxes: all unchecked → \`proposal\`; all checked plus code changes since the change was proposed (\`git log --format=%h -- orbit/changes/<name>/ ':!orbit/changes/<name>/.orbit-runs'\` — hashes only, never commit subjects, which can carry prior passes' counts) → \`system\`; mixed or ambiguous → \`AskUserQuestion\` (chain: target). State the resolution in the report header (\`Mode: proposal (inferred from 12 unchecked tasks)\`).
 
 ### 2. Resolve the target
 
@@ -1373,7 +1373,7 @@ Resolve the MODE first — it decides what the positional IS — from \`--as pro
 
 ### 3. Resolve flags
 
-Resolve the reviewer FIRST, before anything is read or written: read \`references/flags-detail.md\` and follow its first section (the flags, the reviewer selectors and the wrong-mode notes). The first three reviewer values are the classes; \`blind-pair\` is not a class but an INVOCATION of both independent classes at once — one fresh pass and one external pass, blind to each other. Each reviewer value has ONE shorthand, exactly \`--reviewer <value>\`, and an invocation carries AT MOST ONE selector. \`in-context\` runs this body's steps; \`fresh\` dispatches (Dispatching a fresh pass); \`external\` loads \`references/external-handoff.md\` and follows it, packaging the prompt from \`references/prompt-template.md\` and \`references/mode-sections.md\`, and no pass of the internal classes runs; \`blind-pair\` loads \`references/blind-pair.md\` AND \`references/external-handoff.md\` and follows the pair reference, which runs both halves. \`external\` and \`blind-pair\` require \`--as proposal|system\`.
+The other flags and the wrong-mode notes are that same section's, read at Step 1. The first three reviewer values are the classes; \`blind-pair\` is not a class but an INVOCATION of both independent classes at once — one fresh pass and one external pass, blind to each other. Each reviewer value has ONE shorthand, exactly \`--reviewer <value>\`, and an invocation carries AT MOST ONE selector. \`in-context\` runs this body's steps; \`fresh\` dispatches (Dispatching a fresh pass); \`external\` loads \`references/external-handoff.md\` and follows it, packaging the prompt from \`references/prompt-template.md\` and \`references/mode-sections.md\`, and no pass of the internal classes runs; \`blind-pair\` loads \`references/blind-pair.md\` AND \`references/external-handoff.md\` and follows the pair reference, which runs both halves. \`external\` and \`blind-pair\` require \`--as proposal|system\`.
 
 ### 4. Load context
 
@@ -1391,7 +1391,7 @@ From the returned \`contextFiles\`, read every artifact: \`proposal\`, \`design\
 - \`orbit/changes/<name>/sketches/\` if present
 - Project context: \`CLAUDE.md\` (root), \`orbit/project.md\`, any \`*_convention.md\` at project root
 - Baseline: \`orbit/specs/*/spec.md\`
-- Orbit lenses: \`orbit/lenses/perspectives.md\`, \`orbit/lenses/critical-paths.md\` (system mode primarily; proposal mode uses for cross-doc checks)
+- Orbit lenses: \`orbit/lenses/perspectives.md\`, \`orbit/lenses/critical-paths.md\` (system mode primarily, cross-doc checks in proposal mode)
 
 System mode also reads:
 - \`git diff <change-start>..HEAD -- . ':!orbit/changes/<name>/.orbit-runs'\` — \`<change-start>\` is the commit that first added the change's \`proposal.md\`, found by hash alone (\`git log --diff-filter=A --format=%h -- orbit/changes/<name>/proposal.md | tail -1\`); commit subjects can carry prior passes' counts, so a REVIEW-genre pass never reads them. The pathspec keeps the trail's pass records and walk logs out of what the pass reads
@@ -1403,7 +1403,7 @@ Decide this pass's PASS GENRE first, by the table under **Pass genre** above. A 
 
 - **REVIEW pass genre** — SKIP the rest of this step: the metadata probe above is the ONLY read of the trail's pass and walk records a REVIEW-genre pass makes. Pushback is current-state verification and needs no prior list, and the iteration ordinal and trend are ENGINE-computed at render time from the trail — never authored here. The owner's ONE exemption: architecture mode keeps its hand-computed per-doc iteration note (Step 8), counted over \`review-architecture-*.json\` emits in \`orbit/architecture/.orbit-runs/\` whose \`doc\` field equals the doc under review — the trail is shared across docs, and a review of doc B must never treat doc A's run as its previous iteration.
 - **VERIFICATION pass genre** — this pass VERIFIES the walks; it does not re-review the whole artifact: read \`references/verification.md\` and follow it.
-- **A refusal naming owed \`verification\` keys** means the engine computed VERIFICATION: read \`references/verification.md\` and follow it from the refusal you already have.
+- **A refusal saying the pass owes \`verification\`**, with owed keys or none, means the engine computed VERIFICATION: read \`references/verification.md\` and follow it from the refusal you already have.
 
 ### Dispatching a fresh pass (\`--reviewer fresh\`)
 
@@ -1419,7 +1419,7 @@ Load \`references/passes-<mode>.md\` for the RESOLVED mode — proposal (9 passe
 
 ### Disjunctive recommendations: emit structured \`recommendation_options\`
 
-When a finding's recommendation genuinely offers a choice between two or more defensible concrete paths (different outcomes, not rewordings), emit \`recommendation_options: [{label, body}]\` beside the prose \`recommendation\` — each entry a non-empty \`label\` (\`"A"\`, \`"B"\`, …) and the concrete action the user would take. Never for a single action or a loose conversational "or" ("fix it now or later"): false-negative bias is intentional. The prose still summarizes the disjunction; the structured field, OPTIONAL on every finding, is the fork address-reviews consumes (shape: \`references/run-summary-schema.md\`).
+When a finding's recommendation genuinely offers a choice between two or more defensible concrete paths (different outcomes, not rewordings), emit \`recommendation_options: [{label, body}]\` beside the prose \`recommendation\` — each entry a non-empty \`label\` (\`"A"\`, \`"B"\`, …) and the concrete action. Never for a single action or a loose conversational "or" ("fix it now or later"): false-negative bias is intentional. The prose still summarizes the disjunction; the structured field, OPTIONAL on every finding, is the fork address-reviews consumes (shape: \`references/run-summary-schema.md\`).
 
 ### 7. Apply scorecard rollup
 
@@ -1427,7 +1427,7 @@ Roll every pass's findings into the 3-dimension scorecard per the mode's dimensi
 
 ### 8. Author the direction and the commentary
 
-**The direction.** An independent pass OWES its forward recommendation: when \`reviewer_class\` is \`fresh\` or \`external\`, compose \`direction\` — \`disposition\` exactly one of \`forward\` | \`hold\`, \`reasoning\` a non-empty string, multi-line allowed. The SHAPE is \`orbit-emit-composition\`'s **The review payload carries \`direction\`**: \`orbit emit review\` REFUSES a fresh or external payload without it, and a mis-shaped one at any class, in every mode (an architecture-mode fresh pass owes it too: the rule keys on class, never on mode). An \`in-context\` pass MAY carry one (optional there): the reacting class's direction is the readiness record's job. The CONTENT is \`orbit-report-rendering\`'s **Direction renders as its own section and its absence is marked on independent passes**: the direction says WHICH WAY and WHY — your own recommendation on moving forward — and never states finding counts, the gate's state, or a command token; those exist only in the report's engine-computed sections, and the report renders the direction in its own \`### Direction\` section inside the quarantine, the engine tail still last. The engine judges presence and shape only: whether the direction is RIGHT, and whether its reasons agree with its token, is the in-context reaction's and the readiness author's call.
+**The direction.** An independent pass OWES its forward recommendation: when \`reviewer_class\` is \`fresh\` or \`external\`, compose \`direction\` — \`disposition\` exactly one of \`forward\` | \`hold\`, \`reasoning\` a non-empty string, multi-line allowed. The SHAPE is \`orbit-emit-composition\`'s **The review payload carries \`direction\`**: \`orbit emit review\` REFUSES a fresh or external payload without it, and a mis-shaped one at any class, in every mode (an architecture-mode fresh pass owes it too: the rule keys on class, never on mode). An \`in-context\` pass MAY carry one (optional there): the reacting class's direction is the readiness record's job. The CONTENT is \`orbit-report-rendering\`'s **Direction renders as its own section and its absence is marked on independent passes**: the direction says WHICH WAY and WHY — your own recommendation on moving forward — and never states finding counts, the gate's state, or a command token; those exist only in the report's engine-computed sections, and the report renders the direction in its own \`### Direction\` section inside the quarantine, the engine tail still last. The engine judges presence and shape only: whether the direction is RIGHT, and whether its reasons agree with its token, is the readiness author's call.
 
 **The commentary** (change modes) is the emit's OPTIONAL \`commentary\` field: the pattern behind the findings, what was probed and how hard, risk texture — everything the structured sections can't say. It NEVER states finding counts, gate verdicts, or next commands (those exist only in the report's engine-computed sections). The iteration note is NOT authored — the renderer computes it from the trail. Architecture mode keeps its hand-computed iteration note (matching mode AND \`doc\`, per Step 5 — never cross-doc): \`Note: N of these findings appeared in the last run on <date>. M new this run.\` / \`First architecture review for this doc.\`
 
@@ -1462,7 +1462,7 @@ When uncertain, prefer the lower severity (\`orbit-conventions\`' Severity ladde
 
 ### Read-before-reference enforcement
 
-Every finding that cites a specific file:line is backed by an actual read of that line; an inferred citation ("I think this is around line 50 of design.md") is read first or downgraded to a less specific finding ("design.md mentions <topic> but does not specify <X>"), with no false-precision line number.
+Every finding that cites a specific file:line is backed by an actual read of that line; an inferred citation is read first or downgraded to a less specific finding ("design.md mentions <topic> but does not specify <X>"), with no false-precision line number.
 
 ## Worked example (the change-mode turn shape)
 

@@ -811,7 +811,7 @@ describe('rc02b severity ladder: the generated bodies NAME the ladder and define
     const body = review.instructions;
     const bias = body.split('### Pushback bias')[1].split('###')[0];
     expect(bias).toMatch(LADDER);
-    // cut-review-walk (V4): the flag table is `references/flags-detail.md`'s first section, read at Step 3.
+    // cut-review-walk (V4): the flag table is `references/flags-detail.md`'s first section, read at Step 1.
     const strictRow = ref(review, 'flags-detail.md').split('\n').find(l => l.startsWith('| `--strict`'))!;
     expect(strictRow).toMatch(/block/i);
     const markGist = body.split('### 11. Rarely-used flags')[1].split('## Special cases')[0];
@@ -1169,8 +1169,10 @@ describe('rc08a task 4.2: the walk body and its schema reference carry the lifec
   // @scenario text orbit-address-reviews :: Every walk runs finding by finding :: A retired batch trigger walks finding by finding
   it('batch mode is removed (R-rop2-12): a retired trigger walks finding by finding, the walk saying so; the schema has one walk mode', () => {
     expect(step3).not.toContain('single aggregated step');
-    expect(step3).toContain('Batch mode was removed: an invocation whose message carries a retired batch phrase ("fix them all", "batch them", "go ahead with all", "address all at once", or one of the same intent) is walked finding by finding, saying so in one line');
-    expect(body).toContain('a `--batch` flag is dropped before the positional resolves, and the walk says so in one line');
+    // The system walk (external W5): both retired forms get their notice before discovery, so an early exit still gives it.
+    const input = body.split('**Input**:')[1].split('\n')[0];
+    expect(input).toContain('Batch mode was removed: a `--batch` flag is dropped before the positional resolves, and an invocation carrying it or a retired batch phrase ("fix them all", "batch them", "go ahead with all", "address all at once", or one of the same intent) is walked finding by finding — say so in one line, before discovery.');
+    expect(body.indexOf('**Input**:')).toBeLessThan(body.indexOf('### 1. Discover'));
     expect(schema).toContain('"walk_mode": "per_finding",');
     expect(schema).not.toContain('"walk_mode": "per_finding" | "batch"');
     expect(notes).not.toContain('`--batch` argv');
@@ -1178,7 +1180,7 @@ describe('rc08a task 4.2: the walk body and its schema reference carry the lifec
 
   // @scenario text orbit-address-reviews :: Every walk runs finding by finding :: A retired mid-walk switch is a delegation
   it('a bare mid-walk "batch the rest" is read as a delegation of the rest, recorded verbatim', () => {
-    expect(step3).toContain('a bare mid-walk "go batch" / "switch to batch" / "batch the rest" is a mid-walk delegation of the rest (3b.5), recorded verbatim as `delegation_directive`');
+    expect(step3).toContain('A bare mid-walk "go batch" / "switch to batch" / "batch the rest" is a mid-walk delegation of the rest (3b.5), recorded verbatim as `delegation_directive`');
     expect(body).toContain('**A mid-walk DELEGATION** — an explicit user directive');
   });
 

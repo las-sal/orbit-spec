@@ -174,7 +174,7 @@ describe('what stays is in the body', () => {
     expect(emitRef).toContain('invoke BARE — `orbit emit address-reviews --payload <payload-file>`');
     expect(emitRef).toContain('`--doc <doc-name>` instead of `--change`');
     expect(triageRef).toContain("The logs go in token order, oldest first, then the markers. Write each source's log when that source's findings are walked, before the next source begins.");
-    expect(walk.instructions).toContain('read `references/triage-sources.md` before the walk');
+    expect(walk.instructions).toContain('read `references/triage-sources.md` first and follow it as you build the triage below');
   });
 
   /**

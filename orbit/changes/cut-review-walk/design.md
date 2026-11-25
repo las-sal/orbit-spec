@@ -151,7 +151,7 @@ each moved heading, and each hit naming a moved section is re-pointed to its ref
 `resolution-detail.md`'s "the body's DISCOVERY rows 4 and 5" and "the DISCOVERY fence in the body's Step 1"
 (`address-reviews.ts:373`, `:377`), and review's schema reference's "Step 5's VERIFICATION branch" (`review.ts:212`).
 References are not hashed by the ledger, so these re-pointings are named in the archive. `flags-detail.md` opens "Loaded
-only when one of these flags is set"; with V4 it is read at Step 3 of every pass, so that line is reworded.
+only when one of these flags is set"; with V4 it is read at the start of every pass (Step 1, where the reviewer selectors are resolved before anything is read or asked: the system walk, 2026-11-24), so that line is reworded.
 
 New references: `discovery.md`, `triage-sources.md`, `sweep-record.md`, `reading-findings.md`, `redesign.md`,
 `report.md`, `cascade.md` (address-reviews); `verification.md`, `fresh-dispatch.md`, `architecture-mode.md` (review).
@@ -198,6 +198,9 @@ so `orbit-conventions`' `The review body carries the table as a checked mirror` 
 
 After the last body edit (the walk's included), each edited body's character ceiling is lowered to its new size plus 5%, as
 a named edit naming its previous ceiling, the rule phase 1 set; a body whose size plus 5% would exceed its ceiling keeps it.
+A body that fits G1 is capped at 20,000 characters (5,000 estimated tokens), its ceiling the smaller of its size plus 5%
+and 20,000, so the suite fails the moment it regrows past G1 (the system walk, 2026-11-24: size plus 5% left review and
+address-reviews room to regrow past 5,000 tokens with the suite green).
 Apply's, ff's and propose's come down too, since the tag paragraph's move shrinks them by about 990 characters, and
 onboard's, which loses its batch mentions.
 

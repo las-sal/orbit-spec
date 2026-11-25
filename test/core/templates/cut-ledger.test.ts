@@ -168,7 +168,7 @@ describe('cut ledger (reduce-orbit-phase2)', () => {
     expect(skillRefs('orbit-address-reviews', p.copied!.ref)).toContain(p.copied!.text);
     const b = body('orbit-address-reviews');
     const triage = b.slice(b.indexOf('### 2. Triage'), b.indexOf('### 3. Walk each marker'));
-    expect(triage).toContain('when discovery yields more than one source, or a pass a log already names, read `references/triage-sources.md` before the walk');
+    expect(triage).toContain('when discovery yields more than one source, or a pass a log already names, read `references/triage-sources.md` first and follow it as you build the triage below');
   });
 
   it('the moved texts each reference holds byte-equal also exist nowhere else in the body', () => {

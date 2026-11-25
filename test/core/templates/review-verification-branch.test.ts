@@ -105,7 +105,7 @@ describe('review body: the VERIFICATION branch (1.5)', () => {
   // @scenario text orbit-review :: Verification-genre passes grade the walk record :: A refusal reconciles the probe with the engine
   it('the body routes a refusal naming owed verification keys to the reference, from the refusal in hand', () => {
     const step5 = skill.split('### 5. Inspect prior runs')[1].split('\n### ')[0];
-    expect(step5).toContain('- **A refusal naming owed `verification` keys** means the engine computed VERIFICATION: read `references/verification.md` and follow it from the refusal you already have.');
+    expect(step5).toContain('- **A refusal saying the pass owes `verification`**, with owed keys or none, means the engine computed VERIFICATION: read `references/verification.md` and follow it from the refusal you already have.');
   });
 
   it('lives in Step 5 and references/verification.md only — no reference a REVIEW pass reads carries it', () => {

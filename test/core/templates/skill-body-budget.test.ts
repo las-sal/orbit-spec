@@ -26,7 +26,9 @@ const VERSION = (JSON.parse(readFileSync(path.join(repo, 'package.json'), 'utf-8
  * conditional-steps, lowered after once-per-session-detail for the eleven bodies whose emit step it moved, and lowered
  * again after tighten-bodies, after records-by-setting and after cut-review-walk (reduce-orbit-phase2's G2) wherever the
  * new size plus 5% is below the ceiling (each line names its edit and its previous ceiling; a body whose new size plus 5%
- * would exceed its ceiling keeps it, so none rises).
+ * would exceed its ceiling keeps it, so none rises). A body that fits reduce-orbit-phase2's G1 (at most 5,000 estimated
+ * tokens, 20,000 characters) is capped at 20,000, so the suite fails the moment it regrows past G1 (cut-review-walk's
+ * system walk, 2026-11-24).
  */
 const CHARACTER_CEILING: Record<string, number> = {
   'orbit-explore': 49997, // 47,616 (records-by-setting; was 52432)
@@ -40,8 +42,8 @@ const CHARACTER_CEILING: Record<string, number> = {
   'orbit-verify-change': 12803, // 12,193 (records-by-setting; was 15358)
   'orbit-onboard': 23567, // 22,650 at cut-review-walk, which kept the ceiling, as records-by-setting did (22,712): its size plus 5% would exceed it
   'orbit-propose': 33523, // 31,926 (cut-review-walk; was 34528)
-  'orbit-review': 20961, // 19,962 (cut-review-walk; was 40326)
-  'orbit-address-reviews': 20918, // 19,921 (cut-review-walk; was 45866)
+  'orbit-review': 20000, // under G1's 20,000 (cut-review-walk's system walk, 2026-11-24; was 20961, its size plus 5%)
+  'orbit-address-reviews': 20000, // under G1's 20,000 (cut-review-walk's system walk, 2026-11-24; was 20918, its size plus 5%)
   'orbit-audit-drift': 19840, // 18,895 (records-by-setting; was 22367)
   'orbit-architect': 15601, // 14,858 (records-by-setting; was 18156)
 };

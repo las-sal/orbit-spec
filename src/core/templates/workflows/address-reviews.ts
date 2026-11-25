@@ -455,7 +455,7 @@ Source: --from-file orbit/changes/add-review-workflows/.orbit-runs/external-prop
 External reviewer: Claude Opus 4.7 (fresh-context in-session subagent — iter 5)
 Input findings: 0 CRITICAL / 4 WARNING / 5 SUGGESTION
 Markers walked: 9 (all)
-Walk mode: per_finding (default)
+Walk mode: per_finding
 Pushback verification: all 9 verified against current state; 0 stale suppressions.
 Cascade summary: 14 IN files cascaded across 9 resolutions; 3 OUT files flagged_not_applied (2 baseline specs, 1 cross-change archive ref).
 
@@ -560,7 +560,7 @@ const ADDRESS_REVIEWS_RUN_SUMMARY_SCHEMA_REFERENCE = `# Reference: address-revie
 - v1 → v2 format migration (reader guidance)
 - Field notes
 - Worked-example JSON snippets
-  - (a) Walk-mode clean run (per_finding default, all IN, no fork)
+  - (a) Clean run (per_finding, all IN, no fork)
   - (b) Decision-fork ratified by chat directive
   - (c) \`--no-cascade\` — all ripples flagged-not-applied
 
@@ -948,7 +948,7 @@ The v2 shape is a **structural change** from v1, not a rename. Readers handling 
 
 ## Worked-example JSON snippets
 
-### (a) Walk-mode clean run (per_finding default, all IN, no fork)
+### (a) Clean run (per_finding, all IN, no fork)
 
 \`\`\`json
 {
@@ -1168,7 +1168,7 @@ Markers walked: <M> (subset specified: <yes/no>)
 
 0 unresolved inline markers remaining in scope.
 1 escalated marker deliberately persisted.
-Suggested next: re-run /orbit:review --as proposal to confirm clean baseline.
+Suggested next: <the engine's next_command, from orbit status --change <name> --json>
 \`\`\`
 `;
 
@@ -1208,7 +1208,7 @@ export function getAddressReviewsSkillTemplate(): SkillTemplate {
 
 **Generates resolutions; does not generate findings** — the counterpart to \`/orbit:review\`.
 
-**Input**: Optional scope (path or pattern) and optional flags. Default: whole-repo scan with safe exclusions. Batch mode was removed: a \`--batch\` flag is dropped before the positional resolves, and the walk says so in one line.
+**Input**: Optional scope (path or pattern) and optional flags. Default: whole-repo scan with safe exclusions. Batch mode was removed: a \`--batch\` flag is dropped before the positional resolves, and an invocation carrying it or a retired batch phrase ("fix them all", "batch them", "go ahead with all", "address all at once", or one of the same intent) is walked finding by finding — say so in one line, before discovery.
 
 ## Execution disciplines (epitome)
 
@@ -1230,6 +1230,8 @@ ${DECISION_WRITING_BASIC}
 
 ### 2. Triage
 
+**Several sources, or a rediscovered pass** — when discovery yields more than one source, or a pass a log already names, read \`references/triage-sources.md\` first and follow it as you build the triage below.
+
 Present discovered markers (or parsed virtual markers) as a numbered list:
 
 \`\`\`
@@ -1246,11 +1248,9 @@ Mark external-sourced entries \`(external)\`. **Blocks come first**: a source's 
 
 **Ripple-miss attribution** — on a change-scoped walk whose trail holds earlier walk logs, read \`references/sweep-record.md\` now, before any edit, and follow its first section.
 
-**Several sources, or a rediscovered pass** — when discovery yields more than one source, or a pass a log already names, read \`references/triage-sources.md\` before the walk and follow it.
-
 ### 3. Walk each marker
 
-**Every walk runs finding by finding**: each marker receives its own complete inner cycle — pushback → classify → resolve per LANE → ripple-cascade → remove-marker — before the next marker's pushback begins. Obvious-fix findings (previewed at triage) apply with no prompt and no discussion; decision-lane findings follow the present → discuss → ratify protocol (3b.5). There is NO mandatory per-finding \`AskUserQuestion\` (chain: not a prompt). The user can interrupt between markers; the resolution log captures partial completion if interrupted. Batch mode was removed: an invocation whose message carries a retired batch phrase ("fix them all", "batch them", "go ahead with all", "address all at once", or one of the same intent) is walked finding by finding, saying so in one line, and a bare mid-walk "go batch" / "switch to batch" / "batch the rest" is a mid-walk delegation of the rest (3b.5), recorded verbatim as \`delegation_directive\`.
+**Every walk runs finding by finding**: each marker receives its own complete inner cycle — pushback → classify → resolve per LANE → ripple-cascade → remove-marker — before the next marker's pushback begins. Obvious-fix findings (previewed at triage) apply with no prompt and no discussion; decision-lane findings follow the present → discuss → ratify protocol (3b.5). There is NO mandatory per-finding \`AskUserQuestion\` (chain: not a prompt). The user can interrupt between markers; the resolution log captures partial completion if interrupted. A bare mid-walk "go batch" / "switch to batch" / "batch the rest" is a mid-walk delegation of the rest (3b.5), recorded verbatim as \`delegation_directive\`.
 
 For every marker in the chosen scope, execute the lifecycle below sequentially.
 
@@ -1289,6 +1289,7 @@ The lane's protocol: (1) **PRESENT** — a FULL-PROSE briefing in chat: what the
 
 #### 3c. Apply the fix
 
+- **a reading finding** (\`pass: "reading"\`, its \`file\` a decision record or an account) is never fixed by an edit: before any edit, read \`references/reading-findings.md\` and follow it; its disposition decides whether 3d and 3d.5 run.
 - **trivial fix**: apply the edit. Re-read the file after to confirm.
 - **decision required**: apply the RATIFIED resolution (the user's chat directive, or the closure prompt's outcome) per the decision-lane protocol in 3b.5.
 - **unresolvable (default)**: append a task to \`orbit/changes/<change>/tasks.md\` (or repo-level \`TODO.md\` if no change context); task text is the marker's content + ripple-flag context.
@@ -1301,8 +1302,6 @@ If the resolution edited a normative artifact, compute the ripple-flag set — f
 #### 3d.5. Record the sweep (\`resolved\` entries only)
 
 As the entry's last step before marker removal, compose its \`sweep\`: five arrays, any of them empty, an empty array being the WRITTEN answer that there is nothing of that kind (shape: \`orbit-address-reviews\`' \`A resolved walk entry records its sweep evidence\`). A \`stale\`, \`deferred\` or \`escalated\` entry edited nothing and carries none. Read \`references/sweep-record.md\` and follow its sweep section: what each array holds, the CHECK SCOPE and PATH rules the gate checks the record by, and what a refusal asks of you.
-
-**A reading finding** (\`pass: "reading"\`, its \`file\` a decision record or an account) is never fixed by an edit: read \`references/reading-findings.md\` and follow it.
 
 #### 3e. Remove the marker (invariant)
 
