@@ -25,7 +25,6 @@ export const ALL_WORKFLOWS = [
   'ff',
   'sync',
   'archive',
-  'bulk-archive',
   'verify',
   'onboard',
   'review',

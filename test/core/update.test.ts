@@ -180,7 +180,6 @@ Old instructions content
         'orbit-continue-change',
         'orbit-ff-change',
         'orbit-sync-specs',
-        'orbit-bulk-archive-change',
         'orbit-verify-change',
       ];
 
@@ -289,7 +288,7 @@ Old instructions content
       }
 
       // D15: formerly-non-core commands are created too
-      const nonCoreCommandIds = ['new', 'continue', 'ff', 'sync', 'bulk-archive', 'verify'];
+      const nonCoreCommandIds = ['new', 'continue', 'ff', 'sync', 'verify'];
       for (const cmdId of nonCoreCommandIds) {
         const cmdFile = path.join(commandsDir, `${cmdId}.md`);
         const exists = await FileSystemUtils.fileExists(cmdFile);

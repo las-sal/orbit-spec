@@ -159,10 +159,6 @@ describe('moved blocks: each reference file holds its block, byte-equal to the r
     });
   }
 
-  it('bulk-archive still carries the sign-off hold whole (D-cs-3)', () => {
-    expect(skill('orbit-bulk-archive-change').instructions.split(SIGNOFF_HOLD_STEP).length - 1).toBe(1);
-  });
-
   it('the test fails on a one-byte change to a moved block', () => {
     const changed = COMMIT_STEP.replace('ONE line', 'ONE  line');
     expect(changed).not.toBe(COMMIT_STEP);

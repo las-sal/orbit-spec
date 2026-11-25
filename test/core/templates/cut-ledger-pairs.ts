@@ -5,19 +5,42 @@ import { getSkillTemplates } from '../../../src/core/shared/skill-generation.js'
  * reduce-orbit-phase2's cut ledger (`orbit-conventions`' `A cut ledger names every body edit a cut stage makes`): the
  * recorded hashes and the pairs, shared by `cut-ledger.test.ts`, which checks them, and `tightened-bodies.test.ts`, which
  * undoes them first. A module of its own so that importing it registers no test twice.
- *
- * cut-review-walk, task 1.1: the sha256 of each body the stage edits, recorded from the skills generated at ecf27d14
- * (`npm run build`, then `getSkillTemplates()` from `dist/`), before any template was edited. Green baseline at that
- * commit: 214 test files, 4,476 tests.
  */
-export const CUT_RECORDED: Record<string, string> = {
-  'orbit-address-reviews': '1d168f621ecf91c75b148b666283ea13916db04358ddafc1d4af86c0b155ce0a',
-  'orbit-review': '840a92d126d1b242978566238820405b14aa8ab7aaf2fc0e374bb90e0cd4d8a4',
-  'orbit-apply-change': '73ccdb9cf82f4bd801cfe5af8d71395afa4d4ee57938f0721e4369b52b85fc19',
-  'orbit-ff-change': '72fc6545e5fda5403534219b47c216d5b81197b7a0484bb6c719db32e5fbd42a',
-  'orbit-propose': '15c7bc25d8125e8c597e27b0a4afb399b7c9d6dbe764531fb855aae2ff456d92',
-  'orbit-onboard': 'c557518c6ea02c1b5b32cb8c11d0f5413b4d941e22d6fa9210525f5c75c4798e',
+
+/** The cut stages in the order they ran; the undo runs newest first. */
+export const CUT_STAGES = ['cut-review-walk', 'cut-propose-archive'] as const;
+export type CutStage = (typeof CUT_STAGES)[number];
+
+/**
+ * Each stage's sha256 of each body it edits, recorded before the stage's first template edit.
+ *
+ * cut-review-walk, task 1.1: from the skills generated at ecf27d14 (`npm run build`, then `getSkillTemplates()` from
+ * `dist/`). Green baseline at that commit: 214 test files, 4,476 tests.
+ *
+ * cut-propose-archive, task 1.1: from the skills generated at af79e5cc, the same way. Baseline at that commit: 217 test
+ * files, 4,513 tests, one failing as the change's delta predicts (`commit-step.test.ts` reads this change's delta of
+ * `orbit-conventions`, whose commit-step table no longer names bulk-archive).
+ */
+export const CUT_RECORDED: Record<CutStage, Record<string, string>> = {
+  'cut-review-walk': {
+    'orbit-address-reviews': '1d168f621ecf91c75b148b666283ea13916db04358ddafc1d4af86c0b155ce0a',
+    'orbit-review': '840a92d126d1b242978566238820405b14aa8ab7aaf2fc0e374bb90e0cd4d8a4',
+    'orbit-apply-change': '73ccdb9cf82f4bd801cfe5af8d71395afa4d4ee57938f0721e4369b52b85fc19',
+    'orbit-ff-change': '72fc6545e5fda5403534219b47c216d5b81197b7a0484bb6c719db32e5fbd42a',
+    'orbit-propose': '15c7bc25d8125e8c597e27b0a4afb399b7c9d6dbe764531fb855aae2ff456d92',
+    'orbit-onboard': 'c557518c6ea02c1b5b32cb8c11d0f5413b4d941e22d6fa9210525f5c75c4798e',
+  },
+  'cut-propose-archive': {
+    'orbit-propose': '88a57d4cc2939a28da0240c7f7cecc52eca986143fba8f69cd5ffcdc447fc00f',
+    'orbit-archive-change': '8761d53766baeaad1e5398790266dfa385e06338c5a3026cc9b71b35c0a5c716',
+    'orbit-apply-change': 'd1f6f982fbbc7bd15019c3009d9351f0214b69e414e83374276ec95b08d1faf0',
+    'orbit-onboard': '655b22c0425bd88eb6d060e8c6d7c8e26024191d8f9ea0ec3b82e270fe8f6545',
+    'orbit-sync-specs': '9eecec606b4115008fafabb90c2e518253939d95f7dd3c220a30e92ef5a92159',
+  },
 };
+
+/** Every body some stage records. */
+export const CUT_BODIES: string[] = [...new Set(CUT_STAGES.flatMap((st) => Object.keys(CUT_RECORDED[st])))];
 
 /**
  * One edit, of one kind (the requirement's table):
@@ -29,11 +52,16 @@ export const CUT_RECORDED: Record<string, string> = {
  * - `reworded`: `before` → `after`; whether the meaning is kept is the reviewer's judgement.
  * - `restated`: `before` → `after` drops text that restates `steps`, each still in the body.
  * - `shared`: any of these on a constant every body of `bodies` carries; undone in each.
+ * - `retired`: a whole workflow `ruling` takes: `bodies` names its skill directory and `command` its launcher id, and
+ *   `phrase`, specific to the workflow, occurs in no generated skill. Its `after` is empty and it is outside the
+ *   reconstruction, since no body remains.
  */
 export type CutPair = {
   id: string;
+  stage: CutStage;
   bodies: string[];
-  kind: 'moved' | 'removed' | 'reworded' | 'restated';
+  kind: 'moved' | 'removed' | 'reworded' | 'restated' | 'retired';
+  command?: string;
   shared?: true;
   ruling?: string;
   ref?: string;
@@ -51,7 +79,7 @@ export type CutPair = {
 };
 
 /** cut-review-walk's pairs, in the order applied (design D1–D5; tasks 2.1 to 4.3). */
-export const CUT_PAIRS: CutPair[] = [
+const CUT_REVIEW_WALK_PAIRS: Array<Omit<CutPair, 'stage'>> = [
   {"id":"chain-tags","bodies":["orbit-propose","orbit-ff-change","orbit-apply-change","orbit-review","orbit-address-reviews"],"kind":"moved","shared":true,"ref":"chain-end-step.md","existing":true,"start":"The chained command runs as on a typed arrival except for its prompts","end":"and its brief carries nothing from this session (a named limit).","digest":"dedcfead4a75e1e0d354dd1351c8d9056ed09e9b0f8db5daa9f47639b0469b4e","after":"A command a chain ran reads what its prompts' `(chain: …)` tags mean, and what it records, in `references/chain-end-step.md`, before its first tagged prompt when this session has not read it."},
   {"id":"AR-R2-preamble","bodies":["orbit-address-reviews"],"kind":"reworded","before":"Resolve `@review:` markers across the repo (or external-review findings from a file) with pushback discipline. The lifecycle: **discover → triage → walk → report**, where each walked finding completes its inner cycle (pushback → classify → fix → ripple-cascade → remove-marker) in walk-mode by default. Cascade-by-default auto-applies parallel edits to ripple-flagged IN-set files. Markers are removed from their source files on resolution (the marker-removal invariant) so they don't leak into canonical artifacts.\n\n**Generates resolutions; does not generate findings.** This is the counterpart to `/orbit:review`. Primary use case: close the cross-AI review cycle by ingesting external-AI findings via `--from-file`. Secondary use case: walk repo-scanned inline `@review:` markers with structured pushback.\n\n**Input**: Optional scope (path or pattern) and optional flags. Default: whole-repo scan with safe exclusions.","after":"Resolve `@review:` markers across the repo, or review findings from a file or a change's trail, with pushback discipline: **discover → triage → walk → report**, each walked finding completing its inner cycle (pushback → classify → fix → ripple-cascade → remove-marker) before the next begins. Ripple edits to IN-set files apply by default, and resolved markers are removed from their source files (the marker-removal invariant) so they don't leak into canonical artifacts.\n\n**Generates resolutions; does not generate findings** — the counterpart to `/orbit:review`.\n\n**Input**: Optional scope (path or pattern) and optional flags. Default: whole-repo scan with safe exclusions. Batch mode was removed: a `--batch` flag is dropped before the positional resolves, and the walk says so in one line."},
   {"id":"M1-fence","bodies":["orbit-address-reviews"],"kind":"moved","ref":"discovery.md","start":"```\nDISCOVERY — rows tested in order, first match wins:","end":"and exit clean.\n```","digest":"9f12418baa6ef0f6a73d1678f245fca03657eb8c44b8b64743071987d32f90c5","lead":"**Discovery** decides which sources this invocation walks.\n\n","after":"**Discovery** decides which sources this invocation walks: read `references/discovery.md` and follow it — the DISCOVERY rows, the gate's outstanding set, a marker that restates a finding, and the `--from-file` ingest by format (`references/internal-findings-format.md`, `references/external-findings-format.md`)."},
@@ -130,6 +158,58 @@ export const CUT_PAIRS: CutPair[] = [
   {"id":"WALK-E4-pay-lenses","bodies":["orbit-review"],"kind":"reworded","before":"(system mode primarily; proposal mode uses for cross-doc checks)","after":"(system mode primarily, cross-doc checks in proposal mode)"},
 ];
 
+/** cut-propose-archive's pairs, in the order applied (design D1–D4; tasks 2.2 to 4.4). */
+const CUT_PROPOSE_ARCHIVE_PAIRS: Array<Omit<CutPair, 'stage'>> = [
+  {"id": "bulk-archive-consent-clause", "bodies": ["orbit-archive-change"], "kind": "removed", "ruling": "R-rop2-11", "before": "so the pre-capability prompt is unchanged wherever no PR exists — and it is likewise omitted under `/orbit:bulk-archive`, which runs no tail. Proceed records", "after": "so the pre-capability prompt is unchanged wherever no PR exists. Proceed records", "phrase": "likewise omitted under `/orbit:bulk-archive`"},
+  {"id": "A1-archive-next-bullet", "bodies": ["orbit-archive-change"], "kind": "reworded", "before": "Unless the arrival is granted (next bullet), fire a consent **AskUserQuestion** (chain: not a prompt) BEFORE any of the command's writes", "after": "Unless the arrival is granted, fire a consent **AskUserQuestion** (chain: not a prompt) BEFORE any of the command's writes"},
+  {"id": "A1-archive-era-below", "bodies": ["orbit-archive-change"], "kind": "reworded", "before": "and stamp the consent era below as on the other two paths. No preview is shown", "after": "and stamp the consent era (the body's Consent-era stamp) as on the other two paths. No preview is shown"},
+  {"id": "A1-archive-prompt-below", "bodies": ["orbit-archive-change"], "kind": "reworded", "before": "On a granted arrival each prompt below is met by the kind its tag names", "after": "On a granted arrival each of the body's later prompts is met by the kind its tag names"},
+  {"id": "A1-archive-read", "bodies": ["orbit-archive-change"], "kind": "reworded", "before": "erring toward one extra click, never toward a silent proceed.\n\n**Consent-era stamp (migrate-on-touch)**", "after": "erring toward one extra click, never toward a silent proceed.\n\nOn an arrival classified above as AI-mediated or granted, read `references/consent-at-entry.md` and follow it before any write.\n\n**Consent-era stamp (migrate-on-touch)**"},
+  {"id": "A1-archive-ai-mediated", "bodies": ["orbit-archive-change"], "kind": "moved", "ref": "consent-at-entry.md", "start": "Unless the arrival is granted, fire a consent **AskUserQuestion** (chain: not a prompt) BEFORE any of the command's writes", "end": "**Abort leaves no baseline write, no sync, no move, and no run summary**.", "digest": "2b1dfd71e69691d3de2e29f3404b02d7984a8ec2b1c54e59c78d96d59cd22c1a", "lead": "pointing here. ", "after": "pointing here."},
+  {"id": "A1-archive-granted", "bodies": ["orbit-archive-change"], "kind": "moved", "ref": "consent-at-entry.md", "start": "Record `consent: \"setting\"`, fire no consent prompt", "end": "On every other arrival the tags change nothing.", "digest": "c19704db921d582cb940c7099704bc31420ec30c96104de1942782ea394349df", "lead": "with `may_run: true`. ", "after": "with `may_run: true`."},
+  {"id": "A1-apply-next-bullet", "bodies": ["orbit-apply-change"], "kind": "reworded", "before": "Unless the arrival is granted (next bullet), fire a consent **AskUserQuestion** (chain: not a prompt) BEFORE any write", "after": "Unless the arrival is granted, fire a consent **AskUserQuestion** (chain: not a prompt) BEFORE any write"},
+  {"id": "A1-apply-era-below", "bodies": ["orbit-apply-change"], "kind": "reworded", "before": "and stamp the consent era below as on the other two paths; every anomaly prompt", "after": "and stamp the consent era (the body's Consent-era stamp) as on the other two paths; every anomaly prompt"},
+  {"id": "A1-apply-read", "bodies": ["orbit-apply-change"], "kind": "reworded", "before": "erring toward one extra click, never toward a silent proceed.\n\n   **Ordering invariant**", "after": "erring toward one extra click, never toward a silent proceed.\n\n   On an arrival classified above as AI-mediated or granted, read `references/consent-at-entry.md` and follow it before any write.\n\n   **Ordering invariant**"},
+  {"id": "A1-apply-ai-mediated", "bodies": ["orbit-apply-change"], "kind": "moved", "ref": "consent-at-entry.md", "start": "Unless the arrival is granted, fire a consent **AskUserQuestion** (chain: not a prompt) BEFORE any write", "end": "On Abort: stop; no writes, no run summary.", "digest": "0238ac8e791cbe39117e80054d601cfd4b2fa8ad2d73e609b51f894f38246629", "lead": "pointing here. ", "after": "pointing here."},
+  {"id": "A1-apply-granted", "bodies": ["orbit-apply-change"], "kind": "moved", "ref": "consent-at-entry.md", "start": "Record `setting`, fire no consent prompt", "end": "granted alike when the object allows this command and prompted alike when it does not.", "digest": "1bf06aa84a3991780dbbdd57e1524dc24f03428259e62cf9f6f3a4c7aa39df0c", "lead": "with `may_run: true`. ", "after": "with `may_run: true`."},
+  {"id": "A4-step-0.7", "bodies": ["orbit-archive-change"], "kind": "moved", "ref": "pr-archive-tail.md", "start": "Before ANY archive write — before upstream Step 1, before sync (Step 4) and the move (Step 5)", "end": "`git switch` afterward. Unattached changes see nothing here.", "digest": "8c98e220763d152c760eee815ee09859d7706772a5abd46df9eb4cb71b1875a9", "after": "Part of Step 0's read-only discovery, on every arrival, BEFORE a consent prompt is composed and before the consent-era stamp: read `pr_attachment` from the latest attachment-bearing propose or ff emit on the change's trail; when there is one, read `references/pr-archive-tail.md` and run its entry observation now, so a HEAD mismatch is named in the consent preview when one fires, and otherwise as one line before Step 1."},
+  {"id": "A2-step-3.2", "bodies": ["orbit-archive-change"], "kind": "moved", "ref": "user-validation.md", "start": "Find every unchecked task in `tasks.md` whose line carries the `(User-validation` marker", "end": "When no marked task is unchecked, the step says nothing.", "digest": "0fb31ccfc75bed45b3639b72f87b4eb1a68390e3dafcdb49487e72d815b1d3ff", "after": "Scan `tasks.md` for unchecked tasks whose line carries the `(User-validation` marker, whether or not an apply emit declared them. When there is none, or no `tasks.md`, the step says nothing. When there is one or more, read `references/user-validation.md` and follow it before the move: it disposes of each task, checks the write gate's refusals, and briefs the user. A `tasks.md` that exists and cannot be read is REPORTED to the user, who repairs it before the archive proceeds, or aborts (chain: decision); it is never taken as an empty marked set."},
+  {"id": "A3-step-3.6", "bodies": ["orbit-archive-change"], "kind": "moved", "ref": "brief-save.md", "start": "| the save | the archive |", "end": "(it stops before the sync and the move).", "digest": "834e39bb7d468a45b23c62c714114ca879c293fdb06054ab111153ed5b01cf63", "trail": " On success the command prints the saved file's path and its `sha256`: show neither.", "after": "On success, say nothing about it and go on; the command prints the saved file's path and its `sha256`: show neither. On a non-zero exit, read `references/brief-save.md` and follow it from the result you already have."},
+  {"id": "A4-step-4.9", "bodies": ["orbit-archive-change"], "kind": "reworded", "before": "changes never attach). Anything else loads `references/pr-archive-tail.md`, and its record\nis carried forward: `observations.emit` supplies the Step 5.5 emit's `pr_url`/`pr_state`,\nand `observations.outcome` is Step 5.6's `--outcome`, so the emit and the tail act on ONE\nobservation. Nothing it observes is changed by the move. A non-zero exit is a usage error:\nreport it verbatim, and the archive continues unattached.\n\n(The HEAD-vs-attachment observation already fired at Step 0.7, before any archive write; the\ntail re-checks HEAD immediately before staging as its guard.)", "after": "changes never attach). A non-zero exit is a usage error: report it verbatim, and the archive\ncontinues unattached. On any other result, read `references/pr-archive-tail.md` now, if Step 0.7\ndid not, and carry its record forward."},
+  {"id": "A4-step-5.8-moved", "bodies": ["orbit-archive-change"], "kind": "moved", "ref": "pr-archive-tail.md", "start": "After a program-PR append: the program PR is named and the flip", "end": "action on that pull request is the user's.", "digest": "2dd06ea15366481bdc092be65598894437c46debafd36624ef25c808da5696de", "lead": "Run none of them. ", "after": "Run none of them."},
+  {"id": "A4-step-5.8-echo", "bodies": ["orbit-archive-change"], "kind": "reworded", "before": "When the flow hands control back at an OUTWARD seam, the completion readout shows the acts that\nstay the human's. After a per-change tail, show each of `orbit pr tail`'s `human_acts`\nargv verbatim, labelled as the user's own: the merge, then the return to the default branch\nafter it. Run none of them. No echo fires for an unattached change — there is\nno outward seam to hand back at.", "after": "After a tail, the completion readout shows the acts that stay the human's, as `references/pr-archive-tail.md`'s \"At the close\" says (read by then). No echo fires for an unattached change."},
+  {"id": "R1-readiness", "bodies": ["orbit-archive-change"], "kind": "reworded", "before": "teaches readers to skip it.\n\nThis line is the record's READER, and it is not decoration. A judgement record that no surface consumes would repeat exactly the defect this program already found in the RETIRED field this record superseded — written by every body, read by nothing — inside the change that exists to fix it. A change archived against the author's own judgement should say so where a human is looking, not only inside a JSON field.", "after": "teaches readers to skip it."},
+  {"id": "R2-intro", "bodies": ["orbit-archive-change"], "kind": "reworded", "before": "The sections below describe orbit-specific additions on top of upstream's archive flow. The upstream content above is as `orbit-conventions`' `Generated-file disposition` records it. Orbit adds a **consent check at entry**, a **pre-archive `audit-drift` sweep**, a `--skip-audit` opt-out, an **unresolved `@review:` marker warning**, a **user-validation closure**, a **base-fingerprint divergence check**, an **archive run summary** written to `.orbit-runs/`, and a small set of edge-case behaviors.", "after": "Orbit's steps on top of upstream's archive flow, each numbered by where it runs. The upstream content above is as `orbit-conventions`' `Generated-file disposition` records it."},
+  {"id": "R2-step-3.2-rule", "bodies": ["orbit-archive-change"], "kind": "reworded", "before": "while the change is still active. The rule is `orbit-archive-modifications`' `User-validation closure at the archive seam`; this step carries it out.", "after": "while the change is still active."},
+  {"id": "R2-step-3.5-outcomes", "bodies": ["orbit-archive-change"], "kind": "reworded", "before": "- **Address now** → archive does not proceed. User fixes the drift issues and re-invokes `/orbit:archive`. No summary written this run.\n- **Proceed with archive** → archive proceeds normally. Summary records `user_decision: proceeded_despite_critical`.\n- **Abort** → archive is cancelled. No move, no sync-specs, no summary.\n\n### `--skip-audit` flag\n\nWhen `/orbit:archive --skip-audit <name>` is invoked, the entire Step 3.5 audit is skipped. The archive run summary records `audit_skipped_via_flag: true`. Use case: the user has just run `/orbit:audit-drift` manually and doesn't need to repeat it.", "after": "- **Address now** → the archive stops; the user fixes the drift and re-invokes `/orbit:archive`. No summary.\n- **Proceed with archive** → the archive goes on; the summary records `user_decision: proceeded_despite_critical`.\n- **Abort** → the archive is cancelled: no move, no sync-specs, no summary.\n\n### `--skip-audit` flag\n\n`/orbit:archive --skip-audit <name>` skips Step 3.5 whole (for a user who has just run `/orbit:audit-drift`); the run summary records `audit_skipped_via_flag: true`."},
+  {"id": "R2-step-3.6-intro", "bodies": ["orbit-archive-change"], "kind": "reworded", "before": "save the change's brief while the change is still active, so the copy is written into the change's own history and moves with it. A sign-off given per change (Step 3.7, next) waits before anything is synced or moved and cites this copy, so it is rendered before the archive record exists — the copy says so itself.", "after": "save the change's brief while the change is still active, so the copy lands in the change's own history and moves with it, and a per-change sign-off (Step 3.7, next) can cite it before anything is synced or moved."},
+  {"id": "R2-step-3.6-tail", "bodies": ["orbit-archive-change"], "kind": "reworded", "before": " The save runs under every setting, and with every setting at its default nothing the user sees or is asked changes: the PR-attached tail stages the copy with the archived tree and does not name it among the carried untracked files.", "after": " The save runs under every setting; the PR-attached tail stages the copy with the archived tree and does not name it among the carried untracked files."},
+  {"id": "R2-step-4.9-heading", "bodies": ["orbit-archive-change"], "kind": "reworded", "before": "## Step 4.9 — PR preflight (`orbit pr preflight`, READ-ONLY, BEFORE the move; moved before the move)", "after": "## Step 4.9 — PR preflight (`orbit pr preflight`, READ-ONLY, BEFORE the move)"},
+  {"id": "R2-step-5.65", "bodies": ["orbit-archive-change"], "kind": "reworded", "before": "the completion readout SHALL state it in ONE line, naming the record AND RENDERING `ratified_by`, because that field says WHOSE dissent it was and a line that presupposes one value misreports the other: `readiness: NOT READY", "after": "the completion readout states it in ONE line, naming the record and rendering whose judgement it was (`ratified_by`): `readiness: NOT READY"},
+  {"id": "R2-step-5.65-ready", "bodies": ["orbit-archive-change"], "kind": "reworded", "before": "A `ready` disposition renders NOTHING: the ordinary case needs no announcement, and a readout that speaks on every archive teaches readers to skip it.", "after": "A `ready` disposition renders NOTHING."},
+  {"id": "R2-step-5.7", "bodies": ["orbit-archive-change"], "kind": "reworded", "before": "render the cited stage's post-archive computed position (e.g. `stage d2-architect: now quiescent — completion is yours to ratify`). One line riding the existing position render — no prompt, no doc edit; ratification never happens here.", "after": "render the cited stage's computed position (e.g. `stage d2-architect: now quiescent — completion is yours to ratify`) — no prompt, no doc edit; ratification never happens here."},
+  {"id": "R2-orbit-runs", "bodies": ["orbit-archive-change"], "kind": "reworded", "before": "Upstream Step 5's `mv orbit/changes/<name> orbit/changes/archive/YYYY-MM-DD-<name>` already moves the entire change directory, including `.orbit-runs/`. No additional handling required — `.orbit-runs/` is just a subdirectory of the change.\n\nAll prior internal-run summaries (`review-*-*.json`, `audit-drift-*.json`, `address-reviews-*.json`) and external-review findings (`external-*.md` + `external-prompt-*-*.md`) persist in the archived location at `orbit/changes/archive/<YYYY-MM-DD>-<change-name>/.orbit-runs/`.", "after": "Upstream Step 5's `mv` moves the whole change directory, `.orbit-runs/` included, so every prior run summary and external-review file persists at `orbit/changes/archive/<YYYY-MM-DD>-<change-name>/.orbit-runs/`. Nothing more is needed."},
+  {"id": "R2-edge-audit-restated", "bodies": ["orbit-archive-change"], "kind": "restated", "before": "etc.).\n\n### audit-drift fails to run\n\nAlready covered in Step 3.5 — proceed with warning; summary records `audit.ran: false` + failure reason. Do NOT block on audit-tool failures.\n\n## Audit is informational", "after": "etc.).\n\n## Audit is informational", "steps": ["| **Audit failed to run** (parse error, internal exception) | Proceed with a warning. Archive run summary records `audit.ran: false` with the failure reason. Do NOT block on audit-tool failures. |"]},
+  {"id": "R2-edge-already-archived", "bodies": ["orbit-archive-change"], "kind": "reworded", "before": "If `orbit/changes/archive/<YYYY-MM-DD>-<change-name>/` already exists when the user invokes `/orbit:archive <change-name>` (i.e., a same-day prior archive for the same change name):\n\nHalt with a clear error:\n\n```\nChange <name> is already at orbit/changes/archive/<YYYY-MM-DD>-<name>/.\n```\n\nDo NOT prompt to overwrite; the user must explicitly resolve the conflict (rename existing archive, use different date, etc.).", "after": "When `orbit/changes/archive/<YYYY-MM-DD>-<change-name>/` already exists (a same-day prior archive of the same name), halt with `Change <name> is already at orbit/changes/archive/<YYYY-MM-DD>-<name>/.` and do NOT offer to overwrite: the user resolves it (renames the existing archive, or uses another date)."},
+  {"id": "R2-informational", "bodies": ["orbit-archive-change"], "kind": "reworded", "before": "Audit-drift findings are **informational** unless the user explicitly chooses to abort. The archive command does NOT:\n\n- Attempt to resolve audit findings automatically (user's responsibility via `/orbit:address-reviews` or manual edit).\n- Auto-invoke `/orbit:review --as system` even if it hasn't run for this change. System-mode review is the user's gate — their responsibility to run it before archiving if they want that signal.\n\nThis is a deliberate choice: users may legitimately archive with known drift (e.g., follow-up commit planned). orbit captures the decision in the summary for traceability, but doesn't override.", "after": "Audit-drift findings are **informational** unless the user chooses to abort: the archive never resolves them itself (that is `/orbit:address-reviews` or a manual edit) and never runs `/orbit:review --as system` on its own, since system review is the user's gate. A user may archive with known drift; the summary records the decision."},
+  {"id": "P1-touchpoints-pointer", "bodies": ["orbit-propose"], "kind": "reworded", "before": "Seed `design.md`'s `## Touchpoints` section (authored below)", "after": "Seed `design.md`'s `## Touchpoints` section (the body's Step 0c.5)"},
+  {"id": "P1-size-brief-pointer", "bodies": ["orbit-propose"], "kind": "reworded", "before": "non-strict validation passes) and the\nsize brief below has run", "after": "non-strict validation passes) and the\nbody's size brief has run"},
+  {"id": "P2-conflict-restated", "bodies": ["orbit-propose"], "kind": "restated", "before": "before applying.\n- **`orbit/changes/<name>/` already exists in conflict** → three-way prompt (regenerate / continue / abort) is mandatory; do not silently overwrite.\n- **No staging", "after": "before applying.\n- **No staging", "steps": ["2. **Check for conflict**: do both `orbit/explore/<name>/` AND `orbit/changes/<name>/` exist?", "   - If yes and the staging file is live, halt with a conflict report and prompt via `AskUserQuestion`:"]},
+  {"id": "P1-steps-0a-0c", "bodies": ["orbit-propose"], "kind": "moved", "ref": "consume-mode.md", "start": "### Step 0a — Validate `explore.md` structure", "end": "rather than paraphrasing without attribution.", "digest": "bca9fe17cfc725b83483e4ba921aa62610a1374ddc1528d1b28ae9ac11336685", "after": "After the PR lifecycle's Step 0.5 (Phase 1), read `references/consume-mode.md` and follow it: its Steps 0a to 0c.6 run before and during generation, feeding Step 0c.5's Touchpoints below, and its Step 0d runs after the size brief."},
+  {"id": "P1-steps-0c.6-0d", "bodies": ["orbit-propose"], "kind": "moved", "ref": "consume-mode.md", "start": "### Step 0c.6 — Carry the Mechanism section", "end": "persists unchanged as the historical record of how the change took shape.", "digest": "fffd28c53dd0125081556a37b778dd51af35bd9a53baca764adfca8518c00814", "lead": "not a maintenance chore.\n\n", "after": "not a maintenance chore."},
+  {"id": "P2-degradation", "bodies": ["orbit-propose"], "kind": "moved", "ref": "consume-mode.md", "start": "- **`explore.md` missing one or more sections**", "end": "Suggest user run more `/orbit:explore` work before applying.", "digest": "2de8f2dea510181d4b1c871cfca16315321816177df54e8f078e847a32737d12", "lead": "## Graceful degradation\n\n", "trail": "\n- **No staging directory", "after": "## Graceful degradation\n\n- **No staging directory"},
+  {"id": "bulk-archive-onboard-tail", "bodies": ["orbit-onboard"], "kind": "removed", "ruling": "R-rop2-11", "before": "the archive itself never rolls back. `/orbit:bulk-archive` runs no tail at all — it names any attached changes it left draft so a batch never silently strands a pull request.", "after": "the archive itself never rolls back.", "phrase": "so a batch never silently strands a pull request"},
+  {"id": "bulk-archive-onboard-row", "bodies": ["orbit-onboard"], "kind": "removed", "ruling": "R-rop2-11", "before": "| `/orbit:bulk-archive` | Archive multiple completed changes at once. |\n| `/orbit:continue <name>` |", "after": "| `/orbit:continue <name>` |", "phrase": "Archive multiple completed changes at once."},
+  {"id": "bulk-archive-sync-example", "bodies": ["orbit-sync-specs"], "kind": "removed", "ruling": "R-rop2-11", "before": "(e.g. archive Step 4, bulk-archive Step 8a)", "after": "(e.g. archive Step 4)", "phrase": "bulk-archive Step 8a"},
+  {"id": "bulk-archive-retired", "bodies": ["orbit-bulk-archive-change"], "kind": "retired", "ruling": "R-rop2-11", "command": "bulk-archive", "phrase": "orbit-bulk-archive-change", "after": ""},
+];
+
+/** Every stage's pairs, each naming its stage, in the order applied. */
+export const CUT_PAIRS: CutPair[] = [
+  ...CUT_REVIEW_WALK_PAIRS.map((p): CutPair => ({ ...p, stage: 'cut-review-walk' })),
+  ...CUT_PROPOSE_ARCHIVE_PAIRS.map((p): CutPair => ({ ...p, stage: 'cut-propose-archive' })),
+];
+
 export const sha = (s: string): string => createHash('sha256').update(s).digest('hex');
 const count = (hay: string, needle: string): number => hay.split(needle).length - 1;
 
@@ -154,10 +234,10 @@ export function movedSpan(p: CutPair, dir: string, refs: Refs = skillRefs): { sp
   return { span };
 }
 
-/** Undo every cut pair of `dir` on `text`, last applied first; or the first failure. */
-export function undoCut(dir: string, text: string, pairs: CutPair[] = CUT_PAIRS, refs: Refs = skillRefs): { text: string } | { failure: string } {
+/** Undo one stage's pairs of `dir` on `text`, last applied first; or the first failure. */
+function undoStage(dir: string, text: string, stage: CutStage, pairs: CutPair[], refs: Refs): { text: string } | { failure: string } {
   let t = text;
-  for (const p of [...pairs].reverse().filter((x) => x.bodies.includes(dir))) {
+  for (const p of [...pairs].reverse().filter((x) => x.stage === stage && x.kind !== 'retired' && x.bodies.includes(dir))) {
     const n = count(t, p.after);
     if (n !== 1) return { failure: `${dir}: pair ${p.id}'s after occurs ${n} times` };
     let before: string;
@@ -173,9 +253,24 @@ export function undoCut(dir: string, text: string, pairs: CutPair[] = CUT_PAIRS,
   return { text: t };
 }
 
-/** Why the undo of `dir`'s cut pairs does not reproduce its recorded body, or null. */
+/**
+ * Undo every stage's cut pairs of `dir` on `text`, newest stage first, comparing the body with a stage's recorded hash
+ * right after that stage's own undo; the text as the oldest stage found it, or the first failure.
+ */
+export function undoCut(dir: string, text: string, pairs: CutPair[] = CUT_PAIRS, refs: Refs = skillRefs): { text: string } | { failure: string } {
+  let t = text;
+  for (const stage of [...CUT_STAGES].reverse()) {
+    const r = undoStage(dir, t, stage, pairs, refs);
+    if ('failure' in r) return r;
+    t = r.text;
+    const recorded = CUT_RECORDED[stage][dir];
+    if (recorded !== undefined && sha(t) !== recorded) return { failure: `${dir}: the undone body does not match its recorded hash (${stage})` };
+  }
+  return { text: t };
+}
+
+/** Why the undo of `dir`'s cut pairs does not reproduce each recorded body, or null. */
 export function cutFailure(dir: string, text: string, pairs: CutPair[] = CUT_PAIRS, refs: Refs = skillRefs): string | null {
   const r = undoCut(dir, text, pairs, refs);
-  if ('failure' in r) return r.failure;
-  return sha(r.text) === CUT_RECORDED[dir] ? null : `${dir}: the undone body does not match its recorded hash`;
+  return 'failure' in r ? r.failure : null;
 }

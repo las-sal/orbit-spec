@@ -206,10 +206,12 @@ describe('what stays is in the body', () => {
   });
 });
 
-/** Explore's and bulk-archive's emit sections, recorded at 9c43eee3; neither template is edited by this change. */
+/**
+ * Explore's emit section, recorded at 9c43eee3; its template is not edited by this change. (Bulk-archive's was recorded
+ * here too until its removal: cut-propose-archive, R-rop2-11.)
+ */
 const UNTOUCHED: Array<[string, string, string]> = [
   ['orbit-explore', '## Run-summary emit (named-mode only)', '6f93ba6d6296ec2e61a7e3ea803718bd8f4d1e22d7db16df5c0bbd223540b78a'],
-  ['orbit-bulk-archive-change', '## Per-change archive emit (rc10 — NEW step inside upstream Step 8, after 8b)', 'f874fda135d433202d380e2b83d70d70acd1a5cc3723ae5b75e33d2766074736'],
 ];
 const section = (text: string, heading: string): string => {
   const at = text.indexOf(heading);
@@ -220,9 +222,9 @@ const section = (text: string, heading: string): string => {
   return (heading + (next < 0 ? rest : rest.slice(0, next))).trimEnd();
 };
 
-describe('explore and bulk-archive are left as they are', () => {
-  // @scenario text orbit-run-summary-emit :: A body reads its run-summary detail before the session's first run-summary emit :: Explore and bulk-archive are left as they are
-  it('each emit section reads as before, and neither ships run-summary-emit.md nor carries the cue', () => {
+describe('explore is left as it is', () => {
+  // @scenario text orbit-run-summary-emit :: A body reads its run-summary detail before the session's first run-summary emit :: Explore is left as it is
+  it('its emit section reads as before, and it neither ships run-summary-emit.md nor carries the cue', () => {
     for (const [dir, heading, recorded] of UNTOUCHED) {
       expect(createHash('sha256').update(section(body(dir), heading)).digest('hex'), dir).toBe(recorded);
       expect(reference(dir, RUN_SUMMARY_EMIT_REFERENCE_NAME), dir).toBeUndefined();

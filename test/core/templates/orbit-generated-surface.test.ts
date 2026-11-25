@@ -18,6 +18,7 @@ import {
   MOVE_LINE,
 } from '../../../src/core/explore-grammar.js';
 import { ownerText } from '../../helpers/owner-text.js';
+import { RETIRED_COMMAND_IDS, RETIRED_SKILL_DIRS } from '../../../src/core/profile-sync-drift.js';
 
 vi.mock('@inquirer/prompts', () => ({
   confirm: vi.fn().mockResolvedValue(true),
@@ -44,14 +45,14 @@ vi.mock('../../../src/prompts/searchable-multi-select.js', () => ({
 // dirName -> [commandId, required skill markers]
 const SURFACE: Array<[string, string, string[]]> = [
   ['orbit-explore', 'explore', ['Execution disciplines', 'Run-summary emit', 'Minimal explore metadata']],
-  ['orbit-propose', 'propose', ['Execution disciplines', 'Run-summary emit', 'Completion-prompt override', 'staged-metadata MERGE', 'fresh-owned DENYLIST']],
+  // cut-propose-archive: the staged-metadata merge moved with Step 0d to references/consume-mode.md (checked on disk below).
+  ['orbit-propose', 'propose', ['Execution disciplines', 'Run-summary emit', 'Completion-prompt override', 'references/consume-mode.md']],
   ['orbit-new-change', 'new', ['Execution disciplines', 'Run-summary emit']],
   ['orbit-continue-change', 'continue', ['Execution disciplines', 'Run-summary emit', 'Completion-prompt override']],
   ['orbit-apply-change', 'apply', ['Execution disciplines', 'Run-summary emit', 'Completion-prompt override']],
   ['orbit-ff-change', 'ff', ['Execution disciplines', 'Run-summary emit', 'Completion-prompt override']],
   ['orbit-sync-specs', 'sync', ['Execution disciplines', 'Consent inheritance']], // gained the orbit layer in D1
   ['orbit-archive-change', 'archive', ['Execution disciplines', 'run summary', 'Stage-line garnish']],
-  ['orbit-bulk-archive-change', 'bulk-archive', ['# Orbit additions']],
   ['orbit-verify-change', 'verify', ['Execution disciplines', 'Run-summary emit']],
   ['orbit-onboard', 'onboard', ['Execution disciplines', 'self-contained', 'Program architecture', 'orbit/architecture/.orbit-runs/', 'architecture mode — D-arc Stage D2']],
   ['orbit-review', 'review', ['Execution disciplines', 'Paste the output VERBATIM', 'is PROHIBITED in change modes', 'REVIEWER axis', 'references/external-handoff.md', 'references/passes-<mode>.md', 'orbit emit review', 'references/architecture-mode.md', 'First architecture review for this doc']],
@@ -69,7 +70,8 @@ const REFERENCE_SKILLS: Record<string, string[]> = {
   // conditional-steps: the commit step and chain end step references, and propose's size brief.
   // once-per-session-detail: each emit step's run-summary-emit.md, and the two account steps' references.
   // cut-review-walk: review's verification, fresh-dispatch and architecture-mode references; address-reviews' seven.
-  'orbit-propose': ['pr-choreography.md', 'size-brief.md', 'run-summary-emit.md', 'commit-step.md', 'chain-end-step.md', DR],
+  // cut-propose-archive: propose's consume-mode.md, apply's consent-at-entry.md.
+  'orbit-propose': ['pr-choreography.md', 'consume-mode.md', 'size-brief.md', 'run-summary-emit.md', 'commit-step.md', 'chain-end-step.md', DR],
   'orbit-ff-change': ['pr-choreography.md', 'run-summary-emit.md', 'commit-step.md', 'chain-end-step.md', DR],
   // D6 (external iter 1): the arc-done readout carries the shared resolution algorithm.
   'orbit-architect': ['pr-resolution.md', 'program-signoff.md', 'run-summary-emit.md', DR],
@@ -78,9 +80,8 @@ const REFERENCE_SKILLS: Record<string, string[]> = {
   'orbit-audit-drift': ['run-summary-schema.md', 'worked-example.md', 'run-summary-emit.md', DR],
   'orbit-new-change': ['run-summary-emit.md', DR],
   'orbit-continue-change': ['run-summary-emit.md', DR],
-  'orbit-apply-change': ['account-step.md', 'run-summary-emit.md', 'commit-step.md', 'chain-end-step.md', DR],
+  'orbit-apply-change': ['consent-at-entry.md', 'account-step.md', 'run-summary-emit.md', 'commit-step.md', 'chain-end-step.md', DR],
   'orbit-sync-specs': [DR],
-  'orbit-bulk-archive-change': [DR],
   'orbit-verify-change': ['run-summary-emit.md', DR],
 };
 
@@ -247,6 +248,18 @@ describe('generated surface fidelity (real init, all workflows, claude + codex)'
     await expect(fs.access(strayPath)).rejects.toThrow();
   });
 
+  // @scenario behaviour orbit-skill-generation :: Retired surface artifacts converge on update :: Fresh surfaces never see the retired set
+  it('a fresh surface carries no retired artifact, so a plain update has none to remove', async () => {
+    for (const root of ['.claude', '.codex']) {
+      for (const dir of RETIRED_SKILL_DIRS) await expect(fs.access(path.join(testDir, root, 'skills', dir))).rejects.toThrow();
+    }
+    for (const id of RETIRED_COMMAND_IDS) await expect(fs.access(path.join(testDir, '.claude', 'commands', 'orbit', `${id}.md`))).rejects.toThrow();
+    const before = (await fs.readdir(path.join(testDir, '.claude', 'skills'))).sort();
+    await new UpdateCommand({}).execute(testDir);
+    expect((await fs.readdir(path.join(testDir, '.claude', 'skills'))).sort()).toEqual(before);
+  });
+
+  // @scenario behaviour orbit-skill-generation :: Retired surface artifacts converge on update :: Plain update removes retired artifacts from a pre-existing surface
   it('PLAIN update removes RETIRED artifacts from a pre-existing surface (D5)', async () => {
     // Simulate a pre-D5 surface: the retired skill dir + launcher linger after upgrade.
     const retiredSkill = path.join(testDir, '.claude', 'skills', 'orbit-review-external', 'SKILL.md');
@@ -260,6 +273,42 @@ describe('generated surface fidelity (real init, all workflows, claude + codex)'
     // Retired-artifact drift defeated the short-circuit; reconciliation removed both.
     await expect(fs.access(path.dirname(retiredSkill))).rejects.toThrow();
     await expect(fs.access(retiredCmd)).rejects.toThrow();
+  });
+
+  // @scenario behaviour orbit-skill-generation :: Retired surface artifacts converge on update :: Plain update removes the retired bulk-archive surface
+  it('PLAIN update removes the retired bulk-archive surface and leaves the fourteen workflows in place (cut-propose-archive)', async () => {
+    // Simulate a surface generated before cut-propose-archive: bulk-archive's skill dir (with a reference) and launcher.
+    const retiredSkill = path.join(testDir, '.claude', 'skills', 'orbit-bulk-archive-change', 'SKILL.md');
+    const retiredRef = path.join(testDir, '.claude', 'skills', 'orbit-bulk-archive-change', 'references', 'decision-records.md');
+    const retiredCmd = path.join(testDir, '.claude', 'commands', 'orbit', 'bulk-archive.md');
+    await fs.mkdir(path.dirname(retiredRef), { recursive: true });
+    await fs.writeFile(retiredSkill, 'name: orbit-bulk-archive-change\n');
+    await fs.writeFile(retiredRef, '# decision records\n');
+    await fs.writeFile(retiredCmd, '# retired launcher\n');
+
+    await new UpdateCommand({}).execute(testDir);
+
+    await expect(fs.access(path.dirname(retiredSkill))).rejects.toThrow();
+    await expect(fs.access(retiredCmd)).rejects.toThrow();
+    // Every other workflow's skill and launcher is still there.
+    for (const [dir, id] of SURFACE) {
+      await expect(fs.access(path.join(testDir, '.claude', 'skills', dir, 'SKILL.md'))).resolves.toBeUndefined();
+      await expect(fs.access(path.join(testDir, '.claude', 'commands', 'orbit', `${id}.md`))).resolves.toBeUndefined();
+    }
+    expect(SURFACE).toHaveLength(14);
+    // The registry names both: the deselection sweep iterates known ids only, so nothing else would remove them.
+    expect(RETIRED_SKILL_DIRS).toContain('orbit-bulk-archive-change');
+    expect(RETIRED_COMMAND_IDS).toContain('bulk-archive');
+  });
+
+  it("propose's generated consume-mode.md carries Step 0d's staged-metadata merge (cut-propose-archive)", async () => {
+    for (const root of ['.claude', '.codex']) {
+      const ref = await fs.readFile(path.join(testDir, root, 'skills', 'orbit-propose', 'references', 'consume-mode.md'), 'utf-8');
+      expect(ref).toContain('staged-metadata MERGE');
+      expect(ref).toContain('fresh-owned DENYLIST');
+      const skill = await fs.readFile(path.join(testDir, root, 'skills', 'orbit-propose', 'SKILL.md'), 'utf-8');
+      expect(skill).not.toContain('staged-metadata MERGE');
+    }
   });
 
   it('generates exactly the registered commands', async () => {

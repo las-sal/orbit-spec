@@ -118,6 +118,10 @@ describe('the propose body carries the size brief (rc09a task 5.3)', () => {
     // The validation before the brief is non-strict, so a breach never stops the flow before it.
     expect(s).toContain('passes NON-STRICT — size never fails\nnon-strict validation');
     expect(s).toContain("BEFORE Step 0d's move, BEFORE the PR choreography's Phase 3 (commit, push, draft PR) and BEFORE the\ncompletion emit");
-    expect(body()).toContain('non-strict validation passes) and the\nsize brief below has run, FIRST');
+    // cut-propose-archive (P1): Step 0d is propose's references/consume-mode.md, which points back at the body's brief;
+    // the body still says Step 0d runs after it.
+    const consume = getOrbitProposeSkillTemplate().references!.find((r) => r.name === 'consume-mode.md')!.content;
+    expect(consume).toContain("non-strict validation passes) and the\nbody's size brief has run, FIRST");
+    expect(body()).toContain('its Step 0d runs after the size brief');
   });
 });

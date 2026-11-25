@@ -16,14 +16,12 @@ import {
   getOrbitFfCommandTemplate,
   getOrbitSyncCommandTemplate,
   getOrbitArchiveCommandTemplate,
-  getOrbitBulkArchiveCommandTemplate,
   getOrbitVerifyCommandTemplate,
   getOrbitOnboardCommandTemplate,
   getNewChangeSkillTemplate,
   getContinueChangeSkillTemplate,
   getApplyChangeSkillTemplate,
   getFfChangeSkillTemplate,
-  getBulkArchiveChangeSkillTemplate,
   getVerifyChangeSkillTemplate,
   getArchiveChangeSkillTemplate,
   getArchitectSkillTemplate,
@@ -71,14 +69,13 @@ const RELOCATED: Array<[string, () => SkillTemplate, string[]]> = [
   // section-list mirror, the Mechanism read after the last file write, the Step 0c.6 record and its
   // no-engine-record header, the rule-answer note at Step 0b. Position and parity assertions live in
   // the `rc13c propose consume-mode integrity` block below.
-  ['propose', getOrbitProposeSkillTemplate, ['Execution disciplines', 'Run-summary emit', 'Completion-prompt override', 'this exploration concluded on', 'is never reached', 'LIVE staging director', 'Mechanism → artifacts', 'no engine record', 'Residual kind:', 'no Mechanism entry is authored at propose', 'second claim on one truth']],
+  ['propose', getOrbitProposeSkillTemplate, ['Execution disciplines', 'Run-summary emit', 'Completion-prompt override', 'this exploration concluded on', 'is never reached', 'LIVE staging director', 'second claim on one truth', 'references/consume-mode.md']],
   ['new-change', getNewChangeSkillTemplate, ['Execution disciplines', 'Run-summary emit']],
   ['continue-change', getContinueChangeSkillTemplate, ['Execution disciplines', 'Run-summary emit', 'Completion-prompt override']],
   ['apply-change', getApplyChangeSkillTemplate, ['Execution disciplines', 'Run-summary emit', 'Completion-prompt override', 'blocked-by-gate', 'continuation', 'Consent at entry', 'consent_era_from', 'orbit emit apply']],
   ['ff-change', getFfChangeSkillTemplate, ['Execution disciplines', 'Run-summary emit', 'Completion-prompt override']],
-  ['bulk-archive-change', getBulkArchiveChangeSkillTemplate, ['# Orbit additions', 'Execution disciplines', 'Per-change consent', 'consent_era_from', 'Per-change user-validation closure']],
   ['verify-change', getVerifyChangeSkillTemplate, ['Execution disciplines', 'Run-summary emit']],
-  ['archive-change', getArchiveChangeSkillTemplate, ['Execution disciplines', 'run summary', 'Gate inflection prompt', 'User-validation closure', 'DEFERRAL REFUSALS', 'continuation', 'Consent at entry', 'consent_era_from', 'Sync inheritance']],
+  ['archive-change', getArchiveChangeSkillTemplate, ['Execution disciplines', 'run summary', 'Gate inflection prompt', 'User-validation closure', 'references/user-validation.md', 'continuation', 'Consent at entry', 'consent_era_from', 'Sync inheritance', 'references/consent-at-entry.md']],
   ['onboard', getOnboardSkillTemplate, ['Execution disciplines', 'self-contained', '**Execution disciplines** codified in']],
   ['sync-specs', getSyncSpecsSkillTemplate, ['Execution disciplines', 'Consent inheritance']],
   // B3 editorial workflows (net-new relocation; parity proof per D-b3-4)
@@ -99,7 +96,6 @@ const ALL_SURFACE_SKILLS: Array<[string, () => SkillTemplate]> = [
   ['apply-change', getApplyChangeSkillTemplate],
   ['ff-change', getFfChangeSkillTemplate],
   ['sync-specs', getSyncSpecsSkillTemplate],
-  ['bulk-archive-change', getBulkArchiveChangeSkillTemplate],
   ['verify-change', getVerifyChangeSkillTemplate],
   ['archive-change', getArchiveChangeSkillTemplate],
   ['onboard', getOnboardSkillTemplate],
@@ -132,7 +128,6 @@ const LAUNCHERS: Array<[string, () => { content: string }, string]> = [
   ['ff', getOrbitFfCommandTemplate, 'orbit-ff-change'],
   ['sync', getOrbitSyncCommandTemplate, 'orbit-sync-specs'],
   ['archive', getOrbitArchiveCommandTemplate, 'orbit-archive-change'],
-  ['bulk-archive', getOrbitBulkArchiveCommandTemplate, 'orbit-bulk-archive-change'],
   ['verify', getOrbitVerifyCommandTemplate, 'orbit-verify-change'],
   ['onboard', getOrbitOnboardCommandTemplate, 'orbit-onboard'],
   ['propose', getOrbitProposeCommandTemplate, 'orbit-propose'],
@@ -170,6 +165,8 @@ describe('D4 external prompt output-format block: delta <-> shipped template byt
 
 describe('rc13c propose consume-mode integrity (Mechanism section consumption)', () => {
   const body = getOrbitProposeSkillTemplate().instructions;
+  // cut-propose-archive (P1): consume mode's Steps 0a to 0d, and the mirrors they carry, are `references/consume-mode.md`.
+  const consume = getOrbitProposeSkillTemplate().references!.find((r) => r.name === 'consume-mode.md')!.content;
   const sections = (text: string): Record<string, string> => {
     const out: Record<string, string> = {};
     const parts = text.split(/\n(?=## )/);
@@ -216,7 +213,27 @@ describe('rc13c propose consume-mode integrity (Mechanism section consumption)',
     const m = owner.match(/fixed SIX-section format for `explore\.md`, in this order: ([^.]+)\./);
     expect(m, 'the owner states the list in one "in this order:" clause').toBeTruthy();
     const ownerList = m![1].replace(/\*\*/g, '').trim();
-    expect(body).toContain(`in its order — ${ownerList}.`);
+    expect(consume).toContain(`in its order — ${ownerList}.`);
+    expect(body).not.toContain(`in its order — ${ownerList}.`);
+  });
+
+  // @scenario text orbit-propose-modifications :: Validate explore.md structure before consuming :: The section list ships in the consume-mode reference
+  it('the body names references/consume-mode.md where the consume outcome leads, after Phase 1, and carries neither mirror', () => {
+    const outcome = body.indexOf('→ **consume mode** (continue with consume-mode flow below; skip upstream Step 1)');
+    const flow = body.indexOf('## Consume-mode flow');
+    expect(outcome).toBeGreaterThan(-1);
+    expect(flow).toBeGreaterThan(outcome);
+    const section = body.slice(flow, body.indexOf('### Step 0c.5', flow));
+    expect(section).toContain("After the PR lifecycle's Step 0.5 (Phase 1), read `references/consume-mode.md` and follow it");
+    expect(section).toContain('its Step 0d runs after the size brief');
+    // Neither mirror is in the body: the section list and the Mechanism grammar ship in the reference.
+    expect(body).not.toContain('Premise, Mechanism, Decisions, Open questions, Considered & out, References');
+    expect(body).not.toContain(EXPLORE_MECHANISM_ENTRY_PRODUCTION);
+    expect(consume).toContain(EXPLORE_MECHANISM_ENTRY_PRODUCTION);
+    // The reference keeps the order: structure check, open questions, mapping, Mechanism carry, move.
+    const order = ['### Step 0a', '### Step 0b', '### Step 0c —', '### Step 0c.6', '### Step 0d'].map((h) => consume.indexOf(h));
+    expect(order.every((i) => i > -1)).toBe(true);
+    expect([...order].sort((a, b) => a - b)).toEqual(order);
   });
 
   it("the Step 0c.6 decision table is byte-equal to the ADDED requirement's (trailing whitespace trimmed)", async () => {
@@ -234,27 +251,27 @@ describe('rc13c propose consume-mode integrity (Mechanism section consumption)',
     };
     const ownerRows = rows(owner);
     expect(ownerRows.length).toBe(7); // header + separator + five rows
-    expect(rows(body)).toEqual(ownerRows);
+    expect(rows(consume)).toEqual(ownerRows);
   });
 
   it("the four-shape list is byte-equal to the ADDED requirement's clause", async () => {
     const owner = await ownerText('orbit-propose-modifications', 'a PARTITION of the entries and live rules');
     const m = owner.match(/lands in requirement text as one of four shapes, each observed on the record: ([\s\S]+?)\. Which shape fits/);
     expect(m, 'the owner states the four shapes in one clause').toBeTruthy();
-    const bm = body.match(/\*\*The CLOSED shapes\*\*: ([\s\S]+?)\. Which shape fits/);
-    expect(bm, 'the body states its four shapes in one clause').toBeTruthy();
+    const bm = consume.match(/\*\*The CLOSED shapes\*\*: ([\s\S]+?)\. Which shape fits/);
+    expect(bm, 'the reference states its four shapes in one clause').toBeTruthy();
     expect(stripTrailing(bm![1])).toBe(stripTrailing(m![1]));
-    expect(body.split(stripTrailing(m![1])).length - 1, 'exactly one occurrence in the body').toBe(1);
+    expect(consume.split(stripTrailing(m![1])).length - 1, 'exactly one occurrence in the reference').toBe(1);
   });
 
   it('the Step 0b entry form interpolates the grammar constant (no hand-written variant)', () => {
-    expect(body).toContain('- **<YYYY-MM-DD> — <ID>: <title>** <prose…>');
-    expect(body).not.toContain('D-<tag>-<n>');
+    expect(consume).toContain('- **<YYYY-MM-DD> — <ID>: <title>** <prose…>');
+    expect(consume).not.toContain('D-<tag>-<n>');
   });
 
   it('the Step 0b Mechanism grammar mirror is the grammar module\'s production (adopter-safe, one source)', () => {
-    expect(body).toContain('```\n' + EXPLORE_MECHANISM_ENTRY_PRODUCTION + '\n```');
-    expect(body.split(EXPLORE_MECHANISM_ENTRY_PRODUCTION).length - 1).toBe(1);
+    expect(consume).toContain('```\n' + EXPLORE_MECHANISM_ENTRY_PRODUCTION + '\n```');
+    expect(consume.split(EXPLORE_MECHANISM_ENTRY_PRODUCTION).length - 1).toBe(1);
   });
 });
 
@@ -413,9 +430,6 @@ describe('orbit content fidelity (B1 relocation)', () => {
         expect(skill).toContain('ZERO added prompts');
         expect(skill).toContain('uncertain, treat the arrival as AI-mediated');
       }
-      const bulk = getBulkArchiveChangeSkillTemplate().instructions;
-      expect(bulk).toContain("the user's invocation for the confirmed set");
-      expect(bulk).toContain('treat the arrival as AI-mediated');
     });
   });
 
@@ -454,11 +468,14 @@ describe('orbit content fidelity (B1 relocation)', () => {
   });
 
   describe('references declarations (orbit-skill-generation, D-b2-4 lean scope)', () => {
-    it('archive-change declares its exact reference set (D6 added the PR tail; conditional-steps the three conditional steps and the commit step)', () => {
+    it('archive-change declares its exact reference set (D6 added the PR tail; conditional-steps the three conditional steps and the commit step; cut-propose-archive consent, user-validation and the brief save)', () => {
       const refs = getArchiveChangeSkillTemplate().references ?? [];
       expect(refs.map((r) => r.name)).toEqual([
         'archive-summary-schema.md',
         'pr-archive-tail.md',
+        'consent-at-entry.md',
+        'user-validation.md',
+        'brief-save.md',
         'gate-inflection.md',
         'fingerprint-divergence.md',
         'signoff-hold.md',
@@ -470,9 +487,10 @@ describe('orbit content fidelity (B1 relocation)', () => {
       expect(refs.find((r) => r.name === 'gate-inflection.md')!.content).toContain('formed_against: []');
     });
 
-    it('propose and ff declare exactly the shared PR choreography (D6), their closing steps and, in propose, the size brief (conditional-steps)', () => {
+    it('propose and ff declare exactly the shared PR choreography (D6), their closing steps and, in propose, consume mode (cut-propose-archive) and the size brief (conditional-steps)', () => {
       expect((getOrbitProposeSkillTemplate().references ?? []).map((r) => r.name)).toEqual([
         'pr-choreography.md',
+        'consume-mode.md',
         'size-brief.md',
         'run-summary-emit.md',
         'commit-step.md',
@@ -488,8 +506,9 @@ describe('orbit content fidelity (B1 relocation)', () => {
       ]);
     });
 
-    it('apply declares its account step and emit section (once-per-session-detail), its closing steps and the shared decision-record reference (conditional-steps)', () => {
+    it('apply declares its consent paths (cut-propose-archive), its account step and emit section (once-per-session-detail), its closing steps and the shared decision-record reference (conditional-steps)', () => {
       expect((getApplyChangeSkillTemplate().references ?? []).map((r) => r.name)).toEqual([
+        'consent-at-entry.md',
         'account-step.md',
         'run-summary-emit.md',
         'commit-step.md',
@@ -589,7 +608,6 @@ describe('D6 PR lifecycle surface', () => {
   const propose = getOrbitProposeSkillTemplate();
   const ff = getFfChangeSkillTemplate();
   const archive = getArchiveChangeSkillTemplate();
-  const bulk = getBulkArchiveChangeSkillTemplate();
 
   function reference(tpl: SkillTemplate, name: string): string {
     const ref = (tpl.references ?? []).find((r) => r.name === name);
@@ -750,17 +768,11 @@ describe('D6 PR lifecycle surface', () => {
     expect(tail).toBeLessThan(garnish); // numbering follows the text order: emit → tail → readout
   });
 
-  it('archive consent preview names the outward writes for an attached change', () => {
-    expect(archive.instructions).toContain('PR-ATTACHED');
-    expect(archive.instructions).toMatch(/READY FLIP|READY flip/);
-    expect(archive.instructions).toContain('fires no second prompt');
-  });
-
-  // @scenario text orbit-archive-modifications :: PR-attached archive tail :: Bulk-archive runs no tail and names what it left draft
-  it('bulk-archive runs NO tail and names what it left draft', () => {
-    expect(bulk.instructions).toContain('runs NO tail');
-    expect(bulk.instructions).toMatch(/NAME the PR-attached changes it left DRAFT/i);
-    expect(bulk.instructions).not.toMatch(/`gh pr ready`/);
+  it('archive consent preview names the outward writes for an attached change (in references/consent-at-entry.md since cut-propose-archive)', () => {
+    const consent = reference(archive, 'consent-at-entry.md');
+    expect(consent).toContain('PR-ATTACHED');
+    expect(consent).toMatch(/READY FLIP|READY flip/);
+    expect(consent).toContain('fires no second prompt');
   });
 
   it('new and continue are NOT extended with the PR layer', () => {
@@ -1230,23 +1242,31 @@ describe('seam-chaining-grants: the granted arrival in the apply and archive bod
     expect(hits).toHaveLength(1);
     return hits[0];
   };
+  // cut-propose-archive (A1): what the AI-mediated and granted paths do is each skill's `references/consent-at-entry.md`;
+  // the body keeps the classification and reads the reference on either arrival.
+  const consentRef = (tpl: SkillTemplate): string => (tpl.references ?? []).find((r) => r.name === 'consent-at-entry.md')!.content;
+  const applyConsent = consentRef(getApplyChangeSkillTemplate());
+  const archiveConsent = consentRef(getArchiveChangeSkillTemplate());
+  const grantedPath = (ref: string): string => ref.slice(ref.indexOf('## A granted arrival'));
+  const aiPath = (ref: string): string => ref.slice(ref.indexOf('## An AI-mediated arrival'), ref.indexOf('## A granted arrival'));
 
   // @scenario text orbit-lifecycle-consent :: Invocation-provenance rule :: A granted arrival is read from the engine
   it('both Step 0s carry the granted bullet, read from the chain object, never judged from the route', () => {
-    for (const [body, cmd] of [[apply, '/orbit:apply <name>'], [archive, '/orbit:archive <name>']] as const) {
+    for (const [body, ref, cmd] of [[apply, applyConsent, '/orbit:apply <name>'], [archive, archiveConsent, '/orbit:archive <name>']] as const) {
       const s = step0(body);
       const line = granted(body);
+      const path = grantedPath(ref);
       expect(s).toContain(line);
       expect(line).toContain('the `chain` object of `orbit status --change "<name>" --json`');
       expect(line).toContain(`reports \`next\` as this command (\`${cmd}\`, with or without the \` — user-invoked\` marker) with \`may_run: true\``);
-      expect(line).toContain('fire no consent prompt, and stamp the consent era below as on the other two paths');
-      expect(line).toContain('never judged from how this command was reached: "continue" and a chain\'s closing step are the same arrival');
-      // The granted bullet asks nothing and carries no tag.
-      expect(line).not.toMatch(/AskUserQuestion|\(chain: /);
+      expect(path).toContain("fire no consent prompt, and stamp the consent era (the body's Consent-era stamp) as on the other two paths");
+      expect(path).toContain('never judged from how this command was reached: "continue" and a chain\'s closing step are the same arrival');
+      // The granted path asks nothing and carries no tag.
+      expect(line + path).not.toMatch(/AskUserQuestion|\(chain: /);
       expect(s).toContain('or a granted arrival), read');
     }
-    expect(granted(apply)).toContain('Record `setting`');
-    expect(granted(archive)).toContain('Record `consent: "setting"`');
+    expect(grantedPath(applyConsent)).toContain('Record `setting`');
+    expect(grantedPath(archiveConsent)).toContain('Record `consent: "setting"`');
   });
 
   // @scenario text orbit-lifecycle-consent :: Invocation-provenance rule :: Typed command is consent
@@ -1262,14 +1282,40 @@ describe('seam-chaining-grants: the granted arrival in the apply and archive bod
   // @scenario text orbit-lifecycle-consent :: Consent prompts at consent-marked seams :: AI-mediated archive entry prompts before any write
   // @scenario text orbit-archive-modifications :: Consent prompt on AI-mediated archive entry :: AI-mediated entry prompts first
   it('an arrival not typed and not granted fires the consent prompt before any write, and keeps "uncertain → AI-mediated"', () => {
-    for (const body of [apply, archive]) {
-      expect(body).toContain('a handoff document, a chain, or an eligibility readout pointing here. Unless the arrival is granted (next bullet), fire a consent **AskUserQuestion** (chain: not a prompt) BEFORE any');
+    for (const [body, ref] of [[apply, applyConsent], [archive, archiveConsent]] as const) {
+      expect(body).toContain('a handoff document, a chain, or an eligibility readout pointing here.\n');
+      expect(body).toContain('On an arrival classified above as AI-mediated or granted, read `references/consent-at-entry.md` and follow it before any write.');
+      expect(aiPath(ref)).toContain('Unless the arrival is granted, fire a consent **AskUserQuestion** (chain: not a prompt) BEFORE any');
       expect(body).toContain('**When provenance is uncertain, treat the arrival as AI-mediated**');
     }
-    expect(apply).toContain('On Abort: stop; no writes, no run summary.');
+    expect(aiPath(applyConsent)).toContain('On Abort: stop; no writes, no run summary.');
     expect(apply).toContain('`prompted` (prompt fired, user proceeded)');
-    expect(archive).toContain('Proceed records `consent: "prompted"` in the run summary; **Abort leaves no baseline write, no sync, no move, and no run summary**.');
+    expect(aiPath(archiveConsent)).toContain('Proceed records `consent: "prompted"` in the run summary; **Abort leaves no baseline write, no sync, no move, and no run summary**.');
     expect(archive).toContain('BEFORE any other step — before the Step 1.5 marker scan, the Step 3.4 gate prompt, and every write.');
+  });
+
+  // @scenario text orbit-lifecycle-consent :: Consent prompts at consent-marked seams :: Each consent-scoped body reads its consent reference only off the user-invoked path
+  it('each consent-scoped body keeps the classification and reads references/consent-at-entry.md only on an AI-mediated or granted arrival', () => {
+    for (const [body, ref, typed] of [
+      [apply, applyConsent, 'the typed `/orbit:apply` command, or an unambiguous same-turn prose request naming the act ("apply it", "implement the change")'],
+      [archive, archiveConsent, 'the typed `/orbit:archive` command, or an unambiguous same-turn prose request naming the act ("archive it")'],
+    ] as const) {
+      const s = step0(body);
+      // The classification, each class defined, and the user-invoked path stay in the body.
+      expect(s).toContain(typed);
+      expect(s).toContain('**AI-mediated**: everything else — delegation phrases ("finish the cadence"), inference ("continue"), a handoff document, a chain, or an eligibility readout pointing here.\n');
+      expect(s).toMatch(/\*\*Granted\*\* \(an AI-mediated arrival the project's `chain` setting allows\): the arrival is not typed, [^\n]* with `may_run: true`\.\n/);
+      expect(s).toContain('**When provenance is uncertain, treat the arrival as AI-mediated**');
+      // The read is keyed on the classification, and after the classes it reads.
+      const read = s.indexOf('On an arrival classified above as AI-mediated or granted, read `references/consent-at-entry.md` and follow it before any write.');
+      expect(read).toBeGreaterThan(s.indexOf('**When provenance is uncertain'));
+      // Neither body carries the prompt's options; the reference carries the prompt and the granted path.
+      expect(body).not.toContain('**Proceed** / **Abort**');
+      expect(aiPath(ref)).toContain('exactly two options — **Proceed** / **Abort**');
+      expect(grantedPath(ref)).toContain('fire no consent prompt');
+    }
+    // Mutation: a body that still carried the prompt's options would fail the check above.
+    expect(`${archive}\nexactly two options — **Proceed** / **Abort**`).toContain('**Proceed** / **Abort**');
   });
 
   // @scenario text orbit-lifecycle-consent :: Consent prompts at consent-marked seams :: Sync inside archive does not double-prompt
@@ -1281,11 +1327,11 @@ describe('seam-chaining-grants: the granted arrival in the apply and archive bod
   // @scenario text orbit-archive-modifications :: Consent prompt on AI-mediated archive entry :: A granted entry skips the consent prompt and runs the tail
   // @scenario text orbit-archive-modifications :: Consent prompt on AI-mediated archive entry :: A granted entry on a program PR appends and leaves the flip
   it("archive's granted bullet shows no preview, runs the tail as after a Proceed, and states the tag rules", () => {
-    const line = granted(archive);
+    const line = grantedPath(archiveConsent);
     expect(line).toContain("No preview is shown: the outward writes the tail rides on this entry are named in the `archive` key's row, which the user read before granting it, and the tail (Step 5.6) runs exactly as after a Proceed.");
-    expect(line).toContain('On a granted arrival each prompt below is met by the kind its tag names: a target prompt does not fire, because the next command names the change; a routine prompt takes the default its tag names');
+    expect(line).toContain("On a granted arrival each of the body's later prompts is met by the kind its tag names: a target prompt does not fire, because the next command names the change; a routine prompt takes the default its tag names");
     expect(line).toContain('a decision prompt is asked exactly as on a typed arrival, and the chain does not continue after it. On every other arrival the tags change nothing.');
-    expect(granted(apply)).toContain('every anomaly prompt still fires as on a typed arrival');
+    expect(grantedPath(applyConsent)).toContain('every anomaly prompt still fires as on a typed arrival');
     // The tail Step 5.6 runs: commit, push, rewrite or append, and the flip for a per-change PR only.
     expect(archive).toContain('commit → push → description rewrite or stage-entry append → the\nREADY flip for a per-change PR');
     expect(archive).toContain("The tail's outward writes ride the archive's OWN entry consent — no second prompt.");
@@ -1294,8 +1340,8 @@ describe('seam-chaining-grants: the granted arrival in the apply and archive bod
   // @scenario text orbit-archive-modifications :: Consent prompt on AI-mediated archive entry :: Preview names the outward writes for an attached change
   // @scenario text orbit-archive-modifications :: Consent prompt on AI-mediated archive entry :: Unattached change keeps the pre-capability preview
   it("the prompted archive's preview names the outward writes for an attached change, and none for an unattached one", () => {
-    expect(archive).toContain('When the change is PR-ATTACHED (resolve this from the change\'s trail as part of the same read-only discovery), the preview ADDITIONALLY names the tail\'s OUTWARD writes: the branch the archive commit lands on, the PUSH to the resolved remote, and — for a per-proposal PR — the READY FLIP, or for a program PR the APPENDED stage entry.');
-    expect(archive).toContain('The outward line is OMITTED for unattached changes, so the pre-capability prompt is unchanged wherever no PR exists');
+    expect(aiPath(archiveConsent)).toContain('When the change is PR-ATTACHED (resolve this from the change\'s trail as part of the same read-only discovery), the preview ADDITIONALLY names the tail\'s OUTWARD writes: the branch the archive commit lands on, the PUSH to the resolved remote, and — for a per-proposal PR — the READY FLIP, or for a program PR the APPENDED stage entry.');
+    expect(aiPath(archiveConsent)).toContain('The outward line is OMITTED for unattached changes, so the pre-capability prompt is unchanged wherever no PR exists. Proceed records');
   });
 
   // @scenario text orbit-lifecycle-consent :: Consent recorded in consent-scoped lifecycle emits :: A withdrawn grant writes the emit without consent
@@ -1346,17 +1392,11 @@ describe('seam-chaining-grants: carried scenarios the bodies and the engine sour
 
   // @scenario text orbit-pr-lifecycle :: Single-session operating assumption and v1 limits :: A granted archive's rejected push skips like a typed one
   it("a granted archive's tail runs as a typed one's: the same segment, the same failure line, no retry", () => {
-    const granted = archive.split('\n').find(l => l.includes('**Granted** (an AI-mediated arrival'))!;
-    expect(granted).toContain('the tail (Step 5.6) runs exactly as after a Proceed');
+    const consent = (getArchiveChangeSkillTemplate().references ?? []).find((r) => r.name === 'consent-at-entry.md')!.content;
+    expect(consent.slice(consent.indexOf('## A granted arrival'))).toContain('the tail (Step 5.6) runs exactly as after a Proceed');
     expect(step56).toContain("The tail's outward writes ride the archive's OWN entry consent — no second prompt.");
     expect(step56).toContain('never rolls back');
     expect(step56).not.toMatch(/retry|rebase/i);
-  });
-
-  // @scenario text orbit-lifecycle-consent :: Consent recorded in consent-scoped lifecycle emits :: User-typed bulk propagates to inner archive emits
-  it("a user-typed bulk archive's inner emits record user-invoked", () => {
-    const bulk = getBulkArchiveChangeSkillTemplate().instructions;
-    expect(bulk).toContain("the Step 7 batch confirmation IS the user's invocation for the confirmed set — no per-change consent prompt fires, and each inner archive's run summary records `consent: \"user-invoked\"`.");
   });
 
   // @scenario text orbit-lifecycle-consent :: The engine never prompts for consent :: CLI-direct archive unchanged

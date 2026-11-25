@@ -107,9 +107,13 @@ describe('the draft window and the archive close', () => {
     expect(close).toContain('Show every `human_acts` argv verbatim');
     expect(close).toContain('the merge, then the return\nto the default branch');
     expect(close).toContain('Run none of them.');
+    // cut-propose-archive (A4): Step 5.8's per-change echo is the reference's "At the close", which also carries the
+    // program-PR and skipped-on-invalidation lines; the body keeps the step and points at it.
+    expect(close).toContain('After a program-PR append: the program PR is named and the flip\nstays at arc-done.');
+    expect(close).toContain('name the specific reason and that any\naction on that pull request is the user\'s.');
     const echo = section(getArchiveChangeSkillTemplate().instructions, '## Step 5.8');
-    expect(echo).toContain('`human_acts`');
-    expect(echo).toContain('Run none of them.');
+    expect(echo).toContain('as `references/pr-archive-tail.md`\'s "At the close" says');
+    expect(echo).not.toContain('`human_acts`');
   });
 });
 

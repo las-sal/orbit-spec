@@ -13,7 +13,6 @@ export { getApplyChangeSkillTemplate, getOrbitApplyCommandTemplate } from './wor
 export { getFfChangeSkillTemplate, getOrbitFfCommandTemplate } from './workflows/ff-change.js';
 export { getSyncSpecsSkillTemplate, getOrbitSyncCommandTemplate } from './workflows/sync-specs.js';
 export { getArchiveChangeSkillTemplate, getOrbitArchiveCommandTemplate } from './workflows/archive-change.js';
-export { getBulkArchiveChangeSkillTemplate, getOrbitBulkArchiveCommandTemplate } from './workflows/bulk-archive-change.js';
 export { getVerifyChangeSkillTemplate, getOrbitVerifyCommandTemplate } from './workflows/verify-change.js';
 export { getOnboardSkillTemplate, getOrbitOnboardCommandTemplate } from './workflows/onboard.js';
 export { getOrbitProposeSkillTemplate, getOrbitProposeCommandTemplate } from './workflows/propose.js';

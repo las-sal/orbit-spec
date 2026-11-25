@@ -189,8 +189,8 @@ describe('every epitome-carrying workflow body carries the basic content, and no
   const skills = getSkillTemplates();
   const carriers = skills.filter(s => s.template.instructions.includes(EPITOME));
 
-  it('fourteen bodies carry an epitome; onboard is the one that does not', () => {
-    expect(carriers.length).toBe(14);
+  it('thirteen bodies carry an epitome; onboard is the one that does not', () => {
+    expect(carriers.length).toBe(13); // fourteen until bulk-archive's removal (cut-propose-archive, R-rop2-11)
     expect(skills.filter(s => !carriers.includes(s)).map(s => s.dirName)).toEqual(['orbit-onboard']);
   });
 

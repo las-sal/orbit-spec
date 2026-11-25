@@ -73,8 +73,10 @@ describe('No-chaining contract — the five bodies carry the end step and the cl
     expect(ref('orbit-apply-change', 'chain-end-step.md')).toContain('a chained apply or archive records it as its `consent: "setting"` value and writes no sentence');
     expect(apply).toContain('`setting` (granted by `chain.apply`, no prompt) — it lands in every apply emit this session writes');
     const archive = skill('orbit-archive-change').instructions;
-    expect(archive).toContain('Record `consent: "setting"`, fire no consent prompt');
+    // cut-propose-archive (A1): the granted path is the archive skill's references/consent-at-entry.md.
+    expect(ref('orbit-archive-change', 'consent-at-entry.md')).toContain('Record `consent: "setting"`, fire no consent prompt');
     expect(archive).not.toContain('Chained: granted by chain');
+    expect(ref('orbit-archive-change', 'consent-at-entry.md')).not.toContain('Chained: granted by chain');
   });
 
   // @scenario text orbit-conventions :: No-chaining contract :: A chain ends by stating why
@@ -115,7 +117,7 @@ describe('No-chaining contract — the five bodies carry the end step and the cl
         }
       }
     }
-    expect(others).toBe(9);
+    expect(others).toBe(8); // nine until bulk-archive's removal (cut-propose-archive, R-rop2-11)
   });
 
   // @scenario text orbit-conventions :: No-chaining contract :: Without a chain setting the basic content handles the result
@@ -218,7 +220,8 @@ const INVENTORY: Entry[] = [
   { file: 'orbit-address-reviews/resolution-detail.md', anchor: 'it offers to stop (walk nothing, write no log', tags: ['(chain: decision)'], row: 'address-reviews: a half-landed pair' },
   { file: 'orbit-address-reviews/run-summary-schema.md', anchor: 'closure `AskUserQuestion` did) (chain: not a prompt)', tags: ['(chain: not a prompt)'], row: 'mention' },
   // seam-chaining-grants: the apply and archive surface.
-  { file: 'orbit-apply-change/SKILL.md', anchor: 'Unless the arrival is granted (next bullet), fire a consent **AskUserQuestion** (chain: not a prompt) BEFORE any write (after', tags: ['(chain: not a prompt)'], row: 'apply: the consent prompt' },
+  // cut-propose-archive (A1): the consent prompt is each skill's references/consent-at-entry.md.
+  { file: 'orbit-apply-change/consent-at-entry.md', anchor: 'Unless the arrival is granted, fire a consent **AskUserQuestion** (chain: not a prompt) BEFORE any write (after', tags: ['(chain: not a prompt)'], row: 'apply: the consent prompt' },
   { file: 'orbit-apply-change/SKILL.md', anchor: 'use the **AskUserQuestion tool** to let the user select (chain: target)', tags: ['(chain: target)'], row: 'apply: which change' },
   { file: 'orbit-apply-change/SKILL.md', anchor: 'fire the gate INFLECTION PROMPT via **AskUserQuestion** (chain: decision)', tags: ['(chain: decision)'], row: 'apply: the gate inflection' },
   { file: 'orbit-apply-change/SKILL.md', anchor: '**Pause if:** (chain: decision)', tags: ['(chain: decision)'], row: 'apply: a pause' },
@@ -235,9 +238,11 @@ const INVENTORY: Entry[] = [
   { file: 'orbit-archive-change/SKILL.md', anchor: '- Use **AskUserQuestion tool** to confirm user wants to proceed (chain: decision)', tags: ['(chain: decision)'], row: 'archive: incomplete artifacts; archive: incomplete tasks', exact: true, count: 2 },
   { file: 'orbit-archive-change/SKILL.md', anchor: '"Sync now (recommended)", "Archive without syncing" (chain: routine, default: Sync now)', tags: ['(chain: routine, default: Sync now)'], row: 'archive: the sync assessment' },
   { file: 'orbit-archive-change/SKILL.md', anchor: '"Archive now", "Sync anyway", "Cancel" (chain: routine, default: Archive now)', tags: ['(chain: routine, default: Archive now)'], row: 'archive: the sync assessment' },
-  { file: 'orbit-archive-change/SKILL.md', anchor: 'Unless the arrival is granted (next bullet), fire a consent **AskUserQuestion** (chain: not a prompt) BEFORE any of the command', tags: ['(chain: not a prompt)'], row: 'archive: the consent prompt' },
+  { file: 'orbit-archive-change/consent-at-entry.md', anchor: 'Unless the arrival is granted, fire a consent **AskUserQuestion** (chain: not a prompt) BEFORE any of the command', tags: ['(chain: not a prompt)'], row: 'archive: the consent prompt' },
   { file: 'orbit-archive-change/SKILL.md', anchor: 'Prompt via `AskUserQuestion` (chain: decision):', tags: ['(chain: decision)'], row: 'archive: unaddressed `@review:` markers', exact: true },
-  { file: 'orbit-archive-change/SKILL.md', anchor: 'who repairs `tasks.md` before the archive proceeds, or aborts (chain: decision)', tags: ['(chain: decision)'], row: 'archive: a user-validation task line the closure cannot dispose of' },
+  // cut-propose-archive (A2): the closure's procedure is references/user-validation.md; the body keeps the unreadable case.
+  { file: 'orbit-archive-change/user-validation.md', anchor: 'who repairs `tasks.md` before the archive proceeds, or aborts (chain: decision)', tags: ['(chain: decision)'], row: 'archive: a user-validation task line the closure cannot dispose of' },
+  { file: 'orbit-archive-change/SKILL.md', anchor: 'who repairs it before the archive proceeds, or aborts (chain: decision)', tags: ['(chain: decision)'], row: 'archive: an unreadable tasks.md at the user-validation scan' },
   { file: 'orbit-archive-change/gate-inflection.md', anchor: 'fire ONE inflection prompt via **AskUserQuestion** (chain: decision)', tags: ['(chain: decision)'], row: 'archive: the gate inflection' },
   { file: 'orbit-archive-change/fingerprint-divergence.md', anchor: '| `unverified` present, none `diverged` | Prompt via `AskUserQuestion` (chain: decision)', tags: ['(chain: decision)'], row: 'archive: the base-fingerprint check' },
   { file: 'orbit-archive-change/fingerprint-divergence.md', anchor: '### Divergence inflection prompt (`AskUserQuestion`) (chain: decision)', tags: ['(chain: decision)'], row: 'archive: the base-fingerprint check' },
@@ -356,6 +361,11 @@ describe('A chain treats each prompt by its kind — each listed prompt is tagge
   const gateRef = ref('orbit-archive-change', 'gate-inflection.md');
   const divergenceRef = ref('orbit-archive-change', 'fingerprint-divergence.md');
   const holdRef = ref('orbit-archive-change', 'signoff-hold.md');
+  const applyConsent = ref('orbit-apply-change', 'consent-at-entry.md');
+  const archiveConsent = ref('orbit-archive-change', 'consent-at-entry.md');
+  const uvRef = ref('orbit-archive-change', 'user-validation.md');
+  /** The granted path, from its heading in the consent reference to the end. */
+  const grantedPath = archiveConsent.slice(archiveConsent.indexOf('## A granted arrival'));
   /** The line right after the one carrying `anchor` (for the two byte-identical upstream confirm lines). */
   const lineAfter = (text: string, anchor: string): string => {
     const lines = text.split('\n');
@@ -391,7 +401,7 @@ describe('A chain treats each prompt by its kind — each listed prompt is tagge
     ['address-reviews: a decision-lane finding (closure prompt)', walk, 'is an OPTIONAL CLOSURE DEVICE', '(chain: decision)'],
     ["address-reviews: an unresolvable finding's alternatives", walk, 'Alternatives via **AskUserQuestion**', '(chain: decision)'],
     ['apply: which change', apply, 'use the **AskUserQuestion tool** to let the user select', '(chain: target)'],
-    ['apply: the consent prompt', apply, 'fire a consent **AskUserQuestion**', '(chain: not a prompt)'],
+    ['apply: the consent prompt', applyConsent, 'fire a consent **AskUserQuestion**', '(chain: not a prompt)'],
     ['apply: the gate inflection', apply, 'fire the gate INFLECTION PROMPT via **AskUserQuestion**', '(chain: decision)'],
     ['apply: a pause (the pause list)', apply, '**Pause if:**', '(chain: decision)'],
     ['apply: a pause (an unclear task)', apply, 'Task is unclear → ask for clarification', '(chain: decision)'],
@@ -399,8 +409,9 @@ describe('A chain treats each prompt by its kind — each listed prompt is tagge
     ['apply: a pause (the paused status)', apply, 'If paused: explain why and wait for guidance', '(chain: decision)'],
     ['apply: a pause (guardrails, an ambiguous task)', apply, 'If task is ambiguous, pause and ask before implementing', '(chain: decision)'],
     ['archive: which change', archive, 'Use the **AskUserQuestion tool** to let the user select.', '(chain: target)'],
-    ['archive: the consent prompt', archive, 'fire a consent **AskUserQuestion**', '(chain: not a prompt)'],
-    ['archive: a user-validation task line the closure cannot dispose of', archive, 'who repairs `tasks.md` before the archive proceeds, or aborts', '(chain: decision)'],
+    ['archive: the consent prompt', archiveConsent, 'fire a consent **AskUserQuestion**', '(chain: not a prompt)'],
+    ['archive: a user-validation task line the closure cannot dispose of', uvRef, 'who repairs `tasks.md` before the archive proceeds, or aborts', '(chain: decision)'],
+    ['archive: an unreadable tasks.md at the user-validation scan', archive, 'who repairs it before the archive proceeds, or aborts', '(chain: decision)'],
     ['archive: the sync assessment (deltas need syncing)', archive, '"Sync now (recommended)", "Archive without syncing"', '(chain: routine, default: Sync now)'],
     ['archive: the sync assessment (already synced)', archive, '"Archive now", "Sync anyway", "Cancel"', '(chain: routine, default: Archive now)'],
     ['archive: the gate inflection', gateRef, 'fire ONE inflection prompt via **AskUserQuestion**', '(chain: decision)'],
@@ -430,9 +441,8 @@ describe('A chain treats each prompt by its kind — each listed prompt is tagge
   // @scenario text orbit-conventions :: A chain treats each prompt by its kind :: A chained archive takes the sync default
   it('a chained archive takes the sync default and records it', () => {
     expect(lineWith(archive, '"Sync now (recommended)", "Archive without syncing"')).toContain('(chain: routine, default: Sync now)');
-    const granted = lineWith(archive, '- **Granted** (an AI-mediated arrival');
-    expect(granted).toContain("a routine prompt takes the default its tag names, and the run summary's `final_assessment` records `The chain took the default: <prompt> — <answer>.`");
-    expect(granted).not.toMatch(/\(chain: /);
+    expect(grantedPath).toContain("a routine prompt takes the default its tag names, and the run summary's `final_assessment` records `The chain took the default: <prompt> — <answer>.`");
+    expect(grantedPath).not.toMatch(/\(chain: /);
   });
 
   // @scenario text orbit-conventions :: A chain treats each prompt by its kind :: A pause in a chained apply stops the chain
@@ -450,7 +460,7 @@ describe('A chain treats each prompt by its kind — each listed prompt is tagge
     expect(lineExact(archive, 'Prompt via `AskUserQuestion` (chain: decision):')).toContain('(chain: decision)');
     const step = archive.slice(archive.indexOf('## Step 1.5'), archive.indexOf('## Step 3.2'));
     expect(step).toContain('Prompt via `AskUserQuestion` (chain: decision):\n\n- **Address now**');
-    expect(lineWith(archive, '- **Granted** (an AI-mediated arrival')).toContain('a decision prompt is asked exactly as on a typed arrival, and the chain does not continue after it');
+    expect(grantedPath).toContain('a decision prompt is asked exactly as on a typed arrival, and the chain does not continue after it');
   });
 
   // @scenario text orbit-conventions :: A chain treats each prompt by its kind :: The sign-off stops a chained archive
@@ -462,7 +472,7 @@ describe('A chain treats each prompt by its kind — each listed prompt is tagge
     expect(lineWith(step, '2. Ask with the **AskUserQuestion tool**')).toContain(
       '(chain: decision) — a decision prompt: an archive the `chain` object allowed asks it exactly as an archive the user typed, and the chain does not continue after it'
     );
-    expect(lineWith(archive, '- **Granted** (an AI-mediated arrival')).toContain('a decision prompt is asked exactly as on a typed arrival, and the chain does not continue after it');
+    expect(grantedPath).toContain('a decision prompt is asked exactly as on a typed arrival, and the chain does not continue after it');
   });
 
   // @scenario text orbit-conventions :: A chain treats each prompt by its kind :: A routine scoping prompt takes its default

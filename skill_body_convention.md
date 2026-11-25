@@ -73,5 +73,4 @@ Address-reviews' step 7 reads `references/account-walk-step.md` after the logs a
 
 ## Exceptions
 
-No step is exempt by design. Not yet brought under the convention: bulk-archive (its sign-off hold, PR section and
-divergence check, and its per-change archive emit), explore (its emit step among them) and onboard, untouched until `reduce-orbit-phase1`'s evaluation decides what follows.
+No step is exempt by design. Not yet brought under the convention: explore (its emit step among them) and onboard, untouched until `reduce-orbit-phase1`'s evaluation decides what follows.

@@ -19,7 +19,6 @@ export const WORKFLOW_TO_SKILL_DIR: Record<WorkflowId, string> = {
   'ff': 'orbit-ff-change',
   'sync': 'orbit-sync-specs',
   'archive': 'orbit-archive-change',
-  'bulk-archive': 'orbit-bulk-archive-change',
   'verify': 'orbit-verify-change',
   'onboard': 'orbit-onboard',
   'propose': 'orbit-propose',
@@ -31,12 +30,13 @@ export const WORKFLOW_TO_SKILL_DIR: Record<WorkflowId, string> = {
 
 /**
  * Artifacts RETIRED from the generated surface (D5: the standalone review-external
- * skill/launcher merged into review's `--reviewer` axis). Update reconciliation consults
+ * skill/launcher merged into review's `--reviewer` axis; cut-propose-archive: the bulk-archive
+ * workflow, removed by reduce-orbit-phase2's R-rop2-11). Update reconciliation consults
  * these so PRE-EXISTING surfaces converge — retirement is a first-class transition, never
  * an unknown directory left behind. Grow these lists on any future retirement.
  */
-export const RETIRED_SKILL_DIRS: readonly string[] = ['orbit-review-external'];
-export const RETIRED_COMMAND_IDS: readonly string[] = ['review-external'];
+export const RETIRED_SKILL_DIRS: readonly string[] = ['orbit-review-external', 'orbit-bulk-archive-change'];
+export const RETIRED_COMMAND_IDS: readonly string[] = ['review-external', 'bulk-archive'];
 
 function toKnownWorkflows(workflows: readonly string[]): WorkflowId[] {
   return workflows.filter(

@@ -83,7 +83,7 @@ orbit init --tools claude
 
 - `orbit/specs/`, for your project's living specs, and `orbit/changes/` (with `orbit/changes/archive/`), for
   changes in flight and archived;
-- 15 commands under `.claude/commands/orbit/` and 15 skills under `.claude/skills/`, one of each per workflow:
+- 14 commands under `.claude/commands/orbit/` and 14 skills under `.claude/skills/`, one of each per workflow:
 
 | Command | Command file | Skill directory |
 |---|---|---|
@@ -99,11 +99,10 @@ orbit init --tools claude
 | `/orbit:verify` | `.claude/commands/orbit/verify.md` | `.claude/skills/orbit-verify-change/` |
 | `/orbit:sync` | `.claude/commands/orbit/sync.md` | `.claude/skills/orbit-sync-specs/` |
 | `/orbit:archive` | `.claude/commands/orbit/archive.md` | `.claude/skills/orbit-archive-change/` |
-| `/orbit:bulk-archive` | `.claude/commands/orbit/bulk-archive.md` | `.claude/skills/orbit-bulk-archive-change/` |
 | `/orbit:audit-drift` | `.claude/commands/orbit/audit-drift.md` | `.claude/skills/orbit-audit-drift/` |
 | `/orbit:onboard` | `.claude/commands/orbit/onboard.md` | `.claude/skills/orbit-onboard/` |
 
-Each skill directory holds a `SKILL.md`. The skills of fourteen commands, every one but `onboard`, also hold a
+Each skill directory holds a `SKILL.md`. The skills of thirteen commands, every one but `onboard`, also hold a
 `references/` directory the skill reads.
 
 ### Your first change

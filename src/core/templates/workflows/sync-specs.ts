@@ -155,7 +155,7 @@ ${DECISION_WRITING_BASIC}
 
 ## Consent inheritance
 
-Sync invoked as a step inside a consented flow (e.g. archive Step 4, bulk-archive Step 8a) inherits that flow's consent and does NOT prompt separately. Standalone \`/orbit:sync\` is not consent-scoped (no consent-marked gate, no run-summary emit, no prompt); AI-mediated invocation of it is barred by the no-chaining discipline above.`,
+Sync invoked as a step inside a consented flow (e.g. archive Step 4) inherits that flow's consent and does NOT prompt separately. Standalone \`/orbit:sync\` is not consent-scoped (no consent-marked gate, no run-summary emit, no prompt); AI-mediated invocation of it is barred by the no-chaining discipline above.`,
     references: [
       { name: 'decision-records.md', content: DECISION_RECORDS_REFERENCE },
     ],

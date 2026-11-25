@@ -166,9 +166,8 @@ The workflow runs on a change leave records in its `.orbit-runs/` directory: `pr
 `review-proposal-<TS>.json`, `address-reviews-<TS>.json`, `apply-<TS>.json` and so on, where `<TS>` is a UTC
 timestamp. Not every run writes one there: a named exploration records under `orbit/explore/<name>/` until a proposal
 takes it in, an architect session under `orbit/architecture/.orbit-runs/`, and a project-wide drift audit under
-`orbit/.orbit-runs/`; `/orbit:onboard`, `/orbit:sync` and an unnamed exploration write nothing, and
-`/orbit:bulk-archive` writes one archive record per change. The `orbit-run-summary-emit` capability owns the full
-list. The AI writes only the narrative part of each record; `orbit emit` composes the rest and refuses a record
+`orbit/.orbit-runs/`; `/orbit:onboard`, `/orbit:sync` and an unnamed exploration write nothing. The
+`orbit-run-summary-emit` capability owns the full list. The AI writes only the narrative part of each record; `orbit emit` composes the rest and refuses a record
 that fails its checks. The trail is what the gates read, and it moves with the change when it is archived.
 
 ## Custom schemas

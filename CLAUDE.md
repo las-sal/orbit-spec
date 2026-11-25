@@ -39,7 +39,7 @@ Three decisions were ratified during C1 remediation:
   (upstream body — edited only by named deltas, in place, per `orbit-conventions`' `Generated-file disposition` — + `# Orbit additions`); each command `content` literal is a ~3-line launcher
   invoking the skill. Do NOT regrow workflow bodies in command literals.
 - **D15 — full surface always**: `getProfileWorkflows` (src/core/profiles.ts) always returns ALL
-  workflows (15 as of D5); profile gating is deliberately inert (`delivery` still honored). Do NOT
+  workflows (14 since bulk-archive left, R-rop2-11); profile gating is deliberately inert (`delivery` still honored). Do NOT
   reintroduce profile-filtered installs.
 - **D11 refinement — Claude primacy**: never trade Claude efficacy for cross-tool neutrality; upstream's
   named-tool idiom (`AskUserQuestion`, `Task tool`) stays in bodies by design.

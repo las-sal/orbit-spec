@@ -17,23 +17,36 @@ import { COMMIT_STEP_BASIC, COMMIT_STEP_REFERENCE, COMMIT_STEP_REFERENCE_NAME, D
 // rc10: the DEFERRAL REFUSALS production, a CHECKED MIRROR of the fence in
 // `orbit-archive-modifications`' `User-validation closure at the archive seam` (held byte-equal by
 // test/core/deferral-refusals-parity.test.ts). The owner is the spec; no engine surface runs the
-// write gate before the move, so Step 3.2 carries the production rather than a prose list.
+// write gate before the move, so the skill's `references/user-validation.md` (Step 3.2's procedure) carries the
+// production rather than a prose list.
 /**
- * brief-render: the save step's command and its table (`orbit-archive-modifications`' `The archive saves the
- * change's brief before the sync`), one constant both archive bodies interpolate, so an installed skill
- * carries what the step does with no spec to read.
+ * brief-render: the save step (`orbit-archive-modifications`' `The archive saves the change's brief before the sync`).
+ * cut-propose-archive (A3): the body carries the command and its basic content (`BRIEF_SAVE_STEP`); the table and the
+ * sentence on its rows (`BRIEF_SAVE_TABLE`) ship as `references/brief-save.md`, read when the save exits non-zero.
  */
-export const BRIEF_SAVE_STEP = `\`\`\`bash
+export const BRIEF_SAVE_COMMAND = `\`\`\`bash
 orbit brief --change "<name>" --save
-\`\`\`
+\`\`\``;
 
-| the save | the archive |
+export const BRIEF_SAVE_TABLE = `| the save | the archive |
 |---|---|
 | succeeds | says nothing about it and goes on |
 | exits non-zero (the brief cannot be rendered whole, or a racing writer took its name) | composes ONE \`warnings\` entry naming the failure as the command reported it, for the Step 5.5 run summary, says nothing about it in chat, and goes on to the hold: under every sign-off setting but \`change\` a brief that cannot be saved never stops an archive; under \`change\` the hold stops it, since there is no copy to sign (\`The archive holds for a per-change sign-off\`) |
 | ran, and the archive then stops (an abort or a cancel at a later prompt) | the copy stays in the active change's history; the next archive saves a new one, and the latest is the change's brief |
 
-The rows are the save's two outcomes (written, or refused whole) and the one way an archive can end after it without completing (it stops before the sync and the move). On success the command prints the saved file's path and its \`sha256\`: show neither. The save runs under every setting, and with every setting at its default nothing the user sees or is asked changes: the PR-attached tail stages the copy with the archived tree and does not name it among the carried untracked files.`;
+The rows are the save's two outcomes (written, or refused whole) and the one way an archive can end after it without completing (it stops before the sync and the move).`;
+
+export const BRIEF_SAVE_STEP = `${BRIEF_SAVE_COMMAND}
+
+On success, say nothing about it and go on; the command prints the saved file's path and its \`sha256\`: show neither. On a non-zero exit, read \`references/brief-save.md\` and follow it from the result you already have. The save runs under every setting; the PR-attached tail stages the copy with the archived tree and does not name it among the carried untracked files.`;
+
+export const BRIEF_SAVE_REFERENCE_NAME = 'brief-save.md';
+const BRIEF_SAVE_REFERENCE = `# Reference: the brief save (archive Step 3.6)
+
+Read when \`orbit brief --change "<name>" --save\` exits non-zero; act by the table's row from the result you already have.
+
+${BRIEF_SAVE_TABLE}
+`;
 
 /**
  * program-brief: the sign-off hold, run directly after the save step in both archive bodies
@@ -76,7 +89,7 @@ The consent prompt is unchanged: a granted arrival still records \`consent: "set
 /**
  * conditional-steps (reduce-orbit-phase1): Step 3.4's and Step 3.45's full text, moved byte-equal to the reference files
  * the body's basic contents point at on any result they do not handle themselves (R-rop-3, R-rop-4). The sign-off hold
- * (`SIGNOFF_HOLD_STEP`) ships the same way; bulk-archive keeps interpolating it whole (D-cs-3).
+ * (`SIGNOFF_HOLD_STEP`) ships the same way.
  */
 export const GATE_INFLECTION_STEP = `After Step 3.2 but before the audit sweep (Step 3.5) — the gate prompt fires FIRST among the anomaly prompts per the gated-phase contract:
 
@@ -139,6 +152,25 @@ const GATE_INFLECTION_REFERENCE = `# Reference: the gate inflection prompt (arch
 const FINGERPRINT_DIVERGENCE_REFERENCE = `# Reference: the base-fingerprint divergence check (archive Step 3.45)\n\n${FINGERPRINT_DIVERGENCE_STEP}\n`;
 const SIGNOFF_HOLD_REFERENCE = `# Reference: the sign-off hold (archive Step 3.7)\n\n${SIGNOFF_HOLD_STEP}\n`;
 
+/**
+ * cut-propose-archive (A1): what Step 0's AI-mediated and granted paths do, moved byte-equal from the body, which keeps
+ * the classification and reads this reference on either of those two arrivals.
+ */
+export const CONSENT_AT_ENTRY_REFERENCE_NAME = 'consent-at-entry.md';
+const ARCHIVE_CONSENT_AT_ENTRY_REFERENCE = `# Reference: consent at entry off the user-invoked path (archive Step 0)
+
+Read when Step 0 classifies the arrival as AI-mediated or granted, before any write.
+
+## An AI-mediated arrival
+
+Unless the arrival is granted, fire a consent **AskUserQuestion** (chain: not a prompt) BEFORE any of the command's writes: the position readout, what the archive will write (N deltas across M capabilities synced to baseline + the change moved to archive — from a read-only look at \`orbit/changes/<name>/specs/\`), and exactly two options — **Proceed** / **Abort**. When the change is PR-ATTACHED (resolve this from the change's trail as part of the same read-only discovery), the preview ADDITIONALLY names the tail's OUTWARD writes: the branch the archive commit lands on, the PUSH to the resolved remote, and — for a per-proposal PR — the READY FLIP, or for a program PR the APPENDED stage entry. This is required precisely because the tail rides this same entry consent and fires no second prompt: a preview enumerating only in-repo writes would obtain consent for a spec sync and a directory move, then push to a remote and flip a pull request public. The outward line is OMITTED for unattached changes, so the pre-capability prompt is unchanged wherever no PR exists. Proceed records \`consent: "prompted"\` in the run summary; **Abort leaves no baseline write, no sync, no move, and no run summary**.
+
+## A granted arrival
+
+Record \`consent: "setting"\`, fire no consent prompt, and stamp the consent era (the body's Consent-era stamp) as on the other two paths. No preview is shown: the outward writes the tail rides on this entry are named in the \`archive\` key's row, which the user read before granting it, and the tail (Step 5.6) runs exactly as after a Proceed. Whether an arrival is granted is read from that object, never judged from how this command was reached: "continue" and a chain's closing step are the same arrival. On a granted arrival each of the body's later prompts is met by the kind its tag names: a target prompt does not fire, because the next command names the change; a routine prompt takes the default its tag names, and the run summary's \`final_assessment\` records \`The chain took the default: <prompt> — <answer>.\`; a decision prompt is asked exactly as on a typed arrival, and the chain does not continue after it. On every other arrival the tags change nothing.
+`;
+
+
 export const DEFERRAL_REFUSALS = `DEFERRAL REFUSALS — the archive write gate refuses each, naming the task or line, and Step 3.2 checks each before the move:
 1 an unchecked task carrying the (User-validation marker, with no deferral naming it
 2 a marked unchecked task with no task id, which no deferral can key
@@ -149,6 +181,29 @@ export const DEFERRAL_REFUSALS = `DEFERRAL REFUSALS — the archive write gate r
 7 a deferral carrying a key other than task, why, when and where
 8 a marked unchecked task whose task id another task line also carries, checked or not, naming both lines
 A missing tasks.md is an empty marked set; any other failure to read it is refused, naming the error. An empty deferred_validations array is accepted and written as absent.`;
+
+/**
+ * cut-propose-archive (A2): Step 3.2's dispositions, the check of the DEFERRAL REFUSALS production and the brief, moved
+ * byte-equal from the body, which keeps the scan's three outcomes and the recovery after the move.
+ */
+export const USER_VALIDATION_REFERENCE_NAME = 'user-validation.md';
+const USER_VALIDATION_REFERENCE = `# Reference: the user-validation closure (archive Step 3.2)
+
+Read when \`tasks.md\` holds an unchecked task carrying the \`(User-validation\` marker; follow it before the move.
+
+Find every unchecked task in \`tasks.md\` whose line carries the \`(User-validation\` marker — whether or not an apply emit declared it — and dispose of EACH as exactly one of:
+
+- **OBSERVED** — the validation has happened (during the change's own cycle, or here). Check the box and append to the task line a one-line note naming the evidence (an emit token, a commit, what was seen). No deferral entry.
+- **DEFERRED** — the validation was not observed at this seam: it can happen only after the change ships (a merge, a later stage, a later session), OR it could have happened and has not. The box stays unchecked; compose a \`deferred_validations\` entry \`{task, why, when, where}\` for the Step 5.5 payload — \`why\` saying honestly which case it is. A task whose assertion is about state that exists only AFTER this step — the baseline after sync, the archived directory, or the archive emit — is DEFERRED here: this step precedes the sync and the move.
+
+Then check every case of the production below against \`tasks.md\` and the composed deferrals. A marked task with no id, in no \`## \` group, or with an id another task line carries (cases 2, 3 and 8), or a \`tasks.md\` that cannot be read, is REPORTED to the user, who repairs \`tasks.md\` before the archive proceeds, or aborts (chain: decision); fix any other case in the composed deferrals yourself.
+
+\`\`\`
+${DEFERRAL_REFUSALS}
+\`\`\`
+
+**BRIEF the user before the move** — in chat, one line per task: its id, its disposition and, for a deferral, its \`why\` (and \`when\`/\`where\`). The brief is a REPORT, not a prompt: it asks nothing, and halting stays the user's, by aborting. When no marked task is unchecked, the step says nothing.
+`;
 
 const ARCHIVE_SUMMARY_SCHEMA_REFERENCE = `# Reference: archive run-summary schema
 
@@ -288,7 +343,7 @@ A payload file the archive writes after the move — here an archive that took e
 - **\`unresolved_markers\`** is an ARRAY of the \`@review:\` markers still present when the archive proceeded (empty array when none) — one \`"<file>:<line> — <marker text>"\` entry per marker. Marker-prompt outcomes that halt the archive write no summary at all.
 - **\`user_decision\`** captures the AUDIT-drift prompt decision and has exactly three values: \`proceeded_with_no_critical\` (clean audit or warnings only), \`proceeded_despite_critical\` (user explicitly proceeded past CRITICAL findings), \`audit_skipped_via_flag\` (\`--skip-audit\` used). An abort at the critical-findings prompt cancels the archive and writes no summary.
 - **\`pr_url\` / \`pr_state\`** (D6, per \`orbit-pr-lifecycle\`) record the attached PR's identity and the state the READ-ONLY PREFLIGHT observed — normally \`"draft"\`, and truthfully \`"ready"\` when the PR was already flipped by the USER at an earlier point (including at a prior program's arc-done, for an adopted program PR; never by a stage). The preflight runs BEFORE this emit, so the value is an OBSERVATION, never a forward-looking claim about the flip the tail is about to perform. On POSITIVE invalidation \`pr_state\` is ELIDED while \`pr_url\` is still recorded — the identity that was validated and rejected. Both absent for UNATTACHED changes; present whenever an attachment resolves, EVEN IF \`pr:\` now reads \`never\` (attachment authority).
-- **\`consent\`** (D1, per \`orbit-lifecycle-consent\`) records the invocation's consent story from the Step 0 provenance check: \`"user-invoked"\` (user-typed \`/orbit:archive\`, or a user-typed \`/orbit:bulk-archive\` whose flow confirmed the batch), \`"prompted"\` (AI-mediated arrival, consent prompt fired, user proceeded) or \`"setting"\` (AI-mediated arrival granted by the project's \`chain.archive\` key, no prompt; seam-chaining-grants). Exactly three values — a consent Abort writes NO summary. The write gate checks the value: \`setting\` is refused, naming the \`archive\` key, unless the project's \`chain\` map grants \`archive\`, and any value outside the three is refused naming them; \`user-invoked\` and \`prompted\` are self-reported. REQUIRED on every post-capability archive emit except one written after a withdrawn grant (Step 5.5); absence is the audit-drift tripwire condition. DISTINCT from \`user_decision\` (audit outcome), the \`continuation\` judgement entry (cadence decision), and the fingerprint fields (content guard).
+- **\`consent\`** (D1, per \`orbit-lifecycle-consent\`) records the invocation's consent story from the Step 0 provenance check: \`"user-invoked"\` (user-typed \`/orbit:archive\`), \`"prompted"\` (AI-mediated arrival, consent prompt fired, user proceeded) or \`"setting"\` (AI-mediated arrival granted by the project's \`chain.archive\` key, no prompt; seam-chaining-grants). Exactly three values — a consent Abort writes NO summary. The write gate checks the value: \`setting\` is refused, naming the \`archive\` key, unless the project's \`chain\` map grants \`archive\`, and any value outside the three is refused naming them; \`user-invoked\` and \`prompted\` are self-reported. REQUIRED on every post-capability archive emit except one written after a withdrawn grant (Step 5.5); absence is the audit-drift tripwire condition. DISTINCT from \`user_decision\` (audit outcome), the \`continuation\` judgement entry (cadence decision), and the fingerprint fields (content guard).
 - **\`fingerprint_overridden\`** (C2) is present ONLY when the Step 3.45 fingerprint check reported \`diverged\` requirement(s) and the user chose **Proceed anyway** at the divergence inflection prompt — one \`{capability, requirement, base_hash, live_hash}\` entry per diverged requirement, captured at decision time. Absent when no fingerprint override occurred; REQUIRED when proceed-anyway was chosen. DISTINCT from the \`continuation\` judgement entry (review-cadence decision) and \`user_decision\` (audit-drift outcome).
 - **\`decision_records_unread\`** (decision-reading) is ENGINE-COMPUTED on every archive emit and refused in the payload: the number of the change's decision records (the latest of each replacement chain) that no in-context system review listed as read — records no reading saw. It lives in the run record only: the archive readout does not show it, and no gate reads it.
 - **\`fingerprints_unverified\`** (C2) is present ONLY when the archive proceeded past requirement(s) whose fingerprint status was \`unverified\` (no base recorded — e.g. a hand-authored or pre-C2 delta) — one \`{capability, requirement}\` entry each. Absent when every touched requirement was verified.
@@ -435,7 +490,7 @@ All artifacts complete. All tasks complete.
 
 # Orbit additions
 
-The sections below describe orbit-specific additions on top of upstream's archive flow. The upstream content above is as \`orbit-conventions\`' \`Generated-file disposition\` records it. Orbit adds a **consent check at entry**, a **pre-archive \`audit-drift\` sweep**, a \`--skip-audit\` opt-out, an **unresolved \`@review:\` marker warning**, a **user-validation closure**, a **base-fingerprint divergence check**, an **archive run summary** written to \`.orbit-runs/\`, and a small set of edge-case behaviors.
+Orbit's steps on top of upstream's archive flow, each numbered by where it runs. The upstream content above is as \`orbit-conventions\`' \`Generated-file disposition\` records it.
 
 ## Execution disciplines (epitome)
 
@@ -456,9 +511,11 @@ BEFORE any other step — before the Step 1.5 marker scan, the Step 3.4 gate pro
 Determine invocation provenance — an observable transcript fact, never a judgment of delegated intent:
 
 - **User-invoked**: the triggering turn contains an explicit user invocation — the typed \`/orbit:archive\` command, or an unambiguous same-turn prose request naming the act ("archive it"). Proceed with ZERO added prompts (only the anomaly prompts may interrupt); the run summary records \`consent: "user-invoked"\`.
-- **AI-mediated**: everything else — delegation phrases ("finish the cadence"), inference ("continue"), a handoff document, a chain, or an eligibility readout pointing here. Unless the arrival is granted (next bullet), fire a consent **AskUserQuestion** (chain: not a prompt) BEFORE any of the command's writes: the position readout, what the archive will write (N deltas across M capabilities synced to baseline + the change moved to archive — from a read-only look at \`orbit/changes/<name>/specs/\`), and exactly two options — **Proceed** / **Abort**. When the change is PR-ATTACHED (resolve this from the change's trail as part of the same read-only discovery), the preview ADDITIONALLY names the tail's OUTWARD writes: the branch the archive commit lands on, the PUSH to the resolved remote, and — for a per-proposal PR — the READY FLIP, or for a program PR the APPENDED stage entry. This is required precisely because the tail rides this same entry consent and fires no second prompt: a preview enumerating only in-repo writes would obtain consent for a spec sync and a directory move, then push to a remote and flip a pull request public. The outward line is OMITTED for unattached changes, so the pre-capability prompt is unchanged wherever no PR exists — and it is likewise omitted under \`/orbit:bulk-archive\`, which runs no tail. Proceed records \`consent: "prompted"\` in the run summary; **Abort leaves no baseline write, no sync, no move, and no run summary**.
-- **Granted** (an AI-mediated arrival the project's \`chain\` setting allows): the arrival is not typed, and the \`chain\` object of \`orbit status --change "<name>" --json\`, read at entry (read-only), reports \`next\` as this command (\`/orbit:archive <name>\`, with or without the \` — user-invoked\` marker) with \`may_run: true\`. Record \`consent: "setting"\`, fire no consent prompt, and stamp the consent era below as on the other two paths. No preview is shown: the outward writes the tail rides on this entry are named in the \`archive\` key's row, which the user read before granting it, and the tail (Step 5.6) runs exactly as after a Proceed. Whether an arrival is granted is read from that object, never judged from how this command was reached: "continue" and a chain's closing step are the same arrival. On a granted arrival each prompt below is met by the kind its tag names: a target prompt does not fire, because the next command names the change; a routine prompt takes the default its tag names, and the run summary's \`final_assessment\` records \`The chain took the default: <prompt> — <answer>.\`; a decision prompt is asked exactly as on a typed arrival, and the chain does not continue after it. On every other arrival the tags change nothing.
+- **AI-mediated**: everything else — delegation phrases ("finish the cadence"), inference ("continue"), a handoff document, a chain, or an eligibility readout pointing here.
+- **Granted** (an AI-mediated arrival the project's \`chain\` setting allows): the arrival is not typed, and the \`chain\` object of \`orbit status --change "<name>" --json\`, read at entry (read-only), reports \`next\` as this command (\`/orbit:archive <name>\`, with or without the \` — user-invoked\` marker) with \`may_run: true\`.
 - **When provenance is uncertain, treat the arrival as AI-mediated** — erring toward one extra click, never toward a silent proceed.
+
+On an arrival classified above as AI-mediated or granted, read \`references/consent-at-entry.md\` and follow it before any write.
 
 **Consent-era stamp (migrate-on-touch)**: once consent is established (user-typed provenance, Proceed at the prompt, or a granted arrival), read the change's \`.openspec.yaml\`. If it lacks \`schema_version\`, stamp \`consent_era_from: <current UTC timestamp, YYYY-MM-DDTHH:MM:SSZ>\` into it (add-only; never overwrite an existing stamp) — this marks a pre-capability change as tripwire-covered from this touch onward.
 
@@ -466,19 +523,7 @@ Determine invocation provenance — an observable transcript fact, never a judgm
 
 ## Step 0.7 — PR-attachment entry observation (READ-ONLY, every provenance path)
 
-Before ANY archive write — before upstream Step 1, before sync (Step 4) and the move (Step 5)
-— resolve whether this change is PR-ATTACHED: read \`pr_attachment\` from the LATEST
-attachment-bearing PROPOSE or FF emit on the change's trail (the same read the consent
-preview in Step 0 uses on the AI-mediated path; Step 4.9's \`orbit pr preflight\` reads the same record). This
-step mutates nothing and runs on EVERY provenance path, user-typed included. When attached,
-compare HEAD's branch (\`git branch --show-current\`) with \`pr_attachment.branch\`. On mismatch,
-SAY SO NOW — in the consent preview when one fires, otherwise as one line before Step 1 (on a
-granted arrival that line is the only notice and nobody is asked: the archive proceeds and the tail
-skips, a named limit) — naming both branches and the case-specific switch (\`git switch <branch>\` locally; the
-tracking form when only the remote has it). The tail's HEAD precondition (in the reference)
-remains the GUARD that skips the PR half; this observation is the early warning that lets the
-user switch first instead of carrying uncommitted sync, move, and emit writes across a
-\`git switch\` afterward. Unattached changes see nothing here.
+Part of Step 0's read-only discovery, on every arrival, BEFORE a consent prompt is composed and before the consent-era stamp: read \`pr_attachment\` from the latest attachment-bearing propose or ff emit on the change's trail; when there is one, read \`references/pr-archive-tail.md\` and run its entry observation now, so a HEAD mismatch is named in the consent preview when one fires, and otherwise as one line before Step 1.
 
 ## Step 1.5 — Unresolved \`@review:\` marker warning
 
@@ -506,20 +551,9 @@ If no markers, proceed without prompting.
 
 ## Step 3.2 — User-validation closure
 
-After upstream Step 3 (task-completion check) and BEFORE the Step 3.4 gate prompt — so the brief informs the gate decision, and so every predictable refusal surfaces while the change is still active. The rule is \`orbit-archive-modifications\`' \`User-validation closure at the archive seam\`; this step carries it out.
+After upstream Step 3 (task-completion check) and BEFORE the Step 3.4 gate prompt — so the brief informs the gate decision, and so every predictable refusal surfaces while the change is still active.
 
-Find every unchecked task in \`tasks.md\` whose line carries the \`(User-validation\` marker — whether or not an apply emit declared it — and dispose of EACH as exactly one of:
-
-- **OBSERVED** — the validation has happened (during the change's own cycle, or here). Check the box and append to the task line a one-line note naming the evidence (an emit token, a commit, what was seen). No deferral entry.
-- **DEFERRED** — the validation was not observed at this seam: it can happen only after the change ships (a merge, a later stage, a later session), OR it could have happened and has not. The box stays unchecked; compose a \`deferred_validations\` entry \`{task, why, when, where}\` for the Step 5.5 payload — \`why\` saying honestly which case it is. A task whose assertion is about state that exists only AFTER this step — the baseline after sync, the archived directory, or the archive emit — is DEFERRED here: this step precedes the sync and the move.
-
-Then check every case of the production below against \`tasks.md\` and the composed deferrals. A marked task with no id, in no \`## \` group, or with an id another task line carries (cases 2, 3 and 8), or a \`tasks.md\` that cannot be read, is REPORTED to the user, who repairs \`tasks.md\` before the archive proceeds, or aborts (chain: decision); fix any other case in the composed deferrals yourself.
-
-\`\`\`
-${DEFERRAL_REFUSALS}
-\`\`\`
-
-**BRIEF the user before the move** — in chat, one line per task: its id, its disposition and, for a deferral, its \`why\` (and \`when\`/\`where\`). The brief is a REPORT, not a prompt: it asks nothing, and halting stays the user's, by aborting. When no marked task is unchecked, the step says nothing.
+Scan \`tasks.md\` for unchecked tasks whose line carries the \`(User-validation\` marker, whether or not an apply emit declared them. When there is none, or no \`tasks.md\`, the step says nothing. When there is one or more, read \`references/user-validation.md\` and follow it before the move: it disposes of each task, checks the write gate's refusals, and briefs the user. A \`tasks.md\` that exists and cannot be read is REPORTED to the user, who repairs it before the archive proceeds, or aborts (chain: decision); it is never taken as an empty marked set.
 
 **Recovery after the move**: if \`orbit emit archive\` still refuses at Step 5.5, repair the payload and re-run the emit against the archived directory — NEVER repeat the sync or the move.
 
@@ -548,17 +582,17 @@ After upstream Step 3 (task-completion check) but before Step 4 (sync-specs):
 
 ### Prompt outcomes (for the ≥1 CRITICAL case)
 
-- **Address now** → archive does not proceed. User fixes the drift issues and re-invokes \`/orbit:archive\`. No summary written this run.
-- **Proceed with archive** → archive proceeds normally. Summary records \`user_decision: proceeded_despite_critical\`.
-- **Abort** → archive is cancelled. No move, no sync-specs, no summary.
+- **Address now** → the archive stops; the user fixes the drift and re-invokes \`/orbit:archive\`. No summary.
+- **Proceed with archive** → the archive goes on; the summary records \`user_decision: proceeded_despite_critical\`.
+- **Abort** → the archive is cancelled: no move, no sync-specs, no summary.
 
 ### \`--skip-audit\` flag
 
-When \`/orbit:archive --skip-audit <name>\` is invoked, the entire Step 3.5 audit is skipped. The archive run summary records \`audit_skipped_via_flag: true\`. Use case: the user has just run \`/orbit:audit-drift\` manually and doesn't need to repeat it.
+\`/orbit:archive --skip-audit <name>\` skips Step 3.5 whole (for a user who has just run \`/orbit:audit-drift\`); the run summary records \`audit_skipped_via_flag: true\`.
 
 ## Step 3.6 — Save the change's brief (BEFORE the sync)
 
-After the Step 3.5 audit sweep and its prompt resolve, and BEFORE upstream Step 4 (the sync assessment), in every mode, save the change's brief while the change is still active, so the copy is written into the change's own history and moves with it. A sign-off given per change (Step 3.7, next) waits before anything is synced or moved and cites this copy, so it is rendered before the archive record exists — the copy says so itself.
+After the Step 3.5 audit sweep and its prompt resolve, and BEFORE upstream Step 4 (the sync assessment), in every mode, save the change's brief while the change is still active, so the copy lands in the change's own history and moves with it, and a per-change sign-off (Step 3.7, next) can cite it before anything is synced or moved.
 
 ${BRIEF_SAVE_STEP}
 
@@ -566,7 +600,7 @@ ${BRIEF_SAVE_STEP}
 
 Directly after Step 3.6's save, BEFORE upstream Step 4, in every mode, run \`orbit brief --change "<name>" --hold --json\` (it renders and writes nothing). On \`why: "off"\`, go on silently, stating any warning in one line. On any other result or a non-zero exit, read \`references/${SIGNOFF_HOLD_REFERENCE_NAME}\` and follow it from the save's outcome and the result you already have, before the sync.
 
-## Step 4.9 — PR preflight (\`orbit pr preflight\`, READ-ONLY, BEFORE the move; moved before the move)
+## Step 4.9 — PR preflight (\`orbit pr preflight\`, READ-ONLY, BEFORE the move)
 
 After the sync (upstream Step 4) and BEFORE upstream Step 5's move, while the change is still
 active (after the move the call is a usage error):
@@ -578,14 +612,9 @@ orbit pr preflight <name> --json
 It mutates nothing. \`off\` means the change is UNATTACHED: no tail runs at Step 5.6 and the
 archive ends exactly as pre-capability; when the \`pr\` regime read from \`orbit status --json\`
 is active, write ONE line noting the unattached state (\`/orbit:new\` + \`/orbit:continue\`
-changes never attach). Anything else loads \`references/pr-archive-tail.md\`, and its record
-is carried forward: \`observations.emit\` supplies the Step 5.5 emit's \`pr_url\`/\`pr_state\`,
-and \`observations.outcome\` is Step 5.6's \`--outcome\`, so the emit and the tail act on ONE
-observation. Nothing it observes is changed by the move. A non-zero exit is a usage error:
-report it verbatim, and the archive continues unattached.
-
-(The HEAD-vs-attachment observation already fired at Step 0.7, before any archive write; the
-tail re-checks HEAD immediately before staging as its guard.)
+changes never attach). A non-zero exit is a usage error: report it verbatim, and the archive
+continues unattached. On any other result, read \`references/pr-archive-tail.md\` now, if Step 0.7
+did not, and carry its record forward.
 
 ${ARCHIVE_RUN_SUMMARY_EMIT_BASIC}
 
@@ -610,57 +639,29 @@ ${COMMIT_STEP_BASIC}
 
 ## Step 5.65 — The readiness line in the completion readout
 
-When the archive emit carried a \`readiness\` entry with \`disposition: "not-ready"\`, the completion readout SHALL state it in ONE line, naming the record AND RENDERING \`ratified_by\`, because that field says WHOSE dissent it was and a line that presupposes one value misreports the other: \`readiness: NOT READY — archived against this session's own judgement; see archive-<TS>.json\` when \`ratified_by\` is \`ai\`, and \`readiness: NOT READY — archived against the user's ratified judgement; see archive-<TS>.json\` when it is \`user\`. A \`ready\` disposition renders NOTHING: the ordinary case needs no announcement, and a readout that speaks on every archive teaches readers to skip it.
-
-This line is the record's READER, and it is not decoration. A judgement record that no surface consumes would repeat exactly the defect this program already found in the RETIRED field this record superseded — written by every body, read by nothing — inside the change that exists to fix it. A change archived against the author's own judgement should say so where a human is looking, not only inside a JSON field.
+When the archive emit carried a \`readiness\` entry with \`disposition: "not-ready"\`, the completion readout states it in ONE line, naming the record and rendering whose judgement it was (\`ratified_by\`): \`readiness: NOT READY — archived against this session's own judgement; see archive-<TS>.json\` when \`ratified_by\` is \`ai\`, and \`readiness: NOT READY — archived against the user's ratified judgement; see archive-<TS>.json\` when it is \`user\`. A \`ready\` disposition renders NOTHING.
 
 ## Step 5.7 — Stage-line garnish in the completion readout
 
-When the archived change's metadata carries an \`architecture: {doc, stage}\` citation, the "Archive Complete" readout gains ONE stage line: after the move, run \`orbit architecture status --json\` and render the cited stage's post-archive computed position (e.g. \`stage d2-architect: now quiescent — completion is yours to ratify\`). One line riding the existing position render — no prompt, no doc edit; ratification never happens here. Uncited changes see no stage line.
+When the archived change's metadata carries an \`architecture: {doc, stage}\` citation, the "Archive Complete" readout gains ONE stage line: after the move, run \`orbit architecture status --json\` and render the cited stage's computed position (e.g. \`stage d2-architect: now quiescent — completion is yours to ratify\`) — no prompt, no doc edit; ratification never happens here. Uncited changes see no stage line.
 
 ## Step 5.8 — Residual outward-actions echo
 
-When the flow hands control back at an OUTWARD seam, the completion readout shows the acts that
-stay the human's. After a per-change tail, show each of \`orbit pr tail\`'s \`human_acts\`
-argv verbatim, labelled as the user's own: the merge, then the return to the default branch
-after it. Run none of them. After a program-PR append: the program PR is named and the flip
-stays at arc-done. After a tail whose PR half was SKIPPED on positive invalidation (the commit
-and push landed; the rewrite/append and flip did not): name the specific reason and that any
-action on that pull request is the user's. No echo fires for an unattached change — there is
-no outward seam to hand back at.
+After a tail, the completion readout shows the acts that stay the human's, as \`references/pr-archive-tail.md\`'s "At the close" says (read by then). No echo fires for an unattached change.
 
 ## \`.orbit-runs/\` moves with the change
 
-Upstream Step 5's \`mv orbit/changes/<name> orbit/changes/archive/YYYY-MM-DD-<name>\` already moves the entire change directory, including \`.orbit-runs/\`. No additional handling required — \`.orbit-runs/\` is just a subdirectory of the change.
-
-All prior internal-run summaries (\`review-*-*.json\`, \`audit-drift-*.json\`, \`address-reviews-*.json\`) and external-review findings (\`external-*.md\` + \`external-prompt-*-*.md\`) persist in the archived location at \`orbit/changes/archive/<YYYY-MM-DD>-<change-name>/.orbit-runs/\`.
+Upstream Step 5's \`mv\` moves the whole change directory, \`.orbit-runs/\` included, so every prior run summary and external-review file persists at \`orbit/changes/archive/<YYYY-MM-DD>-<change-name>/.orbit-runs/\`. Nothing more is needed.
 
 ## Edge cases
 
 ### Already archived
 
-If \`orbit/changes/archive/<YYYY-MM-DD>-<change-name>/\` already exists when the user invokes \`/orbit:archive <change-name>\` (i.e., a same-day prior archive for the same change name):
-
-Halt with a clear error:
-
-\`\`\`
-Change <name> is already at orbit/changes/archive/<YYYY-MM-DD>-<name>/.
-\`\`\`
-
-Do NOT prompt to overwrite; the user must explicitly resolve the conflict (rename existing archive, use different date, etc.).
-
-### audit-drift fails to run
-
-Already covered in Step 3.5 — proceed with warning; summary records \`audit.ran: false\` + failure reason. Do NOT block on audit-tool failures.
+When \`orbit/changes/archive/<YYYY-MM-DD>-<change-name>/\` already exists (a same-day prior archive of the same name), halt with \`Change <name> is already at orbit/changes/archive/<YYYY-MM-DD>-<name>/.\` and do NOT offer to overwrite: the user resolves it (renames the existing archive, or uses another date).
 
 ## Audit is informational, not gate
 
-Audit-drift findings are **informational** unless the user explicitly chooses to abort. The archive command does NOT:
-
-- Attempt to resolve audit findings automatically (user's responsibility via \`/orbit:address-reviews\` or manual edit).
-- Auto-invoke \`/orbit:review --as system\` even if it hasn't run for this change. System-mode review is the user's gate — their responsibility to run it before archiving if they want that signal.
-
-This is a deliberate choice: users may legitimately archive with known drift (e.g., follow-up commit planned). orbit captures the decision in the summary for traceability, but doesn't override.`,
+Audit-drift findings are **informational** unless the user chooses to abort: the archive never resolves them itself (that is \`/orbit:address-reviews\` or a manual edit) and never runs \`/orbit:review --as system\` on its own, since system review is the user's gate. A user may archive with known drift; the summary records the decision.`,
     references: [
       {
         name: 'archive-summary-schema.md',
@@ -670,6 +671,9 @@ This is a deliberate choice: users may legitimately archive with known drift (e.
         name: 'pr-archive-tail.md',
         content: PR_ARCHIVE_TAIL_REFERENCE,
       },
+      { name: CONSENT_AT_ENTRY_REFERENCE_NAME, content: ARCHIVE_CONSENT_AT_ENTRY_REFERENCE },
+      { name: USER_VALIDATION_REFERENCE_NAME, content: USER_VALIDATION_REFERENCE },
+      { name: BRIEF_SAVE_REFERENCE_NAME, content: BRIEF_SAVE_REFERENCE },
       { name: GATE_INFLECTION_REFERENCE_NAME, content: GATE_INFLECTION_REFERENCE },
       { name: FINGERPRINT_DIVERGENCE_REFERENCE_NAME, content: FINGERPRINT_DIVERGENCE_REFERENCE },
       { name: SIGNOFF_HOLD_REFERENCE_NAME, content: SIGNOFF_HOLD_REFERENCE },

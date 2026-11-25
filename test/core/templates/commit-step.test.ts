@@ -36,7 +36,6 @@ const DIR_OF: Record<string, string> = {
   archive: 'orbit-archive-change',
   new: 'orbit-new-change',
   continue: 'orbit-continue-change',
-  'bulk-archive': 'orbit-bulk-archive-change',
   architect: 'orbit-architect',
   'audit-drift': 'orbit-audit-drift',
   'sync-specs': 'orbit-sync-specs',

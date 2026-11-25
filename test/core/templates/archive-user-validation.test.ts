@@ -2,22 +2,18 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import * as fs from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
-import {
-  getArchiveChangeSkillTemplate,
-  getBulkArchiveChangeSkillTemplate,
-} from '../../../src/core/templates/skill-templates.js';
+import { getArchiveChangeSkillTemplate } from '../../../src/core/templates/skill-templates.js';
 import { DEFERRAL_REFUSALS } from '../../../src/core/templates/workflows/archive-change.js';
 import { composeAndWriteEmit } from '../../../src/core/emit-composition.js';
 import { loadChangeContext, formatChangeStatus } from '../../../src/core/artifact-graph/instruction-loader.js';
 
 /**
  * rc10-apply-closure — the archive seam's user-validation closure (Step 3.2), Step 3's named edit,
- * the widened Step 3.4 gate prompt, the readout line, and bulk archive's per-change step (tasks
- * 2.1–2.4, 2.6, 2.8), plus the two fixture runs of tasks 4.2 and 4.3.
+ * the widened Step 3.4 gate prompt and the readout line (tasks 2.1–2.4, 2.8), plus the two fixture runs of tasks 4.2 and
+ * 4.3. (Bulk archive's per-change step left with the workflow: R-rop2-11, cut-propose-archive.)
  */
 
 const body = () => getArchiveChangeSkillTemplate().instructions;
-const bulk = () => getBulkArchiveChangeSkillTemplate().instructions;
 const section = (text: string, heading: string): string => {
   const start = text.indexOf(heading);
   expect(start, `body carries "${heading}"`).toBeGreaterThanOrEqual(0);
@@ -29,6 +25,12 @@ const step3 = () => {
   return b.slice(b.indexOf('3. **Check task completion status**'), b.indexOf('4. **Assess delta spec sync state**'));
 };
 const step32 = () => section(body(), '## Step 3.2 — User-validation closure');
+/** Step 3.2's procedure: since cut-propose-archive (A2) the archive skill's `references/user-validation.md`. */
+const uv = () => {
+  const r = (getArchiveChangeSkillTemplate().references ?? []).find(x => x.name === 'user-validation.md');
+  expect(r, 'the archive skill ships references/user-validation.md').toBeDefined();
+  return (r as { content: string }).content;
+};
 /** Step 3.4's full text: since conditional-steps it is the archive skill's `references/gate-inflection.md`. */
 const step34 = () => {
   const r = (getArchiveChangeSkillTemplate().references ?? []).find(x => x.name === 'gate-inflection.md');
@@ -59,14 +61,14 @@ describe('archive body: Step 3.2 user-validation closure (task 2.2)', () => {
 
   // @scenario text orbit-archive-modifications :: User-validation closure at the archive seam :: An observed validation is closed with its evidence
   it('OBSERVED checks the box with a one-line evidence note and writes no deferral', () => {
-    const s = step32();
+    const s = uv();
     expect(s).toMatch(/\*\*OBSERVED\*\* — the validation has happened[^\n]*Check the box and append to the task line a one-line note naming the evidence[^\n]*No deferral entry\./);
     expect(s).toContain('whether or not an apply emit declared it');
   });
 
   // @scenario text orbit-archive-modifications :: User-validation closure at the archive seam :: An available but unperformed validation is deferred with its reason
   it('DEFERRED covers both after-shipping and could-have-run, and `why` says which', () => {
-    const s = step32();
+    const s = uv();
     expect(s).toContain('it can happen only after the change ships (a merge, a later stage, a later session), OR it could have happened and has not');
     expect(s).toContain('compose a `deferred_validations` entry `{task, why, when, where}`');
     expect(s).toContain('`why` saying honestly which case it is');
@@ -74,23 +76,40 @@ describe('archive body: Step 3.2 user-validation closure (task 2.2)', () => {
   });
 
   it('briefs before the move as a report, never a prompt, and states the post-move recovery', () => {
-    const s = step32();
-    expect(s).toContain('**BRIEF the user before the move**');
-    expect(s).toContain('The brief is a REPORT, not a prompt: it asks nothing, and halting stays the user\'s, by aborting');
-    expect(s).toContain('re-run the emit against the archived directory — NEVER repeat the sync or the move');
+    expect(uv()).toContain('**BRIEF the user before the move**');
+    expect(uv()).toContain('The brief is a REPORT, not a prompt: it asks nothing, and halting stays the user\'s, by aborting');
+    // The recovery is needed at Step 5.5, after the reference's moment: it stays in the body.
+    expect(step32()).toContain('re-run the emit against the archived directory — NEVER repeat the sync or the move');
   });
 
   // @scenario text orbit-archive-modifications :: User-validation closure at the archive seam :: A marked line outside every task group is refused before the move
   it('reports an id-less, ungrouped or duplicated-id marked task to the user before the move', () => {
-    const s = step32();
+    const s = uv();
     expect(s).toContain('A marked task with no id, in no `## ` group, or with an id another task line carries (cases 2, 3 and 8), or a `tasks.md` that cannot be read, is REPORTED to the user, who repairs `tasks.md` before the archive proceeds, or aborts');
   });
 
-  it('carries the DEFERRAL REFUSALS production once, as a checked mirror with no note saying it is one', () => {
-    const s = step32();
+  it('carries the DEFERRAL REFUSALS production once, in its reference, as a checked mirror with no note saying it is one', () => {
+    const s = uv();
     expect(s).toContain('```\n' + DEFERRAL_REFUSALS + '\n```');
     expect(s).not.toMatch(/CHECKED MIRROR/i);
-    expect(body().split(DEFERRAL_REFUSALS).length - 1).toBe(1);
+    expect(s.split(DEFERRAL_REFUSALS).length - 1).toBe(1);
+    expect(body()).not.toContain(DEFERRAL_REFUSALS);
+  });
+
+  // @scenario text orbit-archive-modifications :: User-validation closure at the archive seam :: The archive body reads the user-validation reference only when a marked task is unchecked
+  it("the body's scan has three outcomes: silent on none, the reference on one or more, an unreadable tasks.md reported before the move", () => {
+    const s = step32();
+    expect(s).toContain('When there is none, or no `tasks.md`, the step says nothing.');
+    expect(s).toContain('When there is one or more, read `references/user-validation.md` and follow it before the move');
+    expect(s).toContain('A `tasks.md` that exists and cannot be read is REPORTED to the user, who repairs it before the archive proceeds, or aborts (chain: decision); it is never taken as an empty marked set.');
+    // The unreadable case is handled in the body, before the read: it does not send the agent to the reference.
+    const unreadable = s.indexOf('A `tasks.md` that exists and cannot be read');
+    expect(s.slice(unreadable)).not.toContain('references/user-validation.md');
+    // The dispositions and the production are not in the body.
+    expect(s).not.toContain('**OBSERVED**');
+    expect(s).not.toContain('DEFERRAL REFUSALS');
+    // Step 3.2 still runs before Step 3.4 and the sync: the scan's read lands before the move.
+    expect(body().indexOf('read `references/user-validation.md`')).toBeLessThan(body().indexOf('## Step 3.4'));
   });
 });
 
@@ -131,30 +150,6 @@ describe('archive body: completion readout (task 2.4)', () => {
   // @scenario text orbit-archive-modifications :: User-validation closure at the archive seam :: A validation possible only after shipping is deferred and printed
   it('prints one line per deferral', () => {
     expect(body()).toContain('One line per Step 3.2 deferral (orbit): `deferred: <task> — <why>; when <when>, where <where>`');
-  });
-});
-
-describe('bulk archive: per-change user-validation closure (task 2.6)', () => {
-  // @scenario text orbit-archive-modifications :: User-validation closure at the archive seam :: Bulk archive disposes per change
-  it('excludes marked tasks from its own count and runs Step 3.2 per change before sync and move', () => {
-    const b = bulk();
-    expect(b).toContain('excluding every unchecked task carrying the `(User-validation` marker');
-    expect(b).toContain('so a change whose only unchecked tasks carry the marker is never classed incomplete or offered for skipping');
-    const s = section(b, '## Per-change user-validation closure');
-    expect(s).toContain("before its fingerprint check, its Step 8a sync and its Step 8b move, run `orbit-archive-change`'s Step 3.2 for that change");
-    expect(s).toContain("BRIEF that change's dispositions in chat right there, BEFORE its sync and move");
-    expect(s).toContain('repeat them in the Step 9 **Bulk Archive Complete** summary');
-    expect(s).toContain('```\n' + DEFERRAL_REFUSALS + '\n```');
-    expect(b.indexOf('## Per-change user-validation closure')).toBeLessThan(b.indexOf('## Per-change base-fingerprint check'));
-  });
-
-  // @scenario text orbit-archive-modifications :: User-validation closure at the archive seam :: Bulk archive disposes per change
-  it('writes each change\'s archive emit after its move, carrying its deferrals', () => {
-    const s = section(bulk(), '## Per-change archive emit');
-    expect(s).toContain("After each change's Step 8b move, write that change's archive run summary exactly as `orbit-archive-change`'s Step 5.5 does");
-    expect(s).toContain('its Step 3.2 `deferred_validations`');
-    expect(s).toContain('orbit emit archive --change <name> --payload <payload-file>');
-    expect(bulk()).not.toContain('each inner `/orbit:archive` invocation emits');
   });
 });
 

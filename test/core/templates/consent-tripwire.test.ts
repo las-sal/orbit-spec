@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import * as fs from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
-import { getAuditDriftSkillTemplate } from '../../../src/core/templates/skill-templates.js';
+import { getApplyChangeSkillTemplate, getArchiveChangeSkillTemplate, getAuditDriftSkillTemplate } from '../../../src/core/templates/skill-templates.js';
 import { readChangeMetadata, writeChangeMetadata } from '../../../src/utils/change-metadata.js';
 import type { ChangeMetadata } from '../../../src/core/artifact-graph/types.js';
 
@@ -78,6 +78,20 @@ describe('D1 tripwire — three-tier rule semantics (spec scenarios)', () => {
     expect(emitIsChecked(meta, '2026-07-14T08-30-00Z')).toBe(true); // after the stamp
   });
 
+  // @scenario text orbit-lifecycle-consent :: Consent-era metadata marker :: Straddler is covered from first post-capability touch
+  it('a straddler is stamped at entry by both consent-scoped bodies, and checked from the stamp on', () => {
+    const stamp = 'If it lacks `schema_version`, stamp `consent_era_from: <current UTC timestamp, YYYY-MM-DDTHH:MM:SSZ>` into it (add-only; never overwrite an existing stamp)';
+    for (const body of [getApplyChangeSkillTemplate().instructions, getArchiveChangeSkillTemplate().instructions]) {
+      expect(body).toContain('**Consent-era stamp (migrate-on-touch)**: once consent is established');
+      expect(body).toContain(stamp);
+    }
+    expect(getAuditDriftSkillTemplate().instructions).toContain('consent_era_from');
+    // The audit's rule as its body states it: the stamped run's emit and later ones checked, earlier ones exempt.
+    const meta = { consent_era_from: '2026-07-13T12:00:00Z' };
+    expect(emitIsChecked(meta, '2026-07-13T12-00-00Z')).toBe(true);
+    expect(emitIsChecked(meta, '2026-07-13T11-59-59Z')).toBe(false);
+  });
+
   it('neither field → fully exempt', () => {
     expect(emitIsChecked({}, '2026-07-13T10-00-00Z')).toBe(false);
   });
@@ -150,6 +164,7 @@ describe('D1 tripwire — three-tier rule semantics (spec scenarios)', () => {
     }
   });
 
+  // @scenario behaviour orbit-lifecycle-consent :: Consent-era metadata marker :: Pre-D1 archives are exempt by absence
   it('REAL pre-D1 archives scan exempt by absence (C1 + C2 fixtures)', () => {
     const repoRoot = path.join(__dirname, '..', '..', '..');
     const archives = [

@@ -5,7 +5,6 @@ import {
   getReviewSkillTemplate,
   getApplyChangeSkillTemplate,
   getArchiveChangeSkillTemplate,
-  getBulkArchiveChangeSkillTemplate,
   getContinueChangeSkillTemplate,
   getExploreSkillTemplate,
   getFfChangeSkillTemplate,
@@ -242,7 +241,7 @@ describe('Generated-file disposition is visible in the bodies (rc06b, task 4.2)'
     const modified: SkillTemplate[] = [
       getExploreSkillTemplate(), getOrbitProposeSkillTemplate(), getArchiveChangeSkillTemplate(),
       getApplyChangeSkillTemplate(), getVerifyChangeSkillTemplate(), getContinueChangeSkillTemplate(),
-      getFfChangeSkillTemplate(), getNewChangeSkillTemplate(), getBulkArchiveChangeSkillTemplate(),
+      getFfChangeSkillTemplate(), getNewChangeSkillTemplate(),
     ];
     for (const t of modified) {
       expect(marker(t), t.name).toBe(1);
@@ -329,15 +328,6 @@ describe("Emit scope's body-side scenarios (rc06b system walk 1)", () => {
     const body = getOnboardSkillTemplate().instructions;
     expect(body).not.toMatch(/orbit emit onboard/);
     expect(body).toContain('`/orbit:onboard` is one of the few commands that does NOT emit');
-  });
-
-  // @scenario text orbit-run-summary-emit :: Emit scope :: /orbit:bulk-archive relies on inner /orbit:archive emits
-  it('bulk-archive instructs no emit of its own and names the inner archive emits', () => {
-    const body = getBulkArchiveChangeSkillTemplate().instructions;
-    expect(body).not.toMatch(/orbit emit bulk-archive/);
-    // rc10 system walk (fresh W2): the body now names the step that writes each change's emit.
-    expect(body).toContain('each archived change gets its own `archive-<TS>.json`, written by the per-change archive emit step above');
-    expect(body).toContain('SHALL NOT emit a separate `bulk-archive-<TS>.json`');
   });
 
   // @scenario text orbit-run-summary-emit :: Emit scope :: Bodies instruct the surface, never hand-compose

@@ -87,23 +87,9 @@ describe('the archive bodies carry the sign-off hold', () => {
     expect(count(step, 'references/signoff-hold.md')).toBe(1);
   });
 
-  // @scenario text orbit-archive-modifications :: The archive holds for a per-change sign-off :: Bulk archive asks per change
-  it('the bulk-archive body carries it once per change, after that change\'s save and before its Step 8a sync, reporting a stopped change', () => {
-    const b = body('orbit-bulk-archive-change');
-    expect(count(b, SIGNOFF_HOLD_STEP)).toBe(1);
-    const save = b.indexOf(BRIEF_SAVE_STEP);
-    const hold = b.indexOf('## Per-change sign-off hold');
-    expect(save).toBeGreaterThan(-1);
-    expect(hold).toBeGreaterThan(save);
-    expect(b.slice(hold, b.indexOf(SIGNOFF_HOLD_STEP))).toContain('directly after its brief save above and before its Step 8a sync');
-    expect(b.slice(b.indexOf(SIGNOFF_HOLD_STEP))).toContain(
-      'A change whose hold stops is not archived and stays active, and the batch goes on with the others; the Step 9 summary reports it among the changes not archived'
-    );
-  });
-
   it("no other body carries the change's hold; the architect body carries only the program's (program-signoff)", () => {
     for (const s of skills) {
-      if (s.dirName === 'orbit-archive-change' || s.dirName === 'orbit-bulk-archive-change') continue;
+      if (s.dirName === 'orbit-archive-change') continue;
       const b = s.template.instructions;
       if (s.dirName === 'orbit-architect') {
         expect(b.includes('--change "<name>" --hold'), s.dirName).toBe(false);

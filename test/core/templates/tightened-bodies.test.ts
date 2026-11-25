@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 import { describe, expect, it } from 'vitest';
 import { getSkillTemplates } from '../../../src/core/shared/skill-generation.js';
 import { DECISION_RECORDS_REFERENCE, DECISION_WRITING_BASIC, DECISION_WRITING_DISCIPLINE } from '../../../src/core/disciplines.js';
-import { CUT_RECORDED, undoCut } from './cut-ledger-pairs.js';
+import { CUT_BODIES, undoCut } from './cut-ledger-pairs.js';
 
 /**
  * tighten-bodies (reduce-orbit-phase1) — the edit ledger (`orbit-conventions`' `An edit ledger holds every tightened
@@ -10,6 +10,9 @@ import { CUT_RECORDED, undoCut } from './cut-ledger-pairs.js';
  *
  * Task 1.1 recorded the sha256 of each edited body's `instructions` from the skills generated at ef55ee46, before any
  * template was edited: the twelve tightened bodies, and explore and bulk-archive for the shared decision-writing bullet.
+ *
+ * 2026-11-25, cut-propose-archive (R-rop2-11): bulk-archive's recorded hash is dropped, since its workflow was removed
+ * whole and its reconstruction needs a body that no longer exists; it carried no pair of its own. Thirteen bodies remain.
  */
 const RECORDED: Record<string, string> = {
   'orbit-explore': 'b3102136e06c78262ee732962339c6e863916f5fe0fc24569bcb74aa9af71e7c',
@@ -19,7 +22,6 @@ const RECORDED: Record<string, string> = {
   'orbit-ff-change': '79bbbd7f7bc8685751c574c97bc29a598b4c1de9f17321e266b1c1551a99ecbd',
   'orbit-sync-specs': 'b2d1bf0d0330aed3e8b51e32bdacd88e1681256789b79fa1b1937abc3103f32b',
   'orbit-archive-change': '72772de16426662f79fca69d093f92e8f9f275efcaf3a10b79cb1dd54fada5d6',
-  'orbit-bulk-archive-change': 'b76fb452c01b0a4e0936b09d184d147ae058a9d8ae0a03b8cfc2a2b3db8204a4',
   'orbit-verify-change': '32919490db420a5d12391051f8df4a02e45a43a62866624070b9b942c9cdc993',
   'orbit-propose': 'a9890dce6dad3808048b40ac1ebbd9eaef9c154d74da5dd9fbf390aecf82ea2e',
   'orbit-review': 'a6b727aa2946b4fdf4647d8b9b55bf51c2110ecbc4c9fa309e8b823173bcd481',
@@ -243,7 +245,7 @@ function provenanceFailure(before: string, after: string): string | null {
 }
 
 // ---------------------------------------------------------------------------
-// The pairs: every edit to the fourteen bodies, in the order applied, written from the generated diff.
+// The pairs: every edit to the fourteen bodies (thirteen since bulk-archive's removal), in the order applied, written from the generated diff.
 // `restated` names the step line(s) that state the removed Guardrails line; the decision-writing bullet's one
 // `restructured` pair (ONE_PARAGRAPH → the labelled form) is shared by every body and applied first; `records-by-setting`'s
 // swap (the labelled form → DECISION_WRITING_BASIC) was applied after every pair, so `undo` reverses it first.
@@ -419,8 +421,9 @@ const sha = (s: string): string => createHash('sha256').update(s).digest('hex');
 const skills = getSkillTemplates();
 
 describe('tighten-bodies edit ledger', () => {
-  it('records a hash for each of the fourteen edited bodies', () => {
-    expect(Object.keys(RECORDED)).toHaveLength(14);
+  it('records a hash for each of the thirteen edited bodies that remain', () => {
+    expect(Object.keys(RECORDED)).toHaveLength(13);
+    expect(Object.keys(RECORDED)).not.toContain('orbit-bulk-archive-change');
     for (const dir of Object.keys(RECORDED)) {
       expect(skills.find((s) => s.dirName === dir), dir).toBeDefined();
       expect(RECORDED[dir]).toMatch(/^[0-9a-f]{64}$/);
@@ -458,7 +461,7 @@ describe('tighten-bodies edit ledger', () => {
    */
   function undo(dir: string, today: string, pairs: Pair[] = PAIRS): { text: string } | { failure: string } {
     let text = today;
-    if (dir in CUT_RECORDED) {
+    if (CUT_BODIES.includes(dir)) {
       const cut = undoCut(dir, today);
       if ('failure' in cut) return cut;
       text = cut.text;
@@ -623,7 +626,7 @@ describe('tighten-bodies edit ledger', () => {
     expect(added).toContain('`references/mode-sections.md`');
   });
 
-  it('the restructure is one pair shared by the fourteen bodies, and records-by-setting\'s swap one edit undone first', () => {
+  it('the restructure is one pair shared by the thirteen bodies, and records-by-setting\'s swap one edit undone first', () => {
     expect(LABELLED_FORM).not.toBe(DECISION_WRITING_DISCIPLINE);
     expect(missingClauses(LABELLED_FORM)).toEqual([]);
     for (const dir of Object.keys(RECORDED)) {

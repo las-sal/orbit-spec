@@ -2,9 +2,10 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { generateSkillContent, getSkillTemplates } from '../../../src/core/shared/skill-generation.js';
+import { generateSkillContent, getCommandContents, getSkillTemplates } from '../../../src/core/shared/skill-generation.js';
+import { RETIRED_COMMAND_IDS, RETIRED_SKILL_DIRS } from '../../../src/core/profile-sync-drift.js';
 import { CHAIN_END_STEP_SKILLS } from '../../../src/core/disciplines.js';
-import { CUT_PAIRS, CUT_RECORDED, type CutPair, cutFailure, movedSpan, sha, skillRefs } from './cut-ledger-pairs.js';
+import { CUT_BODIES, CUT_PAIRS, CUT_RECORDED, CUT_STAGES, type CutPair, cutFailure, movedSpan, sha, skillRefs } from './cut-ledger-pairs.js';
 
 /**
  * reduce-orbit-phase2's cut ledger (`orbit-conventions`' `A cut ledger names every body edit a cut stage makes`): the
@@ -47,12 +48,38 @@ function restatedFailure(p: CutPair, text: string): string | null {
   return gone ? `${p.id}: the body no longer carries the step text ${JSON.stringify(gone)}` : null;
 }
 
+/** The ruling each stage's `removed` and `retired` pairs name. */
+const STAGE_RULING: Record<string, string> = { 'cut-review-walk': 'R-rop2-12', 'cut-propose-archive': 'R-rop2-11' };
+
+/**
+ * Why a `retired` pair fails: a generated skill or launcher still carries its directory or id, the retired registry lacks
+ * one of them, or its phrase survives in a generated skill.
+ */
+function retiredFailure(
+  p: CutPair,
+  dirs: string[] = skills.map((s) => s.dirName),
+  commandIds: string[] = getCommandContents().map((c) => c.id),
+  files: Array<[string, string]> = skills.flatMap((s) => shipped(s.dirName).map(([n, t]): [string, string] => [`${s.dirName}/${n}`, t])),
+): string | null {
+  const dir = p.bodies[0];
+  if (p.ruling !== 'R-rop2-11') return `${p.id}: names no removal ruling`;
+  if (dirs.includes(dir)) return `${p.id}: the generator still emits the skill ${dir}`;
+  if (commandIds.includes(p.command!)) return `${p.id}: the generator still emits the launcher ${p.command}`;
+  if (!RETIRED_SKILL_DIRS.includes(dir)) return `${p.id}: ${dir} is not in the retired skill registry`;
+  if (!RETIRED_COMMAND_IDS.includes(p.command!)) return `${p.id}: ${p.command} is not in the retired command registry`;
+  const at = files.find(([, text]) => text.includes(p.phrase!));
+  return at ? `${p.id}: ${at[0]} still carries ${JSON.stringify(p.phrase)}` : null;
+}
+
 describe('cut ledger (reduce-orbit-phase2)', () => {
-  it('records a hash for each body cut-review-walk edits', () => {
-    expect(Object.keys(CUT_RECORDED)).toHaveLength(6);
-    for (const dir of Object.keys(CUT_RECORDED)) {
-      expect(skills.find((s) => s.dirName === dir), dir).toBeDefined();
-      expect(CUT_RECORDED[dir]).toMatch(/^[0-9a-f]{64}$/);
+  it('records a hash for each body each stage edits: six for cut-review-walk, five for cut-propose-archive', () => {
+    expect(Object.keys(CUT_RECORDED['cut-review-walk'])).toHaveLength(6);
+    expect(Object.keys(CUT_RECORDED['cut-propose-archive']).sort()).toEqual(['orbit-apply-change', 'orbit-archive-change', 'orbit-onboard', 'orbit-propose', 'orbit-sync-specs']);
+    for (const stage of CUT_STAGES) {
+      for (const dir of Object.keys(CUT_RECORDED[stage])) {
+        expect(skills.find((s) => s.dirName === dir), dir).toBeDefined();
+        expect(CUT_RECORDED[stage][dir]).toMatch(/^[0-9a-f]{64}$/);
+      }
     }
   });
 
@@ -61,8 +88,15 @@ describe('cut ledger (reduce-orbit-phase2)', () => {
     for (const p of CUT_PAIRS) {
       expect(ids.has(p.id), p.id).toBe(false);
       ids.add(p.id);
-      expect(['moved', 'removed', 'reworded', 'restated'], p.id).toContain(p.kind);
-      for (const dir of p.bodies) expect(Object.keys(CUT_RECORDED), p.id).toContain(dir);
+      expect(['moved', 'removed', 'reworded', 'restated', 'retired'], p.id).toContain(p.kind);
+      expect(CUT_STAGES, p.id).toContain(p.stage);
+      if (p.kind === 'retired') {
+        expect(p.after, p.id).toBe('');
+        for (const k of ['ruling', 'command', 'phrase'] as const) expect(p[k], `${p.id}.${k}`).toBeTruthy();
+        expect(p.bodies, p.id).toHaveLength(1);
+        continue;
+      }
+      for (const dir of p.bodies) expect(Object.keys(CUT_RECORDED[p.stage]), p.id).toContain(dir);
       expect(p.after.length, p.id).toBeGreaterThan(0);
       if (p.kind === 'moved') {
         for (const k of ['ref', 'start', 'end', 'digest'] as const) expect(p[k], `${p.id}.${k}`).toBeTruthy();
@@ -72,10 +106,10 @@ describe('cut ledger (reduce-orbit-phase2)', () => {
       if (p.shared) expect(p.bodies.length, p.id).toBeGreaterThan(1);
       else expect(p.bodies, p.id).toHaveLength(1);
     }
-    expect(CUT_PAIRS.filter((p) => p.kind === 'removed').every((p) => p.ruling === 'R-rop2-12')).toBe(true);
+    for (const p of CUT_PAIRS.filter((x) => x.kind === 'removed' || x.kind === 'retired')) expect(p.ruling, p.id).toBe(STAGE_RULING[p.stage]);
   });
 
-  for (const dir of Object.keys(CUT_RECORDED)) {
+  for (const dir of CUT_BODIES) {
     // @scenario text orbit-conventions :: A cut ledger names every body edit a cut stage makes :: An unlisted edit fails the cut ledger
     it(`${dir}: undoing its cut pairs reproduces its recorded body`, () => {
       expect(cutFailure(dir, body(dir))).toBeNull();
@@ -113,7 +147,24 @@ describe('cut ledger (reduce-orbit-phase2)', () => {
     expect(cutFailure('orbit-review', body('orbit-review'), CUT_PAIRS, refs)).toMatch(/^V1: /);
   });
 
-  it('every removed pair names R-rop2-12 and a phrase that occurs nowhere in its generated skill', () => {
+  it("mutation: a word of archive's moved user-validation procedure changed in references/user-validation.md fails its pair, in this stage's undo", () => {
+    const p = CUT_PAIRS.find((x) => x.id === 'A2-step-3.2')!;
+    expect(p.stage).toBe('cut-propose-archive');
+    const ref = skillRefs('orbit-archive-change', 'user-validation.md')!;
+    const changed = ref.replace('No deferral entry.', 'No deferral entry is written.');
+    expect(changed).not.toBe(ref);
+    const refs = (dir: string, name: string) => (name === 'user-validation.md' ? changed : skillRefs(dir, name));
+    expect(cutFailure('orbit-archive-change', body('orbit-archive-change'), CUT_PAIRS, refs)).toMatch(/^A2-step-3\.2: the span in orbit-archive-change\/references\/user-validation\.md no longer hashes/);
+  });
+
+  it('mutation: a removed bulk-archive phrase still carried by a generated skill fails, naming the file', () => {
+    const p = CUT_PAIRS.find((x) => x.id === 'bulk-archive-sync-example')!;
+    expect(removedFailure(p, 'orbit-sync-specs')).toBeNull();
+    const files = shipped('orbit-sync-specs').map(([n, t]): [string, string] => [n, n === 'SKILL.md' ? `${t}\n(e.g. bulk-archive Step 8a)\n` : t]);
+    expect(removedFailure(p, 'orbit-sync-specs', files)).toBe(`${p.id}: orbit-sync-specs/SKILL.md still carries "bulk-archive Step 8a"`);
+  });
+
+  it("every removed pair names its stage's ruling and a phrase that occurs nowhere in its generated skill", () => {
     const failures = CUT_PAIRS.filter((p) => p.kind === 'removed').flatMap((p) => p.bodies.map((dir) => removedFailure(p, dir)));
     expect(failures.filter(Boolean)).toEqual([]);
   });
@@ -131,6 +182,21 @@ describe('cut ledger (reduce-orbit-phase2)', () => {
       expect(text, name).not.toContain('walk_mode_shifted_at_finding');
       expect(text, name).not.toContain('command-shape-interruption');
     }
+  });
+
+  it('the retired pair: no generated skill or launcher is bulk-archive, both are in the retired registry, and its phrase is gone', () => {
+    const retired = CUT_PAIRS.filter((p) => p.kind === 'retired');
+    expect(retired.map((p) => [p.bodies[0], p.command])).toEqual([['orbit-bulk-archive-change', 'bulk-archive']]);
+    expect(retired.map((p) => retiredFailure(p))).toEqual([null]);
+  });
+
+  // @scenario text orbit-conventions :: A cut ledger names every body edit a cut stage makes :: A retired workflow still generated fails
+  it('mutation: a generator that still emits the retired skill, or its launcher, or a skill still naming it, fails the retired pair', () => {
+    const p = CUT_PAIRS.find((x) => x.kind === 'retired')!;
+    const dirs = skills.map((s) => s.dirName);
+    expect(retiredFailure(p, [...dirs, 'orbit-bulk-archive-change'])).toBe(`${p.id}: the generator still emits the skill orbit-bulk-archive-change`);
+    expect(retiredFailure(p, dirs, ['archive', 'bulk-archive'])).toBe(`${p.id}: the generator still emits the launcher bulk-archive`);
+    expect(retiredFailure(p, dirs, ['archive'], [['orbit-onboard/SKILL.md', 'see orbit-bulk-archive-change']])).toBe(`${p.id}: orbit-onboard/SKILL.md still carries "orbit-bulk-archive-change"`);
   });
 
   it('every restated pair drops text whose step the body still states', () => {
@@ -151,11 +217,14 @@ describe('cut ledger (reduce-orbit-phase2)', () => {
     expect(shared.map((p) => p.id)).toEqual(['chain-tags']);
     expect([...shared[0].bodies].sort()).toEqual([...CHAIN_END_STEP_SKILLS].sort());
     for (const dir of shared[0].bodies) expect(cutFailure(dir, body(dir)), dir).toBeNull();
-    // Mutation: a carrier that still holds the paragraph fails its undo.
-    const r = movedSpan(shared[0], 'orbit-apply-change');
+    // Mutation: a carrier that still holds the paragraph fails its undo (ff: no later stage records it, so the
+    // cut-review-walk undo is the first to meet the paragraph).
+    const r = movedSpan(shared[0], 'orbit-ff-change');
     const span = 'span' in r ? r.span : '';
     expect(span.length).toBeGreaterThan(0);
-    expect(cutFailure('orbit-apply-change', body('orbit-apply-change').replace(shared[0].after, span))).toMatch(/chain-tags's after occurs 0 times/);
+    expect(cutFailure('orbit-ff-change', body('orbit-ff-change').replace(shared[0].after, span))).toMatch(/chain-tags's after occurs 0 times/);
+    // In a body a later stage records too, the later stage's own hash check names it first.
+    expect(cutFailure('orbit-apply-change', body('orbit-apply-change').replace(shared[0].after, span))).toBe('orbit-apply-change: the undone body does not match its recorded hash (cut-propose-archive)');
   });
 
   // @scenario text orbit-address-reviews :: One invocation writes one log per discovered source :: A blind pair walks in two logs

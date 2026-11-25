@@ -64,7 +64,7 @@ Claude Code and Codex are orbit's supported tools. The generator carries adapter
 and untested; [Supported tools](supported-tools.md) describes them.
 
 **Profiles.** `--profile` accepts `core` or `custom` and refuses any other value. Either way, `orbit init` installs all
-15 workflows: every install carries the full surface. The option, and the profile in the global config, are kept from
+14 workflows: every install carries the full surface. The option, and the profile in the global config, are kept from
 the upstream code orbit forked; they do not choose which workflows are installed.
 
 Run interactively, `orbit init` also offers to record your external review runner (see
@@ -642,7 +642,7 @@ Run interactively, `orbit config profile` sets two things:
 - **Delivery:** how workflows are installed, as skills, as commands, or both (the default). This setting is honored:
   the next `orbit update` installs accordingly.
 - **Workflows:** a selection of workflows. It is stored, but it does not limit what is installed: every install
-  carries all 15 workflows.
+  carries all 14 workflows.
 
 With a preset, `orbit config profile core` stores the `core` profile and its workflow list without prompting, and
 leaves delivery as it was; any other preset is refused. After a change, it offers to run `orbit update` in the

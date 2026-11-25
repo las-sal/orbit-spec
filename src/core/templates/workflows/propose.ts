@@ -92,9 +92,140 @@ export const PROPOSE_RUN_SUMMARY_EMIT_BASIC = [
 ].join('\n\n');
 
 /**
+ * cut-propose-archive (P1, P2): consume mode's Steps 0a to 0c and 0c.6 to 0d, and the Graceful degradation section's two
+ * consume-mode cases, moved byte-equal from the body, which reads this reference when mode detection resolves consume,
+ * after the PR lifecycle's Step 0.5 (Phase 1). Step 0c.5 (Touchpoints, both modes) stays in the body between them.
+ */
+export const CONSUME_MODE_REFERENCE_NAME = 'consume-mode.md';
+export const CONSUME_MODE_REFERENCE = `# Reference: consume mode (propose Steps 0a to 0d)
+
+## Contents
+
+- Steps 0a to 0d
+  - Step 0a — Validate \`explore.md\` structure
+  - Step 0b — Handle Open questions
+  - Step 0c — Section-to-artifact mapping
+  - Step 0c.6 — Carry the Mechanism section (the \`Mechanism section consumption\` requirement)
+  - Step 0d — Move the staging directory (with the staged-metadata MERGE)
+- Graceful degradation in consume mode
+
+Read when mode detection resolves consume mode, after the PR lifecycle's Step 0.5 (Phase 1). Steps 0a to 0c.6 run before and during generation, with the body's Step 0c.5 (Touchpoints) between Step 0c and Step 0c.6; Step 0d runs after the body's size brief.
+
+## Steps 0a to 0d
+
+### Step 0a — Validate \`explore.md\` structure
+
+Read \`orbit/explore/<name>/explore.md\`. Check for the sections the format's owner lists, in its order — Premise, Mechanism, Decisions, Open questions, Considered & out, References.
+
+- **All listed sections present** → proceed normally.
+- **Missing one or more sections** → warn the user naming the missing sections; prompt via \`AskUserQuestion\` to confirm proceed-anyway (default: proceed). An absent \`## Mechanism\` section is a format note like any other — and on proceed, every live rule is UNACCOUNTED (state \`absent\`) in the record Step 0c.6 writes.
+- **Cannot read or parse** → halt with a clear error; user fixes and re-invokes.
+
+### Step 0b — Handle Open questions
+
+For each entry in the Open questions section, prompt the user via \`AskUserQuestion\` with three options:
+
+- **Resolve now** — user provides a resolution. The resolution becomes a Decision: appended to the Decisions section of \`explore.md\` (the file is updated, not just the in-memory parse), and used to inform generated artifacts. The appended entry is CONFORMING — written in the entry form below, \`Kind:\` per the answer's normative force (a rule PRESCRIBES across a set of situations; a fact describes one world; a scope choice is one-off), \`Disposition: live\` — never a bare bullet: an entry without the opener has no ID and reads as an open rule nobody can name. When the answer is a RULE, tell the user at the prompt that no Mechanism entry is authored at propose, so the rule will stand as an open domain (state \`absent\`) in the Step 0c.6 record.
+- **Defer as \`@review:\` marker** — a \`@review: <question text>\` marker is inserted at the most relevant location in the generated artifacts (typically \`design.md\` or the relevant spec). The Open question is moved to a "Deferred to markers" subsection of Open questions in \`explore.md\` (or tagged \`deferred\`).
+- **Abandon** — the question is moved to Considered & out with a brief rationale; no marker is created.
+
+**Bulk handling**: if more than ~5 Open questions exist, offer "Resolve all (walk one by one)" / "Defer all (mark in artifacts)" / "Abandon all" / "Walk each individually" via \`AskUserQuestion\`. Default: walk each individually.
+
+The entry form:
+
+\`\`\`
+${EXPLORE_DECISION_ENTRY_PRODUCTION}
+\`\`\`
+
+**The Mechanism read — after this step's LAST write to \`explore.md\`, before generation.** Read the \`## Mechanism\` section by the grammar \`orbit-conventions\`' Mechanism-entry requirement owns:
+
+\`\`\`
+${EXPLORE_MECHANISM_ENTRY_PRODUCTION}
+\`\`\`
+
+Take from it the entry set, each entry's \`Closure:\` token, and a BOUNDED entry's two residual lines VERBATIM; Step 0c.6 says what conformance to it decides. Read NO prior explore emit as a source or cross-check — git keeps no modification time, so no trail record can be shown to describe the file's current bytes — and fire none: propose's one emit is its completion emit (\`orbit-run-summary-emit\`'s one-shot rule, untouched). Your reading of the file is the SOLE source of the Step 0c.6 record, whose header always says so.
+
+### Step 0c — Section-to-artifact mapping
+
+When generating artifacts in upstream Step 4, apply this mapping:
+
+| \`explore.md\` section | Feeds into |
+|---|---|
+| **Premise** | \`proposal.md\`'s "Why" / motivation section |
+| **Decisions** | Spec requirements + \`design.md\` decisions + \`tasks.md\` task seeds. **Preserve specific decision wording** where artifact format permits; don't paraphrase. |
+| **Open questions** (resolved at Step 0b) | Promoted to Decisions and treated as above |
+| **Open questions** (deferred at Step 0b) | \`@review:\` markers in \`design.md\` or the relevant spec |
+| **Mechanism** | Per Step 0c.6 — the \`Mechanism section consumption\` requirement's decision table (a partition over the owner's live-rule status × the readout's accounting state) and the \`## Mechanism → artifacts\` record |
+| **Considered & out** | \`design.md\`'s "Alternatives considered" section (prevents future rediscovery) |
+| **References** | Read during artifact generation as context; cited in \`design.md\` where relevant; not copied verbatim |
+| **Decisions + References (codebase leanings)** | Seed \`design.md\`'s \`## Touchpoints\` section (the body's Step 0c.5) |
+
+When \`design.md\` references background or decisions originally from \`explore.md\`, **cite the source** (\`see explore.md\`) rather than paraphrasing without attribution.
+
+### Step 0c.6 — Carry the Mechanism section (the \`Mechanism section consumption\` requirement)
+
+Every Mechanism entry, and every live rule with none, is disposed of by ONE row of this table — rows tested IN ORDER, first match wins. A live rule is ACCOUNTED when it is counted in \`rules_total\` AND not in \`rules_open\` (\`orbit-emit-composition\` owns those fields; the readout's parser is the judge of FORM) — and you decide that from the FILE, by the grammar mirrored under Step 0b: the rule is accounted when its entry CONFORMS in FULL (a heading whose ID matches its Decisions entry; a \`Domain:\` line and a table with at least one member row; a \`Closure:\` token from the closed set; the two residual slots present exactly when BOUNDED; nine move lines, each exactly once). An entry failing ANY clause, or no entry, is OPEN; name the failing clause in the record's state column (the readout's state word when one is at hand). A key defect is an entry whose heading ID matches no Decisions entry (an orphan) or a second entry or heading under an already-used ID (a duplicate).
+
+| row | owner's Decisions state | accounting state | lands in |
+|---|---|---|---|
+| 1 | any, or none — tested FIRST | in \`key_defects\` (an orphan entry whose heading ID matches no Decisions entry; a second entry or heading under an already-used ID) | reported in chat at the Mechanism read (after Step 0b's last write, before generation); no carrier — a key with no owner has nowhere to land, and a duplicate is excluded from \`rules_total\`. Its record row: the heading's ID plus \`line N\`, the defect kind (\`orphan\` / \`duplicate\`) in the state column, owner \`none\` (orphan) or \`duplicate\` (a second claim on an owned ID), destination \`none\` |
+| 2 | NOT a live rule (\`Kind: fact\` / \`scope\`, or \`Disposition: superseded\` / \`assigned\`) | any — an entry or none, well-formed or not | nowhere — permitted history; \`explore.md\` travels unchanged; the record lists it as not carried with NO state word (the engine assigns none to a non-live owner) |
+| 3 | live rule | OPEN — in \`rules_open\` (any state that field defines, whatever \`Closure:\` token the entry carries); from the file alone: no entry, or an entry failing any clause of the Mechanism grammar | UNACCOUNTED: ONE \`design.md\` Risks entry naming the rule as the readout names it — the ID, or \`line N\` for an ID-less entry, per \`orbit-run-summary-emit\`'s identifier rule — with the state word (the readout's when one is at hand; else the failing grammar clause, in the grammar's vocabulary); the spec delta carries nothing for it; never blocking |
+| 4 | live rule | accounted, \`Closure: DERIVED\` or \`SOURCED\` | the spec delta requirement the rule derives: the domain table as one of the CLOSED shapes below, the \`Closure:\` justification as the sentence naming the source |
+| 5 | live rule | accounted, \`Closure: BOUNDED\` (both residual slots present, by construction) | \`Residual kind:\` and \`Residual method:\` VERBATIM in that requirement's text as a named limit (the OWNER — only spec text survives archive); ONE \`design.md\` Risks entry naming the rule ID and POINTING at the requirement, restating nothing |
+
+**The CLOSED shapes**: a normative TABLE (the re-entry table in \`orbit-explore-modifications\`), a GRAMMAR or production block (the Mechanism grammar's fences in \`orbit-conventions\`), a SCENARIO SET — one scenario per member (the maturity rungs in \`orbit-run-summary-emit\`), or a SENTENCE naming the source with the members in prose (the concluded outcome's reader sentence in \`orbit-conventions\`). Which shape fits is your judgement; the record says which was chosen. The set is BOUNDED and its named limit is stated ONCE, in the requirement — point at it; never restate the two residual lines here.
+
+**The record.** \`design.md\` carries a \`## Mechanism → artifacts\` section: a header line reading "the proposing AI's reading of the file; no engine record" — always that sentence — then one table row per Mechanism entry (and per live rule with none): the rule as the readout names it (ID, or \`line N\` for an ID-less entry; a key defect by ID plus \`line N\`), its closure token or its state word (the readout's when one is at hand; else the failing grammar clause; the defect kind for a key defect), its owner's state (\`none\` for an orphan; \`duplicate\` for a second claim), and its destination as a requirement title (plus the shape, for CLOSED entries; \`none\` for a key defect).
+
+**Before Step 0d**: for every BOUNDED entry the table sent to row 5 (a live, accounted rule — never a history row), grep the change's \`specs/\` for both residual lines; a miss is reported and fixed before the move. Propose consumes FORM, as the readout renders form: whether an enumeration is TRUE, a residual honest, or a rule written down at all stays the reviewer's judgement.
+
+### Step 0d — Move the staging directory (with the staged-metadata MERGE)
+
+After all upstream steps complete successfully (artifacts generated, non-strict validation passes) and the
+body's size brief has run, FIRST merge the staged metadata, THEN bulk-move:
+
+1. **Staged-metadata MERGE** (before the bulk move): if \`orbit/explore/<name>/.openspec.yaml\`
+   exists, read it via the change-metadata helpers and merge FIELD-LEVEL into the change's
+   freshly-written \`orbit/changes/<name>/.openspec.yaml\`. The merge is GENERIC with a
+   fresh-owned DENYLIST: the fresh metadata's \`schema\`/\`created\`/\`schema_version\` values win
+   (the staged copies were placeholders); EVERY OTHER staged field — \`architecture:\` today, and
+   any explore-side field a future capability adds — carries forward with STAGED precedence on
+   conflict (for \`architecture:\` specifically: the exploration's citation is the captured
+   decision; note the override in chat). Do NOT enumerate carried fields — copying only known
+   ones would silently discard future extensions. Then DISCARD the staged file (delete it; it is
+   never bulk-moved — a stale metadata copy inside the change directory would be a second claim
+   on one truth). When no staged \`.openspec.yaml\` exists (pre-D2 staging dir), skip this step
+   entirely — the move proceeds exactly as before, and no removal runs.
+
+2. **Bulk move**:
+
+\`\`\`bash
+[ -d orbit/explore/<name>/.orbit-runs ] && mv orbit/explore/<name>/.orbit-runs orbit/changes/<name>/.orbit-runs
+[ -f orbit/explore/<name>/.openspec.yaml ] && rm orbit/explore/<name>/.openspec.yaml  # staged metadata: merged above, then discarded (guarded — pre-D2 staging dirs have none)
+mv orbit/explore/<name>/* orbit/changes/<name>/
+rmdir orbit/explore/<name>
+\`\`\`
+
+(Or equivalent — preserve \`explore.md\` AND any sibling files like \`sketches/\` AND any draft convention files AND the \`.orbit-runs/\` run trail. The \`.orbit-runs/\` directory is dot-prefixed, so a bare \`*\` glob does NOT match it — move it explicitly first (as above) or use a dotfile-aware move; otherwise it is left behind and the \`rmdir\` fails. The \`rm\` of the staged \`.openspec.yaml\` is conditional on its existence. The staging directory should no longer exist; its contents land alongside the generated artifacts in the change directory.)
+
+After the move, \`orbit/changes/<name>/\` contains both:
+- The moved exploration files (\`explore.md\`, \`sketches/\`, draft conventions)
+- The generated artifacts (\`proposal.md\`, \`design.md\`, \`specs/\`, \`tasks.md\`)
+
+\`explore.md\` persists unchanged as the historical record of how the change took shape.
+
+## Graceful degradation in consume mode
+
+- **\`explore.md\` missing one or more sections** → warn, proceed-anyway by default; a missing section feeds nothing — except \`## Mechanism\`, whose absence makes every live rule UNACCOUNTED in the Step 0c.6 record.
+- **\`explore.md\` has no Decisions** → the generated artifacts proceed but flag that they're being generated from Premise + Open questions alone, which usually means the exploration wasn't ready for promotion. Suggest user run more \`/orbit:explore\` work before applying.
+`;
+
+/**
  * tighten-bodies (R-rop-14): the body carries no mirror notes; what only authors need is here.
  *
- * Checked mirrors (an installed skill cannot open these specs; never edit them here):
+ * Checked mirrors, carried by `references/consume-mode.md` (an installed skill cannot open these specs; never edit them
+ * here):
  * - the `explore.md` section list: `orbit-conventions`' `explore.md` format requirement, held by
  *   `test/core/templates/orbit-content-fidelity.test.ts`;
  * - the Step 0b entry form and the Mechanism grammar: `orbit-conventions`' "Decision entry identity and classification"
@@ -247,54 +378,7 @@ Before any upstream step, detect whether to run in consume mode or fall through 
 
 Replaces upstream Step 1 (the "ask what to build" prompt). All later upstream steps (create change directory, generate artifacts in dependency order) still run, but they read the exploration material rather than prompting the user.
 
-### Step 0a — Validate \`explore.md\` structure
-
-Read \`orbit/explore/<name>/explore.md\`. Check for the sections the format's owner lists, in its order — Premise, Mechanism, Decisions, Open questions, Considered & out, References.
-
-- **All listed sections present** → proceed normally.
-- **Missing one or more sections** → warn the user naming the missing sections; prompt via \`AskUserQuestion\` to confirm proceed-anyway (default: proceed). An absent \`## Mechanism\` section is a format note like any other — and on proceed, every live rule is UNACCOUNTED (state \`absent\`) in the record Step 0c.6 writes.
-- **Cannot read or parse** → halt with a clear error; user fixes and re-invokes.
-
-### Step 0b — Handle Open questions
-
-For each entry in the Open questions section, prompt the user via \`AskUserQuestion\` with three options:
-
-- **Resolve now** — user provides a resolution. The resolution becomes a Decision: appended to the Decisions section of \`explore.md\` (the file is updated, not just the in-memory parse), and used to inform generated artifacts. The appended entry is CONFORMING — written in the entry form below, \`Kind:\` per the answer's normative force (a rule PRESCRIBES across a set of situations; a fact describes one world; a scope choice is one-off), \`Disposition: live\` — never a bare bullet: an entry without the opener has no ID and reads as an open rule nobody can name. When the answer is a RULE, tell the user at the prompt that no Mechanism entry is authored at propose, so the rule will stand as an open domain (state \`absent\`) in the Step 0c.6 record.
-- **Defer as \`@review:\` marker** — a \`@review: <question text>\` marker is inserted at the most relevant location in the generated artifacts (typically \`design.md\` or the relevant spec). The Open question is moved to a "Deferred to markers" subsection of Open questions in \`explore.md\` (or tagged \`deferred\`).
-- **Abandon** — the question is moved to Considered & out with a brief rationale; no marker is created.
-
-**Bulk handling**: if more than ~5 Open questions exist, offer "Resolve all (walk one by one)" / "Defer all (mark in artifacts)" / "Abandon all" / "Walk each individually" via \`AskUserQuestion\`. Default: walk each individually.
-
-The entry form:
-
-\`\`\`
-${EXPLORE_DECISION_ENTRY_PRODUCTION}
-\`\`\`
-
-**The Mechanism read — after this step's LAST write to \`explore.md\`, before generation.** Read the \`## Mechanism\` section by the grammar \`orbit-conventions\`' Mechanism-entry requirement owns:
-
-\`\`\`
-${EXPLORE_MECHANISM_ENTRY_PRODUCTION}
-\`\`\`
-
-Take from it the entry set, each entry's \`Closure:\` token, and a BOUNDED entry's two residual lines VERBATIM; Step 0c.6 says what conformance to it decides. Read NO prior explore emit as a source or cross-check — git keeps no modification time, so no trail record can be shown to describe the file's current bytes — and fire none: propose's one emit is its completion emit (\`orbit-run-summary-emit\`'s one-shot rule, untouched). Your reading of the file is the SOLE source of the Step 0c.6 record, whose header always says so.
-
-### Step 0c — Section-to-artifact mapping
-
-When generating artifacts in upstream Step 4, apply this mapping:
-
-| \`explore.md\` section | Feeds into |
-|---|---|
-| **Premise** | \`proposal.md\`'s "Why" / motivation section |
-| **Decisions** | Spec requirements + \`design.md\` decisions + \`tasks.md\` task seeds. **Preserve specific decision wording** where artifact format permits; don't paraphrase. |
-| **Open questions** (resolved at Step 0b) | Promoted to Decisions and treated as above |
-| **Open questions** (deferred at Step 0b) | \`@review:\` markers in \`design.md\` or the relevant spec |
-| **Mechanism** | Per Step 0c.6 — the \`Mechanism section consumption\` requirement's decision table (a partition over the owner's live-rule status × the readout's accounting state) and the \`## Mechanism → artifacts\` record |
-| **Considered & out** | \`design.md\`'s "Alternatives considered" section (prevents future rediscovery) |
-| **References** | Read during artifact generation as context; cited in \`design.md\` where relevant; not copied verbatim |
-| **Decisions + References (codebase leanings)** | Seed \`design.md\`'s \`## Touchpoints\` section (authored below) |
-
-When \`design.md\` references background or decisions originally from \`explore.md\`, **cite the source** (\`see explore.md\`) rather than paraphrasing without attribution.
+After the PR lifecycle's Step 0.5 (Phase 1), read \`references/consume-mode.md\` and follow it: its Steps 0a to 0c.6 run before and during generation, feeding Step 0c.5's Touchpoints below, and its Step 0d runs after the size brief.
 
 ### Step 0c.5 — Author \`## Touchpoints\` in design.md (BOTH modes)
 
@@ -313,68 +397,12 @@ The generated \`design.md\` carries a \`## Touchpoints\` section: the PREDICTED 
 
 **Frozen at apply**: the predicted map is revised only through normal artifact revision (the proposal review cadence bounds its staleness) and is FROZEN once apply begins — from the first apply commit onward it reads as "the plan", while the ACTUAL map is engine-computed from the diff (the boot render's Touchpoints view). Never hand-update the section after apply's first commit; predicted-vs-actual divergence is a computed check (\`orbit-audit-drift\`), not a maintenance chore.
 
-### Step 0c.6 — Carry the Mechanism section (the \`Mechanism section consumption\` requirement)
-
-Every Mechanism entry, and every live rule with none, is disposed of by ONE row of this table — rows tested IN ORDER, first match wins. A live rule is ACCOUNTED when it is counted in \`rules_total\` AND not in \`rules_open\` (\`orbit-emit-composition\` owns those fields; the readout's parser is the judge of FORM) — and you decide that from the FILE, by the grammar mirrored under Step 0b: the rule is accounted when its entry CONFORMS in FULL (a heading whose ID matches its Decisions entry; a \`Domain:\` line and a table with at least one member row; a \`Closure:\` token from the closed set; the two residual slots present exactly when BOUNDED; nine move lines, each exactly once). An entry failing ANY clause, or no entry, is OPEN; name the failing clause in the record's state column (the readout's state word when one is at hand). A key defect is an entry whose heading ID matches no Decisions entry (an orphan) or a second entry or heading under an already-used ID (a duplicate).
-
-| row | owner's Decisions state | accounting state | lands in |
-|---|---|---|---|
-| 1 | any, or none — tested FIRST | in \`key_defects\` (an orphan entry whose heading ID matches no Decisions entry; a second entry or heading under an already-used ID) | reported in chat at the Mechanism read (after Step 0b's last write, before generation); no carrier — a key with no owner has nowhere to land, and a duplicate is excluded from \`rules_total\`. Its record row: the heading's ID plus \`line N\`, the defect kind (\`orphan\` / \`duplicate\`) in the state column, owner \`none\` (orphan) or \`duplicate\` (a second claim on an owned ID), destination \`none\` |
-| 2 | NOT a live rule (\`Kind: fact\` / \`scope\`, or \`Disposition: superseded\` / \`assigned\`) | any — an entry or none, well-formed or not | nowhere — permitted history; \`explore.md\` travels unchanged; the record lists it as not carried with NO state word (the engine assigns none to a non-live owner) |
-| 3 | live rule | OPEN — in \`rules_open\` (any state that field defines, whatever \`Closure:\` token the entry carries); from the file alone: no entry, or an entry failing any clause of the Mechanism grammar | UNACCOUNTED: ONE \`design.md\` Risks entry naming the rule as the readout names it — the ID, or \`line N\` for an ID-less entry, per \`orbit-run-summary-emit\`'s identifier rule — with the state word (the readout's when one is at hand; else the failing grammar clause, in the grammar's vocabulary); the spec delta carries nothing for it; never blocking |
-| 4 | live rule | accounted, \`Closure: DERIVED\` or \`SOURCED\` | the spec delta requirement the rule derives: the domain table as one of the CLOSED shapes below, the \`Closure:\` justification as the sentence naming the source |
-| 5 | live rule | accounted, \`Closure: BOUNDED\` (both residual slots present, by construction) | \`Residual kind:\` and \`Residual method:\` VERBATIM in that requirement's text as a named limit (the OWNER — only spec text survives archive); ONE \`design.md\` Risks entry naming the rule ID and POINTING at the requirement, restating nothing |
-
-**The CLOSED shapes**: a normative TABLE (the re-entry table in \`orbit-explore-modifications\`), a GRAMMAR or production block (the Mechanism grammar's fences in \`orbit-conventions\`), a SCENARIO SET — one scenario per member (the maturity rungs in \`orbit-run-summary-emit\`), or a SENTENCE naming the source with the members in prose (the concluded outcome's reader sentence in \`orbit-conventions\`). Which shape fits is your judgement; the record says which was chosen. The set is BOUNDED and its named limit is stated ONCE, in the requirement — point at it; never restate the two residual lines here.
-
-**The record.** \`design.md\` carries a \`## Mechanism → artifacts\` section: a header line reading "the proposing AI's reading of the file; no engine record" — always that sentence — then one table row per Mechanism entry (and per live rule with none): the rule as the readout names it (ID, or \`line N\` for an ID-less entry; a key defect by ID plus \`line N\`), its closure token or its state word (the readout's when one is at hand; else the failing grammar clause; the defect kind for a key defect), its owner's state (\`none\` for an orphan; \`duplicate\` for a second claim), and its destination as a requirement title (plus the shape, for CLOSED entries; \`none\` for a key defect).
-
-**Before Step 0d**: for every BOUNDED entry the table sent to row 5 (a live, accounted rule — never a history row), grep the change's \`specs/\` for both residual lines; a miss is reported and fixed before the move. Propose consumes FORM, as the readout renders form: whether an enumeration is TRUE, a residual honest, or a rule written down at all stays the reviewer's judgement.
-
-### Step 0d — Move the staging directory (with the staged-metadata MERGE)
-
-After all upstream steps complete successfully (artifacts generated, non-strict validation passes) and the
-size brief below has run, FIRST merge the staged metadata, THEN bulk-move:
-
-1. **Staged-metadata MERGE** (before the bulk move): if \`orbit/explore/<name>/.openspec.yaml\`
-   exists, read it via the change-metadata helpers and merge FIELD-LEVEL into the change's
-   freshly-written \`orbit/changes/<name>/.openspec.yaml\`. The merge is GENERIC with a
-   fresh-owned DENYLIST: the fresh metadata's \`schema\`/\`created\`/\`schema_version\` values win
-   (the staged copies were placeholders); EVERY OTHER staged field — \`architecture:\` today, and
-   any explore-side field a future capability adds — carries forward with STAGED precedence on
-   conflict (for \`architecture:\` specifically: the exploration's citation is the captured
-   decision; note the override in chat). Do NOT enumerate carried fields — copying only known
-   ones would silently discard future extensions. Then DISCARD the staged file (delete it; it is
-   never bulk-moved — a stale metadata copy inside the change directory would be a second claim
-   on one truth). When no staged \`.openspec.yaml\` exists (pre-D2 staging dir), skip this step
-   entirely — the move proceeds exactly as before, and no removal runs.
-
-2. **Bulk move**:
-
-\`\`\`bash
-[ -d orbit/explore/<name>/.orbit-runs ] && mv orbit/explore/<name>/.orbit-runs orbit/changes/<name>/.orbit-runs
-[ -f orbit/explore/<name>/.openspec.yaml ] && rm orbit/explore/<name>/.openspec.yaml  # staged metadata: merged above, then discarded (guarded — pre-D2 staging dirs have none)
-mv orbit/explore/<name>/* orbit/changes/<name>/
-rmdir orbit/explore/<name>
-\`\`\`
-
-(Or equivalent — preserve \`explore.md\` AND any sibling files like \`sketches/\` AND any draft convention files AND the \`.orbit-runs/\` run trail. The \`.orbit-runs/\` directory is dot-prefixed, so a bare \`*\` glob does NOT match it — move it explicitly first (as above) or use a dotfile-aware move; otherwise it is left behind and the \`rmdir\` fails. The \`rm\` of the staged \`.openspec.yaml\` is conditional on its existence. The staging directory should no longer exist; its contents land alongside the generated artifacts in the change directory.)
-
-After the move, \`orbit/changes/<name>/\` contains both:
-- The moved exploration files (\`explore.md\`, \`sketches/\`, draft conventions)
-- The generated artifacts (\`proposal.md\`, \`design.md\`, \`specs/\`, \`tasks.md\`)
-
-\`explore.md\` persists unchanged as the historical record of how the change took shape.
-
 ## Standalone mode
 
 When no \`orbit/explore/<name>/\` exists, fall through to upstream Step 1: prompt for description, generate artifacts from the description. Upstream behavior is otherwise kept, apart from the orbit steps that run in both modes — among them the step 4a baseline read and the \`## Touchpoints\` section (Step 0c.5 — authored fresh from the description and codebase reads; the entry grammar and frozen-at-apply rule apply identically).
 
 ## Graceful degradation
 
-- **\`explore.md\` missing one or more sections** → warn, proceed-anyway by default; a missing section feeds nothing — except \`## Mechanism\`, whose absence makes every live rule UNACCOUNTED in the Step 0c.6 record.
-- **\`explore.md\` has no Decisions** → the generated artifacts proceed but flag that they're being generated from Premise + Open questions alone, which usually means the exploration wasn't ready for promotion. Suggest user run more \`/orbit:explore\` work before applying.
-- **\`orbit/changes/<name>/\` already exists in conflict** → three-way prompt (regenerate / continue / abort) is mandatory; do not silently overwrite.
 - **No staging directory but user explicitly invoked propose** → standalone mode, no message.
 
 ## Base-fingerprint capture (NEW step — both modes)
@@ -432,6 +460,7 @@ ${CHAIN_END_STEP_BASIC}
         name: 'pr-choreography.md',
         content: PR_CHOREOGRAPHY_REFERENCE,
       },
+      { name: CONSUME_MODE_REFERENCE_NAME, content: CONSUME_MODE_REFERENCE },
       { name: SIZE_BRIEF_REFERENCE_NAME, content: SIZE_BRIEF_REFERENCE },
       { name: RUN_SUMMARY_EMIT_REFERENCE_NAME, content: runSummaryEmitReference(PROPOSE_RUN_SUMMARY_EMIT) },
       { name: COMMIT_STEP_REFERENCE_NAME, content: COMMIT_STEP_REFERENCE },
