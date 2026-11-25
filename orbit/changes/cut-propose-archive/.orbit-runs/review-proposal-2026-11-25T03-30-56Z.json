@@ -1,0 +1,175 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-25T03:30:56Z",
+  "change": "cut-propose-archive",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 2
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/cut-propose-archive/design.md",
+      "line": 71,
+      "title": "Positional pointers in the moved text go wrong beyond the one D1 rewords",
+      "recommendation": "D1 rewords only Step 0c's \"(authored below)\" before the move. Three more pointers in the text that moves would point\nat nothing once they sit in a reference:\n- propose.ts:337, Step 0d: \"and the size brief below has run\". The size brief stays in the body, so in\n  references/consume-mode.md nothing is \"below\". test/core/size-declaration-parity.test.ts:128 asserts this exact\n  string in the body, so the test moves too.\n- archive-change.ts:461, the Granted bullet (A1): \"stamp the consent era below as on the other two paths\" and\n  \"each prompt below is met by the kind its tag names\". The era stamp, the User-invoked path and the tagged prompts stay\n  in the body.\n- apply-change.ts:61, apply's Granted bullet (A1): \"stamp the consent era below as on the other two paths\".\nName each one in D1 and D2 as a `reworded` pair made before its move (\"the cut ledger\" rule: text is reworded before it\nmoves). Add them to tasks 3.1 and 4.1. Widen task 4.4's grep to \"below\", \"above\", \"next bullet\" and \"the other two\npaths\" so the sweep would catch the next one.",
+      "reproduction": "Read the moved spans against D1 and D2: propose.ts lines 246-378 (P1, P2) and archive-change.ts lines 459-461 (A1).\nExpected: every positional pointer in them is either named as reworded or still true in the reference.\nObserved: \"the size brief below has run\" (propose.ts:337) and \"the consent era below\" (archive-change.ts:461,\napply-change.ts:61) are named nowhere, and once moved they point at text the reference does not hold."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/cut-propose-archive/design.md",
+      "line": 106,
+      "title": "pr-archive-tail.md already carries part of A4, and its load condition stops being true",
+      "recommendation": "D4 says \"A4 moves into an existing reference, so its anchors name the new span there\", which treats all of A4 as new\ntext. Today's PR_ARCHIVE_TAIL_REFERENCE (pr-choreography.ts) already holds two of the three pieces:\n- its \"## Preflight, before the move\" section holds Step 4.9's carry-forward: observations.emit supplies pr_url/pr_state,\n  and observations.outcome is the tail's --outcome;\n- its \"## At the close\" section holds Step 5.8's per-change echo: \"Show every `human_acts` argv verbatim … Run none of\n  them.\"\nIts first line, \"Loaded when `orbit pr preflight` returned anything but `off`\", becomes false once A4 has the body read it\nat Step 0.7, before the preflight runs.\nClassify each A4 piece in D2/D4. Step 0.7's procedure is a new span. For Step 4.9's carry-forward and Step 5.8's\nper-change echo, record either `moved` with `existing: true` or `restated`, and add only the sentences the reference\nlacks: the program-PR echo line and the skipped-on-invalidation echo. Add a task to reword the reference's load line to\nmatch the new read moment. Also update test/core/templates/pr-references.test.ts:110-112, which reads Step 5.8's\n`human_acts` and \"Run none of them.\" from the body."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/cut-propose-archive/design.md",
+      "line": 107,
+      "title": "After A4, the HEAD-mismatch notice can no longer reach the consent preview",
+      "recommendation": "Today Step 0.7 says to report a HEAD mismatch \"in the consent preview when one fires\". A4 moves that instruction to\npr-archive-tail.md, and the body reads that reference \"now\", at Step 0.7, which comes after Step 0. On an AI-mediated,\nnon-granted arrival on an attached change whose HEAD is on another branch, the session reads consent-at-entry.md and\nshows the preview first. It reads the mismatch rule only afterwards and prints it as a separate line after the user has\nalready consented. That breaks D2's goal that \"a session reads the same text, at the step that uses it.\" Choose where\nthe rule lives.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Keep one sentence in Step 0.7's basic content: when a consent prompt fires, run this observation (read the reference) before the prompt and name a mismatch in its preview. Leave the rest of the procedure in the reference."
+        },
+        {
+          "label": "B",
+          "body": "Carry the mismatch clause in archive's consent-at-entry.md AI-mediated text: an attached change whose HEAD is not on pr_attachment.branch names both branches and the switch in the preview. Record it as a reworded pair made before the move, and have Step 0.7 point there."
+        }
+      ],
+      "reproduction": "Constructed case: change foo is PR-attached with branch foo. HEAD is on main. Archive is reached by \"continue\" with\nno chain grant. The body as A4 leaves it runs Step 0: it reads consent-at-entry.md and fires Proceed/Abort with the\noutward-writes line. Then Step 0.7 reads pr-archive-tail.md and prints the mismatch line.\nExpected (today's archive-change.ts:467-480): the preview itself names the mismatch.\nObserved: the user consented without seeing it."
+    },
+    {
+      "pass": "3",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "skill_body_convention.md",
+      "line": 76,
+      "title": "skill_body_convention.md still names bulk-archive as a body not yet under the convention",
+      "recommendation": "The project-root convention's Exceptions section still says \"Not yet brought under the convention: bulk-archive (its\nsign-off hold, PR section and divergence check, and its per-change archive emit), explore … and onboard\". Once\nbulk-archive is retired, that sentence is stale. Neither design D3's doc list, Touchpoints nor task 5.1 names this file.\nAdd it to D3 and task 5.1: drop the bulk-archive clause, or keep it as a dated record if the stage prefers."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/cut-propose-archive/design.md",
+      "line": 57,
+      "title": "Two of the Graceful degradation cases P2 moves belong to mode detection, not to consume mode",
+      "recommendation": "The inventory sketch justifies P2 with \"its cases are consume mode's\". Two of the four are not:\n- \"No staging directory but user explicitly invoked propose → standalone mode, no message\" is a standalone-mode case.\n- \"orbit/changes/<name>/ already exists in conflict → three-way prompt\" is decided in Step 0, and its step 2 already\n  states it.\nMoved into consume-mode.md, which is read only on the consume outcome, a standalone session never reads \"no message\".\nEither keep the standalone bullet in the body's Standalone mode section and drop the conflict bullet as text Step 0\nalready states (a `restated` pair), or record in D1 that the move accepts this."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "orbit/changes/cut-propose-archive/tasks.md",
+      "line": 45,
+      "title": "The task lists leave out three tests that read moved text, and one orphan that is a ledger entry",
+      "recommendation": "Tasks 2.4, 3.2 and 4.x name the tests that follow the edits. They leave out three that read text moving out of the\nbodies:\n- test/core/templates/chain-prompt-tags.test.ts:433 and :465 read archive's Granted bullet from the body (A1);\n- test/core/templates/pr-references.test.ts:110-112 read Step 5.8 from the body (A4);\n- test/core/size-declaration-parity.test.ts:128 reads Step 0d's text from the body (P1).\nTask 5.3 says \"Retire or re-point each ORPHAN tag\". One of the 8 orphans the map reports is orbit/scenario-ledger.yaml\nentry 46 (\"Bulk archive saves each change's brief\", line 175), a ledger entry rather than a tag.\nName the three tests in the tasks, and change 5.3 to \"each ORPHAN tag or ledger entry\"."
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/cut-propose-archive/design.md",
+      "line": 162,
+      "title": "The cut ledger's data shape cannot hold a second recording of a body",
+      "recommendation": "test/core/templates/cut-ledger-pairs.ts holds CUT_RECORDED as one flat Record<body, sha256>. It already holds hashes\nfor orbit-propose, orbit-apply-change and orbit-onboard from cut-review-walk, and cut-ledger.test.ts asserts\ntoHaveLength(6). This stage records those three bodies again. The ledger then needs a hash per stage, and a check that\nundoing this stage's pairs gives this stage's hash before cut-review-walk's pairs are undone. tightened-bodies.test.ts\nmust undo both stages' pairs, newest first.\nSay this in D4 and task 1.1, so two implementers do not build different shapes.\nAlso, D4's \"which re-record propose, apply and onboard from HEAD\" grammatically makes cut-review-walk the stage that\nre-records. It should name this stage."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/cut-propose-archive/design.md",
+      "line": 95,
+      "title": "Apply's Step 0 sits in the upstream portion, and no delta names the A1 edit to it",
+      "recommendation": "Apply's Step 0, \"Consent at entry\", is step 0 of the numbered Steps above `# Orbit additions` (apply-change.ts:56).\n`Generated-file disposition` says the upstream portion \"SHALL change only through a change whose delta spec names the\nedit\". D2 notes that archive's A2 touches the upstream portion. It says nothing about apply's A1 move.\nAdd one sentence to D2: either Step 0 is orbit-inserted text that the rule's known limit already covers, or the edit\nis named, for example in orbit-lifecycle-consent's modified `Consent prompts at consent-marked seams`."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "The removal side is thorough. Each requirement in the ten delta specs was diffed word by word against its baseline\nblock. Every bulk-archive clause in the baseline specs is either dropped by a delta or is one of the four records D3\nkeeps. orbit-change-size and orbit-scenario-map use \"bulk\" in another sense, and the lifecycle-consent and\nbase-fingerprints Purposes are edited at archive. The size figures (propose 7,982, archive 7,041, apply 3,712) were\nmeasured again with npm run size:report and match. The 14-to-13 decision-writing carrier count matches the fourteen\ntemplates that interpolate DECISION_WRITING_BASIC today. R1's rationale is in orbit-archive-modifications (the\n\"record's READER\" text). The config picker has a fallback for an unknown stored workflow id. Validate passes and no\n@review: markers remain.\n\nThe findings sit on the move side: what the moved text says once it lives in a reference. The weak points are the\npositional words (\"below\", \"the other two paths\"), A4's target reference, which already overlaps what moves into it\nand has a load line written for the later moment, and the one place where Step 0.7 feeds Step 0's preview. None of\nthese stops the design. Each changes the reword list, a ledger kind or one sentence of basic content, so the walk can\nland them before apply.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The stage's shape is right: one change for the cuts and the removal, sized and declared, every edit set to be named in\na ledger, and the removal swept across specs, bodies, tests and docs with only small gaps. What needs fixing before\napply is narrow. Name the stray positional pointers as rewordings. Settle how A4 meets a reference that already holds\npart of it. Decide where the mismatch-in-preview rule lives. Each is a design or task amendment the walk can make, not\na rethink, so the change can go forward once they are settled."
+  },
+  "final_assessment": "0 critical, 4 warning, 4 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews cut-propose-archive",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "c9b682c8da0717f3637c7de0020cea5ab296b0a3",
+      "frozen": false,
+      "evidence": {
+        "files": [],
+        "share": null,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ]
+}
