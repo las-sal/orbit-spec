@@ -253,7 +253,7 @@ first needs it.
 ### Stage cut-propose-archive — propose, archive and bulk-archive
 
 Depends-on: replay-set, inventory
-Complete: [ ]
+Complete: [x] 2026-11-25 (Sal)
 
 The inventory's cut list for propose and archive, applied (`orbit/explore/inventory/sketches/explore-propose-archive-onboard.md`),
 and bulk-archive removed as R-rop2-11 rules (its future, phase 1's R-rop-16 thin loop, was the inventory's to rule on).
@@ -371,3 +371,10 @@ Exit criteria:
   and `Validate generated skills`; the macOS leg failed the known zsh-completion test and `pr/commit.test.ts`'s
   ignore-rule case, which this stage did not touch, which passed on macOS one run earlier and which flaked once locally
   during the apply (outside this stage, intermittent). `cut-propose-archive` is next, as the recommended order says.
+- 2026-11-25 — Architect session after `cut-propose-archive`'s archive (`479c7f99`). Sal ratified it: propose and archive
+  under 5,000 estimated tokens (4,616 and 4,877 by `npm run size:report`), bulk-archive removed under R-rop2-11 and
+  named in its Shipped as, the edited bodies' ceilings lowered, and no cut marked for replay. Its Shipped as records that
+  D-inv-4's premise does not hold: the replay set's `propose` case grades the moved Step 0d and was not run (R-rop2-10).
+  CI run 45705173188 on `a351ba56` (the last walk commit): Linux and lint passed, and macOS failed only the known
+  zsh-completion test. The run on the archive commit had not finished when Sal ratified. Explore (11,904) and onboard (5,610)
+  are the two bodies still over G1. `cut-explore-onboard` is next, the last cut stage, then `close`.
