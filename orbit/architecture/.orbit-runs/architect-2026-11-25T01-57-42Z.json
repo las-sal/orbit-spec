@@ -1,0 +1,41 @@
+{
+  "command": "architect",
+  "timestamp": "2026-11-25T01:57:42Z",
+  "change": null,
+  "doc": "reduce-orbit-phase2",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Architect session after cut-review-walk's archive: Sal ratified the stage, its exit criteria met (review 4,988 and address-reviews 4,990 estimated tokens, ceilings lowered, no replay owed, removals named). CI on 6152961b: Linux green including validate:skills; macOS red on the known zsh-completion test and an intermittent pr/commit.test.ts case outside this stage. Status log entry written. The program brief is not saved (the program is not finished) and the sign-off hold reads off.",
+  "stages_touched": [
+    "cut-review-walk"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [
+    "cut-review-walk"
+  ],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      {
+        "path": "orbit/architecture/reduce-orbit-phase2.md",
+        "why": "G0 to G3, R-rop2-10 and R-rop2-11, stage cut-propose-archive's charter, and cut-review-walk's Shipped as (the cut ledger and the 20,000 cap it set)"
+      },
+      {
+        "path": "orbit/explore/inventory/sketches/explore-propose-archive-onboard.md",
+        "why": "propose's and archive's cut lists and the table of shared steps decided once"
+      },
+      {
+        "path": "orbit/explore/inventory/explore.md",
+        "why": "D-inv-14's bulk-archive removal scope (template, skill, launcher, eight baseline specs, onboard, tests, docs; D15's count 15 to 14)"
+      },
+      {
+        "path": "test/core/templates/cut-ledger.test.ts",
+        "why": "the cut ledger the next cut stage extends: record the bodies before editing, name every edit"
+      }
+    ],
+    "next_command": "/orbit:propose cut-propose-archive",
+    "model_hint": null,
+    "seam": "cut-review-walk is ratified. cut-propose-archive and cut-explore-onboard stay independent; the recommended order runs cut-propose-archive next and cut-explore-onboard last (onboard cut once, after both removals), on the branch reduce-orbit-phase2 (R-rop2-7)."
+  },
+  "next_recommended": "/orbit:propose cut-propose-archive"
+}

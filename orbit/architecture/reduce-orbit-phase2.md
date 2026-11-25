@@ -209,7 +209,7 @@ Exit criteria:
 ### Stage cut-review-walk — review and address-reviews
 
 Depends-on: replay-set, inventory
-Complete: [ ]
+Complete: [x] 2026-11-25 (Sal)
 
 The inventory's cut list for review and address-reviews, the two largest shared-text bodies, applied
 (`orbit/explore/inventory/sketches/review.md` and `address-reviews.md`), with R-rop2-12's removal of batch mode and the
@@ -333,3 +333,10 @@ Exit criteria:
   Recommended order (not ratified, any order is allowed): `cut-review-walk` first (the two largest bodies, and the most-run
   command), then `cut-propose-archive`, then `cut-explore-onboard` last, since R-rop2-11 and R-rop2-12 both edit onboard's
   text, so onboard is cut once, after both removals.
+- 2026-11-25 — Architect session after `cut-review-walk`'s archive (`6152961b`). Sal ratified it: both bodies under
+  5,000 estimated tokens (review 4,988, address-reviews 4,990, by `npm run size:report` at archive), their ceilings
+  capped at 20,000 characters and apply's, ff's and propose's lowered, no cut marked for replay, and every removal named
+  in its Shipped as with its ruling. CI run 45528040946 on `6152961b`: the Linux leg passed its tests, the size report
+  and `Validate generated skills`; the macOS leg failed the known zsh-completion test and `pr/commit.test.ts`'s
+  ignore-rule case, which this stage did not touch, which passed on macOS one run earlier and which flaked once locally
+  during the apply (outside this stage, intermittent). `cut-propose-archive` is next, as the recommended order says.
