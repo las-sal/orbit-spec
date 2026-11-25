@@ -12,13 +12,13 @@ The spans were measured on the generated bodies at propose:
 | body | now | spans that leave | basic content added | after the moves | after R2 |
 |---|---|---|---|---|---|
 | `orbit-propose` | 7,982 | P1 about 3,300 (Steps 0a to 0d; Step 0c.5, which stays, excluded), P2 188 | about 150 | about 4,640 | not needed |
-| `orbit-archive-change` | 7,041 | A1 680, A2 about 580, A3 308, A4 557 (Step 0.7 300; Step 4.9's carry-forward 76 and its HEAD note 39; Step 5.8 142), R1 104 | about 355 | about 5,170 | about 4,660 |
-| `orbit-apply-change` | 3,712 | A1's apply half 334 | about 50 | about 3,430 | — |
+| `orbit-archive-change` | 7,041 | A1 556 (the two bullets, 680, less their classifying sentences, 124, which stay), A2 about 580, A3 308, A4 557 (Step 0.7 300; Step 4.9's carry-forward 76 and its HEAD note 39; Step 5.8 142), R1 104 | about 355 | about 5,290 | about 4,780 |
+| `orbit-apply-change` | 3,712 | A1's apply half 204 (334, less its classifying sentences, 130) | about 50 | about 3,560 | — |
 
 Propose fits on its moves. The chain end step's tag paragraph the sketch counted for it left at `cut-review-walk`
-(R-rop2-14), so P1 and P2 are what remain. Archive is about 170 over after its moves (re-measured at the walk,
-2026-11-25, once Step 4.9 kept its rows and Step 0.7 and Step 3.2 kept their read timing in the body) and fits only once R2
-tightens the prose that stays, with about 340 to spare. Apply already fits; its Step 0 moves because the inventory decided consent at
+(R-rop2-14), so P1 and P2 are what remain. Archive is about 290 over after its moves (re-measured at the walks,
+2026-11-25, once Step 4.9 kept its rows, Step 0.7 and Step 3.2 kept their read timing in the body, and Step 0 kept its
+classifying sentences) and fits only once R2 tightens the prose that stays, with about 220 to spare. Apply already fits; its Step 0 moves because the inventory decided consent at
 entry once for both bodies (the sketch's shared-steps table, A1), and `structure over size` keeps one shape per step.
 
 The bodies are composed in `src/core/templates/workflows/propose.ts`, `archive-change.ts` and `apply-change.ts`.
@@ -99,9 +99,15 @@ and a consume session needs every step.
 
 ### D2 — Archive's four moves, apply's consent half, and R1
 
-- **A1**: archive's AI-mediated and Granted bullets go to `references/consent-at-entry.md`. The body keeps the Step 0
-  heading, the ordering invariant, the User-invoked bullet, the uncertainty bullet, the era stamp and sync inheritance,
-  plus one sentence keyed on Step 0's own classification, never on whether a command was typed: "On an arrival classified
+- **A1**: the procedures of archive's AI-mediated and Granted bullets go to `references/consent-at-entry.md`. Each
+  bullet keeps its classifying sentence in the body: AI-mediated is "everything else — delegation phrases ("finish the
+  cadence"), inference ("continue"), a handoff document, a chain, or an eligibility readout pointing here", and Granted
+  is its opening sentence, ending "with `may_run: true`". So the body holds the whole provenance classification, as
+  `orbit-lifecycle-consent`'s modified `Consent prompts at consent-marked seams` says (the verification pass, walked
+  2026-11-25). What moves is what each path does: the prompt, its preview and outward line, what each path records, and
+  the tag handling. The body keeps the Step 0 heading, the ordering invariant, the three classifying bullets, the
+  uncertainty bullet, the era stamp and sync inheritance, plus one sentence keyed on Step 0's own classification,
+  never on whether a command was typed: "On an arrival classified
   above as AI-mediated or granted, read `references/consent-at-entry.md` and follow it before any write." An explicit
   same-turn prose request ("archive it") is user-invoked by the User-invoked bullet and never reads the reference (the
   external review, walked 2026-11-25). Apply's Step 0 gets the same move into its own `references/consent-at-entry.md`. The texts differ (apply's
@@ -112,7 +118,9 @@ and a consume session needs every step.
   Two pointers in the moved Granted bullets would point at the body from the reference, and are reworded before the
   move (`reworded` pairs): "stamp the consent era below as on the other two paths" (archive and apply) becomes "stamp
   the consent era (the body's Consent-era stamp) as on the other two paths", and archive's "each prompt below is met by
-  the kind its tag names" becomes "each of the body's later prompts is met by the kind its tag names".
+  the kind its tag names" becomes "each of the body's later prompts is met by the kind its tag names". The AI-mediated
+  procedure's "Unless the arrival is granted (next bullet)" (archive and apply) loses "(next bullet)", a `reworded`
+  pair, since the Granted class it names stays in the body.
 - **A2**: Step 3.2's two dispositions, the check against the production, the DEFERRAL REFUSALS fence and the brief go to
   `references/user-validation.md`. The body keeps the heading, its position sentence, the "says nothing" case, the read,
   and the recovery after the move. That recovery is needed at Step 5.5, after the reference's moment has passed.
@@ -255,7 +263,7 @@ Bulk-archive's ceiling entry is deleted with the body.
 
 ## Risks / Trade-offs
 
-- [Archive is about 170 over after its moves and fits only with R2, about 340 to spare.] → Apply measures `npm run size:report` after the moves and before
+- [Archive is about 290 over after its moves and fits only with R2, about 220 to spare.] → Apply measures `npm run size:report` after the moves and before
   R2. A body still over 5,000 after R2 meets the inventory's re-entry trigger ("a cut stage finds a body that its cut
   list does not bring under 5,000"), and the stage raises it rather than cutting further without naming the cut.
 - [A consume session skips reading `consume-mode.md`, or reads it before Phase 1.] → The body's read sentence names the

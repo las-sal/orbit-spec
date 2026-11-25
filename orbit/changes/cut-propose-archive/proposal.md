@@ -15,8 +15,9 @@ ceilings come down (G2), and every removal and every other edit is named (G0).
   degradation cases, to `references/consume-mode.md` (P1, P2). That file is read when mode detection resolves consume,
   after the PR layer's Phase 1. Its Step 0d still runs after the size brief.
 - **archive's body** keeps each step's basic content and moves four procedures to references read at the moment named:
-  - A1: consent at entry's AI-mediated and granted paths go to `references/consent-at-entry.md`, read when the arrival
-    is not user-typed. Apply's Step 0 gets the same move, since the inventory decided the step once for both bodies.
+  - A1: what consent at entry's AI-mediated and granted paths do goes to `references/consent-at-entry.md`, read when
+    Step 0 classifies the arrival as one of them; the classification itself stays in the body. Apply's Step 0 gets the
+    same move, since the inventory decided the step once for both bodies.
   - A2: the user-validation closure's dispositions and its DEFERRAL REFUSALS production go to
     `references/user-validation.md`, read when `tasks.md` holds an unchecked `(User-validation` task.
   - A3: the brief save's outcome table goes to `references/brief-save.md`, read when the save exits non-zero.

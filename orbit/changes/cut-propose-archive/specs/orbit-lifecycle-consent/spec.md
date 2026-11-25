@@ -64,9 +64,9 @@ chunks and the inherited sync. The consent prompt carries:
 #### Scenario: Each consent-scoped body reads its consent reference only off the user-invoked path
 
 - **WHEN** the apply and archive skills are generated
-- **THEN** each body's Step 0 carries the user-invoked path and names `references/consent-at-entry.md` for an arrival it
-  classifies as AI-mediated or granted, and each skill ships that reference carrying the AI-mediated prompt and the
-  granted path
+- **THEN** each body's Step 0 carries the provenance classification, each of its classes defined there, and the
+  user-invoked path, and names `references/consent-at-entry.md` for an arrival it classifies as AI-mediated or
+  granted, and each skill ships that reference carrying the AI-mediated prompt and the granted path
 
 #### Scenario: User-typed entry runs prompt-free
 
