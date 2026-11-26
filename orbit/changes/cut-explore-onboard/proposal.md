@@ -25,15 +25,16 @@ the inventory decided once for every body carrying it (D-inv-2) and which no ear
   - E2: explore's emit step joins the other eleven under `orbit-run-summary-emit`'s read rule. Its payload detail, what
     the engine owns and its rationale go to `references/run-summary-emit.md`, read before the session's first emit,
     and the body carries the shared read cue. When each emit fires stays in the body, as that rule's table requires:
-    the BEGIN emit, the conversation boundary, the residency sweep before it and bare mode's non-emission.
+    the BEGIN emit, the conversation boundary, the residency sweep before it and bare mode's non-emission. That timing
+    is tightened before the move, so the body and the reference carry one wording.
   - E3: the minimal `.openspec.yaml` and the citation offer go to `references/new-exploration.md`, read when a new
-    named exploration is scaffolded.
+    named exploration is scaffolded, a confirmed crystallization's included.
 
-  "Composition with `/orbit:propose`" becomes one sentence (R2), and the prose that stays is tightened, with no step
+  "Composition with `/orbit:propose`" becomes at most two sentences keeping its three facts (R2), and the prose that stays is tightened, with no step
   removed (R3).
 - **REMOVED (G0, R-rop2-13): explore's illustrative upstream text.** The following go: the four "Handling Different
   Entry Points" dialogues with their heading; the ASCII box under "Visualize" with its label (the stance's "Visual"
-  bullet says to use diagrams); "Ending Discovery"'s summary template, whose one-line point stays; and the six
+  bullet says to use diagrams); "Ending Discovery"'s summary template, whose one-line point stays; and the five
   Guardrails lines that repeat the opening's "don't implement" or a stance bullet. These are edits to explore's upstream
   portion, so the delta names each one, as `orbit-conventions`' `Generated-file disposition` requires.
 - **onboard's body** fits by rewording in place:
@@ -71,7 +72,8 @@ replay set's `explore` case breaks the body's emit section, so its `break:` foll
 - `orbit-emit-composition`: `The explore grammar has one source in code` says the explore skill's template interpolates
   the Mechanism production in its `references/mechanism-entries.md` and the other two in its body, and that the parse's
   fixtures are the exemplar entries that reference carries.
-- `orbit-conventions`: `Decision-writing discipline`'s basic-content fence takes the shortened bullet.
+- `orbit-conventions`: `Decision-writing discipline`'s basic-content fence takes the shortened bullet, and `Restated
+  Guardrails lines are removed from orbit-modified bodies` points explore's Guardrails lines at their own named edit.
 
 ## Impact
 

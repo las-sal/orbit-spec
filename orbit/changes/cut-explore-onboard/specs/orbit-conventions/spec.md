@@ -10,7 +10,7 @@ not a stop, where records go), carried byte-equal by the `references/decision-re
 (`Decision-record reference ships beside the statement`). The basic content:
 
 ```
-- **Decision-writing (call-time)**: run `orbit decisions status --json` at each command's first step and after this session edits `orbit/config.yaml` (or `.yml`). On `write: true`, follow `references/decision-records.md` for the rest of the command. On `write: false`, write no new ledger entry or stop record, except a resolution answering a stop already in the trail or a replacement fixing a record there (read that reference first).
+- **Decision-writing (call-time)**: run `orbit decisions status --json` at each command's first step and after this session edits `orbit/config.yaml` (or `.yml`). On `write: true`, follow `references/decision-records.md` for the rest of the command. On `write: false`, write no new ledger entry or stop record; still write a resolution answering a stop already in the trail or a replacement fixing a record there (read that reference first).
 ```
 
 (Shortened at `reduce-orbit-phase2`'s `cut-explore-onboard`, D-inv-2, its branches and link unchanged.) It names the moment, the command, the usual result and the link, so an orbit command's result picks the branch, never
@@ -121,8 +121,8 @@ when it is written, never that a record was owed.
 
 - **WHEN** the basic content is read
 - **THEN** it carries the moment with the config re-run, the `orbit decisions status --json` call, the `write: true`
-  branch with its read of `references/decision-records.md`, and the `write: false` branch with both of its exceptions
-  (a resolution answering a stop already in the trail, a replacement fixing a record there) and its read of that
+  branch with its read of `references/decision-records.md`, and the `write: false` branch with the two records it still
+  writes (a resolution answering a stop already in the trail, a replacement fixing a record there) and its read of that
   reference
 
 #### Scenario: The basic content names when the command runs
@@ -202,3 +202,65 @@ when it is written, never that a record was owed.
   is in it but the opening "under every setting", replaced by "when `orbit decisions status` reports `write: true`";
   only the connecting words, the place of the reference pointer and that one clause differ, and a test holds each
   clause and names the replacement
+
+### Requirement: Restated Guardrails lines are removed from orbit-modified bodies
+
+The system SHALL remove from an orbit-modified body's upstream `**Guardrails**` list, explore's excepted
+(`orbit-explore-modifications`' `Upstream explore stance preserved` names its lines), each line that a step line of the
+same body states with nothing added — no timing, scope or case of its own — and SHALL keep every other line; the
+heading goes when no line is left. This requirement is the named edit `Generated-file disposition` asks of a change to
+an upstream portion: each removed line is named below with the step that states it, and a test holds the step line
+present. The lines it covers, from the bodies generated at `a5ba0f0c`:
+
+| member | covered by |
+|---|---|
+| apply-change: "Keep going through tasks until done or blocked" | removed — step 6, "Implement tasks (loop until done or blocked)", and "Continue to next task" |
+| apply-change: "Always read context files before starting (from the apply instructions output)" | removed — step 4, "Read every file path listed under `contextFiles` from the apply instructions output" |
+| apply-change: "If task is ambiguous, pause and ask before implementing (chain: decision)" | kept — adds "before implementing" |
+| apply-change: "If implementation reveals issues, pause and suggest artifact updates (chain: decision)" | removed — step 6's pause list, "Implementation reveals a design issue → suggest updating artifacts", under its `(chain: decision)` tag |
+| apply-change: "Keep code changes minimal and scoped to each task" | kept — adds "scoped to each task" |
+| apply-change: "Update task checkbox immediately after completing each task" | removed — step 6, "Mark task complete in the tasks file" before "Continue to next task" |
+| apply-change: "Pause on errors, blockers, or unclear requirements - don't guess (chain: decision)" | removed — step 6, "Task is unclear → ask for clarification (chain: decision)" and "Error or blocker encountered → report and wait for guidance (chain: decision)" |
+| apply-change: "Use contextFiles from CLI output, don't assume specific file names" | removed — step 4, "Other schemas: follow the contextFiles from CLI output" |
+| archive-change: all seven lines, and the heading | removed — steps 1 (selection), 2 (completion by `orbit status --change <name> --json`), 2 and 3 (warn, confirm, proceed), 5 (the whole directory moves), 6 (the summary), and 4 (sync through `orbit-sync-specs`; "Show a combined summary before prompting") |
+| continue-change: "Create ONE artifact per invocation" | removed — step 3, "STOP after creating ONE artifact" |
+| continue-change: "Always read dependency artifacts before creating a new one" | removed — step 3, "Read any completed dependency files for context" |
+| continue-change: "Never skip artifacts or create out of order" | removed — step 3, "Pick the FIRST artifact with `status: "ready"`" |
+| continue-change: "Use the schema's artifact sequence, don't assume specific artifact names" | removed — Artifact Creation Guidelines, "The artifact types and their purpose depend on the schema" |
+| continue-change: the unclear-context, file-verification and `context`/`rules` lines | kept — no step asks outside the proposal, verifies the file, or names the `<context>`, `<rules>`, `<project_context>` blocks |
+| ff-change and propose: "Create ALL artifacts needed for implementation (as defined by schema's `apply.requires`)" | removed — step 4b, until every `applyRequires` artifact is done |
+| ff-change and propose: "Always read dependency artifacts before creating a new one" | removed — step 4a, "Read any completed dependency files for context", and the Artifact Creation Guidelines |
+| ff-change and propose: the momentum, existing-name and file-verification lines | kept — no step states them |
+| new-change: "Do NOT create any artifacts yet - just show the instructions" | kept — a prohibition no step states; steps 5 and 6 show the instructions and stop, but none says not to create an artifact |
+| new-change: "Do NOT advance beyond showing the first artifact template" | removed — step 6, "STOP and wait for user direction", after step 5 shows the first artifact's template |
+| new-change: "Pass --schema if using a non-default workflow" | removed — step 3, "Add `--schema <name>` only if the user requested a specific workflow" |
+| new-change: the invalid-name and existing-name lines | kept — no step states them |
+| sync-specs: all five lines | kept — `Generated-file disposition` classes sync-specs as upstream-verbatim, its upstream body unchanged |
+
+The table is sourced from the `**Guardrails**` blocks of the seven bodies that carry one among the twelve
+`tighten-bodies` tightens (explore's and bulk-archive's are outside it): 42 lines, 23 removed. Explore's Guardrails lines
+are named instead by `orbit-explore-modifications`' `Upstream explore stance preserved` (`reduce-orbit-phase2`'s
+`cut-explore-onboard`), because the opening or a stance bullet states them, not a step line; bulk-archive's left with
+its body (R-rop2-11).
+
+#### Scenario: A line a step states goes
+
+- **WHEN** apply's body is generated
+- **THEN** it carries no "Pause on errors, blockers, or unclear requirements" Guardrails line, and its step 6 still
+  carries "Error or blocker encountered → report and wait for guidance (chain: decision)"
+
+#### Scenario: A line that adds to the steps stays
+
+- **WHEN** apply's body is generated
+- **THEN** its Guardrails list still carries "If task is ambiguous, pause and ask before implementing (chain: decision)"
+  and "Keep code changes minimal and scoped to each task"
+
+#### Scenario: Archive's Guardrails heading goes with its lines
+
+- **WHEN** archive's body is generated
+- **THEN** it carries no `**Guardrails**` heading
+
+#### Scenario: Sync-specs keeps its upstream body
+
+- **WHEN** sync-specs' body is generated
+- **THEN** its upstream portion, the `**Guardrails**` list included, is unchanged

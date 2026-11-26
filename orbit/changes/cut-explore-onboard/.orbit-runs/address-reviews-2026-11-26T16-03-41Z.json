@@ -1,0 +1,411 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-26T16:03:41Z",
+  "change": "cut-explore-onboard",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/cut-explore-onboard/.orbit-runs/review-proposal-2026-11-26T00-27-46Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-26T00-27-46Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 3,
+    "suggestion": 5
+  },
+  "pushback_verification": "All eight verified against current state (the read-cue test, the parity test and ledger lines, the separators, the baseline Guardrails sentence); none stale.",
+  "resolution_summary": {
+    "resolved": 8,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "R3 rewords explore's emit timing that stays, but the emit reference must hold that timing byte-equal",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/cut-explore-onboard/design.md",
+      "line": 92,
+      "classification": "decision_required",
+      "action": "applied option B: the emit timing the body keeps, with its stage tags, is reworded before E2 moves the section (task 3.1), so body and reference carry one wording; design D1/D2/D5, the run-summary delta (its SHALL and explore paragraph) and the proposal say so; R3 (task 3.5) excepts it",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Take the emit timing and its stage tags out of R3: the body keeps the timing paragraphs byte-equal to the section (excerpts allowed, as the test's substring check permits), and design D2's list, task 3.5 and the size projection say so."
+          },
+          {
+            "label": "B",
+            "body": "Reword the timing BEFORE the E2 move, as `reworded` pairs, so the reference holds the reworded text. Amend `orbit-run-summary-emit`'s delta (\"as the body carried it at `9a122611` … a positional pointer reworded first\") to name those rewordings."
+          },
+          {
+            "label": "C",
+            "body": "Keep R3 on the timing after the move and record each reworded body paragraph in the read-cue test's SPLIT map, naming the divergence in the delta and in tasks 3.3/3.5."
+          }
+        ],
+        "chosen": "B"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/cut-explore-onboard/tasks.md",
+          "orbit/changes/cut-explore-onboard/proposal.md",
+          "orbit/changes/cut-explore-onboard/specs/orbit-run-summary-emit/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "- the emit timing that stays;",
+          "a positional pointer in it reworded first"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/cut-explore-onboard/specs/orbit-run-summary-emit/spec.md",
+            "text": "so the body and the reference carry one wording"
+          },
+          {
+            "path": "orbit/changes/cut-explore-onboard/design.md",
+            "text": "reworded BEFORE E2 moves the section"
+          }
+        ],
+        "searched": [
+          "emit timing",
+          "reworded first",
+          "stage tags",
+          "9a122611",
+          "R3"
+        ],
+        "scope": [
+          "test/core/templates/run-summary-read-cue.test.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The shortened bullet drops \"is still written\", which two scenario-ledger entries and the parity test cite as evidence",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/cut-explore-onboard/specs/orbit-conventions/spec.md",
+      "line": 13,
+      "classification": "trivial_fix",
+      "action": "the fence's write: false branch keeps a positive verb ('; still write a resolution …'), 441 characters (73 fewer than 514), in the delta fence and design D3; the branches scenario says 'the two records it still writes'; task 5.1 rewords the two scenario-ledger reasons; Touchpoints names orbit/scenario-ledger.yaml",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/cut-explore-onboard/design.md",
+          "orbit/changes/cut-explore-onboard/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "except a resolution answering a stop",
+          "514 to 436",
+          "It is 436 characters",
+          "both of its exceptions"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/cut-explore-onboard/specs/orbit-conventions/spec.md",
+            "text": "still write a resolution answering a stop already in the trail"
+          },
+          {
+            "path": "orbit/changes/cut-explore-onboard/tasks.md",
+            "text": "are reworded to the new words"
+          }
+        ],
+        "searched": [
+          "still written",
+          "except a",
+          "436",
+          "78",
+          "exceptions"
+        ],
+        "scope": [
+          "test/core/decision-writing-parity.test.ts",
+          "orbit/scenario-ledger.yaml"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The new SHALL (\"no illustrative text that the stance already states\") is broader than the named removals, and its day-one truth is contested",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/cut-explore-onboard/specs/orbit-explore-modifications/spec.md",
+      "line": 7,
+      "classification": "trivial_fix",
+      "action": "the SHALL now says the upstream portion changes only by the edits R-rop2-13 rules and the table names, and that a further removal is a further named edit; the quote and the table stay",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "SHALL carry no illustrative text that the stance already states"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/cut-explore-onboard/specs/orbit-explore-modifications/spec.md",
+            "text": "a further removal is a further named edit"
+          }
+        ],
+        "searched": [
+          "illustrative text",
+          "already states"
+        ],
+        "scope": [
+          "orbit/changes/cut-explore-onboard/design.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "orbit-conventions' Guardrails requirement still scopes explore out, and its rule differs from the one this change applies",
+      "marker_source": "internal-review",
+      "file": "orbit/specs/orbit-conventions/spec.md",
+      "line": 1744,
+      "classification": "trivial_fix",
+      "action": "orbit-conventions' delta carries `Restated Guardrails lines are removed from orbit-modified bodies` whole as MODIFIED, its sourcing sentence pointing explore's lines at `Upstream explore stance preserved` and bulk-archive's at its removal; fingerprint stamped; proposal and design D2 name it",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/cut-explore-onboard/specs/orbit-conventions/spec.md",
+          "orbit/changes/cut-explore-onboard/proposal.md",
+          "orbit/changes/cut-explore-onboard/design.md",
+          "orbit/changes/cut-explore-onboard/.openspec.yaml"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "are untouched until `reduce-orbit-phase1`'s evaluation"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/cut-explore-onboard/specs/orbit-conventions/spec.md",
+            "text": "are named instead by `orbit-explore-modifications`' `Upstream explore stance preserved`"
+          }
+        ],
+        "searched": [
+          "untouched until",
+          "Restated Guardrails"
+        ],
+        "scope": [],
+        "kept": [
+          {
+            "path": "orbit/specs/orbit-conventions/spec.md",
+            "why": "the baseline keeps the old sentence until archive applies this MODIFIED block"
+          }
+        ]
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Task 2.1 removes a `---` separator that the requirement's table does not name",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/cut-explore-onboard/tasks.md",
+      "line": 8,
+      "classification": "trivial_fix",
+      "action": "the delta's first row, design D2 and task 2.1 name the `---` separator that closes the section; the one before its heading stays",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/cut-explore-onboard/specs/orbit-explore-modifications/spec.md",
+          "orbit/changes/cut-explore-onboard/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "its heading and its `---` separator included"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/cut-explore-onboard/tasks.md",
+            "text": "the `---` separator that closes it included"
+          },
+          {
+            "path": "orbit/changes/cut-explore-onboard/specs/orbit-explore-modifications/spec.md",
+            "text": "the `---` separator that closes it"
+          }
+        ],
+        "searched": [
+          "---",
+          "Handling Different Entry Points"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The classification note says every explore emit paragraph fell in one row, but the BEGIN and sweep paragraphs are mixed",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/cut-explore-onboard/specs/orbit-run-summary-emit/spec.md",
+      "line": 66,
+      "classification": "trivial_fix",
+      "action": "the named limit says explore's section was read at propose and is classified at apply, and names the two mixed paragraphs (BEGIN, residency sweep) with which part stays; task 3.3 splits them",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/cut-explore-onboard/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "and every paragraph fell"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/cut-explore-onboard/specs/orbit-run-summary-emit/spec.md",
+            "text": "save two mixed ones, each split by the table"
+          },
+          {
+            "path": "orbit/changes/cut-explore-onboard/tasks.md",
+            "text": "splitting the BEGIN emit's and the residency sweep's paragraphs"
+          }
+        ],
+        "searched": [
+          "classified",
+          "every paragraph",
+          "mixed"
+        ],
+        "scope": [
+          ".claude/skills/orbit-explore/SKILL.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The MODIFIED grammar requirement still says the skill's hash pin does not move, while this change re-pins explore",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/cut-explore-onboard/specs/orbit-emit-composition/spec.md",
+      "line": 3,
+      "classification": "trivial_fix",
+      "action": "the requirement and the carried `Body interpolation changes no byte` scenario state the pin as a property of the interpolation alone, the scenario naming that this change re-pins explore for its moves",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "(the skill's hash pin does not move)",
+          "the skill-templates hash pin is unchanged"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/cut-explore-onboard/specs/orbit-emit-composition/spec.md",
+            "text": "interpolating the strings moves no hash pin"
+          }
+        ],
+        "searched": [
+          "hash pin",
+          "byte-identical"
+        ],
+        "scope": [
+          "orbit/changes/cut-explore-onboard/tasks.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The line named as restating Guardrails' \"Don't auto-capture\" is scoped to \"When a change exists\"",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/cut-explore-onboard/specs/orbit-explore-modifications/spec.md",
+      "line": 20,
+      "classification": "decision_required",
+      "action": "kept the Guardrails line: its row reads kept (no single line states it at its scope); the scenarios name three kept lines and four restating lines; proposal and task 2.1 say five restated lines",
+      "ratified_via": "chat",
+      "resolution": "a — keep the \"Don't auto-capture\" Guardrails line, its row kept (no single line states it at its scope), five restated lines removed",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/cut-explore-onboard/design.md",
+          "orbit/changes/cut-explore-onboard/proposal.md",
+          "orbit/changes/cut-explore-onboard/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "remove the six restated Guardrails lines",
+          "removed as restated: \"Orbit Awareness\" step 4"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/cut-explore-onboard/specs/orbit-explore-modifications/spec.md",
+            "text": "no single line states it at its scope"
+          }
+        ],
+        "searched": [
+          "auto-capture",
+          "six",
+          "two kept",
+          "Orbit Awareness"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "All eight resolved as repairs: the two decisions by Sal in chat (B: the emit timing reworded before its move; A: the auto-capture Guardrails line kept), the six others as obvious fixes. The auto-capture and hash-pin findings converge with the codex half and close there by this log.",
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews cut-explore-onboard",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "c49704460a164a6199bd102aa59c2550876dd10d",
+      "frozen": false,
+      "evidence": {
+        "files": [],
+        "share": null,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ],
+  "ripple_misses": 0
+}

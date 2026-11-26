@@ -1,0 +1,160 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-26T17:50:37Z",
+  "change": "cut-explore-onboard",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/cut-explore-onboard/.orbit-runs/review-proposal-2026-11-26T16-46-08Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-26T16-46-08Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 1
+  },
+  "pushback_verification": "Both verified against current state: spec line 74 still named two mixed paragraphs while the explore body (SKILL.md:619, :625, :646) has three more; the carried Guardrails SHALL at line 209 still read as covering every orbit-modified body, explore included, and the block carried a doubled blank line under its heading.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The walk's list of explore's mixed emit paragraphs names two; three more are mixed",
+      "file": "orbit/changes/cut-explore-onboard/specs/orbit-run-summary-emit/spec.md",
+      "line": 74,
+      "marker_source": "internal-review",
+      "classification": "decision_required",
+      "action": "applied option B: the classification note no longer counts or names explore's mixed paragraphs; it says the section is classified paragraph by paragraph at apply, its crystallization subsection apart, and a paragraph mixing rows is split by the table. Task 3.3 says the same, naming none. The scenario `Explore's emit step keeps its timing in the body` now also names the payload's field list and the rationale for the timing among what the body does not carry, so it holds the three paragraphs the list missed",
+      "ratified_via": "chat",
+      "resolution": "b",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/cut-explore-onboard/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "save two mixed ones",
+          "splitting the BEGIN emit's and the residency sweep's paragraphs"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/cut-explore-onboard/specs/orbit-run-summary-emit/spec.md",
+            "text": "a paragraph that mixes rows is"
+          },
+          {
+            "path": "orbit/changes/cut-explore-onboard/specs/orbit-run-summary-emit/spec.md",
+            "text": "none of the payload's field list"
+          },
+          {
+            "path": "orbit/changes/cut-explore-onboard/tasks.md",
+            "text": "splitting each paragraph that mixes rows by that table"
+          }
+        ],
+        "searched": [
+          "mixed",
+          "split",
+          "BEGIN emit's",
+          "residency sweep's",
+          "final_assessment"
+        ],
+        "scope": [
+          ".claude/skills/orbit-explore/SKILL.md"
+        ],
+        "kept": []
+      },
+      "ripple_miss_of": {
+        "walk": "2026-11-26T16-03-41Z",
+        "title": "The classification note says every explore emit paragraph fell in one row, but the BEGIN and sweep paragraphs are mixed",
+        "file": "orbit/changes/cut-explore-onboard/specs/orbit-run-summary-emit/spec.md",
+        "kind": "judgement"
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The carried Guardrails requirement's SHALL still covers explore and keeps its lines",
+      "file": "orbit/changes/cut-explore-onboard/specs/orbit-conventions/spec.md",
+      "line": 209,
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "action": "scoped the carried requirement's SHALL: \"…upstream `**Guardrails**` list, explore's excepted (`orbit-explore-modifications`' `Upstream explore stance preserved` names its lines), each line…\", so it no longer reads as keeping explore's lines the stance requirement removes; dropped the doubled blank line under the heading. The baseline block is unchanged, so its fingerprint stands",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/cut-explore-onboard/specs/orbit-conventions/spec.md",
+            "text": "list, explore's excepted"
+          }
+        ],
+        "searched": [
+          "Restated Guardrails",
+          "explore's excepted",
+          "outside it"
+        ],
+        "scope": [
+          "orbit/specs/orbit-conventions/spec.md"
+        ],
+        "kept": []
+      },
+      "ripple_miss_of": {
+        "walk": "2026-11-26T16-03-41Z",
+        "title": "orbit-conventions' Guardrails requirement still scopes explore out, and its rule differs from the one this change applies",
+        "file": "orbit/specs/orbit-conventions/spec.md",
+        "kind": "judgement"
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "The verification pass's two regressions are repaired: explore's emit-section classification is left to the table at apply, with the scenario naming every kind of text the body must not keep, and the carried Guardrails requirement now excepts explore by name. Both were misses of the first walk's entries, judged unaffected there. 0 markers remain in scope; no escalations persist.",
+  "iteration": 3,
+  "next_recommended": "/orbit:apply cut-explore-onboard — user-invoked",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "c49704460a164a6199bd102aa59c2550876dd10d",
+      "frozen": false,
+      "evidence": {
+        "files": [],
+        "share": null,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ],
+  "ripple_misses": 2
+}

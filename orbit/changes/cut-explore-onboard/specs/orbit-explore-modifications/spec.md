@@ -4,20 +4,21 @@
 
 The system SHALL preserve upstream `/orbit:explore`'s "stance, not workflow" character — thinking-partner mode, no fixed steps, no mandatory outputs, no implementation.
 
-The upstream portion of the explore body SHALL carry no illustrative text that the stance already states, as
-`reduce-orbit-phase2`'s R-rop2-13 rules (Sal, 2026-11-23: "ok to remove some of openspec's original stuff"). This
-requirement is the named edit `orbit-conventions`' `Generated-file disposition` asks of a change to an orbit-modified
-body's upstream portion. Each edit is named below, in the body generated at `9a122611`, and every other line of the
-upstream portion is unchanged:
+The upstream portion of the explore body SHALL change only by the edits `reduce-orbit-phase2`'s R-rop2-13 rules (Sal,
+2026-11-23: "ok to remove some of openspec's original stuff") and the table below names: illustrative text the stance
+already states. This requirement is the named edit `orbit-conventions`' `Generated-file disposition` asks of a change to
+an orbit-modified body's upstream portion. Each edit is named below, in the body generated at `9a122611`, and every other
+line of the upstream portion is unchanged; a further removal is a further named edit, never this requirement read as a
+general rule:
 
 | member | covered by |
 |---|---|
-| "Handling Different Entry Points": its heading and its four dialogues (a vague idea, a specific problem, stuck mid-implementation, comparing options) | removed (R-rop2-13): the stance bullets and "What You Might Do" carry what they illustrate |
+| "Handling Different Entry Points": its heading, its four dialogues (a vague idea, a specific problem, stuck mid-implementation, comparing options) and the `---` separator that closes it, the one before its heading staying between "What You Don't Have To Do" and "Ending Discovery" | removed (R-rop2-13): the stance bullets and "What You Might Do" carry what they illustrate |
 | "What You Might Do": the `**Visualize**` label and its ASCII box | removed (R-rop2-13): the stance's "**Visual** - Use ASCII diagrams liberally when they'd help clarify thinking" says it |
 | "Ending Discovery": the "What We Figured Out" summary template | removed (R-rop2-13); the sentence before it ("When it feels like things are crystallizing, you might summarize:") and the one after it ("But this summary is optional.") join as one: "When it feels like things are crystallizing, you might summarize what you figured out, but this summary is optional."; "Sometimes the thinking IS the value." stays |
 | Guardrails: "Don't implement" | removed as restated: the opening's "**IMPORTANT: Explore mode is for thinking, not implementing.**" paragraph |
 | Guardrails: "Don't rush", "Don't force structure" | removed as restated: the stance's "**Patient** - Don't rush to conclusions, let the shape of the problem emerge" |
-| Guardrails: "Don't auto-capture" | removed as restated: "Orbit Awareness" step 4, "Offer and move on. Don't pressure. Don't auto-capture." |
+| Guardrails: "Don't auto-capture" | kept: no single line states it at its scope, the whole skill ("Orbit Awareness" step 4's "Don't auto-capture" sits under "When a change exists") |
 | Guardrails: "Do visualize" | removed as restated: the stance's "**Visual**" bullet |
 | Guardrails: "Do explore the codebase" | removed as restated: the stance's "**Grounded** - Explore the actual codebase when relevant" |
 | Guardrails: "Don't fake understanding", "Do question assumptions" | kept: no other line states either ("Including the user's and your own" adds to "Challenge assumptions") |
@@ -40,14 +41,13 @@ The table is sourced from the upstream portion's sections as generated at `9a122
 - **WHEN** the explore skill is generated
 - **THEN** it carries no "Handling Different Entry Points" heading, no `COLLABORATION SPECTRUM` dialogue, no ASCII box
   under a `**Visualize**` label and no `## What We Figured Out` template, and its Guardrails list carries exactly the
-  two kept lines
+  three kept lines
 
 #### Scenario: A removed Guardrails line's statement stays
 
 - **WHEN** the explore skill is generated
 - **THEN** each line the table names as a Guardrails restatement is still in the body: the opening's IMPORTANT
-  paragraph, the stance's "Patient", "Visual" and "Grounded" bullets, and "Orbit Awareness" step 4's "Don't
-  auto-capture"
+  paragraph and the stance's "Patient", "Visual" and "Grounded" bullets
 
 ### Requirement: Nine moves applied per rule in the Mechanism section
 

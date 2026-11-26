@@ -20,8 +20,8 @@ Explore does not fit on its moves alone, unlike the sketch's projection (4,926).
 baseline specs at propose account for the gap. E2 cannot move the emit timing: `orbit-run-summary-emit`'s `A body reads
 its run-summary detail before the session's first run-summary emit` keeps "when the emit fires … the sweep before it"
 in the body. E1 cannot move the "substantive decision" test, because the Mode C prompt fires on it. Explore fits only
-once R3 tightens the orbit prose that stays, by about 15% (D2). The shortened decision-writing bullet takes 78
-characters more from every body that carries it (514 to 436; D-inv-2 estimated about 140).
+once R3 tightens the orbit prose that stays, by about 15% (D2). The shortened decision-writing bullet takes 73
+characters more from every body that carries it (514 to 441; D-inv-2 estimated about 140).
 
 The bodies are composed in `src/core/templates/workflows/explore.ts` and `onboard.ts`. Explore interpolates the three
 productions `src/core/explore-grammar.ts` exports (`orbit-emit-composition`'s `The explore grammar has one source in
@@ -54,15 +54,20 @@ and verify.
 
 Each move keeps the step's heading and basic content in the body and moves its procedure byte-equal to a reference
 (`skill_body_convention.md`). Every reference is a one-line title followed by its exported constant in `explore.ts`.
-Positional pointers inside a moved span are reworded first, so the moved text is byte-equal to its source.
+Positional pointers inside a moved span, and the emit timing the body keeps (D2), are reworded first, so the moved text is
+byte-equal to its source.
 
 | move | leaves the body | reference | the body keeps | read when |
 |---|---|---|---|---|
 | D-inv-5a | "Mechanism entries — the grammar", "Closure is ACCOUNTED, not CLOSED", "The nine moves, applied per rule", "Exemplar — two conforming entries" (with the interpolated `EXPLORE_MECHANISM_ENTRY_PRODUCTION`) | `references/mechanism-entries.md` | the first heading; which rules owe an entry (`Kind:` rule or absent, `Disposition:` live or absent) | before writing or editing a Mechanism entry: a rule captured, a Mechanism entry swept at a boundary, a resume adding the section |
 | D-inv-5b | "Concluding an exploration", whole, with reopening | `references/concluding.md` | the heading; that a conclusion is written only on the user's word, the AI recommending and never inferring it | on the user's word to conclude or to reopen |
 | E1 | "Crystallization to named change", whole | `references/crystallization.md` | the heading; that no file is written before the reference's warning is confirmed | when a bare exploration is about to be named: the user asks to save it under a name, or accepts the Mode C prompt |
-| E2 | the emit section (`## Run-summary emit (named-mode only)` and its subsections, crystallization excepted) | `references/run-summary-emit.md`, holding the section whole as the body carried it | when each emit fires: the BEGIN emit after the scaffold (Mode C back-filling first), the two boundary rules and what is not a boundary, the wrap-phrase convention, the residency sweep before every boundary emit, no retro-fire, bare mode's non-emission; the `orbit emit explore` command; the shared read cue | before the session's first emit (the shared cue) |
-| E3 | "Minimal explore metadata", whole | `references/new-exploration.md` | the heading | when a new named exploration is scaffolded, or a resumed one lacks its `.openspec.yaml` |
+| E2 | the emit section (`## Run-summary emit (named-mode only)` and its subsections, crystallization excepted) | `references/run-summary-emit.md`, holding the section whole as the body carried it, its timing reworded first (D2) | when each emit fires: the BEGIN emit after the scaffold (Mode C back-filling first), the two boundary rules and what is not a boundary, the wrap-phrase convention, the residency sweep before every boundary emit, no retro-fire, bare mode's non-emission; the `orbit emit explore` command; the shared read cue | before the session's first emit (the shared cue) |
+| E3 | "Minimal explore metadata", whole | `references/new-exploration.md` | the heading | when a new named exploration is scaffolded (Mode B new, or Mode C after its confirmation), or a resumed one lacks its `.openspec.yaml` |
+
+Mode C's row and the crystallization step's "(and the minimal `.openspec.yaml`, as in Mode B)" are reworded first to name
+`references/new-exploration.md`, so a confirmed crystallization reads the metadata fields and the citation offer before
+it scaffolds, rather than reaching them through Mode B.
 
 The "substantive decision" test stays in the body: the Mode C prompt fires on it, so it is read before any reference.
 The status header and Decisions-entry productions stay in the body, since every named session writes them.
@@ -89,9 +94,18 @@ R3 rewords the orbit prose that stays, with no step removed:
 - the six-section scaffold's placeholders;
 - the Decisions entry's Kind and Disposition prose, its classification test kept;
 - the capture types and offer rules;
-- the emit timing that stays;
-- the mirror notes and stage tags of the text that stays, removed the way `Tightened bodies carry no provenance` removes
+- the emit timing that stays, with its stage tags, reworded BEFORE E2 moves the section, so the body and the reference
+  carry one wording (the read-cue test holds every paragraph the body keeps verbatim in the reference);
+- the mirror notes and stage tags of the other text that stays, removed the way `Tightened bodies carry no provenance` removes
   them from the twelve bodies it names: the instruction stays, and the copied text stays byte-equal, held by its parity test.
+
+R2 shortens "Composition with `/orbit:propose`" to at most two sentences, which keep three facts: `/orbit:propose <name>`
+consumes `orbit/explore/<name>/explore.md` as authoritative and moves the staging directory, its sibling files included,
+to `orbit/changes/<name>/`; a BOUNDED residual's two slots are carried at promotion by `orbit-propose-modifications`'
+`Mechanism section consumption`; and a concluded exploration is refused at propose and reopened here first. What leaves
+is read elsewhere: the open-question prompt and the generated artifacts in propose's own consume mode (a
+reference of the propose skill, which explore's body names as propose's, never as a path of its own), the residual's two destinations in the closure section the pointer names
+(`references/mechanism-entries.md`), and the reopen in `references/concluding.md`. The rationale paragraph goes.
 
 Each rewording is a `reworded` pair in the cut ledger. Whether it keeps the meaning is the reviewers' judgement. The
 re-entry table, the status-header and Decisions-entry fences and the "substantive decision" test are not reworded.
@@ -102,18 +116,20 @@ stance preserved` names one by one:
 
 | upstream text | edit |
 |---|---|
-| "Handling Different Entry Points", its four dialogues and its heading | removed (R-rop2-13) |
+| "Handling Different Entry Points", its four dialogues, its heading and the `---` separator that closes it | removed (R-rop2-13) |
 | the `**Visualize**` label and its ASCII box | removed (R-rop2-13); the stance's "Visual" bullet says to use ASCII diagrams liberally |
 | "Ending Discovery"'s summary template | removed (R-rop2-13); its point is kept by joining the sentences around it into "When it feels like things are crystallizing, you might summarize what you figured out, but this summary is optional.", the one reworded upstream sentence |
 | Guardrails: "Don't implement" | restated: the opening's IMPORTANT paragraph |
 | Guardrails: "Don't rush", "Don't force structure" | restated: the stance's "Patient" bullet |
-| Guardrails: "Don't auto-capture" | restated: Orbit Awareness step 4, "Don't auto-capture" |
+| Guardrails: "Don't auto-capture" | kept: Orbit Awareness step 4 says it only under "When a change exists", so no line states it at its scope (Sal, at the proposal walk) |
 | Guardrails: "Do visualize" | restated: the stance's "Visual" bullet |
 | Guardrails: "Do explore the codebase" | restated: the stance's "Grounded" bullet |
 | Guardrails: "Don't fake understanding", "Do question assumptions" | kept: no other line says either ("Including the user's and your own" adds to "Challenge assumptions") |
 
 The Guardrails lines are `restated` pairs, each naming the line that states it (the test asserts that line is still in
-the body). The other three rows are `removed` pairs naming R-rop2-13, each with a phrase that leaves the skill entirely
+the body). `orbit-conventions`' `Restated Guardrails lines are removed from orbit-modified bodies`, whose sourcing sentence
+said explore's lines were untouched until phase 1's evaluation, is MODIFIED to point them at this table, so one list has
+one rule. The other three rows are `removed` pairs naming R-rop2-13, each with a phrase that leaves the skill entirely
 (`COLLABORATION SPECTRUM`, `Use ASCII diagrams liberally        │`, `## What We Figured Out`). The joined sentence is a
 `reworded` pair.
 
@@ -122,12 +138,14 @@ the body). The other three rows are `removed` pairs naming R-rop2-13, each with 
 `DECISION_WRITING_BASIC` becomes:
 
 ```
-- **Decision-writing (call-time)**: run `orbit decisions status --json` at each command's first step and after this session edits `orbit/config.yaml` (or `.yml`). On `write: true`, follow `references/decision-records.md` for the rest of the command. On `write: false`, write no new ledger entry or stop record, except a resolution answering a stop already in the trail or a replacement fixing a record there (read that reference first).
+- **Decision-writing (call-time)**: run `orbit decisions status --json` at each command's first step and after this session edits `orbit/config.yaml` (or `.yml`). On `write: true`, follow `references/decision-records.md` for the rest of the command. On `write: false`, write no new ledger entry or stop record; still write a resolution answering a stop already in the trail or a replacement fixing a record there (read that reference first).
 ```
 
-It keeps the moment and the config re-run, the command, the `write: true` read, and the `write: false` branch with its
-two exceptions and its read. It is 436 characters, 78 fewer than today's 514. D-inv-2 estimated about 140 fewer; going further
-would drop a word one of the branches needs (the exceptions' "answering" and "fixing", the path). `Decision-writing discipline`'s basic-content fence is MODIFIED to this text. The sentence
+It keeps the moment and the config re-run, the command, the `write: true` read, and the `write: false` branch with the
+two records it still writes and its read: "still write" keeps the positive verb today's "is still written" carries, since
+a resolution is neither a ledger entry nor a stop record and so is no exception to that list. It is 441 characters, 73
+fewer than today's 514. D-inv-2 estimated about 140 fewer; going further
+would drop a word one of the branches needs (the two records' "answering" and "fixing", the path). `Decision-writing discipline`'s basic-content fence is MODIFIED to this text. The sentence
 after the fence ("It names the moment, the command, the usual result and the link") and the moments table stay true and
 are carried unchanged. `decision-writing-parity.test.ts` holds the constant equal to the fence. Its `toContain` checks
 follow the new words (the test's own phrases "again after this session edits the project config" and "follow its rule"
@@ -174,7 +192,7 @@ hashes, as `cut-propose-archive` set up.
 | edit | pair kind |
 |---|---|
 | D1's five moves | `moved`, anchors unique in each new reference |
-| the pointers reworded before a move, R2, R3, D2's joined sentence, D4's rewordings | `reworded` |
+| the pointers and the emit timing reworded before a move, R2, R3, D2's joined sentence, D4's rewordings | `reworded` |
 | D2's Guardrails lines | `restated` |
 | D2's three upstream removals | `removed`, naming R-rop2-13 |
 | D3's bullet | `shared` (`reworded`), naming its thirteen carriers |
@@ -213,12 +231,15 @@ lines. That is a lowering (G2), and `skill_body_convention.md`'s budget rule and
   crystallization read happens before any file is written, and the Mode C prompt and its test stay in the body.
 - [A compaction drops a reference read mid-session.] → The body keeps every moment, and the reads are unconditional at
   those moments. As for the other eleven emit steps, a compaction after the first emit is `orbit-run-summary-emit`'s
-  named limit, which this change carries to explore.
+  named limit, which this change carries to explore, citing R-rop-18 for why no re-read is added (Sal, at the proposal
+  walk). A named exploration compacted after BEGIN still emits at each boundary from its body, and a payload composed
+  without the reference is refused by the emit surface, naming the field (`model` missing, an engine-owned or unknown
+  key).
 - [The replay set's `explore` case breaks the section `## Run-summary emit (named-mode only)`.] → Its `break:` gains
   `remove: [references/run-summary-emit.md]`, which `test/replay/cases.test.ts` requires of every case whose skill
   installs an emit reference. The case is not run for this stage (R-rop2-10). Its graders read the trail and the
   printed path, which E2 does not change.
-- [The shortened bullet loses a nuance the rule depends on.] → The three branches and both exceptions stay word for
+- [The shortened bullet loses a nuance the rule depends on.] → The three branches and both records still written stay word for
   word in meaning, and `decision-writing-parity.test.ts`' clause checks follow them. D-inv-2 marked it as not replayed,
   and the reviewers grade it.
 - [`orbit-explore-modifications`' "Implementation guardrail preserved" scenario after "Don't implement" leaves the
@@ -241,6 +262,7 @@ lines. That is a lowering (G2), and `skill_body_convention.md`'s budget rule and
 - `test/core/templates/cut-ledger.test.ts` + `test/core/templates/cut-ledger-pairs.ts` — this stage's hashes and pairs.
 - `test/core/templates/tightened-bodies.test.ts` — the recorded `records-by-setting` basic content.
 - `test/core/decision-writing-parity.test.ts` — the new fence and clauses.
+- `orbit/scenario-ledger.yaml` — the two decision-writing `untestable` reasons that cite the bullet's words.
 - `test/core/templates/skill-body-budget.test.ts` — ceilings; explore's line ceiling.
 - `test/core/templates/skill-templates-parity.test.ts` — hashes.
 - `test/core/templates/*.test.ts` — the tests that read moved or reworded text (orbit-generated-surface, orbit-content-fidelity, run-summary-read-cue, verify-scenario-map, commit-step).
