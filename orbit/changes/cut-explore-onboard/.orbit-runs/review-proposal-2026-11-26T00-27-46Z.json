@@ -1,0 +1,177 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-26T00:27:46Z",
+  "change": "cut-explore-onboard",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 2,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 3
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/cut-explore-onboard/design.md",
+      "line": 92,
+      "title": "R3 rewords explore's emit timing that stays, but the emit reference must hold that timing byte-equal",
+      "recommendation": "Settle how the timing paragraphs explore's body keeps relate to the reference before apply. Today `test/core/templates/run-summary-read-cue.test.ts` (\"every staying paragraph is also in the section, so the reference holds the step whole\") requires every paragraph a body keeps in its emit step, cue aside, to appear verbatim in the reference, except an own-sentence regex and its SPLIT map. `orbit-run-summary-emit`'s delta says the reference holds explore's section \"as the body carried it at `9a122611`\", with only one positional pointer reworded. Design D2 still lists \"the emit timing that stays\" and the stage tags of the text that stays (`(D-arc Stage D3 — mode-aware)`, `(D-arc Stage D5, leak-hardening layer 2; …)`) as R3 targets, and tasks 3.3/3.5 never say how the two fit. Built as written, the body's reworded timing would differ from the reference's copy: two wordings of one instruction, and a failing invariant or an unnamed test exemption. Note that taking the timing out of R3 also shrinks the prose R3 can tighten, which design's Risks already says is tight (about 15%).",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Take the emit timing and its stage tags out of R3: the body keeps the timing paragraphs byte-equal to the section (excerpts allowed, as the test's substring check permits), and design D2's list, task 3.5 and the size projection say so."
+        },
+        {
+          "label": "B",
+          "body": "Reword the timing BEFORE the E2 move, as `reworded` pairs, so the reference holds the reworded text. Amend `orbit-run-summary-emit`'s delta (\"as the body carried it at `9a122611` … a positional pointer reworded first\") to name those rewordings."
+        },
+        {
+          "label": "C",
+          "body": "Keep R3 on the timing after the move and record each reworded body paragraph in the read-cue test's SPLIT map, naming the divergence in the delta and in tasks 3.3/3.5."
+        }
+      ]
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/cut-explore-onboard/specs/orbit-conventions/spec.md",
+      "line": 13,
+      "title": "The shortened bullet drops \"is still written\", which two scenario-ledger entries and the parity test cite as evidence",
+      "recommendation": "The new fence says \"write no new ledger entry or stop record, except a resolution answering a stop already in the trail or a replacement fixing a record there\". The old one said these \"are still written\". A resolution is neither a ledger entry nor a stop record, so read literally it is not an exception to that list, and the sentence no longer says the two records ARE written. The requirement's prose (\"a record that answers or fixes one already in the trail is written whatever the result\") still says so. `test/core/decision-writing-parity.test.ts:245` asserts the \"is still written\" phrase. The `untestable` reasons at `orbit/scenario-ledger.yaml:182` and `:185` (\"A stop already in the trail is answered at the defaults\", \"A reading finding is fixed at the defaults\") cite that phrase as their text-tested evidence. Design D3 updates the test's `toContain` checks, but no task updates those two ledger reasons, so they would cite words the bullet no longer carries. Keep a positive verb in the fence, for example \"…; still write a resolution answering a stop already in the trail or a replacement fixing a record there (read that reference first).\", and re-measure the length. Add a task line to rewrite the two ledger reasons to the new words."
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/cut-explore-onboard/specs/orbit-explore-modifications/spec.md",
+      "line": 7,
+      "title": "The new SHALL (\"no illustrative text that the stance already states\") is broader than the named removals, and its day-one truth is contested",
+      "recommendation": "As written, the requirement sets a general property of the upstream portion, not the named edit `Generated-file disposition` asks for. Design's Alternatives names `What You Might Do` and the Orbit Awareness example offers as further illustrative text the stance arguably states (\"the candidates Sal would be asked about\"), and both stay. So a reader either finds the SHALL false on the day it ships, or reads it as permission, or a duty, for a later session to remove more upstream text unnamed, which is against G0 (every removal is Sal's decision). Scope the sentence to the edits the table names, for example: \"The upstream portion of the explore body SHALL change only by the edits R-rop2-13 rules and the table below names; every other line is unchanged\". This keeps R-rop2-13's quote and the table as they are."
+    },
+    {
+      "pass": "4",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "orbit/specs/orbit-conventions/spec.md",
+      "line": 1744,
+      "title": "orbit-conventions' Guardrails requirement still scopes explore out, and its rule differs from the one this change applies",
+      "recommendation": "`Restated Guardrails lines are removed from orbit-modified bodies` says the system SHALL remove a line \"a step line of the same body states\" from an orbit-modified body and \"SHALL keep every other line\". It excludes explore only through its sourcing sentence (\"explore's and bulk-archive's are untouched until `reduce-orbit-phase1`'s evaluation\"). This change removes explore's lines because a STANCE bullet or the opening paragraph restates them, under `orbit-explore-modifications`. Since `orbit-conventions` is already in this change, a short MODIFIED of that sourcing sentence would close the gap: it would point explore at its own named edit and drop bulk-archive, which `cut-propose-archive` retired. Two owners would then not state different rules for one list."
+    },
+    {
+      "pass": "2",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "orbit/changes/cut-explore-onboard/tasks.md",
+      "line": 8,
+      "title": "Task 2.1 removes a `---` separator that the requirement's table does not name",
+      "recommendation": "Task 2.1 removes \"Handling Different Entry Points\" with \"its heading and its `---` separator\". The delta's table names \"its heading and its four dialogues\" and states that \"every other line of the upstream portion is unchanged\". Either name the separator in the table's first row, or say which of the two separators around the section stays, so the removal phrase test and the claim agree."
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/cut-explore-onboard/specs/orbit-run-summary-emit/spec.md",
+      "line": 66,
+      "title": "The classification note says every explore emit paragraph fell in one row, but the BEGIN and sweep paragraphs are mixed",
+      "recommendation": "The BEGIN emit paragraph mixes timing (\"Fire the begin emit immediately after the staging scaffold…\", Mode C back-filling first) with payload content (\"`final_assessment` records the scaffold + the citation decision\"). The new scenario `Explore's emit step keeps its timing in the body` needs that paragraph split. The sweep paragraph mixes timing with rationale (\"so the engine-computed attestation counts describe the SWEPT file…\"). The requirement already names architect's mixed paragraph. Name explore's two the same way: which part stays and which leaves. Also align the claim that classification was done \"at `cut-explore-onboard`'s propose\" with task 3.3, which classifies at apply."
+    },
+    {
+      "pass": "4",
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "file": "orbit/changes/cut-explore-onboard/specs/orbit-emit-composition/spec.md",
+      "line": 3,
+      "title": "The MODIFIED grammar requirement still says the skill's hash pin does not move, while this change re-pins explore",
+      "recommendation": "The requirement keeps \"(the skill's hash pin does not move)\", and the carried scenario `Body interpolation changes no byte` says \"the skill-templates hash pin is unchanged\". This same change moves explore's text to a reference and re-pins its hash (task 6.4). Qualify both as a property of the interpolation alone, for example \"(interpolating the strings moves no hash pin)\", so a reader does not see the delta contradicting its own task list."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/cut-explore-onboard/specs/orbit-explore-modifications/spec.md",
+      "line": 20,
+      "title": "The line named as restating Guardrails' \"Don't auto-capture\" is scoped to \"When a change exists\"",
+      "recommendation": "The `restated` pair's anchor, Orbit Awareness step 4 (\"Offer and move on. Don't pressure. Don't auto-capture.\"), sits under `### When a change exists`. The Guardrails line applies with or without a change. orbit's own `## Offer-don't-auto rule` section states it generally for non-decision captures, though it lives in the additions, which R3 may reword. Name the scope in the table row (the bare-mode case is covered by the stance and the opening), or anchor the pair on a line whose scope matches."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "The change is careful bookkeeping over a large body. Most of what it claims checks out against the tree. There are thirteen `DECISION_WRITING_BASIC` carriers in `src/`. The bullet goes from 514 to 436 characters. Eight bodies carry an earlier stage's cut-ledger hash. Onboard's table has fourteen rows. `test/replay/cases.test.ts` requires the explore break to remove the new emit reference. O1 really does collide with `orbit-onboard`'s two PR-layer scenarios. Validate passes, and the two `@review:` hits are documentation prose.\n\nThe risk is where a move meets a test or a spec that holds text in place, not in the moves themselves. The sharpest case is explore's emit timing. The body keeps it, R3 wants to tighten it, and both the read-cue invariant and the delta require the reference to hold it verbatim. Second is the decision-writing bullet. Its shorter wording loses the positive \"is written\" that two scenario-ledger reasons and a parity assertion stand on. Third is a new upstream-portion SHALL worded as a general property, wider than the edits it names.\n\nProbed and not raised: the Mode C path now reads the crystallization warning at accept, which matches the baseline Mode C begin-emit scenario (\"the user confirmed the crystallization warning\"). The `(\"Concluding an exploration\" below)` pointer in the status-header prose still resolves, because the heading stays in the body. The scaffold placeholders are guidance, not file content, so pointing one at a reference path leaks nothing into an `explore.md`. Explore's size after the moves is a projection. Design's Risks already routes an over-budget result to Sal, and the first finding narrows R3's base further.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "Go forward to a walk, then apply. The design is sound. The moves follow the convention. The decisions not taken (O1, moving the emit timing) are argued from the baseline specs. The upstream removals are named one by one. Nothing found needs a redesign or a new capability. The three items that should be settled before apply are wording and placement choices that an in-context walk can make. They are how explore's kept emit timing relates to its reference copy, a positive verb in the shortened bullet with the ledger reasons that cite it, and a SHALL scoped to the named edits. Settle the first before apply, because it changes how much R3 can tighten, and R3 is what explore's fit under 5,000 depends on."
+  },
+  "final_assessment": "0 critical, 3 warning, 5 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews cut-explore-onboard",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "9fd767274bf48f8678421b6bca1e4b791c24318d",
+      "frozen": false,
+      "evidence": {
+        "files": [],
+        "share": null,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ]
+}
