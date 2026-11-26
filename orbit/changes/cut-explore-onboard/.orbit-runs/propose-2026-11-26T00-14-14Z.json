@@ -1,0 +1,16 @@
+{
+  "command": "propose",
+  "timestamp": "2026-11-26T00:14:14Z",
+  "change": "cut-explore-onboard",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Standalone propose of reduce-orbit-phase2's last cut stage, on the program branch (architecture: written before pr select). Explore (11,904 est. tokens) moves five procedures to references read at their moments (mechanism-entries, concluding, crystallization, run-summary-emit, new-exploration) and drops its illustrative upstream text under R-rop2-13, the upstream edits named in orbit-explore-modifications' Upstream explore stance preserved. Two corrections to the inventory's cut list from the baseline specs: E2 keeps the emit timing in the body (orbit-run-summary-emit's placement table), and E1 keeps the substantive-decision test (the Mode C cue), so explore fits only with R3 tightening of about 15% (projected about 4,800). Onboard (5,610) fits by rewording in place; the inventory's O1 move of the PR-layer paragraphs is not taken because orbit-onboard teaches the PR layer unconditionally (design D4). Sal brought in D-inv-2's decision-writing bullet shortening (514 to 436 characters, thirteen carriers), which adds orbit-conventions as a fourth capability; Sal declared the capabilities breach. 4 capabilities, 5 requirements, 15 tasks; no cut is marked for replay (R-rop2-10).",
+  "pr_attachment": {
+    "branch": "reduce-orbit-phase2",
+    "granularity": "per-architecture",
+    "doc": "reduce-orbit-phase2",
+    "url": "https://github.com/las-sal/orbit-spec/pull/47",
+    "state": "draft"
+  },
+  "next_recommended": "/orbit:review cut-explore-onboard — proposal artifacts ready; review before apply"
+}
