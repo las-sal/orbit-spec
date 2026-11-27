@@ -266,7 +266,7 @@ export const EXPLORE_RUN_SUMMARY_EMIT = `## Run-summary emit (named-mode only)
 
 Named-mode \`/orbit:explore <name>\` emits at BEGIN and at each conversation boundary.
 
-**Boundary residency sweep — "no emit without sweep"** (begin emits excepted: nothing has been discussed yet): before EVERY boundary emit, write into its slot each decision, leaning, rejection and citation since the last emit that is not yet file-resident — Decisions (ID opener, \`Kind:\`), a rule's Mechanism entry (domain table, closure token, residual slots, move dispositions), an open question's \`Standing recommendation:\`, Considered & out, References. A rule left with no entry stays a visible open domain (the "A rule is captured" rule).
+**Boundary residency sweep — "no emit without sweep"** (begin emits excepted: nothing has been discussed yet): before EVERY boundary emit, write into its slot each decision, leaning, rejection and citation since the last emit that is not yet file-resident — Decisions (ID opener, \`Kind:\`), a rule's Mechanism entry (a domain, closure token, residual slot or move disposition settled in conversation and not yet in the entry, an existing entry included), an open question's \`Standing recommendation:\`, Considered & out, References. A rule left with no entry stays a visible open domain (the "A rule is captured" rule).
 
 The sweep rides this existing boundary trigger — no new prompt, no user-facing step — so the engine-computed attestation counts describe the SWEPT file, and \`orbit-audit-drift\`'s cross-check closes the loop.
 
@@ -307,7 +307,7 @@ export const EXPLORE_RUN_SUMMARY_EMIT_BASIC = `## Run-summary emit (named-mode o
 
 Named-mode \`/orbit:explore <name>\` emits at BEGIN and at each conversation boundary.
 
-**Boundary residency sweep — "no emit without sweep"** (begin emits excepted: nothing has been discussed yet): before EVERY boundary emit, write into its slot each decision, leaning, rejection and citation since the last emit that is not yet file-resident — Decisions (ID opener, \`Kind:\`), a rule's Mechanism entry (domain table, closure token, residual slots, move dispositions), an open question's \`Standing recommendation:\`, Considered & out, References. A rule left with no entry stays a visible open domain (the "A rule is captured" rule).
+**Boundary residency sweep — "no emit without sweep"** (begin emits excepted: nothing has been discussed yet): before EVERY boundary emit, write into its slot each decision, leaning, rejection and citation since the last emit that is not yet file-resident — Decisions (ID opener, \`Kind:\`), a rule's Mechanism entry (a domain, closure token, residual slot or move disposition settled in conversation and not yet in the entry, an existing entry included), an open question's \`Standing recommendation:\`, Considered & out, References. A rule left with no entry stays a visible open domain (the "A rule is captured" rule).
 
 ${RUN_SUMMARY_READ_CUE}
 
@@ -485,7 +485,6 @@ The disciplines from \`orbit-conventions\`, embedded per body; detail lives wher
 
 - **Read-before-reference (authoring-time)**: before a captured artifact names a specific construct, read its definition; unverifiable → ask the user or leave a \`@review:\` marker, never guess.
 - **Change completeness (modification-time)**: section moves in \`explore.md\` land whole (a resolved Open question MOVES to Decisions, never left in both); re-read the section to confirm.
-
 - **Pushback (review-time)**: when the conversation flags something as already-decided, verify against \`explore.md\` before treating it as new; don't re-litigate captured decisions.
 - **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line — gate \`passed\` means *eligible*, not *commanded*.
 ${DECISION_WRITING_BASIC}
@@ -578,7 +577,7 @@ Each Decisions entry is a top-level list item opened by its ID slot. A slot matc
 ${EXPLORE_DECISION_ENTRY_PRODUCTION}
 \`\`\`
 
-Before writing the session's first Decisions entry, read \`references/decision-entries.md\` and follow it: whether a claim is a rule, a fact or a scope, when an entry is split, and what each slot means (an absent \`Kind:\` means \`rule\`, an absent \`Disposition:\` \`live\`).
+Before writing the session's first Decisions entry, or stating a concluded exploration's \`Re-entry:\` trigger, read \`references/decision-entries.md\` and follow it: whether a claim is a rule, a fact or a scope, when an entry is split, and what each slot means (an absent \`Kind:\` means \`rule\`, an absent \`Disposition:\` \`live\`).
 
 A Decisions entry without a well-formed ID is a format violation corrected on next touch.
 

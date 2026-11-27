@@ -381,6 +381,9 @@ describe('generated surface fidelity (real init, all workflows, claude + codex)'
       expect(skill).toContain('Re-entry: <what would reopen it>');
       expect(skill).toContain('an absent `Kind:` means `rule`, an absent `Disposition:` `live`');
       expect(skill).toContain('read `references/decision-entries.md`');
+      // cut-explore-onboard's system walk: the live-carrier rule is read before a concluded exploration's trigger is stated.
+      expect(skill).toContain("or stating a concluded exploration's `Re-entry:` trigger, read `references/decision-entries.md`");
+      expect(decisions).toContain("a CONCLUDED entry's `Re-entry:` slot is live only while its Disposition is");
       expect(decisions).toContain('**absent means `rule`.**');
       expect(decisions).toContain('absent means `live`');
       expect(decisions).toContain('One claim under obligation per entry');

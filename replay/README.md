@@ -113,7 +113,9 @@ A case is a directory under `cases/` holding a `case.yaml` (the folder shape `cl
   before any spend); `break` (`file`, the installed skill file; `section`, a heading — or a list — whose section
   `--broken` deletes, or `whole_body: true`, which keeps only the frontmatter; `remove`, reference files deleted beside it, relative to the skill file; `grader`, the grader
   expected to fail then). Cut a step from its references too: a session that finds the step in a reference file the
-  body pointed to recovers it, and the case then cannot fail.
+  body pointed to recovers it, and the case then cannot fail. A `remove` names a file of the case's current layout, so
+  `--broken` with a `--ref` built before that reference existed stops at the fixture (`break remove: no <file> beside
+  <skill>`) before any grader runs: grade a broken body only on a build that ships every file its case removes.
 - `scaffold.sh` — the seed, run in the fixture after `orbit init` with `REPLAY_LIB` and `REPLAY_CASES` set.
 - `graders/` — one Markdown file per fact, YAML frontmatter plus the fact in prose.
 

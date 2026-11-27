@@ -1,0 +1,250 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-27T18:09:28Z",
+  "change": "cut-explore-onboard",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/cut-explore-onboard/.orbit-runs/external-system-2026-11-27T17-47-40Z.md",
+  "source_command": null,
+  "source_token": "2026-11-27T17-47-40Z",
+  "latest_apply_token": "2026-11-27T17-04-33Z",
+  "external_reviewer": "GPT-6",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 4,
+    "suggestion": 1
+  },
+  "pushback_verification": "All five verified against current state; none stale. The replay claim was confirmed at replay/lib/fixture.mjs:120, the sweep claim against orbit-explore-modifications' baseline scenario.",
+  "resolution_summary": {
+    "resolved": 5,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "A compacted exploration can lose the instructions needed to emit at its next boundary",
+      "marker_source": "external",
+      "file": "orbit/changes/cut-explore-onboard/specs/orbit-run-summary-emit/spec.md",
+      "line": 59,
+      "classification": "decision_required",
+      "action": "No edit: the delta's named limit stands (R-rop-18; Sal's ruling at the proposal walk). A payload composed without the reference is refused naming the field, so the session adds it and emits again; explore stays shaped like the other eleven emit steps.",
+      "ratified_via": "chat",
+      "resolution": "A on #3",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "heuristic",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Keep the delta's named limit; no edit."
+          },
+          {
+            "label": "B",
+            "body": "Keep the two payload keys (final_assessment + the required nullable model) in explore's body."
+          }
+        ],
+        "chosen": "A"
+      },
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [],
+        "searched": [
+          "the required nullable `model`"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Re-entering a concluded exploration can surface a superseded trigger",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/explore.ts",
+      "line": 509,
+      "classification": "trivial_fix",
+      "action": "The body's read of references/decision-entries.md now comes before the session's first Decisions entry or before stating a concluded exploration's Re-entry: trigger; that reference says which carrier is live. A test holds both texts.",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/templates/cut-ledger-pairs.ts",
+          "test/core/templates/orbit-generated-surface.test.ts",
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "first Decisions entry, read"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/templates/workflows/explore.ts",
+            "text": "or stating a concluded exploration's"
+          }
+        ],
+        "searched": [
+          "decision-entries.md",
+          "Re-entry:"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "The boundary sweep no longer explicitly requires updates to existing Mechanism entries",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/explore.ts",
+      "line": 310,
+      "classification": "trivial_fix",
+      "action": "The sweep's Mechanism slot again names a domain, closure token, residual slot or move disposition settled in conversation and not yet in the entry, an existing entry included (orbit-explore-modifications' 'A rule discussed to a domain is swept into its Mechanism entry'), in the body and the emit reference alike. A test holds it.",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/templates/cut-ledger-pairs.ts",
+          "test/core/templates/run-summary-read-cue.test.ts",
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "residual slots, move dispositions), an open question"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/templates/workflows/explore.ts",
+            "text": "an existing entry included"
+          }
+        ],
+        "searched": [
+          "settled in conversation",
+          "residency sweep"
+        ],
+        "scope": [
+          "orbit/specs/orbit-explore-modifications/spec.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Onboard drops the user’s choice over open questions",
+      "marker_source": "external",
+      "file": "src/core/templates/workflows/onboard.ts",
+      "line": 84,
+      "classification": "trivial_fix",
+      "action": "Onboard's propose paragraph says propose prompts for each Open question (resolve now, defer, abandon). A test holds it.",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/templates/cut-ledger-pairs.ts",
+          "test/core/templates/onboard-orientation.test.ts",
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "Each Open question is resolved now"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/templates/workflows/onboard.ts",
+            "text": "Propose prompts for each Open question"
+          }
+        ],
+        "searched": [
+          "Open question"
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The broken explore replay assumes the build has the new reference layout",
+      "marker_source": "external",
+      "file": "replay/cases/explore/case.yaml",
+      "line": 15,
+      "classification": "trivial_fix",
+      "action": "replay/README.md's case.yaml entry says a remove names a file of the case's current layout, so --broken against an older --ref stops at the fixture before any grader runs; grade a broken body only on a build that ships every file its case removes. The removal stays unconditional, as test/replay/cases.test.ts requires.",
+      "ripple_cascade": {
+        "applied": [
+          "replay/README.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "replay/README.md",
+            "text": "grade a broken body only on a build that ships every file its case removes"
+          }
+        ],
+        "searched": [
+          "break remove",
+          "--ref"
+        ],
+        "scope": [
+          "replay/lib/fixture.mjs",
+          "replay/cases/apply/case.yaml"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "All five codex findings resolved: four by edits (the trigger read, the sweep's existing-entry clause, onboard's open-question prompt, the replay README), and the compaction finding by Sal's ratification of the delta's named limit (A: no edit).",
+  "iteration": 5,
+  "next_recommended": "/orbit:review --as system cut-explore-onboard",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "a71057ea755e9ef64f8ee9049ad884a2a860c202",
+      "frozen": true,
+      "evidence": {
+        "files": [],
+        "share": 0,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ],
+  "ripple_misses": 0
+}

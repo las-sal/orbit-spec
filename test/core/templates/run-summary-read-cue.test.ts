@@ -220,6 +220,9 @@ describe("explore's emit step (cut-explore-onboard, design D1)", () => {
       '2. **AI-initiated wrap**',
       '**Boundary residency sweep — "no emit without sweep"**',
       'before EVERY boundary emit',
+      // cut-explore-onboard's system walk: an existing entry's settled details are swept too (orbit-explore-modifications'
+      // `A rule discussed to a domain is swept into its Mechanism entry`).
+      'settled in conversation and not yet in the entry, an existing entry included',
       'Bare-mode `/orbit:explore` does NOT emit: with no name it writes ZERO files.',
     ];
     for (const k of kept) expect(EXPLORE_RUN_SUMMARY_EMIT_BASIC, k).toContain(k);

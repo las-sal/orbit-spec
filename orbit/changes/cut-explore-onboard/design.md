@@ -259,6 +259,9 @@ lines. That is a lowering (G2), and `skill_body_convention.md`'s budget rule and
 - The Shipped as names R-rop2-13's removal (each of D2's upstream edits), the inventory's O1 not taken and why (D4),
   the decision-writing bullet taken at Sal's word, the tests each edit followed, and the measured sizes.
 - `skill_body_convention.md`'s Exceptions paragraph says no body is outside the convention.
+- The Shipped as says D4 removed onboard's stage tags, and that the "D-arc Stage D2" which `orbit-onboard`'s
+  `Enumerates orbit-distinctive layers` scenario names beside program architecture is provenance the body need not carry
+  (the system walk; no delta, since neither of the scenario's tests asserts the tag).
 
 ## Touchpoints
 
