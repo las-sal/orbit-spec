@@ -307,6 +307,44 @@ Exit criteria:
 - The replay set run before and after on every cut whose replay mark says yes (G3, R-rop2-10); every removal named in
   the archive.
 
+Shipped as (2026-11-27; archived as `orbit/changes/archive/2026-11-27-cut-explore-onboard/`; the charter stands, with one
+move Sal added at apply and one cut taken at propose, below). `npm run size:report` at archive reads explore at 4,996
+estimated tokens and onboard at 4,988, down from 11,904 and 5,610 (G1), so no generated body is over 5,000. Explore's
+line ceiling was deleted, the body falling from 664 lines to 344, and every edited body's character ceiling came down,
+explore's and onboard's to the 20,000 cap (G2). No cut was marked for the replay set, so none was replayed (R-rop2-10);
+the replay set's `explore` case now also removes explore's emit reference when it breaks the body.
+
+R-rop2-13's removals, each named by `orbit-explore-modifications`' `Upstream explore stance preserved`: the four
+"Handling Different Entry Points" dialogues with their heading, the ASCII box under "Visualize", "Ending Discovery"'s
+summary template (its two neighbouring sentences joined as one), and five Guardrails lines that the opening or a stance
+bullet already states ("Don't implement", "Don't rush", "Don't force structure", "Do visualize", "Do explore the
+codebase"); "Don't auto-capture", "Don't fake understanding" and "Do question assumptions" stay. Explore's procedures
+moved to six references read at the moment each serves: the Mechanism-entry grammar, closure outcomes, nine moves and
+exemplars (`mechanism-entries.md`), concluding and reopening (`concluding.md`), the crystallization warning
+(`crystallization.md`), a new exploration's metadata (`new-exploration.md`), its emit detail (`run-summary-emit.md`,
+explore joining the shared read cue as the twelfth body, its timing kept in the body as `orbit-run-summary-emit`
+requires), and the Decisions-entry explanations (`decision-entries.md`). That sixth move was not on the inventory's list.
+After every planned cut explore was still 914 characters over, and Sal chose it at apply (2026-11-27) over further
+upstream removals or leaving explore over. The orbit prose that stayed was tightened (R2, R3), its mirror notes and
+stage tags removed as `Tightened bodies carry no provenance` removes them elsewhere.
+
+Onboard fits by rewording in place. The inventory's O1, moving its PR-layer paragraphs to a reference, was not taken:
+`orbit-onboard` teaches the PR layer at propose and archive in every project, whatever its `pr:` says. Its
+disciplines list became one line each, its stage tags left (so the "D-arc Stage D2" that `orbit-onboard`'s `Enumerates
+orbit-distinctive layers` scenario names beside program architecture is provenance the body need not carry; neither of
+the scenario's tests asserts it), its longest paragraphs were tightened with every fact kept, and "15 commands" reads
+14. At propose Sal also took the shortening of the decision-writing bullet that thirteen bodies carry (D-inv-2): 514 to
+441 characters, its three branches kept. The cut ledger records fourteen bodies and 81 pairs, the bullet as one shared
+pair, and its undo reproduces every recorded body (G0). The tests that read moved or reworded text follow it:
+`orbit-generated-surface`, `orbit-content-fidelity`, `run-summary-read-cue`, `decision-writing-parity`,
+`tightened-bodies`, `explore-grammar-parity`, `parsers/explore-rules`, `blind-pair-command`, `onboard-orientation`,
+`config-profile`, `skill-body-budget`, `skill-templates-parity`, and the new `explore-upstream-removals`. The system
+review ran as a blind pair, and its walk put four things right: explore reads `decision-entries.md` before stating a
+concluded exploration's trigger, its residency sweep again names an existing entry's settled details, onboard says
+propose prompts for each open question, and the replay README names the build range a broken case supports. Sal kept
+the compaction limit as the delta names it (R-rop-18). The verification pass found every resolution landed. Explore sits
+16 characters under its cap: the next edit to it has to take text out first.
+
 ### Stage close — measure the program against its goals
 
 Depends-on: cut-review-walk, cut-propose-archive, cut-explore-onboard

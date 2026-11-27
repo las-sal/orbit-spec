@@ -63,7 +63,9 @@ disagreement test, and explore's illustrative upstream text (R-rop2-11 to R-rop2
 `cut-review-walk`, shipped on 2026-11-25: review and address-reviews each under 5,000 estimated tokens, batch mode and
 the disagreement test removed, and every body edit named in a cut ledger (`test/core/templates/cut-ledger.test.ts`).
 The second, `cut-propose-archive`, shipped the same day: propose and archive each under 5,000 estimated tokens, propose's
-consume mode in a reference read when an exploration is consumed, and bulk-archive removed. `cut-explore-onboard` is next.
+consume mode in a reference read when an exploration is consumed, and bulk-archive removed. The third and last,
+`cut-explore-onboard`, shipped on 2026-11-27: explore and onboard each under 5,000 estimated tokens, so no body is over,
+explore's illustrative upstream text removed (R-rop2-13) and six of its procedures in references. `close` is next.
 
 **`orbit/architecture/reduce-orbit-phase1.md`** (2026-11-17 to 2026-11-20, merged as PR #46) is complete. It restructured the skill bodies to be
 slimmer and in line with Anthropic's guidance for building skills, without changing what any workflow does. Text a

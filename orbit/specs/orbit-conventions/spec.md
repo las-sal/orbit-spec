@@ -1247,10 +1247,10 @@ not a stop, where records go), carried byte-equal by the `references/decision-re
 (`Decision-record reference ships beside the statement`). The basic content:
 
 ```
-- **Decision-writing (call-time)**: at each command's first step, and again after this session edits the project config (`orbit/config.yaml` or `.yml`), run `orbit decisions status --json`. On `write: true`, read `references/decision-records.md` and follow its rule for the rest of the command. On `write: false`, write no new ledger entry or stop record; a resolution answering a stop already in the trail, or a replacement fixing a record already there, is still written — read that reference when you write one.
+- **Decision-writing (call-time)**: run `orbit decisions status --json` at each command's first step and after this session edits `orbit/config.yaml` (or `.yml`). On `write: true`, follow `references/decision-records.md` for the rest of the command. On `write: false`, write no new ledger entry or stop record; still write a resolution answering a stop already in the trail or a replacement fixing a record there (read that reference first).
 ```
 
-It names the moment, the command, the usual result and the link, so an orbit command's result picks the branch, never
+(Shortened at `reduce-orbit-phase2`'s `cut-explore-onboard`, D-inv-2, its branches and link unchanged.) It names the moment, the command, the usual result and the link, so an orbit command's result picks the branch, never
 the agent's judgement (R-rop-4): `orbit decisions status` (`orbit-decision-records`' `orbit decisions status says
 whether decision records are written`) reports `write: false` at the defaults, and the rule is then read only by a
 session that answers or fixes a record already in its trail. On `write: false` the AI writes no NEW ledger entry or stop
@@ -1353,6 +1353,14 @@ when it is written, never that a record was owed.
   walk resolves the finding
 - **THEN** the walk writes a replacement of that entry, as `orbit-decision-records`' `A record is fixed by a replacement,
   never edited` says, and writes no new ledger entry
+
+#### Scenario: The shortened basic content keeps its three branches
+
+- **WHEN** the basic content is read
+- **THEN** it carries the moment with the config re-run, the `orbit decisions status --json` call, the `write: true`
+  branch with its read of `references/decision-records.md`, and the `write: false` branch with the two records it still
+  writes (a resolution answering a stop already in the trail, a replacement fixing a record there) and its read of that
+  reference
 
 #### Scenario: The basic content names when the command runs
 
@@ -1710,7 +1718,8 @@ carrying body.
 
 ### Requirement: Restated Guardrails lines are removed from orbit-modified bodies
 
-The system SHALL remove from an orbit-modified body's upstream `**Guardrails**` list each line that a step line of the
+The system SHALL remove from an orbit-modified body's upstream `**Guardrails**` list, explore's excepted
+(`orbit-explore-modifications`' `Upstream explore stance preserved` names its lines), each line that a step line of the
 same body states with nothing added — no timing, scope or case of its own — and SHALL keep every other line; the
 heading goes when no line is left. This requirement is the named edit `Generated-file disposition` asks of a change to
 an upstream portion: each removed line is named below with the step that states it, and a test holds the step line
@@ -1742,8 +1751,10 @@ present. The lines it covers, from the bodies generated at `a5ba0f0c`:
 | sync-specs: all five lines | kept — `Generated-file disposition` classes sync-specs as upstream-verbatim, its upstream body unchanged |
 
 The table is sourced from the `**Guardrails**` blocks of the seven bodies that carry one among the twelve
-`tighten-bodies` tightens (explore's and bulk-archive's are untouched until `reduce-orbit-phase1`'s evaluation): 42
-lines, 23 removed.
+`tighten-bodies` tightens (explore's and bulk-archive's are outside it): 42 lines, 23 removed. Explore's Guardrails lines
+are named instead by `orbit-explore-modifications`' `Upstream explore stance preserved` (`reduce-orbit-phase2`'s
+`cut-explore-onboard`), because the opening or a stance bullet states them, not a step line; bulk-archive's left with
+its body (R-rop2-11).
 
 #### Scenario: A line a step states goes
 
